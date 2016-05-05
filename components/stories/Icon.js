@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 
-import Icon from '../Icon.jsx';
+import Icon from '../Icon';
 
 storiesOf('Icon', module)
   .add('Default', () => ( render() ))

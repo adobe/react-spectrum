@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Icon from './Icon.jsx';
+import Icon from './Icon';
 
 export default ({
   element,

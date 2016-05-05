@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 
-import Button from '../Button.jsx';
+import Button from '../Button';
 
 storiesOf('Button', module)
   .add('Default', () => ( render() ))

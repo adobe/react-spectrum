@@ -1,2 +1,0 @@
-import './Button';
-import './Icon';
