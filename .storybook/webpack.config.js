@@ -14,10 +14,9 @@ module.exports = {
         include: path.resolve(__dirname, '../')
       },
       {
-        test: /\.(cur)$/,
-        loaders: [ 'url?limit=8192' ], // limit inlining base64 URLs to <=8k images, direct URLs for the rest
-        include: path.resolve(__dirname, '../')
-      },
+        test: /\.(ttf|woff|svg|gif|cur|eot|png|jpg)$/,
+        loader: 'url-loader?limit=8192'// limit inlining base64 URLs to <=8k images, direct URLs for the rest
+      }
     ]
   }
 }

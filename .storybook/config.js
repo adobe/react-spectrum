@@ -1,8 +1,8 @@
 import { configure } from '@kadira/storybook';
+import '../css/coral.css';
 
 function loadStories() {
-  require('../components/stories/button');
-  // require as many as stories you need.
+  require('../components/stories/');
 }
 
 configure(loadStories, module);
