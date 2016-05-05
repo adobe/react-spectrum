@@ -24,4 +24,9 @@ describe('Icon', () => {
     const tree = shallow(<Icon icon="bell" className="myClass" />);
     expect(tree.prop('className')).toBe('coral-Icon coral-Icon--sizeM coral-Icon--bell myClass');
   });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Icon icon="bell" foo />);
+    expect(tree.prop('foo')).toBe(true);
+  });
 });

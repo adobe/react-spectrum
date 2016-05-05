@@ -51,6 +51,18 @@ describe('Button', () => {
     expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium myClass');
   });
 
+  it('supports additional properties', () => {
+    const tree = shallow(<Button foo>My Heading</Button>);
+    expect(tree.prop('foo')).toBe(true);
+  });
+
+  it('supports children', () => {
+    const tree = shallow(<Button><div>My Custom Content</div></Button>);
+    const child = tree.find('div');
+    expect(child).toExist();
+    expect(child.children().node).toBe('My Custom Content');
+  });
+
   it('can be clicked', () => {
     const spy = createSpy();
     const tree = shallow(<Button onClick={ spy } />);

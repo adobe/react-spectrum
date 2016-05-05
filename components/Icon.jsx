@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 export default ({
   icon, // add, bell, heart, star
-  size, // XS, S, M, L
+  size = 'M', // XS, S, M, L
   className,
   ...rest
 }) => {
@@ -18,7 +18,7 @@ export default ({
       className={
         classNames(
           'coral-Icon',
-          `coral-Icon--size${ size || 'M' }`,
+          `coral-Icon--size${ size }`,
           `coral-Icon--${ icon }`,
           {
             'coral-ColorIcon': isColorIcon

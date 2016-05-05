@@ -3,20 +3,20 @@ import classNames from 'classnames';
 import Icon from './Icon';
 
 export default ({
-  element,
+  element = 'button',
   label,
   children,
-  variant,
+  variant = 'default',
   icon,
-  iconSize,
-  size,
+  iconSize = 'S',
+  size = 'M',
   selected,
   square,
   block,
   className,
   ...rest
 }) => {
-  const Element = element || 'button';
+  const Element = element;
   const sizes = {
     L: 'large',
     M: 'medium'
@@ -27,8 +27,8 @@ export default ({
       className={
         classNames(
           'coral-Button',
-          `coral-Button--${ variant || 'default' }`,
-          `coral-Button--${ sizes[ size || 'M' ] }`,
+          `coral-Button--${ variant }`,
+          `coral-Button--${ sizes[ size ] }`,
           {
             'is-selected': selected,
             'coral-Button--block': block,
@@ -40,7 +40,7 @@ export default ({
       { ...rest }
     >
       {
-        icon && <Icon size={ iconSize || 'S' } icon={ icon } />
+        icon && <Icon size={ iconSize } icon={ icon } />
       }
       <span className="coral-Button-label">{ label }{ children }</span>
     </Element>
