@@ -53,14 +53,13 @@ export default class Accordion extends React.Component {
 
     if (this.props.multiselectable) {
       selectedKey = [...selectedKey];
+
       const index = selectedKey.indexOf(key);
       const selected = index !== -1;
-      if (selected) {
-        // remove active state
-        selectedKey.splice(index, 1);
-      } else {
-        selectedKey.push(key);
-      }
+
+      selected
+        ? selectedKey.splice(index, 1)
+        : selectedKey.push(key);
     } else {
       selectedKey = selectedKey[0] === key ? [] : [key];
     }
@@ -92,13 +91,9 @@ export default class Accordion extends React.Component {
     return React.Children.map(children, (child, index) => {
       // If there is no key provide, use the index as default key
       const key = child.key || String(index);
-      let selected = false;
-
-      if (multiselectable) {
-        selected = selectedKey.indexOf(key) !== -1;
-      } else {
-        selected = selectedKey[0] === key;
-      }
+      const selected = multiselectable
+        ? selectedKey.indexOf(key) !== -1
+        : selectedKey[0] === key;
 
       const props = {
         selected,
