@@ -41,6 +41,8 @@
     "file-loader": "^0.8.5",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-portal": "^2.1.2",
+    "react-tether": "^0.5.1",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.0.0",
