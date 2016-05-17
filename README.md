@@ -18,7 +18,8 @@ Current react-coral doesn't have a build system at this point. Instead, we inten
 ```javascript
 // Using es6
 import { Button, Heading, Modal } from 'react-coral';
-
+```
+```javascript
 // Using es5
 var Coral = require('react-coral');
 var Button = Coral.Button;
