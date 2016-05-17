@@ -17,12 +17,12 @@ npm test
 Current react-coral doesn't have a build system at this point. Instead, we intend on having the codebase which depends on react-coral to use its own bundling framework (e.g. webpack, browserify, jspm, etc). This can be done by doing the following (after adding react-coral as a dependency to your project):
 ```javascript
 // Using es6
-import { Button, Heading, Modal } from 'react-coral';
+import { Button, Heading, Dialog } from 'react-coral';
 ```
 ```javascript
 // Using es5
 var Coral = require('react-coral');
 var Button = Coral.Button;
 var Heading = Coral.Heading;
-var Modal = Coral.Modal;
+var Dialog = Coral.Dialog;
 ```
