@@ -3,6 +3,9 @@
   "env": {
     "development": {
       "presets": [ "react-hmre" ]
+    },
+    "testing": {
+      "presets": []
     }
   },
   "plugins": [
