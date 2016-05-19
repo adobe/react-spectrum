@@ -63,6 +63,7 @@
     "eslint-plugin-react": "^5.0.1",
     "grunt": "^0.4.5",
     "mocha": "^2.4.5",
+    "react-addons-test-utils": "^0.14.7",
     "webpack": "^1.9.11",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.9.1"
