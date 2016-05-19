@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "test": "mocha --compilers js:babel-register",
+    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register",
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
