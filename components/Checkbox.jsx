@@ -45,7 +45,7 @@ export default class Checkbox extends Component {
   // indeterminate pseudo-selector. It can only be done via javascript.
   setIndeterminate() {
     const { indeterminate } = this.props;
-    if (indeterminate != null) {
+    if (indeterminate != null && this.refs.input) {
       this.refs.input.indeterminate = indeterminate;
     }
   }
