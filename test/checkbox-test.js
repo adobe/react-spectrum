@@ -39,6 +39,11 @@ describe('Checkbox', () => {
     expectChecked(tree, true);
   });
 
+  it('supports indeterminate', () => {
+    let tree = shallow(<Checkbox label="React" indeterminate />);
+    expect(findInput(tree).prop('aria-checked')).toBe('mixed');
+  });
+
   it('supports disabled', () => {
     const tree = shallow(<Checkbox label="React" />);
     expect(findInput(tree).prop('disabled')).toNotExist();
