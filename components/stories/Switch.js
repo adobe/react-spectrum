@@ -13,7 +13,6 @@ storiesOf('Switch', module)
 function render(props = {}) {
   return (
     <Switch
-      label="React"
       onChange={ action('change') }
       { ...props }
     />
