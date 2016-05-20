@@ -1,0 +1,23 @@
+import React from 'react';
+import classNames from  'classnames';
+
+import SwitchBase from './internal/SwitchBase';
+
+export default ({
+  className,
+  ...otherProps
+}) => (
+  <SwitchBase
+    inputType="checkbox"
+    className={
+      classNames(
+        'coral3-Switch',
+        className
+      )
+    }
+    inputClassName="coral3-Switch-input"
+    markClassName="coral3-Switch-label"
+    renderLabel={ false }
+    { ...otherProps }
+  />
+)

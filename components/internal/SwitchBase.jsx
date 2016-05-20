@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 export default class SwitchBase extends Component {
   static defaultProps = {
+    renderLabel: true,
     defaultChecked: false,
     disabled: false,
     required: false,
@@ -58,7 +59,6 @@ export default class SwitchBase extends Component {
       label,
       value,
       name,
-      elementName,
       disabled,
       required,
       invalid,
@@ -66,6 +66,10 @@ export default class SwitchBase extends Component {
       className,
       children,
       inputType,
+      renderLabel,
+      inputClassName,
+      markClassName,
+      labelClassName,
       onChange,
       onBlur,
       onFocus,
@@ -77,9 +81,8 @@ export default class SwitchBase extends Component {
       <div
         className={
           classNames(
-            `coral-${ elementName }`,
-            { 'is-invalid': invalid },
-            className
+            className,
+            { 'is-invalid': invalid }
           )
         }
         required={ required ? true : null }
@@ -93,7 +96,7 @@ export default class SwitchBase extends Component {
         <input
           ref="input"
           type={ inputType }
-          className={ `coral-${ elementName }-input` }
+          className={ inputClassName }
           defaultChecked={ defaultChecked }
           checked={ checked }
           disabled={ disabled }
@@ -106,11 +109,14 @@ export default class SwitchBase extends Component {
           onBlur={ onBlur }
           onFocus={ onFocus }
         />
-        <span className={ `coral-${ elementName }-checkmark` } />
-        <label className={ `coral-${ elementName }-description` }>
-          { label }
-          { children }
-        </label>
+        <span className={ markClassName } />
+        {
+          renderLabel &&
+          <label className={ labelClassName }>
+            { label }
+            { children }
+          </label>
+        }
       </div>
     );
   }

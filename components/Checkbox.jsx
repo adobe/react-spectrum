@@ -28,9 +28,11 @@ export default class Checkbox extends Component {
   render() {
     const {
       indeterminate,
+      className,
       ...otherProps
     } = this.props;
 
+    // override the aria-checked prop of SwitchBase only if it is indeterminate.
     if (indeterminate) {
       otherProps['aria-checked'] = 'mixed';
     }
@@ -39,7 +41,15 @@ export default class Checkbox extends Component {
       <SwitchBase
         ref="input"
         inputType="checkbox"
-        elementName="Checkbox"
+        className={
+          classNames(
+            'coral-Checkbox',
+            className
+          )
+        }
+        inputClassName="coral-Checkbox-input"
+        markClassName="coral-Checkbox-checkmark"
+        labelClassName="coral-Checkbox-description"
         { ...otherProps }
       />
     );

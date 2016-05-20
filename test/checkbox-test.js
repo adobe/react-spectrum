@@ -8,7 +8,10 @@ describe('Checkbox', () => {
     const tree = shallow(<Checkbox />);
     expect(tree.prop('inputType')).toBe('checkbox');
     expect(tree.prop('aria-checked')).toNotExist();
-    expect(tree.prop('elementName')).toBe('Checkbox');
+    expect(tree.prop('className')).toBe('coral-Checkbox');
+    expect(tree.prop('inputClassName')).toBe('coral-Checkbox-input');
+    expect(tree.prop('markClassName')).toBe('coral-Checkbox-checkmark');
+    expect(tree.prop('labelClassName')).toBe('coral-Checkbox-description');
   });
 
   it('supports indeterminate', () => {
