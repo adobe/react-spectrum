@@ -8,7 +8,7 @@ export default ({
   required = false,
   invalid = false,
   readOnly = false,
-  ...rest
+  ...otherProps
 }) => {
   return (
     <textarea
@@ -31,7 +31,7 @@ export default ({
       required={ required }
       invalid={ invalid }
       readonly={ readOnly }
-      { ...rest }
+      { ...otherProps }
     />
   );
 }

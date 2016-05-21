@@ -108,12 +108,12 @@ export default class Accordion extends React.Component {
     const {
       className,
       multiselectable,
-      ...rest
+      ...otherProps
     } = this.props;
 
     return (
       <div
-        { ...rest }
+        { ...otherProps }
         className={
           classNames(
             'coral3-Accordion',

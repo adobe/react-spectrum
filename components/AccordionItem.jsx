@@ -26,12 +26,12 @@ export default class AccordionItem extends React.Component {
       onItemClick,
       header,
       selected,
-      ...rest
+      ...otherProps
     } = this.props;
 
     return (
       <div
-        { ...rest }
+        { ...otherProps }
         className={
           classNames(
             'coral3-Accordion-item',

@@ -5,7 +5,7 @@ export default ({
   icon, // add, bell, heart, star
   size = 'M', // XS, S, M, L
   className,
-  ...rest
+  ...otherProps
 }) => {
   let isColorIcon = false;
 
@@ -26,7 +26,7 @@ export default ({
           className
         )
       }
-      { ...rest }
+      { ...otherProps }
     />
   );
 }

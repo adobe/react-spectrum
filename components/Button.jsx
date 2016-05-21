@@ -14,7 +14,7 @@ export default ({
   square,
   block,
   className,
-  ...rest
+  ...otherProps
 }) => {
   const Element = element;
   const sizes = {
@@ -37,7 +37,7 @@ export default ({
           className
         )
       }
-      { ...rest }
+      { ...otherProps }
     >
       {
         icon && <Icon size={ iconSize } icon={ icon } />
