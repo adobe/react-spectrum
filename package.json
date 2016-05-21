@@ -10,7 +10,7 @@
   "scripts": {
     "start": "start-storybook -p 9001",
     "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register --require ignore-styles",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch --watch-extensions jsx"
   },
   "dependencies": {
     "babel": "^6.3.26",
