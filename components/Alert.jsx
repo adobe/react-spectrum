@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import Icon from './Icon';
 import Button from './Button';
-import { getVariantIcon } from '../helpers/icon-variant';
+import { getVariantIcon } from './utils/icon-variant';
 
 import './Alert.styl';
 

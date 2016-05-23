@@ -3,10 +3,9 @@ import classNames from 'classnames';
 import TetherComponent from 'react-tether';
 import Portal from 'react-portal';
 
-import Icon from './Icon';
-import Heading from './Heading';
+import DialogHeader from './internal/DialogHeader';
 import Button from './Button';
-import { getVariantIcon } from '../helpers/icon-variant';
+import { getVariantIcon } from './utils/icon-variant';
 
 const BACKDROP_NONE = 'none';
 const BACKDROP_MODAL = 'modal';
@@ -28,11 +27,10 @@ export default class Dialog extends Component {
       variant,
       icon = getVariantIcon(variant || 'default'),
       open,
-      className,
       title,
       children,
       footer,
-      onOpen,
+      className,
       onClose,
       ...otherProps
     } = this.props;
@@ -60,11 +58,10 @@ export default class Dialog extends Component {
           >
             <div className="coral-Dialog-wrapper">
               {
-                title
-                ? <DialogHeader title={ title } icon={ icon } closable={ closable } onClose={ onClose } />
-                : null
+                title &&
+                <DialogHeader title={ title } icon={ icon } closable={ closable } onClose={ onClose } />
               }
-              <DialogContent>{ children }</DialogContent>
+              <div className="coral-Dialog-content">{ children }</div>
               <DialogFooter onClose={ onClose }>{ footer }</DialogFooter>
             </div>
           </div>
@@ -96,44 +93,6 @@ const DialogBackdrop = ({
     </Portal>
   );
 }
-
-const DialogHeader = ({
-  title,
-  icon,
-  closable,
-  onClose
-}) => (
-  <div className="coral-Dialog-header">
-    {
-      icon
-      ? <Icon className="coral-Dialog-typeIcon" icon={ icon } size="S" />
-      : null
-    }
-    <Heading size={ 2 } className="coral-Dialog-title">{ title }</Heading>
-    {
-      closable
-      ?
-      <Button
-        variant="minimal"
-        onClick={ onClose }
-        className="coral-Dialog-closeButton"
-        square
-        size="M"
-        icon="close"
-        iconSize="XS"
-      />
-      : null
-    }
-  </div>
-)
-
-const DialogContent = ({
-  children
-}) => (
-  <div className="coral-Dialog-content">
-		{ children }
-	</div>
-)
 
 const DialogFooter = ({
   children,

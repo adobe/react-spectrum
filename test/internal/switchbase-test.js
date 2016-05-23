@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import SwitchBase from '../components/internal/SwitchBase';
+import SwitchBase from '../../components/internal/SwitchBase';
 import { shallow } from 'enzyme';
 
 describe('SwitchBase', () => {
