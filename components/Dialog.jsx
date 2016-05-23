@@ -34,7 +34,7 @@ export default class Dialog extends Component {
       footer,
       onOpen,
       onClose,
-      ...rest
+      ...otherProps
     } = this.props;
 
     return (
@@ -56,7 +56,7 @@ export default class Dialog extends Component {
               )
             }
             style={{ position: 'static' }}
-            { ...rest }
+            { ...otherProps }
           >
             <div className="coral-Dialog-wrapper">
               {

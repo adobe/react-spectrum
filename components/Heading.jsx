@@ -5,7 +5,7 @@ export default({
   size = 1,
   children,
   className,
-  ...rest
+  ...otherProps
 }) => {
   const Element = `h${ size }`;
 
@@ -17,7 +17,7 @@ export default({
           className
         )
       }
-      { ...rest }
+      { ...otherProps }
     >
       { children }
     </Element>

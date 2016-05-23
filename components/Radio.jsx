@@ -63,7 +63,7 @@ export default class Radio extends Component {
       onChange,
       onBlur,
       onFocus,
-      ...rest
+      ...otherProps
     } = this.props;
     const { checked } = this.state;
 
@@ -81,7 +81,7 @@ export default class Radio extends Component {
         aria-required={ required }
         aria-invalid={ invalid }
         aria-readonly={ readOnly }
-        { ...rest }
+        { ...otherProps }
       >
         <input
           ref="input"
