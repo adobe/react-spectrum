@@ -10,7 +10,8 @@
   "scripts": {
     "start": "start-storybook -p 9001",
     "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register --require ignore-styles",
-    "test:watch": "npm test -- --watch --watch-extensions jsx"
+    "test:watch": "npm test -- --watch",
+    "coverage": "export NODE_ENV=testing|| set NODE_ENV=testing&& istanbul cover _mocha -- --compilers js:babel-register -R dot"
   },
   "dependencies": {
     "babel": "^6.3.26",
@@ -63,6 +64,7 @@
     "eslint-plugin-react": "^5.0.1",
     "grunt": "^0.4.5",
     "ignore-styles": "^2.0.0",
+    "istanbul": "^1.0.0-alpha.2",
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^0.14.7",
     "webpack": "^1.9.11",
