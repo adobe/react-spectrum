@@ -14,7 +14,7 @@ Run tests once
 ```javascript
 npm test
 ```
-Watch tests and run if they change
+Run tests if source or test files change (TDD)
 ```javascript
 npm run test:watch
 ```
