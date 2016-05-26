@@ -14,9 +14,13 @@ Run tests once
 ```javascript
 npm test
 ```
-Watch tests and run if they change
+Run tests if source or test files change (TDD)
 ```javascript
 npm run test:watch
+```
+### Running Coverage Reports
+```javascript
+npm run coverage
 ```
 ### Consuming react-coral in your project
 Current react-coral doesn't have a build system at this point. Instead, we intend on having the codebase which depends on react-coral to use its own bundling framework (e.g. webpack, browserify, jspm, etc). This can be done by doing the following (after adding react-coral as a dependency to your project):
