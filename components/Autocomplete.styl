@@ -1,0 +1,53 @@
+//There are a few dangerous things in here such as overriding colors
+//and manual spacing. Our options are very limited if we want to use
+//coralui styles.
+
+overflow-item()
+	overflow: hidden
+	text-overflow: ellipsis
+	white-space: nowrap
+	padding-right: 45px
+	box-sizing: border-box
+
+.coral-Autocomplete
+	.Select-value, .Select-placeholder
+		position: absolute
+		padding: 11px
+
+	.Select-placeholder
+		color: #707070
+		overflow-item()
+
+	&.has-icon
+		.Select-placeholder
+			padding-left: 31px
+
+	.Select-values
+		position: absolute
+		left: 0
+
+	&.Select--single
+		&:not(.is-disabled)
+			.Select-input-field
+				background-color: transparent
+			.Select-value
+				background-color: #fff
+		&.is-disabled
+			.Select-placeholder, .Select-value
+				z-index: 1
+		&.has-icon
+			.Select-value
+				padding-left: 31px
+
+		.Select-value
+			position: absolute
+			left: 0
+			width: 100%
+			text-align: left
+			overflow-item()
+
+	.Select-menu-outer
+		width: 100%
+
+	.Select-noresults
+		color: #707070
