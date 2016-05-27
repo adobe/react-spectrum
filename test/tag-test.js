@@ -16,7 +16,7 @@ describe('Tag', () => {
     const tree = shallow(<Tag multiline />);
     expect(tree.prop('className')).toInclude('coral-Tag--multiline');
   });
-  it('supports a quiet varient', () => {
+  it('supports a quiet variant', () => {
     const tree = shallow(<Tag quiet />);
     expect(tree.prop('className')).toInclude('coral-Tag--quiet');
   });
