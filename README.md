@@ -35,3 +35,11 @@ var Button = Coral.Button;
 var Heading = Coral.Heading;
 var Dialog = Coral.Dialog;
 ```
+
+### Testing
+We split the tests into 2 groups.
+  1. Visual tests
+    - A Storybook story should be written for any visual breakage of a component.
+  2. Unit tests
+    - (Props) Anything that should be changed by a prop should be tested via enzyme.
+    - (Events) Anything that should trigger an event should be tested via enzyme.
