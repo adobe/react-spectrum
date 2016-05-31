@@ -38,6 +38,7 @@
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-portal": "^2.1.2",
+    "react-select": "git+ssh://git@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.1",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
