@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& jenkins-mocha --no-coverage --compilers js:babel-register --require ignore-styles",
+    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register --require ignore-styles",
+    "test:xml": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha -R xunit --compilers js:babel-register --require ignore-styles > test-reports.xml",
     "test:watch": "npm test -- --watch",
     "coverage": "export NODE_ENV=testing|| set NODE_ENV=testing&& istanbul cover --report cobertura _mocha -- --compilers js:babel-register --require ignore-styles -R dot"
   },
@@ -38,7 +39,7 @@
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-portal": "^2.1.2",
-    "react-select": "git+ssh://git@git.corp.adobe.com/React/react-select.git#react-coral",
+    "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.1",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
@@ -62,7 +63,6 @@
     "ignore-styles": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
     "istanbul-cobertura-badger": "^1.2.1",
-    "jenkins-mocha": "^2.6.0",
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^0.14.7",
     "webpack": "^1.9.11",
