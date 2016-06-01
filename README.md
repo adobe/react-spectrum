@@ -1,6 +1,8 @@
 # react-coral
 React components using cloudui style guidelines from CoralUI
 
+[![Build Status][status-image]][status-url] [![Coverage Status][coverage-image]][coverage-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url]
+
 ### Getting started
 ```javascript
 npm install
@@ -43,3 +45,10 @@ We split the tests into 2 groups.
   2. Unit tests
     - (Props) Anything that should be changed by a prop should be tested via enzyme.
     - (Events) Anything that should trigger an event should be tested via enzyme.
+
+[status-url]: https://sparkle.ci.corp.adobe.com:12001/job/mcdp-react-coral-unit-tests-develop
+[status-image]: https://sparkle.ci.corp.adobe.com:12001/buildStatus/icon?job=mcdp-react-coral-unit-tests-develop
+[coverage-url]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/lastStableBuild/cobertura/
+[coverage-image]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/coverage.svg
+[npm-dependencies-url]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/dependencies.txt
+[npm-dependencies-image]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/dependencies.svg
