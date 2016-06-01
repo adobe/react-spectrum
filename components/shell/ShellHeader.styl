@@ -1,0 +1,8 @@
+@require '../core';
+@require '~coralui-component-shell-header/styles/index';
+
+// CoralUI is using a descendent element selector `.coral-Shell-homeAnchor coral-icon`.
+// Overriding it here.  Logged CUI-5813.
+.coral-Shell-homeAnchor .coral-Icon
+  vertical-align: middle
+  margin-right: .625rem

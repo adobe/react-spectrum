@@ -25,7 +25,26 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+<<<<<<< 24d0a2252943ac6739cb0def6744bc07b43dcbab
     "react-portal": "^2.1.3",
+=======
+    "coralui-component-shell": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell.git#4.0.0",
+    "coralui-component-shell-header": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-header.git#1.0.2",
+    "coralui-component-shell-help": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-help.git#1.1.1",
+    "coralui-component-shell-menubar": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-menubar.git#1.0.3",
+    "coralui-component-shell-orgswitcher": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-orgswitcher.git#1.1.1",
+    "coralui-component-shell-solutionswitcher": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-solutionswitcher.git#1.0.2",
+    "coralui-component-shell-user": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-user.git#1.0.0",
+    "coralui-component-shell-workspaces": "git+ssh://git@git.corp.adobe.com:Coral/coralui-component-shell-workspaces.git#1.0.1",
+    "coralui-core": "git+ssh://git@git.corp.adobe.com:Coral/coralui-core.git#4.0.2",
+    "coralui-theme-cloudui": "git+ssh://git@git.corp.adobe.com:Coral/coralui-theme-cloudui.git#8.1.3",
+    "css-loader": "^0.23.1",
+    "expect": "^1.19.0",
+    "file-loader": "^0.8.5",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.8",
+    "react-portal": "^2.1.2",
+>>>>>>> Shell header and styles done
     "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.2",
     "tether-drop": "^1.4.2"
