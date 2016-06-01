@@ -25,5 +25,5 @@ if ! [ -f ${COBERTURA_FILE} ]; then
 fi
 
 if [ -f ${COBERTURA_FILE} ] && [ -f "./node_modules/.bin/istanbul-cobertura-badger" ]; then
-  ./node_modules/.bin/istanbul-cobertura-badger -e 75 -g 60 -r coverage/cobertura.xml -d badges -b coverage -v
+  ./node_modules/.bin/istanbul-cobertura-badger -e 75 -g 60 -r ${COBERTURA_FILE} -d badges -b coverage -v
 fi
