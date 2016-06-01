@@ -9,9 +9,9 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register --require ignore-styles",
+    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& jenkins-mocha --no-coverage --compilers js:babel-register --require ignore-styles",
     "test:watch": "npm test -- --watch",
-    "coverage": "export NODE_ENV=testing|| set NODE_ENV=testing&& istanbul cover _mocha -- --compilers js:babel-register --require ignore-styles -R dot"
+    "coverage": "export NODE_ENV=testing|| set NODE_ENV=testing&& istanbul cover --report cobertura _mocha -- --compilers js:babel-register --require ignore-styles -R dot"
   },
   "dependencies": {
     "babel": "^6.3.26",
@@ -61,6 +61,8 @@
     "grunt": "^0.4.5",
     "ignore-styles": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
+    "istanbul-cobertura-badger": "^1.2.1",
+    "jenkins-mocha": "^2.6.0",
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^0.14.7",
     "webpack": "^1.9.11",
