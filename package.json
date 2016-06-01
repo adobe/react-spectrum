@@ -9,10 +9,10 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "test": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha --compilers js:babel-register --require ignore-styles",
-    "test:xml": "export NODE_ENV=testing|| set NODE_ENV=testing&& mocha -R xunit --compilers js:babel-register --require ignore-styles > test-reports.xml",
+    "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
+    "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
     "test:watch": "npm test -- --watch",
-    "coverage": "export NODE_ENV=testing|| set NODE_ENV=testing&& istanbul cover --report cobertura _mocha -- --compilers js:babel-register --require ignore-styles -R dot"
+    "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura _mocha -- -R dot test/.setup.js test/"
   },
   "dependencies": {
     "babel": "^6.3.26",
@@ -37,13 +37,14 @@
     "expect": "^1.19.0",
     "file-loader": "^0.8.5",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7",
+    "react-dom": "^0.14.8",
     "react-portal": "^2.1.2",
     "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.1",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.0.0",
+    "tether-drop": "^1.4.2",
     "url-loader": "^0.5.7"
   },
   "devDependencies": {
@@ -63,6 +64,7 @@
     "ignore-styles": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
     "istanbul-cobertura-badger": "^1.2.1",
+    "jsdom": "^9.2.0",
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^0.14.7",
     "webpack": "^1.9.11",

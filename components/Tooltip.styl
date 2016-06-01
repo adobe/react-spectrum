@@ -1,0 +1,56 @@
+.coral-Tooltip-drop-content
+  .coral3-Tooltip
+    position: relative
+    max-width: 200px
+    &:before
+      position: absolute
+      content: ' '
+      width: 2px
+      height: 2px
+      background-color: #707070
+
+.coral-Tooltip-drop-content
+  .coral3-Tooltip--inspect:before
+    background-color: #707070
+  .coral3-Tooltip--error:before
+    background-color: #fa7369
+  .coral3-Tooltip--success:before
+    background-color: #a5d273
+  .coral3-Tooltip--info:before
+    background-color: #87beff
+
+.coral-Tooltip-drop-element
+  &.coral-Tooltip-drop-element-attached-top
+    .coral-Tooltip-drop-content
+      margin-top: 10px
+      .coral3-Tooltip:before
+        left: 50%
+        top: -8px
+        transform: rotate(-45deg) translateX(-70%)
+  &.coral-Tooltip-drop-element-attached-right
+    .coral-Tooltip-drop-content
+      margin-right: 10px
+      .coral3-Tooltip:before
+        top: 50%
+        right: 2px
+        margin-right: -10px
+        transform: rotate(-45deg) translateY(-70%)
+  &.coral-Tooltip-drop-element-attached-left
+    .coral-Tooltip-drop-content
+      margin-left: 10px
+      .coral3-Tooltip:before
+        top: 50%
+        left: 0
+        transform: rotate(-45deg) translateY(-70%)
+  &.coral-Tooltip-drop-element-attached-bottom
+    .coral-Tooltip-drop-content
+      margin-bottom: 10px
+      .coral3-Tooltip:before
+        left: 50%
+        bottom: 0
+        transform: rotate(-45deg) translateX(-70%)
+
+.coral-Tooltip-drop-element .coral3-Tooltip
+    opacity: 0
+.coral-Tooltip-drop-element.coral-Tooltip-drop-after-open .coral3-Tooltip
+    opacity: 1

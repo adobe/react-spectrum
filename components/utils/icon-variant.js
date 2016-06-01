@@ -9,7 +9,9 @@ export const getVariantIcon = (variant) => {
       return 'helpCircle';
     case 'info':
       return 'infoCircle';
-    default:
+    case 'default':
       return null;
+    default:
+      throw new Error('Invalid icon variant - Must use error, warning, success, help, or info');
   }
 }

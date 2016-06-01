@@ -1,0 +1,46 @@
+.coral3-Popover
+  position: static
+  .coral3-Popover-content
+    background: #fff
+    padding: .9375rem
+
+.coral-Popover-drop-element
+  &.coral-Popover-drop-element-attached-left .coral-Popover-drop-content
+    margin-left: 10px
+  &.coral-Popover-drop-element-attached-right .coral-Popover-drop-content
+    margin-right: 10px
+  &.coral-Popover-drop-element-attached-top .coral-Popover-drop-content
+    margin-top: 10px
+  &.coral-Popover-drop-element-attached-bottom .coral-Popover-drop-content
+    margin-bottom: 10px
+  &.coral-Popover-drop-element-attached-top.coral-Popover-drop-element-attached-center
+    .coral-Popover-drop-content:before
+      left: 50%
+      top: -4px
+      margin-top: -10px
+      transform: rotate(-45deg) translateX(-70%)
+  &.coral-Popover-drop-element-attached-right.coral-Popover-drop-element-attached-center
+    .coral-Popover-drop-content:before
+      top: 50%
+      right: -4px
+      margin-right: -10px
+      transform: rotate(-45deg) translateY(-70%)
+  &.coral-Popover-drop-element-attached-left.coral-Popover-drop-element-attached-center
+    .coral-Popover-drop-content:before
+      top: 50%
+      left: 4px
+      transform: rotate(-45deg) translateY(-70%)
+  &.coral-Popover-drop-element-attached-bottom.coral-Popover-drop-element-attached-center
+    .coral-Popover-drop-content:before
+      left: 50%
+      bottom: 4px
+      transform: rotate(-45deg) translateX(-70%)
+  .coral-Popover-drop-content
+    position: relative
+    &:before
+      position: absolute
+      content: ' '
+      width: 14px
+      height: 14px
+      background: #fff
+      border: solid 2px #c8c8c8

@@ -4,7 +4,7 @@
     "development": {
       "presets": [ "react-hmre" ]
     },
-    "testing": {
+    "test": {
       "presets": []
     }
   },
