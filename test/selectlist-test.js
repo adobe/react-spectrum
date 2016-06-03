@@ -24,12 +24,12 @@ let groupedOptions = {
   'Group 1': [
     { label: 'Chocolate', value: 'chocolate' },
     { label: 'Vanilla', value: 'vanilla' },
-    { label: 'Strawberry', value: 'strawberry' },
+    { label: 'Strawberry', value: 'strawberry' }
   ],
   'Group 2': [
     { label: 'Caramel', value: 'caramel' },
     { label: 'Cookies and Cream', value: 'cookiescream', disabled: true },
-    { label: 'Peppermint', value: 'peppermint' },
+    { label: 'Peppermint', value: 'peppermint' }
   ]
 };
 
@@ -71,14 +71,14 @@ describe('SelectList', () => {
   it('supports multiple items being selected', () => {
     const tree = shallow(<SelectList options={testOptions} multiple value={selectedValue} />);
     expect(tree.find('.is-selected').length).toBe(3);
-    tree.find('.is-selected').forEach((node)=>{
+    tree.find('.is-selected').forEach((node) => {
       expect(node.prop('aria-selected')).toBe(true);
     });
   });
 
   it('supports all items being disabled', () => {
     const tree = shallow(<SelectList options={testOptions} disabled />);
-    tree.find('.coral3-SelectList-item').forEach((node)=>{
+    tree.find('.coral3-SelectList-item').forEach((node) => {
       expect(node.hasClass('is-disabled')).toBe(true);
       expect(node.prop('aria-disabled')).toBe(true);
     });
@@ -113,31 +113,49 @@ describe('SelectList', () => {
   });
 
   it('supports selection being returned on selecetion change for single select', () => {
-    const tree = shallow(<SelectList options={testOptions} onChange={(value)=>{
-      expect(value).toEqual(testOptions[0]);
-    }}/>);
+    const tree = shallow(
+      <SelectList
+        options={testOptions}
+        onChange={(value) => {
+          expect(value).toEqual(testOptions[0]);
+        }}
+      />
+    );
     tree.find('.coral3-SelectList-item').first().simulate('click');
   });
 
   it('supports selection being returned on selecetion add for multiple select', () => {
     let finalValue;
-    let tree = shallow(
-      <SelectList options={testOptions} value={[testOptions[0].value]} multiple onChange={(value)=>{
-      finalValue = value
-      }}/>
+    const tree = shallow(
+      <SelectList
+        options={testOptions}
+        value={[testOptions[0].value]}
+        multiple onChange={(value) => {
+          finalValue = value;
+        }}
+      />
     );
-    tree.find('.coral3-SelectList-item').first().simulate('click').simulate('click');
+    tree.find('.coral3-SelectList-item').first()
+      .simulate('click')
+      .simulate('click');
     expect(finalValue).toEqual([]);
   });
 
   it('supports selection being returned on selecetion remove for multiple select', () => {
     let finalValue;
-    let tree = shallow(
-      <SelectList options={testOptions} value={[testOptions[0].value]} multiple onChange={(value)=>{
-      finalValue = value
-      }}/>
+    const tree = shallow(
+      <SelectList
+        options={testOptions}
+        value={[testOptions[0].value]}
+        multiple
+        onChange={(value) => {
+          finalValue = value;
+        }}
+      />
     );
-    tree.find('.coral3-SelectList-item').first().simulate('click').simulate('click');
+    tree.find('.coral3-SelectList-item').first()
+      .simulate('click')
+      .simulate('click');
     expect(finalValue).toEqual([]);
   });
 
