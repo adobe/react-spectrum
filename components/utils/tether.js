@@ -1,5 +1,5 @@
 export function getTetherPositionFromPlacement(placement) {
-  switch(placement) {
+  switch (placement) {
     case 'left': return 'left center';
     case 'right': return 'right center';
     case 'top': return 'top center';

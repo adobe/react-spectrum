@@ -11,7 +11,7 @@ export default ({
   className,
   ...otherProps
 }) => {
-  const sizeClassPart = { 'S': 'small', 'M': 'medium', 'L': 'large' }[size];
+  const sizeClassPart = { S: 'small', M: 'medium', L: 'large' }[size];
   value = Math.min(Math.max(+value, 0), 100);
 
   return (
@@ -19,28 +19,28 @@ export default ({
       className={
         classNames(
           'coral-Progress',
-          `coral-Progress--${ sizeClassPart }`,
+          `coral-Progress--${sizeClassPart}`,
           {
-            [ `coral-Progress--${ labelPosition }Label` ]: showLabel,
+            [`coral-Progress--${labelPosition}Label`]: showLabel,
             'coral-Progress--indeterminate': indeterminate
           },
           className
         )
       }
-      aria-valuemin={ indeterminate ? null : 0 }
-      aria-valuemax={ indeterminate ? null : 100 }
-      aria-valuenow={ indeterminate ? null : value }
+      aria-valuemin={indeterminate ? null : 0}
+      aria-valuemax={indeterminate ? null : 100}
+      aria-valuenow={indeterminate ? null : value}
       { ...otherProps }
     >
       <div className="coral-Progress-bar">
-        <div className="coral-Progress-status" style={{ width: `${ indeterminate ? 0 : value }%` }} />
+        <div className="coral-Progress-status" style={{ width: `${indeterminate ? 0 : value}%` }} />
       </div>
       {
         showLabel &&
-        <div className="coral-Progress-label">
-          { label ? label : `${ value }%` }
-        </div>
+          <div className="coral-Progress-label">
+            {label || `${value}%`}
+          </div>
       }
     </div>
   );
-}
+};

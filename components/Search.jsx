@@ -23,7 +23,7 @@ export default class Search extends Component {
     this.state = {
       emptyText: !value && !defaultValue,
       value: value || defaultValue || ''
-    }
+    };
   }
 
   handleTextKeyDown = e => {
@@ -95,24 +95,24 @@ export default class Search extends Component {
         <Textfield
           ref="input"
           className="coral-DecoratedTextfield-input"
-          value={ value }
-          defaultValue={ defaultValue }
-          disabled={ disabled }
+          value={value}
+          defaultValue={defaultValue}
+          disabled={disabled}
           { ...otherProps }
-          onKeyDown={ this.handleTextKeyDown }
-          onChange={ this.handleTextChange }
+          onKeyDown={this.handleTextKeyDown}
+          onChange={this.handleTextChange}
         />
         {
           !emptyText &&
-          <Button
-            variant="minimal"
-            icon="close"
-            iconSize="XS"
-            square
-            className="coral-DecoratedTextfield-button"
-            disabled={ disabled }
-            onClick={ this.handleClearText }
-          />
+            <Button
+              variant="minimal"
+              icon="close"
+              iconSize="XS"
+              square
+              className="coral-DecoratedTextfield-button"
+              disabled={disabled}
+              onClick={this.handleClearText}
+            />
         }
       </div>
     );

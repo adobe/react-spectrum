@@ -28,7 +28,7 @@ describe('SwitchBase', () => {
   });
 
   it('uncontrolled switchBase will toggle', () => {
-    const tree = shallow(<SwitchBase defaultChecked={ false } />);
+    const tree = shallow(<SwitchBase defaultChecked={false} />);
     findInput(tree).simulate('change', { target: { checked: true } });
     expectChecked(tree, true);
   });
@@ -49,7 +49,7 @@ describe('SwitchBase', () => {
   });
 
   it('supports name', () => {
-    let tree = shallow(<SwitchBase name="foo" />);
+    const tree = shallow(<SwitchBase name="foo" />);
     expect(findInput(tree).prop('name')).toBe('foo');
   });
 
@@ -82,7 +82,11 @@ describe('SwitchBase', () => {
   });
 
   it('supports children', () => {
-    const tree = shallow(<SwitchBase labelClassName="coral-Foo-description"><div>My Custom Content</div></SwitchBase>);
+    const tree = shallow(
+      <SwitchBase labelClassName="coral-Foo-description">
+        <div>My Custom Content</div>
+      </SwitchBase>
+    );
     const child = findLabel(tree);
     expect(child).toExist();
     expect(child.childAt(0).text()).toBe('My Custom Content');
@@ -99,7 +103,7 @@ describe('SwitchBase', () => {
   });
 
   it('supports not rendering a label', () => {
-    const tree = shallow(<SwitchBase labelClassName="coral-Foo-description" renderLabel={ false } />);
+    const tree = shallow(<SwitchBase labelClassName="coral-Foo-description" renderLabel={false} />);
     expect(findLabel(tree).node).toNotExist();
     tree.setProps({ renderLabel: true });
     expect(findLabel(tree).node).toExist();
@@ -128,8 +132,8 @@ describe('SwitchBase', () => {
 });
 
 const findInput = tree => tree.find('input');
-const findCheckmark = (tree, classType) => tree.find(`.coral-Foo-checkmark`);
-const findLabel = (tree, classType) => tree.find(`.coral-Foo-description`);
+const findCheckmark = (tree) => tree.find('.coral-Foo-checkmark');
+const findLabel = (tree) => tree.find('.coral-Foo-description');
 
 const expectChecked = (tree, checked) => {
   expect(tree.prop('aria-checked')).toBe(checked);

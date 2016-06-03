@@ -22,34 +22,33 @@ export default class Tooltip extends Component {
       content,
       children,
       className,
-      onClose,
       openOn,
       ...otherProps
     } = this.props;
 
     return (
       <TetherDropComponent
-        position={ getTetherPositionFromPlacement(placement) }
-        openOn={ openOn }
+        position={getTetherPositionFromPlacement(placement)}
+        openOn={openOn}
         classPrefix="coral-Tooltip-drop"
-        hoverOpenDelay={ 400 }
-        hoverCloseDelay={ 400 }
+        hoverOpenDelay={400}
+        hoverCloseDelay={400}
         content={
           <div
             className={
               classNames(
                 'coral3-Tooltip',
-                `coral3-Tooltip--${ variant }`,
+                `coral3-Tooltip--${variant}`,
                 className
               )
             }
             { ...otherProps }
           >
-            { content }
+            {content}
           </div>
         }
       >
-        { children }
+        {children}
       </TetherDropComponent>
     );
   }

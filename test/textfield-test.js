@@ -18,7 +18,7 @@ describe('Textfield', () => {
   });
 
   it('supports name', () => {
-    let tree = shallow(<Textfield name="foo" />);
+    const tree = shallow(<Textfield name="foo" />);
     expect(tree.prop('name')).toBe('foo');
   });
 

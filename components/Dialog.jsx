@@ -36,36 +36,37 @@ export default class Dialog extends Component {
     } = this.props;
 
     return (
-        <TetherComponent
-          attachment="middle center"
-          target={ document.body }
-          targetModifier="visible"
-        >
-          <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
-          <div className={
-              classNames(
-                'coral-Dialog',
-                `coral-Dialog--${ variant }`,
-                {
-                  'coral-Dialog--closable': closable,
-                  'is-open': open
-                },
-                className
-              )
-            }
-            style={{ position: 'static' }}
-            { ...otherProps }
-          >
-            <div className="coral-Dialog-wrapper">
+      <TetherComponent
+        attachment="middle center"
+        target={document.body}
+        targetModifier="visible"
+      >
+        <DialogBackdrop open={open} backdrop={backdrop} onClose={onClose} />
+        <div
+          className={
+            classNames(
+              'coral-Dialog',
+              `coral-Dialog--${variant}`,
               {
-                title &&
-                <DialogHeader title={ title } icon={ icon } closable={ closable } onClose={ onClose } />
-              }
-              <div className="coral-Dialog-content">{ children }</div>
-              <DialogFooter onClose={ onClose }>{ footer }</DialogFooter>
-            </div>
+                'coral-Dialog--closable': closable,
+                'is-open': open
+              },
+              className
+            )
+          }
+          style={{ position: 'static' }}
+          { ...otherProps }
+        >
+          <div className="coral-Dialog-wrapper">
+            {
+              title &&
+                <DialogHeader title={title} icon={icon} closable={closable} onClose={onClose} />
+            }
+            <div className="coral-Dialog-content">{children}</div>
+            <DialogFooter onClose={onClose}>{footer}</DialogFooter>
           </div>
-        </TetherComponent>
+        </div>
+      </TetherComponent>
     );
   }
 }
@@ -79,7 +80,7 @@ const DialogBackdrop = ({
 
   return (
     <Portal
-      isOpened={ open }
+      isOpened={open}
     >
       <div
         className={
@@ -88,11 +89,11 @@ const DialogBackdrop = ({
             'is-open': open
           })
         }
-        onClick={ onClose }
+        onClick={onClose}
       />
     </Portal>
   );
-}
+};
 
 const DialogFooter = ({
   children,
@@ -101,8 +102,8 @@ const DialogFooter = ({
   return (
     <div className="coral-Dialog-footer">
       {
-        children || <Button variant="primary" label="OK" onClick={ onClose } />
+        children || <Button variant="primary" label="OK" onClick={onClose} />
       }
     </div>
   );
-}
+};

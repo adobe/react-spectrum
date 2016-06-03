@@ -1,0 +1,18 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true
+  },
+  "extends": "airbnb",
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "no-param-reassign": 0,
+    "no-use-before-define": 0,
+    "react/prop-types": 0,
+    "react/jsx-no-bind": 0,
+    "arrow-body-style": 0
+  }
+}
+

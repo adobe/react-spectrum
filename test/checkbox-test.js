@@ -17,17 +17,17 @@ describe('Checkbox', () => {
   it('supports indeterminate', () => {
     // Render the Checkbox AND it's SwitchBase component and make sure overriding
     // aria-checked happens properly.
-    let tree = shallow(<Checkbox indeterminate />);
+    const tree = shallow(<Checkbox indeterminate />);
     let innerTree = tree.shallow();
     expect(tree.prop('aria-checked')).toBe('mixed');
     expect(innerTree.prop('aria-checked')).toBe('mixed');
 
-    tree.setProps({ 'indeterminate': false });
+    tree.setProps({ indeterminate: false });
     innerTree = tree.shallow();
     expect(tree.prop('aria-checked')).toNotExist();
     expect(innerTree.prop('aria-checked')).toBe(false);
 
-    tree.setProps({ 'checked': true });
+    tree.setProps({ checked: true });
     innerTree = tree.shallow();
     expect(tree.prop('aria-checked')).toNotExist();
     expect(innerTree.prop('aria-checked')).toBe(true);

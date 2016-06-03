@@ -12,7 +12,7 @@ describe('icon-variant', () => {
     });
 
     it('throws when supplied an invalid placement', () => {
-      expect(() => { getVariantIcon('foo') }).toThrow();
+      expect(() => { getVariantIcon('foo'); }).toThrow();
     });
   });
 });

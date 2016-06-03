@@ -6,45 +6,45 @@ import Tag from './Tag';
 import './Select.styl';
 
 export default class Select extends Component {
-
-  constructor(props) {
-    super(props);
-  }
-
-  valuesComponent({value, onClick, onRemove, disabled}) {
+  valuesComponent({ value, onClick, onRemove, disabled }) {
     return {
-      render(){
+      render() {
         return (
           <Tag
-            onClose={(e)=> onRemove(value, e)}
+            onClose={(e) => onRemove(value, e)}
             closable
             disabled={disabled}
-            onMouseDown={(e)=> onClick(value, e)}>
+            onMouseDown={(e) => onClick(value, e)}
+          >
             {value.label}
           </Tag>
-        )
+        );
       }
-    }
+    };
   }
 
-  valueComponent({value, disabled}) {
+  valueComponent({ value, disabled }) {
     return {
-      render(){
+      render() {
         return (
-          <div className="coral3-Select-label"
+          <div
+            className="coral3-Select-label"
             closable
             disabled={disabled}
-            >
+          >
             {value.label}
           </div>
-        )
+        );
       }
-    }
+    };
   }
 
-  arrowRenderer(handleMouseDownOnArrow, props) {
+  arrowRenderer() {
     return (
-      <span className="coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS"></span>
+      <span
+        className="coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS"
+      >
+      </span>
     );
   }
 
@@ -57,25 +57,30 @@ export default class Select extends Component {
           props.className,
           'coral-Button',
           'coral-Button--secondary',
-          {'coral-Button--block': props.variant !== 'quiet'}
+          { 'coral-Button--block': props.variant !== 'quiet' }
         )}
-        disabled={props.disabled || props.readOnly} >
+        disabled={props.disabled || props.readOnly}
+      >
         {props.children}
       </button>
     );
   }
 
   render() {
+    const isQuiet = this.props.variant === 'quiet';
+    const arrowZoneClasses =
+      'coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS';
+
     return (
       <ReactSelect
-        className={classNames('coral3-Select', { 'coral3-Select--quiet': this.props.variant === 'quiet' } )}
+        className={classNames('coral3-Select', { 'coral3-Select--quiet': isQuiet })}
         multi={this.props.multiple || this.props.multi}
         noResultsText={<em>No matching results.</em>}
         arrowRenderer={this.arrowRenderer}
         controlComponent={this.controlComponent}
         classAdditions={{
           'Select-placeholder': 'coral3-Select-label',
-          'Select-arrow-zone': 'coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS',
+          'Select-arrow-zone': arrowZoneClasses,
           'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',
           'Select-menu': 'coral3-SelectList coral3-Select-selectList',
           'Select-option': 'coral3-SelectList-item',
@@ -85,7 +90,8 @@ export default class Select extends Component {
         {...this.props}
         clearable={false}
         autosize={false}
-        searchable={false}/>
+        searchable={false}
+      />
     );
   }
 }

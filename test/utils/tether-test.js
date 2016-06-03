@@ -11,7 +11,7 @@ describe('tether', () => {
     });
 
     it('throws when supplied an invalid placement', () => {
-      expect(() => { getTetherPositionFromPlacement('foo') }).toThrow();
+      expect(() => { getTetherPositionFromPlacement('foo'); }).toThrow();
     });
   });
 });

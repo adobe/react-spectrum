@@ -5,17 +5,17 @@ import Dialog from '../Dialog';
 import Heading from '../Heading';
 
 storiesOf('Dialog', module)
-  .add('Default', () => render('Content') )
-  .add('Long content', () => render(longMarkup) )
-  .add('open: false', () => render('Content', { open: false }) )
-  .add('closable: false', () => render('Content', { closable: false }) )
-  .add('variant: error', () => render('Content', { variant: 'error' }) )
-  .add('variant: warning', () => render('Content', { variant: 'warning' }) )
-  .add('variant: success', () => render('Content', { variant: 'success' }) )
-  .add('variant: help', () => render('Content', { variant: 'help' }) )
-  .add('variant: info', () => render('Content', { variant: 'info' }) )
-  .add('backdrop: none', () => render('Content', { backdrop: 'none' }) )
-  .add('backdrop: static', () => render('Content', { backdrop: 'static' }) )
+  .add('Default', () => render('Content'))
+  .add('Long content', () => render(longMarkup))
+  .add('open: false', () => render('Content', { open: false }))
+  .add('closable: false', () => render('Content', { closable: false }))
+  .add('variant: error', () => render('Content', { variant: 'error' }))
+  .add('variant: warning', () => render('Content', { variant: 'warning' }))
+  .add('variant: success', () => render('Content', { variant: 'success' }))
+  .add('variant: help', () => render('Content', { variant: 'help' }))
+  .add('variant: info', () => render('Content', { variant: 'info' }))
+  .add('backdrop: none', () => render('Content', { backdrop: 'none' }))
+  .add('backdrop: static', () => render('Content', { backdrop: 'static' }));
 
 function render(children, props = {}) {
   return (
@@ -23,17 +23,17 @@ function render(children, props = {}) {
       title="Title"
       open
       closable
-      onClose={ action('close') }
+      onClose={action('close')}
       { ...props }
     >
-      { children }
+      {children}
     </Dialog>
   );
 }
 
 const longMarkup = (
   <div>
-    <Heading size={ 2 }>Really long content...</Heading>
+    <Heading size={2}>Really long content...</Heading>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean

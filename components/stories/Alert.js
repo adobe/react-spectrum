@@ -5,23 +5,23 @@ import Alert from '../Alert';
 import './Alert.styl';
 
 storiesOf('Alert', module)
-  .add('Default', () => render() )
-  .add('header', () => render({ header: 'info' }) )
-  .add('variant: help', () => render({ header: 'help', variant: 'help' }) )
-  .add('variant: success', () => render({ header: 'success', variant: 'success' }) )
-  .add('variant: error', () => render({ header: 'error', variant: 'error' }) )
-  .add('variant: warning', () => render({ header: 'warning', variant: 'warning' }) )
-  .add('large: true', () => render({ header: 'Info', large: true }) )
-  .add('closable: true', () => render({ header: 'Info', closable: true }) )
-  .add('large: true, closable: true', () => render({ header: 'Info', large: true, closable: true }) )
+  .add('Default', () => render())
+  .add('header', () => render({ header: 'info' }))
+  .add('variant: help', () => render({ header: 'help', variant: 'help' }))
+  .add('variant: success', () => render({ header: 'success', variant: 'success' }))
+  .add('variant: error', () => render({ header: 'error', variant: 'error' }))
+  .add('variant: warning', () => render({ header: 'warning', variant: 'warning' }))
+  .add('large: true', () => render({ header: 'Info', large: true }))
+  .add('closable: true', () => render({ header: 'Info', closable: true }))
+  .add('large: true, closable: true', () => render({ header: 'Info', large: true, closable: true }));
 
 function render(props = {}, children = 'This is a React Coral alert') {
   return (
     <Alert
-      onClose={ action('close') }
+      onClose={action('close')}
       { ...props }
     >
-      { children }
+      {children}
     </Alert>
   );
 }

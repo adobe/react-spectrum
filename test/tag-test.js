@@ -44,5 +44,4 @@ describe('Tag', () => {
     tree.find('.coral-Tag-removeButton').simulate('click');
     expect(onClose).toHaveBeenCalledWith('stuff');
   });
-
 });

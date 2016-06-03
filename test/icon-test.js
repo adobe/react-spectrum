@@ -12,7 +12,8 @@ describe('Icon', () => {
 
   it('supports color icons', () => {
     const tree = shallow(<Icon icon="twitterColor" />);
-    expect(tree.prop('className')).toBe('coral-Icon coral-Icon--sizeM coral-Icon--twitterColor coral-ColorIcon');
+    expect(tree.prop('className'))
+      .toBe('coral-Icon coral-Icon--sizeM coral-Icon--twitterColor coral-ColorIcon');
   });
 
   it('supports multiple sizes', () => {

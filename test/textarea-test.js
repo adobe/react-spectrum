@@ -12,13 +12,14 @@ describe('Textarea', () => {
 
   it('supports quiet variation', () => {
     const tree = shallow(<Textarea quiet />);
-    expect(tree.prop('className')).toBe('coral-Textfield coral-Textfield--multiline coral-Textfield--quiet');
+    expect(tree.prop('className'))
+      .toBe('coral-Textfield coral-Textfield--multiline coral-Textfield--quiet');
     tree.setProps({ quiet: false });
     expect(tree.prop('className')).toBe('coral-Textfield coral-Textfield--multiline');
   });
 
   it('supports name', () => {
-    let tree = shallow(<Textarea name="foo" />);
+    const tree = shallow(<Textarea name="foo" />);
     expect(tree.prop('name')).toBe('foo');
   });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from  'classnames';
+import classNames from 'classnames';
 
 import SwitchBase from './internal/SwitchBase';
 
@@ -17,7 +17,7 @@ export default ({
     }
     inputClassName="coral3-Switch-input"
     markClassName="coral3-Switch-label"
-    renderLabel={ false }
+    renderLabel={false}
     { ...otherProps }
   />
-)
+);
