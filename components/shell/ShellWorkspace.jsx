@@ -17,7 +17,8 @@ export default ({
     className={
       classNames(
         'coral-Shell-workspaces-workspace',
-        { 'is-selected': selected }
+        { 'is-selected': selected },
+        className
       )
     }
     href={ href }

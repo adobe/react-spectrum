@@ -1,5 +1,6 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Select from '../Select';
 
@@ -25,6 +26,7 @@ const selectedValue = [
 
 
 storiesOf('Select', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render({ ...defaultProps }))
   .add('placeholder: other placeholder', () => render({ placeholder: 'other placeholder' }))
   .add('variant: quiet', () => render({ variant: 'quiet' }))

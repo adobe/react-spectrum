@@ -22,7 +22,7 @@ export default class ShellHeader extends Component {
     } = this.props;
 
     return (
-      <div className="coral--dark coral-Shell-header">
+      <div className="coral-Shell-header coral--dark">
         <div className="coral-Shell-header-home" aria-level="2">
           <a className="coral-Shell-homeAnchor" href={ homeURL } role="heading" aria-level="2">
             <Icon icon={ homeIcon } />

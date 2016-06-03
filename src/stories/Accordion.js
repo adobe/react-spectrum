@@ -1,14 +1,15 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Accordion from '../Accordion';
 import AccordionItem from '../AccordionItem';
 
 storiesOf('Accordion', module)
   .addDecorator(story => (
-    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px' } }>
       { story() }
-    </div>
+    </VerticalCenter>
   ))
   .add('Default', () => render())
   .add('multiselectable: true', () => render({ multiselectable: true }))

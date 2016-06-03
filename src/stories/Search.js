@@ -1,9 +1,11 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Search from '../Search';
 
 storiesOf('Search', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('defaultValue (uncontrolled)', () => render({ defaultValue: 'React' }))
   .add('value (controlled)', () => render({ value: 'React' }))

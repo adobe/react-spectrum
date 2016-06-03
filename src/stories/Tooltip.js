@@ -1,10 +1,12 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Tooltip from '../Tooltip';
 import Button from '../Button';
 
 storiesOf('Tooltip', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render('This is a tooltip.'))
   .add('Long content', () => render(longMarkup))
   .add('placement: left', () => render('This is a tooltip.', { placement: 'left' }))

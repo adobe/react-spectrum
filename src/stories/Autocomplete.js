@@ -1,5 +1,6 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Autocomplete from '../Autocomplete';
 
@@ -25,6 +26,7 @@ const selectedValue = [
 
 
 storiesOf('Autocomplete', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render({ ...defaultProps }))
   .add('icon: filter', () => render({ icon: 'filter' }))
   .add('placeholder: other placeholder', () => render({ placeholder: 'other placeholder' }))

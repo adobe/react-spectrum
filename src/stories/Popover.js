@@ -1,11 +1,13 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Popover from '../Popover';
 import Button from '../Button';
 import Heading from '../Heading';
 
 storiesOf('Popover', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render('Content'))
   .add('Long content', () => render(longMarkup))
   .add('placement: left', () => render('Content', { placement: 'left' }))

@@ -8,7 +8,7 @@ export default ({
   children,
   ...otherProps
 }) => (
-  <div className={ classNames('coral-Shell-header-content', className) }>
+  <div className={ classNames('coral-Shell-header-content', className) } { ...otherProps }>
     <div className="coral-Shell-workspaces">
       { children }
     </div>

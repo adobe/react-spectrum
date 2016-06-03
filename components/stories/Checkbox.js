@@ -6,12 +6,12 @@ import Checkbox from '../Checkbox';
 
 storiesOf('Checkbox', module)
   .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('defaultChecked: true', () => render({ defaultChecked: true }))
-  .add('checked: true', () => render({ checked: true }))
-  .add('checked: false', () => render({ checked: false }))
-  .add('indeterminate: true', () => render({ indeterminate: true }))
-  .add('disabled: true', () => render({ disabled: true }));
+  .add('Default', () => ( render() ))
+  .add('defaultChecked: true', () => ( render({ defaultChecked: true }) ))
+  .add('checked: true', () => ( render({ checked: true }) ))
+  .add('checked: false', () => ( render({ checked: false }) ))
+  .add('indeterminate: true', () => ( render({ indeterminate: true }) ))
+  .add('disabled: true', () => ( render({ disabled: true }) ))
 
 function render(props = {}) {
   return (
