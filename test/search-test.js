@@ -14,7 +14,7 @@ describe('Search', () => {
     expect(icon.prop('size')).toBe('S');
 
     const input = findInput(tree);
-    expect(icon.prop('className')).toBe('coral-DecoratedTextfield-icon');
+    expect(input.prop('className')).toBe('coral-DecoratedTextfield-input');
 
     const button = findButton(tree);
     expect(button.node).toNotExist();
@@ -31,7 +31,8 @@ describe('Search', () => {
   });
 
   describe('onSubmit', () => {
-    let spy, preventDefaultSpy;
+    let spy;
+    let preventDefaultSpy;
 
     beforeEach(() => {
       spy = expect.createSpy();
@@ -39,14 +40,14 @@ describe('Search', () => {
     });
 
     it('is called when enter is pressed', () => {
-      const tree = shallow(<Search onSubmit={ spy } />);
+      const tree = shallow(<Search onSubmit={spy} />);
       findInput(tree).simulate('keyDown', { which: 13, preventDefault: preventDefaultSpy });
       expect(spy).toHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
     it('is not called when enter is pressed if it is disabled', () => {
-      const tree = shallow(<Search onSubmit={ spy } disabled />);
+      const tree = shallow(<Search onSubmit={spy} disabled />);
       findInput(tree).simulate('keyDown', { which: 13, preventDefault: preventDefaultSpy });
       expect(spy).toNotHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
@@ -54,7 +55,8 @@ describe('Search', () => {
   });
 
   describe('onClear', () => {
-    let spy, preventDefaultSpy;
+    let spy;
+    let preventDefaultSpy;
 
     beforeEach(() => {
       spy = expect.createSpy();
@@ -62,27 +64,27 @@ describe('Search', () => {
     });
 
     it('is called when escape is pressed', () => {
-      const tree = shallow(<Search onClear={ spy } />);
+      const tree = shallow(<Search onClear={spy} />);
       findInput(tree).simulate('keyDown', { which: 27, preventDefault: preventDefaultSpy });
       expect(spy).toHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
     it('is called when the clear button is pressed', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" />);
       findButton(tree).simulate('click');
       expect(spy).toHaveBeenCalled();
     });
 
     it('is not called when escape is pressed if it is disabled', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
       findInput(tree).simulate('keyDown', { which: 27, preventDefault: preventDefaultSpy });
       expect(spy).toNotHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
     it('is not called when the clear button is preseed if it is disabled', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
       findButton(tree).simulate('click');
       expect(spy).toNotHaveBeenCalled();
     });
@@ -90,10 +92,10 @@ describe('Search', () => {
 
   it('calls onChange when text is entered', () => {
     const spy = expect.createSpy();
-    const tree = shallow(<Search onChange={ spy } />);
+    const tree = shallow(<Search onChange={spy} />);
     expect(tree.state('value')).toBe('');
     expect(tree.state('emptyText')).toBe(true);
-    
+
     findInput(tree).simulate('change', { target: { value: 'a' } });
     expect(spy).toHaveBeenCalled();
     expect(tree.state('value')).toBe('a');

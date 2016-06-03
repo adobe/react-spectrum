@@ -34,7 +34,7 @@ describe('Progress', () => {
       expect(findStatus(tree).prop('style')).toEqual({ width: '100%' });
       expect(findLabel(tree).text()).toBe('100%');
 
-      tree.setProps({ value: "-1" });
+      tree.setProps({ value: '-1' });
       expect(tree.prop('aria-valuenow')).toBe(0);
       expect(findStatus(tree).prop('style')).toEqual({ width: '0%' });
       expect(findLabel(tree).text()).toBe('0%');

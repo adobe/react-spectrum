@@ -21,8 +21,8 @@ export default ({
     className={
       classNames(
         'coral3-Alert',
-        `coral3-Alert--${ variant }`,
-        `coral3-Alert--${ large ? 'large' : 'small' }`,
+        `coral3-Alert--${variant}`,
+        `coral3-Alert--${large ? 'large' : 'small'}`,
         className
       )
     }
@@ -30,22 +30,22 @@ export default ({
   >
     <Icon
       className="coral3-Alert-typeIcon"
-      icon={ getVariantIcon(variant) }
+      icon={getVariantIcon(variant)}
       size="XS"
     />
     {
       closable &&
-      <Button
-      className="coral3-Alert-closeButton u-coral-pullRight"
-      variant="minimal"
-      square
-      size="M"
-      icon="close"
-      iconSize="XS"
-      onClick={ onClose }
-      />
+        <Button
+          className="coral3-Alert-closeButton u-coral-pullRight"
+          variant="minimal"
+          square
+          size="M"
+          icon="close"
+          iconSize="XS"
+          onClick={onClose}
+        />
     }
-    <div className="coral3-Alert-header">{ header }</div>
-    <div className="coral3-Alert-content">{ children }</div>
+    <div className="coral3-Alert-header">{header}</div>
+    <div className="coral3-Alert-content">{children}</div>
   </div>
-)
+);

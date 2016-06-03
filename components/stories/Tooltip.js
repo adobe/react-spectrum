@@ -5,16 +5,16 @@ import Tooltip from '../Tooltip';
 import Button from '../Button';
 
 storiesOf('Tooltip', module)
-  .add('Default', () => render('This is a tooltip.') )
-  .add('Long content', () => render(longMarkup) )
-  .add('placement: left', () => render('This is a tooltip.', { placement: 'left' }) )
-  .add('placement: top', () => render('This is a tooltip.', { placement: 'top' }) )
-  .add('placement: bottom', () => render('This is a tooltip.', { placement: 'bottom' }) )
-  .add('variant: error', () => render('This is a tooltip.', { variant: 'error' }) )
-  .add('variant: success', () => render('This is a tooltip.', { variant: 'success' }) )
-  .add('variant: info', () => render('This is a tooltip.', { variant: 'info' }) )
-  .add('openOn: hover', () => render('This is a tooltip.', { openOn: 'hover' }) )
-  .add('openOn: click', () => render('This is a tooltip.', { openOn: 'click' }) )
+  .add('Default', () => render('This is a tooltip.'))
+  .add('Long content', () => render(longMarkup))
+  .add('placement: left', () => render('This is a tooltip.', { placement: 'left' }))
+  .add('placement: top', () => render('This is a tooltip.', { placement: 'top' }))
+  .add('placement: bottom', () => render('This is a tooltip.', { placement: 'bottom' }))
+  .add('variant: error', () => render('This is a tooltip.', { variant: 'error' }))
+  .add('variant: success', () => render('This is a tooltip.', { variant: 'success' }))
+  .add('variant: info', () => render('This is a tooltip.', { variant: 'info' }))
+  .add('openOn: hover', () => render('This is a tooltip.', { openOn: 'hover' }))
+  .add('openOn: click', () => render('This is a tooltip.', { openOn: 'click' }));
 
 function render(children, props = {}) {
   let buttonLbl = 'Target';
@@ -31,11 +31,11 @@ function render(children, props = {}) {
         openOn="always"
         open
         closable
-        content={ children }
-        onClose={ action('close') }
+        content={children}
+        onClose={action('close')}
         { ...props }
       >
-        <Button label={ buttonLbl } />
+        <Button label={buttonLbl} />
       </Tooltip>
     </div>
   );

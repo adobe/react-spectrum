@@ -34,14 +34,15 @@ export default class Popover extends Component {
 
     return (
       <TetherDropComponent
-        position={ getTetherPositionFromPlacement(placement) }
-        open={ open }
+        position={getTetherPositionFromPlacement(placement)}
+        open={open}
         classPrefix="coral-Popover-drop"
         content={
-          <div className={
+          <div
+            className={
               classNames(
                 'coral3-Popover',
-                `coral-Dialog--${ variant }`,
+                `coral-Dialog--${variant}`,
                 {
                   'is-open': open
                 },
@@ -52,14 +53,14 @@ export default class Popover extends Component {
           >
             {
               title &&
-              <DialogHeader title={ title } icon={ icon } closable={ closable } onClose={ onClose } />
+                <DialogHeader title={title} icon={icon} closable={closable} onClose={onClose} />
             }
-            <div className="coral3-Popover-content">{ content }</div>
+            <div className="coral3-Popover-content">{content}</div>
           </div>
         }
-        onClickOutside={ onClose }
+        onClickOutside={onClose}
       >
-        { children }
+        {children}
       </TetherDropComponent>
     );
   }

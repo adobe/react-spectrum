@@ -1,5 +1,5 @@
 export const getVariantIcon = (variant) => {
-  switch(variant) {
+  switch (variant) {
     case 'error':
     case 'warning':
       return 'alert';
@@ -14,4 +14,4 @@ export const getVariantIcon = (variant) => {
     default:
       throw new Error('Invalid icon variant - Must use error, warning, success, help, or info');
   }
-}
+};

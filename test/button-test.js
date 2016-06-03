@@ -24,12 +24,14 @@ describe('Button', () => {
 
   it('supports block', () => {
     const tree = shallow(<Button block />);
-    expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium coral-Button--block');
+    expect(tree.prop('className'))
+      .toBe('coral-Button coral-Button--default coral-Button--medium coral-Button--block');
   });
 
   it('supports square', () => {
     const tree = shallow(<Button square />);
-    expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium coral-Button--square');
+    expect(tree.prop('className'))
+      .toBe('coral-Button coral-Button--default coral-Button--medium coral-Button--square');
   });
 
   it('supports disabled', () => {
@@ -43,12 +45,14 @@ describe('Button', () => {
     const tree = shallow(<Button />);
     expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium');
     tree.setProps({ selected: true });
-    expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium is-selected');
+    expect(tree.prop('className'))
+      .toBe('coral-Button coral-Button--default coral-Button--medium is-selected');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Button className="myClass" />);
-    expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium myClass');
+    expect(tree.prop('className'))
+      .toBe('coral-Button coral-Button--default coral-Button--medium myClass');
   });
 
   it('supports additional properties', () => {
@@ -65,7 +69,7 @@ describe('Button', () => {
 
   it('can be clicked', () => {
     const spy = createSpy();
-    const tree = shallow(<Button onClick={ spy } />);
+    const tree = shallow(<Button onClick={spy} />);
     tree.simulate('click');
     expect(spy).toHaveBeenCalled();
   });

@@ -25,7 +25,7 @@ export default class Accordion extends React.Component {
       defaultSelectedKey
     } = props;
 
-    let currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
+    const currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
 
     this.state = {
       selectedKey: this.selectedKeyToArray(currentSelectedKey)
@@ -40,14 +40,6 @@ export default class Accordion extends React.Component {
     }
   }
 
-  selectedKeyToArray(selectedKey) {
-    if (Array.isArray(selectedKey)) {
-      return selectedKey;
-    }
-
-    return selectedKey ? [selectedKey] : [];
-  }
-
   onClickItem(key) {
     let selectedKey = this.state.selectedKey;
 
@@ -57,9 +49,11 @@ export default class Accordion extends React.Component {
       const index = selectedKey.indexOf(key);
       const selected = index !== -1;
 
-      selected
-        ? selectedKey.splice(index, 1)
-        : selectedKey.push(key);
+      if (selected) {
+        selectedKey.splice(index, 1);
+      } else {
+        selectedKey.push(key);
+      }
     } else {
       selectedKey = selectedKey[0] === key ? [] : [key];
     }
@@ -76,7 +70,7 @@ export default class Accordion extends React.Component {
       });
     }
 
-    var deliverableSelectedKey = selectedKey;
+    let deliverableSelectedKey = selectedKey;
 
     if (!this.props.multiselectable) {
       deliverableSelectedKey = selectedKey.length ? selectedKey[0] : null;
@@ -100,8 +94,16 @@ export default class Accordion extends React.Component {
         onItemClick: this.onClickItem.bind(this, key)
       };
 
-      return React.cloneElement(child, props)
+      return React.cloneElement(child, props);
     });
+  }
+
+  selectedKeyToArray(selectedKey) {
+    if (Array.isArray(selectedKey)) {
+      return selectedKey;
+    }
+
+    return selectedKey ? [selectedKey] : [];
   }
 
   render() {

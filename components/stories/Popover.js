@@ -6,18 +6,18 @@ import Button from '../Button';
 import Heading from '../Heading';
 
 storiesOf('Popover', module)
-  .add('Default', () => render('Content') )
-  .add('Long content', () => render(longMarkup) )
-  .add('placement: left', () => render('Content', { placement: 'left' }) )
-  .add('placement: top', () => render('Content', { placement: 'top' }) )
-  .add('placement: bottom', () => render('Content', { placement: 'bottom' }) )
-  .add('open: false', () => render('Content', { open: false }) )
-  .add('closable: false', () => render('Content', { closable: false }) )
-  .add('variant: error', () => render('Content', { variant: 'error' }) )
-  .add('variant: warning', () => render('Content', { variant: 'warning' }) )
-  .add('variant: success', () => render('Content', { variant: 'success' }) )
-  .add('variant: help', () => render('Content', { variant: 'help' }) )
-  .add('variant: info', () => render('Content', { variant: 'info' }) )
+  .add('Default', () => render('Content'))
+  .add('Long content', () => render(longMarkup))
+  .add('placement: left', () => render('Content', { placement: 'left' }))
+  .add('placement: top', () => render('Content', { placement: 'top' }))
+  .add('placement: bottom', () => render('Content', { placement: 'bottom' }))
+  .add('open: false', () => render('Content', { open: false }))
+  .add('closable: false', () => render('Content', { closable: false }))
+  .add('variant: error', () => render('Content', { variant: 'error' }))
+  .add('variant: warning', () => render('Content', { variant: 'warning' }))
+  .add('variant: success', () => render('Content', { variant: 'success' }))
+  .add('variant: help', () => render('Content', { variant: 'help' }))
+  .add('variant: info', () => render('Content', { variant: 'info' }));
 
 function render(children, props = {}) {
   return (
@@ -26,8 +26,8 @@ function render(children, props = {}) {
         title="Title"
         open
         closable
-        content={ children }
-        onClose={ action('close') }
+        content={children}
+        onClose={action('close')}
         { ...props }
       >
         <Button label="Click Me" />
@@ -38,7 +38,7 @@ function render(children, props = {}) {
 
 const longMarkup = (
   <div>
-    <Heading size={ 2 }>Really long content...</Heading>
+    <Heading size={2}>Really long content...</Heading>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
