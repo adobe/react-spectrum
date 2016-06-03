@@ -52,5 +52,5 @@ We split the tests into 2 groups.
 [coverage-image]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/coverage.svg
 [npm-dependencies-url]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/dependencies.txt
 [npm-dependencies-image]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/dependencies.svg
-[storybook-url]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/storybook-static/index.html
+[storybook-url]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/Storybook/
 [storybook-image]: https://sparkle.ci.corp.adobe.com:12001/view/MCDP%20UI/job/mcdp-react-coral-unit-tests-develop/ws/badges/storybook.svg
