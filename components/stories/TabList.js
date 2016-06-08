@@ -14,7 +14,7 @@ storiesOf('TabList', module)
   .add('defaultSelectedKey: 1', () => render({ defaultSelectedKey: '1' }))
   .add('selectedKey: 1', () => render({ selectedKey: '1' }))
   .add('size: L', () => render({ size: 'L' }))
-  .add('orientation: vertical', () => render({ orientation: 'vertical'}))
+  .add('orientation: vertical', () => render({ orientation: 'vertical' }))
   .add('orientation: vertical, size: L', () => render({ orientation: 'vertical', size: 'L' }));
 
 function render(props = {}) {

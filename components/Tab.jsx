@@ -37,7 +37,7 @@ export default class Tab extends React.Component {
         }
         onClick={onClick}
         id={this.tabId}
-        role='tab'
+        role="tab"
         aria-invalid={false}
         selected={selected}
         aria-selected={selected}
@@ -45,7 +45,7 @@ export default class Tab extends React.Component {
         aria-disabled={disabled}
         tabIndex={tabIndex || '0'}
       >
-        { icon ? <Icon icon={icon} size="S"/> : null }
+        {icon ? <Icon icon={icon} size="S" /> : null}
         <span className="coral-Tab-label">{children}</span>
       </div>
     );

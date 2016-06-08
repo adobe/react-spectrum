@@ -3,7 +3,7 @@ import expect from 'expect';
 import Tab from '../components/Tab';
 import { shallow, mount } from 'enzyme';
 
-describe.only('Tab', () => {
+describe('Tab', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Tab />);
     expect(tree.prop('className')).toBe('coral-Tab');
@@ -14,7 +14,7 @@ describe.only('Tab', () => {
   });
 
   it('supports tabIndex', () => {
-    const tree = shallow(<Tab tabIndex='10' />);
+    const tree = shallow(<Tab tabIndex="10" />);
     expect(tree.prop('tabIndex')).toBe('10');
   });
 
@@ -25,7 +25,7 @@ describe.only('Tab', () => {
   });
 
   it('supports icon', () => {
-    const tree = mount(<Tab icon='add' />);
+    const tree = mount(<Tab icon="add" />);
     const child = tree.find('.coral-Icon');
     expect(child.length).toBe(1);
   });

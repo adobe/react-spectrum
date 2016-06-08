@@ -9,16 +9,16 @@ describe('TabList', () => {
     expect(tree.prop('className')).toBe('coral-TabList');
     expect(tree.type()).toBe('div');
     expect(tree.prop('role')).toBe('tablist');
-    expect(tree.prop('aria-multiselectable')).toBe('false');
+    expect(tree.prop('aria-multiselectable')).toBe(false);
   });
 
   it('supports large size', () => {
-    const tree = shallow(<TabList size='L' />);
+    const tree = shallow(<TabList size="L" />);
     expect(tree.prop('className')).toBe('coral-TabList coral-TabList--large');
   });
 
   it('supports vertical orientation', () => {
-    const tree = shallow(<TabList orientation='vertical' />);
+    const tree = shallow(<TabList orientation="vertical" />);
     expect(tree.prop('className')).toBe('coral-TabList coral-TabList--vertical');
   });
 
@@ -34,7 +34,7 @@ describe('TabList', () => {
   });
 
   it('supports children', () => {
-    const tree = shallow(<TabList><div className='someContent'>My Custom Content</div></TabList>);
+    const tree = shallow(<TabList><div className="someContent">My Custom Content</div></TabList>);
     const child = tree.find('.someContent');
     expect(child.length).toBe(1);
     expect(child.children().node).toBe('My Custom Content');
@@ -43,9 +43,9 @@ describe('TabList', () => {
   it('can be changed', () => {
     const spy = createSpy();
     const tree = shallow(
-      <TabList onChange={ spy }>
-        <div className='one'>a</div>
-        <div className='two'>b</div>
+      <TabList onChange={spy}>
+        <div className="one">a</div>
+        <div className="two">b</div>
       </TabList>
     );
 
@@ -59,9 +59,9 @@ describe('TabList', () => {
   it('support custom keys property', () => {
     const spy = createSpy();
     const tree = shallow(
-      <TabList onChange={ spy }>
-        <div key='one' className='one'>a</div>
-        <div key='two' className='two'>b</div>
+      <TabList onChange={spy}>
+        <div key="one" className="one">a</div>
+        <div key="two" className="two">b</div>
       </TabList>
     );
 

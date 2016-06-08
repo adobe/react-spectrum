@@ -22,7 +22,7 @@ export default class TabList extends React.Component {
       defaultSelectedKey
     } = props;
 
-    let currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
+    const currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
     this.state = {
       selectedKey: currentSelectedKey
     };
@@ -36,6 +36,10 @@ export default class TabList extends React.Component {
     }
   }
 
+  onClickItem(selectedKey) {
+    this.setSelectedKey(selectedKey);
+  }
+
   setSelectedKey(selectedKey) {
     // If selectedKey is defined on props then this is a controlled component and we shouldn't
     // change our own state.
@@ -46,10 +50,6 @@ export default class TabList extends React.Component {
     }
 
     this.props.onChange(selectedKey);
-  }
-
-  onClickItem(selectedKey) {
-    this.setSelectedKey(selectedKey);
   }
 
   getItems() {
@@ -67,7 +67,7 @@ export default class TabList extends React.Component {
         onClick: this.onClickItem.bind(this, key)
       };
 
-      return React.cloneElement(child, props)
+      return React.cloneElement(child, props);
     });
   }
 
@@ -84,18 +84,19 @@ export default class TabList extends React.Component {
         { ...otherProps }
         className={
           classNames(
-            'coral-TabList' + (size === 'L' ? ' coral-TabList--large' : ''),
+            'coral-TabList',
+            size === 'L' ? 'coral-TabList--large' : '',
             orientation === 'vertical' ? 'coral-TabList--vertical' : '',
             className
           )
         }
-        role='tablist'
-        aria-multiselectable='false'
+        role="tablist"
+        aria-multiselectable={false}
       >
         {this.getItems()}
       </div>
     );
-  };
+  }
 }
 
 TabList.defaultProps = {
