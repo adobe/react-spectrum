@@ -63,7 +63,7 @@ describe('Button', () => {
   it('supports children', () => {
     const tree = shallow(<Button><div>My Custom Content</div></Button>);
     const child = tree.find('div');
-    expect(child).toExist();
+    expect(child.length).toBe(1);
     expect(child.children().node).toBe('My Custom Content');
   });
 

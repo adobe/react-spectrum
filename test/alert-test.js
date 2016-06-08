@@ -9,8 +9,8 @@ describe('Alert', () => {
     expect(tree.prop('className')).toBe('coral3-Alert coral3-Alert--info coral3-Alert--small');
     expect(tree.type()).toBe('div');
     assertAlertClassAndIcon(tree, 'info', 'infoCircle');
-    expect(tree.find('.coral3-Alert-header')).toExist();
-    expect(tree.find('.coral3-Alert-content')).toExist();
+    expect(tree.find('.coral3-Alert-header').length).toBe(1);
+    expect(tree.find('.coral3-Alert-content').length).toBe(1);
     expect(tree.find('.coral3-Alert-closeButton').node).toNotExist();
   });
 
@@ -62,14 +62,14 @@ describe('Alert', () => {
   it('supports header', () => {
     const tree = shallow(<Alert header={<div>My Custom Header</div>} />);
     const child = tree.find('.coral3-Alert-header > div');
-    expect(child).toExist();
+    expect(child.length).toBe(1);
     expect(child.children().node).toBe('My Custom Header');
   });
 
   it('supports children', () => {
     const tree = shallow(<Alert><div>My Custom Content</div></Alert>);
     const child = tree.find('.coral3-Alert-content > div');
-    expect(child).toExist();
+    expect(child.length).toBe(1);
     expect(child.children().node).toBe('My Custom Content');
   });
 });
