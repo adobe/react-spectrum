@@ -23,7 +23,6 @@ export default class TabList extends React.Component {
     } = props;
 
     let currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
-
     this.state = {
       selectedKey: currentSelectedKey
     };
@@ -60,12 +59,12 @@ export default class TabList extends React.Component {
     return React.Children.map(children, (child, index) => {
       // If there is no key provide, use the index as default key
       const key = child.key || String(index);
-            const selected = selectedKey === key;
+      const selected = selectedKey === key;
 
       const props = {
         selected,
         tabIndex: index,
-        onItemClick: this.onClickItem.bind(this, key)
+        onClick: this.onClickItem.bind(this, key)
       };
 
       return React.cloneElement(child, props)
@@ -85,7 +84,7 @@ export default class TabList extends React.Component {
         { ...otherProps }
         className={
           classNames(
-            'coral-TabList' + (size === 'L' ? '--large' : ''),
+            'coral-TabList' + (size === 'L' ? ' coral-TabList--large' : ''),
             orientation === 'vertical' ? 'coral-TabList--vertical' : '',
             className
           )

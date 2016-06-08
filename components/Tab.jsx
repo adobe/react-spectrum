@@ -17,7 +17,8 @@ export default class Tab extends React.Component {
       children,
       className,
       selected,
-      onItemClick,
+      disabled,
+      onClick,
       icon,
       tabIndex,
       ...otherProps
@@ -30,25 +31,28 @@ export default class Tab extends React.Component {
           classNames(
             'coral-Tab',
             selected ? 'is-selected' : null,
+            disabled ? 'is-disabled' : null,
             className
           )
         }
-        onClick={onItemClick}
+        onClick={onClick}
         id={this.tabId}
         role='tab'
-        aria-selected={selected}
+        aria-invalid={false}
         selected={selected}
-        aria-invalid='false'
-        aria-disabled='false'
-        tabIndex={tabIndex}
+        aria-selected={selected}
+        disabled={disabled}
+        aria-disabled={disabled}
+        tabIndex={tabIndex || '0'}
       >
         { icon ? <Icon icon={icon} size="S"/> : null }
-        <span className="coral3-Accordion-label">{children}</span>
+        <span className="coral-Tab-label">{children}</span>
       </div>
     );
   }
 }
 
 Tab.defaultProps = {
-  onItemClick() {}
+  disabled: false,
+  onClick() {}
 };

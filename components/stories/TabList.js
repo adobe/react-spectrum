@@ -15,22 +15,12 @@ storiesOf('TabList', module)
   .add('selectedKey: 1', () => render({ selectedKey: '1' }))
   .add('size: L', () => render({ size: 'L' }))
   .add('orientation: vertical', () => render({ orientation: 'vertical'}))
-  .add('orientation: vertical, size: L', () => render({ orientation: 'vertical', size: 'L' }))
-  .add('Default with icon', () => renderWithIcons());
+  .add('orientation: vertical, size: L', () => render({ orientation: 'vertical', size: 'L' }));
 
 function render(props = {}) {
   return (
     <TabList {...props} onChange={action('onChange')}>
       <Tab>Tab 1</Tab>
-      <Tab selected>Tab 2</Tab>
-    </TabList>
-  );
-}
-
-function renderWithIcons(props = {}) {
-  return (
-    <TabList {...props} onChange={action('onChange')}>
-      <Tab icon='add'>Tab 1</Tab>
       <Tab selected>Tab 2</Tab>
     </TabList>
   );
