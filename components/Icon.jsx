@@ -26,6 +26,7 @@ export default ({
           className
         )
       }
+      role="img"
       { ...otherProps }
     />
   );
