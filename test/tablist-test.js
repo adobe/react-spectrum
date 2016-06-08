@@ -65,10 +65,35 @@ describe('TabList', () => {
       </TabList>
     );
 
-
     const child = tree.find('.two');
     child.simulate('click');
 
     expect(spy).toHaveBeenCalledWith('two');
+  });
+
+  it('supports selectedKey', () => {
+    const tree = shallow(
+      <TabList selectedKey="1">
+        <div className="one">a</div>
+        <div className="two">b</div>
+      </TabList>
+    );
+    const child = tree.find('[selected=true]');
+
+    expect(child.length).toBe(1);
+    expect(child.node.props.className).toBe('two');
+  });
+
+  it('supports defaultSelectedKey', () => {
+    const tree = shallow(
+      <TabList selectedKey="1">
+        <div className="one">a</div>
+        <div className="two">b</div>
+      </TabList>
+    );
+    const child = tree.find('[selected=true]');
+
+    expect(child.length).toBe(1);
+    expect(child.node.props.className).toBe('two');
   });
 });
