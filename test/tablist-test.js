@@ -86,7 +86,7 @@ describe('TabList', () => {
 
   it('supports defaultSelectedKey', () => {
     const tree = shallow(
-      <TabList selectedKey="1">
+      <TabList defaultSelectedKey="1">
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
