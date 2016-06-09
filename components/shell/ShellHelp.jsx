@@ -56,8 +56,8 @@ export default class ShellHelp extends Component {
             <div className="coral-Shell-help-items">
               {
                 defaultResults && defaultResults.length &&
-                defaultResults.map(({ href, icon, label }) => (
-                  <HelpItem url={ href } icon={ icon }>{ label }</HelpItem>
+                defaultResults.map(({ href, icon, label }, index) => (
+                  <HelpItem key={ index } url={ href } icon={ icon }>{ label }</HelpItem>
                 ))
               }
             </div>
@@ -73,7 +73,7 @@ const HelpItem = ({ url, icon, children }) => (
     <Icon icon={ icon } className="coral-BasicList-item-icon" />
     <div className="coral-BasicList-item-outerContainer">
       <div className="coral-BasicList-item-contentContainer">
-        <div classname="coral-BasicList-item-content">{ children }</div>
+        <div className="coral-BasicList-item-content">{ children }</div>
       </div>
     </div>
   </a>

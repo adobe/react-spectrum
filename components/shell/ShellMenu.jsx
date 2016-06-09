@@ -14,6 +14,7 @@ export default class ShellMenu extends Component {
     dark: false,
     onOpen: () => {},
     onClose: () => {},
+    onVisible: () => {},
     onHidden: () => {}
   };
 
@@ -76,7 +77,18 @@ export default class ShellMenu extends Component {
   }
 
   handleTransitionEnd = e => {
+    if (e.propertyName !== 'transform') {
+      return;
+    }
+
+    const { onVisible, onHidden } = this.props;
     const { open } = this.state;
+
+    if (open) {
+      onVisible();
+    } else {
+      onHidden();
+    }
     this.setState({ visible: open });
   }
 

@@ -21,17 +21,17 @@ storiesOf('ShellHeader', module)
 function render(props = {}) {
   return (
     <ShellHeader { ...props }>
-      <ShellActions> { /* Make shellActions handle menu open/close */ }
+      <ShellActions>
         <Button element="a" href="#" variant="quiet">Beta Feedback</Button>
 
-        <ShellOrgSwitcher title="NIKE, Inc">
-          <ShellOrganization icon="facebookColor" label="Facebook, Inc." />
-          <ShellOrganization icon="flickrColor" label="Flickr, Inc." />
-          <ShellOrganization icon="newsgatorColor" label="Newsgator, Inc." />
-          <ShellOrganization icon="windowsColor" label="Microsoft">
-            <ShellSubOrganization label="Microsoft Japan" selected />
-            <ShellSubOrganization label="Microsoft USA" />
-            <ShellSubOrganization label="Microsoft South America" />
+        <ShellOrgSwitcher onOrgChange={action('org-change')}>
+          <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
+          <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
+          <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />
+          <ShellOrganization name="microsoft" icon="windowsColor" label="Microsoft">
+            <ShellSubOrganization name="microsoftjapan" label="Microsoft Japan" selected />
+            <ShellSubOrganization name="microsoftusa" label="Microsoft USA" />
+            <ShellSubOrganization name="microsoftsouthamerica" label="Microsoft South America" />
           </ShellOrganization>
         </ShellOrgSwitcher>
 
