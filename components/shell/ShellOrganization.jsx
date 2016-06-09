@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
+import ListItem from '../ListItem';
 import Icon from '../Icon';
 
 import './ShellOrganization.styl';
@@ -10,11 +11,7 @@ export default class ShellOrganization extends Component {
     selected: false,
     isSubItem: false,
     visibilityFilter: () => {},
-    onSelect: () => {},
-    onFocusNext: () => {},
-    onFocusPrevious: () => {},
-    onFocusFirst: () => {},
-    onFocusLast: () => {}
+    onSelect: () => {}
   };
 
   state = {
@@ -24,6 +21,18 @@ export default class ShellOrganization extends Component {
   componentWillReceiveProps(nextProps) {
     const { visibilityFilter, label, children } = nextProps;
     this.determineVisibility(visibilityFilter, label, children);
+  }
+
+  handleSelect = e => {
+    if (!this.hasChildren()) {
+      this.props.onSelect(e);
+    }
+  }
+
+  handleMouseEnter = e => {
+    if (!this.hasChildren()) {
+      e.target.focus();
+    }
   }
 
   determineVisibility(visibilityFilter, label, children) {
@@ -42,62 +51,6 @@ export default class ShellOrganization extends Component {
     }
 
     this.setState({ visible });
-  }
-
-  handleClick = e => {
-    if (!this.hasChildren()) {
-      this.handleSelect(e);
-    }
-  }
-
-  handleKeyDown = e => {
-    switch(e.which) {
-      case 13: // enter
-        this.handleSelect(e);
-        break;
-      case 33: // page up
-      case 35: // home
-        this.handleFocusFirst(e);
-        break;
-      case 34: // page down
-      case 36: // end
-        this.handleFocusLast(e);
-        break;
-      case 37: // left
-      case 38: // up
-        this.handleFocusPrevious(e);
-        break;
-      case 39: // right
-      case 40: // down
-        this.handleFocusNext(e);
-        break;
-    }
-  }
-
-  handleMouseEnter = e => {
-    if (!this.hasChildren()) {
-      e.target.focus();
-    }
-  }
-
-  handleSelect = e => {
-    this.props.onSelect(e);
-  }
-
-  handleFocusFirst = e => {
-    this.props.onFocusFirst(e);
-  }
-
-  handleFocusLast = e => {
-    this.props.onFocusLast(e);
-  }
-
-  handleFocusPrevious = e => {
-    this.props.onFocusPrevious(e);
-  }
-
-  handleFocusNext = e => {
-    this.props.onFocusNext(e);
   }
 
   hasChildren() {
@@ -125,6 +78,7 @@ export default class ShellOrganization extends Component {
       visibilityFilter,
       className,
       children,
+      onSelect,
       ...otherProps
     } = this.props;
 
@@ -132,10 +86,9 @@ export default class ShellOrganization extends Component {
     const isChildSelected = children && this.isChildSelected(children);
 
     return (
-      <div
+      <ListItem
         className={
           classNames(
-            'coral-BasicList-item',
             `coral-Shell-orgSwitcher-${ isSubItem ? 'sub' : '' }item`,
             {
               'is-selected': selected || isChildSelected,
@@ -147,24 +100,15 @@ export default class ShellOrganization extends Component {
         }
         role="button"
         tabIndex={ this.hasChildren() ? null : '0' }
+        label={ label }
+        icon={ icon }
+        iconSize={ isSubItem ? 'S' : 'M' }
         selected={ selected }
-        onKeyDown={ this.handleKeyDown }
-        onMouseEnter={ this.handleMouseEnter }
-        onClick={ this.handleClick }
         hidden={ !visible }
+        onMouseEnter={ this.handleMouseEnter }
+        onSelect={ this.handleSelect }
         { ...otherProps }
       >
-        {
-          icon &&
-          <Icon className="coral-BasicList-item-icon" icon={ icon } size={ isSubItem ? 'S' : 'M' } />
-        }
-        <div className="coral-BasicList-item-outerContainer">
-          <div className="coral-BasicList-item-contentContainer">
-            <coral-list-item-content className="coral-BasicList-item-content">
-              { label }
-            </coral-list-item-content>
-          </div>
-        </div>
         {
           selected &&
           <Icon className="coral-Shell-orgSwitcher-item-checkmark" icon="check" size="XS" />
@@ -182,7 +126,7 @@ export default class ShellOrganization extends Component {
                     {
                       key,
                       visibilityFilter,
-                      onSelect: this.handleSelect,
+                      onSelect: onSelect,
                       onFocusNext: this.handleFocusNext,
                       onFocusPrevious: this.handleFocusPrevious,
                       onFocusFirst: this.handleFocusFirst,
@@ -196,7 +140,7 @@ export default class ShellOrganization extends Component {
             }
           </div>
         }
-      </div>
+      </ListItem>
     );
   }
 }

@@ -1,7 +1,7 @@
 import { configure } from '@kadira/storybook';
 import './storybook.styl';
 
-import '../css/coral.css';
+//import '../css/coral.css';
 
 function loadStories() {
   var storiesContext = require.context('../src/stories', true, /^(.*\.(js|jsx))$/);

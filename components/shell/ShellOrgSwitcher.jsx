@@ -4,6 +4,7 @@ import ShellMenu from './ShellMenu';
 
 import Search from '../Search';
 import Button from '../Button';
+import List from '../List';
 
 import './ShellOrgSwitcher.styl';
 
@@ -30,45 +31,10 @@ export default class ShellOrgSwitcher extends Component {
     this.props.onOrgChange(e);
   }
 
-  handleFocusFirst = e => {
-    this.getItems()[0].focus();
-  }
-
-  handleFocusLast = e => {
-    const items = this.getItems();
-    items[items.length - 1].focus();
-  }
-
-  handleFocusPrevious = e => {
-    const items = this.getItems();
-    let index = items.indexOf(e.target) - 1;
-    if (index < 0) {
-      index = items.length - 1;
-    }
-    items[index].focus();
-  }
-
-  handleFocusNext = e => {
-    const items = this.getItems();
-    let index = items.indexOf(e.target) + 1;
-    if (index >= items.length) {
-      index = 0;
-    }
-    items[index].focus();
-  }
-
   handleVisible = () => {
     if (this.refs) {
-      this.refs.switcher.querySelector('.coral-Search-input').focus();
+      this.refs.content.querySelector('.coral-Search-input').focus();
     }
-  }
-
-  getItems() {
-    return Array.prototype.slice.call(
-      this.refs.switcher.querySelectorAll(
-        '.coral-Shell-orgSwitcher-item:not(.is-parent):not([hidden]), .coral-Shell-orgSwitcher-subitem:not([hidden])'
-      )
-    );
   }
 
   getSelectedLabel(children) {
@@ -113,7 +79,7 @@ export default class ShellOrgSwitcher extends Component {
         onVisible={ this.handleVisible }
         { ...otherProps }
       >
-        <div className={ classNames('coral-BasicList coral-Shell-orgSwitcher', className) } ref="switcher">
+        <div className={ classNames('coral-BasicList coral-Shell-orgSwitcher', className) } ref="content">
           <label className="u-coral-screenReaderOnly">Search Organizations</label>
           <Search
             className="coral-Shell-orgSwitcher-search"
@@ -121,30 +87,23 @@ export default class ShellOrgSwitcher extends Component {
             onChange={ this.handleSearchChange }
             quiet
           />
-          <div className="coral-Shell-orgSwitcher-items">
+          <List
+            className="coral-Shell-orgSwitcher-items"
+            listItemSelector=".coral-Shell-orgSwitcher-item:not(.is-parent):not([hidden]), .coral-Shell-orgSwitcher-subitem:not([hidden])"
+            onSelect={ this.handleSelect }
+          >
             {
-              React.Children.map(children, (child, index) => {
-                if (typeof child === 'object' && child && child.type) { // Is this a react element?
-                  const key = child.key || String(index);
-
-                  return React.cloneElement(
-                    child,
-                    {
-                      key,
-                      visibilityFilter: this.visibilityFilter,
-                      onSelect: this.handleSelect,
-                      onFocusNext: this.handleFocusNext,
-                      onFocusPrevious: this.handleFocusPrevious,
-                      onFocusFirst: this.handleFocusFirst,
-                      onFocusLast: this.handleFocusLast,
-                    }
-                  )
-                } else { // Must be a string
-                  return child;
-                }
-              })
+              React.Children.map(children, (child, index) => (
+                React.cloneElement(
+                  child,
+                  {
+                    key: child.key || String(index),
+                    visibilityFilter: this.visibilityFilter
+                  }
+                )
+              ))
             }
-          </div>
+          </List>
           <div className="coral-Shell-orgSwitcher-resultMessage" hidden={ this.getResultCount(children) !== 0 }>
             <div className="coral-Shell-orgSwitcher-resultMessage-container">
               <div className="coral-Heading--1 coral-Shell-orgSwitcher-resultMessage-heading">
