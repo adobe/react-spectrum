@@ -8,8 +8,6 @@ import List from '../List';
 import ListItem from '../ListItem';
 import Wait from '../Wait';
 
-import './ShellHelp.styl';
-
 export default class ShellHelp extends Component {
   static defaultProps = {
     defaultResults: [

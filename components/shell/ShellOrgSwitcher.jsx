@@ -6,8 +6,6 @@ import Search from '../Search';
 import Button from '../Button';
 import List from '../List';
 
-import './ShellOrgSwitcher.styl';
-
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
     manageOrgsUrl: '#',

@@ -5,8 +5,6 @@ import ShellMenu from './ShellMenu';
 import Button from '../Button';
 import Icon from '../Icon';
 
-import './ShellUserProfile.styl';
-
 export default class ShellUserProfile extends Component {
   static defaultProps = {
     avatarUrl: '#',

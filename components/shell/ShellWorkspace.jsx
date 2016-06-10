@@ -3,8 +3,6 @@ import classNames from 'classnames';
 
 import Icon from '../Icon';
 
-import './ShellWorkspaces.styl';
-
 export default ({
   href = '#',
   title,

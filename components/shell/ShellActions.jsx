@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
-import './ShellActions.styl';
-
 export default class ShellHeaderActions extends Component {
   state = {
     openIndex: -1
