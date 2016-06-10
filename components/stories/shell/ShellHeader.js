@@ -11,7 +11,11 @@ import ShellOrgSwitcher from '../../shell/ShellOrgSwitcher';
 import ShellOrganization from '../../shell/ShellOrganization';
 import ShellSubOrganization from '../../shell/ShellSubOrganization';
 import ShellUserProfile from '../../shell/ShellUserProfile';
+import ShellSolutionSwitcher from '../../shell/ShellSolutionSwitcher';
+import ShellSolutionGroup from '../../shell/ShellSolutionGroup';
+import ShellSolution from '../../shell/ShellSolution';
 import Button from '../../Button';
+import Icon from '../../Icon';
 
 storiesOf('ShellHeader', module)
   .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
@@ -41,7 +45,27 @@ function render(props = {}) {
         />
 
         <Button variant="minimal" className="coral-Shell-menu-button" icon="bell" square />
-        <Button variant="minimal" className="coral-Shell-menu-button" icon="apps" square />
+
+        <ShellSolutionSwitcher>
+          <ShellSolutionGroup>
+            <ShellSolution href="#" icon="adobeAnalyticsColor" label="Analytics" linked />
+            <ShellSolution href="#" icon="adobeExperienceManagerColor" label="Experience Manager" linked />
+            <ShellSolution href="#" icon="adobeTargetColor" label="Target" linked />
+            <ShellSolution href="#" icon="adobeAudienceManager" label="Audience Manager" />
+            <ShellSolution href="#" icon="adobeCampaign" label="Campaign" />
+            <ShellSolution href="#" icon="adobeMediaOptimizer" label="Media Optimizer" />
+            <ShellSolution href="#" icon="adobePrimetime" label="Primetime" />
+            <ShellSolution href="#" icon="adobeSocial" label="Social" />
+          </ShellSolutionGroup>
+          <ShellSolutionGroup secondary>
+            <ShellSolution href="#" icon="launch" label="Activation" />
+            <ShellSolution href="#" icon="asset" label="Assets" />
+            <ShellSolution href="#" icon="sync" label="Exchange" />
+            <ShellSolution href="#" icon="feed" label="Feed" />
+            <ShellSolution href="#" icon="mobileServices" label="Mobile Services" />
+            <ShellSolution href="#" icon="user" label="Profiles & Audiences" />
+          </ShellSolutionGroup>
+        </ShellSolutionSwitcher>
 
         <ShellUserProfile
           name="Shantanu Narayen"

@@ -7,26 +7,28 @@ import ShellHelp from '../../shell/ShellHelp';
 storiesOf('ShellHelp', module)
   .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
-  .add('defaultResults', () => render({ defaultResults }))
-  .add('searchResults: 0', () => render({ searchResults: [], numTotalResults: 0 }))
+  .add('open: true', () => render({ open: true }))
+  .add('defaultResults', () => render({ defaultResults, open: true }))
+  .add('searchResults: 0', () => render({ searchResults: [], numTotalResults: 0, open: true }))
   .add('5 searchResults', () => render({
     searchResults: searchResults.slice(5),
     numTotalResults: 5,
-    moreSearchResultsUrl
+    moreSearchResultsUrl,
+    open: true
   }))
   .add('1000 searchResults', () => render({
     searchResults,
     numTotalResults: 1000,
-    moreSearchResultsUrl
+    moreSearchResultsUrl,
+    open: true
   }))
-  .add('loading: true', () => render({ loading: true }))
+  .add('loading: true', () => render({ loading: true, open: true }))
 
 function render(props = {}) {
   return (
     <ShellHelp
       moreSearchResultsUrl="#"
       onSearch={ action('search') }
-      open
       { ...props }
     />
   );

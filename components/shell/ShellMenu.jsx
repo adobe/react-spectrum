@@ -12,6 +12,7 @@ export default class ShellMenu extends Component {
     animateFrom: 'right', // top, right
     full: false,
     dark: false,
+    top: false, // if true, appears on top of the other menus
     onOpen: () => {},
     onClose: () => {},
     onVisible: () => {},
@@ -145,6 +146,7 @@ export default class ShellMenu extends Component {
       animateFrom,
       full,
       dark,
+      top,
       target,
       children
     } = this.props;
@@ -164,7 +166,7 @@ export default class ShellMenu extends Component {
         >
           <div
             ref="menu"
-            style={{ zIndex: open ? 10015 : 10010 }}
+            style={{ zIndex: open ? (top ? 10018 : 10015) : (top ? 10017 : 10010) }}
             className={
               classNames(
                 'coral-Shell-menu',

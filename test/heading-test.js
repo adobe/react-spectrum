@@ -25,7 +25,7 @@ describe('Heading', () => {
   });
 
   it('supports children', () => {
-    const tree = shallow(<Heading classname="myClass">My Heading</Heading>);
+    const tree = shallow(<Heading>My Heading</Heading>);
     expect(tree.children().node).toBe('My Heading');
   });
 });

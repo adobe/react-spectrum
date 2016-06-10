@@ -8,14 +8,14 @@ import ShellSubOrganization from '../../shell/ShellSubOrganization';
 
 storiesOf('ShellOrgSwitcher', module)
   .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('selected', () => render({ selected: true }))
+  .add('Default', () => render({ selected: true }))
+  .add('open: true', () => render({ selected: true, open: true }))
+  .add('open: true, no selected', () => render({ open: true }))
 
 function render({ selected, ...props } = {}) {
   return (
     <ShellOrgSwitcher
       onOrgChange={action('org-change')}
-      open
       { ...props }
     >
       <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
