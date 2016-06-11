@@ -30,7 +30,7 @@ describe('Tag', () => {
   });
   it('supports being disabled', () => {
     let onClose = expect.createSpy();
-    const tree = shallow(<Tag disabled closable onClose={onClose} />);
+    const tree = shallow(<Tag disabled closable onClose={ onClose } />);
     tree.find('.coral-Tag-removeButton').simulate('click');
     expect(onClose).toNotHaveBeenCalled();
   });
@@ -40,7 +40,7 @@ describe('Tag', () => {
   });
   it('supports an onClose event', () => {
     let onClose = expect.createSpy();
-    const tree = shallow(<Tag closable value="stuff" onClose={onClose} />);
+    const tree = shallow(<Tag closable value="stuff" onClose={ onClose } />);
     tree.find('.coral-Tag-removeButton').simulate('click');
     expect(onClose).toHaveBeenCalledWith('stuff');
   });

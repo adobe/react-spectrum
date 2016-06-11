@@ -7,7 +7,7 @@ describe('TetherDropComponent', () => {
   it('Adds target and drop elements', () => {
     const { targetEl, dropEl } = renderIntoDiv(
       <TetherDropComponent
-        content={<div className="drop" />}
+        content={ <div className="drop" /> }
       >
         <div className="target" />
       </TetherDropComponent>
@@ -23,7 +23,7 @@ describe('TetherDropComponent', () => {
   it('supports classPrefix', () => {
     const { targetEl, dropEl } = renderIntoDiv(
       <TetherDropComponent
-        content={<div className="drop" />}
+        content={ <div className="drop" /> }
         classPrefix="foo"
       >
         <div className="target" />
@@ -37,7 +37,7 @@ describe('TetherDropComponent', () => {
   it('supports open', () => {
     const { targetEl, dropEl } = renderIntoDiv(
       <TetherDropComponent
-        content={<div className="drop" />}
+        content={ <div className="drop" /> }
         open
       >
         <div className="target" />
@@ -52,8 +52,8 @@ describe('TetherDropComponent', () => {
     const createElWithPosition = position => (
       renderIntoDiv(
         <TetherDropComponent
-          content={<div className="drop" />}
-          position={position}
+          content={ <div className="drop" /> }
+          position={ position }
           open
         >
           <div className="target" />
@@ -86,7 +86,7 @@ describe('TetherDropComponent', () => {
     const addSpy = expect.spyOn(document, 'addEventListener');
     const removeSpy = expect.spyOn(document, 'removeEventListener');
     const { tree, targetEl, dropEl } = renderIntoDiv(
-      <TetherDropComponent onClickOutside={() => {}} content={<div />} open>
+      <TetherDropComponent onClickOutside={ () => {} } content={ <div /> } open>
         Foo
       </TetherDropComponent>
     );
@@ -108,7 +108,7 @@ describe('TetherDropComponent', () => {
   it('supports onClickOutside', () => {
     const spy = expect.createSpy();
     const { targetEl } = renderIntoDiv(
-      <TetherDropComponent onClickOutside={spy} content={<div />} open>
+      <TetherDropComponent onClickOutside={ spy } content={ <div /> } open>
         Foo
       </TetherDropComponent>
     );
@@ -128,13 +128,21 @@ describe('TetherDropComponent', () => {
         otherProps.content = <div />;
       }
       const tree =
-        render(<TetherDropComponent open { ...otherProps }>{children}</TetherDropComponent>, node);
+        render(
+          <TetherDropComponent
+            open
+            { ...otherProps }
+          >
+            { children }
+          </TetherDropComponent>,
+          node
+        );
       return populateReturnObject(tree, node);
     };
 
     beforeEach(() => {
       const tree =
-        renderIntoDiv(<TetherDropComponent content={<div />} open>Foo</TetherDropComponent>);
+        renderIntoDiv(<TetherDropComponent content={ <div /> } open>Foo</TetherDropComponent>);
       targetEl = tree.targetEl;
       dropEl = tree.dropEl;
     });
@@ -154,7 +162,7 @@ describe('TetherDropComponent', () => {
 
     it('visibility when open changes', () => {
       ({ targetEl, dropEl } =
-        renderIntoDiv(<TetherDropComponent content={<div />}>Foo</TetherDropComponent>));
+        renderIntoDiv(<TetherDropComponent content={ <div /> }>Foo</TetherDropComponent>));
       expect(dropEl.parentNode).toNotExist();
       const { dropEl: newDropEl } = renderAgainWithProps(targetEl, {});
       expect(newDropEl.parentNode).toExist(); // Make sure visibility is changed.
@@ -185,13 +193,13 @@ const populateReturnObject = (tree, node) => (
 
 const assertPosition = (el, elementPosition, targetPosition) => {
   expect(hasClasses(el.firstChild, [
-    `coral-drop-element-attached-${elementPosition}`,
+    `coral-drop-element-attached-${ elementPosition }`,
     'coral-drop-element-attached-center',
-    `coral-drop-target-attached-${targetPosition}`,
+    `coral-drop-target-attached-${ targetPosition }`,
     'coral-drop-target-attached-center'
   ])).toBe(true);
 };
 
-const hasClass = (el, className) => ` ${el.className} `.indexOf(` ${className} `) >= 0;
+const hasClass = (el, className) => ` ${ el.className } `.indexOf(` ${ className } `) >= 0;
 const hasClasses =
   (el, classNames) => classNames.find(className => hasClass(el, className) === false) == null;

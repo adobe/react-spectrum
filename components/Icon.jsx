@@ -18,8 +18,8 @@ export default ({
       className={
         classNames(
           'coral-Icon',
-          `coral-Icon--size${size}`,
-          `coral-Icon--${icon}`,
+          `coral-Icon--size${ size }`,
+          `coral-Icon--${ icon }`,
           {
             'coral-ColorIcon': isColorIcon
           },

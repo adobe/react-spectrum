@@ -25,17 +25,17 @@ function render(children, props = {}) {
     buttonLbl = 'Click Me';
   }
   return (
-    <div style={{ display: 'inline-block' }}>
+    <div style={ { display: 'inline-block' } }>
       <Tooltip
         title="Title"
         openOn="always"
         open
         closable
-        content={children}
-        onClose={action('close')}
+        content={ children }
+        onClose={ action('close') }
         { ...props }
       >
-        <Button label={buttonLbl} />
+        <Button label={ buttonLbl } />
       </Tooltip>
     </div>
   );

@@ -16,7 +16,7 @@ describe('Alert', () => {
 
   it('supports closable and can be closed', () => {
     const spy = expect.createSpy();
-    const tree = shallow(<Alert closable onClose={spy} />);
+    const tree = shallow(<Alert closable onClose={ spy } />);
     const closeButton = tree.find('.coral3-Alert-closeButton');
     expect(closeButton.node).toExist();
     expect(closeButton.prop('className')).toBe('coral3-Alert-closeButton u-coral-pullRight');
@@ -60,7 +60,7 @@ describe('Alert', () => {
   });
 
   it('supports header', () => {
-    const tree = shallow(<Alert header={<div>My Custom Header</div>} />);
+    const tree = shallow(<Alert header={ <div>My Custom Header</div> } />);
     const child = tree.find('.coral3-Alert-header > div');
     expect(child.length).toBe(1);
     expect(child.children().node).toBe('My Custom Header');
@@ -77,6 +77,6 @@ describe('Alert', () => {
 const findIcon = tree => tree.find('.coral3-Alert-typeIcon');
 
 const assertAlertClassAndIcon = (tree, classPart, icon) => {
-  expect(tree.hasClass(`coral3-Alert--${classPart}`)).toBe(true);
+  expect(tree.hasClass(`coral3-Alert--${ classPart }`)).toBe(true);
   expect(findIcon(tree).prop('icon')).toBe(icon);
 };

@@ -17,7 +17,7 @@ export default ({
     }
     inputClassName="coral3-Switch-input"
     markClassName="coral3-Switch-label"
-    renderLabel={false}
+    renderLabel={ false }
     { ...otherProps }
   />
 );

@@ -70,10 +70,9 @@ export default class SwitchBase extends Component {
       inputClassName,
       markClassName,
       labelClassName,
-      onChange,
       onBlur,
       onFocus,
-      ...rest
+      ...otherProps
     } = this.props;
     const { checked } = this.state;
 
@@ -91,7 +90,7 @@ export default class SwitchBase extends Component {
         aria-invalid={ invalid }
         aria-readonly={ readOnly }
         aria-checked={ checked }
-        { ...rest }
+        { ...otherProps }
       >
         <input
           ref="input"
@@ -101,10 +100,10 @@ export default class SwitchBase extends Component {
           checked={ checked }
           disabled={ disabled }
           required={ required }
-          name={ name ? name : null }
-          value={ value ? value : null }
+          name={ name }
+          value={ value }
           required={ required ? true : null }
-          readonly={ readOnly ? true : null }
+          readOnly={ readOnly }
           onChange={ this.handleChange }
           onBlur={ onBlur }
           onFocus={ onFocus }

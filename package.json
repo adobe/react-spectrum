@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "lint": "eslint components/** test/**",
+    "lint": "eslint \"components/**/*(.js|.jsx)\" \"test/**/*.js\"",
     "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
     "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
     "test:watch": "npm test -- --watch",

@@ -23,7 +23,7 @@ describe('DialogHeader', () => {
 
   it('onClose is fired when the close button is clicked', () => {
     const spy = expect.createSpy();
-    const tree = shallow(<DialogHeader onClose={spy} closable />);
+    const tree = shallow(<DialogHeader onClose={ spy } closable />);
     tree.find(Button).simulate('click');
     expect(spy).toHaveBeenCalled();
   });

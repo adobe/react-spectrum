@@ -41,28 +41,28 @@ export default class AccordionItem extends React.Component {
         role="presentation"
       >
         <div
-          id={this.headerId}
+          id={ this.headerId }
           className="coral3-Accordion-header"
-          onClick={onItemClick}
-          aria-controls={this.contentId}
-          aria-selected={selected}
-          aria-expanded={selected}
+          onClick={ onItemClick }
+          aria-controls={ this.contentId }
+          aria-selected={ selected }
+          aria-expanded={ selected }
           aria-disabled="false"
           tabIndex="0"
-          onKeyPress={this.onHeaderKeyDown.bind(this)}
+          onKeyPress={ this.onHeaderKeyDown.bind(this) }
         >
-          <Icon icon={selected ? 'chevronDown' : 'chevronRight'} size="XS" />
-          <span className="coral3-Accordion-label">{header}</span>
+          <Icon icon={ selected ? 'chevronDown' : 'chevronRight' } size="XS" />
+          <span className="coral3-Accordion-label">{ header }</span>
         </div>
         <div
-          id={this.contentId}
+          id={ this.contentId }
           role="tabpanel"
-          aria-labelledby={this.headerId}
-          aria-hidden={!selected}
+          aria-labelledby={ this.headerId }
+          aria-hidden={ !selected }
           className="coral3-Accordion-content"
-          style={{ display: selected ? 'block' : 'none' }}
+          style={ { display: selected ? 'block' : 'none' } }
         >
-          {children}
+          { children }
         </div>
       </div>
     );

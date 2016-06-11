@@ -6,8 +6,8 @@ import AccordionItem from '../AccordionItem';
 
 storiesOf('Accordion', module)
   .addDecorator(story => (
-    <div style={{ textAlign: 'left', margin: '0 100px' }}>
-      {story()}
+    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+      { story() }
     </div>
   ))
   .add('Default', () => render())
@@ -17,7 +17,7 @@ storiesOf('Accordion', module)
 
 function render(props = {}) {
   return (
-    <Accordion {...props} onChange={action('onChange')}>
+    <Accordion {...props} onChange={ action('onChange') }>
       <AccordionItem header="Header 1">Item 1</AccordionItem>
       <AccordionItem header="Header 2">Item 2</AccordionItem>
     </Accordion>

@@ -122,9 +122,9 @@ export default class Accordion extends React.Component {
             className
           )
         }
-        aria-multiselectable={multiselectable}
+        aria-multiselectable={ multiselectable }
       >
-        {this.getItems()}
+        { this.getItems() }
       </div>
     );
   }

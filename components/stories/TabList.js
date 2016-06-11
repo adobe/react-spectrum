@@ -6,8 +6,8 @@ import Tab from '../Tab';
 
 storiesOf('TabList', module)
   .addDecorator(story => (
-    <div style={{ textAlign: 'left', margin: '0 100px' }}>
-      {story()}
+    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+      { story() }
     </div>
   ))
   .add('Default', () => render())
@@ -19,7 +19,7 @@ storiesOf('TabList', module)
 
 function render(props = {}) {
   return (
-    <TabList {...props} onChange={action('onChange')}>
+    <TabList {...props} onChange={ action('onChange') }>
       <Tab>Tab 1</Tab>
       <Tab selected>Tab 2</Tab>
     </TabList>

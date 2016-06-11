@@ -20,10 +20,10 @@ function render(props = {}, children = 'Cool Tag') {
     <div>
       <Tag
         value="testValue"
-        onClose={action('close')}
+        onClose={ action('close') }
         {...props}
       >
-        {props.children || children}
+        { props.children || children }
       </Tag>
     </div>
   );

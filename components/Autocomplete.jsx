@@ -10,12 +10,12 @@ export default class Autocomplete extends Component {
       render() {
         return (
           <Tag
-            onClose={(e) => onRemove(value, e)}
+            onClose={ (e) => onRemove(value, e) }
             closable
-            disabled={disabled}
-            onMouseDown={(e) => onClick(value, e)}
+            disabled={ disabled }
+            onMouseDown={ (e) => onClick(value, e) }
           >
-            {value.label}
+            { value.label }
           </Tag>
         );
       }
@@ -26,11 +26,11 @@ export default class Autocomplete extends Component {
     return (
       <ReactSelect
         className="coral-Autocomplete"
-        clearable={false}
-        autosize={false}
-        multi={this.props.multiple || this.props.multi}
-        noResultsText={<em>No matching results.</em>}
-        classAdditions={{
+        clearable={ false }
+        autosize={ false }
+        multi={ this.props.multiple || this.props.multi }
+        noResultsText={ <em>No matching results.</em> }
+        classAdditions={ {
           'Select-control':
             'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
           'Select-loading': 'coral-Wait',
@@ -48,8 +48,8 @@ export default class Autocomplete extends Component {
           'Select-option': 'coral-BasicList-item coral-ButtonList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
-        }}
-        valueComponent={this.props.multiple && this.valueComponent}
+        } }
+        valueComponent={ this.props.multiple && this.valueComponent }
         {...this.props}
       />
     );
