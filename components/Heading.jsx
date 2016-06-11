@@ -7,20 +7,20 @@ export default({
   className,
   ...otherProps
 }) => {
-  const Element = `h${size}`;
+  const Element = `h${ size }`;
 
   return (
     <Element
       className={
         classNames(
           'coral-Heading',
-          `coral-Heading--${size}`,
+          `coral-Heading--${ size }`,
           className
         )
       }
       { ...otherProps }
     >
-      {children}
+      { children }
     </Element>
   );
 };

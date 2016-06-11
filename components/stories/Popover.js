@@ -21,13 +21,13 @@ storiesOf('Popover', module)
 
 function render(children, props = {}) {
   return (
-    <div style={{ display: 'inline-block' }}>
+    <div style={ { display: 'inline-block' } }>
       <Popover
         title="Title"
         open
         closable
-        content={children}
-        onClose={action('close')}
+        content={ children }
+        onClose={ action('close') }
         { ...props }
       >
         <Button label="Click Me" />
@@ -38,7 +38,7 @@ function render(children, props = {}) {
 
 const longMarkup = (
   <div>
-    <Heading size={2}>Really long content...</Heading>
+    <Heading size={ 2 }>Really long content...</Heading>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean

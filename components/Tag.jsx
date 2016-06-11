@@ -24,8 +24,8 @@ export default ({
     className={
       classNames(
         'coral-Tag',
-        `coral-Tag--${sizeMap[size]}`,
-        `coral-Tag--${color}`,
+        `coral-Tag--${ sizeMap[size] }`,
+        `coral-Tag--${ color }`,
         {
           'coral-Tag--multiline': multiline,
           'coral-Tag--quiet': quiet
@@ -35,16 +35,16 @@ export default ({
     }
     { ...otherProps }
   >
-    {closable ?
+    { closable ?
       <span
         className="coral-Button coral-Button--minimal coral-Button--square coral-Tag-removeButton"
-        onClick={disabled ? undefined : onClose.bind(this, value || children)}
+        onClick={ disabled ? undefined : onClose.bind(this, value || children) }
       >
         <span className="coral-Icon coral-Icon--close coral-Icon--sizeXS" />
       </span>
-    : null}
+    : null }
     <span className="coral-Tag-label">
-      {children || value}
+      { children || value }
     </span>
   </div>
 );

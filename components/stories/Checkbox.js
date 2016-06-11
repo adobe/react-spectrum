@@ -15,7 +15,7 @@ function render(props = {}) {
   return (
     <Checkbox
       label="React"
-      onChange={action('change')}
+      onChange={ action('change') }
       { ...props }
     />
   );

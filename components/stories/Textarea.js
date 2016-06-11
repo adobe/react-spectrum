@@ -15,9 +15,9 @@ function render(props = {}) {
   return (
     <Textarea
       placeholder="React"
-      onChange={action('change')}
-      onFocus={action('focus')}
-      onBlur={action('blur')}
+      onChange={ action('change') }
+      onFocus={ action('focus') }
+      onBlur={ action('blur') }
       { ...props }
     />
   );

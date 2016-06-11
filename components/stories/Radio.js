@@ -14,7 +14,7 @@ function render(props = {}) {
   return (
     <Radio
       label="React"
-      onChange={action('change')}
+      onChange={ action('change') }
       { ...props }
     />
   );

@@ -69,7 +69,7 @@ describe('Button', () => {
 
   it('can be clicked', () => {
     const spy = createSpy();
-    const tree = shallow(<Button onClick={spy} />);
+    const tree = shallow(<Button onClick={ spy } />);
     tree.simulate('click');
     expect(spy).toHaveBeenCalled();
   });

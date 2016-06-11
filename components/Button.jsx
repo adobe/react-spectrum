@@ -27,8 +27,8 @@ export default ({
       className={
         classNames(
           'coral-Button',
-          `coral-Button--${variant}`,
-          `coral-Button--${sizes[size]}`,
+          `coral-Button--${ variant }`,
+          `coral-Button--${ sizes[size] }`,
           {
             'is-selected': selected,
             'coral-Button--block': block,
@@ -40,9 +40,9 @@ export default ({
       { ...otherProps }
     >
       {
-        icon && <Icon size={iconSize} icon={icon} />
+        icon && <Icon size={ iconSize } icon={ icon } />
       }
-      <span className="coral-Button-label">{label}{children}</span>
+      <span className="coral-Button-label">{ label }{ children }</span>
     </Element>
   );
 };

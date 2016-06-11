@@ -11,12 +11,12 @@ export default class Select extends Component {
       render() {
         return (
           <Tag
-            onClose={(e) => onRemove(value, e)}
+            onClose={ (e) => onRemove(value, e) }
             closable
-            disabled={disabled}
-            onMouseDown={(e) => onClick(value, e)}
+            disabled={ disabled }
+            onMouseDown={ (e) => onClick(value, e) }
           >
-            {value.label}
+            { value.label }
           </Tag>
         );
       }
@@ -30,9 +30,9 @@ export default class Select extends Component {
           <div
             className="coral3-Select-label"
             closable
-            disabled={disabled}
+            disabled={ disabled }
           >
-            {value.label}
+            { value.label }
           </div>
         );
       }
@@ -53,15 +53,15 @@ export default class Select extends Component {
       <button
         tabIndex="0"
         {...props}
-        className={classNames(
+        className={ classNames(
           props.className,
           'coral-Button',
           'coral-Button--secondary',
           { 'coral-Button--block': props.variant !== 'quiet' }
-        )}
-        disabled={props.disabled || props.readOnly}
+        ) }
+        disabled={ props.disabled || props.readOnly }
       >
-        {props.children}
+        { props.children }
       </button>
     );
   }
@@ -73,24 +73,24 @@ export default class Select extends Component {
 
     return (
       <ReactSelect
-        className={classNames('coral3-Select', { 'coral3-Select--quiet': isQuiet })}
-        multi={this.props.multiple || this.props.multi}
-        noResultsText={<em>No matching results.</em>}
-        arrowRenderer={this.arrowRenderer}
-        controlComponent={this.controlComponent}
-        classAdditions={{
+        className={ classNames('coral3-Select', { 'coral3-Select--quiet': isQuiet }) }
+        multi={ this.props.multiple || this.props.multi }
+        noResultsText={ <em>No matching results.</em> }
+        arrowRenderer={ this.arrowRenderer }
+        controlComponent={ this.controlComponent }
+        classAdditions={ {
           'Select-placeholder': 'coral3-Select-label',
           'Select-arrow-zone': arrowZoneClasses,
           'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',
           'Select-menu': 'coral3-SelectList coral3-Select-selectList',
           'Select-option': 'coral3-SelectList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
-        }}
-        valueComponent={this.props.multiple ? this.valuesComponent : this.valueComponent}
+        } }
+        valueComponent={ this.props.multiple ? this.valuesComponent : this.valueComponent }
         {...this.props}
-        clearable={false}
-        autosize={false}
-        searchable={false}
+        clearable={ false }
+        autosize={ false }
+        searchable={ false }
       />
     );
   }

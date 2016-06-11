@@ -21,6 +21,6 @@ export default ({
     }
     {...otherProps}
   >
-    {children}
+    { children }
   </table>
 );

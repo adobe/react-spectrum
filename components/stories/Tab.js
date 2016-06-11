@@ -5,8 +5,8 @@ import Tab from '../Tab';
 
 storiesOf('Tab', module)
   .addDecorator(story => (
-    <div style={{ textAlign: 'left', margin: '0 100px' }}>
-      {story()}
+    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+      { story() }
     </div>
   ))
   .add('Default', () => render())
@@ -16,6 +16,6 @@ storiesOf('Tab', module)
 
 function render(props = {}) {
   return (
-    <Tab {...props} onClick={action('onClick')}>Tab 1</Tab>
+    <Tab {...props} onClick={ action('onClick') }>Tab 1</Tab>
   );
 }

@@ -28,7 +28,7 @@ describe('SwitchBase', () => {
   });
 
   it('uncontrolled switchBase will toggle', () => {
-    const tree = shallow(<SwitchBase defaultChecked={false} />);
+    const tree = shallow(<SwitchBase defaultChecked={ false } />);
     findInput(tree).simulate('change', { target: { checked: true } });
     expectChecked(tree, true);
   });
@@ -103,7 +103,12 @@ describe('SwitchBase', () => {
   });
 
   it('supports not rendering a label', () => {
-    const tree = shallow(<SwitchBase labelClassName="coral-Foo-description" renderLabel={false} />);
+    const tree = shallow(
+      <SwitchBase
+        labelClassName="coral-Foo-description"
+        renderLabel={ false }
+      />
+    );
     expect(findLabel(tree).node).toNotExist();
     tree.setProps({ renderLabel: true });
     expect(findLabel(tree).node).toExist();

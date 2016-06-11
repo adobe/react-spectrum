@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { unstable_renderSubtreeIntoContainer, unmountComponentAtNode } from 'react-dom';
+import ReactDOM from 'react-dom';
 import Drop from 'tether-drop';
 
 export default class TetherDropComponent extends Component {
@@ -7,7 +7,7 @@ export default class TetherDropComponent extends Component {
     position: 'right center',
     onClickOutside: null,
     classPrefix: 'coral-drop',
-    openOn: null // Null means we'll manually call .open() and .close() on the drop instance to toggle visibility.
+    openOn: null // Null means we'll manually call .open() and .close() on the drop instance.
   };
 
   componentDidMount() {
@@ -24,10 +24,11 @@ export default class TetherDropComponent extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const { position, content, children, classPrefix, openOn, open } = this.props;
+    const { content, children, classPrefix, openOn, open } = this.props;
 
     if (this.tetherDrop) {
-      // TODO: There is not an easy way that I've found to update the position after it's set with Tether.
+      // TODO: There is not an easy way that I've found to update the position after it's set
+      // with Tether.
       // if (position !== previousProps.position) { }
       if (content !== previousProps.content || classPrefix !== previousProps.classPrefix) {
         this.renderDropContent(content, classPrefix);
@@ -39,7 +40,6 @@ export default class TetherDropComponent extends Component {
         this.setVisibility(open);
       }
     }
-
   }
 
   componentWillUnmount() {
@@ -52,17 +52,45 @@ export default class TetherDropComponent extends Component {
     }
   }
 
+  getTetherDropNode() {
+    return this.tetherDrop && this.tetherDrop.drop;
+  }
+
+  setVisibility(visible) {
+    if (visible) {
+      this.tetherDrop.open();
+    } else {
+      this.tetherDrop.close();
+    }
+  }
+
+  handleClickOutside = e => {
+    const { onClickOutside } = this.props;
+    const tetherDropNode = this.getTetherDropNode();
+
+    if (onClickOutside && tetherDropNode && !tetherDropNode.contains(e.target)) {
+      onClickOutside(e);
+    }
+  }
+
+  destroyDrop() {
+    if (this.tetherDrop) {
+      this.tetherDrop.destroy(); // this also cleans up the drop DOM node
+      delete this.tetherDrop;
+    }
+  }
+
   renderDrop() {
     const {
       position,
       content,
-      open,
       openOn,
       hoverOpenDelay,
       hoverCloseDelay,
       classPrefix
     } = this.props;
 
+    /** eslint new-cap **/
     const CoralDropContext = new Drop.createContext({
       classPrefix
     });
@@ -70,7 +98,7 @@ export default class TetherDropComponent extends Component {
     this.tetherDrop = new CoralDropContext({
       target: this.refs.target,
       position,
-      openOn: openOn,
+      openOn,
       hoverOpenDelay,
       hoverCloseDelay,
       content: ' ', // We'll manage the content ourselves
@@ -89,37 +117,9 @@ export default class TetherDropComponent extends Component {
 
   renderDropContent(content, classPrefix) {
     const tooltipNode = this.getTetherDropNode();
-    const tooltipContentNode = tooltipNode && tooltipNode.querySelector(`.${ classPrefix }-content`);
-    if (tooltipContentNode) {
-      unstable_renderSubtreeIntoContainer(this, content, tooltipContentNode);
-    }
-  }
-
-  setVisibility(visible) {
-    if (visible) {
-      this.tetherDrop.open();
-    } else {
-      this.tetherDrop.close();
-    }
-  }
-
-  getTetherDropNode() {
-    return this.tetherDrop && this.tetherDrop.drop;
-  }
-
-  destroyDrop() {
-    if (this.tetherDrop) {
-      this.tetherDrop.destroy(); // this also cleans up the drop DOM node
-      delete this.tetherDrop;
-    }
-  }
-
-  handleClickOutside = e => {
-    const { onClickOutside } = this.props;
-    const tetherDropNode = this.getTetherDropNode();
-
-    if (onClickOutside && tetherDropNode && !tetherDropNode.contains(e.target)) {
-      onClickOutside(e);
+    const contentNode = tooltipNode && tooltipNode.querySelector(`.${ classPrefix }-content`);
+    if (contentNode) {
+      ReactDOM.unstable_renderSubtreeIntoContainer(this, content, contentNode);
     }
   }
 
@@ -129,6 +129,6 @@ export default class TetherDropComponent extends Component {
       <div ref="target">
         { children }
       </div>
-    )
+    );
   }
 }

@@ -43,7 +43,7 @@ describe('TabList', () => {
   it('can be changed', () => {
     const spy = createSpy();
     const tree = shallow(
-      <TabList onChange={spy}>
+      <TabList onChange={ spy }>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
@@ -59,7 +59,7 @@ describe('TabList', () => {
   it('support custom keys property', () => {
     const spy = createSpy();
     const tree = shallow(
-      <TabList onChange={spy}>
+      <TabList onChange={ spy }>
         <div key="one" className="one">a</div>
         <div key="two" className="two">b</div>
       </TabList>

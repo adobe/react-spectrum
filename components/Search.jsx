@@ -95,12 +95,12 @@ export default class Search extends Component {
         <Textfield
           ref="input"
           className="coral-DecoratedTextfield-input"
-          value={value}
-          defaultValue={defaultValue}
-          disabled={disabled}
+          value={ value }
+          defaultValue={ defaultValue }
+          disabled={ disabled }
           { ...otherProps }
-          onKeyDown={this.handleTextKeyDown}
-          onChange={this.handleTextChange}
+          onKeyDown={ this.handleTextKeyDown }
+          onChange={ this.handleTextChange }
         />
         {
           !emptyText &&
@@ -110,8 +110,8 @@ export default class Search extends Component {
               iconSize="XS"
               square
               className="coral-DecoratedTextfield-button"
-              disabled={disabled}
-              onClick={this.handleClearText}
+              disabled={ disabled }
+              onClick={ this.handleClearText }
             />
         }
       </div>

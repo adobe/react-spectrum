@@ -53,15 +53,15 @@ storiesOf('SelectList', module)
 function render(props = {}) {
   return (
     <SelectList
-      style={{ textAlign: 'left' }}
+      style={ { textAlign: 'left' } }
       label="React"
-      onChange={action('change')}
-      onBlur={action('blur')}
-      onClose={action('close')}
-      onFocus={action('focus')}
-      onInputChange={action('inputChange')}
-      onOpen={action('open')}
-      onValueClick={action('valueClick')}
+      onChange={ action('change') }
+      onBlur={ action('blur') }
+      onClose={ action('close') }
+      onFocus={ action('focus') }
+      onInputChange={ action('inputChange') }
+      onOpen={ action('open') }
+      onValueClick={ action('valueClick') }
       { ...defaultProps}
       { ...props }
     />

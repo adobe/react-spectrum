@@ -13,7 +13,7 @@ storiesOf('Switch', module)
 function render(props = {}) {
   return (
     <Switch
-      onChange={action('change')}
+      onChange={ action('change') }
       { ...props }
     />
   );

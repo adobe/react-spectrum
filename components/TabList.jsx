@@ -91,9 +91,9 @@ export default class TabList extends React.Component {
           )
         }
         role="tablist"
-        aria-multiselectable={false}
+        aria-multiselectable={ false }
       >
-        {this.getItems()}
+        { this.getItems() }
       </div>
     );
   }

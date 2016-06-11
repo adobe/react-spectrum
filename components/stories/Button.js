@@ -26,7 +26,7 @@ function render(props = {}) {
     <Button
       icon="checkCircle"
       label="React"
-      onClick={action('click')}
+      onClick={ action('click') }
       { ...props }
     />
   );

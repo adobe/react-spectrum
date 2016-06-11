@@ -35,18 +35,18 @@ export default class Tab extends React.Component {
             className
           )
         }
-        onClick={onClick}
-        id={this.tabId}
+        onClick={ onClick }
+        id={ this.tabId }
         role="tab"
-        aria-invalid={false}
-        selected={selected}
-        aria-selected={selected}
-        disabled={disabled}
-        aria-disabled={disabled}
-        tabIndex={tabIndex || '0'}
+        aria-invalid={ false }
+        selected={ selected }
+        aria-selected={ selected }
+        disabled={ disabled }
+        aria-disabled={ disabled }
+        tabIndex={ tabIndex || '0' }
       >
-        {icon ? <Icon icon={icon} size="S" /> : null}
-        <span className="coral-Tab-label">{children}</span>
+        { icon ? <Icon icon={ icon } size="S" /> : null }
+        <span className="coral-Tab-label">{ children }</span>
       </div>
     );
   }

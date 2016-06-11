@@ -37,6 +37,6 @@ function changeAndAssertSize(tree, size) {
 }
 
 function assertSize(tree, size) {
-  expect(tree.type()).toBe(`h${size}`);
-  expect(tree.prop('className')).toBe(`coral-Heading coral-Heading--${size}`);
+  expect(tree.type()).toBe(`h${ size }`);
+  expect(tree.prop('className')).toBe(`coral-Heading coral-Heading--${ size }`);
 }

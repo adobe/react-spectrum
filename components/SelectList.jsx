@@ -94,20 +94,20 @@ export default class SelectList extends Component {
       }
       return (
         <div
-          key={option.value}
-          className={classNames('coral3-SelectList-item', {
+          key={ option.value }
+          className={ classNames('coral3-SelectList-item', {
             'is-highlighted': highlightedOption === option,
             'is-selected': selected,
             'is-disabled': disabled
-          })}
-          tabIndex={lastSelected === option ? '0' : '-1'}
+          }) }
+          tabIndex={ lastSelected === option ? '0' : '-1' }
           {...events}
           role="option"
-          disabled={disabled}
-          aria-selected={selected}
-          aria-disabled={disabled}
+          disabled={ disabled }
+          aria-selected={ selected }
+          aria-disabled={ disabled }
         >
-            {option.label}
+            { option.label }
         </div>
       );
     });
@@ -120,9 +120,9 @@ export default class SelectList extends Component {
       optionsWithGroups.push(
         <div
           className="coral-SelectList-group"
-          label={optionKey}
+          label={ optionKey }
           role="group"
-          aria-label={optionKey}
+          aria-label={ optionKey }
         />
       );
 
@@ -143,14 +143,14 @@ export default class SelectList extends Component {
     const containsGroups = !isArray(options);
     return (
       <div
-        className={classNames('coral3-SelectList', { 'is-focused': isFocused }, className)}
+        className={ classNames('coral3-SelectList', { 'is-focused': isFocused }, className) }
         {...otherProps}
         tabIndex="-1"
-        onFocus={this.handleFocus}
-        onBlur={this.handleBlur}
+        onFocus={ this.handleFocus }
+        onBlur={ this.handleBlur }
         role="listbox"
       >
-        {containsGroups ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
+        { containsGroups ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options) }
       </div>
     );
   }

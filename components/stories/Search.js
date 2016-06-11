@@ -14,9 +14,9 @@ function render(props = {}) {
     <Search
       placeholder="Enter text"
       { ...props }
-      onChange={action('change')}
-      onSubmit={action('submit')}
-      onClear={action('clear')}
+      onChange={ action('change') }
+      onSubmit={ action('submit') }
+      onClear={ action('clear') }
     />
   );
 }

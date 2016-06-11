@@ -18,15 +18,15 @@ export default ({
     <Heading size={ 2 } className="coral-Dialog-title">{ title }</Heading>
     {
       closable &&
-      <Button
-        variant="minimal"
-        onClick={ onClose }
-        className="coral-Dialog-closeButton"
-        square
-        size="M"
-        icon="close"
-        iconSize="XS"
-      />
+        <Button
+          variant="minimal"
+          onClick={ onClose }
+          className="coral-Dialog-closeButton"
+          square
+          size="M"
+          icon="close"
+          iconSize="XS"
+        />
     }
   </div>
-)
+);

@@ -15,6 +15,6 @@ export default ({
     }
     {...otherProps}
   >
-    {children}
+    { children }
   </thead>
 );

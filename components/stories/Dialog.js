@@ -23,17 +23,17 @@ function render(children, props = {}) {
       title="Title"
       open
       closable
-      onClose={action('close')}
+      onClose={ action('close') }
       { ...props }
     >
-      {children}
+      { children }
     </Dialog>
   );
 }
 
 const longMarkup = (
   <div>
-    <Heading size={2}>Really long content...</Heading>
+    <Heading size={ 2 }>Really long content...</Heading>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
