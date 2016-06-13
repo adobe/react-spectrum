@@ -51,7 +51,7 @@ export default class Search extends Component {
       value: e.target.value,
       emptyText: e.target.value === ''
     });
-    onChange();
+    onChange(e.target.value);
   }
 
   handleClearText = () => {
@@ -70,7 +70,7 @@ export default class Search extends Component {
       }
     }
     onClear();
-    onChange();
+    onChange('');
   }
 
   render() {
