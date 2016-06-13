@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import TBody from '../components/TBody';
+import TBody from '../lib/TBody';
 import { shallow } from 'enzyme';
 
 describe('TBody', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Tag from '../components/Tag';
+import Tag from '../lib/Tag';
 import { shallow } from 'enzyme';
 
 describe('Tag', () => {

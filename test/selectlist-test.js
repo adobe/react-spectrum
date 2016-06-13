@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import SelectList from '../components/SelectList';
+import SelectList from '../lib/SelectList';
 import { shallow } from 'enzyme';
 
 

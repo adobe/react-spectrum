@@ -1,7 +1,7 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
-import Button from '../components/Button';
-import Icon from '../components/Icon';
+import Button from '../lib/Button';
+import Icon from '../lib/Icon';
 import { shallow } from 'enzyme';
 
 describe('Button', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import THead from '../components/THead';
+import THead from '../lib/THead';
 import { shallow } from 'enzyme';
 
 describe('THead', () => {

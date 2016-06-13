@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Tab from '../components/Tab';
+import Tab from '../lib/Tab';
 import { shallow, mount } from 'enzyme';
 
 describe('Tab', () => {

@@ -1,5 +1,5 @@
 import expect from 'expect';
-import { getTetherPositionFromPlacement } from '../../components/utils/tether';
+import { getTetherPositionFromPlacement } from '../../lib/utils/tether';
 
 describe('tether', () => {
   describe('getTetherPositionFromPlacement', () => {

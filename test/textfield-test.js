@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Textfield from '../components/Textfield';
+import Textfield from '../lib/Textfield';
 import { shallow } from 'enzyme';
 
 describe('Textfield', () => {

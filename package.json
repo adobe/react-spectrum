@@ -9,13 +9,13 @@
   "private": true,
   "scripts": {
     "start": "start-storybook -p 9001",
-    "lint": "eslint \"components/**/*(.js|.jsx)\" \"test/**/*.js\"",
+    "lint": "eslint \"lib/**/*(.js|.jsx)\" \"test/**/*.js\"",
     "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
     "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
     "test:watch": "npm test -- --watch",
     "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura --report html _mocha -- -R dot test/.setup.js test/"
   },
-  "main": "components/index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.3.26",
