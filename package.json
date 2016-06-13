@@ -15,6 +15,7 @@
     "test:watch": "npm test -- --watch",
     "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura --report html _mocha -- -R dot test/.setup.js test/"
   },
+  "main": "components/index.js",
   "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.3.26",
