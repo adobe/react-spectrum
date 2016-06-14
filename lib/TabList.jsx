@@ -36,7 +36,7 @@ export default class TabList extends React.Component {
     }
   }
 
-  onClickItem(selectedKey) {
+  handleClickItem(selectedKey) {
     this.setSelectedKey(selectedKey);
   }
 
@@ -59,12 +59,12 @@ export default class TabList extends React.Component {
     return React.Children.map(children, (child, index) => {
       // If there is no key provide, use the index as default key
       const key = child.key || String(index);
-      const selected = selectedKey === key;
+      const selected = String(selectedKey) === key;
 
       const props = {
         selected,
         tabIndex: index,
-        onClick: this.onClickItem.bind(this, key)
+        onClick: this.handleClickItem.bind(this, key)
       };
 
       return React.cloneElement(child, props);
