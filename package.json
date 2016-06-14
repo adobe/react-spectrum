@@ -1,13 +1,16 @@
 {
-  "name": "react-coral",
-  "version": "0.0.1",
+  "name": "@coralui/react-coral",
+  "version": "0.0.4",
   "description": "React components using cloudui style guidelines from CoralUI",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.adobe.com/MarketingCloudDataPlatform/react-coral"
+    "url": "https://git.corp.adobe.com/React/react-coral"
   },
-  "private": true,
+  "publishConfig": {
+    "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-coralui-local"
+  },
   "scripts": {
+    "prepublish": "export NODE_ENV=production|| set NODE_ENV=production&& babel lib --out-dir dist",
     "start": "start-storybook -p 9001",
     "lint": "eslint \"lib/**/*(.js|.jsx)\" \"test/**/*.js\"",
     "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
@@ -15,7 +18,7 @@
     "test:watch": "npm test -- --watch",
     "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura --report html _mocha -- -R dot test/.setup.js test/"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
     "react-dom": "^0.14.0 || ^15.0.0"
@@ -52,8 +55,11 @@
   },
   "devDependencies": {
     "@kadira/storybook": "^1.28.1",
+    "babel-cli": "^6.10.1",
     "babel-core": "^6.9.1",
+    "babel-eslint": "^6.0.4",
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.9.0",
@@ -63,7 +69,6 @@
     "eslint-plugin-import": "^1.8.1",
     "eslint-plugin-jsx-a11y": "^1.2.3",
     "eslint-plugin-react": "^5.1.1",
-    "babel-eslint": "^6.0.4",
     "grunt": "^1.0.1",
     "ignore-styles": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
