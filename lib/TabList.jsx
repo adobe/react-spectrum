@@ -36,10 +36,6 @@ export default class TabList extends React.Component {
     }
   }
 
-  handleClickItem(selectedKey) {
-    this.setSelectedKey(selectedKey);
-  }
-
   setSelectedKey(selectedKey) {
     // If selectedKey is defined on props then this is a controlled component and we shouldn't
     // change our own state.
@@ -69,6 +65,10 @@ export default class TabList extends React.Component {
 
       return React.cloneElement(child, props);
     });
+  }
+
+  handleClickItem(selectedKey) {
+    this.setSelectedKey(selectedKey);
   }
 
   render() {
