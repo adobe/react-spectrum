@@ -12,13 +12,18 @@ export default class Tab extends React.Component {
     this.tabId = createId();
   }
 
+  handleClick = e => {
+    if (!this.props.disabled) {
+      this.props.onClick(e);
+    }
+  }
+
   render() {
     const {
       children,
       className,
       selected,
       disabled,
-      onClick,
       icon,
       tabIndex,
       ...otherProps
@@ -35,7 +40,7 @@ export default class Tab extends React.Component {
             className
           )
         }
-        onClick={ onClick }
+        onClick={ this.handleClick }
         id={ this.tabId }
         role="tab"
         aria-invalid={ false }
