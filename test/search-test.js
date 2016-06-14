@@ -6,7 +6,8 @@ import { shallow } from 'enzyme';
 describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
-    expect(tree.prop('className')).toBe('coral-DecoratedTextfield');
+    expect(tree.hasClass('coral-DecoratedTextfield')).toBe(true);
+    expect(tree.hasClass('coral-Search')).toBe(true);
 
     const icon = tree.find('.coral-DecoratedTextfield-icon');
     expect(icon.prop('className')).toBe('coral-DecoratedTextfield-icon');
@@ -102,6 +103,11 @@ describe('Search', () => {
     expect(tree.state('emptyText')).toBe(false);
   });
 
+  it('supports clearable', () => {
+    const tree = shallow(<Search defaultValue="foo" clearable={ false } />);
+    expect(findButton(tree).node).toNotExist();
+  });
+
   it('supports disabled', () => {
     const tree = shallow(<Search defaultValue="foo" disabled />);
     expect(findInput(tree).prop('disabled')).toBe(true);
@@ -110,7 +116,7 @@ describe('Search', () => {
 
   it('supports additional classNames', () => {
     const tree = shallow(<Search className="myClass" />);
-    expect(tree.prop('className')).toBe('coral-DecoratedTextfield myClass');
+    expect(tree.hasClass('myClass')).toBe(true);
   });
 
   it('supports additional properties', () => {

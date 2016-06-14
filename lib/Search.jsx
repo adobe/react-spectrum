@@ -7,6 +7,7 @@ import Icon from './Icon';
 
 export default class Search extends Component {
   static defaultProps = {
+    clearable: true,
     onChange: () => {},
     onClear: () => {},
     onSubmit: () => {}
@@ -75,6 +76,7 @@ export default class Search extends Component {
 
   render() {
     const {
+      clearable,
       disabled,
       defaultValue,
       className,
@@ -86,6 +88,7 @@ export default class Search extends Component {
       <div
         className={
           classNames(
+            'coral-Search',
             'coral-DecoratedTextfield',
             className
           )
@@ -103,7 +106,7 @@ export default class Search extends Component {
           onChange={ this.handleTextChange }
         />
         {
-          !emptyText &&
+          clearable && !emptyText &&
             <Button
               variant="minimal"
               icon="close"
