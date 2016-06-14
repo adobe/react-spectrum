@@ -31,9 +31,12 @@ describe('Tab', () => {
   });
 
   it('supports disabled', () => {
-    const tree = shallow(<Tab disabled />);
+    const spy = expect.createSpy();
+    const tree = shallow(<Tab onClick={ spy } disabled />);
     expect(tree.prop('disabled')).toBe(true);
     expect(tree.prop('aria-disabled')).toBe(true);
     expect(tree.prop('className')).toInclude('is-disabled');
+    tree.simulate('click');
+    expect(spy).toNotHaveBeenCalled();
   });
 });
