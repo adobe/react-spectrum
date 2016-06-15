@@ -1,20 +1,22 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function TR({
   className,
   children,
   ...otherProps
-}) => (
-  <tr
-    className={
-      classNames(
-        'coral-Table-row',
-        className
-      )
-    }
-    {...otherProps}
-  >
-    { children }
-  </tr>
-);
+}) {
+  return (
+    <tr
+      className={
+        classNames(
+          'coral-Table-row',
+          className
+        )
+      }
+      {...otherProps}
+    >
+      { children }
+    </tr>
+  );
+}

@@ -1,12 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default({
+export default function Heading({
   size = 1,
   children,
   className,
   ...otherProps
-}) => {
+}) {
   const Element = `h${ size }`;
 
   return (
@@ -23,4 +23,4 @@ export default({
       { children }
     </Element>
   );
-};
+}

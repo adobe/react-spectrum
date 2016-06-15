@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function Progress({
   value = 0, // number between 0 - 100
   size = 'M', // 'S', "M", "L"
   showLabel = false, // Whether the label should be shown or not
@@ -10,7 +10,7 @@ export default ({
   indeterminate = false,
   className,
   ...otherProps
-}) => {
+}) {
   const sizeClassPart = { S: 'small', M: 'medium', L: 'large' }[size];
   value = Math.min(Math.max(+value, 0), 100);
 
@@ -46,4 +46,4 @@ export default ({
       }
     </div>
   );
-};
+}

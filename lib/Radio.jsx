@@ -3,21 +3,23 @@ import classNames from 'classnames';
 
 import SwitchBase from './internal/SwitchBase';
 
-export default ({
+export default function Radio({
   className,
   ...otherProps
-}) => (
-  <SwitchBase
-    inputType="radio"
-    className={
-      classNames(
-        'coral-Radio',
-        className
-      )
-    }
-    inputClassName="coral-Radio-input"
-    markClassName="coral-Radio-checkmark"
-    labelClassName="coral-Radio-description"
-    { ...otherProps }
-  />
-);
+}) {
+  return (
+    <SwitchBase
+      inputType="radio"
+      className={
+        classNames(
+          'coral-Radio',
+          className
+        )
+      }
+      inputClassName="coral-Radio-input"
+      markClassName="coral-Radio-checkmark"
+      labelClassName="coral-Radio-description"
+      { ...otherProps }
+    />
+  );
+}

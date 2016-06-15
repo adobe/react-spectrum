@@ -1,20 +1,22 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function TH({
   className,
   children,
   ...otherProps
-}) => (
-  <th
-    className={
-      classNames(
-        'coral-Table-headerCell',
-        className
-      )
-    }
-    {...otherProps}
-  >
-    { children }
-  </th>
-);
+}) {
+  return (
+    <th
+      className={
+        classNames(
+          'coral-Table-headerCell',
+          className
+        )
+      }
+      {...otherProps}
+    >
+      { children }
+    </th>
+  );
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import Icon from './Icon';
 
-export default ({
+export default function Button({
   element = 'button',
   label,
   children,
@@ -15,7 +15,7 @@ export default ({
   block,
   className,
   ...otherProps
-}) => {
+}) {
   const Element = element;
   const sizes = {
     L: 'large',
@@ -45,4 +45,4 @@ export default ({
       <span className="coral-Button-label">{ label }{ children }</span>
     </Element>
   );
-};
+}
