@@ -19,10 +19,20 @@ export default class TabList extends React.Component {
 
     const {
       selectedKey,
-      defaultSelectedKey
+      defaultSelectedKey,
+      children
     } = props;
 
-    const currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelectedKey;
+    let firstSelectedItem;
+    React.Children.forEach(children, (child) => {
+      if (child.props.selected) {
+        firstSelectedItem = child.key;
+      }
+    });
+
+    const defaultSelected = firstSelectedItem || defaultSelectedKey;
+
+    const currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelected;
     this.state = {
       selectedKey: currentSelectedKey
     };
@@ -57,10 +67,14 @@ export default class TabList extends React.Component {
       const key = child.key || String(index);
       const selected = String(selectedKey) === key;
 
+      const tabListOnClick = this.onClickItem.bind(this, key);
       const props = {
         selected,
         tabIndex: index,
-        onClick: this.handleClickItem.bind(this, key)
+        onClick: () => {
+          if (child.props.onClick) { child.props.onClick(key); }
+          tabListOnClick();
+        }
       };
 
       return React.cloneElement(child, props);

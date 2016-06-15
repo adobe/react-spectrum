@@ -1,6 +1,6 @@
 {
   "name": "@coralui/react-coral",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "React components using cloudui style guidelines from CoralUI",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-coralui-local"
   },
   "scripts": {
-    "prepublish": "babel lib --out-dir dist",
+    "prepublish": "export NODE_ENV=production|| set NODE_ENV=production&& babel lib --out-dir dist",
     "start": "start-storybook -p 9001",
     "lint": "eslint \"lib/**/*(.js|.jsx)\" \"test/**/*.js\"",
     "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
