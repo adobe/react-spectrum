@@ -46,6 +46,10 @@ export default class TabList extends React.Component {
     }
   }
 
+  onClickItem(selectedKey) {
+    this.setSelectedKey(selectedKey);
+  }
+
   setSelectedKey(selectedKey) {
     // If selectedKey is defined on props then this is a controlled component and we shouldn't
     // change our own state.

@@ -4,7 +4,10 @@ import classNames from 'classnames';
 export default class SwitchBase extends Component {
   static defaultProps = {
     renderLabel: true,
-    defaultChecked: false,
+    // defaultChecked is undefined by default so we can repect
+    // the value that is passed in without erroneously putting
+    // both checked and defaultChecked on the input
+    defaultChecked: undefined,
     disabled: false,
     required: false,
     invalid: false,
@@ -21,7 +24,7 @@ export default class SwitchBase extends Component {
     } = props;
 
     this.state = {
-      checked: checked !== undefined ? checked : defaultChecked
+      checked: checked !== undefined ? checked : defaultChecked || false
     };
   }
 
