@@ -29,11 +29,16 @@ export default class Dialog extends Component {
       open,
       title,
       children,
-      footer,
       className,
       onClose,
       ...otherProps
     } = this.props;
+    const normalizedChildren = {};
+    React.Children.forEach(children, ((child) => {
+      if (child.props) {
+        normalizedChildren[child.type] = child.props.children;
+      }
+    }));
 
     return (
       <TetherComponent
@@ -59,16 +64,17 @@ export default class Dialog extends Component {
         >
           <div className="coral-Dialog-wrapper">
             {
-              title &&
+              (title || normalizedChildren['dialog-header']) &&
                 <DialogHeader
-                  title={ title }
                   icon={ icon }
                   closable={ closable }
                   onClose={ onClose }
-                />
+                >
+                  { title || normalizedChildren['dialog-header'] }
+                </DialogHeader>
             }
-            <div className="coral-Dialog-content">{ children }</div>
-            <DialogFooter onClose={ onClose }>{ footer }</DialogFooter>
+            <div className="coral-Dialog-content">{ normalizedChildren['dialog-content'] }</div>
+            <DialogFooter onClose={ onClose }>{ normalizedChildren['dialog-footer'] }</DialogFooter>
           </div>
         </div>
       </TetherComponent>
@@ -100,6 +106,34 @@ const DialogBackdrop = ({
   );
 };
 
+// const addClose = (children)=>{
+//   return React.Children.map((child) =>{
+//     if (child.props && child.props.children) {
+//       addClose(child.props.children)
+//     }else {
+//       return child;
+//     }
+//   });
+// }
+
+function addClose(children, onClose) {
+  return React.Children.map(children, child => {
+    if (React.isValidElement(child) && child.props && child.props['close-dialog']) {
+      // String has no Prop
+      return React.cloneElement(child, {
+        children: addClose(child.props.children),
+        onClose: (...args) => {
+          if (child.props.onClick) {
+            child.props.onClick.apply(child, args);
+          }
+          onClose.apply(child, args);
+        }
+      });
+    }
+    return child;
+  });
+}
+
 const DialogFooter = ({
   children,
   onClose
@@ -107,7 +141,7 @@ const DialogFooter = ({
   return (
     <div className="coral-Dialog-footer">
       {
-        children || <Button variant="primary" label="OK" onClick={ onClose } />
+        children ? addClose(children) : <Button variant="primary" label="OK" onClick={ onClose } />
       }
     </div>
   );
