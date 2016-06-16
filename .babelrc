@@ -6,6 +6,11 @@
     },
     "test": {
       "presets": []
+    },
+    "production": {
+      "plugins": [
+        "./helpers/stylusToScript.js"
+      ]
     }
   },
   "plugins": [
