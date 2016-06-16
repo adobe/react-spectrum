@@ -4,14 +4,14 @@ import TetherComponent from 'react-tether';
 import Portal from 'react-portal';
 
 import DialogHeader from './internal/DialogHeader';
-import Button from './Button';
+import DialogFooter from './internal/DialogFooter';
 import { getVariantIcon } from './utils/icon-variant';
 
 const BACKDROP_NONE = 'none';
 const BACKDROP_MODAL = 'modal';
 const BACKDROP_STATIC = 'static';
 
-export default class Dialog extends Component {
+class Dialog extends Component {
   static defaultProps = {
     backdrop: BACKDROP_MODAL, // none, modal, static
     closable: false,
@@ -27,7 +27,6 @@ export default class Dialog extends Component {
       variant,
       icon = getVariantIcon(variant || 'default'),
       open,
-      title,
       children,
       className,
       onClose,
@@ -35,8 +34,8 @@ export default class Dialog extends Component {
     } = this.props;
     const normalizedChildren = {};
     React.Children.forEach(children, ((child) => {
-      if (child.props) {
-        normalizedChildren[child.type] = child.props.children;
+      if (typeof child.type === 'function') {
+        normalizedChildren[child.type.name] = child;
       }
     }));
 
@@ -45,6 +44,7 @@ export default class Dialog extends Component {
         attachment="middle center"
         target={ document.body }
         targetModifier="visible"
+        style={ { zIndex: 10010 } }
       >
         <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
         <div
@@ -64,17 +64,28 @@ export default class Dialog extends Component {
         >
           <div className="coral-Dialog-wrapper">
             {
-              (title || normalizedChildren['dialog-header']) &&
+              normalizedChildren.DialogHeader ?
+                React.cloneElement(normalizedChildren.DialogHeader, {
+                  icon,
+                  closable,
+                  onClose,
+                  ...normalizedChildren.DialogHeader.props
+                }) :
                 <DialogHeader
                   icon={ icon }
                   closable={ closable }
                   onClose={ onClose }
-                >
-                  { title || normalizedChildren['dialog-header'] }
-                </DialogHeader>
+                />
             }
-            <div className="coral-Dialog-content">{ normalizedChildren['dialog-content'] }</div>
-            <DialogFooter onClose={ onClose }>{ normalizedChildren['dialog-footer'] }</DialogFooter>
+            {
+              normalizedChildren.DialogContent ||
+              <DialogContent>{ children }</DialogContent>
+            }
+            {
+              normalizedChildren.DialogFooter ?
+                React.cloneElement(normalizedChildren.DialogFooter, { onClose }) :
+                <DialogFooter onClose={ onClose } />
+            }
           </div>
         </div>
       </TetherComponent>
@@ -101,48 +112,25 @@ const DialogBackdrop = ({
           })
         }
         onClick={ onClose }
+        style={ { zIndex: 10009 } }
       />
     </Portal>
   );
 };
 
-// const addClose = (children)=>{
-//   return React.Children.map((child) =>{
-//     if (child.props && child.props.children) {
-//       addClose(child.props.children)
-//     }else {
-//       return child;
-//     }
-//   });
-// }
-
-function addClose(children, onClose) {
-  return React.Children.map(children, child => {
-    if (React.isValidElement(child) && child.props && child.props['close-dialog']) {
-      // String has no Prop
-      return React.cloneElement(child, {
-        children: addClose(child.props.children),
-        onClose: (...args) => {
-          if (child.props.onClick) {
-            child.props.onClick.apply(child, args);
-          }
-          onClose.apply(child, args);
-        }
-      });
-    }
-    return child;
-  });
-}
-
-const DialogFooter = ({
+function DialogContent({
+  className,
   children,
-  onClose
-}) => {
+  ...otherProps
+}) {
   return (
-    <div className="coral-Dialog-footer">
-      {
-        children ? addClose(children) : <Button variant="primary" label="OK" onClick={ onClose } />
-      }
+    <div className={ classNames('coral-Dialog-content', className) } { ...otherProps }>
+      { children }
     </div>
   );
-};
+}
+
+Dialog.Header = DialogHeader;
+Dialog.Footer = DialogFooter;
+Dialog.Content = DialogContent;
+export default Dialog;

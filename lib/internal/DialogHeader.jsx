@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import Heading from '../Heading';
 import Button from '../Button';
@@ -9,10 +10,12 @@ export default function DialogHeader({
   icon,
   closable,
   onClose,
-  children
+  children,
+  className,
+  ...otherProps
 }) {
   return (
-    <div className="coral-Dialog-header">
+    <div className={ classNames('coral-Dialog-header', className) } {...otherProps}>
       {
         icon &&
         <Icon className="coral-Dialog-typeIcon" icon={ icon } size="S" />
