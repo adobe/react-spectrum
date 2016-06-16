@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function Textarea({
   className,
   quiet,
   disabled = false,
@@ -9,7 +9,7 @@ export default ({
   invalid = false,
   readOnly = false,
   ...otherProps
-}) => {
+}) {
   return (
     <textarea
       className={
@@ -34,4 +34,4 @@ export default ({
       { ...otherProps }
     />
   );
-};
+}

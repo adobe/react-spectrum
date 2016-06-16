@@ -1,12 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function Icon({
   icon, // add, bell, heart, star
   size = 'M', // XS, S, M, L
   className,
   ...otherProps
-}) => {
+}) {
   let isColorIcon = false;
 
   if (icon.indexOf('Color') >= 0) {
@@ -30,4 +30,4 @@ export default ({
       { ...otherProps }
     />
   );
-};
+}

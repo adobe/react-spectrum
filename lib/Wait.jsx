@@ -1,12 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default ({
+export default function Wait({
   large = false,
   centered = false,
   className,
   ...otherProps
-}) => {
+}) {
   return (
     <div
       className={
@@ -22,4 +22,4 @@ export default ({
       { ...otherProps }
     />
   );
-};
+}
