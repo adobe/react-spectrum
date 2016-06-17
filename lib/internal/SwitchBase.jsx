@@ -79,6 +79,9 @@ export default class SwitchBase extends Component {
     } = this.props;
     const { checked } = this.state;
 
+    // Don't let native browser change events bubble up to the root div. Otherwise we double dispatch.
+    delete otherProps.onChange;
+
     return (
       <div
         className={
