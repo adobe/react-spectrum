@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import createId from './utils/createId';
 import Icon from './Icon';
@@ -6,7 +6,7 @@ import Icon from './Icon';
 /**
  * header: A string or node which will be placed at the top of the accordion item.
  */
-export default class Tab extends React.Component {
+export default class Tab extends Component {
   constructor(props) {
     super(props);
     this.tabId = createId();

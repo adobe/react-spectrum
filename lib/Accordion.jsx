@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -16,7 +16,7 @@ import classNames from 'classnames';
  * onChange: A function that will be called when an AccordionItem is selected (opened) or
  * deselected (closed). It will be passed the updated selected key.
  */
-export default class Accordion extends React.Component {
+export default class Accordion extends Component {
   constructor(props) {
     super(props);
 

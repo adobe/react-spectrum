@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * onChange: A function that will be called when an Tab is selected or deselected. It will be passed
  * the updated selected key.
  */
-export default class TabList extends React.Component {
+export default class TabList extends Component {
   constructor(props) {
     super(props);
 
