@@ -4,3 +4,7 @@ coverage
 .idea/*
 test-reports.xml
 lib
+npm-debug.log
+
+# editor project and temp files
+*.sublime*
