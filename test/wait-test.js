@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Wait from '../components/Wait';
+import Wait from '../src/Wait';
 import { shallow } from 'enzyme';
 
 describe('Wait', () => {

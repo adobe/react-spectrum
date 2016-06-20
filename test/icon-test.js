@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Icon from '../components/Icon';
+import Icon from '../src/Icon';
 import { shallow } from 'enzyme';
 
 describe('Icon', () => {

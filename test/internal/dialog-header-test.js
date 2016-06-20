@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
-import DialogHeader from '../../components/internal/DialogHeader';
-import Icon from '../../components/Icon';
-import Button from '../../components/Button';
+import DialogHeader from '../../src/internal/DialogHeader';
+import Icon from '../../src/Icon';
+import Button from '../../src/Button';
 import { shallow } from 'enzyme';
 
 describe('DialogHeader', () => {

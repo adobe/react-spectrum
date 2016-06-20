@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import TD from '../components/TD';
+import TD from '../src/TD';
 import { shallow } from 'enzyme';
 
 describe('TD', () => {

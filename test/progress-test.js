@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Progress from '../components/Progress';
+import Progress from '../src/Progress';
 import { shallow } from 'enzyme';
 
 describe('Progress', () => {

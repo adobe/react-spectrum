@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Table from '../components/Table';
+import Table from '../src/Table';
 import { shallow } from 'enzyme';
 
 describe('Table', () => {

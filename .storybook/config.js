@@ -4,9 +4,9 @@ import './storybook.styl';
 import '../css/coral.css';
 
 function loadStories() {
-  var storiesContext = require.context('../components/stories', true, /^(.*\.(js|jsx))$/);
+  var storiesContext = require.context('../src/stories', true, /^(.*\.(js|jsx))$/);
   storiesContext.keys().forEach(storiesContext);
-  //require('../components/stories/');
+  //require('../src/stories/');
 }
 
 configure(loadStories, module);

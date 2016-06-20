@@ -1,5 +1,5 @@
 # react-coral
-React components using cloudui style guidelines from CoralUI
+React  using cloudui style guidelines from CoralUI
 
 [![Build Status][status-image]][status-url] [![Coverage Status][coverage-image]][coverage-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url] [![Storybook][storybook-image]][storybook-url]
 
@@ -10,7 +10,7 @@ npm install
 ```javascript
 npm start
 ```
-Navigate to http://localhost:9001 in your browser to see storyboards which demonstrate how the components work.  Hot module reloading is also supported.  Change some files and watch the storyboards update automatically.
+Navigate to http://localhost:9001 in your browser to see storyboards which demonstrate how the  work.  Hot module reloading is also supported.  Change some files and watch the storyboards update automatically.
 ### Running Tests
 Run tests once
 ```javascript

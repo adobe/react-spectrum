@@ -1,6 +1,6 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
-import TabList from '../components/TabList';
+import TabList from '../src/TabList';
 import { shallow } from 'enzyme';
 
 describe('TabList', () => {
@@ -71,18 +71,41 @@ describe('TabList', () => {
     expect(spy).toHaveBeenCalledWith('two');
   });
 
-  it('supports selectedKey', () => {
-    const tree = shallow(
-      <TabList selectedKey="1">
+  describe('selectedKey', () => {
+    const renderTabListWithSelectedKey = key => shallow(
+      <TabList selectedKey={ key }>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
     );
-    const child = tree.find('[selected=true]');
 
-    expect(child.length).toBe(1);
-    expect(child.node.props.className).toBe('two');
+    const assertChildTwoSelected = tree => {
+      const child = tree.find('[selected=true]');
+      expect(child.length).toBe(1);
+      expect(child.node.props.className).toBe('two');
+    };
+
+    it('supports string index', () => {
+      const tree = renderTabListWithSelectedKey('1');
+      assertChildTwoSelected(tree);
+    });
+
+    it('supports integer index', () => {
+      const tree = renderTabListWithSelectedKey(1);
+      assertChildTwoSelected(tree);
+    });
+
+    it('support child keys', () => {
+      const tree = shallow(
+        <TabList selectedKey="bar">
+          <div key="foo" className="one">a</div>
+          <div key="bar" className="two">b</div>
+        </TabList>
+      );
+      assertChildTwoSelected(tree);
+    });
   });
+
 
   it('supports defaultSelectedKey', () => {
     const tree = shallow(

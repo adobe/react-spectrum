@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import SwitchBase from '../../components/internal/SwitchBase';
+import SwitchBase from '../../src/internal/SwitchBase';
 import { shallow } from 'enzyme';
 
 describe('SwitchBase', () => {
@@ -44,7 +44,8 @@ describe('SwitchBase', () => {
     expect(findInput(tree).prop('defaultChecked')).toBe(true);
     expectChecked(tree, true);
     tree = shallow(<SwitchBase checked />);
-    expect(findInput(tree).prop('defaultChecked')).toBe(false);
+    expect(findInput(tree).prop('checked')).toBe(true);
+    expect(findInput(tree).prop('defaultChecked')).toBe(undefined);
     expectChecked(tree, true);
   });
 

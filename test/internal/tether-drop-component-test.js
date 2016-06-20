@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import TetherDropComponent from '../../components/internal/TetherDropComponent';
+import TetherDropComponent from '../../src/internal/TetherDropComponent';
 import { render, unmountComponentAtNode } from 'react-dom';
 
 describe('TetherDropComponent', () => {
