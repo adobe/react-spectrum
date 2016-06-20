@@ -3,4 +3,4 @@ node_modules
 coverage
 .idea/*
 test-reports.xml
-dist
+lib

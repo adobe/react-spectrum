@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Textarea from '../lib/Textarea';
+import Textarea from '../src/Textarea';
 import { shallow } from 'enzyme';
 
 describe('Textarea', () => {

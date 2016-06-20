@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Switch from '../lib/Switch';
+import Switch from '../src/Switch';
 import { shallow } from 'enzyme';
 
 describe('Switch', () => {

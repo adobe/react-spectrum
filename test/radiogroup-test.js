@@ -1,7 +1,7 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
-import RadioGroup from '../lib/RadioGroup';
-import Radio from '../lib/Radio';
+import RadioGroup from '../src/RadioGroup';
+import Radio from '../src/Radio';
 import { shallow } from 'enzyme';
 
 describe('RadioGroup', () => {

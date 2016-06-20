@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Search from '../lib/Search';
+import Search from '../src/Search';
 import { shallow } from 'enzyme';
 
 describe('Search', () => {

@@ -1,5 +1,5 @@
 import expect from 'expect';
-import { getVariantIcon } from '../../lib/utils/icon-variant';
+import { getVariantIcon } from '../../src/utils/icon-variant';
 
 describe('icon-variant', () => {
   describe('getVariantIcon', () => {

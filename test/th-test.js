@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import TH from '../lib/TH';
+import TH from '../src/TH';
 import { shallow } from 'enzyme';
 
 describe('TH', () => {

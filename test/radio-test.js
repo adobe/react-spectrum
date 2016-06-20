@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Radio from '../lib/Radio';
+import Radio from '../src/Radio';
 import { shallow } from 'enzyme';
 
 describe('Radio', () => {

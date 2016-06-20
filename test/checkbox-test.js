@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import Checkbox from '../lib/Checkbox';
+import Checkbox from '../src/Checkbox';
 import { shallow } from 'enzyme';
 
 describe('Checkbox', () => {

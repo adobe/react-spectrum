@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Popover from '../lib/Popover';
-import DialogHeader from '../lib/internal/DialogHeader';
+import Popover from '../src/Popover';
+import DialogHeader from '../src/internal/DialogHeader';
 import { shallow } from 'enzyme';
 
 describe('Popover', () => {
