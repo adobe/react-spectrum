@@ -30,6 +30,14 @@ export default class RadioGroup extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if ('selectedValue' in nextProps) {
+      this.setState({
+        selectedValue: nextProps.selectedValue
+      });
+    }
+  }
+
   setSelectedValue(value) {
     if (!('selectedValue' in this.props)) {
       this.setState({
