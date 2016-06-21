@@ -15,7 +15,7 @@ export default function DialogHeader({
   ...otherProps
 }) {
   return (
-    <div className={ classNames('coral-Dialog-header', className) } {...otherProps}>
+    <div className={ classNames('coral-Dialog-header', className) } { ...otherProps }>
       {
         icon &&
         <Icon className="coral-Dialog-typeIcon" icon={ icon } size="S" />

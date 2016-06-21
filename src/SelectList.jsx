@@ -101,7 +101,7 @@ export default class SelectList extends Component {
             'is-disabled': disabled
           }) }
           tabIndex={ lastSelected === option ? '0' : '-1' }
-          {...events}
+          { ...events }
           role="option"
           disabled={ disabled }
           aria-selected={ selected }
@@ -144,7 +144,7 @@ export default class SelectList extends Component {
     return (
       <div
         className={ classNames('coral3-SelectList', { 'is-focused': isFocused }, className) }
-        {...otherProps}
+        { ...otherProps }
         tabIndex="-1"
         onFocus={ this.handleFocus }
         onBlur={ this.handleBlur }

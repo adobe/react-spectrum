@@ -49,7 +49,7 @@ function render(props = {}) {
       onInputChange={ action('inputChange') }
       onOpen={ action('open') }
       onValueClick={ action('valueClick') }
-      { ...defaultProps}
+      { ...defaultProps }
       { ...props }
     />
   );

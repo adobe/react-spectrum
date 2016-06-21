@@ -14,7 +14,7 @@ export default function THead({
           className
         )
       }
-      {...otherProps}
+      { ...otherProps }
     >
       { children }
     </thead>

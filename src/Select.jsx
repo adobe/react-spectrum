@@ -52,7 +52,7 @@ export default class Select extends Component {
     return (
       <button
         tabIndex="0"
-        {...props}
+        { ...props }
         className={ classNames(
           props.className,
           'coral-Button',
@@ -87,7 +87,7 @@ export default class Select extends Component {
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
         } }
         valueComponent={ this.props.multiple ? this.valuesComponent : this.valueComponent }
-        {...this.props}
+        { ...this.props }
         clearable={ false }
         autosize={ false }
         searchable={ false }

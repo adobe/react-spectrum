@@ -16,6 +16,6 @@ storiesOf('Tab', module)
 
 function render(props = {}) {
   return (
-    <Tab {...props} onClick={ action('onClick') }>Tab 1</Tab>
+    <Tab { ...props } onClick={ action('onClick') }>Tab 1</Tab>
   );
 }
