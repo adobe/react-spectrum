@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 
 
-// import './Select.styl';
 function isArray(subjectVar) {
   return Object.prototype.toString.call(subjectVar) === '[object Array]';
 }
@@ -81,8 +80,7 @@ export default class SelectList extends Component {
 
     return options.map((option) => {
       const disabled = this.props.disabled || option.disabled;
-      let selected = value === option;
-      selected = multiple ?
+      const selected = multiple ?
         this.isSelected(option) :
         value === option.value;
 
