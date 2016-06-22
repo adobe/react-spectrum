@@ -61,7 +61,6 @@
     "eslint-plugin-react": "^5.1.1",
     "expect": "^1.20.1",
     "file-loader": "^0.8.5",
-    "grunt": "^1.0.1",
     "ignore-styles": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
     "istanbul-cobertura-badger": "^1.2.1",
