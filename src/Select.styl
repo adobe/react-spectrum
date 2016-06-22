@@ -3,46 +3,46 @@
 //coralui styles.
 
 .coral3-Select
-	.Select-control
-		position: relative
-		padding-right: .625rem
-		padding-left: .625rem
-	&.is-openBelow:not(.coral3-Select--quiet)
-		.Select-control
-			//these should live in coralui
-			//they currently have these styles applied based on
-			//button[is=coral-button]
-			border-bottom-right-radius: 0
-			border-bottom-left-radius: 0
-			border-bottom: none
-	.Select-menu
-		max-height: 252px
-	.Select-values
-		text-align: left
-		position: absolute
-		left: 0px
-	&.is-invalid:not([disabled]):not([readonly])
-		.Select-control
-			border-color: #e14132
-			color: #e14132
-	.Select-menu-outer
-		width: 100%
-		text-align: left
-	&.coral3-Select--quiet
-		width: auto
-		.Select-menu-outer
-			left: 10px
-			width: auto
-			min-width: 200px
-		&.is-focused, &.is-selected, &:active, &:focus
-			.Select-control
-				background: 0 0
-				color: #326ec8
-		.Select-control
-			display: block
-			border-color: transparent
-			background: 0 0
-			:hover
-				text-decoration: underline
-			&.is-selected, &:hover
-				background: 0 0
+  .Select-control
+    position: relative
+    padding-right: .625rem
+    padding-left: .625rem
+  &.is-openBelow:not(.coral3-Select--quiet)
+    .Select-control
+      //these should live in coralui
+      //they currently have these styles applied based on
+      //button[is=coral-button]
+      border-bottom-right-radius: 0
+      border-bottom-left-radius: 0
+      border-bottom: none
+  .Select-menu
+    max-height: 252px
+  .Select-values
+    text-align: left
+  &.is-invalid:not([disabled]):not([readonly])
+    .Select-control
+      border-color: #e14132
+      color: #e14132
+  .Select-menu-outer
+    width: 100%
+    text-align: left
+    top: 2.313rem
+    z-index: 2
+  &.coral3-Select--quiet
+    width: auto
+    .Select-menu-outer
+      left: 10px
+      width: auto
+      min-width: 200px
+    &.is-focused, &.is-selected, &:active, &:focus
+      .Select-control
+        background: 0 0
+        color: #326ec8
+    .Select-control
+      display: block
+      border-color: transparent
+      background: 0 0
+      :hover
+        text-decoration: underline
+      &.is-selected, &:hover
+        background: 0 0

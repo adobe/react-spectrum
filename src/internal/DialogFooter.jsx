@@ -28,7 +28,7 @@ export default function DialogFooter({
   ...otherProps
 }) {
   return (
-    <div className={ classNames('coral-Dialog-footer', className) } {...otherProps}>
+    <div className={ classNames('coral-Dialog-footer', className) } { ...otherProps }>
       {
         children ?
           addClose(children, onClose) :

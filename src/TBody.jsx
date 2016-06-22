@@ -14,7 +14,7 @@ export default function TBody({
           className
         )
       }
-      {...otherProps}
+      { ...otherProps }
     >
       { children }
     </tbody>

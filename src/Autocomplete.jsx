@@ -50,7 +50,7 @@ export default class Autocomplete extends Component {
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         valueComponent={ this.props.multiple && this.valueComponent }
-        {...this.props}
+        { ...this.props }
       />
     );
   }

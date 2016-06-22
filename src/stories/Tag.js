@@ -21,7 +21,7 @@ function render(props = {}, children = 'Cool Tag') {
       <Tag
         value="testValue"
         onClose={ action('close') }
-        {...props}
+        { ...props }
       >
         { props.children || children }
       </Tag>

@@ -19,7 +19,7 @@ storiesOf('TabList', module)
 
 function render(props = {}) {
   return (
-    <TabList {...props} onChange={ action('onChange') }>
+    <TabList { ...props } onChange={ action('onChange') }>
       <Tab>Tab 1</Tab>
       <Tab selected>Tab 2</Tab>
     </TabList>
