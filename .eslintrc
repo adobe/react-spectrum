@@ -15,7 +15,7 @@
     "template-curly-spacing": ["error", "always"],
     "react/prop-types": 0,
     "react/jsx-no-bind": 0,
-    "react/jsx-pascal-case": [2, { ignore: ['TR', 'TH', 'TD'] }],
+    "react/jsx-pascal-case": [2, { "ignore": ["TR", "TH", "TD"] }],
     "react/jsx-curly-spacing": [2, "always"],
     "react/jsx-indent": 0
   }
