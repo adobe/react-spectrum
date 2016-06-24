@@ -19,6 +19,7 @@ export Tab from './Tab';
 export Table from './Table';
 export TabList from './TabList';
 export Tag from './Tag';
+export TagList from './TagList';
 export TBody from './TBody';
 export TD from './TD';
 export Textarea from './Textarea';
