@@ -7,36 +7,28 @@ import './Select.styl';
 
 export default class Select extends Component {
   valuesComponent({ value, onClick, onRemove, disabled }) {
-    return {
-      render() {
-        return (
-          <Tag
-            onClose={ (e) => onRemove(value, e) }
-            closable
-            disabled={ disabled }
-            onMouseDown={ (e) => onClick(value, e) }
-          >
-            { value.label }
-          </Tag>
-        );
-      }
-    };
+    return (
+      <Tag
+        onClose={ (e) => onRemove(value, e) }
+        closable
+        disabled={ disabled }
+        onMouseDown={ (e) => onClick(value, e) }
+      >
+        { value.label }
+      </Tag>
+    );
   }
 
   valueComponent({ value, disabled }) {
-    return {
-      render() {
-        return (
-          <div
-            className="coral3-Select-label"
-            closable
-            disabled={ disabled }
-          >
-            { value.label }
-          </div>
-        );
-      }
-    };
+    return (
+      <div
+        className="coral3-Select-label"
+        closable
+        disabled={ disabled }
+      >
+        { value.label }
+      </div>
+    );
   }
 
   arrowRenderer() {
