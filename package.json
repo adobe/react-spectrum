@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@kadira/storybook": "^1.35.2",
+    "@kadira/react-storybook-addon-info": "^3.0.7",
     "babel": "^6.5.2",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.3.26",
