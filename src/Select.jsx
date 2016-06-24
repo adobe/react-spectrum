@@ -85,6 +85,7 @@ export default class Select extends Component {
         clearable={ false }
         autosize={ false }
         searchable={ false }
+        autoBlur
       />
     );
   }
