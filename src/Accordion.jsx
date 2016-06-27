@@ -109,6 +109,7 @@ export default class Accordion extends Component {
   render() {
     const {
       className,
+      variant,
       multiselectable,
       ...otherProps
     } = this.props;
@@ -119,6 +120,10 @@ export default class Accordion extends Component {
         className={
           classNames(
             'coral3-Accordion',
+            {
+              'coral3-Accordion--quiet': variant === 'quiet',
+              'coral3-Accordion--large': variant === 'large'
+            },
             className
           )
         }
@@ -132,5 +137,6 @@ export default class Accordion extends Component {
 
 Accordion.defaultProps = {
   onChange() {},
-  multiselectable: false
+  multiselectable: false,
+  variant: ''
 };
