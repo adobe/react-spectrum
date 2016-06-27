@@ -6,21 +6,17 @@ import Tag from './Tag';
 import './Autocomplete.styl';
 
 export default class Autocomplete extends Component {
-  valueComponent({ value, onClick, onRemove, disabled }) {
-    return {
-      render() {
-        return (
-          <Tag
-            onClose={ (e) => onRemove(value, e) }
-            closable
-            disabled={ disabled }
-            onMouseDown={ (e) => onClick(value, e) }
-          >
-            { value.label }
-          </Tag>
-        );
-      }
-    };
+  valuesComponent({ value, onClick, onRemove, disabled }) {
+    return (
+      <Tag
+        onClose={ (e) => onRemove(value, e) }
+        closable
+        disabled={ disabled }
+        onMouseDown={ (e) => onClick(value, e) }
+      >
+        { value.label }
+      </Tag>
+    );
   }
 
   render() {
@@ -30,6 +26,8 @@ export default class Autocomplete extends Component {
         className={
           classNames(this.props.className, 'coral-Autocomplete')
         }
+        tabSelectsValue={ false }
+        autoBlur
         clearable={ false }
         autosize={ false }
         multi={ this.props.multiple || this.props.multi }
@@ -53,7 +51,8 @@ export default class Autocomplete extends Component {
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
-        valueComponent={ this.props.multiple && this.valueComponent }
+        onValueClick={ this.props.onValueClick || (() => {}) }
+        valueComponent={ (this.props.multiple || this.props.multi) && this.valuesComponent }
       />
     );
   }
