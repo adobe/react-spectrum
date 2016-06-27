@@ -81,7 +81,9 @@ export default class Select extends Component {
           'Select-option': 'coral3-SelectList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
         } }
-        valueComponent={ this.props.multiple ? this.valuesComponent : this.valueComponent }
+        valueComponent={
+          (this.props.multiple || this.props.multi) ? this.valuesComponent : this.valueComponent
+        }
         clearable={ false }
         autosize={ false }
         searchable={ false }
