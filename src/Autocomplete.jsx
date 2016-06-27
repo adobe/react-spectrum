@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { Component } from 'react';
 import ReactSelect from 'react-select';
 import Tag from './Tag';
@@ -25,7 +26,10 @@ export default class Autocomplete extends Component {
   render() {
     return (
       <ReactSelect
-        className="coral-Autocomplete"
+        { ...this.props }
+        className={
+          classNames(this.props.className, 'coral-Autocomplete')
+        }
         clearable={ false }
         autosize={ false }
         multi={ this.props.multiple || this.props.multi }
@@ -50,7 +54,6 @@ export default class Autocomplete extends Component {
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         valueComponent={ this.props.multiple && this.valueComponent }
-        { ...this.props }
       />
     );
   }
