@@ -25,16 +25,17 @@ const selectedValue = [
 
 
 storiesOf('Autocomplete', module)
-  .add('Default', () => (render({ ...defaultProps })))
-  .add('icon: filter', () => (render({ icon: 'filter' })))
-  .add('placeholder: other placeholder', () => (render({ placeholder: 'other placeholder' })))
-  .add('multiple: true', () => (render({ multiple: true, value: selectedValue })))
-  .add('required: true', () => (render({ required: true })))
-  .add('invalid: true', () => (render({ invalid: true })))
-  .add('disabled: true', () => (render({ disabled: true })))
-  .add('multiple disabled: true', () => (render({ disabled: true, multiple: true, value: selectedValue })))
-  .add('value: longVal, icon: true', () => (render({ value: 'logVal', icon: 'filter' })))
-  .add('value: longVal', () => (render({ value: 'logVal' })));
+  .add('Default', () => render({ ...defaultProps }))
+  .add('icon: filter', () => render({ icon: 'filter' }))
+  .add('placeholder: other placeholder', () => render({ placeholder: 'other placeholder' }))
+  .add('multiple: true', () => render({ multiple: true, value: selectedValue }))
+  .add('required: true', () => render({ required: true }))
+  .add('invalid: true', () => render({ invalid: true }))
+  .add('disabled: true', () => render({ disabled: true }))
+  .add('multiple disabled: true', () => render({ disabled: true, multiple: true, value: selectedValue }))
+  .add('value: longVal, icon: true', () => render({ value: 'logVal', icon: 'filter' }))
+  .add('value: longVal', () => render({ value: 'logVal' }))
+  .add('no results', () => render({ options: [], noResultsText: 'Nothing to see here folks' }));
 
 function render(props = {}) {
   return (
