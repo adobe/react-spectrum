@@ -89,7 +89,6 @@ export default class Select extends Component {
         searchable={ false }
         tabSelectsValue={ false }
         onValueClick={ this.props.onValueClick || (() => {}) }
-        autoBlur
       />
     );
   }

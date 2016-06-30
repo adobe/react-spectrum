@@ -27,7 +27,6 @@ export default class Autocomplete extends Component {
           classNames(this.props.className, 'coral-Autocomplete')
         }
         tabSelectsValue={ false }
-        autoBlur
         clearable={ false }
         autosize={ false }
         multi={ this.props.multiple || this.props.multi }
