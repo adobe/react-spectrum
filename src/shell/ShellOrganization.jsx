@@ -70,7 +70,6 @@ export default class ShellOrganization extends Component {
 
   render() {
     const {
-      hiddenFilter,
       selected,
       label,
       isSubItem,
@@ -126,16 +125,17 @@ export default class ShellOrganization extends Component {
                     {
                       key,
                       visibilityFilter,
-                      onSelect: onSelect,
+                      onSelect,
                       onFocusNext: this.handleFocusNext,
                       onFocusPrevious: this.handleFocusPrevious,
                       onFocusFirst: this.handleFocusFirst,
-                      onFocusLast: this.handleFocusLast,
+                      onFocusLast: this.handleFocusLast
                     }
-                  )
-                } else { // Must be a string
-                  return child;
+                  );
                 }
+
+                // Must be a string
+                return child;
               })
             }
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import { storiesOf } from '@kadira/storybook';
 import { VerticalCenter } from '../../../.storybook/layout';
 
 import ShellSolutionSwitcher from '../../shell/ShellSolutionSwitcher';
@@ -9,9 +9,9 @@ import ShellSolution from '../../shell/ShellSolution';
 storiesOf('ShellSolutionSwitcher', module)
   .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
-  .add('open: true', () => render({ open: true }))
+  .add('open: true', () => render({ open: true }));
 
-function render({ selected, ...props } = {}) {
+function render(props) {
   return (
     <ShellSolutionSwitcher
       { ...props }

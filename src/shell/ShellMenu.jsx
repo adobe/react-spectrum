@@ -131,7 +131,8 @@ export default class ShellMenu extends Component {
     const { target, menu } = this.refs;
 
     // If the click happens on the menu, don't have it be closed.
-    // If the click happens on the target element, it will be closed within the handleTargetClick function.
+    // If the click happens on the target element, it will be closed within the handleTargetClick
+    // function.
     if (menu.contains(e.target) || target.contains(e.target)) {
       return;
     }
@@ -152,6 +153,12 @@ export default class ShellMenu extends Component {
     } = this.props;
 
     const { open, visible } = this.state;
+    let zIndex;
+    if (open) {
+      zIndex = top ? 10018 : 10015;
+    } else {
+      zIndex = top ? 10017 : 10010;
+    }
 
     return (
       <span>
@@ -162,11 +169,11 @@ export default class ShellMenu extends Component {
         </span>
         <Portal
           onClose={ this.handleMenuClose }
-          isOpened={ true }
+          isOpened
         >
           <div
             ref="menu"
-            style={{ zIndex: open ? (top ? 10018 : 10015) : (top ? 10017 : 10010) }}
+            style={ { zIndex } }
             className={
               classNames(
                 'coral-Shell-menu',

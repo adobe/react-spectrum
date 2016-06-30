@@ -1,14 +1,15 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import TabList from '../TabList';
 import Tab from '../Tab';
 
 storiesOf('TabList', module)
   .addDecorator(story => (
-    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px' } }>
       { story() }
-    </div>
+    </VerticalCenter>
   ))
   .add('Default', () => render())
   .add('defaultSelectedKey: 1', () => render({ defaultSelectedKey: '1' }))

@@ -24,7 +24,7 @@ export default class ListItem extends Component {
   }
 
   handleKeyDown = e => {
-    switch(e.which) {
+    switch (e.which) {
       case 13: // enter
         this.handleSelect(e);
         break;
@@ -44,6 +44,8 @@ export default class ListItem extends Component {
       case 40: // down
         this.handleFocusNext(e);
         break;
+      default:
+        // do nothing
     }
   }
 
@@ -118,6 +120,6 @@ export default class ListItem extends Component {
         }
         { children }
       </Element>
-    )
+    );
   }
 }

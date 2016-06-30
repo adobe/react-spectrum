@@ -8,8 +8,8 @@ export function VerticalCenter({ children, style }) {
           position: 'absolute',
           transform: 'translate(0px, -50%)',
           top: '50%',
-          left: '0',
-          right: '0',
+          left: 0,
+          right: 0,
           textAlign: 'center',
           ...style
         }
@@ -26,9 +26,9 @@ export function VerticalTop({ children, style }) {
       style={
         {
           position: 'relative',
-          top: '0',
-          left: '0',
-          right: '0',
+          top: 0,
+          left: 0,
+          right: 0,
           ...style
         }
       }

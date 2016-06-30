@@ -1,10 +1,12 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import RadioGroup from '../RadioGroup';
 import Radio from '../Radio';
 
 storiesOf('RadioGroup', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('labelsBelow: true', () => render({ labelsBelow: true }))
   .add('vertical: true', () => render({ vertical: true }));

@@ -7,6 +7,8 @@ export Checkbox from './Checkbox';
 export Dialog from './Dialog';
 export Heading from './Heading';
 export Icon from './Icon';
+export List from './List';
+export ListItem from './ListItem';
 export Popover from './Popover';
 export Progress from './Progress';
 export Radio from './Radio';
@@ -29,3 +31,5 @@ export THead from './THead';
 export Tooltip from './Tooltip';
 export TR from './TR';
 export Wait from './Wait';
+
+export * from './shell';

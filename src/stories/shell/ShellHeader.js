@@ -15,12 +15,11 @@ import ShellSolutionSwitcher from '../../shell/ShellSolutionSwitcher';
 import ShellSolutionGroup from '../../shell/ShellSolutionGroup';
 import ShellSolution from '../../shell/ShellSolution';
 import Button from '../../Button';
-import Icon from '../../Icon';
 
 storiesOf('ShellHeader', module)
   .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
   .add('Default', () => render())
-  .add('homeIcon: adobeAnalyticsColor', () => render({ homeIcon: 'adobeAnalyticsColor' }))
+  .add('homeIcon: adobeAnalyticsColor', () => render({ homeIcon: 'adobeAnalyticsColor' }));
 
 function render(props = {}) {
   return (
@@ -28,7 +27,7 @@ function render(props = {}) {
       <ShellActions>
         <Button element="a" href="#" variant="quiet">Beta Feedback</Button>
 
-        <ShellOrgSwitcher onOrgChange={action('org-change')}>
+        <ShellOrgSwitcher onOrgChange={ action('org-change') }>
           <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
           <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
           <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />

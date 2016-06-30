@@ -7,11 +7,15 @@ export default class List extends Component {
     onSelect: () => {}
   }
 
-  handleFocusFirst = e => {
+  getItems() {
+    return Array.prototype.slice.call(this.refs.list.querySelectorAll(this.props.listItemSelector));
+  }
+
+  handleFocusFirst = () => {
     this.getItems()[0].focus();
   }
 
-  handleFocusLast = e => {
+  handleFocusLast = () => {
     const items = this.getItems();
     items[items.length - 1].focus();
   }
@@ -32,10 +36,6 @@ export default class List extends Component {
       index = 0;
     }
     items[index].focus();
-  }
-
-  getItems() {
-    return Array.prototype.slice.call(this.refs.list.querySelectorAll(this.props.listItemSelector));
   }
 
   render() {

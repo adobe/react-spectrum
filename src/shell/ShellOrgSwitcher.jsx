@@ -16,25 +16,6 @@ export default class ShellOrgSwitcher extends Component {
     searchTerm: ''
   };
 
-  handleSearchChange = searchTerm => {
-    this.setState({ searchTerm });
-  }
-
-  visibilityFilter = label => {
-    const { searchTerm } = this.state;
-    return label.toLowerCase().indexOf(searchTerm) !== -1;
-  }
-
-  handleSelect = e => {
-    this.props.onOrgChange(e);
-  }
-
-  handleVisible = () => {
-    if (this.refs) {
-      this.refs.content.querySelector('.coral-Search-input').focus();
-    }
-  }
-
   getSelectedLabel(children) {
     let label;
     React.Children.forEach(children, child => {
@@ -60,6 +41,25 @@ export default class ShellOrgSwitcher extends Component {
     return resultCount;
   }
 
+  handleVisible = () => {
+    if (this.refs) {
+      this.refs.content.querySelector('.coral-Search-input').focus();
+    }
+  }
+
+  handleSelect = e => {
+    this.props.onOrgChange(e);
+  }
+
+  visibilityFilter = label => {
+    const { searchTerm } = this.state;
+    return label.toLowerCase().indexOf(searchTerm) !== -1;
+  }
+
+  handleSearchChange = searchTerm => {
+    this.setState({ searchTerm });
+  }
+
   render() {
     const {
       label,
@@ -73,11 +73,27 @@ export default class ShellOrgSwitcher extends Component {
       <ShellMenu
         placement="right"
         animateFrom="top"
-        target={ <Button variant="minimal" className="coral-Shell-menu-button">{ this.getSelectedLabel(children) }</Button> }
+        target={
+          <Button
+            variant="minimal"
+            className="coral-Shell-menu-button"
+          >
+            { this.getSelectedLabel(children) }
+          </Button>
+        }
         onVisible={ this.handleVisible }
         { ...otherProps }
       >
-        <div className={ classNames('coral-BasicList coral-Shell-orgSwitcher', className) } ref="content">
+        <div
+          ref="content"
+          className={
+            classNames(
+              'coral-BasicList',
+              'coral-Shell-orgSwitcher',
+              className
+            )
+          }
+        >
           <label className="u-coral-screenReaderOnly">Search Organizations</label>
           <Search
             className="coral-Shell-orgSwitcher-search"
@@ -87,7 +103,12 @@ export default class ShellOrgSwitcher extends Component {
           />
           <List
             className="coral-Shell-orgSwitcher-items"
-            listItemSelector=".coral-Shell-orgSwitcher-item:not(.is-parent):not([hidden]), .coral-Shell-orgSwitcher-subitem:not([hidden])"
+            listItemSelector={
+              [
+                '.coral-Shell-orgSwitcher-item:not(.is-parent):not([hidden])',
+                '.coral-Shell-orgSwitcher-subitem:not([hidden])'
+              ].join(', ')
+            }
             onSelect={ this.handleSelect }
           >
             {
@@ -102,7 +123,10 @@ export default class ShellOrgSwitcher extends Component {
               ))
             }
           </List>
-          <div className="coral-Shell-orgSwitcher-resultMessage" hidden={ this.getResultCount(children) !== 0 }>
+          <div
+            className="coral-Shell-orgSwitcher-resultMessage"
+            hidden={ this.getResultCount(children) !== 0 }
+          >
             <div className="coral-Shell-orgSwitcher-resultMessage-container">
               <div className="coral-Heading--1 coral-Shell-orgSwitcher-resultMessage-heading">
                 No organizations found.

@@ -10,7 +10,7 @@ export default class ShellHeaderActions extends Component {
     this.setState({ openIndex: index });
   }
 
-  handleMenuClose = e => {
+  handleMenuClose = () => {
     this.setState({ openIndex: -1 });
   }
 
@@ -27,7 +27,15 @@ export default class ShellHeaderActions extends Component {
     let index = 0;
 
     return (
-      <div className={ classNames('coral-Shell-header-actions', className) }>
+      <div
+        className={
+          classNames(
+            'coral-Shell-header-actions',
+            className
+          )
+        }
+        { ...otherProps }
+      >
         { betaFeedback }
         <div className="coral-Shell-menubar">
           {
@@ -35,17 +43,18 @@ export default class ShellHeaderActions extends Component {
             React.Children.map(children, child => {
               if (typeof child === 'object' && child && child.type) { // Is this a react element?
                 return React.cloneElement(
-                    child,
-                    {
-                      onOpen: this.handleMenuOpen,
-                      onClose: this.handleMenuClose,
-                      defaultOpen: index === openIndex,
-                      index: index++
-                    }
-                  );
-              } else { // Must be a string
-                return child;
+                  child,
+                  {
+                    onOpen: this.handleMenuOpen,
+                    onClose: this.handleMenuClose,
+                    defaultOpen: index === openIndex,
+                    index: index++
+                  }
+                );
               }
+
+              // Otherwise, the child is a string
+              return child;
             })
           }
         </div>
