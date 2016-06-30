@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import ShellMenu from './ShellMenu';
+import ShellMenu from './internal/ShellMenu';
 
 import Search from '../Search';
 import Button from '../Button';

@@ -55,7 +55,7 @@ export default class List extends Component {
             className
           )
         }
-        {...otherProps}
+        { ...otherProps }
       >
         {
           React.Children.map(children, child => (

@@ -3,7 +3,6 @@ export ShellActions from './ShellActions';
 export ShellContent from './ShellContent';
 export ShellHeader from './ShellHeader';
 export ShellHelp from './ShellHelp';
-export ShellMenu from './ShellMenu';
 export ShellOrganization from './ShellOrganization';
 export ShellOrgSwitcher from './ShellOrgSwitcher';
 export ShellSolution from './ShellSolution';
