@@ -15,7 +15,8 @@ describe('Search', () => {
     expect(icon.prop('size')).toBe('S');
 
     const input = findInput(tree);
-    expect(input.prop('className')).toBe('coral-DecoratedTextfield-input');
+    expect(input.hasClass('coral-DecoratedTextfield-input')).toBe(true);
+    expect(input.hasClass('coral-Search-input')).toBe(true);
 
     const button = findButton(tree);
     expect(button.node).toNotExist();

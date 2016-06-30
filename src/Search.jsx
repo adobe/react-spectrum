@@ -5,6 +5,8 @@ import Textfield from './Textfield';
 import Button from './Button';
 import Icon from './Icon';
 
+import './Search.styl';
+
 export default class Search extends Component {
   static defaultProps = {
     clearable: true,
@@ -97,7 +99,7 @@ export default class Search extends Component {
         <Icon className="coral-DecoratedTextfield-icon" icon="search" size="S" />
         <Textfield
           ref="input"
-          className="coral-DecoratedTextfield-input"
+          className="coral-DecoratedTextfield-input coral-Search-input"
           value={ value }
           defaultValue={ defaultValue }
           disabled={ disabled }
