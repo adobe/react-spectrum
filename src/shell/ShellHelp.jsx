@@ -8,6 +8,8 @@ import List from '../List';
 import ListItem from '../ListItem';
 import Wait from '../Wait';
 
+import './ShellHelp.styl';
+
 export default class ShellHelp extends Component {
   static defaultProps = {
     defaultResults: [
@@ -57,7 +59,7 @@ export default class ShellHelp extends Component {
       <List className="coral-BasicList coral-AnchorList coral-Shell-help-results">
         {
           numTotalResults !== 0 && searchResults && searchResults.length
-          ? searchResults.map(({ tags, label, href }, index) => (
+          ? searchResults.map(({ tags, title, href }, index) => (
               <ListItem
                 key={ index }
                 element="a"
@@ -66,7 +68,7 @@ export default class ShellHelp extends Component {
                 target="undefined"
                 label={
                   <span>
-                    { label }
+                    { title }
                     <div className="coral-Shell-help-result-description">
                       { tags.join('&nbsp; &bull; &nbsp;') }
                     </div>
@@ -101,8 +103,9 @@ export default class ShellHelp extends Component {
       <List className="coral-Shell-help-items">
         {
           defaultResults && defaultResults.length &&
-          defaultResults.map(({ href, icon, label }) => (
+          defaultResults.map(({ href, icon, label }, index) => (
             <ListItem
+              key={ index }
               element="a"
               href={ href }
               className="coral-AnchorList-item coral-Shell-help-item"

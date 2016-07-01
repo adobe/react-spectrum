@@ -1,3 +1,3 @@
 export function isUrl(string) {
-  return !!string.match(/\/|:|\./g);
+  return string && !!string.match(/\/|:|\./g);
 }

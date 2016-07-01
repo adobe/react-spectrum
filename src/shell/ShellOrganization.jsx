@@ -23,9 +23,9 @@ export default class ShellOrganization extends Component {
     this.determineVisibility(visibilityFilter, label, children);
   }
 
-  handleSelect = e => {
+  handleSelect = () => {
     if (!this.hasChildren()) {
-      this.props.onSelect(e);
+      this.props.onSelect(this.props.name || this.props.label);
     }
   }
 

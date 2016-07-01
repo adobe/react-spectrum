@@ -10,7 +10,7 @@ export default function Icon({
   ...otherProps
 }) {
   const isImage = isUrl(icon);
-  const isColorIcon = !isImage && icon.indexOf('Color') >= 0;
+  const isColorIcon = !isImage && icon && icon.indexOf('Color') >= 0;
 
   return (
     <span
