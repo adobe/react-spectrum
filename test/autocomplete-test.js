@@ -4,14 +4,14 @@ import Autocomplete from '../src/Autocomplete';
 import ReactSelect from 'react-select';
 import { mount } from 'enzyme';
 
-describe('Select', () => {
+describe('Autocomplete', () => {
   it('supports additional classNames', () => {
     const tree = mount(<Autocomplete className="myClass" />);
     const select = tree.find('div.Select');
 
-    expect(select.prop('className')).toContain('myClass');
+    expect(select.hasClass('myClass')).toBe(true);
     // Check that coral-Autocomplete is not overwritten by the provided class.
-    expect(select.prop('className')).toContain('coral-Autocomplete');
+    expect(select.hasClass('coral-Autocomplete')).toBe(true);
   });
 
   it('supports additional properties', () => {
@@ -19,5 +19,13 @@ describe('Select', () => {
     const reactSelectComponent = tree.find(ReactSelect);
 
     expect(reactSelectComponent.prop('foo')).toBe(true);
+  });
+
+  it('supports overriding no results text', () => {
+    const tree = mount(<Autocomplete noResultsText="foobar" />);
+    // Mousedown on the arrow button then simulate focus to the text input to open the overlay.
+    tree.find('.Select-arrow').simulate('mousedown');
+    tree.find('.Select-input-field').simulate('focus');
+    expect(tree.find('.Select-noresults em').text()).toBe('foobar');
   });
 });

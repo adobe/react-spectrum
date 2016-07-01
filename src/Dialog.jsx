@@ -44,7 +44,7 @@ class Dialog extends Component {
         attachment="middle center"
         target={ document.body }
         targetModifier="visible"
-        style={ { zIndex: 10010 } }
+        style={ { zIndex: open ? 10020 : 10010 } }
       >
         <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
         <div

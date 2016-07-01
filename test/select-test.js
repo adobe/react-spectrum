@@ -9,9 +9,9 @@ describe('Select', () => {
     const tree = mount(<Select className="myClass" />);
     const select = tree.find('div.Select');
 
-    expect(select.prop('className')).toContain('myClass');
+    expect(select.hasClass('myClass')).toBe(true);
     // Check that coral3-Select is not overwritten by the provided class.
-    expect(select.prop('className')).toContain('coral3-Select');
+    expect(select.hasClass('coral3-Select')).toBe(true);
   });
 
   it('supports additional properties', () => {
@@ -19,5 +19,11 @@ describe('Select', () => {
     const reactSelectComponent = tree.find(ReactSelect);
 
     expect(reactSelectComponent.prop('foo')).toBe(true);
+  });
+
+  it('supports overriding no results text', () => {
+    const tree = mount(<Select noResultsText="foobar" />);
+    tree.find('.Select-input').simulate('mousedown');
+    expect(tree.find('.Select-noresults em').text()).toBe('foobar');
   });
 });

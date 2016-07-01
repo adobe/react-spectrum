@@ -6,6 +6,12 @@ import Tag from './Tag';
 import './Select.styl';
 
 export default class Select extends Component {
+  static defaultProps = {
+    variant: 'default', // default, quiet
+    multiple: false,
+    noResultsText: 'No matching results.'
+  };
+
   onChange = (...args) => {
     if (this.props.onChange) {
       this.props.onChange.apply(this, args);
@@ -43,8 +49,7 @@ export default class Select extends Component {
     return (
       <span
         className="coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS"
-      >
-      </span>
+      />
     );
   }
 
@@ -67,19 +72,28 @@ export default class Select extends Component {
   }
 
   render() {
-    const isQuiet = this.props.variant === 'quiet';
+    const {
+      variant,
+      multiple,
+      multi,
+      noResultsText,
+      className,
+      ...otherProps
+    } = this.props;
+
+    const isQuiet = variant === 'quiet';
     const arrowZoneClasses =
       'coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS';
+    const multiSelect = multiple || multi;
 
     return (
       <ReactSelect
         ref="select"
-        { ...this.props }
         className={
-          classNames(this.props.className, 'coral3-Select', { 'coral3-Select--quiet': isQuiet })
+          classNames(className, 'coral3-Select', { 'coral3-Select--quiet': isQuiet })
         }
-        multi={ this.props.multiple || this.props.multi }
-        noResultsText={ <em>No matching results.</em> }
+        multi={ multiSelect }
+        noResultsText={ <em>{ noResultsText }</em> }
         arrowRenderer={ this.arrowRenderer }
         controlComponent={ this.controlComponent }
         classAdditions={ {
@@ -90,15 +104,14 @@ export default class Select extends Component {
           'Select-option': 'coral3-SelectList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
         } }
-        valueComponent={
-          (this.props.multiple || this.props.multi) ? this.valuesComponent : this.valueComponent
-        }
+        valueComponent={ multiSelect ? this.valuesComponent : this.valueComponent }
         clearable={ false }
         autosize={ false }
         searchable={ false }
         tabSelectsValue={ false }
         onValueClick={ this.props.onValueClick || (() => {}) }
         onChange={ this.onChange }
+        { ...otherProps }
       />
     );
   }
