@@ -1,9 +1,11 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Tag from '../Tag';
 
 storiesOf('Tag', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('color: blue', () => render({ color: 'blue' }))
   .add('size: M', () => render({ size: 'M' }))

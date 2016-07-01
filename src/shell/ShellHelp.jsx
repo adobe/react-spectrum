@@ -1,0 +1,175 @@
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import ShellMenu from './internal/ShellMenu';
+
+import Search from '../Search';
+import Button from '../Button';
+import List from '../List';
+import ListItem from '../ListItem';
+import Wait from '../Wait';
+
+import './ShellHelp.styl';
+
+export default class ShellHelp extends Component {
+  static defaultProps = {
+    defaultResults: [
+      { href: '/learn', icon: 'globe', label: 'Marketing Cloud Help' },
+      { href: '/community', icon: 'users', label: 'Community' },
+      { href: '/customercare', icon: 'callCenter', label: 'Customer Care' },
+      { href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status' }
+    ],
+    onSearch: () => {}
+  };
+
+  state = {
+    searchTerm: ''
+  };
+
+  handleSearch = val => {
+    const { onSearch } = this.props;
+    onSearch(val);
+    this.setState({
+      searchTerm: val
+    });
+  }
+
+  handleVisible = () => {
+    if (this.refs) {
+      this.refs.content.querySelector('.coral-Search-input').focus();
+    }
+  }
+
+  renderResults() {
+    const { searchResults } = this.props;
+    if (searchResults) {
+      return this.renderSearchResults();
+    }
+    return this.renderDefaultResults();
+  }
+
+  renderSearchResults() {
+    const {
+      searchResults,
+      numTotalResults,
+      moreSearchResultsUrl
+    } = this.props;
+    const { searchTerm } = this.state;
+
+    return (
+      <List className="coral-BasicList coral-AnchorList coral-Shell-help-results">
+        {
+          numTotalResults !== 0 && searchResults && searchResults.length
+          ? searchResults.map(({ tags, title, href }, index) => (
+              <ListItem
+                key={ index }
+                element="a"
+                href={ href }
+                className="coral-AnchorList-item"
+                target="undefined"
+                label={
+                  <span>
+                    { title }
+                    <div className="coral-Shell-help-result-description">
+                      { tags.join('&nbsp; &bull; &nbsp;') }
+                    </div>
+                  </span>
+                }
+              />
+            )).concat(
+              <ListItem
+                element="a"
+                className="coral-AnchorList-item coral-Link coral-Shell-help-allResults"
+                href={ `${ moreSearchResultsUrl }?q=${ searchTerm }` }
+                label={ `See all ${ numTotalResults } results` }
+                target="undefined"
+              />
+            )
+          : <div className="coral-Shell-help-resultMessage">
+              <div className="coral-Shell-help-resultMessage-container">
+                <div className="coral-Heading--1 coral-Shell-help-resultMessage-heading">
+                  No results found
+                </div>
+              </div>
+            </div>
+        }
+      </List>
+    );
+  }
+
+  renderDefaultResults() {
+    const { defaultResults } = this.props;
+
+    return (
+      <List className="coral-Shell-help-items">
+        {
+          defaultResults && defaultResults.length &&
+          defaultResults.map(({ href, icon, label }, index) => (
+            <ListItem
+              key={ index }
+              element="a"
+              href={ href }
+              className="coral-AnchorList-item coral-Shell-help-item"
+              icon={ icon }
+              iconSize="S"
+              label={ label }
+            />
+          ))
+        }
+      </List>
+    );
+  }
+
+  render() {
+    const {
+      className,
+      loading,
+      ...otherProps
+    } = this.props;
+
+    return (
+      <ShellMenu
+        placement="right"
+        animateFrom="top"
+        target={
+          <Button
+            className="coral-Shell-menu-button"
+            variant="minimal"
+            icon="helpCircle"
+            square
+          />
+        }
+        onVisible={ this.handleVisible }
+        { ...otherProps }
+      >
+        <div
+          ref="content"
+          className={
+            classNames(
+              'coral-BasicList',
+              'coral-AnchorList coral-Shell-help',
+              className
+            )
+          }
+        >
+          <label className="u-coral-screenReaderOnly">Search Help</label>
+          <Search
+            className="coral-Shell-help-search"
+            placeholder="Search Help"
+            onSubmit={ this.handleSearch }
+            quiet
+          />
+          {
+            loading
+            ? <div className="coral-Shell-help-loading">
+                <Wait className="coral-Shell-help-loading-wait" />
+                <span className="coral-Heading--2 coral-Shell-help-loading-info">
+                  Searching Help...
+                </span>
+              </div>
+            : this.renderResults()
+          }
+        </div>
+      </ShellMenu>
+    );
+  }
+}

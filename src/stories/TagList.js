@@ -1,10 +1,12 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import TagList from '../TagList';
 import Tag from '../Tag';
 
 storiesOf('TagList', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('Read Only', () => render({ readonly: true }))
   .add('Disabled', () => render({ disabled: true }))

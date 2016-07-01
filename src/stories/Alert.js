@@ -1,10 +1,12 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Alert from '../Alert';
 import './Alert.styl';
 
 storiesOf('Alert', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('header', () => render({ header: 'info' }))
   .add('variant: help', () => render({ header: 'help', variant: 'help' }))

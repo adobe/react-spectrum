@@ -1,9 +1,11 @@
 import React from 'react';
 import { storiesOf } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Progress from '../Progress';
 
 storiesOf('Progress', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('value: 50', () => render({ value: 50 }))
   .add('value: 100', () => render({ value: 100 }))

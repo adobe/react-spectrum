@@ -1,13 +1,14 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Tab from '../Tab';
 
 storiesOf('Tab', module)
   .addDecorator(story => (
-    <div style={ { textAlign: 'left', margin: '0 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0px 100px' } }>
       { story() }
-    </div>
+    </VerticalCenter>
   ))
   .add('Default', () => render())
   .add('icon: add', () => render({ icon: 'add' }))

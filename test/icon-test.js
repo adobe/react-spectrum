@@ -7,7 +7,7 @@ describe('Icon', () => {
   it('supports icons', () => {
     const tree = shallow(<Icon icon="bell" />);
     expect(tree.prop('className')).toBe('coral-Icon coral-Icon--sizeM coral-Icon--bell');
-    expect(tree.type()).toBe('i');
+    expect(tree.type()).toBe('span');
   });
 
   it('supports color icons', () => {

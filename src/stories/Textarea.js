@@ -1,9 +1,11 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Textarea from '../Textarea';
 
 storiesOf('Textarea', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('quiet: true', () => render({ quiet: true }))
   .add('disabled: true', () => render({ disabled: true }))

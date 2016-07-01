@@ -1,5 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import Table from '../Table';
 import THead from '../THead';
@@ -9,6 +10,7 @@ import TH from '../TH';
 import TD from '../TD';
 
 storiesOf('Table', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => render())
   .add('hover: true', () => render({ hover: true }))
   .add('bordered: true', () => render({ bordered: true }));

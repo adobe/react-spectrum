@@ -9,6 +9,7 @@ var fs = require('fs');
 var dirname = path.dirname;
 var isAbsolute = path.isAbsolute;
 var resolve = path.resolve;
+var relative = path.relative;
 
 var resolveModulePath = function(filename) {
   var dir = dirname(filename);
@@ -31,10 +32,13 @@ module.exports = function () {
         var filePath = resolve(resolveModulePath(options.file.opts.filename), fileName);
         if (fileName.match(/^.*\.(styl)$/)) {
           var content = fs.readFileSync(filePath, 'utf8'),
-            css = stylus(content, {compress: true}).render();
-            path.replaceWithSourceString(
-              'require("./buildGlobalScript.js").default("' + encodeURI(css) + '")'
-            );
+            css = stylus(content, {compress: true}).render(),
+            globalScriptPath = resolve(process.env.PWD, 'helpers/buildGlobalScript.js'),
+            relativeScriptPath = relative(dirname(filePath), globalScriptPath);
+
+          path.replaceWithSourceString(
+            'require("' + relativeScriptPath + '").default("' + encodeURI(css) + '")'
+          );
         }
       }
     }

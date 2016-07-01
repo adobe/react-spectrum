@@ -1,8 +1,8 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { VerticalCenter } from '../../.storybook/layout';
 
 import SelectList from '../SelectList';
-
 
 const defaultProps = {
   placeholder: 'Enter Text...',
@@ -41,6 +41,7 @@ const selectedValue = [
 
 
 storiesOf('SelectList', module)
+  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
   .add('Default', () => (render({ ...defaultProps })))
   .add('grouped: true', () => (render({ options: groupedOptions })))
   .add('grouped multiple: true', () => (render({ multiple: true, value: selectedValue, options: groupedOptions })))
