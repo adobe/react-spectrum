@@ -11,6 +11,14 @@ export default class Autocomplete extends Component {
     noResultsText: 'No matching results.'
   };
 
+  onChange = (...args) => {
+    if (this.props.onChange) {
+      this.props.onChange.apply(this, args);
+    }
+
+    this.refs.select.closeMenu();
+  }
+
   valuesComponent({ value, onClick, onRemove, disabled }) {
     return (
       <Tag
@@ -37,6 +45,7 @@ export default class Autocomplete extends Component {
 
     return (
       <ReactSelect
+        ref="select"
         className={
           classNames(className, 'coral-Autocomplete')
         }
@@ -65,7 +74,7 @@ export default class Autocomplete extends Component {
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         onValueClick={ this.props.onValueClick || (() => {}) }
-        valueComponent={ multiSelect && this.valuesComponent }
+        onChange={ this.onChange }
         { ...otherProps }
       />
     );
