@@ -25,18 +25,19 @@ const selectedValue = [
 
 
 storiesOf('Select', module)
-  .add('Default', () => (render({ ...defaultProps })))
-  .add('placeholder: other placeholder', () => (render({ placeholder: 'other placeholder' })))
-  .add('variant: quiet', () => (render({ variant: 'quiet' })))
-  .add('variant: quiet value: longVal', () => (render({ variant: 'quiet', value: 'logVal' })))
-  .add('variant: quiet multiple', () => (render({ variant: 'quiet', multiple: true, value: selectedValue })))
-  .add('multiple: true', () => (render({ multiple: true, value: selectedValue })))
-  .add('required: true', () => (render({ required: true })))
-  .add('read-only: true', () => (render({ readOnly: true })))
-  .add('disabled: true', () => (render({ disabled: true })))
-  .add('invalid: true', () => (render({ invalid: true })))
-  .add('multiple disabled: true', () => (render({ disabled: true, multiple: true, value: selectedValue })))
-  .add('value: longVal', () => (render({ value: 'logVal' })));
+  .add('Default', () => render({ ...defaultProps }))
+  .add('placeholder: other placeholder', () => render({ placeholder: 'other placeholder' }))
+  .add('variant: quiet', () => render({ variant: 'quiet' }))
+  .add('variant: quiet value: longVal', () => render({ variant: 'quiet', value: 'logVal' }))
+  .add('variant: quiet multiple', () => render({ variant: 'quiet', multiple: true, value: selectedValue }))
+  .add('multiple: true', () => render({ multiple: true, value: selectedValue }))
+  .add('required: true', () => render({ required: true }))
+  .add('read-only: true', () => render({ readOnly: true }))
+  .add('disabled: true', () => render({ disabled: true }))
+  .add('invalid: true', () => render({ invalid: true }))
+  .add('multiple disabled: true', () => render({ disabled: true, multiple: true, value: selectedValue }))
+  .add('value: longVal', () => render({ value: 'logVal' }))
+  .add('no results', () => render({ options: [], noResultsText: 'Nothing to see here folks' }));
 
 function render(props = {}) {
   return (

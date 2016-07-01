@@ -6,6 +6,11 @@ import Tag from './Tag';
 import './Autocomplete.styl';
 
 export default class Autocomplete extends Component {
+  static defaultProps = {
+    multiple: false,
+    noResultsText: 'No matching results.'
+  };
+
   valuesComponent({ value, onClick, onRemove, disabled }) {
     return (
       <Tag
@@ -20,17 +25,26 @@ export default class Autocomplete extends Component {
   }
 
   render() {
+    const {
+      multiple,
+      multi,
+      noResultsText,
+      className,
+      ...otherProps
+    } = this.props;
+
+    const multiSelect = multiple || multi;
+
     return (
       <ReactSelect
-        { ...this.props }
         className={
-          classNames(this.props.className, 'coral-Autocomplete')
+          classNames(className, 'coral-Autocomplete')
         }
         tabSelectsValue={ false }
         clearable={ false }
         autosize={ false }
-        multi={ this.props.multiple || this.props.multi }
-        noResultsText={ <em>No matching results.</em> }
+        multi={ multiSelect }
+        noResultsText={ <em>{ noResultsText }</em> }
         classAdditions={ {
           'Select-control':
             'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
@@ -51,7 +65,8 @@ export default class Autocomplete extends Component {
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         onValueClick={ this.props.onValueClick || (() => {}) }
-        valueComponent={ (this.props.multiple || this.props.multi) && this.valuesComponent }
+        valueComponent={ multiSelect && this.valuesComponent }
+        { ...otherProps }
       />
     );
   }
