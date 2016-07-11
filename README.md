@@ -1,7 +1,13 @@
 # react-coral
-React  using cloudui style guidelines from CoralUI.  For the reasons behind this, please see the [slides](http://slides.com/jeffhicken/coralui#) or [recording](https://my.adobeconnect.com/p1ghpd8opfz) for a presentation Jeff Hicken and Nate Ross did at CoralUI Summit June 6, 2016.  We also have a Slack channel `react-coral` in the Adobe Slack organization -- anyone can join and get help or ask questions there.
+React components with [CoralUI](http://coralui.corp.adobe.com/) styles.
 
 [![Build Status][status-image]][status-url] [![Coverage Status][coverage-image]][coverage-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url] [![Storybook][storybook-image]][storybook-url]
+
+### Why react-coral?
+For the reasons behind this project, please see the [slides](http://slides.com/jeffhicken/coralui#) or [recording](https://my.adobeconnect.com/p1ghpd8opfz) for a presentation [Jeff Hicken](https://git.corp.adobe.com/hicken) and [Nate Ross](https://git.corp.adobe.com/nross) did at CoralUI Summit on June 6, 2016.
+
+### Collaboration
+We have a Slack channel `react-coral` in the Adobe Slack organization -- anyone can join and get help or ask questions there.  We keep our issues here in GitHub as well.  Please log new issues or add to the conversations happening there.
 
 ### Getting started
 ```javascript
