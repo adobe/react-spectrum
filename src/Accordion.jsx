@@ -135,6 +135,14 @@ export default class Accordion extends Component {
   }
 }
 
+Accordion.displayName = 'Accordion';
+
+Accordion.propTypes = {
+  onChange() {},
+  multiselectable: React.PropTypes.bool,
+  variant: React.PropTypes.string
+};
+
 Accordion.defaultProps = {
   onChange() {},
   multiselectable: false,

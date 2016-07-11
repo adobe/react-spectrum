@@ -7,16 +7,46 @@ import AccordionItem from '../AccordionItem';
 
 storiesOf('Accordion', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
     </VerticalCenter>
   ))
-  .add('Default', () => render())
-  .add('multiselectable: true', () => render({ multiselectable: true }))
-  .add('defaultSelectedKey: 1', () => render({ defaultSelectedKey: '1' }))
-  .add('selectedKey: 1', () => render({ selectedKey: '1' }))
-  .add('variant: quiet', () => render({ variant: 'quiet' }))
-  .add('variant: large', () => render({ variant: 'large' }));
+  .addWithInfo(
+    'Default',
+    'This is the basic usage of the Accordion.',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Multiselectable',
+    'This is an Accordion where you can open multiple accordion items.',
+    () => render({ multiselectable: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Default selected key',
+    'This is an Accordion where the the second accordion item is opened by default.',
+    () => render({ defaultSelectedKey: '1' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Selected key',
+    'This is a controlled Accordion where the the second accordion item is opened by default.',
+    () => render({ selectedKey: '1' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Quiet variant',
+    'This is a quiet variant of the Accordion.',
+    () => render({ variant: 'quiet' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Large variant',
+    'This is a large variant of the Accordion.',
+    () => render({ variant: 'large' }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

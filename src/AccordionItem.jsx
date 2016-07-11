@@ -69,6 +69,13 @@ export default class AccordionItem extends Component {
   }
 }
 
+AccordionItem.displayName = 'AccordionItem';
+
+AccordionItem.propTypes = {
+  selected: React.PropTypes.bool,
+  onItemClick: React.PropTypes.func
+};
+
 AccordionItem.defaultProps = {
   selected: false,
   onItemClick() {}
