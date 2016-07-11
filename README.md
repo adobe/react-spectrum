@@ -1,5 +1,5 @@
 # react-coral
-React  using cloudui style guidelines from CoralUI
+React  using cloudui style guidelines from CoralUI.  For the reasons behind this, please see the [slides](http://slides.com/jeffhicken/coralui#) or [recording](https://my.adobeconnect.com/p1ghpd8opfz) for a presentation Jeff Hicken and Nate Ross did at CoralUI Summit June 6, 2016.  We also have a Slack channel `react-coral` in the Adobe Slack organization -- anyone can join and get help or ask questions there.
 
 [![Build Status][status-image]][status-url] [![Coverage Status][coverage-image]][coverage-url] [![NPM Dependencies][npm-dependencies-image]][npm-dependencies-url] [![Storybook][storybook-image]][storybook-url]
 
