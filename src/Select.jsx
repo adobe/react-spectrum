@@ -12,14 +12,6 @@ export default class Select extends Component {
     noResultsText: 'No matching results.'
   };
 
-  onChange = (...args) => {
-    if (this.props.onChange) {
-      this.props.onChange.apply(this, args);
-    }
-
-    this.refs.select.closeMenu();
-  }
-
   valuesComponent({ value, onClick, onRemove, disabled }) {
     return (
       <Tag
@@ -88,7 +80,6 @@ export default class Select extends Component {
 
     return (
       <ReactSelect
-        ref="select"
         className={
           classNames(className, 'coral3-Select', { 'coral3-Select--quiet': isQuiet })
         }
@@ -110,7 +101,6 @@ export default class Select extends Component {
         searchable={ false }
         tabSelectsValue={ false }
         onValueClick={ this.props.onValueClick || (() => {}) }
-        onChange={ this.onChange }
         { ...otherProps }
       />
     );
