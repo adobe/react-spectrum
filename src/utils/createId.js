@@ -1,4 +1,4 @@
 const PREFIX = 'react-coral-';
-var incrementor = 0;
+let incrementor = 0;
 
 export default () => PREFIX + ++incrementor;
