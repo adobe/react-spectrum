@@ -43,7 +43,7 @@ Current react-coral doesn't have a build system at this point. Instead, we inten
 // This import method allows for bundling of individual components without importing every single react-coral
 // component that is available. Keeps library size down to a minimum as you only require the components you
 // need and nothing more.
-import Textfield from 'react-coral/dist/Textfield';
+import Textfield from 'react-coral/lib/Textfield';
 
 // #2
 // This import method is convenient for grabbing multiple components out of react-coral. Using this style 
