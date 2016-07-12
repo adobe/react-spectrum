@@ -65,6 +65,7 @@ export default class Autocomplete extends Component {
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         onValueClick={ this.props.onValueClick || (() => {}) }
+        valueComponent={ multiSelect && this.valuesComponent }
         { ...otherProps }
       />
     );
