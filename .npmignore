@@ -1,6 +1,6 @@
 .storybook
 components
-helpers
+babelPlugins
 test
 Dockerfile
 webpack.config.js

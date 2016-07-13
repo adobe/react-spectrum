@@ -9,7 +9,7 @@
     },
     "production": {
       "plugins": [
-        "./helpers/stylusToScript.js"
+        "./babelPlugins/stylusToScript.js"
       ]
     }
   },
