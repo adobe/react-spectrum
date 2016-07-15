@@ -15,12 +15,22 @@ overflow-item()
     padding: 11px
 
   .Select-placeholder
-    color: #707070
     overflow-item()
+    z-index: 1
+    color: #919191
+    font-style: italic
+
+  .Select-control
+    z-index: 1
+    background: #fff
 
   &.has-icon
     .Select-placeholder
       padding-left: 31px
+
+  &.is-disabled
+    .Select-placeholder
+      color: #bebebe
 
   &.Select--single
     &:not(.is-disabled)
@@ -41,6 +51,9 @@ overflow-item()
       width: 100%
       text-align: left
       overflow-item()
+
+  &.Select--multi
+    text-align: left
 
   .Select-menu-outer
     width: 100%
