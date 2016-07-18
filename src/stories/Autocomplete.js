@@ -24,6 +24,8 @@ const selectedValue = [
   'logVal'
 ];
 
+let value = '';
+let multipleValues = selectedValue.slice();
 
 storiesOf('Autocomplete', module)
   .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
@@ -37,7 +39,18 @@ storiesOf('Autocomplete', module)
   .add('multiple disabled: true', () => render({ disabled: true, multiple: true, value: selectedValue }))
   .add('value: longVal, icon: true', () => render({ value: 'logVal', icon: 'filter' }))
   .add('value: longVal', () => render({ value: 'logVal' }))
-  .add('no results', () => render({ options: [], noResultsText: 'Nothing to see here folks' }));
+  .add('no results', () => render({ options: [], noResultsText: 'Nothing to see here folks' }))
+  .add('Stateful component', () => render({
+    ...defaultProps,
+    value,
+    onChange: (v) => { value = v; action('change')(v); }
+  }))
+  .add('Stateful multiple component', () => render({
+    ...defaultProps,
+    value: multipleValues,
+    multiple: true,
+    onChange: (v) => { multipleValues = v; action('change')(v); }
+  }));
 
 function render(props = {}) {
   return (

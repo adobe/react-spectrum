@@ -66,10 +66,10 @@ export default class Select extends Component {
   render() {
     const {
       variant,
-      multiple,
-      multi,
       noResultsText,
       className,
+      multiple,
+      multi,
       ...otherProps
     } = this.props;
 
@@ -100,8 +100,9 @@ export default class Select extends Component {
         autosize={ false }
         searchable={ false }
         tabSelectsValue={ false }
-        onValueClick={ this.props.onValueClick || (() => {}) }
         { ...otherProps }
+        onValueClick={ this.props.onValueClick || (() => {}) }
+        backspaceToRemoveMessage=""
       />
     );
   }
