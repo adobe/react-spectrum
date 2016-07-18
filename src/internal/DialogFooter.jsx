@@ -4,18 +4,21 @@ import classNames from 'classnames';
 
 function addClose(children, onClose) {
   return React.Children.map(children, child => {
-    if (React.isValidElement(child) && child.props && child.props['close-dialog']) {
-      // String has no Prop
+    // String has no Prop
+    if (React.isValidElement(child) && child.props) {
+      // Strip close-dialog off of the child since it isn't a valid property outside of
+      // this context. This will prevent unknown prop warnings from being fired by react.
+      const { 'close-dialog': shouldClose, children: kids, ...otherProps } = child.props;
 
-      return React.cloneElement(child, {
-        children: addClose(child.props.children),
-        onClick: (...args) => {
+      if (shouldClose) {
+        otherProps.onClick = (...args) => {
           if (child.props.onClick) {
             child.props.onClick.apply(child, args);
           }
           onClose.apply(child, args);
-        }
-      });
+        };
+        return React.createElement(child.type, otherProps, addClose(kids, onClose));
+      }
     }
     return child;
   });
