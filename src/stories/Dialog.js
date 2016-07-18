@@ -3,8 +3,8 @@ import { storiesOf, action } from '@kadira/storybook';
 import Button from '../Button';
 import Dialog from '../Dialog';
 
-const title = <Dialog.Header>Title</Dialog.Header>;
-const content = <Dialog.Content>Content</Dialog.Content>;
+const title = <Dialog.Header key="header">Title</Dialog.Header>;
+const content = <Dialog.Content key="content">Content</Dialog.Content>;
 const dialogChildren = [title, content];
 storiesOf('Dialog', module)
   .add('Default', () => render(dialogChildren))
@@ -25,7 +25,6 @@ function render(children, props = {}) {
       open
       closable
       onClose={ action('close') }
-      footer=""
       { ...props }
     >
       { children }
@@ -37,10 +36,10 @@ function render(children, props = {}) {
 const longMarkup = [
   // building an array of children like this will cause react to complain about needing a key
   // since this is not how you will generally build a Dialog this should be fine
-  <Dialog.Header>
+  <Dialog.Header key="header">
     Really long content...
   </Dialog.Header>,
-  <Dialog.Content>
+  <Dialog.Content key="content">
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
@@ -69,7 +68,7 @@ const longMarkup = [
       eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus
     </p>
   </Dialog.Content>,
-  <Dialog.Footer>
+  <Dialog.Footer key="footer">
     <Button variant="primary" label="Custom Button" close-dialog onClick={ action('custom-close-button') } />
   </Dialog.Footer>
 ];
