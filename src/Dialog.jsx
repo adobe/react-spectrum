@@ -20,6 +20,28 @@ class Dialog extends Component {
     onClose: () => {}
   };
 
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown = e => {
+    const { onClose, open } = this.props;
+
+    if (open) {
+      switch (e.which) {
+        case 27: // escape
+          onClose(e);
+          break;
+        default:
+          // do nothing
+      }
+    }
+  }
+
   render() {
     const {
       backdrop,
