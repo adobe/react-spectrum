@@ -12,4 +12,14 @@ describe('Switch', () => {
     expect(tree.prop('markClassName')).toBe('coral3-Switch-label');
     expect(tree.prop('renderLabel')).toBe(false);
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<Switch className="foo" />);
+    expect(tree.hasClass('foo')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Switch foo />);
+    expect(tree.prop('foo')).toBe(true);
+  });
 });
