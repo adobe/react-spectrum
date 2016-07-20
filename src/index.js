@@ -32,4 +32,6 @@ export Tooltip from './Tooltip';
 export TR from './TR';
 export Wait from './Wait';
 
+export configureTypekit from './configureTypekit';
+
 export * from './shell';
