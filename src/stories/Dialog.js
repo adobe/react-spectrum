@@ -8,6 +8,7 @@ const content = <Dialog.Content key="content">Content</Dialog.Content>;
 const dialogChildren = [title, content];
 storiesOf('Dialog', module)
   .add('Default', () => render(dialogChildren))
+  .add('fullscreen: true', () => render(dialogChildren, { fullscreen: true }))
   .add('Long content', () => render(longMarkup))
   .add('open: false', () => render(dialogChildren, { open: false }))
   .add('closable: false', () => render(dialogChildren, { closable: false }))

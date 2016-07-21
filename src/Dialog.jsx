@@ -44,76 +44,100 @@ class Dialog extends Component {
 
   render() {
     const {
+      fullscreen,
       backdrop,
-      closable,
-      variant,
-      icon = getVariantIcon(variant || 'default'),
-      open,
-      children,
-      className,
       onClose,
+      open,
       ...otherProps
     } = this.props;
-    const normalizedChildren = {};
-    React.Children.forEach(children, ((child) => {
-      if (typeof child.type === 'function') {
-        normalizedChildren[child.type.name] = child;
-      }
-    }));
 
-    return (
+    return fullscreen ? (
+      <div>
+        <DialogComponent { ...this.props } { ...otherProps } />
+      </div>
+    ) : (
       <TetherComponent
         attachment="middle center"
+        targetAttachment="middle center"
         target={ document.body }
         targetModifier="visible"
         style={ { zIndex: open ? 10020 : 10010, display: open ? 'block' : 'none' } }
       >
         <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
-        <div
-          className={
-            classNames(
-              'coral-Dialog',
-              `coral-Dialog--${ variant }`,
-              {
-                'coral-Dialog--closable': closable,
-                'is-open': open
-              },
-              className
-            )
-          }
-          style={ { position: 'static' } }
-          { ...otherProps }
-        >
-          <div className="coral-Dialog-wrapper">
-            {
-              normalizedChildren.DialogHeader ?
-                React.cloneElement(normalizedChildren.DialogHeader, {
-                  icon,
-                  closable,
-                  onClose,
-                  ...normalizedChildren.DialogHeader.props
-                }) :
-                <DialogHeader
-                  icon={ icon }
-                  closable={ closable }
-                  onClose={ onClose }
-                />
-            }
-            {
-              normalizedChildren.DialogContent ||
-              <DialogContent>{ children }</DialogContent>
-            }
-            {
-              normalizedChildren.DialogFooter ?
-                React.cloneElement(normalizedChildren.DialogFooter, { onClose }) :
-                <DialogFooter onClose={ onClose } />
-            }
-          </div>
-        </div>
+        <DialogComponent { ...this.props } { ...otherProps } />
       </TetherComponent>
     );
   }
 }
+
+const DialogComponent = ({
+  fullscreen,
+  closable,
+  variant,
+  icon = getVariantIcon(variant || 'default'),
+  open,
+  children,
+  className,
+  onClose,
+  ...otherProps
+}) => {
+  const normalizedChildren = {};
+  React.Children.forEach(children, ((child) => {
+    if (typeof child.type === 'function') {
+      normalizedChildren[child.type.name] = child;
+    }
+  }));
+
+  return (
+    <div
+      className={
+        classNames(
+          'coral-Dialog',
+          `coral-Dialog--${ variant }`,
+          {
+            'coral-Dialog--closable': closable,
+            'is-open': open,
+            'coral-Dialog--fullscreen': fullscreen
+          },
+          className
+        )
+      }
+      fullscreen={ fullscreen }
+      style={ {
+        display: open ? 'block' : 'none',
+        zIndex: open ? 10020 : 10010,
+        position: fullscreen ? null : 'static'
+      } }
+      { ...otherProps }
+    >
+      <div className="coral-Dialog-wrapper">
+        {
+          normalizedChildren.DialogHeader ?
+            React.cloneElement(normalizedChildren.DialogHeader, {
+              icon,
+              closable,
+              onClose,
+              ...normalizedChildren.DialogHeader.props
+            }) :
+            <DialogHeader
+              icon={ icon }
+              closable={ closable }
+              onClose={ onClose }
+            />
+        }
+        {
+          normalizedChildren.DialogContent ||
+          <DialogContent>{ children }</DialogContent>
+        }
+        {
+          normalizedChildren.DialogFooter ?
+            React.cloneElement(normalizedChildren.DialogFooter, { onClose }) :
+            <DialogFooter onClose={ onClose } />
+        }
+      </div>
+    </div>
+  );
+};
 
 const DialogBackdrop = ({
   open,
