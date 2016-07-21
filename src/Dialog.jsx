@@ -44,14 +44,18 @@ class Dialog extends Component {
 
   render() {
     const {
-      useTether = true,
+      fullscreen,
       backdrop,
       onClose,
       open,
       ...otherProps
     } = this.props;
 
-    return useTether ? (
+    return fullscreen ? (
+      <div>
+        <DialogComponent { ...this.props } { ...otherProps } />
+      </div>
+    ) : (
       <TetherComponent
         attachment="middle center"
         targetAttachment="middle center"
@@ -62,17 +66,12 @@ class Dialog extends Component {
         <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
         <DialogComponent { ...this.props } { ...otherProps } />
       </TetherComponent>
-    ) : (
-      <div>
-        <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
-        <DialogComponent { ...this.props } { ...otherProps } />
-      </div>
     );
   }
 }
 
 const DialogComponent = ({
-  useTether = true,
+  fullscreen,
   closable,
   variant,
   icon = getVariantIcon(variant || 'default'),
@@ -97,15 +96,17 @@ const DialogComponent = ({
           `coral-Dialog--${ variant }`,
           {
             'coral-Dialog--closable': closable,
-            'is-open': open
+            'is-open': open,
+            'coral-Dialog--fullscreen': fullscreen
           },
           className
         )
       }
+      fullscreen={ fullscreen }
       style={ {
         display: open ? 'block' : 'none',
         zIndex: open ? 10020 : 10010,
-        position: useTether ? 'static' : null
+        position: fullscreen ? null : 'static'
       } }
       { ...otherProps }
     >
