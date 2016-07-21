@@ -32,4 +32,14 @@ describe('Checkbox', () => {
     expect(tree.prop('aria-checked')).toNotExist();
     expect(innerTree.prop('aria-checked')).toBe(true);
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<Checkbox className="foo" />);
+    expect(tree.hasClass('foo')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Checkbox foo />);
+    expect(tree.prop('foo')).toBe(true);
+  });
 });

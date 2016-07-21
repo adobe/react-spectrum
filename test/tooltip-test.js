@@ -14,4 +14,16 @@ describe('Tooltip', () => {
     const contentTree = shallow(tree.prop('content'));
     expect(contentTree.hasClass('coral3-Tooltip--info')).toBe(true);
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<Tooltip className="foo" />);
+    const contentTree = shallow(tree.prop('content'));
+    expect(contentTree.hasClass('foo')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Tooltip foo />);
+    const contentTree = shallow(tree.prop('content'));
+    expect(contentTree.prop('foo')).toBe(true);
+  });
 });

@@ -25,4 +25,16 @@ describe('Popover', () => {
     expect(header.node).toExist();
     expect(header.prop('title')).toBe('Foo');
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<Popover className="foo" />);
+    const contentTree = shallow(tree.prop('content'));
+    expect(contentTree.hasClass('foo')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Popover foo />);
+    const contentTree = shallow(tree.prop('content'));
+    expect(contentTree.prop('foo')).toBe(true);
+  });
 });

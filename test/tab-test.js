@@ -39,4 +39,14 @@ describe('Tab', () => {
     tree.simulate('click');
     expect(spy).toNotHaveBeenCalled();
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<Tab className="foo" />);
+    expect(tree.hasClass('foo')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<Tab foo />);
+    expect(tree.prop('foo')).toBe(true);
+  });
 });
