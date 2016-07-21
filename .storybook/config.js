@@ -2,10 +2,13 @@ import React from 'react';
 import { configure, setAddon } from '@kadira/storybook';
 import infoAddon from '@kadira/react-storybook-addon-info';
 
+import configureTypekit from '../src/configureTypekit';
+
 import './storybook.styl';
 import '../css/coral.css';
 
 setAddon(infoAddon);
+configureTypekit('ruf7eed');
 
 let iframeBodyClass = 'coral--light';
 
