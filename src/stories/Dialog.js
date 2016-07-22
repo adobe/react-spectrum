@@ -5,7 +5,9 @@ import Dialog from '../Dialog';
 
 const title = <Dialog.Header key="header">Title</Dialog.Header>;
 const content = <Dialog.Content key="content">Content</Dialog.Content>;
-const dialogChildren = [title, content];
+const footer = <Dialog.Footer key="footer" />;
+const dialogChildren = [title, content, footer];
+
 storiesOf('Dialog', module)
   .add('Default', () => render(dialogChildren))
   .add('fullscreen: true', () => render(dialogChildren, { fullscreen: true }))
