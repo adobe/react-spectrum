@@ -29,7 +29,6 @@ export default class Select extends Component {
     return (
       <div
         className="coral3-Select-label"
-        closable
         disabled={ disabled }
       >
         { value.label }
