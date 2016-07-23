@@ -27,4 +27,14 @@ describe('DialogHeader', () => {
     tree.find(Button).simulate('click');
     expect(spy).toHaveBeenCalled();
   });
+
+  it('supports additional classNames', () => {
+    const tree = shallow(<DialogHeader className="myClass" />);
+    expect(tree.hasClass('myClass')).toBe(true);
+  });
+
+  it('supports additional properties', () => {
+    const tree = shallow(<DialogHeader foo />);
+    expect(tree.prop('foo')).toBe(true);
+  });
 });

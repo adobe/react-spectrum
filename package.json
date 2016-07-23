@@ -31,8 +31,8 @@
     "tether-drop": "^1.4.2"
   },
   "devDependencies": {
-    "@kadira/storybook": "^1.36.0",
     "@kadira/react-storybook-addon-info": "^3.0.9",
+    "@kadira/storybook": "^1.36.0",
     "babel": "^6.5.2",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
