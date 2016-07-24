@@ -17,12 +17,12 @@ export default class Textfield extends Component {
       required,
       invalid,
       readOnly,
-      onChange,
       ...otherProps
     } = this.props;
 
     return (
       <input
+        type="text"
         className={
           classNames(
             'coral-Textfield',
@@ -39,9 +39,7 @@ export default class Textfield extends Component {
         aria-readonly={ readOnly }
         disabled={ disabled }
         required={ required }
-        invalid={ invalid }
         readOnly={ readOnly }
-        onChange={ onChange }
         { ...otherProps }
       />
     );
