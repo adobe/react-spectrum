@@ -29,7 +29,6 @@ export default function Textarea({
       aria-readonly={ readOnly }
       disabled={ disabled }
       required={ required }
-      invalid={ invalid }
       readOnly={ readOnly }
       { ...otherProps }
     />

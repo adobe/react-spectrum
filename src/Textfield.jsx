@@ -39,7 +39,6 @@ export default class Textfield extends Component {
         aria-readonly={ readOnly }
         disabled={ disabled }
         required={ required }
-        invalid={ invalid }
         readOnly={ readOnly }
         onChange={ onChange }
         { ...otherProps }
