@@ -9,6 +9,7 @@ export Heading from './Heading';
 export Icon from './Icon';
 export List from './List';
 export ListItem from './ListItem';
+export NumberInput from './NumberInput';
 export Popover from './Popover';
 export Progress from './Progress';
 export Radio from './Radio';
