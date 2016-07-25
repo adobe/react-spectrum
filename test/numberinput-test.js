@@ -5,7 +5,7 @@ import Textfield from '../src/Textfield';
 import Button from '../src/Button';
 import { shallow } from 'enzyme';
 
-describe('Search', () => {
+describe('NumberInput', () => {
   it('default', () => {
     const assertDefaultButtonProps = (button, inputId) => {
       expect(button.prop('type')).toBe('button');
@@ -24,7 +24,7 @@ describe('Search', () => {
     const input = findInput(tree);
     const inputId = input.prop('id');
     expect(inputId).toExist();
-    expect(input.prop('defaultValue')).toBe('');
+    expect(input.prop('defaultValue')).toBe(undefined);
     expect(input.prop('role')).toBe('spinbutton');
     expect(input.prop('aria-valuenow')).toBe('');
     expect(input.prop('aria-valuetext')).toBe('');
