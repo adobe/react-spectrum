@@ -4,7 +4,7 @@ import classNames from 'classnames';
 export default function Progress({
   value = 0, // number between 0 - 100
   size = 'M', // 'S', "M", "L"
-  showLabel = false, // Whether the label should be shown or not
+  showPercent = false, // Whether the label should be shown or not
   labelPosition = 'right', // 'left', 'right', 'bottom'
   label, // If not specified, a `${value}%` is used.
   indeterminate = false,
@@ -14,14 +14,18 @@ export default function Progress({
   const sizeClassPart = { S: 'small', M: 'medium', L: 'large' }[size];
   value = Math.min(Math.max(+value, 0), 100);
 
+  if (showPercent && !label) {
+    label = `${ value }%`;
+  }
+
   return (
     <div
       className={
         classNames(
           'coral-Progress',
           `coral-Progress--${ sizeClassPart }`,
+          `coral-Progress--${ label ? `${ labelPosition }Label` : 'noLabel' }`,
           {
-            [`coral-Progress--${ labelPosition }Label`]: showLabel,
             'coral-Progress--indeterminate': indeterminate
           },
           className
@@ -39,9 +43,9 @@ export default function Progress({
         />
       </div>
       {
-        showLabel &&
+        label &&
           <div className="coral-Progress-label">
-            { label || `${ value }%` }
+            { label }
           </div>
       }
     </div>

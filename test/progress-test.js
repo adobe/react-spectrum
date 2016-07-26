@@ -6,7 +6,9 @@ import { shallow } from 'enzyme';
 describe('Progress', () => {
   it('default', () => {
     const tree = shallow(<Progress />);
-    expect(tree.prop('className')).toBe('coral-Progress coral-Progress--medium');
+    expect(tree.hasClass('coral-Progress')).toBe(true);
+    expect(tree.hasClass('coral-Progress--medium')).toBe(true);
+    expect(tree.hasClass('coral-Progress--noLabel')).toBe(true);
     expect(tree.prop('aria-valuemin')).toBe(0);
     expect(tree.prop('aria-valuemax')).toBe(100);
     expect(tree.prop('aria-valuenow')).toBe(0);
@@ -22,14 +24,14 @@ describe('Progress', () => {
 
   describe('value', () => {
     it('updates all the fields', () => {
-      const tree = shallow(<Progress value="30" showLabel />);
+      const tree = shallow(<Progress value="30" showPercent />);
       expect(tree.prop('aria-valuenow')).toBe(30);
       expect(findStatus(tree).prop('style')).toEqual({ width: '30%' });
       expect(findLabel(tree).text()).toBe('30%');
     });
 
     it('clamps values to 0-100', () => {
-      const tree = shallow(<Progress value="10000" showLabel />);
+      const tree = shallow(<Progress value="10000" showPercent />);
       expect(tree.prop('aria-valuenow')).toBe(100);
       expect(findStatus(tree).prop('style')).toEqual({ width: '100%' });
       expect(findLabel(tree).text()).toBe('100%');
@@ -43,9 +45,9 @@ describe('Progress', () => {
 
   it('supports multiple sizes', () => {
     const tree = shallow(<Progress size="L" />);
-    expect(tree.prop('className')).toBe('coral-Progress coral-Progress--large');
+    expect(tree.hasClass('coral-Progress--large')).toBe(true);
     tree.setProps({ size: 'S' });
-    expect(tree.prop('className')).toBe('coral-Progress coral-Progress--small');
+    expect(tree.hasClass('coral-Progress--small')).toBe(true);
   });
 
   it('supports indeterminate', () => {
@@ -58,8 +60,8 @@ describe('Progress', () => {
   });
 
   describe('label', () => {
-    it('supports showLabel', () => {
-      const tree = shallow(<Progress showLabel />);
+    it('supports showPercent', () => {
+      const tree = shallow(<Progress showPercent />);
       expect(tree.hasClass('coral-Progress--rightLabel')).toBe(true);
       const label = findLabel(tree);
       expect(label.node).toExist();
@@ -70,14 +72,14 @@ describe('Progress', () => {
     });
 
     it('supports labelPosition', () => {
-      const tree = shallow(<Progress showLabel labelPosition="left" />);
+      const tree = shallow(<Progress showPercent labelPosition="left" />);
       expect(tree.hasClass('coral-Progress--leftLabel')).toBe(true);
       tree.setProps({ labelPosition: 'bottom' });
       expect(tree.hasClass('coral-Progress--bottomLabel')).toBe(true);
     });
 
     it('support custom labels', () => {
-      const tree = shallow(<Progress showLabel label="foo" />);
+      const tree = shallow(<Progress label="foo" />);
       expect(findLabel(tree).text()).toBe('foo');
     });
   });
