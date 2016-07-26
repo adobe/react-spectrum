@@ -5,7 +5,6 @@ import Portal from 'react-portal';
 
 import DialogHeader from './internal/DialogHeader';
 import DialogFooter from './internal/DialogFooter';
-import { getVariantIcon } from './utils/icon-variant';
 
 const BACKDROP_NONE = 'none';
 const BACKDROP_MODAL = 'modal';
@@ -14,9 +13,10 @@ const BACKDROP_STATIC = 'static';
 class Dialog extends Component {
   static defaultProps = {
     backdrop: BACKDROP_MODAL, // none, modal, static
-    closable: false,
-    variant: 'default', // default, error, warning, success, info, help
     open: false,
+    closable: false,
+    fullscreen: false,
+    variant: 'default', // default, error, warning, success, info, help
     onClose: () => {}
   };
 
@@ -48,102 +48,79 @@ class Dialog extends Component {
       backdrop,
       onClose,
       open,
+      variant,
+      closable,
+      className,
+      children,
       ...otherProps
     } = this.props;
 
-    return fullscreen ? (
-      <div>
-        <DialogComponent { ...this.props } { ...otherProps } />
-      </div>
-    ) : (
-      <TetherComponent
-        attachment="middle center"
-        targetAttachment="middle center"
-        target={ document.body }
-        targetModifier="visible"
-        style={ { zIndex: open ? 10020 : 10010, display: open ? 'block' : 'none' } }
-      >
-        <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
-        <DialogComponent { ...this.props } { ...otherProps } />
-      </TetherComponent>
+    let RootEl = fullscreen ? 'div' : TetherComponent;
+
+    const rootProps = {
+      style: {
+        zIndex: open ? 10020 : 10010,
+        display: open ? 'block' : 'none'
+      }
+    };
+
+    // If we're not full screen we need to supply TetherComponent with the props it needs.
+    if (!fullscreen) {
+      rootProps.attachment = 'middle center';
+      rootProps.targetAttachment = 'middle center';
+      rootProps.target = document.body;
+      rootProps.targetModifier = 'visible';
+    }
+
+    return (
+      <RootEl { ...rootProps }>
+        {
+          !fullscreen &&
+          <DialogBackdrop open={ open } backdrop={ backdrop } onClose={ onClose } />
+        }
+        <div
+          className={
+            classNames(
+              'coral-Dialog',
+              `coral-Dialog--${ variant }`,
+              {
+                'coral-Dialog--closable': closable,
+                'coral-Dialog--fullscreen': fullscreen,
+                'is-open': open
+              },
+              className
+            )
+          }
+          style={ {
+            display: open ? 'block' : 'none',
+            zIndex: open ? 10020 : 10010,
+            position: fullscreen ? null : 'static'
+          } }
+          { ...otherProps }
+        >
+          <div className="coral-Dialog-wrapper">
+            {
+              React.Children.map(children, child => (
+                // Pass each child some extra props. Each child can decide to use them or not.
+                React.cloneElement(child, {
+                  variant,
+                  closable,
+                  onClose
+                })
+              ))
+            }
+          </div>
+        </div>
+      </RootEl>
     );
   }
 }
 
-const DialogComponent = ({
-  fullscreen,
-  closable,
-  variant,
-  icon = getVariantIcon(variant || 'default'),
-  open,
-  children,
-  className,
-  onClose,
-  ...otherProps
-}) => {
-  const normalizedChildren = {};
-  React.Children.forEach(children, ((child) => {
-    if (typeof child.type === 'function') {
-      normalizedChildren[child.type.name] = child;
-    }
-  }));
-
-  return (
-    <div
-      className={
-        classNames(
-          'coral-Dialog',
-          `coral-Dialog--${ variant }`,
-          {
-            'coral-Dialog--closable': closable,
-            'is-open': open,
-            'coral-Dialog--fullscreen': fullscreen
-          },
-          className
-        )
-      }
-      fullscreen={ fullscreen }
-      style={ {
-        display: open ? 'block' : 'none',
-        zIndex: open ? 10020 : 10010,
-        position: fullscreen ? null : 'static'
-      } }
-      { ...otherProps }
-    >
-      <div className="coral-Dialog-wrapper">
-        {
-          normalizedChildren.DialogHeader ?
-            React.cloneElement(normalizedChildren.DialogHeader, {
-              icon,
-              closable,
-              onClose,
-              ...normalizedChildren.DialogHeader.props
-            }) :
-            <DialogHeader
-              icon={ icon }
-              closable={ closable }
-              onClose={ onClose }
-            />
-        }
-        {
-          normalizedChildren.DialogContent ||
-          <DialogContent>{ children }</DialogContent>
-        }
-        {
-          normalizedChildren.DialogFooter ?
-            React.cloneElement(normalizedChildren.DialogFooter, { onClose }) :
-            <DialogFooter onClose={ onClose } />
-        }
-      </div>
-    </div>
-  );
-};
-
-const DialogBackdrop = ({
+function DialogBackdrop({
   open,
   backdrop,
   onClose
-}) => {
+}) {
   onClose = backdrop === BACKDROP_STATIC ? () => {} : onClose;
 
   return (
@@ -162,13 +139,18 @@ const DialogBackdrop = ({
       />
     </Portal>
   );
-};
+}
 
 function DialogContent({
   className,
   children,
   ...otherProps
 }) {
+  // We don't need these props and using them causes unknown props warnings in React.
+  delete otherProps.variant;
+  delete otherProps.closable;
+  delete otherProps.onClose;
+
   return (
     <div className={ classNames('coral-Dialog-content', className) } { ...otherProps }>
       { children }

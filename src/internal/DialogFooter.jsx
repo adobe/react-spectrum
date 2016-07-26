@@ -30,6 +30,10 @@ export default function DialogFooter({
   className,
   ...otherProps
 }) {
+  // We don't need these props and using them causes unknown props warnings in React.
+  delete otherProps.variant;
+  delete otherProps.closable;
+
   return (
     <div className={ classNames('coral-Dialog-footer', className) } { ...otherProps }>
       {

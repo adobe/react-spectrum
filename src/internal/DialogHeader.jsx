@@ -4,10 +4,12 @@ import classNames from 'classnames';
 import Heading from '../Heading';
 import Button from '../Button';
 import Icon from '../Icon';
+import { getVariantIcon } from '../utils/icon-variant';
 
 export default function DialogHeader({
   title,
-  icon,
+  variant,
+  icon = getVariantIcon(variant || 'default'),
   closable,
   onClose,
   children,
@@ -15,12 +17,22 @@ export default function DialogHeader({
   ...otherProps
 }) {
   return (
-    <div className={ classNames('coral-Dialog-header', className) } { ...otherProps }>
+    <div
+      className={
+        classNames(
+          'coral-Dialog-header',
+          className
+        )
+      }
+      { ...otherProps }
+    >
       {
         icon &&
         <Icon className="coral-Dialog-typeIcon" icon={ icon } size="S" />
       }
-      <Heading size={ 2 } className="coral-Dialog-title">{ title || children }</Heading>
+      <Heading size={ 2 } className="coral-Dialog-title">
+        { title || children }
+      </Heading>
       {
         closable &&
           <Button
