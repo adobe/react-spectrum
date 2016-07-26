@@ -114,6 +114,9 @@ export default class Accordion extends Component {
       ...otherProps
     } = this.props;
 
+    // Prevent defaultSelectedKey from getting passed to div and causing a warning.
+    delete otherProps.defaultSelectedKey;
+
     return (
       <div
         { ...otherProps }
