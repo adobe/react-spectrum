@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import TetherComponent from 'react-tether';
-import Portal from 'react-portal';
 
 import DialogHeader from './internal/DialogHeader';
 import DialogFooter from './internal/DialogFooter';
-
-const BACKDROP_NONE = 'none';
-const BACKDROP_MODAL = 'modal';
-const BACKDROP_STATIC = 'static';
+import DialogContent from './internal/DialogContent';
+import DialogBackdrop from './internal/DialogBackdrop';
 
 class Dialog extends Component {
   static defaultProps = {
-    backdrop: BACKDROP_MODAL, // none, modal, static
     open: false,
     closable: false,
     fullscreen: false,
@@ -114,48 +110,6 @@ class Dialog extends Component {
       </RootEl>
     );
   }
-}
-
-function DialogBackdrop({
-  open,
-  backdrop,
-  onClose
-}) {
-  onClose = backdrop === BACKDROP_STATIC ? () => {} : onClose;
-
-  return (
-    <Portal
-      isOpened={ open }
-    >
-      <div
-        className={
-          classNames({
-            'coral-Backdrop': backdrop !== BACKDROP_NONE,
-            'is-open': open
-          })
-        }
-        onClick={ onClose }
-        style={ { zIndex: 10009 } }
-      />
-    </Portal>
-  );
-}
-
-function DialogContent({
-  className,
-  children,
-  ...otherProps
-}) {
-  // We don't need these props and using them causes unknown props warnings in React.
-  delete otherProps.variant;
-  delete otherProps.closable;
-  delete otherProps.onClose;
-
-  return (
-    <div className={ classNames('coral-Dialog-content', className) } { ...otherProps }>
-      { children }
-    </div>
-  );
 }
 
 Dialog.Header = DialogHeader;
