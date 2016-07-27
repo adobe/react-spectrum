@@ -11,8 +11,7 @@ export default class Tooltip extends Component {
     variant: 'inspect', // inspect, info, success, error
     open: false,
     placement: 'right', // right, left, top, bottom
-    openOn: 'hover', // click, hover, focus, always
-    onClose: () => {}
+    openOn: 'hover' // click, hover, focus, always
   };
 
   render() {
