@@ -24,15 +24,15 @@ storiesOf('Accordion', module)
     { inline: true }
   )
   .addWithInfo(
-    'Default selected key',
+    'Default selected index',
     'This is an Accordion where the the second accordion item is opened by default.',
-    () => render({ defaultSelectedKey: '1' }),
+    () => render({ defaultSelectedIndex: 1 }),
     { inline: true }
   )
   .addWithInfo(
-    'Selected key',
+    'Selected index',
     'This is a controlled Accordion where the the second accordion item is opened by default.',
-    () => render({ selectedKey: '1' }),
+    () => render({ selectedIndex: 1 }),
     { inline: true }
   )
   .addWithInfo(

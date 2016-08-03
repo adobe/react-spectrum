@@ -53,27 +53,12 @@ describe('TabList', () => {
     const child = tree.find('.two');
     child.simulate('click');
 
-    expect(spy).toHaveBeenCalledWith('1');
-  });
-
-  it('support custom keys property', () => {
-    const spy = createSpy();
-    const tree = shallow(
-      <TabList onChange={ spy }>
-        <div key="one" className="one">a</div>
-        <div key="two" className="two">b</div>
-      </TabList>
-    );
-
-    const child = tree.find('.two');
-    child.simulate('click');
-
-    expect(spy).toHaveBeenCalledWith('two');
+    expect(spy).toHaveBeenCalledWith(1);
   });
 
   describe('selectedKey', () => {
-    const renderTabListWithSelectedKey = key => shallow(
-      <TabList selectedKey={ key }>
+    const renderTabListWithSelectedIndex = index => shallow(
+      <TabList selectedIndex={ index }>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
@@ -86,30 +71,20 @@ describe('TabList', () => {
     };
 
     it('supports string index', () => {
-      const tree = renderTabListWithSelectedKey('1');
+      const tree = renderTabListWithSelectedIndex('1');
       assertChildTwoSelected(tree);
     });
 
     it('supports integer index', () => {
-      const tree = renderTabListWithSelectedKey(1);
-      assertChildTwoSelected(tree);
-    });
-
-    it('support child keys', () => {
-      const tree = shallow(
-        <TabList selectedKey="bar">
-          <div key="foo" className="one">a</div>
-          <div key="bar" className="two">b</div>
-        </TabList>
-      );
+      const tree = renderTabListWithSelectedIndex(1);
       assertChildTwoSelected(tree);
     });
   });
 
 
-  it('supports defaultSelectedKey', () => {
+  it('supports defaultSelectedIndex', () => {
     const tree = shallow(
-      <TabList defaultSelectedKey="1">
+      <TabList defaultSelectedIndex="1">
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
