@@ -2,81 +2,78 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /**
- * selectedKey: The key of the Tab that should be selected (open). If an TAb
- * has not been given a key, its child index will be used as its key. When selectedKey is specified,
- * the component is in a controlled state and an Tab can only be selected by changing the
- * selectedKey prop value. By default, the first Tab will be selected.
+ * selectedIndex: The index of the Tab that should be selected (open). When selectedIndex is
+ * specified, the component is in a controlled state and a Tab can only be selected by changing the
+ * selectedIndex prop value. By default, the first Tab will be selected.
  *
- * defaultSelectedKey: The same as selectedKey except that the component is in an uncontrolled
+ * defaultSelectedIndex: The same as selectedIndex except that the component is in an uncontrolled
  * state.
  *
  * onChange: A function that will be called when an Tab is selected or deselected. It will be passed
- * the updated selected key.
+ * the updated selected index.
  */
 export default class TabList extends Component {
   constructor(props) {
     super(props);
 
     const {
-      selectedKey,
-      defaultSelectedKey,
+      selectedIndex,
+      defaultSelectedIndex,
       children
     } = props;
 
-    let firstSelectedItem;
-    React.Children.forEach(children, (child) => {
+    let firstSelectedIndex;
+    React.Children.forEach(children, (child, index) => {
       if (child.props.selected) {
-        firstSelectedItem = child.key;
+        firstSelectedIndex = index;
       }
     });
 
-    const defaultSelected = firstSelectedItem || defaultSelectedKey;
+    const defaultSelected = firstSelectedIndex || defaultSelectedIndex;
 
-    const currentSelectedKey = selectedKey !== undefined ? selectedKey : defaultSelected;
+    const currentSelectedIndex = selectedIndex !== undefined ? selectedIndex : defaultSelected;
     this.state = {
-      selectedKey: currentSelectedKey
+      selectedIndex: currentSelectedIndex
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if ('selectedKey' in nextProps) {
+    if ('selectedIndex' in nextProps) {
       this.setState({
-        selectedKey: nextProps.selectedKey
+        selectedIndex: nextProps.selectedIndex
       });
     }
   }
 
-  onClickItem(selectedKey) {
-    this.setSelectedKey(selectedKey);
+  onClickItem(selectedIndex) {
+    this.setSelectedIndex(selectedIndex);
   }
 
-  setSelectedKey(selectedKey) {
-    // If selectedKey is defined on props then this is a controlled component and we shouldn't
+  setSelectedIndex(selectedIndex) {
+    // If selectedIndex is defined on props then this is a controlled component and we shouldn't
     // change our own state.
-    if (!('selectedKey' in this.props)) {
+    if (!('selectedIndex' in this.props)) {
       this.setState({
-        selectedKey
+        selectedIndex
       });
     }
 
-    this.props.onChange(selectedKey);
+    this.props.onChange(selectedIndex);
   }
 
   getItems() {
-    const selectedKey = this.state.selectedKey;
+    const selectedIndex = this.state.selectedIndex;
     const { children } = this.props;
 
     return React.Children.map(children, (child, index) => {
-      // If there is no key provide, use the index as default key
-      const key = child.key || String(index);
-      const selected = String(selectedKey) === key;
+      const selected = +selectedIndex === index;
 
-      const tabListOnClick = this.onClickItem.bind(this, key);
+      const tabListOnClick = this.onClickItem.bind(this, index);
       const props = {
         selected,
         tabIndex: index,
         onClick: () => {
-          if (child.props.onClick) { child.props.onClick(key); }
+          if (child.props.onClick) { child.props.onClick(index); }
           tabListOnClick();
         }
       };
@@ -85,8 +82,8 @@ export default class TabList extends Component {
     });
   }
 
-  handleClickItem(selectedKey) {
-    this.setSelectedKey(selectedKey);
+  handleClickItem(selectedIndex) {
+    this.setSelectedIndex(selectedIndex);
   }
 
   render() {
@@ -96,6 +93,9 @@ export default class TabList extends Component {
       orientation,
       ...otherProps
     } = this.props;
+
+    delete otherProps.defaultSelectedIndex;
+    delete otherProps.selectedIndex;
 
     return (
       <div
@@ -120,6 +120,6 @@ export default class TabList extends Component {
 TabList.defaultProps = {
   size: 'M',
   orientation: 'horizontal',
-  defaultSelectedKey: '0',
+  defaultSelectedIndex: 0,
   onChange() {}
 };

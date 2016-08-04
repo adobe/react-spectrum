@@ -12,8 +12,8 @@ storiesOf('TabList', module)
     </VerticalCenter>
   ))
   .add('Default', () => render())
-  .add('defaultSelectedKey: 1', () => render({ defaultSelectedKey: '1' }))
-  .add('selectedKey: 1', () => render({ selectedKey: '1' }))
+  .add('defaultSelectedIndex: 1', () => render({ defaultSelectedIndex: 1 }))
+  .add('selectedIndex: 1', () => render({ selectedIndex: 1 }))
   .add('size: L', () => render({ size: 'L' }))
   .add('orientation: vertical', () => render({ orientation: 'vertical' }))
   .add('orientation: vertical, size: L', () => render({ orientation: 'vertical', size: 'L' }));
@@ -22,7 +22,7 @@ function render(props = {}) {
   return (
     <TabList { ...props } onChange={ action('onChange') }>
       <Tab>Tab 1</Tab>
-      <Tab selected>Tab 2</Tab>
+      <Tab>Tab 2</Tab>
     </TabList>
   );
 }
