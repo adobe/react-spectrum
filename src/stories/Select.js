@@ -6,7 +6,6 @@ import Select from '../Select';
 
 
 const defaultProps = {
-  placeholder: 'Enter Text...',
   options: [
     { label: 'Chocolate', value: 'chocolate' },
     { label: 'Vanilla', value: 'vanilla' },
