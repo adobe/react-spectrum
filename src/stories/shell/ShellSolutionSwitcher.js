@@ -7,9 +7,21 @@ import ShellSolutionGroup from '../../shell/ShellSolutionGroup';
 import ShellSolution from '../../shell/ShellSolution';
 
 storiesOf('ShellSolutionSwitcher', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('open: true', () => render({ open: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: true',
+    () => render({ open: true }),
+    { inline: true }
+  );
 
 function render(props) {
   return (

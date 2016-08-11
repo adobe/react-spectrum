@@ -5,24 +5,56 @@ import { VerticalCenter } from '../../../.storybook/layout';
 import ShellHelp from '../../shell/ShellHelp';
 
 storiesOf('ShellHelp', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('open: true', () => render({ open: true }))
-  .add('defaultResults', () => render({ defaultResults, open: true }))
-  .add('searchResults: 0', () => render({ searchResults: [], numTotalResults: 0, open: true }))
-  .add('5 searchResults', () => render({
-    searchResults: searchResults.slice(5),
-    numTotalResults: 5,
-    moreSearchResultsUrl,
-    open: true
-  }))
-  .add('1000 searchResults', () => render({
-    searchResults,
-    numTotalResults: 1000,
-    moreSearchResultsUrl,
-    open: true
-  }))
-  .add('loading: true', () => render({ loading: true, open: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: true',
+    () => render({ open: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'defaultResults',
+    () => render({ defaultResults, open: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'searchResults: 0',
+    () => render({ searchResults: [], numTotalResults: 0, open: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    '5 searchResults',
+    () => render({
+      searchResults: searchResults.slice(5),
+      numTotalResults: 5,
+      moreSearchResultsUrl,
+      open: true
+    }),
+    { inline: true }
+  )
+  .addWithInfo(
+    '1000 searchResults',
+    () => render({
+      searchResults,
+      numTotalResults: 1000,
+      moreSearchResultsUrl,
+      open: true
+    }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'loading: true',
+    () => render({ loading: true, open: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

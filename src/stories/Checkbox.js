@@ -5,13 +5,41 @@ import { VerticalCenter } from '../../.storybook/layout';
 import Checkbox from '../Checkbox';
 
 storiesOf('Checkbox', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('defaultChecked: true', () => render({ defaultChecked: true }))
-  .add('checked: true', () => render({ checked: true }))
-  .add('checked: false', () => render({ checked: false }))
-  .add('indeterminate: true', () => render({ indeterminate: true }))
-  .add('disabled: true', () => render({ disabled: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'defaultChecked: true',
+    () => render({ defaultChecked: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'checked: true',
+    () => render({ checked: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'checked: false',
+    () => render({ checked: false }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'indeterminate: true',
+    () => render({ indeterminate: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => render({ disabled: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

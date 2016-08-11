@@ -7,10 +7,26 @@ import ShellOrganization from '../../shell/ShellOrganization';
 import ShellSubOrganization from '../../shell/ShellSubOrganization';
 
 storiesOf('ShellOrgSwitcher', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render({ selected: true }))
-  .add('open: true', () => render({ selected: true, open: true }))
-  .add('open: true, no selected', () => render({ open: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render({ selected: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: true',
+    () => render({ selected: true, open: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: true, no selected',
+    () => render({ open: true }),
+    { inline: true }
+  );
 
 function render({ selected, ...props } = {}) {
   return (

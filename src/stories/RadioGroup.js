@@ -6,10 +6,26 @@ import RadioGroup from '../RadioGroup';
 import Radio from '../Radio';
 
 storiesOf('RadioGroup', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('labelsBelow: true', () => render({ labelsBelow: true }))
-  .add('vertical: true', () => render({ vertical: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'labelsBelow: true',
+    () => render({ labelsBelow: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'vertical: true',
+    () => render({ vertical: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

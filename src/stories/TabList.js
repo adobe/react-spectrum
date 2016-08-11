@@ -7,16 +7,40 @@ import Tab from '../Tab';
 
 storiesOf('TabList', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
     </VerticalCenter>
   ))
-  .add('Default', () => render())
-  .add('defaultSelectedIndex: 1', () => render({ defaultSelectedIndex: 1 }))
-  .add('selectedIndex: 1', () => render({ selectedIndex: 1 }))
-  .add('size: L', () => render({ size: 'L' }))
-  .add('orientation: vertical', () => render({ orientation: 'vertical' }))
-  .add('orientation: vertical, size: L', () => render({ orientation: 'vertical', size: 'L' }));
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'defaultSelectedIndex: 1',
+    () => render({ defaultSelectedIndex: 1 }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'selectedIndex: 1',
+    () => render({ selectedIndex: 1 }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'size: L',
+    () => render({ size: 'L' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'orientation: vertical',
+    () => render({ orientation: 'vertical' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'orientation: vertical, size: L',
+    () => render({ orientation: 'vertical', size: 'L' }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

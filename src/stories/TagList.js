@@ -6,13 +6,33 @@ import TagList from '../TagList';
 import Tag from '../Tag';
 
 storiesOf('TagList', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('Read Only', () => render({ readonly: true }))
-  .add('Disabled', () => render({ disabled: true }))
-  .add('Using Values', () => render({ values: [
-    'Mango', 'Turtle', 'Noodles', 'Pluto'
-  ] }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Read Only',
+    () => render({ readonly: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Disabled',
+    () => render({ disabled: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Using Values',
+    () => render({ values: [
+      'Mango', 'Turtle', 'Noodles', 'Pluto'
+    ] }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

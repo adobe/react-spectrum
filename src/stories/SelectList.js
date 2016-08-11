@@ -41,15 +41,51 @@ const selectedValue = [
 
 
 storiesOf('SelectList', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => (render({ ...defaultProps })))
-  .add('grouped: true', () => (render({ options: groupedOptions })))
-  .add('grouped multiple: true', () => (render({ multiple: true, value: selectedValue, options: groupedOptions })))
-  .add('multiple noValue: true', () => (render({ multiple: true })))
-  .add('multiple: true', () => (render({ multiple: true, value: selectedValue })))
-  .add('multiple disabled: true', () => (render({ disabled: true, multiple: true, value: selectedValue })))
-  .add('disabled: true', () => (render({ disabled: true })))
-  .add('value: longVal', () => (render({ value: 'logVal' })));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => (render({ ...defaultProps })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'grouped: true',
+    () => (render({ options: groupedOptions })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'grouped multiple: true',
+    () => (render({ multiple: true, value: selectedValue, options: groupedOptions })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'multiple noValue: true',
+    () => (render({ multiple: true })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'multiple: true',
+    () => (render({ multiple: true, value: selectedValue })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'multiple disabled: true',
+    () => (render({ disabled: true, multiple: true, value: selectedValue })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => (render({ disabled: true })),
+    { inline: true }
+  )
+  .addWithInfo(
+    'value: longVal',
+    () => (render({ value: 'logVal' })),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

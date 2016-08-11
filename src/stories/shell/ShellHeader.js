@@ -18,8 +18,16 @@ import Button from '../../Button';
 
 storiesOf('ShellHeader', module)
   .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
-  .add('Default', () => render())
-  .add('homeIcon: adobeAnalyticsColor', () => render({ homeIcon: 'adobeAnalyticsColor' }));
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'homeIcon: adobeAnalyticsColor',
+    () => render({ homeIcon: 'adobeAnalyticsColor' }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (
