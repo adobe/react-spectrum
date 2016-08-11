@@ -6,14 +6,30 @@ import Tab from '../Tab';
 
 storiesOf('Tab', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0px 100px' } }>
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
     </VerticalCenter>
   ))
-  .add('Default', () => render())
-  .add('icon: add', () => render({ icon: 'add' }))
-  .add('selected: true', () => render({ selected: true }))
-  .add('disabled: true', () => render({ disabled: true }));
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'icon: add',
+    () => render({ icon: 'add' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'selected: true',
+    () => render({ selected: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => render({ disabled: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

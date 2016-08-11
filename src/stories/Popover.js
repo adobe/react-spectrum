@@ -7,19 +7,71 @@ import Button from '../Button';
 import Heading from '../Heading';
 
 storiesOf('Popover', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render('Content'))
-  .add('Long content', () => render(longMarkup))
-  .add('placement: left', () => render('Content', { placement: 'left' }))
-  .add('placement: top', () => render('Content', { placement: 'top' }))
-  .add('placement: bottom', () => render('Content', { placement: 'bottom' }))
-  .add('open: false', () => render('Content', { open: false }))
-  .add('closable: false', () => render('Content', { closable: false }))
-  .add('variant: error', () => render('Content', { variant: 'error' }))
-  .add('variant: warning', () => render('Content', { variant: 'warning' }))
-  .add('variant: success', () => render('Content', { variant: 'success' }))
-  .add('variant: help', () => render('Content', { variant: 'help' }))
-  .add('variant: info', () => render('Content', { variant: 'info' }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render('Content'),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Long content',
+    () => render(longMarkup),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placement: left',
+    () => render('Content', { placement: 'left' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placement: top',
+    () => render('Content', { placement: 'top' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placement: bottom',
+    () => render('Content', { placement: 'bottom' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: false',
+    () => render('Content', { open: false }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'closable: false',
+    () => render('Content', { closable: false }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: error',
+    () => render('Content', { variant: 'error' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: warning',
+    () => render('Content', { variant: 'warning' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: success',
+    () => render('Content', { variant: 'success' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: help',
+    () => render('Content', { variant: 'help' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: info',
+    () => render('Content', { variant: 'info' }),
+    { inline: true }
+  );
 
 function render(children, props = {}) {
   return (

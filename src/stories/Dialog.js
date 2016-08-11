@@ -9,18 +9,66 @@ const footer = <Dialog.Footer key="footer" />;
 const dialogChildren = [title, content, footer];
 
 storiesOf('Dialog', module)
-  .add('Default', () => render(dialogChildren))
-  .add('fullscreen: true', () => render(dialogChildren, { fullscreen: true }))
-  .add('Long content', () => render(longMarkup))
-  .add('open: false', () => render(dialogChildren, { open: false }))
-  .add('closable: false', () => render(dialogChildren, { closable: false }))
-  .add('variant: error', () => render(dialogChildren, { variant: 'error' }))
-  .add('variant: warning', () => render(dialogChildren, { variant: 'warning' }))
-  .add('variant: success', () => render(dialogChildren, { variant: 'success' }))
-  .add('variant: help', () => render(dialogChildren, { variant: 'help' }))
-  .add('variant: info', () => render(dialogChildren, { variant: 'info' }))
-  .add('backdrop: none', () => render(dialogChildren, { backdrop: 'none' }))
-  .add('backdrop: static', () => render(dialogChildren, { backdrop: 'static' }));
+  .addWithInfo(
+    'Default',
+    () => render(dialogChildren),
+    { inline: true }
+  )
+  .addWithInfo(
+    'fullscreen: true',
+    () => render(dialogChildren, { fullscreen: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Long content',
+    () => render(longMarkup),
+    { inline: true }
+  )
+  .addWithInfo(
+    'open: false',
+    () => render(dialogChildren, { open: false }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'closable: false',
+    () => render(dialogChildren, { closable: false }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: error',
+    () => render(dialogChildren, { variant: 'error' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: warning',
+    () => render(dialogChildren, { variant: 'warning' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: success',
+    () => render(dialogChildren, { variant: 'success' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: help',
+    () => render(dialogChildren, { variant: 'help' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: info',
+    () => render(dialogChildren, { variant: 'info' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'backdrop: none',
+    () => render(dialogChildren, { backdrop: 'none' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'backdrop: static',
+    () => render(dialogChildren, { backdrop: 'static' }),
+    { inline: true }
+  );
 
 function render(children, props = {}) {
   return (

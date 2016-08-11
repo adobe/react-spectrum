@@ -28,29 +28,85 @@ let value = '';
 let multipleValues = selectedValue.slice();
 
 storiesOf('Autocomplete', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render({ ...defaultProps }))
-  .add('icon: filter', () => render({ icon: 'filter' }))
-  .add('placeholder: other placeholder', () => render({ placeholder: 'other placeholder' }))
-  .add('multiple: true', () => render({ multiple: true, value: selectedValue }))
-  .add('required: true', () => render({ required: true }))
-  .add('invalid: true', () => render({ invalid: true }))
-  .add('disabled: true', () => render({ disabled: true }))
-  .add('multiple disabled: true', () => render({ disabled: true, multiple: true, value: selectedValue }))
-  .add('value: longVal, icon: true', () => render({ value: 'logVal', icon: 'filter' }))
-  .add('value: longVal', () => render({ value: 'logVal' }))
-  .add('no results', () => render({ options: [], noResultsText: 'Nothing to see here folks' }))
-  .add('Stateful component', () => render({
-    ...defaultProps,
-    value,
-    onChange: (v) => { value = v; action('change')(v); }
-  }))
-  .add('Stateful multiple component', () => render({
-    ...defaultProps,
-    value: multipleValues,
-    multiple: true,
-    onChange: (v) => { multipleValues = v; action('change')(v); }
-  }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render({ ...defaultProps }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'icon: filter',
+    () => render({ icon: 'filter' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placeholder: other placeholder',
+    () => render({ placeholder: 'other placeholder' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'multiple: true',
+    () => render({ multiple: true, value: selectedValue }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'required: true',
+    () => render({ required: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'invalid: true',
+    () => render({ invalid: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => render({ disabled: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'multiple disabled: true',
+    () => render({ disabled: true, multiple: true, value: selectedValue }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'value: longVal, icon: true',
+    () => render({ value: 'logVal', icon: 'filter' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'value: longVal',
+    () => render({ value: 'logVal' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'no results',
+    () => render({ options: [], noResultsText: 'Nothing to see here folks' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Stateful component',
+    () => render({
+      ...defaultProps,
+      value,
+      onChange: (v) => { value = v; action('change')(v); }
+    }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'Stateful multiple component',
+    () => render({
+      ...defaultProps,
+      value: multipleValues,
+      multiple: true,
+      onChange: (v) => { multipleValues = v; action('change')(v); }
+    }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

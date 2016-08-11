@@ -5,12 +5,36 @@ import { VerticalCenter } from '../../.storybook/layout';
 import Search from '../Search';
 
 storiesOf('Search', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('defaultValue (uncontrolled)', () => render({ defaultValue: 'React' }))
-  .add('value (controlled)', () => render({ value: 'React' }))
-  .add('clearable: false', () => render({ clearable: false, value: 'React' }))
-  .add('disabled: true', () => render({ value: 'React', disabled: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'defaultValue (uncontrolled)',
+    () => render({ defaultValue: 'React' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'value (controlled)',
+    () => render({ value: 'React' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'clearable: false',
+    () => render({ clearable: false, value: 'React' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => render({ value: 'React', disabled: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (

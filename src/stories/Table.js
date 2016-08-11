@@ -10,10 +10,26 @@ import TH from '../TH';
 import TD from '../TD';
 
 storiesOf('Table', module)
-  .addDecorator(story => <VerticalCenter>{ story() }</VerticalCenter>)
-  .add('Default', () => render())
-  .add('hover: true', () => render({ hover: true }))
-  .add('bordered: true', () => render({ bordered: true }));
+  .addDecorator(story => (
+    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+      { story() }
+    </VerticalCenter>
+  ))
+  .addWithInfo(
+    'Default',
+    () => render(),
+    { inline: true }
+  )
+  .addWithInfo(
+    'hover: true',
+    () => render({ hover: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'bordered: true',
+    () => render({ bordered: true }),
+    { inline: true }
+  );
 
 function render(props = {}) {
   return (
