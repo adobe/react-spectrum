@@ -24,6 +24,34 @@ export default class Autocomplete extends Component {
     );
   }
 
+  arrowRenderer(handleMouseDownOnArrow, { disabled, readOnly }) {
+    const arrowClasses = [
+      'Select-arrow',
+      'coral-Button',
+      'coral-Button--secondary',
+      'coral-Button--square',
+      'coral-Autocomplete-trigger'
+    ];
+
+    return (
+      <span
+        className="Select-arrow-zone coral-InputGroup-button"
+        onMouseDown={ handleMouseDownOnArrow }
+      >
+        <button
+          type="button"
+          className={ arrowClasses.join(' ') }
+          onMouseDown={ handleMouseDownOnArrow }
+          disabled={ disabled || readOnly }
+        >
+          <span
+            className="Select-arrow-icon coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS"
+          />
+        </button>
+      </span>
+    );
+  }
+
   render() {
     const {
       multiple,
@@ -45,6 +73,7 @@ export default class Autocomplete extends Component {
         autosize={ false }
         multi={ multiSelect }
         noResultsText={ <em>{ noResultsText }</em> }
+        arrowRenderer={ this.arrowRenderer }
         classAdditions={ {
           'Select-control':
             'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
@@ -54,10 +83,6 @@ export default class Autocomplete extends Component {
             'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
           'Select-input-field':
             'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
-          'Select-arrow-zone': 'coral-InputGroup-button',
-          'Select-arrow':
-            'coral-Button coral-Button--secondary coral-Button--square coral-Autocomplete-trigger',
-          'Select-arrow-icon': 'coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS',
           'Select-menu-outer': 'coral-Overlay coral-Autocomplete-overlay',
           'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList',
           'Select-option': 'coral-BasicList-item coral-ButtonList-item',
