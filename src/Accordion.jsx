@@ -27,14 +27,14 @@ export default class Accordion extends Component {
     const currentSelectedIndex = selectedIndex !== undefined ? selectedIndex : defaultSelectedIndex;
 
     this.state = {
-      selectedIndex: this.selectedIndexToArray(currentSelectedIndex)
+      selectedIndex: this.normalizeSelectedIndex(currentSelectedIndex)
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
-        selectedIndex: this.selectedIndexToArray(nextProps.selectedIndex)
+        selectedIndex: this.normalizeSelectedIndex(nextProps.selectedIndex)
       });
     }
   }
@@ -95,12 +95,12 @@ export default class Accordion extends Component {
     });
   }
 
-  selectedIndexToArray(selectedIndex) {
-    if (Array.isArray(selectedIndex)) {
-      return selectedIndex;
+  normalizeSelectedIndex(selectedIndex) {
+    if (!Array.isArray(selectedIndex)) {
+      selectedIndex = selectedIndex !== undefined ? [selectedIndex] : [];
     }
 
-    return selectedIndex ? [selectedIndex] : [];
+    return selectedIndex.map(index => parseInt(index, 10));
   }
 
   render() {
