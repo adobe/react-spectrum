@@ -117,10 +117,10 @@ export default class Calendar extends Component {
         this.selectFocused(nextMoment);
         break;
       case 33: // page up
-        this.focusTimeUnit(nextMoment.add(1, e.metaKey ? 'year' : 'month'));
+        this.focusTimeUnit(nextMoment.subtract(1, e.metaKey ? 'year' : 'month'));
         break;
       case 34: // page down
-        this.focusTimeUnit(nextMoment.subtract(1, e.metaKey ? 'year' : 'month'));
+        this.focusTimeUnit(nextMoment.add(1, e.metaKey ? 'year' : 'month'));
         break;
       case 35: // end
         this.focusTimeUnit(nextMoment.endOf('month').startOf('day'));
@@ -148,8 +148,12 @@ export default class Calendar extends Component {
   }
 
   focusTimeUnit(date) {
+    const { currentMonth } = this.state;
+    const sameMonthAsVisible = currentMonth.isSame(date, 'month');
+
     this.setState({
-      focusedDate: date
+      focusedDate: date,
+      currentMonth: sameMonthAsVisible ? currentMonth : date.clone().startOf('month')
     });
   }
 
@@ -217,13 +221,13 @@ export default class Calendar extends Component {
                 {
                   [...new Array(7).keys()].map(dayIndex => {
                     const day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
-                    const cursor = moment([year, month, day]);
+                    const cursor = moment(new Date(year, month, day));
                     const isCurrentMonth = (cursor.month()) === parseFloat(month);
                     const cursorLocal = cursor.clone().startOf('day');
                     return (
                       <CalendarCell
                         id={ `${ this.coralId }-row${ weekIndex }-col${ dayIndex }` }
-                        date={ cursor.toDate() }
+                        date={ cursor }
                         disabled={ disabled || !isCurrentMonth || !this.isDateInRange(cursor) }
                         isToday={ cursor.isSame(moment(), 'day') }
                         selected={ dateLocal && cursorLocal.isSame(dateLocal, 'day') }
@@ -276,7 +280,7 @@ export default class Calendar extends Component {
             aria-live="assertive"
             aria-atomic="true"
           >
-            August 2016
+            { currentMonth.format('MMMM YYYY') }
           </div>
           <Button
             disabled={ disabled }
@@ -326,8 +330,7 @@ const CalendarCell = function CalendarCell({
   focused = false,
   invalid = false
 }) {
-  const momentDate = moment(date);
-  let title = `${ momentDate.format('dddd') }, ${ momentDate.format('LL') }`;
+  let title = `${ date.format('dddd') }, ${ date.format('LL') }`;
   if (isToday) {
     title = `Today, ${ title }`;
   }
@@ -352,13 +355,13 @@ const CalendarCell = function CalendarCell({
       aria-selected={ selected }
       aria-invalid={ invalid }
       title={ title }
-      onClick={ e => { onClick(e, momentDate); } }
+      onClick={ !disabled && (e => { onClick(e, date); }) }
     >
       <span
         role="presentation"
         className={ disabled ? 'coral-Calendar-secondaryDate' : 'coral-Calendar-date' }
       >
-        { momentDate.date() }
+        { date.date() }
       </span>
     </td>
   );
