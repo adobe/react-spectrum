@@ -71,6 +71,11 @@ storiesOf('Popover', module)
     'variant: info',
     () => render('Content', { variant: 'info' }),
     { inline: true }
+  )
+  .addWithInfo(
+    'no title',
+    () => render('Content', { title: null }),
+    { inline: true }
   );
 
 function render(children, props = {}) {
