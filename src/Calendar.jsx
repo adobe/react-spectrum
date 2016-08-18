@@ -4,6 +4,9 @@ import moment from 'moment';
 
 import Button from './Button';
 import createId from './utils/createId';
+import SlideTransition from './internal/SlideTransition';
+
+import './Calendar.styl';
 
 export default class Calendar extends Component {
   static defaultProps = {
@@ -21,7 +24,8 @@ export default class Calendar extends Component {
   };
 
   state = {
-    value: null
+    value: null,
+    animationDirection: 'right'
   };
 
   componentWillMount() {
@@ -96,6 +100,16 @@ export default class Calendar extends Component {
     return min <= date && date <= max;
   }
 
+  handleClickPrevious = () => {
+    const { focusedDate } = this.state;
+    this.focusTimeUnit(focusedDate.clone().subtract(1, 'month'));
+  }
+
+  handleClickNext = () => {
+    const { focusedDate } = this.state;
+    this.focusTimeUnit(focusedDate.clone().add(1, 'month'));
+  }
+
   handleDayClick = (e, date) => {
     this.setState({
       value: date,
@@ -150,10 +164,12 @@ export default class Calendar extends Component {
   focusTimeUnit(date) {
     const { currentMonth } = this.state;
     const sameMonthAsVisible = currentMonth.isSame(date, 'month');
+    const newCurrentMonth = sameMonthAsVisible ? currentMonth : date.clone().startOf('month');
 
     this.setState({
       focusedDate: date,
-      currentMonth: sameMonthAsVisible ? currentMonth : date.clone().startOf('month')
+      currentMonth: newCurrentMonth,
+      animationDirection: +newCurrentMonth > +currentMonth ? 'right' : 'left'
     });
   }
 
@@ -165,10 +181,14 @@ export default class Calendar extends Component {
 
   renderTable(date) {
     return (
-      <table role="presentation">
-        { this.renderTableHeader() }
-        { this.renderTableBody(date) }
-      </table>
+      <div key={ date.format('MM/Y') }>
+        <table
+          role="presentation"
+        >
+          { this.renderTableHeader() }
+          { this.renderTableBody(date) }
+        </table>
+      </div>
     );
   }
 
@@ -255,7 +275,7 @@ export default class Calendar extends Component {
       ...otherProps
     } = this.props;
 
-    const { value, currentMonth, selectedId } = this.state;
+    const { value, selectedId, currentMonth, animationDirection } = this.state;
 
     return (
       <div
@@ -291,6 +311,7 @@ export default class Calendar extends Component {
             aria-label="Previous"
             title="Previous"
             square
+            onClick={ this.handleClickPrevious }
           />
           <Button
             disabled={ disabled }
@@ -301,6 +322,7 @@ export default class Calendar extends Component {
             aria-label="Next"
             title="Next"
             square
+            onClick={ this.handleClickNext }
           />
         </div>
         <div
@@ -313,7 +335,9 @@ export default class Calendar extends Component {
           aria-activedescendant={ selectedId }
           onKeyDown={ this.handleKeyDown }
         >
-          { this.renderTable(currentMonth) }
+          <SlideTransition direction={ animationDirection }>
+            { this.renderTable(currentMonth) }
+          </SlideTransition>
         </div>
       </div>
     );

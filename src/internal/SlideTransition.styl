@@ -1,0 +1,47 @@
+.coral-SlideTransition-outer-wrapper
+  position: relative
+  overflow: hidden
+  transition: max-height .2s ease
+  white-space: nowrap
+
+.coral-SlideTransition-transition-group
+  width: 200%
+  overflow: hidden
+  white-space: nowrap
+  > *
+    float:right
+    width: 50%
+    transition: transform .2s ease
+    &:first-child
+      position: relative
+      left: -50%
+
+.coral-SlideTransition-right-enter
+  transform: translate3d(100%, 0, 0)
+.coral-SlideTransition-left-enter
+  transform: translate3d(-100%, 0, 0)
+
+.coral-SlideTransition-right-enter-active,
+.coral-SlideTransition-left-enter-active,
+.coral-SlideTransition-right-leave,
+.coral-SlideTransition-left-leave
+  transform: translate3d(0, 0, 0)
+
+.coral-SlideTransition-right-leave-active
+  transform: translate3d(-100%, 0, 0)
+.coral-SlideTransition-left-leave-active
+  transform: translate3d(100%, 0, 0)
+
+
+// .coral-SlideTransition-right-enter, .coral-SlideTransition-right-leave
+//   transition: transform 10s ease
+//
+// .coral-SlideTransition-right-enter
+//   transform: translateX(100%)
+// .coral-SlideTransition-right-enter-active
+//   transform: translateX(0%)
+//
+// .coral-SlideTransition-right-leave
+//   transform: translateX(-100%)
+// .coral-SlideTransition-right-leave-active
+//   transform: translateX(-200%)
