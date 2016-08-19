@@ -48,16 +48,19 @@ export default class Popover extends Component {
       content,
       children,
       className,
+      dropClassName,
       onClose,
       ...otherProps
     } = this.props;
 
     return (
       <TetherDropComponent
+        className={ className }
         ref="drop"
         position={ getTetherPositionFromPlacement(placement) }
         open={ open }
         classPrefix="coral-Popover-drop"
+        dropClassName={ dropClassName }
         content={
           <div
             className={
@@ -66,8 +69,7 @@ export default class Popover extends Component {
                 `coral-Dialog--${ variant }`,
                 {
                   'is-open': open
-                },
-                className
+                }
               )
             }
             { ...otherProps }

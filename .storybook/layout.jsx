@@ -1,8 +1,9 @@
 import React from 'react';
 
-export function VerticalCenter({ children, style }) {
+export function VerticalCenter({ children, className, style }) {
   return (
     <div
+      className={ className }
       style={
         {
           position: 'absolute',
@@ -20,9 +21,10 @@ export function VerticalCenter({ children, style }) {
   );
 }
 
-export function VerticalTop({ children, style }) {
+export function VerticalTop({ children, className, style }) {
   return (
     <div
+      className={ className }
       style={
         {
           position: 'relative',
