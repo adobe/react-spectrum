@@ -16,17 +16,22 @@ import ShellSolutionGroup from '../../shell/ShellSolutionGroup';
 import ShellSolution from '../../shell/ShellSolution';
 import Button from '../../Button';
 
+// We need the Shell Header to be the topmost item on the page because the CoralUI Shell styles assume the menus will be
+// sliding in from the top.  If we include the Storybook header, it pushes the ShellHeader down too far and makes it
+// look broken while interacting with it.
+const options = { inline: true, header: false };
+
 storiesOf('ShellHeader', module)
   .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    options
   )
   .addWithInfo(
     'homeIcon: adobeAnalyticsColor',
     () => render({ homeIcon: 'adobeAnalyticsColor' }),
-    { inline: true }
+    options
   );
 
 function render(props = {}) {
