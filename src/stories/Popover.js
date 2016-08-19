@@ -6,6 +6,8 @@ import Popover from '../Popover';
 import Button from '../Button';
 import Heading from '../Heading';
 
+import './Popover.styl';
+
 storiesOf('Popover', module)
   .addDecorator(story => (
     <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
@@ -18,8 +20,8 @@ storiesOf('Popover', module)
     { inline: true }
   )
   .addWithInfo(
-    'Long content',
-    () => render(longMarkup),
+    'Long content, placement: right top',
+    () => render(longMarkup, { placement: 'right top' }),
     { inline: true }
   )
   .addWithInfo(
@@ -33,8 +35,23 @@ storiesOf('Popover', module)
     { inline: true }
   )
   .addWithInfo(
+    'placement: top left',
+    () => render('Content', { placement: 'top left' }),
+    { inline: true }
+  )
+  .addWithInfo(
     'placement: bottom',
     () => render('Content', { placement: 'bottom' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placement: bottom right',
+    () => render('Content', { placement: 'bottom right' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placement: center middle',
+    () => render('Content', { placement: 'center middle' }),
     { inline: true }
   )
   .addWithInfo(
@@ -43,8 +60,8 @@ storiesOf('Popover', module)
     { inline: true }
   )
   .addWithInfo(
-    'closable: false',
-    () => render('Content', { closable: false }),
+    'closable: true',
+    () => render('Content', { closable: true }),
     { inline: true }
   )
   .addWithInfo(
@@ -80,18 +97,15 @@ storiesOf('Popover', module)
 
 function render(children, props = {}) {
   return (
-    <div style={ { display: 'inline-block' } }>
-      <Popover
-        title="Title"
-        open
-        closable
-        content={ children }
-        onClose={ action('close') }
-        { ...props }
-      >
-        <Button label="Click Me" />
-      </Popover>
-    </div>
+    <Popover
+      title="Title"
+      open
+      content={ children }
+      onClose={ action('close') }
+      { ...props }
+    >
+      <Button label="Click Me" />
+    </Popover>
   );
 }
 
