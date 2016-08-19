@@ -44,21 +44,23 @@ export default class Select extends Component {
     );
   }
 
-  controlComponent(props) {
+  controlComponent = ({ className, ...otherProps }) => {
+    const { disabled, readOnly, variant } = this.props;
+
     return (
       <button
         tabIndex="0"
-        { ...props }
+        type="button"
+        { ...otherProps }
         className={ classNames(
-          props.className,
+          className,
+          'coral3-Select-button',
           'coral-Button',
           'coral-Button--secondary',
-          { 'coral-Button--block': props.variant !== 'quiet' }
+          { 'coral-Button--block': variant !== 'quiet' }
         ) }
-        disabled={ props.disabled || props.readOnly }
-      >
-        { props.children }
-      </button>
+        disabled={ disabled || readOnly }
+      />
     );
   }
 
