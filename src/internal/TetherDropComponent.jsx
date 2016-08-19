@@ -7,6 +7,8 @@ export default class TetherDropComponent extends Component {
     position: 'right center',
     onClickOutside: null,
     classPrefix: 'coral-drop',
+    onOpen: () => {},
+    onClose: () => {},
     openOn: null // Null means we'll manually call .open() and .close() on the drop instance.
   };
 
@@ -71,7 +73,7 @@ export default class TetherDropComponent extends Component {
     if (onClickOutside && tetherDropNode && !tetherDropNode.contains(e.target)) {
       onClickOutside(e);
     }
-  }
+  };
 
   destroyDrop() {
     if (this.tetherDrop) {
@@ -110,6 +112,16 @@ export default class TetherDropComponent extends Component {
           }
         ]
       }
+    });
+
+    this.tetherDrop.on('open', () => {
+      // this.props.onOpen could change at any time.
+      this.props.onOpen();
+    });
+
+    this.tetherDrop.on('close', () => {
+      // this.props.onClose could change at any time.
+      this.props.onClose();
     });
 
     this.renderDropContent(content, classPrefix);
