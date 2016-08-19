@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import Button from './Button';
 import createId from './utils/createId';
-import SlideTransition from './internal/SlideTransition';
 
 import './Calendar.styl';
 
@@ -335,9 +334,7 @@ export default class Calendar extends Component {
           aria-activedescendant={ selectedId }
           onKeyDown={ this.handleKeyDown }
         >
-          <SlideTransition direction={ animationDirection }>
-            { this.renderTable(currentMonth) }
-          </SlideTransition>
+          { this.renderTable(currentMonth) }
         </div>
       </div>
     );
