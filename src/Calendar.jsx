@@ -23,8 +23,7 @@ export default class Calendar extends Component {
   };
 
   state = {
-    value: null,
-    animationDirection: 'right'
+    value: null
   };
 
   componentWillMount() {
@@ -99,6 +98,10 @@ export default class Calendar extends Component {
     return min <= date && date <= max;
   }
 
+  generateDateId(date) {
+    return `${ this.coralId }-${ date.format('l') }`;
+  }
+
   handleClickPrevious = () => {
     const { focusedDate } = this.state;
     this.focusTimeUnit(focusedDate.clone().subtract(1, 'month'));
@@ -110,12 +113,7 @@ export default class Calendar extends Component {
   }
 
   handleDayClick = (e, date) => {
-    this.setState({
-      value: date,
-      focusedDate: date,
-      selectedId: e.currentTarget.id
-    });
-    this.refs.calendarBody.focus();
+    this.selectFocused(date);
   }
 
   handleKeyDown = e => {
@@ -173,9 +171,15 @@ export default class Calendar extends Component {
   }
 
   selectFocused(date) {
+    const { onChange, valueFormat } = this.props;
+
     this.setState({
-      value: date
+      value: date,
+      focusedDate: date
     });
+    this.refs.calendarBody.focus();
+
+    onChange(date.format(valueFormat), date.toDate());
   }
 
   renderTable(date) {
@@ -245,7 +249,7 @@ export default class Calendar extends Component {
                     const cursorLocal = cursor.clone().startOf('day');
                     return (
                       <CalendarCell
-                        id={ `${ this.coralId }-row${ weekIndex }-col${ dayIndex }` }
+                        id={ this.generateDateId(cursor) }
                         date={ cursor }
                         disabled={ disabled || !isCurrentMonth || !this.isDateInRange(cursor) }
                         isToday={ cursor.isSame(moment(), 'day') }
@@ -266,6 +270,7 @@ export default class Calendar extends Component {
 
   render() {
     const {
+      name,
       valueFormat,
       className,
       disabled,
@@ -274,7 +279,7 @@ export default class Calendar extends Component {
       ...otherProps
     } = this.props;
 
-    const { value, selectedId, currentMonth, animationDirection } = this.state;
+    const { value, currentMonth } = this.state;
 
     return (
       <div
@@ -331,7 +336,7 @@ export default class Calendar extends Component {
           tabIndex={ disabled ? null : '0' }
           aria-readonly="true"
           aria-disabled={ disabled }
-          aria-activedescendant={ selectedId }
+          aria-activedescendant={ this.generateDateId(value) }
           onKeyDown={ this.handleKeyDown }
         >
           { this.renderTable(currentMonth) }

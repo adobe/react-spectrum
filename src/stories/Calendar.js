@@ -24,7 +24,7 @@ storiesOf('Calendar', module)
 function render(props = {}) {
   return (
     <Calendar
-      onClose={ action('close') }
+      onChange={ action('change') }
       { ...props }
     />
   );
