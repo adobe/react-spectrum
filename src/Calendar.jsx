@@ -9,6 +9,7 @@ import './Calendar.styl';
 
 export default class Calendar extends Component {
   static defaultProps = {
+    id: createId(),
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
@@ -28,8 +29,6 @@ export default class Calendar extends Component {
 
   componentWillMount() {
     const { value, min, max, valueFormat } = this.props;
-
-    this.coralId = createId();
 
     const newValue = this.toMoment(value, valueFormat);
 
@@ -99,7 +98,9 @@ export default class Calendar extends Component {
   }
 
   generateDateId(date) {
-    return `${ this.coralId }-${ date.format('l') }`;
+    const { id } = this.props;
+
+    return `${ id }-${ date.format('l') }`;
   }
 
   handleClickPrevious = () => {
