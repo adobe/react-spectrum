@@ -6,6 +6,7 @@ import Button from './Button';
 import Textfield from './Textfield';
 import Calendar from './Calendar';
 import Popover from './Popover';
+import Clock from './Clock';
 import createId from './utils/createId';
 
 import './DatePicker.styl';
@@ -13,6 +14,7 @@ import './DatePicker.styl';
 export default class DatePicker extends Component {
   static defaultProps = {
     id: createId(),
+    type: 'date', // date, datetime, time
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
@@ -51,6 +53,11 @@ export default class DatePicker extends Component {
     onChange(valueStr, valueDate);
   }
 
+  handleClockChange = (valueStr, valueDate) => {
+    const { onChange } = this.props;
+    onChange(valueStr, valueDate);
+  }
+
   handleTextChange = e => {
     const { onChange } = this.props;
     const text = e.currentTarget.value;
@@ -78,6 +85,7 @@ export default class DatePicker extends Component {
 
     return (
       <Calendar
+        className="u-coral-borderless"
         id={ id }
         headerFormat={ headerFormat }
         max={ max }
@@ -95,9 +103,35 @@ export default class DatePicker extends Component {
     );
   }
 
+  renderClock() {
+    const {
+      value,
+      valueFormat,
+      disabled,
+      invalid,
+      readOnly,
+      required
+    } = this.props;
+
+    return (
+      <div className="coral-Datepicker-clockContainer">
+        <Clock
+          value={ value }
+          valueFormat={ valueFormat }
+          disabled={ disabled }
+          invalid={ invalid }
+          readOnly={ readOnly }
+          required={ required }
+          onChange={ this.handleClockChange }
+        />
+      </div>
+    );
+  }
+
   render() {
     const {
       id,
+      type,
       placeholder,
       quiet,
       disabled,
@@ -115,10 +149,13 @@ export default class DatePicker extends Component {
         dropClassName="coral-DatePickerPopover-drop"
         className={ classNames('coral-DatePicker', className) }
         open={ open }
-        content="Content"
         placement="bottom right"
-        type="date"
-        content={ this.renderCalendar() }
+        content={
+          <div>
+            { type !== 'time' && this.renderCalendar() }
+            { type !== 'date' && this.renderClock() }
+          </div>
+        }
         aria-disabled={ disabled }
         aria-invalid={ invalid }
         aria-readonly={ readOnly }
@@ -150,7 +187,7 @@ export default class DatePicker extends Component {
             <Button
               className={ classNames({ 'coral-Button--quiet': quiet }) }
               type="button"
-              icon="calendar"
+              icon={ type === 'time' ? 'clock' : 'calendar' }
               iconSize="S"
               square
               quiet

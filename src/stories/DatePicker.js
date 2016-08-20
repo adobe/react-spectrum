@@ -16,6 +16,16 @@ storiesOf('DatePicker', module)
     { inline: true }
   )
   .addWithInfo(
+    'type=datetime',
+    () => render({ type: 'datetime' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'type=time',
+    () => render({ type: 'time' }),
+    { inline: true }
+  )
+  .addWithInfo(
     'startDay=1',
     () => render({ startDay: 1 }),
     { inline: true }
