@@ -39,28 +39,37 @@ export default class DatePicker extends Component {
     const {
       value,
       defaultValue,
-      valueFormat,
-      type
+      displayFormat,
+      valueFormat
     } = props;
 
     const newValueFormat = valueFormat || this.getDefaultValueFormat(props);
+    const newDisplayFormat = displayFormat || this.getDefaultValueFormat(props);
 
     this.state = {
-      value: toMoment(value || defaultValue || 'today', newValueFormat, type),
+      value: toMoment(value || defaultValue || 'today', newValueFormat),
+      valueText: toMoment(value || defaultValue || 'today').format(newDisplayFormat),
       valueFormat: newValueFormat,
+      displayFormat: newDisplayFormat,
       open: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
+      const val = toMoment(nextProps.value);
       this.setState({
-        value: nextProps.value || ''
+        value: val,
+        valueText: (val && val.format(this.state.newDisplayFormat)) || ''
       });
     }
 
     if (this.props.valueFormat !== nextProps.valueFormat) {
       this.setState({ valueFormat: nextProps.valueFormat });
+    }
+
+    if (this.props.displayFormat !== nextProps.displayFormat) {
+      this.setState({ displayFormat: nextProps.displayFormat });
     }
   }
 
@@ -76,16 +85,17 @@ export default class DatePicker extends Component {
     }
   }
 
-  setValue(valueStr, value) {
+  setValue(valueText, value) {
     const { onChange } = this.props;
 
     if (!('value' in this.props)) {
       this.setState({
-        value
+        valueText,
+        value: moment(value)
       });
     }
 
-    onChange(valueStr, value);
+    onChange(valueText, value);
   }
 
   handleCalendarButtonClick = () => {
@@ -102,13 +112,13 @@ export default class DatePicker extends Component {
     }
   }
 
-  handleCalendarChange = (valueStr, valueDate) => {
-    this.setValue(valueStr, valueDate);
+  handleCalendarChange = (valueText, valueDate) => {
+    this.setValue(valueText, valueDate);
     this.setState({ open: false });
   }
 
-  handleClockChange = (valueStr, valueDate) => {
-    this.setValue(valueStr, valueDate);
+  handleClockChange = (valueText, valueDate) => {
+    this.setValue(valueText, valueDate);
   }
 
   handleTextChange = e => {
@@ -194,7 +204,7 @@ export default class DatePicker extends Component {
       ...otherProps
     } = this.props;
 
-    const { open } = this.state;
+    const { open, valueText } = this.state;
 
     return (
       <Popover
@@ -232,6 +242,7 @@ export default class DatePicker extends Component {
             className="coral-InputGroup-input"
             aria-invalid={ invalid }
             placeholder={ placeholder }
+            value={ valueText }
             quiet={ quiet }
             onChange={ this.handleTextChange }
           />

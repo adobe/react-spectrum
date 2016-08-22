@@ -188,7 +188,11 @@ export default class Calendar extends Component {
             [...new Array(7).keys()].map(index => {
               const dayMoment = moment().day((index + startDay) % 7);
               return (
-                <th role="columnheader" scope="col">
+                <th
+                  key={ index }
+                  role="columnheader"
+                  scope="col"
+                >
                   <abbr
                     className="coral-Calendar-dayOfWeek"
                     title={ dayMoment.format('dddd') }
