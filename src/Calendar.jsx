@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import Button from './Button';
 import createId from './utils/createId';
+import { toMoment, isDateInRange } from './utils/moment';
 
 import './Calendar.styl';
 
@@ -33,13 +34,13 @@ export default class Calendar extends Component {
       valueFormat
     } = props;
 
-    const newValue = this.toMoment(value || defaultValue || 'today', valueFormat);
+    const newValue = toMoment(value || defaultValue || 'today', valueFormat);
 
     this.state = {
       value: newValue,
-      min: this.toMoment(min, valueFormat),
-      max: this.toMoment(max, valueFormat),
-      today: this.toMoment('today', valueFormat),
+      min: toMoment(min, valueFormat),
+      max: toMoment(max, valueFormat),
+      today: toMoment('today', valueFormat),
       focusedDate: newValue.clone(),
       currentMonth: newValue.clone().startOf('month')
     };
@@ -50,19 +51,19 @@ export default class Calendar extends Component {
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
       this.setState({
-        min: this.toMoment(nextProps.min, nextProps.valueFormat)
+        min: toMoment(nextProps.min, nextProps.valueFormat)
       });
     }
 
     if (max !== nextProps.max || valueFormat !== nextProps.valueFormat) {
       this.setState({
-        max: this.toMoment(nextProps.max, nextProps.valueFormat)
+        max: toMoment(nextProps.max, nextProps.valueFormat)
       });
     }
 
     if ('value' in nextProps) {
       this.setState({
-        value: this.toMoment(nextProps.value, nextProps.valueFormat)
+        value: toMoment(nextProps.value, nextProps.valueFormat)
       });
     }
   }
@@ -77,39 +78,6 @@ export default class Calendar extends Component {
     }
 
     onChange(date.format(valueFormat), date.toDate());
-  }
-
-  // TODO: Move to util?
-  toMoment(value, format) {
-    // if 'today'
-    if (value === 'today') {
-      return moment().startOf('day');
-    }
-
-    // If it's a moment object
-    if (moment.isMoment(value)) {
-      return value.isValid() ? value.clone() : null;
-    }
-
-    // Anything else
-    const result = moment(value, value instanceof Date ? null : format);
-    return result.isValid() ? result : null;
-  }
-
-  // TODO: Add to date util
-  isDateInRange(date) {
-    const { min, max } = this.state;
-
-    if (!min && !max) {
-      return true;
-    }
-    if (!min) {
-      return date <= max;
-    }
-    if (!max) {
-      return date >= min;
-    }
-    return min <= date && date <= max;
   }
 
   generateDateId(date) {
@@ -238,7 +206,7 @@ export default class Calendar extends Component {
 
   renderTableBody(date) {
     const { startDay, disabled } = this.props;
-    const { value, focusedDate, currentMonth } = this.state;
+    const { value, min, max, focusedDate, currentMonth } = this.state;
 
     const month = date.month();
     const year = date.year();
@@ -267,7 +235,7 @@ export default class Calendar extends Component {
                         key={ dayIndex }
                         id={ this.generateDateId(cursor) }
                         date={ cursor }
-                        disabled={ disabled || !isCurrentMonth || !this.isDateInRange(cursor) }
+                        disabled={ disabled || !isCurrentMonth || !isDateInRange(cursor, min, max) }
                         isToday={ cursor.isSame(moment(), 'day') }
                         selected={ dateLocal && cursorLocal.isSame(dateLocal, 'day') }
                         focused={ dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day') }

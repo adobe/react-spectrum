@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import moment from 'moment';
 
 import Textfield from './Textfield';
+import { toMoment } from './utils/moment';
 
 export default class Clock extends Component {
   static defaultProps = {
@@ -20,33 +20,16 @@ export default class Clock extends Component {
     const { value, defaultValue, valueFormat } = this.props;
 
     this.state = {
-      value: this.toMoment(value || defaultValue || 'today', valueFormat)
+      value: toMoment(value || defaultValue || 'today', valueFormat)
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       this.setState({
-        value: this.toMoment(nextProps.value, nextProps.valueFormat)
+        value: toMoment(nextProps.value, nextProps.valueFormat)
       });
     }
-  }
-
-  // TODO: Move to util?
-  toMoment(value, format) {
-    // if 'today'
-    if (value === 'today') {
-      return moment();
-    }
-
-    // If it's a moment object
-    if (moment.isMoment(value)) {
-      return value.isValid() ? value.clone() : null;
-    }
-
-    // Anything else
-    const result = moment(value, value instanceof Date ? null : format);
-    return result.isValid() ? result : null;
   }
 
   handleHourChange = e => {

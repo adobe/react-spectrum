@@ -8,6 +8,7 @@ import Calendar from './Calendar';
 import Popover from './Popover';
 import Clock from './Clock';
 import createId from './utils/createId';
+import { toMoment } from './utils/moment';
 
 import './DatePicker.styl';
 
@@ -45,7 +46,7 @@ export default class DatePicker extends Component {
     const newValueFormat = valueFormat || this.getDefaultValueFormat(props);
 
     this.state = {
-      value: this.toMoment(value || defaultValue || 'today', newValueFormat, type),
+      value: toMoment(value || defaultValue || 'today', newValueFormat, type),
       valueFormat: newValueFormat,
       open: false
     };
@@ -85,27 +86,6 @@ export default class DatePicker extends Component {
     }
 
     onChange(valueStr, value);
-  }
-
-  // TODO: Move to util?
-  toMoment(value, format, type) {
-    // if 'today'
-    if (value === 'today') {
-      if (type === 'date') {
-        return moment().startOf('day');
-      }
-
-      return moment();
-    }
-
-    // If it's a moment object
-    if (moment.isMoment(value)) {
-      return value.isValid() ? value.clone() : null;
-    }
-
-    // Anything else
-    const result = moment(value, value instanceof Date ? null : format);
-    return result.isValid() ? result : null;
   }
 
   handleCalendarButtonClick = () => {
