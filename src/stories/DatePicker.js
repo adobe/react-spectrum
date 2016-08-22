@@ -16,13 +16,28 @@ storiesOf('DatePicker', module)
     { inline: true }
   )
   .addWithInfo(
+    'Default controlled',
+    () => render({ value: 'today' }),
+    { inline: true }
+  )
+  .addWithInfo(
     'type=datetime',
     () => render({ type: 'datetime' }),
     { inline: true }
   )
   .addWithInfo(
+    'type=datetime controlled',
+    () => render({ type: 'datetime', value: 'today' }),
+    { inline: true }
+  )
+  .addWithInfo(
     'type=time',
     () => render({ type: 'time' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'type=time controlled',
+    () => render({ type: 'time', value: 'today' }),
     { inline: true }
   )
   .addWithInfo(
@@ -33,6 +48,11 @@ storiesOf('DatePicker', module)
   .addWithInfo(
     'quiet=true',
     () => render({ quiet: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'value=2015-01-15T02:15-07:00',
+    () => render({ type: 'datetime', value: '2015-01-15T02:15-07:00' }),
     { inline: true }
   );
 

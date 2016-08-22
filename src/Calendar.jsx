@@ -13,7 +13,6 @@ export default class Calendar extends Component {
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
-    value: 'today',
     valueFormat: 'YYYY-MM-DD',
     startDay: 0,
     disabled: false,
@@ -23,27 +22,31 @@ export default class Calendar extends Component {
     onChange: () => {}
   };
 
-  state = {
-    value: null
-  };
+  constructor(props) {
+    super(props);
 
-  componentWillMount() {
-    const { value, min, max, valueFormat } = this.props;
+    const {
+      value,
+      defaultValue,
+      min,
+      max,
+      valueFormat
+    } = props;
 
-    const newValue = this.toMoment(value, valueFormat);
+    const newValue = this.toMoment(value || defaultValue || 'today', valueFormat);
 
-    this.setState({
+    this.state = {
       value: newValue,
       min: this.toMoment(min, valueFormat),
       max: this.toMoment(max, valueFormat),
       today: this.toMoment('today', valueFormat),
       focusedDate: newValue.clone(),
       currentMonth: newValue.clone().startOf('month')
-    });
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value, min, max, valueFormat } = this.props;
+    const { min, max, valueFormat } = this.props;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
       this.setState({
@@ -57,11 +60,23 @@ export default class Calendar extends Component {
       });
     }
 
-    if (value !== nextProps.value || valueFormat !== nextProps.valueFormat) {
+    if ('value' in nextProps) {
       this.setState({
         value: this.toMoment(nextProps.value, nextProps.valueFormat)
       });
     }
+  }
+
+  setValue(date) {
+    const { onChange, valueFormat } = this.props;
+
+    if (!('value' in this.props)) {
+      this.setState({
+        value: date
+      });
+    }
+
+    onChange(date.format(valueFormat), date.toDate());
   }
 
   // TODO: Move to util?
@@ -172,15 +187,14 @@ export default class Calendar extends Component {
   }
 
   selectFocused(date) {
-    const { onChange, valueFormat } = this.props;
+    const { value } = this.state;
 
+    this.setValue(date.clone().hour(value.hour()).minute(value.minute()));
     this.setState({
-      value: date,
       focusedDate: date
     });
-    this.refs.calendarBody.focus();
 
-    onChange(date.format(valueFormat), date.toDate());
+    this.refs.calendarBody.focus();
   }
 
   renderTable(date) {
@@ -241,7 +255,7 @@ export default class Calendar extends Component {
         {
           [...new Array(6).keys()].map(weekIndex => {
             return (
-              <tr role="row">
+              <tr key={ weekIndex } role="row">
                 {
                   [...new Array(7).keys()].map(dayIndex => {
                     const day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
@@ -250,6 +264,7 @@ export default class Calendar extends Component {
                     const cursorLocal = cursor.clone().startOf('day');
                     return (
                       <CalendarCell
+                        key={ dayIndex }
                         id={ this.generateDateId(cursor) }
                         date={ cursor }
                         disabled={ disabled || !isCurrentMonth || !this.isDateInRange(cursor) }
@@ -272,6 +287,7 @@ export default class Calendar extends Component {
   render() {
     const {
       name,
+      headerFormat,
       valueFormat,
       className,
       disabled,
@@ -297,7 +313,7 @@ export default class Calendar extends Component {
         }
         { ...otherProps }
       >
-        <input type="hidden" name={ name } value={ value.format(valueFormat) } />
+        <input type="hidden" name={ name } value={ value && value.format(valueFormat) } />
         <div className="coral-Calendar-calendarHeader">
           <div
             className="coral-Heading coral-Heading--2"
@@ -305,7 +321,7 @@ export default class Calendar extends Component {
             aria-live="assertive"
             aria-atomic="true"
           >
-            { currentMonth.format('MMMM YYYY') }
+            { currentMonth.format(headerFormat) }
           </div>
           <Button
             disabled={ disabled }
@@ -337,7 +353,7 @@ export default class Calendar extends Component {
           tabIndex={ disabled ? null : '0' }
           aria-readonly="true"
           aria-disabled={ disabled }
-          aria-activedescendant={ this.generateDateId(value) }
+          aria-activedescendant={ value && this.generateDateId(value) }
           onKeyDown={ this.handleKeyDown }
         >
           { this.renderTable(currentMonth) }
@@ -350,12 +366,12 @@ export default class Calendar extends Component {
 const CalendarCell = function CalendarCell({
   id,
   date,
-  onClick,
   isToday = false,
   selected = false,
   disabled = false,
   focused = false,
-  invalid = false
+  invalid = false,
+  onClick = () => {}
 }) {
   let title = `${ date.format('dddd') }, ${ date.format('LL') }`;
   if (isToday) {
@@ -382,7 +398,7 @@ const CalendarCell = function CalendarCell({
       aria-selected={ selected }
       aria-invalid={ invalid }
       title={ title }
-      onClick={ !disabled && (e => { onClick(e, date); }) }
+      onClick={ !disabled && (e => { onClick(e, date.clone()); }) }
     >
       <span
         role="presentation"

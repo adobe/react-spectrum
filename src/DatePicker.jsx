@@ -11,6 +11,10 @@ import createId from './utils/createId';
 
 import './DatePicker.styl';
 
+const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
+const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
+const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
+
 export default class DatePicker extends Component {
   static defaultProps = {
     id: createId(),
@@ -18,8 +22,6 @@ export default class DatePicker extends Component {
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
-    value: 'today',
-    valueFormat: 'YYYY-MM-DD',
     startDay: 0,
     quiet: false,
     disabled: false,
@@ -30,9 +32,81 @@ export default class DatePicker extends Component {
     onChange: () => {}
   };
 
-  state = {
-    open: false
-  };
+  constructor(props) {
+    super(props);
+
+    const {
+      value,
+      defaultValue,
+      valueFormat,
+      type
+    } = props;
+
+    const newValueFormat = valueFormat || this.getDefaultValueFormat(props);
+
+    this.state = {
+      value: this.toMoment(value || defaultValue || 'today', newValueFormat, type),
+      valueFormat: newValueFormat,
+      open: false
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('value' in nextProps) {
+      this.setState({
+        value: nextProps.value || ''
+      });
+    }
+
+    if (this.props.valueFormat !== nextProps.valueFormat) {
+      this.setState({ valueFormat: nextProps.valueFormat });
+    }
+  }
+
+  getDefaultValueFormat(props) {
+    const { type } = props;
+
+    switch (type) {
+      case 'time': return DEFAULT_TIME_VAL_FORMAT;
+      case 'datetime': return DEFAULT_DATE_TIME_VAL_FORMAT;
+      case 'date': return DEFAULT_DATE_VAL_FORMAT;
+      default:
+        throw new Error(`${ type } is not a valid type. Must be 'date', 'datetime', or 'time'`);
+    }
+  }
+
+  setValue(valueStr, value) {
+    const { onChange } = this.props;
+
+    if (!('value' in this.props)) {
+      this.setState({
+        value
+      });
+    }
+
+    onChange(valueStr, value);
+  }
+
+  // TODO: Move to util?
+  toMoment(value, format, type) {
+    // if 'today'
+    if (value === 'today') {
+      if (type === 'date') {
+        return moment().startOf('day');
+      }
+
+      return moment();
+    }
+
+    // If it's a moment object
+    if (moment.isMoment(value)) {
+      return value.isValid() ? value.clone() : null;
+    }
+
+    // Anything else
+    const result = moment(value, value instanceof Date ? null : format);
+    return result.isValid() ? result : null;
+  }
 
   handleCalendarButtonClick = () => {
     this.setState({ open: true });
@@ -49,19 +123,17 @@ export default class DatePicker extends Component {
   }
 
   handleCalendarChange = (valueStr, valueDate) => {
-    const { onChange } = this.props;
-    onChange(valueStr, valueDate);
+    this.setValue(valueStr, valueDate);
+    this.setState({ open: false });
   }
 
   handleClockChange = (valueStr, valueDate) => {
-    const { onChange } = this.props;
-    onChange(valueStr, valueDate);
+    this.setValue(valueStr, valueDate);
   }
 
   handleTextChange = e => {
-    const { onChange } = this.props;
-    const text = e.currentTarget.value;
-    onChange(text, moment(text));
+    const text = e.target.value;
+    this.setValue(text, moment(text));
   }
 
   closeCalendarPopover() {
@@ -74,14 +146,14 @@ export default class DatePicker extends Component {
       headerFormat,
       max,
       min,
-      value,
-      valueFormat,
       startDay,
       disabled,
       invalid,
       readOnly,
       required
     } = this.props;
+
+    const { value, valueFormat } = this.state;
 
     return (
       <Calendar
@@ -105,13 +177,13 @@ export default class DatePicker extends Component {
 
   renderClock() {
     const {
-      value,
-      valueFormat,
       disabled,
       invalid,
       readOnly,
       required
     } = this.props;
+
+    const { value, valueFormat } = this.state;
 
     return (
       <div className="coral-Datepicker-clockContainer">
@@ -190,7 +262,6 @@ export default class DatePicker extends Component {
               icon={ type === 'time' ? 'clock' : 'calendar' }
               iconSize="S"
               square
-              quiet
               onClick={ this.handleCalendarButtonClick }
             />
           </div>

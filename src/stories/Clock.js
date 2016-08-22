@@ -2,9 +2,9 @@ import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { VerticalCenter } from '../../.storybook/layout';
 
-import Calendar from '../Calendar';
+import Clock from '../Clock';
 
-storiesOf('Calendar', module)
+storiesOf('Clock', module)
   .addDecorator(story => (
     <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
@@ -16,19 +16,19 @@ storiesOf('Calendar', module)
     { inline: true }
   )
   .addWithInfo(
-    'startDay=1',
-    () => render({ startDay: 1, value: 'today' }),
+    'uncontrolled',
+    () => render({ defaultValue: 'today' }),
     { inline: true }
   )
   .addWithInfo(
-    'uncontrolled',
-    () => render({ defaultValue: 'today' }),
+    'quiet=true',
+    () => render({ quiet: true }),
     { inline: true }
   );
 
 function render(props = {}) {
   return (
-    <Calendar
+    <Clock
       onChange={ action('change') }
       { ...props }
     />

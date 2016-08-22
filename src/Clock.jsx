@@ -14,19 +14,18 @@ export default class Clock extends Component {
     onChange: () => {}
   };
 
-  componentWillMount() {
-    const { value, valueFormat } = this.props;
+  constructor(props) {
+    super(props);
 
-    this.setState({
-      value: this.toMoment(value, valueFormat)
-    });
+    const { value, defaultValue, valueFormat } = this.props;
+
+    this.state = {
+      value: this.toMoment(value || defaultValue || 'today', valueFormat)
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.value !== this.props.value &&
-      nextProps.valueFormat !== this.props.valueFormat
-    ) {
+    if ('value' in nextProps) {
       this.setState({
         value: this.toMoment(nextProps.value, nextProps.valueFormat)
       });
@@ -37,7 +36,7 @@ export default class Clock extends Component {
   toMoment(value, format) {
     // if 'today'
     if (value === 'today') {
-      return moment().startOf('day');
+      return moment();
     }
 
     // If it's a moment object
@@ -52,11 +51,13 @@ export default class Clock extends Component {
 
   handleHourChange = e => {
     const { value } = this.state;
+    e.stopPropagation();
     this.changeTime(parseInt(e.target.value, 10), value.minutes());
   }
 
   handleMinuteChange = e => {
     const { value } = this.state;
+    e.stopPropagation();
     this.changeTime(value.hours(), parseInt(e.target.value, 10));
   }
 
@@ -80,6 +81,10 @@ export default class Clock extends Component {
     }
 
     if (newTime !== value) {
+      if (!('value' in this.props)) {
+        this.setState({ value: newTime });
+      }
+
       onChange(newTime.format(valueFormat), newTime.toDate());
     }
   }
