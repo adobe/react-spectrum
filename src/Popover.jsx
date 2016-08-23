@@ -27,7 +27,10 @@ export default class Popover extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.transitionVisiblityManager.setIsOpen(nextProps.open);
+    // Won't be defined when shallow rendering.
+    if (this.transitionVisiblityManager) {
+      this.transitionVisiblityManager.setIsOpen(nextProps.open);
+    }
   }
 
   componentWillUnmount() {

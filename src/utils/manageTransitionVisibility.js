@@ -9,7 +9,6 @@ const transitionEvent = getTransitionEvent();
  * interaction on elements behind it if we merely set opacity to 0.
  */
 module.exports = (element, isOpen = false) => {
-
   const onTransitionEnd = e => {
     if (!isOpen && e.propertyName === 'opacity') {
       element.style.visibility = 'hidden';
@@ -31,5 +30,5 @@ module.exports = (element, isOpen = false) => {
     destroy() {
       element.removeEventListener(transitionEvent, onTransitionEnd);
     }
-  }
+  };
 };
