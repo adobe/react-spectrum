@@ -54,6 +54,26 @@ storiesOf('DatePicker', module)
     'value=2015-01-15T02:15-07:00',
     () => render({ type: 'datetime', value: '2015-01-15T02:15-07:00' }),
     { inline: true }
+  )
+  .addWithInfo(
+    'invalid=true',
+    () => render({ invalid: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'disabled=true',
+    () => render({ disabled: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'readOnly=true',
+    () => render({ readOnly: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'placeholder=foo',
+    () => render({ placeholder: 'foo', value: '' }),
+    { inline: true }
   );
 
 function render(props = {}) {

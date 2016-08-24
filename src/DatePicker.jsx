@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
@@ -17,6 +17,37 @@ const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
 const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
 
 export default class DatePicker extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    type: PropTypes.oneOf(['date', 'datetime', 'time']),
+    headerFormat: PropTypes.string,
+    max: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    min: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    valueFormat: PropTypes.string,
+    displayFormat: PropTypes.string,
+    startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+    placeholder: PropTypes.string,
+    quiet: PropTypes.bool,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    required: PropTypes.bool,
+    invalid: PropTypes.bool,
+    onChange: PropTypes.func
+  };
+
   static defaultProps = {
     id: createId(),
     type: 'date', // date, datetime, time
@@ -60,7 +91,7 @@ export default class DatePicker extends Component {
       const val = toMoment(nextProps.value);
       this.setState({
         value: val,
-        valueText: (val && val.format(this.state.newDisplayFormat)) || ''
+        valueText: val && val.isValid() ? val.format(this.state.newDisplayFormat) : val
       });
     }
 
@@ -99,11 +130,14 @@ export default class DatePicker extends Component {
   }
 
   handleCalendarButtonClick = () => {
-    this.setState({ open: true });
+    this.setState({ open: !this.state.open });
   }
 
-  handlePopoverClose = () => {
-    this.closeCalendarPopover();
+  handlePopoverClose = e => {
+    // Don't close the popover if the dropdown button was clicked.
+    if (this.refs.button && !this.refs.button.contains(e.target)) {
+      this.closeCalendarPopover();
+    }
   }
 
   handleCalendarKeyDown = e => {
@@ -211,7 +245,15 @@ export default class DatePicker extends Component {
     return (
       <Popover
         dropClassName="coral-DatePickerPopover-drop"
-        className={ classNames('coral-DatePicker', className) }
+        className={
+          classNames(
+            'coral-DatePicker',
+            {
+              'is-invalid': invalid
+            },
+            className
+          )
+        }
         open={ open }
         placement="bottom right"
         content={
@@ -246,15 +288,19 @@ export default class DatePicker extends Component {
             placeholder={ placeholder }
             value={ valueText }
             quiet={ quiet }
+            readOnly={ readOnly }
+            disabled={ disabled }
+            invalid={ invalid }
             onChange={ this.handleTextChange }
           />
-          <div className="coral-InputGroup-button">
+          <div ref="button" className="coral-InputGroup-button">
             <Button
               className={ classNames({ 'coral-Button--quiet': quiet }) }
               type="button"
               icon={ type === 'time' ? 'clock' : 'calendar' }
               iconSize="S"
               square
+              disabled={ readOnly || disabled }
               onClick={ this.handleCalendarButtonClick }
             />
           </div>

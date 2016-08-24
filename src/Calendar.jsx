@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
@@ -9,6 +9,33 @@ import { toMoment, isDateInRange } from './utils/moment';
 import './Calendar.styl';
 
 export default class Calendar extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    headerFormat: PropTypes.string,
+    max: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    min: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    valueFormat: PropTypes.string,
+    startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    required: PropTypes.bool,
+    invalid: PropTypes.bool,
+    onChange: PropTypes.func
+  };
+
   static defaultProps = {
     id: createId(),
     headerFormat: 'MMMM YYYY',
@@ -33,12 +60,14 @@ export default class Calendar extends Component {
     } = this.props;
 
     const newValue = toMoment(value || defaultValue || 'today', valueFormat);
+    const newMin = toMoment(min, valueFormat);
+    const newMax = toMoment(max, valueFormat);
     const today = toMoment('today', valueFormat);
 
     this.setState({
       value: newValue,
-      min: toMoment(min, valueFormat),
-      max: toMoment(max, valueFormat),
+      min: newMin && newMin.startOf('day'),
+      max: newMax && newMax.startOf('day'),
       today,
       focusedDate: newValue.clone()
     });
@@ -50,14 +79,16 @@ export default class Calendar extends Component {
     const { min, max, valueFormat } = this.props;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
+      const newMin = toMoment(nextProps.min, nextProps.valueFormat);
       this.setState({
-        min: toMoment(nextProps.min, nextProps.valueFormat)
+        min: newMin && newMin.startOf('day')
       });
     }
 
     if (max !== nextProps.max || valueFormat !== nextProps.valueFormat) {
+      const newMax = toMoment(nextProps.max, nextProps.valueFormat);
       this.setState({
-        max: toMoment(nextProps.max, nextProps.valueFormat)
+        max: newMax && newMax.startOf('day')
       });
     }
 
@@ -71,7 +102,11 @@ export default class Calendar extends Component {
       // Only change the current month window if the next value is a different day than
       // what we currently have.  We don't want to trigger the month switch if we are just
       // changing the hours or minutes of the day.
-      if (!nextProps.value.isSame(this.state.value, 'day')) {
+      if (
+        nextProps.value &&
+        nextProps.value.isSame &&
+        !nextProps.value.isSame(this.state.value, 'day')
+      ) {
         this.setCurrentMonth(nextProps.value);
       }
     }
@@ -170,11 +205,10 @@ export default class Calendar extends Component {
 
     this.setState({
       focusedDate: date,
-      currentMonth: newCurrentMonth,
-      animationDirection: +newCurrentMonth > +currentMonth ? 'right' : 'left'
+      currentMonth: newCurrentMonth
     });
 
-    this.refs.calendarBody.focus();
+    this.focusCalendarBody();
   }
 
   selectFocused(date) {
@@ -185,7 +219,13 @@ export default class Calendar extends Component {
       focusedDate: date
     });
 
-    this.refs.calendarBody.focus();
+    this.focusCalendarBody();
+  }
+
+  focusCalendarBody() {
+    if (this.refs.calendarBody) {
+      this.refs.calendarBody.focus();
+    }
   }
 
   renderTable(date) {
@@ -288,6 +328,8 @@ export default class Calendar extends Component {
       disabled,
       focused,
       invalid,
+      required,
+      readOnly,
       ...otherProps
     } = this.props;
 
@@ -306,6 +348,10 @@ export default class Calendar extends Component {
             className
           )
         }
+        aria-required={ required }
+        aria-readonly={ readOnly }
+        aria-invalid={ invalid }
+        aria-disabled={ disabled }
         { ...otherProps }
       >
         <input type="hidden" name={ name } value={ value && value.format(valueFormat) } />
@@ -319,24 +365,24 @@ export default class Calendar extends Component {
             { currentMonth.format(headerFormat) }
           </div>
           <Button
-            disabled={ disabled }
             className="coral-Calendar-prevMonth"
             icon="chevronLeft"
             variant="minimal"
             iconSize="XS"
             aria-label="Previous"
             title="Previous"
+            disabled={ disabled }
             square
             onClick={ this.handleClickPrevious }
           />
           <Button
-            disabled={ disabled }
             className="coral-Calendar-nextMonth"
             icon="chevronRight"
             variant="minimal"
             iconSize="XS"
             aria-label="Next"
             title="Next"
+            disabled={ disabled }
             square
             onClick={ this.handleClickNext }
           />

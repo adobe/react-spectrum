@@ -1,11 +1,29 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 import Textfield from './Textfield';
 import { toMoment } from './utils/moment';
 
 export default class Clock extends Component {
+  static propTypes = {
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+    valueFormat: PropTypes.string,
+    displayFormat: PropTypes.string,
+    quiet: PropTypes.bool,
+    disabled: PropTypes.bool,
+    invalid: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    required: PropTypes.bool,
+    onChange: PropTypes.func
+  };
+
   static defaultProps = {
+    valueFormat: 'HH:mm',
+    displayFormat: 'HH:mm',
     quiet: false,
     disabled: false,
     invalid: false,
@@ -57,12 +75,6 @@ export default class Clock extends Component {
       newTime.minutes(minutes);
     }
 
-    if (newTime && newTime.isValid()) {
-      if (!value.isSame(newTime, 'hour') || !value.isSame(newTime, 'minute')) {
-        newTime.format(valueFormat);
-      }
-    }
-
     if (newTime !== value) {
       if (!('value' in this.props)) {
         this.setState({ value: newTime });
@@ -103,13 +115,14 @@ export default class Clock extends Component {
           ref="hour"
           className="coral-Clock-hour"
           type="number"
-          value={ value.format('HH') }
+          value={ value && value.format('HH') || '' }
           placeholder="HH"
           min="0"
           max="23"
-          aria-invalid={ invalid }
+          invalid={ invalid }
           disabled={ disabled }
           readOnly={ readOnly }
+          required={ required }
           quiet={ quiet }
           onChange={ this.handleHourChange }
         />
@@ -118,13 +131,14 @@ export default class Clock extends Component {
           ref="minute"
           className="coral-Clock-minute"
           type="number"
-          value={ value.format('mm') }
+          value={ value && value.format('mm') || '' }
           placeholder="mm"
           min="0"
           max="59"
-          aria-invalid={ invalid }
+          invalid={ invalid }
           disabled={ disabled }
           readOnly={ readOnly }
+          required={ required }
           quiet={ quiet }
           onChange={ this.handleMinuteChange }
         />
