@@ -68,6 +68,11 @@ const Textarea = Coral.Textarea;
 
 Don't want to use Artifactory?  If you have Webpack (or another package manager) set up to transpile babel/stylus files, you can compile `react-coral` components in your project's build step (make sure your `.babelrc` file matches [ours](https://git.corp.adobe.com/React/react-coral/blob/master/.babelrc)).  With this method you can npm install via GitHub ssh or https oauth and avoid npm scoping as well.  When you require `react-coral` components in your project, use the `src` directory in your require path instead of `lib` (e.g.  `react-coral/src/Textfield` instead of `@coralui/react-coral/lib/Textfield`).
 
+
+#### What about CSS?
+
+We currently don't have CoralUI CSS delivered as part of `react-coral` (see #37).  We encourage teams to include a coral.css file in their project in the meantime.  Please look [here](http://coralui.corp.adobe.com/downloads/) for instructions on how to do this.  If you need the CoralUI Shell components in your project you will have to [create a custom CoralUI build](http://coralui.corp.adobe.com/downloads/custom-builds.html) in order to bundle the CSS for these components.
+
 ### Testing
 We use [mocha](https://mochajs.org/) for unit tests and [enzyme](https://github.com/airbnb/enzyme#basic-usage) + [expect](https://github.com/mjackson/expect) for writing assertions. In general, we prefer enzyme's [shallow rendering](https://github.com/airbnb/enzyme/blob/master/docs/api/shallow.md) for tests because they are fast and easy to maintain.  In cases where shallow rendering doesn't make sense, we use [jsdom](https://github.com/tmpvar/jsdom) to mock the DOM and use enzyme's [full rendering](https://github.com/airbnb/enzyme/blob/master/docs/api/mount.md) tools.
 
