@@ -107,7 +107,7 @@ export default class DatePicker extends Component {
   }
 
   handleCalendarKeyDown = e => {
-    if (e.keyCode === 13) { // escape key
+    if (e.keyCode === 27) { // escape key
       this.closeCalendarPopover();
     }
   }
@@ -122,8 +122,9 @@ export default class DatePicker extends Component {
   }
 
   handleTextChange = e => {
+    const { valueFormat } = this.state;
     const text = e.target.value;
-    this.setValue(text, moment(text));
+    this.setValue(text, moment(text, valueFormat));
   }
 
   closeCalendarPopover() {
@@ -185,6 +186,7 @@ export default class DatePicker extends Component {
           readOnly={ readOnly }
           required={ required }
           onChange={ this.handleClockChange }
+          onKeyDown={ this.handleCalendarKeyDown }
         />
       </div>
     );

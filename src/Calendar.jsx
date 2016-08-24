@@ -23,27 +23,27 @@ export default class Calendar extends Component {
     onChange: () => {}
   };
 
-  constructor(props) {
-    super(props);
-
+  componentWillMount() {
     const {
       value,
       defaultValue,
       min,
       max,
       valueFormat
-    } = props;
+    } = this.props;
 
     const newValue = toMoment(value || defaultValue || 'today', valueFormat);
+    const today = toMoment('today', valueFormat);
 
-    this.state = {
+    this.setState({
       value: newValue,
       min: toMoment(min, valueFormat),
       max: toMoment(max, valueFormat),
-      today: toMoment('today', valueFormat),
-      focusedDate: newValue.clone(),
-      currentMonth: newValue.clone().startOf('month')
-    };
+      today,
+      focusedDate: newValue.clone()
+    });
+
+    this.setCurrentMonth(newValue, today);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,10 +61,19 @@ export default class Calendar extends Component {
       });
     }
 
-    if ('value' in nextProps) {
+    if ('value' in nextProps && +nextProps.value !== +this.state.value) {
+      const newValue = toMoment(nextProps.value, nextProps.valueFormat);
       this.setState({
-        value: toMoment(nextProps.value, nextProps.valueFormat)
+        value: newValue,
+        focusedDate: newValue
       });
+
+      // Only change the current month window if the next value is a different day than
+      // what we currently have.  We don't want to trigger the month switch if we are just
+      // changing the hours or minutes of the day.
+      if (!nextProps.value.isSame(this.state.value, 'day')) {
+        this.setCurrentMonth(nextProps.value);
+      }
     }
   }
 
@@ -72,12 +81,19 @@ export default class Calendar extends Component {
     const { onChange, valueFormat } = this.props;
 
     if (!('value' in this.props)) {
-      this.setState({
-        value: date
-      });
+      this.setState({ value: date, focusedDate: date });
+      this.setCurrentMonth(date);
     }
 
     onChange(date.format(valueFormat), date.toDate());
+  }
+
+  setCurrentMonth(date, today = this.state.today) {
+    const visibleMonth = date && date.isValid() ? date : today;
+
+    this.setState({
+      currentMonth: visibleMonth.clone().startOf('month')
+    });
   }
 
   generateDateId(date) {
@@ -104,42 +120,47 @@ export default class Calendar extends Component {
     const { focusedDate } = this.state;
     const nextMoment = focusedDate.clone();
 
-    e.preventDefault();
-
     switch (e.keyCode) {
       case 13: // enter
       case 32: // space
+        e.preventDefault();
         this.selectFocused(nextMoment);
         break;
       case 33: // page up
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.subtract(1, e.metaKey ? 'year' : 'month'));
         break;
       case 34: // page down
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.add(1, e.metaKey ? 'year' : 'month'));
         break;
       case 35: // end
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.endOf('month').startOf('day'));
         break;
       case 36: // home
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.startOf('month').startOf('day'));
         break;
       case 37: // left arrow
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.subtract(1, 'day'));
         break;
       case 38: // up arrow
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.subtract(1, 'week'));
         break;
       case 39: // right arrow
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.add(1, 'day'));
         break;
       case 40: // down arrow
+        e.preventDefault();
         this.focusTimeUnit(nextMoment.add(1, 'week'));
         break;
-      default:
+      default: // default, do nothing
         break;
     }
-
-    this.refs.calendarBody.focus();
   }
 
   focusTimeUnit(date) {
@@ -152,6 +173,8 @@ export default class Calendar extends Component {
       currentMonth: newCurrentMonth,
       animationDirection: +newCurrentMonth > +currentMonth ? 'right' : 'left'
     });
+
+    this.refs.calendarBody.focus();
   }
 
   selectFocused(date) {
