@@ -10,13 +10,13 @@ import Clock from './Clock';
 import createId from './utils/createId';
 import { toMoment } from './utils/moment';
 
-import './DatePicker.styl';
+import './Datepicker.styl';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
 const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
 
-export default class DatePicker extends Component {
+export default class Datepicker extends Component {
   static propTypes = {
     id: PropTypes.string,
     type: PropTypes.oneOf(['date', 'datetime', 'time']),
@@ -244,10 +244,10 @@ export default class DatePicker extends Component {
 
     return (
       <Popover
-        dropClassName="coral-DatePickerPopover-drop"
+        dropClassName="coral-DatepickerPopover-drop"
         className={
           classNames(
-            'coral-DatePicker',
+            'coral-Datepicker',
             {
               'is-invalid': invalid
             },

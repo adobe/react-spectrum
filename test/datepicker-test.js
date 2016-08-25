@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import expect, { createSpy } from 'expect';
-import DatePicker from '../src/DatePicker';
+import Datepicker from '../src/Datepicker';
 import Textfield from '../src/Textfield';
 import Button from '../src/Button';
 import Calendar from '../src/Calendar';
@@ -12,10 +12,10 @@ const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
 const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
 
-describe('DatePicker', () => {
+describe('Datepicker', () => {
   it('default', () => {
-    const tree = shallow(<DatePicker type="datetime" />);
-    expect(tree.hasClass('coral-DatePicker')).toBe(true);
+    const tree = shallow(<Datepicker type="datetime" />);
+    expect(tree.hasClass('coral-Datepicker')).toBe(true);
     expect(tree.hasClass('is-invalid')).toBe(false);
 
     const textfield = findTextfield(tree);
@@ -48,7 +48,7 @@ describe('DatePicker', () => {
   });
 
   it('supports type (date, time, and datetime)', () => {
-    const tree = shallow(<DatePicker type="date" />);
+    const tree = shallow(<Datepicker type="date" />);
     expect(findCalendar(tree).node).toExist();
     expect(findClock(tree).node).toNotExist();
     expect(findButton(tree).prop('icon')).toBe('calendar');
@@ -66,7 +66,7 @@ describe('DatePicker', () => {
 
   it('supports defaultValue uncontrolled behavior', () => {
     const now = moment();
-    const tree = shallow(<DatePicker defaultValue={ now } />);
+    const tree = shallow(<Datepicker defaultValue={ now } />);
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
@@ -82,7 +82,7 @@ describe('DatePicker', () => {
     const now = moment();
     const dateWeekLater = now.clone().add(7, 'day');
 
-    const tree = shallow(<DatePicker value={ now } />);
+    const tree = shallow(<Datepicker value={ now } />);
 
     // Changing value will change the state
     tree.setProps({ value: dateWeekLater });
@@ -95,7 +95,7 @@ describe('DatePicker', () => {
   });
 
   it('clicking Button opens Popover', () => {
-    const tree = shallow(<DatePicker />);
+    const tree = shallow(<Datepicker />);
     expect(tree.state('open')).toBe(false);
     findButton(tree).simulate('click');
     expect(tree.state('open')).toBe(true);
@@ -104,7 +104,7 @@ describe('DatePicker', () => {
 
   describe('closing popover', () => {
     it('typing escape while popover is open closes popover', () => {
-      const tree = shallow(<DatePicker type="datetime" />);
+      const tree = shallow(<Datepicker type="datetime" />);
       tree.setState({ open: true });
       findCalendar(tree).simulate('keydown', { keyCode: 27 });
       expect(tree.state('open')).toBe(false);
@@ -115,14 +115,14 @@ describe('DatePicker', () => {
 
     it('clicking a date on the calendar closes popover', () => {
       const now = moment();
-      const tree = shallow(<DatePicker />);
+      const tree = shallow(<Datepicker />);
       tree.setState({ open: true });
       findCalendar(tree).simulate('change', now.toString(), now.toDate());
       expect(tree.state('open')).toBe(false);
     });
 
     it('popover can close itself', () => {
-      const tree = shallow(<DatePicker />);
+      const tree = shallow(<Datepicker />);
       tree.prop('onClose')();
       expect(tree.state('open')).toBe(false);
     });
@@ -141,7 +141,7 @@ describe('DatePicker', () => {
 
     beforeEach(() => {
       spy = createSpy();
-      tree = shallow(<DatePicker type="datetime" onChange={ spy } />);
+      tree = shallow(<Datepicker type="datetime" onChange={ spy } />);
     });
 
     it('textfield onChange', () => {
@@ -171,19 +171,19 @@ describe('DatePicker', () => {
   });
 
   it('supports placeholder', () => {
-    const tree = shallow(<DatePicker placeholder="foo" />);
+    const tree = shallow(<Datepicker placeholder="foo" />);
     expect(findTextfield(tree).prop('placeholder')).toBe('foo');
   });
 
   it('supports quiet', () => {
-    const tree = shallow(<DatePicker quiet />);
+    const tree = shallow(<Datepicker quiet />);
     expect(tree.childAt(0).hasClass('coral-InputGroup--quiet')).toBe(true);
     expect(findTextfield(tree).prop('quiet')).toBe(true);
     expect(findButton(tree).hasClass('coral-Button--quiet')).toBe(true);
   });
 
   it('supports disabled', () => {
-    const tree = shallow(<DatePicker type="datetime" disabled />);
+    const tree = shallow(<Datepicker type="datetime" disabled />);
     expect(tree.prop('aria-disabled')).toBe(true);
     expect(findTextfield(tree).prop('disabled')).toBe(true);
     expect(findButton(tree).prop('disabled')).toBe(true);
@@ -192,7 +192,7 @@ describe('DatePicker', () => {
   });
 
   it('supports invalid', () => {
-    const tree = shallow(<DatePicker type="datetime" invalid />);
+    const tree = shallow(<Datepicker type="datetime" invalid />);
     expect(tree.prop('aria-invalid')).toBe(true);
     expect(tree.hasClass('is-invalid')).toBe(true);
     expect(findTextfield(tree).prop('invalid')).toBe(true);
@@ -202,7 +202,7 @@ describe('DatePicker', () => {
   });
 
   it('supports readOnly', () => {
-    const tree = shallow(<DatePicker type="datetime" readOnly />);
+    const tree = shallow(<Datepicker type="datetime" readOnly />);
     expect(tree.prop('aria-readonly')).toBe(true);
     expect(findTextfield(tree).prop('readOnly')).toBe(true);
     expect(findButton(tree).prop('disabled')).toBe(true);
@@ -211,19 +211,19 @@ describe('DatePicker', () => {
   });
 
   it('supports required', () => {
-    const tree = shallow(<DatePicker type="datetime" required />);
+    const tree = shallow(<Datepicker type="datetime" required />);
     expect(tree.prop('aria-required')).toBe(true);
     expect(findCalendar(tree).prop('required')).toBe(true);
     expect(findClock(tree).prop('required')).toBe(true);
   });
 
   it('supports additional classNames', () => {
-    const tree = shallow(<DatePicker className="myClass" />);
+    const tree = shallow(<Datepicker className="myClass" />);
     expect(tree.hasClass('myClass')).toBe(true);
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<DatePicker foo />);
+    const tree = shallow(<Datepicker foo />);
     expect(tree.prop('foo')).toBe(true);
   });
 });

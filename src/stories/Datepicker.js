@@ -2,9 +2,9 @@ import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { VerticalCenter } from '../../.storybook/layout';
 
-import DatePicker from '../DatePicker';
+import Datepicker from '../Datepicker';
 
-storiesOf('DatePicker', module)
+storiesOf('Datepicker', module)
   .addDecorator(story => (
     <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
@@ -78,7 +78,7 @@ storiesOf('DatePicker', module)
 
 function render(props = {}) {
   return (
-    <DatePicker
+    <Datepicker
       onChange={ action('change') }
       { ...props }
     />
