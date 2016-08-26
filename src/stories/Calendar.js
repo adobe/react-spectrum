@@ -45,11 +45,6 @@ storiesOf('Calendar', module)
     'disabled=true',
     () => render({ disabled: true }),
     { inline: true }
-  )
-  .addWithInfo(
-    'placeholder=foo',
-    () => render({ placeholder: 'foo', value: '' }),
-    { inline: true }
   );
 
 function render(props = {}) {

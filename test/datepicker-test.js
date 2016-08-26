@@ -224,7 +224,7 @@ describe('Datepicker', () => {
 
   it('supports additional properties', () => {
     const tree = shallow(<Datepicker foo />);
-    expect(tree.prop('foo')).toBe(true);
+    expect(findTextfield(tree).prop('foo')).toBe(true);
   });
 });
 

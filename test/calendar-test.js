@@ -84,16 +84,10 @@ describe('Calendar', () => {
   });
 
   describe('dispatches onChange', () => {
-    let now;
     let spy;
 
     const assertOnChangeArgsMatch = el => {
-      // The value on a day is rounded to the beginning of the day, set the appropriate hours and
-      // minutes from the original date to get the final time.
-      const newDate = el.prop('date')
-        .clone()
-        .hour(now.hour())
-        .minute(now.minute());
+      const newDate = el.prop('date').clone();
 
       const args = spy.getLastCall().arguments;
       expect(args[0]).toBe(newDate.format(DEFAULT_VALUE_FORMAT));
@@ -101,7 +95,6 @@ describe('Calendar', () => {
     };
 
     beforeEach(() => {
-      now = moment();
       spy = createSpy();
     });
 

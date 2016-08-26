@@ -72,7 +72,7 @@ storiesOf('Datepicker', module)
   )
   .addWithInfo(
     'placeholder=foo',
-    () => render({ placeholder: 'foo', value: '' }),
+    () => render({ placeholder: 'foo' }),
     { inline: true }
   );
 

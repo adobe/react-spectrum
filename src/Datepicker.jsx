@@ -17,6 +17,8 @@ const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
 const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
 
 export default class Datepicker extends Component {
+  static displayName = 'Datepicker';
+
   static propTypes = {
     id: PropTypes.string,
     type: PropTypes.oneOf(['date', 'datetime', 'time']),
@@ -38,7 +40,7 @@ export default class Datepicker extends Component {
     ]),
     valueFormat: PropTypes.string,
     displayFormat: PropTypes.string,
-    startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+    startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
     placeholder: PropTypes.string,
     quiet: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -77,9 +79,11 @@ export default class Datepicker extends Component {
     const newValueFormat = valueFormat || this.getDefaultValueFormat(props);
     const newDisplayFormat = displayFormat || this.getDefaultValueFormat(props);
 
+    const val = toMoment(value || defaultValue || '', newValueFormat);
+
     this.state = {
-      value: toMoment(value || defaultValue || 'today', newValueFormat),
-      valueText: toMoment(value || defaultValue || 'today').format(newDisplayFormat),
+      value: val,
+      valueText: val && val.isValid() ? val.format(newDisplayFormat) : val || '',
       valueFormat: newValueFormat,
       displayFormat: newDisplayFormat,
       open: false
@@ -91,7 +95,7 @@ export default class Datepicker extends Component {
       const val = toMoment(nextProps.value);
       this.setState({
         value: val,
-        valueText: val && val.isValid() ? val.format(this.state.newDisplayFormat) : val
+        valueText: val && val.isValid() ? val.format(this.state.displayFormat) : val || ''
       });
     }
 
@@ -165,60 +169,22 @@ export default class Datepicker extends Component {
     this.setState({ open: false });
   }
 
-  renderCalendar() {
-    const {
-      id,
-      headerFormat,
-      max,
-      min,
-      startDay,
-      disabled,
-      invalid,
-      readOnly,
-      required
-    } = this.props;
-
-    const { value, valueFormat } = this.state;
-
+  renderCalendar(props) {
     return (
       <Calendar
         className="u-coral-borderless"
-        id={ id }
-        headerFormat={ headerFormat }
-        max={ max }
-        min={ min }
-        value={ value }
-        valueFormat={ valueFormat }
-        startDay={ startDay }
-        disabled={ disabled }
-        invalid={ invalid }
-        readOnly={ readOnly }
-        required={ required }
+        { ...props }
         onChange={ this.handleCalendarChange }
         onKeyDown={ this.handleCalendarKeyDown }
       />
     );
   }
 
-  renderClock() {
-    const {
-      disabled,
-      invalid,
-      readOnly,
-      required
-    } = this.props;
-
-    const { value, valueFormat } = this.state;
-
+  renderClock(props) {
     return (
       <div className="coral-Datepicker-clockContainer">
         <Clock
-          value={ value }
-          valueFormat={ valueFormat }
-          disabled={ disabled }
-          invalid={ invalid }
-          readOnly={ readOnly }
-          required={ required }
+          { ...props }
           onChange={ this.handleClockChange }
           onKeyDown={ this.handleCalendarKeyDown }
         />
@@ -230,6 +196,10 @@ export default class Datepicker extends Component {
     const {
       id,
       type,
+      headerFormat,
+      max,
+      min,
+      startDay,
       placeholder,
       quiet,
       disabled,
@@ -240,7 +210,34 @@ export default class Datepicker extends Component {
       ...otherProps
     } = this.props;
 
-    const { open, valueText } = this.state;
+    const { open, valueText, value, valueFormat } = this.state;
+
+    const calendarProps = {
+      id,
+      headerFormat,
+      max,
+      min,
+      startDay,
+      disabled,
+      invalid,
+      readOnly,
+      required,
+      value,
+      valueFormat
+    };
+
+    const clockProps = {
+      value,
+      valueFormat,
+      disabled,
+      invalid,
+      readOnly,
+      required
+    };
+
+    // We are using state for these.
+    delete otherProps.value;
+    delete otherProps.defaultValue;
 
     return (
       <Popover
@@ -258,8 +255,8 @@ export default class Datepicker extends Component {
         placement="bottom right"
         content={
           <div>
-            { type !== 'time' && this.renderCalendar() }
-            { type !== 'date' && this.renderClock() }
+            { type !== 'time' && this.renderCalendar(calendarProps) }
+            { type !== 'date' && this.renderClock(clockProps) }
           </div>
         }
         aria-disabled={ disabled }
@@ -269,7 +266,6 @@ export default class Datepicker extends Component {
         aria-expanded={ open }
         aria-owns={ id }
         aria-haspopup
-        { ...otherProps }
         onClose={ this.handlePopoverClose }
       >
         <div
@@ -291,6 +287,7 @@ export default class Datepicker extends Component {
             readOnly={ readOnly }
             disabled={ disabled }
             invalid={ invalid }
+            { ...otherProps }
             onChange={ this.handleTextChange }
           />
           <div ref="button" className="coral-InputGroup-button">

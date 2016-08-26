@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
+import moment from 'moment';
 import classNames from 'classnames';
 
 import Textfield from './Textfield';
 import { toMoment } from './utils/moment';
 
 export default class Clock extends Component {
+  static displayName = 'Clock';
+
   static propTypes = {
     value: PropTypes.oneOfType([
       PropTypes.string,
@@ -37,50 +40,119 @@ export default class Clock extends Component {
 
     const { value, defaultValue, valueFormat } = this.props;
 
+    const val = toMoment(value || defaultValue || '', valueFormat);
+    const isValid = val && val.isValid();
+
     this.state = {
-      value: toMoment(value || defaultValue || 'today', valueFormat)
+      value: val,
+      hourText: isValid ? val.format('HH') : '',
+      minuteText: isValid ? val.format('mm') : ''
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
+      const val = toMoment(nextProps.value, nextProps.valueFormat);
+      const isValid = val && val.isValid();
+
+      if (!isValid) {
+        this.setState({
+          hourText: this.state.hourText || '',
+          minuteText: this.state.minuteText || ''
+        });
+      } else {
+        if (+this.state.hourText !== val.hour()) {
+          this.setState({ hourText: val.hour() });
+        }
+
+        if (+this.state.minuteText !== val.minute()) {
+          this.setState({ minuteText: val.minute() });
+        }
+      }
+
       this.setState({
-        value: toMoment(nextProps.value, nextProps.valueFormat)
+        value: val
       });
     }
   }
 
   handleHourChange = e => {
-    const { value } = this.state;
+    const { minuteText } = this.state;
     e.stopPropagation();
-    this.changeTime(parseInt(e.target.value, 10), value.minutes());
+    this.changeTime(e.target.value, minuteText);
   }
 
   handleMinuteChange = e => {
-    const { value } = this.state;
+    const { hourText } = this.state;
     e.stopPropagation();
-    this.changeTime(value.hours(), parseInt(e.target.value, 10));
+    this.changeTime(hourText, e.target.value);
   }
 
-  changeTime(hours, minutes) {
+  handleHourBlur = e => {
+    let val = e.target.value;
+
+    // normalize the hourText displayed in the input
+    if (val.length <= 1) {
+      val = `0${ val }`;
+    }
+
+    this.setState({
+      hourText: val
+    });
+  }
+
+  handleMinuteBlur = e => {
+    let val = e.target.value;
+
+    // normalize the minuteText displayed in the input
+    if (val.length <= 1) {
+      val = `0${ val }`;
+    }
+
+    this.setState({
+      minuteText: val
+    });
+  }
+
+  changeTime(hourText, minuteText) {
     const { valueFormat, onChange } = this.props;
     const { value } = this.state;
 
-    let newTime = value.clone();
+    const hours = parseInt(hourText, 10);
+    const minutes = parseInt(minuteText, 10);
+
+    let newTime = moment.isMoment(value) && value.clone();
 
     if (isNaN(hours) || isNaN(minutes)) {
       newTime = '';
     } else {
-      newTime.hours(hours);
-      newTime.minutes(minutes);
+      if (!moment.isMoment(newTime)) {
+        newTime = moment();
+      }
+      newTime.hour(hours);
+      newTime.minute(minutes);
+      newTime.second(0);
+      newTime.millisecond(0);
     }
 
-    if (newTime !== value) {
-      if (!('value' in this.props)) {
-        this.setState({ value: newTime });
-      }
+    this.setState({
+      hourText,
+      minuteText
+    });
 
-      onChange(newTime.format(valueFormat), newTime.toDate());
+    if (!('value' in this.props)) {
+      this.setState({
+        value: newTime
+      });
+    }
+
+    const validMoment = moment.isMoment(newTime);
+
+    if (newTime !== value) {
+      onChange(
+        validMoment ? newTime.format(valueFormat) : newTime,
+        validMoment && newTime.toDate()
+      );
     }
   }
 
@@ -95,7 +167,12 @@ export default class Clock extends Component {
       ...otherProps
     } = this.props;
 
-    const { value } = this.state;
+    const { hourText, minuteText } = this.state;
+
+    delete otherProps.valueFormat;
+    delete otherProps.displayFormat;
+    delete otherProps.value;
+    delete otherProps.defaultValue;
 
     return (
       <div
@@ -115,7 +192,7 @@ export default class Clock extends Component {
           ref="hour"
           className="coral-Clock-hour"
           type="number"
-          value={ value && value.format('HH') || '' }
+          value={ hourText }
           placeholder="HH"
           min="0"
           max="23"
@@ -125,13 +202,14 @@ export default class Clock extends Component {
           required={ required }
           quiet={ quiet }
           onChange={ this.handleHourChange }
+          onBlur={ this.handleHourBlur }
         />
         <span className="coral-Clock-divider">:</span>
         <Textfield
           ref="minute"
           className="coral-Clock-minute"
           type="number"
-          value={ value && value.format('mm') || '' }
+          value={ minuteText }
           placeholder="mm"
           min="0"
           max="59"
@@ -141,6 +219,7 @@ export default class Clock extends Component {
           required={ required }
           quiet={ quiet }
           onChange={ this.handleMinuteChange }
+          onBlur={ this.handleMinuteBlur }
         />
       </div>
     );

@@ -20,14 +20,14 @@ describe('Clock', () => {
     expect(hour.prop('disabled')).toBe(false);
     expect(hour.prop('readOnly')).toBe(false);
     expect(hour.prop('quiet')).toBe(false);
-    expect(hour.prop('value')).toBe(now.format('HH'));
+    expect(hour.prop('value')).toBe('');
 
     const minute = findMinuteTextfield(tree);
     expect(minute.prop('invalid')).toBe(false);
     expect(minute.prop('disabled')).toBe(false);
     expect(minute.prop('readOnly')).toBe(false);
     expect(minute.prop('quiet')).toBe(false);
-    expect(minute.prop('value')).toBe(now.format('mm'));
+    expect(minute.prop('value')).toBe('');
   });
 
   describe('dispatches onChange', () => {
@@ -45,7 +45,7 @@ describe('Clock', () => {
     };
 
     beforeEach(() => {
-      now = moment();
+      now = moment().second(0).millisecond(0);
       spy = createSpy();
       stopPropagationSpy = createSpy();
     });
@@ -64,7 +64,7 @@ describe('Clock', () => {
   });
 
   it('supports defaultValue uncontrolled behavior', () => {
-    const now = moment();
+    const now = moment().second(0).millisecond(0);
     const tree = shallow(<Clock defaultValue={ now } />);
 
     // Setting defaultValue later doesn't change the state. Only component interactions

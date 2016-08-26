@@ -9,6 +9,8 @@ import { toMoment, isDateInRange } from './utils/moment';
 import './Calendar.styl';
 
 export default class Calendar extends Component {
+  static displayName = 'Calendar';
+
   static propTypes = {
     id: PropTypes.string,
     headerFormat: PropTypes.string,
@@ -59,7 +61,7 @@ export default class Calendar extends Component {
       valueFormat
     } = this.props;
 
-    const newValue = toMoment(value || defaultValue || 'today', valueFormat);
+    const newValue = toMoment(value || defaultValue || '', valueFormat);
     const newMin = toMoment(min, valueFormat);
     const newMax = toMoment(max, valueFormat);
     const today = toMoment('today', valueFormat);
@@ -69,7 +71,7 @@ export default class Calendar extends Component {
       min: newMin && newMin.startOf('day'),
       max: newMax && newMax.startOf('day'),
       today,
-      focusedDate: newValue.clone()
+      focusedDate: newValue && newValue.clone()
     });
 
     this.setCurrentMonth(newValue, today);
@@ -214,7 +216,15 @@ export default class Calendar extends Component {
   selectFocused(date) {
     const { value } = this.state;
 
-    this.setValue(date.clone().hour(value.hour()).minute(value.minute()));
+    date = date.clone();
+    if (value && moment.isMoment(value) && value.isValid()) {
+      date.hour(value.hour());
+      date.minute(value.minute());
+      date.second(value.second());
+      date.millisecond(value.millisecond());
+    }
+
+    this.setValue(date);
     this.setState({
       focusedDate: date
     });
@@ -335,6 +345,8 @@ export default class Calendar extends Component {
 
     const { value, currentMonth } = this.state;
 
+    delete otherProps.startDay;
+
     return (
       <div
         className={
@@ -354,7 +366,7 @@ export default class Calendar extends Component {
         aria-disabled={ disabled }
         { ...otherProps }
       >
-        <input type="hidden" name={ name } value={ value && value.format(valueFormat) } />
+        <input type="hidden" name={ name } value={ value && value.format(valueFormat) || '' } />
         <div className="coral-Calendar-calendarHeader">
           <div
             className="coral-Heading coral-Heading--2"

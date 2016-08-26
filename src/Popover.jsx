@@ -20,7 +20,7 @@ export default class Popover extends Component {
 
   componentDidMount() {
     const { drop } = this.refs;
-    this.transitionVisiblityManager = manageTransitionVisibility(
+    this.transitionVisibilityManager = manageTransitionVisibility(
       drop.tetherDrop.drop,
       this.props.open
     );
@@ -28,13 +28,15 @@ export default class Popover extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Won't be defined when shallow rendering.
-    if (this.transitionVisiblityManager) {
-      this.transitionVisiblityManager.setIsOpen(nextProps.open);
+    if (this.transitionVisibilityManager) {
+      this.transitionVisibilityManager.setIsOpen(nextProps.open);
     }
   }
 
   componentWillUnmount() {
-    this.transitionVisiblityManager.destroy();
+    if (this.transitionVisibilityManager) {
+      this.transitionVisibilityManager.destroy();
+    }
   }
 
   render() {
