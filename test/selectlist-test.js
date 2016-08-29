@@ -4,7 +4,7 @@ import SelectList from '../src/SelectList';
 import { shallow } from 'enzyme';
 
 
-let testOptions = [
+const testOptions = [
   { label: 'Chocolate', value: 'chocolate' },
   { label: 'Vanilla', value: 'vanilla' },
   { label: 'Strawberry', value: 'strawberry' },
@@ -14,13 +14,13 @@ let testOptions = [
   { label: 'Some crazy long value that should be cut off', value: 'logVal' }
 ];
 
-let selectedValue = [
+const selectedValue = [
   'chocolate',
   'vanilla',
   'logVal'
 ];
 
-let groupedOptions = {
+const groupedOptions = {
   'Group 1': [
     { label: 'Chocolate', value: 'chocolate' },
     { label: 'Vanilla', value: 'vanilla' },

@@ -51,7 +51,7 @@ class Dialog extends Component {
       ...otherProps
     } = this.props;
 
-    let RootEl = fullscreen ? 'div' : TetherComponent;
+    const RootEl = fullscreen ? 'div' : TetherComponent;
 
     const rootProps = {
       style: {

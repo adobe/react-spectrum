@@ -6,8 +6,6 @@ import { shallow } from 'enzyme';
 
 describe('Clock', () => {
   it('default', () => {
-    const now = moment();
-
     const tree = shallow(<Clock />);
     expect(tree.hasClass('coral-Clock')).toBe(true);
     expect(tree.prop('aria-disabled')).toBe(false);
