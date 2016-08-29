@@ -16,19 +16,19 @@ export default class Tooltip extends Component {
 
   componentDidMount() {
     const { drop } = this.refs;
-    this.transitionVisiblityManager = manageTransitionVisibility(drop.tetherDrop.drop);
+    this.transitionVisibilityManager = manageTransitionVisibility(drop.tetherDrop.drop);
   }
 
   componentWillUnmount() {
-    this.transitionVisiblityManager.destroy();
+    this.transitionVisibilityManager.destroy();
   }
 
   onOpen = () => {
-    this.transitionVisiblityManager.setIsOpen(true);
+    this.transitionVisibilityManager.setIsOpen(true);
   };
 
   onClose = () => {
-    this.transitionVisiblityManager.setIsOpen(false);
+    this.transitionVisibilityManager.setIsOpen(false);
   };
 
   render() {

@@ -9,6 +9,7 @@ export default class TetherDropComponent extends Component {
     classPrefix: 'coral-drop',
     onOpen: () => {},
     onClose: () => {},
+    dropClassName: '',
     openOn: null // Null means we'll manually call .open() and .close() on the drop instance.
   };
 
@@ -89,7 +90,8 @@ export default class TetherDropComponent extends Component {
       openOn,
       hoverOpenDelay,
       hoverCloseDelay,
-      classPrefix
+      classPrefix,
+      dropClassName
     } = this.props;
 
     /** eslint new-cap **/
@@ -99,6 +101,7 @@ export default class TetherDropComponent extends Component {
 
     this.tetherDrop = new CoralDropContext({
       target: this.refs.target,
+      classes: dropClassName,
       position,
       openOn,
       hoverOpenDelay,
@@ -136,9 +139,9 @@ export default class TetherDropComponent extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { className, children } = this.props;
     return (
-      <div ref="target">
+      <div className={ className } ref="target">
         { children }
       </div>
     );

@@ -20,7 +20,7 @@ export default class Popover extends Component {
 
   componentDidMount() {
     const { drop } = this.refs;
-    this.transitionVisiblityManager = manageTransitionVisibility(
+    this.transitionVisibilityManager = manageTransitionVisibility(
       drop.tetherDrop.drop,
       this.props.open
     );
@@ -28,13 +28,15 @@ export default class Popover extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Won't be defined when shallow rendering.
-    if (this.transitionVisiblityManager) {
-      this.transitionVisiblityManager.setIsOpen(nextProps.open);
+    if (this.transitionVisibilityManager) {
+      this.transitionVisibilityManager.setIsOpen(nextProps.open);
     }
   }
 
   componentWillUnmount() {
-    this.transitionVisiblityManager.destroy();
+    if (this.transitionVisibilityManager) {
+      this.transitionVisibilityManager.destroy();
+    }
   }
 
   render() {
@@ -48,16 +50,19 @@ export default class Popover extends Component {
       content,
       children,
       className,
+      dropClassName,
       onClose,
       ...otherProps
     } = this.props;
 
     return (
       <TetherDropComponent
+        className={ className }
         ref="drop"
         position={ getTetherPositionFromPlacement(placement) }
         open={ open }
         classPrefix="coral-Popover-drop"
+        dropClassName={ dropClassName }
         content={
           <div
             className={
@@ -66,8 +71,7 @@ export default class Popover extends Component {
                 `coral-Dialog--${ variant }`,
                 {
                   'is-open': open
-                },
-                className
+                }
               )
             }
             { ...otherProps }

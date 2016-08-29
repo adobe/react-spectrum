@@ -28,8 +28,7 @@ describe('Popover', () => {
 
   it('supports additional classNames', () => {
     const tree = shallow(<Popover className="foo" />);
-    const contentTree = shallow(tree.prop('content'));
-    expect(contentTree.hasClass('foo')).toBe(true);
+    expect(tree.hasClass('foo')).toBe(true);
   });
 
   it('supports additional properties', () => {
