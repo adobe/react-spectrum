@@ -14,3 +14,5 @@ export default function ShellWorkspaces({
     </div>
   );
 }
+
+ShellWorkspaces.displayName = 'ShellWorkspaces';

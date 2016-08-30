@@ -50,3 +50,5 @@ export default function Tag({
     </div>
   );
 }
+
+Tag.displayName = 'Tag';

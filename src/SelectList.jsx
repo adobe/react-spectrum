@@ -154,3 +154,4 @@ export default class SelectList extends Component {
   }
 }
 SelectList.defaultProps = { value: [] };
+SelectList.displayName = 'SelectList';

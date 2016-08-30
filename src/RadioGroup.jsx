@@ -105,3 +105,5 @@ export default class RadioGroup extends Component {
     );
   }
 }
+
+RadioGroup.displayName = 'RadioGroup';

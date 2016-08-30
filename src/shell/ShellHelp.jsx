@@ -173,3 +173,5 @@ export default class ShellHelp extends Component {
     );
   }
 }
+
+ShellHelp.displayName = 'ShellHelp';

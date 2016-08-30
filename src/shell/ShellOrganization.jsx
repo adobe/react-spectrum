@@ -144,3 +144,5 @@ export default class ShellOrganization extends Component {
     );
   }
 }
+
+ShellOrganization.displayName = 'ShellOrganization';

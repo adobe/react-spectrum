@@ -23,3 +23,5 @@ export default function Wait({
     />
   );
 }
+
+Wait.displayName = 'Wait';

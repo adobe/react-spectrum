@@ -48,3 +48,5 @@ export default function DialogHeader({
     </div>
   );
 }
+
+DialogHeader.displayName = 'DialogHeader';

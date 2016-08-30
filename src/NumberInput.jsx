@@ -356,3 +356,5 @@ export default class NumberInput extends Component {
     );
   }
 }
+
+NumberInput.displayName = 'NumberInput';

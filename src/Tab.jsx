@@ -61,3 +61,5 @@ Tab.defaultProps = {
   disabled: false,
   onClick() {}
 };
+
+Tab.displayName = 'Tab';

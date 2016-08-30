@@ -44,3 +44,5 @@ export default function DialogFooter({
     </div>
   );
 }
+
+DialogFooter.displayName = 'DialogFooter';

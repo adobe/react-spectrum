@@ -51,3 +51,5 @@ export default function Progress({
     </div>
   );
 }
+
+Progress.displayName = 'Progress';

@@ -26,3 +26,5 @@ export default function Table({
     </table>
   );
 }
+
+Table.displayName = 'Table';

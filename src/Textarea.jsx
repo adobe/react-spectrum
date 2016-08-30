@@ -34,3 +34,5 @@ export default function Textarea({
     />
   );
 }
+
+Textarea.displayName = 'Textarea';

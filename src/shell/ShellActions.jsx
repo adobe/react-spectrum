@@ -62,3 +62,5 @@ export default class ShellHeaderActions extends Component {
     );
   }
 }
+
+ShellHeaderActions.displayName = 'ShellHeaderActions';

@@ -36,3 +36,5 @@ export default function Icon({
     </span>
   );
 }
+
+Icon.displayName = 'Icon';

@@ -45,3 +45,5 @@ export default class Textfield extends Component {
     );
   }
 }
+
+Textfield.displayName = 'Textfield';

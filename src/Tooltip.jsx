@@ -72,3 +72,5 @@ export default class Tooltip extends Component {
     );
   }
 }
+
+Tooltip.displayName = 'Tooltip';

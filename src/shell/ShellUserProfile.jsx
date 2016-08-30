@@ -57,3 +57,5 @@ export default function ShellUserProfile({
     </ShellMenu>
   );
 }
+
+ShellUserProfile.displayName = 'ShellUserProfile';

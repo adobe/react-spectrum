@@ -20,3 +20,5 @@ export default function TH({
     </th>
   );
 }
+
+TH.displayName = 'TH';

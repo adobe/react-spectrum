@@ -34,3 +34,5 @@ export default function ShellHeader({
     </div>
   );
 }
+
+ShellHeader.displayName = 'ShellHeader';

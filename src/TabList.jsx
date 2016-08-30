@@ -123,3 +123,5 @@ TabList.defaultProps = {
   defaultSelectedIndex: 0,
   onChange() {}
 };
+
+TabList.displayName = 'TabList';

@@ -71,3 +71,5 @@ export default class TagList extends React.Component {
     );
   }
 }
+
+TagList.displayName = 'TagList';

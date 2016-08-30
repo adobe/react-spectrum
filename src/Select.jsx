@@ -170,3 +170,5 @@ export default class Select extends Component {
     );
   }
 }
+
+Select.displayName = 'Select';

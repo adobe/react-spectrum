@@ -20,3 +20,5 @@ export default function TD({
     </td>
   );
 }
+
+TD.displayName = 'TD';

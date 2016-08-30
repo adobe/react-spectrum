@@ -24,3 +24,5 @@ export default function Heading({
     </Element>
   );
 }
+
+Heading.displayName = 'Heading';

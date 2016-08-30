@@ -127,3 +127,5 @@ export default class SwitchBase extends Component {
     );
   }
 }
+
+SwitchBase.displayName = 'SwitchBase';

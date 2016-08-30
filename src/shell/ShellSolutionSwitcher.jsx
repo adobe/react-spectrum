@@ -41,3 +41,5 @@ export default function ShellSolutionSwitcher({
     </ShellMenu>
   );
 }
+
+ShellSolutionSwitcher.displayName = 'ShellSolutionSwitcher';

@@ -123,3 +123,5 @@ export default class ListItem extends Component {
     );
   }
 }
+
+ListItem.displayName = 'ListItem';

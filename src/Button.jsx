@@ -46,3 +46,5 @@ export default function Button({
     </Element>
   );
 }
+
+Button.displayName = 'Button';

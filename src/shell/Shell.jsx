@@ -20,3 +20,5 @@ export default function Shell({
     </div>
   );
 }
+
+Shell.displayName = 'Shell';
