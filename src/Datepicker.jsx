@@ -156,7 +156,9 @@ export default class Datepicker extends Component {
   }
 
   handleClockChange = (valueText, valueDate) => {
-    this.setValue(valueText, valueDate);
+    if (moment(valueDate).isValid()) {
+      this.setValue(valueText, valueDate);
+    }
   }
 
   handleTextChange = e => {

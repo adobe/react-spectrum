@@ -33,12 +33,12 @@ describe('Clock', () => {
     let spy;
     let stopPropagationSpy;
 
-    const assertChangeArgs = (element, value, compareDate) => {
+    const assertChangeArgs = (element, value, compareDate, format = 'HH:mm') => {
       element.simulate('change', { stopPropagation: stopPropagationSpy, target: { value } });
       expect(stopPropagationSpy).toHaveBeenCalled();
 
       const args = spy.getLastCall().arguments;
-      expect(args[0]).toEqual(compareDate.format('HH:mm'));
+      expect(args[0]).toEqual(compareDate.format(format));
       expect(+args[1]).toEqual(+compareDate);
     };
 
@@ -51,13 +51,31 @@ describe('Clock', () => {
     it('when hour changes', () => {
       const tree = shallow(<Clock onChange={ spy } value={ now } />);
       const hour = findHourTextfield(tree);
-      assertChangeArgs(hour, '10', now.hours(10));
+      assertChangeArgs(hour, '10', now.hour(10));
     });
 
     it('when minute changes', () => {
       const tree = shallow(<Clock onChange={ spy } value={ now } />);
       const minute = findMinuteTextfield(tree);
-      assertChangeArgs(minute, '50', now.minutes(50));
+      assertChangeArgs(minute, '50', now.minute(50));
+    });
+
+    it('maintains month, day, and year of value when hour/minute changes are made', () => {
+      const date = new Date(2001, 0, 1);
+      const valueFormat = 'YYYY-MM-DD HH:mm';
+      const tree = shallow(<Clock onChange={ spy } value={ date } valueFormat={ valueFormat } />);
+      const minute = findMinuteTextfield(tree);
+      assertChangeArgs(minute, '10', moment(date).minute(10), valueFormat);
+    });
+
+    it('maintains month, day, and year of defaultValue when hour/minutes changes are made', () => {
+      const date = new Date(2001, 0, 1);
+      const valueFormat = 'YYYY-MM-DD HH:mm';
+      const tree = shallow(
+        <Clock onChange={ spy } defaultValue={ date } valueFormat={ valueFormat } />
+      );
+      const hour = findHourTextfield(tree);
+      assertChangeArgs(hour, '3', moment(date).hour(3), valueFormat);
     });
   });
 

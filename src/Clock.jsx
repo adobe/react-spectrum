@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import Textfield from './Textfield';
 import { toMoment } from './utils/moment';
+import { clamp } from './utils/number';
 
 export default class Clock extends Component {
   static displayName = 'Clock';
@@ -61,11 +62,11 @@ export default class Clock extends Component {
           minuteText: this.state.minuteText || ''
         });
       } else {
-        if (+this.state.hourText !== val.hour()) {
+        if (!this.state.hourText || +this.state.hourText !== val.hour()) {
           this.setState({ hourText: val.hour() });
         }
 
-        if (+this.state.minuteText !== val.minute()) {
+        if (!this.state.minuteText || +this.state.minuteText !== val.minute()) {
           this.setState({ minuteText: val.minute() });
         }
       }
@@ -129,8 +130,8 @@ export default class Clock extends Component {
       if (!moment.isMoment(newTime)) {
         newTime = moment();
       }
-      newTime.hour(hours);
-      newTime.minute(minutes);
+      newTime.hour(clamp(hours, 0, 23));
+      newTime.minute(clamp(minutes, 0, 59));
       newTime.second(0);
       newTime.millisecond(0);
     }

@@ -197,6 +197,23 @@ describe('Calendar', () => {
       assertDateAfterKeyDown({ keyCode: 33, date: previousYear, meta: true });
       assertDateAfterKeyDown({ keyCode: 34, date: now, meta: true });
     });
+
+    it('is set to value if it exists', () => {
+      const date = '2015-01-01';
+      tree = shallow(<Calendar value={ date } />);
+      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+    });
+
+    it('is set to defaultValue if it exists', () => {
+      const date = '2015-01-01';
+      tree = shallow(<Calendar defaultValue={ date } />);
+      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+    });
+
+    it('is set to now if no value or defaultValue exist', () => {
+      tree = shallow(<Calendar />);
+      expect(tree.state('focusedDate').isSame(now, 'day')).toBe(true);
+    });
   });
 
   it('sets min and max to the start of the respective day', () => {
