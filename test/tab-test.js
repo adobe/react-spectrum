@@ -11,6 +11,9 @@ describe('Tab', () => {
     expect(tree.prop('tabIndex')).toBe('0');
     expect(tree.prop('aria-invalid')).toBe(false);
     expect(tree.prop('aria-disabled')).toBe(false);
+    expect(tree.prop('aria-selected')).toBe(false);
+    expect(tree.prop('selected')).toBe(false);
+    expect(tree.prop('disabled')).toBe(false);
   });
 
   it('supports tabIndex', () => {

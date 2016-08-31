@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import Button from './Button';
 
 const sizeMap = {
   L: 'large',
@@ -9,17 +10,21 @@ const sizeMap = {
 
 export default function Tag({
   size = 'L', // L, M, S
+  value,
   children,
   color = 'grey',
+  multiline = false,
+  quiet = false,
+  closable = true,
+  disabled = false,
+  selected = false,
   className,
-  multiline,
-  quiet,
-  closable,
-  disabled,
-  value,
   onClose = () => {},
   ...otherProps
 }) {
+  const childContent = children || value;
+  const ariaLabel = childContent ? `Remove ${ childContent } label` : 'Remove label';
+
   return (
     <div
       className={
@@ -34,18 +39,29 @@ export default function Tag({
           className
         )
       }
+      tabIndex={ !disabled && selected ? 0 : -1 }
+      aria-selected={ !disabled && selected }
+      aria-label={ ariaLabel }
       { ...otherProps }
     >
-      { closable ?
-        <span
-          className="coral-Button coral-Button--minimal coral-Button--square coral-Tag-removeButton"
-          onClick={ disabled ? undefined : onClose.bind(this, value || children) }
-        >
-          <span className="coral-Icon coral-Icon--close coral-Icon--sizeXS" />
-        </span>
-      : null }
+      {
+        closable &&
+        <Button
+          className="coral-Tag-removeButton"
+          role="button"
+          tabIndex="-1"
+          title="Remove"
+          variant="minimal"
+          size="M"
+          iconSize="XS"
+          icon="close"
+          disabled={ disabled }
+          square
+          onClick={ !disabled && (e => { onClose(childContent, e); }) }
+        />
+      }
       <span className="coral-Tag-label">
-        { children || value }
+        { childContent }
       </span>
     </div>
   );

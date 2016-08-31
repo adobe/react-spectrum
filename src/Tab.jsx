@@ -7,10 +7,15 @@ import Icon from './Icon';
  * header: A string or node which will be placed at the top of the accordion item.
  */
 export default class Tab extends Component {
-  constructor(props) {
-    super(props);
-    this.tabId = createId();
-  }
+  static displayName = 'Tab';
+
+  static defaultProps = {
+    id: createId(),
+    invalid: false,
+    disabled: false,
+    selected: false,
+    tabIndex: '0'
+  };
 
   handleClick = e => {
     if (!this.props.disabled) {
@@ -20,6 +25,7 @@ export default class Tab extends Component {
 
   render() {
     const {
+      id,
       children,
       className,
       selected,
@@ -44,8 +50,8 @@ export default class Tab extends Component {
             className
           )
         }
-        tabIndex={ tabIndex || '0' }
-        id={ this.tabId }
+        id={ id }
+        tabIndex={ tabIndex }
         role="tab"
         selected={ selected }
         disabled={ disabled }
@@ -60,10 +66,3 @@ export default class Tab extends Component {
     );
   }
 }
-
-Tab.defaultProps = {
-  disabled: false,
-  onClick() {}
-};
-
-Tab.displayName = 'Tab';

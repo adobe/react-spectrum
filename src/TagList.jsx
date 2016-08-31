@@ -3,16 +3,47 @@ import classNames from 'classnames';
 import Tag from './Tag';
 
 export default class TagList extends React.Component {
+  static displayName = 'TagList';
+
+  static defaultProps = {
+    readOnly: false,
+    disabled: false,
+    required: false,
+    invalid: false,
+    onClose: () => {},
+    onFocus: () => {},
+    onBlur: () => {}
+  };
+
+  state = {
+    selectedIndex: 0,
+    focused: false
+  }
+
+  handleFocus = e => {
+    const { onFocus } = this.props;
+    this.setState({ focused: true });
+    onFocus(e);
+  }
+
+  handleBlur = e => {
+    const { onBlur } = this.props;
+    this.setState({ focused: false });
+    onBlur(e);
+  }
 
   baseChildProps(index) {
-    const { readonly, onClose, disabled } = this.props;
+    const { readOnly, onClose, disabled } = this.props;
+    const { selectedIndex, focused } = this.state;
     return {
-      tabIndex: (disabled) ? -1 : index,
-      closable: !readonly,
+      key: index,
+      selected: !disabled && focused && selectedIndex === index,
+      tabIndex: !disabled && selectedIndex === index ? 0 : -1,
+      closable: !readOnly,
       disabled,
       onClose,
-      role: 'option',
-      'aria-selected': false
+      onFocus: () => { this.setState({ selectedIndex: index }); },
+      role: 'option'
     };
   }
 
@@ -40,12 +71,14 @@ export default class TagList extends React.Component {
     const {
       className,
       name,
-      readonly,
+      readOnly,
       disabled,
       required,
       invalid,
       ...otherProps
     } = this.props;
+
+    const { focused } = this.state;
 
     return (
       <div
@@ -53,22 +86,27 @@ export default class TagList extends React.Component {
         className={
           classNames(
             'coral-TagList',
-            disabled ? 'is-disabled' : '',
+            {
+              'is-disabled': disabled
+            },
             className
           )
         }
         name={ name }
+        readOnly={ readOnly }
+        disabled={ disabled }
         role="listbox"
+        aria-atomic="false"
+        aria-relevant="additions"
+        aria-live={ focused ? 'polite' : 'off' }
         aria-disabled={ disabled }
         aria-invalid={ invalid }
         aria-required={ required }
-        readOnly={ readonly }
-        disabled={ disabled }
+        onFocus={ this.handleFocus }
+        onBlur={ this.handleBlur }
       >
         { this.renderChildren() }
       </div>
     );
   }
 }
-
-TagList.displayName = 'TagList';

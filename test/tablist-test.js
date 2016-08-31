@@ -9,7 +9,6 @@ describe('TabList', () => {
     expect(tree.prop('className')).toBe('coral-TabList');
     expect(tree.type()).toBe('div');
     expect(tree.prop('role')).toBe('tablist');
-    expect(tree.prop('aria-multiselectable')).toBe(false);
   });
 
   it('supports large size', () => {
