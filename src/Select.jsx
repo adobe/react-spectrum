@@ -5,12 +5,19 @@ import Tag from './Tag';
 
 import './Select.styl';
 
+const KEYPRESS_TIMEOUT_DURATION = 1000;
+
 export default class Select extends Component {
   static defaultProps = {
     variant: 'default', // default, quiet
     multiple: false,
-    noResultsText: 'No matching results.'
+    noResultsText: 'No matching results.',
+    placeholder: 'Select one'
   };
+
+  componentWillMount() {
+    this.clearState();
+  }
 
   valuesComponent({ value, onClick, onRemove, disabled }) {
     return (
@@ -64,6 +71,59 @@ export default class Select extends Component {
     );
   }
 
+  clearState = () => {
+    this.setState({
+      currentSearch: '',
+      clearSearchTimeoutId: 0,
+      selectedIndex: -1
+    });
+  }
+
+  onKeyPress = (e) => {
+    let { currentSearch, clearSearchTimeoutId, selectedIndex } = this.state;
+    let options = this.props.options.filter(option => !option.disabled);
+    const newSearch = e.key.toLowerCase();
+
+    window.clearTimeout(clearSearchTimeoutId);
+    this.setState({ clearSearchTimeoutId: window.setTimeout(this.clearState, KEYPRESS_TIMEOUT_DURATION) });
+
+    const testSearchTerm = (option, term) => option && option.label.trim().toLowerCase().indexOf(term) === 0;
+
+    let start = selectedIndex < 0 ? 0 : selectedIndex;
+
+    // if it's the same key, try to advance one and don't append it to the search term
+    if(currentSearch == newSearch) {
+      start = start + 1;
+    } else {
+      currentSearch = currentSearch + newSearch;
+    }
+
+    let newSelectedIndex = -1;
+
+    for(var i = start; i < options.length; i++) {
+      if(testSearchTerm(options[i], currentSearch)) {
+        newSelectedIndex = i;
+        break;
+      }
+    }
+
+    if(newSelectedIndex < 0) {
+      for(var i = 0; i < start; i++) {
+        if(testSearchTerm(options[i], currentSearch)) {
+          newSelectedIndex = i;
+          break;
+        }
+      }
+    }
+
+    if(newSelectedIndex >= 0) {
+      // this is technically not a function we're supposed to call, but it's the
+      // same function that would be used if we were to do a menuRenderer
+      this.setState({ currentSearch, selectedIndex: newSelectedIndex });
+      this.refs.selectComponent.focusOption(options[newSelectedIndex]);
+    }
+  }
+
   render() {
     const {
       variant,
@@ -104,6 +164,8 @@ export default class Select extends Component {
         { ...otherProps }
         onValueClick={ this.props.onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
+        onKeyPress={ this.onKeyPress }
+        ref="selectComponent"
       />
     );
   }

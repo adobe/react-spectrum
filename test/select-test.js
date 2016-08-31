@@ -2,7 +2,18 @@ import React from 'react';
 import expect from 'expect';
 import Select from '../src/Select';
 import ReactSelect from 'react-select';
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
+
+const testOptions = [
+  { label: 'Chocolate', value: 'chocolate' },
+  { label: 'Vanilla', value: 'vanilla' },
+  { label: 'Strawberry', value: 'strawberry' },
+  { label: 'Caramel', value: 'caramel' },
+  { label: 'Cookies and Cream', value: 'cookiescream', disabled: true },
+  { label: 'Coconut', value: 'coco' },
+  { label: 'Peppermint', value: 'peppermint' },
+  { label: 'Some crazy long value that should be cut off', value: 'logVal' }
+];
 
 describe('Select', () => {
   it('supports additional classNames', () => {
@@ -20,6 +31,66 @@ describe('Select', () => {
 
     expect(reactSelectComponent.prop('foo')).toBe(true);
   });
+
+  describe('keypress', () => {
+    let setTimeout, clearTimeout, tree;
+
+    let pressKey = (key) => {
+      tree.instance().onKeyPress({ key });
+      tree.update();
+    }
+
+    beforeEach(() => {
+      setTimeout = expect.spyOn(window, 'setTimeout').andReturn(3);
+      clearTimeout = expect.spyOn(window, 'clearTimeout');
+      tree = mount(<Select options={ testOptions } />);
+    });
+
+    afterEach(() => {
+      setTimeout.restore();
+      clearTimeout.restore();
+    });
+
+    it('selects the first option on first press', () => {
+      pressKey('c');
+      expect(tree.state('selectedIndex')).toEqual(0);
+    });
+
+    it('selects the next appropriate option on second press', () => {
+      pressKey('c');
+      pressKey('c');
+      expect(tree.state('selectedIndex')).toEqual(3);
+    });
+
+    it('wraps on enough presses', () => {
+      pressKey('s');
+      expect(tree.state('selectedIndex')).toEqual(2);
+      pressKey('s');
+      expect(tree.state('selectedIndex')).toEqual(6);
+      pressKey('s');
+      expect(tree.state('selectedIndex')).toEqual(2);
+    });
+
+    it('searches on multiple characters', () => {
+      pressKey('c');
+      pressKey('o');
+      expect(tree.state('selectedIndex')).toEqual(4);
+    });
+
+    it('ignores invalid searches', () => {
+      pressKey('c');
+      pressKey('x');
+      expect(tree.state('selectedIndex')).toEqual(0);
+    });
+
+    it('resets after timeout', () => {
+      pressKey('c');
+      setTimeout.calls[0].arguments[0]();
+      tree.update();
+      pressKey('c');
+      expect(tree.state('selectedIndex')).toEqual(0);
+    });
+  })
 
   // This test works locally but not in jenkins
   //
