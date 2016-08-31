@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Heading from '../src/Heading';
 import { shallow } from 'enzyme';
+import Heading from '../src/Heading';
 
 describe('Heading', () => {
   it('supports different sizes', () => {

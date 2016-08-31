@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import Tag from '../src/Tag';
 import TagList from '../src/TagList';
-import { shallow } from 'enzyme';
 
 describe('TagList', () => {
   it('has correct classname when disabled', () => {

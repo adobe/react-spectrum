@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Checkbox from '../src/Checkbox';
 import { shallow } from 'enzyme';
+import Checkbox from '../src/Checkbox';
 
 describe('Checkbox', () => {
   it('has correct defaults', () => {

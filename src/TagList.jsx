@@ -61,7 +61,6 @@ export default class TagList extends React.Component {
         role="listbox"
         aria-disabled={ disabled }
         aria-invalid={ invalid }
-        aria-readonly={ readonly }
         aria-required={ required }
         readOnly={ readonly }
         disabled={ disabled }

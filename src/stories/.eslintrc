@@ -1,5 +1,6 @@
 {
   "rules": {
+    "react/display-name": 0,
     "max-len": 0
   }
 }

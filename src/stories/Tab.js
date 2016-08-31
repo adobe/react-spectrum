@@ -29,6 +29,11 @@ storiesOf('Tab', module)
     'disabled: true',
     () => render({ disabled: true }),
     { inline: true }
+  )
+  .addWithInfo(
+    'invalid: true',
+    () => render({ invalid: true }),
+    { inline: true }
   );
 
 function render(props = {}) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Alert from '../src/Alert';
 import { shallow } from 'enzyme';
+import Alert from '../src/Alert';
 
 describe('Alert', () => {
   it('default', () => {

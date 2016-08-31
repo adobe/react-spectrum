@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Search from '../src/Search';
 import { shallow } from 'enzyme';
+import Search from '../src/Search';
 
 describe('Search', () => {
   it('default', () => {

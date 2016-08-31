@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Tooltip from '../src/Tooltip';
 import { shallow } from 'enzyme';
+import Tooltip from '../src/Tooltip';
 
 describe('Tooltip', () => {
   it('supports different placements', () => {

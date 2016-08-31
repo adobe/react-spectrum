@@ -24,6 +24,7 @@ export default class Tab extends Component {
       className,
       selected,
       disabled,
+      invalid,
       icon,
       tabIndex,
       ...otherProps
@@ -35,20 +36,23 @@ export default class Tab extends Component {
         className={
           classNames(
             'coral-Tab',
-            selected ? 'is-selected' : null,
-            disabled ? 'is-disabled' : null,
+            {
+              'is-selected': selected,
+              'is-disabled': disabled,
+              'is-invalid': invalid
+            },
             className
           )
         }
-        onClick={ this.handleClick }
+        tabIndex={ tabIndex || '0' }
         id={ this.tabId }
         role="tab"
-        aria-invalid={ false }
         selected={ selected }
-        aria-selected={ selected }
         disabled={ disabled }
+        aria-invalid={ invalid }
+        aria-selected={ selected }
         aria-disabled={ disabled }
-        tabIndex={ tabIndex || '0' }
+        onClick={ this.handleClick }
       >
         { icon ? <Icon icon={ icon } size="S" /> : null }
         <span className="coral-Tab-label">{ children }</span>

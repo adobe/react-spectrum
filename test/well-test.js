@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Well from '../src/Well';
 import { shallow } from 'enzyme';
+import Well from '../src/Well';
 
 describe('Well', () => {
   it('supports additional classNames', () => {

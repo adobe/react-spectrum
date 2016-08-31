@@ -1,9 +1,9 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import NumberInput from '../src/NumberInput';
 import Textfield from '../src/Textfield';
 import Button from '../src/Button';
-import { shallow } from 'enzyme';
 
 describe('NumberInput', () => {
   it('default', () => {

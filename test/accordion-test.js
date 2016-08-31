@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import Accordion from '../src/Accordion';
 import AccordionItem from '../src/AccordionItem';
-import { shallow } from 'enzyme';
 
 describe('Accordion', () => {
   it('supports additional classNames', () => {

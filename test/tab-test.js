@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Tab from '../src/Tab';
 import { shallow, mount } from 'enzyme';
+import Tab from '../src/Tab';
 
 describe('Tab', () => {
   it('has correct defaults', () => {
@@ -20,8 +20,14 @@ describe('Tab', () => {
 
   it('supports selected', () => {
     const tree = shallow(<Tab selected />);
-    expect(tree.prop('className')).toInclude('is-selected');
+    expect(tree.hasClass('is-selected')).toBe(true);
     expect(tree.prop('aria-selected')).toBe(true);
+  });
+
+  it('support invalid', () => {
+    const tree = shallow(<Tab invalid />);
+    expect(tree.hasClass('is-invalid')).toBe(true);
+    expect(tree.prop('aria-invalid')).toBe(true);
   });
 
   it('supports icon', () => {
@@ -35,7 +41,7 @@ describe('Tab', () => {
     const tree = shallow(<Tab onClick={ spy } disabled />);
     expect(tree.prop('disabled')).toBe(true);
     expect(tree.prop('aria-disabled')).toBe(true);
-    expect(tree.prop('className')).toInclude('is-disabled');
+    expect(tree.hasClass('is-disabled')).toBe(true);
     tree.simulate('click');
     expect(spy).toNotHaveBeenCalled();
   });

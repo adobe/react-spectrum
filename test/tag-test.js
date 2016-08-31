@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Tag from '../src/Tag';
 import { shallow } from 'enzyme';
+import Tag from '../src/Tag';
 
 describe('Tag', () => {
   it('supports size', () => {
