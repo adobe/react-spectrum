@@ -22,3 +22,5 @@ export default function Link({
     </a>
   );
 }
+
+Link.displayName = 'Link';
