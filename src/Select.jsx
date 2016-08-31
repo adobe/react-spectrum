@@ -19,19 +19,6 @@ export default class Select extends Component {
     this.clearState();
   }
 
-  valuesComponent({ value, onClick, onRemove, disabled }) {
-    return (
-      <Tag
-        onClose={ (e) => onRemove(value, e) }
-        closable
-        disabled={ disabled }
-        onMouseDown={ (e) => onClick(value, e) }
-      >
-        { value.label }
-      </Tag>
-    );
-  }
-
   valueComponent({ value, disabled }) {
     return (
       <div
@@ -79,49 +66,66 @@ export default class Select extends Component {
     });
   }
 
-  onKeyPress = (e) => {
-    let { currentSearch, clearSearchTimeoutId, selectedIndex } = this.state;
-    let options = this.props.options.filter(option => !option.disabled);
+  handleKeyPress = (e) => {
+    let { currentSearch } = this.state;
+    const { clearSearchTimeoutId, selectedIndex } = this.state;
+    const options = this.props.options.filter(option => !option.disabled);
     const newSearch = e.key.toLowerCase();
 
     window.clearTimeout(clearSearchTimeoutId);
-    this.setState({ clearSearchTimeoutId: window.setTimeout(this.clearState, KEYPRESS_TIMEOUT_DURATION) });
+    this.setState({
+      clearSearchTimeoutId: window.setTimeout(this.clearState, KEYPRESS_TIMEOUT_DURATION)
+    });
 
-    const testSearchTerm = (option, term) => option && option.label.trim().toLowerCase().indexOf(term) === 0;
+    const testSearchTerm = (option, term) =>
+      option && option.label.trim().toLowerCase().indexOf(term) === 0;
 
     let start = selectedIndex < 0 ? 0 : selectedIndex;
 
     // if it's the same key, try to advance one and don't append it to the search term
-    if(currentSearch == newSearch) {
-      start = start + 1;
+    if (currentSearch === newSearch) {
+      start++;
     } else {
-      currentSearch = currentSearch + newSearch;
+      currentSearch += newSearch;
     }
 
     let newSelectedIndex = -1;
 
-    for(var i = start; i < options.length; i++) {
-      if(testSearchTerm(options[i], currentSearch)) {
+    for (let i = start; i < options.length; i++) {
+      if (testSearchTerm(options[i], currentSearch)) {
         newSelectedIndex = i;
         break;
       }
     }
 
-    if(newSelectedIndex < 0) {
-      for(var i = 0; i < start; i++) {
-        if(testSearchTerm(options[i], currentSearch)) {
+    if (newSelectedIndex < 0) {
+      for (let i = 0; i < start; i++) {
+        if (testSearchTerm(options[i], currentSearch)) {
           newSelectedIndex = i;
           break;
         }
       }
     }
 
-    if(newSelectedIndex >= 0) {
+    if (newSelectedIndex >= 0) {
       // this is technically not a function we're supposed to call, but it's the
       // same function that would be used if we were to do a menuRenderer
       this.setState({ currentSearch, selectedIndex: newSelectedIndex });
       this.refs.selectComponent.focusOption(options[newSelectedIndex]);
     }
+  }
+
+  valuesComponent({ value, onClick, onRemove, disabled }) {
+    return (
+      <Tag
+        onClose={ (e) => onRemove(value, e) }
+        closable
+        disabled={ disabled }
+        onMouseDown={ (e) => onClick(value, e) }
+      >
+        { value.label }
+      </Tag>
+    );
   }
 
   render() {
@@ -164,7 +168,7 @@ export default class Select extends Component {
         { ...otherProps }
         onValueClick={ this.props.onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
-        onKeyPress={ this.onKeyPress }
+        onKeyPress={ this.handleKeyPress }
         ref="selectComponent"
       />
     );

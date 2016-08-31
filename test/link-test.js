@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Link from '../src/Link';
 import { shallow } from 'enzyme';
+import Link from '../src/Link';
 
 describe('Link', () => {
   it('supports the subtle variation', () => {

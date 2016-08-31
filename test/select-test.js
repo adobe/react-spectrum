@@ -38,7 +38,7 @@ describe('Select', () => {
     let tree;
 
     const pressKey = (key) => {
-      tree.instance().onKeyPress({ key });
+      tree.instance().handleKeyPress({ key });
       tree.update();
     };
 
