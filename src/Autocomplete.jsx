@@ -8,6 +8,7 @@ import './Autocomplete.styl';
 export default class Autocomplete extends Component {
   static defaultProps = {
     multiple: false,
+    allowCreate: false,
     noResultsText: 'No matching results.'
   };
 
@@ -24,16 +25,49 @@ export default class Autocomplete extends Component {
     );
   }
 
+  filterOptions(options, filter, selectedValues) {
+    // For single autocompletes, selectedValues is always null.
+    const values = selectedValues || [];
+
+    // Filter already selected values
+    let filteredOptions = options.filter(option => {
+      return !(values.includes(option));
+    });
+
+    // Filter by label
+    if (filter != null && filter.length > 0) {
+      filteredOptions = filteredOptions.filter(option => {
+        return RegExp(filter, 'ig').test(option.label);
+      });
+    }
+
+    // Append Addition option
+    if (filteredOptions.length === 0) {
+      filteredOptions.push({
+        label: filter,
+        value: filter,
+        create: true
+      });
+    }
+
+    return filteredOptions;
+  }
+
   render() {
     const {
       multiple,
       multi,
       noResultsText,
       className,
+      allowCreate,
       ...otherProps
     } = this.props;
 
     const multiSelect = multiple || multi;
+
+    if (allowCreate) {
+      otherProps.filterOptions = this.filterOptions;
+    }
 
     return (
       <ReactSelect

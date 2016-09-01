@@ -89,6 +89,11 @@ storiesOf('Autocomplete', module)
     { inline: true }
   )
   .addWithInfo(
+    'allowCreate: true',
+    () => render({ allowCreate: 'true' }),
+  { inline: true }
+  )
+  .addWithInfo(
     'Stateful component',
     () => render({
       ...defaultProps,
