@@ -17,3 +17,5 @@ export default function DialogContent({
     </div>
   );
 }
+
+DialogContent.displayName = 'DialogContent';

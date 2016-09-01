@@ -72,3 +72,5 @@ export default class Autocomplete extends Component {
     );
   }
 }
+
+Autocomplete.displayName = 'Autocomplete';

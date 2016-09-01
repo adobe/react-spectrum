@@ -195,3 +195,5 @@ export default class ShellMenu extends Component {
     );
   }
 }
+
+ShellMenu.displayName = 'ShellMenu';

@@ -95,3 +95,5 @@ export default class Popover extends Component {
     );
   }
 }
+
+Popover.displayName = 'Popover';

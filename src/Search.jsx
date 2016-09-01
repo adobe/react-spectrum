@@ -123,3 +123,5 @@ export default class Search extends Component {
     );
   }
 }
+
+Search.displayName = 'Search';

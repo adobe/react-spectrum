@@ -36,3 +36,5 @@ export default function DialogBackdrop({
     </Portal>
   );
 }
+
+DialogBackdrop.displayName = 'DialogBackdrop';

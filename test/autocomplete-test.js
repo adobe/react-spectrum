@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
-import Autocomplete from '../src/Autocomplete';
-import ReactSelect from 'react-select';
 import { mount } from 'enzyme';
+import ReactSelect from 'react-select';
+import Autocomplete from '../src/Autocomplete';
 
 describe('Autocomplete', () => {
   it('supports additional classNames', () => {

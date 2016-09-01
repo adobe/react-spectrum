@@ -115,4 +115,7 @@ class Dialog extends Component {
 Dialog.Header = DialogHeader;
 Dialog.Footer = DialogFooter;
 Dialog.Content = DialogContent;
+
+Dialog.displayName = 'Dialog';
+
 export default Dialog;

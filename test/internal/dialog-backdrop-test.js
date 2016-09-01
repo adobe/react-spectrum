@@ -1,12 +1,12 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import DialogBackdrop from '../../src/internal/DialogBackdrop';
 import {
   BACKDROP_STATIC,
   BACKDROP_MODAL,
   BACKDROP_NONE
 } from '../../src/constants/backdrop-constants';
-import { shallow } from 'enzyme';
 
 describe('DialogBackdrop', () => {
   it('default', () => {

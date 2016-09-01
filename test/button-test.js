@@ -1,8 +1,8 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
+import { shallow } from 'enzyme';
 import Button from '../src/Button';
 import Icon from '../src/Icon';
-import { shallow } from 'enzyme';
 
 describe('Button', () => {
   it('supports different elements', () => {

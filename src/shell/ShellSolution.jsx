@@ -29,3 +29,5 @@ export default function ShellSolution({
     </a>
   );
 }
+
+ShellSolution.displayName = 'ShellSolution';

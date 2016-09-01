@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import DialogFooter from '../../src/internal/DialogFooter';
 import Button from '../../src/Button';
-import { shallow } from 'enzyme';
 
 describe('DialogFooter', () => {
   it('renders an OK button if no children are supplied', () => {

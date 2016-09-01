@@ -20,3 +20,5 @@ export default function THead({
     </thead>
   );
 }
+
+THead.displayName = 'THead';

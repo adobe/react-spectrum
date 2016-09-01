@@ -462,3 +462,5 @@ const CalendarCell = function CalendarCell({
     </td>
   );
 };
+
+CalendarCell.displayName = 'CalendarCell';

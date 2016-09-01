@@ -20,3 +20,5 @@ export default function ShellContent({
     </div>
   );
 }
+
+ShellContent.displayName = 'ShellContent';

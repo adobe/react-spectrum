@@ -20,3 +20,5 @@ export default function Well({
     </div>
   );
 }
+
+Well.displayName = 'Well';

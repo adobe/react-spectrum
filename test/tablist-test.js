@@ -1,7 +1,7 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
-import TabList from '../src/TabList';
 import { shallow } from 'enzyme';
+import TabList from '../src/TabList';
 
 describe('TabList', () => {
   it('has correct defaults', () => {
@@ -9,7 +9,6 @@ describe('TabList', () => {
     expect(tree.prop('className')).toBe('coral-TabList');
     expect(tree.type()).toBe('div');
     expect(tree.prop('role')).toBe('tablist');
-    expect(tree.prop('aria-multiselectable')).toBe(false);
   });
 
   it('supports large size', () => {

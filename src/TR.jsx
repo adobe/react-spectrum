@@ -20,3 +20,5 @@ export default function TR({
     </tr>
   );
 }
+
+TR.displayName = 'TR';

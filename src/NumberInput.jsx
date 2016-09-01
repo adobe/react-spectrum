@@ -332,6 +332,8 @@ export default class NumberInput extends Component {
           role="spinbutton"
           aria-valuenow={ value || '' }
           aria-valuetext={ value || '' }
+          aria-valuemin={ min }
+          aria-valuemax={ max }
           invalid={ invalid || valueInvalid }
           step={ step }
           placeholder={ placeholder }
@@ -356,3 +358,5 @@ export default class NumberInput extends Component {
     );
   }
 }
+
+NumberInput.displayName = 'NumberInput';

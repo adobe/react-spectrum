@@ -148,3 +148,5 @@ export default class ShellOrgSwitcher extends Component {
     );
   }
 }
+
+ShellOrgSwitcher.displayName = 'ShellOrgSwitcher';

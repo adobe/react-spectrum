@@ -47,3 +47,5 @@ export default class ShellSolutionGroup extends Component {
     return this.renderPrimarySolutions(children);
   }
 }
+
+ShellSolutionGroup.displayName = 'ShellSolutionGroup';

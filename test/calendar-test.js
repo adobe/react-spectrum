@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import expect, { createSpy } from 'expect';
-import Calendar from '../src/Calendar';
 import { shallow } from 'enzyme';
+import Calendar from '../src/Calendar';
 
 describe('Calendar', () => {
   const DEFAULT_VALUE_FORMAT = 'YYYY-MM-DD';

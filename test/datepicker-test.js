@@ -1,12 +1,12 @@
 import React from 'react';
 import moment from 'moment';
 import expect, { createSpy } from 'expect';
+import { shallow } from 'enzyme';
 import Datepicker from '../src/Datepicker';
 import Textfield from '../src/Textfield';
 import Button from '../src/Button';
 import Calendar from '../src/Calendar';
 import Clock from '../src/Clock';
-import { shallow } from 'enzyme';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
@@ -133,7 +133,7 @@ describe('Datepicker', () => {
     let tree;
     const assertChangeArgs = (el, args, inputText, date) => {
       args.unshift('change');
-      el.simulate.apply(el, args);
+      el.simulate(...args);
       const callArgs = spy.getLastCall().arguments;
       expect(callArgs[0]).toBe(inputText);
       expect(+callArgs[1]).toEqual(+date);

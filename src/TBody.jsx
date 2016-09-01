@@ -20,3 +20,5 @@ export default function TBody({
     </tbody>
   );
 }
+
+TBody.displayName = 'TBody';

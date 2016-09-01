@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '../Button';
 import classNames from 'classnames';
+import Button from '../Button';
 
 function addClose(children, onClose) {
   return React.Children.map(children, child => {
@@ -44,3 +44,5 @@ export default function DialogFooter({
     </div>
   );
 }
+
+DialogFooter.displayName = 'DialogFooter';

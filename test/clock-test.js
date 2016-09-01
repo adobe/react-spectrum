@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import expect, { createSpy } from 'expect';
-import Clock from '../src/Clock';
 import { shallow } from 'enzyme';
+import Clock from '../src/Clock';
 
 describe('Clock', () => {
   it('default', () => {

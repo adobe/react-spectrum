@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import TetherDropComponent from '../../src/internal/TetherDropComponent';
 import { render, unmountComponentAtNode } from 'react-dom';
+import TetherDropComponent from '../../src/internal/TetherDropComponent';
 
 describe('TetherDropComponent', () => {
   it('Adds target and drop elements', () => {

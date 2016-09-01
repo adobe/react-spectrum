@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import SelectList from '../src/SelectList';
 import { shallow } from 'enzyme';
+import SelectList from '../src/SelectList';
 
 
 const testOptions = [

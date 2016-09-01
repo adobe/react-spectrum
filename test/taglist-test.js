@@ -1,8 +1,8 @@
 import React from 'react';
-import expect from 'expect';
+import expect, { createSpy } from 'expect';
+import { shallow } from 'enzyme';
 import Tag from '../src/Tag';
 import TagList from '../src/TagList';
-import { shallow } from 'enzyme';
 
 describe('TagList', () => {
   it('has correct classname when disabled', () => {
@@ -40,9 +40,9 @@ describe('TagList', () => {
     expect(tree.prop('aria-invalid')).toBe(true);
   });
 
-  it('sets the aria-readonly', () => {
-    const tree = shallow(<TagList readonly />);
-    expect(tree.prop('aria-readonly')).toBe(true);
+  it('sets readOnly', () => {
+    const tree = shallow(<TagList readOnly />);
+    expect(tree.prop('readOnly')).toBe(true);
   });
 
   it('sets the aria-required', () => {
@@ -55,18 +55,35 @@ describe('TagList', () => {
     expect(tree.prop('disabled')).toBe(true);
   });
 
+  it('sets focused state when onFocus', () => {
+    const spy = createSpy();
+    const tree = shallow(<TagList onFocus={ spy } />);
+    expect(tree.state('focused')).toBe(false);
+    tree.simulate('focus');
+    expect(spy).toHaveBeenCalled();
+    expect(tree.state('focused')).toBe(true);
+  });
+
+  it('removes focused state when onBlur', () => {
+    const spy = createSpy();
+    const tree = shallow(<TagList onBlur={ spy } />).setState({ focused: true });
+    tree.simulate('blur');
+    expect(spy).toHaveBeenCalled();
+    expect(tree.state('focused')).toBe(false);
+  });
+
   describe('Children', () => {
     let tree;
     let child1;
     let child2;
 
-    function run(props = {}) {
+    function run(props = {}, state = {}) {
       tree = shallow(
         <TagList { ...props }>
           <Tag className="one">Tag 1</Tag>
           <Tag className="two">Tag 2</Tag>
         </TagList>
-      );
+      ).setState(state);
       child1 = tree.find('.one');
       child2 = tree.find('.two');
     }
@@ -76,14 +93,20 @@ describe('TagList', () => {
       expect(child1.length).toBe(1);
     });
 
-    it('sets the tab index', () => {
-      run();
-      expect(child1.prop('tabIndex')).toBe(0);
-      expect(child2.prop('tabIndex')).toBe(1);
+    it('sets selected when focused and selectedIndex exists', () => {
+      run({}, { selectedIndex: 1, focused: true });
+      expect(child1.prop('selected')).toBe(false);
+      expect(child2.prop('selected')).toBe(true);
     });
 
-    it('doest set tab index when disabled', () => {
-      run({ disabled: true });
+    it('sets tab index when selectedIndex matches index', () => {
+      run({}, { selectedIndex: 1 });
+      expect(child1.prop('tabIndex')).toBe(-1);
+      expect(child2.prop('tabIndex')).toBe(0);
+    });
+
+    it('doesn\'t set tab index when disabled', () => {
+      run({ disabled: true }, { selectedIndex: 1 });
       expect(child1.prop('tabIndex')).toBe(-1);
       expect(child2.prop('tabIndex')).toBe(-1);
     });
@@ -93,8 +116,8 @@ describe('TagList', () => {
       expect(child1.prop('closable')).toBe(true);
     });
 
-    it('doest set closable when readonly', () => {
-      run({ readonly: true });
+    it('doest set closable when readOnly', () => {
+      run({ readOnly: true });
       expect(child1.prop('closable')).toBe(false);
     });
 
@@ -103,13 +126,14 @@ describe('TagList', () => {
       expect(child1.prop('role')).toBe('option');
     });
 
-    it('sets the aria-selected', () => {
+    it('sets selectedIndex when child is focused', () => {
       run();
-      expect(child1.prop('aria-selected')).toBe(false);
+      child2.simulate('focus');
+      expect(tree.state('selectedIndex')).toBe(1);
     });
 
     it('passes down the onClose', () => {
-      const onClose = expect.createSpy();
+      const onClose = createSpy();
       run({ onClose });
       child1.props().onClose('Tag 1');
       expect(onClose).toHaveBeenCalledWith('Tag 1');

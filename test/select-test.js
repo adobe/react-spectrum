@@ -1,8 +1,8 @@
 import React from 'react';
 import expect from 'expect';
-import Select from '../src/Select';
+import { mount } from 'enzyme';
 import ReactSelect from 'react-select';
-import { mount, shallow } from 'enzyme';
+import Select from '../src/Select';
 
 const testOptions = [
   { label: 'Chocolate', value: 'chocolate' },
@@ -33,12 +33,14 @@ describe('Select', () => {
   });
 
   describe('keypress', () => {
-    let setTimeout, clearTimeout, tree;
+    let setTimeout;
+    let clearTimeout;
+    let tree;
 
-    let pressKey = (key) => {
-      tree.instance().onKeyPress({ key });
+    const pressKey = (key) => {
+      tree.instance().handleKeyPress({ key });
       tree.update();
-    }
+    };
 
     beforeEach(() => {
       setTimeout = expect.spyOn(window, 'setTimeout').andReturn(3);
@@ -90,7 +92,7 @@ describe('Select', () => {
       pressKey('c');
       expect(tree.state('selectedIndex')).toEqual(0);
     });
-  })
+  });
 
   // This test works locally but not in jenkins
   //

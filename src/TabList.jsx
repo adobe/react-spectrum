@@ -109,7 +109,6 @@ export default class TabList extends Component {
           )
         }
         role="tablist"
-        aria-multiselectable={ false }
       >
         { this.getItems() }
       </div>
@@ -123,3 +122,5 @@ TabList.defaultProps = {
   defaultSelectedIndex: 0,
   onChange() {}
 };
+
+TabList.displayName = 'TabList';

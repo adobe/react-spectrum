@@ -23,3 +23,5 @@ export default function Switch({
     />
   );
 }
+
+Switch.displayName = 'Switch';

@@ -147,3 +147,5 @@ export default class TetherDropComponent extends Component {
     );
   }
 }
+
+TetherDropComponent.displayName = 'TetherDropComponent';

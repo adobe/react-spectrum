@@ -1,9 +1,9 @@
 import React from 'react';
 import expect from 'expect';
+import { shallow } from 'enzyme';
 import DialogHeader from '../../src/internal/DialogHeader';
 import Icon from '../../src/Icon';
 import Button from '../../src/Button';
-import { shallow } from 'enzyme';
 
 describe('DialogHeader', () => {
   it('supports optional title', () => {

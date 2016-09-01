@@ -18,7 +18,7 @@ storiesOf('TagList', module)
   )
   .addWithInfo(
     'Read Only',
-    () => render({ readonly: true }),
+    () => render({ readOnly: true }),
     { inline: true }
   )
   .addWithInfo(

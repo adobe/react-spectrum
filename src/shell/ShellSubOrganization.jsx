@@ -5,3 +5,5 @@ import ShellOrganization from './ShellOrganization';
 export default function ShellSubOrganization(props) {
   return <ShellOrganization { ...props } isSubItem />;
 }
+
+ShellSubOrganization.displayName = 'ShellSubOrganization';

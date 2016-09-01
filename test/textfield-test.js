@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
-import Textfield from '../src/Textfield';
 import { shallow } from 'enzyme';
+import Textfield from '../src/Textfield';
 
 describe('Textfield', () => {
   it('default', () => {

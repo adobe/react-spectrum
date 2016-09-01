@@ -23,3 +23,5 @@ export default function Radio({
     />
   );
 }
+
+Radio.displayName = 'Radio';

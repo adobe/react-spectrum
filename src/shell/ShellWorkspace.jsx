@@ -27,3 +27,5 @@ export default function ShellWorkspace({
     </a>
   );
 }
+
+ShellWorkspace.displayName = 'ShellWorkspace';
