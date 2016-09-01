@@ -231,9 +231,9 @@ describe('Calendar', () => {
   });
 
   it('enforces min and max', () => {
-    const startOfThisMonth = moment().startOf('month').startOf('day');
-    const weekAfterMonthStart = startOfThisMonth.clone().add(1, 'week');
-    const tree = shallow(<Calendar min={ startOfThisMonth } max={ weekAfterMonthStart } />);
+    const date = moment('2015-01-01', DEFAULT_VALUE_FORMAT);
+    const oneWeekLater = date.clone().add(1, 'week');
+    const tree = shallow(<Calendar value={ date } min={ date } max={ oneWeekLater } />);
     expect(findAllSelectableCells(tree).length).toBe(8); // includes start and end days
   });
 
@@ -354,7 +354,7 @@ const findBody = tree => tree.find('.coral-Calendar-calendarBody');
 const findAllCells = tree => findBody(tree).find('tbody tr CalendarCell');
 const findAllSelectableCells = tree => (
   findAllCells(tree)
-  .filterWhere(c => !c.prop('isToday') && !c.prop('disabled') && !c.prop('selected'))
+  .filterWhere(c => !c.prop('disabled'))
 );
 const findFirstNonSelectedCell = tree => findAllSelectableCells(tree).first();
 const findFocusedCell = tree => findBody(tree).find('tbody tr CalendarCell[focused=true]');

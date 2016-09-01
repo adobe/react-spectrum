@@ -71,7 +71,7 @@ export default class Calendar extends Component {
       min: newMin && newMin.startOf('day'),
       max: newMax && newMax.startOf('day'),
       today,
-      focusedDate: newValue && newValue.clone()
+      focusedDate: newValue ? newValue.clone() : today.clone()
     });
 
     this.setCurrentMonth(newValue, today);

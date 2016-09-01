@@ -22,7 +22,7 @@ storiesOf('Datepicker', module)
   )
   .addWithInfo(
     'type=datetime',
-    () => render({ type: 'datetime', defaultValue: '2016-01-01' }),
+    () => render({ type: 'datetime' }),
     { inline: true }
   )
   .addWithInfo(

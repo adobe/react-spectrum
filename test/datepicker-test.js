@@ -170,7 +170,7 @@ describe('Datepicker', () => {
     });
 
     describe('maintains month, day, and year when hour/minute changes are made', () => {
-      let date = new Date(2001, 0, 1);
+      const date = new Date(2001, 0, 1);
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
         const clockEl = shallow(findClock(wrapper).node).find(`.coral-Clock-${ field }`);
@@ -193,9 +193,10 @@ describe('Datepicker', () => {
       it('when not controlled', () => {
         tree = shallow(<Datepicker type="datetime" onChange={ spy } defaultValue={ date } />);
         let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
-        console.log(newDate.getHours(), newDate.getMinutes());
+        // changeTimeAndGetNewDate is called setState internally. In order for this change to
+        // be reflected in the shallow render tree, we need to call update.
+        tree = tree.update();
         newDate = changeTimeAndGetNewDate(tree, 15, 'minute');
-        console.log(newDate.getHours(), newDate.getMinutes());
         expect(+newDate).toBe(+moment(date).hour(10).minute(15));
       });
     });
