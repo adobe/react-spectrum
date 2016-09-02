@@ -168,6 +168,38 @@ describe('Datepicker', () => {
       const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT).toDate();
       assertChangeArgs(calendar, [text, date], text, date);
     });
+
+    describe('maintains month, day, and year when hour/minute changes are made', () => {
+      const date = new Date(2001, 0, 1);
+
+      const changeTimeAndGetNewDate = (wrapper, value, field) => {
+        const clockEl = shallow(findClock(wrapper).node).find(`.coral-Clock-${ field }`);
+        clockEl.simulate('change', { stopPropagation: () => {}, target: { value: `${ value }` } });
+        return spy.getLastCall().arguments[1];
+      };
+
+      beforeEach(() => {
+        spy = createSpy();
+      });
+
+      it('when controlled', () => {
+        tree = shallow(<Datepicker type="datetime" onChange={ spy } value={ date } />);
+        let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
+        const newTree = tree.setProps({ value: newDate });
+        newDate = changeTimeAndGetNewDate(newTree, 15, 'minute');
+        expect(+newDate).toBe(+moment(date).hour(10).minute(15));
+      });
+
+      it('when not controlled', () => {
+        tree = shallow(<Datepicker type="datetime" onChange={ spy } defaultValue={ date } />);
+        let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
+        // changeTimeAndGetNewDate is called setState internally. In order for this change to
+        // be reflected in the shallow render tree, we need to call update.
+        tree = tree.update();
+        newDate = changeTimeAndGetNewDate(tree, 15, 'minute');
+        expect(+newDate).toBe(+moment(date).hour(10).minute(15));
+      });
+    });
   });
 
   it('supports placeholder', () => {

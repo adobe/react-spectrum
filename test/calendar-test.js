@@ -197,6 +197,23 @@ describe('Calendar', () => {
       assertDateAfterKeyDown({ keyCode: 33, date: previousYear, meta: true });
       assertDateAfterKeyDown({ keyCode: 34, date: now, meta: true });
     });
+
+    it('is set to value if it exists', () => {
+      const date = '2015-01-01';
+      tree = shallow(<Calendar value={ date } />);
+      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+    });
+
+    it('is set to defaultValue if it exists', () => {
+      const date = '2015-01-01';
+      tree = shallow(<Calendar defaultValue={ date } />);
+      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+    });
+
+    it('is set to now if no value or defaultValue exist', () => {
+      tree = shallow(<Calendar />);
+      expect(tree.state('focusedDate').isSame(now, 'day')).toBe(true);
+    });
   });
 
   it('sets min and max to the start of the respective day', () => {
@@ -214,9 +231,9 @@ describe('Calendar', () => {
   });
 
   it('enforces min and max', () => {
-    const startOfThisMonth = moment().startOf('month').startOf('day');
-    const weekAfterMonthStart = startOfThisMonth.clone().add(1, 'week');
-    const tree = shallow(<Calendar min={ startOfThisMonth } max={ weekAfterMonthStart } />);
+    const date = moment('2015-01-01', DEFAULT_VALUE_FORMAT);
+    const oneWeekLater = date.clone().add(1, 'week');
+    const tree = shallow(<Calendar value={ date } min={ date } max={ oneWeekLater } />);
     expect(findAllSelectableCells(tree).length).toBe(8); // includes start and end days
   });
 
@@ -337,7 +354,7 @@ const findBody = tree => tree.find('.coral-Calendar-calendarBody');
 const findAllCells = tree => findBody(tree).find('tbody tr CalendarCell');
 const findAllSelectableCells = tree => (
   findAllCells(tree)
-  .filterWhere(c => !c.prop('isToday') && !c.prop('disabled') && !c.prop('selected'))
+  .filterWhere(c => !c.prop('disabled'))
 );
 const findFirstNonSelectedCell = tree => findAllSelectableCells(tree).first();
 const findFocusedCell = tree => findBody(tree).find('tbody tr CalendarCell[focused=true]');
