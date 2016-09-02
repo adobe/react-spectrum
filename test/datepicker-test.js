@@ -74,7 +74,10 @@ describe('Datepicker', () => {
     expect(+tree.state('value')).toEqual(+now);
 
     // Component interaction should change the state.
-    findTextfield(tree).simulate('change', { target: { value: '2016-08-01' } });
+    findTextfield(tree).simulate('change', {
+      stopPropagation: () => {},
+      target: { value: '2016-08-01'
+    } });
     expect(+tree.state('value')).toEqual(+(new Date(2016, 7, 1)));
   });
 
@@ -90,7 +93,10 @@ describe('Datepicker', () => {
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
-    findTextfield(tree).simulate('change', { target: { value: '2016-08-01' } });
+    findTextfield(tree).simulate('change', {
+      stopPropagation: () => {},
+      target: { value: '2016-08-01'
+    } });
     expect(+tree.state('value')).toEqual(+dateWeekLater);
   });
 
@@ -148,11 +154,16 @@ describe('Datepicker', () => {
       const textfield = findTextfield(tree);
       assertChangeArgs(
         textfield,
-        [{ target: { value: '2016-08-01' } }],
+        [{ stopPropagation: () => {}, target: { value: '2016-08-01' } }],
         '2016-08-01',
         new Date(2016, 7, 1)
       );
-      assertChangeArgs(textfield, [{ target: { value: 'foo' } }], 'foo', NaN);
+      assertChangeArgs(
+        textfield,
+        [{ stopPropagation: () => {}, target: { value: 'foo' } }],
+        'foo',
+        NaN
+      );
     });
 
     it('calendar onChange', () => {

@@ -15,7 +15,7 @@ export default class Clock extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
-    valueFormat: PropTypes.string,
+    valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     displayFormat: PropTypes.string,
     quiet: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -116,7 +116,7 @@ export default class Clock extends Component {
   }
 
   changeTime(hourText, minuteText) {
-    const { valueFormat, onChange } = this.props;
+    const { displayFormat, onChange } = this.props;
     const { value } = this.state;
 
     const hours = parseInt(hourText, 10);
@@ -151,7 +151,7 @@ export default class Clock extends Component {
 
     if (newTime !== value) {
       onChange(
-        validMoment ? newTime.format(valueFormat) : newTime,
+        validMoment ? newTime.format(displayFormat) : newTime,
         validMoment && newTime.toDate()
       );
     }

@@ -38,7 +38,7 @@ export default class Datepicker extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
-    valueFormat: PropTypes.string,
+    valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     displayFormat: PropTypes.string,
     startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
     placeholder: PropTypes.string,
@@ -83,7 +83,7 @@ export default class Datepicker extends Component {
 
     this.state = {
       value: val,
-      valueText: val && val.isValid() ? val.format(newDisplayFormat) : val || '',
+      valueText: this.formatValueToInputText(val, value || defaultValue || '', newDisplayFormat),
       valueFormat: newValueFormat,
       displayFormat: newDisplayFormat,
       open: false
@@ -91,20 +91,23 @@ export default class Datepicker extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if ('value' in nextProps) {
-      const val = toMoment(nextProps.value);
-      this.setState({
-        value: val,
-        valueText: val && val.isValid() ? val.format(this.state.displayFormat) : val || ''
-      });
-    }
+    let { valueFormat } = this.state;
 
     if (this.props.valueFormat !== nextProps.valueFormat) {
-      this.setState({ valueFormat: nextProps.valueFormat });
+      valueFormat = nextProps.valueFormat;
+      this.setState({ valueFormat });
     }
 
     if (this.props.displayFormat !== nextProps.displayFormat) {
       this.setState({ displayFormat: nextProps.displayFormat });
+    }
+
+    if ('value' in nextProps) {
+      const val = toMoment(nextProps.value, valueFormat);
+      this.setState({
+        value: val,
+        valueText: this.formatValueToInputText(val, nextProps.value || '')
+      });
     }
   }
 
@@ -131,6 +134,13 @@ export default class Datepicker extends Component {
     }
 
     onChange(valueText, value);
+  }
+
+  formatValueToInputText(momentDate, originalText, displayFormat = this.state.displayFormat) {
+    if (momentDate && momentDate.isValid()) {
+      return momentDate.format(displayFormat);
+    }
+    return originalText;
   }
 
   handleCalendarButtonClick = () => {
@@ -162,9 +172,15 @@ export default class Datepicker extends Component {
   }
 
   handleTextChange = e => {
-    const { valueFormat } = this.state;
+    e.stopPropagation();
+    const { displayFormat } = this.state;
     const text = e.target.value;
-    this.setValue(text, moment(text, valueFormat));
+    let date = moment(text, displayFormat, true);
+    // eslint-disable-next-line no-underscore-dangle
+    if (!date || !date.isValid() || date._f !== displayFormat) {
+      date = null;
+    }
+    this.setValue(text, date);
   }
 
   closeCalendarPopover() {
