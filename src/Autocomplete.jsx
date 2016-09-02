@@ -30,15 +30,11 @@ export default class Autocomplete extends Component {
     const values = selectedValues || [];
 
     // Filter already selected values
-    let filteredOptions = options.filter(option => {
-      return !(values.includes(option));
-    });
+    let filteredOptions = options.filter(option => values.indexOf(option) === -1);
 
     // Filter by label
     if (filter != null && filter.length > 0) {
-      filteredOptions = filteredOptions.filter(option => {
-        return RegExp(filter, 'ig').test(option.label);
-      });
+      filteredOptions = filteredOptions.filter(option => RegExp(filter, 'ig').test(option.label));
     }
 
     // Append Addition option

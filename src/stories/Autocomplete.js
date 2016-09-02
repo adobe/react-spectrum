@@ -90,7 +90,7 @@ storiesOf('Autocomplete', module)
   )
   .addWithInfo(
     'allowCreate: true',
-    () => render({ allowCreate: 'true' }),
+    () => render({ allowCreate: true }),
   { inline: true }
   )
   .addWithInfo(
