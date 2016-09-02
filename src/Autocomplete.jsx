@@ -65,6 +65,16 @@ export default class Autocomplete extends Component {
 
     const multiSelect = multiple || multi;
 
+    // We could have added the filterOptions as a prop on the ReactSelectComponent. Something like:
+    // <ReactSelect
+    //    ...
+    //    filterOptions={ allowCreate && this.filterOptions }
+    //    { ...otherProps }
+    //    ...
+    // But doing this, would break the functionality of react-select that shows an no results text
+    // when the value typed does not match any of the available options. This functionality breaks
+    // also if you set filterOptions to null
+    // (filterOptions={ allowCreate ? this.filterOptions : null}).
     if (allowCreate) {
       otherProps.filterOptions = this.filterOptions;
     }
