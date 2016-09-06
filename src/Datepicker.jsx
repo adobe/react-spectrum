@@ -78,7 +78,7 @@ export default class Datepicker extends Component {
     attachmentConstraints: {
       to: 'window',
       attachment: 'together', // flip when we hit a boundary
-      pin: ['left', 'right'] // Pin horizontally
+      pin: true
     },
     onChange: () => {}
   };
