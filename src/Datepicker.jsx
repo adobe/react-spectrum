@@ -83,7 +83,7 @@ export default class Datepicker extends Component {
 
     this.state = {
       value: val,
-      valueText: this.formatValueToInputText(val, value || defaultValue || '', newDisplayFormat),
+      valueText: this.formatValueToInputText(val, newDisplayFormat),
       valueFormat: newValueFormat,
       displayFormat: newDisplayFormat,
       open: false
@@ -91,22 +91,22 @@ export default class Datepicker extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let { valueFormat } = this.state;
+    const valueFormatChanged = this.props.valueFormat !== nextProps.valueFormat;
+    const displayFormatChanged = this.props.displayFormat !== nextProps.displayFormat;
 
-    if (this.props.valueFormat !== nextProps.valueFormat) {
-      valueFormat = nextProps.valueFormat;
-      this.setState({ valueFormat });
-    }
+    const valueFormat = valueFormatChanged ? nextProps.valueFormat : this.state.valueFormat;
+    const displayFormat = displayFormatChanged ? nextProps.displayFormat : this.state.displayFormat;
 
-    if (this.props.displayFormat !== nextProps.displayFormat) {
-      this.setState({ displayFormat: nextProps.displayFormat });
-    }
+    this.setState({
+      valueFormat,
+      displayFormat
+    });
 
     if ('value' in nextProps) {
       const val = toMoment(nextProps.value, valueFormat);
       this.setState({
         value: val,
-        valueText: this.formatValueToInputText(val, nextProps.value || '')
+        valueText: this.formatValueToInputText(val, displayFormat)
       });
     }
   }
@@ -136,11 +136,11 @@ export default class Datepicker extends Component {
     onChange(valueText, value);
   }
 
-  formatValueToInputText(momentDate, originalText, displayFormat = this.state.displayFormat) {
+  formatValueToInputText(momentDate, displayFormat = this.state.displayFormat) {
     if (momentDate && momentDate.isValid()) {
       return momentDate.format(displayFormat);
     }
-    return originalText;
+    return '';
   }
 
   handleCalendarButtonClick = () => {
@@ -173,6 +173,19 @@ export default class Datepicker extends Component {
 
   handleTextChange = e => {
     e.stopPropagation();
+    // Don't call this.props.onChange. We'll notify that a change happened when the text field is
+    // blurred instead. This is done to avoid casting the text into a date object and then have it
+    // fed back into the Datepicker. In some cases, if the user is between editing and the change
+    // determines an invalid date was typed, the text may suddenly be changed out from under the
+    // user, making it very difficult to change the text in the date. Instead just update the
+    // internal state of the textfield. This means we don't get a truly controlled textfield, but
+    // given the date conversion problems, we don't have any other viable option.
+    this.setState({
+      valueText: e.target.value
+    });
+  }
+
+  handleTextBlur = e => {
     const { displayFormat } = this.state;
     const text = e.target.value;
     let date = moment(text, displayFormat, true);
@@ -307,6 +320,7 @@ export default class Datepicker extends Component {
             invalid={ invalid }
             { ...otherProps }
             onChange={ this.handleTextChange }
+            onBlur={ this.handleTextBlur }
           />
           <div ref="button" className="coral-InputGroup-button">
             <Button

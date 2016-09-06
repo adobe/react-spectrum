@@ -73,9 +73,8 @@ describe('Datepicker', () => {
     tree.setProps({ defaultValue: now.clone().add(7, 'day') });
     expect(+tree.state('value')).toEqual(+now);
 
-    // Component interaction should change the state.
-    findTextfield(tree).simulate('change', {
-      stopPropagation: () => {},
+    // Blurring the textfield should change the value state.
+    findTextfield(tree).simulate('blur', {
       target: { value: '2016-08-01'
     } });
     expect(+tree.state('value')).toEqual(+(new Date(2016, 7, 1)));
@@ -152,18 +151,27 @@ describe('Datepicker', () => {
 
     it('textfield onChange', () => {
       const textfield = findTextfield(tree);
-      assertChangeArgs(
-        textfield,
-        [{ stopPropagation: () => {}, target: { value: '2016-08-01' } }],
-        '2016-08-01',
-        new Date(2016, 7, 1)
-      );
-      assertChangeArgs(
-        textfield,
-        [{ stopPropagation: () => {}, target: { value: 'foo' } }],
-        'foo',
-        NaN
-      );
+      const simulatedGoodEvent = {
+        stopPropagation: () => {},
+        target: { value: '2016-08-01 00:00' }
+      };
+      const simulatedBadEvent = {
+        stopPropagation: () => {},
+        target: { value: 'foo' }
+      };
+
+      textfield.simulate('change', simulatedGoodEvent);
+      expect(spy).toNotHaveBeenCalled();
+
+      textfield.simulate('blur', simulatedGoodEvent);
+      const firstCallArgs = spy.getLastCall().arguments;
+      expect(firstCallArgs[0]).toBe('2016-08-01 00:00');
+      expect(+firstCallArgs[1]).toBe(+(new Date(2016, 7, 1)));
+
+      textfield.simulate('blur', simulatedBadEvent);
+      const secondCallArgs = spy.getLastCall().arguments;
+      expect(secondCallArgs[0]).toBe('foo');
+      expect(secondCallArgs[1]).toBe(null);
     });
 
     it('calendar onChange', () => {

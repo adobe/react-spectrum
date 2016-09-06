@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 
 import Textfield from './Textfield';
-import { toMoment } from './utils/moment';
+import { toMoment, formatMoment } from './utils/moment';
 import { clamp } from './utils/number';
 
 export default class Clock extends Component {
@@ -116,7 +116,7 @@ export default class Clock extends Component {
   }
 
   changeTime(hourText, minuteText) {
-    const { displayFormat, onChange } = this.props;
+    const { valueFormat, onChange } = this.props;
     const { value } = this.state;
 
     const hours = parseInt(hourText, 10);
@@ -151,7 +151,7 @@ export default class Clock extends Component {
 
     if (newTime !== value) {
       onChange(
-        validMoment ? newTime.format(displayFormat) : newTime,
+        validMoment ? formatMoment(newTime, valueFormat) : newTime,
         validMoment && newTime.toDate()
       );
     }
