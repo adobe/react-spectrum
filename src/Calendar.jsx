@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import Button from './Button';
 import createId from './utils/createId';
-import { toMoment, isDateInRange } from './utils/moment';
+import { toMoment, isDateInRange, formatMoment } from './utils/moment';
 
 import './Calendar.styl';
 
@@ -29,7 +29,7 @@ export default class Calendar extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
-    valueFormat: PropTypes.string,
+    valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -79,6 +79,7 @@ export default class Calendar extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { min, max, valueFormat } = this.props;
+    const { today } = this.state;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
       const newMin = toMoment(nextProps.min, nextProps.valueFormat);
@@ -98,7 +99,7 @@ export default class Calendar extends Component {
       const newValue = toMoment(nextProps.value, nextProps.valueFormat);
       this.setState({
         value: newValue,
-        focusedDate: newValue
+        focusedDate: newValue ? newValue.clone() : today.clone()
       });
 
       // Only change the current month window if the next value is a different day than
@@ -122,7 +123,7 @@ export default class Calendar extends Component {
       this.setCurrentMonth(date);
     }
 
-    onChange(date.format(valueFormat), date.toDate());
+    onChange(formatMoment(date, valueFormat), date.toDate());
   }
 
   setCurrentMonth(date, today = this.state.today) {
@@ -366,7 +367,7 @@ export default class Calendar extends Component {
         aria-disabled={ disabled }
         { ...otherProps }
       >
-        <input type="hidden" name={ name } value={ value && value.format(valueFormat) || '' } />
+        <input type="hidden" name={ name } value={ formatMoment(value, valueFormat) } />
         <div className="coral-Calendar-calendarHeader">
           <div
             className="coral-Heading coral-Heading--2"
