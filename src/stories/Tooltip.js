@@ -1,5 +1,5 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import { storiesOf } from '@kadira/storybook';
 import { VerticalCenter } from '../../.storybook/layout';
 
 import Tooltip from '../Tooltip';
@@ -76,9 +76,7 @@ function render(children, props = {}) {
         title="Title"
         openOn="always"
         open
-        closable
         content={ children }
-        onClose={ action('close') }
         { ...props }
       >
         <Button label={ buttonLbl } />

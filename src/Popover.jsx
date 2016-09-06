@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import TetherDropComponent from './internal/TetherDropComponent';
 import manageTransitionVisibility from './utils/manageTransitionVisibility';
@@ -10,11 +10,41 @@ import { getTetherPositionFromPlacement } from './utils/tether';
 import './Popover.styl';
 
 export default class Popover extends Component {
+  static propTypes = {
+    variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
+    icon: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'help', 'info']),
+    open: PropTypes.bool,
+    closable: PropTypes.bool,
+    title: PropTypes.node,
+    children: PropTypes.node.isRequired,
+    content: PropTypes.node.isRequired,
+    placement: PropTypes.string, // right, left, top, bottom, right top, right bottom, top right...
+    className: PropTypes.string,
+    dropClassName: PropTypes.string,
+    onClose: PropTypes.func,
+    // Customize how to constrain the popover so it pins to the edge of the window,
+    // scroll container, etc, or if it flips when it would otherwise be clipped.
+    // This is passed to tether internally. See http://tether.io/#constraints
+    attachmentConstraints: PropTypes.shape({
+      to: PropTypes.string,
+      attachment: PropTypes.string,
+      pin: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
+    })
+  };
+
   static defaultProps = {
-    variant: 'default', // default, error, warning, success, info, help
+    variant: 'default',
     open: false,
     closable: false,
-    placement: 'right', // right, left, top, bottom, right top, right bottom, top right, etc
+    placement: 'right',
+    attachmentConstraints: {
+      to: 'window',
+      attachment: 'together'
+    },
     onClose: () => {}
   };
 
@@ -48,6 +78,7 @@ export default class Popover extends Component {
       title,
       placement,
       content,
+      attachmentConstraints,
       children,
       className,
       dropClassName,
@@ -63,6 +94,7 @@ export default class Popover extends Component {
         open={ open }
         classPrefix="coral-Popover-drop"
         dropClassName={ dropClassName }
+        constraints={ attachmentConstraints }
         content={
           <div
             className={

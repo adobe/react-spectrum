@@ -47,6 +47,18 @@ export default class Datepicker extends Component {
     readOnly: PropTypes.bool,
     required: PropTypes.bool,
     invalid: PropTypes.bool,
+    // Customize how to constrain the popover so it pins to the edge of the window,
+    // scroll container, etc, or if it flips when it would otherwise be clipped.
+    // This is passed to tether internally. See http://tether.io/#constraints
+    attachmentConstraints: PropTypes.shape({
+      to: PropTypes.string,
+      attachment: PropTypes.string,
+      pin: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
+    }),
     onChange: PropTypes.func
   };
 
@@ -63,6 +75,11 @@ export default class Datepicker extends Component {
     readOnly: false,
     required: false,
     placeholder: 'Choose a date',
+    attachmentConstraints: {
+      to: 'window',
+      attachment: 'together', // flip when we hit a boundary
+      pin: ['left', 'right'] // Pin horizontally
+    },
     onChange: () => {}
   };
 
@@ -232,6 +249,7 @@ export default class Datepicker extends Component {
       min,
       startDay,
       placeholder,
+      attachmentConstraints,
       quiet,
       disabled,
       invalid,
@@ -290,6 +308,7 @@ export default class Datepicker extends Component {
             { type !== 'date' && this.renderClock(clockProps) }
           </div>
         }
+        attachmentConstraints={ attachmentConstraints }
         aria-disabled={ disabled }
         aria-invalid={ invalid }
         aria-readonly={ readOnly }
