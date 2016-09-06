@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import TetherDropComponent from './internal/TetherDropComponent';
 import manageTransitionVisibility from './utils/manageTransitionVisibility';
@@ -8,10 +8,35 @@ import { getTetherPositionFromPlacement } from './utils/tether';
 import './Tooltip.styl';
 
 export default class Tooltip extends Component {
+  static propTypes = {
+    variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
+    placement: PropTypes.string,
+    openOn: PropTypes.oneOf(['click', 'hover', 'focus', 'always']),
+    children: PropTypes.node.isRequired,
+    content: PropTypes.node.isRequired,
+    className: PropTypes.string,
+    // Customize how to constrain the popover so it pins to the edge of the window,
+    // scroll container, etc, or if it flips when it would otherwise be clipped.
+    // This is passed to tether internally. See http://tether.io/#constraints
+    attachmentConstraints: PropTypes.shape({
+      to: PropTypes.string,
+      attachment: PropTypes.string,
+      pin: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
+    })
+  };
+
   static defaultProps = {
-    variant: 'inspect', // inspect, info, success, error
-    placement: 'right', // right, left, top, bottom
-    openOn: 'hover' // click, hover, focus, always
+    variant: 'inspect',
+    placement: 'right',
+    openOn: 'hover',
+    attachmentConstraints: {
+      to: 'window',
+      attachment: 'together'
+    }
   };
 
   componentDidMount() {
@@ -37,6 +62,7 @@ export default class Tooltip extends Component {
       placement,
       content,
       children,
+      attachmentConstraints,
       className,
       openOn,
       ...otherProps
@@ -50,6 +76,7 @@ export default class Tooltip extends Component {
         classPrefix="coral-Tooltip-drop"
         hoverOpenDelay={ 400 }
         hoverCloseDelay={ 400 }
+        constraints={ attachmentConstraints }
         onOpen={ this.onOpen }
         onClose={ this.onClose }
         content={

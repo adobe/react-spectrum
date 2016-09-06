@@ -1,16 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import Drop from 'tether-drop';
 
 export default class TetherDropComponent extends Component {
+  static propTypes = {
+    position: PropTypes.string,
+    classPrefix: PropTypes.string,
+    dropClassName: PropTypes.string,
+    openOn: PropTypes.string,
+    // Customize how to constrain the popover so it pins to the edge of the window,
+    // scroll container, etc, or if it flips when it would otherwise be clipped.
+    // This is passed to tether internally. See http://tether.io/#constraints
+    constraints: PropTypes.shape({
+      to: PropTypes.string,
+      attachment: PropTypes.string,
+      pin: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
+    }),
+    content: PropTypes.node,
+    children: PropTypes.node,
+    hoverOpenDelay: PropTypes.number,
+    hoverCloseDelay: PropTypes.number,
+    onClickOutside: PropTypes.func,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func
+  };
+
   static defaultProps = {
     position: 'right center',
-    onClickOutside: null,
     classPrefix: 'coral-drop',
-    onOpen: () => {},
-    onClose: () => {},
     dropClassName: '',
-    openOn: null // Null means we'll manually call .open() and .close() on the drop instance.
+    openOn: null, // Null means we'll manually call .open() and .close() on the drop instance.
+    constraints: null,
+    onClickOutside: null,
+    onOpen: () => {},
+    onClose: () => {}
   };
 
   componentDidMount() {
@@ -88,6 +115,7 @@ export default class TetherDropComponent extends Component {
       position,
       content,
       openOn,
+      constraints,
       hoverOpenDelay,
       hoverCloseDelay,
       classPrefix,
@@ -108,12 +136,7 @@ export default class TetherDropComponent extends Component {
       hoverCloseDelay,
       content: ' ', // We'll manage the content ourselves
       tetherOptions: {
-        constraints: [
-          { // Make sure the popover scrolls with the target.
-            to: 'window',
-            attachment: 'together'
-          }
-        ]
+        constraints: constraints ? [constraints] : []
       }
     });
 
