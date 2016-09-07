@@ -12,7 +12,7 @@ import './Popover.styl';
 export default class Popover extends Component {
   static propTypes = {
     variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
-    icon: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'help', 'info']),
+    icon: PropTypes.string,
     open: PropTypes.bool,
     closable: PropTypes.bool,
     title: PropTypes.node,
