@@ -133,6 +133,16 @@ describe('Datepicker', () => {
     });
   });
 
+  describe('onBlur', () => {
+    it('calls onBlur when text input is blurred', () => {
+      const spy = createSpy();
+      const event = { target: { value: '2016-08-01 00:00' } };
+      const tree = shallow(<Datepicker onBlur={ spy } />);
+      findTextfield(tree).simulate('blur', event);
+      expect(spy).toHaveBeenCalledWith(event);
+    });
+  });
+
   describe('onChange', () => {
     let spy;
     let tree;

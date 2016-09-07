@@ -211,6 +211,10 @@ export default class Datepicker extends Component {
       date = null;
     }
     this.setValue(text, date);
+
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
   }
 
   closeCalendarPopover() {
