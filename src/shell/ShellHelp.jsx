@@ -53,7 +53,12 @@ export default class ShellHelp extends Component {
       numTotalResults,
       moreSearchResultsUrl
     } = this.props;
+
     const { searchTerm } = this.state;
+
+    // https://git.corp.adobe.com/React/react-coral/issues/134
+    // unicode for: '&nbsp; &bull; &nbsp';
+    const separator = '\u00a0 \u2022 \u00a0';
 
     return (
       <List className="coral-BasicList coral-AnchorList coral-Shell-help-results">
@@ -70,7 +75,7 @@ export default class ShellHelp extends Component {
                   <span>
                     { title }
                     <div className="coral-Shell-help-result-description">
-                      { tags.join('&nbsp; &bull; &nbsp;') }
+                      { tags.join(separator) }
                     </div>
                   </span>
                 }
