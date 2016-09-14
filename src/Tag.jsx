@@ -15,7 +15,7 @@ export default function Tag({
   color = 'grey',
   multiline = false,
   quiet = false,
-  closable = true,
+  closable = false,
   disabled = false,
   selected = false,
   className,
