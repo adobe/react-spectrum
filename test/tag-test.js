@@ -46,7 +46,7 @@ describe('Tag', () => {
 
   it('supports being disabled', () => {
     const onClose = expect.createSpy();
-    const tree = shallow(<Tag disabled closable={ true } onClose={ onClose } />);
+    const tree = shallow(<Tag disabled closable onClose={ onClose } />);
     tree.find('.coral-Tag-removeButton').simulate('click');
     expect(onClose).toNotHaveBeenCalled();
   });
