@@ -10,8 +10,8 @@ import './NumberInput.styl';
 
 export default class NumberInput extends Component {
   static propTypes = {
-    defaultValue: PropTypes.number,
-    value: PropTypes.number,
+    defaultValue: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
+    value: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
     min: PropTypes.number,
     max: PropTypes.number,
     placeholder: PropTypes.string,
