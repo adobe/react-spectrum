@@ -78,6 +78,8 @@ export default class TagList extends React.Component {
       ...otherProps
     } = this.props;
 
+    delete otherProps.onClose;
+
     const { focused } = this.state;
 
     return (
