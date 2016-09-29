@@ -26,6 +26,16 @@ storiesOf('ShellHelp', module)
     { inline: true }
   )
   .addWithInfo(
+    'onClear',
+    () => render({ defaultResults, open: true, onClear: action('clear') }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'onHide',
+    () => render({ defaultResults, onHide: action('hiding') }),
+    { inline: true }
+  )
+  .addWithInfo(
     'searchResults: 0',
     () => render({ searchResults: [], numTotalResults: 0, open: true }),
     { inline: true }

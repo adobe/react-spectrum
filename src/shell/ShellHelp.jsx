@@ -18,7 +18,9 @@ export default class ShellHelp extends Component {
       { href: '/customercare', icon: 'callCenter', label: 'Customer Care' },
       { href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status' }
     ],
-    onSearch: () => {}
+    onSearch: () => {},
+    onClear: () => {},
+    onHide: () => {}
   };
 
   state = {
@@ -30,6 +32,14 @@ export default class ShellHelp extends Component {
     onSearch(val);
     this.setState({
       searchTerm: val
+    });
+  }
+
+  handleClear = () => {
+    const { onClear } = this.props;
+    onClear();
+    this.setState({
+      searchTerm: ''
     });
   }
 
@@ -144,6 +154,7 @@ export default class ShellHelp extends Component {
           />
         }
         onVisible={ this.handleVisible }
+        onHidden={ this.props.onHide }
         { ...otherProps }
       >
         <div
@@ -161,6 +172,7 @@ export default class ShellHelp extends Component {
             className="coral-Shell-help-search"
             placeholder="Search Help"
             onSubmit={ this.handleSearch }
+            onClear={ this.handleClear }
             quiet
           />
           {
