@@ -7,7 +7,7 @@ export default function ShellSolution({
   href,
   label,
   icon,
-  linked,
+  entitled,
   className,
   children,
   ...otherProps
@@ -17,7 +17,7 @@ export default function ShellSolution({
       className={
         classNames(
           'coral-Shell-solution',
-          { 'coral-Shell-solution--linked': linked },
+          { 'coral-Shell-solution--linked': entitled },
           className
         )
       }

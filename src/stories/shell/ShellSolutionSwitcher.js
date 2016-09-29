@@ -29,9 +29,9 @@ function render(props) {
       { ...props }
     >
       <ShellSolutionGroup>
-        <ShellSolution href="#" icon="adobeAnalyticsColor" label="Analytics" linked />
-        <ShellSolution href="#" icon="adobeExperienceManagerColor" label="Experience Manager" linked />
-        <ShellSolution href="#" icon="adobeTargetColor" label="Target" linked />
+        <ShellSolution href="#" icon="adobeAnalyticsColor" label="Analytics" entitled />
+        <ShellSolution href="#" icon="adobeExperienceManagerColor" label="Experience Manager" entitled />
+        <ShellSolution href="#" icon="adobeTargetColor" label="Target" entitled />
         <ShellSolution href="#" icon="adobeAudienceManager" label="Audience Manager" />
         <ShellSolution href="#" icon="adobeCampaign" label="Campaign" />
         <ShellSolution href="#" icon="adobeMediaOptimizer" label="Media Optimizer" />
