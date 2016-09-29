@@ -6,8 +6,12 @@ export default class ShellSolutionGroup extends Component {
   };
 
   renderPrimarySolutions(children) {
-    const entitledChildren = children.filter(child => child.props && child.props.entitled);
-    const unentitledChildren = children.filter(child => child.props && child.props.entitled == null);
+    const entitledChildren = children.filter(
+      child => child.props && child.props.entitled
+    );
+    const unentitledChildren = children.filter(
+      child => child.props && child.props.entitled == null
+    );
 
     return (
       <div className="coral-Shell-solutions-container">
