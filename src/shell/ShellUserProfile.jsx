@@ -5,6 +5,8 @@ import ShellMenu from './internal/ShellMenu';
 import Button from '../Button';
 import Icon from '../Icon';
 
+import './ShellUserProfile.styl';
+
 export default function ShellUserProfile({
   name,
   heading,
@@ -24,7 +26,8 @@ export default function ShellUserProfile({
         <Button
           className="coral-Shell-menu-button"
           variant="minimal"
-          icon="userCircleColor"
+          icon={ avatarUrl }
+          iconSize="M"
           square
         />
       }
@@ -50,8 +53,8 @@ export default function ShellUserProfile({
           { children }
         </div>
         <div className="coral-Shell-user-footer">
+          <Button element="a" variant="minimal" href={ profileUrl }>Edit Profile</Button>
           <Button element="a" variant="minimal" onClick={ onSignOut }>Sign Out</Button>
-          <Button element="a" variant="minimal" href={ profileUrl }>Profile</Button>
         </div>
       </div>
     </ShellMenu>

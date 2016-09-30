@@ -6,16 +6,20 @@ export default class ShellSolutionGroup extends Component {
   };
 
   renderPrimarySolutions(children) {
-    const linkedChildren = children.filter(child => child.props && child.props.linked);
-    const unlinkedChildren = children.filter(child => child.props && child.props.linked == null);
+    const entitledChildren = children.filter(
+      child => child.props && child.props.entitled
+    );
+    const unentitledChildren = children.filter(
+      child => child.props && child.props.entitled == null
+    );
 
     return (
       <div className="coral-Shell-solutions-container">
         <div className="coral-Shell-solutions">
-          { linkedChildren }
+          { entitledChildren }
         </div>
         <div className="coral-Shell-solutions">
-          { unlinkedChildren }
+          { unentitledChildren }
         </div>
       </div>
     );
