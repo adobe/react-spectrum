@@ -46,8 +46,12 @@ export default function ShellUserProfile({
             <Icon icon={ avatarUrl } size="L" className="coral-Shell-user-avatar is-image" />
           </div>
           <div className="coral-Shell-user-name">{ name }</div>
-          <div className="coral-Shell-user-heading">{ heading }</div>
-          <div className="coral-Shell-user-subheading">{ subheading }</div>
+          <div className="coral-Shell-user-heading">
+            { heading && heading !== 'null' ? heading : '' }
+          </div>
+          <div className="coral-Shell-user-subheading">
+            { subheading && subheading !== 'null' ? subheading : '' }
+          </div>
         </div>
         <div className="coral-Shell-user-content">
           { children }
