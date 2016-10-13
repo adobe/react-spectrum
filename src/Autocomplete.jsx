@@ -39,7 +39,7 @@ export default class Autocomplete extends Component {
     }
 
     // Append Addition option
-    if (filteredOptions.length === 0) {
+    if (filteredOptions.length === 0 && filter.trim()) {
       filteredOptions.push({
         label: filter,
         value: filter,
@@ -68,7 +68,7 @@ export default class Autocomplete extends Component {
     //    filterOptions={ allowCreate && this.filterOptions }
     //    { ...otherProps }
     //    ...
-    // But doing this, would break the functionality of react-select that shows an no results text
+    // But doing this, would break the functionality of react-select that shows a no results text
     // when the value typed does not match any of the available options. This functionality breaks
     // also if you set filterOptions to null
     // (filterOptions={ allowCreate ? this.filterOptions : null}).
