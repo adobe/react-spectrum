@@ -9,8 +9,10 @@ export function getTransitionEvent() {
       MozTransition: 'transitionend',
       WebkitTransition: 'webkitTransitionEnd'
     };
+    const keys = Object.keys(transitions);
 
-    for (const t of Object.keys(transitions)) {
+    for (let i = 0; i < keys.length; i++) {
+      const t = keys[i];
       if (el.style[t] !== undefined) {
         transitionEvent = transitions[t];
         break;
