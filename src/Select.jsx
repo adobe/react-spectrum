@@ -12,6 +12,7 @@ export default class Select extends Component {
   static defaultProps = {
     variant: 'default', // default, quiet
     multiple: false,
+    multiCloseOnSelect: true,
     noResultsText: 'No matching results.',
     placeholder: 'Select one'
   };
@@ -136,6 +137,7 @@ export default class Select extends Component {
       className,
       multiple,
       multi,
+      multiCloseOnSelect,
       ...otherProps
     } = this.props;
 
@@ -166,6 +168,7 @@ export default class Select extends Component {
         autosize={ false }
         searchable={ false }
         tabSelectsValue={ false }
+        multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
         onValueClick={ this.props.onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
