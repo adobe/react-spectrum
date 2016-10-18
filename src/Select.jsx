@@ -12,6 +12,7 @@ export default class Select extends Component {
   static defaultProps = {
     variant: 'default', // default, quiet
     multiple: false,
+    multiCloseOnSelect: true,
     noResultsText: 'No matching results.',
     placeholder: 'Select one'
   };
@@ -20,13 +21,13 @@ export default class Select extends Component {
     this.clearState();
   }
 
-  valueComponent({ value, disabled }) {
+  valueComponent(props, { value, disabled }) {
     return (
       <div
         className="coral3-Select-label"
         disabled={ disabled }
       >
-        { value.label }
+        { value[props.labelKey || 'label'] }
       </div>
     );
   }
@@ -116,7 +117,7 @@ export default class Select extends Component {
     }
   }
 
-  valuesComponent({ value, onClick, onRemove, disabled }) {
+  valuesComponent(props, { value, onClick, onRemove, disabled }) {
     return (
       <Tag
         onClose={ (e) => onRemove(value, e) }
@@ -124,7 +125,7 @@ export default class Select extends Component {
         disabled={ disabled }
         onMouseDown={ (e) => onClick(value, e) }
       >
-        { value.label }
+        { value[props.labelKey || 'label'] }
       </Tag>
     );
   }
@@ -136,6 +137,7 @@ export default class Select extends Component {
       className,
       multiple,
       multi,
+      multiCloseOnSelect,
       ...otherProps
     } = this.props;
 
@@ -160,12 +162,14 @@ export default class Select extends Component {
           'Select-menu': 'coral3-SelectList coral3-Select-selectList',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
         } }
-        valueComponent={ multiSelect ? this.valuesComponent : this.valueComponent }
+        valueComponent={ multiSelect ?
+          this.valuesComponent.bind(this, this.props) : this.valueComponent.bind(this, this.props) }
         menuRenderer={ menuRenderer }
         clearable={ false }
         autosize={ false }
         searchable={ false }
         tabSelectsValue={ false }
+        multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
         onValueClick={ this.props.onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
