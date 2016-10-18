@@ -27,7 +27,7 @@ export default class Autocomplete extends Component {
     );
   }
 
-  valuesComponent({ value, onClick, onRemove, disabled }) {
+  valuesComponent(props, { value, onClick, onRemove, disabled }) {
     return (
       <Tag
         onClose={ (e) => onRemove(value, e) }
@@ -35,7 +35,7 @@ export default class Autocomplete extends Component {
         disabled={ disabled }
         onMouseDown={ (e) => onClick(value, e) }
       >
-        { value.label }
+        { value[props.labelKey || 'label'] }
       </Tag>
     );
   }
@@ -83,7 +83,7 @@ export default class Autocomplete extends Component {
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
-        valueComponent={ multiSelect && this.valuesComponent }
+        valueComponent={ multiSelect && this.valuesComponent.bind(this, this.props) }
         multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
         onValueClick={ onValueClick || (() => {}) }
