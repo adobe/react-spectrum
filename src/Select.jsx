@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import ReactSelect from 'react-select';
 import Tag from './Tag';
+import menuRenderer from './internal/SelectMenuRenderer';
 
 import './Select.styl';
 
@@ -157,10 +158,10 @@ export default class Select extends Component {
           'Select-arrow-zone': arrowZoneClasses,
           'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',
           'Select-menu': 'coral3-SelectList coral3-Select-selectList',
-          'Select-option': 'coral3-SelectList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
         } }
         valueComponent={ multiSelect ? this.valuesComponent : this.valueComponent }
+        menuRenderer={ menuRenderer }
         clearable={ false }
         autosize={ false }
         searchable={ false }

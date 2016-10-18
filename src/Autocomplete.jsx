@@ -2,15 +2,30 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import ReactSelect from 'react-select';
 import Tag from './Tag';
+import menuRenderer from './internal/SelectMenuRenderer';
 
 import './Autocomplete.styl';
 
 export default class Autocomplete extends Component {
   static defaultProps = {
     multiple: false,
+    multiCloseOnSelect: true,
     allowCreate: false,
     noResultsText: 'No matching results.'
   };
+
+  arrowRenderer({ onMouseDown }) {
+    return (
+      <button
+        className="coral-Button coral-Button--secondary coral-Button--square
+          coral-Autocomplete-trigger"
+        onMouseDown={ onMouseDown }
+        disabled={ this.disabled }
+      >
+        <span className="coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS" />
+      </button>
+    );
+  }
 
   valuesComponent({ value, onClick, onRemove, disabled }) {
     return (
@@ -25,31 +40,6 @@ export default class Autocomplete extends Component {
     );
   }
 
-  filterOptions(options, filter, selectedValues) {
-    // For single autocompletes, selectedValues is always null.
-    const values = selectedValues || [];
-
-    // Filter already selected values
-    let filteredOptions = options.filter(option => values.indexOf(option) === -1);
-
-    // Filter by label
-    if (filter != null && filter.length > 0) {
-      filteredOptions =
-        filteredOptions.filter(option => RegExp(filter, 'ig').test(option[this.props.labelKey]));
-    }
-
-    // Append Addition option
-    if (filteredOptions.length === 0 && filter.trim()) {
-      filteredOptions.push({
-        label: filter,
-        value: filter,
-        create: true
-      });
-    }
-
-    return filteredOptions;
-  }
-
   render() {
     const {
       multiple,
@@ -57,57 +47,46 @@ export default class Autocomplete extends Component {
       noResultsText,
       className,
       allowCreate,
+      onValueClick,
+      multiCloseOnSelect,
       ...otherProps
     } = this.props;
 
     const multiSelect = multiple || multi;
-
-    // We could have added the filterOptions as a prop on the ReactSelectComponent. Something like:
-    // <ReactSelect
-    //    ...
-    //    filterOptions={ allowCreate && this.filterOptions }
-    //    { ...otherProps }
-    //    ...
-    // But doing this, would break the functionality of react-select that shows a no results text
-    // when the value typed does not match any of the available options. This functionality breaks
-    // also if you set filterOptions to null
-    // (filterOptions={ allowCreate ? this.filterOptions : null}).
-    if (allowCreate) {
-      otherProps.filterOptions = this.filterOptions;
-    }
+    const SelectComponent = allowCreate ? ReactSelect.Creatable : ReactSelect;
 
     return (
-      <ReactSelect
+      <SelectComponent
         className={
           classNames(className, 'coral-Autocomplete')
         }
+        arrowRenderer={ this.arrowRenderer }
+        menuRenderer={ menuRenderer }
         tabSelectsValue={ false }
         clearable={ false }
         autosize={ false }
+        allowCreate={ allowCreate }
         multi={ multiSelect }
         noResultsText={ <em>{ noResultsText }</em> }
         classAdditions={ {
           'Select-control':
             'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
           'Select-loading': 'coral-Wait',
+          'Select-arrow-zone': 'coral-InputGroup-button',
           'Select-input': 'coral-InputGroup-input coral-DecoratedTextfield',
           'Select-input-icon':
             'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
           'Select-input-field':
             'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
-          'Select-arrow-zone': 'coral-InputGroup-button',
-          'Select-arrow':
-            'coral-Button coral-Button--secondary coral-Button--square coral-Autocomplete-trigger',
-          'Select-arrow-icon': 'coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS',
           'Select-menu-outer': 'coral-Overlay coral-Autocomplete-overlay',
           'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList',
-          'Select-option': 'coral-BasicList-item coral-ButtonList-item',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
         valueComponent={ multiSelect && this.valuesComponent }
+        multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
-        onValueClick={ this.props.onValueClick || (() => {}) }
+        onValueClick={ onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
       />
     );
