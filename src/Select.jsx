@@ -138,6 +138,7 @@ export default class Select extends Component {
       multiple,
       multi,
       multiCloseOnSelect,
+      onValueClick,
       ...otherProps
     } = this.props;
 
@@ -171,7 +172,7 @@ export default class Select extends Component {
         tabSelectsValue={ false }
         multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
-        onValueClick={ this.props.onValueClick || (() => {}) }
+        onValueClick={ onValueClick || (() => {}) }
         backspaceToRemoveMessage=""
         onKeyPress={ this.handleKeyPress }
         ref="selectComponent"

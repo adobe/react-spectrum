@@ -18,14 +18,41 @@ const defaultProps = {
   ]
 };
 
+class AutocompleteWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.initialValue
+    };
+  }
+
+  render() {
+    const { value } = this.state;
+    return (
+      <Autocomplete
+        value={ value }
+        label="React"
+        onChange={ (v) => { this.setState({ value: v }); action('change')(v); } }
+        onBlur={ action('blur') }
+        onClose={ action('close') }
+        onFocus={ action('focus') }
+        onInputChange={ action('inputChange') }
+        onOpen={ action('open') }
+        onValueClick={ action('valueClick') }
+        { ...defaultProps }
+        { ...this.props }
+      />
+    );
+  }
+}
+
 const selectedValue = [
   'chocolate',
   'vanilla',
   'logVal'
 ];
 
-let value = '';
-let multipleValues = selectedValue.slice();
+const multipleValues = selectedValue.slice();
 
 storiesOf('Autocomplete', module)
   .addDecorator(story => (
@@ -91,26 +118,27 @@ storiesOf('Autocomplete', module)
   .addWithInfo(
     'allowCreate: true',
     () => render({ allowCreate: true }),
-  { inline: true }
+    { inline: true }
   )
   .addWithInfo(
     'Stateful component',
-    () => render({
-      ...defaultProps,
-      value,
-      onChange: (v) => { value = v; action('change')(v); }
-    }),
-    { inline: true }
+    () => (
+      <AutocompleteWrapper
+        initialValue="chocolate"
+      />
+    ),
+    { inline: true, propTables: false, source: false }
   )
   .addWithInfo(
-    'Stateful multiple component',
-    () => render({
-      ...defaultProps,
-      value: multipleValues,
-      multiple: true,
-      onChange: (v) => { multipleValues = v; action('change')(v); }
-    }),
-    { inline: true }
+    'Stateful multiple component with allow create enabled',
+    () => (
+      <AutocompleteWrapper
+        initialValue={ multipleValues }
+        allowCreate
+        multiple
+      />
+    ),
+    { inline: true, propTables: false, source: false }
   );
 
 function render(props = {}) {
