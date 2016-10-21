@@ -1,9 +1,9 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
+import { withKnobs, text, boolean, select } from '@kadira/storybook-addon-knobs';
 import { VerticalCenter } from '../../.storybook/layout';
 
 import Autocomplete from '../Autocomplete';
-
 
 const defaultProps = {
   placeholder: 'Enter Text...',
@@ -18,16 +18,73 @@ const defaultProps = {
   ]
 };
 
+const icons = {
+  '': 'None',
+  abc: 'ABC',
+  actions: 'Actions',
+  add: 'Add',
+  addCircle: 'AddCircle',
+  adjust: 'Adjust',
+  adobe: 'Adobe',
+  adobeAnalytics: 'AdobeAnalytics',
+  adobeAudienceManager: 'AdobeAudienceManager',
+  adobeCampaign: 'AdobeCampaign',
+  adobeConnect: 'AdobeConnect',
+  adobeDocumentCloud: 'AdobeDocumentCloud',
+  adobeExperienceManager: 'AdobeExperienceManager',
+  adobeMarketingCloud: 'AdobeMarketingCloud',
+  adobeMediaOptimizer: 'AdobeMediaOptimizer',
+  adobePrimetime: 'AdobePrimetime',
+  adobeSendNow: 'AdobeSendNow',
+  adobeSocial: 'AdobeSocial',
+  adobeTarget: 'AdobeTarget',
+  alert: 'Alert',
+  alertAdd: 'AlertAdd',
+  alertCheck: 'AlertCheck'
+};
+
+class AutocompleteWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.initialValue
+    };
+  }
+
+  render() {
+    const { value } = this.state;
+    return (
+      <Autocomplete
+        value={ value }
+        label="React"
+        onChange={ (v) => { this.setState({ value: v }); action('change')(v); } }
+        onBlur={ action('blur') }
+        onClose={ action('close') }
+        onFocus={ action('focus') }
+        onInputChange={ action('inputChange') }
+        onOpen={ action('open') }
+        onValueClick={ action('valueClick') }
+        allowCreate={ boolean('Allow Create', false) }
+        disabled={ boolean('Disabled', false) }
+        multiple={ boolean('Multiple', false) }
+        invalid={ boolean('Invalid', false) }
+        icon={ select('Icon', icons, '') }
+        { ...defaultProps }
+        { ...this.props }
+        placeholder={ text('Placeholder', 'Enter Text...') }
+      />
+    );
+  }
+}
+
 const selectedValue = [
   'chocolate',
   'vanilla',
   'logVal'
 ];
 
-let value = '';
-let multipleValues = selectedValue.slice();
-
 storiesOf('Autocomplete', module)
+  .addDecorator(withKnobs)
   .addDecorator(story => (
     <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
       { story() }
@@ -91,26 +148,16 @@ storiesOf('Autocomplete', module)
   .addWithInfo(
     'allowCreate: true',
     () => render({ allowCreate: true }),
-  { inline: true }
+    { inline: true }
   )
   .addWithInfo(
     'Stateful component',
-    () => render({
-      ...defaultProps,
-      value,
-      onChange: (v) => { value = v; action('change')(v); }
-    }),
-    { inline: true }
-  )
-  .addWithInfo(
-    'Stateful multiple component',
-    () => render({
-      ...defaultProps,
-      value: multipleValues,
-      multiple: true,
-      onChange: (v) => { multipleValues = v; action('change')(v); }
-    }),
-    { inline: true }
+    () => (
+      <AutocompleteWrapper
+        initialValue="chocolate"
+      />
+    ),
+    { inline: true, propTables: false, source: false }
   );
 
 function render(props = {}) {

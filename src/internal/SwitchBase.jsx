@@ -106,7 +106,6 @@ export default class SwitchBase extends Component {
           defaultChecked={ defaultChecked }
           checked={ checked }
           disabled={ disabled }
-          required={ required }
           name={ name }
           value={ value }
           required={ required ? true : null }
