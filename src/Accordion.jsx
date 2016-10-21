@@ -111,7 +111,9 @@ export default class Accordion extends Component {
       ...otherProps
     } = this.props;
 
-    // Prevent defaultSelectedIndex from getting passed to div and causing a warning.
+    // Prevent defaultSelectedIndex and selectedIndex from getting passed to div and causing a
+    // warning.
+    delete otherProps.selectedIndex;
     delete otherProps.defaultSelectedIndex;
 
     return (
