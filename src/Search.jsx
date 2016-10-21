@@ -82,6 +82,7 @@ export default class Search extends Component {
       disabled,
       defaultValue,
       className,
+      icon,
       ...otherProps
     } = this.props;
     const { value, emptyText } = this.state;
@@ -96,7 +97,9 @@ export default class Search extends Component {
           )
         }
       >
-        <Icon className="coral-DecoratedTextfield-icon" icon="search" size="S" />
+        { icon !== '' &&
+          <Icon className="coral-DecoratedTextfield-icon" icon={icon || 'search'} size="S" />
+        }
         <Textfield
           ref="input"
           className="coral-DecoratedTextfield-input coral-Search-input"
