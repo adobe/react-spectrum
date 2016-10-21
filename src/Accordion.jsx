@@ -116,6 +116,11 @@ export default class Accordion extends Component {
     delete otherProps.selectedIndex;
     delete otherProps.defaultSelectedIndex;
 
+    // We don't need/want to add onChange to the div because we call it manually when we hear that
+    // an accordion item has been clicked. If we were to add the handler to the div, it would be
+    // called every time any input inside the accordion is changed.
+    delete otherProps.onChange;
+
     return (
       <div
         { ...otherProps }
