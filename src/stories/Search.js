@@ -34,6 +34,16 @@ storiesOf('Search', module)
     'disabled: true',
     () => render({ value: 'React', disabled: true }),
     { inline: true }
+  )
+  .addWithInfo(
+    'icon: refresh',
+    () => render({ value: 'React', icon: 'refresh' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'icon: (none)',
+    () => render({ value: 'React', icon: '' }),
+    { inline: true }
   );
 
 function render(props = {}) {
