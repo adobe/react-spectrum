@@ -1,3 +1,4 @@
+/* eslint react/no-unused-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import Drop from 'tether-drop';
