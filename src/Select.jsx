@@ -143,8 +143,6 @@ export default class Select extends Component {
     } = this.props;
 
     const isQuiet = variant === 'quiet';
-    const arrowZoneClasses =
-      'coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS';
     const multiSelect = multiple || multi;
 
     return (
@@ -158,7 +156,6 @@ export default class Select extends Component {
         controlComponent={ this.controlComponent }
         classAdditions={ {
           'Select-placeholder': 'coral3-Select-label',
-          'Select-arrow-zone': arrowZoneClasses,
           'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',
           'Select-menu': 'coral3-SelectList coral3-Select-selectList',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList'
