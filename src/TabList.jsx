@@ -97,6 +97,11 @@ export default class TabList extends Component {
     delete otherProps.defaultSelectedIndex;
     delete otherProps.selectedIndex;
 
+    // We don't need/want to add onChange to the div because we call it manually when we hear that
+    // a tab has been clicked. If we were to add the handler to the div, it would be
+    // called every time any input inside a tab is changed.
+    delete otherProps.onChange;
+
     return (
       <div
         { ...otherProps }

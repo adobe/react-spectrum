@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import Accordion from '../src/Accordion';
 import AccordionItem from '../src/AccordionItem';
 
@@ -78,5 +78,23 @@ describe('Accordion', () => {
 
     expect(child.length).toBe(1);
     expect(child.node.props.className).toBe('two');
+  });
+
+  it('does not call onChange if descendant input is changed', () => {
+    const onChange = expect.createSpy();
+
+    // We need to use mount instead of shallow because we need our simulated change event to
+    // bubble to properly test the scenario. Simulated events don't bubble when rendering shallowly.
+    const tree = mount(
+      <Accordion defaultSelectedIndex={ 0 } onChange={ onChange }>
+        <AccordionItem header="One">
+          One content. <input type="checkbox" />
+        </AccordionItem>
+      </Accordion>
+    );
+
+    tree.find('input').simulate('change');
+
+    expect(onChange).toNotHaveBeenCalled();
   });
 });
