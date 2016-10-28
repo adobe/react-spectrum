@@ -98,7 +98,7 @@ export default class Search extends Component {
         }
       >
         { icon !== '' &&
-          <Icon className="coral-DecoratedTextfield-icon" icon={icon || 'search'} size="S" />
+          <Icon className="coral-DecoratedTextfield-icon" icon={ icon || 'search' } size="S" />
         }
         <Textfield
           ref="input"

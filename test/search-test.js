@@ -22,14 +22,14 @@ describe('Search', () => {
     expect(button.node).toNotExist();
   });
 
-  it('should support custom icons', function() {
-    const tree = shallow(<Search icon='refresh' />);
+  it('should support custom icons', () => {
+    const tree = shallow(<Search icon="refresh" />);
     const icon = tree.find('.coral-DecoratedTextfield-icon');
     expect(icon.prop('icon')).toBe('refresh');
   });
 
-  it('should support no icon', function() {
-    const tree = shallow(<Search icon='' />);
+  it('should support no icon', () => {
+    const tree = shallow(<Search icon="" />);
     const icon = tree.find('.coral-DecoratedTextfield-icon');
     expect(icon.node).toNotExist();
   });
