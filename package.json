@@ -1,6 +1,6 @@
 {
   "name": "@coralui/react-coral",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "React components using cloudui style guidelines from CoralUI",
   "repository": {
     "type": "git",
