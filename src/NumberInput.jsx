@@ -259,17 +259,15 @@ export default class NumberInput extends Component {
     const { inputId } = this.state;
 
     return (
-      <span className="coral-InputGroup-button" role="presentation">
-        <Button
-          { ...props }
-          type="button"
-          aria-controls={ inputId }
-          variant="secondary"
-          iconSize="XS"
-          tabIndex="-1"
-          square
-        />
-      </span>
+      <Button
+        { ...props }
+        type="button"
+        aria-controls={ inputId }
+        variant="secondary"
+        iconSize="XS"
+        tabIndex="-1"
+        square
+      />
     );
   }
 
@@ -300,7 +298,7 @@ export default class NumberInput extends Component {
       <div
         className={
           classNames(
-            'coral-NumberInput',
+            'coral3-NumberInput',
             'coral-InputGroup',
             {
               'is-focused': focused
@@ -309,14 +307,26 @@ export default class NumberInput extends Component {
           )
         }
       >
-        {
-          this.renderStepButton({
-            icon: 'minus',
-            title: decrementTitle,
-            disabled: disabled || min != null && value <= min || readOnly,
-            onClick: this.handleDecrementButtonClick
-          })
-        }
+        <span className="coral-InputGroup-button" role="presentation">
+          {
+            this.renderStepButton({
+              className: 'coral3-NumberInput-stepUp',
+              icon: 'chevronUp',
+              title: incrementTitle,
+              disabled: disabled || max != null && value >= max || readOnly,
+              onClick: this.handleIncrementButtonClick
+            })
+          }
+          {
+            this.renderStepButton({
+              className: 'coral3-NumberInput-stepDown',
+              icon: 'chevronDown',
+              title: decrementTitle,
+              disabled: disabled || min != null && value <= min || readOnly,
+              onClick: this.handleDecrementButtonClick
+            })
+          }
+        </span>
         <Textfield
           className={
             classNames(
@@ -346,14 +356,6 @@ export default class NumberInput extends Component {
           { ...otherProps }
           onChange={ this.handleInputChange }
         />
-        {
-          this.renderStepButton({
-            icon: 'add',
-            title: incrementTitle,
-            disabled: disabled || max != null && value >= max || readOnly,
-            onClick: this.handleIncrementButtonClick
-          })
-        }
       </div>
     );
   }
