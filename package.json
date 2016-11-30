@@ -26,7 +26,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
-    "react-portal": "^2.2.1",
+    "react-portal": "^3.0.0",
     "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.2",
     "tether-drop": "^1.4.2"
