@@ -75,8 +75,8 @@ describe('Datepicker', () => {
 
     // Blurring the textfield should change the value state.
     findTextfield(tree).simulate('blur', {
-      target: { value: '2016-08-01'
-    } });
+      target: { value: '2016-08-01' }
+    });
     expect(+tree.state('value')).toEqual(+(new Date(2016, 7, 1)));
   });
 
@@ -94,8 +94,8 @@ describe('Datepicker', () => {
     // as a prop will change the state.
     findTextfield(tree).simulate('change', {
       stopPropagation: () => {},
-      target: { value: '2016-08-01'
-    } });
+      target: { value: '2016-08-01' }
+    });
     expect(+tree.state('value')).toEqual(+dateWeekLater);
   });
 
