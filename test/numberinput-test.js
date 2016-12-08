@@ -18,7 +18,7 @@ describe('NumberInput', () => {
     };
 
     const tree = shallow(<NumberInput />);
-    expect(tree.hasClass('coral-NumberInput')).toBe(true);
+    expect(tree.hasClass('coral3-NumberInput')).toBe(true);
     expect(tree.hasClass('coral-InputGroup')).toBe(true);
 
     const input = findInput(tree);
@@ -359,5 +359,5 @@ describe('NumberInput', () => {
 
 const findInput = tree => tree.find(Textfield);
 const findAllButtons = tree => tree.find(Button);
-const findDecrementButton = tree => tree.find({ icon: 'minus' });
-const findIncrementButton = tree => tree.find({ icon: 'add' });
+const findDecrementButton = tree => tree.find({ icon: 'chevronDown' });
+const findIncrementButton = tree => tree.find({ icon: 'chevronUp' });
