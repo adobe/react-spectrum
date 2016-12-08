@@ -94,6 +94,17 @@ describe('Select', () => {
     });
   });
 
+  it('won\'t submit a parent form when the dropdown button is clicked', () => {
+    const submitSpy = expect.createSpy();
+    const tree = mount(
+      <form onSubmit={ submitSpy }>
+        <Select />
+      </form>
+    );
+    tree.find('.coral3-Select-button').get(0).click();
+    expect(submitSpy).toNotHaveBeenCalled();
+  });
+
   // This test works locally but not in jenkins
   //
   // it('supports overriding no results text', () => {

@@ -17,6 +17,7 @@ export default class Autocomplete extends Component {
   arrowRenderer({ onMouseDown }) {
     return (
       <button
+        type="button"
         className="coral-Button coral-Button--secondary coral-Button--square
           coral-Autocomplete-trigger"
         onMouseDown={ onMouseDown }
