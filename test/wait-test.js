@@ -10,9 +10,19 @@ describe('Wait', () => {
     expect(tree.type()).toBe('div');
   });
 
-  it('supports large', () => {
-    const tree = shallow(<Wait large />);
+  it('supports size L', () => {
+    const tree = shallow(<Wait size="L" />);
     expect(tree.prop('className')).toBe('coral-Wait coral-Wait--large');
+  });
+
+  it('supports size M', () => {
+    const tree = shallow(<Wait size="M" />);
+    expect(tree.prop('className')).toBe('coral-Wait coral-Wait--medium');
+  });
+
+  it('supports dots variant', () => {
+    const tree = shallow(<Wait variant="dots" />);
+    expect(tree.prop('className')).toBe('coral-Wait coral-Wait--dots');
   });
 
   it('supports centered', () => {
