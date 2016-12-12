@@ -186,14 +186,14 @@ describe('Datepicker', () => {
 
     it('calendar onChange', () => {
       const calendar = findCalendar(tree);
-      const text = '2016-08-01';
+      const text = '2016-08-01 00:00';
       const date = moment(text, DEFAULT_DATE_VAL_FORMAT).toDate();
       assertChangeArgs(calendar, [text, date], text, date);
     });
 
     it('clock onChange', () => {
       const calendar = findCalendar(tree);
-      const text = '2016-08-01 12:35:00';
+      const text = '2016-08-01 12:35';
       const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT).toDate();
       assertChangeArgs(calendar, [text, date], text, date);
     });
