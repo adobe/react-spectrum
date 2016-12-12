@@ -191,9 +191,27 @@ describe('Datepicker', () => {
       assertChangeArgs(calendar, [text, date], text, date);
     });
 
+    it('calendar onChange with displayFormat', () => {
+      tree.setProps({ displayFormat: DEFAULT_DATE_VAL_FORMAT });
+
+      const calendar = findCalendar(tree);
+      const text = '2016-08-01';
+      const date = moment(text, DEFAULT_DATE_VAL_FORMAT).toDate();
+      assertChangeArgs(calendar, [text, date], text, date);
+    });
+
     it('clock onChange', () => {
       const calendar = findCalendar(tree);
       const text = '2016-08-01 12:35';
+      const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT).toDate();
+      assertChangeArgs(calendar, [text, date], text, date);
+    });
+
+    it('clock onChange with displayFormat', () => {
+      tree.setProps({ displayFormat: "YYYY-MM-DD hh:mm:ss" });
+
+      const calendar = findCalendar(tree);
+      const text = '2016-08-01 12:35:00';
       const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT).toDate();
       assertChangeArgs(calendar, [text, date], text, date);
     });
