@@ -146,7 +146,7 @@ export default class Datepicker extends Component {
     if (!('value' in this.props)) {
       this.setState({
         valueText,
-        value: moment(value)
+        value
       });
     }
 
@@ -178,13 +178,18 @@ export default class Datepicker extends Component {
   }
 
   handleCalendarChange = (valueText, valueDate) => {
-    this.setValue(valueText, valueDate);
+    const date = moment(valueDate);
+
+    if (date.isValid()) {
+      this.setValue(this.formatValueToInputText(date), date);
+    }
     this.setState({ open: false });
   }
 
   handleClockChange = (valueText, valueDate) => {
-    if (moment(valueDate).isValid()) {
-      this.setValue(valueText, valueDate);
+    const date = moment(valueDate);
+    if (date.isValid()) {
+      this.setValue(valueText, date);
     }
   }
 
@@ -239,6 +244,7 @@ export default class Datepicker extends Component {
           { ...props }
           onChange={ this.handleClockChange }
           onKeyDown={ this.handleCalendarKeyDown }
+          displayFormat={ this.state.displayFormat }
         />
       </div>
     );
