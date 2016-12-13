@@ -2,9 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default function Wait({
-  large = false,
+  size = 'S',
   centered = false,
   className,
+  variant,
   ...otherProps
 }) {
   return (
@@ -13,8 +14,10 @@ export default function Wait({
         classNames(
           'coral-Wait',
           {
-            'coral-Wait--large': large,
-            'coral-Wait--centered': centered
+            'coral-Wait--large': size === 'L',
+            'coral-Wait--medium': size === 'M',
+            'coral-Wait--centered': centered,
+            'coral-Wait--dots': variant === 'dots'
           },
           className
         )
