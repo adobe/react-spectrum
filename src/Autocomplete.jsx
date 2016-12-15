@@ -11,16 +11,19 @@ export default class Autocomplete extends Component {
     multiple: false,
     multiCloseOnSelect: true,
     allowCreate: false,
-    noResultsText: 'No matching results.'
+    noResultsText: 'No matching results.',
+    disabled: false
   };
 
-  arrowRenderer({ onMouseDown }) {
+  arrowRenderer = ({ onMouseDown }) => {
+    const { disabled } = this.props;
+
     return (
       <button
         className="coral-Button coral-Button--secondary coral-Button--square
           coral-Autocomplete-trigger"
         onMouseDown={ onMouseDown }
-        disabled={ this.disabled }
+        disabled={ disabled }
       >
         <span className="coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS" />
       </button>
