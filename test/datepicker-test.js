@@ -208,7 +208,7 @@ describe('Datepicker', () => {
     });
 
     it('clock onChange with displayFormat', () => {
-      tree.setProps({ displayFormat: "YYYY-MM-DD hh:mm:ss" });
+      tree.setProps({ displayFormat: 'YYYY-MM-DD hh:mm:ss' });
 
       const calendar = findCalendar(tree);
       const text = '2016-08-01 12:35:00';
