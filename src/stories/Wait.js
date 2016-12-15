@@ -32,7 +32,7 @@ storiesOf('Wait', module)
   )
   .addWithInfo(
     'variant: dots',
-    () => render({ variant: 'dots'}),
+    () => render({ variant: 'dots' }),
     { inline: true }
   );
 
