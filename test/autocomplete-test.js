@@ -21,6 +21,17 @@ describe('Autocomplete', () => {
     expect(reactSelectComponent.prop('foo')).toBe(true);
   });
 
+  it('won\'t submit a parent form when the dropdown arrow button is clicked', () => {
+    const submitSpy = expect.createSpy();
+    const tree = mount(
+      <form onSubmit={ submitSpy }>
+        <Autocomplete />
+      </form>
+    );
+    tree.find('.coral-Autocomplete-trigger').get(0).click();
+    expect(submitSpy).toNotHaveBeenCalled();
+  });
+
   // This test works locally but not in jenkins.
   //
   // it('supports overriding no results text', () => {
