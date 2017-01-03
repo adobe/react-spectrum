@@ -6,9 +6,10 @@ import TabList from '../src/TabList';
 describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />);
+    const innerTree = tree.shallow();
     expect(tree.prop('className')).toBe('coral-TabList');
-    expect(tree.type()).toBe('div');
-    expect(tree.prop('role')).toBe('tablist');
+    expect(innerTree.type()).toBe('div');
+    expect(innerTree.prop('role')).toBe('tablist');
   });
 
   it('supports large size', () => {
@@ -47,9 +48,9 @@ describe('TabList', () => {
         <div className="two">b</div>
       </TabList>
     );
+    const innerTree = tree.shallow();
 
-
-    const child = tree.find('.two');
+    const child = innerTree.find('.two');
     child.simulate('click');
 
     expect(spy).toHaveBeenCalledWith(1);
@@ -71,12 +72,14 @@ describe('TabList', () => {
 
     it('supports string index', () => {
       const tree = renderTabListWithSelectedIndex('1');
-      assertChildTwoSelected(tree);
+      const innerTree = tree.shallow();
+      assertChildTwoSelected(innerTree);
     });
 
     it('supports integer index', () => {
       const tree = renderTabListWithSelectedIndex(1);
-      assertChildTwoSelected(tree);
+      const innerTree = tree.shallow();
+      assertChildTwoSelected(innerTree);
     });
   });
 
@@ -88,7 +91,8 @@ describe('TabList', () => {
         <div className="two">b</div>
       </TabList>
     );
-    const child = tree.find('[selected=true]');
+    const innerTree = tree.shallow();
+    const child = innerTree.find('[selected=true]');
 
     expect(child.length).toBe(1);
     expect(child.node.props.className).toBe('two');
