@@ -49,7 +49,7 @@ storiesOf('StepList', module)
 
 function render(props = {}, steps) {
   steps = steps || ['Step 1', 'Step 2', 'Step 3'];
-  const children = steps.map((step) => <Step>{ step }</Step>);
+  const children = steps.map((step, i) => <Step key={ i }>{ step }</Step>);
 
   return (
     <StepList
