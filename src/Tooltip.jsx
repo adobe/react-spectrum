@@ -15,6 +15,8 @@ export default class Tooltip extends Component {
     children: PropTypes.node.isRequired,
     content: PropTypes.node.isRequired,
     className: PropTypes.string,
+    hoverOpenDelay: PropTypes.number,
+    hoverCloseDelay: PropTypes.number,
     // Customize how to constrain the popover so it pins to the edge of the window,
     // scroll container, etc, or if it flips when it would otherwise be clipped.
     // This is passed to tether internally. See http://tether.io/#constraints
@@ -26,6 +28,12 @@ export default class Tooltip extends Component {
         PropTypes.string,
         PropTypes.arrayOf(PropTypes.string)
       ])
+    }),
+    // Additional options to be passed to tether
+    tetherOptions: PropTypes.shape({
+      offset: PropTypes.string,
+      targetOffset: PropTypes.string,
+      targetModifier: PropTypes.string
     })
   };
 
@@ -65,6 +73,9 @@ export default class Tooltip extends Component {
       attachmentConstraints,
       className,
       openOn,
+      hoverOpenDelay = 400,
+      hoverCloseDelay = 400,
+      tetherOptions,
       ...otherProps
     } = this.props;
 
@@ -74,9 +85,10 @@ export default class Tooltip extends Component {
         position={ getTetherPositionFromPlacement(placement) }
         openOn={ openOn }
         classPrefix="coral-Tooltip-drop"
-        hoverOpenDelay={ 400 }
-        hoverCloseDelay={ 400 }
+        hoverOpenDelay={ hoverOpenDelay }
+        hoverCloseDelay={ hoverCloseDelay }
         constraints={ attachmentConstraints }
+        tetherOptions={ tetherOptions }
         onOpen={ this.onOpen }
         onClose={ this.onClose }
         content={

@@ -34,6 +34,9 @@ export default function Step({
           openOn={ (size === SMALL) ? 'hover' : null }
           open
           placement="top"
+          hoverOpenDelay={ 0 }
+          hoverCloseDelay={ 0 }
+          tetherOptions={ { offset: '10px 0px' } }
           content={ children }
         >
           <span className="coral-Step-marker" />
