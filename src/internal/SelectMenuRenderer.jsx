@@ -19,7 +19,7 @@ export default ({
   return options.map((option, i) => {
     const isSelected = valueArray && valueArray.indexOf(option) > -1;
     const isFocused = option === focusedOption;
-    const optionClass = classNames(optionClassName, option.className, {
+    const optionClass = classNames(optionClassName, {
       'coral-BasicList-item': true,
       'coral-ButtonList-item': true,
       'is-selected': isSelected,
