@@ -39,12 +39,26 @@ storiesOf('Checkbox', module)
     'disabled: true',
     () => render({ disabled: true }),
     { inline: true }
+  )
+  .addWithInfo(
+    'Label Not Set',
+    () => renderWithoutLabel(),
+    { inline: true }
   );
 
 function render(props = {}) {
   return (
     <Checkbox
       label="React"
+      onChange={ action('change') }
+      { ...props }
+    />
+  );
+}
+
+function renderWithoutLabel(props = {}) {
+  return (
+    <Checkbox
       onChange={ action('change') }
       { ...props }
     />

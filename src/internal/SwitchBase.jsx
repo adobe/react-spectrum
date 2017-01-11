@@ -117,7 +117,9 @@ export default class SwitchBase extends Component {
         <span className={ markClassName } />
         {
           renderLabel &&
-          <label className={ labelClassName }>
+          <label 
+            className={ labelClassName } 
+            hidden= {!label && !children}>
             { label }
             { children }
           </label>
