@@ -42,7 +42,7 @@ storiesOf('Checkbox', module)
   )
   .addWithInfo(
     'Label Not Set',
-    () => renderWithoutLabel(),
+    () => render({ label: ''}),
     { inline: true }
   );
 
@@ -50,15 +50,6 @@ function render(props = {}) {
   return (
     <Checkbox
       label="React"
-      onChange={ action('change') }
-      { ...props }
-    />
-  );
-}
-
-function renderWithoutLabel(props = {}) {
-  return (
-    <Checkbox
       onChange={ action('change') }
       { ...props }
     />
