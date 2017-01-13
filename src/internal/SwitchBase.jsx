@@ -78,6 +78,7 @@ export default class SwitchBase extends Component {
       ...otherProps
     } = this.props;
     const { checked } = this.state;
+    const shouldRenderLabel = renderLabel && (label || children);
 
     // Don't let native browser change events bubble up to the root div.
     // Otherwise we double dispatch.
@@ -116,8 +117,8 @@ export default class SwitchBase extends Component {
         />
         <span className={ markClassName } />
         {
-          renderLabel &&
-          <label className={ labelClassName }>
+          shouldRenderLabel &&
+          <label className={ labelClassName } >
             { label }
             { children }
           </label>
