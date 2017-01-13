@@ -34,6 +34,11 @@ storiesOf('Radio', module)
     'disabled: true',
     () => render({ disabled: true }),
     { inline: true }
+  )
+  .addWithInfo(
+     'Label Not Set',
+     () => render({ label: '' }),
+     { inline: true }
   );
 
 function render(props = {}) {

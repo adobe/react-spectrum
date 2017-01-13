@@ -112,6 +112,7 @@ describe('SwitchBase', () => {
     );
     expect(findLabel(tree).node).toNotExist();
     tree.setProps({ renderLabel: true });
+    tree.setProps({ label: 'React' });
     expect(findLabel(tree).node).toExist();
   });
 
@@ -130,7 +131,7 @@ describe('SwitchBase', () => {
   });
 
   it('supports overriding the label className', () => {
-    const tree = shallow(<SwitchBase labelClassName="my-label-class" />);
+    const tree = shallow(<SwitchBase labelClassName="my-label-class" label="React" />);
     const mark = tree.find('.my-label-class');
     expect(mark.node).toExist();
     expect(mark.type()).toBe('label');
