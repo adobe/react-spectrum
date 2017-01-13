@@ -21,11 +21,6 @@ storiesOf('Tab', module)
     { inline: true }
   )
   .addWithInfo(
-    'selected: true',
-    () => render({ selected: true }),
-    { inline: true }
-  )
-  .addWithInfo(
     'disabled: true',
     () => render({ disabled: true }),
     { inline: true }
