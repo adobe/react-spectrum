@@ -39,6 +39,11 @@ storiesOf('Textfield', module)
     'required: true',
     () => render({ required: true }),
     { inline: true }
+  )
+  .addWithInfo(
+    'autoFocus: true',
+    () => render({ autoFocus: true }),
+    { inline: true }
   );
 
 function render(props = {}) {

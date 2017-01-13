@@ -27,7 +27,13 @@ export default class TetherDropComponent extends Component {
     hoverCloseDelay: PropTypes.number,
     onClickOutside: PropTypes.func,
     onOpen: PropTypes.func,
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
+    // Additional options to be passed to tether
+    tetherOptions: PropTypes.shape({
+      offset: PropTypes.string,
+      targetOffset: PropTypes.string,
+      targetModifier: PropTypes.string
+    })
   };
 
   static defaultProps = {
@@ -120,7 +126,8 @@ export default class TetherDropComponent extends Component {
       hoverOpenDelay,
       hoverCloseDelay,
       classPrefix,
-      dropClassName
+      dropClassName,
+      tetherOptions
     } = this.props;
 
     /** eslint new-cap **/
@@ -137,7 +144,8 @@ export default class TetherDropComponent extends Component {
       hoverCloseDelay,
       content: ' ', // We'll manage the content ourselves
       tetherOptions: {
-        constraints: constraints ? [constraints] : []
+        constraints: constraints ? [constraints] : [],
+        ...tetherOptions || {}
       }
     });
 

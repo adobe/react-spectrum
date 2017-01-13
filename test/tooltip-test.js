@@ -26,4 +26,19 @@ describe('Tooltip', () => {
     const contentTree = shallow(tree.prop('content'));
     expect(contentTree.prop('foo')).toBe(true);
   });
+
+  it('supports tetherOptions', () => {
+    const tree = shallow(<Tooltip tetherOptions={ { offset: '10px 0' } } />);
+    expect(tree.prop('tetherOptions').offset).toBe('10px 0');
+  });
+
+  it('supports custom hoverOpenDelay', () => {
+    const tree = shallow(<Tooltip hoverOpenDelay={ 77 } />);
+    expect(tree.prop('hoverOpenDelay')).toBe(77);
+  });
+
+  it('supports custom hoverCloseDelay', () => {
+    const tree = shallow(<Tooltip hoverCloseDelay={ 66 } />);
+    expect(tree.prop('hoverCloseDelay')).toBe(66);
+  });
 });
