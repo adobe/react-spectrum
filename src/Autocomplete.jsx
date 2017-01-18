@@ -82,8 +82,8 @@ export default class Autocomplete extends Component {
             'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
           'Select-input-field':
             'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
-          'Select-menu-outer': 'coral-Overlay coral-Autocomplete-overlay',
-          'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList',
+          'Select-menu-outer': 'coral-Overlay',
+          'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList coral-Autocomplete-overlay',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',
           'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
         } }
