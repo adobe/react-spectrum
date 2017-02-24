@@ -87,7 +87,12 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'element: a',
-    () => render({ element: 'a' }),
+    () => render({ element: 'a', href: 'http://example.com' }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'element: a, disabled: true',
+    () => render({ element: 'a', href: 'http://example.com', disabled: true }),
     { inline: true }
   );
 

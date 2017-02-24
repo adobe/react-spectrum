@@ -10,6 +10,26 @@ describe('Button', () => {
     expect(tree.type()).toBe('button');
     tree.setProps({ element: 'a' });
     expect(tree.type()).toBe('a');
+    expect(tree.prop('role')).toBe('button');
+    expect(tree.prop('tabIndex')).toBe(0);
+  });
+
+  it('supports different elements being disabled', () => {
+    const onClickSpy = createSpy();
+    const preventDefaultSpy = createSpy();
+
+    const tree = shallow(<Button onClick={ onClickSpy } />);
+    expect(tree.type()).toBe('button');
+    tree.setProps({ element: 'a', href: 'http://example.com', disabled: true });
+    expect(tree.type()).toBe('a');
+    expect(tree.prop('tabIndex')).toBe(-1);
+    expect(tree.prop('aria-disabled')).toBe(true);
+    expect(tree.prop('className'))
+      .toBe('coral-Button coral-Button--default coral-Button--medium is-disabled');
+
+    tree.simulate('click', { preventDefault: preventDefaultSpy });
+    expect(onClickSpy).toNotHaveBeenCalled();
+    expect(preventDefaultSpy).toHaveBeenCalled();
   });
 
   it('supports different sizes', () => {
