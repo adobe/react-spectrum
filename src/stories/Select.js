@@ -115,6 +115,16 @@ storiesOf('Select', module)
     { inline: true }
   )
   .addWithInfo(
+    'variant: quiet disabled',
+    () => render({ variant: 'quiet', disabled: true }),
+    { inline: true }
+  )
+  .addWithInfo(
+    'variant: quiet read-only',
+    () => render({ variant: 'quiet', readOnly: true }),
+    { inline: true }
+  )
+  .addWithInfo(
     'multiple: true',
     () => render({ multiple: true, value: selectedValue }),
     { inline: true }

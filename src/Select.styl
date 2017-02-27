@@ -50,13 +50,14 @@
     &.is-focused, &.is-selected, &:active, &:focus
       .Select-control
         background: 0 0
-        color: #326ec8
+        &:not(:disabled)
+          color: #326ec8
 
     .Select-control
       display: block
       border-color: transparent
       background: 0 0
-      :hover
+      &:not(:disabled):hover
         text-decoration: underline
       &.is-selected, &:hover
         background: 0 0
