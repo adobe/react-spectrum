@@ -7,6 +7,7 @@ export Checkbox from './Checkbox';
 export Dialog from './Dialog';
 export Heading from './Heading';
 export Icon from './Icon';
+export Link from './Link';
 export List from './List';
 export ListItem from './ListItem';
 export NumberInput from './NumberInput';
