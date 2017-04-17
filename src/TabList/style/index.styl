@@ -55,11 +55,11 @@
     font-size: 14*$px;
   }
 
-  .coral-Icon + coral-tab-label:not(:empty) {
+  .coral-Icon + .coral-Tab-label:not(:empty) {
     margin-left: 5*$px;
   }
 
-  > coral-tab-label {
+  > .coral-Tab-label {
     position: relative;
     padding: 6*$px 0;
   }
@@ -72,7 +72,7 @@
 
   &.is-selected {
     // Horizontal Active Tab Line
-    > coral-tab-label:after {
+    > .coral-Tab-label:after {
       content: "";
       position: absolute;
       display: block;
@@ -113,7 +113,7 @@
     font-size: 13*$px;
     text-align: left;
 
-    > coral-tab-label {
+    > .coral-Tab-label {
       padding: 4*$px 7*$px;
       &:after {
         display: none; // Removing horizontal active line
