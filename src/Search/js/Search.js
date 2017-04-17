@@ -93,6 +93,7 @@ export default class Search extends Component {
           classNames(
             'coral-Search',
             'coral-DecoratedTextfield',
+            {'is-disabled': disabled},
             className
           )
         }

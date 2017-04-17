@@ -22,7 +22,7 @@
   position: relative;
 
   // Search Icon
-  .coral-Icon {
+  > .coral-Icon {
     position: absolute;
     top: 50%;
     left: 0;
@@ -35,12 +35,19 @@
   .coral-DecoratedTextfield-button {
     position: absolute;
     top: 50%;
-    right: 0;
+    right: 8px;
     transform: translateY(-50%);
     margin: 0;
+    height: 13px;
+    width: 13px;
+    padding: 0;
 
     .coral-Icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
       font-size: 10px;
+      transform: translate(-50%, -50%);
     }
   }
 
