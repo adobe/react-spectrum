@@ -89,7 +89,7 @@ export default class SwitchBase extends Component {
         className={
           classNames(
             className,
-            { 'is-invalid': invalid }
+            { 'is-invalid': invalid, 'is-disabled': disabled }
           )
         }
         required={ required ? true : null }
