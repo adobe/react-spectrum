@@ -34,7 +34,8 @@ export default function Tag({
           color ? `coral-Tag--${ color }` : null,
           {
             'coral-Tag--multiline': multiline,
-            'coral-Tag--quiet': quiet
+            'coral-Tag--quiet': quiet,
+            'is-closable': closable
           },
           className
         )

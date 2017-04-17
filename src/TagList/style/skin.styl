@@ -35,7 +35,7 @@ $spectrum-tag-disabled-bg = $spectrum-color-background-disabled
 $spectrum-tag-disabled-text = $spectrum-color-text-disabled
 $spectrum-tag-border-color = $spectrum-color-constant-grey7
 
-.coral-Tag[closable]:not([color]) {
+.coral-Tag.is-closable:not([color]) {
   &:focus {
     border-color: $spectrum-tag-focus;
     color: $spectrum-tag-focus;
@@ -76,8 +76,8 @@ $spectrum-tag-border-color = $spectrum-color-constant-grey7
     background-color: transparent;
     color: $spectrum-color-text-default;
 
-    &[closable]:hover,
-    &[closable]:active {
+    &.is-closable:hover,
+    &.is-closable:active {
       border-color: transparent;
     }
   }
@@ -101,7 +101,7 @@ $spectrum-tag-border-color = $spectrum-color-constant-grey7
 .coral-Tag--cyan {
   color: $tag-colored-text-color;
 
-  &[closable] {
+  &.is-closable {
     .coral-Icon {
       opacity: .75;
     }
