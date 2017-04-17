@@ -51,7 +51,7 @@ export default class AccordionItem extends Component {
           tabIndex="0"
           onKeyPress={ this.onHeaderKeyDown.bind(this) }
         >
-          <Icon icon={ selected ? 'chevronDown' : 'chevronRight' } size="XS" />
+          <Icon icon={ selected ? 'chevronDown' : 'chevronRight' } className="coral3-Accordion-icon" size="XS" />
           <span className="coral3-Accordion-label">{ header }</span>
         </div>
         <div
@@ -59,8 +59,7 @@ export default class AccordionItem extends Component {
           role="tabpanel"
           aria-labelledby={ this.headerId }
           aria-hidden={ !selected }
-          className="coral3-Accordion-content"
-          style={ { display: selected ? 'block' : 'none' } }
+          className={classNames("coral3-Accordion-content", {'is-open': selected, 'is-closed': !selected})}
         >
           { children }
         </div>
