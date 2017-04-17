@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 
 import Button from '../../Button';
+import InputGroup from '../../InputGroup';
 import Textfield from '../../Textfield';
 import Calendar from '../../Calendar';
 import Popover from '../../Popover';
@@ -328,16 +329,7 @@ export default class Datepicker extends Component {
         aria-haspopup
         onClose={ this.handlePopoverClose }
       >
-        <div
-          className={
-            classNames(
-              'coral-InputGroup',
-              {
-                'coral-InputGroup--quiet': quiet
-              }
-            )
-          }
-        >
+        <InputGroup quiet={quiet}>
           <Textfield
             className="coral-InputGroup-input"
             aria-invalid={ invalid }
@@ -362,7 +354,7 @@ export default class Datepicker extends Component {
               onClick={ this.handleCalendarButtonClick }
             />
           </div>
-        </div>
+        </InputGroup>
       </Popover>
     );
   }

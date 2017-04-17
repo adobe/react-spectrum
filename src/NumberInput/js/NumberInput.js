@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
+import InputGroup from '../../InputGroup';
 import Textfield from '../../Textfield';
 import Button from '../../Button';
 
@@ -295,11 +296,10 @@ export default class NumberInput extends Component {
     } = this.state;
 
     return (
-      <div
+      <InputGroup
         className={
           classNames(
             'coral3-NumberInput',
-            'coral-InputGroup',
             {
               'is-focused': focused
             },
@@ -356,7 +356,7 @@ export default class NumberInput extends Component {
           { ...otherProps }
           onChange={ this.handleInputChange }
         />
-      </div>
+      </InputGroup>
     );
   }
 }
