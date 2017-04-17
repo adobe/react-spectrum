@@ -24,6 +24,7 @@
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
+    "@coralui/coralui-core": "^4.4.0",
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "nib": "^1.1.2",

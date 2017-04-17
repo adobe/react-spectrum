@@ -24,12 +24,14 @@ module.exports = {
   },
   stylus: {
     // urlfunc: 'embedurl',
-    use: [require('svg-stylus')()],
+    use: [require('svg-stylus')(), require('nib')()],
     define: {
       'embedurl': require('stylus').url()
     },
-    'resolve url': true
-    // 'include css': 'true',
+    'resolve url': true,
+    set: {
+      'include css': true
+    }
     // 'import': ['nib']
   }
 }

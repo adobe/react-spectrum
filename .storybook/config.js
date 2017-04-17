@@ -5,7 +5,7 @@ import infoAddon from '@kadira/react-storybook-addon-info';
 import configureTypekit from '../src-old/configureTypekit';
 
 import './storybook.styl';
-// import '../css/coral.css';
+import '../src/page/index.styl';
 
 setAddon(infoAddon);
 configureTypekit('ruf7eed');
