@@ -111,13 +111,16 @@ export default class Popover extends Component {
             {
               title &&
                 <DialogHeader
+                  className="coral-Popover-header"
                   title={ title }
                   icon={ icon }
                   closable={ closable }
                   onClose={ onClose }
                 />
             }
-            <div className="coral3-Popover-content">{ content }</div>
+            <div className="coral3-Popover-content">
+              {title ? <div className="u-coral-margin">{content}</div> : content}
+            </div>
           </div>
         }
         onClickOutside={ onClose }

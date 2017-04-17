@@ -29,14 +29,7 @@ $spectrum-popover-content-bottom-padding = 12*$px;
 $spectrum-popover-header-font-size = 18*$px;
 $spectrum-popover-header-height = 30*$px;
 
-// Remove popover flashing while loading the page
-coral-popover {
-  display: none;
-}
-
 .coral3-Popover {
-  position: absolute;
-
   display: block;
 
   box-sizing: border-box; // Let max-width and width include the border so we position nicely
@@ -59,7 +52,7 @@ coral-popover {
 
 .coral-Popover-header {
   height: $spectrum-popover-header-height;
-  width: auto;
+  width: auto !important; // Override .coral-Dialog-header
   margin: $spectrum-popover-padding $spectrum-popover-padding 0 $spectrum-popover-padding;
 
   > .coral-Dialog-title {
@@ -92,12 +85,7 @@ coral-popover {
   margin: 0 16*$px;
 }
 
-coral-popover-separator {
-  // makes the seprator behave like a div
-  display: block;
-}
-
-coral-popover-content {
+.coral3-Popover-content {
   // Make the content zone a block level element
   // This lets consumers apply top/bottom padding etc
   display: block;
