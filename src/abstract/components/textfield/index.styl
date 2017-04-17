@@ -1,0 +1,95 @@
+@require '../../commons'
+
+spectrum-textfield() {
+  // box
+  box-sizing: border-box;
+  border: 1*$px solid;
+  border-radius: $spectrum-border-radius;
+  padding: 0;
+  min-width: 110*$px;
+  height: $spectrum-component-single-line-height;
+  width: $spectrum-component-single-line-width;
+
+  // text
+  normal-text();
+  vertical-align: top; // used to align them correctly in forms.
+
+  font-family: inherit
+  font-size: $spectrum-font-size;
+  line-height: $spectrum-text-body-line-height;
+  text-indent: $spectrum-padding;
+
+  transition: border-color $spectrum-transition-time ease-in-out, box-shadow $spectrum-transition-time ease-in-out;
+
+  outline: none;
+
+  // removes the native spin buttons in firefox. -mox-appearance: none has no effect
+  // http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+
+  &::placeholder {
+    font-weight: normal;
+    font-style: italic;
+    transition: color $spectrum-transition-time ease-in-out;
+  }
+
+  &:hover {
+    &::placeholder {
+      font-weight: normal;
+    }
+  }
+
+  &:disabled {
+    &::placeholder {
+      font-weight: normal;
+    }
+    /* The opacity must be set to 1 */
+    -webkit-opacity: 1;
+  }
+
+  // Remove the native clear button in IE
+  // http://stackoverflow.com/questions/14007655/remove-ie10s-clear-field-x-button-on-certain-inputs
+  &::-ms-clear {
+    width: 0;
+    height: 0;
+  }
+
+  // removes the native spin buttons
+  // http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  // removes the red border that appears in Firefox
+  &:-moz-ui-invalid {
+    box-shadow: none;
+  }
+}
+
+spectrum-textfield--quiet() {
+  border-radius: 0;
+  text-indent: 0;
+
+  border: none;
+  border-bottom: 1*$px solid;
+
+  // removes the side padding to align the text properly
+  padding-left: 0;
+  padding-right: 0;
+
+}
+
+// to be used for textarea
+spectrum-textfield--multiline() {
+  height: auto;
+  padding: 4*$px 8*$px;
+  text-indent: 0;
+}
+
+spectrum-textfield--quiet--multiline() {
+  resize: none;
+  overflow-y: hidden;
+}

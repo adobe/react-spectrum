@@ -1,0 +1,282 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+// The width of a step
+$coral-steplist-stepWidth = 80*$px;
+
+// The diameter of the marker
+$coral-steplist-marker-diameter = 8*$px;
+
+// The width of the hit area
+$coral-steplist-marker-hitArea = 20*$px;
+
+// The height of the line
+$coral-steplist-line-height = 2*$px;
+
+// This gives enough space for one line of text
+$coral-steplist-topPadding = 22*$px;
+
+// This gives enough space for the longest possible label
+$coral-steplist-sidePadding = 60*$px;
+
+// Offset from the BOTTOM of the steplist
+$coral-steplist-labelOffset = 10*$px;
+
+.coral-StepList {
+  display: block;
+  vertical-align: top;
+  margin: 0;
+  padding-top: $coral-steplist-topPadding;
+  padding-left: $coral-steplist-sidePadding;
+  padding-right: $coral-steplist-sidePadding;
+
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0; // To remove html whitespace between inline elements
+  line-height: 16*$px; // in case the container changes it
+}
+
+.coral-StepList--interactive {
+  .coral-Step-label,
+  .coral-Step-markerContainer {
+    // Show cursor on hit zone when clickable
+    cursor: pointer;
+  }
+
+  .coral-Step {
+    // Step Hovered
+    &:hover {
+      .coral-Step-marker {
+        border: none;
+      }
+    }
+
+    // Step Focused
+    &:focus {
+      .coral-Step-marker {
+        border: none;
+      }
+    }
+  }
+}
+
+
+// Tooltips Style
+&.coral-StepList--small {
+  padding: (11*$px) 0;
+
+  .coral-Step {
+    padding: 0 40*$px 0 0;
+    width: 80*$px;
+
+    // Disable Label
+    .coral-Step-label {
+      display: none;
+    }
+
+    &:first-child, &:last-child {
+      width: 20*$px;
+    }
+
+    // Disable first line
+    &:first-child {
+      .coral-Step-markerContainer {
+        margin-left: -10*$px; // C : 0
+      }
+    }
+
+    &:last-child {
+      .coral-Step-markerContainer {
+        margin-right: -10*$px; // C : 0
+      }
+    }
+  }
+}
+
+// Lines Style after Complete
+.coral-Step.is-complete + .coral-Step .coral-Step-line {
+  border-bottom-style: solid;
+}
+
+.coral-Step {
+  outline: none;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+
+  width: $coral-steplist-stepWidth;
+  padding: 0 ($coral-steplist-stepWidth / 2) 0 0;
+  font-size: 14*$px; // ??!??!??!???!?!?!
+
+  // Compelted State
+  &.is-complete {
+    .coral-Step-marker {
+      border: none;
+    }
+  }
+
+  // Selected state
+  &.is-selected {
+    .coral-Step-marker {
+      border: none;
+    }
+  }
+
+  // Focus state
+  &.is-selected:focus {
+    outline: none;
+  }
+}
+
+.coral-Step-label {
+  position: absolute;
+  left: 50%;
+  bottom: $coral-steplist-labelOffset;
+
+  display: block;
+  width: $coral-steplist-stepWidth * 1.5;
+
+  font-size: 12*$px;
+  white-space: normal;
+
+  transform: translateX(-50%);
+}
+
+.coral-Step-markerContainer {
+  display: block;
+
+  z-index: 2;
+  position: absolute;
+  bottom: -10*$px;
+  left: 50%;
+
+  width: $coral-steplist-marker-hitArea;
+  height: $coral-steplist-marker-hitArea;
+
+  margin-left: -1 * ($coral-steplist-marker-hitArea / 2);
+}
+
+// Circle step marker
+.coral-Step-marker {
+  box-sizing: border-box; // So we can stroke nicely
+  display: block;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -1 * ($coral-steplist-marker-diameter / 2);
+  margin-left: -1 * ($coral-steplist-marker-diameter / 2);
+
+  width: $coral-steplist-marker-diameter;
+  height: $coral-steplist-marker-diameter;
+
+  border-radius: $coral-steplist-marker-diameter;
+
+  border: 2px solid;
+  border-color: transparent;
+  background: transparent;
+}
+
+// The dashed line
+.coral-Step-line {
+  display: block;
+
+  z-index: 1;
+  position: absolute;
+  right: ($coral-steplist-stepWidth) - ($coral-steplist-marker-diameter * 1.5);
+  width: ($coral-steplist-stepWidth * 1.5) - ($coral-steplist-marker-diameter * 2);
+  bottom: -1 * ($coral-steplist-line-height / 2);
+
+  border-bottom: $coral-steplist-line-height dashed;
+}
+
+// First step overrides
+.coral-Step:first-child {
+  .coral-Step-markerContainer {
+    left: 0;
+  }
+
+  .coral-Step-label {
+    left: 0;
+  }
+
+  .coral-Step-line {
+    // Not visible for first step
+    display: none;
+  }
+}
+
+// Last step overrides
+.coral-Step:last-child {
+  .coral-Step-markerContainer {
+    left: auto;
+    right: 0;
+
+    margin-left: 0;
+    margin-right: -1 * ($coral-steplist-marker-hitArea / 2);
+  }
+
+  .coral-Step-label {
+    left: auto;
+    right: 0;
+
+    transform: translateX(50%);
+  }
+
+  .coral-Step-line {
+    right: $coral-steplist-marker-diameter;
+    left: auto;
+  }
+}
+
+.coral-Step:first-child,
+.coral-Step:last-child {
+  width: ($coral-steplist-stepWidth / 2) - ($coral-steplist-marker-diameter * 2.5);
+}
+
+// Single step
+.coral-Step:only-child {
+  .coral-Step-label {
+    // Be centered
+    left: 50%;
+
+    // Override last-child bits
+    transform: translate(-50%);
+  }
+
+  .coral-Step-markerContainer {
+    // Be centered
+    left: 50%;
+
+    // Override last-child bits
+    margin-right: 0;
+    margin-left: -1 * ($coral-steplist-marker-hitArea / 2);
+  }
+}
+
+// Previous items
+.coral-Step.is-complete {
+  // The next step's line should be solid
+  & + .coral-Step .coral-Step-line {
+    border-bottom-style: solid;
+  }
+}
+
+@require 'light.styl'
+@require 'dark.styl'

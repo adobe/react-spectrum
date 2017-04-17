@@ -1,0 +1,225 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-select-font-size = $spectrum-font-size;
+
+$spectrum-select-border-radius = $spectrum-border-radius;
+$spectrum-select-width = $spectrum-component-single-line-width;
+$spectrum-select-height = $spectrum-component-single-line-height;
+
+$spectrum-select-border-width = $px;
+
+$spectrum-select-item-spacing-left = 14*$px;
+$spectrum-select-item-spacing-top = 9*$px;
+$spectrum-select-item-focus-width = 2*$px;
+
+$spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
+
+coral-select-item {
+  display: none;
+}
+
+.coral3-Select {
+  component-single-line();
+  position: relative;
+
+  width: $spectrum-select-width;
+  height: $spectrum-select-height;
+
+  outline: none;
+
+  > .coral-Button {
+    position: relative;
+
+    box-sizing: border-box;
+    width: 100%;
+    height: $spectrum-select-height;
+    margin-right: 0;
+
+    border-width: $spectrum-select-border-width;
+    border-radius: $spectrum-select-border-radius;
+  }
+
+  > .coral-Taglist {
+    display: none;
+  }
+
+  .coral3-Select-openIcon {
+    line-height: 36*$px;
+
+    position: absolute;
+    top: 55%;
+    right: 0;
+
+    width: 38*$px;
+    height: 36*$px;
+    margin-right: 0;
+
+    transform: translate(0, -50%);
+    pointer-events: none;
+  }
+
+  > .coral-Overlay {
+    margin-top: -3*$px;
+
+    // removes the outline in Chrome and FF
+    // when the overlay gets focused.
+    outline: none;
+
+    &::after {
+      position: absolute;
+      right: $spectrum-select-item-spacing-left;
+      bottom: 0;
+      left: $spectrum-select-item-spacing-left;
+
+      display: block;
+
+      height: $px;
+
+      content: '';
+    }
+  }
+
+  &.is-openAbove > .coral-Overlay::after {
+    bottom: $px;
+  }
+
+  &.is-openBelow > .coral-Overlay::after {
+    top: $px;
+  }
+
+  &.is-invalid {
+    > .coral-Button::after {
+      position: absolute;
+      top: 50%;
+      right: 8*$px;
+      width: 16*$px;
+      height: 16*$px;
+
+      content: '';
+
+      transform: translateY(-50%);
+
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    .coral3-Select-label {
+      margin-right: 46*$px;
+    }
+
+    .coral3-Select-openIcon {
+      right: 17*$px;
+    }
+  }
+}
+
+.coral3-Select-label {
+  display: block;
+  // button width - button padding = 38 - 15 = 23
+  margin-right: 23*$px;
+  font-weight: normal;
+
+  // reverts the font-smoothing that the button adds due to bold text
+  font-smoothing: subpixel-antialiased;
+
+  text-align: left;
+  font-size: $spectrum-select-font-size;
+
+  overflow: ellipsis;
+}
+
+.coral3-Select-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: none;
+
+  width: 100%;
+  height: $spectrum-select-height;
+
+  // allows the size to match the size of the button
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.coral3-Select-selectList {
+  border-radius: $spectrum-select-border-radius;
+}
+
+.coral3-Select--native {
+  .coral3-Select-select {
+    display: block;
+    opacity: 0.01;
+  }
+}
+
+.coral-Form--vertical .coral-Form-field.coral3-Select {
+  display: block;
+  width: 100%;
+}
+
+.coral3-Select:not(.coral3-Select--quiet).is-openBelow > .coral-Button,
+.coral3-Select:not(.coral3-Select--quiet).is-openAbove .coral3-Select-selectList {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.coral3-Select:not(.coral3-Select--quiet).is-openAbove > .coral-Button,
+.coral3-Select:not(.coral3-Select--quiet).is-openBelow .coral3-Select-selectList {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.coral3-Select--quiet {
+  width: auto;
+  padding: 0 $spectrum-padding 0 $spectrum-padding;
+
+  > .coral-Button {
+    width: auto;
+    padding: 0;
+
+    border-top: none;
+    border-right: none;
+    border-left: none;
+  }
+
+  > .coral-Overlay {
+    width: auto !important;
+  }
+
+  .coral3-Select-openIcon {
+    width: auto;
+  }
+
+  &.is-invalid {
+    .coral3-Select-openIcon {
+      width: auto;
+      right: 22*$px;
+    }
+
+    > .coral-Button::after {
+      right: 0;
+    }
+  }
+}
+
+@require 'light.styl'
+@require 'dark.styl'

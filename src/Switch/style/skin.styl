@@ -1,0 +1,77 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$switch-track-background-color = $spectrum-color-switch-track
+$switch-track-disabled-background-color = $spectrum-color-background-disabled
+
+$switch-handle-border-color = $spectrum-color-border-switch-default
+$switch-handle-border-color-hover = $spectrum-color-border-switch-hover
+$switch-handle-border-color-active = $spectrum-color-border-switch-active
+$switch-handle-border-color-focus = $spectrum-color-border-switch-focus
+$switch-handle-border-color-checked = $spectrum-color-border-switch-active
+$switch-handle-background-color = $spectrum-color-background-default
+$switch-handle-disabled-border-color = $spectrum-color-border-disabled
+
+.coral3-Switch {
+  &:hover .coral3-Switch-input:not(:disabled) {
+    + .coral3-Switch-label:after {
+      border-color: $switch-handle-border-color-hover;
+      box-shadow: none;
+    }
+  }
+
+  &:active .coral3-Switch-input:not(:disabled) {
+    + .coral3-Switch-label:after {
+      border-color: $switch-handle-border-color-active;
+    }
+  }
+}
+
+// :before is used for the track of the switch
+.coral3-Switch-label:before {
+ background: $switch-track-background-color;
+}
+
+// :after is used for the handle of the switch
+.coral3-Switch-label:after {
+ background: $switch-handle-background-color;
+ border: 2*$px solid $switch-handle-border-color;
+}
+
+.coral3-Switch-input {
+
+ &:checked {
+   + .coral3-Switch-label:after {
+     border-color: $switch-handle-border-color-checked;
+   }
+ }
+
+ &:focus + .coral3-Switch-label:after {
+   border-color: $switch-handle-border-color-focus;
+   box-shadow 0 0 0 1*$px $switch-handle-border-color-focus;
+ }
+
+ &:disabled {
+   + .coral3-Switch-label:before {
+     background: $switch-track-disabled-background-color;
+   }
+
+   + .coral3-Switch-label:after {
+     border-color: $switch-handle-disabled-border-color;
+   }
+ }
+}

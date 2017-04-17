@@ -1,0 +1,162 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-select-background-color = $spectrum-color-constant-grey1
+$spectrum-select-border-color = $spectrum-color-border-default
+
+$spectrum-select-border-color-focus = $spectrum-color-border-focus;
+$spectrum-select-border-color-invalid = $spectrum-color-border-invalid;
+
+$spectrum-select-background-color-disabled = $spectrum-color-background-disabled;
+$spectrum-select-border-color-disabled = $spectrum-color-border-disabled;
+
+$spectrum-select-item-background-color-hover = $spectrum-color-constant-grey2;
+$spectrum-select-item-text-color-selected = $spectrum-color-focus-blue;
+
+$spectrum-select-item-background-color-focused = $spectrum-color-focus-blue;
+
+$spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
+
+.coral3-Select {
+
+  > .coral-Button {
+    border-color: $spectrum-select-border-color;
+    background-color: $spectrum-select-background-color;
+    position: relative;
+    color: $spectrum-color-text-default;
+
+    &:hover, &:active {
+      background-color: $spectrum-select-background-color;
+      border-color: $spectrum-select-border-color;
+      color: $spectrum-color-text-default;
+    }
+
+    &:focus:not(.is-selected) {
+      box-shadow: 0 0 0 1*$px $spectrum-select-border-color-focus;
+      border-color: $spectrum-select-border-color-focus;
+    }
+
+    &[disabled] {
+      background-color: $spectrum-select-background-color-disabled;
+      border-color: $spectrum-select-border-color-disabled;
+      color: $spectrum-color-text-disabled;
+    }
+  }
+
+  .coral3-SelectList-item {
+
+    &[hidden] {
+      display: block !important;
+    }
+  }
+
+  > .coral-Overlay {
+    &::after {
+      background-color: $spectrum-select-border-color;
+    }
+  }
+
+  > .coral-TagList {
+    display: none;
+  }
+
+  &.is-invalid {
+    > .coral-Button {
+      &::after {
+        background-image: svgurl(embedurl($spectrum-select-invalid-icon-url)) svg(path fill $spectrum-select-invalid-icon-color);
+      }
+
+      &:not(.is-selected) {
+        border-color: $spectrum-select-border-color-invalid;
+
+        &:focus {
+          box-shadow: 0 0 0 1*$px $spectrum-select-border-color-invalid;
+          border-color: $spectrum-select-border-color-invalid;
+        }
+      }
+    }
+  }
+
+  &.is-openAbove {
+    > .coral-Button {
+      border-top-color: transparent;
+    }
+    .coral3-SelectList {
+      border-bottom-color: transparent;
+    }
+  }
+
+  &.is-openBelow {
+    > .coral-Button {
+      border-bottom-color: transparent;
+    }
+    .coral3-SelectList {
+      border-top-color: transparent;
+    }
+  }
+}
+
+.coral3-Select--quiet {
+  > .coral-Button {
+    background: none;
+    border-color: transparent;
+    border-radius: 0;
+
+    &[disabled], &.is-disabled,
+    &.is-selected, &:hover {
+      background: none;
+      border-color: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    &:not(:disabled):not(.is-disabled) {
+      &:hover {
+        .coral3-Select-label {
+          text-decoration: none;
+        }
+      }
+
+      &:focus {
+        box-shadow: 0 1*$px 0 $spectrum-select-border-color-focus;
+        border-color: $spectrum-select-border-color-focus;
+      }
+    }
+  }
+
+  > .coral-Overlay {
+    box-shadow: 0 1*$px 4*$px 0 rgba(0, 0, 0, .1);
+
+    &::after {
+      display: none;
+    }
+  }
+
+  &.is-openAbove, &.is-openBelow {
+    .coral3-SelectList {
+      border-top-color: $spectrum-select-border-color;
+      border-bottom-color: $spectrum-select-border-color;
+    }
+  }
+
+  &.is-invalid {
+    > .coral-Button, > .coral-Button:not(.is-selected) {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+}

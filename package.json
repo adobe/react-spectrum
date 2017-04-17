@@ -11,7 +11,7 @@
   },
   "scripts": {
     "prepublish": "NODE_ENV=production babel src --out-dir lib",
-    "start": "start-storybook -p 9001",
+    "start": "start-storybook -p 9002",
     "lint": "eslint \"src/**/*\" \"test/**/*.js\"",
     "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
     "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
@@ -26,9 +26,11 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
+    "nib": "^1.1.2",
     "react-portal": "^3.0.0",
     "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.2",
+    "svg-stylus": "^0.0.5",
     "tether-drop": "^1.4.2"
   },
   "devDependencies": {

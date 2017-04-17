@@ -1,0 +1,88 @@
+@require '../../commons'
+
+$spectrum-checkbox-height = $spectrum-component-single-line-height
+
+$spectrum-checkbox-checkmark-box-size = 12*$px
+$spectrum-checkbox-checkmark-mark-size = 10*$px
+$spectrum-checkbox-checkmark-box-border-radius = 2*$px
+
+spectrum-checkbox() {
+  display: inline-block
+  position: relative
+  font-size: 0
+  height: $spectrum-checkbox-height
+  line-height: $spectrum-checkbox-height
+}
+
+spectrum-checkbox-input() {
+  position: absolute
+  width: 100%
+  height: 100%
+  top: 0
+  left: 0
+
+  opacity: .0001
+  z-index: 1
+}
+
+spectrum-checkbox-label() {
+  margin: 0 8*$px
+  font-size: $spectrum-font-size
+  vertical-align: middle
+  transition:color 150ms ease-in-out
+}
+
+spectrum-checkbox-checkmark() {
+  display: inline-block
+  box-sizing: border-box
+  width: $spectrum-checkbox-checkmark-box-size
+  height: $spectrum-checkbox-checkmark-box-size
+
+  border-radius: $spectrum-checkbox-checkmark-box-border-radius
+  border-width: 2*$px
+  border-style: solid
+
+  vertical-align: middle
+
+  transition: border $spectrum-transition-time ease-in-out, box-shadow $spectrum-transition-time ease-in-out
+
+  &::after {
+    position: absolute
+    top: ($spectrum-checkbox-height / 2 - $spectrum-checkbox-checkmark-mark-size / 2 )
+    left: 1*$px
+    width: $spectrum-checkbox-checkmark-mark-size
+    height: $spectrum-checkbox-checkmark-mark-size
+
+    background-repeat: no-repeat
+    background-position: center
+
+    opacity: 0
+    transform: scale(0)
+
+    transition: opacity $spectrum-transition-time ease-in-out, transform $spectrum-transition-time ease-in-out
+
+    content:''
+  }
+}
+
+spectrum-checkbox-checkmark--checked() {
+  border-width: 6*$px
+
+  &::after {
+    transform:scale(1)
+    opacity:1
+  }
+}
+
+spectrum-checkbox-checkmark--hover() {
+  box-shadow: none;
+}
+
+spectrum-checkbox-checkmark--focus() {
+  box-shadow: 0 0 0 1*$px
+}
+
+spectrum-checkbox-checkmark--indeterminate() {
+  border-top-width: 5*$px
+  border-bottom-width: 5*$px
+}

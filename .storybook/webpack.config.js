@@ -17,9 +17,19 @@ module.exports = {
         include: path.resolve(__dirname, '../')
       },
       {
-        test: /\.(ttf|woff|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
+        test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
         loader: 'url-loader?limit=8192'// limit inlining base64 URLs to <=8k images, direct URLs for the rest
       }
     ]
+  },
+  stylus: {
+    // urlfunc: 'embedurl',
+    use: [require('svg-stylus')()],
+    define: {
+      'embedurl': require('stylus').url()
+    },
+    'resolve url': true
+    // 'include css': 'true',
+    // 'import': ['nib']
   }
 }

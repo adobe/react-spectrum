@@ -1,0 +1,156 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+.coral-TabList {
+  clearfix();
+
+  position: relative;
+  z-index: 1;
+
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  * { outline: none; }
+}
+
+// Normal Tab Style
+.coral-Tab {
+  position: relative;
+  float: left;
+
+  display: block;
+  box-sizing: border-box;
+  overflow: ellipsis;
+  max-width: 250*$px;
+  margin: 0 15*$px 0 0;
+  padding: 6*$px 8*$px;
+
+  font-size: 12*$px;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  .coral-Icon {
+    vertical-align: middle;
+    font-size: 14*$px;
+  }
+
+  .coral-Icon + coral-tab-label:not(:empty) {
+    margin-left: 5*$px;
+  }
+
+  > coral-tab-label {
+    position: relative;
+    padding: 6*$px 0;
+  }
+
+  &:focus {
+    .coral-Icon {
+      opacity: 0.9;
+    }
+  }
+
+  &.is-selected {
+    // Horizontal Active Tab Line
+    > coral-tab-label:after {
+      content: "";
+      position: absolute;
+      display: block;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2*$px;
+      border-bottom: 2*$px solid;
+    }
+  }
+
+  &.is-disabled {
+    cursor: default;
+  }
+}
+
+// Large Tab (Bigger font and no uppercase)
+.coral-TabList--large .coral-Tab {
+  margin: 0 17*$px 0 0;
+  padding: 10*$px 8*$px;
+
+  text-transform: none;
+  font-size: 14*$px;
+}
+
+// Vertical Tabs Style
+.coral-TabList--vertical {
+  display: inline-block;
+
+  .coral-Tab {
+    display: block;
+    overflow: visible; // overflow: ellipsis;
+    min-width: none;
+    margin: 0 0 8*$px 0;
+    padding: 4*$px 0;
+    float: none;
+
+    font-size: 13*$px;
+    text-align: left;
+
+    > coral-tab-label {
+      padding: 4*$px 7*$px;
+      &:after {
+        display: none; // Removing horizontal active line
+      }
+    }
+
+    > .coral-Icon {
+      padding: 4*$px 7*$px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &.is-selected {
+      border: none;
+      border-radius: 0;
+      &:after {
+        content: '';
+
+        position: absolute;
+        left: 0;
+        top: 4*$px;
+        bottom: 4*$px;
+        // top = bottom = label vertical padding | is hackfix making the left active bar
+        // as tall as the (label.height - label.vertical-padding)
+
+        display: block;
+        width: 2*$px;
+        height: auto;
+
+        border: none; //reset border
+        border-left: 2*$px solid;
+      }
+    }
+  }
+}
+
+@require 'light.styl'
+@require 'dark.styl'

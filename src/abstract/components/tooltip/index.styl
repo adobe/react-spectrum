@@ -1,0 +1,124 @@
+@require '../../commons'
+@require '../label'
+
+spectrum-tooltip() {
+  padding:8*$px 10*$px;
+  position:absolute;
+  pointer-events:none;
+  z-index: $spectrum-zindex-tooltip;
+  opacity:0;
+  transition:all 100ms ease-in-out;
+}
+
+spectrum-tooltip-content() {
+  spectrum-label()
+}
+
+spectrum-tooltip--large() {
+  spectrum-label--large()
+}
+
+spectrum-tooltip-typeIcon() {
+  spectrum-label-typeIcon()
+}
+
+spectrum-tooltip-href() {
+  pointer-events: all;
+}
+
+spectrum-tooltip-hover() {
+  display:inline-block;
+  position:relative;
+}
+
+spectrum-tooltip-tip() {
+  position: absolute;
+  width: 8 *$px;
+  height: 4 *$px;
+  bottom: -4 *$px;
+  left: 50%;
+  margin-left: -4 *$px;
+
+  &:after {
+    content: '';
+    width: 6 *$px;
+    height: 6 *$px;
+    bottom: 1 *$px;
+    left: 1 *$px;
+    position: absolute;
+    transform: rotate(45deg);
+  }
+}
+
+spectrum-tooltip--is-open() {
+  opacity: 1;
+}
+
+spectrum-tooltip-bottom-hover() {
+  transform:translate(-50%, 8px) scale(.94);
+  opacity:1;
+}
+
+spectrum-tooltip-top-hover() {
+  transform:translate(-50%, -8px) scale(.94);
+  opacity:1;
+}
+
+spectrum-tooltip-left-hover() {
+  transform:translate(-100%, -50%) scale(1);
+  opacity:1;
+}
+
+spectrum-tooltip-right-hover() {
+  transform:translate(0, -50%) scale(1);
+  opacity:1;
+}
+
+spectrum-tooltip-bottom-tip() {
+  bottom: auto;
+  top: -4 *$px;
+  transform: rotate(180deg);
+}
+
+spectrum-tooltip-left-tip() {
+  bottom: 50%;
+  left: auto;
+  margin-bottom: -3 *$px;
+  right: -6 *$px;
+  transform: rotate(-90deg);
+}
+
+spectrum-tooltip-right-tip() {
+  bottom: 50%;
+  left: -2 *$px;
+  margin-bottom: -2 *$px;
+  transform: rotate(90deg);
+}
+
+spectrum-tooltip-wrapped-top() {
+  transform:translate(-50%, 8px) scale(.94);
+  top:-100%;
+  left:50%;
+
+  // this moves the tooltip up, above the hovered component. this should be calculated by JS
+  margin-top:-26*$px;
+}
+
+spectrum-tooltip-wrapped-right() {
+  transform:translate(-8px, -50%) scale(.94);
+  top:50%;
+  left:100%;
+}
+
+spectrum-tooltip-wrapped-left() {
+  transform:translate(calc(-100% + 8px), -50%) scale(.94);
+  top:50%;
+  left:0;
+}
+
+spectrum-tooltip-wrapped-bottom() {
+  transform:translate(-50%, -8px) scale(.94);
+  bottom:-100%;
+  left:50%;
+  margin-bottom:-28*$px;
+}

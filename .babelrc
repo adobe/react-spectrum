@@ -6,11 +6,6 @@
     },
     "test": {
       "presets": []
-    },
-    "production": {
-      "plugins": [
-        "./babelPlugins/stylusToScript.js"
-      ]
     }
   },
   "plugins": [

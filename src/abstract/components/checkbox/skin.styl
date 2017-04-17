@@ -1,0 +1,39 @@
+$spectrum-checkbox-check-icon-url = 'embed/Check.svg' // Relative to project root?
+
+spectrum-checkbox-checkmark() {
+  border-color: $spectrum-color-border-switch-default;
+
+  &::after {
+    $spectrum-checkbox-check-icon-url = 'embed/Check.svg' // WTF? Why does this need to be here?
+    background-image: svgurl(embedurl($spectrum-checkbox-check-icon-url)) svg(path fill $spectrum-color-switch-track);
+  }
+}
+
+spectrum-checkbox-checkmark--checked() {
+  border-color: $spectrum-color-border-switch-default;
+}
+
+spectrum-checkbox-checkmark--focus() {
+  border-color: $spectrum-color-border-switch-focus;
+  box-shadow-color: $spectrum-color-border-switch-focus;
+}
+
+spectrum-checkbox-checkmark--hover() {
+  border-color: $spectrum-color-border-switch-hover;
+}
+
+spectrum-checkbox-checkmark--active() {
+  border-color: $spectrum-color-border-switch-active;
+}
+
+spectrum-checkbox-checkmark--disabled() {
+  border-color: $spectrum-color-border-switch-disabled;
+}
+
+spectrum-checkbox-label() {
+  color: $spectrum-color-text-switch-label-default;
+}
+
+spectrum-checkbox-label--disabled() {
+  color: $spectrum-color-text-switch-label-disabled;
+}

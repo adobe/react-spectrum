@@ -1,0 +1,75 @@
+@require '../../commons'
+
+$spectrum-button-radius = 16*$px
+$spectrum-button-height = 32*$px
+$spectrum-button-border = 2*$px
+$spectrum-button-box-shadow-spread-size = 1*$px
+
+spectrum-button() {
+  display: inline-block;
+  box-sizing: border-box;
+
+  height: $spectrum-button-height
+  padding: 0 $spectrum-padding 1*$px /* 1px to push up text, sits kind of low */
+  margin-right: $spectrum-margin
+
+  background: transparent
+  border-width: $spectrum-button-border
+  border-style: solid
+  border-radius: $spectrum-button-radius
+  border-color: transparent
+
+  -webkit-font-smoothing: antialiased
+
+  font-size: $spectrum-font-size
+  font-weight: bold
+  font-family: inherit
+  line-height: $spectrum-button-height - 4*$px
+  text-decoration: none
+
+  transition: background $spectrum-transition-time ease-out,
+              border-color $spectrum-transition-time ease-out,
+              color $spectrum-transition-time ease-out,
+              box-shadow $spectrum-transition-time ease-out
+
+  cursor: pointer
+
+  // Adjacent buttons should be aligned correctly
+  vertical-align: top
+
+  &:focus {
+    outline: none
+  }
+
+  &:disabled,
+  &[disabled] {
+    cursor: default
+  }
+
+  // Fix Firefox
+  &::-moz-focus-inner {
+    border: 0
+    padding: 0
+    margin-top: -2px
+    margin-bottom: -2px
+  }
+
+  &:hover,
+  &:active {
+    box-shadow: none;
+  }
+}
+
+// Icon text should be aligned correctly
+spectrum-button-icon() {
+  vertical-align: top;
+  margin-right: 5*$px;
+}
+
+spectrum-button--square() {
+}
+
+spectrum-button--square-icon() {
+  // CUI-5646 Remove margin when square
+  margin-right: 0;
+}

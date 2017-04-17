@@ -1,0 +1,16 @@
+@require '../../commons'
+
+spectrum-link() {
+  text-decoration: none;
+  transition: color $spectrum-transition-time ease-in-out;
+  outline: none;
+
+  &[disabled] {
+    opacity: 0.15;
+  }
+}
+
+spectrum-link--subtle() {
+  text-decoration: underline;
+}
+

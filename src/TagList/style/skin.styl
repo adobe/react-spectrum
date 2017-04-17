@@ -1,0 +1,248 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$tag-colored-text-color = white
+
+$spectrum-tag-icon = white
+
+$spectrum-tag-color-blue = $spectrum-color-info
+$spectrum-tag-color-red = $spectrum-color-error
+$spectrum-tag-color-yellow = $spectrum-color-warning
+$spectrum-tag-color-green = $spectrum-color-success
+$spectrum-tag-color-grey = $spectrum-color-constant-grey8
+
+$spectrum-tag-color-lightblue = $spectrum-color-constant-blue1
+
+$spectrum-tag-text = $spectrum-color-text-secondary
+$spectrum-tag-color-hover = $spectrum-color-constant-grey9
+$spectrum-tag-color-active = $spectrum-color-constant-grey10
+$spectrum-tag-focus = $spectrum-color-focus-blue
+$spectrum-tag-disabled-bg = $spectrum-color-background-disabled
+$spectrum-tag-disabled-text = $spectrum-color-text-disabled
+$spectrum-tag-border-color = $spectrum-color-constant-grey7
+
+.coral-Tag[closable]:not([color]) {
+  &:focus {
+    border-color: $spectrum-tag-focus;
+    color: $spectrum-tag-focus;
+
+    .coral-Icon {
+      color: $spectrum-tag-focus;
+    }
+  }
+
+  &:hover {
+    border-color: $spectrum-tag-color-hover;
+    color: $spectrum-tag-color-hover;
+    box-shadow: none;
+
+    .coral-Icon {
+      color: inherit;
+    }
+  }
+
+  &:active {
+    border-color: $spectrum-tag-color-active;
+    color: $spectrum-tag-color-active;
+    box-shadow: none;
+  }
+}
+
+.coral-Tag {
+  color: $spectrum-tag-text;
+  background-color: transparent;
+  border: 1*$px solid $spectrum-tag-border-color;
+
+  &:focus {
+    box-shadow: 0 0 0 1*$px $spectrum-tag-focus;
+  }
+
+  &.coral-Tag--quiet {
+    border-color: transparent;
+    background-color: transparent;
+    color: $spectrum-color-text-default;
+
+    &[closable]:hover,
+    &[closable]:active {
+      border-color: transparent;
+    }
+  }
+}
+
+// Color variants
+.coral-Tag--blue,
+.coral-Tag--lightblue,
+.coral-Tag--periwinkle,
+.coral-Tag--plum,
+.coral-Tag--fuchsia,
+.coral-Tag--magenta,
+.coral-Tag--red,
+.coral-Tag--orange,
+.coral-Tag--tangerine,
+.coral-Tag--yellow,
+.coral-Tag--chartreuse,
+.coral-Tag--green,
+.coral-Tag--kellygreen,
+.coral-Tag--seafoam,
+.coral-Tag--cyan {
+  color: $tag-colored-text-color;
+
+  &[closable] {
+    .coral-Icon {
+      opacity: .75;
+    }
+
+    .coral-Tag-removeButton {
+      color: $spectrum-tag-icon;
+
+      &:focus {
+        color: $spectrum-tag-focus;
+
+        .coral-Icon {
+          opacity: 1;
+        }
+      }
+
+      &:hover {
+        color: $spectrum-tag-icon;
+      }
+    }
+
+    &:focus {
+      color: $tag-colored-text-color;
+      border-color: $spectrum-tag-focus;
+      background-color: $spectrum-tag-focus;
+
+      .coral-Tag-removeButton .coral-Icon {
+        color: $spectrum-tag-icon;
+      }
+    }
+
+    &:hover {
+      color: $tag-colored-text-color;
+
+      .coral-Icon {
+        opacity: .9;
+      }
+    }
+
+    &:active .coral-Icon {
+      opacity: 1;
+    }
+  }
+}
+
+.coral-Tag--lightblue {
+  background-color: $spectrum-tag-color-lightblue;
+  border-color: $spectrum-tag-color-lightblue;
+}
+
+.coral-Tag--periwinkle {
+  background-color: $spectrum-color-constant-periwinkle;
+  border-color: $spectrum-color-constant-periwinkle;
+}
+
+.coral-Tag--plum {
+  background-color: $spectrum-color-constant-plum;
+  border-color: $spectrum-color-constant-plum;
+}
+
+.coral-Tag--fuchsia {
+  background-color: $spectrum-color-constant-fuchsia;
+  border-color: $spectrum-color-constant-fuchsia;
+}
+
+.coral-Tag--magenta {
+  background-color: $spectrum-color-constant-magenta;
+  border-color: $spectrum-color-constant-magenta;
+}
+
+.coral-Tag--orange {
+  background-color: $spectrum-color-constant-orange;
+  border-color: $spectrum-color-constant-orange;
+}
+
+.coral-Tag--tangerine {
+  background-color: $spectrum-color-constant-tangerine;
+  border-color: $spectrum-color-constant-tangerine;
+}
+
+.coral-Tag--chartreuse {
+  background-color: $spectrum-color-constant-chartreuse;
+  border-color: $spectrum-color-constant-chartreuse;
+}
+
+.coral-Tag--kellygreen {
+  background-color: $spectrum-color-constant-kellygreen;
+  border-color: $spectrum-color-constant-kellygreen;
+}
+
+.coral-Tag--seafoam {
+  background-color: $spectrum-color-constant-seafoam;
+  border-color: $spectrum-color-constant-seafoam;
+}
+
+.coral-Tag--cyan {
+  background-color: $spectrum-color-constant-cyan;
+  border-color: $spectrum-color-constant-cyan;
+}
+
+.coral-Tag--blue {
+  background-color: $spectrum-tag-color-blue;
+  border-color: $spectrum-tag-color-blue;
+}
+
+.coral-Tag--red {
+  background-color: $spectrum-tag-color-red;
+  border-color: $spectrum-tag-color-red;
+}
+
+.coral-Tag--yellow {
+  background-color: $spectrum-tag-color-yellow;
+  border-color: $spectrum-tag-color-yellow;
+}
+
+.coral-Tag--green {
+  background-color: $spectrum-tag-color-green;
+  border-color: $spectrum-tag-color-green;
+}
+
+.coral-Tag--grey {
+  background-color: $spectrum-tag-color-grey;
+  border-color: $spectrum-tag-color-grey;
+}
+
+.coral-TagList {
+  &.is-disabled > .coral-Tag {
+    border-color: $spectrum-tag-disabled-bg;
+    background-color: $spectrum-tag-disabled-bg;
+    color: $spectrum-tag-disabled-text;
+
+    &:focus,
+    &:hover,
+    &:active {
+      box-shadow: none;
+      border-color: $spectrum-tag-disabled-bg;
+      background-color: $spectrum-tag-disabled-bg;
+      color: $spectrum-tag-disabled-text;
+    }
+
+    .coral-Tag-removeButton .coral-Icon {
+      color: $spectrum-tag-disabled-text;
+    }
+  }
+}

@@ -1,0 +1,126 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$tag-label-font-size = 12*$px;
+$tag-height-small = 24*$px;
+$tag-height-medium = 28*$px;
+$tag-height-large = 32*$px;
+$tag-close-padding = 28*$px;
+
+.coral-Tag {
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: ellipsis;
+  text-align: left;
+  border-radius: $spectrum-border-radius;
+  position: relative;
+  text-transform: uppercase;
+  // prevent spaces in the HTML from adding width between the remove button and label
+  font-size: 0;
+  line-height: 0;
+
+  outline: none;
+
+  transition: border-color $spectrum-transition-time ease-in-out, color $spectrum-transition-time ease-in-out, box-shadow $spectrum-transition-time ease-in-out, background-color $spectrum-transition-time ease-in-out;
+
+  &.coral-Tag--multiline {
+    white-space: normal;
+    word-break: break-word;
+    height: auto;
+  }
+
+  & > coral-tag-label {
+    font-size: $tag-label-font-size;
+    line-height: 16*$px;
+  }
+
+  & > .coral-Tag-removeButton {
+    line-height: 1;
+
+    width: $tag-close-padding;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    border-radius: 0;
+
+    &:focus {
+      border-color: transparent;
+    }
+
+    .coral-Icon {
+      margin-top: 1*$px;
+    }
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    visibility: visible;
+    transition-delay: 0;
+  }
+
+  &:hover {
+    &:after {
+      visibility: hidden;
+      transition: visibility 50ms step-end;
+    }
+  }
+}
+
+.coral-Tag--small {
+  padding: 4*$px 10*$px;
+  height: $tag-height-small;
+
+  & > coral-tag-label {
+    font-size: $tag-label-font-size;
+    line-height: 13*$px;
+  }
+}
+
+.coral-Tag--medium {
+  padding: 5*$px 10*$px;
+  height: $tag-height-medium;
+}
+
+.coral-Tag--large {
+  padding: 7*$px 12*$px 7*$px;
+  height: $tag-height-large;
+}
+
+.coral-Tag[closable] {
+  padding-right: $tag-close-padding;
+  font-size: 11*$px;
+}
+
+@require 'taglist.styl'
+@require 'light.styl'
+@require 'dark.styl'

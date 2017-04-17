@@ -1,0 +1,40 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-calendar-day-height = 25*$px;
+$spectrum-calendar-day-font-size = 13*$px;
+$spectrum-calendar-width = 250*$px;
+$spectrum-calendar-header-height = 46*$px;
+$spectrum-calendar-header-font-size = 16*$px;
+$spectrum-calendar-day-header-font-size = 10*$px;
+$spectrum-calendar-border-size = 2*$px;
+
+$spectrum-calendar-link-zindex = 200;
+
+@import 'light'
+@import 'dark'
+
+.coral-Form--vertical {
+
+  .coral-Form-field.coral-Calendar {
+    display: block;
+    width: 100%;
+    max-width: 500*$px;
+  }
+}

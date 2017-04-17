@@ -1,0 +1,38 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+// this has to be used for tiny information snippets which may appear on
+// mouse interaction (click, hover) might be located in an modal, dialog etc
+$spectrum-zindex-tooltip = 1500;
+
+// a popover container (which usually is referenced to another UI element
+// e.g. button) quickaction should use this layer as well
+$spectrum-zindex-popover = 1480;
+
+// this has to be used for expandable elements which are part of a component.
+// for instance Dropdown, Select, Autocomplete it receives the high value
+// because it might be located in an modal, dialog, etc
+$spectrum-zindex-dropdown = 1460;
+
+// a overlay, dialog, modal layer
+$spectrum-zindex-modal = 1440;
+
+// the backdrop which blocks interaction with the page underneath
+$spectrum-zindex-modal-backdrop = 1420;
+
+// a fixed layer over the floating page
+$spectrum-zindex-fixedbar = 1300;

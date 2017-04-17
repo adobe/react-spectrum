@@ -1,0 +1,312 @@
+@require '../../commons'
+
+$spectrum-progress-label-padding = 10*$px
+$spectrum-progress-label-vertical-padding = 2*$px
+
+$spectrum-progress-small-width = 148*$px
+$spectrum-progress-small-height = 4*$px
+$spectrum-progress-small-label-size = 11*$px
+$spectrum-progress-small-label-width = 28*$px
+$spectrum-progress-small-label-height = $spectrum-progress-small-label-size + 2*$px
+$spectrum-progress-small-radius = 2*$px;
+
+$spectrum-progress-medium-width = 182*$px
+$spectrum-progress-medium-height = 6*$px
+$spectrum-progress-medium-label-size = 12*$px
+$spectrum-progress-medium-label-width = 30*$px
+$spectrum-progress-medium-label-height = $spectrum-progress-medium-label-size + 2*$px
+$spectrum-progress-medium-radius = 4*$px;
+
+$spectrum-progress-large-width = 272*$px
+$spectrum-progress-large-height = 8*$px
+$spectrum-progress-large-label-size = 13*$px
+$spectrum-progress-large-label-width = 32*$px
+$spectrum-progress-large-label-height = $spectrum-progress-large-label-size + 2*$px
+$spectrum-progress-large-radius = 6*$px;
+
+spectrum-progress() {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  min-width: $spectrum-progress-medium-width;
+  height: $spectrum-progress-medium-height;
+}
+
+spectrum-progress-bar() {
+  // Visually apply border radius to child elements
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // rightLabel is the default style
+  right: $spectrum-progress-medium-label-width + $spectrum-progress-label-padding;
+
+  height: $spectrum-progress-medium-height;
+}
+
+spectrum-progress-status() {
+  height: $spectrum-progress-medium-height;
+
+  transition: width 1s;
+}
+
+spectrum-progress-label() {
+  position: absolute;
+  top: 0;
+
+  height: $spectrum-progress-medium-label-height;
+  width: $spectrum-progress-medium-label-width;
+
+  font-size: $spectrum-progress-medium-label-size;
+
+  right: 0;
+  padding-left: $spectrum-progress-label-padding;
+
+  text-align: left;
+}
+
+spectrum-progress--indeterminate() {
+
+}
+
+spectrum-progress-status--indeterminate() {
+  display: none;
+}
+
+spectrum-progress-bar--indeterminate() {
+  transform: translateZ(0);
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #1473e6;
+    transform: translateX(-110%);
+
+    animation: spectrum-progress-indeterminate 934ms cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite forwards;
+  }
+}
+
+@keyframes spectrum-progress-indeterminate {
+  to {
+    transform:translateX(110%);
+  }
+}
+
+spectrum-progress--leftLabel() {
+
+}
+
+spectrum-progress-label--leftLabel() {
+  left: 0;
+  padding-right: $spectrum-progress-label-padding;
+
+  // resets the default rightLabel style
+  padding-left: 0;
+
+  text-align: right;
+}
+
+spectrum-progress-bar--leftLabel() {
+  left: $spectrum-progress-medium-label-width + $spectrum-progress-label-padding;
+  right: 0;
+}
+
+spectrum-progress--bottomLabel() {
+  height: $spectrum-progress-medium-height + $spectrum-progress-medium-label-height;
+}
+
+spectrum-progress-label--bottomLabel() {
+  top: $spectrum-progress-medium-height + $spectrum-progress-label-vertical-padding;
+  left: 0;
+  right: 0;
+  width: auto;
+  // resets the default rightLabel style
+  padding-left: 0;
+
+  // text-align: center // Alan said to inherit
+
+  line-height: inherit;
+}
+
+spectrum-progress-bar--bottomLabel() {
+  // resets the default rightLabel style
+  right: 0;
+}
+
+
+// no label
+spectrum-progress--noLabel() {
+
+}
+
+spectrum-progress-label--noLabel() {
+  display: none;
+}
+
+spectrum-progress-bar--noLabel() {
+  right: 0;
+}
+
+// small
+spectrum-progress--small() {
+  height: $spectrum-progress-small-height;
+  min-width: $spectrum-progress-small-width;
+}
+
+spectrum-progress-label--small() {
+  height: $spectrum-progress-small-label-height;
+  width: $spectrum-progress-small-label-width;
+
+  font-size: $spectrum-progress-small-label-size;
+}
+
+spectrum-progress-status--small() {
+  height: $spectrum-progress-small-height;
+}
+
+spectrum-progress-bar--small() {
+  height: $spectrum-progress-small-height;
+  border-radius: $spectrum-progress-small-radius;
+}
+
+// small + bottomLabel
+spectrum-progress--small--bottomLabel() {
+  height: $spectrum-progress-small-height + $spectrum-progress-small-label-height;
+}
+spectrum-progress-label--small--bottomLabel() {
+  top: $spectrum-progress-small-height + $spectrum-progress-label-vertical-padding;
+  width: auto;
+
+  line-height: inherit;
+}
+
+// small + leftLabel
+spectrum-progress--small--leftLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-small-label-height;
+}
+// Move the bar to the vertical center
+spectrum-progress-bar--small--leftLabel() {
+  top: ($spectrum-progress-small-label-height / 2) - ($spectrum-progress-small-height / 2);
+}
+
+spectrum-progress-label--small--leftLabel() {
+  line-height: $spectrum-progress-small-label-height;
+}
+
+// small + rightLabel
+spectrum-progress--small--rightLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-small-label-height;
+}
+// Move the bar to the vertical center
+spectrum-progress-bar--small--rightLabel() {
+  top: ($spectrum-progress-small-label-height / 2) - ($spectrum-progress-small-height / 2);
+}
+
+spectrum-progress-label--small--rightLabel() {
+  line-height: $spectrum-progress-small-label-height;
+}
+
+// medium
+spectrum-progress--medium() {
+
+}
+
+spectrum-progress-bar--medium() {
+  border-radius: $spectrum-progress-medium-radius;
+}
+
+// medium + leftLabel
+spectrum-progress--medium--leftLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-medium-label-height;
+}
+
+// Move the bar to the vertical center
+spectrum-progress-bar--medium--leftLabel() {
+  top: ($spectrum-progress-medium-label-height / 2) - ($spectrum-progress-medium-height / 2);
+}
+
+spectrum-progress-label--medium--leftLabel() {
+  line-height: $spectrum-progress-medium-label-height;
+}
+
+// medium + rightLabel
+spectrum-progress--medium--rightLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-medium-label-height;
+}
+
+// Move the bar to the vertical center
+spectrum-progress-bar--medium--rightLabel() {
+  top: ($spectrum-progress-medium-label-height / 2) - ($spectrum-progress-medium-height / 2);
+}
+
+spectrum-progress-label--medium--rightLabel() {
+  line-height: $spectrum-progress-medium-label-height;
+}
+
+// large
+spectrum-progress--large() {
+  height: $spectrum-progress-large-height;
+  min-width: $spectrum-progress-large-width;
+}
+spectrum-progress-label--large() {
+  height: $spectrum-progress-large-label-height;
+  width: $spectrum-progress-large-label-width;
+
+  font-size: $spectrum-progress-large-label-size;
+}
+
+spectrum-progress-status--large() {
+  height: $spectrum-progress-large-height;
+}
+
+spectrum-progress-bar--large() {
+  height: $spectrum-progress-large-height;
+  border-radius: $spectrum-progress-large-radius;
+}
+
+// large + bottomLabel
+spectrum-progress--large--bottomLabel() {
+  height: $spectrum-progress-large-height + $spectrum-progress-large-label-height;
+}
+spectrum-progress-label--large--bottomLabel() {
+  top: $spectrum-progress-large-height + $spectrum-progress-label-vertical-padding;
+  width: auto;
+
+  line-height: inherit;
+}
+
+// large + leftLabel
+spectrum-progress--large--leftLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-large-label-height;
+}
+// Move the bar to the vertical center
+spectrum-progress-bar--large--leftLabel() {
+  top: ($spectrum-progress-large-label-height / 2) - ($spectrum-progress-large-height / 2);
+}
+
+spectrum-progress-label--large--leftLabel() {
+  line-height: $spectrum-progress-large-label-height;
+}
+
+// large + rightLabel
+spectrum-progress--large--rightLabel() {
+  // Be the same height as the label
+  height: $spectrum-progress-large-label-height;
+}
+// Move the bar to the vertical center
+spectrum-progress-bar--large--rightLabel() {
+  top: ($spectrum-progress-large-label-height / 2) - ($spectrum-progress-large-height / 2);
+}
+
+spectrum-progress-label--large--rightLabel() {
+  line-height: $spectrum-progress-large-label-height;
+}

@@ -1,0 +1,239 @@
+@require '../../commons'
+
+
+// The width of a step
+$spectrum-wizard-stepWidth = 80*$px;
+
+// The diameter of the marker
+$spectrum-wizard-marker-diameter = 8*$px;
+
+// The width of the hit area
+$spectrum-wizard-marker-hitArea = 20*$px;
+
+// The height of the line
+$spectrum-wizard-segment-height = 2*$px;
+
+// This gives enough space for one line of text
+$spectrum-wizard-topPadding = 22*$px;
+
+// This gives enough space for the longest possible label
+$spectrum-wizard-sidePadding = 60*$px;
+
+// Offset from the BOTTOM of the steplist
+$spectrum-wizard-labelOffset = 10*$px;
+
+// Font size of the label
+$spectrum-wizard-label-font-size = 12*$px;
+
+spectrum-wizard() {
+  display: block;
+  vertical-align: top;
+  margin: 0;
+  padding-top: $spectrum-wizard-topPadding;
+  padding-left: $spectrum-wizard-sidePadding;
+  padding-right: $spectrum-wizard-sidePadding;
+
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0; // To remove html whitespace between inline elements
+  line-height: 16*$px; // in case the container changes it
+}
+
+spectrum-wizard--small() {
+  padding: (11*$px) 0;
+}
+
+spectrum-wizardstep() {
+  outline: none;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+
+  width: $spectrum-wizard-stepWidth;
+  padding: 0 ($spectrum-wizard-stepWidth / 2) 0 0;
+}
+
+.spectrum-wizardstep--small() {
+  padding: 0 40*$px 0 0;
+  width: 80*$px;
+}
+
+spectrum-wizardstep--edgechild() {
+  width: ($spectrum-wizard-stepWidth / 2) - ($spectrum-wizard-marker-diameter * 2.5);
+}
+
+spectrum-wizardstep--small--edgechild() {
+  width: 20*$px;
+}
+
+spectrum-wizardstep--interactive() {
+  // Show cursor on hit zone when clickable
+  cursor: pointer;
+}
+
+spectrum-wizardstep--is-selected--focus() {
+  outline: none;
+}
+
+spectrum-wizardstep-label() {
+  position: absolute;
+  left: 50%;
+  bottom: $spectrum-wizard-labelOffset;
+
+  display: block;
+  width: $spectrum-wizard-stepWidth * 1.5;
+
+  font-size: $spectrum-wizard-label-font-size;
+  white-space: normal;
+
+  transform: translateX(-50%);
+}
+
+
+// Disable Label
+spectrum-wizardstep-label--small() {
+  display: none;
+}
+
+spectrum-wizardstep-label--firstchild() {
+  left: 0;
+}
+
+spectrum-wizardstep-label--lastchild() {
+  left: auto;
+  right: 0;
+
+  transform: translateX(50%);
+}
+
+spectrum-wizardstep-label--onlychild() {
+  // Be centered
+  left: 50%;
+
+  // Override last-child bits
+  transform: translate(-50%);
+}
+
+
+spectrum-wizardstep-markercontainer() {
+  display: block;
+
+  z-index: 2;
+  position: absolute;
+  bottom: -10*$px;
+  left: 50%;
+
+  width: $spectrum-wizard-marker-hitArea;
+  height: $spectrum-wizard-marker-hitArea;
+
+  margin-left: -1 * ($spectrum-wizard-marker-hitArea / 2);
+}
+
+spectrum-wizardstep-markercontainer--firstchild() {
+  left: 0;
+}
+
+spectrum-wizardstep-markercontainer--lastchild() {
+  left: auto;
+  right: 0;
+
+  margin-left: 0;
+  margin-right: -1 * ($spectrum-wizard-marker-hitArea / 2);
+}
+
+spectrum-wizardstep-markercontainer--small--firstchild() {
+  margin-left: -10*$px;
+}
+
+spectrum-wizardstep-markercontainer--small--lastchild() {
+  margin-right: -10*$px;
+}
+
+spectrum-wizardstep-markercontainer--onlychild() {
+  // Be centered
+  left: 50%;
+
+  // Override last-child bits
+  margin-right: 0;
+  margin-left: -1 * ($spectrum-wizard-marker-hitArea / 2);
+}
+
+
+// Circle step marker
+spectrum-wizardstep-marker() {
+  box-sizing: border-box; // So we can stroke nicely
+  display: block;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -1 * ($spectrum-wizard-marker-diameter / 2);
+  margin-left: -1 * ($spectrum-wizard-marker-diameter / 2);
+
+  width: $spectrum-wizard-marker-diameter;
+  height: $spectrum-wizard-marker-diameter;
+
+  border-radius: $spectrum-wizard-marker-diameter;
+
+  border: 2px solid;
+  border-color: transparent;
+  background: transparent;
+}
+
+spectrum-wizardstep-marker--is-complete() {
+  border: none;
+}
+
+spectrum-wizardstep-marker--is-selected() {
+  border: none;
+}
+
+
+
+// The step line
+spectrum-wizardstep-segment() {
+  display: block;
+  z-index: 1;
+  position: absolute;
+  right: ($spectrum-wizard-stepWidth) - ($spectrum-wizard-marker-diameter * 1.5);
+  width: ($spectrum-wizard-stepWidth * 1.5) - ($spectrum-wizard-marker-diameter * 2);
+  bottom: -1 * ($spectrum-wizard-segment-height / 2);
+}
+
+spectrum-wizardstep-segment--dashed() {
+  border-bottom-width: $spectrum-wizard-segment-height;
+  border-bottom-style: dashed;
+}
+
+spectrum-wizardstep-segment--solid() {
+  border-bottom-width: $spectrum-wizard-segment-height;
+  border-bottom-style: solid;
+}
+
+
+spectrum-wizardstep-segment--firstchild() {
+  // Not visible for first step
+  display: none;
+}
+
+spectrum-wizardstep-segment--lastchild() {
+  right: $spectrum-wizard-marker-diameter;
+  left: auto;
+}
+
+
+// Tooltip
+spectrum-wizardstep-tooltip() {
+  // adjust the tooltip position
+  margin-top: (($spectrum-wizard-marker-hitArea) * -2) !important;
+}
+
+spectrum-wizardstep-tooltip--firstchild() {
+  left: 0 !important;
+}
+
+spectrum-wizardstep-tooltip--lastchild() {
+  left: auto;
+  right: 0;
+  transform: translate(50%, ($spectrum-wizard-marker-hitArea) / -2) !important;
+}
