@@ -19,11 +19,6 @@
 
 $coral-tooltip-arrow-size = 6*$px;
 
-// Remove tooltip flashing while loading the page
-coral-tooltip {
-  display: none;
-}
-
 .coral3-Tooltip {
   box-sizing: border-box;
   display: block;
@@ -72,8 +67,8 @@ coral-tooltip {
   }
 }
 
-.coral3-Tooltip.is-open {
-  opacity: 1;
+.coral-Tooltip-drop-element.coral-Tooltip-drop-after-open .coral3-Tooltip {
+  opacity: 1
 }
 
 .coral3-Tooltip--arrowRight {

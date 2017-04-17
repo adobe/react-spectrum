@@ -7,6 +7,13 @@ import { getTetherPositionFromPlacement } from '../../utils/tether';
 
 import '../style/index.styl';
 
+const ARROWS = {
+  right: 'arrowRight',
+  left: 'arrowLeft',
+  bottom: 'arrowDown',
+  top: 'arrowUp'
+};
+
 export default class Tooltip extends Component {
   static propTypes = {
     variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
@@ -97,6 +104,7 @@ export default class Tooltip extends Component {
               classNames(
                 'coral3-Tooltip',
                 `coral3-Tooltip--${ variant }`,
+                `coral3-Tooltip--${ARROWS[placement]}`,
                 className
               )
             }
