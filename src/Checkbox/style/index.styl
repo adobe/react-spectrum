@@ -30,16 +30,16 @@
   }
 }
 
-.coral-Checkbox[indeterminate] .coral-Checkbox-checkmark {
-  spectrum-checkbox-checkmark--indeterminate()
-}
-
 .coral-Checkbox-description {
   spectrum-checkbox-label()
 }
 
 .coral-Checkbox-checkmark {
   spectrum-checkbox-checkmark()
+
+  &.is-indeterminate {
+    spectrum-checkbox-checkmark--indeterminate()
+  }
 }
 
 
