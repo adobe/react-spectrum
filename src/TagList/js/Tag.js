@@ -12,7 +12,7 @@ export default function Tag({
   size = 'L', // L, M, S
   value,
   children,
-  color = 'grey',
+  color,
   multiline = false,
   quiet = false,
   closable = false,
@@ -31,7 +31,7 @@ export default function Tag({
         classNames(
           'coral-Tag',
           `coral-Tag--${ sizeMap[size] }`,
-          `coral-Tag--${ color }`,
+          color ? `coral-Tag--${ color }` : null,
           {
             'coral-Tag--multiline': multiline,
             'coral-Tag--quiet': quiet
