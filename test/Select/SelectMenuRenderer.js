@@ -4,6 +4,7 @@ import {mount} from 'enzyme';
 import selectMenuRenderer from '../../src/Select/js/SelectMenuRenderer';
 
 const testProps = {
+  optionClassName: 'coral-BasicList-item',
   optionComponent: ({className}) => <div className={ className } />,
   optionRenderer: () => <div>empty</div>,
   onOptionRef: () => false,

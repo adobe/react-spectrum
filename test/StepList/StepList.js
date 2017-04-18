@@ -1,7 +1,7 @@
 import React from 'react';
 import expect, {createSpy} from 'expect';
 import {shallow} from 'enzyme';
-import StepList from '../../src/StepList';
+import {StepList} from '../../src/StepList';
 
 describe('StepList', () => {
   it('has correct defaults', () => {

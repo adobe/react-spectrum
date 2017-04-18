@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import {shallow} from 'enzyme';
-import Tag from '../../src/TagList/js/Tag';
+import {Tag} from '../../src/TagList';
 
 describe('Tag', () => {
   it('default', () => {

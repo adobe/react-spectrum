@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import {shallow} from 'enzyme';
-import Table from '../../src/Table';
+import {Table} from '../../src/Table';
 
 describe('Table', () => {
   it('supports hover', () => {
