@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@coralui/coralui-core": "^4.4.0",
+    "@spectrum/spectrum-abstract-stylus": "^0.0.2",
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "nib": "^1.1.2",

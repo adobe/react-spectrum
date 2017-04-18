@@ -24,6 +24,7 @@ module.exports = {
   },
   stylus: {
     // urlfunc: 'embedurl',
+    paths: [__dirname + '/../node_modules'],
     use: [require('svg-stylus')(), require('nib')()],
     define: {
       'embedurl': require('stylus').url()

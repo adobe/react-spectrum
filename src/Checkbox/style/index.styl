@@ -16,7 +16,9 @@
  */
 
 @require '../../commons'
-@import '../../abstract/components/checkbox/index.styl'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/checkbox/index.styl'
+
+$spectrum-checkbox-check-icon-url = 'embed/Check.svg' // Work around weird issue with stylus
 
 .coral-Checkbox {
   spectrum-checkbox()
@@ -54,5 +56,5 @@
   }
 }
 
-@require 'light.styl'
-@require 'dark.styl'
+@import 'light.styl'
+@import 'dark.styl'
