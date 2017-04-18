@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { mount } from 'enzyme';
+import {mount} from 'enzyme';
 import ReactSelect from 'react-select';
 import Autocomplete from '../../src/Autocomplete';
 

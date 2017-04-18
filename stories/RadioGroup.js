@@ -1,30 +1,30 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
-import { VerticalCenter } from '../.storybook/layout';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import RadioGroup from '../src/RadioGroup';
 import Radio from '../src/Radio';
 
 storiesOf('RadioGroup', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'labelsBelow: true',
-    () => render({ labelsBelow: true }),
-    { inline: true }
+    () => render({labelsBelow: true}),
+    {inline: true}
   )
   .addWithInfo(
     'vertical: true',
-    () => render({ vertical: true }),
-    { inline: true }
+    () => render({vertical: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

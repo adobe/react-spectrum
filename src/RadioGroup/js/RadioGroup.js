@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import '../style/index.styl';
@@ -7,7 +7,7 @@ export default class RadioGroup extends Component {
   static defaultProps = {
     vertical: false,
     labelsBelow: false,
-    onChange: () => {}
+    onChange: function () {}
   };
 
   constructor(props) {
@@ -64,7 +64,7 @@ export default class RadioGroup extends Component {
       ...otherProps
     } = this.props;
 
-    const { selectedValue } = this.state;
+    const {selectedValue} = this.state;
 
     return (
       <div
@@ -82,7 +82,7 @@ export default class RadioGroup extends Component {
       >
         {
           React.Children.map(children, child => {
-            const { value, onChange } = child.props;
+            const {value, onChange} = child.props;
             if (!value) {
               throw new Error('Each Radio Button must have a value property');
             }

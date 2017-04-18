@@ -1,6 +1,6 @@
 import React from 'react';
-import expect, { createSpy } from 'expect';
-import { shallow, mount } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow, mount} from 'enzyme';
 import TabList from '../../src/TabList';
 
 describe('TabList', () => {

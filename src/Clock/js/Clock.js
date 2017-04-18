@@ -1,10 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
 
 import Textfield from '../../Textfield';
-import { toMoment, formatMoment } from '../../utils/moment';
-import { clamp } from '../../utils/number';
+import {toMoment, formatMoment} from '../../utils/moment';
+import {clamp} from '../../utils/number';
 
 import '../style/index.styl';
 
@@ -35,13 +35,13 @@ export default class Clock extends Component {
     invalid: false,
     readOnly: false,
     required: false,
-    onChange: () => {}
+    onChange: function () {}
   };
 
   constructor(props) {
     super(props);
 
-    const { value, defaultValue, valueFormat } = this.props;
+    const {value, defaultValue, valueFormat} = this.props;
 
     const val = toMoment(value || defaultValue || '', valueFormat);
     const isValid = val && val.isValid();
@@ -65,11 +65,11 @@ export default class Clock extends Component {
         });
       } else {
         if (!this.state.hourText || +this.state.hourText !== val.hour()) {
-          this.setState({ hourText: val.hour() });
+          this.setState({hourText: val.hour()});
         }
 
         if (!this.state.minuteText || +this.state.minuteText !== val.minute()) {
-          this.setState({ minuteText: val.minute() });
+          this.setState({minuteText: val.minute()});
         }
       }
 
@@ -80,13 +80,13 @@ export default class Clock extends Component {
   }
 
   handleHourChange = e => {
-    const { minuteText } = this.state;
+    const {minuteText} = this.state;
     e.stopPropagation();
     this.changeTime(e.target.value, minuteText);
   }
 
   handleMinuteChange = e => {
-    const { hourText } = this.state;
+    const {hourText} = this.state;
     e.stopPropagation();
     this.changeTime(hourText, e.target.value);
   }
@@ -118,8 +118,8 @@ export default class Clock extends Component {
   }
 
   changeTime(hourText, minuteText) {
-    const { valueFormat, onChange } = this.props;
-    const { value } = this.state;
+    const {valueFormat, onChange} = this.props;
+    const {value} = this.state;
 
     const hours = parseInt(hourText, 10);
     const minutes = parseInt(minuteText, 10);
@@ -170,7 +170,7 @@ export default class Clock extends Component {
       ...otherProps
     } = this.props;
 
-    const { hourText, minuteText } = this.state;
+    const {hourText, minuteText} = this.state;
 
     delete otherProps.valueFormat;
     delete otherProps.displayFormat;

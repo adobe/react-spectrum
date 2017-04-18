@@ -1,11 +1,11 @@
 import React from 'react';
 import expect from 'expect';
-import { render, unmountComponentAtNode } from 'react-dom';
+import {render, unmountComponentAtNode} from 'react-dom';
 import TetherDropComponent from '../../src/internal/TetherDropComponent';
 
 describe('TetherDropComponent', () => {
   it('Adds target and drop elements', () => {
-    const { targetEl, dropEl } = renderIntoDiv(
+    const {targetEl, dropEl} = renderIntoDiv(
       <TetherDropComponent
         content={ <div className="drop" /> }
       >
@@ -21,7 +21,7 @@ describe('TetherDropComponent', () => {
   });
 
   it('supports classPrefix', () => {
-    const { targetEl, dropEl } = renderIntoDiv(
+    const {targetEl, dropEl} = renderIntoDiv(
       <TetherDropComponent
         content={ <div className="drop" /> }
         classPrefix="foo"
@@ -35,7 +35,7 @@ describe('TetherDropComponent', () => {
   });
 
   it('supports open', () => {
-    const { targetEl, dropEl } = renderIntoDiv(
+    const {targetEl, dropEl} = renderIntoDiv(
       <TetherDropComponent
         content={ <div className="drop" /> }
         open
@@ -62,22 +62,22 @@ describe('TetherDropComponent', () => {
     );
 
     it('right center', () => {
-      const { targetEl } = createElWithPosition('right center');
+      const {targetEl} = createElWithPosition('right center');
       assertPosition(targetEl, 'left', 'center');
     });
 
     it('top center', () => {
-      const { targetEl } = createElWithPosition('top center');
+      const {targetEl} = createElWithPosition('top center');
       assertPosition(targetEl, 'bottom', 'top');
     });
 
     it('left center', () => {
-      const { targetEl } = createElWithPosition('left center');
+      const {targetEl} = createElWithPosition('left center');
       assertPosition(targetEl, 'right', 'left');
     });
 
     it('bottom center', () => {
-      const { targetEl } = createElWithPosition('bottom center');
+      const {targetEl} = createElWithPosition('bottom center');
       assertPosition(targetEl, 'top', 'bottom');
     });
   });
@@ -85,8 +85,8 @@ describe('TetherDropComponent', () => {
   it('cleans up after itself', () => {
     const addSpy = expect.spyOn(document, 'addEventListener');
     const removeSpy = expect.spyOn(document, 'removeEventListener');
-    const { tree, targetEl, dropEl } = renderIntoDiv(
-      <TetherDropComponent onClickOutside={ () => {} } content={ <div /> } open>
+    const {tree, targetEl, dropEl} = renderIntoDiv(
+      <TetherDropComponent onClickOutside={ function () {} } content={ <div /> } open>
         Foo
       </TetherDropComponent>
     );
@@ -107,7 +107,7 @@ describe('TetherDropComponent', () => {
 
   it('supports onClickOutside', () => {
     const spy = expect.createSpy();
-    const { targetEl } = renderIntoDiv(
+    const {targetEl} = renderIntoDiv(
       <TetherDropComponent onClickOutside={ spy } content={ <div /> } open>
         Foo
       </TetherDropComponent>
@@ -123,7 +123,7 @@ describe('TetherDropComponent', () => {
     let targetEl;
     let dropEl;
 
-    const renderAgainWithProps = (node, { children = 'Foo', ...otherProps }) => {
+    const renderAgainWithProps = (node, {children = 'Foo', ...otherProps}) => {
       if (otherProps.content == null) {
         otherProps.content = <div />;
       }
@@ -149,22 +149,22 @@ describe('TetherDropComponent', () => {
 
     it('content when it changes', () => {
       expect(dropEl.querySelector('.coral-drop-content').firstChild.tagName).toBe('DIV');
-      const { dropEl: newDropEl } = renderAgainWithProps(targetEl, { content: <span /> });
+      const {dropEl: newDropEl} = renderAgainWithProps(targetEl, {content: <span />});
       expect(newDropEl.querySelector('.coral-drop-content').firstChild.tagName).toBe('SPAN');
     });
 
     it('children when it changes', () => {
       expect(targetEl.firstChild.innerHTML).toBe('Foo');
-      const { targetEl: newTargetEl } =
-        renderAgainWithProps(targetEl, { children: 'Bar', content: <div /> });
+      const {targetEl: newTargetEl} =
+        renderAgainWithProps(targetEl, {children: 'Bar', content: <div />});
       expect(newTargetEl.firstChild.innerHTML).toBe('Bar');
     });
 
     it('visibility when open changes', () => {
-      ({ targetEl, dropEl } =
+      ({targetEl, dropEl} =
         renderIntoDiv(<TetherDropComponent content={ <div /> }>Foo</TetherDropComponent>));
       expect(dropEl.parentNode).toNotExist();
-      const { dropEl: newDropEl } = renderAgainWithProps(targetEl, {});
+      const {dropEl: newDropEl} = renderAgainWithProps(targetEl, {});
       expect(newDropEl.parentNode).toExist(); // Make sure visibility is changed.
     });
   });

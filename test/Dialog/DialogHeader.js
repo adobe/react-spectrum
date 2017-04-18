@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
 import Icon from '../../src/Icon';
 import Button from '../../src/Button';
@@ -9,7 +9,7 @@ describe('DialogHeader', () => {
   it('supports optional title', () => {
     const tree = shallow(<DialogHeader />);
     expect(tree.find(Icon).node).toNotExist();
-    tree.setProps({ icon: 'info' });
+    tree.setProps({icon: 'info'});
     expect(tree.find(Icon).node).toExist();
     expect(tree.find(Icon).prop('icon')).toBe('info');
   });
@@ -17,7 +17,7 @@ describe('DialogHeader', () => {
   it('supports closable', () => {
     const tree = shallow(<DialogHeader />);
     expect(tree.find(Button).node).toNotExist();
-    tree.setProps({ closable: true });
+    tree.setProps({closable: true});
     expect(tree.find(Button).node).toExist();
   });
 

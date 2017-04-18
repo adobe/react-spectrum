@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import Clock from '../../src/Clock';
 
 describe('Clock', () => {
@@ -34,7 +34,7 @@ describe('Clock', () => {
     let stopPropagationSpy;
 
     const assertChangeArgs = (element, value, compareDate, format = 'HH:mm') => {
-      element.simulate('change', { stopPropagation: stopPropagationSpy, target: { value } });
+      element.simulate('change', {stopPropagation: stopPropagationSpy, target: {value}});
       expect(stopPropagationSpy).toHaveBeenCalled();
 
       const args = spy.getLastCall().arguments;
@@ -85,11 +85,11 @@ describe('Clock', () => {
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
-    tree.setProps({ defaultValue: now.clone().add(7, 'day') });
+    tree.setProps({defaultValue: now.clone().add(7, 'day')});
     expect(+tree.state('value')).toEqual(+now);
 
     // Component interaction should change the state.
-    findHourTextfield(tree).simulate('change', { stopPropagation: () => {}, target: { value: 0 } });
+    findHourTextfield(tree).simulate('change', {stopPropagation: function () {}, target: {value: 0}});
     expect(+tree.state('value')).toEqual(+now.clone().hours(0));
   });
 
@@ -100,12 +100,12 @@ describe('Clock', () => {
     const tree = shallow(<Clock value={ now } />);
 
     // Changing value will change the state.
-    tree.setProps({ value: dateWeekLater });
+    tree.setProps({value: dateWeekLater});
     expect(+tree.state('value')).toEqual(+dateWeekLater);
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
-    findHourTextfield(tree).simulate('change', { stopPropagation: () => {}, target: { value: 0 } });
+    findHourTextfield(tree).simulate('change', {stopPropagation: function () {}, target: {value: 0}});
     expect(+tree.state('value')).toEqual(+dateWeekLater);
   });
 

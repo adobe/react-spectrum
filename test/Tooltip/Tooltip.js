@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Tooltip from '../../src/Tooltip';
 
 describe('Tooltip', () => {
@@ -28,7 +28,7 @@ describe('Tooltip', () => {
   });
 
   it('supports tetherOptions', () => {
-    const tree = shallow(<Tooltip tetherOptions={ { offset: '10px 0' } } />);
+    const tree = shallow(<Tooltip tetherOptions={ {offset: '10px 0'} } />);
     expect(tree.prop('tetherOptions').offset).toBe('10px 0');
   });
 

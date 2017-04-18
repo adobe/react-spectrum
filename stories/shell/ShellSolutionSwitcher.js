@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf } from '@kadira/storybook';
-import { VerticalCenter } from '../../.storybook/layout';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../../.storybook/layout';
 
 import ShellSolutionSwitcher from '../../src/Shell/js/ShellSolutionSwitcher';
 import ShellSolutionGroup from '../../src/Shell/js/ShellSolutionGroup';
@@ -8,19 +8,19 @@ import ShellSolution from '../../src/Shell/js/ShellSolution';
 
 storiesOf('ShellSolutionSwitcher', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'open: true',
-    () => render({ open: true }),
-    { inline: true }
+    () => render({open: true}),
+    {inline: true}
   );
 
 function render(props) {

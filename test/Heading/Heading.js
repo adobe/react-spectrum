@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Heading from '../../src/Heading';
 
 describe('Heading', () => {
@@ -32,7 +32,7 @@ describe('Heading', () => {
 
 
 function changeAndAssertSize(tree, size) {
-  tree.setProps({ size });
+  tree.setProps({size});
   assertSize(tree, size);
 }
 

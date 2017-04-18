@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Search from '../../src/Search';
 
 describe('Search', () => {
@@ -55,14 +55,14 @@ describe('Search', () => {
 
     it('is called when enter is pressed', () => {
       const tree = shallow(<Search onSubmit={ spy } />);
-      findInput(tree).simulate('keyDown', { which: 13, preventDefault: preventDefaultSpy });
+      findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       expect(spy).toHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
     it('is not called when enter is pressed if it is disabled', () => {
       const tree = shallow(<Search onSubmit={ spy } disabled />);
-      findInput(tree).simulate('keyDown', { which: 13, preventDefault: preventDefaultSpy });
+      findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
@@ -79,7 +79,7 @@ describe('Search', () => {
 
     it('is called when escape is pressed', () => {
       const tree = shallow(<Search onClear={ spy } />);
-      findInput(tree).simulate('keyDown', { which: 27, preventDefault: preventDefaultSpy });
+      findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       expect(spy).toHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
@@ -92,7 +92,7 @@ describe('Search', () => {
 
     it('is not called when escape is pressed if it is disabled', () => {
       const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
-      findInput(tree).simulate('keyDown', { which: 27, preventDefault: preventDefaultSpy });
+      findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
@@ -110,7 +110,7 @@ describe('Search', () => {
     expect(tree.state('value')).toBe('');
     expect(tree.state('emptyText')).toBe(true);
 
-    findInput(tree).simulate('change', { target: { value: 'a' } });
+    findInput(tree).simulate('change', {target: {value: 'a'}});
     expect(spy).toHaveBeenCalled();
     expect(tree.state('value')).toBe('a');
     expect(tree.state('emptyText')).toBe(false);

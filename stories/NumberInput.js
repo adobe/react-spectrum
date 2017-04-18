@@ -1,5 +1,5 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import {storiesOf, action} from '@kadira/storybook';
 
 import NumberInput from '../src/NumberInput';
 
@@ -13,25 +13,25 @@ storiesOf('NumberInput', module)
     outside of the range the component marks itself as invalid.
     `,
     () => render(),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'min: -5, max: 10, step: 0.5',
     'Demonstrating a -5 - 10 range input with 0.5 step',
-    () => render({ min: -5, max: 10, step: 0.5, placeholder: 'Type something please' }),
-    { inline: true }
+    () => render({min: -5, max: 10, step: 0.5, placeholder: 'Type something please'}),
+    {inline: true}
   )
   .addWithInfo(
     'invalid',
     'Demonstrating invalid',
-    () => render({ invalid: true }),
-    { inline: true }
+    () => render({invalid: true}),
+    {inline: true}
   )
   .addWithInfo(
     'disabled',
     'Demonstrating disabled',
-    () => render({ disabled: true }),
-    { inline: true }
+    () => render({disabled: true}),
+    {inline: true}
   );
 
 const render = (props = {}) => (

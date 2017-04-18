@@ -1,6 +1,6 @@
 import React from 'react';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import Button from '../../src/Button';
 import Icon from '../../src/Icon';
 
@@ -8,7 +8,7 @@ describe('Button', () => {
   it('supports different elements', () => {
     const tree = shallow(<Button />);
     expect(tree.type()).toBe('button');
-    tree.setProps({ element: 'a' });
+    tree.setProps({element: 'a'});
     expect(tree.type()).toBe('a');
     expect(tree.prop('role')).toBe('button');
     expect(tree.prop('tabIndex')).toBe(0);
@@ -20,14 +20,14 @@ describe('Button', () => {
 
     const tree = shallow(<Button onClick={ onClickSpy } />);
     expect(tree.type()).toBe('button');
-    tree.setProps({ element: 'a', href: 'http://example.com', disabled: true });
+    tree.setProps({element: 'a', href: 'http://example.com', disabled: true});
     expect(tree.type()).toBe('a');
     expect(tree.prop('tabIndex')).toBe(-1);
     expect(tree.prop('aria-disabled')).toBe(true);
     expect(tree.prop('className'))
       .toBe('coral-Button coral-Button--default coral-Button--medium is-disabled');
 
-    tree.simulate('click', { preventDefault: preventDefaultSpy });
+    tree.simulate('click', {preventDefault: preventDefaultSpy});
     expect(onClickSpy).toNotHaveBeenCalled();
     expect(preventDefaultSpy).toHaveBeenCalled();
   });
@@ -57,14 +57,14 @@ describe('Button', () => {
   it('supports disabled', () => {
     const tree = shallow(<Button />);
     expect(tree.prop('disabled')).toNotExist();
-    tree.setProps({ disabled: true });
+    tree.setProps({disabled: true});
     expect(tree.prop('disabled')).toBe(true);
   });
 
   it('supports selected', () => {
     const tree = shallow(<Button />);
     expect(tree.prop('className')).toBe('coral-Button coral-Button--default coral-Button--medium');
-    tree.setProps({ selected: true });
+    tree.setProps({selected: true});
     expect(tree.prop('className'))
       .toBe('coral-Button coral-Button--default coral-Button--medium is-selected');
   });

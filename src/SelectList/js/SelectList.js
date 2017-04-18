@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import '../style/index.styl';
@@ -18,12 +18,10 @@ export default class SelectList extends Component {
     };
   }
 
-  addSelection = (option) => {
-    return [
-      ...this.props.value,
-      option.value
-    ];
-  }
+  addSelection = (option) => ([
+    ...this.props.value,
+    option.value
+  ])
 
   removeSelection = (option) => {
     const index = this.props.value.indexOf(option.value);
@@ -34,15 +32,15 @@ export default class SelectList extends Component {
   }
 
   handleHover = (option) => {
-    this.setState({ highlightedOption: option });
+    this.setState({highlightedOption: option});
   }
 
   handleFocus = () => {
-    this.setState({ isFocused: true });
+    this.setState({isFocused: true});
   }
 
   handleBlur = () => {
-    this.setState({ isFocused: false });
+    this.setState({isFocused: false});
   }
 
   handleSelect = (option) => {
@@ -64,10 +62,9 @@ export default class SelectList extends Component {
     }
   }
 
-  isSelected = (option) => {
-    return this.props.value.indexOf(option.value) >= 0;
-  }
-
+  isSelected = (option) => (
+    this.props.value.indexOf(option.value) >= 0
+  )
 
   renderListOfOptions = (options) => {
     const {
@@ -142,7 +139,7 @@ export default class SelectList extends Component {
     const containsGroups = !isArray(options);
     return (
       <div
-        className={ classNames('coral3-SelectList', { 'is-focused': isFocused }, className) }
+        className={ classNames('coral3-SelectList', {'is-focused': isFocused}, className) }
         { ...otherProps }
         tabIndex="-1"
         onFocus={ this.handleFocus }
@@ -154,5 +151,5 @@ export default class SelectList extends Component {
     );
   }
 }
-SelectList.defaultProps = { value: [] };
+SelectList.defaultProps = {value: []};
 SelectList.displayName = 'SelectList';

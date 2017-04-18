@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Popover from '../../src/Popover';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
 
@@ -20,7 +20,7 @@ describe('Popover', () => {
     const tree = shallow(<Popover />);
     let header = shallow(tree.prop('content')).find(DialogHeader);
     expect(header.node).toNotExist();
-    tree.setProps({ title: 'Foo' });
+    tree.setProps({title: 'Foo'});
     header = shallow(tree.prop('content')).find(DialogHeader);
     expect(header.node).toExist();
     expect(header.prop('title')).toBe('Foo');

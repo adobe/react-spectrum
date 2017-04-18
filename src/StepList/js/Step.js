@@ -18,8 +18,8 @@ export default function Step({
         classNames(
           className,
           'coral-Step',
-          { 'is-complete': complete },
-          { 'is-selected': selected }
+          {'is-complete': complete},
+          {'is-selected': selected}
         )
       }
       role="tab"
@@ -36,7 +36,7 @@ export default function Step({
           placement="top"
           hoverOpenDelay={ 0 }
           hoverCloseDelay={ 0 }
-          tetherOptions={ { offset: '10px 0px' } }
+          tetherOptions={ {offset: '10px 0px'} }
           content={ children }
         >
           <span className="coral-Step-marker" />

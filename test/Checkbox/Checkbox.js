@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Checkbox from '../../src/Checkbox';
 
 describe('Checkbox', () => {
@@ -22,12 +22,12 @@ describe('Checkbox', () => {
     expect(tree.prop('aria-checked')).toBe('mixed');
     expect(innerTree.prop('aria-checked')).toBe('mixed');
 
-    tree.setProps({ indeterminate: false });
+    tree.setProps({indeterminate: false});
     innerTree = tree.shallow();
     expect(tree.prop('aria-checked')).toNotExist();
     expect(innerTree.prop('aria-checked')).toBe(false);
 
-    tree.setProps({ checked: true });
+    tree.setProps({checked: true});
     innerTree = tree.shallow();
     expect(tree.prop('aria-checked')).toNotExist();
     expect(innerTree.prop('aria-checked')).toBe(true);

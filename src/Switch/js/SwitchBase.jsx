@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 export default class SwitchBase extends Component {
@@ -12,7 +12,7 @@ export default class SwitchBase extends Component {
     required: false,
     invalid: false,
     readOnly: false,
-    onChange: () => {}
+    onChange: function () {}
   };
 
   constructor(props) {
@@ -49,8 +49,8 @@ export default class SwitchBase extends Component {
   }
 
   handleChange = e => {
-    const { onChange } = this.props;
-    const { checked } = e.target;
+    const {onChange} = this.props;
+    const {checked} = e.target;
 
     this.setChecked(checked);
     onChange(e, checked);
@@ -77,7 +77,7 @@ export default class SwitchBase extends Component {
       onFocus,
       ...otherProps
     } = this.props;
-    const { checked } = this.state;
+    const {checked} = this.state;
     const shouldRenderLabel = renderLabel && (label || children);
 
     // Don't let native browser change events bubble up to the root div.
@@ -89,7 +89,7 @@ export default class SwitchBase extends Component {
         className={
           classNames(
             className,
-            { 'is-invalid': invalid, 'is-disabled': disabled }
+            {'is-invalid': invalid, 'is-disabled': disabled}
           )
         }
         required={ required ? true : null }

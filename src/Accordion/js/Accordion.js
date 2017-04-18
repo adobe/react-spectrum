@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import '../style/index.styl';
@@ -82,7 +82,7 @@ export default class Accordion extends Component {
 
   getItems() {
     const selectedIndex = this.state.selectedIndex;
-    const { multiselectable, children } = this.props;
+    const {multiselectable, children} = this.props;
     return React.Children.map(children, (child, index) => {
       const selected = multiselectable
         ? selectedIndex.indexOf(index) !== -1

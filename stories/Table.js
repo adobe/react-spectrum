@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf } from '@kadira/storybook';
-import { VerticalCenter } from '../.storybook/layout';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import Table from '../src/Table';
 import THead from '../src/Table/js/THead';
@@ -11,24 +11,24 @@ import TD from '../src/Table/js/TD';
 
 storiesOf('Table', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'hover: true',
-    () => render({ hover: true }),
-    { inline: true }
+    () => render({hover: true}),
+    {inline: true}
   )
   .addWithInfo(
     'bordered: true',
-    () => render({ bordered: true }),
-    { inline: true }
+    () => render({bordered: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import NumberInput from '../../src/NumberInput';
 import Textfield from '../../src/Textfield';
 import Button from '../../src/Button';
@@ -111,47 +111,47 @@ describe('NumberInput', () => {
 
     describe('calls change with proper stepped value', () => {
       it('when increment button is clicked', () => {
-        findIncrementButton(tree).simulate('click', { preventDefault: preventDefaultSpy });
+        findIncrementButton(tree).simulate('click', {preventDefault: preventDefaultSpy});
         expect(spy).toHaveBeenCalledWith(0.5);
         expect(preventDefaultSpy).toHaveBeenCalled();
       });
 
       it('when decrement button is clicked', () => {
-        findDecrementButton(tree).simulate('click', { preventDefault: preventDefaultSpy });
+        findDecrementButton(tree).simulate('click', {preventDefault: preventDefaultSpy});
         expect(spy).toHaveBeenCalledWith(-0.5);
         expect(preventDefaultSpy).toHaveBeenCalled();
       });
 
       describe('when mouse wheel is scrolled', () => {
         const simulateWheel = (deltaY = 5) => {
-          findInput(tree).simulate('wheel', { deltaY, preventDefault: preventDefaultSpy });
+          findInput(tree).simulate('wheel', {deltaY, preventDefault: preventDefaultSpy});
         };
 
         it('up', () => {
-          tree.setState({ focused: true });
+          tree.setState({focused: true});
           simulateWheel(-4.5);
           expect(spy).toHaveBeenCalledWith(0.5);
           expect(preventDefaultSpy).toHaveBeenCalled();
         });
 
         it('down', () => {
-          tree.setState({ focused: true });
+          tree.setState({focused: true});
           simulateWheel(2);
           expect(spy).toHaveBeenCalledWith(-0.5);
           expect(preventDefaultSpy).toHaveBeenCalled();
         });
 
         it('unless input is not focused or readOnly or disabled', () => {
-          tree.setProps({ disabled: true });
+          tree.setProps({disabled: true});
           simulateWheel();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: true });
+          tree.setProps({disabled: false, readOnly: true});
           simulateWheel();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: false });
-          tree.setState({ focused: false });
+          tree.setProps({disabled: false, readOnly: false});
+          tree.setState({focused: false});
           simulateWheel();
           expect(spy).toNotHaveBeenCalled();
         });
@@ -159,18 +159,18 @@ describe('NumberInput', () => {
 
       it('when up or page up arrow keys are pressed', () => {
         const input = findInput(tree);
-        input.simulate('keyDown', { keyCode: 38, preventDefault: preventDefaultSpy }); // up arrow
+        input.simulate('keyDown', {keyCode: 38, preventDefault: preventDefaultSpy}); // up arrow
         expect(spy).toHaveBeenCalledWith(0.5);
-        input.simulate('keyDown', { keyCode: 33, preventDefault: preventDefaultSpy }); // page up
+        input.simulate('keyDown', {keyCode: 33, preventDefault: preventDefaultSpy}); // page up
         expect(spy).toHaveBeenCalledWith(1);
         expect(preventDefaultSpy.calls.length).toEqual(2);
       });
 
       it('when down or page down arrow keys are pressed', () => {
         const input = findInput(tree);
-        input.simulate('keyDown', { keyCode: 40, preventDefault: preventDefaultSpy }); // down arrow
+        input.simulate('keyDown', {keyCode: 40, preventDefault: preventDefaultSpy}); // down arrow
         expect(spy).toHaveBeenCalledWith(-0.5);
-        input.simulate('keyDown', { keyCode: 34, preventDefault: preventDefaultSpy }); // page down
+        input.simulate('keyDown', {keyCode: 34, preventDefault: preventDefaultSpy}); // page down
         expect(spy).toHaveBeenCalledWith(-1);
         expect(preventDefaultSpy.calls.length).toEqual(2);
       });
@@ -204,33 +204,33 @@ describe('NumberInput', () => {
       });
 
       it('won\'t increment if up arrow pressed', () => {
-        findInput(tree).simulate('keyDown', { keyCode: 38, preventDefault: preventDefaultSpy });
+        findInput(tree).simulate('keyDown', {keyCode: 38, preventDefault: preventDefaultSpy});
         expect(spy).toNotHaveBeenCalled();
       });
 
       describe('will jump value to max if home key is pressed', () => {
         const simulateKeyDown = () => {
-          findInput(tree).simulate('keyDown', { keyCode: 36, preventDefault: preventDefaultSpy });
+          findInput(tree).simulate('keyDown', {keyCode: 36, preventDefault: preventDefaultSpy});
         };
 
         it('unless input is not focused or readOnly or disabled', () => {
-          tree.setProps({ disabled: true });
+          tree.setProps({disabled: true});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: true });
+          tree.setProps({disabled: false, readOnly: true});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: false });
-          tree.setState({ focused: false });
+          tree.setProps({disabled: false, readOnly: false});
+          tree.setState({focused: false});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
         });
 
         it('and the input can accept input', () => {
-          tree.setState({ focused: true });
-          tree.setProps({ value: 1 });
+          tree.setState({focused: true});
+          tree.setProps({value: 1});
           simulateKeyDown();
           expect(spy).toHaveBeenCalledWith(10);
           expect(preventDefaultSpy).toHaveBeenCalled();
@@ -238,7 +238,7 @@ describe('NumberInput', () => {
       });
 
       it('will allow changing value greater than max, but marks it invalid', () => {
-        tree.setProps({ value: 12 });
+        tree.setProps({value: 12});
         expect(findIncrementButton(tree).prop('disabled')).toBe(true);
         expect(findInput(tree).prop('invalid')).toBe(true);
       });
@@ -262,33 +262,33 @@ describe('NumberInput', () => {
       });
 
       it('won\'t decrement if down arrow pressed', () => {
-        findInput(tree).simulate('keyDown', { keyCode: 40, preventDefault: preventDefaultSpy });
+        findInput(tree).simulate('keyDown', {keyCode: 40, preventDefault: preventDefaultSpy});
         expect(spy).toNotHaveBeenCalled();
       });
 
       describe('will jump value to max if end key is pressed', () => {
         const simulateKeyDown = () => {
-          findInput(tree).simulate('keyDown', { keyCode: 35, preventDefault: preventDefaultSpy });
+          findInput(tree).simulate('keyDown', {keyCode: 35, preventDefault: preventDefaultSpy});
         };
 
         it('unless input is not focused or readOnly or disabled', () => {
-          tree.setProps({ disabled: true });
+          tree.setProps({disabled: true});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: true });
+          tree.setProps({disabled: false, readOnly: true});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
 
-          tree.setProps({ disabled: false, readOnly: false });
-          tree.setState({ focused: false });
+          tree.setProps({disabled: false, readOnly: false});
+          tree.setState({focused: false});
           simulateKeyDown();
           expect(spy).toNotHaveBeenCalled();
         });
 
         it('and the input can accept input', () => {
-          tree.setState({ focused: true });
-          tree.setProps({ value: -1 });
+          tree.setState({focused: true});
+          tree.setProps({value: -1});
           simulateKeyDown();
           expect(spy).toHaveBeenCalledWith(-10);
           expect(preventDefaultSpy).toHaveBeenCalled();
@@ -296,7 +296,7 @@ describe('NumberInput', () => {
       });
 
       it('will allow setting value to less than min, but marks it invalid', () => {
-        tree.setProps({ value: -12 });
+        tree.setProps({value: -12});
         expect(findDecrementButton(tree).prop('disabled')).toBe(true);
         expect(tree.state('valueInvalid')).toBe(true);
         expect(findInput(tree).prop('invalid')).toBe(true);
@@ -304,7 +304,7 @@ describe('NumberInput', () => {
 
       it('will allow input change value to be less than min, but marks it invalid', () => {
         const spSpy = expect.createSpy();
-        findInput(tree).simulate('change', { target: { value: -12 }, stopPropagation: spSpy });
+        findInput(tree).simulate('change', {target: {value: -12}, stopPropagation: spSpy});
         expect(findDecrementButton(tree).prop('disabled')).toBe(true);
         expect(tree.state('valueInvalid')).toBe(true);
         expect(findInput(tree).prop('invalid')).toBe(true);
@@ -325,21 +325,21 @@ describe('NumberInput', () => {
     });
 
     it('will not allow non-numeric characters', () => {
-      findInput(tree).simulate('change', { target: { value: 'foo' }, stopPropagation: spSpy });
+      findInput(tree).simulate('change', {target: {value: 'foo'}, stopPropagation: spSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(findInput(tree).prop('value')).toBe(1);
       expect(spSpy).toHaveBeenCalled();
     });
 
     it('will allow a single negative sign even though it is not a number', () => {
-      findInput(tree).simulate('change', { target: { value: '-' }, stopPropagation: spSpy });
+      findInput(tree).simulate('change', {target: {value: '-'}, stopPropagation: spSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(findInput(tree).prop('value')).toBe('-');
       expect(spSpy).toHaveBeenCalled();
     });
 
     it('will allow numeric values', () => {
-      findInput(tree).simulate('change', { target: { value: '-5' }, stopPropagation: spSpy });
+      findInput(tree).simulate('change', {target: {value: '-5'}, stopPropagation: spSpy});
       expect(spy).toHaveBeenCalledWith(-5);
       expect(tree.state('value')).toBe('-5');
       expect(findInput(tree).prop('value')).toBe('-5');
@@ -360,5 +360,5 @@ describe('NumberInput', () => {
 
 const findInput = tree => tree.find(Textfield);
 const findAllButtons = tree => tree.find(Button);
-const findDecrementButton = tree => tree.find({ icon: 'chevronDown' });
-const findIncrementButton = tree => tree.find({ icon: 'chevronUp' });
+const findDecrementButton = tree => tree.find({icon: 'chevronDown'});
+const findIncrementButton = tree => tree.find({icon: 'chevronUp'});

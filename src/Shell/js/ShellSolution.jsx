@@ -17,7 +17,7 @@ export default function ShellSolution({
       className={
         classNames(
           'coral-Shell-solution',
-          { 'coral-Shell-solution--linked': entitled },
+          {'coral-Shell-solution--linked': entitled},
           className
         )
       }

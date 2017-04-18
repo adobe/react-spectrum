@@ -12,8 +12,8 @@
   "scripts": {
     "prepublish": "NODE_ENV=production babel src --out-dir lib",
     "start": "start-storybook -p 9002",
-    "lint": "eslint \"src/**/*\" \"test/**/*.js\"",
-    "test": "export NODE_ENV=test|| set NODE_ENV=test&& mocha test/.setup.js test/",
+    "lint": "lfeslint",
+    "test": "NODE_ENV=test mocha test/.setup.js test/",
     "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
     "test:watch": "npm test -- --watch",
     "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura --report html _mocha -- -R dot test/.setup.js test/"
@@ -76,6 +76,7 @@
     "istanbul": "^1.0.0-alpha.2",
     "istanbul-cobertura-badger": "^1.2.1",
     "jsdom": "^9.8.0",
+    "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",

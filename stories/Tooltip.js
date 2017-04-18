@@ -1,65 +1,65 @@
 import React from 'react';
-import { storiesOf } from '@kadira/storybook';
-import { VerticalCenter } from '../.storybook/layout';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import Tooltip from '../src/Tooltip';
 import Button from '../src/Button';
 
 storiesOf('Tooltip', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render('This is a tooltip.'),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'Long content',
     () => render(longMarkup),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'placement: left',
-    () => render('This is a tooltip.', { placement: 'left' }),
-    { inline: true }
+    () => render('This is a tooltip.', {placement: 'left'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: top',
-    () => render('This is a tooltip.', { placement: 'top' }),
-    { inline: true }
+    () => render('This is a tooltip.', {placement: 'top'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: bottom',
-    () => render('This is a tooltip.', { placement: 'bottom' }),
-    { inline: true }
+    () => render('This is a tooltip.', {placement: 'bottom'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: error',
-    () => render('This is a tooltip.', { variant: 'error' }),
-    { inline: true }
+    () => render('This is a tooltip.', {variant: 'error'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: success',
-    () => render('This is a tooltip.', { variant: 'success' }),
-    { inline: true }
+    () => render('This is a tooltip.', {variant: 'success'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: info',
-    () => render('This is a tooltip.', { variant: 'info' }),
-    { inline: true }
+    () => render('This is a tooltip.', {variant: 'info'}),
+    {inline: true}
   )
   .addWithInfo(
     'openOn: hover',
-    () => render('This is a tooltip.', { openOn: 'hover' }),
-    { inline: true }
+    () => render('This is a tooltip.', {openOn: 'hover'}),
+    {inline: true}
   )
   .addWithInfo(
     'openOn: click',
-    () => render('This is a tooltip.', { openOn: 'click' }),
-    { inline: true }
+    () => render('This is a tooltip.', {openOn: 'click'}),
+    {inline: true}
   );
 
 function render(children, props = {}) {
@@ -71,7 +71,7 @@ function render(children, props = {}) {
     buttonLbl = 'Click Me';
   }
   return (
-    <div style={ { display: 'inline-block' } }>
+    <div style={ {display: 'inline-block'} }>
       <Tooltip
         title="Title"
         openOn="always"

@@ -1,9 +1,9 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import TetherDropComponent from '../../internal/TetherDropComponent';
 import manageTransitionVisibility from '../../utils/manageTransitionVisibility';
 
-import { getTetherPositionFromPlacement } from '../../utils/tether';
+import {getTetherPositionFromPlacement} from '../../utils/tether';
 
 import '../style/index.styl';
 
@@ -55,7 +55,7 @@ export default class Tooltip extends Component {
   };
 
   componentDidMount() {
-    const { drop } = this.refs;
+    const {drop} = this.refs;
     this.transitionVisibilityManager = manageTransitionVisibility(drop.tetherDrop.drop);
   }
 

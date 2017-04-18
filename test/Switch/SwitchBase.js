@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import SwitchBase from '../../src/Switch/js/SwitchBase';
 
 describe('SwitchBase', () => {
@@ -29,13 +29,13 @@ describe('SwitchBase', () => {
 
   it('uncontrolled switchBase will toggle', () => {
     const tree = shallow(<SwitchBase defaultChecked={ false } />);
-    findInput(tree).simulate('change', { target: { checked: true } });
+    findInput(tree).simulate('change', {target: {checked: true}});
     expectChecked(tree, true);
   });
 
   it('controlled switchBase won\'t toggle', () => {
     const tree = shallow(<SwitchBase checked />);
-    findInput(tree).simulate('change', { target: { checked: false } });
+    findInput(tree).simulate('change', {target: {checked: false}});
     expectChecked(tree, true);
   });
 
@@ -58,7 +58,7 @@ describe('SwitchBase', () => {
     const tree = shallow(<SwitchBase />);
     expect(findInput(tree).prop('disabled')).toNotExist();
     expect(tree.prop('aria-disabled')).toBe(false);
-    tree.setProps({ disabled: true });
+    tree.setProps({disabled: true});
     expect(findInput(tree).prop('disabled')).toBe(true);
     expect(tree.prop('aria-disabled')).toBe(true);
   });
@@ -66,14 +66,14 @@ describe('SwitchBase', () => {
   it('supports required', () => {
     const tree = shallow(<SwitchBase />);
     expect(tree.prop('aria-required')).toBe(false);
-    tree.setProps({ required: true });
+    tree.setProps({required: true});
     expect(tree.prop('aria-required')).toBe(true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<SwitchBase />);
     expect(tree.prop('aria-readonly')).toBe(false);
-    tree.setProps({ readOnly: true });
+    tree.setProps({readOnly: true});
     expect(tree.prop('aria-readonly')).toBe(true);
   });
 
@@ -111,8 +111,8 @@ describe('SwitchBase', () => {
       />
     );
     expect(findLabel(tree).node).toNotExist();
-    tree.setProps({ renderLabel: true });
-    tree.setProps({ label: 'React' });
+    tree.setProps({renderLabel: true});
+    tree.setProps({label: 'React'});
     expect(findLabel(tree).node).toExist();
   });
 

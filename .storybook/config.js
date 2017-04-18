@@ -1,5 +1,4 @@
-import React from 'react';
-import { configure, setAddon } from '@kadira/storybook';
+import {configure, setAddon} from '@kadira/storybook';
 import infoAddon from '@kadira/react-storybook-addon-info';
 
 import configureTypekit from '../src-old/configureTypekit';

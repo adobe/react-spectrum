@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Progress from '../../src/Progress';
 
 describe('Progress', () => {
@@ -17,7 +17,7 @@ describe('Progress', () => {
     expect(bar.prop('className')).toBe('coral-Progress-bar');
     const status = findStatus(tree);
     expect(status.prop('className')).toBe('coral-Progress-status');
-    expect(status.prop('style')).toEqual({ width: '0%' });
+    expect(status.prop('style')).toEqual({width: '0%'});
 
     expect(tree.find('.coral-Progress-label').node).toNotExist();
   });
@@ -26,19 +26,19 @@ describe('Progress', () => {
     it('updates all the fields', () => {
       const tree = shallow(<Progress value="30" showPercent />);
       expect(tree.prop('aria-valuenow')).toBe(30);
-      expect(findStatus(tree).prop('style')).toEqual({ width: '30%' });
+      expect(findStatus(tree).prop('style')).toEqual({width: '30%'});
       expect(findLabel(tree).text()).toBe('30%');
     });
 
     it('clamps values to 0-100', () => {
       const tree = shallow(<Progress value="10000" showPercent />);
       expect(tree.prop('aria-valuenow')).toBe(100);
-      expect(findStatus(tree).prop('style')).toEqual({ width: '100%' });
+      expect(findStatus(tree).prop('style')).toEqual({width: '100%'});
       expect(findLabel(tree).text()).toBe('100%');
 
-      tree.setProps({ value: '-1' });
+      tree.setProps({value: '-1'});
       expect(tree.prop('aria-valuenow')).toBe(0);
-      expect(findStatus(tree).prop('style')).toEqual({ width: '0%' });
+      expect(findStatus(tree).prop('style')).toEqual({width: '0%'});
       expect(findLabel(tree).text()).toBe('0%');
     });
   });
@@ -46,7 +46,7 @@ describe('Progress', () => {
   it('supports multiple sizes', () => {
     const tree = shallow(<Progress size="L" />);
     expect(tree.hasClass('coral-Progress--large')).toBe(true);
-    tree.setProps({ size: 'S' });
+    tree.setProps({size: 'S'});
     expect(tree.hasClass('coral-Progress--small')).toBe(true);
   });
 
@@ -56,7 +56,7 @@ describe('Progress', () => {
     expect(tree.prop('aria-valuemin')).toNotExist();
     expect(tree.prop('aria-valuemax')).toNotExist();
     expect(tree.prop('aria-valuenow')).toNotExist();
-    expect(findStatus(tree).prop('style')).toEqual({ width: '0%' });
+    expect(findStatus(tree).prop('style')).toEqual({width: '0%'});
   });
 
   describe('label', () => {
@@ -67,14 +67,14 @@ describe('Progress', () => {
       expect(label.node).toExist();
       expect(label.text()).toBe('0%');
 
-      tree.setProps({ value: 50 });
+      tree.setProps({value: 50});
       expect(findLabel(tree).text()).toBe('50%');
     });
 
     it('supports labelPosition', () => {
       const tree = shallow(<Progress showPercent labelPosition="left" />);
       expect(tree.hasClass('coral-Progress--leftLabel')).toBe(true);
-      tree.setProps({ labelPosition: 'bottom' });
+      tree.setProps({labelPosition: 'bottom'});
       expect(tree.hasClass('coral-Progress--bottomLabel')).toBe(true);
     });
 

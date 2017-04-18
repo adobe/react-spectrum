@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
@@ -9,7 +9,7 @@ import Calendar from '../../Calendar';
 import Popover from '../../Popover';
 import Clock from '../../Clock';
 import createId from '../../utils/createId';
-import { toMoment } from '../../utils/moment';
+import {toMoment} from '../../utils/moment';
 
 import '../style/index.styl';
 
@@ -81,7 +81,7 @@ export default class Datepicker extends Component {
       attachment: 'together', // flip when we hit a boundary
       pin: true
     },
-    onChange: () => {}
+    onChange: function () {}
   };
 
   constructor(props) {
@@ -130,7 +130,7 @@ export default class Datepicker extends Component {
   }
 
   getDefaultValueFormat(props) {
-    const { type } = props;
+    const {type} = props;
 
     switch (type) {
       case 'time': return DEFAULT_TIME_VAL_FORMAT;
@@ -142,7 +142,7 @@ export default class Datepicker extends Component {
   }
 
   setValue(valueText, value) {
-    const { onChange } = this.props;
+    const {onChange} = this.props;
 
     if (!('value' in this.props)) {
       this.setState({
@@ -162,7 +162,7 @@ export default class Datepicker extends Component {
   }
 
   handleCalendarButtonClick = () => {
-    this.setState({ open: !this.state.open });
+    this.setState({open: !this.state.open});
   }
 
   handlePopoverClose = e => {
@@ -184,7 +184,7 @@ export default class Datepicker extends Component {
     if (date.isValid()) {
       this.setValue(this.formatValueToInputText(date), date);
     }
-    this.setState({ open: false });
+    this.setState({open: false});
   }
 
   handleClockChange = (valueText, valueDate) => {
@@ -209,7 +209,7 @@ export default class Datepicker extends Component {
   }
 
   handleTextBlur = e => {
-    const { displayFormat } = this.state;
+    const {displayFormat} = this.state;
     const text = e.target.value;
     let date = moment(text, displayFormat, true);
     // eslint-disable-next-line no-underscore-dangle
@@ -224,7 +224,7 @@ export default class Datepicker extends Component {
   }
 
   closeCalendarPopover() {
-    this.setState({ open: false });
+    this.setState({open: false});
   }
 
   renderCalendar(props) {
@@ -270,7 +270,7 @@ export default class Datepicker extends Component {
       ...otherProps
     } = this.props;
 
-    const { open, valueText, value, valueFormat } = this.state;
+    const {open, valueText, value, valueFormat} = this.state;
 
     const calendarProps = {
       id,
@@ -345,7 +345,7 @@ export default class Datepicker extends Component {
           />
           <div ref="button" className="coral-InputGroup-button">
             <Button
-              className={ classNames({ 'coral-Button--quiet': quiet }) }
+              className={ classNames({'coral-Button--quiet': quiet}) }
               type="button"
               icon={ type === 'time' ? 'clock' : 'calendar' }
               iconSize="S"

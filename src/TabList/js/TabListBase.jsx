@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 /**
  * selectedIndex: The index of the StepList that should be selected. When selectedIndex is
@@ -76,7 +76,7 @@ export default class TabListBase extends Component {
   }
 
   getMappedChildProps(child, index) {
-    const { childMappingFunction } = this.props;
+    const {childMappingFunction} = this.props;
     if (!childMappingFunction) { return {}; }
     return childMappingFunction(this, child, index);
   }
@@ -91,14 +91,14 @@ export default class TabListBase extends Component {
   }
 
   getItems() {
-    const { children } = this.props;
-    return React.Children.map(children, (child, index) => {
-      return React.cloneElement(child, this.getChildProps(child, index));
-    });
+    const {children} = this.props;
+    return React.Children.map(children, (child, index) =>
+      React.cloneElement(child, this.getChildProps(child, index))
+    );
   }
 
   cleanProps() {
-    const { ...otherProps } = this.props;
+    const {...otherProps} = this.props;
     delete otherProps.defaultSelectedIndex;
     delete otherProps.selectedIndex;
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import Tag from '../../src/TagList/js/Tag';
 import TagList from '../../src/TagList';
 
@@ -66,7 +66,7 @@ describe('TagList', () => {
 
   it('removes focused state when onBlur', () => {
     const spy = createSpy();
-    const tree = shallow(<TagList onBlur={ spy } />).setState({ focused: true });
+    const tree = shallow(<TagList onBlur={ spy } />).setState({focused: true});
     tree.simulate('blur');
     expect(spy).toHaveBeenCalled();
     expect(tree.state('focused')).toBe(false);
@@ -94,19 +94,19 @@ describe('TagList', () => {
     });
 
     it('sets selected when focused and selectedIndex exists', () => {
-      run({}, { selectedIndex: 1, focused: true });
+      run({}, {selectedIndex: 1, focused: true});
       expect(child1.prop('selected')).toBe(false);
       expect(child2.prop('selected')).toBe(true);
     });
 
     it('sets tab index when selectedIndex matches index', () => {
-      run({}, { selectedIndex: 1 });
+      run({}, {selectedIndex: 1});
       expect(child1.prop('tabIndex')).toBe(-1);
       expect(child2.prop('tabIndex')).toBe(0);
     });
 
     it('doesn\'t set tab index when disabled', () => {
-      run({ disabled: true }, { selectedIndex: 1 });
+      run({disabled: true}, {selectedIndex: 1});
       expect(child1.prop('tabIndex')).toBe(-1);
       expect(child2.prop('tabIndex')).toBe(-1);
     });
@@ -117,7 +117,7 @@ describe('TagList', () => {
     });
 
     it('doest set closable when readOnly', () => {
-      run({ readOnly: true });
+      run({readOnly: true});
       expect(child1.prop('closable')).toBe(false);
     });
 
@@ -134,28 +134,28 @@ describe('TagList', () => {
 
     it('passes down the onClose', () => {
       const onClose = createSpy();
-      run({ onClose });
+      run({onClose});
       child1.props().onClose('Tag 1');
       expect(onClose).toHaveBeenCalledWith('Tag 1');
     });
 
     it('supports values', () => {
-      run({ values: ['test1', 'test2', 'test3'] });
+      run({values: ['test1', 'test2', 'test3']});
       expect(tree.children().length).toBe(3);
     });
 
     it('doesnt render passed children with values', () => {
-      run({ values: ['test1', 'test2'] });
+      run({values: ['test1', 'test2']});
       expect(child1.length).toBe(0);
     });
 
     it('sets the value', () => {
-      run({ values: ['test1', 'test2'] });
+      run({values: ['test1', 'test2']});
       expect(tree.childAt(0).prop('value')).toBe('test1');
     });
 
     it('sets the text', () => {
-      run({ values: ['test1', 'test2'] });
+      run({values: ['test1', 'test2']});
       expect(tree.childAt(1).prop('children')).toBe('test2');
     });
   });

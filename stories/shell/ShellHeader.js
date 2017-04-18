@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
-import { VerticalTop } from '../../.storybook/layout';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalTop} from '../../.storybook/layout';
 
 import ShellHeader from '../../src/Shell/js/ShellHeader';
 import ShellWorkspaces from '../../src/Shell/js/ShellWorkspaces';
@@ -19,7 +19,7 @@ import Button from '../../src/Button';
 // We need the Shell Header to be the topmost item on the page because the CoralUI Shell styles assume the menus will be
 // sliding in from the top.  If we include the Storybook header, it pushes the ShellHeader down too far and makes it
 // look broken while interacting with it.
-const options = { inline: true, header: false };
+const options = {inline: true, header: false};
 
 storiesOf('ShellHeader', module)
   .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
@@ -30,7 +30,7 @@ storiesOf('ShellHeader', module)
   )
   .addWithInfo(
     'homeIcon: adobeAnalyticsColor',
-    () => render({ homeIcon: 'adobeAnalyticsColor' }),
+    () => render({homeIcon: 'adobeAnalyticsColor'}),
     options
   );
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import '../style/index.styl'
+import '../style/index.styl';
 
 export default function Heading({
   size = 1,

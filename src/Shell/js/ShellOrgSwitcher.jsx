@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import ShellMenu from './internal/ShellMenu';
 
@@ -9,7 +9,7 @@ import List from '../../List';
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
     manageOrgsUrl: '#',
-    onOrgChange: () => {}
+    onOrgChange: function () {}
   };
 
   state = {
@@ -52,12 +52,12 @@ export default class ShellOrgSwitcher extends Component {
   }
 
   visibilityFilter = label => {
-    const { searchTerm } = this.state;
+    const {searchTerm} = this.state;
     return label.toLowerCase().indexOf(searchTerm) !== -1;
   }
 
   handleSearchChange = searchTerm => {
-    this.setState({ searchTerm });
+    this.setState({searchTerm});
   }
 
   render() {

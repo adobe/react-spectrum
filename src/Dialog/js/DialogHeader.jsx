@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Heading from '../../Heading';
 import Button from '../../Button';
 import Icon from '../../Icon';
-import { getVariantIcon } from '../../utils/icon-variant';
+import {getVariantIcon} from '../../utils/icon-variant';
 
 export default function DialogHeader({
   title,

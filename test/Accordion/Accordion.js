@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow, mount } from 'enzyme';
+import {shallow, mount} from 'enzyme';
 import Accordion from '../../src/Accordion';
 import AccordionItem from '../../src/Accordion/js/AccordionItem';
 

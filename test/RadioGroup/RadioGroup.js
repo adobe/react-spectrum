@@ -1,6 +1,6 @@
 import React from 'react';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import RadioGroup from '../../src/RadioGroup';
 import Radio from '../../src/Radio';
 
@@ -22,7 +22,7 @@ describe('RadioGroup', () => {
   });
 
   describe('selectedValue', () => {
-    const renderRadioGroupWithChildren = ({ childSelectedIndex, ...otherProps } = {}) => shallow(
+    const renderRadioGroupWithChildren = ({childSelectedIndex, ...otherProps} = {}) => shallow(
       <RadioGroup { ...otherProps }>
         <Radio value="foo" checked={ childSelectedIndex === 0 } />
         <Radio value="bar" checked={ childSelectedIndex === 1 } />
@@ -31,17 +31,17 @@ describe('RadioGroup', () => {
     );
 
     it('makes the child checked', () => {
-      const tree = renderRadioGroupWithChildren({ selectedValue: 'bar' });
+      const tree = renderRadioGroupWithChildren({selectedValue: 'bar'});
       expect(tree.childAt(1).prop('checked')).toBe(true);
     });
 
     it('makes the child checked with defaultSelectedValue', () => {
-      const tree = renderRadioGroupWithChildren({ defaultSelectedValue: 'bar' });
+      const tree = renderRadioGroupWithChildren({defaultSelectedValue: 'bar'});
       expect(tree.childAt(1).prop('checked')).toBe(true);
     });
 
     it('automatically sets selectedValue if a child is selected', () => {
-      const tree = renderRadioGroupWithChildren({ childSelectedIndex: 1 });
+      const tree = renderRadioGroupWithChildren({childSelectedIndex: 1});
       expect(tree.state('selectedValue')).toBe('bar');
     });
 
@@ -49,9 +49,9 @@ describe('RadioGroup', () => {
       const spy = createSpy();
       const stopPropagationSpy = createSpy();
 
-      const tree = renderRadioGroupWithChildren({ onChange: spy });
+      const tree = renderRadioGroupWithChildren({onChange: spy});
       expect(tree.prop('onChange')).toExist();
-      tree.childAt(1).simulate('change', { stopPropagation: stopPropagationSpy });
+      tree.childAt(1).simulate('change', {stopPropagation: stopPropagationSpy});
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith('bar');

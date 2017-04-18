@@ -1,5 +1,5 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import {storiesOf, action} from '@kadira/storybook';
 import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 
@@ -12,62 +12,62 @@ storiesOf('Dialog', module)
   .addWithInfo(
     'Default',
     () => render(dialogChildren),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'fullscreen: true',
-    () => render(dialogChildren, { fullscreen: true }),
-    { inline: true }
+    () => render(dialogChildren, {fullscreen: true}),
+    {inline: true}
   )
   .addWithInfo(
     'Long content',
     () => render(longMarkup),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'open: false',
-    () => render(dialogChildren, { open: false }),
-    { inline: true }
+    () => render(dialogChildren, {open: false}),
+    {inline: true}
   )
   .addWithInfo(
     'closable: false',
-    () => render(dialogChildren, { closable: false }),
-    { inline: true }
+    () => render(dialogChildren, {closable: false}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: error',
-    () => render(dialogChildren, { variant: 'error' }),
-    { inline: true }
+    () => render(dialogChildren, {variant: 'error'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: warning',
-    () => render(dialogChildren, { variant: 'warning' }),
-    { inline: true }
+    () => render(dialogChildren, {variant: 'warning'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: success',
-    () => render(dialogChildren, { variant: 'success' }),
-    { inline: true }
+    () => render(dialogChildren, {variant: 'success'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: help',
-    () => render(dialogChildren, { variant: 'help' }),
-    { inline: true }
+    () => render(dialogChildren, {variant: 'help'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: info',
-    () => render(dialogChildren, { variant: 'info' }),
-    { inline: true }
+    () => render(dialogChildren, {variant: 'info'}),
+    {inline: true}
   )
   .addWithInfo(
     'backdrop: none',
-    () => render(dialogChildren, { backdrop: 'none' }),
-    { inline: true }
+    () => render(dialogChildren, {backdrop: 'none'}),
+    {inline: true}
   )
   .addWithInfo(
     'backdrop: static',
-    () => render(dialogChildren, { backdrop: 'static' }),
-    { inline: true }
+    () => render(dialogChildren, {backdrop: 'static'}),
+    {inline: true}
   );
 
 function render(children, props = {}) {

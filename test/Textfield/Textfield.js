@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import Textfield from '../../src/Textfield';
 
 describe('Textfield', () => {
@@ -13,7 +13,7 @@ describe('Textfield', () => {
   it('supports quiet variation', () => {
     const tree = shallow(<Textfield quiet />);
     expect(tree.prop('className')).toBe('coral-Textfield coral-Textfield--quiet');
-    tree.setProps({ quiet: false });
+    tree.setProps({quiet: false});
     expect(tree.prop('className')).toBe('coral-Textfield');
   });
 
@@ -26,7 +26,7 @@ describe('Textfield', () => {
     const tree = shallow(<Textfield />);
     expect(tree.prop('disabled')).toNotExist();
     expect(tree.prop('aria-disabled')).toBe(false);
-    tree.setProps({ disabled: true });
+    tree.setProps({disabled: true});
     expect(tree.prop('disabled')).toBe(true);
     expect(tree.prop('aria-disabled')).toBe(true);
   });
@@ -34,14 +34,14 @@ describe('Textfield', () => {
   it('supports required', () => {
     const tree = shallow(<Textfield />);
     expect(tree.prop('aria-required')).toBe(false);
-    tree.setProps({ required: true });
+    tree.setProps({required: true});
     expect(tree.prop('aria-required')).toBe(true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<Textfield />);
     expect(tree.prop('aria-readonly')).toBe(false);
-    tree.setProps({ readOnly: true });
+    tree.setProps({readOnly: true});
     expect(tree.prop('aria-readonly')).toBe(true);
   });
 

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import Portal from 'react-portal';
-import { getTransitionEvent } from '../../../utils/transition';
+import {getTransitionEvent} from '../../../utils/transition';
 
 import './ShellMenu.styl';
 
@@ -13,10 +13,10 @@ export default class ShellMenu extends Component {
     full: false,
     dark: false,
     top: false, // if true, appears on top of the other menus
-    onOpen: () => {},
-    onClose: () => {},
-    onVisible: () => {},
-    onHidden: () => {}
+    onOpen: function () {},
+    onClose: function () {},
+    onVisible: function () {},
+    onHidden: function () {}
   };
 
   constructor(props) {
@@ -34,13 +34,13 @@ export default class ShellMenu extends Component {
   }
 
   componentDidMount() {
-    const { menu } = this.refs;
+    const {menu} = this.refs;
     menu.addEventListener(getTransitionEvent(), this.handleTransitionEnd);
   }
 
   componentWillReceiveProps(nextProps) {
     if ('open' in nextProps) {
-      this.setState({ open: nextProps.open });
+      this.setState({open: nextProps.open});
       if (nextProps.open) {
         this.addOutsideClickListeners();
       } else {
@@ -50,14 +50,14 @@ export default class ShellMenu extends Component {
   }
 
   componentWillUnmount() {
-    const { menu } = this.refs;
+    const {menu} = this.refs;
     this.removeOutsideClickListeners();
     menu.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
   }
 
   setOpen(open) {
     if (!('open' in this.props)) {
-      this.setState({ open });
+      this.setState({open});
 
       if (open) {
         this.addOutsideClickListeners();
@@ -82,19 +82,19 @@ export default class ShellMenu extends Component {
       return;
     }
 
-    const { onVisible, onHidden } = this.props;
-    const { open } = this.state;
+    const {onVisible, onHidden} = this.props;
+    const {open} = this.state;
 
     if (open) {
       onVisible();
     } else {
       onHidden();
     }
-    this.setState({ visible: open });
+    this.setState({visible: open});
   }
 
   handleMenuToggle = e => {
-    const { open } = this.state;
+    const {open} = this.state;
 
     if (open) {
       this.handleMenuClose(e);
@@ -104,7 +104,7 @@ export default class ShellMenu extends Component {
   }
 
   handleTargetClick = e => {
-    const { open } = this.state;
+    const {open} = this.state;
     // If it's already open, close it.
     if (open) {
       this.handleMenuClose();
@@ -115,20 +115,20 @@ export default class ShellMenu extends Component {
   }
 
   handleMenuOpen = () => {
-    const { onOpen, index } = this.props;
+    const {onOpen, index} = this.props;
     this.setOpen(true);
     onOpen(index);
   }
 
   handleMenuClose = () => {
-    const { onClose, index } = this.props;
+    const {onClose, index} = this.props;
 
     this.setOpen(false);
     onClose(index);
   }
 
   handleOutsideClick = e => {
-    const { target, menu } = this.refs;
+    const {target, menu} = this.refs;
 
     // If the click happens on the menu, don't have it be closed.
     // If the click happens on the target element, it will be closed within the handleTargetClick
@@ -152,7 +152,7 @@ export default class ShellMenu extends Component {
       children
     } = this.props;
 
-    const { open, visible } = this.state;
+    const {open, visible} = this.state;
     let zIndex;
     if (open) {
       zIndex = top ? 10018 : 10015;
@@ -164,7 +164,7 @@ export default class ShellMenu extends Component {
       <span>
         <span ref="target">
           {
-            React.cloneElement(target, { onClick: this.handleTargetClick })
+            React.cloneElement(target, {onClick: this.handleTargetClick})
           }
         </span>
         <Portal
@@ -173,7 +173,7 @@ export default class ShellMenu extends Component {
         >
           <div
             ref="menu"
-            style={ { zIndex } }
+            style={ {zIndex} }
             className={
               classNames(
                 'coral-Shell-menu',

@@ -1,18 +1,18 @@
 import React from 'react';
 import expect from 'expect';
-import { mount } from 'enzyme';
+import {mount} from 'enzyme';
 import ReactSelect from 'react-select';
 import Select from '../../src/Select';
 
 const testOptions = [
-  { label: 'Chocolate', value: 'chocolate' },
-  { label: 'Vanilla', value: 'vanilla' },
-  { label: 'Strawberry', value: 'strawberry' },
-  { label: 'Caramel', value: 'caramel' },
-  { label: 'Cookies and Cream', value: 'cookiescream', disabled: true },
-  { label: 'Coconut', value: 'coco' },
-  { label: 'Peppermint', value: 'peppermint' },
-  { label: 'Some crazy long value that should be cut off', value: 'logVal' }
+  {label: 'Chocolate', value: 'chocolate'},
+  {label: 'Vanilla', value: 'vanilla'},
+  {label: 'Strawberry', value: 'strawberry'},
+  {label: 'Caramel', value: 'caramel'},
+  {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
+  {label: 'Coconut', value: 'coco'},
+  {label: 'Peppermint', value: 'peppermint'},
+  {label: 'Some crazy long value that should be cut off', value: 'logVal'}
 ];
 
 describe('Select', () => {
@@ -38,7 +38,7 @@ describe('Select', () => {
     let tree;
 
     const pressKey = (key) => {
-      tree.instance().handleKeyPress({ key });
+      tree.instance().handleKeyPress({key});
       tree.update();
     };
 

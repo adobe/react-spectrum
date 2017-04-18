@@ -1,5 +1,5 @@
 /* eslint react/no-unused-prop-types: 0 */
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import Drop from 'tether-drop';
 
@@ -43,12 +43,12 @@ export default class TetherDropComponent extends Component {
     openOn: null, // Null means we'll manually call .open() and .close() on the drop instance.
     constraints: null,
     onClickOutside: null,
-    onOpen: () => {},
-    onClose: () => {}
+    onOpen: function () {},
+    onClose: function () {}
   };
 
   componentDidMount() {
-    const { onClickOutside, open, openOn } = this.props;
+    const {onClickOutside, open, openOn} = this.props;
 
     this.renderDrop();
     if (!openOn) {
@@ -61,7 +61,7 @@ export default class TetherDropComponent extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const { content, children, classPrefix, openOn, open } = this.props;
+    const {content, children, classPrefix, openOn, open} = this.props;
 
     if (this.tetherDrop) {
       // TODO: There is not an easy way that I've found to update the position after it's set
@@ -80,7 +80,7 @@ export default class TetherDropComponent extends Component {
   }
 
   componentWillUnmount() {
-    const { onClickOutside } = this.props;
+    const {onClickOutside} = this.props;
 
     this.destroyDrop();
 
@@ -102,7 +102,7 @@ export default class TetherDropComponent extends Component {
   }
 
   handleClickOutside = e => {
-    const { onClickOutside } = this.props;
+    const {onClickOutside} = this.props;
     const tetherDropNode = this.getTetherDropNode();
 
     if (onClickOutside && tetherDropNode && !tetherDropNode.contains(e.target)) {
@@ -171,7 +171,7 @@ export default class TetherDropComponent extends Component {
   }
 
   render() {
-    const { className, children } = this.props;
+    const {className, children} = this.props;
     return (
       <div className={ className } ref="target">
         { children }

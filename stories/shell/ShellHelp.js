@@ -1,44 +1,44 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
-import { VerticalCenter } from '../../.storybook/layout';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalCenter} from '../../.storybook/layout';
 
 import ShellHelp from '../../src/Shell/js/ShellHelp';
 
 storiesOf('ShellHelp', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'open: true',
-    () => render({ open: true }),
-    { inline: true }
+    () => render({open: true}),
+    {inline: true}
   )
   .addWithInfo(
     'defaultResults',
-    () => render({ defaultResults, open: true }),
-    { inline: true }
+    () => render({defaultResults, open: true}),
+    {inline: true}
   )
   .addWithInfo(
     'onClear',
-    () => render({ defaultResults, open: true, onClear: action('clear') }),
-    { inline: true }
+    () => render({defaultResults, open: true, onClear: action('clear')}),
+    {inline: true}
   )
   .addWithInfo(
     'onHide',
-    () => render({ defaultResults, onHide: action('hiding') }),
-    { inline: true }
+    () => render({defaultResults, onHide: action('hiding')}),
+    {inline: true}
   )
   .addWithInfo(
     'searchResults: 0',
-    () => render({ searchResults: [], numTotalResults: 0, open: true }),
-    { inline: true }
+    () => render({searchResults: [], numTotalResults: 0, open: true}),
+    {inline: true}
   )
   .addWithInfo(
     '5 searchResults',
@@ -48,7 +48,7 @@ storiesOf('ShellHelp', module)
       moreSearchResultsUrl,
       open: true
     }),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     '1000 searchResults',
@@ -58,12 +58,12 @@ storiesOf('ShellHelp', module)
       moreSearchResultsUrl,
       open: true
     }),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'loading: true',
-    () => render({ loading: true, open: true }),
-    { inline: true }
+    () => render({loading: true, open: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

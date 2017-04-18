@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import ListItem from '../../List/js/ListItem';
@@ -10,8 +10,8 @@ export default class ShellOrganization extends Component {
   static defaultProps = {
     selected: false,
     isSubItem: false,
-    visibilityFilter: () => {},
-    onSelect: () => {}
+    visibilityFilter: function () {},
+    onSelect: function () {}
   };
 
   state = {
@@ -19,7 +19,7 @@ export default class ShellOrganization extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { visibilityFilter, label, children } = nextProps;
+    const {visibilityFilter, label, children} = nextProps;
     this.determineVisibility(visibilityFilter, label, children);
   }
 
@@ -50,11 +50,11 @@ export default class ShellOrganization extends Component {
       visible = childVisible;
     }
 
-    this.setState({ visible });
+    this.setState({visible});
   }
 
   hasChildren() {
-    const { children } = this.props;
+    const {children} = this.props;
     return !!children;
   }
 
@@ -81,7 +81,7 @@ export default class ShellOrganization extends Component {
       ...otherProps
     } = this.props;
 
-    const { visible } = this.state;
+    const {visible} = this.state;
     const isChildSelected = children && this.isChildSelected(children);
 
     return (

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import '../style/index.styl';
@@ -6,7 +6,7 @@ import '../style/index.styl';
 export default class List extends Component {
   static defaultProps = {
     listItemSelector: '.coral-BasicList-item',
-    onSelect: () => {}
+    onSelect: function () {}
   }
 
   getItems() {

@@ -1,6 +1,6 @@
 import React from 'react';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import StepList from '../../src/StepList';
 
 describe('StepList', () => {
@@ -18,7 +18,7 @@ describe('StepList', () => {
     const tree = shallow(<StepList />);
     expect(tree.hasClass('coral-StepList--small')).toBe(false);
 
-    tree.setProps({ size: 'S' });
+    tree.setProps({size: 'S'});
     expect(tree.hasClass('coral-StepList--small')).toBe(true);
   });
 
@@ -26,7 +26,7 @@ describe('StepList', () => {
     const tree = shallow(<StepList />);
     expect(tree.hasClass('coral-StepList--interactive')).toBe(true);
 
-    tree.setProps({ interaction: 'off' });
+    tree.setProps({interaction: 'off'});
     expect(tree.hasClass('coral-StepList--interactive')).toBe(false);
   });
 

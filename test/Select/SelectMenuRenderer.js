@@ -1,12 +1,12 @@
 import React from 'react';
 import expect from 'expect';
-import { mount } from 'enzyme';
+import {mount} from 'enzyme';
 import selectMenuRenderer from '../../src/Select/js/SelectMenuRenderer';
 
 const testProps = {
-  optionComponent: ({ className }) => { return (<div className={ className } />); },
-  optionRenderer: () => { return (<div>empty</div>); },
-  onOptionRef: () => { return false; },
+  optionComponent: ({className}) => <div className={ className } />,
+  optionRenderer: () => <div>empty</div>,
+  onOptionRef: () => false,
   options: [
     {
       label: 'Chocolate',

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import Calendar from '../../src/Calendar';
 
 describe('Calendar', () => {
@@ -40,7 +40,7 @@ describe('Calendar', () => {
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
-    tree.setProps({ defaultValue: weekLater });
+    tree.setProps({defaultValue: weekLater});
     expect(+tree.state('value')).toEqual(+date);
 
     // Component interaction should change the state.
@@ -54,7 +54,7 @@ describe('Calendar', () => {
     const tree = shallow(<Calendar value={ date } />);
 
     // Changing value will change the state
-    tree.setProps({ value: weekLater });
+    tree.setProps({value: weekLater});
     expect(+tree.state('value')).toEqual(+weekLater);
 
     // Component interaction should not change the state, only manually setting value
@@ -79,7 +79,7 @@ describe('Calendar', () => {
   it('supports valueFormat', () => {
     const tree = shallow(<Calendar value="08-01-2016" valueFormat="MM-DD-YYYY" />);
     expect(+tree.state('value')).toBe(+new Date(2016, 7, 1));
-    tree.setProps({ value: '01-08-2016' });
+    tree.setProps({value: '01-08-2016'});
     expect(+tree.state('value')).toBe(+new Date(2016, 0, 8));
   });
 
@@ -111,8 +111,8 @@ describe('Calendar', () => {
       const preventDefaultSpy = createSpy();
       const firstNonSelectedCell = findFirstNonSelectedCell(tree);
       const firstNonSelectedCellDate = firstNonSelectedCell.prop('date');
-      tree.setState({ focusedDate: firstNonSelectedCellDate });
-      findBody(tree).simulate('keydown', { keyCode: 13, preventDefault: preventDefaultSpy });
+      tree.setState({focusedDate: firstNonSelectedCellDate});
+      findBody(tree).simulate('keydown', {keyCode: 13, preventDefault: preventDefaultSpy});
       assertOnChangeArgsMatch(firstNonSelectedCell);
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
@@ -130,7 +130,7 @@ describe('Calendar', () => {
     it('changes currentMonth when value prop is set to different day', () => {
       const date3MonthsLater = now.clone().add(3, 'month');
       expect(+tree.state('currentMonth')).toBe(+now.clone().startOf('month'));
-      tree.setProps({ value: date3MonthsLater });
+      tree.setProps({value: date3MonthsLater});
       expect(+tree.state('currentMonth')).toBe(+date3MonthsLater.clone().startOf('month'));
     });
 
@@ -151,9 +151,9 @@ describe('Calendar', () => {
     let tree;
     let body;
 
-    const assertDateAfterKeyDown = ({ keyCode, date, meta = false }) => {
+    const assertDateAfterKeyDown = ({keyCode, date, meta = false}) => {
       preventDefaultSpy.restore();
-      body.simulate('keydown', { preventDefault: preventDefaultSpy, keyCode, metaKey: meta });
+      body.simulate('keydown', {preventDefault: preventDefaultSpy, keyCode, metaKey: meta});
       expect(+tree.state('focusedDate')).toBe(+date.clone());
       expect(+tree.state('currentMonth')).toBe(+date.clone().startOf('month'));
       expect(+findFocusedCell(tree).prop('date')).toBe(+date.clone().startOf('day'));
@@ -169,33 +169,33 @@ describe('Calendar', () => {
 
     it('increments/decrements one day with left/right arrows', () => {
       const previousDay = now.clone().subtract(1, 'day');
-      assertDateAfterKeyDown({ keyCode: 37, date: previousDay }); // left arrow
-      assertDateAfterKeyDown({ keyCode: 39, date: now }); // right arrow
+      assertDateAfterKeyDown({keyCode: 37, date: previousDay}); // left arrow
+      assertDateAfterKeyDown({keyCode: 39, date: now}); // right arrow
     });
 
     it('increments/decrements one week with up/down arrows', () => {
       const previousWeek = now.clone().subtract(1, 'week');
-      assertDateAfterKeyDown({ keyCode: 38, date: previousWeek }); // up arrow
-      assertDateAfterKeyDown({ keyCode: 40, date: now }); // down arrow
+      assertDateAfterKeyDown({keyCode: 38, date: previousWeek}); // up arrow
+      assertDateAfterKeyDown({keyCode: 40, date: now}); // down arrow
     });
 
     it('goes to beginning/end of month with home and end keys', () => {
       const monthBegin = now.clone().startOf('month').startOf('day');
       const monthEnd = now.clone().endOf('month').startOf('day');
-      assertDateAfterKeyDown({ keyCode: 36, date: monthBegin }); // home
-      assertDateAfterKeyDown({ keyCode: 35, date: monthEnd }); // end
+      assertDateAfterKeyDown({keyCode: 36, date: monthBegin}); // home
+      assertDateAfterKeyDown({keyCode: 35, date: monthEnd}); // end
     });
 
     it('increments/decrements one month with page up/down', () => {
       const previousMonth = now.clone().subtract(1, 'month');
-      assertDateAfterKeyDown({ keyCode: 33, date: previousMonth });
-      assertDateAfterKeyDown({ keyCode: 34, date: now });
+      assertDateAfterKeyDown({keyCode: 33, date: previousMonth});
+      assertDateAfterKeyDown({keyCode: 34, date: now});
     });
 
     it('increments/decrements one year with cmd + page up/down', () => {
       const previousYear = now.clone().subtract(1, 'year');
-      assertDateAfterKeyDown({ keyCode: 33, date: previousYear, meta: true });
-      assertDateAfterKeyDown({ keyCode: 34, date: now, meta: true });
+      assertDateAfterKeyDown({keyCode: 33, date: previousYear, meta: true});
+      assertDateAfterKeyDown({keyCode: 34, date: now, meta: true});
     });
 
     it('is set to value if it exists', () => {
@@ -225,7 +225,7 @@ describe('Calendar', () => {
 
     const minDateMinus1 = minDate.clone().subtract(1, 'day');
     const maxDatePlus1 = maxDate.clone().add(1, 'day');
-    tree.setProps({ min: minDateMinus1, max: maxDatePlus1 });
+    tree.setProps({min: minDateMinus1, max: maxDatePlus1});
     expect(+tree.state('min')).toBe(+minDateMinus1.startOf('day'));
     expect(+tree.state('max')).toBe(+maxDatePlus1.startOf('day'));
   });

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import Icon from '../../Icon';
 import Button from '../../Button';
-import { getVariantIcon } from '../../utils/icon-variant';
+import {getVariantIcon} from '../../utils/icon-variant';
 
 import '../style/index.styl';
 
@@ -14,7 +14,7 @@ export default function Alert({
   variant = 'info', // info, help, success, error, warning
   large = false,
   className,
-  onClose = () => {},
+  onClose = function () {},
   ...otherProps
 }) {
   return (

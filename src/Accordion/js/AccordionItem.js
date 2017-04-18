@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import Icon from '../../Icon';
 import createId from '../../utils/createId';
@@ -59,7 +59,7 @@ export default class AccordionItem extends Component {
           role="tabpanel"
           aria-labelledby={ this.headerId }
           aria-hidden={ !selected }
-          className={classNames("coral3-Accordion-content", {'is-open': selected, 'is-closed': !selected})}
+          className={classNames('coral3-Accordion-content', {'is-open': selected, 'is-closed': !selected})}
         >
           { children }
         </div>

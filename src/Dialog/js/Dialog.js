@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import TetherComponent from 'react-tether';
 
@@ -15,7 +15,7 @@ class Dialog extends Component {
     closable: false,
     fullscreen: false,
     variant: 'default', // default, error, warning, success, info, help
-    onClose: () => {}
+    onClose: function () {}
   };
 
   componentDidMount() {
@@ -27,7 +27,7 @@ class Dialog extends Component {
   }
 
   handleKeyDown = e => {
-    const { onClose, open } = this.props;
+    const {onClose, open} = this.props;
 
     if (open) {
       switch (e.which) {

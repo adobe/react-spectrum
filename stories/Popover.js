@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
-import { VerticalCenter } from '../.storybook/layout';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import Popover from '../src/Popover';
 import Button from '../src/Button';
@@ -25,82 +25,82 @@ storiesOf('Popover', module)
   .addWithInfo(
     'Default',
     () => render('Content'),
-    { inline: true }
+    {inline: true}
   )
   .addWithInfo(
     'Long content, placement: right top',
-    () => render(longMarkup, { placement: 'right top' }),
-    { inline: true }
+    () => render(longMarkup, {placement: 'right top'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: left',
-    () => render('Content', { placement: 'left' }),
-    { inline: true }
+    () => render('Content', {placement: 'left'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: top',
-    () => render('Content', { placement: 'top' }),
-    { inline: true }
+    () => render('Content', {placement: 'top'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: top left',
-    () => render('Content', { placement: 'top left' }),
-    { inline: true }
+    () => render('Content', {placement: 'top left'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: bottom',
-    () => render('Content', { placement: 'bottom' }),
-    { inline: true }
+    () => render('Content', {placement: 'bottom'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: bottom right',
-    () => render('Content', { placement: 'bottom right' }),
-    { inline: true }
+    () => render('Content', {placement: 'bottom right'}),
+    {inline: true}
   )
   .addWithInfo(
     'placement: center middle',
-    () => render('Content', { placement: 'center middle' }),
-    { inline: true }
+    () => render('Content', {placement: 'center middle'}),
+    {inline: true}
   )
   .addWithInfo(
     'open: false',
-    () => render('Content', { open: false }),
-    { inline: true }
+    () => render('Content', {open: false}),
+    {inline: true}
   )
   .addWithInfo(
     'closable: true',
-    () => render('Content', { closable: true }),
-    { inline: true }
+    () => render('Content', {closable: true}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: error',
-    () => render('Content', { variant: 'error' }),
-    { inline: true }
+    () => render('Content', {variant: 'error'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: warning',
-    () => render('Content', { variant: 'warning' }),
-    { inline: true }
+    () => render('Content', {variant: 'warning'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: success',
-    () => render('Content', { variant: 'success' }),
-    { inline: true }
+    () => render('Content', {variant: 'success'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: help',
-    () => render('Content', { variant: 'help' }),
-    { inline: true }
+    () => render('Content', {variant: 'help'}),
+    {inline: true}
   )
   .addWithInfo(
     'variant: info',
-    () => render('Content', { variant: 'info' }),
-    { inline: true }
+    () => render('Content', {variant: 'info'}),
+    {inline: true}
   )
   .addWithInfo(
     'no title',
-    () => render('Content', { title: null }),
-    { inline: true }
+    () => render('Content', {title: null}),
+    {inline: true}
   );
 
 function render(children, props = {}) {

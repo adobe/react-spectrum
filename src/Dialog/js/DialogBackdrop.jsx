@@ -9,7 +9,7 @@ export const BACKDROP_STATIC = 'static';
 export default function DialogBackdrop({
   open = false,
   backdrop = BACKDROP_MODAL,
-  onClose = () => {},
+  onClose = function () {},
   className,
   ...otherProps
 }) {
@@ -33,7 +33,7 @@ export default function DialogBackdrop({
         }
         { ...otherProps }
         onClick={ backdrop !== BACKDROP_STATIC ? onClose : null }
-        style={ { zIndex: 10009 } }
+        style={ {zIndex: 10009} }
       />
     </Portal>
   );

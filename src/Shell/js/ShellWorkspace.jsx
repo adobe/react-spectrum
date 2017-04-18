@@ -14,7 +14,7 @@ export default function ShellWorkspace({
       className={
         classNames(
           'coral-Shell-workspaces-workspace',
-          { 'is-selected': selected },
+          {'is-selected': selected},
           className
         )
       }

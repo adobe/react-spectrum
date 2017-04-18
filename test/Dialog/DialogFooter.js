@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import DialogFooter from '../../src/Dialog/js/DialogFooter';
 import Button from '../../src/Button';
 
@@ -25,7 +25,7 @@ describe('DialogFooter', () => {
         <DialogFooter onClose={ onCloseSpy }>
           <Button label="Foo" onClick={ onClickSpy || null } close-dialog />
         </DialogFooter>
-      ).find({ label: 'Foo' })
+      ).find({label: 'Foo'})
     );
 
     it('by adding onClick handler', () => {

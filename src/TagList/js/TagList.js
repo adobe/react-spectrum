@@ -12,9 +12,9 @@ export default class TagList extends React.Component {
     disabled: false,
     required: false,
     invalid: false,
-    onClose: () => {},
-    onFocus: () => {},
-    onBlur: () => {}
+    onClose: function () {},
+    onFocus: function () {},
+    onBlur: function () {}
   };
 
   state = {
@@ -23,20 +23,20 @@ export default class TagList extends React.Component {
   }
 
   handleFocus = e => {
-    const { onFocus } = this.props;
-    this.setState({ focused: true });
+    const {onFocus} = this.props;
+    this.setState({focused: true});
     onFocus(e);
   }
 
   handleBlur = e => {
-    const { onBlur } = this.props;
-    this.setState({ focused: false });
+    const {onBlur} = this.props;
+    this.setState({focused: false});
     onBlur(e);
   }
 
   baseChildProps(index) {
-    const { readOnly, onClose, disabled } = this.props;
-    const { selectedIndex, focused } = this.state;
+    const {readOnly, onClose, disabled} = this.props;
+    const {selectedIndex, focused} = this.state;
     return {
       key: index,
       selected: !disabled && focused && selectedIndex === index,
@@ -44,7 +44,7 @@ export default class TagList extends React.Component {
       closable: !readOnly,
       disabled,
       onClose,
-      onFocus: () => { this.setState({ selectedIndex: index }); },
+      onFocus: () => { this.setState({selectedIndex: index}); },
       role: 'option'
     };
   }
@@ -53,20 +53,18 @@ export default class TagList extends React.Component {
     if (this.props.values) {
       return this.renderValues();
     }
-    return React.Children.map(this.props.children, (child, index) => {
-      return React.cloneElement(child, this.baseChildProps(index));
-    });
+    return React.Children.map(this.props.children, (child, index) =>
+      React.cloneElement(child, this.baseChildProps(index))
+    );
   }
 
   renderValues() {
-    const { values } = this.props;
-    return values.map((value, index) => {
-      return (
-        <Tag value={ value } { ...this.baseChildProps(index) }>
-          { value }
-        </Tag>
-      );
-    });
+    const {values} = this.props;
+    return values.map((value, index) => (
+      <Tag value={ value } { ...this.baseChildProps(index) }>
+        { value }
+      </Tag>
+    ));
   }
 
   render() {
@@ -82,7 +80,7 @@ export default class TagList extends React.Component {
 
     delete otherProps.onClose;
 
-    const { focused } = this.state;
+    const {focused} = this.state;
 
     return (
       <div

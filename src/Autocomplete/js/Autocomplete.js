@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ReactSelect from 'react-select';
 import Tag from '../../TagList/js/Tag';
 import menuRenderer from '../../Select/js/SelectMenuRenderer';
@@ -15,8 +15,8 @@ export default class Autocomplete extends Component {
     disabled: false
   };
 
-  arrowRenderer = ({ onMouseDown }) => {
-    const { disabled } = this.props;
+  arrowRenderer = ({onMouseDown}) => {
+    const {disabled} = this.props;
 
     return (
       <button
@@ -31,7 +31,7 @@ export default class Autocomplete extends Component {
     );
   }
 
-  valuesComponent(props, { value, onClick, onRemove, disabled }) {
+  valuesComponent(props, {value, onClick, onRemove, disabled}) {
     return (
       <Tag
         onClose={ (e) => onRemove(value, e) }
@@ -90,7 +90,7 @@ export default class Autocomplete extends Component {
         valueComponent={ multiSelect && this.valuesComponent.bind(this, this.props) }
         multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
-        onValueClick={ onValueClick || (() => {}) }
+        onValueClick={ onValueClick || (function () {}) }
         backspaceToRemoveMessage=""
       />
     );

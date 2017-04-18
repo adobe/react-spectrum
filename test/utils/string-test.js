@@ -1,5 +1,5 @@
 import expect from 'expect';
-import { isUrl } from '../../src/utils/string';
+import {isUrl} from '../../src/utils/string';
 
 describe('string', () => {
   describe('isUrl', () => {

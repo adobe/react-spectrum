@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { isUrl } from '../../utils/string';
+import {isUrl} from '../../utils/string';
 
 import '../style/index.styl';
 

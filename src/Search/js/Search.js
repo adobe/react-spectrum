@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import Textfield from '../../Textfield';
@@ -10,9 +10,9 @@ import '../style/index.styl';
 export default class Search extends Component {
   static defaultProps = {
     clearable: true,
-    onChange: () => {},
-    onClear: () => {},
-    onSubmit: () => {}
+    onChange: function () {},
+    onClear: function () {},
+    onSubmit: function () {}
   };
 
   constructor(props) {
@@ -30,8 +30,8 @@ export default class Search extends Component {
   }
 
   handleTextKeyDown = e => {
-    const { onSubmit, disabled } = this.props;
-    const { value } = this.state;
+    const {onSubmit, disabled} = this.props;
+    const {value} = this.state;
     const key = e.which;
 
     if (key === 13 || key === 27) {
@@ -48,7 +48,7 @@ export default class Search extends Component {
   }
 
   handleTextChange = e => {
-    const { onChange } = this.props;
+    const {onChange} = this.props;
 
     this.setState({
       value: e.target.value,
@@ -58,7 +58,7 @@ export default class Search extends Component {
   }
 
   handleClearText = () => {
-    const { onClear, onChange, disabled } = this.props;
+    const {onClear, onChange, disabled} = this.props;
 
     if (disabled) {
       return;
@@ -85,7 +85,7 @@ export default class Search extends Component {
       icon,
       ...otherProps
     } = this.props;
-    const { value, emptyText } = this.state;
+    const {value, emptyText} = this.state;
 
     return (
       <div

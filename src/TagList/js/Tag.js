@@ -19,7 +19,7 @@ export default function Tag({
   disabled = false,
   selected = false,
   className,
-  onClose = () => {},
+  onClose = function () {},
   ...otherProps
 }) {
   const childContent = children || value;

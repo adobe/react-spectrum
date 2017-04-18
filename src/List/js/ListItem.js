@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import Icon from '../../Icon';
@@ -8,11 +8,11 @@ export default class ListItem extends Component {
     element: 'span',
     iconSize: 'M',
     selected: false,
-    onSelect: () => {},
-    onFocusNext: () => {},
-    onFocusPrevious: () => {},
-    onFocusFirst: () => {},
-    onFocusLast: () => {}
+    onSelect: function () {},
+    onFocusNext: function () {},
+    onFocusPrevious: function () {},
+    onFocusFirst: function () {},
+    onFocusLast: function () {}
   }
 
   handleClick = e => {
@@ -95,7 +95,7 @@ export default class ListItem extends Component {
         className={
           classNames(
             'coral-BasicList-item',
-            { 'is-selected': selected },
+            {'is-selected': selected},
             className
           )
         }

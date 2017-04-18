@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 import SwitchBase from '../../Switch/js/SwitchBase';
@@ -20,7 +20,7 @@ export default class Checkbox extends Component {
   // There is no way to set indeterminate through markup such that it will be picked up by a CSS
   // indeterminate pseudo-selector. It can only be done via javascript.
   setIndeterminate() {
-    const { indeterminate } = this.props;
+    const {indeterminate} = this.props;
     if (indeterminate != null && this.refs.input) {
       this.refs.input.getInput().indeterminate = indeterminate;
     }
@@ -49,7 +49,7 @@ export default class Checkbox extends Component {
           )
         }
         inputClassName="coral-Checkbox-input"
-        markClassName={classNames("coral-Checkbox-checkmark", {'is-indeterminate': indeterminate})}
+        markClassName={classNames('coral-Checkbox-checkmark', {'is-indeterminate': indeterminate})}
         labelClassName="coral-Checkbox-description"
         { ...otherProps }
       />

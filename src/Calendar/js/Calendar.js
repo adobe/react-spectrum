@@ -1,10 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 
 import Button from '../../Button';
 import createId from '../../utils/createId';
-import { toMoment, isDateInRange, formatMoment } from '../../utils/moment';
+import {toMoment, isDateInRange, formatMoment} from '../../utils/moment';
 
 import '../style/index.styl';
 
@@ -49,7 +49,7 @@ export default class Calendar extends Component {
     invalid: false,
     readOnly: false,
     required: false,
-    onChange: () => {}
+    onChange: function () {}
   };
 
   componentWillMount() {
@@ -78,8 +78,8 @@ export default class Calendar extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { min, max, valueFormat } = this.props;
-    const { today } = this.state;
+    const {min, max, valueFormat} = this.props;
+    const {today} = this.state;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
       const newMin = toMoment(nextProps.min, nextProps.valueFormat);
@@ -116,10 +116,10 @@ export default class Calendar extends Component {
   }
 
   setValue(date) {
-    const { onChange, valueFormat } = this.props;
+    const {onChange, valueFormat} = this.props;
 
     if (!('value' in this.props)) {
-      this.setState({ value: date, focusedDate: date });
+      this.setState({value: date, focusedDate: date});
       this.setCurrentMonth(date);
     }
 
@@ -135,18 +135,18 @@ export default class Calendar extends Component {
   }
 
   generateDateId(date) {
-    const { id } = this.props;
+    const {id} = this.props;
 
     return `${ id }-${ date.format('l') }`;
   }
 
   handleClickPrevious = () => {
-    const { focusedDate } = this.state;
+    const {focusedDate} = this.state;
     this.focusTimeUnit(focusedDate.clone().subtract(1, 'month'));
   }
 
   handleClickNext = () => {
-    const { focusedDate } = this.state;
+    const {focusedDate} = this.state;
     this.focusTimeUnit(focusedDate.clone().add(1, 'month'));
   }
 
@@ -155,7 +155,7 @@ export default class Calendar extends Component {
   }
 
   handleKeyDown = e => {
-    const { focusedDate } = this.state;
+    const {focusedDate} = this.state;
     const nextMoment = focusedDate.clone();
 
     switch (e.keyCode) {
@@ -202,7 +202,7 @@ export default class Calendar extends Component {
   }
 
   focusTimeUnit(date) {
-    const { currentMonth } = this.state;
+    const {currentMonth} = this.state;
     const sameMonthAsVisible = currentMonth.isSame(date, 'month');
     const newCurrentMonth = sameMonthAsVisible ? currentMonth : date.clone().startOf('month');
 
@@ -215,7 +215,7 @@ export default class Calendar extends Component {
   }
 
   selectFocused(date) {
-    const { value } = this.state;
+    const {value} = this.state;
 
     date = date.clone();
     if (value && moment.isMoment(value) && value.isValid()) {
@@ -253,7 +253,7 @@ export default class Calendar extends Component {
   }
 
   renderTableHeader() {
-    const { startDay } = this.props;
+    const {startDay} = this.props;
 
     return (
       <thead role="presentation">
@@ -283,8 +283,8 @@ export default class Calendar extends Component {
   }
 
   renderTableBody(date) {
-    const { startDay, disabled } = this.props;
-    const { value, min, max, focusedDate, currentMonth } = this.state;
+    const {startDay, disabled} = this.props;
+    const {value, min, max, focusedDate, currentMonth} = this.state;
 
     const month = date.month();
     const year = date.year();
@@ -299,32 +299,30 @@ export default class Calendar extends Component {
     return (
       <tbody role="presentation">
         {
-          [...new Array(6).keys()].map(weekIndex => {
-            return (
-              <tr key={ weekIndex } role="row">
-                {
-                  [...new Array(7).keys()].map(dayIndex => {
-                    const day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
-                    const cursor = moment(new Date(year, month, day));
-                    const isCurrentMonth = (cursor.month()) === parseFloat(month);
-                    const cursorLocal = cursor.clone().startOf('day');
-                    return (
-                      <CalendarCell
-                        key={ dayIndex }
-                        id={ this.generateDateId(cursor) }
-                        date={ cursor }
-                        disabled={ disabled || !isCurrentMonth || !isDateInRange(cursor, min, max) }
-                        isToday={ cursor.isSame(moment(), 'day') }
-                        selected={ dateLocal && cursorLocal.isSame(dateLocal, 'day') }
-                        focused={ dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day') }
-                        onClick={ this.handleDayClick }
-                      />
-                    );
-                  })
-                }
-              </tr>
-            );
-          })
+          [...new Array(6).keys()].map(weekIndex => (
+            <tr key={ weekIndex } role="row">
+              {
+                [...new Array(7).keys()].map(dayIndex => {
+                  const day = (weekIndex * 7 + dayIndex) - monthStartsAt + 1;
+                  const cursor = moment(new Date(year, month, day));
+                  const isCurrentMonth = (cursor.month()) === parseFloat(month);
+                  const cursorLocal = cursor.clone().startOf('day');
+                  return (
+                    <CalendarCell
+                      key={ dayIndex }
+                      id={ this.generateDateId(cursor) }
+                      date={ cursor }
+                      disabled={ disabled || !isCurrentMonth || !isDateInRange(cursor, min, max) }
+                      isToday={ cursor.isSame(moment(), 'day') }
+                      selected={ dateLocal && cursorLocal.isSame(dateLocal, 'day') }
+                      focused={ dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day') }
+                      onClick={ this.handleDayClick }
+                    />
+                  );
+                })
+              }
+            </tr>
+          ))
         }
       </tbody>
     );
@@ -344,7 +342,7 @@ export default class Calendar extends Component {
       ...otherProps
     } = this.props;
 
-    const { value, currentMonth } = this.state;
+    const {value, currentMonth} = this.state;
 
     delete otherProps.startDay;
 
@@ -425,7 +423,7 @@ const CalendarCell = function CalendarCell({
   disabled = false,
   focused = false,
   invalid = false,
-  onClick = () => {}
+  onClick = function () {}
 }) {
   let title = `${ date.format('dddd') }, ${ date.format('LL') }`;
   if (isToday) {

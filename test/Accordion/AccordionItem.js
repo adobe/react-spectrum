@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import AccordionItem from '../../src/Accordion/js/AccordionItem';
 import Icon from '../../src/Icon';
 
@@ -51,7 +51,7 @@ describe('AccordionItem', () => {
     });
 
     it('when enter key pressed', () => {
-      header.simulate('keypress', { key: 'Enter' });
+      header.simulate('keypress', {key: 'Enter'});
       expect(spy).toHaveBeenCalled();
     });
   });

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
 import InputGroup from '../../InputGroup';
@@ -33,7 +33,7 @@ export default class NumberInput extends Component {
     readOnly: false,
     decrementTitle: 'Decrement',
     incrementTitle: 'Increment',
-    onChange: () => {}
+    onChange: function () {}
   };
 
   constructor(props) {
@@ -79,11 +79,11 @@ export default class NumberInput extends Component {
   }
 
   handleInputFocus = () => {
-    this.setState({ focused: true });
+    this.setState({focused: true});
   }
 
   handleInputBlur = () => {
-    this.setState({ focused: false });
+    this.setState({focused: false});
   }
 
   handleInputKeyDown = e => {
@@ -129,8 +129,8 @@ export default class NumberInput extends Component {
   handleInputChange = e => {
     e.stopPropagation();
 
-    const { onChange } = this.props;
-    const { target: { value } } = e;
+    const {onChange} = this.props;
+    const {target: {value}} = e;
     const valueAsNumber = +value;
     const numeric = !isNaN(valueAsNumber);
 
@@ -155,8 +155,8 @@ export default class NumberInput extends Component {
    * Returns true if the Textfield cannot receive any input.
    */
   isInactive() {
-    const { disabled, readOnly } = this.props;
-    const { focused } = this.state;
+    const {disabled, readOnly} = this.props;
+    const {focused} = this.state;
 
     return disabled || readOnly || !focused;
   }
@@ -166,8 +166,8 @@ export default class NumberInput extends Component {
    * If value is undefined, sets it to the step.
    */
   incrementValue() {
-    const { max, step } = this.props;
-    const { value } = this.state;
+    const {max, step} = this.props;
+    const {value} = this.state;
 
     let newValue = +value;
     if (isNaN(newValue)) {
@@ -183,7 +183,7 @@ export default class NumberInput extends Component {
    * If max is defined, sets value to the max value.
    */
   incrementToMaxValue() {
-    const { max } = this.props;
+    const {max} = this.props;
 
     // If the input isn't supposed to receive input, do nothing.
     if (this.isInactive()) {
@@ -200,8 +200,8 @@ export default class NumberInput extends Component {
    * defined). If value is undefined, sets it to the step.
    */
   decrementValue() {
-    const { min, step } = this.props;
-    const { value } = this.state;
+    const {min, step} = this.props;
+    const {value} = this.state;
 
     let newValue = +value;
     if (isNaN(newValue)) {
@@ -217,7 +217,7 @@ export default class NumberInput extends Component {
    * If min is defined, sets value to the max value.
    */
   decrementToMinValue() {
-    const { min } = this.props;
+    const {min} = this.props;
 
     // If the input isn't supposed to receive input, do nothing.
     if (this.isInactive()) {
@@ -233,8 +233,8 @@ export default class NumberInput extends Component {
    * Updates state to the new value and notifies the onChange handler.
    */
   triggerChange(newValue) {
-    const { onChange } = this.props;
-    const { value } = this.state;
+    const {onChange} = this.props;
+    const {value} = this.state;
 
     // Only trigger change event and setState if the value changed
     if (value !== newValue) {
@@ -250,14 +250,14 @@ export default class NumberInput extends Component {
    * If true, the input's value is currently invalid.
    */
   isInputValueInvalid(value) {
-    const { max, min } = this.props;
+    const {max, min} = this.props;
 
     return value !== '' && isNaN(+value)
       || (max !== null && value > max || min !== null && value < min);
   }
 
   renderStepButton(props) {
-    const { inputId } = this.state;
+    const {inputId} = this.state;
 
     return (
       <Button

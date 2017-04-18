@@ -1,4 +1,4 @@
-import { getTransitionEvent } from './transition';
+import {getTransitionEvent} from './transition';
 
 const transitionEvent = getTransitionEvent();
 

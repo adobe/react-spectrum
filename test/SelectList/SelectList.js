@@ -1,17 +1,17 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 import SelectList from '../../src/SelectList';
 
 
 const testOptions = [
-  { label: 'Chocolate', value: 'chocolate' },
-  { label: 'Vanilla', value: 'vanilla' },
-  { label: 'Strawberry', value: 'strawberry' },
-  { label: 'Caramel', value: 'caramel' },
-  { label: 'Cookies and Cream', value: 'cookiescream', disabled: true },
-  { label: 'Peppermint', value: 'peppermint' },
-  { label: 'Some crazy long value that should be cut off', value: 'logVal' }
+  {label: 'Chocolate', value: 'chocolate'},
+  {label: 'Vanilla', value: 'vanilla'},
+  {label: 'Strawberry', value: 'strawberry'},
+  {label: 'Caramel', value: 'caramel'},
+  {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
+  {label: 'Peppermint', value: 'peppermint'},
+  {label: 'Some crazy long value that should be cut off', value: 'logVal'}
 ];
 
 const selectedValue = [
@@ -22,14 +22,14 @@ const selectedValue = [
 
 const groupedOptions = {
   'Group 1': [
-    { label: 'Chocolate', value: 'chocolate' },
-    { label: 'Vanilla', value: 'vanilla' },
-    { label: 'Strawberry', value: 'strawberry' }
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'}
   ],
   'Group 2': [
-    { label: 'Caramel', value: 'caramel' },
-    { label: 'Cookies and Cream', value: 'cookiescream', disabled: true },
-    { label: 'Peppermint', value: 'peppermint' }
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
+    {label: 'Peppermint', value: 'peppermint'}
   ]
 };
 

@@ -1,11 +1,11 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import TetherDropComponent from '../../internal/TetherDropComponent';
 import manageTransitionVisibility from '../../utils/manageTransitionVisibility';
 
 import DialogHeader from '../../Dialog/js/DialogHeader';
-import { getVariantIcon } from '../../utils/icon-variant';
-import { getTetherPositionFromPlacement } from '../../utils/tether';
+import {getVariantIcon} from '../../utils/icon-variant';
+import {getTetherPositionFromPlacement} from '../../utils/tether';
 
 import '../style/index.styl';
 
@@ -45,11 +45,11 @@ export default class Popover extends Component {
       to: 'window',
       attachment: 'together'
     },
-    onClose: () => {}
+    onClose: function () {}
   };
 
   componentDidMount() {
-    const { drop } = this.refs;
+    const {drop} = this.refs;
     this.transitionVisibilityManager = manageTransitionVisibility(
       drop.tetherDrop.drop,
       this.props.open

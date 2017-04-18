@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 
 export default class ShellHeaderActions extends Component {
@@ -7,11 +7,11 @@ export default class ShellHeaderActions extends Component {
   }
 
   handleMenuOpen = (e, index) => {
-    this.setState({ openIndex: index });
+    this.setState({openIndex: index});
   }
 
   handleMenuClose = () => {
-    this.setState({ openIndex: -1 });
+    this.setState({openIndex: -1});
   }
 
   render() {
@@ -22,7 +22,7 @@ export default class ShellHeaderActions extends Component {
       ...otherProps
     } = this.props;
 
-    const { openIndex } = this.state;
+    const {openIndex} = this.state;
 
     let index = 0;
 

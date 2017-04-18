@@ -13,7 +13,7 @@ export default function Progress({
   className,
   ...otherProps
 }) {
-  const sizeClassPart = { S: 'small', M: 'medium', L: 'large' }[size];
+  const sizeClassPart = {S: 'small', M: 'medium', L: 'large'}[size];
   value = Math.min(Math.max(+value, 0), 100);
 
   if (showPercent && !label) {
@@ -41,7 +41,7 @@ export default function Progress({
       <div className="coral-Progress-bar">
         <div
           className="coral-Progress-status"
-          style={ { width: `${ indeterminate ? 0 : value }%` } }
+          style={ {width: `${ indeterminate ? 0 : value }%`} }
         />
       </div>
       {

@@ -8,7 +8,7 @@ function addClose(children, onClose) {
     if (React.isValidElement(child) && child.props) {
       // Strip close-dialog off of the child since it isn't a valid property outside of
       // this context. This will prevent unknown prop warnings from being fired by react.
-      const { 'close-dialog': shouldClose, children: kids, ...otherProps } = child.props;
+      const {'close-dialog': shouldClose, children: kids, ...otherProps} = child.props;
 
       if (shouldClose) {
         otherProps.onClick = (...args) => {

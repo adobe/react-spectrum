@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import expect, { createSpy } from 'expect';
-import { shallow } from 'enzyme';
+import expect, {createSpy} from 'expect';
+import {shallow} from 'enzyme';
 import Datepicker from '../../src/Datepicker';
 import Textfield from '../../src/Textfield';
 import Button from '../../src/Button';
@@ -53,12 +53,12 @@ describe('Datepicker', () => {
     expect(findClock(tree).node).toNotExist();
     expect(findButton(tree).prop('icon')).toBe('calendar');
 
-    tree.setProps({ type: 'datetime' });
+    tree.setProps({type: 'datetime'});
     expect(findCalendar(tree).node).toExist();
     expect(findClock(tree).node).toExist();
     expect(findButton(tree).prop('icon')).toBe('calendar');
 
-    tree.setProps({ type: 'time' });
+    tree.setProps({type: 'time'});
     expect(findCalendar(tree).node).toNotExist();
     expect(findClock(tree).node).toExist();
     expect(findButton(tree).prop('icon')).toBe('clock');
@@ -70,12 +70,12 @@ describe('Datepicker', () => {
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
-    tree.setProps({ defaultValue: now.clone().add(7, 'day') });
+    tree.setProps({defaultValue: now.clone().add(7, 'day')});
     expect(+tree.state('value')).toEqual(+now);
 
     // Blurring the textfield should change the value state.
     findTextfield(tree).simulate('blur', {
-      target: { value: '2016-08-01' }
+      target: {value: '2016-08-01'}
     });
     expect(+tree.state('value')).toEqual(+(new Date(2016, 7, 1)));
   });
@@ -87,14 +87,14 @@ describe('Datepicker', () => {
     const tree = shallow(<Datepicker value={ now } />);
 
     // Changing value will change the state
-    tree.setProps({ value: dateWeekLater });
+    tree.setProps({value: dateWeekLater});
     expect(+tree.state('value')).toEqual(+dateWeekLater);
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
     findTextfield(tree).simulate('change', {
-      stopPropagation: () => {},
-      target: { value: '2016-08-01' }
+      stopPropagation: function () {},
+      target: {value: '2016-08-01'}
     });
     expect(+tree.state('value')).toEqual(+dateWeekLater);
   });
@@ -110,18 +110,18 @@ describe('Datepicker', () => {
   describe('closing popover', () => {
     it('typing escape while popover is open closes popover', () => {
       const tree = shallow(<Datepicker type="datetime" />);
-      tree.setState({ open: true });
-      findCalendar(tree).simulate('keydown', { keyCode: 27 });
+      tree.setState({open: true});
+      findCalendar(tree).simulate('keydown', {keyCode: 27});
       expect(tree.state('open')).toBe(false);
-      tree.setState({ open: true });
-      findClock(tree).simulate('keydown', { keyCode: 27 });
+      tree.setState({open: true});
+      findClock(tree).simulate('keydown', {keyCode: 27});
       expect(tree.state('open')).toBe(false);
     });
 
     it('clicking a date on the calendar closes popover', () => {
       const now = moment();
       const tree = shallow(<Datepicker />);
-      tree.setState({ open: true });
+      tree.setState({open: true});
       findCalendar(tree).simulate('change', now.toString(), now.toDate());
       expect(tree.state('open')).toBe(false);
     });
@@ -136,7 +136,7 @@ describe('Datepicker', () => {
   describe('onBlur', () => {
     it('calls onBlur when text input is blurred', () => {
       const spy = createSpy();
-      const event = { target: { value: '2016-08-01 00:00' } };
+      const event = {target: {value: '2016-08-01 00:00'}};
       const tree = shallow(<Datepicker onBlur={ spy } />);
       findTextfield(tree).simulate('blur', event);
       expect(spy).toHaveBeenCalledWith(event);
@@ -162,12 +162,12 @@ describe('Datepicker', () => {
     it('textfield onChange', () => {
       const textfield = findTextfield(tree);
       const simulatedGoodEvent = {
-        stopPropagation: () => {},
-        target: { value: '2016-08-01 00:00' }
+        stopPropagation: function () {},
+        target: {value: '2016-08-01 00:00'}
       };
       const simulatedBadEvent = {
-        stopPropagation: () => {},
-        target: { value: 'foo' }
+        stopPropagation: function () {},
+        target: {value: 'foo'}
       };
 
       textfield.simulate('change', simulatedGoodEvent);
@@ -192,7 +192,7 @@ describe('Datepicker', () => {
     });
 
     it('calendar onChange with displayFormat', () => {
-      tree.setProps({ displayFormat: DEFAULT_DATE_VAL_FORMAT });
+      tree.setProps({displayFormat: DEFAULT_DATE_VAL_FORMAT});
 
       const calendar = findCalendar(tree);
       const text = '2016-08-01';
@@ -208,7 +208,7 @@ describe('Datepicker', () => {
     });
 
     it('clock onChange with displayFormat', () => {
-      tree.setProps({ displayFormat: 'YYYY-MM-DD hh:mm:ss' });
+      tree.setProps({displayFormat: 'YYYY-MM-DD hh:mm:ss'});
 
       const calendar = findCalendar(tree);
       const text = '2016-08-01 12:35:00';
@@ -221,7 +221,7 @@ describe('Datepicker', () => {
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
         const clockEl = shallow(findClock(wrapper).node).find(`.coral-Clock-${ field }`);
-        clockEl.simulate('change', { stopPropagation: () => {}, target: { value: `${ value }` } });
+        clockEl.simulate('change', {stopPropagation: function () {}, target: {value: `${ value }`}});
         return spy.getLastCall().arguments[1];
       };
 
@@ -232,7 +232,7 @@ describe('Datepicker', () => {
       it('when controlled', () => {
         tree = shallow(<Datepicker type="datetime" onChange={ spy } value={ date } />);
         let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
-        const newTree = tree.setProps({ value: newDate });
+        const newTree = tree.setProps({value: newDate});
         newDate = changeTimeAndGetNewDate(newTree, 15, 'minute');
         expect(+newDate).toBe(+moment(date).hour(10).minute(15));
       });

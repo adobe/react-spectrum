@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import ShellMenu from './internal/ShellMenu';
 
@@ -13,14 +13,14 @@ import './ShellHelp.styl';
 export default class ShellHelp extends Component {
   static defaultProps = {
     defaultResults: [
-      { href: '/learn', icon: 'globe', label: 'Marketing Cloud Help' },
-      { href: '/community', icon: 'users', label: 'Community' },
-      { href: '/customercare', icon: 'callCenter', label: 'Customer Care' },
-      { href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status' }
+      {href: '/learn', icon: 'globe', label: 'Marketing Cloud Help'},
+      {href: '/community', icon: 'users', label: 'Community'},
+      {href: '/customercare', icon: 'callCenter', label: 'Customer Care'},
+      {href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status'}
     ],
-    onSearch: () => {},
-    onClear: () => {},
-    onHide: () => {}
+    onSearch: function () {},
+    onClear: function () {},
+    onHide: function () {}
   };
 
   state = {
@@ -28,7 +28,7 @@ export default class ShellHelp extends Component {
   };
 
   handleSearch = val => {
-    const { onSearch } = this.props;
+    const {onSearch} = this.props;
     onSearch(val);
     this.setState({
       searchTerm: val
@@ -36,7 +36,7 @@ export default class ShellHelp extends Component {
   }
 
   handleClear = () => {
-    const { onClear } = this.props;
+    const {onClear} = this.props;
     onClear();
     this.setState({
       searchTerm: ''
@@ -50,7 +50,7 @@ export default class ShellHelp extends Component {
   }
 
   renderResults() {
-    const { searchResults } = this.props;
+    const {searchResults} = this.props;
     if (searchResults) {
       return this.renderSearchResults();
     }
@@ -64,7 +64,7 @@ export default class ShellHelp extends Component {
       moreSearchResultsUrl
     } = this.props;
 
-    const { searchTerm } = this.state;
+    const {searchTerm} = this.state;
 
     // https://git.corp.adobe.com/React/react-coral/issues/134
     // unicode for: '&nbsp; &bull; &nbsp';
@@ -74,7 +74,7 @@ export default class ShellHelp extends Component {
       <List className="coral-BasicList coral-AnchorList coral-Shell-help-results">
         {
           numTotalResults !== 0 && searchResults && searchResults.length
-          ? searchResults.map(({ tags, title, href }, index) => (
+          ? searchResults.map(({tags, title, href}, index) => (
               <ListItem
                 key={ index }
                 element="a"
@@ -112,13 +112,13 @@ export default class ShellHelp extends Component {
   }
 
   renderDefaultResults() {
-    const { defaultResults } = this.props;
+    const {defaultResults} = this.props;
 
     return (
       <List className="coral-Shell-help-items">
         {
           defaultResults && defaultResults.length &&
-          defaultResults.map(({ href, icon, label }, index) => (
+          defaultResults.map(({href, icon, label}, index) => (
             <ListItem
               key={ index }
               element="a"

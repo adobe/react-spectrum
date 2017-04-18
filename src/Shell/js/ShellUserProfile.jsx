@@ -13,7 +13,7 @@ export default function ShellUserProfile({
   subheading,
   avatarUrl = '#',
   profileUrl = '#',
-  onSignOut = () => {},
+  onSignOut = function () {},
   children,
   className,
   ...otherProps

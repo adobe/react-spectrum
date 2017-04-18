@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
-import { VerticalCenter } from '../../.storybook/layout';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalCenter} from '../../.storybook/layout';
 
 import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
 import ShellOrganization from '../../src/Shell/js/ShellOrganization';
@@ -8,27 +8,27 @@ import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
 
 storiesOf('ShellOrgSwitcher', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
-    () => render({ selected: true }),
-    { inline: true }
+    () => render({selected: true}),
+    {inline: true}
   )
   .addWithInfo(
     'open: true',
-    () => render({ selected: true, open: true }),
-    { inline: true }
+    () => render({selected: true, open: true}),
+    {inline: true}
   )
   .addWithInfo(
     'open: true, no selected',
-    () => render({ open: true }),
-    { inline: true }
+    () => render({open: true}),
+    {inline: true}
   );
 
-function render({ selected, ...props } = {}) {
+function render({selected, ...props} = {}) {
   return (
     <ShellOrgSwitcher
       onOrgChange={ action('org-change') }

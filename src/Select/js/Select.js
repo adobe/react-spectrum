@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import classNames from 'classnames';
 import ReactSelect from 'react-select';
 import Tag from '../../TagList/js/Tag';
@@ -21,7 +21,7 @@ export default class Select extends Component {
     this.clearState();
   }
 
-  valueComponent(props, { value, disabled }) {
+  valueComponent(props, {value, disabled}) {
     return (
       <div
         className="coral3-Select-label"
@@ -40,8 +40,8 @@ export default class Select extends Component {
     );
   }
 
-  controlComponent = ({ className, ...otherProps }) => {
-    const { disabled, readOnly, variant } = this.props;
+  controlComponent = ({className, ...otherProps}) => {
+    const {disabled, readOnly, variant} = this.props;
 
     return (
       <button
@@ -53,7 +53,7 @@ export default class Select extends Component {
           'coral3-Select-button',
           'coral-Button',
           'coral-Button--secondary',
-          { 'coral-Button--block': variant !== 'quiet' }
+          {'coral-Button--block': variant !== 'quiet'}
         ) }
         disabled={ disabled || readOnly }
       />
@@ -69,8 +69,8 @@ export default class Select extends Component {
   }
 
   handleKeyPress = (e) => {
-    let { currentSearch } = this.state;
-    const { clearSearchTimeoutId, selectedIndex } = this.state;
+    let {currentSearch} = this.state;
+    const {clearSearchTimeoutId, selectedIndex} = this.state;
     const options = this.props.options.filter(option => !option.disabled);
     const newSearch = e.key.toLowerCase();
 
@@ -112,12 +112,12 @@ export default class Select extends Component {
     if (newSelectedIndex >= 0) {
       // this is technically not a function we're supposed to call, but it's the
       // same function that would be used if we were to do a menuRenderer
-      this.setState({ currentSearch, selectedIndex: newSelectedIndex });
+      this.setState({currentSearch, selectedIndex: newSelectedIndex});
       this.refs.selectComponent.focusOption(options[newSelectedIndex]);
     }
   }
 
-  valuesComponent(props, { value, onClick, onRemove, disabled }) {
+  valuesComponent(props, {value, onClick, onRemove, disabled}) {
     return (
       <Tag
         onClose={ (e) => onRemove(value, e) }
@@ -148,7 +148,7 @@ export default class Select extends Component {
     return (
       <ReactSelect
         className={
-          classNames(className, 'coral3-Select', { 'coral3-Select--quiet': isQuiet })
+          classNames(className, 'coral3-Select', {'coral3-Select--quiet': isQuiet})
         }
         multi={ multiSelect }
         noResultsText={ <em>{ noResultsText }</em> }
@@ -169,7 +169,7 @@ export default class Select extends Component {
         tabSelectsValue={ false }
         multiCloseOnSelect={ multiCloseOnSelect }
         { ...otherProps }
-        onValueClick={ onValueClick || (() => {}) }
+        onValueClick={ onValueClick || (function () {}) }
         backspaceToRemoveMessage=""
         onKeyPress={ this.handleKeyPress }
         ref="selectComponent"

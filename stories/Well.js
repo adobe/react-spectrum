@@ -1,19 +1,19 @@
 import React from 'react';
-import { storiesOf } from '@kadira/storybook';
-import { VerticalCenter } from '../.storybook/layout';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import Well from '../src/Well';
 
 storiesOf('Well', module)
   .addDecorator(story => (
-    <VerticalCenter style={ { textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none' } }>
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
       { story() }
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render(),
-    { inline: true }
+    {inline: true}
   );
 
 function render(props = {}) {

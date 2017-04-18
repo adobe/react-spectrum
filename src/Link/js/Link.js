@@ -14,7 +14,7 @@ export default function Link({
       className={
         classNames(
           'coral-Link',
-          { 'coral-Link--subtle': subtle },
+          {'coral-Link--subtle': subtle},
           className
         )
       }

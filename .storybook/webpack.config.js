@@ -2,18 +2,18 @@ const path = require('path');
 
 module.exports = {
   resolve: {
-    extensions: [ '', '.js', '.jsx' ]
+    extensions: ['', '.js', '.jsx']
   },
   module: {
     loaders: [
       {
         test: /\.styl$/,
-        loaders: [ 'style', 'css', 'stylus' ],
+        loaders: ['style', 'css', 'stylus'],
         include: path.resolve(__dirname, '../')
       },
       {
         test: /\.css$/,
-        loaders: [ 'style', 'css' ],
+        loaders: ['style', 'css'],
         include: path.resolve(__dirname, '../')
       },
       {
@@ -23,7 +23,6 @@ module.exports = {
     ]
   },
   stylus: {
-    // urlfunc: 'embedurl',
     paths: [__dirname + '/../node_modules'],
     use: [require('svg-stylus')(), require('nib')()],
     define: {
@@ -33,6 +32,5 @@ module.exports = {
     set: {
       'include css': true
     }
-    // 'import': ['nib']
   }
-}
+};
