@@ -35,6 +35,10 @@
     "svg-stylus": "^0.0.5",
     "tether-drop": "^1.4.2"
   },
+  "bundledDependencies": [
+    "@coralui/coralui-core",
+    "@spectrum/spectrum-abstract-stylus"
+  ],
   "devDependencies": {
     "@kadira/react-storybook-addon-info": "^3.2.4",
     "@kadira/storybook": "^2.24.1",
