@@ -38,6 +38,28 @@ $spectrum-autocomplete-invalid-icon-color = $spectrum-color-constant-red2;
 }
 
 .coral-Autocomplete {
+  .Select-control {
+    background: $spectrum-color-background-input-default;
+  }
+
+  .Select-placeholder {
+    color: $spectrum-color-text-placeholder-default;
+  }
+
+  .Select-noresults {
+    color: $spectrum-color-text-disabled;
+  }
+
+  &.is-disabled {
+    .Select-control {
+      background: $spectrum-color-background-input-disabled;
+    }
+
+    .Select-placeholder {
+      color: $spectrum-color-text-input-disabled;
+    }
+  }
+
   &.is-invalid {
     .coral-Autocomplete-input,
     .coral-Autocomplete-trigger {

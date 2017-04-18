@@ -154,6 +154,7 @@ export default class Select extends Component {
         noResultsText={ <em>{ noResultsText }</em> }
         arrowRenderer={ this.arrowRenderer }
         controlComponent={ this.controlComponent }
+        optionClassName="coral3-SelectList-item"
         classAdditions={ {
           'Select-placeholder': 'coral3-Select-label',
           'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',

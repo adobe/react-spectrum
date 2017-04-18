@@ -20,8 +20,6 @@ export default ({
     const isSelected = valueArray && valueArray.indexOf(option) > -1;
     const isFocused = option === focusedOption;
     const optionClass = classNames(optionClassName, option.className, {
-      'coral-BasicList-item': true,
-      'coral-ButtonList-item': true,
       'is-selected': isSelected,
       'is-focused': isFocused,
       'is-highlighted': isFocused,

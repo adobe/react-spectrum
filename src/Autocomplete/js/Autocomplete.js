@@ -72,16 +72,14 @@ export default class Autocomplete extends Component {
         allowCreate={ allowCreate }
         multi={ multiSelect }
         noResultsText={ <em>{ noResultsText }</em> }
+        optionClassName="coral3-SelectList-item"
         classAdditions={ {
-          'Select-control':
-            'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
+          'Select-control': 'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
           'Select-loading': 'coral-Wait',
           'Select-arrow-zone': 'coral-InputGroup-button',
           'Select-input': 'coral-InputGroup-input coral-DecoratedTextfield',
-          'Select-input-icon':
-            'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
-          'Select-input-field':
-            'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
+          'Select-input-icon': 'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
+          'Select-input-field': 'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
           'Select-menu-outer': 'coral-Overlay',
           'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList coral-Autocomplete-overlay',
           'Select-values': 'coral-TagList coral-Autocomplete-tagList',

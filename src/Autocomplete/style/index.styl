@@ -36,12 +36,41 @@ $spectrum-autocomplete-invalid-icon-url = '../../commons/embed/icon-alert.svg';
 
 .coral-Autocomplete {
   position: relative;
-
   display: inline-block;
-
   vertical-align: top;
-
   width: $spectrum-component-single-line-width;
+
+  .Select-control {
+    border-radius: $spectrum-border-radius;
+  }
+
+  .Select-multi-value-wrapper {
+    position: relative;
+    display: table-cell;
+  }
+
+  .Select-value, .Select-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    text-indent: $spectrum-padding;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .Select-input-field {
+    background-color: transparent !important;
+  }
+
+  &.has-icon {
+    .Select-value, .Select-placeholder {
+      text-indent: 25px;
+    }
+  }
 
   &.is-focused {
     .coral-Autocomplete-inputGroup {
