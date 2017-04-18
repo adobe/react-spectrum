@@ -2,12 +2,7 @@ import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import Table from '../src/Table';
-import THead from '../src/Table/js/THead';
-import TBody from '../src/Table/js/TBody';
-import TR from '../src/Table/js/TR';
-import TH from '../src/Table/js/TH';
-import TD from '../src/Table/js/TD';
+import {Table, THead, TBody, TR, TH, TD} from '../src/Table';
 
 storiesOf('Table', module)
   .addDecorator(story => (

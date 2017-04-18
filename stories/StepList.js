@@ -2,8 +2,7 @@ import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import StepList from '../src/StepList';
-import Step from '../src/StepList/js/Step';
+import {StepList, Step} from '../src/StepList';
 
 storiesOf('StepList', module)
   .addDecorator(story => (

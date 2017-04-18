@@ -2,7 +2,7 @@ import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import Textarea from '../src/Textfield/js/Textarea';
+import Textarea from '../src/Textarea';
 
 storiesOf('Textarea', module)
   .addDecorator(story => (

@@ -2,8 +2,7 @@ import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import Accordion from '../src/Accordion';
-import AccordionItem from '../src/Accordion/js/AccordionItem';
+import {Accordion, AccordionItem} from '../src/Accordion';
 
 storiesOf('Accordion', module)
   .addDecorator(story => (

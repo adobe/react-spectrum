@@ -19,16 +19,20 @@ export default class Textfield extends Component {
       required,
       invalid,
       readOnly,
+      multiLine,
       ...otherProps
     } = this.props;
 
+    var Tag = multiLine ? 'textarea' : 'input';
+
     return (
-      <input
+      <Tag
         type="text"
         className={
           classNames(
             'coral-Textfield',
             {
+              'coral-Textfield--multiline': multiLine,
               'is-invalid': invalid,
               'coral-Textfield--quiet': quiet
             },
