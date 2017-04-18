@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import THead from '../src/THead';
+import THead from '../src/Table/js/THead';
 
 describe('THead', () => {
   it('supports additional classNames', () => {

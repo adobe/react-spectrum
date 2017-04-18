@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import SwitchBase from '../../src/internal/SwitchBase';
+import SwitchBase from '../../src/Switch/js/SwitchBase';
 
 describe('SwitchBase', () => {
   it('has correct defaults', () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
 import Popover from '../src/Popover';
-import DialogHeader from '../src/internal/DialogHeader';
+import DialogHeader from '../src/Dialog/js/DialogHeader';
 
 describe('Popover', () => {
   it('supports different placements', () => {

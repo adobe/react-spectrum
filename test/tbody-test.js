@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import TBody from '../src/TBody';
+import TBody from '../src/Table/js/TBody';
 
 describe('TBody', () => {
   it('supports additional classNames', () => {

@@ -256,7 +256,7 @@ describe('Datepicker', () => {
 
   it('supports quiet', () => {
     const tree = shallow(<Datepicker quiet />);
-    expect(tree.childAt(0).hasClass('coral-InputGroup--quiet')).toBe(true);
+    expect(tree.childAt(0).prop('quiet')).toBe(true);
     expect(findTextfield(tree).prop('quiet')).toBe(true);
     expect(findButton(tree).hasClass('coral-Button--quiet')).toBe(true);
   });

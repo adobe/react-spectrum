@@ -1,12 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import DialogBackdrop from '../../src/internal/DialogBackdrop';
-import {
-  BACKDROP_STATIC,
-  BACKDROP_MODAL,
-  BACKDROP_NONE
-} from '../../src/constants/backdrop-constants';
+import DialogBackdrop from '../../src/Dialog/js/DialogBackdrop';
 
 describe('DialogBackdrop', () => {
   it('default', () => {
@@ -20,7 +15,7 @@ describe('DialogBackdrop', () => {
   });
 
   it('supports backdrop: none', () => {
-    const tree = render({ backdrop: BACKDROP_NONE });
+    const tree = render({ backdrop: 'none' });
     expect(tree.node).toNotExist();
   });
 
@@ -36,14 +31,14 @@ describe('DialogBackdrop', () => {
   describe('supports onClick', () => {
     it('when backdrop="modal"', () => {
       const spy = expect.createSpy();
-      const backdrop = findBackdrop(render({ backdrop: BACKDROP_MODAL, onClose: spy }));
+      const backdrop = findBackdrop(render({ backdrop: 'modal', onClose: spy }));
       backdrop.simulate('click');
       expect(spy).toHaveBeenCalled();
     });
 
     it('except when backdrop="static"', () => {
       const spy = expect.createSpy();
-      const backdrop = findBackdrop(render({ backdrop: BACKDROP_STATIC, onClose: spy }));
+      const backdrop = findBackdrop(render({ backdrop: 'static', onClose: spy }));
       backdrop.simulate('click');
       expect(spy).toNotHaveBeenCalled();
     });

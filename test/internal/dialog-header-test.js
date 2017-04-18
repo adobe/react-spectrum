@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import DialogHeader from '../../src/internal/DialogHeader';
+import DialogHeader from '../../src/Dialog/js/DialogHeader';
 import Icon from '../../src/Icon';
 import Button from '../../src/Button';
 

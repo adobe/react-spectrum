@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import Textarea from '../src/Textarea';
+import Textarea from '../src/Textfield/js/Textarea';
 
 describe('Textarea', () => {
   it('default', () => {

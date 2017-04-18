@@ -1,7 +1,7 @@
 import React from 'react';
 import expect, { createSpy } from 'expect';
 import { shallow } from 'enzyme';
-import Tag from '../src/Tag';
+import Tag from '../src/TagList/js/Tag';
 import TagList from '../src/TagList';
 
 describe('TagList', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import DialogFooter from '../../src/internal/DialogFooter';
+import DialogFooter from '../../src/Dialog/js/DialogFooter';
 import Button from '../../src/Button';
 
 describe('DialogFooter', () => {

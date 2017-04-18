@@ -4,6 +4,7 @@ import { shallow } from 'enzyme';
 import NumberInput from '../src/NumberInput';
 import Textfield from '../src/Textfield';
 import Button from '../src/Button';
+import InputGroup from '../src/InputGroup';
 
 describe('NumberInput', () => {
   it('default', () => {
@@ -19,7 +20,7 @@ describe('NumberInput', () => {
 
     const tree = shallow(<NumberInput />);
     expect(tree.hasClass('coral3-NumberInput')).toBe(true);
-    expect(tree.hasClass('coral-InputGroup')).toBe(true);
+    expect(tree.type()).toBe(InputGroup);
 
     const input = findInput(tree);
     const inputId = input.prop('id');

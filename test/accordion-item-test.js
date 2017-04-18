@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import AccordionItem from '../src/AccordionItem';
+import AccordionItem from '../src/Accordion/js/AccordionItem';
 import Icon from '../src/Icon';
 
 describe('AccordionItem', () => {
@@ -21,7 +21,7 @@ describe('AccordionItem', () => {
     expect(header.prop('aria-expanded')).toBe(true);
     expect(icon.prop('icon')).toBe('chevronDown');
     expect(content.prop('aria-hidden')).toBe(false);
-    expect(content.prop('style').display).toBe('block');
+    expect(content.prop('className')).toBe('coral3-Accordion-content is-open');
   });
 
   it('supports header', () => {

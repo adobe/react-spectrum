@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { mount } from 'enzyme';
-import selectMenuRenderer from '../src/internal/SelectMenuRenderer';
+import selectMenuRenderer from '../src/Select/js/SelectMenuRenderer';
 
 const testProps = {
   optionComponent: ({ className }) => { return (<div className={ className } />); },

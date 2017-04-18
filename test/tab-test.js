@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow, mount } from 'enzyme';
-import Tab from '../src/Tab';
+import Tab from '../src/TabList/js/Tab';
 
 describe('Tab', () => {
   it('has correct defaults', () => {

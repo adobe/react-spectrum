@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import TR from '../src/TR';
+import TR from '../src/Table/js/TR';
 
 describe('TR', () => {
   it('supports additional classNames', () => {

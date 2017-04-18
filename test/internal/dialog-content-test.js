@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import DialogContent from '../../src/internal/DialogContent';
+import DialogContent from '../../src/Dialog/js/DialogContent';
 
 describe('DialogContent', () => {
   it('supports additional classNames', () => {

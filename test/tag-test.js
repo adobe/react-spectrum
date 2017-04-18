@@ -1,7 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import Tag from '../src/Tag';
+import Tag from '../src/TagList/js/Tag';
 
 describe('Tag', () => {
   it('default', () => {
@@ -11,7 +11,6 @@ describe('Tag', () => {
     expect(tree.prop('aria-label')).toBe('Remove label');
     expect(tree.hasClass('coral-Tag')).toBe(true);
     expect(tree.hasClass('coral-Tag--large')).toBe(true);
-    expect(tree.hasClass('coral-Tag--grey')).toBe(true);
   });
 
   it('supports size', () => {
