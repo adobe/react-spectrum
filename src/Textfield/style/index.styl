@@ -44,5 +44,50 @@
   display: block;
 }
 
+.coral-DecoratedTextfield {
+  position: relative;
+
+  component-single-line();
+}
+
+.coral-DecoratedTextfield-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  margin-left: 10px;
+
+  // Don't get clicks
+  pointer-events: none;
+}
+
+.coral-DecoratedTextfield-input {
+  margin: 0;
+  width: 100%;
+}
+
+// Move text to right when the icon is visible
+.coral-DecoratedTextfield-icon:not([hidden]) + .coral-DecoratedTextfield-input {
+  padding-left: 25px;
+  // Reset the text-indent the spectrum textfield has
+  text-indent: 0px;
+}
+
+.coral-DecoratedTextfield-button {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  &.is-hidden {
+    visibility: hidden;
+  }
+}
+
+.coral-Form--vertical .coral-Form-field.coral-DecoratedTextfield {
+  display: block;
+  width: 100%;
+}
+
 @require 'light.styl'
 @require 'dark.styl'
