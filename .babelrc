@@ -4,8 +4,8 @@
     "development": {
       "presets": [ "react-hmre" ]
     },
-    "test": {
-      "presets": []
+    "cover": {
+      "plugins": ["istanbul"]
     }
   },
   "plugins": [

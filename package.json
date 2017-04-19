@@ -1,22 +1,14 @@
 {
-  "name": "@coralui/react-coral",
-  "version": "0.19.0",
-  "description": "React components using cloudui style guidelines from CoralUI",
+  "name": "react-spectrum",
+  "version": "1.0.0",
+  "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.adobe.com/React/react-coral"
-  },
-  "publishConfig": {
-    "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-coralui-local"
+    "url": "https://github.com/Livefyre/react-spectrum"
   },
   "scripts": {
-    "prepublish": "NODE_ENV=production babel src --out-dir lib",
-    "start": "start-storybook -p 9002",
-    "lint": "lfeslint",
-    "test": "NODE_ENV=test mocha test/.setup.js test/",
-    "test:xml": "export NODE_ENV=test|| set NODE_ENV=test&& mocha -R xunit test/.setup.js test/ > test-reports.xml",
-    "test:watch": "npm test -- --watch",
-    "coverage": "export NODE_ENV=test|| set NODE_ENV=test&& istanbul cover --report cobertura --report html _mocha -- -R dot test/.setup.js test/"
+    "start": "make run",
+    "test": "make test"
   },
   "main": "lib/index.js",
   "peerDependencies": {
@@ -37,7 +29,8 @@
   },
   "bundledDependencies": [
     "@coralui/coralui-core",
-    "@spectrum/spectrum-abstract-stylus"
+    "@spectrum/spectrum-abstract-stylus",
+    "react-select"
   ],
   "devDependencies": {
     "@kadira/react-storybook-addon-info": "^3.2.4",
@@ -46,8 +39,8 @@
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
-    "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.5",
+    "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-syntax-class-properties": "^6.13.0",
     "babel-plugin-syntax-decorators": "^6.13.0",
     "babel-plugin-syntax-object-rest-spread": "^6.13.0",
@@ -65,19 +58,13 @@
     "babel-runtime": "^6.11.6",
     "css-loader": "^0.25.0",
     "enzyme": "^2.5.1",
-    "eslint": "^3.8.1",
-    "eslint-config-airbnb": "^12.0.0",
-    "eslint-plugin-import": "^2.0.1",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.4.1",
     "expect": "^1.20.2",
     "file-loader": "^0.9.0",
     "ignore-styles": "^5.0.1",
-    "istanbul": "^1.0.0-alpha.2",
-    "istanbul-cobertura-badger": "^1.2.1",
     "jsdom": "^9.8.0",
     "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
+    "nyc": "^10.2.0",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",

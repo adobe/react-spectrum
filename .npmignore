@@ -1,6 +1,5 @@
 .storybook
-components
-babelPlugins
+.editorconfig
+.nycrc
+src
 test
-Dockerfile
-webpack.config.js
