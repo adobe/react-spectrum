@@ -1,5 +1,11 @@
+.DS_Store
 .storybook
 .editorconfig
 .nycrc
+.nyc_output
 src
 test
+stories
+coverage
+Makefile
+yarn.lock

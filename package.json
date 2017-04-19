@@ -8,9 +8,9 @@
   },
   "scripts": {
     "start": "make run",
-    "test": "make test"
+    "test": "make test",
+    "prepublish": "make build"
   },
-  "main": "lib/index.js",
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
     "react-dom": "^0.14.0 || ^15.0.0"

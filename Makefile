@@ -1,4 +1,4 @@
-.PHONY: clean test lint
+.PHONY: clean test lint build
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
@@ -24,3 +24,6 @@ test: lint
 
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha $(MOCHA_OPTS)
+
+build:
+	cp -R src/* .
