@@ -1,7 +1,7 @@
 import {configure, setAddon} from '@kadira/storybook';
 import infoAddon from '@kadira/react-storybook-addon-info';
 
-import configureTypekit from '../src-old/configureTypekit';
+import configureTypekit from '../src/utils/configureTypekit';
 
 import './storybook.styl';
 import '../src/page/index.styl';
