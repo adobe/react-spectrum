@@ -17,10 +17,8 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
-    "nib": "^1.1.2",
     "react-portal": "^3.0.0",
     "react-tether": "^0.5.2",
-    "svg-stylus": "^0.0.5",
     "tether-drop": "^1.4.2"
   },
   "bundledDependencies": [
@@ -61,6 +59,7 @@
     "jsdom": "^9.8.0",
     "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
+    "nib": "^1.1.2",
     "nyc": "^10.2.0",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
@@ -68,10 +67,9 @@
     "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "stringify": "^5.1.0",
     "style-loader": "^0.13.1",
-    "stylify": "^1.4.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
-    "text-extractify": "^0.1.0",
+    "svg-stylus": "^0.0.5",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.4",
