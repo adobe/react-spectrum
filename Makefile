@@ -2,7 +2,6 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-MOCHA_OPTS = --require ./test/.setup.js --recursive test
 
 all: node_modules
 
@@ -21,10 +20,10 @@ lint:
 	lfeslint
 
 test: lint
-	NODE_ENV=test mocha $(MOCHA_OPTS)
+	NODE_ENV=test mocha
 
 cover:
-	NODE_ENV=test BABEL_ENV=cover nyc mocha $(MOCHA_OPTS)
+	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 build:
 	cp -R src dist
