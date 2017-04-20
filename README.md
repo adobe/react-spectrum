@@ -20,6 +20,12 @@ Components are then `require`able as in the following example. The styles for ea
 along-side the JavaScript (more on configuring this below). Each component should be imported independently -
 this way only the components you use will be included in the output JavaScript and CSS files.
 
+### Installation
+
+```
+npm install react-spectrum --save
+```
+
 ### Example
 
 ```javascript
@@ -36,7 +42,8 @@ ReactDOM.render(<Button>Hello World</Button>, dom);
 ### Browserify
 
 To use react-spectrum with browserify, you will need a plugin to extract the CSS into a separate file.
-One such plugin is [text-extractify](https://github.com/TiddoLangerak/text-extractify).
+One such plugin is [text-extractify](https://github.com/TiddoLangerak/text-extractify). This will build
+a CSS file containing all of the required styles for the components you imported.
 
 With the browserify CLI:
 
@@ -58,7 +65,7 @@ b.plugin('text-extractify', {
 To use react-spectrum, you'll need [css-loader](https://github.com/webpack-contrib/css-loader) and either
 [style-loader](https://github.com/webpack-contrib/style-loader) to inject the styles
 directly into the DOM, or [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)
-to extract the CSS to a separate file.
+to extract the CSS to a single separate file.
 
 ```javascript
 module.exports = {
