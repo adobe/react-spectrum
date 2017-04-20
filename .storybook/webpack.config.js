@@ -2,24 +2,35 @@ const path = require('path');
 
 module.exports = {
   resolve: {
-    extensions: [ '', '.js', '.jsx' ]
+    extensions: ['', '.js', '.jsx']
   },
   module: {
     loaders: [
       {
         test: /\.styl$/,
-        loaders: [ 'style', 'css', 'stylus' ],
+        loaders: ['style', 'css', 'stylus'],
         include: path.resolve(__dirname, '../')
       },
       {
         test: /\.css$/,
-        loaders: [ 'style', 'css' ],
+        loaders: ['style', 'css'],
         include: path.resolve(__dirname, '../')
       },
       {
-        test: /\.(ttf|woff|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
+        test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
         loader: 'url-loader?limit=8192'// limit inlining base64 URLs to <=8k images, direct URLs for the rest
       }
     ]
+  },
+  stylus: {
+    paths: [__dirname + '/../node_modules'],
+    use: [require('svg-stylus')(), require('nib')()],
+    define: {
+      'embedurl': require('stylus').url()
+    },
+    'resolve url': true,
+    set: {
+      'include css': true
+    }
   }
-}
+};

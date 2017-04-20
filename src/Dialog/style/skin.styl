@@ -1,0 +1,94 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-dialog-background = $spectrum-color-background-dialog-underlay
+$spectrum-dialog-wrapper-background = $spectrum-color-background-dialog-default;
+$spectrum-dialog-border-color = $spectrum-color-border-default;
+
+$spectrum-dialog-header-text-color-success = $spectrum-color-success;
+$spectrum-dialog-header-text-color-help = $spectrum-color-info;
+$spectrum-dialog-header-text-color-warning = $spectrum-color-warning;
+$spectrum-dialog-header-text-color-error = $spectrum-color-error;
+
+$spectrum-dialog-header-icon-color-success = $spectrum-color-success;
+$spectrum-dialog-header-icon-color-help = $spectrum-color-info;
+$spectrum-dialog-header-icon-color-warning = $spectrum-color-warning;
+$spectrum-dialog-header-icon-color-error = $spectrum-color-error;
+
+.coral-Dialog {
+  background: $spectrum-dialog-background;
+
+  &.coral-Dialog--backdropNone {
+    background: none;
+  }
+
+  &.coral-Dialog--error {
+    .coral-Dialog-title {
+      color: $spectrum-dialog-header-text-color-error;
+    }
+
+    .coral-Dialog-typeIcon {
+      color: $spectrum-dialog-header-icon-color-error;
+    }
+  }
+
+  &.coral-Dialog--warning {
+    .coral-Dialog-title {
+      color: $spectrum-dialog-header-text-color-warning;
+    }
+
+    .coral-Dialog-typeIcon {
+      color: $spectrum-dialog-header-icon-color-warning;
+    }
+  }
+
+  &.coral-Dialog--help, &.coral-Dialog--info {
+    .coral-Dialog-title {
+      color: $spectrum-dialog-header-text-color-help;
+    }
+
+    .coral-Dialog-typeIcon {
+      color: $spectrum-dialog-header-icon-color-help;
+    }
+  }
+
+  &.coral-Dialog--success {
+    .coral-Dialog-title {
+      color: $spectrum-dialog-header-text-color-success;
+    }
+
+    .coral-Dialog-typeIcon {
+      color: $spectrum-dialog-header-icon-color-success;
+    }
+  }
+}
+
+.coral-Dialog-wrapper {
+  background: $spectrum-dialog-wrapper-background;
+}
+
+.coral-Dialog-header {
+  background: $spectrum-dialog-wrapper-background;
+
+  &:after {
+    background: $spectrum-dialog-border-color;
+  }
+}
+
+.coral-Dialog-footer {
+  background: $spectrum-dialog-wrapper-background;
+}

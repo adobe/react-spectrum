@@ -1,0 +1,147 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$coral-tooltip-arrow-size = 6*$px;
+
+.coral3-Tooltip {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  z-index: $spectrum-zindex-tooltip;
+  font-size: 12*$px;
+
+  min-width: 32*$px;
+  min-height: 24*$px;
+  // explicit value in case the container overrides it
+  line-height: $spectrum-text-body-line-height;
+
+  padding: 4*$px 8*$px 3*$px;
+
+  vertical-align: middle; // Point at center of adjacent elements when included inline
+
+  background-position: 8*$px 8*$px;
+  background-repeat: no-repeat;
+  background-size: 16*$px 16*$px;
+
+  border-radius: $spectrum-border-radius;
+
+  opacity: 0;
+  transition: opacity $spectrum-transition-time ease-in-out;
+
+  // In order to make clicking on a tooltip behave nicely, we need to make it focusable
+  // However, if there are no child elements, we don't shift focus away from the tooltip
+  // When the tooltip is in this state, it shouldn't show an outline
+  outline: none;
+
+  text-align: left;
+
+  &:before,
+  &:after {
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .coral-Icon {
+    // Get a nice vertical alignment
+    vertical-align: -3*$px;
+  }
+}
+
+.coral-Tooltip-drop-element.coral-Tooltip-drop-after-open .coral3-Tooltip {
+  opacity: 1
+}
+
+.coral3-Tooltip--arrowRight {
+  &:before,
+  &:after {
+    top: 50%; // center the arrow in the center
+    right: 100%; // position the border on the left
+  }
+
+  &:before {
+    border-width: $coral-tooltip-arrow-size;
+    margin-top: -1*$coral-tooltip-arrow-size;
+  }
+
+  &:after { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size - $px;
+    margin-top: -1*$coral-tooltip-arrow-size + $px;
+  }
+}
+
+.coral3-Tooltip--arrowLeft {
+  &:before,
+  &:after {
+    top: 50%; // center the arrow in the center
+    left: 100%; // position the border on the right
+  }
+
+  &:before { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size;
+    margin-top: -1*$coral-tooltip-arrow-size;
+  }
+
+  &:after { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size - $px;
+    margin-top: -1*$coral-tooltip-arrow-size + $px;
+  }
+}
+
+.coral3-Tooltip--arrowDown {
+  &:before,
+  &:after {
+    left: 50%; // center the arrow in the center
+    bottom: 100%; // position the border on the top
+  }
+
+  &:before {
+    border-width: $coral-tooltip-arrow-size;  // center the arrow in the center
+    margin-left: -1*$coral-tooltip-arrow-size;
+  }
+
+  &:after { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size - $px;
+    margin-left: -1*$coral-tooltip-arrow-size + $px;
+  }
+}
+
+.coral3-Tooltip--arrowUp {
+  &:before,
+  &:after {
+    left: 50%; // center the arrow in the center
+    top: 100%; // position the border on the bottom
+  }
+
+  &:before { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size;
+    margin-left: -1*$coral-tooltip-arrow-size;
+  }
+
+  &:after { // center the arrow in the center
+    border-width: $coral-tooltip-arrow-size - $px;
+    margin-left: -1*$coral-tooltip-arrow-size + $px;
+  }
+}
+
+@require 'light.styl'
+@require 'dark.styl'

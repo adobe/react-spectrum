@@ -1,0 +1,334 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-calendar-day-color = $spectrum-color-constant-grey8
+$spectrum-calendar-day-dimmed-text-color = $spectrum-color-text-disabled
+$spectrum-calendar-day-focus-background-color = $spectrum-color-constant-grey5
+$spectrum-calendar-day-focus-border-color = $spectrum-color-border-focus
+$spectrum-calendar-day-focus-foreground-color = $spectrum-color-constant-grey9
+$spectrum-calendar-day-hover-background-color = $spectrum-color-constant-grey5
+$spectrum-calendar-day-hover-foreground-color = $spectrum-color-constant-grey9
+$spectrum-calendar-day-selected-background-color = $spectrum-color-constant-blue3;
+$spectrum-calendar-day-selected-foreground-color = white;
+$spectrum-calendar-day-focus-selected-background-color = $spectrum-color-constant-blue4;
+
+$spectrum-calendar-day-today-background-color = $spectrum-color-constant-grey9
+$spectrum-calendar-secondary-day-today-background-color = rgba($spectrum-calendar-day-today-background-color, 0.15)
+$spectrum-calendar-day-today-foreground-color = $spectrum-color-constant-grey1;
+$spectrum-calendar-day-today-hover-background-color = $spectrum-color-constant-grey10;
+$spectrum-calendar-day-today-focus-background-color = $spectrum-color-constant-grey10;
+
+
+$spectrum-calendar-day-today-selected-background-color = $spectrum-color-constant-blue3;
+$spectrum-calendar-day-today-selected-foreground-color = white;
+$spectrum-calendar-day-today-selected-border-color = $spectrum-color-border-focus;
+$spectrum-calendar-day-today-focus-selected-background-color = $spectrum-color-constant-blue4;
+
+$spectrum-calendar-day-foreground-color = $spectrum-color-constant-grey9;
+
+$spectrum-calendar-error-background-color = $spectrum-color-error;
+$spectrum-calendar-error-text-color = white;
+
+.coral-Calendar {
+  display: inline-block;
+  margin: 0;
+  vertical-align: top;
+
+  width: $spectrum-calendar-width;
+
+  overflow: visible;
+
+  &.is-invalid,
+  &.is-disabled {
+     &.is-currentMonth {
+      .coral-Calendar-secondaryDate {
+        color: $spectrum-calendar-day-dimmed-text-color;
+      }
+    }
+  }
+
+  table {
+    border-spacing: 1*$px;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    font-size: $spectrum-calendar-day-font-size;
+    border-collapse: separate;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    .coral-Calendar-date,
+    .coral-Calendar-secondaryDate,
+    .coral-Calendar-dayOfWeek {
+      display: block;
+      border-bottom: none;
+    }
+
+    th, td {
+      text-align: center;
+      padding: 4*$px;
+    }
+
+    tr:last-child {
+      td {
+        &:first-child {
+          .coral-Calendar-date {
+            border-bottom-left-radius: $spectrum-calendar-day-height;
+          }
+        }
+        &:last-child {
+          .coral-Calendar-date {
+            border-bottom-right-radius: $spectrum-calendar-day-height;
+          }
+        }
+      }
+    }
+
+    th {
+      .coral-Calendar-dayOfWeek {
+        font-size: $spectrum-calendar-day-header-font-size;
+        text-transform: uppercase;
+        color: $spectrum-calendar-day-foreground-color;
+        cursor: default;
+      }
+    }
+
+    td {
+      .coral-Calendar-date {
+        color: $spectrum-calendar-day-color;
+        text-decoration: none;
+        position: relative;
+        cursor: pointer;
+        height: $spectrum-calendar-day-height;
+        width: $spectrum-calendar-day-height;
+        border-radius: $spectrum-calendar-day-height;
+        line-height: $spectrum-calendar-day-height;
+        border: 0 solid transparent;
+        margin: $spectrum-calendar-border-size;
+
+        transition: background $spectrum-transition-time ease-out,
+              color $spectrum-transition-time ease-out,
+              box-shadow $spectrum-transition-time ease-out
+
+        &:hover {
+          color: $spectrum-calendar-day-hover-foreground-color;
+          text-decoration: none;
+          background: $spectrum-calendar-day-hover-background-color;
+          z-index: $spectrum-calendar-link-zindex;
+
+          &:active {
+            color: $spectrum-calendar-day-selected-foreground-color;
+            background: $spectrum-calendar-day-selected-background-color;
+            border-color: $spectrum-calendar-day-selected-background-color;
+          }
+        }
+
+        &:active {
+          color: $spectrum-calendar-day-selected-foreground-color;
+          background: $spectrum-calendar-day-selected-background-color;
+          z-index: $spectrum-calendar-link-zindex;
+        }
+      }
+
+      .coral-Calendar-secondaryDate {
+        color: transparent;
+        cursor: default;
+        height: $spectrum-calendar-day-height;
+        width: $spectrum-calendar-day-height;
+        border-radius: $spectrum-calendar-day-height;
+        line-height: $spectrum-calendar-day-height;
+        border: 0 solid transparent;
+        margin: $spectrum-calendar-border-size;
+      }
+
+      &.is-currentMonth {
+        .coral-Calendar-secondaryDate {
+          color: $spectrum-calendar-day-dimmed-text-color;
+        }
+      }
+
+      &.is-selected {
+        .coral-Calendar-date,
+        &.is-currentMonth .coral-Calendar-secondaryDate {
+          color: $spectrum-calendar-day-selected-foreground-color;
+          background: $spectrum-calendar-day-selected-background-color;
+          z-index: $spectrum-calendar-link-zindex;
+        }
+      }
+
+      &.is-today {
+        .coral-Calendar-date {
+          color: $spectrum-calendar-day-today-foreground-color;
+          background: $spectrum-calendar-day-today-background-color;
+          z-index: $spectrum-calendar-link-zindex;
+
+          &:hover {
+            color: $spectrum-calendar-day-today-foreground-color;
+            background: $spectrum-calendar-day-today-hover-background-color;
+          }
+
+          &:active {
+            color: $spectrum-calendar-day-today-selected-foreground-color;
+            background: $spectrum-calendar-day-today-selected-background-color;
+          }
+        }
+
+        &.is-currentMonth {
+          .coral-Calendar-secondaryDate {
+            background: alpha($spectrum-calendar-day-today-background-color, 0.15);
+          }
+        }
+
+        &.is-selected {
+          .coral-Calendar-date,
+          &.is-currentMonth:not(.is-invalid) .coral-Calendar-secondaryDate {
+            color: $spectrum-calendar-day-today-selected-foreground-color;
+            background: $spectrum-calendar-day-today-selected-background-color;
+          }
+        }
+
+
+      }
+
+      &.is-invalid {
+        &.is-currentMonth {
+          .coral-Calendar-secondaryDate {
+            background: $spectrum-calendar-error-background-color;
+            color: $spectrum-calendar-error-text-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.coral-Calendar-calendarHeader {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: $spectrum-calendar-header-height;
+
+  > .coral-Heading {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    font-size: $spectrum-calendar-header-font-size;
+    font-weight: bold;
+
+    box-sizing: border-box;
+    width: 100%;
+    height: $spectrum-calendar-header-height;
+    margin: 0;
+    padding: 0;
+
+    text-align: center;
+    overflow: ellipsis;
+  }
+
+  .coral-Calendar-prevMonth,
+  .coral-Calendar-nextMonth {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .coral-Calendar-prevMonth {
+    left: 5*$px;
+  }
+  .coral-Calendar-nextMonth {
+    right: 5*$px;
+  }
+
+}
+
+.coral-Calendar-calendarBody {
+  box-sizing: initial;
+  padding: 0;
+  outline: none;
+  scrollable();
+
+  &:focus {
+    td {
+      &.coral-focus {
+        .coral-Calendar-date {
+          background: $spectrum-calendar-day-focus-background-color;
+          border-color: $spectrum-calendar-day-focus-border-color;
+          border-width: $spectrum-calendar-border-size;
+          margin: auto;
+          color: $spectrum-calendar-day-focus-foreground-color;
+          z-index: $spectrum-calendar-link-zindex;
+        }
+
+        &.is-selected {
+          .coral-Calendar-date {
+            color: $spectrum-calendar-day-selected-foreground-color;
+            background: $spectrum-calendar-day-focus-selected-background-color;
+            border-color: $spectrum-calendar-day-focus-selected-background-color;
+          }
+        }
+
+        &.is-today {
+          .coral-Calendar-date {
+            background: $spectrum-calendar-day-today-focus-background-color;
+            border-color: $spectrum-calendar-day-focus-border-color;
+            color: $spectrum-calendar-day-today-foreground-color;
+          }
+
+          &.is-selected {
+            .coral-Calendar-date {
+              border-color: $spectrum-calendar-day-today-selected-border-color;
+              background: $spectrum-calendar-day-today-focus-selected-background-color;
+              color: $spectrum-calendar-day-today-selected-foreground-color;
+            }
+          }
+        }
+      }
+    }
+
+    tr:last-child {
+      td.coral-focus {
+        &:first-child {
+          .coral-Calendar-date {
+            border-bottom-left-radius: $spectrum-calendar-day-height;
+          }
+        }
+        &:last-child {
+          .coral-Calendar-date {
+            border-bottom-right-radius: $spectrum-calendar-day-height;
+          }
+        }
+      }
+    }
+  }
+}
+
+.coral-DatePicker-calendarSlidingContainer {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.coral-Calendar-table--transit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: left 400ms;
+}

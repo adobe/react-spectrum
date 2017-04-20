@@ -1,0 +1,89 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+.coral-Wait {
+  display: inline-block;
+  width: 16*$px;
+  height: 16*$px;
+
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(60);
+}
+
+// @deprecated .coral-Wait--center, please use .coral-Wait--centered
+.coral-Wait--center,
+.coral-Wait--centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -8*$px;
+  margin-left: -8*$px;
+}
+
+.coral-Wait--centered.coral-Wait--medium {
+  margin-top: -16*$px;
+  margin-left: -16*$px;
+}
+
+.coral-Wait--medium {
+  width: 32*$px;
+  height: 32*$px;
+}
+
+.coral-Wait--centered.coral-Wait--large {
+  margin-top: -32*$px;
+  margin-left: -32*$px;
+}
+
+.coral-Wait--large {
+  width: 64*$px;
+  height: 64*$px;
+}
+
+.coral-Wait--dots {
+  animation-duration: 0.8s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(40);
+
+  background-size: auto 9*$px;
+  background-repeat: no-repeat;
+
+  width: 24*$px;
+}
+
+.coral-Wait--dots.coral-Wait--medium {
+  background-size: auto 12*$px;
+
+  width: 32*$px;
+}
+
+.coral-Wait--dots.coral-Wait--large {
+  background-size: auto 24*$px;
+
+  width: 64*$px;
+}
+
+@require 'light.styl'
+@require 'dark.styl'

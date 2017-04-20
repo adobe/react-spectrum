@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function VerticalCenter({ children, className, style }) {
+export function VerticalCenter({children, className, style}) {
   return (
     <div
       className={ className }
@@ -21,7 +21,7 @@ export function VerticalCenter({ children, className, style }) {
   );
 }
 
-export function VerticalTop({ children, className, style }) {
+export function VerticalTop({children, className, style}) {
   return (
     <div
       className={ className }

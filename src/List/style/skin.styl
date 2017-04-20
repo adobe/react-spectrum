@@ -1,0 +1,50 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-basiclist-border-color = $spectrum-color-border-default;
+$spectrum-basiclist-background-color = $spectrum-color-background-default;
+
+$spectrum-basiclist-item-background-color = $spectrum-color-constant-grey1;
+$spectrum-basiclist-item-background-color-hover = $spectrum-color-constant-grey2;
+$spectrum-basiclist-item-background-color-focused = $spectrum-color-constant-grey3;
+$spectrum-basiclist-item-border-color-focused = $spectrum-color-border-focus;
+
+.coral-BasicList {
+  border-color: $spectrum-basiclist-border-color;
+  background-color: $spectrum-basiclist-background-color;
+}
+
+.coral-BasicList-item {
+  background-color: $spectrum-basiclist-item-background-color;
+  color: $spectrum-color-text-default;
+
+  &:focus,
+  &.is-focused {
+    background-color: $spectrum-basiclist-item-background-color-focused;
+    border-left-color: $spectrum-basiclist-item-border-color-focused;
+  }
+
+  &:hover {
+    background-color: $spectrum-basiclist-item-background-color-hover;
+    border-left-color: transparent;
+  }
+
+  &.is-disabled {
+    color: $spectrum-color-text-disabled;
+    background-color: $spectrum-basiclist-item-background-color;
+  }
+}

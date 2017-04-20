@@ -1,0 +1,132 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-selectlist-border-radius = $spectrum-border-radius;
+$spectrum-selectlist-border-width = $px;
+$spectrum-selectlist-font-size = $spectrum-font-size;
+
+$spectrum-selectlist-item-padding-left = 14*$px;
+$spectrum-selectlist-item-padding-top = 9*$px;
+$spectrum-selectlist-item-focus-width = 2*$px;
+$spectrum-selectlist-item-tick-size = 16*$px;
+
+$spectrum-selectlist-checked-icon-url = '../../commons/embed/icon-check.svg';
+
+.coral3-SelectList {
+  overflow-y: auto;
+  display: block;
+
+  box-sizing: border-box;
+
+  padding: 0;
+  margin: 0;
+
+  // removes the outline in FF
+  outline: none;
+
+  border-radius: $spectrum-selectlist-border-radius;
+  border-width: $spectrum-selectlist-border-width;
+  border-style: solid;
+}
+
+.coral3-SelectList-item,
+.coral-SelectList-group {
+  display: block;
+  margin: 0;
+
+  text-decoration: none;
+}
+
+.coral3-SelectList-item {
+  line-height: $spectrum-selectlist-font-size;
+
+  position: relative;
+
+  min-height: inherit;
+  padding: $spectrum-selectlist-item-padding-top $spectrum-selectlist-item-padding-left $spectrum-selectlist-item-padding-top ($spectrum-selectlist-item-padding-left - 2 * $spectrum-selectlist-item-focus-width);
+
+  cursor: pointer;
+  transition: background-color $spectrum-transition-time ease-out,
+              border-left-color $spectrum-transition-time ease-out;
+
+  border-left-width: $spectrum-selectlist-item-focus-width;
+  border-left-style: solid;
+
+  > .coral-Icon {
+    // this value will make it look like 10px
+    margin-right: 7*$px;
+    vertical-align: middle;
+  }
+
+  &.is-selected {
+    // give the item more space for the icon.
+    padding-right: ($spectrum-selectlist-item-padding-left + $spectrum-selectlist-item-tick-size);
+
+    &:after {
+      position: absolute;
+      top: 50%;
+      right: ($spectrum-selectlist-item-padding-left - 4*$px);
+
+      padding: 0 ($spectrum-selectlist-item-tick-size / 2);
+      height: $spectrum-selectlist-item-tick-size;
+
+      margin-left: $spectrum-padding;
+
+      transform: translateY(-50%);
+
+      content: '';
+
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  }
+
+  &.is-disabled {
+    cursor: default;
+  }
+
+  &:focus {
+    outline: none;
+    text-decoration: none;
+  }
+}
+
+.coral-SelectList-group {
+  padding: 0;
+}
+
+.coral-SelectList-group:before {
+  display: block;
+
+  font-weight: bold;
+  text-transform: uppercase;
+
+  padding: 10*$px 12*$px;
+  font-size: 11*$px;
+
+  content: attr(label);
+}
+
+.coral-SelectList-loading {
+  position: relative;
+  height: 42*$px;
+}
+
+@require 'light.styl'
+@require 'dark.styl'

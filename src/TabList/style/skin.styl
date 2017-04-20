@@ -1,0 +1,94 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-tablist-active-text-color = $spectrum-color-constant-grey10
+$spectrum-tablist-active-bar-color = $spectrum-color-constant-grey10
+$spectrum-tablist-inactive-text-color = $spectrum-color-constant-grey8
+
+$spectrum-tablist-disabled-text-color = $spectrum-color-constant-grey6
+$spectrum-tablist-disabled-bar-color = $spectrum-color-constant-grey5
+
+$spectrum-tablist-vert-hover-text-color = $spectrum-color-constant-grey9
+
+$spectrum-tablist-focus-color = $spectrum-color-focus-blue
+
+.coral-Tab {
+  color: $spectrum-tablist-inactive-text-color;
+
+  &:hover {
+    color: $spectrum-tablist-active-text-color; //as in spec
+  }
+
+  &.is-selected {
+    color: $spectrum-tablist-active-text-color;
+    > .coral-Tab-label:after {
+      border-color: $spectrum-tablist-active-text-color;
+    }
+  }
+
+  &:focus:not(:active) {
+    color: $spectrum-tablist-focus-color;
+
+    > .coral-Tab-label:after {
+      border-color: $spectrum-tablist-focus-color;
+    }
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover,
+  &.is-disabled:focus {
+    color: $spectrum-tablist-disabled-text-color;
+    box-shadow: none;
+
+    * {
+      box-shadow: none;
+      color: $spectrum-tablist-disabled-text-color;
+    }
+
+    &.is-selected {
+      color: $spectrum-tablist-disabled-text-color;
+      &:after {
+        border-color: $spectrum-tablist-disabled-text-color;
+      }
+    }
+  }
+}
+
+.coral-TabList--vertical {
+  .coral-Tab {
+    color: $spectrum-tablist-inactive-text-color;
+
+    &:hover {
+      color: $spectrum-tablist-vert-hover-text-color;
+    }
+
+    &.is-selected {
+      color: $spectrum-tablist-active-text-color;
+      &:after {
+        border-color: $spectrum-tablist-active-text-color;
+      }
+    }
+
+    &:focus {
+      color: $spectrum-tablist-focus-color;
+
+      &:after {
+        border-color: $spectrum-tablist-focus-color;
+      }
+    }
+  }
+}

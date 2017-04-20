@@ -1,0 +1,249 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-dialog-height = auto;
+$spectrum-dialog-min-width = 320*$px;
+$spectrum-dialog-max-width = 90%;
+$spectrum-dialog-margin = 40*$px;
+
+$spectrum-dialog-border-width = 1*$px;
+$spectrum-dialog-border-radius = $spectrum-border-radius;
+$spectrum-dialog-header-font-size = 18*$px;
+$spectrum-dialog-header-height = 30*$px;
+$spectrum-dialog-padding = 25*$px;
+
+$spectrum-dialog-closebutton-height = 18*$px;
+
+// The full screen container in which the dialog resides
+// Because of this contain, clicks will never fall though when a dialog is visible
+.coral-Dialog {
+  position: fixed;
+  top: 0;
+  right: 0
+  bottom: 0;
+  left: 0;
+
+  // Scroll vertically only
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  // Match the fade time of the backdrop
+  transition: opacity $spectrum-transition-time;
+
+  opacity: 0;
+
+  &.coral-Dialog--backdropNone {
+    pointer-events: none;
+
+    .coral-Dialog-wrapper {
+      pointer-events: auto;
+    }
+  }
+}
+
+.coral-Dialog.is-open {
+  opacity: 1;
+}
+
+.coral-Dialog-header {
+  display: block;
+}
+
+.coral-Dialog-content {
+  display: block;
+}
+
+.coral-Dialog-footer {
+  display: block;
+}
+
+.coral-Dialog-wrapper {
+  display: block;
+
+  min-width: $spectrum-dialog-min-width;
+  max-width: $spectrum-dialog-max-width;
+  margin: $spectrum-dialog-margin;
+  padding: $spectrum-dialog-padding;
+
+  border-radius: $spectrum-dialog-border-radius;
+  outline: none; // Firefox shows outline
+}
+
+.coral-Dialog-header {
+  position: relative;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: $spectrum-dialog-header-height;
+
+  border-radius: $spectrum-dialog-border-radius $spectrum-dialog-border-radius 0 0;
+  outline: none; // Hide focus outline around header
+
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    height: $spectrum-dialog-border-width;
+
+    content: '';
+  }
+}
+
+.coral-Dialog-title {
+  font-size: $spectrum-dialog-header-font-size;
+  line-height: 100%;
+
+  overflow: visible;
+
+  padding-left: 0;
+  padding-right: 15*$px;
+
+  outline: none; // Hide focus outline
+
+  &,
+  &:not(:first-child) { // Undo margin from.coral-Heading--2:not(:first-child)
+    margin: 0;
+  }
+}
+
+.coral-Dialog-typeIcon {
+  position: absolute;
+  right: 0;
+  top: -2*$px;
+}
+
+.coral-Dialog-closeButton {
+  line-height: $spectrum-dialog-closebutton-height;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: none;
+
+  width: $spectrum-dialog-closebutton-height;
+  height: $spectrum-dialog-closebutton-height;
+}
+
+.coral-Dialog-content {
+  display: block;
+  box-sizing: border-box;
+  padding: 0;
+
+  // Stop right there! The dialog's body should NOT scroll
+
+  outline: none; // Hide focus outline
+  word-break: break-word; // CUI-6659
+}
+
+.coral-Dialog-footer {
+  &:after {
+    content: " "; /* Older browser do not support empty content */
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+
+  border-radius: 0 0 $coral-dialog-border-radius $coral-dialog-border-radius;
+
+  text-align: right; // right align buttons
+
+  outline: none; // Hide focus outline
+
+  .coral-Button {
+    margin: 16*$px 12*$px;
+  }
+
+  .coral-Button:first-child {
+    margin-left: 0;
+  }
+
+  .coral-Button:last-child {
+    margin-right: 16*$px;
+  }
+
+  .coral-Button + .coral-Button {
+    margin-left: 0;
+  }
+}
+
+.coral-Dialog--fullscreen {
+  .coral-Dialog-wrapper {
+    position: absolute;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+
+    box-sizing: border-box;
+    width: 100%; // Fit vertically
+    min-width: 100%; // Fit vertically
+    max-width: none;
+    height: auto; // Variable height
+    min-height: 100%; // Full screen height
+    max-height: none;
+    margin: 0;
+
+    border: none; // Remove border
+  }
+
+  .coral-Dialog-header {
+    position: fixed; // Fixed so the header stays top even it scrolls.
+    top: 0;
+    right: $spectrum-dialog-padding;
+    left: $spectrum-dialog-padding;
+
+    box-sizing: content-box;
+    width: auto;
+    padding-top: $spectrum-dialog-padding;
+    border-radius: 0;
+  }
+
+  .coral-Dialog-typeIcon {
+    top: $spectrum-dialog-padding - 2*$px;
+  }
+
+  .coral-Dialog-footer {
+    position: fixed; // Fixed so the footer stays bottom even it scrolls.
+    right: $spectrum-dialog-padding;
+    bottom: 0;
+    left: $spectrum-dialog-padding;
+
+    padding-top: ($spectrum-dialog-padding/2);
+    padding-bottom: ($spectrum-dialog-padding/2); // looks better with half padding.
+  }
+
+  .coral-Dialog-footer,
+  .coral-Dialog-header {
+    // Avoid overlap with dialog content if containing elements with multiple layers
+    z-index: 1
+  }
+
+  .coral-Dialog-content {
+    padding-top: $spectrum-dialog-header-height;
+  }
+}
+
+
+@require 'light.styl'
+@require 'dark.styl'

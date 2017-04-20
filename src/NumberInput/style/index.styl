@@ -1,0 +1,71 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-numberinput-button-height = $spectrum-component-single-line-height / 2;
+$spectrum-numberinput-padding = $spectrum-padding / 2;
+
+.coral3-NumberInput {
+  border-top-left-radius: $spectrum-border-radius;
+  border-bottom-left-radius: $spectrum-border-radius;
+
+  transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+
+  .coral3-NumberInput-input:invalid {
+    z-index: 2;
+  }
+
+  .coral-InputGroup-button {
+    > .coral3-NumberInput-stepUp,
+    > .coral3-NumberInput-stepDown {
+      height: $spectrum-numberinput-button-height;
+      padding-left: $spectrum-numberinput-padding;
+      padding-right: $spectrum-numberinput-padding;
+
+      .coral-Icon {
+        line-height: $spectrum-numberinput-button-height;
+      }
+    }
+
+    > .coral3-NumberInput-stepUp {
+      border-bottom: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      &:focus,
+      &.is-focused {
+        border-bottom: none;
+      }
+    }
+
+    > .coral3-NumberInput-stepDown {
+      float: left;
+      border-top: none;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+
+      &:focus,
+      &.is-focused {
+        border-top: none;
+      }
+    }
+  }
+}
+
+@require 'light.styl'
+@require 'dark.styl'

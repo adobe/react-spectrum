@@ -1,6 +1,13 @@
+.DS_Store
 .storybook
-components
-babelPlugins
+.editorconfig
+.nycrc
+.nyc_output
+src
 test
-Dockerfile
-webpack.config.js
+stories
+coverage
+Makefile
+yarn.lock
+bin
+dist

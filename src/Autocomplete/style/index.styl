@@ -1,0 +1,233 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+@require '../../commons'
+
+$spectrum-autocomplete-font-size = $spectrum-font-size;
+$spectrum-autocomplete-border-radius = $spectrum-border-radius;
+$spectrum-autocomplete-text-indent = $spectrum-padding;
+
+$spectrum-autocomplete-trigger-width = 32*$px;
+$spectrum-autocomplete-trigger-width-quiet = 12*$px;
+
+$spectrum-autocomplete-alert-width = 32*$px;
+
+$spectrum-autocomplete-border-width = $px;
+
+$spectrum-autocomplete-item-spacing-left = 14*$px;
+$spectrum-autocomplete-item-spacing-top = 9*$px;
+$spectrum-autocomplete-item-focus-width = 2*$px;
+
+$spectrum-autocomplete-invalid-icon-url = '../../commons/embed/icon-alert.svg';
+
+.coral-Autocomplete {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: $spectrum-component-single-line-width;
+
+  .Select-control {
+    border-radius: $spectrum-border-radius;
+  }
+
+  .Select-multi-value-wrapper {
+    position: relative;
+    display: table-cell;
+  }
+
+  .Select-value, .Select-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    text-indent: $spectrum-padding;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .Select-input-field {
+    background-color: transparent !important;
+  }
+
+  &.has-icon {
+    .Select-value, .Select-placeholder {
+      text-indent: 25px;
+    }
+  }
+
+  &.is-focused {
+    .coral-Autocomplete-inputGroup {
+      glow();
+      // Border will be given to inside elements
+      // Otherwise, height is calculated wrong
+      border: none;
+
+      // Match radius of button
+      border-radius: 0 $spectrum-autocomplete-border-radius $spectrum-autocomplete-border-radius 0;
+    }
+
+    .coral-Autocomplete-input,
+    .coral-Autocomplete-trigger {
+      // Box shadow is on the input group
+      box-shadow: none;
+    }
+  }
+
+  &.is-invalid.is-focused {
+    .coral-Autocomplete-inputGroup {
+      // Border will be given to inside elements
+      // Otherwise, height is calculated wrong
+      border: none;
+    }
+  }
+
+  &.is-openAbove {
+    .coral-Autocomplete-trigger {
+      border-top-right-radius: 0;
+    }
+    .coral-Autocomplete-input {
+      border-top-left-radius: 0;
+    }
+
+    .coral-Autocomplete-selectList {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-width: 0;
+    }
+  }
+
+  &.is-openBelow {
+    .coral-Autocomplete-trigger {
+      border-bottom-right-radius: 0;
+    }
+    .coral-Autocomplete-input {
+      border-bottom-left-radius: 0;
+    }
+
+    .coral-Autocomplete-selectList {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+      border-top-width: 0;
+    }
+  }
+
+  &.is-invalid {
+    .coral-Autocomplete-input {
+      padding-right: $spectrum-autocomplete-alert-width;
+    }
+
+    .coral-InputGroup-input {
+      &:after {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        width: $spectrum-autocomplete-alert-width;
+        height: 100%;
+
+        content: '';
+
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+    }
+  }
+}
+
+.coral-Autocomplete[variant="quiet"] {
+  .coral-Autocomplete-input {
+    text-indent: 0;
+  }
+
+  .coral-InputGroup-button {
+    width: $spectrum-autocomplete-trigger-width-quiet;
+  }
+
+  .coral-Autocomplete-input,
+  .coral-Autocomplete-trigger {
+    // Remove border
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    background: transparent;
+
+    &:disabled {
+      background: transparent;
+    }
+  }
+}
+
+.coral-Autocomplete-inputGroup {
+  .coral-Autocomplete-trigger {
+    width: $spectrum-autocomplete-trigger-width;
+    padding: 0; // Centers the icon
+
+    .coral-Icon {
+      margin: 0; // Centers the icons
+    }
+  }
+
+  .coral-Autocomplete-input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.coral-Autocomplete-overlay {
+  display: block;
+
+  box-sizing: border-box;
+
+  // Constrains the size of the list to 6 items
+  max-height: 5 * 40*$px;
+
+  scrollable();
+}
+
+.coral-Autocomplete-loading {
+  position: relative;
+  height: 42*$px;
+}
+
+.coral-Autocomplete-tagList {
+  margin-top: 4*$px;
+
+  //override the dimensions to fit the spectrum theme better (see CUI-5647)
+  .coral-Tag--large {
+    padding: 3*$px 26*$px 3*$px 12*$px;
+    height: 24*$px;
+  }
+}
+
+/**
+  Data-only component, targetted with tagName as it doesn't get a CSS class
+*/
+coral-autocomplete-item {
+  display: none !important;
+}
+
+.coral-Form--vertical .coral-Form-field.coral-Autocomplete {
+  display: block;
+  width: 100%;
+}
+
+@require 'light.styl'
+@require 'dark.styl'

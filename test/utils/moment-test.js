@@ -1,6 +1,6 @@
 import expect from 'expect';
 import moment from 'moment';
-import { toMoment, isDateInRange } from '../../src/utils/moment';
+import {toMoment, isDateInRange} from '../../src/utils/moment';
 
 describe('moment', () => {
   describe('toMoment', () => {

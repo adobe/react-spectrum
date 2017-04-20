@@ -1,0 +1,198 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2013 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+/*! icon.styl */
+
+@require '../../commons'
+
+// Icons size
+$icon-xxsmall-size = 9*$px;
+$icon-xsmall-size = 12*$px;
+$icon-small-size = 18*$px;
+$icon-medium-size = 24*$px;
+$icon-large-size = 36*$px;
+$icon-xlarge-size = 48*$px;
+$icon-xxlarge-size = 72*$px;
+
+.coral-Icon {
+  display: inline-block;
+  font-style: normal;
+  font-weight: normal;
+  line-height: inherit;
+
+  // improves rendering of the custom font
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  transition: color $spectrum-transition-time ease-in-out, opacity $spectrum-transition-time ease-in-out;
+
+  opacity: 0.80;
+
+  // sets the default icon font
+  font-family: AdobeSpectrumIcons18;
+
+  // sets the default size of the icon
+  font-size: $icon-small-size;
+
+  &:before {
+    height: $icon-small-size;
+    width: $icon-small-size;
+  }
+
+  &:hover {
+    opacity: 0.90;
+  }
+
+  &:active {
+    opacity: 1.00;
+  }
+}
+
+.coral-Icon--sizeXXS {
+  font-family: AdobeSpectrumIcons18;
+  font-size: $icon-xxsmall-size;
+
+  &:before {
+    height: $icon-xxsmall-size;
+    width: $icon-xxsmall-size;
+  }
+}
+
+.coral-Icon--sizeXS {
+  font-family: AdobeSpectrumIcons24;
+  font-size: $icon-xsmall-size;
+
+  &:before {
+    height: $icon-xsmall-size;
+    width: $icon-xsmall-size;
+  }
+}
+
+.coral-Icon--sizeS {
+  font-family: AdobeSpectrumIcons18;
+  font-size: $icon-small-size;
+
+  &:before {
+    height: $icon-small-size;
+    width: $icon-small-size;
+  }
+}
+
+.coral-Icon--sizeM {
+  font-family: AdobeSpectrumIcons24;
+  font-size: $icon-medium-size;
+
+  &:before {
+    height: $icon-medium-size;
+    width: $icon-medium-size;
+  }
+}
+
+.coral-Icon--sizeL {
+  font-family: AdobeSpectrumIcons18;
+  font-size: $icon-large-size;
+
+  &:before {
+    height: $icon-large-size;
+    width: $icon-large-size;
+  }
+}
+
+.coral-Icon--sizeXL {
+  font-family: AdobeSpectrumIcons24;
+  font-size: $icon-xlarge-size;
+
+
+  &:before {
+    height: $icon-xlarge-size;
+    width: $icon-xlarge-size;
+  }
+}
+
+.coral-Icon--sizeXXL {
+  font-family: AdobeSpectrumIcons24;
+  font-size: $icon-xxlarge-size;
+
+
+  &:before {
+    height: $icon-xxlarge-size;
+    width: $icon-xxlarge-size;
+  }
+}
+
+.coral-Icon {
+  &.is-image {
+    &:before {
+      display: none;
+    }
+
+    &.coral-Icon--sizeXXS {
+      .coral-Icon-image {
+        width: $icon-xxsmall-size;
+        height: $icon-xxsmall-size;
+      }
+    }
+
+    &.coral-Icon--sizeXS {
+      .coral-Icon-image {
+        width: $icon-xsmall-size;
+        height: $icon-xsmall-size;
+      }
+    }
+
+    &.coral-Icon--sizeS {
+      .coral-Icon-image {
+        width: $icon-small-size;
+        height: $icon-small-size;
+      }
+    }
+
+    &.coral-Icon--sizeM {
+      .coral-Icon-image {
+        width: $icon-medium-size;
+        height: $icon-medium-size;
+      }
+    }
+
+    &.coral-Icon--sizeL {
+      .coral-Icon-image {
+        width: $icon-large-size;
+        height: $icon-large-size;
+      }
+    }
+
+    &.coral-Icon--sizeXL {
+      .coral-Icon-image {
+        width: $icon-xlarge-size;
+        height: $icon-xlarge-size;
+      }
+    }
+
+    &.coral-Icon--sizeXXL {
+      .coral-Icon-image {
+        width: $icon-xxlarge-size;
+        height: $icon-xxlarge-size;
+      }
+    }
+  }
+}
+
+@require 'icon.mono.24';
+@require 'icon.mono.18';
+@require 'color-icon.base';
+@require 'color-icon.light';
+@require 'color-icon.dark';
