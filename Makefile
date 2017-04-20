@@ -14,7 +14,8 @@ run:
 	start-storybook -p 9002
 
 clean:
-	rm -rf node_modules
+	rm -rf node_modules dist
+	bash -c 'for f in src/*; do rm -rf $$(basename $$f); done'
 
 lint:
 	lfeslint
@@ -26,4 +27,11 @@ cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha $(MOCHA_OPTS)
 
 build:
-	cp -R src/* .
+	cp -R src dist
+	babel dist -d dist
+	find dist -name index.styl -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
+	find dist -name *.styl -delete
+	find dist -name *.js -exec sed -i.bak 's/index.styl/index.css/g' {} \;
+	find dist -name *.bak -delete
+	cp -R dist/* ./.
+	rm -rf dist

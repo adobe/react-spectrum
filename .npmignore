@@ -9,3 +9,5 @@ stories
 coverage
 Makefile
 yarn.lock
+bin
+dist

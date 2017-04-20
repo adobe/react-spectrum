@@ -8,34 +8,30 @@
   },
   "scripts": {
     "start": "make run",
-    "test": "make test",
-    "prepublish": "make build"
+    "test": "make test"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
-    "@coralui/coralui-core": "^4.4.0",
-    "@spectrum/spectrum-abstract-stylus": "^0.0.2",
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "nib": "^1.1.2",
     "react-portal": "^3.0.0",
-    "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "react-tether": "^0.5.2",
     "svg-stylus": "^0.0.5",
     "tether-drop": "^1.4.2"
   },
   "bundledDependencies": [
-    "@coralui/coralui-core",
-    "@spectrum/spectrum-abstract-stylus",
     "react-select"
   ],
   "devDependencies": {
+    "@coralui/coralui-core": "^4.4.0",
     "@kadira/react-storybook-addon-info": "^3.2.4",
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
+    "@spectrum/spectrum-abstract-stylus": "^0.0.2",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
@@ -56,6 +52,7 @@
     "babel-preset-react-hmre": "^1.1.1",
     "babel-register": "^6.16.3",
     "babel-runtime": "^6.11.6",
+    "babelify": "^7.3.0",
     "css-loader": "^0.25.0",
     "enzyme": "^2.5.1",
     "expect": "^1.20.2",
@@ -68,12 +65,21 @@
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
+    "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
+    "stringify": "^5.1.0",
     "style-loader": "^0.13.1",
+    "stylify": "^1.4.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
+    "text-extractify": "^0.1.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.0"
+  },
+  "browserify": {
+    "transform": [
+      ["stringify", [".css"]]
+    ]
   }
 }

@@ -6,3 +6,4 @@ npm-debug.log
 test-reports.xml
 .nyc_output
 yarn.lock
+dist
