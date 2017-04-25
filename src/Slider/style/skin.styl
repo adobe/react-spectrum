@@ -1,0 +1,75 @@
+/*
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2016 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ */
+
+$spectrum-slider-handle-border-color = $spectrum-color-constant-grey8
+$spectrum-slider-handle-border-color-focus = $spectrum-color-border-focus
+$spectrum-slider-handle-border-color-hover = $spectrum-color-border-hover
+$spectrum-slider-handle-border-color-dragged = $spectrum-color-constant-grey10
+$spectrum-slider-handle-border-color-disabled = $spectrum-color-constant-grey4
+$spectrum-slider-handle-border-color-error = $spectrum-color-border-invalid;
+
+$spectrum-slider-bar-background-color = $spectrum-color-border-default;
+$spectrum-slider-bar-background-color-focus = $spectrum-color-border-default;
+$spectrum-slider-bar-background-color-disabled = $spectrum-color-background-disabled;
+$spectrum-slider-bar-background-color-error = $spectrum-color-border-default;
+
+$spectrum-slider-fill-background-color = $spectrum-color-constant-grey8;
+
+.coral3-Slider {
+  background: transparent;
+
+  &.is-disabled {
+    .coral3-Slider-handle {
+      border-color: $spectrum-slider-handle-border-color-disabled;
+    }
+
+    .coral3-Slider-bar {
+      background: $spectrum-slider-bar-background-color-disabled;
+    }
+  }
+
+  &.is-focused {
+    .coral3-Slider-bar {
+      background: $spectrum-slider-bar-background-color-focus;
+    }
+  }
+}
+
+.coral3-Slider-handle {
+  border-color: $spectrum-slider-handle-border-color;
+  background: $spectrum-color-background-default;
+
+  &.is-focused {
+    border-color: $spectrum-slider-handle-border-color-focus;
+  }
+
+  &:hover {
+   border-color: $spectrum-slider-handle-border-color-hover;
+ }
+
+  &.is-dragged {
+    border-color: $spectrum-slider-handle-border-color-dragged;
+  }
+}
+
+.coral3-Slider-bar {
+  background: $spectrum-slider-bar-background-color;
+}
+
+.coral3-Slider-fill {
+  background-color: $spectrum-slider-fill-background-color;
+}
