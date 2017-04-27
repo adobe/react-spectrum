@@ -22,7 +22,7 @@ $spectrum-basiclist-border-width = $px;
 
 $spectrum-basiclist-item-height = 40*$px;
 $spectrum-basiclist-item-padding-left = 14*$px;
-$spectrum-basiclist-item-padding-top = 9*$px;
+$spectrum-basiclist-item-padding-top = 6*$px;
 $spectrum-basiclist-item-focus-width = 2*$px;
 $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spectrum-basiclist-item-padding-top * 2);
 $spectrum-basiclist-item-tick-size = 16*$px;
@@ -40,16 +40,17 @@ $spectrum-basiclist-item-tick-size = 16*$px;
 }
 
 .coral-BasicList-item {
-  display: block;
+  display: flex;
   box-sizing: border-box;
   position: relative;
 
+  align-items: center;
   padding: $spectrum-basiclist-item-padding-top $spectrum-basiclist-item-padding-left $spectrum-basiclist-item-padding-top ($spectrum-basiclist-item-padding-left - 2 * $spectrum-basiclist-item-focus-width);
-  min-height: $spectrum-basiclist-item-height;
 
   text-decoration: none;
   text-align: left;
   cursor: pointer;
+  user-select: none;
 
   border-left: solid $spectrum-basiclist-item-focus-width transparent;
   transition: background-color $spectrum-transition-time ease-out,
@@ -87,47 +88,19 @@ $spectrum-basiclist-item-tick-size = 16*$px;
       background-repeat: no-repeat;
     }
   }
-
 }
 
 .coral-BasicList-item-icon {
-  float: left;
-
   width: 18*$px;
-  height: $spectrum-basiclist-item-contentheight;
-
   margin-right: 7*$px;
-
-  // Align text correctly
-  vertical-align: middle;
-
-  // Align icon correctly
-  line-height: $spectrum-basiclist-item-contentheight;
-
   text-align: center;
 }
 
-.coral-BasicList-item-outerContainer {
-  overflow: hidden; // Don't go under the float
-
-  height: 100%; // Truncate text when it's longer than 2 lines
-}
-
-.coral-BasicList-item-contentContainer {
-  display: table;
-  table-layout: fixed; // Allow percent width
-  width: 100%; // Required for text-overflow: ellipsis to apply on cells
-}
-
 .coral-BasicList-item-content {
-  display: table-cell;
-  vertical-align: middle; // Center content
-
-  max-width: 100%; // Enable text-overflow
-
-  height: $spectrum-basiclist-item-contentheight;
-
-  overflow: ellipsis;
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .coral-BasicList-group {

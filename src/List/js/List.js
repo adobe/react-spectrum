@@ -5,10 +5,6 @@ import '../style/index.styl';
 const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
 
 export default class List extends Component {
-  static defaultProps = {
-    onSelect: function () {}
-  }
-
   getItems() {
     return Array.from(this.refs.list.querySelectorAll(LIST_ITEM_SELECTOR));
   }
@@ -44,7 +40,6 @@ export default class List extends Component {
     const {
       className,
       children,
-      onSelect,
       role = 'listbox',
       ...otherProps
     } = this.props;

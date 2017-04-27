@@ -118,12 +118,8 @@ export default class ListItem extends Component {
         {icon &&
           <Icon className="coral-BasicList-item-icon" icon={ icon } size={ iconSize } />
         }
-        <div className="coral-BasicList-item-outerContainer">
-          <div className="coral-BasicList-item-contentContainer">
-            <div className="coral-BasicList-item-content">
-              {label || children}
-            </div>
-          </div>
+        <div className="coral-BasicList-item-content">
+          {label || children}
         </div>
       </li>
     );
