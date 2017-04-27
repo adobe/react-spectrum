@@ -1,10 +1,8 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
-import Popover from '../src/Popover';
-import Button from '../src/Button';
 import Heading from '../src/Heading';
+import Popover from '../src/Popover';
+import React from 'react';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 import './Popover.styl';
 
@@ -33,43 +31,8 @@ storiesOf('Popover', module)
     {inline: true}
   )
   .addWithInfo(
-    'placement: left',
-    () => render('Content', {placement: 'left'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'placement: top',
-    () => render('Content', {placement: 'top'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'placement: top left',
-    () => render('Content', {placement: 'top left'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'placement: bottom',
-    () => render('Content', {placement: 'bottom'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'placement: bottom right',
-    () => render('Content', {placement: 'bottom right'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'placement: center middle',
-    () => render('Content', {placement: 'center middle'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'open: false',
     () => render('Content', {open: false}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'closable: true',
-    () => render('Content', {closable: true}),
     {inline: true}
   )
   .addWithInfo(
@@ -103,16 +66,13 @@ storiesOf('Popover', module)
     {inline: true}
   );
 
-function render(children, props = {}) {
+function render(content, props = {}) {
   return (
     <Popover
       title="Title"
       open
-      content={ children }
-      onClose={ action('close') }
-      { ...props }
-    >
-      <Button label="Click Me" />
+      { ...props}>
+      {content}
     </Popover>
   );
 }

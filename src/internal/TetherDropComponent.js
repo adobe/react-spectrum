@@ -142,6 +142,7 @@ export default class TetherDropComponent extends Component {
       openOn,
       hoverOpenDelay,
       hoverCloseDelay,
+      remove: true,
       content: ' ', // We'll manage the content ourselves
       tetherOptions: {
         constraints: constraints ? [constraints] : [],
