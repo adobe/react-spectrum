@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
+import {DateRange} from 'moment-range';
 
 import Button from '../../Button';
 import createId from '../../utils/createId';
@@ -30,6 +31,7 @@ export default class Calendar extends Component {
       PropTypes.number
     ]),
     valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    selectionType: PropTypes.string,
     startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -44,6 +46,7 @@ export default class Calendar extends Component {
     max: null,
     min: null,
     valueFormat: 'YYYY-MM-DD',
+    selectionType: 'single',
     startDay: 0,
     disabled: false,
     invalid: false,
@@ -64,22 +67,18 @@ export default class Calendar extends Component {
     const newValue = toMoment(value || defaultValue || '', valueFormat);
     const newMin = toMoment(min, valueFormat);
     const newMax = toMoment(max, valueFormat);
-    const today = toMoment('today', valueFormat);
 
     this.setState({
-      value: newValue,
       min: newMin && newMin.startOf('day'),
-      max: newMax && newMax.startOf('day'),
-      today,
-      focusedDate: newValue ? newValue.clone() : today.clone()
+      max: newMax && newMax.startOf('day')
     });
 
-    this.setCurrentMonth(newValue, today);
+    this.setSelected(newValue);
+    this.setCurrentMonth(newValue);
   }
 
   componentWillReceiveProps(nextProps) {
     const {min, max, valueFormat} = this.props;
-    const {today} = this.state;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {
       const newMin = toMoment(nextProps.min, nextProps.valueFormat);
@@ -95,38 +94,61 @@ export default class Calendar extends Component {
       });
     }
 
-    if ('value' in nextProps && +nextProps.value !== +this.state.value) {
+    if ('value' in nextProps && nextProps.value !== this.state.value) {
       const newValue = toMoment(nextProps.value, nextProps.valueFormat);
-      this.setState({
-        value: newValue,
-        focusedDate: newValue ? newValue.clone() : today.clone()
-      });
 
       // Only change the current month window if the next value is a different day than
       // what we currently have.  We don't want to trigger the month switch if we are just
       // changing the hours or minutes of the day.
-      if (
-        nextProps.value &&
-        nextProps.value.isSame &&
-        !nextProps.value.isSame(this.state.value, 'day')
-      ) {
-        this.setCurrentMonth(nextProps.value);
+      if (!newValue.isSame(this.state.value, 'day')) {
+        this.setSelected(newValue);
+        this.setCurrentMonth(newValue);
       }
     }
   }
 
-  setValue(date) {
-    const {onChange, valueFormat} = this.props;
-
-    if (!('value' in this.props)) {
-      this.setState({value: date, focusedDate: date});
-      this.setCurrentMonth(date);
+  getRange(value) {
+    if (value instanceof DateRange) {
+      return value.clone();
+    } else if (value) {
+      return new DateRange(value.clone().startOf('day'), value.clone().endOf('day'));
     }
 
-    onChange(formatMoment(date, valueFormat), date.toDate());
+    return null;
   }
 
-  setCurrentMonth(date, today = this.state.today) {
+  setSelected(value) {
+    let range = this.getRange(value);
+
+    this.setState({
+      value: this.props.selectionType === 'range' ? range : value,
+      highlightedRange: range,
+      focusedDate: range ? range.start : moment()
+    });
+  }
+
+  setValue(value) {
+    const {onChange} = this.props;
+
+    if (this.props.selectionType === 'range') {
+      value = this.getRange(value);
+    } else {
+      value = value.clone();
+    }
+
+    if (!('value' in this.props)) {
+      this.setSelected(value);
+      this.setCurrentMonth(value);
+    }
+
+    onChange(value);
+  }
+
+  setCurrentMonth(date, today = moment()) {
+    if (date instanceof DateRange) {
+      date = date.end;
+    }
+
     const visibleMonth = date && date.isValid() ? date : today;
 
     this.setState({
@@ -152,6 +174,20 @@ export default class Calendar extends Component {
 
   handleDayClick = (e, date) => {
     this.selectFocused(date);
+  }
+
+  getSelectingRange(date) {
+    let min = moment.min(this.state.focusedDate, date).clone();
+    let max = moment.max(this.state.focusedDate, date).clone();
+    return new DateRange(min, max);
+  }
+
+  onHighlight = (e, date) => {
+    if (this.state.selectingRange) {
+      this.setState({
+        selectingRange: this.getSelectingRange(date)
+      });
+    }
   }
 
   handleKeyDown = e => {
@@ -196,6 +232,11 @@ export default class Calendar extends Component {
         e.preventDefault();
         this.focusTimeUnit(nextMoment.add(1, 'week'));
         break;
+      case 27: // escape
+        if (this.state.selectingRange) {
+          this.setState({selectingRange: null});
+        }
+        break;
       default: // default, do nothing
         break;
     }
@@ -225,9 +266,22 @@ export default class Calendar extends Component {
       date.millisecond(value.millisecond());
     }
 
-    this.setValue(date);
+    let selectingRange = null;
+    if (this.props.selectionType === 'range') {
+      // If this is the second date selected, set the value.
+      // Otherwise, setup the selecting range.
+      if (this.state.selectingRange) {
+        this.setValue(this.getSelectingRange(date));
+      } else {
+        selectingRange = this.getRange(date);
+      }
+    } else {
+      this.setValue(date);
+    }
+
     this.setState({
-      focusedDate: date
+      focusedDate: date,
+      selectingRange
     });
 
     this.focusCalendarBody();
@@ -284,11 +338,11 @@ export default class Calendar extends Component {
 
   renderTableBody(date) {
     const {startDay, disabled} = this.props;
-    const {value, min, max, focusedDate, currentMonth} = this.state;
+    const {highlightedRange, selectingRange, min, max, focusedDate, currentMonth} = this.state;
+    const range = selectingRange || highlightedRange;
 
     const month = date.month();
     const year = date.year();
-    const dateLocal = value ? value.clone().startOf('day') : null;
     const dateFocusedLocal = focusedDate ? focusedDate.clone().startOf('day') : null;
     let monthStartsAt = (currentMonth.day() - startDay) % 7;
 
@@ -314,9 +368,14 @@ export default class Calendar extends Component {
                       date={ cursor }
                       disabled={ disabled || !isCurrentMonth || !isDateInRange(cursor, min, max) }
                       isToday={ cursor.isSame(moment(), 'day') }
-                      selected={ dateLocal && cursorLocal.isSame(dateLocal, 'day') }
+                      isCurrentMonth={isCurrentMonth}
+                      selected={range && range.contains(cursorLocal)}
+                      isRangeSelection={this.props.selectionType === 'range'}
+                      isRangeStart={range && cursorLocal.isSame(range.start, 'day')}
+                      isRangeEnd={range && cursorLocal.isSame(range.end, 'day')}
                       focused={ dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day') }
                       onClick={ this.handleDayClick }
+                      onHighlight={this.onHighlight}
                     />
                   );
                 })
@@ -342,7 +401,7 @@ export default class Calendar extends Component {
       ...otherProps
     } = this.props;
 
-    const {value, currentMonth} = this.state;
+    const {focusedDate, highlightedRange, currentMonth} = this.state;
 
     delete otherProps.startDay;
 
@@ -365,7 +424,7 @@ export default class Calendar extends Component {
         aria-disabled={ disabled }
         { ...otherProps }
       >
-        <input type="hidden" name={ name } value={ formatMoment(value, valueFormat) } />
+        <input type="hidden" name={ name } value={ formatMoment(highlightedRange && highlightedRange.start, valueFormat) } />
         <div className="coral-Calendar-calendarHeader">
           <div
             className="coral-Heading coral-Heading--2"
@@ -405,7 +464,7 @@ export default class Calendar extends Component {
           tabIndex={ disabled ? null : '0' }
           aria-readonly="true"
           aria-disabled={ disabled }
-          aria-activedescendant={ value && this.generateDateId(value) }
+          aria-activedescendant={ focusedDate && this.generateDateId(focusedDate) }
           onKeyDown={ this.handleKeyDown }
         >
           { this.renderTable(currentMonth) }
@@ -419,11 +478,16 @@ const CalendarCell = function CalendarCell({
   id,
   date,
   isToday = false,
+  isCurrentMonth = false,
   selected = false,
   disabled = false,
   focused = false,
   invalid = false,
-  onClick = function () {}
+  isRangeSelection = false,
+  isRangeStart = false,
+  isRangeEnd = false,
+  onClick = function () {},
+  onHighlight = function () {}
 }) {
   let title = `${ date.format('dddd') }, ${ date.format('LL') }`;
   if (isToday) {
@@ -441,7 +505,8 @@ const CalendarCell = function CalendarCell({
           {
             'is-today': isToday,
             'is-selected': selected,
-            'coral-focus': focused
+            'coral-focus': focused,
+            'is-currentMonth': isCurrentMonth
           }
         )
       }
@@ -451,10 +516,17 @@ const CalendarCell = function CalendarCell({
       aria-invalid={ invalid }
       title={ title }
       onClick={ !disabled && (e => { onClick(e, date.clone()); }) }
+      onMouseEnter={!disabled && (e => { onHighlight(e, date.clone()); })}
     >
       <span
         role="presentation"
-        className={ disabled ? 'coral-Calendar-secondaryDate' : 'coral-Calendar-date' }
+        className={classNames({
+          'coral-Calendar-secondaryDate': disabled,
+          'coral-Calendar-date': !disabled,
+          'is-range-selection': isRangeSelection && selected,
+          'is-range-start': isRangeSelection && isRangeStart,
+          'is-range-end': isRangeSelection && isRangeEnd
+        })}
       >
         { date.date() }
       </span>

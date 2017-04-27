@@ -1,9 +1,22 @@
 import moment from 'moment';
+import {DateRange} from 'moment-range';
 
 export const toMoment = (value, format) => {
+  if (!value) {
+    return null;
+  }
+
   // if 'today'
   if (value === 'today') {
     return moment();
+  }
+
+  if (value instanceof DateRange) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return new DateRange(value.map(v => toMoment(v, format)));
   }
 
   // If it's a moment object

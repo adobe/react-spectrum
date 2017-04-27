@@ -1,8 +1,9 @@
-import React from 'react';
-import moment from 'moment';
-import expect, {createSpy} from 'expect';
-import {shallow} from 'enzyme';
 import Calendar from '../../src/Calendar';
+import {DateRange} from 'moment-range';
+import expect, {createSpy} from 'expect';
+import moment from 'moment';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Calendar', () => {
   const DEFAULT_VALUE_FORMAT = 'YYYY-MM-DD';
@@ -83,6 +84,50 @@ describe('Calendar', () => {
     expect(+tree.state('value')).toBe(+new Date(2016, 0, 8));
   });
 
+  it('supports selectionType=range', function () {
+    const start = moment(new Date(2016, 7, 1));
+    const end = moment(new Date(2016, 7, 5));
+    const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
+    expect(tree.state('value')).toEqual(new DateRange(start, end));
+  });
+
+  it('supports selectionType=range with uncontrolled behavior', function () {
+    const start = moment(new Date(2016, 7, 1));
+    const end = moment(new Date(2016, 7, 5));
+    const tree = shallow(<Calendar selectionType="range" defaultValue={[start, end]} />);
+    expect(tree.state('value')).toEqual(new DateRange(start, end));
+
+    const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
+
+    // Setting defaultValue later doesn't change the state.
+    tree.setProps({defaultValue: weekLater});
+    expect(tree.state('value').toDate()).toEqual([start.toDate(), end.toDate()]);
+
+    // Component interaction should change the state.
+    findCellByDate(tree, weekLater.start).simulate('click', {}, weekLater.start);
+    findCellByDate(tree, weekLater.end).simulate('click', {}, weekLater.end);
+    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+  });
+
+  it('supports selectionType=range with controlled behavior', function () {
+    const start = moment(new Date(2016, 7, 1));
+    const end = moment(new Date(2016, 7, 5));
+    const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
+    expect(tree.state('value')).toEqual(new DateRange(start, end));
+
+    const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
+
+    // Changing value will change the state
+    tree.setProps({value: weekLater});
+    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+
+    // Component interaction should not change the state, only manually setting value
+    // as a prop will change the state.
+    findCellByDate(tree, start).simulate('click', {}, start);
+    findCellByDate(tree, end).simulate('click', {}, end);
+    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+  });
+
   describe('dispatches onChange', () => {
     let spy;
 
@@ -90,8 +135,7 @@ describe('Calendar', () => {
       const newDate = el.prop('date').clone();
 
       const args = spy.getLastCall().arguments;
-      expect(args[0]).toBe(newDate.format(DEFAULT_VALUE_FORMAT));
-      expect(+args[1]).toBe(+newDate);
+      expect(+args[0]).toBe(+newDate);
     };
 
     beforeEach(() => {
@@ -116,6 +160,17 @@ describe('Calendar', () => {
       assertOnChangeArgsMatch(firstNonSelectedCell);
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
+
+    it('with a range when selectionType=range', function () {
+      const tree = shallow(<Calendar onChange={ spy } selectionType="range" />);
+      const startCell = findFirstNonSelectedCell(tree);
+      const endCell = findAllSelectableCells(tree).at(5);
+      const startDate = startCell.prop('date');
+      const endDate = endCell.prop('date');
+      startCell.simulate('click', {}, startDate);
+      endCell.simulate('click', {}, endDate);
+      expect(spy.getLastCall().arguments[0].toDate()).toEqual([startDate.toDate(), endDate.toDate()]);
+    });
   });
 
   describe('currentMonth', () => {
@@ -123,7 +178,7 @@ describe('Calendar', () => {
     let tree;
 
     beforeEach(() => {
-      now = moment();
+      now = moment().startOf('day');
       tree = shallow(<Calendar value={ now } />);
     });
 
@@ -161,7 +216,7 @@ describe('Calendar', () => {
     };
 
     beforeEach(() => {
-      now = moment();
+      now = moment().startOf('day');
       preventDefaultSpy = createSpy();
       tree = shallow(<Calendar value={ now } />);
       body = findBody(tree);
@@ -213,6 +268,40 @@ describe('Calendar', () => {
     it('is set to now if no value or defaultValue exist', () => {
       tree = shallow(<Calendar />);
       expect(tree.state('focusedDate').isSame(now, 'day')).toBe(true);
+    });
+  });
+
+  describe('selectionType=range', function () {
+    it('highlights the selected range when hovering over cells', function () {
+      const before = moment().startOf('month').startOf('day');
+      const start = before.clone().add(5, 'days');
+      const after = start.clone().add(5, 'days');
+      const tree = shallow(<Calendar selectionType="range" />);
+
+      findCellByDate(tree, start).simulate('click', {}, start);
+      expect(tree.state('selectingRange').toDate()).toEqual([start.toDate(), start.clone().endOf('day').toDate()]);
+
+      findCellByDate(tree, before).simulate('highlight', {}, before);
+      expect(tree.state('selectingRange').toDate()).toEqual([before.toDate(), start.toDate()]);
+
+      findCellByDate(tree, after).simulate('highlight', {}, after);
+      expect(tree.state('selectingRange').toDate()).toEqual([start.toDate(), after.toDate()]);
+    });
+
+    it('resets the selection when the escape key is pressed', function () {
+      const before = moment().startOf('month').startOf('day');
+      const start = before.clone().add(5, 'days');
+      const after = start.clone().add(5, 'days');
+      const tree = shallow(<Calendar selectionType="range" />);
+      const body = findBody(tree);
+
+      findCellByDate(tree, start).simulate('click', {}, start);
+      findCellByDate(tree, before).simulate('highlight', {}, before);
+      expect(tree.state('selectingRange').toDate()).toEqual([before.toDate(), start.toDate()]);
+
+      body.simulate('keydown', {keyCode: 27});
+
+      expect(tree.state('selectingRange')).toBe(null);
     });
   });
 
@@ -275,6 +364,28 @@ describe('Calendar', () => {
         expect(cellTree.hasClass('is-selected')).toBe(true);
         expect(cellTree.hasClass('coral-focus')).toBe(true);
         expect(cellTree.childAt(0).hasClass('coral-Calendar-date')).toBe(true);
+      });
+
+      it('supports range selections', function () {
+        const start = moment(new Date(2016, 7, 1));
+        const end = moment(new Date(2016, 7, 5));
+        const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
+
+        const startCell = shallow(findCellByDate(tree, start).node).find('span');
+        const midCell = shallow(findCellByDate(tree, start.clone().add(1, 'day')).node).find('span');
+        const endCell = shallow(findCellByDate(tree, end).node).find('span');
+
+        expect(startCell.hasClass('is-range-selection')).toBe(true);
+        expect(startCell.hasClass('is-range-start')).toBe(true);
+        expect(startCell.hasClass('is-range-end')).toBe(false);
+
+        expect(midCell.hasClass('is-range-selection')).toBe(true);
+        expect(midCell.hasClass('is-range-start')).toBe(false);
+        expect(midCell.hasClass('is-range-end')).toBe(false);
+
+        expect(endCell.hasClass('is-range-selection')).toBe(true);
+        expect(endCell.hasClass('is-range-start')).toBe(false);
+        expect(endCell.hasClass('is-range-end')).toBe(true);
       });
     });
 

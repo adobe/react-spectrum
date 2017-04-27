@@ -45,6 +45,21 @@ storiesOf('Calendar', module)
     'disabled=true',
     () => render({disabled: true}),
     {inline: true}
+  )
+  .addWithInfo(
+    'selectionType=range',
+    () => render({selectionType: 'range'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'selectionType=range with value',
+    () => render({selectionType: 'range', value: ['2015-01-15', '2015-01-19']}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabled selectionType=range',
+    () => render({selectionType: 'range', value: ['2015-01-15', '2015-01-19'], disabled: true}),
+    {inline: true}
   );
 
 function render(props = {}) {
