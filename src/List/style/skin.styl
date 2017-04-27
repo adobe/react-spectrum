@@ -23,6 +23,9 @@ $spectrum-basiclist-item-background-color-hover = $spectrum-color-constant-grey2
 $spectrum-basiclist-item-background-color-focused = $spectrum-color-constant-grey3;
 $spectrum-basiclist-item-border-color-focused = $spectrum-color-border-focus;
 
+$spectrum-basiclist-checked-icon-url = '../../commons/embed/icon-check.svg';
+$spectrum-basiclist-checked-icon-color = $spectrum-color-constant-blue3;
+
 .coral-BasicList {
   border-color: $spectrum-basiclist-border-color;
   background-color: $spectrum-basiclist-background-color;
@@ -46,5 +49,18 @@ $spectrum-basiclist-item-border-color-focused = $spectrum-color-border-focus;
   &.is-disabled {
     color: $spectrum-color-text-disabled;
     background-color: $spectrum-basiclist-item-background-color;
+    border-left-color: transparent;
   }
+
+  &.is-selected {
+    color: $spectrum-color-text-active;
+
+    &:after {
+      background-image: svgurl(embedurl($spectrum-basiclist-checked-icon-url)) svg(path fill $spectrum-basiclist-checked-icon-color);
+    }
+  }
+}
+
+.coral-BasicList-group:before {
+  background-color: $spectrum-basiclist-item-background-color-hover;
 }

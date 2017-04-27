@@ -25,26 +25,31 @@ $spectrum-basiclist-item-padding-left = 14*$px;
 $spectrum-basiclist-item-padding-top = 9*$px;
 $spectrum-basiclist-item-focus-width = 2*$px;
 $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spectrum-basiclist-item-padding-top * 2);
+$spectrum-basiclist-item-tick-size = 16*$px;
 
 .coral-BasicList {
   display: block;
-
   overflow-y: auto;
-
+  box-sizing: border-box;
   border-radius: $spectrum-basiclist-border-radius;
   border-width: $spectrum-basiclist-border-width;
   border-style: solid;
+  margin: 0;
+  padding: 0;
+  outline: none; // removes the outline in FF
 }
 
 .coral-BasicList-item {
   display: block;
   box-sizing: border-box;
+  position: relative;
 
   padding: $spectrum-basiclist-item-padding-top $spectrum-basiclist-item-padding-left $spectrum-basiclist-item-padding-top ($spectrum-basiclist-item-padding-left - 2 * $spectrum-basiclist-item-focus-width);
   min-height: $spectrum-basiclist-item-height;
 
   text-decoration: none;
   text-align: left;
+  cursor: pointer;
 
   border-left: solid $spectrum-basiclist-item-focus-width transparent;
   transition: background-color $spectrum-transition-time ease-out,
@@ -53,11 +58,36 @@ $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spe
   &.is-focused,
   &:focus {
     outline: none;
+    text-decoration: none;
   }
 
   &.is-disabled {
     cursor: default;
   }
+
+  &.is-selected {
+    // give the item more space for the icon.
+    padding-right: ($spectrum-basiclist-item-padding-left + $spectrum-basiclist-item-tick-size);
+
+    &:after {
+      position: absolute;
+      top: 50%;
+      right: ($spectrum-basiclist-item-padding-left - 4*$px);
+
+      padding: 0 ($spectrum-basiclist-item-tick-size / 2);
+      height: $spectrum-basiclist-item-tick-size;
+
+      margin-left: $spectrum-padding;
+
+      transform: translateY(-50%);
+
+      content: '';
+
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  }
+
 }
 
 .coral-BasicList-item-icon {
@@ -66,7 +96,7 @@ $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spe
   width: 18*$px;
   height: $spectrum-basiclist-item-contentheight;
 
-  margin-right: 12*$px;
+  margin-right: 7*$px;
 
   // Align text correctly
   vertical-align: middle;
@@ -98,6 +128,22 @@ $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spe
   height: $spectrum-basiclist-item-contentheight;
 
   overflow: ellipsis;
+}
+
+.coral-BasicList-group {
+  padding: 0;
+}
+
+.coral-BasicList-group:before {
+  display: block;
+
+  font-weight: bold;
+  text-transform: uppercase;
+
+  padding: 10*$px 12*$px;
+  font-size: 11*$px;
+
+  content: attr(label);
 }
 
 .coral-ButtonList-item,

@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-
 import '../style/index.styl';
+
+const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
 
 export default class List extends Component {
   static defaultProps = {
-    listItemSelector: '.coral-BasicList-item',
     onSelect: function () {}
   }
 
   getItems() {
-    return Array.prototype.slice.call(this.refs.list.querySelectorAll(this.props.listItemSelector));
+    return Array.from(this.refs.list.querySelectorAll(LIST_ITEM_SELECTOR));
   }
 
   handleFocusFirst = () => {
@@ -45,11 +45,12 @@ export default class List extends Component {
       className,
       children,
       onSelect,
+      role = 'listbox',
       ...otherProps
     } = this.props;
 
     return (
-      <div
+      <ul
         ref="list"
         className={
           classNames(
@@ -57,22 +58,18 @@ export default class List extends Component {
             className
           )
         }
-        { ...otherProps }
+        role={role}
+        {...otherProps}
       >
-        {
-          React.Children.map(children, child => (
-            React.cloneElement(child, {
-              onSelect,
-              onFocusNext: this.handleFocusNext,
-              onFocusPrevious: this.handleFocusPrevious,
-              onFocusFirst: this.handleFocusFirst,
-              onFocusLast: this.handleFocusLast
-            })
-          ))
-        }
-      </div>
+        {React.Children.map(children, child => (
+          React.cloneElement(child, {
+            onFocusNext: this.handleFocusNext,
+            onFocusPrevious: this.handleFocusPrevious,
+            onFocusFirst: this.handleFocusFirst,
+            onFocusLast: this.handleFocusLast
+          })
+        ))}
+      </ul>
     );
   }
 }
-
-List.displayName = 'List';

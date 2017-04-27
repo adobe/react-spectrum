@@ -1,49 +1,40 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
-
-import '../style/index.styl';
-
-function isArray(subjectVar) {
-  return Object.prototype.toString.call(subjectVar) === '[object Array]';
-}
+import {List, ListItem, ListGroup} from '../../List';
+import React, {Component} from 'react';
 
 export default class SelectList extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      highlightedOption: {},
-      isFocused: false,
-      lastSelected: {}
+      value: props.value
     };
   }
 
-  addSelection = (option) => ([
-    ...this.props.value,
-    option.value
-  ])
+  componentWillReceiveProps(props) {
+    if (props.value && props.value !== this.state.value) {
+      this.setState({
+        value: props.value
+      });
+    }
+  }
 
-  removeSelection = (option) => {
-    const index = this.props.value.indexOf(option.value);
+  addSelection(option) {
     return [
-      ...this.props.value.slice(0, index),
-      ...this.props.value.slice(index + 1, this.props.value.length)
+      ...(this.state.value || []),
+      option.value
     ];
   }
 
-  handleHover = (option) => {
-    this.setState({highlightedOption: option});
+  removeSelection(option) {
+    let value = this.state.value || [];
+    const index = value.indexOf(option.value);
+    return [
+      ...value.slice(0, index),
+      ...value.slice(index + 1, value.length)
+    ];
   }
 
-  handleFocus = () => {
-    this.setState({isFocused: true});
-  }
-
-  handleBlur = () => {
-    this.setState({isFocused: false});
-  }
-
-  handleSelect = (option) => {
+  handleSelect(option) {
     let nextOptions;
     if (this.props.multiple) {
       if (this.isSelected(option)) {
@@ -52,79 +43,42 @@ export default class SelectList extends Component {
         nextOptions = this.addSelection(option);
       }
     } else {
-      nextOptions = option;
+      nextOptions = option.value;
     }
-    this.setState({
-      lastSelected: option
-    });
+
+    // Set state if in uncontrolled mode
+    if (!('value' in this.props)) {
+      this.setState({value: nextOptions});
+    }
+
     if (this.props.onChange) {
       this.props.onChange(nextOptions);
     }
   }
 
-  isSelected = (option) => (
-    this.props.value.indexOf(option.value) >= 0
-  )
+  isSelected(option) {
+    return this.props.multiple
+      ? this.state.value && this.state.value.indexOf(option.value) >= 0
+      : this.state.value === option.value;
+  }
 
   renderListOfOptions = (options) => {
-    const {
-      multiple = false,
-      value
-    } = this.props;
-    const {
-      highlightedOption,
-      lastSelected
-    } = this.state || {};
-
-    return options.map((option) => {
-      const disabled = this.props.disabled || option.disabled;
-      const selected = multiple ?
-        this.isSelected(option) :
-        value === option.value;
-
-      const events = {};
-      if (!disabled) {
-        events.onClick = this.handleSelect.bind(this, option);
-        events.onMouseOver = this.handleHover.bind(this, option);
-        events.onFocus = this.handleHover.bind(this, option);
-      }
-      return (
-        <div
-          key={ option.value }
-          className={ classNames('coral3-SelectList-item', {
-            'is-highlighted': highlightedOption === option,
-            'is-selected': selected,
-            'is-disabled': disabled
-          }) }
-          tabIndex={ lastSelected === option ? '0' : '-1' }
-          { ...events }
-          role="option"
-          disabled={ disabled }
-          aria-selected={ selected }
-          aria-disabled={ disabled }
-        >
-            { option.label }
-        </div>
-      );
-    });
+    return options.map((option) => (
+      <ListItem
+        selected={this.isSelected(option)}
+        disabled={this.props.disabled || option.disabled}
+        onSelect={this.handleSelect.bind(this, option)}>
+          {option.label}
+      </ListItem>
+    ));
   }
 
   renderGroupsOfOptions = (options) => {
-    let optionsWithGroups = [];
-
-    Object.keys(options).forEach((optionKey) => {
-      optionsWithGroups.push(
-        <div
-          className="coral-SelectList-group"
-          label={ optionKey }
-          role="group"
-          aria-label={ optionKey }
-        />
-      );
-
-      optionsWithGroups = [optionsWithGroups, ...this.renderListOfOptions(options[optionKey])];
-    });
-    return optionsWithGroups;
+    return Object.keys(options).map((optionKey) => (
+      <ListGroup label={optionKey}>
+        {this.renderListOfOptions(options[optionKey])}
+      </ListGroup>
+    ));
   }
 
   render() {
@@ -133,23 +87,11 @@ export default class SelectList extends Component {
       className,
       ...otherProps
     } = this.props;
-    const {
-      isFocused
-    } = this.state || {};
-    const containsGroups = !isArray(options);
+
     return (
-      <div
-        className={ classNames('coral3-SelectList', {'is-focused': isFocused}, className) }
-        { ...otherProps }
-        tabIndex="-1"
-        onFocus={ this.handleFocus }
-        onBlur={ this.handleBlur }
-        role="listbox"
-      >
-        { containsGroups ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options) }
-      </div>
+      <List className={className}>
+        {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
+      </List>
     );
   }
 }
-SelectList.defaultProps = {value: []};
-SelectList.displayName = 'SelectList';
