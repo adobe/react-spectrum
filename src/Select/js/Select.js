@@ -67,7 +67,8 @@ export default class Select extends React.Component {
       invalid = false,
       multiple = false,
       required = false,
-      placeholder = 'Select an item'
+      placeholder = 'Select an option',
+      className
     } = this.props;
 
     const {value} = this.state;
@@ -84,7 +85,7 @@ export default class Select extends React.Component {
           'coral3-Select--quiet': variant === 'quiet',
           'is-disabled': disabled,
           'is-invalid': invalid
-        })}
+        }, className)}
         onSelect={this.onSelect}
         onClose={this.onClose}
         aria-required={required}
@@ -110,7 +111,7 @@ export default class Select extends React.Component {
   }
 }
 
-function SelectMenu({onClose, onSelect, ...props}) {
+export function SelectMenu({onClose, onSelect, ...props}) {
   return (
     <RootCloseWrapper onRootClose={onClose}>
       <SelectList {...props} onChange={onSelect} />
