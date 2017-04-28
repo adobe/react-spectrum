@@ -32,13 +32,14 @@ export default class Dropdown extends React.Component {
     const {alignRight, className} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
+    const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
 
     return (
       <div className={classNames('coral-Dropdown', className)}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {onClick: this.onClick})
-          } else if (child.type === Menu) {
+          } else if (child === menu) {
             return this.state.showingMenu && React.cloneElement(child, {
               className: classNames(child.props.className, 'coral-Dropdown-menu', {'align-right': alignRight}),
               onClose: this.onClose,
