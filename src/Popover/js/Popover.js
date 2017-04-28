@@ -11,8 +11,6 @@ export default class Popover extends Component {
     icon: PropTypes.string,
     open: PropTypes.bool,
     title: PropTypes.node,
-    children: PropTypes.node.isRequired,
-    content: PropTypes.node.isRequired,
     className: PropTypes.string
   };
 
@@ -44,19 +42,18 @@ export default class Popover extends Component {
             className
           )
         }
-        { ...otherProps }
-      >
-        {
-          title &&
-            <DialogHeader
-              className="coral-Popover-header"
-              title={ title }
-              icon={ icon }
-            />
-        }
-        <div className="coral3-Popover-content">
-          {title ? <div className="u-coral-margin">{children}</div> : children}
-        </div>
+        {...otherProps}>
+          {
+            title &&
+              <DialogHeader
+                className="coral-Popover-header"
+                title={ title }
+                icon={ icon }
+              />
+          }
+          <div className="coral3-Popover-content">
+            {title ? <div className="u-coral-margin">{children}</div> : children}
+          </div>
       </div>
     );
   }

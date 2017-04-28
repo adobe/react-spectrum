@@ -15,5 +15,5 @@ storiesOf('OverlayTrigger', module)
   );
 
 const render = (props = {overlay: <Popover />}) => (
-  <OverlayTrigger overlay={<Popover title="Title"><span>This is the content</span></Popover>}><button type="button" style={{width: '100px', display: 'block'}}>Click Me</button></OverlayTrigger>
+  <OverlayTrigger><button>Click me</button><Popover title="popover">my content</Popover></OverlayTrigger>
 );
