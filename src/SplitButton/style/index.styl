@@ -1,0 +1,32 @@
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/button'
+
+.coral-SplitButton {
+  display: inline-block;
+  margin-right: $spectrum-margin;
+
+  .coral-SplitButton-action {
+    margin-right: 0;
+    border-radius: $spectrum-button-radius 0 0 $spectrum-button-radius;
+  }
+
+  .coral-SplitButton-trigger {
+    margin-right: 0;
+    border-radius: 0 $spectrum-button-radius $spectrum-button-radius 0;
+    border-left-width: 0;
+    padding-left: ($spectrum-padding / 2);
+    padding-right: ($spectrum-padding * 2/3);
+  }
+
+  .coral-SplitButton-action.coral-Button--cta {
+    margin-right: $spectrum-button-border;
+    border-right: 0;
+  }
+
+  .coral-SplitButton-action,
+  .coral-SplitButton-trigger {
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
