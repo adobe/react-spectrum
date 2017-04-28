@@ -16,6 +16,9 @@ export default class Dropdown extends React.Component {
 
   onClose = () => {
     this.setState({showingMenu: false});
+    if (this.props.onClose) {
+      this.props.onClose();
+    }
   }
 
   onSelect = (...args) => {
