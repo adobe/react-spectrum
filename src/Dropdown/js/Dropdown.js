@@ -29,13 +29,13 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const {alignRight, className} = this.props;
+    const {alignRight, className, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
 
     return (
-      <div className={classNames('coral-Dropdown', className)}>
+      <div className={classNames('coral-Dropdown', {'is-openBelow': this.state.showingMenu}, className)} {...otherProps}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {onClick: this.onClick})
