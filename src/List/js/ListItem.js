@@ -61,7 +61,7 @@ export default class ListItem extends Component {
   }
 
   handleSelect = e => {
-    this.props.onSelect(e);
+    this.props.onSelect(this.props.value, e);
   }
 
   handleFocusFirst = e => {
