@@ -62,24 +62,24 @@ export default class SelectList extends Component {
       : this.state.value === option.value;
   }
 
-  renderListOfOptions = (options) => {
-    return options.map((option) => (
+  renderListOfOptions = (options) => (
+    options.map((option) => (
       <ListItem
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
         onSelect={this.handleSelect.bind(this, option)}>
           {option.label}
       </ListItem>
-    ));
-  }
+    ))
+  )
 
-  renderGroupsOfOptions = (options) => {
-    return Object.keys(options).map((optionKey) => (
+  renderGroupsOfOptions = (options) => (
+    Object.keys(options).map((optionKey) => (
       <ListGroup label={optionKey}>
         {this.renderListOfOptions(options[optionKey])}
       </ListGroup>
-    ));
-  }
+    ))
+  )
 
   render() {
     const {

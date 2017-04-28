@@ -2,12 +2,12 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import Icon from '../../Icon';
-import Menu from '../../Menu';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
+import '../../Menu/style/index.styl';
 
 export default class Select extends React.Component {
   state = {

@@ -291,7 +291,6 @@ describe('Calendar', () => {
     it('resets the selection when the escape key is pressed', function () {
       const before = moment().startOf('month').startOf('day');
       const start = before.clone().add(5, 'days');
-      const after = start.clone().add(5, 'days');
       const tree = shallow(<Calendar selectionType="range" />);
       const body = findBody(tree);
 

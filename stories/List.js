@@ -27,7 +27,3 @@ storiesOf('List', module)
     ),
     {inline: true}
   );
-
-function render(props = {}) {
-  return (<Link href="#" { ...props }>This is a React Coral Link</Link>);
-}
