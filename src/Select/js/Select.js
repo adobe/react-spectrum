@@ -10,27 +10,27 @@ import '../style/index.styl';
 import '../../Menu/style/index.styl';
 
 export default class Select extends React.Component {
-  state = {
-    value: null
-  };
+  constructor(props) {
+    super(props);
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
-  }
-
-  componentWillReceiveProps(props) {
     let value = null;
-    if (props.value) {
+    if ('value' in props) {
       value = props.value;
+    } else if ('defaultValue' in props) {
+      value = props.defaultValue;
     } else if (props.multiple) {
       value = [];
     } else {
-      const opt = props.options[0];
+      const opt = props.options && props.options[0];
       value = opt ? opt.value : null;
     }
 
-    if (props.value !== this.state.value) {
-      this.setState({value});
+    this.state = {value};
+  }
+
+  componentWillReceiveProps(props) {
+    if ('value' in props && props.value !== this.state.value) {
+      this.setState({value: props.value});
     }
   }
 
