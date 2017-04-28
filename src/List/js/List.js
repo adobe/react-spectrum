@@ -3,10 +3,11 @@ import classNames from 'classnames';
 import '../style/index.styl';
 
 const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
+const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + '.is-selected';
 
 export default class List extends Component {
   getItems() {
-    return Array.from(this.refs.list.querySelectorAll(LIST_ITEM_SELECTOR));
+    return Array.from(this.list.querySelectorAll(LIST_ITEM_SELECTOR));
   }
 
   handleFocusFirst = () => {
@@ -36,6 +37,17 @@ export default class List extends Component {
     items[index].focus();
   }
 
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      const selected = this.list.querySelector(SELECTED_LIST_ITEM_SELECTOR);
+      if (selected) {
+        selected.focus();
+      } else {
+        this.handleFocusFirst();
+      }
+    }
+  }
+
   render() {
     const {
       className,
@@ -46,7 +58,7 @@ export default class List extends Component {
 
     return (
       <ul
-        ref="list"
+        ref={l => this.list = l}
         className={
           classNames(
             'coral-BasicList',
