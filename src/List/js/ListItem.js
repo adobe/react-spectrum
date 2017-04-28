@@ -25,6 +25,7 @@ export default class ListItem extends Component {
   handleKeyDown = e => {
     switch (e.which) {
       case 13: // enter
+        e.preventDefault();
         this.handleSelect(e);
         break;
       case 33: // page up
