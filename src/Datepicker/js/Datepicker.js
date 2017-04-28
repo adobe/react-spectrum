@@ -178,9 +178,7 @@ export default class Datepicker extends Component {
     }
   }
 
-  handleCalendarChange = (valueText, valueDate) => {
-    const date = moment(valueDate);
-
+  handleCalendarChange = (date) => {
     if (date.isValid()) {
       this.setValue(this.formatValueToInputText(date), date);
     }

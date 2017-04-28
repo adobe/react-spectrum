@@ -1,5 +1,5 @@
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
+import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
 import Slider from '../src/Slider';
