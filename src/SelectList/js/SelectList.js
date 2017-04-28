@@ -85,12 +85,22 @@ export default class SelectList extends Component {
     const {
       options = [],
       className,
+      multiple = false,
+      disabled = false,
+      invalid = false,
+      required = false,
       ...otherProps
     } = this.props;
 
     return (
-      <List className={className}>
-        {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
+      <List
+        aria-multiselectable={multiple}
+        aria-disabled={disabled}
+        aria-invalid={invalid}
+        aria-required={required}
+        {...otherProps}
+        className={classNames('coral3-SelectList', className)}>
+          {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
       </List>
     );
   }
