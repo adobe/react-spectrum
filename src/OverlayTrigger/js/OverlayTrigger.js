@@ -61,8 +61,6 @@ export default class OverlayTrigger extends Component {
     onFocus: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
-    // Overridden props from `<Overlay>`.
-    // target: PropTypes.oneOf([null]),
     onHide: PropTypes.oneOf([null]),
     show: PropTypes.oneOf([null])
   };
