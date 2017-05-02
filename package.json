@@ -26,9 +26,6 @@
     "stringify": "^5.1.0",
     "tether-drop": "^1.4.2"
   },
-  "bundledDependencies": [
-    "react-select"
-  ],
   "devDependencies": {
     "@coralui/coralui-core": "^4.4.0",
     "@kadira/react-storybook-addon-info": "^3.2.4",
@@ -69,7 +66,6 @@
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
-    "react-select": "git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
