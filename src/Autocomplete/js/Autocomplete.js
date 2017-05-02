@@ -3,6 +3,7 @@ import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {Menu, MenuItem} from '../../Menu';
 import React from 'react';
+import '../style/index.styl';
 
 @autobind
 export default class Autocomplete extends React.Component {
