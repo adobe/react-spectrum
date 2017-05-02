@@ -1,16 +1,13 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-
 import '../style/index.styl';
 
-export default class List extends Component {
-  static defaultProps = {
-    listItemSelector: '.coral-BasicList-item',
-    onSelect: function () {}
-  }
+const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
+const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + '.is-selected';
 
+export default class List extends Component {
   getItems() {
-    return Array.prototype.slice.call(this.refs.list.querySelectorAll(this.props.listItemSelector));
+    return Array.from(this.list.querySelectorAll(LIST_ITEM_SELECTOR));
   }
 
   handleFocusFirst = () => {
@@ -40,39 +37,46 @@ export default class List extends Component {
     items[index].focus();
   }
 
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      const selected = this.list.querySelector(SELECTED_LIST_ITEM_SELECTOR);
+      if (selected) {
+        selected.focus();
+      } else {
+        this.handleFocusFirst();
+      }
+    }
+  }
+
   render() {
     const {
       className,
       children,
-      onSelect,
+      role = 'listbox',
       ...otherProps
     } = this.props;
 
     return (
-      <div
-        ref="list"
+      <ul
+        ref={l => this.list = l}
         className={
           classNames(
             'coral-BasicList',
             className
           )
         }
-        { ...otherProps }
+        role={role}
+        {...otherProps}
       >
-        {
-          React.Children.map(children, child => (
-            React.cloneElement(child, {
-              onSelect,
-              onFocusNext: this.handleFocusNext,
-              onFocusPrevious: this.handleFocusPrevious,
-              onFocusFirst: this.handleFocusFirst,
-              onFocusLast: this.handleFocusLast
-            })
-          ))
-        }
-      </div>
+        {React.Children.map(children, child => (
+          React.cloneElement(child, {
+            onFocusNext: this.handleFocusNext,
+            onFocusPrevious: this.handleFocusPrevious,
+            onFocusFirst: this.handleFocusFirst,
+            onFocusLast: this.handleFocusLast
+          })
+        ))}
+      </ul>
     );
   }
 }
-
-List.displayName = 'List';

@@ -1,8 +1,9 @@
-import React from 'react';
+import Button from '../../src/Button';
+import Dropdown from '../../src/Dropdown';
 import expect from 'expect';
-import {mount} from 'enzyme';
-import ReactSelect from 'react-select';
-import Select from '../../src/Select';
+import React from 'react';
+import Select, {SelectMenu} from '../../src/Select';
+import {shallow} from 'enzyme';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -16,100 +17,101 @@ const testOptions = [
 ];
 
 describe('Select', () => {
+  it('renders a dropdown', () => {
+    const tree = shallow(<Select />);
+    const dropdown = tree.find(Dropdown);
+    expect(dropdown.prop('className')).toBe('coral3-Select');
+    expect(tree.state('value')).toBe(null);
+  });
+
   it('supports additional classNames', () => {
-    const tree = mount(<Select className="myClass" />);
-    const select = tree.find('div.Select');
+    const tree = shallow(<Select className="myClass" />);
+    const select = tree.find(Dropdown);
 
     expect(select.hasClass('myClass')).toBe(true);
     // Check that coral3-Select is not overwritten by the provided class.
     expect(select.hasClass('coral3-Select')).toBe(true);
   });
 
-  it('supports additional properties', () => {
-    const tree = mount(<Select foo />);
-    const reactSelectComponent = tree.find(ReactSelect);
-
-    expect(reactSelectComponent.prop('foo')).toBe(true);
+  it('renders options', () => {
+    const tree = shallow(<Select options={testOptions} />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Chocolate');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toBe('chocolate');
   });
 
-  describe('keypress', () => {
-    let setTimeout;
-    let clearTimeout;
-    let tree;
-
-    const pressKey = (key) => {
-      tree.instance().handleKeyPress({key});
-      tree.update();
-    };
-
-    beforeEach(() => {
-      setTimeout = expect.spyOn(window, 'setTimeout').andReturn(3);
-      clearTimeout = expect.spyOn(window, 'clearTimeout');
-      tree = mount(<Select options={ testOptions } />);
-    });
-
-    afterEach(() => {
-      setTimeout.restore();
-      clearTimeout.restore();
-    });
-
-    it('selects the first option on first press', () => {
-      pressKey('c');
-      expect(tree.state('selectedIndex')).toEqual(0);
-    });
-
-    it('selects the next appropriate option on second press', () => {
-      pressKey('c');
-      pressKey('c');
-      expect(tree.state('selectedIndex')).toEqual(3);
-    });
-
-    it('wraps on enough presses', () => {
-      pressKey('s');
-      expect(tree.state('selectedIndex')).toEqual(2);
-      pressKey('s');
-      expect(tree.state('selectedIndex')).toEqual(6);
-      pressKey('s');
-      expect(tree.state('selectedIndex')).toEqual(2);
-    });
-
-    it('searches on multiple characters', () => {
-      pressKey('c');
-      pressKey('o');
-      expect(tree.state('selectedIndex')).toEqual(4);
-    });
-
-    it('ignores invalid searches', () => {
-      pressKey('c');
-      pressKey('x');
-      expect(tree.state('selectedIndex')).toEqual(0);
-    });
-
-    it('resets after timeout', () => {
-      pressKey('c');
-      setTimeout.calls[0].arguments[0]();
-      tree.update();
-      pressKey('c');
-      expect(tree.state('selectedIndex')).toEqual(0);
-    });
+  it('renders options with multiple select', () => {
+    const tree = shallow(<Select options={testOptions} multiple />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Select an option');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toEqual([]);
   });
 
-  it('won\'t submit a parent form when the dropdown button is clicked', () => {
-    const submitSpy = expect.createSpy();
-    const tree = mount(
-      <form onSubmit={ submitSpy }>
-        <Select />
-      </form>
-    );
-    tree.find('.coral3-Select-button').get(0).click();
-    expect(submitSpy).toNotHaveBeenCalled();
+  it('should set an initial value', () => {
+    const tree = shallow(<Select options={testOptions} value="vanilla" />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Vanilla');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toBe('vanilla');
   });
 
-  // This test works locally but not in jenkins
-  //
-  // it('supports overriding no results text', () => {
-  //   const tree = mount(<Select noResultsText="foobar" />);
-  //   tree.find('.Select-input').simulate('mousedown');
-  //   expect(tree.find('.Select-noresults em').text()).toBe('foobar');
-  // });
+  it('should set an initial value with multiple select', () => {
+    const tree = shallow(<Select options={testOptions} value={['vanilla', 'caramel']} multiple />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Select an option');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toEqual(['vanilla', 'caramel']);
+  });
+
+  it('should set a default value', () => {
+    const tree = shallow(<Select options={testOptions} defaultValue="vanilla" />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Vanilla');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toBe('vanilla');
+  });
+
+  it('should update value if passed in', () => {
+    const tree = shallow(<Select options={testOptions} value="vanilla" />);
+    expect(tree.find('.coral3-Select-label').text()).toBe('Vanilla');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toBe('vanilla');
+
+    tree.setProps({value: 'chocolate'});
+
+    expect(tree.find('.coral3-Select-label').text()).toBe('Chocolate');
+    expect(tree.find(SelectMenu).prop('options')).toEqual(testOptions);
+    expect(tree.find(SelectMenu).prop('value')).toBe('chocolate');
+  });
+
+  it('should handle selection', () => {
+    const onChange = expect.createSpy();
+    const tree = shallow(<Select options={testOptions} onChange={onChange} />);
+    expect(tree.state('value')).toBe('chocolate');
+
+    tree.find(Dropdown).simulate('select', 'vanilla');
+
+    expect(tree.state('value')).toBe('vanilla');
+    expect(onChange).toHaveBeenCalled();
+  });
+
+  it('should not update state if value prop is passed', () => {
+    const onChange = expect.createSpy();
+    const tree = shallow(<Select options={testOptions} value="vanilla" onChange={onChange} />);
+    expect(tree.state('value')).toBe('vanilla');
+
+    tree.find(Dropdown).simulate('select', 'chocolate');
+
+    expect(tree.state('value')).toBe('vanilla');
+    expect(onChange).toHaveBeenCalled();
+  });
+
+  it('should trigger the menu on key press', () => {
+    const tree = shallow(<Select options={testOptions} />);
+
+    for (let key of ['Enter', 'ArrowDown', 'Space']) {
+      const spy = expect.createSpy();
+      tree.instance().button = {onClick: spy};
+
+      tree.find(Button).simulate('keyDown', {key, preventDefault: function () {}});
+      expect(spy).toHaveBeenCalled();
+    }
+  });
 });

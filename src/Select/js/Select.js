@@ -1,182 +1,120 @@
-import React, {Component} from 'react';
+import Button from '../../Button';
 import classNames from 'classnames';
-import ReactSelect from 'react-select';
-import Tag from '../../TagList/js/Tag';
-import menuRenderer from './SelectMenuRenderer';
-
+import Dropdown from '../../Dropdown';
+import Icon from '../../Icon';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import SelectList from '../../SelectList';
 import '../style/index.styl';
+import '../../Menu/style/index.styl';
 
-const KEYPRESS_TIMEOUT_DURATION = 1000;
+export default class Select extends React.Component {
+  constructor(props) {
+    super(props);
 
-export default class Select extends Component {
-  static defaultProps = {
-    variant: 'default', // default, quiet
-    multiple: false,
-    multiCloseOnSelect: true,
-    noResultsText: 'No matching results.',
-    placeholder: 'Select one'
-  };
-
-  componentWillMount() {
-    this.clearState();
-  }
-
-  valueComponent(props, {value, disabled}) {
-    return (
-      <div
-        className="coral3-Select-label"
-        disabled={ disabled }
-      >
-        { value[props.labelKey || 'label'] }
-      </div>
-    );
-  }
-
-  arrowRenderer() {
-    return (
-      <span
-        className="coral-Icon coral3-Select-openIcon coral-Icon--chevronDown coral-Icon--sizeXXS"
-      />
-    );
-  }
-
-  controlComponent = ({className, ...otherProps}) => {
-    const {disabled, readOnly, variant} = this.props;
-
-    return (
-      <button
-        tabIndex="0"
-        type="button"
-        { ...otherProps }
-        className={ classNames(
-          className,
-          'coral3-Select-button',
-          'coral-Button',
-          'coral-Button--secondary',
-          {'coral-Button--block': variant !== 'quiet'}
-        ) }
-        disabled={ disabled || readOnly }
-      />
-    );
-  }
-
-  clearState = () => {
-    this.setState({
-      currentSearch: '',
-      clearSearchTimeoutId: 0,
-      selectedIndex: -1
-    });
-  }
-
-  handleKeyPress = (e) => {
-    let {currentSearch} = this.state;
-    const {clearSearchTimeoutId, selectedIndex} = this.state;
-    const options = this.props.options.filter(option => !option.disabled);
-    const newSearch = e.key.toLowerCase();
-
-    window.clearTimeout(clearSearchTimeoutId);
-    this.setState({
-      clearSearchTimeoutId: window.setTimeout(this.clearState, KEYPRESS_TIMEOUT_DURATION)
-    });
-
-    const testSearchTerm = (option, term) =>
-      option && option.label.trim().toLowerCase().indexOf(term) === 0;
-
-    let start = selectedIndex < 0 ? 0 : selectedIndex;
-
-    // if it's the same key, try to advance one and don't append it to the search term
-    if (currentSearch === newSearch) {
-      start++;
+    let value = null;
+    if ('value' in props) {
+      value = props.value;
+    } else if ('defaultValue' in props) {
+      value = props.defaultValue;
+    } else if (props.multiple) {
+      value = [];
     } else {
-      currentSearch += newSearch;
+      const opt = props.options && props.options[0];
+      value = opt ? opt.value : null;
     }
 
-    let newSelectedIndex = -1;
+    this.state = {value};
+  }
 
-    for (let i = start; i < options.length; i++) {
-      if (testSearchTerm(options[i], currentSearch)) {
-        newSelectedIndex = i;
-        break;
-      }
-    }
-
-    if (newSelectedIndex < 0) {
-      for (let i = 0; i < start; i++) {
-        if (testSearchTerm(options[i], currentSearch)) {
-          newSelectedIndex = i;
-          break;
-        }
-      }
-    }
-
-    if (newSelectedIndex >= 0) {
-      // this is technically not a function we're supposed to call, but it's the
-      // same function that would be used if we were to do a menuRenderer
-      this.setState({currentSearch, selectedIndex: newSelectedIndex});
-      this.refs.selectComponent.focusOption(options[newSelectedIndex]);
+  componentWillReceiveProps(props) {
+    if ('value' in props && props.value !== this.state.value) {
+      this.setState({value: props.value});
     }
   }
 
-  valuesComponent(props, {value, onClick, onRemove, disabled}) {
-    return (
-      <Tag
-        onClose={ (e) => onRemove(value, e) }
-        closable
-        disabled={ disabled }
-        onMouseDown={ (e) => onClick(value, e) }
-      >
-        { value[props.labelKey || 'label'] }
-      </Tag>
-    );
+  onSelect = (value) => {
+    if (!('value' in this.props)) {
+      this.setState({value});
+    }
+
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
+  }
+
+  onClose = () => {
+    ReactDOM.findDOMNode(this.button).focus();
+  }
+
+  onKeyDown = (e) => {
+    switch (e.key) {
+      case 'Enter':
+      case 'ArrowDown':
+      case 'Space':
+        e.preventDefault();
+        this.button.onClick();
+        break;
+    }
   }
 
   render() {
     const {
+      options = [],
       variant,
-      noResultsText,
-      className,
-      multiple,
-      multi,
-      multiCloseOnSelect,
-      onValueClick,
-      ...otherProps
+      disabled = false,
+      invalid = false,
+      multiple = false,
+      required = false,
+      placeholder = 'Select an option',
+      className
     } = this.props;
 
-    const isQuiet = variant === 'quiet';
-    const multiSelect = multiple || multi;
+    const {value} = this.state;
+
+    let label = placeholder;
+    if (!multiple) {
+      const selectedOption = options.find(o => o.value === value);
+      label = selectedOption ? selectedOption.label : placeholder;
+    }
 
     return (
-      <ReactSelect
-        className={
-          classNames(className, 'coral3-Select', {'coral3-Select--quiet': isQuiet})
-        }
-        multi={ multiSelect }
-        noResultsText={ <em>{ noResultsText }</em> }
-        arrowRenderer={ this.arrowRenderer }
-        controlComponent={ this.controlComponent }
-        optionClassName="coral3-SelectList-item"
-        classAdditions={ {
-          'Select-placeholder': 'coral3-Select-label',
-          'Select-menu-outer': 'coral-Overlay coral3-Select-overlay',
-          'Select-menu': 'coral3-SelectList coral3-Select-selectList',
-          'Select-values': 'coral-TagList coral-Autocomplete-tagList'
-        } }
-        valueComponent={ multiSelect ?
-          this.valuesComponent.bind(this, this.props) : this.valueComponent.bind(this, this.props) }
-        menuRenderer={ menuRenderer }
-        clearable={ false }
-        autosize={ false }
-        searchable={ false }
-        tabSelectsValue={ false }
-        multiCloseOnSelect={ multiCloseOnSelect }
-        { ...otherProps }
-        onValueClick={ onValueClick || (function () {}) }
-        backspaceToRemoveMessage=""
-        onKeyPress={ this.handleKeyPress }
-        ref="selectComponent"
-      />
+      <Dropdown
+        className={classNames('coral3-Select', {
+          'coral3-Select--quiet': variant === 'quiet',
+          'is-disabled': disabled,
+          'is-invalid': invalid
+        }, className)}
+        onSelect={this.onSelect}
+        onClose={this.onClose}
+        aria-required={required}
+        aria-multiselectable={multiple}
+        aria-disabled={disabled}
+        aria-invalid={invalid}>
+          <Button ref={b => this.button = b} onKeyDown={this.onKeyDown} disabled={disabled}>
+            <span className="coral3-Select-label">{label}</span>
+            <Icon icon="chevronDown" size="XS" className="coral3-Select-openIcon" />
+          </Button>
+          <SelectMenu
+            dropdownMenu
+            options={options}
+            value={value}
+            multiple={multiple}
+            disabled={disabled}
+            invalid={invalid}
+            required={required}
+            className="coral-Menu coral3-Select-selectList"
+            autoFocus />
+      </Dropdown>
     );
   }
 }
 
-Select.displayName = 'Select';
+export function SelectMenu({onClose, onSelect, ...props}) {
+  return (
+    <RootCloseWrapper onRootClose={onClose}>
+      <SelectList {...props} onChange={onSelect} />
+    </RootCloseWrapper>
+  );
+}

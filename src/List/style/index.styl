@@ -22,29 +22,35 @@ $spectrum-basiclist-border-width = $px;
 
 $spectrum-basiclist-item-height = 40*$px;
 $spectrum-basiclist-item-padding-left = 14*$px;
-$spectrum-basiclist-item-padding-top = 9*$px;
+$spectrum-basiclist-item-padding-top = 6*$px;
 $spectrum-basiclist-item-focus-width = 2*$px;
 $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spectrum-basiclist-item-padding-top * 2);
+$spectrum-basiclist-item-tick-size = 16*$px;
 
 .coral-BasicList {
   display: block;
-
   overflow-y: auto;
-
+  box-sizing: border-box;
   border-radius: $spectrum-basiclist-border-radius;
   border-width: $spectrum-basiclist-border-width;
   border-style: solid;
+  margin: 0;
+  padding: 0;
+  outline: none; // removes the outline in FF
 }
 
 .coral-BasicList-item {
-  display: block;
+  display: flex;
   box-sizing: border-box;
+  position: relative;
 
+  align-items: center;
   padding: $spectrum-basiclist-item-padding-top $spectrum-basiclist-item-padding-left $spectrum-basiclist-item-padding-top ($spectrum-basiclist-item-padding-left - 2 * $spectrum-basiclist-item-focus-width);
-  min-height: $spectrum-basiclist-item-height;
 
   text-decoration: none;
   text-align: left;
+  cursor: pointer;
+  user-select: none;
 
   border-left: solid $spectrum-basiclist-item-focus-width transparent;
   transition: background-color $spectrum-transition-time ease-out,
@@ -53,51 +59,64 @@ $spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spe
   &.is-focused,
   &:focus {
     outline: none;
+    text-decoration: none;
   }
 
   &.is-disabled {
     cursor: default;
   }
+
+  &.is-selected {
+    // give the item more space for the icon.
+    padding-right: ($spectrum-basiclist-item-padding-left + $spectrum-basiclist-item-tick-size);
+
+    &:after {
+      position: absolute;
+      top: 50%;
+      right: ($spectrum-basiclist-item-padding-left - 4*$px);
+
+      padding: 0 ($spectrum-basiclist-item-tick-size / 2);
+      height: $spectrum-basiclist-item-tick-size;
+
+      margin-left: $spectrum-padding;
+
+      transform: translateY(-50%);
+
+      content: '';
+
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  }
 }
 
 .coral-BasicList-item-icon {
-  float: left;
-
   width: 18*$px;
-  height: $spectrum-basiclist-item-contentheight;
-
-  margin-right: 12*$px;
-
-  // Align text correctly
-  vertical-align: middle;
-
-  // Align icon correctly
-  line-height: $spectrum-basiclist-item-contentheight;
-
+  margin-right: 7*$px;
   text-align: center;
 }
 
-.coral-BasicList-item-outerContainer {
-  overflow: hidden; // Don't go under the float
-
-  height: 100%; // Truncate text when it's longer than 2 lines
-}
-
-.coral-BasicList-item-contentContainer {
-  display: table;
-  table-layout: fixed; // Allow percent width
-  width: 100%; // Required for text-overflow: ellipsis to apply on cells
-}
-
 .coral-BasicList-item-content {
-  display: table-cell;
-  vertical-align: middle; // Center content
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
-  max-width: 100%; // Enable text-overflow
+.coral-BasicList-group {
+  padding: 0;
+}
 
-  height: $spectrum-basiclist-item-contentheight;
+.coral-BasicList-group:before {
+  display: block;
 
-  overflow: ellipsis;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  padding: 10*$px 12*$px;
+  font-size: 11*$px;
+
+  content: attr(label);
 }
 
 .coral-ButtonList-item,

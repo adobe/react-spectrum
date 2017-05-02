@@ -93,12 +93,6 @@ function render(props = {}) {
       style={ {textAlign: 'left'} }
       label="React"
       onChange={ action('change') }
-      onBlur={ action('blur') }
-      onClose={ action('close') }
-      onFocus={ action('focus') }
-      onInputChange={ action('inputChange') }
-      onOpen={ action('open') }
-      onValueClick={ action('valueClick') }
       { ...defaultProps }
       { ...props }
     />

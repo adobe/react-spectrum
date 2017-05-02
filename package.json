@@ -18,6 +18,7 @@
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
+    "react-overlays": "^0.7.0",
     "react-portal": "^3.0.0",
     "react-tether": "^0.5.2",
     "stringify": "^5.1.0",

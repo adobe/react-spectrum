@@ -5,6 +5,7 @@ import Tag from '../../TagList/js/Tag';
 import menuRenderer from '../../Select/js/SelectMenuRenderer';
 
 import '../style/index.styl';
+import '../../List/style/index.styl';
 
 export default class Autocomplete extends Component {
   static defaultProps = {
@@ -72,7 +73,7 @@ export default class Autocomplete extends Component {
         allowCreate={ allowCreate }
         multi={ multiSelect }
         noResultsText={ <em>{ noResultsText }</em> }
-        optionClassName="coral3-SelectList-item"
+        optionClassName="coral-BasicList-item"
         classAdditions={ {
           'Select-control': 'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
           'Select-loading': 'coral-Wait',

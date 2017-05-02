@@ -2,7 +2,7 @@ import React from 'react';
 import expect from 'expect';
 import {shallow} from 'enzyme';
 import SelectList from '../../src/SelectList';
-
+import {ListItem, ListGroup} from '../../src/List';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -41,107 +41,79 @@ describe('SelectList', () => {
 
   it('supports a list of options', () => {
     const tree = shallow(<SelectList options={ testOptions } />);
-    expect(tree.find('.coral3-SelectList-item').length).toBe(7);
+    expect(tree.find(ListItem).length).toBe(7);
   });
 
   it('supports a list of grouped options', () => {
     const tree = shallow(<SelectList options={ groupedOptions } />);
-    expect(tree.find('.coral-SelectList-group').length).toBe(2);
-    expect(tree.find('.coral3-SelectList-item').length).toBe(6);
+    expect(tree.find(ListGroup).length).toBe(2);
+    expect(tree.find(ListItem).length).toBe(6);
   });
 
   it('supports a list of grouped options', () => {
     const tree = shallow(<SelectList options={ groupedOptions } />);
-    expect(tree.find('.coral-SelectList-group').length).toBe(2);
-    expect(tree.find('.coral3-SelectList-item').length).toBe(6);
+    expect(tree.find(ListGroup).length).toBe(2);
+    expect(tree.find(ListItem).length).toBe(6);
   });
 
   it('supports an item being selected', () => {
     const tree = shallow(<SelectList options={ testOptions } value={ testOptions[0].value } />);
-    expect(tree.find('.is-selected').length).toBe(1);
+    expect(tree.find({selected: true}).length).toBe(1);
   });
 
   it('supports an item being selected', () => {
     const tree = shallow(<SelectList options={ testOptions } value={ testOptions[0].value } />);
-    const selectedItem = tree.find('.is-selected');
+    const selectedItem = tree.find({selected: true});
     expect(selectedItem.length).toBe(1);
-    expect(selectedItem.prop('aria-selected')).toBe(true);
   });
 
   it('supports multiple items being selected', () => {
     const tree = shallow(<SelectList options={ testOptions } multiple value={ selectedValue } />);
-    expect(tree.find('.is-selected').length).toBe(3);
-    tree.find('.is-selected').forEach((node) => {
-      expect(node.prop('aria-selected')).toBe(true);
-    });
+    expect(tree.find({selected: true}).length).toBe(3);
   });
 
   it('supports all items being disabled', () => {
     const tree = shallow(<SelectList options={ testOptions } disabled />);
-    tree.find('.coral3-SelectList-item').forEach((node) => {
-      expect(node.hasClass('is-disabled')).toBe(true);
-      expect(node.prop('aria-disabled')).toBe(true);
+    tree.find(ListItem).forEach((node) => {
+      expect(node.prop('disabled')).toBe(true);
     });
   });
 
   it('supports an item being disabled', () => {
     const tree = shallow(<SelectList options={ testOptions } />);
-    expect(tree.find('.is-disabled').length).toBe(1);
-    expect(tree.find('.is-disabled').prop('aria-disabled')).toBe(true);
+    expect(tree.find({disabled: true}).length).toBe(1);
   });
 
-
-  it('supports getting focus then blur', () => {
-    const tree = shallow(<SelectList options={ testOptions } />);
-    tree.simulate('focus');
-    expect(tree.hasClass('is-focused')).toBe(true);
-    tree.simulate('blur');
-    expect(tree.hasClass('is-focused')).toBe(false);
-  });
-
-  it('supports items being highlighted by mouseover', () => {
-    const tree = shallow(<SelectList options={ testOptions } />);
-    tree.find('.coral3-SelectList-item').first().simulate('mouseover');
-    expect(tree.find('.coral3-SelectList-item').first().hasClass('is-highlighted')).toBe(true);
-  });
-
-
-  it('supports items being highlighted by focus', () => {
-    const tree = shallow(<SelectList options={ testOptions } />);
-    tree.find('.coral3-SelectList-item').first().simulate('focus');
-    expect(tree.find('.coral3-SelectList-item').first().hasClass('is-highlighted')).toBe(true);
-  });
-
-  it('supports selection being returned on selecetion change for single select', () => {
+  it('supports selection being returned on selection change for single select', () => {
     const tree = shallow(
       <SelectList
         options={ testOptions }
         onChange={ (value) => {
-          expect(value).toEqual(testOptions[0]);
+          expect(value).toEqual(testOptions[0].value);
         } }
       />
     );
-    tree.find('.coral3-SelectList-item').first().simulate('click');
+    tree.find(ListItem).first().simulate('select');
   });
 
-  it('supports selection being returned on selecetion add for multiple select', () => {
+  it('supports selection being returned on selection add for multiple select', () => {
     let finalValue;
     const tree = shallow(
       <SelectList
         options={ testOptions }
-        value={ [testOptions[0].value] }
-        multiple onChange={ (value) => {
+        value={ [testOptions[1].value] }
+        multiple
+        onChange={ (value) => {
           finalValue = value;
         } }
       />
     );
-    tree.find('.coral3-SelectList-item').first()
-      .simulate('click')
-      .simulate('click');
-    expect(finalValue).toEqual([]);
+    tree.find(ListItem).first()
+      .simulate('select');
+    expect(finalValue).toEqual([testOptions[1].value, testOptions[0].value]);
   });
 
-  it('supports selection being returned on selecetion remove for multiple select', () => {
+  it('supports selection being returned on selection remove for multiple select', () => {
     let finalValue;
     const tree = shallow(
       <SelectList
@@ -153,9 +125,8 @@ describe('SelectList', () => {
         } }
       />
     );
-    tree.find('.coral3-SelectList-item').first()
-      .simulate('click')
-      .simulate('click');
+    tree.find(ListItem).first()
+      .simulate('select');
     expect(finalValue).toEqual([]);
   });
 
