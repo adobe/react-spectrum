@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import Icon from '../../Icon';
+import {interpretKeyboardEvent} from '../../utils/events';
 import React, {Component} from 'react';
 
 export default class ListItem extends Component {
@@ -18,38 +19,7 @@ export default class ListItem extends Component {
     if (this.props.onClick) {
       this.props.onClick(e);
     } else {
-      this.handleSelect(e);
-    }
-  }
-
-  handleKeyDown = e => {
-    switch (e.which) {
-      case 13: // enter
-        e.preventDefault();
-        this.handleSelect(e);
-        break;
-      case 33: // page up
-      case 35: // home
-        e.preventDefault();
-        this.handleFocusFirst(e);
-        break;
-      case 34: // page down
-      case 36: // end
-        e.preventDefault();
-        this.handleFocusLast(e);
-        break;
-      case 37: // left
-      case 38: // up
-        e.preventDefault();
-        this.handleFocusPrevious(e);
-        break;
-      case 39: // right
-      case 40: // down
-        e.preventDefault();
-        this.handleFocusNext(e);
-        break;
-      default:
-        // do nothing
+      this.onSelectFocused(e);
     }
   }
 
@@ -61,23 +31,23 @@ export default class ListItem extends Component {
     }
   }
 
-  handleSelect = e => {
+  onSelectFocused = e => {
     this.props.onSelect(this.props.value, e);
   }
 
-  handleFocusFirst = e => {
+  onFocusFirst = e => {
     this.props.onFocusFirst(e);
   }
 
-  handleFocusLast = e => {
+  onFocusLast = e => {
     this.props.onFocusLast(e);
   }
 
-  handleFocusPrevious = e => {
+  onFocusPrevious = e => {
     this.props.onFocusPrevious(e);
   }
 
-  handleFocusNext = e => {
+  onFocusNext = e => {
     this.props.onFocusNext(e);
   }
 
@@ -90,6 +60,7 @@ export default class ListItem extends Component {
       children,
       selected,
       disabled,
+      focused,
       role = 'option',
       ...otherProps
     } = this.props;
@@ -101,12 +72,13 @@ export default class ListItem extends Component {
             'coral-BasicList-item',
             {
               'is-selected': selected,
-              'is-disabled': disabled
+              'is-disabled': disabled,
+              'is-focused': focused
             },
             className
           )
         }
-        onKeyDown={!disabled && this.handleKeyDown}
+        onKeyDown={!disabled && interpretKeyboardEvent.bind(this)}
         onMouseEnter={!disabled && this.handleMouseEnter}
         onClick={!disabled && this.handleClick}
         tabIndex="0"

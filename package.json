@@ -15,6 +15,8 @@
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
+    "autobind-decorator": "^1.4.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",

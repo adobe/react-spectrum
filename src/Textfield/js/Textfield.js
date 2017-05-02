@@ -1,8 +1,9 @@
-import React, {Component} from 'react';
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-
+import React, {Component} from 'react';
 import '../style/index.styl';
 
+@autobind
 export default class Textfield extends Component {
   static defaultProps = {
     disabled: false,
@@ -10,6 +11,12 @@ export default class Textfield extends Component {
     invalid: false,
     readOnly: false
   };
+
+  onChange(e) {
+    if (this.props.onChange) {
+      this.props.onChange(e.target.value);
+    }
+  }
 
   render() {
     const {
@@ -47,6 +54,7 @@ export default class Textfield extends Component {
         required={ required }
         readOnly={ readOnly }
         { ...otherProps }
+        onChange={this.onChange}
       />
     );
   }
