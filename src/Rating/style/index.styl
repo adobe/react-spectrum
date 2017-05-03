@@ -1,0 +1,21 @@
+@import '../../commons'
+
+.coral-Rating {
+  cursor: pointer;
+
+  .coral-Rating-icon {
+    margin-right: 4px;
+    opacity: 1;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &.is-readonly {
+    cursor: default;
+  }
+}
+
+@import 'light'
+@import 'dark'
