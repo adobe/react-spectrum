@@ -1,9 +1,9 @@
-import React from 'react';
 import assert from 'assert';
-import expect from 'expect';
-import {shallow} from 'enzyme';
 import Autocomplete from '../../src/Autocomplete';
+import expect from 'expect';
 import {Menu, MenuItem} from '../../src/Menu';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
