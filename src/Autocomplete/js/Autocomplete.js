@@ -66,7 +66,7 @@ export default class Autocomplete extends React.Component {
   }
 
   onSelect(value) {
-    this.onChange(value);
+    this.onChange(typeof value === 'string' ? value : value.label);
     this.hideMenu();
 
     if (this.props.onSelect) {
@@ -173,7 +173,7 @@ export default class Autocomplete extends React.Component {
                 focused={selectedIndex === i}
                 onMouseEnter={this.onMouseEnter.bind(this, i)}
                 onMouseDown={e => e.preventDefault()}>
-                  {result}
+                  {typeof result === 'string' ? result : result.label}
               </MenuItem>
             )}
           </Menu>

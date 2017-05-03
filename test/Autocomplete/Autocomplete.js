@@ -235,4 +235,23 @@ describe('Autocomplete', () => {
     tree.instance().toggleMenu();
     assert.equal(tree.find(Menu).length, 0);
   });
+
+  it('supports non-string completions', async () => {
+    const onSelect = expect.createSpy();
+    const tree = shallow(
+      <Autocomplete onSelect={onSelect} getCompletions={v => [{id: 1, label: 'one'}, {id: 2, label: 'two'}]}>
+        <input />
+      </Autocomplete>
+    );
+
+    tree.find('input').simulate('focus').simulate('change', 'test');
+
+    await sleep(1);
+
+    tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
+    assert.equal(tree.find('input').prop('value'), 'one');
+
+    assert.equal(onSelect.calls.length, 1);
+    assert.deepEqual(onSelect.calls[0].arguments[0], {id: 1, label: 'one'});
+  });
 });

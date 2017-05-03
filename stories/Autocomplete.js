@@ -1,9 +1,8 @@
-import React from 'react';
-import {storiesOf} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Autocomplete from '../src/Autocomplete';
+import React from 'react';
 import Textfield from '../src/Textfield';
+import {VerticalCenter} from '../.storybook/layout';
 
 const OPTIONS = [
   'Chocolate',
@@ -24,7 +23,7 @@ function getCompletionsAsync(input) {
   return fetch(`https://api.github.com/search/users?q=${input}`)
     .then((response) => response.json())
     .then((json) => {
-      return json.items.map(item => item.login);
+      return json.items.map(item => ({label: item.login, id: item.id}));
     });
 }
 
@@ -37,7 +36,7 @@ storiesOf('Autocomplete', module)
   .addWithInfo(
     'Default',
     () => (
-      <Autocomplete getCompletions={getCompletions}>
+      <Autocomplete getCompletions={getCompletions} onSelect={action('select')}>
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
     ),
@@ -46,8 +45,8 @@ storiesOf('Autocomplete', module)
   .addWithInfo(
     'Async',
     () => (
-      <Autocomplete getCompletions={getCompletionsAsync}>
-        <Textfield placeholder="Github username..." />
+      <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
+        <Textfield placeholder="Github usernames..." />
       </Autocomplete>
     ),
     {inline: true}
