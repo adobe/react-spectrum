@@ -20,6 +20,14 @@ function getCompletions(text) {
   return OPTIONS.filter(o => o.toLowerCase().startsWith(text.toLowerCase()));
 }
 
+function getCompletionsAsync(input) {
+  return fetch(`https://api.github.com/search/users?q=${input}`)
+    .then((response) => response.json())
+    .then((json) => {
+      return json.items.map(item => item.login);
+    });
+}
+
 storiesOf('Autocomplete', module)
   .addDecorator(story => (
     <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
@@ -31,6 +39,15 @@ storiesOf('Autocomplete', module)
     () => (
       <Autocomplete getCompletions={getCompletions}>
         <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Async',
+    () => (
+      <Autocomplete getCompletions={getCompletionsAsync}>
+        <Textfield placeholder="Github username..." />
       </Autocomplete>
     ),
     {inline: true}
