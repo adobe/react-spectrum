@@ -24,7 +24,7 @@ export default class TagField extends React.Component {
   }
 
   onSelect(value) {
-    if (!value || this.props.allowDuplicates || this.state.tags.includes(value)) {
+    if (!value || (!this.props.allowDuplicates && this.state.tags.includes(value))) {
       return;
     }
 

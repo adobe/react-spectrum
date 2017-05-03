@@ -2,7 +2,6 @@ import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
 import Button from '../../src/Button';
 import ComboBox from '../../src/ComboBox';
-import expect from 'expect';
 import React from 'react';
 import {shallow} from 'enzyme';
 import Textfield from '../../src/Textfield';
