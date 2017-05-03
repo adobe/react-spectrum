@@ -1,6 +1,7 @@
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
+import OverlayTrigger from '../src/OverlayTrigger';
 
 import Tooltip from '../src/Tooltip';
 import Button from '../src/Button';
@@ -52,34 +53,37 @@ storiesOf('Tooltip', module)
     {inline: true}
   )
   .addWithInfo(
-    'openOn: hover',
-    () => render('This is a tooltip.', {openOn: 'hover'}),
+    'with OverlayTrigger: hover',
+    () => render('This is a tooltip.', {trigger: 'click'}),
     {inline: true}
   )
-  .addWithInfo(
-    'openOn: click',
-    () => render('This is a tooltip.', {openOn: 'click'}),
-    {inline: true}
-  );
+  // .addWithInfo(
+  //   'openOn: click',
+  //   () => render('This is a tooltip.', {openOn: 'click'}),
+  //   {inline: true}
+  // );
 
-function render(children, props = {}) {
-  let buttonLbl = 'Target';
-  if (props.openOn === 'hover') {
-    buttonLbl = 'Hover Over Me';
+function render(content, props = {}) {
+  if (props.trigger) {
+    return (
+      <OverlayTrigger placement="left" {...props}>
+        <Button label="djfjgh" variant='cta' />
+        <Tooltip
+          title="Title"
+          open>
+            {content}
+        </Tooltip>
+      </OverlayTrigger>
+    );
   }
-  if (props.openOn === 'click') {
-    buttonLbl = 'Click Me';
-  }
+
   return (
     <div style={ {display: 'inline-block'} }>
       <Tooltip
         title="Title"
-        openOn="always"
-        open
-        content={ children }
-        { ...props }
-      >
-        <Button label={ buttonLbl } />
+        {...props}
+        open>
+          {content}
       </Tooltip>
     </div>
   );

@@ -22,7 +22,7 @@ $coral-tooltip-arrow-size = 6*$px;
 .coral3-Tooltip {
   box-sizing: border-box;
   display: block;
-  position: absolute;
+  // position: absolute;
   z-index: $spectrum-zindex-tooltip;
   font-size: 12*$px;
 
@@ -67,11 +67,14 @@ $coral-tooltip-arrow-size = 6*$px;
   }
 }
 
-.coral-Tooltip-drop-element.coral-Tooltip-drop-after-open .coral3-Tooltip {
+.coral3-Tooltip.coral3-Tooltip-drop-after-open{
   opacity: 1
 }
 
 .coral3-Tooltip--arrowRight {
+  top: 0;
+  left: 5px;
+  position: relative;
   &:before,
   &:after {
     top: 50%; // center the arrow in the center
@@ -90,6 +93,9 @@ $coral-tooltip-arrow-size = 6*$px;
 }
 
 .coral3-Tooltip--arrowLeft {
+  top: 0;
+  left: -5px;
+  position: relative;
   &:before,
   &:after {
     top: 50%; // center the arrow in the center
@@ -108,6 +114,9 @@ $coral-tooltip-arrow-size = 6*$px;
 }
 
 .coral3-Tooltip--arrowDown {
+  top: 5px;
+  left: 0;
+  position: relative;
   &:before,
   &:after {
     left: 50%; // center the arrow in the center
@@ -126,6 +135,9 @@ $coral-tooltip-arrow-size = 6*$px;
 }
 
 .coral3-Tooltip--arrowUp {
+  top: -5px;
+  left: 0;
+  position: relative;
   &:before,
   &:after {
     left: 50%; // center the arrow in the center

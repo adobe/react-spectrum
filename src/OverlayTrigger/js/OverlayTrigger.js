@@ -7,6 +7,9 @@ import '../style/index.styl';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
 
+//  REMOVE TETHER DROP FROM OTHER COMPS SUCH AS TOOLTIP******************************************
+
+
 /**
  * Check if value one is inside or equal to the of value
  *
@@ -67,7 +70,8 @@ export default class OverlayTrigger extends Component {
 
   static defaultProps = {
     defaultShow: false,
-    trigger: ['hover', 'focus']
+    trigger: ['hover', 'focus'],
+    placement: 'left'
   };
 
   constructor(props, context) {
@@ -187,7 +191,7 @@ export default class OverlayTrigger extends Component {
         target={this}
         rootClose={isOneOf('click', this.props.trigger)}>
         <div className="coral-OverlayTrigger-overlay-container">
-          {overlay}
+          {cloneElement(overlay, props)}
         </div>
       </Overlay>
     );
@@ -217,6 +221,7 @@ export default class OverlayTrigger extends Component {
 
     const [triggerChild, overlayChild] = React.Children.toArray(this.props.children);
     const triggerProps = {};
+    delete props.children;
     
 
     if (this.state.show) {
@@ -238,7 +243,6 @@ export default class OverlayTrigger extends Component {
     }
 
     this._overlay = this.makeOverlay(overlayChild, props);
-
     return cloneElement(triggerChild, triggerProps);
   }
 }

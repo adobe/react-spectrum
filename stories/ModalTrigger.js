@@ -1,12 +1,10 @@
 import Button from '../src/Button';
-import OverlayTrigger from '../src/OverlayTrigger';
-import Popover from '../src/Popover';
+import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
-import Tooltip from '../src/Tooltip';
 
 
-storiesOf('OverlayTrigger', module)
+storiesOf('ModalTrigger', module)
   .addWithInfo(
     'with OverlayTrigger: hover',
     () => render('This is a tooltip.', {trigger: 'click'}),
@@ -20,9 +18,9 @@ storiesOf('OverlayTrigger', module)
 
 const render = (props = {}) => (
   <div style={{paddingLeft: '200px'}}> 
-    <OverlayTrigger trigger="click" placement="bottom">
+    <ModalTrigger placement="bottom">
       <Button label="Click Me" variant="primary" />
-      <Tooltip open>Notes from a tooltip</Tooltip>
-    </OverlayTrigger>
+      <div className='coral-Dialog' modalContent>This is my modal</div>
+    </ModalTrigger>
   </div>
 );
