@@ -59,6 +59,7 @@ export default class Autocomplete extends React.Component {
       results = await getCompletions(value);
     }
 
+    // Avoid race condition where two getCompletions calls are made in parallel.
     if (this._value === value) {
       this.setState({results});
     }
@@ -96,7 +97,7 @@ export default class Autocomplete extends React.Component {
   }
 
   onFocusFirst() {
-    this.selectedIndex(0);
+    this.selectIndex(0);
   }
 
   onFocusLast() {
@@ -172,7 +173,7 @@ export default class Autocomplete extends React.Component {
                 focused={selectedIndex === i}
                 onMouseEnter={this.onMouseEnter.bind(this, i)}
                 onMouseDown={e => e.preventDefault()}>
-                  {typeof result === 'string' ? result : result.label}
+                  {result}
               </MenuItem>
             )}
           </Menu>

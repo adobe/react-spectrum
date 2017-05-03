@@ -1,4 +1,5 @@
 --compilers js:babel-register
 --require ignore-styles
+--require babel-polyfill
 --require ./test/.setup.js
 --recursive
