@@ -1,11 +1,32 @@
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+      opacity: 1;
+  }
+}
+
 .coral3-Backdrop {
-  background: rgba(0,0,0,.6);
+  animation-duration: 0.3s;
+  animation-name: fadein;
+  background: rgba(0,0,0,.4);
   position: fixed;
   top: 0; 
   bottom: 0; 
   left: 0; 
   right: 0;
   z-index: auto;
-  opacity: 0.5;
+}
 
+.coral3-modal {
+  animation-duration: 0.3s;
+  animation-name: fadein;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10040;
 }

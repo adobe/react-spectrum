@@ -56,7 +56,7 @@ storiesOf('Tooltip', module)
     'with OverlayTrigger: hover',
     () => render('This is a tooltip.', {trigger: 'click'}),
     {inline: true}
-  )
+  );
   // .addWithInfo(
   //   'openOn: click',
   //   () => render('This is a tooltip.', {openOn: 'click'}),
@@ -67,7 +67,7 @@ function render(content, props = {}) {
   if (props.trigger) {
     return (
       <OverlayTrigger placement="left" {...props}>
-        <Button label="djfjgh" variant='cta' />
+        <Button label="djfjgh" variant="primary" />
         <Tooltip
           title="Title"
           open>

@@ -45,8 +45,7 @@ export default class Tooltip extends Component {
             },
             className
           )
-        }
-        {...otherProps}>
+        }>
           {children}
       </div>
     );

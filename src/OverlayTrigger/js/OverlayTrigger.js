@@ -6,10 +6,6 @@ import ReactDOM from 'react-dom';
 import '../style/index.styl';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
-
-//  REMOVE TETHER DROP FROM OTHER COMPS SUCH AS TOOLTIP******************************************
-
-
 /**
  * Check if value one is inside or equal to the of value
  *
@@ -37,7 +33,7 @@ export default class OverlayTrigger extends Component {
      * Specify which action or actions trigger Overlay visibility
      */
     trigger: PropTypes.oneOfType([
-      triggerType, PropTypes.arrayOf(triggerType),
+      triggerType, PropTypes.arrayOf(triggerType)
     ]),
     /**
      * A millisecond delay amount to show and hide the Overlay once triggered
@@ -78,7 +74,7 @@ export default class OverlayTrigger extends Component {
     super(props, context);
     this._mountNode = null;
     this.state = {
-      show: props.defaultShow,
+      show: props.defaultShow
     };
   }
 
@@ -206,11 +202,6 @@ export default class OverlayTrigger extends Component {
   render() {
     const {
       trigger,
-      onBlur,
-      onClick,
-      onFocus,
-      onMouseOut,
-      onMouseOver,
       ...props
     } = this.props;
 

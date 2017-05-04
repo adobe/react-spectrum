@@ -1,27 +1,33 @@
 import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
-import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 
-const title = <Dialog.Header key="header">Title</Dialog.Header>;
-const content = <Dialog.Content key="content">Content</Dialog.Content>;
-const footer = <Dialog.Footer key="footer" />;
-const dialogChildren = [title, content, footer];
+const dialogChildren = <span>Content of the dialog</span>;
 
 storiesOf('Dialog', module)
   .addWithInfo(
     'Default',
-    () => render(dialogChildren),
+    () => render(dialogChildren, {title: 'Dialog title'}),
     {inline: true}
   )
   .addWithInfo(
-    'fullscreen: true',
-    () => render(dialogChildren, {fullscreen: true}),
+    'with confirm button',
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with confirm and cancel',
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with confirm function',
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm')}),
     {inline: true}
   )
   .addWithInfo(
     'Long content',
-    () => render(longMarkup),
+    () => render(longMarkup, {title: 'Dialog title'}),
     {inline: true}
   )
   .addWithInfo(
@@ -30,43 +36,28 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
-    'closable: false',
-    () => render(dialogChildren, {closable: false}),
-    {inline: true}
-  )
-  .addWithInfo(
     'variant: error',
-    () => render(dialogChildren, {variant: 'error'}),
+    () => render(dialogChildren, {title: 'Error', variant: 'error'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: warning',
-    () => render(dialogChildren, {variant: 'warning'}),
+    () => render(dialogChildren, {title: 'Warning', variant: 'warning'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: success',
-    () => render(dialogChildren, {variant: 'success'}),
+    () => render(dialogChildren, {title: 'Success', variant: 'success'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: help',
-    () => render(dialogChildren, {variant: 'help'}),
+    () => render(dialogChildren, {title: 'Help', variant: 'help'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: info',
-    () => render(dialogChildren, {variant: 'info'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'backdrop: none',
-    () => render(dialogChildren, {backdrop: 'none'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'backdrop: static',
-    () => render(dialogChildren, {backdrop: 'static'}),
+    () => render(dialogChildren, {title: 'Info', variant: 'info'}),
     {inline: true}
   );
 
@@ -74,23 +65,15 @@ function render(children, props = {}) {
   return (
     <Dialog
       open
-      closable
-      onClose={ action('close') }
-      { ...props }
-    >
-      { children }
+      onClose={action('close')}
+      {...props}>
+        {children}
     </Dialog>
   );
 }
 
-
-const longMarkup = [
-  // building an array of children like this will cause react to complain about needing a key
-  // since this is not how you will generally build a Dialog this should be fine
-  <Dialog.Header key="header">
-    Really long content...
-  </Dialog.Header>,
-  <Dialog.Content key="content">
+const longMarkup = (
+  <div>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
@@ -118,8 +101,5 @@ const longMarkup = [
       facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna
       eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus
     </p>
-  </Dialog.Content>,
-  <Dialog.Footer key="footer">
-    <Button variant="primary" label="Custom Button" close-dialog onClick={ action('custom-close-button') } />
-  </Dialog.Footer>
-];
+  </div>
+);

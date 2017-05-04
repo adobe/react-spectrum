@@ -1,6 +1,6 @@
 import Button from '../src/Button';
 import OverlayTrigger from '../src/OverlayTrigger';
-import Popover from '../src/Popover';
+// import Popover from '../src/Popover';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import Tooltip from '../src/Tooltip';
