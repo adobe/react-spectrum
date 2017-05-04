@@ -26,6 +26,7 @@ export default class Tab extends Component {
   render() {
     const {
       id,
+      label,
       children,
       className,
       selected,
@@ -61,7 +62,7 @@ export default class Tab extends Component {
         onClick={ this.handleClick }
       >
         { icon ? <Icon icon={ icon } size="S" /> : null }
-        <span className="coral-Tab-label">{ children }</span>
+        <span className="coral-Tab-label">{ label || children }</span>
       </div>
     );
   }
