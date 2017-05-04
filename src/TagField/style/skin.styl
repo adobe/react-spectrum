@@ -1,0 +1,47 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/components/textfield/skin.styl';
+
+.coral-TagField {
+  spectrum-textfield()
+
+  &:hover {
+    spectrum-textfield--hover()
+  }
+
+  &.is-focused {
+    spectrum-textfield--focus()
+  }
+
+  &.is-disabled {
+    spectrum-textfield--disabled()
+  }
+
+  &.is-invalid {
+    spectrum-textfield--invalid()
+    &.is-focused {
+      box-shadow: 0 0 0 1*$px $spectrum-color-border-input-invalid;
+    }
+  }
+}
+
+.coral-TagField--quiet {
+  spectrum-textfield--quiet()
+
+  &:hover {
+    spectrum-textfield--quiet--hover()
+  }
+
+  &.is-focused {
+    spectrum-textfield--quiet--focus()
+  }
+
+  &.is-disabled {
+    spectrum-textfield--quiet--disabled()
+  }
+
+  &.is-invalid {
+    spectrum-textfield--quiet--invalid()
+    &.is-focused {
+      box-shadow: 0 1*$px 0 $spectrum-color-border-input-invalid;
+    }
+  }
+}

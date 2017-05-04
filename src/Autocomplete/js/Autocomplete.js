@@ -1,99 +1,184 @@
+import autobind from 'autobind-decorator';
+import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
-import React, {Component} from 'react';
-import ReactSelect from 'react-select';
-import Tag from '../../TagList/js/Tag';
-import menuRenderer from '../../Select/js/SelectMenuRenderer';
-
+import {Menu, MenuItem} from '../../Menu';
+import React from 'react';
 import '../style/index.styl';
-import '../../List/style/index.styl';
 
-export default class Autocomplete extends Component {
+@autobind
+export default class Autocomplete extends React.Component {
   static defaultProps = {
-    multiple: false,
-    multiCloseOnSelect: true,
-    allowCreate: false,
-    noResultsText: 'No matching results.',
-    disabled: false
+    allowCreate: false
   };
 
-  arrowRenderer = ({onMouseDown}) => {
-    const {disabled} = this.props;
+  state = {
+    value: '',
+    showDropdown: false,
+    results: [],
+    selectedIndex: -1,
+    isFocused: false
+  };
 
-    return (
-      <button
-        type="button"
-        className="coral-Button coral-Button--secondary coral-Button--square
-          coral-Autocomplete-trigger"
-        onMouseDown={ onMouseDown }
-        disabled={ disabled }
-      >
-        <span className="coral-Icon coral-Icon--chevronDown coral-Icon--sizeXS" />
-      </button>
-    );
+  componentWillMount() {
+    this.componentWillReceiveProps(this.props);
   }
 
-  valuesComponent(props, {value, onClick, onRemove, disabled}) {
-    return (
-      <Tag
-        onClose={ (e) => onRemove(value, e) }
-        closable
-        disabled={ disabled }
-        onMouseDown={ (e) => onClick(value, e) }
-      >
-        { value[props.labelKey || 'label'] }
-      </Tag>
-    );
+  componentWillReceiveProps(props) {
+    if (props.value != null && props.value !== this.state.value) {
+      this.setValue(props.value);
+    }
+  }
+
+  onChange(value) {
+    let {onChange} = this.props;
+    if (onChange) {
+      onChange(value);
+    }
+
+    if (this.props.value == null) {
+      this.setValue(value);
+    }
+  }
+
+  setValue(value) {
+    this.setState({
+      value,
+      showDropdown: true,
+      selectedIndex: this.props.allowCreate && this.state.selectedIndex === -1 ? -1 : 0
+    });
+
+    this.getCompletions(value);
+  }
+
+  async getCompletions(value) {
+    this._value = value;
+
+    let results = [];
+    let {getCompletions} = this.props;
+    if (getCompletions) {
+      results = await getCompletions(value);
+    }
+
+    // Avoid race condition where two getCompletions calls are made in parallel.
+    if (this._value === value) {
+      this.setState({results});
+    }
+  }
+
+  onSelect(value) {
+    this.onChange(typeof value === 'string' ? value : value.label);
+    this.hideMenu();
+
+    if (this.props.onSelect) {
+      this.props.onSelect(value);
+    }
+  }
+
+  onFocus() {
+    this.setState({isFocused: true});
+  }
+
+  onBlur() {
+    this.hideMenu();
+    this.setState({isFocused: false});
+  }
+
+  onEscape() {
+    this.hideMenu();
+  }
+
+  onSelectFocused() {
+    let value = this.state.results[this.state.selectedIndex];
+    if (value) {
+      this.onSelect(value);
+    } else if (this.props.allowCreate) {
+      this.onSelect(this.state.value);
+    }
+  }
+
+  onFocusFirst() {
+    this.selectIndex(0);
+  }
+
+  onFocusLast() {
+    this.selectIndex(this.state.results.length - 1);
+  }
+
+  onFocusPrevious() {
+    let index = this.state.selectedIndex - 1;
+    if (index < 0) {
+      index = this.state.results.length - 1;
+    }
+
+    this.selectIndex(index);
+  }
+
+  onFocusNext() {
+    let index = (this.state.selectedIndex + 1) % this.state.results.length;
+    this.selectIndex(index);
+  }
+
+  onMouseEnter(index) {
+    this.selectIndex(index);
+  }
+
+  selectIndex(selectedIndex) {
+    this.setState({selectedIndex});
+  }
+
+  toggleMenu() {
+    if (this.state.showDropdown) {
+      this.hideMenu();
+    } else {
+      this.showMenu();
+    }
+  }
+
+  showMenu() {
+    this.setState({showDropdown: true, selectedIndex: 0});
+    this.getCompletions(this.state.value);
+  }
+
+  hideMenu() {
+    this.setState({showDropdown: false, selectedIndex: -1});
   }
 
   render() {
-    const {
-      multiple,
-      multi,
-      noResultsText,
-      className,
-      allowCreate,
-      onValueClick,
-      multiCloseOnSelect,
-      ...otherProps
-    } = this.props;
-
-    const multiSelect = multiple || multi;
-    const SelectComponent = allowCreate ? ReactSelect.Creatable : ReactSelect;
+    const {className} = this.props;
+    const {isFocused, results, selectedIndex, showDropdown, value} = this.state;
+    const children = React.Children.toArray(this.props.children);
+    const trigger = children.find(c => c.props.autocompleteInput) || children[0];
 
     return (
-      <SelectComponent
-        className={
-          classNames(className, 'coral-Autocomplete')
+      <div className={classNames('coral-Autocomplete', {'is-focused': isFocused}, className)}>
+        {children.map(child => {
+          if (child === trigger) {
+            return React.cloneElement(child, {
+              value: value,
+              onChange: chain(child.props.onChange, this.onChange),
+              onKeyDown: chain(child.props.onKeyDown, interpretKeyboardEvent.bind(this)),
+              onFocus: chain(child.props.onFocus, this.onFocus),
+              onBlur: chain(child.props.onBlur, this.onBlur)
+            });
+          }
+
+          return child;
+        })}
+
+        {showDropdown && results.length > 0 &&
+          <Menu className="coral-Autocomplete-menu" onSelect={this.onSelect}>
+            {results.map((result, i) =>
+              <MenuItem
+                value={result}
+                focused={selectedIndex === i}
+                onMouseEnter={this.onMouseEnter.bind(this, i)}
+                onMouseDown={e => e.preventDefault()}>
+                  {typeof result === 'string' ? result : result.label}
+              </MenuItem>
+            )}
+          </Menu>
         }
-        arrowRenderer={ this.arrowRenderer }
-        menuRenderer={ menuRenderer }
-        tabSelectsValue={ false }
-        clearable={ false }
-        autosize={ false }
-        allowCreate={ allowCreate }
-        multi={ multiSelect }
-        noResultsText={ <em>{ noResultsText }</em> }
-        optionClassName="coral-BasicList-item"
-        classAdditions={ {
-          'Select-control': 'coral-InputGroup coral-InputGroup--block coral-Autocomplete-inputGroup',
-          'Select-loading': 'coral-Wait',
-          'Select-arrow-zone': 'coral-InputGroup-button',
-          'Select-input': 'coral-InputGroup-input coral-DecoratedTextfield',
-          'Select-input-icon': 'coral-Icon coral-DecoratedTextfield-icon coral-Autocomplete-icon coral-Icon--sizeXS',
-          'Select-input-field': 'coral-DecoratedTextfield-input coral-Autocomplete-input coral-Textfield',
-          'Select-menu-outer': 'coral-Overlay',
-          'Select-menu': 'coral-BasicList coral-ButtonList coral-Autocomplete-selectList coral-Autocomplete-overlay',
-          'Select-values': 'coral-TagList coral-Autocomplete-tagList',
-          'Select-noresults': 'coral-BasicList-item coral-ButtonList-item'
-        } }
-        valueComponent={ multiSelect && this.valuesComponent.bind(this, this.props) }
-        multiCloseOnSelect={ multiCloseOnSelect }
-        { ...otherProps }
-        onValueClick={ onValueClick || (function () {}) }
-        backspaceToRemoveMessage=""
-      />
+      </div>
     );
   }
 }
-
-Autocomplete.displayName = 'Autocomplete';
