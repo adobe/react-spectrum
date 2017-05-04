@@ -1,0 +1,23 @@
+.coral-Breadcrumbs {
+  .coral-Breadcrumb {
+    color: $spectrum-color-constant-grey8;
+    &:not(:last-child):hover {
+      color: $spectrum-color-constant-grey10;
+    }
+
+    .coral-Icon {
+      color: $spectrum-color-constant-grey8;
+    }
+  }
+
+  &.is-disabled {
+    .coral-Breadcrumb {
+      color: $spectrum-color-constant-grey6;
+
+      .coral-Icon,
+      &:hover {
+        color: $spectrum-color-constant-grey6;
+      }
+    }
+  }
+}
