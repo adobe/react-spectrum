@@ -22,9 +22,7 @@ function getCompletions(text) {
 function getCompletionsAsync(input) {
   return fetch(`https://api.github.com/search/users?q=${input}`)
     .then((response) => response.json())
-    .then((json) => {
-      return json.items.map(item => ({label: item.login, id: item.id}));
-    });
+    .then((json) => json.items.map(item => ({label: item.login, id: item.id})));
 }
 
 storiesOf('Autocomplete', module)
