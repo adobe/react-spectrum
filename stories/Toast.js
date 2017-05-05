@@ -18,7 +18,7 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'closable',
-    () => <Toast closable>Toast is done.</Toast>,
+    () => <Toast closable onClose={action('onClose')}>Toast is done.</Toast>,
     {inline: true}
   )
   .addWithInfo(

@@ -5,6 +5,7 @@ import Toast from './Toast';
 
 let TOAST_CONTAINER = null;
 const TOAST_TIMEOUT = 5000;
+const TOAST_ANIMATION_TIME = 200;
 
 export class ToastContainer extends React.Component {
   state = {
@@ -32,10 +33,10 @@ export class ToastContainer extends React.Component {
       <CSSTransitionGroup
         className="coral-ToastContainer"
         transitionName="coral-Toast-slide"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={200}>
-          {this.state.toasts.map(toast =>
-            React.cloneElement(toast, {onClose: this.remove.bind(this, toast)})
+        transitionEnterTimeout={TOAST_ANIMATION_TIME}
+        transitionLeaveTimeout={TOAST_ANIMATION_TIME}>
+          {this.state.toasts.map((toast, i) =>
+            React.cloneElement(toast, {key: i, onClose: this.remove.bind(this, toast)})
           )}
       </CSSTransitionGroup>
     );
@@ -75,4 +76,8 @@ export function error(message, options = {}) {
 
 export function info(message, options = {}) {
   addToast(<Toast closable variant="info" {...options}>{message}</Toast>, options.timeout);
+}
+
+export function help(message, options = {}) {
+  addToast(<Toast closable variant="help" {...options}>{message}</Toast>, options.timeout);
 }
