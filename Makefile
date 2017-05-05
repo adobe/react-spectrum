@@ -7,8 +7,6 @@ all: node_modules
 
 node_modules: package.json
 	npm install
-	# npm installs the wrong react-select because of the bundledDependencies
-	npm install git+https://0b7e8fbc147e13115b0fa573c41504bf441660fa:x-oauth-basic@git.corp.adobe.com/React/react-select.git#react-coral
 	touch $@
 
 run:
@@ -35,4 +33,5 @@ build:
 	find dist -name *.js -exec sed -i.bak 's/index.styl/index.css/g' {} \;
 	find dist -name *.bak -delete
 	cp -R dist/* ./.
-	rm -rf dist
+	rm -rf dist/*
+	cp -R src/Icon/style/resources dist/.
