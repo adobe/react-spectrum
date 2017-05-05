@@ -59,6 +59,7 @@
     "file-loader": "^0.9.0",
     "ignore-styles": "^5.0.1",
     "jsdom": "^9.8.0",
+    "lfcdn": "^0.4.1",
     "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
     "nib": "^1.1.2",
