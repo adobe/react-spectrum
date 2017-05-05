@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import ShellMenu from './internal/ShellMenu';
+import ShellMenu from './ShellMenu';
 
 import Button from '../../Button';
 import Icon from '../../Icon';
 
-import './ShellUserProfile.styl';
+import '../style/ShellUserProfile.styl';
 
 export default function ShellUserProfile({
   name,

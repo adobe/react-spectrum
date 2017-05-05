@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-import ShellMenu from './internal/ShellMenu';
+import ShellMenu from './ShellMenu';
 
 import Search from '../../Search';
 import Button from '../../Button';
@@ -8,7 +8,7 @@ import List from '../../List';
 import ListItem from '../../List/js/ListItem';
 import Wait from '../../Wait';
 
-import './ShellHelp.styl';
+import '../style/ShellHelp.styl';
 
 export default class ShellHelp extends Component {
   static defaultProps = {

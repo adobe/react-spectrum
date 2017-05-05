@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import Icon from '../../Icon';
 
-import './ShellHeader.styl';
+import '../style/ShellHeader.styl';
 
 export default function ShellHeader({
   homeURL = '#',

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import ListItem from '../../List/js/ListItem';
 import Icon from '../../Icon';
 
-import './ShellOrganization.styl';
+import '../style/ShellOrganization.styl';
 
 export default class ShellOrganization extends Component {
   static defaultProps = {

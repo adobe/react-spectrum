@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Portal from 'react-portal';
 import {getTransitionEvent} from '../../../utils/transition';
 
-import './ShellMenu.styl';
+import '../style/ShellMenu.styl';
 
 export default class ShellMenu extends Component {
   static defaultProps = {
