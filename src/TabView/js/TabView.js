@@ -1,7 +1,7 @@
 import autobind from 'autobind-decorator';
+import {arraysEqual} from '../../utils/array';
 import classNames from 'classnames';
 import React from 'react';
-import shallowEqual from 'shallow-equal/arrays';
 import {TabList} from '../../TabList';
 import '../style/index.styl';
 
@@ -19,7 +19,7 @@ export default class TabView extends React.Component {
     let oldChildren = React.Children.toArray(this.props.children).map(child => child.key);
     let newChildren = React.Children.toArray(props.children).map(child => child.key);
 
-    if (props.selectedIndex !== this.props.selectedIndex || !shallowEqual(oldChildren, newChildren)) {
+    if (props.selectedIndex !== this.props.selectedIndex || !arraysEqual(oldChildren, newChildren)) {
       this.setState({
         selectedIndex: props.selectedIndex || 0
       });
