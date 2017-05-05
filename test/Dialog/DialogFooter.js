@@ -1,66 +1,42 @@
-import React from 'react';
-import expect from 'expect';
-import {shallow} from 'enzyme';
-import DialogFooter from '../../src/Dialog/js/DialogFooter';
+import assert from 'assert';
 import Button from '../../src/Button';
+import DialogFooter from '../../src/Dialog/js/DialogFooter';
+import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('DialogFooter', () => {
-  it('renders an OK button if no children are supplied', () => {
+  it('renders no buttons on default', () => {
     const tree = shallow(<DialogFooter />);
-    const button = tree.find(Button);
-    expect(button.prop('variant')).toBe('primary');
-    expect(button.prop('label')).toBe('OK');
+    assert(tree.hasClass('coral-Dialog-footer'));
+    assert.equal(tree.find(Button).length, 0);
   });
 
-  it('supports onClose', () => {
-    const spy = expect.createSpy();
-    const tree = shallow(<DialogFooter onClose={ spy } />);
-    tree.find(Button).simulate('click');
-    expect(spy).toHaveBeenCalled();
+  it('renders an OK button using confirmLabel', () => {
+    const tree = shallow(<DialogFooter confirmLabel="OK" />);
+    let button = tree.find(Button);
+    assert.equal(button.length, 1);
+    assert.equal(button.prop('variant'), 'primary');
+    assert.equal(button.prop('label'), 'OK');
   });
 
-  describe('adds onClose to children with close-dialog property on them', () => {
-    const render = (onCloseSpy, onClickSpy) => (
-      shallow(
-        <DialogFooter onClose={ onCloseSpy }>
-          <Button label="Foo" onClick={ onClickSpy || null } close-dialog />
-        </DialogFooter>
-      ).find({label: 'Foo'})
-    );
-
-    it('by adding onClick handler', () => {
-      const spy = expect.createSpy();
-      const child = render(spy);
-      expect(child.prop('close-dialog')).toNotExist();
-      child.simulate('click');
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('without overriding onClick handler', () => {
-      const spy = expect.createSpy();
-      const otherSpy = expect.createSpy();
-      const child = render(spy, otherSpy);
-      expect(child.prop('close-dialog')).toNotExist();
-      child.simulate('click');
-
-      expect(spy).toHaveBeenCalled();
-      // Any onClick added to the child component manually should still be called.
-      expect(otherSpy).toHaveBeenCalled();
-    });
+  it('renders an OK and close button', () => {
+    const tree = shallow(<DialogFooter confirmLabel="OK" cancelLabel="Close" />);
+    let buttons = tree.find(Button);
+    assert.equal(buttons.length, 2);
+    assert.equal(buttons.at(0).prop('label'), 'Close');
+    assert.equal(buttons.at(1).prop('label'), 'OK');
+    assert.equal(buttons.at(0).prop('variant'), 'secondary');
+    assert.equal(buttons.at(1).prop('variant'), 'primary');
   });
 
-  it('supports children', () => {
-    const tree = shallow(<DialogFooter>Foo</DialogFooter>);
-    expect(tree.text()).toBe('Foo');
-  });
-
-  it('supports additional classNames', () => {
-    const tree = shallow(<DialogFooter className="myClass" />);
-    expect(tree.hasClass('myClass')).toBe(true);
-  });
-
-  it('supports additional properties', () => {
-    const tree = shallow(<DialogFooter foo />);
-    expect(tree.prop('foo')).toBe(true);
+  it('Supports the onClose and onConfirm', () => {
+    const spy = sinon.spy();
+    const tree = shallow(<DialogFooter confirmLabel="OK" cancelLabel="Close" onClose={spy} onConfirm={spy} />);
+    let buttons = tree.find(Button);
+    buttons.at(0).simulate('click');
+    assert(spy.calledOnce);
+    buttons.at(1).simulate('click');
+    assert(spy.calledTwice);
   });
 });

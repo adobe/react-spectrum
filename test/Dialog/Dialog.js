@@ -8,12 +8,11 @@ import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
 
-
 describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
     assert(tree.hasClass('coral-Dialog--default'));
-    assert(tree.hasClass('coral-Dialog--M'), );
+    assert(tree.hasClass('coral-Dialog--M'));
   });
 
   it('supports optional title', () => {
