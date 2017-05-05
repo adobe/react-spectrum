@@ -1,0 +1,76 @@
+@import '../../commons'
+
+.coral-Toast {
+  display: inline-flex;
+  align-items: center;
+  padding: 8*$px 18*$px 8*$px 18*$px;
+  height: 32*$px;
+  border-radius: $spectrum-border-radius;
+
+  &.is-closable {
+    padding: 8*$px 6*$px 8*$px 18*$px;
+  }
+
+  > .coral-Icon {
+    margin-right: 8*$px;
+  }
+
+  .coral-Toast-closeButton {
+    margin-left: 6*$px;
+    margin-right: 0;
+    width: 2rem;
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+
+    &:hover,
+    &:focus {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.coral-ToastContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10050;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+
+  .coral-Toast {
+    margin-top: 5*$px;
+    pointer-events: all;
+  }
+}
+
+.coral-Toast-slide-enter, .coral-Toast-slide-appear {
+  opacity: 0;
+  transform: translate3d(0, -100%, 0);
+}
+
+.coral-Toast-slide-enter-active, .coral-Toast-slide-appear-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: all $spectrum-transition-time;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+}
+
+.coral-Toast-slide-leave {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.coral-Toast-slide-leave-active {
+  opacity: 0;
+  transform: translate3d(0, -100%, 0);
+  transition: all $spectrum-transition-time ease-in-out;
+}
+
+@import 'light'
+@import 'dark'

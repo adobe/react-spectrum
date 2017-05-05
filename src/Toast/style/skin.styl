@@ -1,0 +1,39 @@
+.coral-Toast {
+  color: $spectrum-color-text-notification;
+  background-color: $spectrum-color-background-notification-default;
+
+  &.coral-Toast-icon {
+    color: $spectrum-color-notification-icon;
+  }
+
+  .coral-Toast-closeButton {
+    color: $spectrum-color-notification-button;
+
+    &:hover,
+    &:focus {
+      color: $spectrum-color-notification-button;
+      background-color: rgba($spectrum-color-notification-button, 0.1);
+    }
+
+    &:active {
+      background-color: rgba($spectrum-color-notification-button, 0.15);
+    }
+  }
+
+  &.coral-Toast--error {
+    background-color: $spectrum-color-background-notification-error;
+  }
+
+  &.coral-Toast--info,
+  &.coral-Toast--help {
+    background-color: $spectrum-color-background-notification-info;
+  }
+
+  &.coral-Toast--success {
+    background-color: $spectrum-color-background-notification-success;
+  }
+
+  &.coral-Toast--warning {
+    background-color: $spectrum-color-background-notification-warning;
+  }
+}
