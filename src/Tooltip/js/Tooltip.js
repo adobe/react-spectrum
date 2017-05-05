@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
-
 import '../style/index.styl';
 
 const ARROWS = {
@@ -29,8 +28,7 @@ export default class Tooltip extends Component {
       variant,
       children,
       className,
-      placement,
-      ...otherProps
+      placement
     } = this.props;
 
     return (
@@ -51,5 +49,3 @@ export default class Tooltip extends Component {
     );
   }
 }
-
-Tooltip.displayName = 'Tooltip';
