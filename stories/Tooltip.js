@@ -8,18 +8,13 @@ import Button from '../src/Button';
 
 storiesOf('Tooltip', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render('This is a tooltip.'),
-    {inline: true}
-  )
-  .addWithInfo(
-    'Long content',
-    () => render(longMarkup),
     {inline: true}
   )
   .addWithInfo(
@@ -53,24 +48,22 @@ storiesOf('Tooltip', module)
     {inline: true}
   )
   .addWithInfo(
-    'with OverlayTrigger: hover',
+    'Long content',
+    () => render(longMarkup),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with OverlayTrigger: using click',
     () => render('This is a tooltip.', {trigger: 'click'}),
     {inline: true}
   );
-  // .addWithInfo(
-  //   'openOn: click',
-  //   () => render('This is a tooltip.', {openOn: 'click'}),
-  //   {inline: true}
-  // );
 
 function render(content, props = {}) {
   if (props.trigger) {
     return (
-      <OverlayTrigger placement="left" {...props}>
+      <OverlayTrigger placement="right" {...props}>
         <Button label="djfjgh" variant="primary" />
-        <Tooltip
-          title="Title"
-          open>
+        <Tooltip open>
             {content}
         </Tooltip>
       </OverlayTrigger>
@@ -80,7 +73,6 @@ function render(content, props = {}) {
   return (
     <div style={ {display: 'inline-block'} }>
       <Tooltip
-        title="Title"
         {...props}
         open>
           {content}

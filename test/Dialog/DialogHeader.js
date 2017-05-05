@@ -1,5 +1,4 @@
 import assert from 'assert';
-import Button from '../../src/Button';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
 import Icon from '../../src/Icon';
 import React from 'react';

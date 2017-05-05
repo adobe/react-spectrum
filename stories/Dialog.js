@@ -59,6 +59,21 @@ storiesOf('Dialog', module)
     'variant: info',
     () => render(dialogChildren, {title: 'Info', variant: 'info'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'size: S',
+    () => render(dialogChildren, {title: 'Dialog title', size: 'S'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'size: M',
+    () => render(dialogChildren, {title: 'Dialog title', size: 'M'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'size: L',
+    () => render(dialogChildren, {title: 'Dialog title', size: 'L'}),
+    {inline: true}
   );
 
 function render(children, props = {}) {
