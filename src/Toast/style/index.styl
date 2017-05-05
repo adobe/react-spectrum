@@ -3,8 +3,17 @@
 .coral-Toast {
   display: inline-flex;
   align-items: center;
-  padding: 8*$px 6*$px 8*$px 18*$px;
+  padding: 8*$px 18*$px 8*$px 18*$px;
+  height: 32*$px;
   border-radius: $spectrum-border-radius;
+
+  &.is-closable {
+    padding: 8*$px 6*$px 8*$px 18*$px;
+  }
+
+  > .coral-Icon {
+    margin-right: 8*$px;
+  }
 
   .coral-Toast-closeButton {
     margin-left: 6px;

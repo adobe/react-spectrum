@@ -13,6 +13,11 @@ storiesOf('Toast', module)
   ))
   .addWithInfo(
     'Default',
+    () => <Toast>Toast is done.</Toast>,
+    {inline: true}
+  )
+  .addWithInfo(
+    'closable',
     () => <Toast closable>Toast is done.</Toast>,
     {inline: true}
   )
@@ -29,6 +34,11 @@ storiesOf('Toast', module)
   .addWithInfo(
     'variant = info',
     () => <Toast closable variant="info">Toast is high carb.</Toast>,
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant = help',
+    () => <Toast closable variant="help">Toast is high carb.</Toast>,
     {inline: true}
   )
   .addWithInfo(
