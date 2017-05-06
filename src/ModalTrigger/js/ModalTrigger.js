@@ -1,6 +1,7 @@
 
 import autobind from 'autobind-decorator';
 import Modal from 'react-overlays/lib/Modal';
+import PropTypes from 'prop-types';
 import React, {cloneElement, Component} from 'react';
 import '../style/index.styl';
 
@@ -31,7 +32,7 @@ export default class ModalTrigger extends Component {
     props.onClose = this.hide;
 
     return (
-      <div className="modalstuff">
+      <div>
         {children.map((child) => {
           if (child === trigger) {
             return cloneElement(child, {onClick: this.trigger});

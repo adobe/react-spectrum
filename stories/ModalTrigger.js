@@ -2,28 +2,44 @@ import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf, action} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 
 storiesOf('ModalTrigger', module)
+  .addDecorator(story => (
+    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
+      {story()}
+    </VerticalCenter>
+  ))
   .addWithInfo(
-    'with OverlayTrigger: hover',
-    () => render('This is a tooltip.', {trigger: 'click'}),
+    'Default',
+    () => render(),
     {inline: true}
   )
   .addWithInfo(
-    'with OverlayTrigger: hover',
-    () => render('This is a tooltip.', {trigger: 'click'}),
+    'with onConfirm',
+    () => render({onConfirm: action('confirm')}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with onConfirm () => false',
+    () => render({onConfirm: () => false}),
     {inline: true}
   );
 
 const render = (props = {}) => (
-  <div style={{paddingLeft: '200px'}}> 
-    <ModalTrigger>
-      <Button label="Click Me" variant="primary" />
-      <Dialog title="the title" confirmLabel="do it" size="S" cancelLabel="close" variant="help" onConfirm={() => false}>
-        <span>the modal dialogsdiuhfsdjhgediu fvuygf diuv fuhv sdiugv j content</span>
-      </Dialog>
-    </ModalTrigger>
-  </div>
+  <ModalTrigger>
+    <Button label="Click Me" variant="primary" modalTrigger />
+    <Dialog
+      modalContent
+      title="The title"
+      confirmLabel="Do it"
+      size="S"
+      cancelLabel="close"
+      variant="help"
+      {...props}>
+        <span>the modal dialog content goes here</span>
+    </Dialog>
+  </ModalTrigger>
 );

@@ -62,7 +62,7 @@ function render(content, props = {}) {
   if (props.trigger) {
     return (
       <OverlayTrigger placement="right" {...props}>
-        <Button label="djfjgh" variant="primary" />
+        <Button label="Click me" variant="primary" />
         <Tooltip open>
             {content}
         </Tooltip>
@@ -71,7 +71,7 @@ function render(content, props = {}) {
   }
 
   return (
-    <div style={ {display: 'inline-block'} }>
+    <div style={{display: 'inline-block'}}>
       <Tooltip
         {...props}
         open>
