@@ -1,7 +1,6 @@
 
 import autobind from 'autobind-decorator';
 import Modal from 'react-overlays/lib/Modal';
-import PropTypes from 'prop-types';
 import React, {cloneElement, Component} from 'react';
 import '../style/index.styl';
 

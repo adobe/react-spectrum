@@ -53,4 +53,4 @@ function render(type, props = {}) {
       <Tooltip open>Notes from a tooltip</Tooltip>
     </OverlayTrigger>
   );
-};
+}
