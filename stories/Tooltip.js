@@ -1,24 +1,20 @@
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
+import OverlayTrigger from '../src/OverlayTrigger';
 
 import Tooltip from '../src/Tooltip';
 import Button from '../src/Button';
 
 storiesOf('Tooltip', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
     'Default',
     () => render('This is a tooltip.'),
-    {inline: true}
-  )
-  .addWithInfo(
-    'Long content',
-    () => render(longMarkup),
     {inline: true}
   )
   .addWithInfo(
@@ -52,34 +48,34 @@ storiesOf('Tooltip', module)
     {inline: true}
   )
   .addWithInfo(
-    'openOn: hover',
-    () => render('This is a tooltip.', {openOn: 'hover'}),
+    'Long content',
+    () => render(longMarkup),
     {inline: true}
   )
   .addWithInfo(
-    'openOn: click',
-    () => render('This is a tooltip.', {openOn: 'click'}),
+    'with OverlayTrigger: using click',
+    () => render('This is a tooltip.', {trigger: 'click'}),
     {inline: true}
   );
 
-function render(children, props = {}) {
-  let buttonLbl = 'Target';
-  if (props.openOn === 'hover') {
-    buttonLbl = 'Hover Over Me';
+function render(content, props = {}) {
+  if (props.trigger) {
+    return (
+      <OverlayTrigger placement="right" {...props}>
+        <Button label="Click me" variant="primary" />
+        <Tooltip open>
+            {content}
+        </Tooltip>
+      </OverlayTrigger>
+    );
   }
-  if (props.openOn === 'click') {
-    buttonLbl = 'Click Me';
-  }
+
   return (
-    <div style={ {display: 'inline-block'} }>
+    <div style={{display: 'inline-block'}}>
       <Tooltip
-        title="Title"
-        openOn="always"
-        open
-        content={ children }
-        { ...props }
-      >
-        <Button label={ buttonLbl } />
+        {...props}
+        open>
+          {content}
       </Tooltip>
     </div>
   );

@@ -28,25 +28,25 @@ $spectrum-dialog-header-font-size = 18*$px;
 $spectrum-dialog-header-height = 30*$px;
 $spectrum-dialog-padding = 25*$px;
 
+$spectrum-dialog-width-small = 300*$px;
+$spectrum-dialog-width-medium = 600*$px;
+$spectrum-dialog-width-large = 90%;
+
+
 $spectrum-dialog-closebutton-height = 18*$px;
 
-// The full screen container in which the dialog resides
-// Because of this contain, clicks will never fall though when a dialog is visible
 .coral-Dialog {
-  position: fixed;
-  top: 0;
-  right: 0
-  bottom: 0;
-  left: 0;
+  position: relative;
+  margin: $spectrum-dialog-margin auto;
 
   // Scroll vertically only
   display: block;
   overflow-x: hidden;
   overflow-y: auto;
+  outline: none;
 
   // Match the fade time of the backdrop
   transition: opacity $spectrum-transition-time;
-
   opacity: 0;
 
   &.coral-Dialog--backdropNone {
@@ -56,10 +56,22 @@ $spectrum-dialog-closebutton-height = 18*$px;
       pointer-events: auto;
     }
   }
-}
 
-.coral-Dialog.is-open {
-  opacity: 1;
+  &.coral-Dialog--S {
+    width: $spectrum-dialog-width-small;
+  }
+
+  &.coral-Dialog--M {
+    width: $spectrum-dialog-width-medium;
+  }
+
+  &.coral-Dialog--L {
+    width: $spectrum-dialog-width-large;
+  }
+
+  &.is-open {
+    opacity: 1;
+  }
 }
 
 .coral-Dialog-header {
@@ -76,23 +88,16 @@ $spectrum-dialog-closebutton-height = 18*$px;
 
 .coral-Dialog-wrapper {
   display: block;
-
-  min-width: $spectrum-dialog-min-width;
-  max-width: $spectrum-dialog-max-width;
-  margin: $spectrum-dialog-margin;
   padding: $spectrum-dialog-padding;
-
   border-radius: $spectrum-dialog-border-radius;
   outline: none; // Firefox shows outline
 }
 
 .coral-Dialog-header {
   position: relative;
-
   box-sizing: border-box;
   width: 100%;
   height: $spectrum-dialog-header-height;
-
   border-radius: $spectrum-dialog-border-radius $spectrum-dialog-border-radius 0 0;
   outline: none; // Hide focus outline around header
 
@@ -101,9 +106,7 @@ $spectrum-dialog-closebutton-height = 18*$px;
     right: 0;
     bottom: 0;
     left: 0;
-
     height: $spectrum-dialog-border-width;
-
     content: '';
   }
 }
@@ -111,12 +114,9 @@ $spectrum-dialog-closebutton-height = 18*$px;
 .coral-Dialog-title {
   font-size: $spectrum-dialog-header-font-size;
   line-height: 100%;
-
   overflow: visible;
-
   padding-left: 0;
   padding-right: 15*$px;
-
   outline: none; // Hide focus outline
 
   &,
@@ -133,13 +133,10 @@ $spectrum-dialog-closebutton-height = 18*$px;
 
 .coral-Dialog-closeButton {
   line-height: $spectrum-dialog-closebutton-height;
-
   position: absolute;
   top: 0;
   right: 0;
-
   display: none;
-
   width: $spectrum-dialog-closebutton-height;
   height: $spectrum-dialog-closebutton-height;
 }
@@ -148,6 +145,7 @@ $spectrum-dialog-closebutton-height = 18*$px;
   display: block;
   box-sizing: border-box;
   padding: 0;
+  margin-top: 20*$px;
 
   // Stop right there! The dialog's body should NOT scroll
 
@@ -165,9 +163,7 @@ $spectrum-dialog-closebutton-height = 18*$px;
   }
 
   border-radius: 0 0 $coral-dialog-border-radius $coral-dialog-border-radius;
-
   text-align: right; // right align buttons
-
   outline: none; // Hide focus outline
 
   .coral-Button {
@@ -186,64 +182,6 @@ $spectrum-dialog-closebutton-height = 18*$px;
     margin-left: 0;
   }
 }
-
-.coral-Dialog--fullscreen {
-  .coral-Dialog-wrapper {
-    position: absolute;
-    top: 0;
-    right: auto;
-    bottom: auto;
-    left: 0;
-
-    box-sizing: border-box;
-    width: 100%; // Fit vertically
-    min-width: 100%; // Fit vertically
-    max-width: none;
-    height: auto; // Variable height
-    min-height: 100%; // Full screen height
-    max-height: none;
-    margin: 0;
-
-    border: none; // Remove border
-  }
-
-  .coral-Dialog-header {
-    position: fixed; // Fixed so the header stays top even it scrolls.
-    top: 0;
-    right: $spectrum-dialog-padding;
-    left: $spectrum-dialog-padding;
-
-    box-sizing: content-box;
-    width: auto;
-    padding-top: $spectrum-dialog-padding;
-    border-radius: 0;
-  }
-
-  .coral-Dialog-typeIcon {
-    top: $spectrum-dialog-padding - 2*$px;
-  }
-
-  .coral-Dialog-footer {
-    position: fixed; // Fixed so the footer stays bottom even it scrolls.
-    right: $spectrum-dialog-padding;
-    bottom: 0;
-    left: $spectrum-dialog-padding;
-
-    padding-top: ($spectrum-dialog-padding/2);
-    padding-bottom: ($spectrum-dialog-padding/2); // looks better with half padding.
-  }
-
-  .coral-Dialog-footer,
-  .coral-Dialog-header {
-    // Avoid overlap with dialog content if containing elements with multiple layers
-    z-index: 1
-  }
-
-  .coral-Dialog-content {
-    padding-top: $spectrum-dialog-header-height;
-  }
-}
-
 
 @require 'light.styl'
 @require 'dark.styl'

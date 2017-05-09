@@ -4,10 +4,7 @@ import expect from 'expect';
 import {Menu, MenuItem} from '../../src/Menu';
 import React from 'react';
 import {shallow} from 'enzyme';
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+import {sleep} from '../utils';
 
 describe('Autocomplete', () => {
   it('should render children', () => {
