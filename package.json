@@ -23,7 +23,7 @@
     "react-overlays": "^0.7.0",
     "react-portal": "^3.0.0",
     "react-transition-group": "^1.1.3",
-    "stringify": "^5.1.0",
+    "stringify": "^5.1.0"
   },
   "devDependencies": {
     "@coralui/coralui-core": "^4.4.0",
