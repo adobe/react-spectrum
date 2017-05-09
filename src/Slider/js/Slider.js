@@ -88,7 +88,8 @@ export default class Slider extends React.Component {
     let styleKey = this.props.orientation === 'vertical' ? 'bottom' : 'left';
     let sliderClasses = classNames('coral3-Slider', {
       'is-disabled': isDisabled, 
-      'coral3-Slider--vertical': orientation === 'vertical'}
+      'coral3-Slider--vertical': orientation === 'vertical'},
+      this.props.className
     );
     return (
       <div

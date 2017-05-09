@@ -1,4 +1,3 @@
-
 import autobind from 'autobind-decorator';
 import Modal from 'react-overlays/lib/Modal';
 import React, {cloneElement, Component} from 'react';
@@ -27,8 +26,7 @@ export default class ModalTrigger extends Component {
     const trigger = children.find(c => c.props.modalTrigger) || children[0];
     const modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
 
-    let props = {};
-    props.onClose = this.hide;
+    let modalProps = {onClose: this.hide};
 
     return (
       <div>
@@ -42,7 +40,7 @@ export default class ModalTrigger extends Component {
                 onHide={this.hide}
                 backdropClassName="coral3-Backdrop"
                 className="coral3-modal">
-                  {cloneElement(modalChild, props)}
+                  {cloneElement(modalChild, modalProps)}
               </Modal>
             );
           } else {
