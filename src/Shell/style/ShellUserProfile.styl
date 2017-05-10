@@ -1,14 +1,106 @@
-.coral-Shell-menu-button .coral-Icon.is-image.coral-Icon--sizeM .coral-Icon-image {
-  border-radius: 1.5rem;
-  margin-top: 5.5px;
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require '../../commons'
+
+coral-shell-user-width = 200*$px;
+$coral-shell-user-image-size = 48*$px;
+$coral-shell-user-name-color = $spectrum-color-constant-grey9
+$coral-shell-user-heading-color = $spectrum-color-constant-grey8
+$coral-Shell-user-background = $spectrum-color-constant-grey1
+
+.coral3-Shell-user {
+  display: block;
+
+  background: $coral-Shell-user-background;
 }
-.coral-Shell-user-container {
+
+.coral3-Shell-user-container {
+  padding: 20*$px 16*$px 16*$px 16*$px;
+
+  min-width: $coral-shell-user-width;
+}
+
+.coral3-Shell-user-image {
+  float: left;
+
+  width: $coral-shell-user-image-size;
+  height: $coral-shell-user-image-size;
+  margin-right: 16*$px;
+  line-height: $coral-shell-user-image-size;
+}
+
+.coral3-Shell-user-avatar {
+  &:before {
+    width: $coral-shell-user-image-size !important;
+    height: $coral-shell-user-image-size !important;
+    border-radius: $coral-shell-user-image-size;
+    font-size: $coral-shell-user-image-size;
+  }
+  &.is-image {
+    .coral-Icon-image {
+      width: $coral-shell-user-image-size !important;
+      height: $coral-shell-user-image-size !important;
+      border-radius: $coral-shell-user-image-size;
+    }
+  }
+}
+
+.coral3-Shell-user-name {
+  display: block;
+
+  font-size: 15*$px;
+  font-weight: bold;
+  color: $coral-shell-user-name-color;
+}
+
+.coral3-Shell-user-heading,
+.coral3-Shell-user-subheading {
+  display: block;
+
+  font-size: 13*$px;
+  color: $coral-shell-user-heading-color;
+}
+
+.coral3-Shell-user-footer {
+  width: 100%;
+  display: table;
+
+  margin-top: 8*$px;
+
+  background-color: rgb(250, 250, 250);
+
+  border-top: 1*$px solid rgb(235, 235, 235);
+
+  .coral-Button {
+    display: table-cell;
+
+    // Make them be 44px so Lindsay is happy
+    padding: 3*$px 0;
+
+    border-radius: 0;
+    border-width: 0;
+
+    // Missing in .coral-Button
+    text-align: center;
+
+    & + .coral-Button {
+      &, &:focus {
+        border-left: 1*$px solid rgb(235, 235, 235);
+      }
+    }
+  }
+}
+
+.coral3-Shell-menu-button .coral-Icon.is-image.coral-Icon--sizeM .coral-Icon-image {
+  border-radius: 1.5rem;
+  margin-top: 2.5*$px;
+}
+.coral3-Shell-user-container {
   overflow: hidden;
   min-width: 300px;
 
-  .coral-Shell-user-name,
-  .coral-Shell-user-heading,
-  .coral-Shell-user-subheading {
+  .coral3-Shell-user-name,
+  .coral3-Shell-user-heading,
+  .coral3-Shell-user-subheading {
     max-width: 360px;
     overflow: hidden;
     text-overflow: ellipsis;

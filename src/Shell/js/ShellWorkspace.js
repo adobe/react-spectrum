@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import '../style/ShellWorkspace.styl';
+
 export default function ShellWorkspace({
   href = '#',
   label,
@@ -13,7 +15,7 @@ export default function ShellWorkspace({
     <a
       className={
         classNames(
-          'coral-Shell-workspaces-workspace',
+          'coral3-Shell-workspaces-workspace',
           {'is-selected': selected},
           className
         )

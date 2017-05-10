@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import '../style/Shell.styl';
+
 export default function ShellContent({
   className,
   children,
@@ -10,7 +12,7 @@ export default function ShellContent({
     <div
       className={
         classNames(
-          'coral-Shell-content',
+          'coral3-Shell-content',
           className
         )
       }

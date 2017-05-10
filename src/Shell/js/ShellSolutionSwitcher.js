@@ -4,6 +4,8 @@ import ShellMenu from './ShellMenu';
 
 import Button from '../../Button';
 
+import '../style/ShellSolutionSwitcher.styl';
+
 export default function ShellSolutionSwitcher({
   className,
   children,
@@ -18,7 +20,7 @@ export default function ShellSolutionSwitcher({
       top
       target={
         <Button
-          className="coral-Shell-menu-button"
+          className="coral3-Shell-menu-button"
           variant="minimal"
           icon="apps"
           square
@@ -29,12 +31,12 @@ export default function ShellSolutionSwitcher({
       <div
         className={
           classNames(
-            'coral-Shell-solutionSwitcher',
+            'coral3-Shell-solutionSwitcher',
             className
           )
         }
       >
-        <div className="coral-Shell-solutionSwitcher-content">
+        <div className="coral3-Shell-solutionSwitcher-content">
           { children }
         </div>
       </div>

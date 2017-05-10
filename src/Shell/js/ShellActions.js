@@ -30,14 +30,14 @@ export default class ShellHeaderActions extends Component {
       <div
         className={
           classNames(
-            'coral-Shell-header-actions',
+            'coral3-Shell-header-actions',
             className
           )
         }
         { ...otherProps }
       >
         { betaFeedback }
-        <div className="coral-Shell-menubar">
+        <div className="coral3-Shell-menubar">
           {
             children &&
             React.Children.map(children, child => {
@@ -50,7 +50,6 @@ export default class ShellHeaderActions extends Component {
                 };
                 return React.cloneElement(child, childProps);
               }
-              debugger;
 
               // Otherwise, the child is a string
               return child;

@@ -88,7 +88,7 @@ export default class ShellOrganization extends Component {
       <ListItem
         className={
           classNames(
-            `coral-Shell-orgSwitcher-${ isSubItem ? 'sub' : '' }item`,
+            `coral3-Shell-orgSwitcher-${ isSubItem ? 'sub' : '' }item`,
             {
               'is-selected': selected || isChildSelected,
               'is-parent': children,
@@ -110,11 +110,11 @@ export default class ShellOrganization extends Component {
       >
         {
           selected &&
-          <Icon className="coral-Shell-orgSwitcher-item-checkmark" icon="check" size="XS" />
+          <Icon className="coral3-Shell-orgSwitcher-item-checkmark" icon="check" size="XS" />
         }
         {
           children && !isSubItem &&
-          <div className="coral-Shell-orgSwitcher-subitems">
+          <div className="coral3-Shell-orgSwitcher-subitems">
             {
               React.Children.map(children, (child, index) => {
                 if (typeof child === 'object' && child && child.type) { // Is this a react element?

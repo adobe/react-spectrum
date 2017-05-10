@@ -16,16 +16,16 @@ export default function ShellSolution({
     <a
       className={
         classNames(
-          'coral-Shell-solution',
-          {'coral-Shell-solution--linked': entitled},
+          'coral3-Shell-solution',
+          {'coral3-Shell-solution--linked': entitled},
           className
         )
       }
       href={ href }
       { ...otherProps }
     >
-      <Icon icon={ icon } size="L" className="coral-Shell-solution-icon" />
-      <div className="coral-Shell-solution-label">{ label }{ children }</div>
+      <Icon icon={ icon } size="L" className="coral3-Shell-solution-icon" />
+      <div className="coral3-Shell-solution-label">{ label }{ children }</div>
     </a>
   );
 }
