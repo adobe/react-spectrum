@@ -39,6 +39,11 @@ storiesOf('Slider', module)
     'Vertical step = 1',
     () => render({orientation: 'vertical', min: 0, max: 10, step: 1}),
     {inline: true}
+  )
+  .addWithInfo(
+    'disabled',
+    () => render({disabled: true}),
+    {inline: true}
   );
 
 function render(props = {}) {
