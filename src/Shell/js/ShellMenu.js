@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
 import Portal from 'react-portal';
-import {getTransitionEvent} from '../../../utils/transition';
+import {getTransitionEvent} from '../../utils/transition';
 
 import '../style/ShellMenu.styl';
 

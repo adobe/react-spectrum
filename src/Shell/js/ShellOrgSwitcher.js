@@ -4,7 +4,7 @@ import ShellMenu from './ShellMenu';
 
 import Search from '../../Search';
 import Button from '../../Button';
-import List from '../../List';
+import {List} from '../../List';
 
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
@@ -101,6 +101,7 @@ export default class ShellOrgSwitcher extends Component {
             onChange={ this.handleSearchChange }
             quiet
           />
+
           <List
             className="coral-Shell-orgSwitcher-items"
             listItemSelector={

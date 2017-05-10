@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
 
-import ListItem from '../../List/js/ListItem';
+import {ListItem} from '../../List';
 import Icon from '../../Icon';
 
 import '../style/ShellOrganization.styl';

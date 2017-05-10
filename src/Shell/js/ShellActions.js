@@ -42,16 +42,15 @@ export default class ShellHeaderActions extends Component {
             children &&
             React.Children.map(children, child => {
               if (typeof child === 'object' && child && child.type) { // Is this a react element?
-                return React.cloneElement(
-                  child,
-                  {
-                    onOpen: this.handleMenuOpen,
-                    onClose: this.handleMenuClose,
-                    defaultOpen: index === openIndex,
-                    index: index++
-                  }
-                );
+                let childProps = child.type.name === 'Button' ? {} : {
+                  onOpen: this.handleMenuOpen,
+                  onClose: this.handleMenuClose,
+                  defaultOpen: index === openIndex,
+                  index: index++
+                };
+                return React.cloneElement(child, childProps);
               }
+              debugger;
 
               // Otherwise, the child is a string
               return child;

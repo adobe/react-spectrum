@@ -4,8 +4,7 @@ import ShellMenu from './ShellMenu';
 
 import Search from '../../Search';
 import Button from '../../Button';
-import List from '../../List';
-import ListItem from '../../List/js/ListItem';
+import {List, ListItem} from '../../List';
 import Wait from '../../Wait';
 
 import '../style/ShellHelp.styl';
