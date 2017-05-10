@@ -16,65 +16,53 @@
  */
 
 $tag-colored-text-color = white
-
-$spectrum-tag-icon = white
-
-$spectrum-tag-color-blue = $spectrum-color-info
-$spectrum-tag-color-red = $spectrum-color-error
-$spectrum-tag-color-yellow = $spectrum-color-warning
-$spectrum-tag-color-green = $spectrum-color-success
-$spectrum-tag-color-grey = $spectrum-color-constant-grey8
-
-$spectrum-tag-color-lightblue = $spectrum-color-constant-blue1
-
-$spectrum-tag-text = $spectrum-color-text-secondary
-$spectrum-tag-color-hover = $spectrum-color-constant-grey9
-$spectrum-tag-color-active = $spectrum-color-constant-grey10
-$spectrum-tag-focus = $spectrum-color-focus-blue
-$spectrum-tag-disabled-bg = $spectrum-color-background-disabled
-$spectrum-tag-disabled-text = $spectrum-color-text-disabled
-$spectrum-tag-border-color = $spectrum-color-constant-grey7
+$spectrum-tag-remove-button-color = white
+$spectrum-tag-disabled-bg = $spectrum-alias-background-color-transparent
 
 .coral-Tag.is-closable:not([color]) {
   &:focus {
-    border-color: $spectrum-tag-focus;
-    color: $spectrum-tag-focus;
+    border-color: $spectrum-tag-border-color-focus;
+    color: $spectrum-tag-text-color-focus;
 
     .coral-Icon {
-      color: $spectrum-tag-focus;
+      color: $spectrum-tag-icon-color-focus;
     }
   }
 
   &:hover {
-    border-color: $spectrum-tag-color-hover;
-    color: $spectrum-tag-color-hover;
+    border-color: $spectrum-tag-border-color-hover;
+    color: $spectrum-tag-text-color-hover;
     box-shadow: none;
 
     .coral-Icon {
-      color: inherit;
+      color: $spectrum-tag-icon-color-hover;
     }
   }
 
   &:active {
-    border-color: $spectrum-tag-color-active;
-    color: $spectrum-tag-color-active;
+    border-color: $spectrum-tag-border-color-active;
+    color: $spectrum-tag-text-color-active;
     box-shadow: none;
+
+    .coral-Icon {
+      color: $spectrum-tag-icon-color-active;
+    }
   }
 }
 
 .coral-Tag {
-  color: $spectrum-tag-text;
+  color: $spectrum-tag-text-color-default;
   background-color: transparent;
-  border: 1*$px solid $spectrum-tag-border-color;
+  border: 1*$px solid $spectrum-tag-border-color-default;
 
   &:focus {
-    box-shadow: 0 0 0 1*$px $spectrum-tag-focus;
+    box-shadow: 0 0 0 1*$px $spectrum-tag-border-color-focus;
   }
 
   &.coral-Tag--quiet {
     border-color: transparent;
     background-color: transparent;
-    color: $spectrum-color-text-default;
+    color: $spectrum-tag-text-color-default;
 
     &.is-closable:hover,
     &.is-closable:active {
@@ -107,10 +95,10 @@ $spectrum-tag-border-color = $spectrum-color-constant-grey7
     }
 
     .coral-Tag-removeButton {
-      color: $spectrum-tag-icon;
+      color: $spectrum-tag-remove-button-color;
 
       &:focus {
-        color: $spectrum-tag-focus;
+        color: $spectrum-tag-remove-button-color;
 
         .coral-Icon {
           opacity: 1;
@@ -118,17 +106,17 @@ $spectrum-tag-border-color = $spectrum-color-constant-grey7
       }
 
       &:hover {
-        color: $spectrum-tag-icon;
+        color: $spectrum-tag-remove-button-color;
       }
     }
 
     &:focus {
       color: $tag-colored-text-color;
-      border-color: $spectrum-tag-focus;
-      background-color: $spectrum-tag-focus;
+      border-color: $spectrum-tag-border-color-focus;
+      background-color: $spectrum-tag-border-color-focus;
 
       .coral-Tag-removeButton .coral-Icon {
-        color: $spectrum-tag-icon;
+        color: $spectrum-tag-remove-button-color;
       }
     }
 
@@ -147,102 +135,102 @@ $spectrum-tag-border-color = $spectrum-color-constant-grey7
 }
 
 .coral-Tag--lightblue {
-  background-color: $spectrum-tag-color-lightblue;
-  border-color: $spectrum-tag-color-lightblue;
+  background-color: $spectrum-global-color-blue1;
+  border-color: $spectrum-global-color-blue1;
 }
 
 .coral-Tag--periwinkle {
-  background-color: $spectrum-color-constant-periwinkle;
-  border-color: $spectrum-color-constant-periwinkle;
+  background-color: $spectrum-global-color-periwinkle;
+  border-color: $spectrum-global-color-periwinkle;
 }
 
 .coral-Tag--plum {
-  background-color: $spectrum-color-constant-plum;
-  border-color: $spectrum-color-constant-plum;
+  background-color: $spectrum-global-color-plum;
+  border-color: $spectrum-global-color-plum;
 }
 
 .coral-Tag--fuchsia {
-  background-color: $spectrum-color-constant-fuchsia;
-  border-color: $spectrum-color-constant-fuchsia;
+  background-color: $spectrum-global-color-fuchsia;
+  border-color: $spectrum-global-color-fuchsia;
 }
 
 .coral-Tag--magenta {
-  background-color: $spectrum-color-constant-magenta;
-  border-color: $spectrum-color-constant-magenta;
+  background-color: $spectrum-global-color-magenta;
+  border-color: $spectrum-global-color-magenta;
 }
 
 .coral-Tag--orange {
-  background-color: $spectrum-color-constant-orange;
-  border-color: $spectrum-color-constant-orange;
+  background-color: $spectrum-global-color-orange;
+  border-color: $spectrum-global-color-orange;
 }
 
 .coral-Tag--tangerine {
-  background-color: $spectrum-color-constant-tangerine;
-  border-color: $spectrum-color-constant-tangerine;
+  background-color: $spectrum-global-color-tangerine;
+  border-color: $spectrum-global-color-tangerine;
 }
 
 .coral-Tag--chartreuse {
-  background-color: $spectrum-color-constant-chartreuse;
-  border-color: $spectrum-color-constant-chartreuse;
+  background-color: $spectrum-global-color-chartreuse;
+  border-color: $spectrum-global-color-chartreuse;
 }
 
 .coral-Tag--kellygreen {
-  background-color: $spectrum-color-constant-kellygreen;
-  border-color: $spectrum-color-constant-kellygreen;
+  background-color: $spectrum-global-color-kellygreen;
+  border-color: $spectrum-global-color-kellygreen;
 }
 
 .coral-Tag--seafoam {
-  background-color: $spectrum-color-constant-seafoam;
-  border-color: $spectrum-color-constant-seafoam;
+  background-color: $spectrum-global-color-seafoam;
+  border-color: $spectrum-global-color-seafoam;
 }
 
 .coral-Tag--cyan {
-  background-color: $spectrum-color-constant-cyan;
-  border-color: $spectrum-color-constant-cyan;
+  background-color: $spectrum-global-color-cyan;
+  border-color: $spectrum-global-color-cyan;
 }
 
 .coral-Tag--blue {
-  background-color: $spectrum-tag-color-blue;
-  border-color: $spectrum-tag-color-blue;
+  background-color: $spectrum-global-color-blue1;
+  border-color: $spectrum-global-color-blue1;
 }
 
 .coral-Tag--red {
-  background-color: $spectrum-tag-color-red;
-  border-color: $spectrum-tag-color-red;
+  background-color: $spectrum-global-color-red1;
+  border-color: $spectrum-global-color-red1;
 }
 
 .coral-Tag--yellow {
-  background-color: $spectrum-tag-color-yellow;
-  border-color: $spectrum-tag-color-yellow;
+  background-color: $spectrum-global-color-yellow1;
+  border-color: $spectrum-global-color-yellow1;
 }
 
 .coral-Tag--green {
-  background-color: $spectrum-tag-color-green;
-  border-color: $spectrum-tag-color-green;
+  background-color: $spectrum-global-color-green1;
+  border-color: $spectrum-global-color-green1;
 }
 
 .coral-Tag--grey {
-  background-color: $spectrum-tag-color-grey;
-  border-color: $spectrum-tag-color-grey;
+  background-color: $spectrum-global-color-grey8;
+  border-color: $spectrum-global-color-grey8;
 }
 
 .coral-TagList {
   &.is-disabled > .coral-Tag {
-    border-color: $spectrum-tag-disabled-bg;
+    border-color: $spectrum-tag-border-color-disabled;
     background-color: $spectrum-tag-disabled-bg;
-    color: $spectrum-tag-disabled-text;
+    color: $spectrum-tag-text-color-disabled;
 
     &:focus,
     &:hover,
     &:active {
       box-shadow: none;
-      border-color: $spectrum-tag-disabled-bg;
+      border-color: $spectrum-tag-border-color-disabled;
       background-color: $spectrum-tag-disabled-bg;
-      color: $spectrum-tag-disabled-text;
+      color: $spectrum-tag-text-color-disabled;
     }
 
     .coral-Tag-removeButton .coral-Icon {
-      color: $spectrum-tag-disabled-text;
+      color: $spectrum-tag-icon-color-disabled;
     }
   }
 }

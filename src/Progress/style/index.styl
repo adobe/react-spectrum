@@ -15,264 +15,167 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
-
-$spectrum-progress-label-padding = 10*$px
-$spectrum-progress-label-vertical-padding = 2*$px
-
-$spectrum-progress-small-width = 148*$px
-$spectrum-progress-small-height = 4*$px
-$spectrum-progress-small-label-size = 11*$px
-$spectrum-progress-small-label-width = 28*$px
-$spectrum-progress-small-label-height = $spectrum-progress-small-label-size + 2*$px
-$spectrum-progress-small-radius = 2*$px;
-
-$spectrum-progress-medium-width = 182*$px
-$spectrum-progress-medium-height = 6*$px
-$spectrum-progress-medium-label-size = 12*$px
-$spectrum-progress-medium-label-width = 30*$px
-$spectrum-progress-medium-label-height = $spectrum-progress-medium-label-size + 2*$px
-$spectrum-progress-medium-radius = 4*$px;
-
-$spectrum-progress-large-width = 272*$px
-$spectrum-progress-large-height = 8*$px
-$spectrum-progress-large-label-size = 13*$px
-$spectrum-progress-large-label-width = 32*$px
-$spectrum-progress-large-label-height = $spectrum-progress-large-label-size + 2*$px
-$spectrum-progress-large-radius = 6*$px;
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/progress'
 
 .coral-Progress {
-  position: relative;
-  display: inline-block;
-  vertical-align: top;
-  min-width: $spectrum-progress-medium-width;
-  height: $spectrum-progress-medium-height;
+  spectrum-progress()
 }
 
 .coral-Progress-bar {
-  // Visually apply border radius to child elements
-  overflow: hidden;
-}
-
-.coral-Progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  // rightLabel is the default style
-  right: $spectrum-progress-medium-label-width + $spectrum-progress-label-padding;
-
-  height: $spectrum-progress-medium-height;
+  spectrum-progress-bar()
 }
 
 .coral-Progress-status {
-  height: $spectrum-progress-medium-height;
-
-  transition: width 1s;
+  spectrum-progress-status()
 }
 
 .coral-Progress-label {
-  position: absolute;
-  top: 0;
-
-  height: $spectrum-progress-medium-label-height;
-  width: $spectrum-progress-medium-label-width;
-
-  font-size: $spectrum-progress-medium-label-size;
-
-  right: 0;
-  padding-left: $spectrum-progress-label-padding;
-
-  text-align: left;
+  spectrum-progress-label()
 }
 
 .coral-Progress--indeterminate {
+  spectrum-progress--indeterminate()
+
   .coral-Progress-status {
-    display: none;
+    spectrum-progress-status--indeterminate()
   }
 
   .coral-Progress-bar {
-    transform: translateZ(0);
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      background: #1473e6;
-      transform: translateX(-110%);
-
-      animation: indeterminate 934ms cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite forwards;
-    }
-  }
-}
-
-@keyframes indeterminate {
-  to {
-    transform:translateX(110%);
+    spectrum-progress-bar--indeterminate()
   }
 }
 
 .coral-Progress--leftLabel {
+  spectrum-progress--leftLabel()
+
   .coral-Progress-label {
-    left: 0;
-    padding-right: $spectrum-progress-label-padding;
-
-    // resets the default rightLabel style
-    padding-left: 0;
-
-    text-align: right;
+    spectrum-progress-label--leftLabel()
   }
+
   .coral-Progress-bar {
-    left: $spectrum-progress-medium-label-width + $spectrum-progress-label-padding;
-    right: 0;
+    spectrum-progress-bar--leftLabel()
   }
 }
 
 .coral-Progress--bottomLabel {
-  height: $spectrum-progress-medium-height + $spectrum-progress-medium-label-height;
+  spectrum-progress--bottomLabel()
 
   .coral-Progress-label {
-    top: $spectrum-progress-medium-height + $spectrum-progress-label-vertical-padding;
-    left: 0;
-    right: 0;
-    width: auto;
-    // resets the default rightLabel style
-    padding-left: 0;
-
-    // text-align: center // Alan said to inherit
-
-    line-height: inherit;
+    spectrum-progress-label--bottomLabel()
   }
 
   .coral-Progress-bar {
-    // resets the default rightLabel style
-    right: 0;
+    spectrum-progress-bar--bottomLabel()
   }
 }
 
 .coral-Progress--noLabel {
+  spectrum-progress--noLabel()
+
   .coral-Progress-label {
-    display: none;
+    spectrum-progress-label--noLabel()
   }
 
   .coral-Progress-bar {
-    right: 0;
+    spectrum-progress-bar--noLabel()
   }
 }
 
 .coral-Progress--small {
-  height: $spectrum-progress-small-height;
-  min-width: $spectrum-progress-small-width;
+  spectrum-progress--small()
 
   .coral-Progress-label {
-    height: $spectrum-progress-small-label-height;
-    width: $spectrum-progress-small-label-width;
-
-    font-size: $spectrum-progress-small-label-size;
+    spectrum-progress-label--small()
   }
 
   .coral-Progress-status {
-    height: $spectrum-progress-small-height;
+    spectrum-progress-status--small()
   }
 
   .coral-Progress-bar {
-    height: $spectrum-progress-small-height;
-    border-radius: $spectrum-progress-small-radius;
+    spectrum-progress-bar--small()
   }
 
   &.coral-Progress--bottomLabel {
-    height: $spectrum-progress-small-height + $spectrum-progress-small-label-height;
+    spectrum-progress--small--bottomLabel()
 
     .coral-Progress-label {
-      top: $spectrum-progress-small-height + $spectrum-progress-label-vertical-padding;
-      width: auto;
-
-      line-height: inherit;
+      spectrum-progress-label--small--bottomLabel()
     }
   }
 
   &.coral-Progress--leftLabel,
   &.coral-Progress--rightLabel {
-    // Be the same height as the label
-    height: $spectrum-progress-small-label-height;
+    spectrum-progress--small--leftLabel()
 
     // Move the bar to the vertical center
     .coral-Progress-bar {
-      top: ($spectrum-progress-small-label-height / 2) - ($spectrum-progress-small-height / 2);
+      spectrum-progress-bar--small--leftLabel()
     }
 
     .coral-Progress-label {
-      line-height: $spectrum-progress-small-label-height;
+      spectrum-progress-label--small--leftLabel()
     }
   }
 }
 
 .coral-Progress--medium {
+  spectrum-progress--medium()
+
   .coral-Progress-bar {
-    border-radius: $spectrum-progress-medium-radius;
+    spectrum-progress-bar--medium()
   }
 
   &.coral-Progress--leftLabel,
   &.coral-Progress--rightLabel {
-    // Be the same height as the label
-    height: $spectrum-progress-medium-label-height;
+    spectrum-progress--medium--leftLabel()
 
     // Move the bar to the vertical center
     .coral-Progress-bar {
-      top: ($spectrum-progress-medium-label-height / 2) - ($spectrum-progress-medium-height / 2);
+      spectrum-progress-bar--medium--leftLabel()
     }
 
     .coral-Progress-label {
-      line-height: $spectrum-progress-medium-label-height;
+      spectrum-progress-label--medium--leftLabel()
     }
   }
 }
 
 .coral-Progress--large {
-  height: $spectrum-progress-large-height;
-  min-width: $spectrum-progress-large-width;
+  spectrum-progress--large()
 
   .coral-Progress-label {
-    height: $spectrum-progress-large-label-height;
-    width: $spectrum-progress-large-label-width;
-
-    font-size: $spectrum-progress-large-label-size;
+    spectrum-progress-label--large()
   }
 
   .coral-Progress-status {
-    height: $spectrum-progress-large-height;
+    spectrum-progress-status--large()
   }
 
   .coral-Progress-bar {
-    height: $spectrum-progress-large-height;
-    border-radius: $spectrum-progress-large-radius;
+    spectrum-progress-bar--large()
   }
 
   &.coral-Progress--bottomLabel {
-    height: $spectrum-progress-large-height + $spectrum-progress-large-label-height;
+    spectrum-progress--large--bottomLabel()
 
     .coral-Progress-label {
-      top: $spectrum-progress-large-height + $spectrum-progress-label-vertical-padding;
-      width: auto;
-
-      line-height: inherit;
+      spectrum-progress-label--large--bottomLabel()
     }
   }
 
   &.coral-Progress--leftLabel,
   &.coral-Progress--rightLabel {
-    // Be the same height as the label
-    height: $spectrum-progress-large-label-height;
+    spectrum-progress--large--leftLabel()
 
     // Move the bar to the vertical center
     .coral-Progress-bar {
-      top: ($spectrum-progress-large-label-height / 2) - ($spectrum-progress-large-height / 2);
+      spectrum-progress-bar--large--leftLabel()
     }
 
     .coral-Progress-label {
-      line-height: $spectrum-progress-large-label-height;
+      spectrum-progress-label--large--leftLabel()
     }
   }
 }

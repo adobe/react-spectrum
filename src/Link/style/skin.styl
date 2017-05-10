@@ -15,44 +15,38 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-link-color = $spectrum-color-text-link-default
-$spectrum-link-color-hover = $spectrum-color-text-link-hover
-$spectrum-link-color-active = $spectrum-color-text-link-active
-$spectrum-link-color-focus = $spectrum-color-focus-blue
-$spectrum-link-subtle-focus = $spectrum-color-constant-grey9
-$spectrum-link-subtle-hover = $spectrum-color-constant-grey10
+@import '@spectrum/spectrum-abstract-stylus/dist/components/link/skin'
 
 .coral-Link {
-  color: $spectrum-link-color;
+  spectrum-link--default()
 
   &:focus,
   &.is-focused {
-    color: $spectrum-link-color-focus;
+    spectrum-link--focus()
   }
 
   &:hover {
-    color: $spectrum-link-color-hover;
+    spectrum-link--hover()
   }
 
   &:active {
-    color: $spectrum-link-color-active;
+    spectrum-link--active()
   }
 }
 
 .coral-Link--subtle {
-  color: inherit;
+  spectrum-link--subtle()
 
   &:focus,
   &.is-focused {
-    color: inherit;
-    box-shadow: 0 1*$px 0 $spectrum-link-subtle-focus;
+    spectrum-link--subtle--focus()
   }
 
   &:hover {
-    color: $spectrum-link-subtle-hover;
+    spectrum-link--subtle--hover()
   }
 
   &:active {
-    color: $spectrum-link-subtle-hover;
+    spectrum-link--subtle--active()
   }
 }

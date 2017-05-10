@@ -15,54 +15,43 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-tablist-active-text-color = $spectrum-color-constant-grey10
-$spectrum-tablist-active-bar-color = $spectrum-color-constant-grey10
-$spectrum-tablist-inactive-text-color = $spectrum-color-constant-grey8
-
-$spectrum-tablist-disabled-text-color = $spectrum-color-constant-grey6
-$spectrum-tablist-disabled-bar-color = $spectrum-color-constant-grey5
-
-$spectrum-tablist-vert-hover-text-color = $spectrum-color-constant-grey9
-
-$spectrum-tablist-focus-color = $spectrum-color-focus-blue
-
 .coral-Tab {
-  color: $spectrum-tablist-inactive-text-color;
+  color: $spectrum-tab-text-color-default;
 
   &:hover {
-    color: $spectrum-tablist-active-text-color; //as in spec
+    color: $spectrum-tab-text-color-hover; //as in spec
   }
 
   &.is-selected {
-    color: $spectrum-tablist-active-text-color;
+    color: $spectrum-tab-text-color-active;
     > .coral-Tab-label:after {
-      border-color: $spectrum-tablist-active-text-color;
+      border-color: $spectrum-tab-border-color-default;
     }
   }
 
   &:focus:not(:active) {
-    color: $spectrum-tablist-focus-color;
+    color: $spectrum-tab-text-color-focus;
 
     > .coral-Tab-label:after {
-      border-color: $spectrum-tablist-focus-color;
+      border-color: $spectrum-tab-border-color-focus;
     }
   }
 
   &.is-disabled,
   &.is-disabled:hover,
   &.is-disabled:focus {
-    color: $spectrum-tablist-disabled-text-color;
+    color: $spectrum-tab-text-color-default;
     box-shadow: none;
 
     * {
       box-shadow: none;
-      color: $spectrum-tablist-disabled-text-color;
+      color: $spectrum-tab-text-color-default;
     }
 
     &.is-selected {
-      color: $spectrum-tablist-disabled-text-color;
+      color: $spectrum-tab-text-color-default;
       &:after {
-        border-color: $spectrum-tablist-disabled-text-color;
+        border-color: $spectrum-tab-border-color-disabled;
       }
     }
   }
@@ -70,24 +59,24 @@ $spectrum-tablist-focus-color = $spectrum-color-focus-blue
 
 .coral-TabList--vertical {
   .coral-Tab {
-    color: $spectrum-tablist-inactive-text-color;
+    color: $spectrum-tab-text-color-default;
 
     &:hover {
-      color: $spectrum-tablist-vert-hover-text-color;
+      color: $spectrum-tab-text-color-hover;
     }
 
     &.is-selected {
-      color: $spectrum-tablist-active-text-color;
+      color: $spectrum-tab-text-color-active;
       &:after {
-        border-color: $spectrum-tablist-active-text-color;
+        border-color: $spectrum-tab-text-color-active;
       }
     }
 
     &:focus {
-      color: $spectrum-tablist-focus-color;
+      color: $spectrum-tab-text-color-focus;
 
       &:after {
-        border-color: $spectrum-tablist-focus-color;
+        border-color: $spectrum-tab-border-color-focus;
       }
     }
   }

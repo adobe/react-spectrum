@@ -15,77 +15,65 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-dialog-wrapper-background = $spectrum-color-background-dialog-default;
-$spectrum-dialog-border-color = $spectrum-color-border-default;
-
-$spectrum-dialog-header-text-color-success = $spectrum-color-success;
-$spectrum-dialog-header-text-color-help = $spectrum-color-info;
-$spectrum-dialog-header-text-color-warning = $spectrum-color-warning;
-$spectrum-dialog-header-text-color-error = $spectrum-color-error;
-
-$spectrum-dialog-header-icon-color-success = $spectrum-color-success;
-$spectrum-dialog-header-icon-color-help = $spectrum-color-info;
-$spectrum-dialog-header-icon-color-warning = $spectrum-color-warning;
-$spectrum-dialog-header-icon-color-error = $spectrum-color-error;
-
 .coral-Dialog {
   &.coral-Dialog--backdropNone {
     background: none;
   }
+}
 
-  &.coral-Dialog--error {
-    .coral-Dialog-title {
-      color: $spectrum-dialog-header-text-color-error;
-    }
-
-    .coral-Dialog-typeIcon {
-      color: $spectrum-dialog-header-icon-color-error;
-    }
+.coral-Dialog-header--error {
+  .coral-Dialog-title {
+    color: $spectrum-dialog-error-title-text-color-default;
   }
 
-  &.coral-Dialog--warning {
-    .coral-Dialog-title {
-      color: $spectrum-dialog-header-text-color-warning;
-    }
+  .coral-Dialog-typeIcon {
+    color: $spectrum-dialog-error-icon-color-default;
+  }
+}
 
-    .coral-Dialog-typeIcon {
-      color: $spectrum-dialog-header-icon-color-warning;
-    }
+.coral-Dialog-header--warning {
+  .coral-Dialog-title {
+    color: $spectrum-dialog-warning-title-text-color-default;
   }
 
-  &.coral-Dialog--help, &.coral-Dialog--info {
-    .coral-Dialog-title {
-      color: $spectrum-dialog-header-text-color-help;
-    }
+  .coral-Dialog-typeIcon {
+    color: $spectrum-dialog-warning-icon-color-default;
+  }
+}
 
-    .coral-Dialog-typeIcon {
-      color: $spectrum-dialog-header-icon-color-help;
-    }
+.coral-Dialog-header--help,
+.coral-Dialog-header--info {
+  .coral-Dialog-title {
+    color: $spectrum-dialog-info-title-text-color-default;
   }
 
-  &.coral-Dialog--success {
-    .coral-Dialog-title {
-      color: $spectrum-dialog-header-text-color-success;
-    }
+  .coral-Dialog-typeIcon {
+    color: $spectrum-dialog-info-icon-color-default;
+  }
+}
 
-    .coral-Dialog-typeIcon {
-      color: $spectrum-dialog-header-icon-color-success;
-    }
+.coral-Dialog-header--success {
+  .coral-Dialog-title {
+    color: $spectrum-dialog-success-title-text-color-default;
+  }
+
+  .coral-Dialog-typeIcon {
+    color: $spectrum-dialog-success-icon-color-default;
   }
 }
 
 .coral-Dialog-wrapper {
-  background: $spectrum-dialog-wrapper-background;
+  background: $spectrum-dialog-background-color-default;
 }
 
 .coral-Dialog-header {
-  background: $spectrum-dialog-wrapper-background;
+  background: $spectrum-dialog-background-color-default;
 
   &:after {
-    background: $spectrum-dialog-border-color;
+    background: $spectrum-dialog-title-divider-color-default;
   }
 }
 
 .coral-Dialog-footer {
-  background: $spectrum-dialog-wrapper-background;
+  background: $spectrum-dialog-background-color-default;
 }

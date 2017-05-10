@@ -15,34 +15,27 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-select-background-color = $spectrum-color-constant-grey1
-$spectrum-select-border-color = $spectrum-color-border-default
+$spectrum-select-border-color-invalid = $spectrum-alias-border-color-invalid-default;
 
-$spectrum-select-border-color-focus = $spectrum-color-border-focus;
-$spectrum-select-border-color-invalid = $spectrum-color-border-invalid;
+$spectrum-select-background-color-disabled = $spectrum-alias-background-color-transparent;
+$spectrum-select-border-color-disabled = $spectrum-alias-border-color-transparent;
+$spectrum-select-text-color-default = $spectrum-text-text-color-default;
+$spectrum-select-text-color-disabled = $spectrum-text-text-color-disabled;
 
-$spectrum-select-background-color-disabled = $spectrum-color-background-disabled;
-$spectrum-select-border-color-disabled = $spectrum-color-border-disabled;
-
-$spectrum-select-item-background-color-hover = $spectrum-color-constant-grey2;
-$spectrum-select-item-text-color-selected = $spectrum-color-focus-blue;
-
-$spectrum-select-item-background-color-focused = $spectrum-color-focus-blue;
-
-$spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
+$spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
 
 .coral3-Select {
 
   > .coral-Button {
-    border-color: $spectrum-select-border-color;
-    background-color: $spectrum-select-background-color;
+    border-color: $spectrum-select-border-color-default;
+    background-color: $spectrum-select-background-color-default;
     position: relative;
-    color: $spectrum-color-text-default;
+    color: $spectrum-select-text-color-default;
 
     &:hover, &:active {
-      background-color: $spectrum-select-background-color;
-      border-color: $spectrum-select-border-color;
-      color: $spectrum-color-text-default;
+      background-color: $spectrum-select-background-color-hover;
+      border-color: $spectrum-select-border-color-default;
+      color: $spectrum-select-text-color-default;
     }
 
     &:focus:not(.is-selected) {
@@ -53,7 +46,7 @@ $spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
     &.is-disabled {
       background-color: $spectrum-select-background-color-disabled;
       border-color: $spectrum-select-border-color-disabled;
-      color: $spectrum-color-text-disabled;
+      color: $spectrum-select-text-color-disabled;
     }
   }
 
@@ -65,7 +58,7 @@ $spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
 
   > .coral-Menu {
     &::after {
-      background-color: $spectrum-select-border-color;
+      background-color: $spectrum-select-border-color-default;
     }
   }
 
@@ -92,7 +85,7 @@ $spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
 
   &.is-openAbove {
     > .coral-Button {
-      border-color: $spectrum-color-border-hover !important;
+      border-color: $spectrum-global-color-grey6 !important;
       border-top: 0px transparent;
     }
     .coral3-SelectList {
@@ -102,7 +95,7 @@ $spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
 
   &.is-openBelow {
     > .coral-Button {
-      border-color: $spectrum-color-border-hover !important;
+      border-color: $spectrum-global-color-grey6 !important;
       border-bottom: 0px transparent;
     }
     .coral3-SelectList {
@@ -149,8 +142,8 @@ $spectrum-select-invalid-icon-color = $spectrum-color-constant-red2;
 
   &.is-openAbove, &.is-openBelow {
     .coral3-SelectList {
-      border-top: $px solid $spectrum-color-border-hover;
-      border-bottom: $px solid $spectrum-color-border-hover;
+      border-top: $px solid $spectrum-global-color-grey6;
+      border-bottom: $px solid $spectrum-global-color-grey6;
     }
   }
 

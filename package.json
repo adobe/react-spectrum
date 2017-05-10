@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "autobind-decorator": "^1.4.0",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "classnames": "^2.2.5",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
@@ -30,7 +29,7 @@
     "@kadira/react-storybook-addon-info": "^3.2.4",
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
-    "@spectrum/spectrum-abstract-stylus": "^0.0.2",
+    "@spectrum/spectrum-abstract-stylus": "^0.2.3",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",

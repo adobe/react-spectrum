@@ -15,57 +15,51 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-basiclist-border-color = $spectrum-color-border-default;
-$spectrum-basiclist-background-color = $spectrum-color-background-list-default;
-
-$spectrum-basiclist-item-background-color = $spectrum-color-background-list-default;
-$spectrum-basiclist-item-background-color-hover = $spectrum-color-background-list-hover;
-$spectrum-basiclist-item-background-color-focused = $spectrum-color-background-list-hover;
-$spectrum-basiclist-item-background-color-active = $spectrum-color-constant-grey4;
-$spectrum-basiclist-item-border-color-focused = $spectrum-color-border-focus;
-
-$spectrum-basiclist-checked-icon-url = '../../commons/embed/icon-check.svg';
-$spectrum-basiclist-checked-icon-color = $spectrum-color-constant-blue3;
+$spectrum-list-border-color-default = $spectrum-global-color-grey5;
+$spectrum-list-background-color-active = $spectrum-global-color-grey4;
+$spectrum-list-text-color-selected = $spectrum-alias-focus-blue
+$spectrum-list-checked-icon-url = '../../commons/embed/icon-check.svg';
+$spectrum-list-checked-icon-color = $spectrum-alias-focus-blue
 
 .coral-BasicList {
-  border-color: $spectrum-basiclist-border-color;
-  background-color: $spectrum-basiclist-background-color;
+  border-color: $spectrum-list-border-color-default;
+  background-color: $spectrum-list-background-color-default;
 }
 
 .coral-BasicList-item {
-  background-color: $spectrum-basiclist-item-background-color;
-  color: $spectrum-color-text-default;
+  background-color: $spectrum-list-background-color-default;
+  color: $spectrum-list-text-color-default;
 
   &:focus,
   &.is-focused {
-    background-color: $spectrum-basiclist-item-background-color-focused;
-    border-left-color: $spectrum-basiclist-item-border-color-focused;
+    background-color: $spectrum-list-background-color-hover;
+    border-left-color: $spectrum-list-focusindicator-color-default;
   }
 
   &:hover {
-    background-color: $spectrum-basiclist-item-background-color-hover;
+    background-color: $spectrum-list-background-color-hover;
     border-left-color: transparent;
   }
 
   &:active {
-    background-color: $spectrum-basiclist-item-background-color-active;
+    background-color: $spectrum-list-background-color-active;
   }
 
   &.is-disabled {
-    color: $spectrum-color-text-disabled;
-    background-color: $spectrum-basiclist-item-background-color;
+    color: $spectrum-text-text-color-disabled;
+    background-color: $spectrum-list-background-color-default;
     border-left-color: transparent;
   }
 
   &.is-selected {
-    color: $spectrum-color-text-list-active;
+    color: $spectrum-list-text-color-selected;
 
     &:after {
-      background-image: svgurl(embedurl($spectrum-basiclist-checked-icon-url)) svg(path fill $spectrum-basiclist-checked-icon-color);
+      background-image: svgurl(embedurl($spectrum-list-checked-icon-url)) svg(path fill $spectrum-list-checked-icon-color);
     }
   }
 }
 
 .coral-BasicList-group:before {
-  background-color: $spectrum-basiclist-item-background-color-hover;
+  background-color: $spectrum-list-background-color-hover;
 }

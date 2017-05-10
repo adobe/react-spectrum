@@ -15,25 +15,19 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/link'
 
 .coral-Link {
-  text-decoration: none;
-  transition: color $spectrum-transition-time ease-in-out;
-  outline: none;
-
-  &:focus,
-  &.is-focused {
-    text-decoration: underline;
-  }
+  spectrum-link()
 
   &.is-disabled {
-    opacity: 0.15;
+    @extends .coral-Link[disabled]
   }
 }
 
 .coral-Link--subtle {
-  text-decoration: underline;
+  spectrum-link--subtle()
 }
 
 @require 'light.styl'

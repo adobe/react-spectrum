@@ -15,19 +15,19 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-combobox-background-color = $spectrum-color-constant-grey1
-$spectrum-combobox-border-color = $spectrum-color-border-default
+$spectrum-combobox-background-color = $spectrum-global-color-grey1
+$spectrum-combobox-border-color = $spectrum-global-color-grey5
 
-$spectrum-combobox-border-color-focus = $spectrum-color-focus-blue;
-$spectrum-combobox-border-color-invalid = $spectrum-color-border-invalid;
+$spectrum-combobox-border-color-focus = $spectrum-alias-border-color-focus-blue;
+$spectrum-combobox-border-color-invalid = $spectrum-alias-border-color-invalid-default;
 
-$spectrum-combobox-background-color-disabled = $spectrum-color-background-disabled;
-$spectrum-combobox-border-color-disabled = $spectrum-color-border-disabled;
+$spectrum-combobox-background-color-disabled = $spectrum-alias-background-color-transparent;
+$spectrum-combobox-border-color-disabled = $spectrum-alias-border-color-transparent;
 
-$spectrum-combobox-item-text-color-selected = $spectrum-color-focus-blue;
-$spectrum-combobox-item-background-color-focused = $spectrum-color-focus-blue;
+$spectrum-combobox-item-text-color-selected = $spectrum-alias-focus-blue;
+$spectrum-combobox-item-background-color-focused = $spectrum-alias-focus-blue;
 
-$spectrum-combobox-invalid-icon-color = $spectrum-color-constant-red2;
+$spectrum-combobox-invalid-icon-color = $spectrum-global-color-red2;
 
 
 .coral-ComboBox {
@@ -81,12 +81,16 @@ $spectrum-combobox-invalid-icon-color = $spectrum-color-constant-red2;
   &:not(.is-focused):not(.is-invalid):hover {
     .coral-ComboBox-input:not(:disabled),
     .coral-ComboBox-trigger:not(:disabled) {
-      border-color: $spectrum-color-border-input-hover;
+      border-color: $spectrum-input-border-color-hover;
     }
   }
   .coral-ComboBox-trigger:disabled {
     border-color: $spectrum-combobox-border-color;
     background: transparent;
+  }
+
+  .coral-ComboBox-input:disabled:hover {
+    border-color: $spectrum-combobox-border-color;
   }
 
   &.is-focused {

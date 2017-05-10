@@ -15,76 +15,8 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-popover-background = $spectrum-color-background-dialog-default
-$spectrum-popover-wrapper-background = $spectrum-color-background-dialog-default
-$spectrum-popover-border-color = $spectrum-color-border-default
-
-$spectrum-popover-header-text-color-success = $spectrum-color-success
-$spectrum-popover-header-text-color-help = $spectrum-color-info
-$spectrum-popover-header-text-color-warning = $spectrum-color-warning
-$spectrum-popover-header-text-color-error = $spectrum-color-error
-
-$spectrum-popover-header-icon-color-success = $spectrum-color-success
-$spectrum-popover-header-icon-color-help = $spectrum-color-info
-$spectrum-popover-header-icon-color-warning = $spectrum-color-warning
-$spectrum-popover-header-icon-color-error = $spectrum-color-error
-
 .coral3-Popover {
-    background: $spectrum-popover-background;
-    border-color: $spectrum-popover-border-color;
-    box-shadow: 0 1*$px 4*$px rgba(0, 0, 0, 0.1);
-
-    &.coral-Dialog--error {
-      .coral-Popover-header {
-        > .coral-Dialog-title {
-            color: $spectrum-popover-header-text-color-error;
-        }
-
-        > .coral-Dialog-typeIcon {
-            color: $spectrum-popover-header-icon-color-error;
-        }
-      }
-    }
-
-    &.coral-Dialog--warning {
-      .coral-Popover-header {
-        > .coral-Dialog-title {
-            color: $spectrum-popover-header-text-color-warning;
-        }
-
-        > .coral-Dialog-typeIcon {
-            color: $spectrum-popover-header-icon-color-warning;
-        }
-      }
-    }
-
-    &.coral-Dialog--help, &.coral-Dialog--info {
-      .coral-Popover-header {
-        > .coral-Dialog-title {
-            color: $spectrum-popover-header-text-color-help;
-        }
-
-        > .coral-Dialog-typeIcon {
-            color: $spectrum-popover-header-icon-color-help;
-        }
-      }
-    }
-
-    &.coral-Dialog--success {
-      .coral-Popover-header {
-        > .coral-Dialog-title {
-            color: $spectrum-popover-header-text-color-success;
-        }
-
-        > .coral-Dialog-typeIcon {
-            color: $spectrum-popover-header-icon-color-success;
-        }
-      }
-    }
-}
-
-.coral-Popover-header {
-    &:after {
-        background: $spectrum-popover-border-color;
-    }
+  background-color: $spectrum-dialog-background-color-default;
+  border-color: $spectrum-dialog-popover-border-color-default;
+  box-shadow: 0 1*$px 4*$px $spectrum-dialog-popover-shadow-color-default;
 }

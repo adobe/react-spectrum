@@ -1,39 +1,43 @@
+$spectrum-toast-close-button-color-default = $spectrum-global-color-white
+$spectrum-toast-close-button-background-color-hover = rgba($spectrum-global-color-white, 0.1)
+$spectrum-toast-close-button-background-color-active = rgba($spectrum-global-color-white, 0.15)
+
 .coral-Toast {
-  color: $spectrum-color-text-notification;
-  background-color: $spectrum-color-background-notification-default;
+  color: $spectrum-toast-text-color-default;
+  background-color: $spectrum-toast-background-color-default;
 
   &.coral-Toast-icon {
-    color: $spectrum-color-notification-icon;
+    color: $spectrum-toast-icon-color-default;
   }
 
   .coral-Toast-closeButton {
-    color: $spectrum-color-notification-button;
+    color: $spectrum-toast-close-button-color-default;
 
     &:hover,
     &:focus {
-      color: $spectrum-color-notification-button;
-      background-color: rgba($spectrum-color-notification-button, 0.1);
+      color: $spectrum-toast-close-button-color-default;
+      background-color: $spectrum-toast-close-button-background-color-hover;
     }
 
     &:active {
-      background-color: rgba($spectrum-color-notification-button, 0.15);
+      background-color: $spectrum-toast-close-button-background-color-active;
     }
   }
 
   &.coral-Toast--error {
-    background-color: $spectrum-color-background-notification-error;
+    background-color: $spectrum-toast-error-background-color-default;
   }
 
   &.coral-Toast--info,
   &.coral-Toast--help {
-    background-color: $spectrum-color-background-notification-info;
+    background-color: $spectrum-toast-info-background-color-default;
   }
 
   &.coral-Toast--success {
-    background-color: $spectrum-color-background-notification-success;
+    background-color: $spectrum-toast-success-background-color-default;
   }
 
   &.coral-Toast--warning {
-    background-color: $spectrum-color-background-notification-warning;
+    background-color: $spectrum-toast-warning-background-color-default;
   }
 }
