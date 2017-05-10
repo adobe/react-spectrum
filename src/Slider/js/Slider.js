@@ -23,7 +23,7 @@ export default class Slider extends React.Component {
 
   componentWillReceiveProps(props) {
     let value = props.value == null ? props.defaultValue : props.value;
-    if (value == null && this.state.value == null || (this.props.max !== props.max || this.props.min !== props.min)) {
+    if (value == null && (this.state.value == null || this.props.max !== props.max || this.props.min !== props.min)) {
       value = props.min + (props.max - props.min) / 2;
     }
 
@@ -87,7 +87,7 @@ export default class Slider extends React.Component {
     let percent = (value - min) / (max - min);
     let styleKey = this.props.orientation === 'vertical' ? 'bottom' : 'left';
     let sliderClasses = classNames('coral3-Slider', {
-      'is-disabled': isDisabled, 
+      'is-disabled': isDisabled,
       'coral3-Slider--vertical': orientation === 'vertical'},
       this.props.className
     );
