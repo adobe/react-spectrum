@@ -38,7 +38,7 @@ export default class Dropdown extends React.Component {
       <div className={classNames('coral-Dropdown', {'is-openBelow': this.state.showingMenu}, className)} {...otherProps}>
         {children.map(child => {
           if (child === trigger) {
-            return React.cloneElement(child, {onClick: this.onClick});
+            return React.cloneElement(child, {onClick: menu ? this.onClick : null});
           } else if (child === menu) {
             return this.state.showingMenu && React.cloneElement(child, {
               className: classNames(child.props.className, 'coral-Dropdown-menu', {'align-right': alignRight}),
