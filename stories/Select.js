@@ -42,40 +42,6 @@ const icons = {
   alertCheck: 'AlertCheck'
 };
 
-class SelectWrapper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.initialValue
-    };
-  }
-
-  render() {
-    const {value} = this.state;
-    return (
-      <Select
-        value={ value }
-        label="React"
-        onChange={ (v) => { this.setState({value: v}); action('change')(v); } }
-        onBlur={ action('blur') }
-        onClose={ action('close') }
-        onFocus={ action('focus') }
-        onInputChange={ action('inputChange') }
-        onOpen={ action('open') }
-        onValueClick={ action('valueClick') }
-        allowCreate={ boolean('Allow Create', false) }
-        disabled={ boolean('Disabled', false) }
-        multiple={ boolean('Multiple', false) }
-        invalid={ boolean('Invalid', false) }
-        icon={ select('Icon', icons, '') }
-        { ...defaultProps }
-        { ...this.props }
-        placeholder={ text('Placeholder', 'Enter Text...') }
-      />
-    );
-  }
-}
-
 const selectedValue = [
   'chocolate',
   'vanilla',
@@ -120,11 +86,6 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet read-only',
-    () => render({variant: 'quiet', readOnly: true}),
-    {inline: true}
-  )
-  .addWithInfo(
     'multiple: true',
     () => render({multiple: true, value: selectedValue}),
     {inline: true}
@@ -132,11 +93,6 @@ storiesOf('Select', module)
   .addWithInfo(
     'required: true',
     () => render({required: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'read-only: true',
-    () => render({readOnly: true}),
     {inline: true}
   )
   .addWithInfo(
@@ -163,15 +119,6 @@ storiesOf('Select', module)
     'no results',
     () => render({options: [], noResultsText: 'Nothing to see here folks'}),
     {inline: true}
-  )
-  .addWithInfo(
-    'Stateful component',
-    () => (
-      <SelectWrapper
-        initialValue="chocolate"
-      />
-    ),
-    {inline: true, propTables: false, source: false}
   );
 
 function render(props = {}) {
