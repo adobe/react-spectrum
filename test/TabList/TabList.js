@@ -7,14 +7,14 @@ describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />);
     const innerTree = tree.shallow();
-    expect(tree.prop('className')).toBe('coral-TabList');
+    expect(tree.prop('className')).toBe('coral-TabList coral-TabList--horizontal');
     expect(innerTree.type()).toBe('div');
     expect(innerTree.prop('role')).toBe('tablist');
   });
 
   it('supports large size', () => {
     const tree = shallow(<TabList size="L" />);
-    expect(tree.prop('className')).toBe('coral-TabList coral-TabList--large');
+    expect(tree.prop('className')).toBe('coral-TabList coral-TabList--large coral-TabList--horizontal');
   });
 
   it('supports vertical orientation', () => {
@@ -24,8 +24,7 @@ describe('TabList', () => {
 
   it('supports additional classNames', () => {
     const tree = shallow(<TabList className="myClass" />);
-    expect(tree.prop('className'))
-      .toBe('coral-TabList myClass');
+    expect(tree.prop('className')).toBe('coral-TabList coral-TabList--horizontal myClass');
   });
 
   it('supports additional properties', () => {
