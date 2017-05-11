@@ -15,87 +15,47 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/tablist'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/tab'
 
 .coral-TabList {
   clearfix();
-
-  position: relative;
-  z-index: 1;
-
-  display: block;
-  margin: 0;
-  padding: 0;
-
-  * { outline: none; }
+  spectrum-tablist()
 }
 
 // Normal Tab Style
 .coral-Tab {
-  position: relative;
-  float: left;
-
-  display: block;
-  box-sizing: border-box;
-  overflow: ellipsis;
-  max-width: 250*$px;
-  margin: 0 15*$px 0 0;
-  padding: 6*$px 8*$px;
-
-  font-size: 12*$px;
-  text-decoration: none;
-  text-transform: uppercase;
-  text-align: center;
-  white-space: nowrap;
-
-  cursor: pointer;
+  spectrum-tab()
 
   .coral-Icon {
-    vertical-align: middle;
-    font-size: 14*$px;
-  }
-
-  .coral-Icon + .coral-Tab-label:not(:empty) {
-    margin-left: 5*$px;
+    spectrum-tab-icon()
   }
 
   > .coral-Tab-label {
-    position: relative;
-    padding: 6*$px 0;
-  }
-
-  &:focus {
-    .coral-Icon {
-      opacity: 0.9;
-    }
-  }
-
-  &.is-selected {
-    // Horizontal Active Tab Line
-    > .coral-Tab-label:after {
-      content: "";
-      position: absolute;
-      display: block;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 2*$px;
-      border-bottom: 2*$px solid;
-    }
+    spectrum-tab-label()
   }
 
   &.is-disabled {
-    cursor: default;
+    spectrum-tab--disabled()
   }
 }
 
-// Large Tab (Bigger font and no uppercase)
-.coral-TabList--large .coral-Tab {
-  margin: 0 17*$px 0 0;
-  padding: 10*$px 8*$px;
+.coral-TabList--horizontal {
+  .coral-Tab {
+    spectrum-tab--horizontal()
 
-  text-transform: none;
-  font-size: 14*$px;
+    > .coral-Tab-label {
+      spectrum-tab-label--horizontal()
+    }
+
+    &.is-selected {
+      // Horizontal Active Tab Line
+      > .coral-Tab-label:after {
+        spectrum-tab--horizontal--selected()
+      }
+    }
+  }
 }
 
 // Vertical Tabs Style
@@ -103,53 +63,27 @@
   display: inline-block;
 
   .coral-Tab {
-    display: block;
-    overflow: visible; // overflow: ellipsis;
-    min-width: none;
-    margin: 0 0 8*$px 0;
-    padding: 4*$px 0;
-    float: none;
-
-    font-size: 13*$px;
-    text-align: left;
+    spectrum-tab--vertical()
 
     > .coral-Tab-label {
-      padding: 4*$px 7*$px;
-      &:after {
-        display: none; // Removing horizontal active line
-      }
+      spectrum-tab-label--vertical()
     }
 
     > .coral-Icon {
-      padding: 4*$px 7*$px;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
+      spectrum-tab-icon--vertical()
     }
 
     &.is-selected {
-      border: none;
-      border-radius: 0;
-      &:after {
-        content: '';
-
-        position: absolute;
-        left: 0;
-        top: 4*$px;
-        bottom: 4*$px;
-        // top = bottom = label vertical padding | is hackfix making the left active bar
-        // as tall as the (label.height - label.vertical-padding)
-
-        display: block;
-        width: 2*$px;
-        height: auto;
-
-        border: none; //reset border
-        border-left: 2*$px solid;
+      > .coral-Tab-label:after {
+        spectrum-tab--vertical--selected()
       }
     }
   }
+}
+
+// Large Tab (Bigger font and no uppercase)
+.coral-TabList--large .coral-Tab .coral-Tab-label {
+  spectrum-tab--large()
 }
 
 @require 'light.styl'

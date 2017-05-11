@@ -15,68 +15,43 @@
  * from Adobe Systems Incorporated.
  */
 
-.coral-Tab {
-  color: $spectrum-tab-text-color-default;
+@import '@spectrum/spectrum-abstract-stylus/dist/components/tab/skin'
 
-  &:hover {
-    color: $spectrum-tab-text-color-hover; //as in spec
+.coral-Tab {
+  .coral-Tab-label {
+    spectrum-tab-label-default()
   }
 
-  &.is-selected {
-    color: $spectrum-tab-text-color-active;
+  &:hover .coral-Tab-label {
+    spectrum-tab-label-hover()
+  }
+
+  &.is-selected .coral-Tab-label {
+    spectrum-tab-label-active()
     > .coral-Tab-label:after {
-      border-color: $spectrum-tab-border-color-default;
+      spectrum-tab-line-default()
     }
   }
 
-  &:focus:not(:active) {
-    color: $spectrum-tab-text-color-focus;
+  &:focus:not(:active) .coral-Tab-label {
+    spectrum-tab-label-focus()
 
     > .coral-Tab-label:after {
-      border-color: $spectrum-tab-border-color-focus;
+      spectrum-tab-line-focus()
     }
   }
 
   &.is-disabled,
   &.is-disabled:hover,
   &.is-disabled:focus {
-    color: $spectrum-tab-text-color-default;
-    box-shadow: none;
+    .coral-Tab-label {
+      spectrum-tab-label-disabled()
 
-    * {
-      box-shadow: none;
-      color: $spectrum-tab-text-color-default;
-    }
-
-    &.is-selected {
-      color: $spectrum-tab-text-color-default;
-      &:after {
-        border-color: $spectrum-tab-border-color-disabled;
-      }
-    }
-  }
-}
-
-.coral-TabList--vertical {
-  .coral-Tab {
-    color: $spectrum-tab-text-color-default;
-
-    &:hover {
-      color: $spectrum-tab-text-color-hover;
-    }
-
-    &.is-selected {
-      color: $spectrum-tab-text-color-active;
-      &:after {
-        border-color: $spectrum-tab-text-color-active;
-      }
-    }
-
-    &:focus {
-      color: $spectrum-tab-text-color-focus;
-
-      &:after {
-        border-color: $spectrum-tab-border-color-focus;
+      &.is-selected {
+        spectrum-tab-label-disabled()
+        &:after {
+          spectrum-tab-line-disabled()
+        }
       }
     }
   }
