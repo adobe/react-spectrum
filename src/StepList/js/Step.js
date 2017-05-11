@@ -1,5 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
+import OverlayTrigger from '../../OverlayTrigger';
+import React from 'react';
 import Tooltip from '../../Tooltip';
 
 const SMALL = 'S';
@@ -14,35 +15,29 @@ export default function Step({
 }) {
   return (
     <div
-      className={
-        classNames(
-          className,
-          'coral-Step',
-          {'is-complete': complete},
-          {'is-selected': selected}
-        )
-      }
+      className={classNames(
+        className,
+        'coral-Step',
+        {'is-complete': complete},
+        {'is-selected': selected}
+      )}
       role="tab"
-      aria-selected={ selected }
-      { ...otherProps }
-    >
-      <div className="coral-Step-label">
-        {children}
-      </div>
-      <span className="coral-Step-markerContainer">
-        <Tooltip
-          openOn={ (size === SMALL) ? 'hover' : null }
-          open
-          placement="top"
-          hoverOpenDelay={ 0 }
-          hoverCloseDelay={ 0 }
-          tetherOptions={ {offset: '10px 0px'} }
-          content={ children }
-        >
-          <span className="coral-Step-marker" />
-        </Tooltip>
-      </span>
-      <span className="coral-Step-line" />
+      aria-selected={selected}
+      {...otherProps}>
+        <div className="coral-Step-label">
+          {(size !== SMALL) && children}
+        </div>
+        <span className="coral-Step-markerContainer">
+          {(size === SMALL) ?
+            <OverlayTrigger placement="top">
+              <span className="coral-Step-marker" />
+              <Tooltip open>
+                  {children}
+              </Tooltip>
+            </OverlayTrigger>
+          : <span className="coral-Step-marker" />}
+        </span>
+        <span className="coral-Step-line" />
     </div>
   );
 }
