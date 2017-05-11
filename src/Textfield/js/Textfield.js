@@ -14,7 +14,7 @@ export default class Textfield extends Component {
 
   onChange(e) {
     if (this.props.onChange) {
-      this.props.onChange(e.target.value);
+      this.props.onChange(e.target.value, e);
     }
   }
 

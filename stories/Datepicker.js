@@ -1,8 +1,7 @@
+import Datepicker from '../src/Datepicker';
 import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Datepicker from '../src/Datepicker';
 
 storiesOf('Datepicker', module)
   .addDecorator(story => (
@@ -32,7 +31,7 @@ storiesOf('Datepicker', module)
   )
   .addWithInfo(
     'type=time',
-    () => render({type: 'time'}),
+    () => render({type: 'time', placeholder: 'Choose a time'}),
     {inline: true}
   )
   .addWithInfo(
@@ -51,8 +50,8 @@ storiesOf('Datepicker', module)
     {inline: true}
   )
   .addWithInfo(
-    'value=2015-01-15T02:15-07:00',
-    () => render({type: 'datetime', value: '2015-01-15T02:15-07:00'}),
+    'value=2015-01-15 02:15',
+    () => render({type: 'datetime', value: '2015-01-15 02:15'}),
     {inline: true}
   )
   .addWithInfo(

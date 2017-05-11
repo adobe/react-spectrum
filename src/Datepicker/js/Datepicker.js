@@ -1,22 +1,23 @@
-import React, {Component, PropTypes} from 'react';
-import classNames from 'classnames';
-import moment from 'moment';
-
+import autobind from 'autobind-decorator';
 import Button from '../../Button';
-import InputGroup from '../../InputGroup';
-import Textfield from '../../Textfield';
 import Calendar from '../../Calendar';
-import Popover from '../../Popover';
+import classNames from 'classnames';
 import Clock from '../../Clock';
 import createId from '../../utils/createId';
+import InputGroup from '../../InputGroup';
+import moment from 'moment';
+import OverlayTrigger from '../../OverlayTrigger';
+import Popover from '../../Popover';
+import React, {Component, PropTypes} from 'react';
+import Textfield from '../../Textfield';
 import {toMoment} from '../../utils/moment';
-
 import '../style/index.styl';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
 const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
 
+@autobind
 export default class Datepicker extends Component {
   static displayName = 'Datepicker';
 
@@ -48,18 +49,6 @@ export default class Datepicker extends Component {
     readOnly: PropTypes.bool,
     required: PropTypes.bool,
     invalid: PropTypes.bool,
-    // Customize how to constrain the popover so it pins to the edge of the window,
-    // scroll container, etc, or if it flips when it would otherwise be clipped.
-    // This is passed to tether internally. See http://tether.io/#constraints
-    attachmentConstraints: PropTypes.shape({
-      to: PropTypes.string,
-      attachment: PropTypes.string,
-      pin: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.string,
-        PropTypes.arrayOf(PropTypes.string)
-      ])
-    }),
     onChange: PropTypes.func
   };
 
@@ -76,11 +65,6 @@ export default class Datepicker extends Component {
     readOnly: false,
     required: false,
     placeholder: 'Choose a date',
-    attachmentConstraints: {
-      to: 'window',
-      attachment: 'together', // flip when we hit a boundary
-      pin: true
-    },
     onChange: function () {}
   };
 
@@ -96,9 +80,7 @@ export default class Datepicker extends Component {
 
     const newValueFormat = valueFormat || this.getDefaultValueFormat(props);
     const newDisplayFormat = displayFormat || this.getDefaultValueFormat(props);
-
     const val = toMoment(value || defaultValue || '', newValueFormat);
-
     this.state = {
       value: val,
       valueText: this.formatValueToInputText(val, newDisplayFormat),
@@ -161,38 +143,21 @@ export default class Datepicker extends Component {
     return '';
   }
 
-  handleCalendarButtonClick = () => {
-    this.setState({open: !this.state.open});
-  }
-
-  handlePopoverClose = e => {
-    // Don't close the popover if the dropdown button was clicked.
-    if (this.refs.button && !this.refs.button.contains(e.target)) {
-      this.closeCalendarPopover();
-    }
-  }
-
-  handleCalendarKeyDown = e => {
-    if (e.keyCode === 27) { // escape key
-      this.closeCalendarPopover();
-    }
-  }
-
-  handleCalendarChange = (date) => {
+  handleCalendarChange(date) {
     if (date.isValid()) {
       this.setValue(this.formatValueToInputText(date), date);
     }
     this.setState({open: false});
   }
 
-  handleClockChange = (valueText, valueDate) => {
+  handleClockChange(valueText, valueDate) {
     const date = moment(valueDate);
     if (date.isValid()) {
       this.setValue(valueText, date);
     }
   }
 
-  handleTextChange = e => {
+  handleTextChange(value, e) {
     e.stopPropagation();
     // Don't call this.props.onChange. We'll notify that a change happened when the text field is
     // blurred instead. This is done to avoid casting the text into a date object and then have it
@@ -202,11 +167,11 @@ export default class Datepicker extends Component {
     // internal state of the textfield. This means we don't get a truly controlled textfield, but
     // given the date conversion problems, we don't have any other viable option.
     this.setState({
-      valueText: e.target.value
+      valueText: value
     });
   }
 
-  handleTextBlur = e => {
+  handleTextBlur(e) {
     const {displayFormat} = this.state;
     const text = e.target.value;
     let date = moment(text, displayFormat, true);
@@ -221,17 +186,12 @@ export default class Datepicker extends Component {
     }
   }
 
-  closeCalendarPopover() {
-    this.setState({open: false});
-  }
-
   renderCalendar(props) {
     return (
       <Calendar
         className="u-coral-borderless"
-        { ...props }
-        onChange={ this.handleCalendarChange }
-        onKeyDown={ this.handleCalendarKeyDown }
+        {...props}
+        onChange={this.handleCalendarChange}
       />
     );
   }
@@ -240,10 +200,9 @@ export default class Datepicker extends Component {
     return (
       <div className="coral-Datepicker-clockContainer">
         <Clock
-          { ...props }
-          onChange={ this.handleClockChange }
-          onKeyDown={ this.handleCalendarKeyDown }
-          displayFormat={ this.state.displayFormat }
+          {...props}
+          onChange={this.handleClockChange}
+          displayFormat={this.state.displayFormat}
         />
       </div>
     );
@@ -258,17 +217,15 @@ export default class Datepicker extends Component {
       min,
       startDay,
       placeholder,
-      attachmentConstraints,
       quiet,
       disabled,
       invalid,
       readOnly,
       required,
-      className,
       ...otherProps
     } = this.props;
 
-    const {open, valueText, value, valueFormat} = this.state;
+    const {valueText, value, valueFormat} = this.state;
 
     const calendarProps = {
       id,
@@ -296,64 +253,39 @@ export default class Datepicker extends Component {
     // We are using state for these.
     delete otherProps.value;
     delete otherProps.defaultValue;
-
     return (
-      <Popover
-        dropClassName="coral-DatepickerPopover-drop"
-        className={
-          classNames(
-            'coral-Datepicker',
-            {
-              'is-invalid': invalid
-            },
-            className
-          )
-        }
-        open={ open }
-        placement="bottom right"
-        content={
-          <div>
-            { type !== 'time' && this.renderCalendar(calendarProps) }
-            { type !== 'date' && this.renderClock(clockProps) }
-          </div>
-        }
-        attachmentConstraints={ attachmentConstraints }
-        aria-disabled={ disabled }
-        aria-invalid={ invalid }
-        aria-readonly={ readOnly }
-        aria-required={ required }
-        aria-expanded={ open }
-        aria-owns={ id }
-        aria-haspopup
-        onClose={ this.handlePopoverClose }
-      >
-        <InputGroup quiet={quiet}>
-          <Textfield
-            className="coral-InputGroup-input"
-            aria-invalid={ invalid }
-            placeholder={ placeholder }
-            value={ valueText }
-            quiet={ quiet }
-            readOnly={ readOnly }
-            disabled={ disabled }
-            invalid={ invalid }
-            { ...otherProps }
-            onChange={ this.handleTextChange }
-            onBlur={ this.handleTextBlur }
-          />
-          <div ref="button" className="coral-InputGroup-button">
+      <InputGroup quiet={quiet}>
+        <Textfield
+          className="coral-InputGroup-input"
+          aria-invalid={invalid}
+          placeholder={placeholder}
+          value={valueText}
+          quiet={quiet}
+          readOnly={readOnly}
+          disabled={disabled}
+          invalid={invalid}
+          {...otherProps}
+          onChange={this.handleTextChange}
+          onBlur={this.handleTextBlur}
+        />
+        <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
+          <div className="coral-InputGroup-button">
             <Button
-              className={ classNames({'coral-Button--quiet': quiet}) }
+              className={classNames({'coral-Button--quiet': quiet})}
               type="button"
-              icon={ type === 'time' ? 'clock' : 'calendar' }
+              icon={type === 'time' ? 'clock' : 'calendar'}
               iconSize="S"
               square
-              disabled={ readOnly || disabled }
-              onClick={ this.handleCalendarButtonClick }
-            />
+              disabled={readOnly || disabled} />
           </div>
-        </InputGroup>
-      </Popover>
+          <Popover open>
+            <div>
+              {type !== 'time' && this.renderCalendar(calendarProps)}
+              {type !== 'date' && this.renderClock(clockProps)}
+            </div>
+          </Popover>
+        </OverlayTrigger>
+      </InputGroup>
     );
   }
 }
