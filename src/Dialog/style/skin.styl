@@ -15,65 +15,67 @@
  * from Adobe Systems Incorporated.
  */
 
+@import '@spectrum/spectrum-abstract-stylus/dist/components/dialog/skin'
+
 .coral-Dialog {
-  &.coral-Dialog--backdropNone {
-    background: none;
+  .coral-Dialog-wrapper {
+    spectrum-dialog-wrapper()
+  }
+}
+
+.coral-Dialog-header {
+  spectrum-dialog-header()
+
+  .coral-Dialog-title {
+    spectrum-dialog-title()
+  }
+
+  .coral-Dialog-typeIcon {
+    spectrum-dialog-typeIcon()
   }
 }
 
 .coral-Dialog-header--error {
   .coral-Dialog-title {
-    color: $spectrum-dialog-error-title-text-color-default;
+    spectrum-dialog-title--error()
   }
 
   .coral-Dialog-typeIcon {
-    color: $spectrum-dialog-error-icon-color-default;
+    spectrum-dialog-typeIcon--error()
   }
 }
 
 .coral-Dialog-header--warning {
   .coral-Dialog-title {
-    color: $spectrum-dialog-warning-title-text-color-default;
+    spectrum-dialog-title--warning()
   }
 
   .coral-Dialog-typeIcon {
-    color: $spectrum-dialog-warning-icon-color-default;
+    spectrum-dialog-typeIcon--warning()
   }
 }
 
 .coral-Dialog-header--help,
 .coral-Dialog-header--info {
   .coral-Dialog-title {
-    color: $spectrum-dialog-info-title-text-color-default;
+    spectrum-dialog-title--info()
   }
 
   .coral-Dialog-typeIcon {
-    color: $spectrum-dialog-info-icon-color-default;
+    spectrum-dialog-typeIcon--info()
   }
 }
 
 .coral-Dialog-header--success {
   .coral-Dialog-title {
-    color: $spectrum-dialog-success-title-text-color-default;
+    spectrum-dialog-title--success()
   }
 
   .coral-Dialog-typeIcon {
-    color: $spectrum-dialog-success-icon-color-default;
-  }
-}
-
-.coral-Dialog-wrapper {
-  background: $spectrum-dialog-background-color-default;
-}
-
-.coral-Dialog-header {
-  background: $spectrum-dialog-background-color-default;
-
-  &:after {
-    background: $spectrum-dialog-title-divider-color-default;
+    spectrum-dialog-typeIcon--success()
   }
 }
 
 .coral-Dialog-footer {
-  background: $spectrum-dialog-background-color-default;
+  spectrum-dialog-footer()
 }
