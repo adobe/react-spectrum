@@ -15,7 +15,6 @@
  * from Adobe Systems Incorporated.
  */
 
-$switch-track-disabled-background-color = $spectrum-alias-background-color-transparent
 $switch-handle-background-color = $spectrum-alias-background-color-default
 
 .coral3-Switch {
@@ -36,26 +35,25 @@ $switch-handle-background-color = $spectrum-alias-background-color-default
 }
 
 .coral3-Switch-label {
-   height: $spectrum-switch-toggle-height-default;
-   width: $spectrum-switch-toggle-width-default;
+  height: $spectrum-switch-toggle-height-default;
+  width: $spectrum-switch-toggle-width-default;
 }
 
 // :before is used for the track of the switch
 .coral3-Switch-label:before {
- background: $spectrum-switch-toggle-track-color-default;
+  background: $spectrum-switch-toggle-track-color-default;
 }
 
 // :after is used for the handle of the switch
 .coral3-Switch-label:after {
- background: $switch-handle-background-color;
- border: 2*$px solid $spectrum-switch-border-color-default;
+  background: $switch-handle-background-color;
+  border: 2*$px solid $spectrum-switch-border-color-default;
 }
 
 .coral3-Switch-input {
-
  &:checked {
-   + .coral3-Switch-label:after {
-     border-color: $spectrum-switch-border-color-active;
+   + .coral3-Switch-label:before {
+     background: $spectrum-switch-border-color-active;
    }
  }
 
@@ -66,7 +64,7 @@ $switch-handle-background-color = $spectrum-alias-background-color-default
 
  &:disabled {
    + .coral3-Switch-label:before {
-     background: $switch-track-disabled-background-color;
+     background: $spectrum-switch-border-color-disabled;
    }
 
    + .coral3-Switch-label:after {
