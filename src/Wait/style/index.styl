@@ -15,74 +15,60 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/wait'
 
 .coral-Wait {
-  display: inline-block;
-  width: 16*$px;
-  height: 16*$px;
-
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-timing-function: steps(60);
+  spectrum-wait-spinner()
+  spectrum-wait-spinner--small()
 }
 
 // @deprecated .coral-Wait--center, please use .coral-Wait--centered
 .coral-Wait--center,
 .coral-Wait--centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -8*$px;
-  margin-left: -8*$px;
-}
-
-.coral-Wait--centered.coral-Wait--medium {
-  margin-top: -16*$px;
-  margin-left: -16*$px;
+  spectrum-wait--centered()
+  spectrum-wait-spinner--centered--small()
 }
 
 .coral-Wait--medium {
-  width: 32*$px;
-  height: 32*$px;
+  spectrum-wait-spinner--medium()
 }
 
-.coral-Wait--centered.coral-Wait--large {
-  margin-top: -32*$px;
-  margin-left: -32*$px;
+.coral-Wait--centered.coral-Wait--medium {
+  spectrum-wait-spinner--centered--medium()
 }
 
 .coral-Wait--large {
-  width: 64*$px;
-  height: 64*$px;
+  spectrum-wait-spinner--large()
+}
+
+.coral-Wait--centered.coral-Wait--large {
+  spectrum-wait-spinner--centered--large()
 }
 
 .coral-Wait--dots {
-  animation-duration: 0.8s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-timing-function: steps(40);
-
-  background-size: auto 9*$px;
-  background-repeat: no-repeat;
-
-  width: 24*$px;
+  spectrum-wait-dots()
+  spectrum-wait-dots--small()
 }
 
 .coral-Wait--dots.coral-Wait--medium {
-  background-size: auto 12*$px;
-
-  width: 32*$px;
+  spectrum-wait-dots--medium()
 }
 
 .coral-Wait--dots.coral-Wait--large {
-  background-size: auto 24*$px;
+  spectrum-wait-dots--large()
+}
 
-  width: 64*$px;
+.coral-Wait--centered.coral-Wait--dots {
+  spectrum-wait-dots--centered--small()
+}
+
+.coral-Wait--centered.coral-Wait--dots.coral-Wait--medium {
+  spectrum-wait-dots--centered--medium()
+}
+
+.coral-Wait--centered.coral-Wait--dots.coral-Wait--large {
+  spectrum-wait-dots--centered--large()
 }
 
 @require 'light.styl'

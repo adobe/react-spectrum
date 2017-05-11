@@ -15,89 +15,20 @@
  * from Adobe Systems Incorporated.
  */
 
-// default wait spinner
-
-@keyframes coral-wait {
-  from {
-    background-position: 0 center;
-  }
-
-  to {
-    background-position: -960*$px center;
-  }
-}
-
-@keyframes coral-wait-medium {
-  from {
-    background-position: 0 center;
-  }
-
-  to {
-    background-position: -1920*$px center;
-  }
-}
-
-@keyframes coral-wait-large {
-  from {
-    background-position: 0 center;
-  }
-
-  to {
-    background-position: -3840*$px center;
-  }
-}
+@import '@spectrum/spectrum-abstract-stylus/dist/components/wait/skin'
 
 .coral-Wait {
-  background-image: embedurl($spectrum-wait-medium-sprite);
-  animation-name: coral-wait;
+  spectrum-wait-spinner-sprite-small()
 }
 
 .coral-Wait--medium {
-  animation-name: coral-wait-medium;
+  spectrum-wait-spinner-sprite-medium()
 }
 
 .coral-Wait--large {
-  background-image: embedurl($spectrum-wait-large-sprite);
-  animation-name: coral-wait-large;
-}
-
-// dots wait
-@keyframes coral-wait-dots-small {
-  0% {
-    background-position: 0 center;
-  }
-  100% {
-    background-position: -960*$px center;
-  }
-}
-
-@keyframes coral-wait-dots-medium {
-  0% {
-    background-position: 0 center;
-  }
-  100% {
-    background-position: -1280*$px center;
-  }
-}
-
-@keyframes coral-wait-dots-large {
-  0% {
-    background-position: 0 center;
-  }
-  100% {
-    background-position: -2560*$px center;
-  }
+  spectrum-wait-spinner-sprite-large()
 }
 
 .coral-Wait--dots {
-  background-image: embedurl($spectrum-wait-dots-sprite);
-  animation-name: coral-wait-dots-small;
-}
-
-.coral-Wait--dots.coral-Wait--medium {
-  animation-name: coral-wait-dots-medium;
-}
-
-.coral-Wait--dots.coral-Wait--large {
-  animation-name: coral-wait-dots-large;
+  spectrum-wait-dots-sprite()
 }
