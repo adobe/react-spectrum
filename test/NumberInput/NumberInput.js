@@ -304,7 +304,7 @@ describe('NumberInput', () => {
 
       it('will allow input change value to be less than min, but marks it invalid', () => {
         const spSpy = expect.createSpy();
-        findInput(tree).simulate('change', {target: {value: -12}, stopPropagation: spSpy});
+        findInput(tree).simulate('change', -12, {stopPropagation: spSpy});
         expect(findDecrementButton(tree).prop('disabled')).toBe(true);
         expect(tree.state('valueInvalid')).toBe(true);
         expect(findInput(tree).prop('invalid')).toBe(true);
@@ -325,21 +325,21 @@ describe('NumberInput', () => {
     });
 
     it('will not allow non-numeric characters', () => {
-      findInput(tree).simulate('change', {target: {value: 'foo'}, stopPropagation: spSpy});
+      findInput(tree).simulate('change', 'foo', {stopPropagation: spSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(findInput(tree).prop('value')).toBe(1);
       expect(spSpy).toHaveBeenCalled();
     });
 
     it('will allow a single negative sign even though it is not a number', () => {
-      findInput(tree).simulate('change', {target: {value: '-'}, stopPropagation: spSpy});
+      findInput(tree).simulate('change', '-', {stopPropagation: spSpy});
       expect(spy).toNotHaveBeenCalled();
       expect(findInput(tree).prop('value')).toBe('-');
       expect(spSpy).toHaveBeenCalled();
     });
 
     it('will allow numeric values', () => {
-      findInput(tree).simulate('change', {target: {value: '-5'}, stopPropagation: spSpy});
+      findInput(tree).simulate('change', '-5', {stopPropagation: spSpy});
       expect(spy).toHaveBeenCalledWith(-5);
       expect(tree.state('value')).toBe('-5');
       expect(findInput(tree).prop('value')).toBe('-5');

@@ -91,7 +91,7 @@ export default class RadioGroup extends Component {
             return React.cloneElement(child, {
               checked: selectedValue === value,
               name,
-              onChange: (e) => {
+              onChange: (checked, e) => {
                 if (onChange) {
                   onChange(value);
                 }

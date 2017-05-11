@@ -47,14 +47,14 @@ export default class Search extends Component {
     }
   }
 
-  handleTextChange = e => {
+  handleTextChange = (value, e) => {
     const {onChange} = this.props;
 
     this.setState({
-      value: e.target.value,
-      emptyText: e.target.value === ''
+      value,
+      emptyText: value === ''
     });
-    onChange(e.target.value);
+    onChange(value);
   }
 
   handleClearText = () => {

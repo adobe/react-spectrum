@@ -126,11 +126,10 @@ export default class NumberInput extends Component {
     }
   }
 
-  handleInputChange = e => {
+  handleInputChange = (value, e) => {
     e.stopPropagation();
 
     const {onChange} = this.props;
-    const {target: {value}} = e;
     const valueAsNumber = +value;
     const numeric = !isNaN(valueAsNumber);
 
