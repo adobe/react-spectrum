@@ -26,6 +26,11 @@ storiesOf('StepList', module)
     {inline: true}
   )
   .addWithInfo(
+    'size: large',
+    () => render({size: 'L'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'defaultSelectedIndex: 1',
     () => render({defaultSelectedIndex: 1}),
     {inline: true}
