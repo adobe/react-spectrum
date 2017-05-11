@@ -1,6 +1,6 @@
 import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
-import {withKnobs, text, boolean, select} from '@kadira/storybook-addon-knobs';
+import {withKnobs} from '@kadira/storybook-addon-knobs';
 import {VerticalCenter} from '../.storybook/layout';
 
 import Select from '../src/Select';
@@ -15,31 +15,6 @@ const defaultProps = {
     {label: 'Peppermint', value: 'peppermint'},
     {label: 'Some crazy long value that should be cut off', value: 'logVal'}
   ]
-};
-
-const icons = {
-  '': 'None',
-  abc: 'ABC',
-  actions: 'Actions',
-  add: 'Add',
-  addCircle: 'AddCircle',
-  adjust: 'Adjust',
-  adobe: 'Adobe',
-  adobeAnalytics: 'AdobeAnalytics',
-  adobeAudienceManager: 'AdobeAudienceManager',
-  adobeCampaign: 'AdobeCampaign',
-  adobeConnect: 'AdobeConnect',
-  adobeDocumentCloud: 'AdobeDocumentCloud',
-  adobeExperienceManager: 'AdobeExperienceManager',
-  adobeMarketingCloud: 'AdobeMarketingCloud',
-  adobeMediaOptimizer: 'AdobeMediaOptimizer',
-  adobePrimetime: 'AdobePrimetime',
-  adobeSendNow: 'AdobeSendNow',
-  adobeSocial: 'AdobeSocial',
-  adobeTarget: 'AdobeTarget',
-  alert: 'Alert',
-  alertAdd: 'AlertAdd',
-  alertCheck: 'AlertCheck'
 };
 
 const selectedValue = [

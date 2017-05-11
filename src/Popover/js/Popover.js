@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
-import {getVariantIcon} from '../../utils/icon-variant';
 
 import '../style/index.styl';
 import '../../Dialog/style/index.styl';
