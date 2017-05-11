@@ -15,32 +15,27 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-steplist-label-color = $spectrum-global-color-grey8;
-$spectrum-steplist-step-color  = $spectrum-global-color-grey5;
-$spectrum-steplist-line-complete-color = $spectrum-global-color-grey6;
-$spectrum-steplist-step-complete-color = $spectrum-global-color-grey7;
-$spectrum-steplist-blue-color = $spectrum-global-color-blue4;
+@import '@spectrum/spectrum-abstract-stylus/dist/components/wizard/skin'
 
 .coral-StepList {
-
   // Default Label Style
   .coral-Step-label {
-    color: $spectrum-steplist-label-color;
+    spectrum-wizard-label--incomplete()
   }
 
   // Default Marker Style
   .coral-Step-marker {
-    border-color: $spectrum-steplist-step-color;
+    spectrum-wizard-marker--incomplete()
   }
 
   // Default Line Style
   .coral-Step-line {
-    border-bottom-color: $spectrum-steplist-step-color;
+    spectrum-wizard-segment--incomplete()
   }
 
   // Lines Style after Complete
   .coral-Step.is-complete + .coral-Step .coral-Step-line {
-    border-bottom-color: $spectrum-steplist-line-complete-color;
+    spectrum-wizard-segment--complete()
   }
 
   .coral-Step {
@@ -48,18 +43,18 @@ $spectrum-steplist-blue-color = $spectrum-global-color-blue4;
     // Step Completed
     &.is-complete {
       .coral-Step-marker {
-        background: $spectrum-steplist-step-complete-color;
+        spectrum-wizard-marker--complete()
       }
     }
 
     // Step Selected
     &.is-selected {
       .coral-Step-label {
-        color: $spectrum-steplist-blue-color;
+        spectrum-wizard-label--current()
       }
 
       .coral-Step-marker {
-        background: $spectrum-steplist-blue-color;
+        spectrum-wizard-marker--current()
       }
     }
   }
@@ -72,14 +67,14 @@ $spectrum-steplist-blue-color = $spectrum-global-color-blue4;
       // Step Hovered
       &:hover {
         .coral-Step-marker {
-          background: $spectrum-steplist-label-color;
+          spectrum-wizard-marker--complete()
         }
       }
 
       // Step Focused
       &:focus {
         .coral-Step-marker {
-          background: $spectrum-steplist-blue-color;
+          spectrum-wizard-marker--current()
         }
       }
     }
