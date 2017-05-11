@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+import autobind from 'autobind-decorator';
 
 import Textfield from '../../Textfield';
 import {toMoment, formatMoment} from '../../utils/moment';
@@ -8,6 +9,7 @@ import {clamp} from '../../utils/number';
 
 import '../style/index.styl';
 
+@autobind
 export default class Clock extends Component {
   static displayName = 'Clock';
 
@@ -79,41 +81,39 @@ export default class Clock extends Component {
     }
   }
 
-  handleHourChange = e => {
+  handleHourChange(value, e) {
     const {minuteText} = this.state;
     e.stopPropagation();
-    this.changeTime(e.target.value, minuteText);
+    this.changeTime(value, minuteText);
   }
 
-  handleMinuteChange = e => {
+  handleMinuteChange(value, e) {
     const {hourText} = this.state;
     e.stopPropagation();
-    this.changeTime(hourText, e.target.value);
+    this.changeTime(hourText, value);
   }
 
-  handleHourBlur = e => {
-    let val = e.target.value;
-
+  handleHourBlur(e) {
+    let value = e.target.value;
     // normalize the hourText displayed in the input
-    if (val.length <= 1) {
-      val = `0${ val }`;
+    if (value.length <= 1) {
+      value = `0${value}`;
     }
 
     this.setState({
-      hourText: val
+      hourText: value
     });
   }
 
-  handleMinuteBlur = e => {
-    let val = e.target.value;
-
+  handleMinuteBlur(e) {
+    let value = e.target.value;
     // normalize the minuteText displayed in the input
-    if (val.length <= 1) {
-      val = `0${ val }`;
+    if (value.length <= 1) {
+      value = `0${value}`;
     }
 
     this.setState({
-      minuteText: val
+      minuteText: value
     });
   }
 
@@ -137,7 +137,6 @@ export default class Clock extends Component {
       newTime.second(0);
       newTime.millisecond(0);
     }
-
     this.setState({
       hourText,
       minuteText
@@ -185,44 +184,44 @@ export default class Clock extends Component {
             className
           )
         }
-        aria-disabled={ disabled }
-        aria-invalid={ invalid }
-        aria-readonly={ readOnly }
-        aria-required={ required }
-        { ...otherProps }
+        aria-disabled={disabled}
+        aria-invalid={invalid}
+        aria-readonly={readOnly}
+        aria-required={required}
+        {...otherProps}
       >
         <Textfield
           ref="hour"
           className="coral-Clock-hour"
           type="number"
-          value={ hourText }
+          value={hourText}
           placeholder="HH"
           min="0"
           max="23"
-          invalid={ invalid }
-          disabled={ disabled }
-          readOnly={ readOnly }
-          required={ required }
-          quiet={ quiet }
-          onChange={ this.handleHourChange }
-          onBlur={ this.handleHourBlur }
+          invalid={invalid}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+          quiet={quiet}
+          onChange={this.handleHourChange}
+          onBlur={this.handleHourBlur}
         />
         <span className="coral-Clock-divider">:</span>
         <Textfield
           ref="minute"
           className="coral-Clock-minute"
           type="number"
-          value={ minuteText }
+          value={minuteText}
           placeholder="mm"
           min="0"
           max="59"
-          invalid={ invalid }
-          disabled={ disabled }
-          readOnly={ readOnly }
-          required={ required }
-          quiet={ quiet }
-          onChange={ this.handleMinuteChange }
-          onBlur={ this.handleMinuteBlur }
+          invalid={invalid}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+          quiet={quiet}
+          onChange={this.handleMinuteChange}
+          onBlur={this.handleMinuteBlur}
         />
       </div>
     );
