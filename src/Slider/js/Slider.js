@@ -51,6 +51,8 @@ export default class Slider extends React.Component {
   };
 
   onMouseMove = (e) => {
+    e.preventDefault();
+
     let rect = this.dom.getBoundingClientRect();
     let minOffset = this.props.orientation === 'vertical' ? rect.top : rect.left;
     let offset = this.props.orientation === 'vertical' ? e.clientY : e.clientX;
