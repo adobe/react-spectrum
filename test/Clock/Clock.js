@@ -35,7 +35,7 @@ describe('Clock', () => {
     let stopPropagationSpy;
 
     const assertChangeArgs = (element, value, compareDate, format = 'HH:mm') => {
-      element.simulate('change', {stopPropagation: stopPropagationSpy, target: {value}});
+      element.simulate('change', value, {stopPropagation: stopPropagationSpy, target: {value}});
       assert(stopPropagationSpy.called);
 
       const args = spy.lastCall.args;
@@ -50,13 +50,13 @@ describe('Clock', () => {
     });
 
     it('when hour changes', () => {
-      const tree = shallow(<Clock onChange={ spy } value={ now } />);
+      const tree = shallow(<Clock onChange={spy} value={now} />);
       const hour = findHourTextfield(tree);
       assertChangeArgs(hour, '10', now.hour(10));
     });
 
     it('when minute changes', () => {
-      const tree = shallow(<Clock onChange={ spy } value={ now } />);
+      const tree = shallow(<Clock onChange={spy} value={now} />);
       const minute = findMinuteTextfield(tree);
       assertChangeArgs(minute, '50', now.minute(50));
     });
@@ -64,7 +64,7 @@ describe('Clock', () => {
     it('maintains month, day, and year of value when hour/minute changes are made', () => {
       const date = new Date(2001, 0, 1);
       const valueFormat = 'YYYY-MM-DD HH:mm';
-      const tree = shallow(<Clock onChange={ spy } value={ date } valueFormat={ valueFormat } />);
+      const tree = shallow(<Clock onChange={spy} value={date} valueFormat={valueFormat} />);
       const minute = findMinuteTextfield(tree);
       assertChangeArgs(minute, '10', moment(date).minute(10), valueFormat);
     });
@@ -73,7 +73,7 @@ describe('Clock', () => {
       const date = new Date(2001, 0, 1);
       const valueFormat = 'YYYY-MM-DD HH:mm';
       const tree = shallow(
-        <Clock onChange={ spy } defaultValue={ date } valueFormat={ valueFormat } />
+        <Clock onChange={spy} defaultValue={date} valueFormat={valueFormat} />
       );
       const hour = findHourTextfield(tree);
       assertChangeArgs(hour, '3', moment(date).hour(3), valueFormat);
@@ -82,7 +82,7 @@ describe('Clock', () => {
 
   it('supports defaultValue uncontrolled behavior', () => {
     const now = moment().second(0).millisecond(0);
-    const tree = shallow(<Clock defaultValue={ now } />);
+    const tree = shallow(<Clock defaultValue={now} />);
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
@@ -90,7 +90,7 @@ describe('Clock', () => {
     assert.deepEqual(+tree.state('value'), +now);
 
     // Component interaction should change the state.
-    findHourTextfield(tree).simulate('change', {stopPropagation: function () {}, target: {value: 0}});
+    findHourTextfield(tree).simulate('change', 0, {stopPropagation: function () {}, target: {value: 0}});
     assert.deepEqual(+tree.state('value'), +now.clone().hours(0));
   });
 
@@ -98,7 +98,7 @@ describe('Clock', () => {
     const now = moment();
     const dateWeekLater = now.clone().add(7, 'day');
 
-    const tree = shallow(<Clock value={ now } />);
+    const tree = shallow(<Clock value={now} />);
 
     // Changing value will change the state.
     tree.setProps({value: dateWeekLater});
@@ -106,7 +106,7 @@ describe('Clock', () => {
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
-    findHourTextfield(tree).simulate('change', {stopPropagation: function () {}, target: {value: 0}});
+    findHourTextfield(tree).simulate('change', 0, {stopPropagation: function () {}, target: {value: 0}});
     assert.deepEqual(+tree.state('value'), +dateWeekLater);
   });
 

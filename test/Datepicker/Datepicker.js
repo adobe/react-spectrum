@@ -1,13 +1,13 @@
-import React from 'react';
-import moment from 'moment';
 import assert from 'assert';
-import sinon from 'sinon';
-import {shallow} from 'enzyme';
-import Datepicker from '../../src/Datepicker';
-import Textfield from '../../src/Textfield';
 import Button from '../../src/Button';
 import Calendar from '../../src/Calendar';
 import Clock from '../../src/Clock';
+import Datepicker from '../../src/Datepicker';
+import moment from 'moment';
+import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
+import Textfield from '../../src/Textfield';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
@@ -33,14 +33,14 @@ describe('Datepicker', () => {
     assert.equal(button.prop('disabled'), false);
     assert.equal(button.hasClass('coral-Button--quiet'), false);
 
-    const calendar = findCalendar(tree);
+    const calendar = tree.find(Calendar);
     assert.equal(calendar.hasClass('u-coral-borderless'), true);
     assert.equal(calendar.prop('disabled'), false);
     assert.equal(calendar.prop('invalid'), false);
     assert.equal(calendar.prop('readOnly'), false);
     assert.equal(calendar.prop('required'), false);
 
-    const clock = findClock(tree);
+    const clock = tree.find(Clock);
     assert.equal(clock.parent().hasClass('coral-Datepicker-clockContainer'), true);
     assert.equal(clock.prop('disabled'), false);
     assert.equal(clock.prop('invalid'), false);
@@ -50,18 +50,19 @@ describe('Datepicker', () => {
 
   it('supports type (date, time, and datetime)', () => {
     const tree = shallow(<Datepicker type="date" />);
-    assert(findCalendar(tree).node);
-    assert(!findClock(tree).node);
+
+    assert(tree.find(Calendar).node);
+    assert(!tree.find(Clock).node);
     assert.equal(findButton(tree).prop('icon'), 'calendar');
 
     tree.setProps({type: 'datetime'});
-    assert(findCalendar(tree).node);
-    assert(findClock(tree).node);
+    assert(tree.find(Calendar).node);
+    assert(tree.find(Clock).node);
     assert.equal(findButton(tree).prop('icon'), 'calendar');
 
     tree.setProps({type: 'time'});
-    assert(!findCalendar(tree).node);
-    assert(findClock(tree).node);
+    assert(!tree.find(Calendar).node);
+    assert(tree.find(Clock).node);
     assert.equal(findButton(tree).prop('icon'), 'clock');
   });
 
@@ -93,45 +94,11 @@ describe('Datepicker', () => {
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
-    findTextfield(tree).simulate('change', {
+    findTextfield(tree).simulate('change', '2016-08-01', {
       stopPropagation: function () {},
       target: {value: '2016-08-01'}
     });
     assert.deepEqual(+tree.state('value'), +dateWeekLater);
-  });
-
-  it('clicking Button opens Popover', () => {
-    const tree = shallow(<Datepicker />);
-    assert.equal(tree.state('open'), false);
-    findButton(tree).simulate('click');
-    assert.equal(tree.state('open'), true);
-    assert.equal(tree.prop('open'), true);
-  });
-
-  describe('closing popover', () => {
-    it('typing escape while popover is open closes popover', () => {
-      const tree = shallow(<Datepicker type="datetime" />);
-      tree.setState({open: true});
-      findCalendar(tree).simulate('keydown', {keyCode: 27});
-      assert.equal(tree.state('open'), false);
-      tree.setState({open: true});
-      findClock(tree).simulate('keydown', {keyCode: 27});
-      assert.equal(tree.state('open'), false);
-    });
-
-    it('clicking a date on the calendar closes popover', () => {
-      const now = moment();
-      const tree = shallow(<Datepicker />);
-      tree.setState({open: true});
-      findCalendar(tree).simulate('change', now);
-      assert.equal(tree.state('open'), false);
-    });
-
-    it('popover can close itself', () => {
-      const tree = shallow(<Datepicker />);
-      tree.prop('onClose')();
-      assert.equal(tree.state('open'), false);
-    });
   });
 
   describe('onBlur', () => {
@@ -171,7 +138,7 @@ describe('Datepicker', () => {
         target: {value: 'foo'}
       };
 
-      textfield.simulate('change', simulatedGoodEvent);
+      textfield.simulate('change', '2016-08-01 00:00', simulatedGoodEvent);
       assert(!spy.called);
 
       textfield.simulate('blur', simulatedGoodEvent);
@@ -186,7 +153,7 @@ describe('Datepicker', () => {
     });
 
     it('calendar onChange', () => {
-      const calendar = findCalendar(tree);
+      const calendar = tree.find(Calendar);
       const text = '2016-08-01 00:00';
       const date = moment(text, DEFAULT_DATE_VAL_FORMAT);
       assertChangeArgs(calendar, [date], text, date);
@@ -195,14 +162,14 @@ describe('Datepicker', () => {
     it('calendar onChange with displayFormat', () => {
       tree.setProps({displayFormat: DEFAULT_DATE_VAL_FORMAT});
 
-      const calendar = findCalendar(tree);
+      const calendar = tree.find(Calendar);
       const text = '2016-08-01';
       const date = moment(text, DEFAULT_DATE_VAL_FORMAT);
       assertChangeArgs(calendar, [date], text, date);
     });
 
     it('clock onChange', () => {
-      const calendar = findCalendar(tree);
+      const calendar = tree.find(Calendar);
       const text = '2016-08-01 12:35';
       const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT);
       assertChangeArgs(calendar, [date], text, date);
@@ -211,7 +178,7 @@ describe('Datepicker', () => {
     it('clock onChange with displayFormat', () => {
       tree.setProps({displayFormat: 'YYYY-MM-DD hh:mm:ss'});
 
-      const calendar = findCalendar(tree);
+      const calendar = tree.find(Calendar);
       const text = '2016-08-01 12:35:00';
       const date = moment(text, DEFAULT_DATE_TIME_VAL_FORMAT);
       assertChangeArgs(calendar, [date], text, date);
@@ -221,8 +188,8 @@ describe('Datepicker', () => {
       const date = new Date(2001, 0, 1);
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
-        const clockEl = shallow(findClock(wrapper).node).find(`.coral-Clock-${ field }`);
-        clockEl.simulate('change', {stopPropagation: function () {}, target: {value: `${ value }`}});
+        const clockEl = shallow(wrapper.find(Clock).node).find(`.coral-Clock-${ field }`);
+        clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${ value }`}});
         return spy.lastCall.args[1];
       };
 
@@ -267,8 +234,8 @@ describe('Datepicker', () => {
     assert.equal(tree.prop('aria-disabled'), true);
     assert.equal(findTextfield(tree).prop('disabled'), true);
     assert.equal(findButton(tree).prop('disabled'), true);
-    assert.equal(findCalendar(tree).prop('disabled'), true);
-    assert.equal(findClock(tree).prop('disabled'), true);
+    assert.equal(tree.find(Calendar).prop('disabled'), true);
+    assert.equal(tree.find(Clock).prop('disabled'), true);
   });
 
   it('supports invalid', () => {
@@ -277,8 +244,8 @@ describe('Datepicker', () => {
     assert.equal(tree.hasClass('is-invalid'), true);
     assert.equal(findTextfield(tree).prop('invalid'), true);
     assert.equal(findTextfield(tree).prop('aria-invalid'), true);
-    assert.equal(findCalendar(tree).prop('invalid'), true);
-    assert.equal(findClock(tree).prop('invalid'), true);
+    assert.equal(tree.find(Calendar).prop('invalid'), true);
+    assert.equal(tree.find(Clock).prop('invalid'), true);
   });
 
   it('supports readOnly', () => {
@@ -286,15 +253,15 @@ describe('Datepicker', () => {
     assert.equal(tree.prop('aria-readonly'), true);
     assert.equal(findTextfield(tree).prop('readOnly'), true);
     assert.equal(findButton(tree).prop('disabled'), true);
-    assert.equal(findCalendar(tree).prop('readOnly'), true);
-    assert.equal(findClock(tree).prop('readOnly'), true);
+    assert.equal(tree.find(Calendar).prop('readOnly'), true);
+    assert.equal(tree.find(Clock).prop('readOnly'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<Datepicker type="datetime" required />);
     assert.equal(tree.prop('aria-required'), true);
-    assert.equal(findCalendar(tree).prop('required'), true);
-    assert.equal(findClock(tree).prop('required'), true);
+    assert.equal(tree.find(Calendar).prop('required'), true);
+    assert.equal(tree.find(Clock).prop('required'), true);
   });
 
   it('supports additional classNames', () => {
@@ -310,5 +277,3 @@ describe('Datepicker', () => {
 
 const findTextfield = tree => tree.find(Textfield);
 const findButton = tree => tree.find(Button);
-const findCalendar = tree => shallow(tree.prop('content')).find(Calendar);
-const findClock = tree => shallow(tree.prop('content')).find(Clock);
