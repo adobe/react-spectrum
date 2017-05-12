@@ -96,7 +96,7 @@ compiled to a single CSS file for each component. The directory structure is als
 ### Testing
 
 We use [mocha](https://mochajs.org/) for unit tests and [enzyme](https://github.com/airbnb/enzyme#basic-usage) +
-[expect](https://github.com/mjackson/expect) for writing assertions. In general, we prefer enzyme's
+[assert](http://nodejs.org/api/assert.html) for writing assertions. In general, we prefer enzyme's
 [shallow rendering](https://github.com/airbnb/enzyme/blob/master/docs/api/shallow.md) for tests because they are
 fast and easy to maintain.  In cases where shallow rendering doesn't make sense, we use
 [jsdom](https://github.com/tmpvar/jsdom) to mock the DOM and use enzyme's

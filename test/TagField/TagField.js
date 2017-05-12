@@ -1,8 +1,8 @@
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
-import expect from 'expect';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import {Tag} from '../../src/TagList';
 import TagField from '../../src/TagField';
 import Textfield from '../../src/Textfield';
@@ -32,7 +32,7 @@ describe('TagField', () => {
   });
 
   it('should allow entering tags', () => {
-    const onChange = expect.createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<TagField onChange={onChange} />);
 
     tree.simulate('change', 'test');
@@ -45,8 +45,8 @@ describe('TagField', () => {
     assert.equal(tree.find(Tag).length, 1);
     assert.equal(tree.find(Tag).first().childAt(0).text(), 'foo');
 
-    assert.equal(onChange.calls.length, 1);
-    assert.deepEqual(onChange.calls[0].arguments[0], ['foo']);
+    assert.equal(onChange.callCount, 1);
+    assert.deepEqual(onChange.getCall(0).args[0], ['foo']);
 
     // Add another
     tree.simulate('select', 'hi');
@@ -56,8 +56,8 @@ describe('TagField', () => {
     assert.equal(tree.find(Tag).first().childAt(0).text(), 'foo');
     assert.equal(tree.find(Tag).last().childAt(0).text(), 'hi');
 
-    assert.equal(onChange.calls.length, 2);
-    assert.deepEqual(onChange.calls[1].arguments[0], ['foo', 'hi']);
+    assert.equal(onChange.callCount, 2);
+    assert.deepEqual(onChange.getCall(1).args[0], ['foo', 'hi']);
   });
 
   it('should not allow empty tags', () => {
@@ -86,20 +86,20 @@ describe('TagField', () => {
   });
 
   it('should allow removing tags', () => {
-    const onChange = expect.createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<TagField onChange={onChange} />);
 
     tree.simulate('select', 'foo');
     assert.equal(tree.find(Tag).length, 1);
 
-    assert.equal(onChange.calls.length, 1);
-    assert.deepEqual(onChange.calls[0].arguments[0], ['foo']);
+    assert.equal(onChange.callCount, 1);
+    assert.deepEqual(onChange.getCall(0).args[0], ['foo']);
 
     tree.find(Tag).simulate('close', 'foo');
     assert.equal(tree.find(Tag).length, 0);
 
-    assert.equal(onChange.calls.length, 2);
-    assert.deepEqual(onChange.calls[1].arguments[0], []);
+    assert.equal(onChange.callCount, 2);
+    assert.deepEqual(onChange.getCall(1).args[0], []);
   });
 
   it('should not set state in controlled mode', () => {

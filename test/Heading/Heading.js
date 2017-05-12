@@ -1,5 +1,5 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import Heading from '../../src/Heading';
 
@@ -16,17 +16,17 @@ describe('Heading', () => {
 
   it('supports additional classNames', () => {
     const tree = shallow(<Heading className="myClass">Testing</Heading>);
-    expect(tree.prop('className')).toBe('coral-Heading coral-Heading--1 myClass');
+    assert.equal(tree.prop('className'), 'coral-Heading coral-Heading--1 myClass');
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Heading foo>My Heading</Heading>);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 
   it('supports children', () => {
     const tree = shallow(<Heading>My Heading</Heading>);
-    expect(tree.children().node).toBe('My Heading');
+    assert.equal(tree.children().node, 'My Heading');
   });
 });
 
@@ -37,6 +37,6 @@ function changeAndAssertSize(tree, size) {
 }
 
 function assertSize(tree, size) {
-  expect(tree.type()).toBe(`h${ size }`);
-  expect(tree.prop('className')).toBe(`coral-Heading coral-Heading--${ size }`);
+  assert.equal(tree.type(), `h${ size }`);
+  assert.equal(tree.prop('className'), `coral-Heading coral-Heading--${ size }`);
 }

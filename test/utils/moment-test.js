@@ -1,4 +1,4 @@
-import expect from 'expect';
+import assert from 'assert';
 import moment from 'moment';
 import {toMoment, isDateInRange} from '../../src/utils/moment';
 
@@ -9,27 +9,27 @@ describe('moment', () => {
     it('returns current date if \'today\' is specified', () => {
       const now = moment();
       const date = toMoment('today');
-      expect(moment.isMoment(date)).toBe(true);
-      expect(now.isSame(date, 'day'));
+      assert.equal(moment.isMoment(date), true);
+      assert(now.isSame(date, 'day'));
     });
 
     describe('accepts moment object', () => {
       it('if moment is valid, returns clone', () => {
         const date = moment();
         const returnedDate = toMoment(date);
-        expect(date).toNotBe(returnedDate);
-        expect(+date).toEqual(+returnedDate);
+        assert.notEqual(date, returnedDate);
+        assert.deepEqual(+date, +returnedDate);
       });
 
       it('if moment is not valid, returns null', () => {
-        expect(toMoment(moment('abc', valueFormat), valueFormat)).toBe(null);
+        assert.equal(toMoment(moment('abc', valueFormat), valueFormat), null);
       });
 
       it('converts a date object into moment', () => {
         const date = new Date();
         const momentDate = toMoment(date);
-        expect(+momentDate).toEqual(+moment(date));
-        expect(moment.isMoment(momentDate)).toBe(true);
+        assert.deepEqual(+momentDate, +moment(date));
+        assert.equal(moment.isMoment(momentDate), true);
       });
     });
   });
@@ -39,12 +39,12 @@ describe('moment', () => {
     const yesterday = moment().subtract(1, 'day');
     const tomorrow = moment().add(1, 'day');
 
-    expect(isDateInRange(today, yesterday, tomorrow)).toBe(true);
-    expect(isDateInRange(yesterday, today, tomorrow)).toBe(false);
-    expect(isDateInRange(tomorrow, yesterday, today)).toBe(false);
+    assert.equal(isDateInRange(today, yesterday, tomorrow), true);
+    assert.equal(isDateInRange(yesterday, today, tomorrow), false);
+    assert.equal(isDateInRange(tomorrow, yesterday, today), false);
 
-    expect(isDateInRange(today, yesterday, null)).toBe(true);
-    expect(isDateInRange(today, null, tomorrow)).toBe(true);
-    expect(isDateInRange(today)).toBe(true);
+    assert.equal(isDateInRange(today, yesterday, null), true);
+    assert.equal(isDateInRange(today, null, tomorrow), true);
+    assert.equal(isDateInRange(today), true);
   });
 });
