@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-import ShellMenu from './internal/ShellMenu';
+import ShellMenu from './ShellMenu';
 
 import Search from '../../Search';
 import Button from '../../Button';
-import List from '../../List';
+import {List} from '../../List';
+
+import '../style/ShellOrgSwitcher.styl';
 
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
@@ -76,7 +78,7 @@ export default class ShellOrgSwitcher extends Component {
         target={
           <Button
             variant="minimal"
-            className="coral-Shell-menu-button"
+            className="coral3-Shell-menu-button"
           >
             { this.getSelectedLabel(children) }
           </Button>
@@ -89,24 +91,25 @@ export default class ShellOrgSwitcher extends Component {
           className={
             classNames(
               'coral-BasicList',
-              'coral-Shell-orgSwitcher',
+              'coral3-Shell-orgSwitcher',
               className
             )
           }
         >
           <label className="u-coral-screenReaderOnly">Search Organizations</label>
           <Search
-            className="coral-Shell-orgSwitcher-search"
+            className="coral3-Shell-orgSwitcher-search"
             placeholder="Search Organizations"
             onChange={ this.handleSearchChange }
             quiet
           />
+
           <List
-            className="coral-Shell-orgSwitcher-items"
+            className="coral3-Shell-orgSwitcher-items"
             listItemSelector={
               [
-                '.coral-Shell-orgSwitcher-item:not(.is-parent):not([hidden])',
-                '.coral-Shell-orgSwitcher-subitem:not([hidden])'
+                '.coral3-Shell-orgSwitcher-item:not(.is-parent):not([hidden])',
+                '.coral3-Shell-orgSwitcher-subitem:not([hidden])'
               ].join(', ')
             }
             onSelect={ this.handleSelect }
@@ -124,16 +127,16 @@ export default class ShellOrgSwitcher extends Component {
             }
           </List>
           <div
-            className="coral-Shell-orgSwitcher-resultMessage"
+            className="coral3-Shell-orgSwitcher-resultMessage"
             hidden={ this.getResultCount(children) !== 0 }
           >
-            <div className="coral-Shell-orgSwitcher-resultMessage-container">
-              <div className="coral-Heading--1 coral-Shell-orgSwitcher-resultMessage-heading">
+            <div className="coral3-Shell-orgSwitcher-resultMessage-container">
+              <div className="coral-Heading--1 coral3-Shell-orgSwitcher-resultMessage-heading">
                 No organizations found.
               </div>
             </div>
           </div>
-          <div className="coral-Shell-orgSwitcher-footer">
+          <div className="coral3-Shell-orgSwitcher-footer">
             <Button
               element="a"
               variant="minimal"

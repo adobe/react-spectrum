@@ -1,0 +1,178 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require './Shell'
+@require '../../commons'
+
+$coral-shell-header-padding-leftright = 8*$px;
+$coral-shell-header-padding-topbottom = ($coral-shell-header-height - $spectrum-component-single-line-height) * 0.5;
+$coral-shell-header-area = $coral-shell-header-height - $coral-shell-header-padding-topbottom;
+
+$coral-shell-header-background-color = $spectrum-color-constant-grey1;
+$coral-shell-header-background-disabled-color = $spectrum-color-constant-grey5;
+
+$coral-shell-header-action-text-size = 12*$px;
+
+$coral-shell-menu-background = rgb(255, 255, 255);
+$coral-shell-menu-border = rgb(220, 220, 220);
+$coral-shell-animation-time = 400ms;
+
+$coral-shell-menubar-badge-background-color = rgb(235, 50, 45);
+$coral-shell-menubar-badge-border-color = rgb(30, 30, 30);
+/* this is for the badge: an icon/number on a red background */
+$coral-shell-menubar-badge-text-color = white;
+
+.coral3-Shell-menu {
+  visibility: hidden;
+}
+
+.is-visible {
+  visibility: visible;
+}
+
+.coral3-Shell-menubar {
+  // Live in harmony with buttons
+  display: inline-block;
+}
+
+.coral3-Shell-menubar-item {
+  display: inline-block;
+
+  vertical-align: top;
+}
+
+.coral3-Shell-menubar-item--circle {
+  .coral-Icon.is-image {
+    &.coral-Icon--sizeXXS {
+      .coral-Icon-image {
+        border-radius : 9*$px;
+      }
+    }
+
+    &.coral-Icon--sizeXS {
+      .coral-Icon-image {
+        border-radius : 12*$px;
+      }
+    }
+
+    &.coral-Icon--sizeS {
+      .coral-Icon-image {
+        border-radius : 18*$px;
+      }
+    }
+
+    &.coral-Icon--sizeM {
+      .coral-Icon-image {
+        border-radius : 24*$px;
+      }
+    }
+
+    &.coral-Icon--sizeL {
+      .coral-Icon-image {
+        border-radius : 36*$px;
+      }
+    }
+
+    &.coral-Icon--sizeXL {
+      .coral-Icon-image {
+        border-radius : 48*$px;
+      }
+    }
+
+    &.coral-Icon--sizeXXL {
+      .coral-Icon-image {
+        border-radius : 72*$px;
+      }
+    }
+  }
+}
+
+.coral3-Shell-menu {
+  position: absolute;
+
+  max-height: "calc(100% - %s)" % $coral-shell-header-height;
+  overflow: auto;
+
+  border-bottom-left-radius: 3*$px;
+  border: solid rgb(220, 220, 220);
+  border-width: 0 0 2*$px 2*$px;
+
+  background: $coral-shell-menu-background;
+
+  transition: transform $coral-shell-animation-time cubic-bezier(.42,-.01,.175,1)
+
+  &:focus {
+    // The overlay is focused when opened
+    // We don't want to indicate this in most cases
+    // The user can hit tab to focus on the first child of the shown overlay
+    outline: none;
+  }
+
+  &.is-open {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+.coral3-Shell-menu--full {
+  border-radius: 0;
+}
+
+.coral3-Shell-menu--placement-top {
+  top: $coral-shell-header-height;
+
+  &.coral3-Shell-menu--full {
+    left: 0;
+    right: 0;
+    border: none;
+    background: $coral-shell-header-background-color;
+  }
+}
+
+.coral3-Shell-menu--placement-right {
+  top: $coral-shell-header-height;
+  right: 0;
+
+  &.coral3-Shell-menu--full {
+    // Determined by position
+    max-height: none;
+
+    border-bottom: none;
+
+    bottom: 0;
+  }
+}
+
+.coral3-Shell-menu--from-top {
+  transform: translateY(-100%);
+}
+
+.coral3-Shell-menu--from-right {
+  transform: translateX(100%);
+}
+
+.coral3-Shell-menu-button {
+  position: relative;
+}
+
+.coral3-Shell-menu-button[badge]:after {
+  content: attr(badge);
+  position: absolute;
+  top: 5*$px;
+  left: 18*$px;
+
+  min-width: 5*$px;
+  height: 12*$px;
+  padding-left: 3.5*$px;
+  padding-right: 3.5*$px;
+
+  line-height: 11*$px;
+  text-align: center;
+
+  bold-text();
+  font-size: 9*$px;
+  color: $coral-shell-menubar-badge-text-color;
+
+  border-radius: 16*$px;
+
+  background-color: $coral-shell-menubar-badge-background-color;
+
+  border: 1*$px solid $coral-shell-menubar-badge-border-color;
+}

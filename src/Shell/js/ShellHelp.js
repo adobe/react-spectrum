@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-import ShellMenu from './internal/ShellMenu';
+import ShellMenu from './ShellMenu';
 
 import Search from '../../Search';
 import Button from '../../Button';
-import List from '../../List';
-import ListItem from '../../List/js/ListItem';
+import {List, ListItem} from '../../List';
 import Wait from '../../Wait';
 
-import './ShellHelp.styl';
+import '../style/ShellHelp.styl';
 
 export default class ShellHelp extends Component {
   static defaultProps = {
@@ -71,12 +70,12 @@ export default class ShellHelp extends Component {
     const separator = '\u00a0 \u2022 \u00a0';
 
     return (
-      <List className="coral-BasicList coral-AnchorList coral-Shell-help-results">
+      <List className="coral-BasicList coral-AnchorList coral3-Shell-help-results">
         {
           numTotalResults !== 0 && searchResults && searchResults.length
           ? searchResults.map(({tags, title, href}, index) => (
               <ListItem
-                key={ index }
+                key={ href }
                 element="a"
                 href={ href }
                 className="coral-AnchorList-item"
@@ -84,7 +83,7 @@ export default class ShellHelp extends Component {
                 label={
                   <span>
                     { title }
-                    <div className="coral-Shell-help-result-description">
+                    <div className="coral3-Shell-help-result-description">
                       { tags.join(separator) }
                     </div>
                   </span>
@@ -93,15 +92,16 @@ export default class ShellHelp extends Component {
             )).concat(
               <ListItem
                 element="a"
-                className="coral-AnchorList-item coral-Link coral-Shell-help-allResults"
+                key="all-results"
+                className="coral-AnchorList-item coral-Link coral3-Shell-help-allResults"
                 href={ `${ moreSearchResultsUrl }?q=${ searchTerm }` }
                 label={ `See all ${ numTotalResults } results` }
                 target="undefined"
               />
             )
-          : <div className="coral-Shell-help-resultMessage">
-              <div className="coral-Shell-help-resultMessage-container">
-                <div className="coral-Heading--1 coral-Shell-help-resultMessage-heading">
+          : <div className="coral3-Shell-help-resultMessage">
+              <div className="coral3-Shell-help-resultMessage-container">
+                <div className="coral-Heading--1 coral3-Shell-help-resultMessage-heading">
                   No results found
                 </div>
               </div>
@@ -115,7 +115,7 @@ export default class ShellHelp extends Component {
     const {defaultResults} = this.props;
 
     return (
-      <List className="coral-Shell-help-items">
+      <List className="coral3-Shell-help-items">
         {
           defaultResults && defaultResults.length &&
           defaultResults.map(({href, icon, label}, index) => (
@@ -123,7 +123,7 @@ export default class ShellHelp extends Component {
               key={ index }
               element="a"
               href={ href }
-              className="coral-AnchorList-item coral-Shell-help-item"
+              className="coral-AnchorList-item coral3-Shell-help-item"
               icon={ icon }
               iconSize="S"
               label={ label }
@@ -147,7 +147,7 @@ export default class ShellHelp extends Component {
         animateFrom="top"
         target={
           <Button
-            className="coral-Shell-menu-button"
+            className="coral3-Shell-menu-button"
             variant="minimal"
             icon="helpCircle"
             square
@@ -162,14 +162,14 @@ export default class ShellHelp extends Component {
           className={
             classNames(
               'coral-BasicList',
-              'coral-AnchorList coral-Shell-help',
+              'coral-AnchorList coral3-Shell-help',
               className
             )
           }
         >
           <label className="u-coral-screenReaderOnly">Search Help</label>
           <Search
-            className="coral-Shell-help-search"
+            className="coral3-Shell-help-search"
             placeholder="Search Help"
             onSubmit={ this.handleSearch }
             onClear={ this.handleClear }
@@ -177,9 +177,9 @@ export default class ShellHelp extends Component {
           />
           {
             loading
-            ? <div className="coral-Shell-help-loading">
-                <Wait className="coral-Shell-help-loading-wait" />
-                <span className="coral-Heading--2 coral-Shell-help-loading-info">
+            ? <div className="coral3-Shell-help-loading">
+                <Wait className="coral3-Shell-help-loading-wait" />
+                <span className="coral-Heading--2 coral3-Shell-help-loading-info">
                   Searching Help...
                 </span>
               </div>

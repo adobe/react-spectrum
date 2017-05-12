@@ -1,0 +1,22 @@
+@require '../../commons'
+
+$coral-shell-header-height = 52*$px;
+
+.coral3-Shell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.coral3-Shell-content {
+  position: absolute;
+  top: $coral-shell-header-height;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+}
