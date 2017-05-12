@@ -1,5 +1,6 @@
 import React from 'react';
-import expect, {createSpy} from 'expect';
+import assert from 'assert';
+import sinon from 'sinon';
 import {shallow} from 'enzyme';
 import RadioGroup from '../../src/RadioGroup';
 import Radio from '../../src/Radio';
@@ -7,18 +8,18 @@ import Radio from '../../src/Radio';
 describe('RadioGroup', () => {
   it('has correct defaults', () => {
     const tree = shallow(<RadioGroup />);
-    expect(tree.prop('className')).toBe('coral-RadioGroup');
-    expect(tree.type()).toBe('div');
+    assert.equal(tree.prop('className'), 'coral-RadioGroup');
+    assert.equal(tree.type(), 'div');
   });
 
   it('supports vertical layout', () => {
     const tree = shallow(<RadioGroup vertical />);
-    expect(tree.hasClass('coral-RadioGroup--vertical')).toBe(true);
+    assert.equal(tree.hasClass('coral-RadioGroup--vertical'), true);
   });
 
   it('supports labelsBelow layout', () => {
     const tree = shallow(<RadioGroup labelsBelow />);
-    expect(tree.hasClass('coral-RadioGroup--labelsBelow')).toBe(true);
+    assert.equal(tree.hasClass('coral-RadioGroup--labelsBelow'), true);
   });
 
   describe('selectedValue', () => {
@@ -32,44 +33,44 @@ describe('RadioGroup', () => {
 
     it('makes the child checked', () => {
       const tree = renderRadioGroupWithChildren({selectedValue: 'bar'});
-      expect(tree.childAt(1).prop('checked')).toBe(true);
+      assert.equal(tree.childAt(1).prop('checked'), true);
     });
 
     it('makes the child checked with defaultSelectedValue', () => {
       const tree = renderRadioGroupWithChildren({defaultSelectedValue: 'bar'});
-      expect(tree.childAt(1).prop('checked')).toBe(true);
+      assert.equal(tree.childAt(1).prop('checked'), true);
     });
 
     it('automatically sets selectedValue if a child is selected', () => {
       const tree = renderRadioGroupWithChildren({childSelectedIndex: 1});
-      expect(tree.state('selectedValue')).toBe('bar');
+      assert.equal(tree.state('selectedValue'), 'bar');
     });
 
     it('dispatches onChange which is caught and redispatched by RadioGroup', () => {
-      const spy = createSpy();
-      const stopPropagationSpy = createSpy();
+      const spy = sinon.spy();
+      const stopPropagationSpy = sinon.spy();
 
       const tree = renderRadioGroupWithChildren({onChange: spy});
-      expect(tree.prop('onChange')).toExist();
+      assert(tree.prop('onChange'));
       tree.childAt(1).simulate('change', true, {stopPropagation: stopPropagationSpy});
 
-      expect(spy).toHaveBeenCalled();
-      expect(spy).toHaveBeenCalledWith('bar');
-      expect(stopPropagationSpy).toHaveBeenCalled();
+      assert(spy.called);
+      assert(spy.calledWith('bar'));
+      assert(stopPropagationSpy.called);
     });
 
     it('throws if child doesn\'t have a value prop', () => {
-      expect(() => shallow(<RadioGroup><Radio /><Radio /><Radio /></RadioGroup>)).toThrow();
+      assert.throws(() => shallow(<RadioGroup><Radio /><Radio /><Radio /></RadioGroup>));
     });
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<RadioGroup className="myClass" />);
-    expect(tree.hasClass('myClass')).toBe(true);
+    assert.equal(tree.hasClass('myClass'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<RadioGroup foo />);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 });

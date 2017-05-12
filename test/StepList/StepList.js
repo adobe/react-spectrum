@@ -1,5 +1,6 @@
 import React from 'react';
-import expect, {createSpy} from 'expect';
+import assert from 'assert';
+import sinon from 'sinon';
 import {shallow} from 'enzyme';
 import {StepList} from '../../src/StepList';
 
@@ -7,27 +8,27 @@ describe('StepList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<StepList />);
     const innerTree = tree.shallow();
-    expect(tree.hasClass('coral-StepList')).toBe(true);
-    expect(tree.hasClass('coral-StepList--interactive')).toBe(true);
-    expect(innerTree.type()).toBe('div');
-    expect(innerTree.prop('role')).toBe('tablist');
-    expect(innerTree.prop('aria-multiselectable')).toBe(false);
+    assert.equal(tree.hasClass('coral-StepList'), true);
+    assert.equal(tree.hasClass('coral-StepList--interactive'), true);
+    assert.equal(innerTree.type(), 'div');
+    assert.equal(innerTree.prop('role'), 'tablist');
+    assert.equal(innerTree.prop('aria-multiselectable'), false);
   });
 
   it('should support size', () => {
     const tree = shallow(<StepList />);
-    expect(tree.hasClass('coral-StepList--small')).toBe(false);
+    assert.equal(tree.hasClass('coral-StepList--small'), false);
 
     tree.setProps({size: 'S'});
-    expect(tree.hasClass('coral-StepList--small')).toBe(true);
+    assert.equal(tree.hasClass('coral-StepList--small'), true);
   });
 
   it('should support interaction', () => {
     const tree = shallow(<StepList />);
-    expect(tree.hasClass('coral-StepList--interactive')).toBe(true);
+    assert.equal(tree.hasClass('coral-StepList--interactive'), true);
 
     tree.setProps({interaction: 'off'});
-    expect(tree.hasClass('coral-StepList--interactive')).toBe(false);
+    assert.equal(tree.hasClass('coral-StepList--interactive'), false);
   });
 
   it('should pass the size property to the children', () => {
@@ -39,7 +40,7 @@ describe('StepList', () => {
     );
     const innerTree = tree.shallow();
     const child = innerTree.find('.two');
-    expect(child.prop('size')).toBe('S');
+    assert.equal(child.prop('size'), 'S');
   });
 
   it('should handle the complete prop for the children before selected', () => {
@@ -51,14 +52,14 @@ describe('StepList', () => {
     );
     const innerTree = tree.shallow();
     let child = innerTree.find('.one');
-    expect(child.prop('complete')).toBe(true);
+    assert.equal(child.prop('complete'), true);
 
     child = innerTree.find('.two');
-    expect(child.prop('complete')).toBe(false);
+    assert.equal(child.prop('complete'), false);
   });
 
   it('should disable the steps when not interactive', () => {
-    const spy = createSpy();
+    const spy = sinon.spy();
     const tree = shallow(
       <StepList interaction="off">
         <div className="one">a</div>
@@ -69,6 +70,6 @@ describe('StepList', () => {
     const child = innerTree.find('.two');
     child.simulate('click');
 
-    expect(spy).toNotHaveBeenCalled();
+    assert(!spy.called);
   });
 });

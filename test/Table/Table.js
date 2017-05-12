@@ -1,32 +1,32 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import {Table} from '../../src/Table';
 
 describe('Table', () => {
   it('supports hover', () => {
     const tree = shallow(render({hover: true}));
-    expect(tree.hasClass('coral-Table--hover')).toBe(true);
+    assert.equal(tree.hasClass('coral-Table--hover'), true);
   });
 
   it('supports bordered', () => {
     const tree = shallow(render({bordered: true}));
-    expect(tree.hasClass('coral-Table--bordered')).toBe(true);
+    assert.equal(tree.hasClass('coral-Table--bordered'), true);
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(render({className: 'myClass'}));
-    expect(tree.hasClass('myClass')).toBe(true);
+    assert.equal(tree.hasClass('myClass'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(render({foo: true}));
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 
   it('supports children', () => {
     const tree = shallow(render({children: 'Foo'}));
-    expect(tree.children().node).toBe('Foo');
+    assert.equal(tree.children().node, 'Foo');
   });
 });
 

@@ -1,10 +1,10 @@
 import assert from 'assert';
 import Dropdown from '../../src/Dropdown';
-import expect from 'expect';
 import Button from '../../src/Button';
 import {Menu, MenuItem} from '../../src/Menu';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Dropdown', function () {
   it('renders a target', function () {
@@ -78,7 +78,7 @@ describe('Dropdown', function () {
   });
 
   it('closes the menu onClose', function () {
-    const spy = expect.createSpy();
+    const spy = sinon.spy();
     const tree = shallow(
       <Dropdown onClose={spy}>
         <Button>Test</Button>
@@ -96,12 +96,12 @@ describe('Dropdown', function () {
     tree.find(Menu).simulate('close');
     assert.equal(tree.find(Menu).length, 0);
 
-    assert.equal(spy.calls.length, 1);
+    assert.equal(spy.callCount, 1);
   });
 
   it('closes the menu onSelect', function () {
-    const onClose = expect.createSpy();
-    const onSelect = expect.createSpy();
+    const onClose = sinon.spy();
+    const onSelect = sinon.spy();
     const tree = shallow(
       <Dropdown onClose={onClose} onSelect={onSelect}>
         <Button>Test</Button>
@@ -119,8 +119,8 @@ describe('Dropdown', function () {
     tree.find(Menu).simulate('select', 'test');
     assert.equal(tree.find(Menu).length, 0);
 
-    assert.equal(onClose.calls.length, 1);
-    assert.equal(onSelect.calls.length, 1);
-    assert.equal(onSelect.calls[0].arguments[0], 'test');
+    assert.equal(onClose.callCount, 1);
+    assert.equal(onSelect.callCount, 1);
+    assert.equal(onSelect.getCall(0).args[0], 'test');
   });
 });
