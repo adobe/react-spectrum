@@ -34,6 +34,11 @@ storiesOf('Switch', module)
     'disabled: true',
     () => (render({disabled: true})),
     {inline: true}
+  )
+  .addWithInfo(
+    'with label',
+    () => (render({label: 'Test'})),
+    {inline: true}
   );
 
 function render(props = {}) {

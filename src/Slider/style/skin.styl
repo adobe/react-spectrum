@@ -15,20 +15,6 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-slider-handle-border-color = $spectrum-color-constant-grey8
-$spectrum-slider-handle-border-color-focus = $spectrum-color-border-focus
-$spectrum-slider-handle-border-color-hover = $spectrum-color-border-hover
-$spectrum-slider-handle-border-color-dragged = $spectrum-color-constant-grey10
-$spectrum-slider-handle-border-color-disabled = $spectrum-color-constant-grey4
-$spectrum-slider-handle-border-color-error = $spectrum-color-border-invalid;
-
-$spectrum-slider-bar-background-color = $spectrum-color-border-default;
-$spectrum-slider-bar-background-color-focus = $spectrum-color-border-default;
-$spectrum-slider-bar-background-color-disabled = $spectrum-color-background-disabled;
-$spectrum-slider-bar-background-color-error = $spectrum-color-border-default;
-
-$spectrum-slider-fill-background-color = $spectrum-color-constant-grey8;
-
 .coral3-Slider {
   background: transparent;
 
@@ -38,20 +24,14 @@ $spectrum-slider-fill-background-color = $spectrum-color-constant-grey8;
     }
 
     .coral3-Slider-bar {
-      background: $spectrum-slider-bar-background-color-disabled;
-    }
-  }
-
-  &.is-focused {
-    .coral3-Slider-bar {
-      background: $spectrum-slider-bar-background-color-focus;
+      background: $spectrum-slider-handle-border-color-disabled;
     }
   }
 }
 
 .coral3-Slider-handle {
-  border-color: $spectrum-slider-handle-border-color;
-  background: $spectrum-color-background-default;
+  border-color: $spectrum-slider-handle-border-color-default;
+  background: $spectrum-alias-background-color-default;
 
   &.is-focused {
     border-color: $spectrum-slider-handle-border-color-focus;
@@ -62,14 +42,14 @@ $spectrum-slider-fill-background-color = $spectrum-color-constant-grey8;
  }
 
   &.is-dragged {
-    border-color: $spectrum-slider-handle-border-color-dragged;
+    border-color: $spectrum-slider-handle-fill-color-active;
   }
 }
 
 .coral3-Slider-bar {
-  background: $spectrum-slider-bar-background-color;
+  background: $spectrum-slider-track-color-default;
 }
 
 .coral3-Slider-fill {
-  background-color: $spectrum-slider-fill-background-color;
+  background-color: $spectrum-slider-track-filled-color-default;
 }

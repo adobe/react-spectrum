@@ -1,22 +1,28 @@
+$spectrum-breadcrumb-text-color-default = $spectrum-global-color-grey8
+$spectrum-breadcrumb-text-color-hover = $spectrum-global-color-grey10
+$spectrum-breadcrumb-text-color-disabled = $spectrum-global-color-grey6
+$spectrum-breadcrumb-icon-color-default = $spectrum-global-color-grey8
+$spectrum-breadcrumb-icon-color-disabled = $spectrum-global-color-grey6
+
 .coral-Breadcrumbs {
   .coral-Breadcrumb {
-    color: $spectrum-color-constant-grey8;
+    color: $spectrum-breadcrumb-text-color-default;
     &:not(:last-child):hover {
-      color: $spectrum-color-constant-grey10;
+      color: $spectrum-breadcrumb-text-color-hover;
     }
 
     .coral-Icon {
-      color: $spectrum-color-constant-grey8;
+      color: $spectrum-breadcrumb-icon-color-default;
     }
   }
 
   &.is-disabled {
     .coral-Breadcrumb {
-      color: $spectrum-color-constant-grey6;
+      color: $spectrum-breadcrumb-text-color-disabled;
 
       .coral-Icon,
       &:hover {
-        color: $spectrum-color-constant-grey6;
+        color: $spectrum-breadcrumb-icon-color-disabled;
       }
     }
   }

@@ -175,7 +175,6 @@ export default class Datepicker extends Component {
     const {displayFormat} = this.state;
     const text = e.target.value;
     let date = moment(text, displayFormat, true);
-    // eslint-disable-next-line no-underscore-dangle
     if (!date || !date.isValid() || date._f !== displayFormat) {
       date = null;
     }
@@ -222,6 +221,7 @@ export default class Datepicker extends Component {
       invalid,
       readOnly,
       required,
+      className,
       ...otherProps
     } = this.props;
 
@@ -254,7 +254,19 @@ export default class Datepicker extends Component {
     delete otherProps.value;
     delete otherProps.defaultValue;
     return (
-      <InputGroup quiet={quiet}>
+      <InputGroup quiet={quiet}
+        aria-disabled={disabled}
+        aria-invalid={invalid}
+        aria-readonly={readOnly}
+        aria-required={required}
+        aria-owns={id}
+        aria-haspopup
+        className={classNames('coral-Datepicker',
+          {
+            'is-invalid': invalid
+          },
+          className
+        )}>
         <Textfield
           className="coral-InputGroup-input"
           aria-invalid={invalid}

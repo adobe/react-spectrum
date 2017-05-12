@@ -14,34 +14,8 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe Systems Incorporated.
  */
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
 
-.coral3-Accordion-item {
-  border-color: $spectrum-accordion-border-color-default;
-}
-
-.coral3-Accordion-header {
-  color: $spectrum-accordion-text-color-default;
-
-  &:focus,
-  &:hover {
-    color: $spectrum-accordion-text-color-hover;
-  }
-
-  &:focus {
-    border-left-color: $spectrum-accordion-border-left-color-focus;
-  }
-}
-
-.coral3-Accordion-item.is-disabled {
-  .coral3-Accordion-header {
-    &,
-    &:hover,
-    &:focus {
-      color: $spectrum-accordion-text-color-disabled;
-    }
-  }
-}
-
-.coral3-Accordion--quiet {
-  // @todo not implemented
+.coral--dark {
+  @import 'skin.styl'
 }

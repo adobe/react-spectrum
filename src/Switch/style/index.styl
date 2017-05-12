@@ -15,11 +15,13 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
+@import '../../commons'
 
-$switch-width = 24*$px;
-$switch-height = 12*$px;
-$switch-handle-width = 10*$px;
+// Import variables for sizing. Ideally these would be separate from the theme
+// See https://git.corp.adobe.com/Spectrum/spectrum-abstract-stylus/issues/10
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-light.styl'
+
+$switch-handle-width = $spectrum-switch-toggle-height-default;
 
 .coral3-Switch {
  // required to comply with single line components
@@ -28,22 +30,29 @@ $switch-handle-width = 10*$px;
  margin: 0;
 
  // centers the component in case it measures less the most coral components
- //padding-top: ($coral-component-single-line-height - $switch-height) * 0.5;
- //padding-bottom: ($coral-component-single-line-height - $switch-height) * 0.5;
+ //padding-top: ($coral-component-single-line-height - $spectrum-switch-toggle-height-default) * 0.5;
+ //padding-bottom: ($coral-component-single-line-height - $spectrum-switch-toggle-height-default) * 0.5;
 
  // required for the input to take the whole size
  position: relative;
 
- height: $switch-height;
+ height: $spectrum-switch-toggle-height-default;
+
+ label {
+   vertical-align: middle
+ }
 }
 
 .coral3-Switch-label {
- display: inline-block;
- // positions the pseudo elements relative to this one
- position: relative;
+  display: inline-block;
+  // positions the pseudo elements relative to this one
+  position: relative;
 
- height: $switch-height;
- width: $switch-width;
+  height: $spectrum-switch-toggle-height-default;
+  width: $spectrum-switch-toggle-width-default;
+
+  margin-right: $spectrum-margin;
+  vertical-align: middle;
 }
 
 .coral3-Switch-label:before,
@@ -59,13 +68,13 @@ $switch-handle-width = 10*$px;
 .coral3-Switch-label:before {
  transition: background $spectrum-transition-time ease-in-out, border $spectrum-transition-time ease-in-out;
 
- height: 4*$px;
+ height: $spectrum-switch-toggle-height-default;
 
- top: 3*$px;
+ top: 0;
  left: 0;
  right: 0;
 
- border-radius: 2*$px;
+ border-radius: $spectrum-switch-toggle-radius-default;
 }
 
 // :after is used for the handle of the switch
@@ -95,8 +104,7 @@ $switch-handle-width = 10*$px;
 
  &:checked {
    + .coral3-Switch-label:after {
-     transform: translateX($switch-width - $switch-handle-width);
-     border-width: ($switch-handle-width / 2);
+     transform: translateX($spectrum-switch-toggle-width-default - $switch-handle-width);
    }
  }
 

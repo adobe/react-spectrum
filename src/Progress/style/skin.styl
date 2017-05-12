@@ -15,10 +15,12 @@
  * from Adobe Systems Incorporated.
  */
 
+ @import '@spectrum/spectrum-abstract-stylus/dist/components/progress/skin'
+
 .coral-Progress-bar {
-  background-color: $spectrum-color-background-loader-bar;
+  spectrum-progress-bar()
 }
 
 .coral-Progress-status {
-  background: $spectrum-color-loader-blue;
+  spectrum-progress-status()
 }

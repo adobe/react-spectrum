@@ -24,7 +24,7 @@ transition-placeholder() {
 
 .coral-Textfield {
   /* The transition-placeholder function works around a bug in Nib's placeholder mixin */
-  placeholder(color $spectrum-color-text-placeholder-default, font-weight normal, font-style italic, transition-placeholder);
+  placeholder(color $spectrum-input-placeholder-text-color-default, font-weight normal, font-style italic, transition-placeholder);
 
   spectrum-textfield()
 
@@ -33,7 +33,7 @@ transition-placeholder() {
   }
 
   &:hover {
-    placeholder(color $spectrum-color-text-placeholder-hover, font-weight normal);
+    placeholder(color $spectrum-input-placeholder-text-color-hover, font-weight normal);
 
     spectrum-textfield--hover()
 
@@ -47,7 +47,7 @@ transition-placeholder() {
   }
 
   &[disabled] {
-    placeholder(color $spectrum-color-text-placeholder-disabled, font-weight normal);
+    placeholder(color $spectrum-input-placeholder-text-color-disabled, font-weight normal);
 
     spectrum-textfield--disabled()
 
@@ -90,7 +90,7 @@ transition-placeholder() {
   &:invalid
   &.is-invalid {
     no-glow();
-    color: $spectrum-color-text-default;
+    color: $spectrum-input-text-color-default;
   }
 }
 

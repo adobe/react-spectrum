@@ -10,7 +10,6 @@ describe('Switch', () => {
     expect(tree.prop('className')).toBe('coral3-Switch');
     expect(tree.prop('inputClassName')).toBe('coral3-Switch-input');
     expect(tree.prop('markClassName')).toBe('coral3-Switch-label');
-    expect(tree.prop('renderLabel')).toBe(false);
   });
 
   it('supports additional classNames', () => {

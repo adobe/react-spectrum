@@ -15,63 +15,60 @@
  * from Adobe Systems Incorporated.
  */
 
-$switch-track-background-color = $spectrum-color-switch-track
-$switch-track-disabled-background-color = $spectrum-color-background-disabled
-
-$switch-handle-border-color = $spectrum-color-border-switch-default
-$switch-handle-border-color-hover = $spectrum-color-border-switch-hover
-$switch-handle-border-color-active = $spectrum-color-border-switch-active
-$switch-handle-border-color-focus = $spectrum-color-border-switch-focus
-$switch-handle-border-color-checked = $spectrum-color-border-switch-active
-$switch-handle-background-color = $spectrum-color-background-default
-$switch-handle-disabled-border-color = $spectrum-color-border-disabled
+$switch-handle-background-color = $spectrum-alias-background-color-default
 
 .coral3-Switch {
+  height: $spectrum-switch-toggle-height-default;
+
   &:hover .coral3-Switch-input:not(:disabled) {
     + .coral3-Switch-label:after {
-      border-color: $switch-handle-border-color-hover;
+      border-color: $spectrum-switch-border-color-hover;
       box-shadow: none;
     }
   }
 
   &:active .coral3-Switch-input:not(:disabled) {
     + .coral3-Switch-label:after {
-      border-color: $switch-handle-border-color-active;
+      border-color: $spectrum-switch-border-color-active;
     }
   }
 }
 
+.coral3-Switch-label {
+  height: $spectrum-switch-toggle-height-default;
+  width: $spectrum-switch-toggle-width-default;
+}
+
 // :before is used for the track of the switch
 .coral3-Switch-label:before {
- background: $switch-track-background-color;
+  background: $spectrum-switch-toggle-track-color-default;
 }
 
 // :after is used for the handle of the switch
 .coral3-Switch-label:after {
- background: $switch-handle-background-color;
- border: 2*$px solid $switch-handle-border-color;
+  background: $switch-handle-background-color;
+  border: 2*$px solid $spectrum-switch-border-color-default;
 }
 
 .coral3-Switch-input {
-
  &:checked {
-   + .coral3-Switch-label:after {
-     border-color: $switch-handle-border-color-checked;
+   + .coral3-Switch-label:before {
+     background: $spectrum-switch-border-color-active;
    }
  }
 
  &:focus + .coral3-Switch-label:after {
-   border-color: $switch-handle-border-color-focus;
-   box-shadow 0 0 0 1*$px $switch-handle-border-color-focus;
+   border-color: $spectrum-switch-border-color-focus;
+   box-shadow 0 0 0 1*$px $spectrum-switch-border-color-focus;
  }
 
  &:disabled {
    + .coral3-Switch-label:before {
-     background: $switch-track-disabled-background-color;
+     background: $spectrum-switch-border-color-disabled;
    }
 
    + .coral3-Switch-label:after {
-     border-color: $switch-handle-disabled-border-color;
+     border-color: $spectrum-switch-border-color-disabled;
    }
  }
 }

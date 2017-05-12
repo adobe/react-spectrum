@@ -15,25 +15,16 @@
  * from Adobe Systems Incorporated.
  */
 
-@require '../../commons'
+@import '../../commons'
+@import '@spectrum/spectrum-abstract-stylus/dist/components/dialog'
 
-$spectrum-dialog-height = auto;
-$spectrum-dialog-min-width = 320*$px;
-$spectrum-dialog-max-width = 90%;
 $spectrum-dialog-margin = 40*$px;
-
-$spectrum-dialog-border-width = 1*$px;
 $spectrum-dialog-border-radius = $spectrum-border-radius;
-$spectrum-dialog-header-font-size = 18*$px;
-$spectrum-dialog-header-height = 30*$px;
 $spectrum-dialog-padding = 25*$px;
 
 $spectrum-dialog-width-small = 300*$px;
 $spectrum-dialog-width-medium = 600*$px;
 $spectrum-dialog-width-large = 90%;
-
-
-$spectrum-dialog-closebutton-height = 18*$px;
 
 .coral-Dialog {
   position: relative;
@@ -48,14 +39,6 @@ $spectrum-dialog-closebutton-height = 18*$px;
   // Match the fade time of the backdrop
   transition: opacity $spectrum-transition-time;
   opacity: 0;
-
-  &.coral-Dialog--backdropNone {
-    pointer-events: none;
-
-    .coral-Dialog-wrapper {
-      pointer-events: auto;
-    }
-  }
 
   &.coral-Dialog--S {
     width: $spectrum-dialog-width-small;
@@ -75,15 +58,15 @@ $spectrum-dialog-closebutton-height = 18*$px;
 }
 
 .coral-Dialog-header {
-  display: block;
+  spectrum-dialog-header()
 }
 
 .coral-Dialog-content {
-  display: block;
+  spectrum-dialog-content()
 }
 
 .coral-Dialog-footer {
-  display: block;
+  spectrum-dialog-footer()
 }
 
 .coral-Dialog-wrapper {
@@ -94,92 +77,31 @@ $spectrum-dialog-closebutton-height = 18*$px;
 }
 
 .coral-Dialog-header {
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-  height: $spectrum-dialog-header-height;
-  border-radius: $spectrum-dialog-border-radius $spectrum-dialog-border-radius 0 0;
-  outline: none; // Hide focus outline around header
-
-  &::after {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: $spectrum-dialog-border-width;
-    content: '';
-  }
+  spectrum-dialog-header()
 }
 
 .coral-Dialog-title {
-  font-size: $spectrum-dialog-header-font-size;
-  line-height: 100%;
-  overflow: visible;
-  padding-left: 0;
-  padding-right: 15*$px;
-  outline: none; // Hide focus outline
-
-  &,
-  &:not(:first-child) { // Undo margin from.coral-Heading--2:not(:first-child)
-    margin: 0;
-  }
+  spectrum-dialog-title()
 }
 
 .coral-Dialog-typeIcon {
-  position: absolute;
-  right: 0;
-  top: -2*$px;
+  spectrum-dialog-typeIcon()
 }
 
 .coral-Dialog-closeButton {
-  line-height: $spectrum-dialog-closebutton-height;
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: none;
-  width: $spectrum-dialog-closebutton-height;
-  height: $spectrum-dialog-closebutton-height;
+  spectrum-dialog-closeButton()
 }
 
 .coral-Dialog-content {
-  display: block;
-  box-sizing: border-box;
-  padding: 0;
+  spectrum-dialog-content()
   margin-top: 20*$px;
-
-  // Stop right there! The dialog's body should NOT scroll
-
-  outline: none; // Hide focus outline
-  word-break: break-word; // CUI-6659
 }
 
 .coral-Dialog-footer {
-  &:after {
-    content: " "; /* Older browser do not support empty content */
-    visibility: hidden;
-    display: block;
-    height: 0;
-    clear: both;
-  }
-
-  border-radius: 0 0 $coral-dialog-border-radius $coral-dialog-border-radius;
-  text-align: right; // right align buttons
-  outline: none; // Hide focus outline
+  spectrum-dialog-footer()
 
   .coral-Button {
-    margin: 16*$px 12*$px;
-  }
-
-  .coral-Button:first-child {
-    margin-left: 0;
-  }
-
-  .coral-Button:last-child {
-    margin-right: 16*$px;
-  }
-
-  .coral-Button + .coral-Button {
-    margin-left: 0;
+    spectrum-dialog-footer-button()
   }
 }
 

@@ -53,7 +53,7 @@ export default class SwitchBase extends Component {
     const {checked} = e.target;
 
     this.setChecked(checked);
-    onChange(e, checked);
+    onChange(checked, e);
   }
 
   render() {

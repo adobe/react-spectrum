@@ -29,7 +29,7 @@ export default function TabList({
         classNames(
           'coral-TabList',
           size === 'L' ? 'coral-TabList--large' : '',
-          orientation === 'vertical' ? 'coral-TabList--vertical' : '',
+          `coral-TabList--${orientation}`,
           className
         )
       }

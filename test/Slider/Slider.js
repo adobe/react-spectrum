@@ -48,6 +48,7 @@ describe('Slider', function () {
     };
 
     tree.instance().onMouseMove({
+      preventDefault() {},
       clientX: 80
     });
 
@@ -69,6 +70,7 @@ describe('Slider', function () {
     };
 
     tree.simulate('mouseDown', {
+      preventDefault() {},
       clientX: 80
     });
 
@@ -89,6 +91,7 @@ describe('Slider', function () {
     };
 
     tree.instance().onMouseMove({
+      preventDefault() {},
       clientX: 80
     });
 
@@ -109,6 +112,7 @@ describe('Slider', function () {
     };
 
     tree.instance().onMouseMove({
+      preventDefault() {},
       clientY: 80
     });
 
@@ -128,6 +132,7 @@ describe('Slider', function () {
     };
 
     tree.simulate('mouseDown', {
+      preventDefault() {},
       clientX: 80
     });
 
@@ -148,6 +153,7 @@ describe('Slider', function () {
     // Initial mouse down
     tree.instance().dom = dom;
     tree.simulate('mouseDown', {
+      preventDefault() {},
       clientX: 80
     });
 

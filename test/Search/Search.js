@@ -110,7 +110,7 @@ describe('Search', () => {
     expect(tree.state('value')).toBe('');
     expect(tree.state('emptyText')).toBe(true);
 
-    findInput(tree).simulate('change', {target: {value: 'a'}});
+    findInput(tree).simulate('change', 'a');
     expect(spy).toHaveBeenCalled();
     expect(tree.state('value')).toBe('a');
     expect(tree.state('emptyText')).toBe(false);

@@ -96,16 +96,18 @@ export default class Select extends React.Component {
             <span className="coral3-Select-label">{label}</span>
             <Icon icon="chevronDown" size="XS" className="coral3-Select-openIcon" />
           </Button>
-          <SelectMenu
-            dropdownMenu
-            options={options}
-            value={value}
-            multiple={multiple}
-            disabled={disabled}
-            invalid={invalid}
-            required={required}
-            className="coral-Menu coral3-Select-selectList"
-            autoFocus />
+          {options.length > 0 &&
+            <SelectMenu
+              dropdownMenu
+              options={options}
+              value={value}
+              multiple={multiple}
+              disabled={disabled}
+              invalid={invalid}
+              required={required}
+              className="coral-Menu coral3-Select-selectList"
+              autoFocus />
+          }
       </Dropdown>
     );
   }

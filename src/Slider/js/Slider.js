@@ -8,7 +8,7 @@ export default class Slider extends React.Component {
     min: 0,
     max: 1,
     step: 0,
-    isDisabled: false,
+    disabled: false,
     orientation: 'horizontal'
   };
 
@@ -51,6 +51,8 @@ export default class Slider extends React.Component {
   };
 
   onMouseMove = (e) => {
+    e.preventDefault();
+
     let rect = this.dom.getBoundingClientRect();
     let minOffset = this.props.orientation === 'vertical' ? rect.top : rect.left;
     let offset = this.props.orientation === 'vertical' ? e.clientY : e.clientX;
@@ -82,12 +84,12 @@ export default class Slider extends React.Component {
   };
 
   render() {
-    let {isDisabled, max, min, orientation, step} = this.props;
+    let {disabled, max, min, orientation, step} = this.props;
     let {isDragging, isFocused, value} = this.state;
     let percent = (value - min) / (max - min);
     let styleKey = this.props.orientation === 'vertical' ? 'bottom' : 'left';
     let sliderClasses = classNames('coral3-Slider', {
-      'is-disabled': isDisabled,
+      'is-disabled': disabled,
       'coral3-Slider--vertical': orientation === 'vertical'},
       this.props.className
     );
@@ -101,20 +103,20 @@ export default class Slider extends React.Component {
         aria-valuemax={max}
         aria-valuenow={value}
         aria-orientation={orientation}
-        aria-disabled={isDisabled}>
+        aria-disabled={disabled}>
           <div className="coral3-Slider-bar" />
           <div
             className={classNames('coral3-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
-            onMouseDown={!isDisabled && this.onMouseDown}
+            onMouseDown={!disabled && this.onMouseDown}
             style={{[styleKey]: percent * 100 + '%'}}
-            aria-disabled={isDisabled}>
+            aria-disabled={disabled}>
               <input
                 type="range"
                 className="coral3-Slider-input"
                 step={step}
                 max={max}
                 min={min}
-                disabled={isDisabled} />
+                disabled={disabled} />
           </div>
       </div>
     );

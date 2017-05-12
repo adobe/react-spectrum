@@ -15,79 +15,43 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-tablist-active-text-color = $spectrum-color-constant-grey10
-$spectrum-tablist-active-bar-color = $spectrum-color-constant-grey10
-$spectrum-tablist-inactive-text-color = $spectrum-color-constant-grey8
-
-$spectrum-tablist-disabled-text-color = $spectrum-color-constant-grey6
-$spectrum-tablist-disabled-bar-color = $spectrum-color-constant-grey5
-
-$spectrum-tablist-vert-hover-text-color = $spectrum-color-constant-grey9
-
-$spectrum-tablist-focus-color = $spectrum-color-focus-blue
+@import '@spectrum/spectrum-abstract-stylus/dist/components/tab/skin'
 
 .coral-Tab {
-  color: $spectrum-tablist-inactive-text-color;
-
-  &:hover {
-    color: $spectrum-tablist-active-text-color; //as in spec
+  .coral-Tab-label {
+    spectrum-tab-label-default()
   }
 
-  &.is-selected {
-    color: $spectrum-tablist-active-text-color;
+  &:hover .coral-Tab-label {
+    spectrum-tab-label-hover()
+  }
+
+  &.is-selected .coral-Tab-label {
+    spectrum-tab-label-active()
     > .coral-Tab-label:after {
-      border-color: $spectrum-tablist-active-text-color;
+      spectrum-tab-line-default()
     }
   }
 
-  &:focus:not(:active) {
-    color: $spectrum-tablist-focus-color;
+  &:focus:not(:active) .coral-Tab-label {
+    spectrum-tab-label-focus()
 
     > .coral-Tab-label:after {
-      border-color: $spectrum-tablist-focus-color;
+      spectrum-tab-line-focus()
     }
   }
 
   &.is-disabled,
   &.is-disabled:hover,
   &.is-disabled:focus {
-    color: $spectrum-tablist-disabled-text-color;
-    box-shadow: none;
+    .coral-Tab-label {
+      spectrum-tab-label-disabled()
 
-    * {
-      box-shadow: none;
-      color: $spectrum-tablist-disabled-text-color;
-    }
-
-    &.is-selected {
-      color: $spectrum-tablist-disabled-text-color;
-      &:after {
-        border-color: $spectrum-tablist-disabled-text-color;
-      }
-    }
-  }
-}
-
-.coral-TabList--vertical {
-  .coral-Tab {
-    color: $spectrum-tablist-inactive-text-color;
-
-    &:hover {
-      color: $spectrum-tablist-vert-hover-text-color;
-    }
-
-    &.is-selected {
-      color: $spectrum-tablist-active-text-color;
-      &:after {
-        border-color: $spectrum-tablist-active-text-color;
-      }
-    }
-
-    &:focus {
-      color: $spectrum-tablist-focus-color;
-
-      &:after {
-        border-color: $spectrum-tablist-focus-color;
+      &.is-selected {
+        spectrum-tab-label-disabled()
+        &:after {
+          spectrum-tab-line-disabled()
+        }
       }
     }
   }

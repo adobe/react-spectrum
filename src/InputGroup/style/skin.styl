@@ -15,20 +15,22 @@
  * from Adobe Systems Incorporated.
  */
 
-$spectrum-inputgroup-color-border = $spectrum-color-border-default
-$spectrum-inputgroup-color-button-hover = $spectrum-color-constant-grey1
-$spectrum-inputgroup-color-button-active = $spectrum-color-constant-grey2
-$spectrum-inputgroup-color-button-focus = $spectrum-color-focus-blue
-$spectrum-inputgroup-color-icon-hover = $spectrum-color-constant-grey9
-$spectrum-inputgroup-color-icon-active = $spectrum-color-constant-grey10
-$spectrum-inputgroup-color-icon-focus = $spectrum-color-focus-blue
-$spectrum-inputgroup-color-disabled-button = $spectrum-color-background-disabled
-$spectrum-inputgroup-color-disabled-border = $spectrum-color-border-disabled
-$spectrum-inputgroup-color-disabled-text = $spectrum-color-text-disabled
+$spectrum-inputgroup-color-border = $spectrum-input-border-color-default
+$spectrum-inputgroup-color-button-default = $spectrum-global-color-grey1
+$spectrum-inputgroup-color-button-hover = $spectrum-global-color-grey1
+$spectrum-inputgroup-color-button-active = $spectrum-global-color-grey2
+$spectrum-inputgroup-color-button-focus = $spectrum-alias-focus-blue
+$spectrum-inputgroup-color-icon-hover = $spectrum-global-color-grey9
+$spectrum-inputgroup-color-icon-active = $spectrum-global-color-grey10
+$spectrum-inputgroup-color-icon-focus = $spectrum-alias-focus-blue
+$spectrum-inputgroup-color-disabled-button = $spectrum-alias-background-color-transparent
+$spectrum-inputgroup-color-disabled-border = $spectrum-alias-border-color-transparent
+$spectrum-inputgroup-color-disabled-text = $spectrum-text-text-color-disabled
 
 .coral-InputGroup-button {
   .coral-Button {
     border-color: $spectrum-inputgroup-color-border;
+    background-color: $spectrum-inputgroup-color-button-default;
 
     &:focus {
       border-color: $spectrum-inputgroup-color-button-focus;

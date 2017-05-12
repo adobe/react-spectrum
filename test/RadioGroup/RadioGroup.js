@@ -51,7 +51,7 @@ describe('RadioGroup', () => {
 
       const tree = renderRadioGroupWithChildren({onChange: spy});
       expect(tree.prop('onChange')).toExist();
-      tree.childAt(1).simulate('change', {stopPropagation: stopPropagationSpy});
+      tree.childAt(1).simulate('change', true, {stopPropagation: stopPropagationSpy});
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith('bar');

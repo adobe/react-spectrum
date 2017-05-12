@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
-import {getVariantIcon} from '../../utils/icon-variant';
 
 import '../style/index.styl';
+import '../../Dialog/style/index.styl';
 
 export default class Popover extends Component {
   static propTypes = {
@@ -22,7 +22,7 @@ export default class Popover extends Component {
   render() {
     const {
       variant,
-      icon = variant ? getVariantIcon(variant) : null,
+      icon,
       open,
       title,
       children,
@@ -35,7 +35,7 @@ export default class Popover extends Component {
         className={
           classNames(
             'coral3-Popover',
-            `coral-Dialog--${ variant }`,
+            `coral-Dialog--${variant}`,
             {
               'is-open': open
             },
@@ -47,8 +47,9 @@ export default class Popover extends Component {
             title &&
               <DialogHeader
                 className="coral-Popover-header"
-                title={ title }
-                icon={ icon }
+                title={title}
+                variant={variant}
+                icon={icon}
               />
           }
           <div className="coral3-Popover-content">
