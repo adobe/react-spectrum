@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
-import Portal from 'react-portal';
 import {getTransitionEvent} from '../../utils/transition';
-
+import Portal from 'react-overlays/lib/Portal';
+import React, {Component} from 'react';
+import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import '../style/ShellMenu.styl';
 
 export default class ShellMenu extends Component {
@@ -41,40 +41,18 @@ export default class ShellMenu extends Component {
   componentWillReceiveProps(nextProps) {
     if ('open' in nextProps) {
       this.setState({open: nextProps.open});
-      if (nextProps.open) {
-        this.addOutsideClickListeners();
-      } else {
-        this.removeOutsideClickListeners();
-      }
     }
   }
 
   componentWillUnmount() {
     const {menu} = this.refs;
-    this.removeOutsideClickListeners();
     menu.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
   }
 
   setOpen(open) {
     if (!('open' in this.props)) {
       this.setState({open});
-
-      if (open) {
-        this.addOutsideClickListeners();
-      } else {
-        this.removeOutsideClickListeners();
-      }
     }
-  }
-
-  addOutsideClickListeners() {
-    document.addEventListener('mouseup', this.handleOutsideClick);
-    document.addEventListener('touchstart', this.handleOutsideClick);
-  }
-
-  removeOutsideClickListeners() {
-    document.removeEventListener('mouseup', this.handleOutsideClick);
-    document.removeEventListener('touchstart', this.handleOutsideClick);
   }
 
   handleTransitionEnd = e => {
@@ -127,20 +105,6 @@ export default class ShellMenu extends Component {
     onClose(index);
   }
 
-  handleOutsideClick = e => {
-    const {target, menu} = this.refs;
-
-    // If the click happens on the menu, don't have it be closed.
-    // If the click happens on the target element, it will be closed within the handleTargetClick
-    // function.
-    if (menu.contains(e.target) || target.contains(e.target)) {
-      return;
-    }
-
-    e.stopPropagation();
-    this.handleMenuClose();
-  }
-
   render() {
     const {
       placement,
@@ -167,29 +131,28 @@ export default class ShellMenu extends Component {
             React.cloneElement(target, {onClick: this.handleTargetClick})
           }
         </span>
-        <Portal
-          onClose={ this.handleMenuClose }
-          isOpened
-        >
-          <div
-            ref="menu"
-            style={ {zIndex} }
-            className={
-              classNames(
-                'coral3-Shell-menu',
-                `coral3-Shell-menu--placement-${ placement }`,
-                `coral3-Shell-menu--from-${ animateFrom }`,
-                {
-                  'coral3-Shell-menu--full': full,
-                  'is-open': open,
-                  'coral--dark': dark,
-                  'is-visible': open || visible
-                }
-              )
-            }
-          >
-            { children }
-          </div>
+        <Portal>
+          <RootCloseWrapper onRootClose={this.handleMenuClose} disabled={!open}>
+            <div
+              ref="menu"
+              style={ {zIndex} }
+              className={
+                classNames(
+                  'coral3-Shell-menu',
+                  `coral3-Shell-menu--placement-${ placement }`,
+                  `coral3-Shell-menu--from-${ animateFrom }`,
+                  {
+                    'coral3-Shell-menu--full': full,
+                    'is-open': open,
+                    'coral--dark': dark,
+                    'is-visible': open || visible
+                  }
+                )
+              }
+            >
+              { children }
+            </div>
+          </RootCloseWrapper>
         </Portal>
       </span>
     );
