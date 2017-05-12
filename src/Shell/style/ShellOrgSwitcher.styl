@@ -1,0 +1,141 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require '../../commons'
+@require '../../List/style'
+
+$coral-shell-orgswitcher-width = 300*$px;
+$coral-shell-orgswitcher-message-height = 200*$px
+$coral-Shell-orgswitcher-background = $spectrum-color-constant-grey1
+$coral-Shell-orgswitcher-footer-background = $spectrum-color-constant-grey2
+$coral-Shell-orgswitcher-search-background = $spectrum-color-constant-grey2
+$coral-Shell-orgswitcher-height = 8*$spectrum-basiclist-item-contentheight+16*$spectrum-basiclist-item-padding-top;
+
+.coral3-Shell-orgSwitcher {
+  width: $coral-shell-orgswitcher-width;
+}
+
+.coral3-Shell-orgSwitcher-items {
+  max-height: $coral-Shell-orgswitcher-height;
+  overflow-y: auto;
+}
+
+.coral3-Shell-orgSwitcher-item-checkmark {
+  position: absolute;
+  right: 16*$px;
+  top: 12*$px; // Fix vertical alignment
+  color: $spectrum-color-text-link-default;
+}
+
+.coral3-Shell-orgSwitcher-item-icon {
+  width: 2rem;
+  margin-top: -0.125rem; // Fix vertical alignment
+  margin-right: 8*$px; // Differs from specs for visual alignment
+}
+
+.coral3-Shell-orgSwitcher-item,
+.coral3-Shell-orgSwitcher-subitem {
+  cursor: pointer;
+
+  padding-right: 0;
+  padding-left: 0;
+
+  position: relative;
+
+  &.is-selected {
+    color: $spectrum-color-text-link-active;
+  }
+}
+
+.coral3-Shell-orgSwitcher-item {
+  padding-left: 10*$px;
+
+  &.is-child-selected > .coral3-Shell-orgSwitcher-item-checkmark {
+    // Hide the checkmark if a child is selected
+    display: none;
+  }
+
+  &.is-parent {
+    cursor: default;
+
+    // Let children give padding
+    padding-bottom: 0;
+
+    > .coral3-Shell-orgSwitcher-subitems {
+      // Give a little padding
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+
+.coral3-Shell-orgSwitcher-subitem {
+  padding-left: 28*$px;
+
+  // Don't overlap parent's icon
+  background: none;
+
+  .coral3-Shell-orgSwitcher-item-checkmark {
+    top: 10*$px;
+  }
+
+  coral-list-item-content {
+    height: 1rem;
+  }
+}
+
+.coral3-Shell-orgSwitcher-subitem-icon {
+  width: 1.25rem;
+  height: 1rem;
+  margin-top: -1*$px; // Fix vertical alignment
+}
+
+.coral3-Shell-orgSwitcher-search {
+  width: $coral-shell-orgswitcher-width;
+
+  background-color: $coral-Shell-orgswitcher-search-background;
+
+  border-bottom: 1*$px solid rgb(235, 235, 235);
+}
+
+.coral3-Shell-orgSwitcher-resultMessage {
+  display: table;
+
+  width: 100%;
+  height: $coral-shell-orgswitcher-message-height;
+
+  background-color: $coral-Shell-orgswitcher-background;
+}
+
+.coral3-Shell-orgSwitcher-resultMessage-heading {
+  // Override heading
+  margin-bottom: 0;
+}
+
+.coral3-Shell-orgSwitcher-resultMessage-container {
+  display: table-cell;
+
+  padding: 0 20*$px;
+
+  vertical-align: middle;
+
+  text-align: center;
+}
+
+.coral3-Shell-orgSwitcher-footer {
+  display: block;
+  background-color: $coral-Shell-orgswitcher-footer-background;
+
+  border-top: 1*$px solid rgb(235, 235, 235);
+
+  text-align: center;
+
+  button[is='coral-button'],
+  a[is='coral-anchorbutton'] {
+    // Force block
+    width: 100%;
+
+    // Make them be 44px so Lindsay is happy
+    padding: 3*$px 0;
+
+    border-radius: 0;
+  }
+}

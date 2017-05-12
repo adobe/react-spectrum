@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import ShellMenu from './internal/ShellMenu';
+import ShellMenu from './ShellMenu';
 
 import Button from '../../Button';
 import Icon from '../../Icon';
 
-import './ShellUserProfile.styl';
+import '../style/ShellUserProfile.styl';
 
 export default function ShellUserProfile({
   name,
@@ -24,7 +24,7 @@ export default function ShellUserProfile({
       animateFrom="top"
       target={
         <Button
-          className="coral-Shell-menu-button"
+          className="coral3-Shell-menu-button"
           variant="minimal"
           icon={ avatarUrl }
           iconSize="M"
@@ -36,27 +36,27 @@ export default function ShellUserProfile({
       <div
         className={
           classNames(
-            'coral-Shell-user',
+            'coral3-Shell-user',
             className
           )
         }
       >
-        <div className="coral-Shell-user-container">
-          <div className="coral-Shell-user-image">
-            <Icon icon={ avatarUrl } size="L" className="coral-Shell-user-avatar is-image" />
+        <div className="coral3-Shell-user-container">
+          <div className="coral3-Shell-user-image">
+            <Icon icon={ avatarUrl } size="L" className="coral3-Shell-user-avatar is-image" />
           </div>
-          <div className="coral-Shell-user-name">{ name }</div>
-          <div className="coral-Shell-user-heading">
+          <div className="coral3-Shell-user-name">{ name }</div>
+          <div className="coral3-Shell-user-heading">
             { heading && heading !== 'null' ? heading : '' }
           </div>
-          <div className="coral-Shell-user-subheading">
+          <div className="coral3-Shell-user-subheading">
             { subheading && subheading !== 'null' ? subheading : '' }
           </div>
         </div>
-        <div className="coral-Shell-user-content">
+        <div className="coral3-Shell-user-content">
           { children }
         </div>
-        <div className="coral-Shell-user-footer">
+        <div className="coral3-Shell-user-footer">
           <Button element="a" variant="minimal" href={ profileUrl }>Edit Profile</Button>
           <Button element="a" variant="minimal" onClick={ onSignOut }>Sign Out</Button>
         </div>

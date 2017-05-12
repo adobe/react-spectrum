@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
 import Portal from 'react-portal';
-import {getTransitionEvent} from '../../../utils/transition';
+import {getTransitionEvent} from '../../utils/transition';
 
-import './ShellMenu.styl';
+import '../style/ShellMenu.styl';
 
 export default class ShellMenu extends Component {
   static defaultProps = {
@@ -176,11 +176,11 @@ export default class ShellMenu extends Component {
             style={ {zIndex} }
             className={
               classNames(
-                'coral-Shell-menu',
-                `coral-Shell-menu--placement-${ placement }`,
-                `coral-Shell-menu--from-${ animateFrom }`,
+                'coral3-Shell-menu',
+                `coral3-Shell-menu--placement-${ placement }`,
+                `coral3-Shell-menu--from-${ animateFrom }`,
                 {
-                  'coral-Shell-menu--full': full,
+                  'coral3-Shell-menu--full': full,
                   'is-open': open,
                   'coral--dark': dark,
                   'is-visible': open || visible

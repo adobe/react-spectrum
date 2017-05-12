@@ -1,0 +1,159 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require '../../commons'
+
+$coral-shell-solutionswitcher-transitiontime = 0.21s; // Fibonacci number
+$coral-shell-solutionswitcher-background-color = rgb(30, 30, 30);
+$coral-shell-solutionswitcher-iconsize = 40*$px;
+$coral-shell-solutionswitcher-linked-solution-iconsize = 56*$px;
+$coral-shell-solutionswitcher-icon-container-height = 72*$px;
+$coral-shell-solutionswitcher-secondary-iconsize = 24*$px;
+$coral-shell-solution-text-color = rgba(255, 255, 255, .75);
+$coral-shell-solution-text-color-hover = rgb(255, 255, 255);
+$coral-shell-solution-icon-color = rgba(255, 255, 255, .45);
+$coral-shell-solution-secondary-icon-color = rgba(255, 255, 255, .60);
+
+.coral3-Shell-solutionSwitcher {
+  position: relative;
+
+  display: block;
+  padding: 48*$px 0;
+
+  background: $coral-shell-solutionswitcher-background-color;
+}
+
+.coral3-Shell-solutionSwitcher-content {
+  display: flex;
+  justify-content: center;
+  max-width: 90%;
+  margin: auto;
+
+  text-align: center;
+}
+
+.coral3-Shell-solutions-container {
+  display: flex;
+  flex-direction: column;
+  vertical-align: middle;
+  padding-right: 13*$px;
+}
+
+.coral3-Shell-solutions + .coral3-Shell-solutions {
+  margin-top: 50*$px;
+}
+
+.coral3-Shell-solution {
+  display: inline-block;
+  vertical-align: top;
+
+  height: 100*$px;
+  min-width: 120*$px;
+
+  text-decoration: none;
+
+  color: $coral-shell-solution-text-color;
+  font-size: 14*$px;
+
+  @media (max-width: 1225px) {
+    width: 20%;
+  }
+  @media (max-width: 800px) {
+    width: 40%;
+  }
+  @media (max-width: 550px) {
+    width: 100%;
+  }
+}
+
+.coral3-Shell-solution:hover {
+  color: $coral-shell-solution-text-color-hover;
+}
+
+.coral3-Shell-solution--linked {
+  margin-bottom: 15*$px;
+}
+
+.coral3-Shell-solution--linked:hover .coral3-Shell-solution-icon {
+  transform: scale(1.2);
+}
+
+.coral3-Shell-solution--linked .coral3-Shell-solution-icon {
+  line-height: $coral-shell-solutionswitcher-linked-solution-iconsize;
+}
+
+.coral3-Shell-solution--linked .coral3-Shell-solution-icon:before {
+  width: $coral-shell-solutionswitcher-linked-solution-iconsize;
+  height: $coral-shell-solutionswitcher-linked-solution-iconsize;
+}
+
+.coral3-Shell-solution-icon {
+  vertical-align: middle;
+  height: $coral-shell-solutionswitcher-icon-container-height;
+  line-height: $coral-shell-solutionswitcher-icon-container-height;
+
+  color: $coral-shell-solution-icon-color;
+  font-size: $coral-shell-solutionswitcher-iconsize;
+
+  will-change: transform;
+  transition: transform $coral-shell-solutionswitcher-transitiontime ease-out, opacity $coral-shell-solutionswitcher-transitiontime ease-out;
+
+  &:before {
+    width: $coral-shell-solutionswitcher-iconsize;
+    height: $coral-shell-solutionswitcher-iconsize;
+    vertical-align: middle;
+  }
+}
+
+.coral3-Shell-solution-label {
+  display: block;
+
+  font-weight: 300;
+  line-height: 1.5;
+
+  transition: opacity $coral-shell-solutionswitcher-transitiontime ease-out;
+}
+
+// Seconary menu styling
+.coral3-Shell-solutions--secondary {
+  padding-left: 26*$px;
+  vertical-align: top;
+
+  border-left: 1*$px solid #3b3b3b;
+
+  whitespace: nowrap;
+
+  .coral3-Shell-solution {
+    display: block;
+    height: auto;
+    width: auto;
+
+    text-decoration: none;
+    text-align: left;
+
+    &:hover {
+      .coral3-Shell-solution-icon {
+        transform: scale(1);
+      }
+      .coral3-Shell-solution-label {
+        color: $coral-shell-solution-text-color-hover;
+      }
+    }
+  }
+
+  .coral3-Shell-solution-icon {
+    display: inline-block;
+    margin: 12*$px;
+    color: $coral-shell-solution-secondary-icon-color;
+    font-size: $coral-shell-solutionswitcher-secondary-iconsize;
+    width: $coral-shell-solutionswitcher-secondary-iconsize;
+    height: $coral-shell-solutionswitcher-secondary-iconsize;
+    line-height: $coral-shell-solutionswitcher-secondary-iconsize;
+    text-align: center;
+    &:before {
+      vertical-align: baseline;
+    }
+  }
+
+  .coral3-Shell-solution-label {
+    display: inline-block;
+  }
+}

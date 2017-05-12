@@ -1,0 +1,59 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require '../../commons'
+
+$spectrum-color-workspace-text-default = $spectrum-color-constant-grey8
+$spectrum-color-workspace-text-hover = $spectrum-color-constant-grey10
+$spectrum-color-workspace-text-active = $spectrum-color-constant-grey10
+$spectrum-color-workspace-text-hover = $spectrum-color-focus-blue
+$coral-shell-workspaces-height = 45*$px;
+$coral-shell-workspaces-margin = 17.5*$px;
+$coral-shell-workspaces-textVerticalOffset = 10*$px;
+$coral-shell-workspaces-border-width = 2*$px;
+$coral-shell-workspaces-transitiontime = 0.21s;
+
+.coral3-Shell-workspaces {
+  display: block;
+}
+
+.coral3-Shell-workspaces-workspace {
+  display: inline-block;
+  box-sizing: border-box;
+  height: $coral-shell-workspaces-height;
+  margin: 0 $coral-shell-workspaces-margin;
+
+  border-bottom: $coral-shell-workspaces-border-width solid transparent;
+
+  line-height: $coral-shell-workspaces-height - $coral-shell-workspaces-border-width - $coral-shell-workspaces-textVerticalOffset;
+
+  text-decoration: none;
+
+  light-text();
+
+  transition: border-color $coral-shell-workspaces-transitiontime ease-out, color $coral-shell-workspaces-transitiontime ease-out;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:first-of-type {
+    margin-left: 0;
+  }
+}
+
+.coral3-Shell-workspaces-workspace {
+  color: $spectrum-color-workspace-text-default;
+
+  &:hover {
+    color: $spectrum-color-workspace-text-hover;
+  }
+
+  &.is-selected {
+    border-color: $spectrum-color-workspace-text-active;
+    color: $spectrum-color-workspace-text-active;
+  }
+
+  &:focus {
+    border-color: $spectrum-color-workspace-text-hover;
+    color: $spectrum-color-workspace-text-hover;
+  }
+}

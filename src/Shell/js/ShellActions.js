@@ -30,27 +30,25 @@ export default class ShellHeaderActions extends Component {
       <div
         className={
           classNames(
-            'coral-Shell-header-actions',
+            'coral3-Shell-header-actions',
             className
           )
         }
         { ...otherProps }
       >
         { betaFeedback }
-        <div className="coral-Shell-menubar">
+        <div className="coral3-Shell-menubar">
           {
             children &&
             React.Children.map(children, child => {
               if (typeof child === 'object' && child && child.type) { // Is this a react element?
-                return React.cloneElement(
-                  child,
-                  {
-                    onOpen: this.handleMenuOpen,
-                    onClose: this.handleMenuClose,
-                    defaultOpen: index === openIndex,
-                    index: index++
-                  }
-                );
+                let childProps = child.type.name === 'Button' ? {} : {
+                  onOpen: this.handleMenuOpen,
+                  onClose: this.handleMenuClose,
+                  defaultOpen: index === openIndex,
+                  index: index++
+                };
+                return React.cloneElement(child, childProps);
               }
 
               // Otherwise, the child is a string

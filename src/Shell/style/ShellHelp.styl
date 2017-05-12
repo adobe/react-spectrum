@@ -1,0 +1,94 @@
+@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@require '../../commons'
+
+$coral-shell-help-width = 325*$px;
+$coral-shell-help-loading-height = 300*$px
+$coral-shell-help-background = $spectrum-color-constant-grey1;
+
+$coral-shell-loading-middle = 48%; // Better visual centering
+$coral-shell-loading-spacing = 16*$px;
+
+.coral3-Shell-help {
+  display: block;
+  width: $coral-shell-help-width;
+}
+
+.coral3-Shell-help-search {
+  width: $coral-shell-help-width;
+
+  .coral3-Search-input {
+    border-width: 0 0 $px 0;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+.coral3-Shell-help-result-description {
+  color: $spectrum-color-text-secondary;
+  font-weight: 300;
+  letter-spacing: 0.125px; // Tweak: Letters were too close
+
+  overflow: ellipsis;
+}
+
+.coral3-Shell-help-loading,
+.coral3-Shell-help-resultMessage {
+  // Contain the wait component
+  position: relative;
+  display: block;
+  height: $coral-shell-help-loading-height;
+
+  background-color: $coral-shell-help-background;
+}
+
+.coral3-Shell-help-allResults {
+  &, .coral3-Shell-help-result-content {
+    // Just look like a link
+    color: $spectrum-color-text-link-default;
+  }
+}
+
+.coral3-Shell-help-resultMessage {
+  display: table;
+  width: 100%;
+}
+
+.coral3-Shell-help-resultMessage-heading {
+  margin-bottom: 12*$px;
+  margin-top: -8*$px;
+}
+
+.coral3-Shell-help-resultMessage-container {
+  display: table-cell;
+
+  padding: 0 20*$px;
+
+  vertical-align: middle;
+
+  text-align: center;
+}
+
+.coral3-Shell-help-loading-wait {
+  position: absolute;
+  bottom: (100% - $coral-shell-loading-middle);
+  left: 50%;
+
+  margin-left: -8*$px; // Center
+  margin-bottom: ($coral-shell-loading-spacing / 2);
+}
+
+.coral3-Shell-help-loading-info {
+  position: absolute;
+  top: $coral-shell-loading-middle;
+  left: 0;
+  right: 0;
+
+  padding-left: 5*$px; // Tweak: Make it look nicer with the ellipsis
+
+  display: block;
+  padding-top: ($coral-shell-loading-spacing / 2);
+
+  text-align: center;
+}
