@@ -296,20 +296,14 @@ export default class NumberInput extends Component {
 
     return (
       <InputGroup
-        className={
-          classNames(
-            'coral3-NumberInput',
-            {
-              'is-focused': focused
-            },
-            className
-          )
-        }
-      >
+        focused={focused}
+        invalid={invalid}
+        disabled={disabled}
+        className={classNames('coral3-NumberInput', className)}>
         <span className="coral-InputGroup-button" role="presentation">
           {
             this.renderStepButton({
-              className: 'coral3-NumberInput-stepUp',
+              className: 'coral-InputGroup-button coral3-NumberInput-stepUp',
               icon: 'chevronUp',
               title: incrementTitle,
               disabled: disabled || max != null && value >= max || readOnly,
@@ -318,7 +312,7 @@ export default class NumberInput extends Component {
           }
           {
             this.renderStepButton({
-              className: 'coral3-NumberInput-stepDown',
+              className: 'coral-InputGroup-button coral3-NumberInput-stepDown',
               icon: 'chevronDown',
               title: decrementTitle,
               disabled: disabled || min != null && value <= min || readOnly,
@@ -327,14 +321,7 @@ export default class NumberInput extends Component {
           }
         </span>
         <Textfield
-          className={
-            classNames(
-              'coral-InputGroup-input',
-              {
-                'is-focused': focused
-              }
-            )
-          }
+          className="coral-InputGroup-input"
           id={ inputId }
           value={ value }
           defaultValue={ defaultValue }

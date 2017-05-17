@@ -7,7 +7,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
 import '../../InputGroup/style/index.styl';
-import '../style/index.styl';
 
 @autobind
 export default class ComboBox extends React.Component {
@@ -43,7 +42,7 @@ export default class ComboBox extends React.Component {
     return (
       <Autocomplete
         className={classNames('coral-ComboBox', 'coral-InputGroup', 'coral-DecoratedTextfield', {
-          'coral-ComboBox--quiet': quiet,
+          'coral-InputGroup--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid
         })}
@@ -65,19 +64,16 @@ export default class ComboBox extends React.Component {
             autocompleteInput
             quiet={quiet} />
 
-          <div className="coral-InputGroup-button">
-            <Button
-              variant="secondary"
-              className="coral-ComboBox-trigger"
-              square
-              onClick={this.onButtonClick}
-              onMouseDown={e => e.preventDefault()}
-              disabled={disabled}
-              required={required}
-              quiet={quiet}>
-                <Icon icon="chevronDown" size="XS" />
-            </Button>
-          </div>
+          <Button
+            className="coral-InputGroup-button"
+            square
+            onClick={this.onButtonClick}
+            onMouseDown={e => e.preventDefault()}
+            disabled={disabled}
+            required={required}
+            quiet={quiet}>
+              <Icon icon="chevronDown" size="XS" />
+          </Button>
       </Autocomplete>
     );
   }

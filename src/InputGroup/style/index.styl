@@ -17,41 +17,27 @@
 
 @require '../../commons'
 
+$spectrum-inputgroup-trigger-width = 32*$px;
+$spectrum-inputgroup-trigger-width-quiet = 12*$px;
+$spectrum-combobox-alert-width = 32*$px;
+
 .coral-InputGroup {
   // for dropdowns
   position: relative;
-  display: inline-table; // All field needs to be inline-block-like.
+  display: inline-flex; // All field needs to be inline-block-like.
   vertical-align: top;
   // prevent input groups from inheriting border styles from table cells when placed within a table
   border-collapse: separate;
   width: $spectrum-component-single-line-width;
-}
 
-.coral-InputGroup--block {
-  display: table;
-  width: 100%;
-}
-
-.coral-InputGroup-button,
-.coral-InputGroup-input {
-  display: table-cell;
-}
-
-.coral-InputGroup-button {
-  width: 1px;
-  // aligns the components
-  vertical-align: middle;
-
-  position: relative;
-  font-size: 0;
-  white-space: nowrap;
-
-  // position for bringing hovered/focused/actived element above the siblings.
-  .coral-Button {
+  .coral-InputGroup-button.coral-Button {
+    // position for bringing hovered/focused/actived element above the siblings.
     position: relative; // Needed for z-index to function.
     margin: 0;
     border-radius: 0;
     border-width: 1*$px;
+    min-width: $spectrum-inputgroup-trigger-width;
+    padding: 0;
 
     // Brings the interaction to the front. z-index: 2 so it comes in front
     // of neighboring elements with invalid state styles.
@@ -60,43 +46,94 @@
       z-index: 2;
     }
   }
-}
 
-.coral-InputGroup-input {
-  border-radius: 0;
-  z-index: 2;
-  position: relative;
-  width: 100%;
+  .coral-InputGroup-input {
+    border-radius: $spectrum-border-radius 0 0 $spectrum-border-radius;
+    z-index: 2;
+    flex: 1;
 
-  // IE9 fubars the placeholder attribute in text inputs and the arrows on
-  // select elements in input groups. To fix it, we float the input. Details:
-  // https://github.com/twbs/bootstrap/issues/11561#issuecomment-28936855
-  float: left;
+    // Invalid border should come on top, but it should not come above
+    // the borders of sibling elements that have focus.
+    &.is-invalid,
+    &:invalid,
+    &:focus {
+      z-index: 1
+    }
 
-  margin-bottom: 0;
+    &+ .coral-InputGroup-button {
+      border-radius: 0 $spectrum-border-radius $spectrum-border-radius 0;
+      border-left-width: 0 !important;
+    }
+  }
 
-  // Invalid border should come on top, but it should not come above
-  // the borders of sibling elements that have focus.
-  &.is-invalid,
-  &:invalid,
-  &:focus {
-    z-index: 1
+  &.is-focused {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      // Box shadow is on the input group
+      box-shadow: none;
+    }
+  }
+
+  &.is-invalid {
+    .coral-InputGroup-input {
+      padding-right: $spectrum-combobox-alert-width;
+    }
+
+    &:after {
+      position: absolute;
+      top: 0;
+      right: $spectrum-inputgroup-trigger-width;
+      z-index: 3000;
+
+      width: $spectrum-combobox-alert-width;
+      height: 100%;
+
+      content: '';
+
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
   }
 }
 
-.coral-InputGroup-button:first-child .coral-Button {
-  border-radius: $spectrum-border-radius 0 0 $spectrum-border-radius;
-  border-right-width: 0;
-}
-
-.coral-InputGroup-button:last-child .coral-Button {
-  border-radius: 0 $spectrum-border-radius $spectrum-border-radius 0;
-  border-left-width: 0;
+.coral-InputGroup--block {
+  display: flex;
+  width: 100%;
 }
 
 .coral-Form--vertical .coral-Form-field.coral-InputGroup {
   display: table;
   width: 100%;
+}
+
+.coral-InputGroup--quiet {
+  .coral-DecoratedTextfield-icon {
+    margin-left: 0;
+  }
+
+  .coral-InputGroup-button.coral-Button {
+    min-width: $spectrum-inputgroup-trigger-width-quiet;
+  }
+
+  .coral-InputGroup-input,
+  .coral-InputGroup-button {
+    // Remove border
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0 !important;
+    background: transparent;
+
+    &:disabled {
+      background: transparent;
+    }
+  }
+
+  &.is-invalid {
+    &:after {
+      right: $spectrum-inputgroup-trigger-width-quiet;
+    }
+  }
 }
 
 @require 'light.styl'

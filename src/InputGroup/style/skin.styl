@@ -27,8 +27,11 @@ $spectrum-inputgroup-color-disabled-button = $spectrum-alias-background-color-tr
 $spectrum-inputgroup-color-disabled-border = $spectrum-alias-border-color-transparent
 $spectrum-inputgroup-color-disabled-text = $spectrum-text-text-color-disabled
 
-.coral-InputGroup-button {
-  .coral-Button {
+$spectrum-inputgroup-invalid-icon-color = $spectrum-input-invalid-border-color-default;
+$spectrum-inputgroup-invalid-icon-url = '../../commons/embed/icon-alert.svg';
+
+.coral-InputGroup {
+  .coral-InputGroup-button {
     border-color: $spectrum-inputgroup-color-border;
     background-color: $spectrum-inputgroup-color-button-default;
 
@@ -49,12 +52,91 @@ $spectrum-inputgroup-color-disabled-text = $spectrum-text-text-color-disabled
       background-color: $spectrum-inputgroup-color-button-active;
       color: $spectrum-inputgroup-color-icon-active;
     }
+
+    &:disabled {
+      // Required since the above overrides colors
+      border-color: $spectrum-inputgroup-color-disabled-border;
+      background-color: $spectrum-inputgroup-color-disabled-button;
+      color: $spectrum-inputgroup-color-disabled-text;
+    }
   }
 
-  .coral-Button:disabled {
-    // Required since the above overrides colors
-    border-color: $spectrum-inputgroup-color-disabled-border;
-    background-color: $spectrum-inputgroup-color-disabled-button;
-    color: $spectrum-inputgroup-color-disabled-text;
+  .coral-InputGroup-input,
+  .coral-InputGroup-button {
+    border-color: $spectrum-input-border-color-default;
+  }
+
+  &:hover {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      border-color: $spectrum-input-border-color-hover;
+    }
+  }
+
+  &.is-invalid {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      border-color: $spectrum-input-invalid-border-color-default;
+    }
+
+    &:after {
+      background-image: svgurl(embedurl($spectrum-inputgroup-invalid-icon-url)) svg(path fill $spectrum-inputgroup-invalid-icon-color);
+    }
+  }
+
+  &.is-focused {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      border-color: $spectrum-input-border-color-focus;
+      box-shadow: 0 0 0 1*$px $spectrum-input-border-color-focus;
+    }
+
+    &.is-invalid {
+      .coral-InputGroup-input,
+      .coral-InputGroup-button {
+        border-color: $spectrum-input-invalid-border-color-default;
+        box-shadow: 0 0 0 1*$px $spectrum-input-invalid-border-color-default;
+      }
+    }
+  }
+
+  &.is-disabled {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      border-color: $spectrum-input-border-color-disabled;
+      background: $spectrum-input-background-color-disabled;
+    }
+  }
+}
+
+.coral-InputGroup--quiet {
+  .coral-InputGroup-button {
+    background: transparent;
+    &:hover {
+      // Stay transparent on hover
+      background: transparent;
+    }
+  }
+
+  &.is-disabled {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      background: transparent;
+      border-color: $spectrum-input-border-color-default;
+    }
+  }
+
+  &.is-focused {
+    .coral-InputGroup-input,
+    .coral-InputGroup-button {
+      box-shadow: 0 1*$px 0 $spectrum-input-border-color-focus;
+    }
+
+    &.is-invalid {
+      .coral-InputGroup-input,
+      .coral-InputGroup-button {
+        box-shadow: 0 1*$px 0 $spectrum-input-invalid-border-color-default;
+      }
+    }
   }
 }
