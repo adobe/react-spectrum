@@ -1,24 +1,24 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import Switch from '../../src/Switch';
 
 describe('Switch', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Switch />);
-    expect(tree.prop('inputType')).toBe('checkbox');
-    expect(tree.prop('className')).toBe('coral3-Switch');
-    expect(tree.prop('inputClassName')).toBe('coral3-Switch-input');
-    expect(tree.prop('markClassName')).toBe('coral3-Switch-label');
+    assert.equal(tree.prop('inputType'), 'checkbox');
+    assert.equal(tree.prop('className'), 'coral3-Switch');
+    assert.equal(tree.prop('inputClassName'), 'coral3-Switch-input');
+    assert.equal(tree.prop('markClassName'), 'coral3-Switch-label');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Switch className="foo" />);
-    expect(tree.hasClass('foo')).toBe(true);
+    assert.equal(tree.hasClass('foo'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Switch foo />);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 });

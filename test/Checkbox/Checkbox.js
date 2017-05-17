@@ -1,17 +1,17 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import Checkbox from '../../src/Checkbox';
 
 describe('Checkbox', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Checkbox />);
-    expect(tree.prop('inputType')).toBe('checkbox');
-    expect(tree.prop('aria-checked')).toNotExist();
-    expect(tree.prop('className')).toBe('coral-Checkbox');
-    expect(tree.prop('inputClassName')).toBe('coral-Checkbox-input');
-    expect(tree.prop('markClassName')).toBe('coral-Checkbox-checkmark');
-    expect(tree.prop('labelClassName')).toBe('coral-Checkbox-description');
+    assert.equal(tree.prop('inputType'), 'checkbox');
+    assert(!tree.prop('aria-checked'));
+    assert.equal(tree.prop('className'), 'coral-Checkbox');
+    assert.equal(tree.prop('inputClassName'), 'coral-Checkbox-input');
+    assert.equal(tree.prop('markClassName'), 'coral-Checkbox-checkmark');
+    assert.equal(tree.prop('labelClassName'), 'coral-Checkbox-description');
   });
 
   it('supports indeterminate', () => {
@@ -19,27 +19,27 @@ describe('Checkbox', () => {
     // aria-checked happens properly.
     const tree = shallow(<Checkbox indeterminate />);
     let innerTree = tree.shallow();
-    expect(tree.prop('aria-checked')).toBe('mixed');
-    expect(innerTree.prop('aria-checked')).toBe('mixed');
+    assert.equal(tree.prop('aria-checked'), 'mixed');
+    assert.equal(innerTree.prop('aria-checked'), 'mixed');
 
     tree.setProps({indeterminate: false});
     innerTree = tree.shallow();
-    expect(tree.prop('aria-checked')).toNotExist();
-    expect(innerTree.prop('aria-checked')).toBe(false);
+    assert(!tree.prop('aria-checked'));
+    assert.equal(innerTree.prop('aria-checked'), false);
 
     tree.setProps({checked: true});
     innerTree = tree.shallow();
-    expect(tree.prop('aria-checked')).toNotExist();
-    expect(innerTree.prop('aria-checked')).toBe(true);
+    assert(!tree.prop('aria-checked'));
+    assert.equal(innerTree.prop('aria-checked'), true);
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Checkbox className="foo" />);
-    expect(tree.hasClass('foo')).toBe(true);
+    assert.equal(tree.hasClass('foo'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Checkbox foo />);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 });

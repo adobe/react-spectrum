@@ -1,26 +1,26 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import Link from '../../src/Link';
 
 describe('Link', () => {
   it('supports the subtle variation', () => {
     const tree = shallow(<Link subtle className="myClass">Testing</Link>);
-    expect(tree.prop('className')).toInclude('coral-Link--subtle');
+    assert(tree.prop('className').indexOf('coral-Link--subtle') >= 0);
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Link className="myClass">Testing</Link>);
-    expect(tree.prop('className')).toInclude('myClass');
+    assert(tree.prop('className').indexOf('myClass') >= 0);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Link foo>My Link</Link>);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 
   it('supports children', () => {
     const tree = shallow(<Link>My Link</Link>);
-    expect(tree.children().node).toBe('My Link');
+    assert.equal(tree.children().node, 'My Link');
   });
 });

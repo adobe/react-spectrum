@@ -1,47 +1,48 @@
 import React from 'react';
-import expect from 'expect';
-import {shallow} from 'enzyme';
+import assert from 'assert';
 import Search from '../../src/Search';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
-    expect(tree.hasClass('coral-DecoratedTextfield')).toBe(true);
-    expect(tree.hasClass('coral-Search')).toBe(true);
+    assert.equal(tree.hasClass('coral-DecoratedTextfield'), true);
+    assert.equal(tree.hasClass('coral-Search'), true);
 
     const icon = tree.find('.coral-DecoratedTextfield-icon');
-    expect(icon.prop('className')).toBe('coral-DecoratedTextfield-icon');
-    expect(icon.prop('icon')).toBe('search');
-    expect(icon.prop('size')).toBe('S');
+    assert.equal(icon.prop('className'), 'coral-DecoratedTextfield-icon');
+    assert.equal(icon.prop('icon'), 'search');
+    assert.equal(icon.prop('size'), 'S');
 
     const input = findInput(tree);
-    expect(input.hasClass('coral-DecoratedTextfield-input')).toBe(true);
-    expect(input.hasClass('coral-Search-input')).toBe(true);
+    assert.equal(input.hasClass('coral-DecoratedTextfield-input'), true);
+    assert.equal(input.hasClass('coral-Search-input'), true);
 
     const button = findButton(tree);
-    expect(button.node).toNotExist();
+    assert(!button.node);
   });
 
   it('should support custom icons', () => {
     const tree = shallow(<Search icon="refresh" />);
     const icon = tree.find('.coral-DecoratedTextfield-icon');
-    expect(icon.prop('icon')).toBe('refresh');
+    assert.equal(icon.prop('icon'), 'refresh');
   });
 
   it('should support no icon', () => {
     const tree = shallow(<Search icon="" />);
     const icon = tree.find('.coral-DecoratedTextfield-icon');
-    expect(icon.node).toNotExist();
+    assert(!icon.node);
   });
 
   it('shows clear button if text exists', () => {
     const tree = shallow(<Search defaultValue="foo" />);
     const button = findButton(tree);
-    expect(button.prop('variant')).toBe('minimal');
-    expect(button.prop('icon')).toBe('close');
-    expect(button.prop('iconSize')).toBe('XS');
-    expect(button.prop('square')).toBe(true);
-    expect(button.prop('className')).toBe('coral-DecoratedTextfield-button');
+    assert.equal(button.prop('variant'), 'minimal');
+    assert.equal(button.prop('icon'), 'close');
+    assert.equal(button.prop('iconSize'), 'XS');
+    assert.equal(button.prop('square'), true);
+    assert.equal(button.prop('className'), 'coral-DecoratedTextfield-button');
   });
 
   describe('onSubmit', () => {
@@ -49,22 +50,22 @@ describe('Search', () => {
     let preventDefaultSpy;
 
     beforeEach(() => {
-      spy = expect.createSpy();
-      preventDefaultSpy = expect.createSpy();
+      spy = sinon.spy();
+      preventDefaultSpy = sinon.spy();
     });
 
     it('is called when enter is pressed', () => {
       const tree = shallow(<Search onSubmit={ spy } />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
-      expect(spy).toHaveBeenCalled();
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert(spy.called);
+      assert(preventDefaultSpy.called);
     });
 
     it('is not called when enter is pressed if it is disabled', () => {
       const tree = shallow(<Search onSubmit={ spy } disabled />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
-      expect(spy).toNotHaveBeenCalled();
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert(!spy.called);
+      assert(preventDefaultSpy.called);
     });
   });
 
@@ -73,68 +74,68 @@ describe('Search', () => {
     let preventDefaultSpy;
 
     beforeEach(() => {
-      spy = expect.createSpy();
-      preventDefaultSpy = expect.createSpy();
+      spy = sinon.spy();
+      preventDefaultSpy = sinon.spy();
     });
 
     it('is called when escape is pressed', () => {
       const tree = shallow(<Search onClear={ spy } />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
-      expect(spy).toHaveBeenCalled();
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert(spy.called);
+      assert(preventDefaultSpy.called);
     });
 
     it('is called when the clear button is pressed', () => {
       const tree = shallow(<Search onClear={ spy } defaultValue="foo" />);
       findButton(tree).simulate('click');
-      expect(spy).toHaveBeenCalled();
+      assert(spy.called);
     });
 
     it('is not called when escape is pressed if it is disabled', () => {
       const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
-      expect(spy).toNotHaveBeenCalled();
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert(!spy.called);
+      assert(preventDefaultSpy.called);
     });
 
     it('is not called when the clear button is preseed if it is disabled', () => {
       const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
       findButton(tree).simulate('click');
-      expect(spy).toNotHaveBeenCalled();
+      assert(!spy.called);
     });
   });
 
   it('calls onChange when text is entered', () => {
-    const spy = expect.createSpy();
+    const spy = sinon.spy();
     const tree = shallow(<Search onChange={ spy } />);
-    expect(tree.state('value')).toBe('');
-    expect(tree.state('emptyText')).toBe(true);
+    assert.equal(tree.state('value'), '');
+    assert.equal(tree.state('emptyText'), true);
 
     findInput(tree).simulate('change', 'a');
-    expect(spy).toHaveBeenCalled();
-    expect(tree.state('value')).toBe('a');
-    expect(tree.state('emptyText')).toBe(false);
+    assert(spy.called);
+    assert.equal(tree.state('value'), 'a');
+    assert.equal(tree.state('emptyText'), false);
   });
 
   it('supports clearable', () => {
     const tree = shallow(<Search defaultValue="foo" clearable={ false } />);
-    expect(findButton(tree).node).toNotExist();
+    assert(!findButton(tree).node);
   });
 
   it('supports disabled', () => {
     const tree = shallow(<Search defaultValue="foo" disabled />);
-    expect(findInput(tree).prop('disabled')).toBe(true);
-    expect(findButton(tree).prop('disabled')).toBe(true);
+    assert.equal(findInput(tree).prop('disabled'), true);
+    assert.equal(findButton(tree).prop('disabled'), true);
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Search className="myClass" />);
-    expect(tree.hasClass('myClass')).toBe(true);
+    assert.equal(tree.hasClass('myClass'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Search foo />);
-    expect(findInput(tree).prop('foo')).toBe(true);
+    assert.equal(findInput(tree).prop('foo'), true);
   });
 });
 

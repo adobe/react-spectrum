@@ -1,9 +1,9 @@
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
-import expect from 'expect';
 import {Menu, MenuItem} from '../../src/Menu';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('Autocomplete', () => {
@@ -163,8 +163,8 @@ describe('Autocomplete', () => {
   });
 
   it('supports a controlled mode', async () => {
-    const onChange = expect.createSpy();
-    const onSelect = expect.createSpy();
+    const onChange = sinon.spy();
+    const onSelect = sinon.spy();
 
     const tree = shallow(
       <Autocomplete value="foo" onChange={onChange} onSelect={onSelect} getCompletions={v => ['one', 'two', 'three']}>
@@ -178,25 +178,25 @@ describe('Autocomplete', () => {
 
     await sleep(1);
 
-    assert.equal(onChange.calls.length, 1);
-    assert.deepEqual(onChange.calls[0].arguments[0], 'test');
-    assert.equal(onSelect.calls.length, 0);
+    assert.equal(onChange.callCount, 1);
+    assert.deepEqual(onChange.getCall(0).args[0], 'test');
+    assert.equal(onSelect.callCount, 0);
 
     // It doesn't change the value in controlled mode
     assert.equal(tree.find('input').prop('value'), 'foo');
 
     tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
 
-    assert.equal(onChange.calls.length, 2);
-    assert.deepEqual(onChange.calls[1].arguments[0], 'one');
-    assert.equal(onSelect.calls.length, 1);
-    assert.equal(onSelect.calls[0].arguments[0], 'one');
+    assert.equal(onChange.callCount, 2);
+    assert.deepEqual(onChange.getCall(1).args[0], 'one');
+    assert.equal(onSelect.callCount, 1);
+    assert.equal(onSelect.getCall(0).args[0], 'one');
 
     assert.equal(tree.find('input').prop('value'), 'foo');
   });
 
   it('does not select first menu item by default with allowCreate', async () => {
-    const onSelect = expect.createSpy();
+    const onSelect = sinon.spy();
     const tree = shallow(
       <Autocomplete allowCreate onSelect={onSelect} getCompletions={v => ['one', 'two', 'three']}>
         <input />
@@ -214,8 +214,8 @@ describe('Autocomplete', () => {
     tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
     assert.equal(tree.find('input').prop('value'), 'test');
 
-    assert.equal(onSelect.calls.length, 1);
-    assert.equal(onSelect.calls[0].arguments[0], 'test');
+    assert.equal(onSelect.callCount, 1);
+    assert.equal(onSelect.getCall(0).args[0], 'test');
   });
 
   it('can toggle the menu programmatically', async () => {
@@ -234,7 +234,7 @@ describe('Autocomplete', () => {
   });
 
   it('supports non-string completions', async () => {
-    const onSelect = expect.createSpy();
+    const onSelect = sinon.spy();
     const tree = shallow(
       <Autocomplete onSelect={onSelect} getCompletions={v => [{id: 1, label: 'one'}, {id: 2, label: 'two'}]}>
         <input />
@@ -248,7 +248,7 @@ describe('Autocomplete', () => {
     tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
     assert.equal(tree.find('input').prop('value'), 'one');
 
-    assert.equal(onSelect.calls.length, 1);
-    assert.deepEqual(onSelect.calls[0].arguments[0], {id: 1, label: 'one'});
+    assert.equal(onSelect.callCount, 1);
+    assert.deepEqual(onSelect.getCall(0).args[0], {id: 1, label: 'one'});
   });
 });

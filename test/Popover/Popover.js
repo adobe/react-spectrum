@@ -1,38 +1,38 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import Popover from '../../src/Popover';
 
 describe('Popover', () => {
   it('supports different variants', () => {
     const tree = shallow(<Popover variant="info" />);
-    expect(tree.hasClass('coral-Dialog--info')).toBe(true);
+    assert.equal(tree.hasClass('coral-Dialog--info'), true);
   });
 
   // it('supports different variants', () => {
   //   const tree = shallow(<Popover variant="info" />);
   //   const contentTree = shallow(tree.prop('content'));
-  //   expect(contentTree.hasClass('coral-Dialog--info')).toBe(true);
+  //   assert.equal(contentTree.hasClass('coral-Dialog--info'), true);
   // });
 
   // it('supports optional title', () => {
   //   const tree = shallow(<Popover />);
   //   let header = shallow(tree.prop('content')).find(DialogHeader);
-  //   expect(header.node).toNotExist();
+  //   assert(!header.node);
   //   tree.setProps({title: 'Foo'});
   //   header = shallow(tree.prop('content')).find(DialogHeader);
-  //   expect(header.node).toExist();
-  //   expect(header.prop('title')).toBe('Foo');
+  //   assert(header.node);
+  //   assert.equal(header.prop('title'), 'Foo');
   // });
 
   // it('supports additional classNames', () => {
   //   const tree = shallow(<Popover className="foo" />);
-  //   expect(tree.hasClass('foo')).toBe(true);
+  //   assert.equal(tree.hasClass('foo'), true);
   // });
 
   // it('supports additional properties', () => {
   //   const tree = shallow(<Popover foo />);
   //   const contentTree = shallow(tree.prop('content'));
-  //   expect(contentTree.prop('foo')).toBe(true);
+  //   assert.equal(contentTree.prop('foo'), true);
   // });
 });
