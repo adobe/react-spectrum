@@ -1,6 +1,6 @@
 {
   "name": "react-spectrum",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -75,7 +75,12 @@
   },
   "browserify": {
     "transform": [
-      ["stringify", [".css"]]
+      [
+        "stringify",
+        [
+          ".css"
+        ]
+      ]
     ]
   }
 }
