@@ -20,7 +20,7 @@ describe('ComboBox', () => {
 
   it('should render classnames for states', () => {
     const tree = shallow(<ComboBox quiet disabled invalid />);
-    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup coral-DecoratedTextfield coral-ComboBox--quiet is-disabled is-invalid');
+    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup coral-DecoratedTextfield coral-InputGroup--quiet is-disabled is-invalid');
   });
 
   it('should support rendering an icon', () => {

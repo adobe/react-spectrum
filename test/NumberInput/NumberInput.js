@@ -46,9 +46,7 @@ describe('NumberInput', () => {
     assert.equal(incButton.prop('title'), 'Increment');
 
     const buttonWrappers = tree.find('.coral-InputGroup-button');
-    buttonWrappers.forEach(wrapper => {
-      assert.equal(wrapper.prop('role'), 'presentation');
-    });
+    assert.equal(buttonWrappers.at(0).prop('role'), 'presentation');
   });
 
   it('supports placeholder', () => {
@@ -181,11 +179,9 @@ describe('NumberInput', () => {
   it('sets focused class when focused', () => {
     const tree = shallow(<NumberInput />);
     findInput(tree).simulate('focus');
-    assert.equal(tree.hasClass('is-focused'), true);
-    assert.equal(findInput(tree).hasClass('is-focused'), true);
+    assert.equal(tree.prop('focused'), true);
     findInput(tree).simulate('blur');
-    assert.equal(tree.hasClass('is-focused'), false);
-    assert.equal(findInput(tree).hasClass('is-focused'), false);
+    assert.equal(tree.prop('focused'), false);
   });
 
   describe('support max', () => {

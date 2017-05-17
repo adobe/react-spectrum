@@ -86,7 +86,8 @@ export default class Datepicker extends Component {
       valueText: this.formatValueToInputText(val, newDisplayFormat),
       valueFormat: newValueFormat,
       displayFormat: newDisplayFormat,
-      open: false
+      open: false,
+      focused: false
     };
   }
 
@@ -171,6 +172,13 @@ export default class Datepicker extends Component {
     });
   }
 
+  onFocus(e) {
+    this.setState({focused: true});
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
   handleTextBlur(e) {
     const {displayFormat} = this.state;
     const text = e.target.value;
@@ -179,6 +187,7 @@ export default class Datepicker extends Component {
       date = null;
     }
     this.setValue(text, date);
+    this.setState({focused: false});
 
     if (this.props.onBlur) {
       this.props.onBlur(e);
@@ -225,7 +234,7 @@ export default class Datepicker extends Component {
       ...otherProps
     } = this.props;
 
-    const {valueText, value, valueFormat} = this.state;
+    const {valueText, value, valueFormat, focused} = this.state;
 
     const calendarProps = {
       id,
@@ -254,19 +263,16 @@ export default class Datepicker extends Component {
     delete otherProps.value;
     delete otherProps.defaultValue;
     return (
-      <InputGroup quiet={quiet}
-        aria-disabled={disabled}
-        aria-invalid={invalid}
+      <InputGroup
+        quiet={quiet}
+        disabled={disabled}
+        invalid={invalid}
+        focused={focused}
         aria-readonly={readOnly}
         aria-required={required}
         aria-owns={id}
         aria-haspopup
-        className={classNames('coral-Datepicker',
-          {
-            'is-invalid': invalid
-          },
-          className
-        )}>
+        className={classNames('coral-Datepicker', className)}>
         <Textfield
           className="coral-InputGroup-input"
           aria-invalid={invalid}
@@ -278,18 +284,17 @@ export default class Datepicker extends Component {
           invalid={invalid}
           {...otherProps}
           onChange={this.handleTextChange}
+          onFocus={this.onFocus}
           onBlur={this.handleTextBlur}
         />
         <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
-          <div className="coral-InputGroup-button">
-            <Button
-              className={classNames({'coral-Button--quiet': quiet})}
-              type="button"
-              icon={type === 'time' ? 'clock' : 'calendar'}
-              iconSize="S"
-              square
-              disabled={readOnly || disabled} />
-          </div>
+          <Button
+            className={classNames('coral-InputGroup-button', {'coral-Button--quiet': quiet})}
+            type="button"
+            icon={type === 'time' ? 'clock' : 'calendar'}
+            iconSize="S"
+            square
+            disabled={readOnly || disabled} />
           <Popover open>
             <div>
               {type !== 'time' && this.renderCalendar(calendarProps)}

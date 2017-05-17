@@ -21,51 +21,57 @@ $spectrum-numberinput-button-height = $spectrum-component-single-line-height / 2
 $spectrum-numberinput-padding = $spectrum-padding / 2;
 
 .coral3-NumberInput {
-  border-top-left-radius: $spectrum-border-radius;
-  border-bottom-left-radius: $spectrum-border-radius;
-
-  transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
-
   .coral3-NumberInput-input:invalid {
     z-index: 2;
   }
 
-  .coral-InputGroup-button {
-    > .coral3-NumberInput-stepUp,
-    > .coral3-NumberInput-stepDown {
-      height: $spectrum-numberinput-button-height;
-      padding-left: $spectrum-numberinput-padding;
-      padding-right: $spectrum-numberinput-padding;
+  .coral-InputGroup-input {
+    border-radius: 0 $spectrum-border-radius $spectrum-border-radius 0;
+  }
 
-      .coral-Icon {
-        line-height: $spectrum-numberinput-button-height;
-      }
+  > .coral-InputGroup-button {
+    transition: box-shadow $spectrum-transition-time ease-in-out;
+    border-radius: $spectrum-border-radius 0 0 $spectrum-border-radius;
+  }
+
+  .coral-InputGroup-button.coral3-NumberInput-stepUp,
+  .coral-InputGroup-button.coral3-NumberInput-stepDown {
+    display: block;
+    min-width: 0;
+    height: $spectrum-numberinput-button-height;
+    padding-left: $spectrum-numberinput-padding;
+    padding-right: $spectrum-numberinput-padding;
+    border-right-width: 0;
+    box-shadow: none !important; // box shadow is on parent
+
+    .coral-Icon {
+      line-height: $spectrum-numberinput-button-height;
     }
+  }
 
-    > .coral3-NumberInput-stepUp {
+  .coral-InputGroup-button.coral3-NumberInput-stepUp {
+    border-bottom: none;
+    border-radius: $spectrum-border-radius 0 0 0;
+
+    &:focus,
+    &.is-focused {
       border-bottom: none;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-
-      &:focus,
-      &.is-focused {
-        border-bottom: none;
-      }
     }
+  }
 
-    > .coral3-NumberInput-stepDown {
-      float: left;
+  .coral-InputGroup-button.coral3-NumberInput-stepDown {
+    border-top: none;
+    border-radius: 0 0 0 $spectrum-border-radius;
+
+    &:focus,
+    &.is-focused {
       border-top: none;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+    }
+  }
 
-      &:focus,
-      &.is-focused {
-        border-top: none;
-      }
+  &.is-invalid {
+    &:after {
+      right: 0;
     }
   }
 }
-
-@require 'light.styl'
-@require 'dark.styl'
