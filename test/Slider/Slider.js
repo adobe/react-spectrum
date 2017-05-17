@@ -1,5 +1,5 @@
 import React from 'react';
-import {createSpy} from 'expect';
+import sinon from 'sinon';
 import assert from 'assert';
 import {shallow} from 'enzyme';
 import Slider from '../../src/Slider';
@@ -35,7 +35,7 @@ describe('Slider', function () {
   });
 
   it('should support drag and drop to set the slider value', function () {
-    const onChange = createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<Slider onChange={onChange} />);
 
     tree.instance().dom = {
@@ -52,12 +52,12 @@ describe('Slider', function () {
       clientX: 80
     });
 
-    assert.deepEqual(onChange.calls[0].arguments[0], 0.6);
+    assert.deepEqual(onChange.getCall(0).args[0], 0.6);
     assert.equal(tree.state('value'), 0.6);
   });
 
   it('should support clicking on the track to set the value', function () {
-    const onChange = createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<Slider onChange={onChange} />);
 
     tree.instance().dom = {
@@ -74,11 +74,11 @@ describe('Slider', function () {
       clientX: 80
     });
 
-    assert.deepEqual(onChange.calls[0].arguments[0], 0.6);
+    assert.deepEqual(onChange.getCall(0).args[0], 0.6);
   });
 
   it('should support drag and drop to set the slider value with step', function () {
-    const onChange = createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<Slider onChange={onChange} min={10} max={25} step={5} />);
 
     tree.instance().dom = {
@@ -95,11 +95,11 @@ describe('Slider', function () {
       clientX: 80
     });
 
-    assert.deepEqual(onChange.calls[0].arguments[0], 20);
+    assert.deepEqual(onChange.getCall(0).args[0], 20);
   });
 
   it('should support drag and drop to set the slider value in vertical orientation', function () {
-    const onChange = createSpy();
+    const onChange = sinon.spy();
     const tree = shallow(<Slider onChange={onChange} orientation="vertical" />);
 
     tree.instance().dom = {
@@ -116,7 +116,7 @@ describe('Slider', function () {
       clientY: 80
     });
 
-    assert.deepEqual(onChange.calls[0].arguments[0], 0.4);
+    assert.deepEqual(onChange.getCall(0).args[0], 0.4);
   });
 
   it('should not set state if value is controlled', function () {

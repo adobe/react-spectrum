@@ -1,6 +1,7 @@
 import Calendar from '../../src/Calendar';
 import {DateRange} from 'moment-range';
-import expect, {createSpy} from 'expect';
+import assert from 'assert';
+import sinon from 'sinon';
 import moment from 'moment';
 import React from 'react';
 import {shallow} from 'enzyme';
@@ -13,25 +14,25 @@ describe('Calendar', () => {
     const now = moment();
 
     const tree = shallow(<Calendar />);
-    expect(tree.hasClass('coral-Calendar')).toBe(true);
+    assert.equal(tree.hasClass('coral-Calendar'), true);
 
     const headerTitle = findHeaderTitle(tree);
-    expect(headerTitle.text()).toBe(now.format(DEFAULT_HEADER_FORMAT));
+    assert.equal(headerTitle.text(), now.format(DEFAULT_HEADER_FORMAT));
 
     const prevBtn = findPreviousButton(tree);
-    expect(prevBtn.prop('aria-label')).toBe('Previous');
-    expect(prevBtn.prop('title')).toBe('Previous');
+    assert.equal(prevBtn.prop('aria-label'), 'Previous');
+    assert.equal(prevBtn.prop('title'), 'Previous');
     const nextBtn = findNextButton(tree);
-    expect(nextBtn.prop('aria-label')).toBe('Next');
-    expect(nextBtn.prop('title')).toBe('Next');
+    assert.equal(nextBtn.prop('aria-label'), 'Next');
+    assert.equal(nextBtn.prop('title'), 'Next');
 
     const body = findBody(tree);
-    expect(body.find('thead tr').length).toBe(1);
+    assert.equal(body.find('thead tr').length, 1);
     const headerCells = body.find('thead tr th');
-    expect(headerCells.length).toBe(7);
-    expect(headerCells.first().childAt(0).prop('title')).toBe('Sunday'); // week starts Sunday
-    expect(body.find('tbody tr').length).toBe(6);
-    expect(body.find('tbody tr CalendarCell').length).toBe(42); // 6 weeks * 7 days each
+    assert.equal(headerCells.length, 7);
+    assert.equal(headerCells.first().childAt(0).prop('title'), 'Sunday'); // week starts Sunday
+    assert.equal(body.find('tbody tr').length, 6);
+    assert.equal(body.find('tbody tr CalendarCell').length, 42); // 6 weeks * 7 days each
   });
 
   it('supports defaultValue uncontrolled behavior', () => {
@@ -42,11 +43,11 @@ describe('Calendar', () => {
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
     tree.setProps({defaultValue: weekLater});
-    expect(+tree.state('value')).toEqual(+date);
+    assert.deepEqual(+tree.state('value'), +date);
 
     // Component interaction should change the state.
     findCellByDate(tree, weekLater).simulate('click', {}, weekLater);
-    expect(+tree.state('value')).toEqual(+weekLater);
+    assert.deepEqual(+tree.state('value'), +weekLater);
   });
 
   it('supports value controlled behavior', () => {
@@ -56,76 +57,76 @@ describe('Calendar', () => {
 
     // Changing value will change the state
     tree.setProps({value: weekLater});
-    expect(+tree.state('value')).toEqual(+weekLater);
+    assert.deepEqual(+tree.state('value'), +weekLater);
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
     findCellByDate(tree, date).simulate('click', {}, date);
-    expect(+tree.state('value')).toEqual(+weekLater);
+    assert.deepEqual(+tree.state('value'), +weekLater);
   });
 
   it('supports startDay', () => {
     const tree = shallow(<Calendar startDay={ 2 } />); // Weeks start on Tuesday
     // Grab first column to see if it is Tuesday
     const head = tree.find('.coral-Calendar-calendarBody thead tr th').first();
-    expect(head.childAt(0).prop('title')).toBe('Tuesday');
-    expect(head.childAt(0).text()).toBe('Tu');
+    assert.equal(head.childAt(0).prop('title'), 'Tuesday');
+    assert.equal(head.childAt(0).text(), 'Tu');
   });
 
   it('supports headerFormat', () => {
     const tree = shallow(<Calendar value="2016-08-01" headerFormat="M/YYYY" />);
-    expect(findHeaderTitle(tree).text()).toBe('8/2016');
+    assert.equal(findHeaderTitle(tree).text(), '8/2016');
   });
 
   it('supports valueFormat', () => {
     const tree = shallow(<Calendar value="08-01-2016" valueFormat="MM-DD-YYYY" />);
-    expect(+tree.state('value')).toBe(+new Date(2016, 7, 1));
+    assert.equal(+tree.state('value'), +new Date(2016, 7, 1));
     tree.setProps({value: '01-08-2016'});
-    expect(+tree.state('value')).toBe(+new Date(2016, 0, 8));
+    assert.equal(+tree.state('value'), +new Date(2016, 0, 8));
   });
 
   it('supports selectionType=range', function () {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
-    expect(tree.state('value')).toEqual(new DateRange(start, end));
+    assert.deepEqual(tree.state('value'), new DateRange(start, end));
   });
 
   it('supports selectionType=range with uncontrolled behavior', function () {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" defaultValue={[start, end]} />);
-    expect(tree.state('value')).toEqual(new DateRange(start, end));
+    assert.deepEqual(tree.state('value'), new DateRange(start, end));
 
     const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
 
     // Setting defaultValue later doesn't change the state.
     tree.setProps({defaultValue: weekLater});
-    expect(tree.state('value').toDate()).toEqual([start.toDate(), end.toDate()]);
+    assert.deepEqual(tree.state('value').toDate(), [start.toDate(), end.toDate()]);
 
     // Component interaction should change the state.
     findCellByDate(tree, weekLater.start).simulate('click', {}, weekLater.start);
     findCellByDate(tree, weekLater.end).simulate('click', {}, weekLater.end);
-    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+    assert.deepEqual(tree.state('value').toDate(), weekLater.toDate());
   });
 
   it('supports selectionType=range with controlled behavior', function () {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
-    expect(tree.state('value')).toEqual(new DateRange(start, end));
+    assert.deepEqual(tree.state('value'), new DateRange(start, end));
 
     const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
 
     // Changing value will change the state
     tree.setProps({value: weekLater});
-    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+    assert.deepEqual(tree.state('value').toDate(), weekLater.toDate());
 
     // Component interaction should not change the state, only manually setting value
     // as a prop will change the state.
     findCellByDate(tree, start).simulate('click', {}, start);
     findCellByDate(tree, end).simulate('click', {}, end);
-    expect(tree.state('value').toDate()).toEqual(weekLater.toDate());
+    assert.deepEqual(tree.state('value').toDate(), weekLater.toDate());
   });
 
   describe('dispatches onChange', () => {
@@ -134,12 +135,12 @@ describe('Calendar', () => {
     const assertOnChangeArgsMatch = el => {
       const newDate = el.prop('date').clone();
 
-      const args = spy.getLastCall().arguments;
-      expect(+args[0]).toBe(+newDate);
+      const args = spy.lastCall.args;
+      assert.equal(+args[0], +newDate);
     };
 
     beforeEach(() => {
-      spy = createSpy();
+      spy = sinon.spy();
     });
 
     it('when a non-disabled day is clicked', () => {
@@ -152,13 +153,13 @@ describe('Calendar', () => {
 
     it('when a focused day receives enter/space keydown event', () => {
       const tree = shallow(<Calendar onChange={ spy } />);
-      const preventDefaultSpy = createSpy();
+      const preventDefaultSpy = sinon.spy();
       const firstNonSelectedCell = findFirstNonSelectedCell(tree);
       const firstNonSelectedCellDate = firstNonSelectedCell.prop('date');
       tree.setState({focusedDate: firstNonSelectedCellDate});
       findBody(tree).simulate('keydown', {keyCode: 13, preventDefault: preventDefaultSpy});
       assertOnChangeArgsMatch(firstNonSelectedCell);
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert(preventDefaultSpy.called);
     });
 
     it('with a range when selectionType=range', function () {
@@ -169,7 +170,7 @@ describe('Calendar', () => {
       const endDate = endCell.prop('date');
       startCell.simulate('click', {}, startDate);
       endCell.simulate('click', {}, endDate);
-      expect(spy.getLastCall().arguments[0].toDate()).toEqual([startDate.toDate(), endDate.toDate()]);
+      assert.deepEqual(spy.lastCall.args[0].toDate(), [startDate.toDate(), endDate.toDate()]);
     });
   });
 
@@ -184,19 +185,19 @@ describe('Calendar', () => {
 
     it('changes currentMonth when value prop is set to different day', () => {
       const date3MonthsLater = now.clone().add(3, 'month');
-      expect(+tree.state('currentMonth')).toBe(+now.clone().startOf('month'));
+      assert.equal(+tree.state('currentMonth'), +now.clone().startOf('month'));
       tree.setProps({value: date3MonthsLater});
-      expect(+tree.state('currentMonth')).toBe(+date3MonthsLater.clone().startOf('month'));
+      assert.equal(+tree.state('currentMonth'), +date3MonthsLater.clone().startOf('month'));
     });
 
     it('changes currentMonth when previous or next buttons are clicked', () => {
       const previousMonth = now.clone().subtract(1, 'month');
       findPreviousButton(tree).simulate('click');
-      expect(+tree.state('focusedDate')).toBe(+previousMonth.clone());
-      expect(+tree.state('currentMonth')).toBe(+previousMonth.clone().startOf('month'));
+      assert.equal(+tree.state('focusedDate'), +previousMonth.clone());
+      assert.equal(+tree.state('currentMonth'), +previousMonth.clone().startOf('month'));
       findNextButton(tree).simulate('click');
-      expect(+tree.state('focusedDate')).toBe(+now.clone());
-      expect(+tree.state('currentMonth')).toBe(+now.clone().startOf('month'));
+      assert.equal(+tree.state('focusedDate'), +now.clone());
+      assert.equal(+tree.state('currentMonth'), +now.clone().startOf('month'));
     });
   });
 
@@ -207,17 +208,16 @@ describe('Calendar', () => {
     let body;
 
     const assertDateAfterKeyDown = ({keyCode, date, meta = false}) => {
-      preventDefaultSpy.restore();
       body.simulate('keydown', {preventDefault: preventDefaultSpy, keyCode, metaKey: meta});
-      expect(+tree.state('focusedDate')).toBe(+date.clone());
-      expect(+tree.state('currentMonth')).toBe(+date.clone().startOf('month'));
-      expect(+findFocusedCell(tree).prop('date')).toBe(+date.clone().startOf('day'));
-      expect(preventDefaultSpy).toHaveBeenCalled();
+      assert.equal(+tree.state('focusedDate'), +date.clone());
+      assert.equal(+tree.state('currentMonth'), +date.clone().startOf('month'));
+      assert.equal(+findFocusedCell(tree).prop('date'), +date.clone().startOf('day'));
+      assert(preventDefaultSpy.called);
     };
 
     beforeEach(() => {
       now = moment().startOf('day');
-      preventDefaultSpy = createSpy();
+      preventDefaultSpy = sinon.spy();
       tree = shallow(<Calendar value={ now } />);
       body = findBody(tree);
     });
@@ -256,18 +256,18 @@ describe('Calendar', () => {
     it('is set to value if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar value={ date } />);
-      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
     it('is set to defaultValue if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar defaultValue={ date } />);
-      expect(+tree.state('focusedDate')).toBe(+moment(date, DEFAULT_VALUE_FORMAT));
+      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
     it('is set to now if no value or defaultValue exist', () => {
       tree = shallow(<Calendar />);
-      expect(tree.state('focusedDate').isSame(now, 'day')).toBe(true);
+      assert.equal(tree.state('focusedDate').isSame(now, 'day'), true);
     });
   });
 
@@ -279,13 +279,13 @@ describe('Calendar', () => {
       const tree = shallow(<Calendar selectionType="range" />);
 
       findCellByDate(tree, start).simulate('click', {}, start);
-      expect(tree.state('selectingRange').toDate()).toEqual([start.toDate(), start.clone().endOf('day').toDate()]);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [start.toDate(), start.clone().endOf('day').toDate()]);
 
       findCellByDate(tree, before).simulate('highlight', {}, before);
-      expect(tree.state('selectingRange').toDate()).toEqual([before.toDate(), start.toDate()]);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [before.toDate(), start.toDate()]);
 
       findCellByDate(tree, after).simulate('highlight', {}, after);
-      expect(tree.state('selectingRange').toDate()).toEqual([start.toDate(), after.toDate()]);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [start.toDate(), after.toDate()]);
     });
 
     it('resets the selection when the escape key is pressed', function () {
@@ -296,11 +296,11 @@ describe('Calendar', () => {
 
       findCellByDate(tree, start).simulate('click', {}, start);
       findCellByDate(tree, before).simulate('highlight', {}, before);
-      expect(tree.state('selectingRange').toDate()).toEqual([before.toDate(), start.toDate()]);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [before.toDate(), start.toDate()]);
 
       body.simulate('keydown', {keyCode: 27});
 
-      expect(tree.state('selectingRange')).toBe(null);
+      assert.equal(tree.state('selectingRange'), null);
     });
   });
 
@@ -308,27 +308,27 @@ describe('Calendar', () => {
     const minDate = moment(new Date(2016, 9, 24, 12, 30));
     const maxDate = minDate.clone().add(3, 'day');
     const tree = shallow(<Calendar min={ minDate } max={ maxDate } />);
-    expect(+tree.state('min')).toBe(+minDate.startOf('day'));
-    expect(+tree.state('max')).toBe(+maxDate.startOf('day'));
+    assert.equal(+tree.state('min'), +minDate.startOf('day'));
+    assert.equal(+tree.state('max'), +maxDate.startOf('day'));
 
     const minDateMinus1 = minDate.clone().subtract(1, 'day');
     const maxDatePlus1 = maxDate.clone().add(1, 'day');
     tree.setProps({min: minDateMinus1, max: maxDatePlus1});
-    expect(+tree.state('min')).toBe(+minDateMinus1.startOf('day'));
-    expect(+tree.state('max')).toBe(+maxDatePlus1.startOf('day'));
+    assert.equal(+tree.state('min'), +minDateMinus1.startOf('day'));
+    assert.equal(+tree.state('max'), +maxDatePlus1.startOf('day'));
   });
 
   it('enforces min and max', () => {
     const date = moment('2015-01-01', DEFAULT_VALUE_FORMAT);
     const oneWeekLater = date.clone().add(1, 'week');
     const tree = shallow(<Calendar value={ date } min={ date } max={ oneWeekLater } />);
-    expect(findAllSelectableCells(tree).length).toBe(8); // includes start and end days
+    assert.equal(findAllSelectableCells(tree).length, 8); // includes start and end days
   });
 
   it('generateDateId', () => {
     const today = moment(new Date(2016, 7, 24));
     const tree = shallow(<Calendar value={ today } />);
-    expect(tree.instance().generateDateId(today)).toBe('react-coral-1-8/24/2016');
+    assert.equal(tree.instance().generateDateId(today), 'react-coral-1-8/24/2016');
   });
 
   describe('CalendarCell', () => {
@@ -349,20 +349,20 @@ describe('Calendar', () => {
       });
 
       it('props', () => {
-        expect(cellTree.prop('id')).toBe(tree.instance().generateDateId(now));
-        expect(cellTree.prop('title')).toBe(`Today, ${ dateStringForTitle(now) } selected`);
-        expect(cellTree.prop('aria-disabled')).toBe(false);
-        expect(cellTree.prop('aria-selected')).toBe(true);
-        expect(cellTree.prop('aria-invalid')).toBe(false);
-        expect(cellTree.prop('onClick')).toExist();
-        expect(cellTree.childAt(0).text()).toBe(`${ now.date() }`);
+        assert.equal(cellTree.prop('id'), tree.instance().generateDateId(now));
+        assert.equal(cellTree.prop('title'), `Today, ${ dateStringForTitle(now) } selected`);
+        assert.equal(cellTree.prop('aria-disabled'), false);
+        assert.equal(cellTree.prop('aria-selected'), true);
+        assert.equal(cellTree.prop('aria-invalid'), false);
+        assert(cellTree.prop('onClick'));
+        assert.equal(cellTree.childAt(0).text(), `${ now.date() }`);
       });
 
       it('classes', () => {
-        expect(cellTree.hasClass('is-today')).toBe(true);
-        expect(cellTree.hasClass('is-selected')).toBe(true);
-        expect(cellTree.hasClass('coral-focus')).toBe(true);
-        expect(cellTree.childAt(0).hasClass('coral-Calendar-date')).toBe(true);
+        assert.equal(cellTree.hasClass('is-today'), true);
+        assert.equal(cellTree.hasClass('is-selected'), true);
+        assert.equal(cellTree.hasClass('coral-focus'), true);
+        assert.equal(cellTree.childAt(0).hasClass('coral-Calendar-date'), true);
       });
 
       it('supports range selections', function () {
@@ -374,17 +374,17 @@ describe('Calendar', () => {
         const midCell = shallow(findCellByDate(tree, start.clone().add(1, 'day')).node).find('span');
         const endCell = shallow(findCellByDate(tree, end).node).find('span');
 
-        expect(startCell.hasClass('is-range-selection')).toBe(true);
-        expect(startCell.hasClass('is-range-start')).toBe(true);
-        expect(startCell.hasClass('is-range-end')).toBe(false);
+        assert.equal(startCell.hasClass('is-range-selection'), true);
+        assert.equal(startCell.hasClass('is-range-start'), true);
+        assert.equal(startCell.hasClass('is-range-end'), false);
 
-        expect(midCell.hasClass('is-range-selection')).toBe(true);
-        expect(midCell.hasClass('is-range-start')).toBe(false);
-        expect(midCell.hasClass('is-range-end')).toBe(false);
+        assert.equal(midCell.hasClass('is-range-selection'), true);
+        assert.equal(midCell.hasClass('is-range-start'), false);
+        assert.equal(midCell.hasClass('is-range-end'), false);
 
-        expect(endCell.hasClass('is-range-selection')).toBe(true);
-        expect(endCell.hasClass('is-range-start')).toBe(false);
-        expect(endCell.hasClass('is-range-end')).toBe(true);
+        assert.equal(endCell.hasClass('is-range-selection'), true);
+        assert.equal(endCell.hasClass('is-range-start'), false);
+        assert.equal(endCell.hasClass('is-range-end'), true);
       });
     });
 
@@ -401,59 +401,59 @@ describe('Calendar', () => {
       });
 
       it('props', () => {
-        expect(cellTree.prop('id')).toBe(tree.instance().generateDateId(startOfNextMonth));
-        expect(cellTree.prop('title')).toBe(dateStringForTitle(startOfNextMonth));
-        expect(cellTree.prop('aria-disabled')).toBe(true);
-        expect(cellTree.prop('aria-selected')).toBe(false);
-        expect(cellTree.prop('aria-invalid')).toBe(false);
-        expect(cellTree.prop('onClick')).toNotExist();
-        expect(cellTree.childAt(0).text()).toBe(`${ startOfNextMonth.date() }`);
+        assert.equal(cellTree.prop('id'), tree.instance().generateDateId(startOfNextMonth));
+        assert.equal(cellTree.prop('title'), dateStringForTitle(startOfNextMonth));
+        assert.equal(cellTree.prop('aria-disabled'), true);
+        assert.equal(cellTree.prop('aria-selected'), false);
+        assert.equal(cellTree.prop('aria-invalid'), false);
+        assert(!cellTree.prop('onClick'));
+        assert.equal(cellTree.childAt(0).text(), `${ startOfNextMonth.date() }`);
       });
 
       it('classes', () => {
-        expect(cellTree.hasClass('is-today')).toBe(false);
-        expect(cellTree.hasClass('is-selected')).toBe(false);
-        expect(cellTree.hasClass('coral-focus')).toBe(false);
-        expect(cellTree.childAt(0).hasClass('coral-Calendar-secondaryDate')).toBe(true);
+        assert.equal(cellTree.hasClass('is-today'), false);
+        assert.equal(cellTree.hasClass('is-selected'), false);
+        assert.equal(cellTree.hasClass('coral-focus'), false);
+        assert.equal(cellTree.childAt(0).hasClass('coral-Calendar-secondaryDate'), true);
       });
     });
   });
 
   it('supports disabled', () => {
     const tree = shallow(<Calendar disabled />);
-    expect(tree.prop('aria-disabled')).toBe(true);
-    expect(tree.hasClass('is-disabled')).toBe(true);
+    assert.equal(tree.prop('aria-disabled'), true);
+    assert.equal(tree.hasClass('is-disabled'), true);
 
     const body = findBody(tree);
     // every cell should be disabled
-    expect(body.find('tbody tr CalendarCell[disabled]').length).toBe(42);
-    expect(body.prop('aria-disabled')).toBe(true);
+    assert.equal(body.find('tbody tr CalendarCell[disabled]').length, 42);
+    assert.equal(body.prop('aria-disabled'), true);
   });
 
   it('supports invalid', () => {
     const tree = shallow(<Calendar invalid />);
-    expect(tree.prop('aria-invalid')).toBe(true);
-    expect(tree.hasClass('is-invalid')).toBe(true);
+    assert.equal(tree.prop('aria-invalid'), true);
+    assert.equal(tree.hasClass('is-invalid'), true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<Calendar readOnly />);
-    expect(tree.prop('aria-readonly')).toBe(true);
+    assert.equal(tree.prop('aria-readonly'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<Calendar required />);
-    expect(tree.prop('aria-required')).toBe(true);
+    assert.equal(tree.prop('aria-required'), true);
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Calendar className="myClass" />);
-    expect(tree.hasClass('myClass')).toBe(true);
+    assert.equal(tree.hasClass('myClass'), true);
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<Calendar foo />);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 });
 

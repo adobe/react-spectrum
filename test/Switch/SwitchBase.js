@@ -1,5 +1,5 @@
 import React from 'react';
-import expect from 'expect';
+import assert from 'assert';
 import {shallow} from 'enzyme';
 import SwitchBase from '../../src/Switch/js/SwitchBase';
 
@@ -15,16 +15,16 @@ describe('SwitchBase', () => {
         label="React"
       />
     );
-    expect(tree.prop('className')).toBe('coral-Foo');
+    assert.equal(tree.prop('className'), 'coral-Foo');
     const input = findInput(tree);
-    expect(input.prop('type')).toBe('bar');
-    expect(input.prop('className')).toBe('coral-Foo-input');
+    assert.equal(input.prop('type'), 'bar');
+    assert.equal(input.prop('className'), 'coral-Foo-input');
     expectChecked(tree, false);
     const checkmark = findCheckmark(tree, 'Foo');
-    expect(checkmark.prop('className')).toBe('coral-Foo-checkmark');
+    assert.equal(checkmark.prop('className'), 'coral-Foo-checkmark');
     const label = findLabel(tree, 'Foo');
-    expect(label.prop('className')).toBe('coral-Foo-description');
-    expect(label.children().node).toBe('React');
+    assert.equal(label.prop('className'), 'coral-Foo-description');
+    assert.equal(label.children().node, 'React');
   });
 
   it('uncontrolled switchBase will toggle', () => {
@@ -41,45 +41,45 @@ describe('SwitchBase', () => {
 
   it('supports defaultChecked and checked', () => {
     let tree = shallow(<SwitchBase defaultChecked />);
-    expect(findInput(tree).prop('defaultChecked')).toBe(true);
+    assert.equal(findInput(tree).prop('defaultChecked'), true);
     expectChecked(tree, true);
     tree = shallow(<SwitchBase checked />);
-    expect(findInput(tree).prop('checked')).toBe(true);
-    expect(findInput(tree).prop('defaultChecked')).toBe(undefined);
+    assert.equal(findInput(tree).prop('checked'), true);
+    assert.equal(findInput(tree).prop('defaultChecked'), undefined);
     expectChecked(tree, true);
   });
 
   it('supports name', () => {
     const tree = shallow(<SwitchBase name="foo" />);
-    expect(findInput(tree).prop('name')).toBe('foo');
+    assert.equal(findInput(tree).prop('name'), 'foo');
   });
 
   it('supports disabled', () => {
     const tree = shallow(<SwitchBase />);
-    expect(findInput(tree).prop('disabled')).toNotExist();
-    expect(tree.prop('aria-disabled')).toBe(false);
+    assert(!findInput(tree).prop('disabled'));
+    assert.equal(tree.prop('aria-disabled'), false);
     tree.setProps({disabled: true});
-    expect(findInput(tree).prop('disabled')).toBe(true);
-    expect(tree.prop('aria-disabled')).toBe(true);
+    assert.equal(findInput(tree).prop('disabled'), true);
+    assert.equal(tree.prop('aria-disabled'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<SwitchBase />);
-    expect(tree.prop('aria-required')).toBe(false);
+    assert.equal(tree.prop('aria-required'), false);
     tree.setProps({required: true});
-    expect(tree.prop('aria-required')).toBe(true);
+    assert.equal(tree.prop('aria-required'), true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<SwitchBase />);
-    expect(tree.prop('aria-readonly')).toBe(false);
+    assert.equal(tree.prop('aria-readonly'), false);
     tree.setProps({readOnly: true});
-    expect(tree.prop('aria-readonly')).toBe(true);
+    assert.equal(tree.prop('aria-readonly'), true);
   });
 
   it('supports invalid', () => {
     const tree = shallow(<SwitchBase invalid />);
-    expect(tree.prop('className')).toBe('is-invalid');
+    assert.equal(tree.prop('className'), 'is-invalid');
   });
 
   it('supports children', () => {
@@ -89,18 +89,18 @@ describe('SwitchBase', () => {
       </SwitchBase>
     );
     const child = findLabel(tree);
-    expect(child).toExist();
-    expect(child.childAt(0).text()).toBe('My Custom Content');
+    assert(child);
+    assert.equal(child.childAt(0).text(), 'My Custom Content');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<SwitchBase className="myClass" />);
-    expect(tree.prop('className')).toBe('myClass');
+    assert.equal(tree.prop('className'), 'myClass');
   });
 
   it('supports additional properties', () => {
     const tree = shallow(<SwitchBase foo />);
-    expect(tree.prop('foo')).toBe(true);
+    assert.equal(tree.prop('foo'), true);
   });
 
   it('supports not rendering a label', () => {
@@ -110,31 +110,31 @@ describe('SwitchBase', () => {
         renderLabel={ false }
       />
     );
-    expect(findLabel(tree).node).toNotExist();
+    assert(!findLabel(tree).node);
     tree.setProps({renderLabel: true});
     tree.setProps({label: 'React'});
-    expect(findLabel(tree).node).toExist();
+    assert(findLabel(tree).node);
   });
 
   it('supports overriding the input className', () => {
     const tree = shallow(<SwitchBase inputClassName="my-input-class" />);
     const input = tree.find('.my-input-class');
-    expect(input.node).toExist();
-    expect(input.type()).toBe('input');
+    assert(input.node);
+    assert.equal(input.type(), 'input');
   });
 
   it('supports overriding the mark className', () => {
     const tree = shallow(<SwitchBase markClassName="my-mark-class" />);
     const mark = tree.find('.my-mark-class');
-    expect(mark.node).toExist();
-    expect(mark.type()).toBe('span');
+    assert(mark.node);
+    assert.equal(mark.type(), 'span');
   });
 
   it('supports overriding the label className', () => {
     const tree = shallow(<SwitchBase labelClassName="my-label-class" label="React" />);
     const mark = tree.find('.my-label-class');
-    expect(mark.node).toExist();
-    expect(mark.type()).toBe('label');
+    assert(mark.node);
+    assert.equal(mark.type(), 'label');
   });
 });
 
@@ -143,6 +143,6 @@ const findCheckmark = (tree) => tree.find('.coral-Foo-checkmark');
 const findLabel = (tree) => tree.find('.coral-Foo-description');
 
 const expectChecked = (tree, checked) => {
-  expect(tree.prop('aria-checked')).toBe(checked);
-  expect(findInput(tree).prop('checked')).toBe(checked);
+  assert.equal(tree.prop('aria-checked'), checked);
+  assert.equal(findInput(tree).prop('checked'), checked);
 };

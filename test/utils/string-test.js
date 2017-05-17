@@ -1,21 +1,21 @@
-import expect from 'expect';
+import assert from 'assert';
 import {isUrl} from '../../src/utils/string';
 
 describe('string', () => {
   describe('isUrl', () => {
     it('matches urls', () => {
-      expect(isUrl('http://www.adobe.com/image.png')).toBe(true);
-      expect(isUrl('http://adobe.com/image.png')).toBe(true);
-      expect(isUrl('adobe.com/image.png')).toBe(true);
-      expect(isUrl('image.png')).toBe(true);
-      expect(isUrl('../image.png')).toBe(true);
-      expect(isUrl('/image.png')).toBe(true);
+      assert.equal(isUrl('http://www.adobe.com/image.png'), true);
+      assert.equal(isUrl('http://adobe.com/image.png'), true);
+      assert.equal(isUrl('adobe.com/image.png'), true);
+      assert.equal(isUrl('image.png'), true);
+      assert.equal(isUrl('../image.png'), true);
+      assert.equal(isUrl('/image.png'), true);
     });
 
     it('doesn\'t match icon types', () => {
-      expect(isUrl('add')).toBe(false);
-      expect(isUrl('adobe')).toBe(false);
-      expect(isUrl('foo-bar')).toBe(false);
+      assert.equal(isUrl('add'), false);
+      assert.equal(isUrl('adobe'), false);
+      assert.equal(isUrl('foo-bar'), false);
     });
   });
 });

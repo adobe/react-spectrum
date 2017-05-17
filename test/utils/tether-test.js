@@ -1,24 +1,24 @@
-import expect from 'expect';
+import assert from 'assert';
 import {getTetherPositionFromPlacement} from '../../src/utils/tether';
 
 describe('tether', () => {
   describe('getTetherPositionFromPlacement', () => {
     it('returns proper tether strings for shorthand placements', () => {
-      expect(getTetherPositionFromPlacement('left')).toBe('left center');
-      expect(getTetherPositionFromPlacement('right')).toBe('right center');
-      expect(getTetherPositionFromPlacement('top')).toBe('top center');
-      expect(getTetherPositionFromPlacement('bottom')).toBe('bottom center');
+      assert.equal(getTetherPositionFromPlacement('left'), 'left center');
+      assert.equal(getTetherPositionFromPlacement('right'), 'right center');
+      assert.equal(getTetherPositionFromPlacement('top'), 'top center');
+      assert.equal(getTetherPositionFromPlacement('bottom'), 'bottom center');
     });
 
     it('returns placement if it is valid', () => {
-      expect(getTetherPositionFromPlacement('top right')).toBe('top right');
-      expect(getTetherPositionFromPlacement('bottom left')).toBe('bottom left');
+      assert.equal(getTetherPositionFromPlacement('top right'), 'top right');
+      assert.equal(getTetherPositionFromPlacement('bottom left'), 'bottom left');
     });
 
     it('throws when supplied an invalid placement', () => {
-      expect(() => { getTetherPositionFromPlacement('foo'); }).toThrow();
-      expect(() => { getTetherPositionFromPlacement('bob jerry'); }).toThrow();
-      expect(() => { getTetherPositionFromPlacement('center'); }).toThrow();
+      assert.throws(() => { getTetherPositionFromPlacement('foo'); });
+      assert.throws(() => { getTetherPositionFromPlacement('bob jerry'); });
+      assert.throws(() => { getTetherPositionFromPlacement('center'); });
     });
   });
 });

@@ -1,28 +1,29 @@
-import React from 'react';
-import expect from 'expect';
-import {shallow, mount} from 'enzyme';
 import {Accordion, AccordionItem} from '../../src/Accordion';
+import assert from 'assert';
+import React from 'react';
+import {shallow, mount} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Accordion', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<Accordion className="myClass" />);
     const wrapper = tree.find('.coral3-Accordion');
 
-    expect(wrapper.hasClass('myClass')).toBe(true);
+    assert.equal(wrapper.hasClass('myClass'), true);
   });
 
   it('supports quiet variant', () => {
     const tree = shallow(<Accordion variant="quiet" />);
     const wrapper = tree.find('.coral3-Accordion');
 
-    expect(wrapper.hasClass('coral3-Accordion--quiet')).toBe(true);
+    assert.equal(wrapper.hasClass('coral3-Accordion--quiet'), true);
   });
 
   it('supports large variant', () => {
     const tree = shallow(<Accordion variant="large" />);
     const wrapper = tree.find('.coral3-Accordion');
 
-    expect(wrapper.hasClass('coral3-Accordion--large')).toBe(true);
+    assert.equal(wrapper.hasClass('coral3-Accordion--large'), true);
   });
 
   describe('selectedKey', () => {
@@ -39,8 +40,8 @@ describe('Accordion', () => {
 
     const assertChildWithClassNameSelected = (tree, className) => {
       const child = tree.find('[selected=true]');
-      expect(child.length).toBe(1);
-      expect(child.node.props.className).toBe(className);
+      assert.equal(child.length, 1);
+      assert.equal(child.node.props.className, className);
     };
 
     it('supports string index', () => {
@@ -75,12 +76,12 @@ describe('Accordion', () => {
 
     const child = tree.find('[selected=true]');
 
-    expect(child.length).toBe(1);
-    expect(child.node.props.className).toBe('two');
+    assert.equal(child.length, 1);
+    assert.equal(child.node.props.className, 'two');
   });
 
   it('does not call onChange if descendant input is changed', () => {
-    const onChange = expect.createSpy();
+    const onChange = sinon.spy();
 
     // We need to use mount instead of shallow because we need our simulated change event to
     // bubble to properly test the scenario. Simulated events don't bubble when rendering shallowly.
@@ -94,6 +95,6 @@ describe('Accordion', () => {
 
     tree.find('input').simulate('change');
 
-    expect(onChange).toNotHaveBeenCalled();
+    assert(!onChange.called);
   });
 });
