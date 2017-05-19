@@ -22,18 +22,27 @@ this way only the components you use will be included in the output JavaScript a
 
 ### Installation
 
+Add the following to your `~/.npmrc`:
+
 ```
-npm install react-spectrum --save
+@react:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+//artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/:always-auth=false
+```
+
+Then you should be able to install with npm:
+
+```
+npm install @react/react-spectrum --save
 ```
 
 ### Example
 
 ```javascript
 // Import global page styles (CSS reset, fonts, icons, etc.)
-import 'react-spectrum/page';
+import '@react/react-spectrum/page';
 
 // Import the component you want to use
-import Button from 'react-spectrum/Button';
+import Button from '@react/react-spectrum/Button';
 
 // Render it!
 ReactDOM.render(<Button>Hello World</Button>, dom);
@@ -91,7 +100,7 @@ Each component lives in a directory under `src/`. The JavaScript lives in `src/{
 (written in [Stylus](http://stylus-lang.com)) live in `src/{component}/style`. When we build in preparation
 for publishing to npm, the JavaScript is pre-compiled with [Babel](http://babeljs.io), and the stylus is
 compiled to a single CSS file for each component. The directory structure is also flattened so e.g.
-`import 'react-spectrum/Button'` works.
+`import '@react/react-spectrum/Button'` works.
 
 ### Testing
 
