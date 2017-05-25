@@ -30,7 +30,7 @@ export default class Search extends Component {
   }
 
   handleTextKeyDown = e => {
-    const {onSubmit, disabled} = this.props;
+    const {onSubmit, onKeyDown, disabled} = this.props;
     const {value} = this.state;
     const key = e.which;
 
@@ -44,6 +44,10 @@ export default class Search extends Component {
 
     if (key === 27 && !disabled) {
       this.handleClearText();
+    }
+
+    if (onKeyDown) {
+      onKeyDown(e);
     }
   }
 

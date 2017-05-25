@@ -170,6 +170,7 @@ export default class Autocomplete extends React.Component {
             {results.map((result, i) =>
               <MenuItem
                 value={result}
+                icon={result.icon}
                 focused={selectedIndex === i}
                 onMouseEnter={this.onMouseEnter.bind(this, i)}
                 onMouseDown={e => e.preventDefault()}>
