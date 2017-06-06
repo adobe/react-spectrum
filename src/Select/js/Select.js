@@ -92,7 +92,11 @@ export default class Select extends React.Component {
         aria-multiselectable={multiple}
         aria-disabled={disabled}
         aria-invalid={invalid}>
-          <Button ref={b => this.button = b} onKeyDown={this.onKeyDown} disabled={disabled}>
+          <Button
+            type="button"
+            ref={b => this.button = b}
+            onKeyDown={this.onKeyDown}
+            disabled={disabled}>
             <span className="coral3-Select-label">{label}</span>
             <Icon icon="chevronDown" size="XS" className="coral3-Select-openIcon" />
           </Button>
