@@ -16,6 +16,7 @@ export default class Dropdown extends React.Component {
       this.props.onFocus();
     }
   }
+
   hide() {
     this.setState({showingMenu: false});
     if (this.props.onBlur) {
@@ -24,8 +25,11 @@ export default class Dropdown extends React.Component {
   }
 
   onClick() {
-    if (this.state.showingMenu) { return this.hide(); }
-    return this.show();
+    if (this.state.showingMenu) {
+      this.hide();
+    } else {
+      this.show();
+    }
   }
 
   onClose() {
