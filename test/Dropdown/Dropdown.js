@@ -123,4 +123,24 @@ describe('Dropdown', function () {
     assert.equal(onSelect.callCount, 1);
     assert.equal(onSelect.getCall(0).args[0], 'test');
   });
+
+  it('calls focus & blur', function () {
+    const onFocus = sinon.spy();
+    const onBlur = sinon.spy();
+
+    const tree = shallow(
+      <Dropdown onFocus={onFocus} onBlur={onBlur}>
+        <Button>Test</Button>
+        <Menu>
+          <MenuItem>Test</MenuItem>
+        </Menu>
+      </Dropdown>
+    );
+
+    tree.find(Button).simulate('click');
+    assert.equal(onFocus.callCount, 1);
+
+    tree.find(Button).simulate('click');
+    assert.equal(onBlur.callCount, 1);
+  });
 });

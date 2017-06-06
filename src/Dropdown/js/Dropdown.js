@@ -1,27 +1,41 @@
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {Menu} from '../../Menu';
 import React from 'react';
 import '../style/index.styl';
 
+@autobind
 export default class Dropdown extends React.Component {
   state = {
     showingMenu: false
   };
 
-  onClick = () => {
-    this.setState({
-      showingMenu: !this.state.showingMenu
-    });
+  show() {
+    this.setState({showingMenu: true});
+    if (this.props.onFocus) {
+      this.props.onFocus();
+    }
+  }
+  hide() {
+    this.setState({showingMenu: false});
+    if (this.props.onBlur) {
+      this.props.onBlur();
+    }
   }
 
-  onClose = () => {
-    this.setState({showingMenu: false});
+  onClick() {
+    if (this.state.showingMenu) { return this.hide(); }
+    return this.show();
+  }
+
+  onClose() {
+    this.hide();
     if (this.props.onClose) {
       this.props.onClose();
     }
   }
 
-  onSelect = (...args) => {
+  onSelect(...args) {
     this.onClose();
     if (this.props.onSelect) {
       this.props.onSelect(...args);
@@ -33,6 +47,8 @@ export default class Dropdown extends React.Component {
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
+    delete otherProps.onBlur;
+    delete otherProps.onFocus;
 
     return (
       <div className={classNames('coral-Dropdown', {'is-openBelow': this.state.showingMenu}, className)} {...otherProps}>

@@ -63,6 +63,8 @@ export default class Select extends React.Component {
     const {
       options = [],
       variant,
+      onFocus,
+      onBlur,
       disabled = false,
       invalid = false,
       multiple = false,
@@ -88,6 +90,8 @@ export default class Select extends React.Component {
         }, className)}
         onSelect={this.onSelect}
         onClose={this.onClose}
+        onFocus={onFocus}
+        onBlur={onBlur}
         aria-required={required}
         aria-multiselectable={multiple}
         aria-disabled={disabled}
