@@ -45,7 +45,7 @@ export default class SwitchBase extends Component {
   }
 
   getInput() {
-    return this.refs.input;
+    return this.inputRef;
   }
 
   handleChange = e => {
@@ -101,7 +101,7 @@ export default class SwitchBase extends Component {
         { ...otherProps }
       >
         <input
-          ref="input"
+          ref={ el => { this.inputRef = el; } }
           type={ inputType }
           className={ inputClassName }
           defaultChecked={ defaultChecked }

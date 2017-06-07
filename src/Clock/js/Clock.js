@@ -189,7 +189,7 @@ export default class Clock extends Component {
         {...otherProps}
       >
         <Textfield
-          ref="hour"
+          ref={ el => { this.hourRef = el; } }
           className="coral-Clock-hour"
           type="number"
           value={hourText}
@@ -206,7 +206,7 @@ export default class Clock extends Component {
         />
         <span className="coral-Clock-divider">:</span>
         <Textfield
-          ref="minute"
+          ref={ el => { this.minuteRef = el; } }
           className="coral-Clock-minute"
           type="number"
           value={minuteText}

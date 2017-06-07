@@ -68,7 +68,7 @@ export default class Search extends Component {
       return;
     }
 
-    if (this.refs.input) {
+    if (this.inputRef) {
       if (!('value' in this.props)) {
         this.setState({
           value: '',
@@ -106,7 +106,7 @@ export default class Search extends Component {
           <Icon className="coral-DecoratedTextfield-icon" icon={ icon || 'search' } size="S" />
         }
         <Textfield
-          ref="input"
+          ref={ el => { this.inputRef = el; } }
           className="coral-DecoratedTextfield-input coral-Search-input"
           value={ value }
           defaultValue={ defaultValue }

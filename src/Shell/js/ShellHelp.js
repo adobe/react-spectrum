@@ -43,8 +43,8 @@ export default class ShellHelp extends Component {
   }
 
   handleVisible = () => {
-    if (this.refs) {
-      this.refs.content.querySelector('.coral-Search-input').focus();
+    if (this.contentRef) {
+      this.contentRef.querySelector('.coral-Search-input').focus();
     }
   }
 
@@ -158,7 +158,7 @@ export default class ShellHelp extends Component {
         { ...otherProps }
       >
         <div
-          ref="content"
+          ref={ el => { this.contentRef = el; } }
           className={
             classNames(
               'coral-BasicList',

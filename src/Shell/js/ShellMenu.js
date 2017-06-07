@@ -34,8 +34,7 @@ export default class ShellMenu extends Component {
   }
 
   componentDidMount() {
-    const {menu} = this.refs;
-    menu.addEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    this.menuRef.addEventListener(getTransitionEvent(), this.handleTransitionEnd);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -45,8 +44,7 @@ export default class ShellMenu extends Component {
   }
 
   componentWillUnmount() {
-    const {menu} = this.refs;
-    menu.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    this.menuRef.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
   }
 
   setOpen(open) {
@@ -126,7 +124,7 @@ export default class ShellMenu extends Component {
 
     return (
       <span>
-        <span ref="target">
+        <span ref={ el => { this.targetRef = el; } }>
           {
             React.cloneElement(target, {onClick: this.handleTargetClick})
           }
@@ -134,7 +132,7 @@ export default class ShellMenu extends Component {
         <Portal>
           <RootCloseWrapper onRootClose={this.handleMenuClose} disabled={!open}>
             <div
-              ref="menu"
+              ref={ el => { this.menuRef = el; } }
               style={ {zIndex} }
               className={
                 classNames(

@@ -288,8 +288,8 @@ export default class Calendar extends Component {
   }
 
   focusCalendarBody() {
-    if (this.refs.calendarBody) {
-      this.refs.calendarBody.focus();
+    if (this.calendarBody) {
+      this.calendarBody.focus();
     }
   }
 
@@ -458,7 +458,7 @@ export default class Calendar extends Component {
           />
         </div>
         <div
-          ref="calendarBody"
+          ref={ el => { this.calendarBody = el; } }
           className="coral-Calendar-calendarBody"
           role="grid"
           tabIndex={ disabled ? null : '0' }

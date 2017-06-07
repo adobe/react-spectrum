@@ -21,8 +21,9 @@ export default class Checkbox extends Component {
   // indeterminate pseudo-selector. It can only be done via javascript.
   setIndeterminate() {
     const {indeterminate} = this.props;
-    if (indeterminate != null && this.refs.input) {
-      this.refs.input.getInput().indeterminate = indeterminate;
+    const input = this.inputRef && this.inputRef.getInput();
+    if (indeterminate != null && input) {
+      input.indeterminate = indeterminate;
     }
   }
 
@@ -40,7 +41,7 @@ export default class Checkbox extends Component {
 
     return (
       <SwitchBase
-        ref="input"
+        ref={ el => { this.inputRef = el; } }
         inputType="checkbox"
         className={
           classNames(
