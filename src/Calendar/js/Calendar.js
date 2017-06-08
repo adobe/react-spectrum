@@ -516,7 +516,7 @@ const CalendarCell = function CalendarCell({
       aria-invalid={ invalid }
       title={ title }
       onClick={ !disabled && (e => { onClick(e, date.clone()); }) }
-      onMouseEnter={!disabled && (e => { onHighlight(e, date.clone()); })}
+      onMouseEnter={ (e => { !disabled && onHighlight(e, date.clone()); })}
     >
       <span
         role="presentation"
