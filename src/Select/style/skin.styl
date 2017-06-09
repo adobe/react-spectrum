@@ -19,8 +19,8 @@ $spectrum-select-border-color-invalid = $spectrum-alias-border-color-invalid-def
 
 $spectrum-select-background-color-disabled = $spectrum-alias-background-color-transparent;
 $spectrum-select-border-color-disabled = $spectrum-alias-border-color-transparent;
-$spectrum-select-text-color-default = $spectrum-text-text-color-default;
-$spectrum-select-text-color-disabled = $spectrum-text-text-color-disabled;
+$spectrum-select-text-color-default = $spectrum-alias-text-color;
+$spectrum-select-text-color-disabled = $spectrum-alias-text-color-disabled;
 
 $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
 
@@ -143,6 +143,10 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-openAbove, &.is-openBelow {
+    > .coral-Button {
+      background: none;
+    }
+
     .coral3-SelectList {
       background: none;
       border-top: $px solid $spectrum-global-color-grey6;
