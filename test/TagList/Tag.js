@@ -85,4 +85,15 @@ describe('Tag', () => {
     const tree = shallow(<Tag foo />);
     assert.equal(tree.prop('foo'), true);
   });
+
+  it('supports an icon', () => {
+    const tree = shallow(<Tag icon="camera" />);
+    assert(tree.find('.coral-Tag-icon').node);
+  });
+
+  it('supports an avatar', () => {
+    const tree = shallow(<Tag avatar="https://www.botlibre.com/media/a12832214.png" />);
+    assert(tree.find('.coral-Tag-avatar').node);
+  });
+
 });

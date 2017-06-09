@@ -49,6 +49,7 @@ $tag-close-padding = 28*$px;
   & > .coral-Tag-label {
     font-size: $tag-label-font-size;
     line-height: 16*$px;
+    vertical-align: bottom;
   }
 
   & > .coral-Tag-removeButton {
@@ -119,6 +120,17 @@ $tag-close-padding = 28*$px;
 .coral-Tag.is-closable {
   padding-right: $tag-close-padding;
   font-size: 11*$px;
+}
+
+.coral-Tag-avatar {
+  height: 16px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.coral-Tag-icon {
+  margin-right: 8px;
+  vertical-align: super;
 }
 
 @require 'taglist.styl'

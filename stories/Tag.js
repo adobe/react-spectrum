@@ -21,6 +21,16 @@ storiesOf('Tag', module)
     {inline: true}
   )
   .addWithInfo(
+    'avatar',
+    () => render({avatar: 'https://www.botlibre.com/media/a12832214.png', closable: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'icon',
+    () => render({icon: 'camera'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'size: M',
     () => render({size: 'M'}),
     {inline: true}

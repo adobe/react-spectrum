@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Button from '../../Button';
+import Icon from '../../Icon';
 import '../style/index.styl';
 
 const sizeMap = {
@@ -14,6 +15,8 @@ export default function Tag({
   value,
   children,
   color,
+  avatar,
+  icon,
   multiline = false,
   quiet = false,
   closable = false,
@@ -61,6 +64,14 @@ export default function Tag({
           square
           onClick={ !disabled && (e => { onClose(childContent, e); }) }
         />
+      }
+      {
+        avatar &&
+        <img className="coral-Tag-avatar" src={avatar}/>
+      }
+      {
+        icon &&
+        <Icon className="coral-Tag-icon" size="S" icon={icon}/>
       }
       <span className="coral-Tag-label">
         { childContent }
