@@ -1,4 +1,5 @@
 # react-spectrum
+
 [Spectrum](http://spectrum.corp.adobe.com) UI components in React.
 
 ## Why react-spectrum?
