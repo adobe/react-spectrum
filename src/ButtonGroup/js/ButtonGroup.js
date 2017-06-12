@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import classNames from 'classnames';
-
 import '../style/index.styl';
 
 export default class ButtonGroup extends Component {
@@ -46,10 +45,12 @@ export default class ButtonGroup extends Component {
     } else {
       nextButtons = button.value;
     }
+
     // Set state if in uncontrolled mode
     if (!('value' in this.props)) {
       this.setState({value: nextButtons});
     }
+
     if (this.props.onClick) {
       this.props.onClick(nextButtons);
     }
@@ -57,8 +58,8 @@ export default class ButtonGroup extends Component {
 
   isSelected(button) {
     return this.props.multiple
-    ? this.state.value && this.state.value.indexOf(button.value) >= 0
-    : this.state.value === button.value;
+      ? this.state.value && this.state.value.indexOf(button.value) >= 0
+      : this.state.value === button.value;
   }
 
   getChildProps(button, index) {
@@ -75,11 +76,11 @@ export default class ButtonGroup extends Component {
   }
 
 	renderButtons() {
-  const {children} = this.props;
-  return React.Children.map(children, (child, index) =>
-    child ? React.cloneElement(child, this.getChildProps(child, index)) : null
+    const {children} = this.props;
+    return React.Children.map(children, (child, index) =>
+      child ? React.cloneElement(child, this.getChildProps(child, index)) : null
     );
-}
+  }
 
   render() {
     const {
@@ -94,6 +95,8 @@ export default class ButtonGroup extends Component {
       ...otherProps
     } = this.props;
 
+    delete otherProps.onClick;
+
     return (
       <div
         aria-multiselectable={multiple}
@@ -106,8 +109,6 @@ export default class ButtonGroup extends Component {
         className={classNames('coral3-ButtonGroup', className)}>
           {this.renderButtons(children)}
       </div>
-	);
+	  );
   }
 }
-
-ButtonGroup.displayName = 'ButtonGroup';
