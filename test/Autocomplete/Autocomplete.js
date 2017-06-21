@@ -41,6 +41,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
+    tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
@@ -62,6 +63,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
+    tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'test');
 
     await sleep(15); // Wait for async getCompletions
@@ -78,6 +80,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
+    tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
@@ -115,6 +118,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
+    tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
@@ -133,6 +137,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
+    tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions

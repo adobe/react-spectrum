@@ -62,7 +62,7 @@ export default function Tag({
           icon="close"
           disabled={ disabled }
           square
-          onClick={ !disabled && (e => { onClose(childContent, e); }) }
+          onClick={ !disabled && (e => { onClose(value || children, e); }) }
         />
       }
       {

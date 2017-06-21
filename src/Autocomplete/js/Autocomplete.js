@@ -43,7 +43,7 @@ export default class Autocomplete extends React.Component {
   setValue(value) {
     this.setState({
       value,
-      showDropdown: true,
+      showDropdown: this.state.isFocused,
       selectedIndex: this.props.allowCreate && this.state.selectedIndex === -1 ? -1 : 0
     });
 

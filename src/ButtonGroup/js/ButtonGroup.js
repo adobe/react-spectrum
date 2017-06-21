@@ -75,7 +75,7 @@ export default class ButtonGroup extends Component {
     };
   }
 
-	renderButtons() {
+  renderButtons() {
     const {children} = this.props;
     return React.Children.map(children, (child, index) =>
       child ? React.cloneElement(child, this.getChildProps(child, index)) : null
@@ -109,6 +109,6 @@ export default class ButtonGroup extends Component {
         className={classNames('coral3-ButtonGroup', className)}>
           {this.renderButtons(children)}
       </div>
-	  );
+    );
   }
 }

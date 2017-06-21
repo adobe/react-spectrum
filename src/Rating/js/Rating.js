@@ -11,7 +11,8 @@ export default class Rating extends React.Component {
     filledIcon: 'starFill',
     unfilledIcon: 'starStroke',
     className: '',
-    max: 5
+    max: 5,
+    size: 'S'
   };
 
   state = {
@@ -54,7 +55,7 @@ export default class Rating extends React.Component {
   }
 
   render() {
-    let {filledIcon, unfilledIcon, max, disabled, readOnly, className} = this.props;
+    let {filledIcon, unfilledIcon, max, disabled, readOnly, className, size} = this.props;
     let {currentRating, currentRatingHover, hovering} = this.state;
     let rating = hovering ? currentRatingHover : currentRating;
     let ratings = [];
@@ -68,7 +69,7 @@ export default class Rating extends React.Component {
       ratings.push(
         <Icon
           icon={icon}
-          size="S"
+          size={size}
           key={i}
           className={classNames('coral-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
           onMouseEnter={!readOnly && this.onMouseEnter.bind(this, i)}

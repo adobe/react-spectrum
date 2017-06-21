@@ -61,8 +61,10 @@ export default class Tab extends Component {
         aria-disabled={ disabled }
         onClick={ this.handleClick }
       >
-        { icon ? <Icon icon={ icon } size="S" /> : null }
-        <span className="coral-Tab-label">{ label || children }</span>
+        <span className="coral-Tab-label">
+          { icon ? <Icon icon={ icon } size="S" /> : null }
+          { label || children }
+        </span>
       </div>
     );
   }
