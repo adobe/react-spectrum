@@ -8,8 +8,8 @@ import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
 
 storiesOf('ShellOrgSwitcher', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -31,14 +31,14 @@ storiesOf('ShellOrgSwitcher', module)
 function render({selected, ...props} = {}) {
   return (
     <ShellOrgSwitcher
-      onOrgChange={ action('org-change') }
-      { ...props }
+      onOrgChange={action('org-change')}
+      {...props}
     >
       <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
       <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
       <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />
       <ShellOrganization name="microsoft" icon="windowsColor" label="Microsoft">
-        <ShellSubOrganization name="microsoftjapan" label="Microsoft Japan" selected={ selected } />
+        <ShellSubOrganization name="microsoftjapan" label="Microsoft Japan" selected={selected} />
         <ShellSubOrganization name="microsoftusa" label="Microsoft USA" />
         <ShellSubOrganization name="microsoftsouthamerica" label="Microsoft South America" />
       </ShellOrganization>

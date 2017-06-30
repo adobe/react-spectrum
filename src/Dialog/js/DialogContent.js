@@ -12,8 +12,8 @@ export default function DialogContent({
   delete otherProps.onClose;
 
   return (
-    <div className={ classNames('coral-Dialog-content', className) } { ...otherProps }>
-      { children }
+    <div className={classNames('coral-Dialog-content', className)} {...otherProps}>
+      {children}
     </div>
   );
 }

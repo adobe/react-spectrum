@@ -16,9 +16,9 @@ export default function Shell({
           className
         )
       }
-      { ...otherProps }
+      {...otherProps}
     >
-      { children }
+      {children}
     </div>
   );
 }

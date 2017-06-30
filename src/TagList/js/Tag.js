@@ -27,15 +27,15 @@ export default function Tag({
   ...otherProps
 }) {
   const childContent = children || value;
-  const ariaLabel = childContent ? `Remove ${ childContent } label` : 'Remove label';
+  const ariaLabel = childContent ? `Remove ${childContent} label` : 'Remove label';
 
   return (
     <div
       className={
         classNames(
           'coral-Tag',
-          `coral-Tag--${ sizeMap[size] }`,
-          color ? `coral-Tag--${ color }` : null,
+          `coral-Tag--${sizeMap[size]}`,
+          color ? `coral-Tag--${color}` : null,
           {
             'coral-Tag--multiline': multiline,
             'coral-Tag--quiet': quiet,
@@ -44,10 +44,10 @@ export default function Tag({
           className
         )
       }
-      tabIndex={ !disabled && selected ? 0 : -1 }
-      aria-selected={ !disabled && selected }
-      aria-label={ ariaLabel }
-      { ...otherProps }
+      tabIndex={!disabled && selected ? 0 : -1}
+      aria-selected={!disabled && selected}
+      aria-label={ariaLabel}
+      {...otherProps}
     >
       {
         closable &&
@@ -60,9 +60,9 @@ export default function Tag({
           size="M"
           iconSize="XS"
           icon="close"
-          disabled={ disabled }
+          disabled={disabled}
           square
-          onClick={ !disabled && (e => { onClose(value || children, e); }) }
+          onClick={!disabled && (e => {onClose(value || children, e); })}
         />
       }
       {
@@ -74,7 +74,7 @@ export default function Tag({
         <Icon className="coral-Tag-icon" size="S" icon={icon}/>
       }
       <span className="coral-Tag-label">
-        { childContent }
+        {childContent}
       </span>
     </div>
   );

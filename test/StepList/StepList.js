@@ -45,7 +45,7 @@ describe('StepList', () => {
 
   it('should handle the complete prop for the children before selected', () => {
     const tree = shallow(
-      <StepList selectedIndex={ 1 }>
+      <StepList selectedIndex={1}>
         <div className="one">a</div>
         <div className="two">b</div>
       </StepList>

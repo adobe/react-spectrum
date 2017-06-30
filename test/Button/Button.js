@@ -19,7 +19,7 @@ describe('Button', () => {
     const onClickSpy = sinon.spy();
     const preventDefaultSpy = sinon.spy();
 
-    const tree = shallow(<Button onClick={ onClickSpy } />);
+    const tree = shallow(<Button onClick={onClickSpy} />);
     assert.equal(tree.type(), 'button');
     tree.setProps({element: 'a', href: 'http://example.com', disabled: true});
     assert.equal(tree.type(), 'a');
@@ -85,7 +85,7 @@ describe('Button', () => {
 
   it('can be clicked', () => {
     const spy = sinon.spy();
-    const tree = shallow(<Button onClick={ spy } />);
+    const tree = shallow(<Button onClick={spy} />);
     tree.simulate('click');
     assert(spy.called);
   });

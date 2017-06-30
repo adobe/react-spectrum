@@ -7,8 +7,8 @@ import Radio from '../src/Radio';
 
 storiesOf('RadioGroup', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -29,7 +29,7 @@ storiesOf('RadioGroup', module)
 
 function render(props = {}) {
   return (
-    <RadioGroup name="foo-group" onChange={ action('change') } { ...props }>
+    <RadioGroup name="foo-group" onChange={action('change')} {...props}>
       <Radio label="1" value="1" />
       <Radio label="2" value="2" />
       <Radio label="3" value="3" />

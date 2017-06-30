@@ -88,7 +88,7 @@ export default class ShellOrganization extends Component {
       <ListItem
         className={
           classNames(
-            `coral3-Shell-orgSwitcher-${ isSubItem ? 'sub' : '' }item`,
+            `coral3-Shell-orgSwitcher-${isSubItem ? 'sub' : '' }item`,
             {
               'is-selected': selected || isChildSelected,
               'is-parent': children,
@@ -98,15 +98,15 @@ export default class ShellOrganization extends Component {
           )
         }
         role="button"
-        tabIndex={ this.hasChildren() ? null : '0' }
-        label={ label }
-        icon={ icon }
-        iconSize={ isSubItem ? 'S' : 'M' }
-        selected={ selected }
-        hidden={ !visible }
-        onMouseEnter={ this.handleMouseEnter }
-        onSelect={ this.handleSelect }
-        { ...otherProps }
+        tabIndex={this.hasChildren() ? null : '0'}
+        label={label}
+        icon={icon}
+        iconSize={isSubItem ? 'S' : 'M'}
+        selected={selected}
+        hidden={!visible}
+        onMouseEnter={this.handleMouseEnter}
+        onSelect={this.handleSelect}
+        {...otherProps}
       >
         {
           selected &&

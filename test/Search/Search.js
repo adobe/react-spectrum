@@ -55,14 +55,14 @@ describe('Search', () => {
     });
 
     it('is called when enter is pressed', () => {
-      const tree = shallow(<Search onSubmit={ spy } />);
+      const tree = shallow(<Search onSubmit={spy} />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       assert(spy.called);
       assert(preventDefaultSpy.called);
     });
 
     it('is not called when enter is pressed if it is disabled', () => {
-      const tree = shallow(<Search onSubmit={ spy } disabled />);
+      const tree = shallow(<Search onSubmit={spy} disabled />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       assert(!spy.called);
       assert(preventDefaultSpy.called);
@@ -79,27 +79,27 @@ describe('Search', () => {
     });
 
     it('is called when escape is pressed', () => {
-      const tree = shallow(<Search onClear={ spy } />);
+      const tree = shallow(<Search onClear={spy} />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       assert(spy.called);
       assert(preventDefaultSpy.called);
     });
 
     it('is called when the clear button is pressed', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" />);
       findButton(tree).simulate('click');
       assert(spy.called);
     });
 
     it('is not called when escape is pressed if it is disabled', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       assert(!spy.called);
       assert(preventDefaultSpy.called);
     });
 
     it('is not called when the clear button is preseed if it is disabled', () => {
-      const tree = shallow(<Search onClear={ spy } defaultValue="foo" disabled />);
+      const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
       findButton(tree).simulate('click');
       assert(!spy.called);
     });
@@ -107,7 +107,7 @@ describe('Search', () => {
 
   it('calls onChange when text is entered', () => {
     const spy = sinon.spy();
-    const tree = shallow(<Search onChange={ spy } />);
+    const tree = shallow(<Search onChange={spy} />);
     assert.equal(tree.state('value'), '');
     assert.equal(tree.state('emptyText'), true);
 
@@ -118,7 +118,7 @@ describe('Search', () => {
   });
 
   it('supports clearable', () => {
-    const tree = shallow(<Search defaultValue="foo" clearable={ false } />);
+    const tree = shallow(<Search defaultValue="foo" clearable={false} />);
     assert(!findButton(tree).node);
   });
 

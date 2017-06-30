@@ -14,9 +14,9 @@ export default function TR({
           className
         )
       }
-      { ...otherProps }
+      {...otherProps}
     >
-      { children }
+      {children}
     </tr>
   );
 }

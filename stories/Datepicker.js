@@ -5,8 +5,8 @@ import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Datepicker', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -78,8 +78,8 @@ storiesOf('Datepicker', module)
 function render(props = {}) {
   return (
     <Datepicker
-      onChange={ action('change') }
-      { ...props }
+      onChange={action('change')}
+      {...props}
     />
   );
 }

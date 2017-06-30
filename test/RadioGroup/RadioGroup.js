@@ -24,10 +24,10 @@ describe('RadioGroup', () => {
 
   describe('selectedValue', () => {
     const renderRadioGroupWithChildren = ({childSelectedIndex, ...otherProps} = {}) => shallow(
-      <RadioGroup { ...otherProps }>
-        <Radio value="foo" checked={ childSelectedIndex === 0 } />
-        <Radio value="bar" checked={ childSelectedIndex === 1 } />
-        <Radio value="foobar" checked={ childSelectedIndex === 2 } />
+      <RadioGroup {...otherProps}>
+        <Radio value="foo" checked={childSelectedIndex === 0} />
+        <Radio value="bar" checked={childSelectedIndex === 1} />
+        <Radio value="foobar" checked={childSelectedIndex === 2} />
       </RadioGroup>
     );
 

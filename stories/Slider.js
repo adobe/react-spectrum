@@ -6,8 +6,8 @@ import Slider from '../src/Slider';
 
 storiesOf('Slider', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -49,7 +49,7 @@ storiesOf('Slider', module)
 function render(props = {}) {
   return (
     <Slider
-      { ...props }
+      {...props}
     />
   );
 }

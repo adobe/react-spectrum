@@ -75,16 +75,16 @@ export default class ShellHelp extends Component {
           numTotalResults !== 0 && searchResults && searchResults.length
           ? searchResults.map(({tags, title, href}, index) => (
               <ListItem
-                key={ href }
+                key={href}
                 element="a"
-                href={ href }
+                href={href}
                 className="coral-AnchorList-item"
                 target="undefined"
                 label={
                   <span>
-                    { title }
+                    {title}
                     <div className="coral3-Shell-help-result-description">
-                      { tags.join(separator) }
+                      {tags.join(separator)}
                     </div>
                   </span>
                 }
@@ -94,8 +94,8 @@ export default class ShellHelp extends Component {
                 element="a"
                 key="all-results"
                 className="coral-AnchorList-item coral-Link coral3-Shell-help-allResults"
-                href={ `${ moreSearchResultsUrl }?q=${ searchTerm }` }
-                label={ `See all ${ numTotalResults } results` }
+                href={`${moreSearchResultsUrl}?q=${searchTerm}`}
+                label={`See all ${numTotalResults} results`}
                 target="undefined"
               />
             )
@@ -120,13 +120,13 @@ export default class ShellHelp extends Component {
           defaultResults && defaultResults.length &&
           defaultResults.map(({href, icon, label}, index) => (
             <ListItem
-              key={ index }
+              key={index}
               element="a"
-              href={ href }
+              href={href}
               className="coral-AnchorList-item coral3-Shell-help-item"
-              icon={ icon }
+              icon={icon}
               iconSize="S"
-              label={ label }
+              label={label}
             />
           ))
         }
@@ -153,12 +153,12 @@ export default class ShellHelp extends Component {
             square
           />
         }
-        onVisible={ this.handleVisible }
-        onHidden={ this.props.onHide }
-        { ...otherProps }
+        onVisible={this.handleVisible}
+        onHidden={this.props.onHide}
+        {...otherProps}
       >
         <div
-          ref={ el => { this.contentRef = el; } }
+          ref={el => {this.contentRef = el; }}
           className={
             classNames(
               'coral-BasicList',
@@ -171,8 +171,8 @@ export default class ShellHelp extends Component {
           <Search
             className="coral3-Shell-help-search"
             placeholder="Search Help"
-            onSubmit={ this.handleSearch }
-            onClear={ this.handleClear }
+            onSubmit={this.handleSearch}
+            onClear={this.handleClear}
             quiet
           />
           {

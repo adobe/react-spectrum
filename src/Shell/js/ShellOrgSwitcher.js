@@ -80,14 +80,14 @@ export default class ShellOrgSwitcher extends Component {
             variant="minimal"
             className="coral3-Shell-menu-button"
           >
-            { this.getSelectedLabel(children) }
+            {this.getSelectedLabel(children)}
           </Button>
         }
-        onVisible={ this.handleVisible }
-        { ...otherProps }
+        onVisible={this.handleVisible}
+        {...otherProps}
       >
         <div
-          ref={ el => { this.contentRef = el; } }
+          ref={el => {this.contentRef = el; }}
           className={
             classNames(
               'coral-BasicList',
@@ -100,7 +100,7 @@ export default class ShellOrgSwitcher extends Component {
           <Search
             className="coral3-Shell-orgSwitcher-search"
             placeholder="Search Organizations"
-            onChange={ this.handleSearchChange }
+            onChange={this.handleSearchChange}
             quiet
           />
 
@@ -112,7 +112,7 @@ export default class ShellOrgSwitcher extends Component {
                 '.coral3-Shell-orgSwitcher-subitem:not([hidden])'
               ].join(', ')
             }
-            onSelect={ this.handleSelect }
+            onSelect={this.handleSelect}
           >
             {
               React.Children.map(children, (child, index) => (
@@ -128,7 +128,7 @@ export default class ShellOrgSwitcher extends Component {
           </List>
           <div
             className="coral3-Shell-orgSwitcher-resultMessage"
-            hidden={ this.getResultCount(children) !== 0 }
+            hidden={this.getResultCount(children) !== 0}
           >
             <div className="coral3-Shell-orgSwitcher-resultMessage-container">
               <div className="coral-Heading--1 coral3-Shell-orgSwitcher-resultMessage-heading">
@@ -140,7 +140,7 @@ export default class ShellOrgSwitcher extends Component {
             <Button
               element="a"
               variant="minimal"
-              href={ manageOrgsUrl }
+              href={manageOrgsUrl}
               block
             >
               Manage Organizations

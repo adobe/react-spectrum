@@ -21,5 +21,5 @@ describe('TBody', () => {
 });
 
 const render = ({children, ...otherProps}) => (
-  <TBody { ...otherProps }>{ children }</TBody>
+  <TBody {...otherProps}>{children}</TBody>
 );

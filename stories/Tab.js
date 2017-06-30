@@ -6,8 +6,8 @@ import Tab from '../src/TabList/js/Tab';
 
 storiesOf('Tab', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -33,6 +33,6 @@ storiesOf('Tab', module)
 
 function render(props = {}) {
   return (
-    <Tab { ...props } onClick={ action('onClick') }>Tab 1</Tab>
+    <Tab {...props} onClick={action('onClick')}>Tab 1</Tab>
   );
 }

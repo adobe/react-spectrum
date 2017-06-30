@@ -6,8 +6,8 @@ import Textarea from '../src/Textarea';
 
 storiesOf('Textarea', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -45,10 +45,10 @@ function render(props = {}) {
   return (
     <Textarea
       placeholder="React"
-      onChange={ action('change') }
-      onFocus={ action('focus') }
-      onBlur={ action('blur') }
-      { ...props }
+      onChange={action('change')}
+      onFocus={action('focus')}
+      onBlur={action('blur')}
+      {...props}
     />
   );
 }

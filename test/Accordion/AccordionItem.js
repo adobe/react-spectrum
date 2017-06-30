@@ -42,7 +42,7 @@ describe('AccordionItem', () => {
 
     beforeEach(() => {
       spy = sinon.spy();
-      tree = shallow(<AccordionItem onItemClick={ spy } />);
+      tree = shallow(<AccordionItem onItemClick={spy} />);
       header = findHeader(tree);
     });
 

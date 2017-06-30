@@ -7,9 +7,9 @@ export default function ShellWorkspaces({
   ...otherProps
 }) {
   return (
-    <div className={ classNames('coral3-Shell-header-content', className) } { ...otherProps }>
+    <div className={classNames('coral3-Shell-header-content', className)} {...otherProps}>
       <div className="coral3-Shell-workspaces">
-        { children }
+        {children}
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ export const formatMoment = (date, valueFormat) => {
   }
 
   throw new Error(
-    `${ valueFormat } is not valid, 'valueFormat' should be a moment format string ` +
+    `${valueFormat} is not valid, 'valueFormat' should be a moment format string ` +
     'or the moment.ISO_8601 constant.'
   );
 };

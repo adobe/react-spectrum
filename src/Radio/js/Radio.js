@@ -20,7 +20,7 @@ export default function Radio({
       inputClassName="coral-Radio-input"
       markClassName="coral-Radio-checkmark"
       labelClassName="coral-Radio-description"
-      { ...otherProps }
+      {...otherProps}
     />
   );
 }

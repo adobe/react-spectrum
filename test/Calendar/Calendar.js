@@ -38,7 +38,7 @@ describe('Calendar', () => {
   it('supports defaultValue uncontrolled behavior', () => {
     const date = moment(new Date(2016, 7, 1));
     const weekLater = date.clone().add(1, 'week');
-    const tree = shallow(<Calendar defaultValue={ date } />);
+    const tree = shallow(<Calendar defaultValue={date} />);
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
@@ -53,7 +53,7 @@ describe('Calendar', () => {
   it('supports value controlled behavior', () => {
     const date = moment(new Date(2016, 7, 1));
     const weekLater = date.clone().add(1, 'week');
-    const tree = shallow(<Calendar value={ date } />);
+    const tree = shallow(<Calendar value={date} />);
 
     // Changing value will change the state
     tree.setProps({value: weekLater});
@@ -66,7 +66,7 @@ describe('Calendar', () => {
   });
 
   it('supports startDay', () => {
-    const tree = shallow(<Calendar startDay={ 2 } />); // Weeks start on Tuesday
+    const tree = shallow(<Calendar startDay={2} />); // Weeks start on Tuesday
     // Grab first column to see if it is Tuesday
     const head = tree.find('.coral-Calendar-calendarBody thead tr th').first();
     assert.equal(head.childAt(0).prop('title'), 'Tuesday');
@@ -144,7 +144,7 @@ describe('Calendar', () => {
     });
 
     it('when a non-disabled day is clicked', () => {
-      const tree = shallow(<Calendar onChange={ spy } />);
+      const tree = shallow(<Calendar onChange={spy} />);
       const firstNonSelectedCell = findFirstNonSelectedCell(tree);
       const firstNonSelectedCellDate = firstNonSelectedCell.prop('date');
       firstNonSelectedCell.simulate('click', {}, firstNonSelectedCellDate);
@@ -152,7 +152,7 @@ describe('Calendar', () => {
     });
 
     it('when a focused day receives enter/space keydown event', () => {
-      const tree = shallow(<Calendar onChange={ spy } />);
+      const tree = shallow(<Calendar onChange={spy} />);
       const preventDefaultSpy = sinon.spy();
       const firstNonSelectedCell = findFirstNonSelectedCell(tree);
       const firstNonSelectedCellDate = firstNonSelectedCell.prop('date');
@@ -163,7 +163,7 @@ describe('Calendar', () => {
     });
 
     it('with a range when selectionType=range', function () {
-      const tree = shallow(<Calendar onChange={ spy } selectionType="range" />);
+      const tree = shallow(<Calendar onChange={spy} selectionType="range" />);
       const startCell = findFirstNonSelectedCell(tree);
       const endCell = findAllSelectableCells(tree).at(5);
       const startDate = startCell.prop('date');
@@ -180,7 +180,7 @@ describe('Calendar', () => {
 
     beforeEach(() => {
       now = moment().startOf('day');
-      tree = shallow(<Calendar value={ now } />);
+      tree = shallow(<Calendar value={now} />);
     });
 
     it('changes currentMonth when value prop is set to different day', () => {
@@ -218,7 +218,7 @@ describe('Calendar', () => {
     beforeEach(() => {
       now = moment().startOf('day');
       preventDefaultSpy = sinon.spy();
-      tree = shallow(<Calendar value={ now } />);
+      tree = shallow(<Calendar value={now} />);
       body = findBody(tree);
     });
 
@@ -255,13 +255,13 @@ describe('Calendar', () => {
 
     it('is set to value if it exists', () => {
       const date = '2015-01-01';
-      tree = shallow(<Calendar value={ date } />);
+      tree = shallow(<Calendar value={date} />);
       assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
     it('is set to defaultValue if it exists', () => {
       const date = '2015-01-01';
-      tree = shallow(<Calendar defaultValue={ date } />);
+      tree = shallow(<Calendar defaultValue={date} />);
       assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
@@ -307,7 +307,7 @@ describe('Calendar', () => {
   it('sets min and max to the start of the respective day', () => {
     const minDate = moment(new Date(2016, 9, 24, 12, 30));
     const maxDate = minDate.clone().add(3, 'day');
-    const tree = shallow(<Calendar min={ minDate } max={ maxDate } />);
+    const tree = shallow(<Calendar min={minDate} max={maxDate} />);
     assert.equal(+tree.state('min'), +minDate.startOf('day'));
     assert.equal(+tree.state('max'), +maxDate.startOf('day'));
 
@@ -321,24 +321,24 @@ describe('Calendar', () => {
   it('enforces min and max', () => {
     const date = moment('2015-01-01', DEFAULT_VALUE_FORMAT);
     const oneWeekLater = date.clone().add(1, 'week');
-    const tree = shallow(<Calendar value={ date } min={ date } max={ oneWeekLater } />);
+    const tree = shallow(<Calendar value={date} min={date} max={oneWeekLater} />);
     assert.equal(findAllSelectableCells(tree).length, 8); // includes start and end days
   });
 
   it('generateDateId', () => {
     const today = moment(new Date(2016, 7, 24));
-    const tree = shallow(<Calendar value={ today } />);
+    const tree = shallow(<Calendar value={today} />);
     assert.equal(tree.instance().generateDateId(today), 'react-coral-1-8/24/2016');
   });
 
   describe('CalendarCell', () => {
     let now;
     let tree;
-    const dateStringForTitle = date => `${ date.format('dddd') }, ${ date.format('LL') }`;
+    const dateStringForTitle = date => `${date.format('dddd')}, ${date.format('LL')}`;
 
     beforeEach(() => {
       now = moment();
-      tree = shallow(<Calendar value={ now } />);
+      tree = shallow(<Calendar value={now} />);
     });
 
     describe('selected cell', () => {
@@ -350,12 +350,12 @@ describe('Calendar', () => {
 
       it('props', () => {
         assert.equal(cellTree.prop('id'), tree.instance().generateDateId(now));
-        assert.equal(cellTree.prop('title'), `Today, ${ dateStringForTitle(now) } selected`);
+        assert.equal(cellTree.prop('title'), `Today, ${dateStringForTitle(now)} selected`);
         assert.equal(cellTree.prop('aria-disabled'), false);
         assert.equal(cellTree.prop('aria-selected'), true);
         assert.equal(cellTree.prop('aria-invalid'), false);
         assert(cellTree.prop('onClick'));
-        assert.equal(cellTree.childAt(0).text(), `${ now.date() }`);
+        assert.equal(cellTree.childAt(0).text(), `${now.date()}`);
       });
 
       it('classes', () => {
@@ -407,7 +407,7 @@ describe('Calendar', () => {
         assert.equal(cellTree.prop('aria-selected'), false);
         assert.equal(cellTree.prop('aria-invalid'), false);
         assert(!cellTree.prop('onClick'));
-        assert.equal(cellTree.childAt(0).text(), `${ startOfNextMonth.date() }`);
+        assert.equal(cellTree.childAt(0).text(), `${startOfNextMonth.date()}`);
       });
 
       it('classes', () => {

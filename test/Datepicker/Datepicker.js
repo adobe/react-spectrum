@@ -11,7 +11,7 @@ import Textfield from '../../src/Textfield';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
-const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
+const DEFAULT_DATE_TIME_VAL_FORMAT = `${DEFAULT_DATE_VAL_FORMAT} ${DEFAULT_TIME_VAL_FORMAT}`;
 
 describe('Datepicker', () => {
   it('default', () => {
@@ -68,7 +68,7 @@ describe('Datepicker', () => {
 
   it('supports defaultValue uncontrolled behavior', () => {
     const now = moment();
-    const tree = shallow(<Datepicker defaultValue={ now } />);
+    const tree = shallow(<Datepicker defaultValue={now} />);
 
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
@@ -86,7 +86,7 @@ describe('Datepicker', () => {
     const now = moment();
     const dateWeekLater = now.clone().add(7, 'day');
 
-    const tree = shallow(<Datepicker value={ now } />);
+    const tree = shallow(<Datepicker value={now} />);
 
     // Changing value will change the state
     tree.setProps({value: dateWeekLater});
@@ -105,7 +105,7 @@ describe('Datepicker', () => {
     it('calls onBlur when text input is blurred', () => {
       const spy = sinon.spy();
       const event = {target: {value: '2016-08-01 00:00'}};
-      const tree = shallow(<Datepicker onBlur={ spy } />);
+      const tree = shallow(<Datepicker onBlur={spy} />);
       findTextfield(tree).simulate('blur', event);
       assert(spy.calledWith(event));
     });
@@ -124,7 +124,7 @@ describe('Datepicker', () => {
 
     beforeEach(() => {
       spy = sinon.spy();
-      tree = shallow(<Datepicker type="datetime" onChange={ spy } />);
+      tree = shallow(<Datepicker type="datetime" onChange={spy} />);
     });
 
     it('textfield onChange', () => {
@@ -188,8 +188,8 @@ describe('Datepicker', () => {
       const date = new Date(2001, 0, 1);
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
-        const clockEl = shallow(wrapper.find(Clock).node).find(`.coral-Clock-${ field }`);
-        clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${ value }`}});
+        const clockEl = shallow(wrapper.find(Clock).node).find(`.coral-Clock-${field}`);
+        clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${value}`}});
         return spy.lastCall.args[1];
       };
 
@@ -198,7 +198,7 @@ describe('Datepicker', () => {
       });
 
       it('when controlled', () => {
-        tree = shallow(<Datepicker type="datetime" onChange={ spy } value={ date } />);
+        tree = shallow(<Datepicker type="datetime" onChange={spy} value={date} />);
         let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
         const newTree = tree.setProps({value: newDate});
         newDate = changeTimeAndGetNewDate(newTree, 15, 'minute');
@@ -206,7 +206,7 @@ describe('Datepicker', () => {
       });
 
       it('when not controlled', () => {
-        tree = shallow(<Datepicker type="datetime" onChange={ spy } defaultValue={ date } />);
+        tree = shallow(<Datepicker type="datetime" onChange={spy} defaultValue={date} />);
         let newDate = changeTimeAndGetNewDate(tree, 10, 'hour');
         // changeTimeAndGetNewDate is called setState internally. In order for this change to
         // be reflected in the shallow render tree, we need to call update.

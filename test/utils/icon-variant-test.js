@@ -12,7 +12,7 @@ describe('icon-variant', () => {
     });
 
     it('throws when supplied an invalid placement', () => {
-      assert.throws(() => { getVariantIcon('foo'); });
+      assert.throws(() => {getVariantIcon('foo'); });
     });
   });
 });

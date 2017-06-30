@@ -6,8 +6,8 @@ import ShellHelp from '../../src/Shell/js/ShellHelp';
 
 storiesOf('ShellHelp', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -70,8 +70,8 @@ function render(props = {}) {
   return (
     <ShellHelp
       moreSearchResultsUrl="#"
-      onSearch={ action('search') }
-      { ...props }
+      onSearch={action('search')}
+      {...props}
     />
   );
 }

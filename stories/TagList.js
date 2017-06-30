@@ -6,8 +6,8 @@ import {TagList, Tag} from '../src/TagList';
 
 storiesOf('TagList', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -37,8 +37,8 @@ function render(props = {}) {
   return (
     <div>
       <TagList
-        onClose={ action('close') }
-        { ...props }
+        onClose={action('close')}
+        {...props}
       >
         <Tag>Tag 1</Tag>
         <Tag>Tag 2</Tag>

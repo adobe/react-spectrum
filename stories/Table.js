@@ -6,8 +6,8 @@ import {Table, THead, TBody, TR, TH, TD} from '../src/Table';
 
 storiesOf('Table', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -28,7 +28,7 @@ storiesOf('Table', module)
 
 function render(props = {}) {
   return (
-    <Table { ...props }>
+    <Table {...props}>
       <THead>
         <TR>
           <TH>Pet Name</TH>

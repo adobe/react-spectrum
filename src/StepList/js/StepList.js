@@ -17,7 +17,7 @@ export default function StepList({
 }) {
   return (
     <TabListBase
-      { ...otherProps }
+      {...otherProps}
       className={
         classNames(
           'coral-StepList',
@@ -28,9 +28,9 @@ export default function StepList({
           className
         )
       }
-      disabled={ interaction !== ON }
-      aria-multiselectable={ false }
-      childMappingFunction={ (...args) => getChildProps(size, ...args) }
+      disabled={interaction !== ON}
+      aria-multiselectable={false}
+      childMappingFunction={(...args) => getChildProps(size, ...args)}
     />
   );
 }

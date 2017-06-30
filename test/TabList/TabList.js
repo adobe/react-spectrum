@@ -43,7 +43,7 @@ describe('TabList', () => {
   it('can be changed', () => {
     const spy = sinon.spy();
     const tree = shallow(
-      <TabList onChange={ spy }>
+      <TabList onChange={spy}>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
@@ -58,7 +58,7 @@ describe('TabList', () => {
 
   describe('selectedKey', () => {
     const renderTabListWithSelectedIndex = index => shallow(
-      <TabList selectedIndex={ index }>
+      <TabList selectedIndex={index}>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>
@@ -104,7 +104,7 @@ describe('TabList', () => {
     // We need to use mount instead of shallow because we need our simulated change event to
     // bubble to properly test the scenario. Simulated events don't bubble when rendering shallowly.
     const tree = mount(
-      <TabList defaultSelectedIndex="0" onChange={ onChange }>
+      <TabList defaultSelectedIndex="0" onChange={onChange}>
         <div>a <input type="checkbox" /></div>
       </TabList>
     );

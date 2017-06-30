@@ -25,8 +25,8 @@ const selectedValue = [
 
 storiesOf('Select', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addDecorator(withKnobs)
@@ -100,15 +100,15 @@ function render(props = {}) {
   return (
     <Select
       label="React"
-      onChange={ action('change') }
-      onBlur={ action('blur') }
-      onClose={ action('close') }
-      onFocus={ action('focus') }
-      onInputChange={ action('inputChange') }
-      onOpen={ action('open') }
-      onValueClick={ action('valueClick') }
-      { ...defaultProps }
-      { ...props }
+      onChange={action('change')}
+      onBlur={action('blur')}
+      onClose={action('close')}
+      onFocus={action('focus')}
+      onInputChange={action('inputChange')}
+      onOpen={action('open')}
+      onValueClick={action('valueClick')}
+      {...defaultProps}
+      {...props}
     />
   );
 }

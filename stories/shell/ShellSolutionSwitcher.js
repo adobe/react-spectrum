@@ -8,8 +8,8 @@ import ShellSolution from '../../src/Shell/js/ShellSolution';
 
 storiesOf('ShellSolutionSwitcher', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -26,7 +26,7 @@ storiesOf('ShellSolutionSwitcher', module)
 function render(props) {
   return (
     <ShellSolutionSwitcher
-      { ...props }
+      {...props}
     >
       <ShellSolutionGroup>
         <ShellSolution href="#" icon="adobeAnalyticsColor" label="Analytics" entitled />

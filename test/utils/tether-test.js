@@ -16,9 +16,9 @@ describe('tether', () => {
     });
 
     it('throws when supplied an invalid placement', () => {
-      assert.throws(() => { getTetherPositionFromPlacement('foo'); });
-      assert.throws(() => { getTetherPositionFromPlacement('bob jerry'); });
-      assert.throws(() => { getTetherPositionFromPlacement('center'); });
+      assert.throws(() => {getTetherPositionFromPlacement('foo'); });
+      assert.throws(() => {getTetherPositionFromPlacement('bob jerry'); });
+      assert.throws(() => {getTetherPositionFromPlacement('center'); });
     });
   });
 });

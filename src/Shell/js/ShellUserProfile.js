@@ -26,12 +26,12 @@ export default function ShellUserProfile({
         <Button
           className="coral3-Shell-menu-button"
           variant="minimal"
-          icon={ avatarUrl }
+          icon={avatarUrl}
           iconSize="M"
           square
         />
       }
-      { ...otherProps }
+      {...otherProps}
     >
       <div
         className={
@@ -43,22 +43,22 @@ export default function ShellUserProfile({
       >
         <div className="coral3-Shell-user-container">
           <div className="coral3-Shell-user-image">
-            <Icon icon={ avatarUrl } size="L" className="coral3-Shell-user-avatar is-image" />
+            <Icon icon={avatarUrl} size="L" className="coral3-Shell-user-avatar is-image" />
           </div>
-          <div className="coral3-Shell-user-name">{ name }</div>
+          <div className="coral3-Shell-user-name">{name}</div>
           <div className="coral3-Shell-user-heading">
-            { heading && heading !== 'null' ? heading : '' }
+            {heading && heading !== 'null' ? heading : ''}
           </div>
           <div className="coral3-Shell-user-subheading">
-            { subheading && subheading !== 'null' ? subheading : '' }
+            {subheading && subheading !== 'null' ? subheading : ''}
           </div>
         </div>
         <div className="coral3-Shell-user-content">
-          { children }
+          {children}
         </div>
         <div className="coral3-Shell-user-footer">
-          <Button element="a" variant="minimal" href={ profileUrl }>Edit Profile</Button>
-          <Button element="a" variant="minimal" onClick={ onSignOut }>Sign Out</Button>
+          <Button element="a" variant="minimal" href={profileUrl}>Edit Profile</Button>
+          <Button element="a" variant="minimal" onClick={onSignOut}>Sign Out</Button>
         </div>
       </div>
     </ShellMenu>

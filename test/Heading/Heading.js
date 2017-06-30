@@ -37,6 +37,6 @@ function changeAndAssertSize(tree, size) {
 }
 
 function assertSize(tree, size) {
-  assert.equal(tree.type(), `h${ size }`);
-  assert.equal(tree.prop('className'), `coral-Heading coral-Heading--${ size }`);
+  assert.equal(tree.type(), `h${size}`);
+  assert.equal(tree.prop('className'), `coral-Heading coral-Heading--${size}`);
 }

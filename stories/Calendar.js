@@ -7,8 +7,8 @@ import Calendar from '../src/Calendar';
 
 storiesOf('Calendar', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -65,8 +65,8 @@ storiesOf('Calendar', module)
 function render(props = {}) {
   return (
     <Calendar
-      onChange={ action('change') }
-      { ...props }
+      onChange={action('change')}
+      {...props}
     />
   );
 }

@@ -28,7 +28,7 @@ describe('Accordion', () => {
 
   describe('selectedKey', () => {
     const renderAccordionWithSelectedIndex = index => shallow(
-      <Accordion selectedIndex={ index }>
+      <Accordion selectedIndex={index}>
         <AccordionItem header="One" className="one">
           One content.
         </AccordionItem>
@@ -64,7 +64,7 @@ describe('Accordion', () => {
 
   it('supports defaultSelectedIndex', () => {
     const tree = shallow(
-      <Accordion defaultSelectedIndex={ 1 }>
+      <Accordion defaultSelectedIndex={1}>
         <AccordionItem header="One" className="one">
           One content.
         </AccordionItem>
@@ -86,7 +86,7 @@ describe('Accordion', () => {
     // We need to use mount instead of shallow because we need our simulated change event to
     // bubble to properly test the scenario. Simulated events don't bubble when rendering shallowly.
     const tree = mount(
-      <Accordion defaultSelectedIndex={ 0 } onChange={ onChange }>
+      <Accordion defaultSelectedIndex={0} onChange={onChange}>
         <AccordionItem header="One">
           One content. <input type="checkbox" />
         </AccordionItem>

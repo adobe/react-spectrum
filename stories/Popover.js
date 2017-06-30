@@ -10,14 +10,14 @@ storiesOf('Popover', module)
   .addDecorator(story => (
     <VerticalCenter
       className="popover-story"
-      style={ {
+      style={{
         textAlign: 'left',
         margin: '0 100px 50px',
         position: 'static',
         transform: 'none'
-      } }
+      }}
     >
-      { story() }
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -71,7 +71,7 @@ function render(content, props = {}) {
     <Popover
       title="Title"
       open
-      { ...props}>
+      {...props}>
       {content}
     </Popover>
   );
@@ -79,7 +79,7 @@ function render(content, props = {}) {
 
 const longMarkup = (
   <div>
-    <Heading size={ 2 }>Really long content...</Heading>
+    <Heading size={2}>Really long content...</Heading>
     <p>
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
       quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean

@@ -39,7 +39,7 @@ export default class Tab extends Component {
 
     return (
       <div
-        { ...otherProps }
+        {...otherProps}
         className={
           classNames(
             'coral-Tab',
@@ -51,19 +51,19 @@ export default class Tab extends Component {
             className
           )
         }
-        id={ id }
-        tabIndex={ tabIndex }
+        id={id}
+        tabIndex={tabIndex}
         role="tab"
-        selected={ selected }
-        disabled={ disabled }
-        aria-invalid={ invalid }
-        aria-selected={ selected }
-        aria-disabled={ disabled }
-        onClick={ this.handleClick }
+        selected={selected}
+        disabled={disabled}
+        aria-invalid={invalid}
+        aria-selected={selected}
+        aria-disabled={disabled}
+        onClick={this.handleClick}
       >
         <span className="coral-Tab-label">
-          { icon ? <Icon icon={ icon } size="S" /> : null }
-          { label || children }
+          {icon ? <Icon icon={icon} size="S" /> : null}
+          {label || children}
         </span>
       </div>
     );

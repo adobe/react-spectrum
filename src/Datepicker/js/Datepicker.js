@@ -15,7 +15,7 @@ import '../style/index.styl';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';
-const DEFAULT_DATE_TIME_VAL_FORMAT = `${ DEFAULT_DATE_VAL_FORMAT } ${ DEFAULT_TIME_VAL_FORMAT }`;
+const DEFAULT_DATE_TIME_VAL_FORMAT = `${DEFAULT_DATE_VAL_FORMAT} ${DEFAULT_TIME_VAL_FORMAT}`;
 
 @autobind
 export default class Datepicker extends Component {
@@ -120,7 +120,7 @@ export default class Datepicker extends Component {
       case 'datetime': return DEFAULT_DATE_TIME_VAL_FORMAT;
       case 'date': return DEFAULT_DATE_VAL_FORMAT;
       default:
-        throw new Error(`${ type } is not a valid type. Must be 'date', 'datetime', or 'time'`);
+        throw new Error(`${type} is not a valid type. Must be 'date', 'datetime', or 'time'`);
     }
   }
 

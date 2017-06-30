@@ -6,8 +6,8 @@ import Radio from '../src/Radio';
 
 storiesOf('Radio', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -45,8 +45,8 @@ function render(props = {}) {
   return (
     <Radio
       label="React"
-      onChange={ action('change') }
-      { ...props }
+      onChange={action('change')}
+      {...props}
     />
   );
 }

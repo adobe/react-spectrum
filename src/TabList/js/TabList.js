@@ -24,7 +24,7 @@ export default function TabList({
 }) {
   return (
     <TabListBase
-      { ...otherProps }
+      {...otherProps}
       className={
         classNames(
           'coral-TabList',

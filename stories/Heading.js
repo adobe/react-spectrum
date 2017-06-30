@@ -6,8 +6,8 @@ import Heading from '../src/Heading';
 
 storiesOf('Heading', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -42,5 +42,5 @@ storiesOf('Heading', module)
   );
 
 function render(props = {}) {
-  return <Heading { ...props }>React</Heading>;
+  return <Heading {...props}>React</Heading>;
 }

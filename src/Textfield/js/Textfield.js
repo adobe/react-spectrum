@@ -46,14 +46,14 @@ export default class Textfield extends Component {
             className
           )
         }
-        aria-disabled={ disabled }
-        aria-required={ required }
-        aria-invalid={ invalid }
-        aria-readonly={ readOnly }
-        disabled={ disabled }
-        required={ required }
-        readOnly={ readOnly }
-        { ...otherProps }
+        aria-disabled={disabled}
+        aria-required={required}
+        aria-invalid={invalid}
+        aria-readonly={readOnly}
+        disabled={disabled}
+        required={required}
+        readOnly={readOnly}
+        {...otherProps}
         onChange={this.onChange}
       />
     );

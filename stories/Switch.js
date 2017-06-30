@@ -6,8 +6,8 @@ import Switch from '../src/Switch';
 
 storiesOf('Switch', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -44,8 +44,8 @@ storiesOf('Switch', module)
 function render(props = {}) {
   return (
     <Switch
-      onChange={ action('change') }
-      { ...props }
+      onChange={action('change')}
+      {...props}
     />
   );
 }

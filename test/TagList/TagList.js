@@ -57,7 +57,7 @@ describe('TagList', () => {
 
   it('sets focused state when onFocus', () => {
     const spy = sinon.spy();
-    const tree = shallow(<TagList onFocus={ spy } />);
+    const tree = shallow(<TagList onFocus={spy} />);
     assert.equal(tree.state('focused'), false);
     tree.simulate('focus');
     assert(spy.called);
@@ -66,7 +66,7 @@ describe('TagList', () => {
 
   it('removes focused state when onBlur', () => {
     const spy = sinon.spy();
-    const tree = shallow(<TagList onBlur={ spy } />).setState({focused: true});
+    const tree = shallow(<TagList onBlur={spy} />).setState({focused: true});
     tree.simulate('blur');
     assert(spy.called);
     assert.equal(tree.state('focused'), false);
@@ -79,7 +79,7 @@ describe('TagList', () => {
 
     function run(props = {}, state = {}) {
       tree = shallow(
-        <TagList { ...props }>
+        <TagList {...props}>
           <Tag className="one">Tag 1</Tag>
           <Tag className="two">Tag 2</Tag>
         </TagList>

@@ -19,9 +19,9 @@ export default function Icon({
       className={
         classNames(
           'coral-Icon',
-          `coral-Icon--size${ size }`,
+          `coral-Icon--size${size}`,
           {
-            [`coral-Icon--${ icon }`]: !isImage,
+            [`coral-Icon--${icon}`]: !isImage,
             'coral-ColorIcon': isColorIcon,
             'is-image': isImage
           },
@@ -29,11 +29,11 @@ export default function Icon({
         )
       }
       role="img"
-      { ...otherProps }
+      {...otherProps}
     >
       {
         isImage &&
-        <img className="coral-Icon-image" src={ icon } role="presentation" />
+        <img className="coral-Icon-image" src={icon} role="presentation" />
       }
     </span>
   );

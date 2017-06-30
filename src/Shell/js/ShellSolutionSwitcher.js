@@ -26,7 +26,7 @@ export default function ShellSolutionSwitcher({
           square
         />
       }
-      { ...otherProps }
+      {...otherProps}
     >
       <div
         className={
@@ -37,7 +37,7 @@ export default function ShellSolutionSwitcher({
         }
       >
         <div className="coral3-Shell-solutionSwitcher-content">
-          { children }
+          {children}
         </div>
       </div>
     </ShellMenu>

@@ -17,7 +17,7 @@ describe('Alert', () => {
 
   it('supports closable and can be closed', () => {
     const spy = sinon.spy();
-    const tree = shallow(<Alert closable onClose={ spy } />);
+    const tree = shallow(<Alert closable onClose={spy} />);
     const closeButton = tree.find('.coral3-Alert-closeButton');
     assert(closeButton.node);
     assert.equal(closeButton.prop('className'), 'coral3-Alert-closeButton u-coral-pullRight');
@@ -60,7 +60,7 @@ describe('Alert', () => {
   });
 
   it('supports header', () => {
-    const tree = shallow(<Alert header={ <div>My Custom Header</div> } />);
+    const tree = shallow(<Alert header={<div>My Custom Header</div>}/>);
     const child = tree.find('.coral3-Alert-header > div');
     assert.equal(child.length, 1);
     assert.equal(child.children().node, 'My Custom Header');
@@ -77,6 +77,6 @@ describe('Alert', () => {
 const findIcon = tree => tree.find('.coral3-Alert-typeIcon');
 
 const assertAlertClassAndIcon = (tree, classPart, icon) => {
-  assert.equal(tree.hasClass(`coral3-Alert--${ classPart }`), true);
+  assert.equal(tree.hasClass(`coral3-Alert--${classPart}`), true);
   assert.equal(findIcon(tree).prop('icon'), icon);
 };

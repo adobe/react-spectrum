@@ -16,7 +16,7 @@ export default function configureTypekit(typeKitId) {
     const tk = document.createElement('script');
     let d = false;
 
-    tk.src = `//use.typekit.net/${ config.kitId }.js`;
+    tk.src = `//use.typekit.net/${config.kitId}.js`;
     tk.type = 'text/javascript';
     tk.async = 'true';
     tk.onload = tk.onreadystatechange = function onload() {

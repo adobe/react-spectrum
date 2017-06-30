@@ -22,8 +22,8 @@ const selectedValue = [
 
 storiesOf('ButtonGroup', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -55,11 +55,11 @@ storiesOf('ButtonGroup', module)
 function render(props = {}) {
   return (
     <ButtonGroup
-    style={ {textAlign: 'left'} }
+    style={{textAlign: 'left'}}
     label="ButtonGroup"
-    onClick={ action('click') }
-    { ...defaultProps }
-    { ...props }>
+    onClick={action('click')}
+    {...defaultProps}
+    {...props}>
     </ButtonGroup>
-    );
+  );
 }

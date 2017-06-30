@@ -17,7 +17,7 @@ export default function Progress({
   value = Math.min(Math.max(+value, 0), 100);
 
   if (showPercent && !label) {
-    label = `${ value }%`;
+    label = `${value}%`;
   }
 
   return (
@@ -25,29 +25,29 @@ export default function Progress({
       className={
         classNames(
           'coral-Progress',
-          `coral-Progress--${ sizeClassPart }`,
-          `coral-Progress--${ label ? `${ labelPosition }Label` : 'noLabel' }`,
+          `coral-Progress--${sizeClassPart}`,
+          `coral-Progress--${label ? `${labelPosition}Label` : 'noLabel' }`,
           {
             'coral-Progress--indeterminate': indeterminate
           },
           className
         )
       }
-      aria-valuemin={ indeterminate ? null : 0 }
-      aria-valuemax={ indeterminate ? null : 100 }
-      aria-valuenow={ indeterminate ? null : value }
-      { ...otherProps }
+      aria-valuemin={indeterminate ? null : 0}
+      aria-valuemax={indeterminate ? null : 100}
+      aria-valuenow={indeterminate ? null : value}
+      {...otherProps}
     >
       <div className="coral-Progress-bar">
         <div
           className="coral-Progress-status"
-          style={ {width: `${ indeterminate ? 0 : value }%`} }
+          style={{width: `${indeterminate ? 0 : value}%`}}
         />
       </div>
       {
         label &&
           <div className="coral-Progress-label">
-            { label }
+            {label}
           </div>
       }
     </div>

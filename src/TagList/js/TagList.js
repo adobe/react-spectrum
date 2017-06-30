@@ -44,7 +44,7 @@ export default class TagList extends React.Component {
       closable: !readOnly,
       disabled,
       onClose,
-      onFocus: () => { this.setState({selectedIndex: index}); },
+      onFocus: () => {this.setState({selectedIndex: index}); },
       role: 'option'
     };
   }
@@ -61,8 +61,8 @@ export default class TagList extends React.Component {
   renderValues() {
     const {values} = this.props;
     return values.map((value, index) => (
-      <Tag value={ value } { ...this.baseChildProps(index) }>
-        { value }
+      <Tag value={value} {...this.baseChildProps(index)}>
+        {value}
       </Tag>
     ));
   }
@@ -84,7 +84,7 @@ export default class TagList extends React.Component {
 
     return (
       <div
-        { ...otherProps }
+        {...otherProps}
         className={
           classNames(
             'coral-TagList',
@@ -94,20 +94,20 @@ export default class TagList extends React.Component {
             className
           )
         }
-        name={ name }
-        readOnly={ readOnly }
-        disabled={ disabled }
+        name={name}
+        readOnly={readOnly}
+        disabled={disabled}
         role="listbox"
         aria-atomic="false"
         aria-relevant="additions"
-        aria-live={ focused ? 'polite' : 'off' }
-        aria-disabled={ disabled }
-        aria-invalid={ invalid }
-        aria-required={ required }
-        onFocus={ this.handleFocus }
-        onBlur={ this.handleBlur }
+        aria-live={focused ? 'polite' : 'off'}
+        aria-disabled={disabled}
+        aria-invalid={invalid}
+        aria-required={required}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
       >
-        { this.renderChildren() }
+        {this.renderChildren()}
       </div>
     );
   }

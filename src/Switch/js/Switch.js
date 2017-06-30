@@ -20,7 +20,7 @@ export default function Switch({
       }
       inputClassName="coral3-Switch-input"
       markClassName="coral3-Switch-label"
-      { ...otherProps }
+      {...otherProps}
     />
   );
 }

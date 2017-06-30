@@ -86,10 +86,10 @@ export default class ListItem extends Component {
         aria-checked={selected}
         aria-selected={selected}
         aria-disabled={disabled}
-        { ...otherProps }
+        {...otherProps}
       >
         {icon &&
-          <Icon className="coral-BasicList-item-icon" icon={ icon } size={ iconSize } />
+          <Icon className="coral-BasicList-item-icon" icon={icon} size={iconSize} />
         }
         <div className="coral-BasicList-item-content">
           {label || children}

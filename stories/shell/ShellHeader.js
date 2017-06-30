@@ -22,7 +22,7 @@ import Button from '../../src/Button';
 const options = {inline: true, header: false};
 
 storiesOf('ShellHeader', module)
-  .addDecorator(story => <VerticalTop>{ story() }</VerticalTop>)
+  .addDecorator(story => <VerticalTop>{story()}</VerticalTop>)
   .addWithInfo(
     'Default',
     () => render(),
@@ -36,11 +36,11 @@ storiesOf('ShellHeader', module)
 
 function render(props = {}) {
   return (
-    <ShellHeader { ...props }>
+    <ShellHeader {...props}>
       <ShellActions>
         <Button element="a" href="#" variant="quiet">Beta Feedback</Button>
 
-        <ShellOrgSwitcher onOrgChange={ action('org-change') }>
+        <ShellOrgSwitcher onOrgChange={action('org-change')}>
           <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
           <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
           <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />
@@ -53,7 +53,7 @@ function render(props = {}) {
 
         <ShellHelp
           moreSearchResultsUrl="#"
-          onSearch={ action('search') }
+          onSearch={action('search')}
         />
 
         <Button variant="minimal" className="coral-Shell-menu-button" icon="bell" square />
@@ -85,7 +85,7 @@ function render(props = {}) {
           subheading="Adobe Systems, Inc."
           avatarUrl="http://wwwimages.adobe.com/content/dam/Adobe/en/leaders/images/138x138/adobe-leaders-shantanu-narayen-138x138.jpg"
           profileUrl="#"
-          onSignOut={ action('sign out') }
+          onSignOut={action('sign out')}
         />
       </ShellActions>
       <ShellWorkspaces>

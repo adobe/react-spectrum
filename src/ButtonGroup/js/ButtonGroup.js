@@ -64,13 +64,20 @@ export default class ButtonGroup extends Component {
 
   getChildProps(button, index) {
     const disabled = this.props.disabled || button.props.disabled || this.props.readOnly;
-
+    var variantVal;
+    if (this.props.quiet) {
+      variantVal = 'quiet';
+    } else if (disabled) {
+      variantVal = 'secondary';
+    } else {
+      variantVal = '';
+    }
     return {
       tabIndex: index,
       className: classNames('coral3-ButtonGroup-item', button.props.className),
       selected: this.isSelected(button.props),
       disabled: disabled,
-      variant: this.props.quiet ? 'quiet' : (disabled ? 'secondary' : ''),
+      variant: variantVal,
       onClick: this.handleSelect.bind(this, button.props)
     };
   }

@@ -40,13 +40,13 @@ describe('Tag', () => {
   });
 
   it('supports being closable', () => {
-    const tree = shallow(<Tag closable={ false } />);
+    const tree = shallow(<Tag closable={false} />);
     assert(!tree.find('.coral-Tag-removeButton').node);
   });
 
   it('supports being disabled', () => {
     const onClose = sinon.spy();
-    const tree = shallow(<Tag disabled closable onClose={ onClose } />);
+    const tree = shallow(<Tag disabled closable onClose={onClose} />);
     tree.find('.coral-Tag-removeButton').simulate('click');
     assert(!onClose.called);
   });
@@ -64,7 +64,7 @@ describe('Tag', () => {
 
   it('supports an onClose event', () => {
     const onClose = sinon.spy();
-    const tree = shallow(<Tag closable value="stuff" onClose={ onClose } />);
+    const tree = shallow(<Tag closable value="stuff" onClose={onClose} />);
     tree.find('.coral-Tag-removeButton').simulate('click', {});
     const args = onClose.lastCall.args;
     assert.equal(args[0], 'stuff');

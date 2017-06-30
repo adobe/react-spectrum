@@ -125,7 +125,7 @@ export default class Accordion extends Component {
 
     return (
       <div
-        { ...otherProps }
+        {...otherProps}
         className={
           classNames(
             'coral3-Accordion',
@@ -136,9 +136,9 @@ export default class Accordion extends Component {
             className
           )
         }
-        aria-multiselectable={ multiselectable }
+        aria-multiselectable={multiselectable}
       >
-        { this.getItems() }
+        {this.getItems()}
       </div>
     );
   }

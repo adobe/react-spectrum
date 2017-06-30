@@ -16,10 +16,10 @@ export default class ShellSolutionGroup extends Component {
     return (
       <div className="coral-Shell-solutions-container">
         <div className="coral-Shell-solutions">
-          { entitledChildren }
+          {entitledChildren}
         </div>
         <div className="coral-Shell-solutions">
-          { unentitledChildren }
+          {unentitledChildren}
         </div>
       </div>
     );

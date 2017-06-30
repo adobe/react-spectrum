@@ -102,18 +102,18 @@ export default class Search extends Component {
           )
         }
       >
-        { icon !== '' &&
-          <Icon className="coral-DecoratedTextfield-icon" icon={ icon || 'search' } size="S" />
+        {icon !== '' &&
+          <Icon className="coral-DecoratedTextfield-icon" icon={icon || 'search'} size="S" />
         }
         <Textfield
-          ref={ el => { this.inputRef = el; } }
+          ref={el => {this.inputRef = el; }}
           className="coral-DecoratedTextfield-input coral-Search-input"
-          value={ value }
-          defaultValue={ defaultValue }
-          disabled={ disabled }
-          { ...otherProps }
-          onKeyDown={ this.handleTextKeyDown }
-          onChange={ this.handleTextChange }
+          value={value}
+          defaultValue={defaultValue}
+          disabled={disabled}
+          {...otherProps}
+          onKeyDown={this.handleTextKeyDown}
+          onChange={this.handleTextChange}
         />
         {
           clearable && !emptyText &&
@@ -123,8 +123,8 @@ export default class Search extends Component {
               iconSize="XS"
               square
               className="coral-DecoratedTextfield-button"
-              disabled={ disabled }
-              onClick={ this.handleClearText }
+              disabled={disabled}
+              onClick={this.handleClearText}
             />
         }
       </div>

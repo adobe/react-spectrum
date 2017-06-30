@@ -260,9 +260,9 @@ export default class NumberInput extends Component {
 
     return (
       <Button
-        { ...props }
+        {...props}
         type="button"
-        aria-controls={ inputId }
+        aria-controls={inputId}
         variant="secondary"
         iconSize="XS"
         tabIndex="-1"
@@ -322,25 +322,25 @@ export default class NumberInput extends Component {
         </span>
         <Textfield
           className="coral-InputGroup-input"
-          id={ inputId }
-          value={ value }
-          defaultValue={ defaultValue }
+          id={inputId}
+          value={value}
+          defaultValue={defaultValue}
           role="spinbutton"
-          aria-valuenow={ value || '' }
-          aria-valuetext={ value || '' }
-          aria-valuemin={ min }
-          aria-valuemax={ max }
-          invalid={ invalid || valueInvalid }
-          step={ step }
-          placeholder={ placeholder }
-          disabled={ disabled }
-          readOnly={ readOnly }
-          onKeyDown={ this.handleInputKeyDown }
-          onWheel={ this.handleInputScrollWheel }
-          onFocus={ this.handleInputFocus }
-          onBlur={ this.handleInputBlur }
-          { ...otherProps }
-          onChange={ this.handleInputChange }
+          aria-valuenow={value || ''}
+          aria-valuetext={value || ''}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          invalid={invalid || valueInvalid}
+          step={step}
+          placeholder={placeholder}
+          disabled={disabled}
+          readOnly={readOnly}
+          onKeyDown={this.handleInputKeyDown}
+          onWheel={this.handleInputScrollWheel}
+          onFocus={this.handleInputFocus}
+          onBlur={this.handleInputBlur}
+          {...otherProps}
+          onChange={this.handleInputChange}
         />
       </InputGroup>
     );

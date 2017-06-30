@@ -16,9 +16,9 @@ export default function Well({
           className
         )
       }
-      { ...otherProps }
+      {...otherProps}
     >
-      { children }
+      {children}
     </div>
   );
 }

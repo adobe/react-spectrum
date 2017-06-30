@@ -6,8 +6,8 @@ import {StepList, Step} from '../src/StepList';
 
 storiesOf('StepList', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -53,12 +53,12 @@ storiesOf('StepList', module)
 
 function render(props = {}, steps) {
   steps = steps || ['Step 1', 'Step 2', 'Step 3'];
-  const children = steps.map((step, i) => <Step key={ i }>{ step }</Step>);
+  const children = steps.map((step, i) => <Step key={i}>{step}</Step>);
 
   return (
     <StepList
-      { ...props }
-      onChange={ action('onChange') }
+      {...props}
+      onChange={action('onChange')}
     >
       {children}
     </StepList>

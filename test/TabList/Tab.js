@@ -42,7 +42,7 @@ describe('Tab', () => {
 
   it('supports disabled', () => {
     const spy = sinon.spy();
-    const tree = shallow(<Tab onClick={ spy } disabled />);
+    const tree = shallow(<Tab onClick={spy} disabled />);
     assert.equal(tree.prop('disabled'), true);
     assert.equal(tree.prop('aria-disabled'), true);
     assert.equal(tree.hasClass('is-disabled'), true);

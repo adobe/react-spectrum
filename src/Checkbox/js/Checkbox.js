@@ -41,7 +41,7 @@ export default class Checkbox extends Component {
 
     return (
       <SwitchBase
-        ref={ el => { this.inputRef = el; } }
+        ref={el => {this.inputRef = el; }}
         inputType="checkbox"
         className={
           classNames(
@@ -52,7 +52,7 @@ export default class Checkbox extends Component {
         inputClassName="coral-Checkbox-input"
         markClassName={classNames('coral-Checkbox-checkmark', {'is-indeterminate': indeterminate})}
         labelClassName="coral-Checkbox-description"
-        { ...otherProps }
+        {...otherProps}
       />
     );
   }

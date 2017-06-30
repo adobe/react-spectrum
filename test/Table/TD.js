@@ -21,5 +21,5 @@ describe('TD', () => {
 });
 
 const render = ({children, ...otherProps}) => (
-  <TD { ...otherProps }>{ children }</TD>
+  <TD {...otherProps}>{children}</TD>
 );

@@ -42,8 +42,8 @@ const selectedValue = [
 
 storiesOf('SelectList', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -90,11 +90,11 @@ storiesOf('SelectList', module)
 function render(props = {}) {
   return (
     <SelectList
-      style={ {textAlign: 'left'} }
+      style={{textAlign: 'left'}}
       label="React"
-      onChange={ action('change') }
-      { ...defaultProps }
-      { ...props }
+      onChange={action('change')}
+      {...defaultProps}
+      {...props}
     />
   );
 }

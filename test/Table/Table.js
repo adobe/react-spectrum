@@ -31,5 +31,5 @@ describe('Table', () => {
 });
 
 const render = ({children, ...otherProps}) => (
-  <Table { ...otherProps }>{ children }</Table>
+  <Table {...otherProps}>{children}</Table>
 );

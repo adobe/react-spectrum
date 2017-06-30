@@ -101,7 +101,7 @@ describe('NumberInput', () => {
     beforeEach(() => {
       spy = sinon.spy();
       preventDefaultSpy = sinon.spy();
-      tree = shallow(<NumberInput step={ 0.5 } onChange={ spy } />);
+      tree = shallow(<NumberInput step={0.5} onChange={spy} />);
     });
 
     it('adds prop to input', () => {
@@ -193,7 +193,7 @@ describe('NumberInput', () => {
       beforeEach(() => {
         spy = sinon.spy();
         preventDefaultSpy = sinon.spy();
-        tree = shallow(<NumberInput max={ 10 } value={ 10 } onChange={ spy } />);
+        tree = shallow(<NumberInput max={10} value={10} onChange={spy} />);
       });
 
       it('disables increment button', () => {
@@ -251,7 +251,7 @@ describe('NumberInput', () => {
       beforeEach(() => {
         spy = sinon.spy();
         preventDefaultSpy = sinon.spy();
-        tree = shallow(<NumberInput min={ -10 } value={ -10 } onChange={ spy } />);
+        tree = shallow(<NumberInput min={-10} value={-10} onChange={spy} />);
       });
 
       it('disables decrement button', () => {
@@ -318,7 +318,7 @@ describe('NumberInput', () => {
     beforeEach(() => {
       spSpy = sinon.spy();
       spy = sinon.spy();
-      tree = shallow(<NumberInput defaultValue={ 1 } onChange={ spy } />);
+      tree = shallow(<NumberInput defaultValue={1} onChange={spy} />);
     });
 
     it('will not allow non-numeric characters', () => {

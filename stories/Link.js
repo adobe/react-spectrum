@@ -6,8 +6,8 @@ import Link from '../src/Link';
 
 storiesOf('Link', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -22,5 +22,5 @@ storiesOf('Link', module)
   );
 
 function render(props = {}) {
-  return (<Link href="#" { ...props }>This is a React Coral Link</Link>);
+  return (<Link href="#" {...props}>This is a React Coral Link</Link>);
 }

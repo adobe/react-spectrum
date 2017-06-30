@@ -6,8 +6,8 @@ import Checkbox from '../src/Checkbox';
 
 storiesOf('Checkbox', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -50,8 +50,8 @@ function render(props = {}) {
   return (
     <Checkbox
       label="React"
-      onChange={ action('change') }
-      { ...props }
+      onChange={action('change')}
+      {...props}
     />
   );
 }

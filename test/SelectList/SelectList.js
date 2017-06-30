@@ -40,57 +40,57 @@ describe('SelectList', () => {
   });
 
   it('supports a list of options', () => {
-    const tree = shallow(<SelectList options={ testOptions } />);
+    const tree = shallow(<SelectList options={testOptions} />);
     assert.equal(tree.find(ListItem).length, 7);
   });
 
   it('supports a list of grouped options', () => {
-    const tree = shallow(<SelectList options={ groupedOptions } />);
+    const tree = shallow(<SelectList options={groupedOptions} />);
     assert.equal(tree.find(ListGroup).length, 2);
     assert.equal(tree.find(ListItem).length, 6);
   });
 
   it('supports a list of grouped options', () => {
-    const tree = shallow(<SelectList options={ groupedOptions } />);
+    const tree = shallow(<SelectList options={groupedOptions} />);
     assert.equal(tree.find(ListGroup).length, 2);
     assert.equal(tree.find(ListItem).length, 6);
   });
 
   it('supports an item being selected', () => {
-    const tree = shallow(<SelectList options={ testOptions } value={ testOptions[0].value } />);
+    const tree = shallow(<SelectList options={testOptions} value={testOptions[0].value} />);
     assert.equal(tree.find({selected: true}).length, 1);
   });
 
   it('supports an item being selected', () => {
-    const tree = shallow(<SelectList options={ testOptions } value={ testOptions[0].value } />);
+    const tree = shallow(<SelectList options={testOptions} value={testOptions[0].value} />);
     const selectedItem = tree.find({selected: true});
     assert.equal(selectedItem.length, 1);
   });
 
   it('supports multiple items being selected', () => {
-    const tree = shallow(<SelectList options={ testOptions } multiple value={ selectedValue } />);
+    const tree = shallow(<SelectList options={testOptions} multiple value={selectedValue} />);
     assert.equal(tree.find({selected: true}).length, 3);
   });
 
   it('supports all items being disabled', () => {
-    const tree = shallow(<SelectList options={ testOptions } disabled />);
+    const tree = shallow(<SelectList options={testOptions} disabled />);
     tree.find(ListItem).forEach((node) => {
       assert.equal(node.prop('disabled'), true);
     });
   });
 
   it('supports an item being disabled', () => {
-    const tree = shallow(<SelectList options={ testOptions } />);
+    const tree = shallow(<SelectList options={testOptions} />);
     assert.equal(tree.find({disabled: true}).length, 1);
   });
 
   it('supports selection being returned on selection change for single select', () => {
     const tree = shallow(
       <SelectList
-        options={ testOptions }
-        onChange={ (value) => {
+        options={testOptions}
+        onChange={(value) => {
           assert.deepEqual(value, testOptions[0].value);
-        } }
+        }}
       />
     );
     tree.find(ListItem).first().simulate('select');
@@ -100,12 +100,12 @@ describe('SelectList', () => {
     let finalValue;
     const tree = shallow(
       <SelectList
-        options={ testOptions }
-        value={ [testOptions[1].value] }
+        options={testOptions}
+        value={[testOptions[1].value]}
         multiple
-        onChange={ (value) => {
+        onChange={(value) => {
           finalValue = value;
-        } }
+        }}
       />
     );
     tree.find(ListItem).first()
@@ -117,12 +117,12 @@ describe('SelectList', () => {
     let finalValue;
     const tree = shallow(
       <SelectList
-        options={ testOptions }
-        value={ [testOptions[0].value] }
+        options={testOptions}
+        value={[testOptions[0].value]}
         multiple
-        onChange={ (value) => {
+        onChange={(value) => {
           finalValue = value;
-        } }
+        }}
       />
     );
     tree.find(ListItem).first()

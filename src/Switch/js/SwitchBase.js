@@ -92,35 +92,35 @@ export default class SwitchBase extends Component {
             {'is-invalid': invalid, 'is-disabled': disabled}
           )
         }
-        required={ required ? true : null }
-        aria-disabled={ disabled }
-        aria-required={ required }
-        aria-invalid={ invalid }
-        aria-readonly={ readOnly }
-        aria-checked={ checked }
-        { ...otherProps }
+        required={required ? true : null}
+        aria-disabled={disabled}
+        aria-required={required}
+        aria-invalid={invalid}
+        aria-readonly={readOnly}
+        aria-checked={checked}
+        {...otherProps}
       >
         <input
-          ref={ el => { this.inputRef = el; } }
-          type={ inputType }
-          className={ inputClassName }
-          defaultChecked={ defaultChecked }
-          checked={ checked }
-          disabled={ disabled }
-          name={ name }
-          value={ value }
-          required={ required ? true : null }
-          readOnly={ readOnly }
-          onChange={ this.handleChange }
-          onBlur={ onBlur }
-          onFocus={ onFocus }
+          ref={el => {this.inputRef = el; }}
+          type={inputType}
+          className={inputClassName}
+          defaultChecked={defaultChecked}
+          checked={checked}
+          disabled={disabled}
+          name={name}
+          value={value}
+          required={required ? true : null}
+          readOnly={readOnly}
+          onChange={this.handleChange}
+          onBlur={onBlur}
+          onFocus={onFocus}
         />
-        <span className={ markClassName } />
+        <span className={markClassName} />
         {
           shouldRenderLabel &&
-          <label className={ labelClassName } >
-            { label }
-            { children }
+          <label className={labelClassName} >
+            {label}
+            {children}
           </label>
         }
       </div>

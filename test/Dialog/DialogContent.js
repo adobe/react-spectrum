@@ -16,5 +16,5 @@ describe('DialogContent', () => {
 });
 
 const render = props => (
-  <DialogContent { ...props } />
+  <DialogContent {...props} />
 );

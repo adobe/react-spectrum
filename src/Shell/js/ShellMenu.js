@@ -124,7 +124,7 @@ export default class ShellMenu extends Component {
 
     return (
       <span>
-        <span ref={ el => { this.targetRef = el; } }>
+        <span ref={el => {this.targetRef = el; }}>
           {
             React.cloneElement(target, {onClick: this.handleTargetClick})
           }
@@ -132,13 +132,13 @@ export default class ShellMenu extends Component {
         <Portal>
           <RootCloseWrapper onRootClose={this.handleMenuClose} disabled={!open}>
             <div
-              ref={ el => { this.menuRef = el; } }
-              style={ {zIndex} }
+              ref={el => {this.menuRef = el; }}
+              style={{zIndex}}
               className={
                 classNames(
                   'coral3-Shell-menu',
-                  `coral3-Shell-menu--placement-${ placement }`,
-                  `coral3-Shell-menu--from-${ animateFrom }`,
+                  `coral3-Shell-menu--placement-${placement}`,
+                  `coral3-Shell-menu--from-${animateFrom}`,
                   {
                     'coral3-Shell-menu--full': full,
                     'is-open': open,
@@ -148,7 +148,7 @@ export default class ShellMenu extends Component {
                 )
               }
             >
-              { children }
+              {children}
             </div>
           </RootCloseWrapper>
         </Portal>

@@ -7,8 +7,8 @@ import './Alert.styl';
 
 storiesOf('Alert', module)
   .addDecorator(story => (
-    <VerticalCenter style={ {textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'} }>
-      { story() }
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
     </VerticalCenter>
   ))
   .addWithInfo(
@@ -60,10 +60,10 @@ storiesOf('Alert', module)
 function render(props = {}, children = 'This is a React Coral alert') {
   return (
     <Alert
-      onClose={ action('close') }
-      { ...props }
+      onClose={action('close')}
+      {...props}
     >
-      { children }
+      {children}
     </Alert>
   );
 }

@@ -35,5 +35,5 @@ storiesOf('NumberInput', module)
   );
 
 const render = (props = {}) => (
-  <NumberInput { ...props } onChange={ action('change') } />
+  <NumberInput {...props} onChange={action('change')} />
 );

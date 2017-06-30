@@ -46,12 +46,12 @@ export default class Button extends Component {
 
     return (
       <Element
-        { ...otherProps }
+        {...otherProps}
         className={
           classNames(
             'coral-Button',
-            `coral-Button--${ variant }`,
-            `coral-Button--${ sizes[size] }`,
+            `coral-Button--${variant}`,
+            `coral-Button--${sizes[size]}`,
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -61,13 +61,13 @@ export default class Button extends Component {
             className
           )
         }
-        disabled={ disabled }
-        onClick={ this.onClick }
+        disabled={disabled}
+        onClick={this.onClick}
       >
         {
-          icon && <Icon size={ iconSize } icon={ icon } />
+          icon && <Icon size={iconSize} icon={icon} />
         }
-        <span className="coral-Button-label">{ label }{ children }</span>
+        <span className="coral-Button-label">{label}{children}</span>
       </Element>
     );
   }

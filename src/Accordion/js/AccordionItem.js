@@ -31,7 +31,7 @@ export default class AccordionItem extends Component {
 
     return (
       <div
-        { ...otherProps }
+        {...otherProps}
         className={
           classNames(
             'coral3-Accordion-item',
@@ -41,27 +41,27 @@ export default class AccordionItem extends Component {
         role="presentation"
       >
         <div
-          id={ this.headerId }
+          id={this.headerId}
           className="coral3-Accordion-header"
-          onClick={ onItemClick }
-          aria-controls={ this.contentId }
-          aria-selected={ selected }
-          aria-expanded={ selected }
+          onClick={onItemClick}
+          aria-controls={this.contentId}
+          aria-selected={selected}
+          aria-expanded={selected}
           aria-disabled="false"
           tabIndex="0"
-          onKeyPress={ this.onHeaderKeyDown.bind(this) }
+          onKeyPress={this.onHeaderKeyDown.bind(this)}
         >
-          <Icon icon={ selected ? 'chevronDown' : 'chevronRight' } className="coral3-Accordion-icon" size="XS" />
-          <span className="coral3-Accordion-label">{ header }</span>
+          <Icon icon={selected ? 'chevronDown' : 'chevronRight'} className="coral3-Accordion-icon" size="XS" />
+          <span className="coral3-Accordion-label">{header}</span>
         </div>
         <div
-          id={ this.contentId }
+          id={this.contentId}
           role="tabpanel"
-          aria-labelledby={ this.headerId }
-          aria-hidden={ !selected }
+          aria-labelledby={this.headerId}
+          aria-hidden={!selected}
           className={classNames('coral3-Accordion-content', {'is-open': selected, 'is-closed': !selected})}
         >
-          { children }
+          {children}
         </div>
       </div>
     );

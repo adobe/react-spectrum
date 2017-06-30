@@ -20,12 +20,12 @@ export default function ShellWorkspace({
           className
         )
       }
-      href={ href }
-      selected={ selected }
-      { ...otherProps }
+      href={href}
+      selected={selected}
+      {...otherProps}
     >
-      { label }
-      { children }
+      {label}
+      {children}
     </a>
   );
 }
