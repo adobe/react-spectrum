@@ -26,6 +26,7 @@ cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 build:
+	rm -rf dist
 	cp -R src dist
 	babel dist -d dist
 	find dist \( -name index.styl -o -name "Shell*.styl" \) -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
