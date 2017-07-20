@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
-import classNames from 'classnames';
-import ShellMenu from './ShellMenu';
-
-import Search from '../../Search';
 import Button from '../../Button';
+import classNames from 'classnames';
 import {List, ListItem} from '../../List';
+import React, {Component} from 'react';
+import Search from '../../Search';
+import ShellMenu from './ShellMenu';
 import Wait from '../../Wait';
-
 import '../style/ShellHelp.styl';
 
 export default class ShellHelp extends Component {

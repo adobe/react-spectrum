@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
+import React, {Component} from 'react';
 import '../style/index.styl';
 
 const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';

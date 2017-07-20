@@ -1,8 +1,7 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Radio from '../src/Radio';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Radio', module)
   .addDecorator(story => (

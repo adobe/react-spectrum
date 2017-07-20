@@ -1,8 +1,7 @@
+import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
 import Tab from '../src/TabList/js/Tab';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Tab', module)
   .addDecorator(story => (

@@ -1,9 +1,8 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
-import {Toast, success} from '../src/Toast';
+import {action, storiesOf} from '@kadira/storybook';
 import Button from '../src/Button';
+import React from 'react';
+import {success, Toast} from '../src/Toast';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Toast', module)
   .addDecorator(story => (

@@ -1,5 +1,5 @@
-import autobind from 'autobind-decorator';
 import {arraysEqual} from '../../utils/array';
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import React from 'react';
 import {TabList} from '../../TabList';

@@ -1,9 +1,7 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
-
-import {ListItem} from '../../List';
 import Icon from '../../Icon';
-
+import {ListItem} from '../../List';
+import React, {Component} from 'react';
 import '../style/ShellOrganization.styl';
 
 export default class ShellOrganization extends Component {

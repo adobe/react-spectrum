@@ -1,8 +1,7 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Breadcrumbs from '../src/Breadcrumbs';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Breadcrumbs', module)
   .addDecorator(story => (

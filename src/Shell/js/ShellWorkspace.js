@@ -1,6 +1,5 @@
-import React from 'react';
 import classNames from 'classnames';
-
+import React from 'react';
 import '../style/ShellWorkspace.styl';
 
 export default function ShellWorkspace({

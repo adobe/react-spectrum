@@ -1,5 +1,5 @@
-import React from 'react';
 import assert from 'assert';
+import React from 'react';
 import {shallow} from 'enzyme';
 import SwitchBase from '../../src/Switch/js/SwitchBase';
 

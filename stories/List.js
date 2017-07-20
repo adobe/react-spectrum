@@ -1,8 +1,7 @@
+import {List, ListGroup, ListItem} from '../src/List';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import {List, ListItem, ListGroup} from '../src/List';
 
 storiesOf('List', module)
   .addDecorator(story => (

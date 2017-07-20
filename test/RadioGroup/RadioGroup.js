@@ -1,9 +1,9 @@
-import React from 'react';
 import assert from 'assert';
-import sinon from 'sinon';
-import {shallow} from 'enzyme';
-import RadioGroup from '../../src/RadioGroup';
 import Radio from '../../src/Radio';
+import RadioGroup from '../../src/RadioGroup';
+import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('RadioGroup', () => {
   it('has correct defaults', () => {

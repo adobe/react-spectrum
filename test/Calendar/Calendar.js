@@ -1,10 +1,10 @@
+import assert from 'assert';
 import Calendar from '../../src/Calendar';
 import {DateRange} from 'moment-range';
-import assert from 'assert';
-import sinon from 'sinon';
 import moment from 'moment';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Calendar', () => {
   const DEFAULT_VALUE_FORMAT = 'YYYY-MM-DD';

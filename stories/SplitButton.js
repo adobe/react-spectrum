@@ -1,9 +1,8 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import {MenuItem} from '../src/Menu';
+import React from 'react';
 import SplitButton from '../src/SplitButton';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('SplitButton', module)
   .addDecorator(story => (

@@ -1,20 +1,19 @@
+import {action, storiesOf} from '@kadira/storybook';
+import Button from '../../src/Button';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalTop} from '../../.storybook/layout';
-
-import ShellHeader from '../../src/Shell/js/ShellHeader';
-import ShellWorkspaces from '../../src/Shell/js/ShellWorkspaces';
-import ShellWorkspace from '../../src/Shell/js/ShellWorkspace';
 import ShellActions from '../../src/Shell/js/ShellActions';
+import ShellHeader from '../../src/Shell/js/ShellHeader';
 import ShellHelp from '../../src/Shell/js/ShellHelp';
-import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
 import ShellOrganization from '../../src/Shell/js/ShellOrganization';
+import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
+import ShellSolution from '../../src/Shell/js/ShellSolution';
+import ShellSolutionGroup from '../../src/Shell/js/ShellSolutionGroup';
+import ShellSolutionSwitcher from '../../src/Shell/js/ShellSolutionSwitcher';
 import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
 import ShellUserProfile from '../../src/Shell/js/ShellUserProfile';
-import ShellSolutionSwitcher from '../../src/Shell/js/ShellSolutionSwitcher';
-import ShellSolutionGroup from '../../src/Shell/js/ShellSolutionGroup';
-import ShellSolution from '../../src/Shell/js/ShellSolution';
-import Button from '../../src/Button';
+import ShellWorkspace from '../../src/Shell/js/ShellWorkspace';
+import ShellWorkspaces from '../../src/Shell/js/ShellWorkspaces';
+import {VerticalTop} from '../../.storybook/layout';
 
 // We need the Shell Header to be the topmost item on the page because the CoralUI Shell styles assume the menus will be
 // sliding in from the top.  If we include the Storybook header, it pushes the ShellHeader down too far and makes it

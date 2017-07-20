@@ -1,8 +1,8 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
+import {ListGroup, ListItem} from '../../src/List';
+import React from 'react';
 import SelectList from '../../src/SelectList';
-import {ListItem, ListGroup} from '../../src/List';
+import {shallow} from 'enzyme';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},

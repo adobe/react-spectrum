@@ -1,7 +1,8 @@
-import React from 'react';
+
 import assert from 'assert';
-import {shallow} from 'enzyme';
 import Heading from '../../src/Heading';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Heading', () => {
   it('supports different sizes', () => {

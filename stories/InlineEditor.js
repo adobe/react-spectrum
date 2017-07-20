@@ -1,6 +1,6 @@
+import {action, storiesOf} from '@kadira/storybook';
 import InlineEditor from '../src/InlineEditor';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('InlineEditor', module)

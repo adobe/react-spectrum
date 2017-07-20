@@ -2,8 +2,8 @@ import assert from 'assert';
 import Breadcrumbs from '../../src/Breadcrumbs';
 import Icon from '../../src/Icon';
 import React from 'react';
-import sinon from 'sinon';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Breadcrumbs', function () {
   it('should render breadcrumbs', function () {

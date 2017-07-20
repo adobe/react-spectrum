@@ -1,8 +1,7 @@
+import Heading from '../src/Heading';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Heading from '../src/Heading';
 
 storiesOf('Heading', module)
   .addDecorator(story => (

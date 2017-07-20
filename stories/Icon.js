@@ -1,8 +1,7 @@
+import Icon from '../src/Icon';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Icon from '../src/Icon';
 
 storiesOf('Icon', module)
   .addDecorator(story => (

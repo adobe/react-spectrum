@@ -1,9 +1,8 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
-
 import Button from '../../src/Button';
 import ButtonGroup from '../../src/ButtonGroup';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 const defaultProps = {
   children: [

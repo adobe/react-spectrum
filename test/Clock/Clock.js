@@ -1,9 +1,9 @@
-import React from 'react';
-import moment from 'moment';
 import assert from 'assert';
-import sinon from 'sinon';
-import {shallow} from 'enzyme';
 import Clock from '../../src/Clock';
+import moment from 'moment';
+import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Clock', () => {
   it('default', () => {

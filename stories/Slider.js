@@ -1,8 +1,7 @@
 import React from 'react';
+import Slider from '../src/Slider';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Slider from '../src/Slider';
 
 storiesOf('Slider', module)
   .addDecorator(story => (

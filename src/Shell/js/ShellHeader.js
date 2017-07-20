@@ -1,8 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
-
 import Icon from '../../Icon';
-
+import React from 'react';
 import '../style/ShellHeader.styl';
 
 export default function ShellHeader({

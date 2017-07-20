@@ -1,7 +1,7 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
 import Checkbox from '../../src/Checkbox';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Checkbox', () => {
   it('has correct defaults', () => {

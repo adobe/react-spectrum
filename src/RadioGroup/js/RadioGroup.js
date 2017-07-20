@@ -1,6 +1,5 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
-
+import React, {Component} from 'react';
 import '../style/index.styl';
 
 export default class RadioGroup extends Component {

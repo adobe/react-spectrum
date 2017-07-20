@@ -1,6 +1,5 @@
-import React from 'react';
 import classNames from 'classnames';
-
+import React from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
 import '../style/index.styl';
 

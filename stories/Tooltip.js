@@ -1,10 +1,9 @@
+import Button from '../src/Button';
+import OverlayTrigger from '../src/OverlayTrigger';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-import OverlayTrigger from '../src/OverlayTrigger';
-
 import Tooltip from '../src/Tooltip';
-import Button from '../src/Button';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Tooltip', module)
   .addDecorator(story => (

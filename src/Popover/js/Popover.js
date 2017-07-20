@@ -1,7 +1,6 @@
-import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
-
+import React, {Component, PropTypes} from 'react';
 import '../style/index.styl';
 import '../../Dialog/style/index.styl';
 

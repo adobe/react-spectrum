@@ -1,11 +1,9 @@
-import React, {Component} from 'react';
-import classNames from 'classnames';
-import ShellMenu from './ShellMenu';
-
-import Search from '../../Search';
 import Button from '../../Button';
+import classNames from 'classnames';
 import {List} from '../../List';
-
+import React, {Component} from 'react';
+import Search from '../../Search';
+import ShellMenu from './ShellMenu';
 import '../style/ShellOrgSwitcher.styl';
 
 export default class ShellOrgSwitcher extends Component {

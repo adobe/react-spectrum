@@ -1,10 +1,9 @@
+import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../../.storybook/layout';
-
-import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
 import ShellOrganization from '../../src/Shell/js/ShellOrganization';
+import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
 import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
+import {VerticalCenter} from '../../.storybook/layout';
 
 storiesOf('ShellOrgSwitcher', module)
   .addDecorator(story => (

@@ -1,6 +1,6 @@
 import {action, storiesOf} from '@kadira/storybook';
-import React from 'react';
 import Rating from '../src/Rating';
+import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Rating', module)

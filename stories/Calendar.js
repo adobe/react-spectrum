@@ -1,9 +1,8 @@
-import React from 'react';
-import moment from 'moment';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Calendar from '../src/Calendar';
+import moment from 'moment';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Calendar', module)
   .addDecorator(story => (

@@ -1,8 +1,7 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Checkbox from '../src/Checkbox';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Checkbox', module)
   .addDecorator(story => (

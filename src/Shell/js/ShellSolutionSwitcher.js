@@ -1,9 +1,7 @@
-import React from 'react';
-import classNames from 'classnames';
-import ShellMenu from './ShellMenu';
-
 import Button from '../../Button';
-
+import classNames from 'classnames';
+import React from 'react';
+import ShellMenu from './ShellMenu';
 import '../style/ShellSolutionSwitcher.styl';
 
 export default function ShellSolutionSwitcher({

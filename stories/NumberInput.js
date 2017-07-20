@@ -1,7 +1,6 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-
+import {action, storiesOf} from '@kadira/storybook';
 import NumberInput from '../src/NumberInput';
+import React from 'react';
 
 storiesOf('NumberInput', module)
   .addWithInfo(

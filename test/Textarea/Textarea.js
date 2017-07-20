@@ -1,8 +1,8 @@
-import React from 'react';
 import assert from 'assert';
+import React from 'react';
 import {shallow} from 'enzyme';
-import Textfield from '../../src/Textfield';
 import Textarea from '../../src/Textarea';
+import Textfield from '../../src/Textfield';
 
 describe('Textarea', () => {
   it('should render a Textfield with multiLine = true', () => {

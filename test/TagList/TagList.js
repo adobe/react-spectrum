@@ -1,8 +1,8 @@
-import React from 'react';
 import assert from 'assert';
-import sinon from 'sinon';
+import React from 'react';
 import {shallow} from 'enzyme';
-import {TagList, Tag} from '../../src/TagList';
+import sinon from 'sinon';
+import {Tag, TagList} from '../../src/TagList';
 
 describe('TagList', () => {
   it('has correct classname when disabled', () => {

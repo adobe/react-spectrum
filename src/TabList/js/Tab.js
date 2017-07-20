@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import Icon from '../../Icon';
+import React, {Component} from 'react';
 
 /**
  * header: A string or node which will be placed at the top of the accordion item.

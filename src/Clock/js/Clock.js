@@ -1,10 +1,10 @@
 import autobind from 'autobind-decorator';
 import {clamp} from '../../utils/number';
 import classNames from 'classnames';
+import {formatMoment, toMoment} from '../../utils/moment';
 import moment from 'moment';
 import React, {Component, PropTypes} from 'react';
 import Textfield from '../../Textfield';
-import {toMoment, formatMoment} from '../../utils/moment';
 import '../style/index.styl';
 
 @autobind

@@ -1,9 +1,9 @@
-import React from 'react';
 import assert from 'assert';
-import sinon from 'sinon';
-import {shallow} from 'enzyme';
 import Button from '../../src/Button';
 import Icon from '../../src/Icon';
+import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Button', () => {
   it('supports different elements', () => {

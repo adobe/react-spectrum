@@ -1,6 +1,6 @@
+import {action, storiesOf} from '@kadira/storybook';
 import Datepicker from '../src/Datepicker';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Datepicker', module)

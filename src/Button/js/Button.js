@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
 import classNames from 'classnames';
 import Icon from '../../Icon';
+import React, {Component} from 'react';
 import '../style/index.styl';
 
 export default class Button extends Component {

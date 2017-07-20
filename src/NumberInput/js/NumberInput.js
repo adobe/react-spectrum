@@ -1,12 +1,9 @@
-import React, {Component, PropTypes} from 'react';
-import classNames from 'classnames';
-
-import InputGroup from '../../InputGroup';
-import Textfield from '../../Textfield';
 import Button from '../../Button';
-
+import classNames from 'classnames';
 import createId from '../../utils/createId';
-
+import InputGroup from '../../InputGroup';
+import React, {Component, PropTypes} from 'react';
+import Textfield from '../../Textfield';
 import '../style/index.styl';
 
 export default class NumberInput extends Component {

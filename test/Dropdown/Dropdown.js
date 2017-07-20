@@ -1,6 +1,6 @@
 import assert from 'assert';
-import Dropdown from '../../src/Dropdown';
 import Button from '../../src/Button';
+import Dropdown from '../../src/Dropdown';
 import {Menu, MenuItem} from '../../src/Menu';
 import React from 'react';
 import {shallow} from 'enzyme';

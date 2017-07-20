@@ -1,7 +1,7 @@
 import assert from 'assert';
+import PortalContainer from '../../src/PortalContainer';
 import React from 'react';
 import {shallow} from 'enzyme';
-import PortalContainer from '../../src/PortalContainer';
 
 describe('PortalContainer', () => {
   it('should render children', () => {

@@ -1,8 +1,7 @@
+import Progress from '../src/Progress';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Progress from '../src/Progress';
 
 storiesOf('Progress', module)
   .addDecorator(story => (

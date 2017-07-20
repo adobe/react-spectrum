@@ -1,7 +1,7 @@
-import React from 'react';
-import classNames from 'classnames';
 import Button from '../../Button';
+import classNames from 'classnames';
 import Icon from '../../Icon';
+import React from 'react';
 import '../style/index.styl';
 
 const sizeMap = {

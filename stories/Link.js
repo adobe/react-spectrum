@@ -1,8 +1,7 @@
+import Link from '../src/Link';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
-import Link from '../src/Link';
 
 storiesOf('Link', module)
   .addDecorator(story => (

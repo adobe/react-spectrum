@@ -1,6 +1,6 @@
 import assert from 'assert';
+import {isDateInRange, toMoment} from '../../src/utils/moment';
 import moment from 'moment';
-import {toMoment, isDateInRange} from '../../src/utils/moment';
 
 describe('moment', () => {
   describe('toMoment', () => {

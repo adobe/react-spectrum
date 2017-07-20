@@ -1,6 +1,6 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
+import {action, storiesOf} from '@kadira/storybook';
 import Dialog from '../src/Dialog';
+import React from 'react';
 
 const dialogChildren = <span>Content of the dialog</span>;
 

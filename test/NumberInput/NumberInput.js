@@ -1,11 +1,11 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
-import NumberInput from '../../src/NumberInput';
-import Textfield from '../../src/Textfield';
 import Button from '../../src/Button';
 import InputGroup from '../../src/InputGroup';
+import NumberInput from '../../src/NumberInput';
+import React from 'react';
+import {shallow} from 'enzyme';
 import sinon from 'sinon';
+import Textfield from '../../src/Textfield';
 
 describe('NumberInput', () => {
   it('default', () => {

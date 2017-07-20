@@ -1,7 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 import Tag from './Tag';
-
 import '../style/index.styl';
 
 export default class TagList extends React.Component {

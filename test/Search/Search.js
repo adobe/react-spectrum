@@ -1,5 +1,5 @@
-import React from 'react';
 import assert from 'assert';
+import React from 'react';
 import Search from '../../src/Search';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';

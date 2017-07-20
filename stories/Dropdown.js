@@ -1,10 +1,9 @@
-import React from 'react';
-import {storiesOf} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
 import Button from '../src/Button';
 import Dropdown from '../src/Dropdown';
 import {Menu, MenuItem} from '../src/Menu';
+import React from 'react';
+import {storiesOf} from '@kadira/storybook';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Dropdown', module)
   .addDecorator(story => (

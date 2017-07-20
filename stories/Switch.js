@@ -1,8 +1,7 @@
+import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
 import Switch from '../src/Switch';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Switch', module)
   .addDecorator(story => (

@@ -1,8 +1,8 @@
+import {addToast, error, help, info, removeToast, success, Toast, ToastContainer, warning} from '../../src/Toast';
 import assert from 'assert';
 import React from 'react';
 import {shallow} from 'enzyme';
 import {sleep} from '../utils';
-import {Toast, ToastContainer, addToast, removeToast, success, warning, error, info, help} from '../../src/Toast';
 
 describe('ToastContainer', () => {
   it('should render toasts', () => {

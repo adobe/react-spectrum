@@ -1,10 +1,8 @@
-import React from 'react';
-import classNames from 'classnames';
-import ShellMenu from './ShellMenu';
-
 import Button from '../../Button';
+import classNames from 'classnames';
 import Icon from '../../Icon';
-
+import React from 'react';
+import ShellMenu from './ShellMenu';
 import '../style/ShellUserProfile.styl';
 
 export default function ShellUserProfile({

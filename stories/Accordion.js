@@ -1,8 +1,7 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
 import {Accordion, AccordionItem} from '../src/Accordion';
+import {action, storiesOf} from '@kadira/storybook';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Accordion', module)
   .addDecorator(story => (

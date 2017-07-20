@@ -1,6 +1,6 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow, mount} from 'enzyme';
+import {mount, shallow} from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 import {Tab} from '../../src/TabList';
 

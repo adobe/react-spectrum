@@ -1,8 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
-
 import {isUrl} from '../../utils/string';
-
+import React from 'react';
 import '../style/index.styl';
 
 export default function Icon({

@@ -1,10 +1,8 @@
-import React, {Component} from 'react';
-import classNames from 'classnames';
-
-import Textfield from '../../Textfield';
 import Button from '../../Button';
+import classNames from 'classnames';
 import Icon from '../../Icon';
-
+import React, {Component} from 'react';
+import Textfield from '../../Textfield';
 import '../style/index.styl';
 
 export default class Search extends Component {

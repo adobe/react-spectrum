@@ -1,10 +1,9 @@
+import {action, storiesOf} from '@kadira/storybook';
 import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
-
 
 storiesOf('ModalTrigger', module)
   .addDecorator(story => (

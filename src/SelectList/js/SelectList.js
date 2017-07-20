@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {List, ListItem, ListGroup} from '../../List';
+import {List, ListGroup, ListItem} from '../../List';
 import React, {Component} from 'react';
 
 export default class SelectList extends Component {

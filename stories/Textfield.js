@@ -1,8 +1,7 @@
+import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
 import Textfield from '../src/Textfield';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Textfield', module)
   .addDecorator(story => (

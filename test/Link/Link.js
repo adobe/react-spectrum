@@ -1,7 +1,7 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
 import Link from '../../src/Link';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Link', () => {
   it('supports the subtle variation', () => {

@@ -1,7 +1,7 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
 import Radio from '../../src/Radio';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Radio', () => {
   it('has correct defaults', () => {

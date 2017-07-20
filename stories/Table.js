@@ -1,8 +1,7 @@
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
+import {Table, TBody, TD, TH, THead, TR} from '../src/Table';
 import {VerticalCenter} from '../.storybook/layout';
-
-import {Table, THead, TBody, TR, TH, TD} from '../src/Table';
 
 storiesOf('Table', module)
   .addDecorator(story => (

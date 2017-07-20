@@ -1,8 +1,8 @@
-import React from 'react';
-import assert from 'assert';
-import {shallow} from 'enzyme';
 import AccordionItem from '../../src/Accordion/js/AccordionItem';
+import assert from 'assert';
 import Icon from '../../src/Icon';
+import React from 'react';
+import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('AccordionItem', () => {

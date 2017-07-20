@@ -1,7 +1,7 @@
-import React from 'react';
 import assert from 'assert';
-import {shallow} from 'enzyme';
 import Progress from '../../src/Progress';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('Progress', () => {
   it('default', () => {

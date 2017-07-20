@@ -1,9 +1,8 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
-import ButtonGroup from '../src/ButtonGroup';
+import {action, storiesOf} from '@kadira/storybook';
 import Button from '../src/Button';
+import ButtonGroup from '../src/ButtonGroup';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 const defaultProps = {
   children: [

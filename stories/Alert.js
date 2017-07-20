@@ -1,8 +1,7 @@
-import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
-import {VerticalCenter} from '../.storybook/layout';
-
+import {action, storiesOf} from '@kadira/storybook';
 import Alert from '../src/Alert';
+import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 import './Alert.styl';
 
 storiesOf('Alert', module)

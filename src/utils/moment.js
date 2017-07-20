@@ -1,5 +1,5 @@
-import moment from 'moment';
 import {DateRange} from 'moment-range';
+import moment from 'moment';
 
 export const toMoment = (value, format) => {
   if (!value) {

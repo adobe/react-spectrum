@@ -1,12 +1,10 @@
-import React, {Component, PropTypes} from 'react';
-import classNames from 'classnames';
-import moment from 'moment';
-import {DateRange} from 'moment-range';
-
 import Button from '../../Button';
+import classNames from 'classnames';
 import createId from '../../utils/createId';
-import {toMoment, isDateInRange, formatMoment} from '../../utils/moment';
-
+import {DateRange} from 'moment-range';
+import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
+import moment from 'moment';
+import React, {Component, PropTypes} from 'react';
 import '../style/index.styl';
 
 export default class Calendar extends Component {

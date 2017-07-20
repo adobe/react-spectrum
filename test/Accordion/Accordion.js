@@ -1,7 +1,7 @@
 import {Accordion, AccordionItem} from '../../src/Accordion';
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow, mount} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Accordion', () => {
