@@ -5,5 +5,7 @@ if (process.browser) {
   configureTypekit('ruf7eed');
   if (!/coral--/.test(document.body.className)) {
     document.body.classList.add('coral--light');
+    document.body.classList.add('spectrum');
+    document.body.classList.add('spectrum--light');
   }
 }

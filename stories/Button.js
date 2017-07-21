@@ -15,13 +15,13 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
-    'size: L',
-    () => render({size: 'L'}),
+    'block: true',
+    () => render({block: true}),
     {inline: true}
   )
   .addWithInfo(
-    'block: true',
-    () => render({block: true}),
+    'variant: cta',
+    () => render({variant: 'cta'}),
     {inline: true}
   )
   .addWithInfo(
@@ -35,18 +35,58 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet',
-    () => render({variant: 'quiet'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: quiet',
-    () => render({variant: 'quiet'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'variant: warning',
     () => render({variant: 'warning'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: action',
+    () => render({variant: 'action'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: action icon only',
+    () => render({variant: 'action', label: null}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: and',
+    () => render({variant: 'and'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: or',
+    () => render({variant: 'or'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, variant: primary',
+    () => render({quiet: true, variant: 'primary'}),
+    {inline: true}
+  )
+ .addWithInfo(
+    'quiet: true, variant: secondary',
+    () => render({quiet: true, variant: 'secondary'}),
+    {inline: true}
+  )
+ .addWithInfo(
+    'quiet: true, variant: warning',
+    () => render({quiet: true, variant: 'warning'}),
+    {inline: true}
+  )
+ .addWithInfo(
+    'quiet: true, variant: action',
+    () => render({quiet: true, variant: 'action'}),
+    {inline: true}
+  )
+ .addWithInfo(
+    'quiet: true, variant: action icon only',
+    () => render({quiet: true, variant: 'action', label: null}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: quiet',
+    () => render({variant: 'quiet'}),
     {inline: true}
   )
   .addWithInfo(
@@ -56,52 +96,51 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'icon: bell',
-    () => render({icon: 'bell'}),
+    () => render({icon: 'bell', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'iconSize: XS',
-    () => render({iconSize: 'XS'}),
+    () => render({iconSize: 'XS', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'iconSize: M',
-    () => render({iconSize: 'M'}),
+    () => render({iconSize: 'M', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'iconSize: L',
-    () => render({iconSize: 'L'}),
+    () => render({iconSize: 'L', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'selected: true',
-    () => render({selected: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'disabled: true',
-    () => render({disabled: true}),
+    () => render({selected: true, variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'element: a',
     () => render({element: 'a', href: 'http://example.com'}),
     {inline: true}
-  )
-  .addWithInfo(
-    'element: a, disabled: true',
-    () => render({element: 'a', href: 'http://example.com', disabled: true}),
-    {inline: true}
   );
 
 function render(props = {}) {
   return (
-    <Button
-      icon="checkCircle"
-      label="React"
-      onClick={action('click')}
-      {...props}
-    />
+    <div>
+      <Button
+        icon="checkCircle"
+        label="React"
+        onClick={action('click')}
+        {...props}
+      />
+      <Button
+        icon="checkCircle"
+        label="React"
+        onClick={action('click')}
+        disabled
+        {...props}
+      />
+    </div>
   );
 }

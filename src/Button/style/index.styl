@@ -14,26 +14,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe Systems Incorporated.
  */
-@require '../../commons'
+// @require '../../commons'
 
 // Spectrum relies on variables from a skin for sizing etc.
 // See https://git.corp.adobe.com/Spectrum/spectrum-abstract-stylus/issues/10
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-light.styl'
-@import '@spectrum/spectrum-abstract-stylus/dist/components/button'
+// @import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-light.styl'
+// @import '@spectrum/spectrum-abstract-stylus/dist/components/button'
 
-.coral-Button {
-  spectrum-button()
+// .coral-Button {
+//   spectrum-button()
 
-  .coral-Icon {
-    vertical-align: top
-  }
+//   .coral-Icon {
+//     vertical-align: top
+//   }
 
-  // when ever there is a label we need to make sure the spacing is correct
-  .coral-Icon + .coral-Button-label:not(:empty),
-  .coral-Icon + .coral-Anchorbutton-label:not(:empty) {
-    margin-left: 8*$px
-  }
-}
+//   // when ever there is a label we need to make sure the spacing is correct
+//   .coral-Icon + .coral-Button-label:not(:empty),
+//   .coral-Icon + .coral-Anchorbutton-label:not(:empty) {
+//     margin-left: 8*$px
+//   }
+// }
 
-@import 'light'
-@import 'dark'
+// @import 'light'
+// @import 'dark'
+
+@import '@spectrum/spectrum-css/dist/components/button/index.css';
+@import '@spectrum/spectrum-css/dist/components/button/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/button/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/button/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/button/multiStops/darkest.css';
