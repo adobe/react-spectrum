@@ -12,13 +12,13 @@ export default function Radio({
       inputType="radio"
       className={
         classNames(
-          'coral-Radio',
+          'spectrum-Radio',
           className
         )
       }
-      inputClassName="coral-Radio-input"
-      markClassName="coral-Radio-checkmark"
-      labelClassName="coral-Radio-description"
+      inputClassName="spectrum-Radio-input"
+      markClassName="spectrum-Radio-checkmark"
+      labelClassName="spectrum-Radio-label"
       {...otherProps}
     />
   );
