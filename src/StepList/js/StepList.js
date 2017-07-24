@@ -18,10 +18,10 @@ export default function StepList({
       {...otherProps}
       className={
         classNames(
-          'coral-StepList',
+          'spectrum-Steplist',
           {
-            'coral-StepList--interactive': interaction === ON,
-            'coral-StepList--small': size === SMALL
+            'spectrum-Steplist--interactive': interaction === ON,
+            'spectrum-Steplist--small': size === SMALL
           },
           className
         )
