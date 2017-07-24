@@ -18,6 +18,7 @@ export default function TabList({
   className,
   size = 'M',
   orientation = 'horizontal',
+  anchored,
   ...otherProps
 }) {
   return (
@@ -25,9 +26,10 @@ export default function TabList({
       {...otherProps}
       className={
         classNames(
-          'coral-TabList',
-          size === 'L' ? 'coral-TabList--large' : '',
-          `coral-TabList--${orientation}`,
+          'spectrum-TabList',
+          size === 'L' ? 'spectrum-TabList--large' : '',
+          `spectrum-TabList--${orientation}`,
+          {'spectrum-TabList--anchored': anchored},
           className
         )
       }

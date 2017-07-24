@@ -38,13 +38,38 @@ storiesOf('TabList', module)
     'orientation: vertical, size: L',
     () => render({orientation: 'vertical', size: 'L'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'anchored',
+    () => render({anchored: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'icons',
+    () => render({icons: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'icons, orientation: vertical',
+    () => render({icons: true, orientation: 'vertical'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabled tabs',
+    () => (
+      <TabList onChange={action('onChange')}>
+        <Tab icon="twitter">Tab 1</Tab>
+        <Tab icon="instagram" disabled>Tab 2</Tab>
+      </TabList>
+    ),
+    {inline: true}
   );
 
 function render(props = {}) {
   return (
     <TabList {...props} onChange={action('onChange')}>
-      <Tab>Tab 1</Tab>
-      <Tab>Tab 2</Tab>
+      <Tab icon={props.icons && "twitter"}>Tab 1</Tab>
+      <Tab icon={props.icons && "instagram"}>Tab 2</Tab>
     </TabList>
   );
 }

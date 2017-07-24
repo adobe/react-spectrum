@@ -42,7 +42,7 @@ export default class Tab extends Component {
         {...otherProps}
         className={
           classNames(
-            'coral-Tab',
+            'spectrum-Tab',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -61,10 +61,8 @@ export default class Tab extends Component {
         aria-disabled={disabled}
         onClick={this.handleClick}
       >
-        <span className="coral-Tab-label">
-          {icon ? <Icon icon={icon} size="S" /> : null}
-          {label || children}
-        </span>
+        {icon && <Icon icon={icon} size="S" className="spectrum-Tab-icon" />}
+        {(label || children) && <span className="spectrum-Tab-label">{label || children}</span>}
       </div>
     );
   }
