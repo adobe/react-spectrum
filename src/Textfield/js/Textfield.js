@@ -37,11 +37,11 @@ export default class Textfield extends Component {
         type="text"
         className={
           classNames(
-            'coral-Textfield',
+            'spectrum-Textfield',
             {
-              'coral-Textfield--multiline': multiLine,
+              'spectrum-Textfield--multiline': multiLine,
               'is-invalid': invalid,
-              'coral-Textfield--quiet': quiet
+              'spectrum-Textfield--quiet': quiet
             },
             className
           )
