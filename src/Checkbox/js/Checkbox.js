@@ -44,13 +44,14 @@ export default class Checkbox extends Component {
         inputType="checkbox"
         className={
           classNames(
-            'coral-Checkbox',
+            'spectrum-Checkbox',
+            {'is-indeterminate': indeterminate},
             className
           )
         }
-        inputClassName="coral-Checkbox-input"
-        markClassName={classNames('coral-Checkbox-checkmark', {'is-indeterminate': indeterminate})}
-        labelClassName="coral-Checkbox-description"
+        inputClassName="spectrum-Checkbox-input"
+        markClassName="spectrum-Checkbox-checkmark"
+        labelClassName="spectrum-Checkbox-label"
         {...otherProps}
       />
     );
