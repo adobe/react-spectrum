@@ -13,12 +13,12 @@ export default function Wait({
     <div
       className={
         classNames(
-          'coral-Wait',
+          'spectrum-Wait',
           {
-            'coral-Wait--large': size === 'L',
-            'coral-Wait--medium': size === 'M',
-            'coral-Wait--centered': centered,
-            'coral-Wait--dots': variant === 'dots'
+            'spectrum-Wait--large': size === 'L',
+            'spectrum-Wait--medium': size === 'M',
+            'spectrum-Wait--centered': centered,
+            'spectrum-Wait--dots': variant === 'dots'
           },
           className
         )
