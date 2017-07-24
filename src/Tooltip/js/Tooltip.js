@@ -36,16 +36,17 @@ export default class Tooltip extends Component {
       <div
         className={
           classNames(
-            'coral3-Tooltip',
-            `coral3-Tooltip--${variant}`,
-            `coral3-Tooltip--${ARROWS[placement]}`,
+            'spectrum-Tooltip',
+            `spectrum-Tooltip--${variant}`,
+            `spectrum-Tooltip--${placement}`,
             {
-              'coral3-Tooltip-drop-after-open': open
+              'spectrum-Tooltip--is-open': open
             },
             className
           )
         }>
-          {children}
+          <div className="spectrum-Tooltip-content">{children}</div>
+          <div className="spectrum-Tooltip-tip" />
       </div>
     );
   }
