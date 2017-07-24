@@ -39,21 +39,6 @@ storiesOf('Alert', module)
     'variant: warning',
     () => render({header: 'warning', variant: 'warning'}),
     {inline: true}
-  )
-  .addWithInfo(
-    'large: true',
-    () => render({header: 'Info', large: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'closable: true',
-    () => render({header: 'Info', closable: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'large: true, closable: true',
-    () => render({header: 'Info', large: true, closable: true}),
-    {inline: true}
   );
 
 function render(props = {}, children = 'This is a React Coral alert') {
