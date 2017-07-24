@@ -11,8 +11,8 @@ import {sleep} from '../utils';
 describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
-    assert(tree.hasClass('coral-Dialog--default'));
-    assert(tree.hasClass('coral-Dialog--M'));
+    assert(tree.hasClass('spectrum-Dialog--default'));
+    assert(tree.hasClass('spectrum-Dialog--M'));
   });
 
   it('supports optional title', () => {
@@ -31,22 +31,22 @@ describe('Dialog', () => {
 
   it('supports different sizes', () => {
     const tree = shallow(<Dialog size="S" />);
-    assert(tree.hasClass('coral-Dialog--S'));
+    assert(tree.hasClass('spectrum-Dialog--S'));
     tree.setProps({size: 'L'});
-    assert(tree.hasClass('coral-Dialog--L'));
+    assert(tree.hasClass('spectrum-Dialog--L'));
   });
 
   it('supports different variants', () => {
     const tree = shallow(<Dialog variant="error" />);
-    assert(tree.hasClass('coral-Dialog--error'));
+    assert(tree.hasClass('spectrum-Dialog--error'));
     tree.setProps({variant: 'info'});
-    assert(tree.hasClass('coral-Dialog--info'));
+    assert(tree.hasClass('spectrum-Dialog--info'));
     tree.setProps({variant: 'help'});
-    assert(tree.hasClass('coral-Dialog--help'));
+    assert(tree.hasClass('spectrum-Dialog--help'));
     tree.setProps({variant: 'success'});
-    assert(tree.hasClass('coral-Dialog--success'));
+    assert(tree.hasClass('spectrum-Dialog--success'));
     tree.setProps({variant: 'warning'});
-    assert(tree.hasClass('coral-Dialog--warning'));
+    assert(tree.hasClass('spectrum-Dialog--warning'));
   });
 
   it('renders content comp', () => {
@@ -70,7 +70,7 @@ describe('Dialog', () => {
     var onClose = sinon.spy();
     const tree = shallow(<Dialog onClose={onClose} onConfirm={stub} confirmLabel="Go" />);
     tree.find(DialogFooter).simulate('confirm');
-    assert(stub.calledOnce);    
+    assert(stub.calledOnce);
     await sleep(1);
     assert(onClose.calledOnce);
   });
@@ -82,7 +82,7 @@ describe('Dialog', () => {
     var onClose = sinon.spy();
     const tree = shallow(<Dialog onClose={onClose} onConfirm={stub} confirmLabel="Go" />);
     tree.find(DialogFooter).simulate('confirm');
-    assert(stub.calledOnce);    
+    assert(stub.calledOnce);
     await sleep(1);
     assert(!onClose.calledOnce);
   });

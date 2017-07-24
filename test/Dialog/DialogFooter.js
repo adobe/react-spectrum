@@ -8,7 +8,7 @@ import sinon from 'sinon';
 describe('DialogFooter', () => {
   it('renders no buttons on default', () => {
     const tree = shallow(<DialogFooter />);
-    assert(tree.hasClass('coral-Dialog-footer'));
+    assert(tree.hasClass('spectrum-Dialog-footer'));
     assert.equal(tree.find(Button).length, 0);
   });
 

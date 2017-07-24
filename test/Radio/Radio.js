@@ -7,10 +7,10 @@ describe('Radio', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Radio />);
     assert.equal(tree.prop('inputType'), 'radio');
-    assert.equal(tree.prop('className'), 'coral-Radio');
-    assert.equal(tree.prop('inputClassName'), 'coral-Radio-input');
-    assert.equal(tree.prop('markClassName'), 'coral-Radio-checkmark');
-    assert.equal(tree.prop('labelClassName'), 'coral-Radio-description');
+    assert.equal(tree.prop('className'), 'spectrum-Radio');
+    assert.equal(tree.prop('inputClassName'), 'spectrum-Radio-input');
+    assert.equal(tree.prop('markClassName'), 'spectrum-Radio-checkmark');
+    assert.equal(tree.prop('labelClassName'), 'spectrum-Radio-label');
   });
 
   it('supports additional classNames', () => {

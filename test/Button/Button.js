@@ -25,31 +25,21 @@ describe('Button', () => {
     assert.equal(tree.type(), 'a');
     assert.equal(tree.prop('tabIndex'), -1);
     assert.equal(tree.prop('aria-disabled'), true);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium is-disabled');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-disabled');
 
     tree.simulate('click', {preventDefault: preventDefaultSpy});
     assert(!onClickSpy.called);
     assert(preventDefaultSpy.called);
   });
 
-  it('supports different sizes', () => {
-    const tree = shallow(<Button size="L" />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--large');
-  });
-
   it('supports different variants', () => {
     const tree = shallow(<Button variant="primary" />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--primary coral-Button--medium');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--primary');
   });
 
   it('supports block', () => {
     const tree = shallow(<Button block />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium coral-Button--block');
-  });
-
-  it('supports square', () => {
-    const tree = shallow(<Button square />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium coral-Button--square');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default spectrum-Button--block');
   });
 
   it('supports disabled', () => {
@@ -61,14 +51,14 @@ describe('Button', () => {
 
   it('supports selected', () => {
     const tree = shallow(<Button />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default');
     tree.setProps({selected: true});
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium is-selected');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-selected');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Button className="myClass" />);
-    assert.equal(tree.prop('className'), 'coral-Button coral-Button--default coral-Button--medium myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default myClass');
   });
 
   it('supports additional properties', () => {
@@ -111,12 +101,12 @@ describe('Button', () => {
   describe('label', () => {
     it('doesn\'t render a label by default', () => {
       const tree = shallow(<Button />);
-      assert(!tree.find('.coral-Button-label').children().node);
+      assert(!tree.find('.spectrum-Button-label').children().node);
     });
 
     it('supports label text', () => {
       const tree = shallow(<Button label="My Label" />);
-      assert.equal(tree.find('.coral-Button-label').children().node, 'My Label');
+      assert.equal(tree.find('.spectrum-Button-label').children().node, 'My Label');
     });
   });
 });

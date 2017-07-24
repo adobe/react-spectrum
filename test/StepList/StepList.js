@@ -8,8 +8,8 @@ describe('StepList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<StepList />);
     const innerTree = tree.shallow();
-    assert.equal(tree.hasClass('coral-StepList'), true);
-    assert.equal(tree.hasClass('coral-StepList--interactive'), true);
+    assert.equal(tree.hasClass('spectrum-Steplist'), true);
+    assert.equal(tree.hasClass('spectrum-Steplist--interactive'), true);
     assert.equal(innerTree.type(), 'div');
     assert.equal(innerTree.prop('role'), 'tablist');
     assert.equal(innerTree.prop('aria-multiselectable'), false);
@@ -17,18 +17,18 @@ describe('StepList', () => {
 
   it('should support size', () => {
     const tree = shallow(<StepList />);
-    assert.equal(tree.hasClass('coral-StepList--small'), false);
+    assert.equal(tree.hasClass('spectrum-Steplist--small'), false);
 
     tree.setProps({size: 'S'});
-    assert.equal(tree.hasClass('coral-StepList--small'), true);
+    assert.equal(tree.hasClass('spectrum-Steplist--small'), true);
   });
 
   it('should support interaction', () => {
     const tree = shallow(<StepList />);
-    assert.equal(tree.hasClass('coral-StepList--interactive'), true);
+    assert.equal(tree.hasClass('spectrum-Steplist--interactive'), true);
 
     tree.setProps({interaction: 'off'});
-    assert.equal(tree.hasClass('coral-StepList--interactive'), false);
+    assert.equal(tree.hasClass('spectrum-Steplist--interactive'), false);
   });
 
   it('should pass the size property to the children', () => {

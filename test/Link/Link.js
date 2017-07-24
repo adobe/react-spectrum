@@ -6,7 +6,7 @@ import {shallow} from 'enzyme';
 describe('Link', () => {
   it('supports the subtle variation', () => {
     const tree = shallow(<Link subtle className="myClass">Testing</Link>);
-    assert(tree.prop('className').indexOf('coral-Link--subtle') >= 0);
+    assert(tree.prop('className').indexOf('spectrum-Link--subtle') >= 0);
   });
 
   it('supports additional classNames', () => {

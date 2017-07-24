@@ -7,31 +7,31 @@ import Slider from '../../src/Slider';
 describe('Slider', function () {
   it('should render a basic slider', function () {
     const tree = shallow(<Slider />);
-    assert.equal(tree.prop('className'), 'coral3-Slider');
-    assert.equal(tree.find('.coral3-Slider-bar').length, 1);
-    assert.equal(tree.find('.coral3-Slider-handle').length, 1);
-    assert.equal(tree.find('.coral3-Slider-input').length, 1);
+    assert.equal(tree.prop('className'), 'spectrum-Slider');
+    assert.equal(tree.find('.spectrum-Slider-track').length, 1);
+    assert.equal(tree.find('.spectrum-Slider-handle').length, 1);
+    assert.equal(tree.find('.spectrum-Slider-input').length, 1);
 
     assert.equal(tree.state('value'), 0.5);
-    assert.equal(tree.find('.coral3-Slider-handle').prop('style').left, '50%');
+    assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '50%');
   });
 
   it('should support setting a default value', function () {
     const tree = shallow(<Slider defaultValue={0.75} />);
     assert.equal(tree.state('value'), 0.75);
-    assert.equal(tree.find('.coral3-Slider-handle').prop('style').left, '75%');
+    assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '75%');
   });
 
   it('should support setting a min and max value', function () {
     const tree = shallow(<Slider min={10} max={20} />);
     assert.equal(tree.state('value'), 15);
-    assert.equal(tree.find('.coral3-Slider-handle').prop('style').left, '50%');
+    assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '50%');
   });
 
   it('should support vertical orientation', function () {
     const tree = shallow(<Slider min={10} max={20} defaultValue={18} orientation="vertical" />);
     assert.equal(tree.state('value'), 18);
-    assert.equal(tree.find('.coral3-Slider-handle').prop('style').bottom, '80%');
+    assert.equal(tree.find('.spectrum-Slider-handle').prop('style').bottom, '80%');
   });
 
   it('should support drag and drop to set the slider value', function () {

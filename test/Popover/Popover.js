@@ -6,13 +6,13 @@ import {shallow} from 'enzyme';
 describe('Popover', () => {
   it('supports different variants', () => {
     const tree = shallow(<Popover variant="info" />);
-    assert.equal(tree.hasClass('coral-Dialog--info'), true);
+    assert.equal(tree.hasClass('spectrum-Dialog--info'), true);
   });
 
   // it('supports different variants', () => {
   //   const tree = shallow(<Popover variant="info" />);
   //   const contentTree = shallow(tree.prop('content'));
-  //   assert.equal(contentTree.hasClass('coral-Dialog--info'), true);
+  //   assert.equal(contentTree.hasClass('spectrum-Dialog--info'), true);
   // });
 
   // it('supports optional title', () => {

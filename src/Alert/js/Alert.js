@@ -21,7 +21,7 @@ export default function Alert({
       }
       {...otherProps}
     >
-      <div className="spectrum-Alert-typeIcon" role="img" aria-label="info" />
+      <div className="spectrum-Alert-typeIcon" role="img" aria-label={variant} />
       <div className="spectrum-Alert-header">{header}</div>
       <div className="spectrum-Alert-content">{children}</div>
     </div>

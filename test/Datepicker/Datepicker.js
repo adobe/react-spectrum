@@ -31,7 +31,7 @@ describe('Datepicker', () => {
     assert.equal(button.hasClass('coral-InputGroup-button'), true);
     assert.equal(button.prop('icon'), 'calendar');
     assert.equal(button.prop('disabled'), false);
-    assert.equal(button.hasClass('coral-Button--quiet'), false);
+    assert.equal(button.prop('quiet'), false);
 
     const calendar = tree.find(Calendar);
     assert.equal(calendar.hasClass('u-coral-borderless'), true);
@@ -226,7 +226,7 @@ describe('Datepicker', () => {
     const tree = shallow(<Datepicker quiet />);
     assert.equal(tree.childAt(0).prop('quiet'), true);
     assert.equal(findTextfield(tree).prop('quiet'), true);
-    assert.equal(findButton(tree).hasClass('coral-Button--quiet'), true);
+    assert.equal(findButton(tree).prop('quiet'), true);
   });
 
   it('supports disabled', () => {
