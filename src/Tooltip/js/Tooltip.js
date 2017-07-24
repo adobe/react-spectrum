@@ -32,7 +32,7 @@ export default class Tooltip extends Component {
             `spectrum-Tooltip--${variant}`,
             `spectrum-Tooltip--${placement}`,
             {
-              'spectrum-Tooltip--is-open': open
+              'is-open': open
             },
             className
           )
