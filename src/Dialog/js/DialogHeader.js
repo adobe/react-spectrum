@@ -17,12 +17,12 @@ export default function DialogHeader({
     <div
       {...otherProps}
       className={classNames(
-        'coral-Dialog-header',
-        `coral-Dialog-header--${variant}`,
+        'spectrum-Dialog-header',
+        `spectrum-Dialog-header--${variant}`,
         className
       )}>
-        {icon && <Icon className="coral-Dialog-typeIcon" icon={icon} size="S" />}
-        <Heading size={3} className="coral-Dialog-title">
+        {icon && <Icon className="spectrum-Dialog-typeIcon" icon={icon} size="S" />}
+        <Heading size={3} className="spectrum-Dialog-title">
           {title}
         </Heading>
     </div>

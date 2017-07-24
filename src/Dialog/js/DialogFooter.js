@@ -11,7 +11,7 @@ export default function DialogFooter({
   ...otherProps
 }) {
   return (
-    <div className={classNames('coral-Dialog-footer', className)}>
+    <div className={classNames('spectrum-Dialog-footer', className)}>
       {
         cancelLabel && <Button variant="secondary" label={cancelLabel} onClick={onClose} />
       }

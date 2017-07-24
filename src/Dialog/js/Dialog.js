@@ -4,7 +4,6 @@ import DialogFooter from './DialogFooter';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-
 import '../style/index.styl';
 
 let variantType = ['default', 'error', 'help', 'info', 'success', 'warning'];
@@ -57,15 +56,15 @@ export default class Dialog extends Component {
     return (
       <div
         className={classNames(
-          'coral-Dialog',
-          `coral-Dialog--${variant}`,
-          `coral-Dialog--${size}`,
+          'spectrum-Dialog',
+          `spectrum-Dialog--${variant}`,
+          `spectrum-Dialog--${size}`,
           {
             'is-open': open
           },
           className
         )}>
-        <div className="coral-Dialog-wrapper">
+        <div className="spectrum-Dialog-wrapper">
           {title && <DialogHeader variant={variant} title={title} />}
           <DialogContent>
             {

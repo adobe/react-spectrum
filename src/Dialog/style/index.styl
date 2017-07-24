@@ -1,109 +1,39 @@
-/*
- * ADOBE CONFIDENTIAL
- *
- * Copyright 2016 Adobe Systems Incorporated
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Adobe Systems Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Adobe Systems Incorporated and its
- * suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Adobe Systems Incorporated.
- */
+@import '@spectrum/spectrum-css/dist/components/dialog/index.css';
+@import '@spectrum/spectrum-css/dist/components/dialog/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/dialog/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/dialog/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/dialog/multiStops/darkest.css';
 
-@import '../../commons'
-@import '@spectrum/spectrum-abstract-stylus/dist/components/dialog'
-
-$spectrum-dialog-margin = 40*$px;
-$spectrum-dialog-border-radius = $spectrum-border-radius;
-$spectrum-dialog-padding = 25*$px;
-
-$spectrum-dialog-width-small = 300*$px;
-$spectrum-dialog-width-medium = 600*$px;
+// react-spectrum Dialog works slightly differently from how spectrum-css expects, so there are some overrides.
+// TODO: determine how to get rid of these.
+$spectrum-dialog-margin = 40px;
+$spectrum-dialog-width-small = 300px;
+$spectrum-dialog-width-medium = 600px;
 $spectrum-dialog-width-large = 90%;
 
-.coral-Dialog {
+.spectrum-Dialog {
   position: relative;
   margin: $spectrum-dialog-margin auto;
-
-  // Scroll vertically only
   display: block;
-  overflow-x: hidden;
-  overflow-y: auto;
   outline: none;
 
-  // Match the fade time of the backdrop
-  transition: opacity $spectrum-transition-time;
-  opacity: 0;
-
-  &.coral-Dialog--S {
+  &.spectrum-Dialog--S {
     width: $spectrum-dialog-width-small;
   }
 
-  &.coral-Dialog--M {
+  &.spectrum-Dialog--M {
     width: $spectrum-dialog-width-medium;
   }
 
-  &.coral-Dialog--L {
+  &.spectrum-Dialog--L {
     width: $spectrum-dialog-width-large;
   }
-
-  &.is-open {
-    opacity: 1;
-  }
 }
 
-.coral-Dialog-header {
-  spectrum-dialog-header()
+.spectrum-Dialog-wrapper {
+  margin: 0;
 }
 
-.coral-Dialog-content {
-  spectrum-dialog-content()
+.spectrum-Dialog-content {
+  margin-top: 20px;
 }
-
-.coral-Dialog-footer {
-  spectrum-dialog-footer()
-}
-
-.coral-Dialog-wrapper {
-  display: block;
-  padding: $spectrum-dialog-padding;
-  border-radius: $spectrum-dialog-border-radius;
-  outline: none; // Firefox shows outline
-}
-
-.coral-Dialog-header {
-  spectrum-dialog-header()
-}
-
-.coral-Dialog-title {
-  spectrum-dialog-title()
-}
-
-.coral-Dialog-typeIcon {
-  spectrum-dialog-typeIcon()
-}
-
-.coral-Dialog-closeButton {
-  spectrum-dialog-closeButton()
-}
-
-.coral-Dialog-content {
-  spectrum-dialog-content()
-  margin-top: 20*$px;
-}
-
-.coral-Dialog-footer {
-  spectrum-dialog-footer()
-
-  .coral-Button {
-    spectrum-dialog-footer-button()
-  }
-}
-
-@require 'light.styl'
-@require 'dark.styl'
