@@ -23,11 +23,11 @@ export default function Progress({
     <div
       className={
         classNames(
-          'coral-Progress',
-          `coral-Progress--${sizeClassPart}`,
-          `coral-Progress--${label ? `${labelPosition}Label` : 'noLabel' }`,
+          'spectrum-Progress',
+          `spectrum-Progress--${sizeClassPart}`,
+          `spectrum-Progress--${label ? `${labelPosition}Label` : 'noLabel' }`,
           {
-            'coral-Progress--indeterminate': indeterminate
+            'spectrum-Progress--indeterminate': indeterminate
           },
           className
         )
@@ -37,15 +37,15 @@ export default function Progress({
       aria-valuenow={indeterminate ? null : value}
       {...otherProps}
     >
-      <div className="coral-Progress-bar">
+      <div className="spectrum-Progress-bar">
         <div
-          className="coral-Progress-status"
+          className="spectrum-Progress-status"
           style={{width: `${indeterminate ? 0 : value}%`}}
         />
       </div>
       {
         label &&
-          <div className="coral-Progress-label">
+          <div className="spectrum-Progress-label">
             {label}
           </div>
       }
