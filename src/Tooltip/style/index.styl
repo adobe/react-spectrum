@@ -5,17 +5,6 @@
 @import '@spectrum/spectrum-css/dist/components/tooltip/multiStops/darkest.css';
 
 // spectrum-css tooltips do their own positioning. react-spectrum uses OverlayTrigger for that.
-// TODO: work this out with spectrum-css team. for now, override positioning.
 .spectrum-Tooltip {
   position: relative;
-  padding: 0;
-}
-
-.spectrum-Tooltip--right,
-.spectrum-Tooltip--left,
-.spectrum-Tooltip--bottom,
-.spectrum-Tooltip--top {
-  transform: none;
-  left: 0;
-  top: 0;
 }
