@@ -1,15 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-
 import '../style/index.styl';
-
-const ARROWS = {
-  right: 'arrowRight',
-  left: 'arrowLeft',
-  bottom: 'arrowDown',
-  top: 'arrowUp'
-};
 
 export default class Tooltip extends Component {
   static propTypes = {

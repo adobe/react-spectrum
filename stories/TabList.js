@@ -68,8 +68,8 @@ storiesOf('TabList', module)
 function render(props = {}) {
   return (
     <TabList {...props} onChange={action('onChange')}>
-      <Tab icon={props.icons && "twitter"}>Tab 1</Tab>
-      <Tab icon={props.icons && "instagram"}>Tab 2</Tab>
+      <Tab icon={props.icons && 'twitter'}>Tab 1</Tab>
+      <Tab icon={props.icons && 'instagram'}>Tab 2</Tab>
     </TabList>
   );
 }
