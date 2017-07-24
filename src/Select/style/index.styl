@@ -40,7 +40,7 @@ $spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
 
   outline: none;
 
-  > .coral-Button {
+  > .spectrum-Button {
     position: relative;
 
     box-sizing: border-box;
@@ -103,7 +103,7 @@ $spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
   }
 
   &.is-invalid {
-    > .coral-Button::after {
+    > .spectrum-Button::after {
       position: absolute;
       top: 50%;
       right: 8*$px;
@@ -174,13 +174,13 @@ $spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
   width: 100%;
 }
 
-.coral3-Select:not(.coral3-Select--quiet).is-openBelow > .coral-Button,
+.coral3-Select:not(.coral3-Select--quiet).is-openBelow > .spectrum-Button,
 .coral3-Select:not(.coral3-Select--quiet).is-openAbove .coral3-Select-selectList {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.coral3-Select:not(.coral3-Select--quiet).is-openAbove > .coral-Button,
+.coral3-Select:not(.coral3-Select--quiet).is-openAbove > .spectrum-Button,
 .coral3-Select:not(.coral3-Select--quiet).is-openBelow .coral3-Select-selectList {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -190,7 +190,7 @@ $spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
   width: auto;
   padding: 0 $spectrum-padding 0 $spectrum-padding;
 
-  > .coral-Button {
+  > .spectrum-Button {
     width: auto;
     padding: 0;
 
@@ -213,7 +213,7 @@ $spectrum-select-invalid-icon-url = '../../commons/embed/icon-alert.svg';
       right: 22*$px;
     }
 
-    > .coral-Button::after {
+    > .spectrum-Button::after {
       right: 0;
     }
   }

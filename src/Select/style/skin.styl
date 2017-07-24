@@ -26,7 +26,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
 
 .coral3-Select {
 
-  > .coral-Button {
+  > .spectrum-Button {
     border-color: $spectrum-select-border-color-default;
     background-color: $spectrum-select-background-color-default;
     position: relative;
@@ -67,7 +67,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-invalid {
-    > .coral-Button {
+    > .spectrum-Button {
       &::after {
         background-image: svgurl(embedurl($spectrum-select-invalid-icon-url)) svg(path fill $spectrum-select-invalid-icon-color);
       }
@@ -84,7 +84,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-openAbove {
-    > .coral-Button {
+    > .spectrum-Button {
       background-color: $spectrum-select-background-color-hover;
       border-color: $spectrum-global-color-grey6 !important;
       border-top: 0px transparent;
@@ -95,7 +95,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-openBelow {
-    > .coral-Button {
+    > .spectrum-Button {
       background-color: $spectrum-select-background-color-hover;
       border-color: $spectrum-global-color-grey6 !important;
       border-bottom: 0px transparent;
@@ -107,7 +107,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
 }
 
 .coral3-Select--quiet {
-  > .coral-Button {
+  > .spectrum-Button {
     background: none;
     border-color: transparent;
     border-radius: 0;
@@ -143,7 +143,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-openAbove, &.is-openBelow {
-    > .coral-Button {
+    > .spectrum-Button {
       background: none;
     }
 
@@ -155,7 +155,7 @@ $spectrum-select-invalid-icon-color = $spectrum-global-color-red2;
   }
 
   &.is-invalid {
-    > .coral-Button, > .coral-Button:not(.is-selected) {
+    > .spectrum-Button, > .spectrum-Button:not(.is-selected) {
       border-color: transparent;
       box-shadow: none;
     }

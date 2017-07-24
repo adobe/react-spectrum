@@ -289,7 +289,8 @@ export default class Datepicker extends Component {
         />
         <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
           <Button
-            className={classNames('coral-InputGroup-button', {'coral-Button--quiet': quiet})}
+            className="coral-InputGroup-button"
+            quiet={quiet}
             type="button"
             icon={type === 'time' ? 'clock' : 'calendar'}
             iconSize="S"

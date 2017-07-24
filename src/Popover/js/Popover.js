@@ -34,7 +34,7 @@ export default class Popover extends Component {
         className={
           classNames(
             'coral3-Popover',
-            `coral-Dialog--${variant}`,
+            `spectrum-Dialog--${variant}`,
             {
               'is-open': open
             },
