@@ -1,36 +1,10 @@
+@import '@spectrum/spectrum-css/dist/components/toast/index.css';
+@import '@spectrum/spectrum-css/dist/components/toast/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/toast/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/toast/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/toast/multiStops/darkest.css';
+
 @import '../../commons'
-
-.coral-Toast {
-  display: inline-flex;
-  align-items: center;
-  padding: 8*$px 18*$px 8*$px 18*$px;
-  height: 32*$px;
-  border-radius: $spectrum-border-radius;
-
-  &.is-closable {
-    padding: 8*$px 6*$px 8*$px 18*$px;
-  }
-
-  > .coral-Icon {
-    margin-right: 8*$px;
-  }
-
-  .coral-Toast-closeButton {
-    margin-left: 6*$px;
-    margin-right: 0;
-    width: 2rem;
-    box-sizing: border-box;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-
-    &:hover,
-    &:focus {
-      border: none;
-      box-shadow: none;
-    }
-  }
-}
 
 .coral-ToastContainer {
   position: fixed;
@@ -43,7 +17,7 @@
   align-items: center;
   pointer-events: none;
 
-  .coral-Toast {
+  .spectrum-Toast {
     margin-top: 5*$px;
     pointer-events: all;
   }
@@ -71,6 +45,3 @@
   transform: translate3d(0, -100%, 0);
   transition: all $spectrum-transition-time ease-in-out;
 }
-
-@import 'light'
-@import 'dark'
