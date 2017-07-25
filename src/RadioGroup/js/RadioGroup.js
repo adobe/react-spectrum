@@ -69,10 +69,10 @@ export default class RadioGroup extends Component {
       <div
         className={
           classNames(
-            'coral-RadioGroup',
+            'spectrum-RadioGroup',
             {
-              'coral-RadioGroup--vertical': vertical,
-              'coral-RadioGroup--labelsBelow': labelsBelow
+              'spectrum-RadioGroup--vertical': vertical,
+              'spectrum-RadioGroup--labelsBelow': labelsBelow
             },
             className
           )
