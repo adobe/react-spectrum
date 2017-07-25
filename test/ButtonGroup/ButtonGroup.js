@@ -71,7 +71,7 @@ describe('ButtonGroup', () => {
       <ButtonGroup
         {...defaultProps}
         onChange={(value) => {
-          assert.deepEqual(value, defaultProps[0].value);
+          assert.deepEqual(value, 'react');
           done();
         }}
       />

@@ -42,7 +42,7 @@ storiesOf('ButtonGroup', module)
   )
   .addWithInfo(
     'readOnly: true',
-    () => (render({readOnly: true})),
+    () => (render({readOnly: true, onClick: action('click')})),
     {inline: true}
   );
 
@@ -51,7 +51,7 @@ function render(props = {}) {
     <ButtonGroup
       style={{textAlign: 'left'}}
       label="ButtonGroup"
-      onClick={action('click')}
+      onChange={action('change')}
       {...defaultProps}
       {...props}>
     </ButtonGroup>

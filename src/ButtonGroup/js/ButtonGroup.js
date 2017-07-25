@@ -34,24 +34,30 @@ export default class ButtonGroup extends Component {
   }
 
   handleSelect(button) {
-    let nextButtons;
-    if (this.props.multiple) {
-      if (this.isSelected(button)) {
-        nextButtons = this.removeSelection(button);
+    if (!this.props.readOnly) {
+      let nextButtons;
+      if (this.props.multiple) {
+        if (this.isSelected(button)) {
+          nextButtons = this.removeSelection(button);
+        } else {
+          nextButtons = this.addSelection(button);
+        }
       } else {
-        nextButtons = this.addSelection(button);
+        nextButtons = button.value;
       }
-    } else {
-      nextButtons = button.value;
-    }
 
-    // Set state if in uncontrolled mode
-    if (!('value' in this.props) && !this.props.readOnly) {
-      this.setState({value: nextButtons});
+      // Set state if in uncontrolled mode
+      if (!('value' in this.props)) {
+        this.setState({value: nextButtons});
+      }
+
+      if (this.props.onChange) {
+        this.props.onChange(nextButtons);
+      }
     }
 
     if (this.props.onClick) {
-      this.props.onClick(nextButtons);
+      this.props.onClick(button.value);
     }
   }
 
@@ -92,6 +98,7 @@ export default class ButtonGroup extends Component {
       ...otherProps
     } = this.props;
 
+    delete otherProps.onChange;
     delete otherProps.onClick;
 
     return (
