@@ -15,6 +15,10 @@ const defaultProps = {
   ]
 };
 
+const selectedValue = [
+  'delete'
+];
+
 storiesOf('ButtonGroup', module)
   .addDecorator(story => (
     <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
@@ -27,7 +31,17 @@ storiesOf('ButtonGroup', module)
     {inline: true}
   )
   .addWithInfo(
-    'Disabled: true',
+    'multiple selection',
+    () => (render({multiple: true})),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabled: true',
+    () => (render({value: selectedValue, multiple: true, disabled: true})),
+    {inline: true}
+  )
+  .addWithInfo(
+    'readOnly: true',
     () => (render({readOnly: true})),
     {inline: true}
   );
@@ -35,12 +49,11 @@ storiesOf('ButtonGroup', module)
 function render(props = {}) {
   return (
     <ButtonGroup
-    style={{textAlign: 'left'}}
-    label="ButtonGroup"
-    onClick={action('click')}
-    quiet
-    {...defaultProps}
-    {...props}>
+      style={{textAlign: 'left'}}
+      label="ButtonGroup"
+      onClick={action('click')}
+      {...defaultProps}
+      {...props}>
     </ButtonGroup>
   );
 }
