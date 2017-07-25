@@ -32,18 +32,6 @@ storiesOf('Accordion', module)
     'This is a controlled Accordion where the the second accordion item is opened by default.',
     () => render({selectedIndex: 1}),
     {inline: true}
-  )
-  .addWithInfo(
-    'Quiet variant',
-    'This is a quiet variant of the Accordion.',
-    () => render({variant: 'quiet'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'Large variant',
-    'This is a large variant of the Accordion.',
-    () => render({variant: 'large'}),
-    {inline: true}
   );
 
 function render(props = {}) {

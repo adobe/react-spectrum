@@ -1,12 +1,25 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
-import Icon from '../../Icon';
 import React, {Component} from 'react';
 
 /**
  * header: A string or node which will be placed at the top of the accordion item.
  */
 export default class AccordionItem extends Component {
+  static propTypes = {
+    header: React.PropTypes.string,
+    selected: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+    onItemClick: React.PropTypes.func
+  };
+
+  static defaultProps = {
+    header: '',
+    selected: false,
+    disabled: false,
+    onItemClick() {}
+  };
+
   constructor(props) {
     super(props);
     this.headerId = createId();
@@ -26,6 +39,7 @@ export default class AccordionItem extends Component {
       onItemClick,
       header,
       selected,
+      disabled,
       ...otherProps
     } = this.props;
 
@@ -34,48 +48,33 @@ export default class AccordionItem extends Component {
         {...otherProps}
         className={
           classNames(
-            'coral3-Accordion-item',
+            'spectrum-Accordion-item',
+            {'is-open': selected, 'is-disabled': disabled},
             className
           )
         }
-        role="presentation"
-      >
-        <div
-          id={this.headerId}
-          className="coral3-Accordion-header"
-          onClick={onItemClick}
-          aria-controls={this.contentId}
-          aria-selected={selected}
-          aria-expanded={selected}
-          aria-disabled="false"
-          tabIndex="0"
-          onKeyPress={this.onHeaderKeyDown.bind(this)}
-        >
-          <Icon icon={selected ? 'chevronDown' : 'chevronRight'} className="coral3-Accordion-icon" size="XS" />
-          <span className="coral3-Accordion-label">{header}</span>
-        </div>
-        <div
-          id={this.contentId}
-          role="tabpanel"
-          aria-labelledby={this.headerId}
-          aria-hidden={!selected}
-          className={classNames('coral3-Accordion-content', {'is-open': selected, 'is-closed': !selected})}
-        >
-          {children}
-        </div>
+        role="presentation">
+          <div
+            id={this.headerId}
+            className="spectrum-Accordion-header"
+            onClick={onItemClick}
+            aria-controls={this.contentId}
+            aria-selected={selected}
+            aria-expanded={selected}
+            aria-disabled="false"
+            tabIndex="0"
+            onKeyPress={this.onHeaderKeyDown.bind(this)}>
+              {header}
+          </div>
+          <div
+            id={this.contentId}
+            role="tabpanel"
+            aria-labelledby={this.headerId}
+            aria-hidden={!selected}
+            className="spectrum-Accordion-content">
+              {children}
+          </div>
       </div>
     );
   }
 }
-
-AccordionItem.displayName = 'AccordionItem';
-
-AccordionItem.propTypes = {
-  selected: React.PropTypes.bool,
-  onItemClick: React.PropTypes.func
-};
-
-AccordionItem.defaultProps = {
-  selected: false,
-  onItemClick() {}
-};
