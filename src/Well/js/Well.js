@@ -11,7 +11,7 @@ export default function Well({
     <div
       className={
         classNames(
-          'coral-Well',
+          'spectrum-Well',
           className
         )
       }
