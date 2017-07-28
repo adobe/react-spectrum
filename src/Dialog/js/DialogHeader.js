@@ -1,7 +1,5 @@
 import classNames from 'classnames';
-import {getVariantIcon} from '../../utils/icon-variant';
 import Heading from '../../Heading';
-import Icon from '../../Icon';
 import React from 'react';
 
 export default function DialogHeader({
