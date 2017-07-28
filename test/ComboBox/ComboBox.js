@@ -10,7 +10,7 @@ describe('ComboBox', () => {
   it('should render a textfield and button', () => {
     const tree = shallow(<ComboBox />);
     assert.equal(tree.type(), Autocomplete);
-    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup coral-DecoratedTextfield');
+    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup spectrum-DecoratedTextfield');
 
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
@@ -20,12 +20,12 @@ describe('ComboBox', () => {
 
   it('should render classnames for states', () => {
     const tree = shallow(<ComboBox quiet disabled invalid />);
-    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup coral-DecoratedTextfield coral-InputGroup--quiet is-disabled is-invalid');
+    assert.equal(tree.prop('className'), 'coral-ComboBox coral-InputGroup spectrum-DecoratedTextfield coral-InputGroup--quiet is-disabled is-invalid');
   });
 
   it('should support rendering an icon', () => {
     const tree = shallow(<ComboBox icon="filter" />);
-    assert.equal(tree.find('.coral-DecoratedTextfield-icon').length, 1);
+    assert.equal(tree.find('.spectrum-DecoratedTextfield-icon').length, 1);
   });
 
   it('should get completions from options', () => {

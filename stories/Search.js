@@ -43,6 +43,21 @@ storiesOf('Search', module)
     'icon: (none)',
     () => render({value: 'React', icon: ''}),
     {inline: true}
+  )
+  .addWithInfo(
+    'quiet',
+    () => render({quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet disabled',
+    () => render({quiet: true, disabled: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet icon: refresh',
+    () => render({quiet: true, icon: 'refresh'}),
+    {inline: true}
   );
 
 function render(props = {}) {

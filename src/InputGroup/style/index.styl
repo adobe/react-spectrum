@@ -30,6 +30,10 @@ $spectrum-combobox-alert-width = 32*$px;
   border-collapse: separate;
   width: $spectrum-component-single-line-width;
 
+  .spectrum-DecoratedTextfield-icon {
+    z-index: 5;
+  }
+
   .coral-InputGroup-button.spectrum-Button {
     // position for bringing hovered/focused/actived element above the siblings.
     position: relative; // Needed for z-index to function.
@@ -60,7 +64,7 @@ $spectrum-combobox-alert-width = 32*$px;
       z-index: 1
     }
 
-    &+ .coral-InputGroup-button {
+    &~ .coral-InputGroup-button {
       border-radius: 0 $spectrum-border-radius $spectrum-border-radius 0;
       border-left-width: 0 !important;
     }
@@ -107,7 +111,7 @@ $spectrum-combobox-alert-width = 32*$px;
 }
 
 .coral-InputGroup--quiet {
-  .coral-DecoratedTextfield-icon {
+  .spectrum-DecoratedTextfield-icon {
     margin-left: 0;
   }
 
