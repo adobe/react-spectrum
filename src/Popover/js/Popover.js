@@ -7,7 +7,7 @@ import '../../Dialog/style/index.styl';
 export default class Popover extends Component {
   static propTypes = {
     variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
-    icon: PropTypes.string,
+    placement: PropTypes.oneOf(['bottom', 'top', 'left', 'right']),
     open: PropTypes.bool,
     title: PropTypes.node,
     className: PropTypes.string
@@ -15,13 +15,15 @@ export default class Popover extends Component {
 
   static defaultProps = {
     variant: 'default',
+    placement: 'bottom',
     open: true
   };
 
   render() {
     const {
       variant,
-      icon,
+      placement,
+      arrowStyle,
       open,
       title,
       children,
@@ -33,7 +35,8 @@ export default class Popover extends Component {
       <div
         className={
           classNames(
-            'coral3-Popover',
+            'spectrum-Popover',
+            `spectrum-Popover--${placement}`,
             `spectrum-Dialog--${variant}`,
             {
               'is-open': open
@@ -42,18 +45,20 @@ export default class Popover extends Component {
           )
         }
         {...otherProps}>
-          {
-            title &&
-              <DialogHeader
-                className="coral-Popover-header"
-                title={title}
-                variant={variant}
-                icon={icon}
-              />
-          }
-          <div className="coral3-Popover-content">
-            {title ? <div className="u-coral-margin">{children}</div> : children}
+          <div className="spectrum-Dialog-wrapper">
+            {
+              title &&
+                <DialogHeader
+                  className="spectrum-Popover-header"
+                  title={title}
+                  variant={variant}
+                />
+            }
+            <div className="spectrum-Dialog-content">
+              {children}
+            </div>
           </div>
+          <div className="spectrum-Popover-tip" style={arrowStyle} />
       </div>
     );
   }

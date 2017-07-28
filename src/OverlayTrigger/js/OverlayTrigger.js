@@ -186,9 +186,9 @@ export default class OverlayTrigger extends Component {
         onHide={this.handleHide}
         target={this}
         rootClose={isOneOf('click', this.props.trigger)}>
-        <div className="coral-OverlayTrigger-overlay-container">
+        <OverlayContainer>
           {cloneElement(overlay, props)}
-        </div>
+        </OverlayContainer>
       </Overlay>
     );
   }
@@ -213,7 +213,7 @@ export default class OverlayTrigger extends Component {
     const [triggerChild, overlayChild] = React.Children.toArray(this.props.children);
     const triggerProps = {};
     delete props.children;
-    
+
 
     if (this.state.show) {
       triggerProps['aria-describedby'] = overlayChild.props.id;
@@ -236,4 +236,17 @@ export default class OverlayTrigger extends Component {
     this._overlay = this.makeOverlay(overlayChild, props);
     return cloneElement(triggerChild, triggerProps);
   }
+}
+
+function OverlayContainer({arrowOffsetLeft, arrowOffsetTop, children, placement, style}) {
+  let arrowStyle = {
+    top: arrowOffsetTop,
+    left: arrowOffsetLeft
+  };
+
+  return (
+    <div className="coral-OverlayTrigger-overlay-container" style={style}>
+      {React.cloneElement(React.Children.only(children), {arrowStyle, placement})}
+    </div>
+  );
 }

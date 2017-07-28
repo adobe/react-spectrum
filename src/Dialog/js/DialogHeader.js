@@ -7,7 +7,6 @@ import React from 'react';
 export default function DialogHeader({
   title,
   variant,
-  icon = getVariantIcon(variant || 'default'),
   closable,
   onClose,
   className,
@@ -21,7 +20,7 @@ export default function DialogHeader({
         `spectrum-Dialog-header--${variant}`,
         className
       )}>
-        {icon && <Icon className="spectrum-Dialog-typeIcon" icon={icon} size="S" />}
+        <div className="spectrum-Dialog-typeIcon" />
         <Heading size={3} className="spectrum-Dialog-title">
           {title}
         </Heading>
