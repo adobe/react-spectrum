@@ -90,6 +90,10 @@ module.exports = {
 }
 ```
 
+### Manifest
+
+React Spectrum allows you to import only the components you need rather than bloating your application with unused components. If you would like to import multiple components in one import statement, you can add a manifest to your own application.
+
 ## Development
 
 We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open http://localhost:9002
