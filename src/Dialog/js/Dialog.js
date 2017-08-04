@@ -17,9 +17,9 @@ export default class Dialog extends Component {
     onClose: PropTypes.func,
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
-    size: PropTypes.oneOfType(['S', 'M', 'L']),
+    size: PropTypes.oneOf(['S', 'M', 'L']),
     title: PropTypes.string,
-    variant: PropTypes.oneOfType(variantType)
+    variant: PropTypes.oneOf(variantType)
   };
 
   static defaultProps = {
