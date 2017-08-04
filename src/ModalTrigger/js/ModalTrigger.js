@@ -1,38 +1,20 @@
 import autobind from 'autobind-decorator';
-import Modal from 'react-overlays/lib/Modal';
-import PortalContainer from '../../PortalContainer';
+import ModalContainer from '../../ModalContainer';
 import React, {cloneElement, Component} from 'react';
 import ReactDOM from 'react-dom';
-import '../style/index.styl';
-
-let MODAL_KEY = 0;
 
 @autobind
 export default class ModalTrigger extends Component {
-  modalKey = MODAL_KEY++;
-
   show() {
     const children = React.Children.toArray(this.props.children);
     const modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
-
-    this.modal = (
-      <Modal
-        show={true}
-        onHide={this.hide}
-        backdropClassName="coral3-Backdrop"
-        className="coral3-modal"
-        key={this.modalKey}>
-          {cloneElement(modalChild, {onClose: this.hide})}
-      </Modal>
-    );
-
-    PortalContainer.add(this.modal);
+    this.modalKey = ModalContainer.show(modalChild);
   }
 
   hide() {
-    if (this.modal) {
-      PortalContainer.remove(this.modal);
-      this.modal = null;
+    if (this.modalKey) {
+      ModalContainer.hide(this.modalKey);
+      this.modalKey = null;
     }
   }
 
