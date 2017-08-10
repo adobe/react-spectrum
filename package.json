@@ -29,6 +29,7 @@
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
     "@spectrum/spectrum-abstract-stylus": "0.2.8",
+    "@spectrum/spectrum-flexbox-grid": "1.0.2",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
