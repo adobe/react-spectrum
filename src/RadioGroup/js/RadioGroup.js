@@ -82,7 +82,7 @@ export default class RadioGroup extends Component {
         {
           React.Children.map(children, child => {
             const {value, onChange} = child.props;
-            if (!value) {
+            if (value == null) {
               throw new Error('Each Radio Button must have a value property');
             }
             const radioGroupOnClick = this.handleClickItem.bind(this, value);
