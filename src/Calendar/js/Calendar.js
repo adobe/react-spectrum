@@ -338,7 +338,7 @@ export default class Calendar extends Component {
                   role="columnheader"
                   scope="col">
                     <abbr
-                      className="spectrum-Calendar-day-of-week"
+                      className="spectrum-Calendar-dayOfWeek"
                       title={dayMoment.format('dddd')}>
                         {dayMoment.format('dd')}
                     </abbr>
@@ -444,7 +444,7 @@ export default class Calendar extends Component {
                 {currentMonth.format(headerFormat)}
             </h2>
             <Button
-              className="spectrum-Calendar-prev-month"
+              className="spectrum-Calendar-prevMonth"
               variant="icon"
               aria-label="Previous"
               title="Previous"
@@ -452,7 +452,7 @@ export default class Calendar extends Component {
               square
               onClick={this.handleClickPrevious} />
             <Button
-              className="spectrum-Calendar-next-month"
+              className="spectrum-Calendar-nextMonth"
               variant="icon"
               aria-label="Next"
               title="Next"
