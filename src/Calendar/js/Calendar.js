@@ -316,7 +316,8 @@ export default class Calendar extends Component {
     return (
       <table
         key={date.format('MM/Y')}
-        role="presentation">
+        role="presentation"
+        className="spectrum-Calendar-table">
           {this.renderTableHeader()}
           {this.renderTableBody(date)}
       </table>
@@ -336,7 +337,8 @@ export default class Calendar extends Component {
                 <th
                   key={index}
                   role="columnheader"
-                  scope="col">
+                  scope="col"
+                  className="spectrum-Calendar-tableCell">
                     <abbr
                       className="spectrum-Calendar-dayOfWeek"
                       title={dayMoment.format('dddd')}>
@@ -506,6 +508,7 @@ const CalendarCell = function CalendarCell({
     <td
       id={id}
       role="gridcell"
+      className="spectrum-Calendar-tableCell"
       aria-disabled={disabled}
       aria-selected={selected}
       aria-invalid={invalid}
@@ -519,7 +522,7 @@ const CalendarCell = function CalendarCell({
             'is-selected': selected,
             'is-focused': focused,
             'is-disabled': disabled,
-            'is-hidden': !isCurrentMonth,
+            'is-outsideMonth': !isCurrentMonth,
             'is-range-selection': isRangeSelection && selected,
             'is-range-start': isRangeSelection && isRangeStart,
             'is-range-end': isRangeSelection && isRangeEnd
