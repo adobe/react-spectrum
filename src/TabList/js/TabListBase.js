@@ -115,8 +115,7 @@ export default class TabListBase extends Component {
     return (
       <div
         {...this.cleanProps()}
-        role="tablist"
-      >
+        role="tablist">
         {this.getItems()}
       </div>
     );

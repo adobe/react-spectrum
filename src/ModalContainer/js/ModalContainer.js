@@ -11,12 +11,12 @@ export default class ModalContainer {
     let hide = this.hide.bind(this, key);
     let modal = (
       <Modal
-        show={true}
+        show
         onHide={hide}
         backdropClassName="coral3-Backdrop"
         className="coral3-modal"
         key={key}>
-          {cloneElement(content, {onClose: hide})}
+        {cloneElement(content, {onClose: hide})}
       </Modal>
     );
 

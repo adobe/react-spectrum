@@ -20,7 +20,7 @@ describe('GridColumn', () => {
   });
 
   it('supports custom column size', () => {
-    const tree = shallow(render({size: [12,10,4,4,2]}));
+    const tree = shallow(render({size: [12, 10, 4, 4, 2]}));
     assert.equal(tree.hasClass('spectrum-grid-col-sm-10'), true);
   });
 

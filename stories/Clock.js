@@ -29,7 +29,6 @@ function render(props = {}) {
   return (
     <Clock
       onChange={action('change')}
-      {...props}
-    />
+      {...props} />
   );
 }

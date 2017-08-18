@@ -59,8 +59,7 @@ export default class Tab extends Component {
         aria-invalid={invalid}
         aria-selected={selected}
         aria-disabled={disabled}
-        onClick={this.handleClick}
-      >
+        onClick={this.handleClick}>
         <span className="coral-Tab-label">
           {icon ? <Icon icon={icon} size="S" /> : null}
           {label || children}

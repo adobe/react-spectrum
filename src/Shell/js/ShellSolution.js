@@ -21,8 +21,7 @@ export default function ShellSolution({
         )
       }
       href={href}
-      {...otherProps}
-    >
+      {...otherProps}>
       <Icon icon={icon} size="L" className="coral3-Shell-solution-icon" />
       <div className="coral3-Shell-solution-label">{label}{children}</div>
     </a>

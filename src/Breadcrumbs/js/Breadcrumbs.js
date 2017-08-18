@@ -28,15 +28,15 @@ export default class Breadcrumbs extends React.Component {
         }
 
         {items.map((item, i) =>
-          <span
+          (<span
             key={i}
             className="coral-Breadcrumb"
             onClick={!disabled && items.length > 1 && i < items.length - 1 && onBreadcrumbClick.bind(null, item, items.length - i - 1)}>
-              {i > 0 &&
-                <Icon icon="chevronRight" size="XS" />
+            {i > 0 &&
+            <Icon icon="chevronRight" size="XS" />
               }
-              {item.label}
-          </span>
+            {item.label}
+          </span>)
         )}
       </div>
     );

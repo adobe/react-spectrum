@@ -107,7 +107,6 @@ function render(props = {}) {
       onOpen={action('open')}
       onValueClick={action('valueClick')}
       {...defaultProps}
-      {...props}
-    />
+      {...props} />
   );
 }

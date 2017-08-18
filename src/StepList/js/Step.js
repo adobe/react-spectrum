@@ -24,20 +24,20 @@ export default function Step({
       role="tab"
       aria-selected={selected}
       {...otherProps}>
-        <div className="coral-Step-label">
-          {(size !== SMALL) && children}
-        </div>
-        <span className="coral-Step-markerContainer">
-          {(size === SMALL) ?
-            <OverlayTrigger placement="top">
-              <span className="coral-Step-marker" />
-              <Tooltip open>
-                  {children}
-              </Tooltip>
-            </OverlayTrigger>
+      <div className="coral-Step-label">
+        {(size !== SMALL) && children}
+      </div>
+      <span className="coral-Step-markerContainer">
+        {(size === SMALL) ?
+          <OverlayTrigger placement="top">
+            <span className="coral-Step-marker" />
+            <Tooltip open>
+              {children}
+            </Tooltip>
+          </OverlayTrigger>
           : <span className="coral-Step-marker" />}
-        </span>
-        <span className="coral-Step-line" />
+      </span>
+      <span className="coral-Step-line" />
     </div>
   );
 }

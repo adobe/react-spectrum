@@ -263,8 +263,7 @@ export default class NumberInput extends Component {
         variant="secondary"
         iconSize="XS"
         tabIndex="-1"
-        square
-      />
+        square />
     );
   }
 
@@ -337,8 +336,7 @@ export default class NumberInput extends Component {
           onFocus={this.handleInputFocus}
           onBlur={this.handleInputBlur}
           {...otherProps}
-          onChange={this.handleInputChange}
-        />
+          onChange={this.handleInputChange} />
       </InputGroup>
     );
   }

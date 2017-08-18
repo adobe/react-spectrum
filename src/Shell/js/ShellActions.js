@@ -34,8 +34,7 @@ export default class ShellHeaderActions extends Component {
             className
           )
         }
-        {...otherProps}
-      >
+        {...otherProps}>
         {betaFeedback}
         <div className="coral3-Shell-menubar">
           {

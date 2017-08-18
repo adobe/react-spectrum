@@ -295,8 +295,7 @@ export default class Calendar extends Component {
     return (
       <div key={date.format('MM/Y')}>
         <table
-          role="presentation"
-        >
+          role="presentation">
           {this.renderTableHeader()}
           {this.renderTableBody(date)}
         </table>
@@ -317,12 +316,10 @@ export default class Calendar extends Component {
                 <th
                   key={index}
                   role="columnheader"
-                  scope="col"
-                >
+                  scope="col">
                   <abbr
                     className="coral-Calendar-dayOfWeek"
-                    title={dayMoment.format('dddd')}
-                  >
+                    title={dayMoment.format('dddd')}>
                     {dayMoment.format('dd')}
                   </abbr>
                 </th>
@@ -373,8 +370,7 @@ export default class Calendar extends Component {
                       isRangeEnd={range && cursorLocal.isSame(range.end, 'day')}
                       focused={dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
                       onClick={this.handleDayClick}
-                      onHighlight={this.onHighlight}
-                    />
+                      onHighlight={this.onHighlight} />
                   );
                 })
               }
@@ -420,16 +416,14 @@ export default class Calendar extends Component {
         aria-readonly={readOnly}
         aria-invalid={invalid}
         aria-disabled={disabled}
-        {...otherProps}
-      >
+        {...otherProps}>
         <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
         <div className="coral-Calendar-calendarHeader">
           <div
             className="coral-Heading coral-Heading--2"
             role="heading"
             aria-live="assertive"
-            aria-atomic="true"
-          >
+            aria-atomic="true">
             {currentMonth.format(headerFormat)}
           </div>
           <Button
@@ -441,8 +435,7 @@ export default class Calendar extends Component {
             title="Previous"
             disabled={disabled}
             square
-            onClick={this.handleClickPrevious}
-          />
+            onClick={this.handleClickPrevious} />
           <Button
             className="coral-Calendar-nextMonth"
             icon="chevronRight"
@@ -452,8 +445,7 @@ export default class Calendar extends Component {
             title="Next"
             disabled={disabled}
             square
-            onClick={this.handleClickNext}
-          />
+            onClick={this.handleClickNext} />
         </div>
         <div
           ref={el => {this.calendarBody = el; }}
@@ -463,8 +455,7 @@ export default class Calendar extends Component {
           aria-readonly="true"
           aria-disabled={disabled}
           aria-activedescendant={focusedDate && this.generateDateId(focusedDate)}
-          onKeyDown={this.handleKeyDown}
-        >
+          onKeyDown={this.handleKeyDown}>
           {this.renderTable(currentMonth)}
         </div>
       </div>
@@ -514,8 +505,7 @@ const CalendarCell = function CalendarCell({
       aria-invalid={invalid}
       title={title}
       onClick={!disabled && (e => {onClick(e, date.clone()); })}
-      onMouseEnter={(e => { !disabled && onHighlight(e, date.clone()); })}
-    >
+      onMouseEnter={(e => { !disabled && onHighlight(e, date.clone()); })}>
       <span
         role="presentation"
         className={classNames({
@@ -524,8 +514,7 @@ const CalendarCell = function CalendarCell({
           'is-range-selection': isRangeSelection && selected,
           'is-range-start': isRangeSelection && isRangeStart,
           'is-range-end': isRangeSelection && isRangeEnd
-        })}
-      >
+        })}>
         {date.date()}
       </span>
     </td>

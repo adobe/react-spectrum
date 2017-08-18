@@ -20,8 +20,7 @@ export default function InputGroup({quiet, focused, invalid, disabled, className
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </div>
   );

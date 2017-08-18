@@ -21,10 +21,10 @@ export default function DialogHeader({
         `coral-Dialog-header--${variant}`,
         className
       )}>
-        {icon && <Icon className="coral-Dialog-typeIcon" icon={icon} size="S" />}
-        <Heading size={3} className="coral-Dialog-title">
-          {title}
-        </Heading>
+      {icon && <Icon className="coral-Dialog-typeIcon" icon={icon} size="S" />}
+      <Heading size={3} className="coral-Dialog-title">
+        {title}
+      </Heading>
     </div>
   );
 }

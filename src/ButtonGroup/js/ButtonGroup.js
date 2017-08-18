@@ -114,7 +114,7 @@ export default class ButtonGroup extends Component {
         aria-selected={selected}
         {...otherProps}
         className={classNames('coral3-ButtonGroup', className)}>
-          {this.renderButtons(children)}
+        {this.renderButtons(children)}
       </div>
     );
   }

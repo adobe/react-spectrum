@@ -199,8 +199,7 @@ export default class Datepicker extends Component {
       <Calendar
         className="u-coral-borderless"
         {...props}
-        onChange={this.handleCalendarChange}
-      />
+        onChange={this.handleCalendarChange} />
     );
   }
 
@@ -210,8 +209,7 @@ export default class Datepicker extends Component {
         <Clock
           {...props}
           onChange={this.handleClockChange}
-          displayFormat={this.state.displayFormat}
-        />
+          displayFormat={this.state.displayFormat} />
       </div>
     );
   }
@@ -285,8 +283,7 @@ export default class Datepicker extends Component {
           {...otherProps}
           onChange={this.handleTextChange}
           onFocus={this.onFocus}
-          onBlur={this.handleTextBlur}
-        />
+          onBlur={this.handleTextBlur} />
         <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
           <Button
             className={classNames('coral-InputGroup-button', {'coral-Button--quiet': quiet})}

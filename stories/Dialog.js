@@ -82,7 +82,7 @@ function render(children, props = {}) {
       open
       onClose={action('close')}
       {...props}>
-        {children}
+      {children}
     </Dialog>
   );
 }

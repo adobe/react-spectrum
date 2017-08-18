@@ -54,8 +54,7 @@ export default class Textfield extends Component {
         required={required}
         readOnly={readOnly}
         {...otherProps}
-        onChange={this.onChange}
-      />
+        onChange={this.onChange} />
     );
   }
 }

@@ -51,8 +51,7 @@ export default class Checkbox extends Component {
         inputClassName="coral-Checkbox-input"
         markClassName={classNames('coral-Checkbox-checkmark', {'is-indeterminate': indeterminate})}
         labelClassName="coral-Checkbox-description"
-        {...otherProps}
-      />
+        {...otherProps} />
     );
   }
 }

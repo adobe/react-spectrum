@@ -52,8 +52,7 @@ function render(props = {}) {
 
         <ShellHelp
           moreSearchResultsUrl="#"
-          onSearch={action('search')}
-        />
+          onSearch={action('search')} />
 
         <Button variant="minimal" className="coral-Shell-menu-button" icon="bell" square />
 
@@ -84,8 +83,7 @@ function render(props = {}) {
           subheading="Adobe Systems, Inc."
           avatarUrl="http://wwwimages.adobe.com/content/dam/Adobe/en/leaders/images/138x138/adobe-leaders-shantanu-narayen-138x138.jpg"
           profileUrl="#"
-          onSignOut={action('sign out')}
-        />
+          onSignOut={action('sign out')} />
       </ShellActions>
       <ShellWorkspaces>
         <ShellWorkspace href="#workspace1" selected>Workspace 1</ShellWorkspace>

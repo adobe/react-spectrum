@@ -146,8 +146,7 @@ export default class ShellMenu extends Component {
                     'is-visible': open || visible
                   }
                 )
-              }
-            >
+              }>
               {children}
             </div>
           </RootCloseWrapper>

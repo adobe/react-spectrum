@@ -65,7 +65,6 @@ function render(props = {}) {
   return (
     <Calendar
       onChange={action('change')}
-      {...props}
-    />
+      {...props} />
   );
 }

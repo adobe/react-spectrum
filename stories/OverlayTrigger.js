@@ -20,7 +20,7 @@ storiesOf('OverlayTrigger', module)
   )
   .addWithInfo(
     'with trigger: click',
-    () => render('popover',{trigger: 'click', placement: 'right'}),
+    () => render('popover', {trigger: 'click', placement: 'right'}),
     {inline: true}
   )
   .addWithInfo(

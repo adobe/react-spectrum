@@ -50,30 +50,30 @@ export default class ComboBox extends React.Component {
         getCompletions={this.getCompletions}
         value={value}
         onChange={onChange}>
-          {icon &&
-            <Icon className="coral-DecoratedTextfield-icon" icon={icon} size="XS" />
+        {icon &&
+        <Icon className="coral-DecoratedTextfield-icon" icon={icon} size="XS" />
           }
 
-          <Textfield
-            className="coral-InputGroup-input coral-ComboBox-input coral-DecoratedTextfield-input"
-            {...props}
-            ref={t => this.textfield = t}
-            disabled={disabled}
-            required={required}
-            invalid={invalid}
-            autocompleteInput
-            quiet={quiet} />
+        <Textfield
+          className="coral-InputGroup-input coral-ComboBox-input coral-DecoratedTextfield-input"
+          {...props}
+          ref={t => this.textfield = t}
+          disabled={disabled}
+          required={required}
+          invalid={invalid}
+          autocompleteInput
+          quiet={quiet} />
 
-          <Button
-            className="coral-InputGroup-button"
-            square
-            onClick={this.onButtonClick}
-            onMouseDown={e => e.preventDefault()}
-            disabled={disabled}
-            required={required}
-            quiet={quiet}>
-              <Icon icon="chevronDown" size="XS" />
-          </Button>
+        <Button
+          className="coral-InputGroup-button"
+          square
+          onClick={this.onButtonClick}
+          onMouseDown={e => e.preventDefault()}
+          disabled={disabled}
+          required={required}
+          quiet={quiet}>
+          <Icon icon="chevronDown" size="XS" />
+        </Button>
       </Autocomplete>
     );
   }

@@ -77,8 +77,7 @@ export default class RadioGroup extends Component {
             className
           )
         }
-        {...otherProps}
-      >
+        {...otherProps}>
         {
           React.Children.map(children, child => {
             const {value, onChange} = child.props;

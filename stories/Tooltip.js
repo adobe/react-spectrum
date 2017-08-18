@@ -63,7 +63,7 @@ function render(content, props = {}) {
       <OverlayTrigger placement="right" {...props}>
         <Button label="Click me" variant="primary" />
         <Tooltip open>
-            {content}
+          {content}
         </Tooltip>
       </OverlayTrigger>
     );
@@ -74,7 +74,7 @@ function render(content, props = {}) {
       <Tooltip
         {...props}
         open>
-          {content}
+        {content}
       </Tooltip>
     </div>
   );

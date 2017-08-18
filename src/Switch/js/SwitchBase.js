@@ -98,8 +98,7 @@ export default class SwitchBase extends Component {
         aria-invalid={invalid}
         aria-readonly={readOnly}
         aria-checked={checked}
-        {...otherProps}
-      >
+        {...otherProps}>
         <input
           ref={el => {this.inputRef = el; }}
           type={inputType}
@@ -113,8 +112,7 @@ export default class SwitchBase extends Component {
           readOnly={readOnly}
           onChange={this.handleChange}
           onBlur={onBlur}
-          onFocus={onFocus}
-        />
+          onFocus={onFocus} />
         <span className={markClassName} />
         {
           shouldRenderLabel &&

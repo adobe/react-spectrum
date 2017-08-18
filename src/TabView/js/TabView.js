@@ -53,7 +53,7 @@ export default class TabView extends React.Component {
           orientation={orientation}
           selectedIndex={this.state.selectedIndex}
           onChange={this.onChange}>
-            {children}
+          {children}
         </TabList>
         <div className="coral-TabView-body">
           {body}

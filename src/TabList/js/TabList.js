@@ -30,8 +30,7 @@ export default function TabList({
           `coral-TabList--${orientation}`,
           className
         )
-      }
-    />
+      } />
   );
 }
 

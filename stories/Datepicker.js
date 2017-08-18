@@ -79,7 +79,6 @@ function render(props = {}) {
   return (
     <Datepicker
       onChange={action('change')}
-      {...props}
-    />
+      {...props} />
   );
 }

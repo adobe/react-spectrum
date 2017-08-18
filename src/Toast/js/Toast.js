@@ -13,10 +13,11 @@ export default function Toast({
   onClose
 }) {
   return (
-    <div className={classNames('coral-Toast', {
-      ['coral-Toast--' + variant]: variant,
-      'is-closable': closable
-    })}>
+    <div
+      className={classNames('coral-Toast', {
+        ['coral-Toast--' + variant]: variant,
+        'is-closable': closable
+      })}>
       {icon &&
         <Icon icon={icon} size="S" />
       }

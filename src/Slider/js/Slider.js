@@ -104,20 +104,20 @@ export default class Slider extends React.Component {
         aria-valuenow={value}
         aria-orientation={orientation}
         aria-disabled={disabled}>
-          <div className="coral3-Slider-bar" />
-          <div
-            className={classNames('coral3-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
-            onMouseDown={!disabled && this.onMouseDown}
-            style={{[styleKey]: percent * 100 + '%'}}
-            aria-disabled={disabled}>
-              <input
-                type="range"
-                className="coral3-Slider-input"
-                step={step}
-                max={max}
-                min={min}
-                disabled={disabled} />
-          </div>
+        <div className="coral3-Slider-bar" />
+        <div
+          className={classNames('coral3-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
+          onMouseDown={!disabled && this.onMouseDown}
+          style={{[styleKey]: percent * 100 + '%'}}
+          aria-disabled={disabled}>
+          <input
+            type="range"
+            className="coral3-Slider-input"
+            step={step}
+            max={max}
+            min={min}
+            disabled={disabled} />
+        </div>
       </div>
     );
   }

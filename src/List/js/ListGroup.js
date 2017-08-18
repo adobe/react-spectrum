@@ -8,7 +8,7 @@ export default function ListGroup({label, className, children, ...otherProps}) {
       label={label}
       role="group"
       aria-label={label}>
-        {React.Children.map(children, child => React.cloneElement(child, otherProps))}
+      {React.Children.map(children, child => React.cloneElement(child, otherProps))}
     </ul>
   );
 }

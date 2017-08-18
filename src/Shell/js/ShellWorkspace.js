@@ -21,8 +21,7 @@ export default function ShellWorkspace({
       }
       href={href}
       selected={selected}
-      {...otherProps}
-    >
+      {...otherProps}>
       {label}
       {children}
     </a>

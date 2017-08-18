@@ -186,8 +186,7 @@ export default class Clock extends Component {
         aria-invalid={invalid}
         aria-readonly={readOnly}
         aria-required={required}
-        {...otherProps}
-      >
+        {...otherProps}>
         <Textfield
           ref={el => {this.hourRef = el; }}
           className="coral-Clock-hour"
@@ -202,8 +201,7 @@ export default class Clock extends Component {
           required={required}
           quiet={quiet}
           onChange={this.handleHourChange}
-          onBlur={this.handleHourBlur}
-        />
+          onBlur={this.handleHourBlur} />
         <span className="coral-Clock-divider">:</span>
         <Textfield
           ref={el => {this.minuteRef = el; }}
@@ -219,8 +217,7 @@ export default class Clock extends Component {
           required={required}
           quiet={quiet}
           onChange={this.handleMinuteChange}
-          onBlur={this.handleMinuteBlur}
-        />
+          onBlur={this.handleMinuteBlur} />
       </div>
     );
   }

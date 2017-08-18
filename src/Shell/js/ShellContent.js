@@ -15,8 +15,7 @@ export default function ShellContent({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </div>
   );

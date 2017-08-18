@@ -104,8 +104,7 @@ export default class TagList extends React.Component {
         aria-invalid={invalid}
         aria-required={required}
         onFocus={this.handleFocus}
-        onBlur={this.handleBlur}
-      >
+        onBlur={this.handleBlur}>
         {this.renderChildren()}
       </div>
     );

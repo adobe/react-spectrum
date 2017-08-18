@@ -69,7 +69,7 @@ export default class SelectList extends Component {
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
         onSelect={this.handleSelect.bind(this, option)}>
-          {option.label}
+        {option.label}
       </ListItem>
     ))
   )
@@ -101,7 +101,7 @@ export default class SelectList extends Component {
         aria-required={required}
         {...otherProps}
         className={classNames('coral3-SelectList', className)}>
-          {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
+        {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
       </List>
     );
   }

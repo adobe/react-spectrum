@@ -47,8 +47,7 @@ export default function Tag({
       tabIndex={!disabled && selected ? 0 : -1}
       aria-selected={!disabled && selected}
       aria-label={ariaLabel}
-      {...otherProps}
-    >
+      {...otherProps}>
       {
         closable &&
         <Button
@@ -62,16 +61,15 @@ export default function Tag({
           icon="close"
           disabled={disabled}
           square
-          onClick={!disabled && (e => {onClose(value || children, e); })}
-        />
+          onClick={!disabled && (e => {onClose(value || children, e); })} />
       }
       {
         avatar &&
-        <img className="coral-Tag-avatar" src={avatar}/>
+        <img className="coral-Tag-avatar" src={avatar} />
       }
       {
         icon &&
-        <Icon className="coral-Tag-icon" size="S" icon={icon}/>
+        <Icon className="coral-Tag-icon" size="S" icon={icon} />
       }
       <span className="coral-Tag-label">
         {childContent}

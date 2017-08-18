@@ -57,8 +57,7 @@ function render(props = {}, steps) {
   return (
     <StepList
       {...props}
-      onChange={action('onChange')}
-    >
+      onChange={action('onChange')}>
       {children}
     </StepList>
   );

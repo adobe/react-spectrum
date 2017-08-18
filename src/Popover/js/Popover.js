@@ -42,18 +42,17 @@ export default class Popover extends Component {
           )
         }
         {...otherProps}>
-          {
+        {
             title &&
               <DialogHeader
                 className="coral-Popover-header"
                 title={title}
                 variant={variant}
-                icon={icon}
-              />
+                icon={icon} />
           }
-          <div className="coral3-Popover-content">
-            {title ? <div className="u-coral-margin">{children}</div> : children}
-          </div>
+        <div className="coral3-Popover-content">
+          {title ? <div className="u-coral-margin">{children}</div> : children}
+        </div>
       </div>
     );
   }

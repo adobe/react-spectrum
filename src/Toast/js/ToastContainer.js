@@ -35,7 +35,7 @@ export class ToastContainer extends React.Component {
         transitionName="coral-Toast-slide"
         transitionEnterTimeout={TOAST_ANIMATION_TIME}
         transitionLeaveTimeout={TOAST_ANIMATION_TIME}>
-          {this.state.toasts.map((toast, i) =>
+        {this.state.toasts.map((toast, i) =>
             React.cloneElement(toast, {key: i, onClose: this.remove.bind(this, toast)})
           )}
       </CSSTransitionGroup>

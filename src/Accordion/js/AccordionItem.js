@@ -38,8 +38,7 @@ export default class AccordionItem extends Component {
             className
           )
         }
-        role="presentation"
-      >
+        role="presentation">
         <div
           id={this.headerId}
           className="coral3-Accordion-header"
@@ -49,8 +48,7 @@ export default class AccordionItem extends Component {
           aria-expanded={selected}
           aria-disabled="false"
           tabIndex="0"
-          onKeyPress={this.onHeaderKeyDown.bind(this)}
-        >
+          onKeyPress={this.onHeaderKeyDown.bind(this)}>
           <Icon icon={selected ? 'chevronDown' : 'chevronRight'} className="coral3-Accordion-icon" size="XS" />
           <span className="coral3-Accordion-label">{header}</span>
         </div>
@@ -59,8 +57,7 @@ export default class AccordionItem extends Component {
           role="tabpanel"
           aria-labelledby={this.headerId}
           aria-hidden={!selected}
-          className={classNames('coral3-Accordion-content', {'is-open': selected, 'is-closed': !selected})}
-        >
+          className={classNames('coral3-Accordion-content', {'is-open': selected, 'is-closed': !selected})}>
           {children}
         </div>
       </div>

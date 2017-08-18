@@ -64,7 +64,7 @@ export default class InlineEditor extends React.Component {
       <span
         className={classNames('coral-InlineEditor', 'coral-InlineEditor-label', className)}
         onDoubleClick={!disabled && this.startEditing}>
-          {this.state.value}
+        {this.state.value}
       </span>
     );
   }

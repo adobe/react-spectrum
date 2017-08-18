@@ -62,8 +62,7 @@ export default class Button extends Component {
           )
         }
         disabled={disabled}
-        onClick={this.onClick}
-      >
+        onClick={this.onClick}>
         {
           icon && <Icon size={iconSize} icon={icon} />
         }

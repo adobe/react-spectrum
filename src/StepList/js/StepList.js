@@ -28,8 +28,7 @@ export default function StepList({
       }
       disabled={interaction !== ON}
       aria-multiselectable={false}
-      childMappingFunction={(...args) => getChildProps(size, ...args)}
-    />
+      childMappingFunction={(...args) => getChildProps(size, ...args)} />
   );
 }
 

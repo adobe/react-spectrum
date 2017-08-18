@@ -60,8 +60,7 @@ function render(props = {}, children = 'This is a React Coral alert') {
   return (
     <Alert
       onClose={action('close')}
-      {...props}
-    >
+      {...props}>
       {children}
     </Alert>
   );

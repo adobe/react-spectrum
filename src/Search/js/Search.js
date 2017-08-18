@@ -98,8 +98,7 @@ export default class Search extends Component {
             {'is-disabled': disabled},
             className
           )
-        }
-      >
+        }>
         {icon !== '' &&
           <Icon className="coral-DecoratedTextfield-icon" icon={icon || 'search'} size="S" />
         }
@@ -111,8 +110,7 @@ export default class Search extends Component {
           disabled={disabled}
           {...otherProps}
           onKeyDown={this.handleTextKeyDown}
-          onChange={this.handleTextChange}
-        />
+          onChange={this.handleTextChange} />
         {
           clearable && !emptyText &&
             <Button
@@ -122,8 +120,7 @@ export default class Search extends Component {
               square
               className="coral-DecoratedTextfield-button"
               disabled={disabled}
-              onClick={this.handleClearText}
-            />
+              onClick={this.handleClearText} />
         }
       </div>
     );

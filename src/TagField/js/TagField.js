@@ -67,14 +67,14 @@ export default class TagField extends React.Component {
         onSelect={this.onSelect}
         value={value}
         onChange={this.onTextfieldChange}>
-          {tags.map((tag, i) =>
-            <Tag key={i} size="S" onClose={this.onRemove} closable disabled={disabled}>{tag}</Tag>)
+        {tags.map((tag, i) =>
+          <Tag key={i} size="S" onClose={this.onRemove} closable disabled={disabled}>{tag}</Tag>)
           }
-          <Textfield
-            className="coral-TagField-input"
-            autocompleteInput
-            disabled={disabled}
-            {...props} />
+        <Textfield
+          className="coral-TagField-input"
+          autocompleteInput
+          disabled={disabled}
+          {...props} />
       </Autocomplete>
     );
   }

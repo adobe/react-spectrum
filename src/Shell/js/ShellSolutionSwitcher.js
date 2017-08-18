@@ -21,19 +21,16 @@ export default function ShellSolutionSwitcher({
           className="coral3-Shell-menu-button"
           variant="minimal"
           icon="apps"
-          square
-        />
+          square />
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       <div
         className={
           classNames(
             'coral3-Shell-solutionSwitcher',
             className
           )
-        }
-      >
+        }>
         <div className="coral3-Shell-solutionSwitcher-content">
           {children}
         </div>

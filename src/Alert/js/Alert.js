@@ -25,13 +25,11 @@ export default function Alert({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       <Icon
         className="coral3-Alert-typeIcon"
         icon={getVariantIcon(variant)}
-        size="XS"
-      />
+        size="XS" />
       {
         closable &&
           <Button
@@ -41,8 +39,7 @@ export default function Alert({
             size="M"
             icon="close"
             iconSize="XS"
-            onClick={onClose}
-          />
+            onClick={onClose} />
       }
       <div className="coral3-Alert-header">{header}</div>
       <div className="coral3-Alert-content">{children}</div>
