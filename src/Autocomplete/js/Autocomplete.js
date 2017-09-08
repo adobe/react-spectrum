@@ -169,6 +169,7 @@ export default class Autocomplete extends React.Component {
           <Menu className="coral-Autocomplete-menu" onSelect={this.onSelect}>
             {results.map((result, i) =>
               (<MenuItem
+                key={`item-${i}`}
                 value={result}
                 icon={result.icon}
                 focused={selectedIndex === i}
