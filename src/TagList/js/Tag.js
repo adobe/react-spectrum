@@ -53,6 +53,7 @@ export default function Tag({
         <Button
           className="coral-Tag-removeButton"
           role="button"
+          type="button"
           tabIndex="-1"
           title="Remove"
           variant="minimal"
