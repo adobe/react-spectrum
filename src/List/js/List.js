@@ -6,10 +6,6 @@ const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + '.is-selected';
 
 export default class List extends Component {
-  static defaultProps = {
-    onSelect: () => {},
-  };
-
   getItems() {
     return Array.from(this.list.querySelectorAll(LIST_ITEM_SELECTOR));
   }
@@ -56,7 +52,6 @@ export default class List extends Component {
     const {
       className,
       children,
-      onSelect,
       role = 'listbox',
       ...otherProps
     } = this.props;
@@ -74,7 +69,6 @@ export default class List extends Component {
         {...otherProps}>
         {React.Children.map(children, child => (
           React.cloneElement(child, {
-            onSelect,
             onFocusNext: this.handleFocusNext,
             onFocusPrevious: this.handleFocusPrevious,
             onFocusFirst: this.handleFocusFirst,
