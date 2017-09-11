@@ -55,6 +55,7 @@ export default function Tag({
       {closable &&
         <Button
           className="spectrum-Tag-removeButton"
+          type="button"
           variant="icon"
           title="Remove"
           onClick={!disabled && (e => {onClose(value || children, e); })} />
