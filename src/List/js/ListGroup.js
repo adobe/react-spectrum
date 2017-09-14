@@ -4,7 +4,7 @@ import React from 'react';
 export default function ListGroup({label, className, children, ...otherProps}) {
   return (
     <ul
-      className={classNames('coral-BasicList-group', className)}
+      className={classNames('react-spectrum-List-group', className)}
       label={label}
       role="group"
       aria-label={label}>

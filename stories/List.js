@@ -2,6 +2,7 @@ import {List, ListGroup, ListItem} from '../src/List';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
+import './List.styl';
 
 storiesOf('List', module)
   .addDecorator(story => (
@@ -22,6 +23,7 @@ storiesOf('List', module)
           <ListItem>Test</ListItem>
           <ListItem>Hi</ListItem>
         </ListGroup>
+        <ListItem>No group Item looks the same</ListItem>
       </List>
     ),
     {inline: true}

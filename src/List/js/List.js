@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
-const LIST_ITEM_SELECTOR = '.coral-BasicList-item:not(.is-disabled)';
+const LIST_ITEM_SELECTOR = '.spectrum-Flyout-option';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + '.is-selected';
 
 export default class List extends Component {
@@ -61,7 +61,8 @@ export default class List extends Component {
         ref={l => this.list = l}
         className={
           classNames(
-            'coral-BasicList',
+            'spectrum-Flyout',
+            'is-open',
             className
           )
         }

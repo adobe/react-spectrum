@@ -26,8 +26,6 @@ export default class ListItem extends Component {
   handleMouseEnter = e => {
     if (this.props.onMouseEnter) {
       this.props.onMouseEnter(e);
-    } else {
-      e.target.focus();
     }
   }
 
@@ -69,7 +67,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'coral-BasicList-item',
+            'spectrum-Flyout-option',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -78,7 +76,7 @@ export default class ListItem extends Component {
             className
           )
         }
-        onKeyDown={!disabled && interpretKeyboardEvent.bind(this)}
+        onKeyDown={interpretKeyboardEvent.bind(this)}
         onMouseEnter={disabled ? null : this.handleMouseEnter}
         onClick={!disabled && this.handleClick}
         tabIndex="0"
@@ -88,9 +86,9 @@ export default class ListItem extends Component {
         aria-disabled={disabled}
         {...otherProps}>
         {icon &&
-          <Icon className="coral-BasicList-item-icon" icon={icon} size={iconSize} />
+          <Icon className="react-spectrum-List-option-icon" icon={icon} size={iconSize} />
         }
-        <div className="coral-BasicList-item-content">
+        <div className="react-spectrum-List-option-content">
           {label || children}
         </div>
       </li>
