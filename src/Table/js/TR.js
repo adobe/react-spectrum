@@ -10,7 +10,7 @@ export default function TR({
     <tr
       className={
         classNames(
-          'coral-Table-row',
+          'spectrum-Table-row',
           className
         )
       }

@@ -10,7 +10,7 @@ export default function TH({
     <th
       className={
         classNames(
-          'coral-Table-headerCell',
+          'spectrum-Table-headCell',
           className
         )
       }

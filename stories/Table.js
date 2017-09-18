@@ -15,13 +15,8 @@ storiesOf('Table', module)
     {inline: true}
   )
   .addWithInfo(
-    'hover: true',
-    () => render({hover: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'bordered: true',
-    () => render({bordered: true}),
+    'quiet: true',
+    () => render({quiet: true}),
     {inline: true}
   );
 
@@ -29,11 +24,9 @@ function render(props = {}) {
   return (
     <Table {...props}>
       <THead>
-        <TR>
-          <TH>Pet Name</TH>
-          <TH>Type</TH>
-          <TH>Good/Bad</TH>
-        </TR>
+        <TH>Pet Name</TH>
+        <TH>Type</TH>
+        <TH>Good/Bad</TH>
       </THead>
       <TBody>
         <TR>

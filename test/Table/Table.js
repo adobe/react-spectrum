@@ -4,14 +4,9 @@ import {shallow} from 'enzyme';
 import {Table} from '../../src/Table';
 
 describe('Table', () => {
-  it('supports hover', () => {
-    const tree = shallow(render({hover: true}));
-    assert.equal(tree.hasClass('coral-Table--hover'), true);
-  });
-
-  it('supports bordered', () => {
-    const tree = shallow(render({bordered: true}));
-    assert.equal(tree.hasClass('coral-Table--bordered'), true);
+  it('supports quiet', () => {
+    const tree = shallow(render({quiet: true}));
+    assert.equal(tree.hasClass('spectrum-Table--quiet'), true);
   });
 
   it('supports additional classNames', () => {

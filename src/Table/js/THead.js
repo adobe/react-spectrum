@@ -10,12 +10,12 @@ export default function THead({
     <thead
       className={
         classNames(
-          'coral-Table-head',
+          'spectrum-Table-head',
           className
         )
       }
       {...otherProps}>
-      {children}
+      <tr>{children}</tr>
     </thead>
   );
 }
