@@ -67,7 +67,6 @@ export default class TabListBase extends Component {
     return {
       ...this.getMappedChildProps(child, index),
       selected,
-      tabIndex: index,
       onClick: this.getChildOnClick(child, index)
     };
   }

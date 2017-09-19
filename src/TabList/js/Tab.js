@@ -13,8 +13,7 @@ export default class Tab extends Component {
     id: createId(),
     invalid: false,
     disabled: false,
-    selected: false,
-    tabIndex: '0'
+    selected: false
   };
 
   handleClick = e => {
