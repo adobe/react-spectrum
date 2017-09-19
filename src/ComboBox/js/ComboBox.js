@@ -41,17 +41,15 @@ export default class ComboBox extends React.Component {
 
     return (
       <Autocomplete
-        className={classNames('coral-ComboBox', 'coral-InputGroup', 'spectrum-DecoratedTextfield', {
-          'coral-InputGroup--quiet': quiet,
-          'is-disabled': disabled,
-          'is-invalid': invalid
+        className={classNames('spectrum-ComboBox', 'spectrum-InputGroup', 'spectrum-DecoratedTextfield', {
+          'spectrum-InputGroup--quiet': quiet
         })}
         ref={a => this.autocomplete = a}
         getCompletions={this.getCompletions}
         value={value}
         onChange={onChange}>
           <Textfield
-            className={classNames('coral-InputGroup-input', 'coral-ComboBox-input', {'spectrum-DecoratedTextfield-input': icon})}
+            className={classNames('spectrum-InputGroup-input', 'spectrum-ComboBox-input', {'spectrum-DecoratedTextfield-input': icon})}
             {...props}
             ref={t => this.textfield = t}
             disabled={disabled}
@@ -65,12 +63,14 @@ export default class ComboBox extends React.Component {
           }
 
           <Button
-            className="coral-InputGroup-button"
-            square
+            className="spectrum-InputGroup-button"
+            type="button"
+            variant="dropdown"
             onClick={this.onButtonClick}
             onMouseDown={e => e.preventDefault()}
             disabled={disabled}
             required={required}
+            invalid={invalid}
             quiet={quiet}>
               <Icon icon="chevronDown" size="XS" />
           </Button>

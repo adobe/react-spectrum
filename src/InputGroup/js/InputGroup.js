@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React from 'react';
-
 import '../style/index.styl';
 
 export default function InputGroup({quiet, focused, invalid, disabled, className, children, ...otherProps}) {
@@ -10,9 +9,9 @@ export default function InputGroup({quiet, focused, invalid, disabled, className
       aria-invalid={invalid}
       className={
         classNames(
-          'coral-InputGroup',
+          'spectrum-InputGroup',
           {
-            'coral-InputGroup--quiet': quiet,
+            'spectrum-InputGroup--quiet': quiet,
             'is-focused': focused,
             'is-invalid': invalid,
             'is-disabled': disabled
@@ -20,8 +19,7 @@ export default function InputGroup({quiet, focused, invalid, disabled, className
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </div>
   );
