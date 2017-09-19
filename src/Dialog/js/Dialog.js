@@ -64,7 +64,6 @@ export default class Dialog extends Component {
           },
           className
         )}>
-        <div className="spectrum-Dialog-wrapper">
           {title && <DialogHeader variant={variant} title={title} />}
           <DialogContent>
             {
@@ -74,7 +73,6 @@ export default class Dialog extends Component {
             }
           </DialogContent>
           {confirmLabel && <DialogFooter {...this.props} onConfirm={this.onConfirm.bind(this)} />}
-        </div>
       </div>
     );
   }
