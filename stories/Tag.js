@@ -15,11 +15,6 @@ storiesOf('Tag', module)
     {inline: true}
   )
   .addWithInfo(
-    'color: blue',
-    () => render({color: 'blue'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'avatar',
     () => render({avatar: 'https://www.botlibre.com/media/a12832214.png', closable: true}),
     {inline: true}
@@ -27,16 +22,6 @@ storiesOf('Tag', module)
   .addWithInfo(
     'icon',
     () => render({icon: 'camera'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: M',
-    () => render({size: 'M'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: S',
-    () => render({size: 'S'}),
     {inline: true}
   )
   .addWithInfo(
