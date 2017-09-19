@@ -11,3 +11,4 @@ Makefile
 yarn.lock
 bin
 dist
+.babelrc
