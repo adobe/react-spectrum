@@ -62,7 +62,7 @@ export default class Select extends React.Component {
   render() {
     const {
       options = [],
-      variant,
+      quiet,
       onFocus,
       onBlur,
       disabled = false,
@@ -83,8 +83,8 @@ export default class Select extends React.Component {
 
     return (
       <Dropdown
-        className={classNames('coral3-Select', {
-          'coral3-Select--quiet': variant === 'quiet',
+        className={classNames('spectrum-Dropdown', {
+          'spectrum-Dropdown--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid
         }, className)}
@@ -96,26 +96,35 @@ export default class Select extends React.Component {
         aria-multiselectable={multiple}
         aria-disabled={disabled}
         aria-invalid={invalid}>
-          <Button
-            type="button"
-            ref={b => this.button = b}
-            onKeyDown={this.onKeyDown}
-            disabled={disabled}>
-            <span className="coral3-Select-label">{label}</span>
-            <Icon icon="chevronDown" size="XS" className="coral3-Select-openIcon" />
-          </Button>
-          {options.length > 0 &&
-            <SelectMenu
-              dropdownMenu
-              options={options}
-              value={value}
-              multiple={multiple}
-              disabled={disabled}
-              invalid={invalid}
-              required={required}
-              className="coral-Menu coral3-Select-selectList"
-              autoFocus />
-          }
+        <Button
+          className="spectrum-Dropdown-trigger"
+          type="button"
+          variant="dropdown"
+          quiet={quiet}
+          disabled={disabled}
+          invalid={invalid}
+          ref={b => this.button = b}
+          onKeyDown={this.onKeyDown}>
+          <span className="spectrum-Dropdown-trigger-container">
+            <span className={classNames("spectrum-Dropdown-trigger-label", {'is-placeholder': label === placeholder})}>{label}</span>
+            <span className="spectrum-Dropdown-icon-container">
+              {invalid && <Icon size="S" icon="alert" className="spectrum-Icon" />}
+              <span className="spectrum-Icon spectrum-Dropdown-open-icon" />
+            </span>
+          </span>
+        </Button>
+        {options.length > 0 &&
+          <SelectMenu
+            dropdownMenu
+            options={options}
+            value={value}
+            multiple={multiple}
+            disabled={disabled}
+            invalid={invalid}
+            required={required}
+            className="coral-Menu coral3-Select-selectList"
+            autoFocus />
+        }
       </Dropdown>
     );
   }
