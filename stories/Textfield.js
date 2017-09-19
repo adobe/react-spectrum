@@ -52,7 +52,6 @@ function render(props = {}) {
       onChange={action('change')}
       onFocus={action('focus')}
       onBlur={action('blur')}
-      {...props}
-    />
+      {...props} />
   );
 }

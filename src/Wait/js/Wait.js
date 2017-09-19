@@ -23,8 +23,7 @@ export default function Wait({
           className
         )
       }
-      {...otherProps}
-    />
+      {...otherProps} />
   );
 }
 

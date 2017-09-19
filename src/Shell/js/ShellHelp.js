@@ -72,21 +72,20 @@ export default class ShellHelp extends Component {
         {
           numTotalResults !== 0 && searchResults && searchResults.length
           ? searchResults.map(({tags, title, href}, index) => (
-              <ListItem
-                key={href}
-                element="a"
-                href={href}
-                className="coral-AnchorList-item"
-                target="undefined"
-                label={
-                  <span>
-                    {title}
-                    <div className="coral3-Shell-help-result-description">
-                      {tags.join(separator)}
-                    </div>
-                  </span>
-                }
-              />
+            <ListItem
+              key={href}
+              element="a"
+              href={href}
+              className="coral-AnchorList-item"
+              target="undefined"
+              label={
+                <span>
+                  {title}
+                  <div className="coral3-Shell-help-result-description">
+                    {tags.join(separator)}
+                  </div>
+                </span>
+                } />
             )).concat(
               <ListItem
                 element="a"
@@ -94,16 +93,15 @@ export default class ShellHelp extends Component {
                 className="coral-AnchorList-item spectrum-Link coral3-Shell-help-allResults"
                 href={`${moreSearchResultsUrl}?q=${searchTerm}`}
                 label={`See all ${numTotalResults} results`}
-                target="undefined"
-              />
+                target="undefined" />
             )
           : <div className="coral3-Shell-help-resultMessage">
-              <div className="coral3-Shell-help-resultMessage-container">
-                <div className="coral-Heading--1 coral3-Shell-help-resultMessage-heading">
+            <div className="coral3-Shell-help-resultMessage-container">
+              <div className="coral-Heading--1 coral3-Shell-help-resultMessage-heading">
                   No results found
                 </div>
-              </div>
             </div>
+          </div>
         }
       </List>
     );
@@ -124,8 +122,7 @@ export default class ShellHelp extends Component {
               className="coral-AnchorList-item coral3-Shell-help-item"
               icon={icon}
               iconSize="S"
-              label={label}
-            />
+              label={label} />
           ))
         }
       </List>
@@ -148,13 +145,11 @@ export default class ShellHelp extends Component {
             className="coral3-Shell-menu-button"
             variant="minimal"
             icon="helpCircle"
-            square
-          />
+            square />
         }
         onVisible={this.handleVisible}
         onHidden={this.props.onHide}
-        {...otherProps}
-      >
+        {...otherProps}>
         <div
           ref={el => {this.contentRef = el; }}
           className={
@@ -163,24 +158,22 @@ export default class ShellHelp extends Component {
               'coral-AnchorList coral3-Shell-help',
               className
             )
-          }
-        >
+          }>
           <label className="u-coral-screenReaderOnly">Search Help</label>
           <Search
             className="coral3-Shell-help-search"
             placeholder="Search Help"
             onSubmit={this.handleSearch}
             onClear={this.handleClear}
-            quiet
-          />
+            quiet />
           {
             loading
             ? <div className="coral3-Shell-help-loading">
-                <Wait className="coral3-Shell-help-loading-wait" />
-                <span className="coral-Heading--2 coral3-Shell-help-loading-info">
+              <Wait className="coral3-Shell-help-loading-wait" />
+              <span className="coral-Heading--2 coral3-Shell-help-loading-info">
                   Searching Help...
                 </span>
-              </div>
+            </div>
             : this.renderResults()
           }
         </div>

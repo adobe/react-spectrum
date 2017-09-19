@@ -26,19 +26,16 @@ export default function ShellUserProfile({
           variant="minimal"
           icon={avatarUrl}
           iconSize="M"
-          square
-        />
+          square />
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       <div
         className={
           classNames(
             'coral3-Shell-user',
             className
           )
-        }
-      >
+        }>
         <div className="coral3-Shell-user-container">
           <div className="coral3-Shell-user-image">
             <Icon icon={avatarUrl} size="L" className="coral3-Shell-user-avatar is-image" />

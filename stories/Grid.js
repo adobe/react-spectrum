@@ -82,30 +82,30 @@ storiesOf('Grid', module)
     () => (
       <Grid variant="fixed">
         <GridRow>
-          <GridColumn size={[12,3,2,1]}>
-            <div style={boxRow}/>
+          <GridColumn size={[12, 3, 2, 1]}>
+            <div style={boxRow} />
           </GridColumn>
-          <GridColumn size={[6,6,8,10]}>
-            <div style={boxRow}/>
+          <GridColumn size={[6, 6, 8, 10]}>
+            <div style={boxRow} />
           </GridColumn>
-          <GridColumn size={[6,3,2,1]}>
-            <div style={boxRow}/>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn size={[12,3,2,1]}>
-            <div style={boxRow}/>
-          </GridColumn>
-          <GridColumn size={[12,9,10,11]}>
-            <div style={boxRow}/>
+          <GridColumn size={[6, 3, 2, 1]}>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn size={[10,6,8,10]}>
-            <div style={boxRow}/>
+          <GridColumn size={[12, 3, 2, 1]}>
+            <div style={boxRow} />
           </GridColumn>
-          <GridColumn size={[2,6,4,2]}>
-            <div style={boxRow}/>
+          <GridColumn size={[12, 9, 10, 11]}>
+            <div style={boxRow} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={[10, 6, 8, 10]}>
+            <div style={boxRow} />
+          </GridColumn>
+          <GridColumn size={[2, 6, 4, 2]}>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -118,55 +118,55 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow>
           <GridColumn size={12}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={1}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={11}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={2}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={10}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={3}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={9}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={4}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={8}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={5}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={7}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={6}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn size={6}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -179,57 +179,57 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow>
           <GridColumn size={1} offsetSize={11}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={2} offsetSize={10}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={3} offsetSize={9}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={4} offsetSize={8}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={5} offsetSize={7}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={6} offsetSize={6}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={7} offsetSize={5}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={8} offsetSize={4}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={9} offsetSize={3}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={10} offsetSize={2}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn size={11} offsetSize={1}>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -242,21 +242,21 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow>
           <GridColumn>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
           <GridColumn>
-            <div style={boxRow}/>
+            <div style={boxRow} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -270,42 +270,42 @@ storiesOf('Grid', module)
         <GridRow>
           <GridColumn size={7}>
             <div style={box}>
-            <GridRow>
-              <GridColumn size={9}>
-                <GridRow>
-                  <GridColumn size={4}>
-                    <div style={boxNested}/>
-                  </GridColumn>
-                  <GridColumn size={8}>
-                    <div style={boxNested}/>
-                  </GridColumn>
-                </GridRow>
-              </GridColumn>
-              <GridColumn size={3}>
-                <GridRow>
-                  <GridColumn>
-                    <div style={boxNested}/>
-                  </GridColumn>
-                </GridRow>
-              </GridColumn>
-            </GridRow>
+              <GridRow>
+                <GridColumn size={9}>
+                  <GridRow>
+                    <GridColumn size={4}>
+                      <div style={boxNested} />
+                    </GridColumn>
+                    <GridColumn size={8}>
+                      <div style={boxNested} />
+                    </GridColumn>
+                  </GridRow>
+                </GridColumn>
+                <GridColumn size={3}>
+                  <GridRow>
+                    <GridColumn>
+                      <div style={boxNested} />
+                    </GridColumn>
+                  </GridRow>
+                </GridColumn>
+              </GridRow>
             </div>
           </GridColumn>
 
           <GridColumn size={5}>
             <div style={box}>
-            <GridRow>
-              <GridColumn size={12}>
-                <GridRow>
-                  <GridColumn size={6}>
-                    <div style={boxNested}/>
-                  </GridColumn>
-                  <GridColumn size={6}>
-                    <div style={boxNested}/>
-                  </GridColumn>
-                </GridRow>
-              </GridColumn>
-            </GridRow>
+              <GridRow>
+                <GridColumn size={12}>
+                  <GridRow>
+                    <GridColumn size={6}>
+                      <div style={boxNested} />
+                    </GridColumn>
+                    <GridColumn size={6}>
+                      <div style={boxNested} />
+                    </GridColumn>
+                  </GridRow>
+                </GridColumn>
+              </GridRow>
             </div>
           </GridColumn>
         </GridRow>
@@ -322,7 +322,7 @@ storiesOf('Grid', module)
             <div style={box}>
               <GridRow align={{xs: 'start', sm: 'start', md: 'start', lg: 'start', xl: 'start'}}>
                 <GridColumn size={6}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
               </GridRow>
             </div>
@@ -341,7 +341,7 @@ storiesOf('Grid', module)
             <div style={box}>
               <GridRow align={{xs: 'center', sm: 'center', md: 'center', lg: 'center', xl: 'center'}}>
                 <GridColumn size={6}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
               </GridRow>
             </div>
@@ -360,7 +360,7 @@ storiesOf('Grid', module)
             <div style={box}>
               <GridRow align="end">
                 <GridColumn size={6}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
               </GridRow>
             </div>
@@ -376,10 +376,10 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow valign="top">
           <GridColumn size={6}>
-            <div style={boxLarge}/>
+            <div style={boxLarge} />
           </GridColumn>
           <GridColumn size={6}>
-            <div style={box}/>
+            <div style={box} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -392,10 +392,10 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow valign="middle">
           <GridColumn size={6}>
-            <div style={boxLarge}/>
+            <div style={boxLarge} />
           </GridColumn>
           <GridColumn size={6}>
-            <div style={box}/>
+            <div style={box} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -408,10 +408,10 @@ storiesOf('Grid', module)
       <Grid>
         <GridRow valign="bottom">
           <GridColumn size={6}>
-            <div style={boxLarge}/>
+            <div style={boxLarge} />
           </GridColumn>
           <GridColumn size={6}>
-            <div style={box}/>
+            <div style={box} />
           </GridColumn>
         </GridRow>
       </Grid>
@@ -427,13 +427,13 @@ storiesOf('Grid', module)
             <div style={box}>
               <GridRow distribution="around">
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
               </GridRow>
             </div>
@@ -452,16 +452,16 @@ storiesOf('Grid', module)
             <div style={box}>
               <GridRow distribution="between">
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
                 <GridColumn size={2}>
-                  <div style={boxNested}/>
+                  <div style={boxNested} />
                 </GridColumn>
               </GridRow>
-             </div>
+            </div>
           </GridColumn>
         </GridRow>
       </Grid>

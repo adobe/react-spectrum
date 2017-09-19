@@ -48,32 +48,32 @@ export default class ComboBox extends React.Component {
         getCompletions={this.getCompletions}
         value={value}
         onChange={onChange}>
-          <Textfield
-            className={classNames('spectrum-InputGroup-input', 'spectrum-ComboBox-input', {'spectrum-DecoratedTextfield-input': icon})}
-            {...props}
-            ref={t => this.textfield = t}
-            disabled={disabled}
-            required={required}
-            invalid={invalid}
-            autocompleteInput
-            quiet={quiet} />
+        <Textfield
+          className={classNames('spectrum-InputGroup-input', 'spectrum-ComboBox-input', {'spectrum-DecoratedTextfield-input': icon})}
+          {...props}
+          ref={t => this.textfield = t}
+          disabled={disabled}
+          required={required}
+          invalid={invalid}
+          autocompleteInput
+          quiet={quiet} />
 
-          {icon &&
-            <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="XS" />
+        {icon &&
+        <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="XS" />
           }
 
-          <Button
-            className="spectrum-InputGroup-button"
-            type="button"
-            variant="dropdown"
-            onClick={this.onButtonClick}
-            onMouseDown={e => e.preventDefault()}
-            disabled={disabled}
-            required={required}
-            invalid={invalid}
-            quiet={quiet}>
-              <Icon icon="chevronDown" size="XS" />
-          </Button>
+        <Button
+          className="spectrum-InputGroup-button"
+          type="button"
+          variant="dropdown"
+          onClick={this.onButtonClick}
+          onMouseDown={e => e.preventDefault()}
+          disabled={disabled}
+          required={required}
+          invalid={invalid}
+          quiet={quiet}>
+          <Icon icon="chevronDown" size="XS" />
+        </Button>
       </Autocomplete>
     );
   }

@@ -99,8 +99,7 @@ export default class Search extends Component {
             {'is-disabled': disabled},
             className
           )
-        }
-      >
+        }>
         <Textfield
           ref={el => {this.inputRef = el; }}
           className={classNames('spectrum-Search-input', {'spectrum-DecoratedTextfield-input': icon})}
@@ -120,8 +119,7 @@ export default class Search extends Component {
               variant="icon"
               className="spectrum-Search-clear"
               disabled={disabled}
-              onClick={this.handleClearText}
-            />
+              onClick={this.handleClearText} />
         }
       </div>
     );

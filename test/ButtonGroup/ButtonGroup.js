@@ -6,12 +6,12 @@ import {shallow} from 'enzyme';
 
 const defaultProps = {
   children: [
-    <Button label="React" value="react" icon="checkCircle"/>,
-    <Button label="Add" value="add" icon="add"/>,
-    <Button label="Delete" value="delete" icon="delete" disabled/>,
-    <Button label="Bell" value="bell" icon="bell"/>,
-    <Button label="Camera" value="camera" icon="camera"/>,
-    <Button label="Undo" value="undo" icon="undo" readOnly/>
+    <Button label="React" value="react" icon="checkCircle" />,
+    <Button label="Add" value="add" icon="add" />,
+    <Button label="Delete" value="delete" icon="delete" disabled />,
+    <Button label="Bell" value="bell" icon="bell" />,
+    <Button label="Camera" value="camera" icon="camera" />,
+    <Button label="Undo" value="undo" icon="undo" readOnly />
   ]
 };
 
@@ -28,7 +28,7 @@ describe('ButtonGroup', () => {
   });
 
   it('supports numerous buttons', () => {
-    const tree = shallow(<ButtonGroup {...defaultProps}/>);
+    const tree = shallow(<ButtonGroup {...defaultProps} />);
     assert.equal(tree.find(Button).length, 6);
   });
 
@@ -61,7 +61,7 @@ describe('ButtonGroup', () => {
   });
 
   it('supports readOnly', () => {
-    const tree = shallow(<ButtonGroup {...defaultProps} readOnly/>);
+    const tree = shallow(<ButtonGroup {...defaultProps} readOnly />);
     tree.find(Button).first().simulate('click');
     assert.equal(tree.find({selected: true}).length, 0);
   });
@@ -73,8 +73,7 @@ describe('ButtonGroup', () => {
         onChange={(value) => {
           assert.deepEqual(value, 'react');
           done();
-        }}
-      />
+        }} />
     );
     tree.find(Button).first().simulate('click');
   });

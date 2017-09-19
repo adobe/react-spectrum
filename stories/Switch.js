@@ -44,7 +44,6 @@ function render(props = {}) {
   return (
     <Switch
       onChange={action('change')}
-      {...props}
-    />
+      {...props} />
   );
 }

@@ -168,14 +168,14 @@ export default class Autocomplete extends React.Component {
         {showDropdown && results.length > 0 &&
           <Menu className="coral-Autocomplete-menu" onSelect={this.onSelect}>
             {results.map((result, i) =>
-              <MenuItem
+              (<MenuItem
                 value={result}
                 icon={result.icon}
                 focused={selectedIndex === i}
                 onMouseEnter={this.onMouseEnter.bind(this, i)}
                 onMouseDown={e => e.preventDefault()}>
-                  {typeof result === 'string' ? result : result.label}
-              </MenuItem>
+                {typeof result === 'string' ? result : result.label}
+              </MenuItem>)
             )}
           </Menu>
         }

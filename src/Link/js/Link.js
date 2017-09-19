@@ -17,8 +17,7 @@ export default function Link({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </a>
   );

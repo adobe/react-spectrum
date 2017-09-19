@@ -19,8 +19,7 @@ export default function Radio({
       inputClassName="spectrum-Radio-input"
       markClassName="spectrum-Radio-checkmark"
       labelClassName="spectrum-Radio-label"
-      {...otherProps}
-    />
+      {...otherProps} />
   );
 }
 

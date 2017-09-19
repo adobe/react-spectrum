@@ -14,14 +14,14 @@ export default class ModalContainer {
 
     let modal = (
       <Modal
-        show={true}
+        show
         onHide={hide}
         backdropClassName="spectrum-Underlay"
         key={key}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}
         backdropTransition={OpenTransition}>
-          {cloneElement(content, {onClose: hide})}
+        {cloneElement(content, {onClose: hide})}
       </Modal>
     );
 

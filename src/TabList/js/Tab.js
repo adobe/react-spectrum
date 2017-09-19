@@ -33,7 +33,6 @@ export default class Tab extends Component {
       disabled,
       invalid,
       icon,
-      tabIndex,
       ...otherProps
     } = this.props;
 
@@ -58,8 +57,7 @@ export default class Tab extends Component {
         aria-invalid={invalid}
         aria-selected={selected}
         aria-disabled={disabled}
-        onClick={this.handleClick}
-      >
+        onClick={this.handleClick}>
         {icon && <Icon icon={icon} size="S" className="spectrum-Tab-icon" />}
         {(label || children) && <span className="spectrum-Tab-label">{label || children}</span>}
       </div>

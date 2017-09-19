@@ -31,8 +31,7 @@ function render({selected, ...props} = {}) {
   return (
     <ShellOrgSwitcher
       onOrgChange={action('org-change')}
-      {...props}
-    >
+      {...props}>
       <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
       <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
       <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />

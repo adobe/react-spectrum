@@ -318,8 +318,8 @@ export default class Calendar extends Component {
         key={date.format('MM/Y')}
         role="presentation"
         className="spectrum-Calendar-table">
-          {this.renderTableHeader()}
-          {this.renderTableBody(date)}
+        {this.renderTableHeader()}
+        {this.renderTableBody(date)}
       </table>
     );
   }
@@ -339,11 +339,11 @@ export default class Calendar extends Component {
                   role="columnheader"
                   scope="col"
                   className="spectrum-Calendar-tableCell">
-                    <abbr
-                      className="spectrum-Calendar-dayOfWeek"
-                      title={dayMoment.format('dddd')}>
-                        {dayMoment.format('dd')}
-                    </abbr>
+                  <abbr
+                    className="spectrum-Calendar-dayOfWeek"
+                    title={dayMoment.format('dddd')}>
+                    {dayMoment.format('dd')}
+                  </abbr>
                 </th>
               );
             })
@@ -394,8 +394,7 @@ export default class Calendar extends Component {
                       isRangeEnd={isRangeEnd}
                       focused={isFocused && dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
                       onClick={this.handleDayClick}
-                      onHighlight={this.onHighlight}
-                    />
+                      onHighlight={this.onHighlight} />
                   );
                 })
               }
@@ -436,45 +435,45 @@ export default class Calendar extends Component {
         aria-invalid={invalid}
         aria-disabled={disabled}
         {...otherProps}>
-          <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
-          <div className="spectrum-Calendar-header">
-            <h2
-              className="spectrum-Heading spectrum-Calendar-heading"
-              role="heading"
-              aria-live="assertive"
-              aria-atomic="true">
-                {currentMonth.format(headerFormat)}
-            </h2>
-            <Button
-              className="spectrum-Calendar-prevMonth"
-              variant="icon"
-              aria-label="Previous"
-              title="Previous"
-              disabled={disabled}
-              square
-              onClick={this.handleClickPrevious} />
-            <Button
-              className="spectrum-Calendar-nextMonth"
-              variant="icon"
-              aria-label="Next"
-              title="Next"
-              disabled={disabled}
-              square
-              onClick={this.handleClickNext} />
-          </div>
-          <div
-            ref={el => {this.calendarBody = el; }}
-            className="spectrum-Calendar-body"
-            role="grid"
-            tabIndex={disabled ? null : '0'}
-            aria-readonly="true"
-            aria-disabled={disabled}
-            aria-activedescendant={focusedDate && this.generateDateId(focusedDate)}
-            onKeyDown={this.handleKeyDown}
-            onFocus={this.onFocus}
-            onBlur={this.onBlur}>
-              {this.renderTable(currentMonth)}
-          </div>
+        <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
+        <div className="spectrum-Calendar-header">
+          <h2
+            className="spectrum-Heading spectrum-Calendar-heading"
+            role="heading"
+            aria-live="assertive"
+            aria-atomic="true">
+            {currentMonth.format(headerFormat)}
+          </h2>
+          <Button
+            className="spectrum-Calendar-prevMonth"
+            variant="icon"
+            aria-label="Previous"
+            title="Previous"
+            disabled={disabled}
+            square
+            onClick={this.handleClickPrevious} />
+          <Button
+            className="spectrum-Calendar-nextMonth"
+            variant="icon"
+            aria-label="Next"
+            title="Next"
+            disabled={disabled}
+            square
+            onClick={this.handleClickNext} />
+        </div>
+        <div
+          ref={el => {this.calendarBody = el; }}
+          className="spectrum-Calendar-body"
+          role="grid"
+          tabIndex={disabled ? null : '0'}
+          aria-readonly="true"
+          aria-disabled={disabled}
+          aria-activedescendant={focusedDate && this.generateDateId(focusedDate)}
+          onKeyDown={this.handleKeyDown}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}>
+          {this.renderTable(currentMonth)}
+        </div>
       </div>
     );
   }
@@ -515,20 +514,20 @@ const CalendarCell = function CalendarCell({
       title={title}
       onClick={!disabled && (e => {onClick(e, date.clone()); })}
       onMouseEnter={(e => { !disabled && onHighlight(e, date.clone()); })}>
-        <span
-          role="presentation"
-          className={classNames('spectrum-Calendar-date', {
-            'is-today': isToday,
-            'is-selected': selected,
-            'is-focused': focused,
-            'is-disabled': disabled,
-            'is-outsideMonth': !isCurrentMonth,
-            'is-range-selection': isRangeSelection && selected,
-            'is-range-start': isRangeSelection && isRangeStart,
-            'is-range-end': isRangeSelection && isRangeEnd
-          })}>
-            {date.date()}
-        </span>
+      <span
+        role="presentation"
+        className={classNames('spectrum-Calendar-date', {
+          'is-today': isToday,
+          'is-selected': selected,
+          'is-focused': focused,
+          'is-disabled': disabled,
+          'is-outsideMonth': !isCurrentMonth,
+          'is-range-selection': isRangeSelection && selected,
+          'is-range-start': isRangeSelection && isRangeStart,
+          'is-range-end': isRangeSelection && isRangeEnd
+        })}>
+        {date.date()}
+      </span>
     </td>
   );
 };

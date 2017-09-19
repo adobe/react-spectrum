@@ -106,7 +106,7 @@ export default class Select extends React.Component {
           ref={b => this.button = b}
           onKeyDown={this.onKeyDown}>
           <span className="spectrum-Dropdown-trigger-container">
-            <span className={classNames("spectrum-Dropdown-trigger-label", {'is-placeholder': label === placeholder})}>{label}</span>
+            <span className={classNames('spectrum-Dropdown-trigger-label', {'is-placeholder': label === placeholder})}>{label}</span>
             <span className="spectrum-Dropdown-icon-container">
               {invalid && <Icon size="S" icon="alert" className="spectrum-Icon" />}
               <span className="spectrum-Icon spectrum-Dropdown-open-icon" />

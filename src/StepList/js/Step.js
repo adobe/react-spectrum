@@ -24,20 +24,20 @@ export default function Step({
       role="tab"
       aria-selected={selected}
       {...otherProps}>
-        <div className="spectrum-Steplist-label">
-          {(size !== SMALL) && children}
-        </div>
-        <span className="spectrum-Steplist-markerContainer">
-          {(size === SMALL) ?
-            <OverlayTrigger placement="top">
-              <span className="spectrum-Steplist-marker" />
-              <Tooltip open className="spectrum-Steplist-tooltip">
-                {children}
-              </Tooltip>
-            </OverlayTrigger>
+      <div className="spectrum-Steplist-label">
+        {(size !== SMALL) && children}
+      </div>
+      <span className="spectrum-Steplist-markerContainer">
+        {(size === SMALL) ?
+          <OverlayTrigger placement="top">
+            <span className="spectrum-Steplist-marker" />
+            <Tooltip open className="spectrum-Steplist-tooltip">
+              {children}
+            </Tooltip>
+          </OverlayTrigger>
           : <span className="spectrum-Steplist-marker" />}
-        </span>
-        <span className="spectrum-Steplist-segment" />
+      </span>
+      <span className="spectrum-Steplist-segment" />
     </div>
   );
 }

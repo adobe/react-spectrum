@@ -6,12 +6,12 @@ import {VerticalCenter} from '../.storybook/layout';
 
 const defaultProps = {
   children: [
-    <Button label="React" value="react" icon="checkCircle"/>,
-    <Button label="Add" value="add" icon="add"/>,
-    <Button label="Delete" value="delete" icon="delete"/>,
-    <Button label="Bell" value="bell" icon="bell"/>,
-    <Button label="Camera" value="camera" icon="camera"/>,
-    <Button label="Undo" value="undo" icon="undo"/>
+    <Button label="React" value="react" icon="checkCircle" />,
+    <Button label="Add" value="add" icon="add" />,
+    <Button label="Delete" value="delete" icon="delete" />,
+    <Button label="Bell" value="bell" icon="bell" />,
+    <Button label="Camera" value="camera" icon="camera" />,
+    <Button label="Undo" value="undo" icon="undo" />
   ]
 };
 
@@ -53,7 +53,6 @@ function render(props = {}) {
       label="ButtonGroup"
       onChange={action('change')}
       {...defaultProps}
-      {...props}>
-    </ButtonGroup>
+      {...props} />
   );
 }

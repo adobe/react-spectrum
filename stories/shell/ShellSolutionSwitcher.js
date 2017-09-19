@@ -25,8 +25,7 @@ storiesOf('ShellSolutionSwitcher', module)
 function render(props) {
   return (
     <ShellSolutionSwitcher
-      {...props}
-    >
+      {...props}>
       <ShellSolutionGroup>
         <ShellSolution href="#" icon="adobeAnalyticsColor" label="Analytics" entitled />
         <ShellSolution href="#" icon="adobeExperienceManagerColor" label="Experience Manager" entitled />

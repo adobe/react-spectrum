@@ -70,8 +70,7 @@ function render(props = {}) {
     <ShellHelp
       moreSearchResultsUrl="#"
       onSearch={action('search')}
-      {...props}
-    />
+      {...props} />
   );
 }
 

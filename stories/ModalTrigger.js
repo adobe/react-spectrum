@@ -38,7 +38,7 @@ const render = (props = {}) => (
       cancelLabel="close"
       variant="help"
       {...props}>
-        <span>the modal dialog content goes here</span>
+      <span>the modal dialog content goes here</span>
     </Dialog>
   </ModalTrigger>
 );

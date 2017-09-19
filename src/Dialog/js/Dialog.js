@@ -64,15 +64,15 @@ export default class Dialog extends Component {
           },
           className
         )}>
-          {title && <DialogHeader variant={variant} title={title} />}
-          <DialogContent>
-            {
+        {title && <DialogHeader variant={variant} title={title} />}
+        <DialogContent>
+          {
               React.Children.map(children, child => (
                 React.cloneElement(child, {})
               ))
             }
-          </DialogContent>
-          {confirmLabel && <DialogFooter {...this.props} onConfirm={this.onConfirm.bind(this)} />}
+        </DialogContent>
+        {confirmLabel && <DialogFooter {...this.props} onConfirm={this.onConfirm.bind(this)} />}
       </div>
     );
   }

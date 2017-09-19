@@ -50,7 +50,6 @@ function render(props = {}) {
     <Checkbox
       label="React"
       onChange={action('change')}
-      {...props}
-    />
+      {...props} />
   );
 }

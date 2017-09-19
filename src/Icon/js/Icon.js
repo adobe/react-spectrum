@@ -27,8 +27,7 @@ export default function Icon({
         )
       }
       role="img"
-      {...otherProps}
-    >
+      {...otherProps}>
       {
         isImage &&
         <img className="coral-Icon-image" src={icon} role="presentation" />

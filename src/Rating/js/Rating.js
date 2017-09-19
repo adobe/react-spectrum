@@ -81,7 +81,7 @@ export default class Rating extends React.Component {
       <div
         className={classNames('coral-Rating', {'is-readonly': readOnly}, className)}
         onMouseLeave={this.onMouseLeave}>
-          {ratings}
+        {ratings}
       </div>
     );
   }

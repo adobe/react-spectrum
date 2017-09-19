@@ -35,13 +35,11 @@ export default function Progress({
       aria-valuemin={indeterminate ? null : 0}
       aria-valuemax={indeterminate ? null : 100}
       aria-valuenow={indeterminate ? null : value}
-      {...otherProps}
-    >
+      {...otherProps}>
       <div className="spectrum-Progress-bar">
         <div
           className="spectrum-Progress-status"
-          style={{width: `${indeterminate ? 0 : value}%`}}
-        />
+          style={{width: `${indeterminate ? 0 : value}%`}} />
       </div>
       {
         label &&

@@ -67,7 +67,6 @@ function render(props = {}) {
       {...props}
       onChange={action('change')}
       onSubmit={action('submit')}
-      onClear={action('clear')}
-    />
+      onClear={action('clear')} />
   );
 }

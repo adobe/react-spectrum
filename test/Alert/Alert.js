@@ -44,7 +44,7 @@ describe('Alert', () => {
   });
 
   it('supports header', () => {
-    const tree = shallow(<Alert header={<div>My Custom Header</div>}/>);
+    const tree = shallow(<Alert header={<div>My Custom Header</div>} />);
     const child = tree.find('.spectrum-Alert-header > div');
     assert.equal(child.length, 1);
     assert.equal(child.children().node, 'My Custom Header');

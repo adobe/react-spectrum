@@ -54,26 +54,26 @@ export default class AccordionItem extends Component {
           )
         }
         role="presentation">
-          <div
-            id={this.headerId}
-            className="spectrum-Accordion-header"
-            onClick={onItemClick}
-            aria-controls={this.contentId}
-            aria-selected={selected}
-            aria-expanded={selected}
-            aria-disabled="false"
-            tabIndex="0"
-            onKeyPress={this.onHeaderKeyDown.bind(this)}>
-              {header}
-          </div>
-          <div
-            id={this.contentId}
-            role="tabpanel"
-            aria-labelledby={this.headerId}
-            aria-hidden={!selected}
-            className="spectrum-Accordion-content">
-              {children}
-          </div>
+        <div
+          id={this.headerId}
+          className="spectrum-Accordion-header"
+          onClick={onItemClick}
+          aria-controls={this.contentId}
+          aria-selected={selected}
+          aria-expanded={selected}
+          aria-disabled="false"
+          tabIndex="0"
+          onKeyPress={this.onHeaderKeyDown.bind(this)}>
+          {header}
+        </div>
+        <div
+          id={this.contentId}
+          role="tabpanel"
+          aria-labelledby={this.headerId}
+          aria-hidden={!selected}
+          className="spectrum-Accordion-content">
+          {children}
+        </div>
       </div>
     );
   }

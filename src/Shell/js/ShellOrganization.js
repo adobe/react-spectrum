@@ -104,8 +104,7 @@ export default class ShellOrganization extends Component {
         hidden={!visible}
         onMouseEnter={this.handleMouseEnter}
         onSelect={this.handleSelect}
-        {...otherProps}
-      >
+        {...otherProps}>
         {
           selected &&
           <Icon className="coral3-Shell-orgSwitcher-item-checkmark" icon="check" size="XS" />

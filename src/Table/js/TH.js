@@ -14,8 +14,7 @@ export default function TH({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </th>
   );

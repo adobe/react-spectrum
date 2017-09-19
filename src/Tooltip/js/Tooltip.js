@@ -38,8 +38,8 @@ export default class Tooltip extends Component {
             className
           )
         }>
-          <div className="spectrum-Tooltip-content">{children}</div>
-          <div className="spectrum-Tooltip-tip" />
+        <div className="spectrum-Tooltip-content">{children}</div>
+        <div className="spectrum-Tooltip-tip" />
       </div>
     );
   }

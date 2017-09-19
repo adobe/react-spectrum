@@ -12,8 +12,7 @@ describe('SwitchBase', () => {
         markClassName="coral-Foo-checkmark"
         labelClassName="coral-Foo-description"
         inputType="bar"
-        label="React"
-      />
+        label="React" />
     );
     assert.equal(tree.prop('className'), 'coral-Foo');
     const input = findInput(tree);
@@ -107,8 +106,7 @@ describe('SwitchBase', () => {
     const tree = shallow(
       <SwitchBase
         labelClassName="coral-Foo-description"
-        renderLabel={false}
-      />
+        renderLabel={false} />
     );
     assert(!findLabel(tree).node);
     tree.setProps({renderLabel: true});

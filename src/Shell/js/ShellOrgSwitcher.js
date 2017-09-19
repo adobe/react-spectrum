@@ -76,14 +76,12 @@ export default class ShellOrgSwitcher extends Component {
         target={
           <Button
             variant="minimal"
-            className="coral3-Shell-menu-button"
-          >
+            className="coral3-Shell-menu-button">
             {this.getSelectedLabel(children)}
           </Button>
         }
         onVisible={this.handleVisible}
-        {...otherProps}
-      >
+        {...otherProps}>
         <div
           ref={el => {this.contentRef = el; }}
           className={
@@ -92,15 +90,13 @@ export default class ShellOrgSwitcher extends Component {
               'coral3-Shell-orgSwitcher',
               className
             )
-          }
-        >
+          }>
           <label className="u-coral-screenReaderOnly">Search Organizations</label>
           <Search
             className="coral3-Shell-orgSwitcher-search"
             placeholder="Search Organizations"
             onChange={this.handleSearchChange}
-            quiet
-          />
+            quiet />
 
           <List
             className="coral3-Shell-orgSwitcher-items"
@@ -110,8 +106,7 @@ export default class ShellOrgSwitcher extends Component {
                 '.coral3-Shell-orgSwitcher-subitem:not([hidden])'
               ].join(', ')
             }
-            onSelect={this.handleSelect}
-          >
+            onSelect={this.handleSelect}>
             {
               React.Children.map(children, (child, index) => (
                 React.cloneElement(
@@ -126,8 +121,7 @@ export default class ShellOrgSwitcher extends Component {
           </List>
           <div
             className="coral3-Shell-orgSwitcher-resultMessage"
-            hidden={this.getResultCount(children) !== 0}
-          >
+            hidden={this.getResultCount(children) !== 0}>
             <div className="coral3-Shell-orgSwitcher-resultMessage-container">
               <div className="coral-Heading--1 coral3-Shell-orgSwitcher-resultMessage-heading">
                 No organizations found.
@@ -139,8 +133,7 @@ export default class ShellOrgSwitcher extends Component {
               element="a"
               variant="minimal"
               href={manageOrgsUrl}
-              block
-            >
+              block>
               Manage Organizations
             </Button>
           </div>

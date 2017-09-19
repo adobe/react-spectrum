@@ -130,8 +130,7 @@ export default class Accordion extends Component {
             className
           )
         }
-        aria-multiselectable={multiselectable}
-      >
+        aria-multiselectable={multiselectable}>
         {this.getItems()}
       </div>
     );

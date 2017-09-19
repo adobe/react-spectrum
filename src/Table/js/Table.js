@@ -21,8 +21,7 @@ export default function Table({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </table>
   );

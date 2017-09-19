@@ -18,10 +18,10 @@ export default function DialogHeader({
         `spectrum-Dialog-header--${variant}`,
         className
       )}>
-        <div className="spectrum-Dialog-typeIcon" />
-        <Heading size={3} className="spectrum-Dialog-title">
-          {title}
-        </Heading>
+      <div className="spectrum-Dialog-typeIcon" />
+      <Heading size={3} className="spectrum-Dialog-title">
+        {title}
+      </Heading>
     </div>
   );
 }

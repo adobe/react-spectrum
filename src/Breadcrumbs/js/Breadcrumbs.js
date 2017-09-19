@@ -19,12 +19,12 @@ export default class Breadcrumbs extends React.Component {
         }
 
         {items.map((item, i) =>
-          <span
+          (<span
             key={i}
             className="spectrum-Breadcrumb"
             onClick={items.length > 1 && i < items.length - 1 && onBreadcrumbClick.bind(null, item, items.length - i - 1)}>
-              {item.label}
-          </span>
+            {item.label}
+          </span>)
         )}
       </div>
     );

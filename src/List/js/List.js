@@ -66,8 +66,7 @@ export default class List extends Component {
           )
         }
         role={role}
-        {...otherProps}
-      >
+        {...otherProps}>
         {React.Children.map(children, child => (
           React.cloneElement(child, {
             onFocusNext: this.handleFocusNext,

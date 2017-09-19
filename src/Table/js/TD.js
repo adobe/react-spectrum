@@ -14,8 +14,7 @@ export default function TD({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </td>
   );

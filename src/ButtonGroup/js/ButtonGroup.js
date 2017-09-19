@@ -111,7 +111,7 @@ export default class ButtonGroup extends Component {
         aria-selected={selected}
         {...otherProps}
         className={classNames('spectrum-ButtonGroup', className)}>
-          {this.renderButtons(children)}
+        {this.renderButtons(children)}
       </div>
     );
   }

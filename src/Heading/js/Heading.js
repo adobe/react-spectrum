@@ -37,8 +37,7 @@ export default function Heading({
           className
         )
       }
-      {...otherProps}
-    >
+      {...otherProps}>
       {children}
     </Element>
   );

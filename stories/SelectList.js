@@ -93,7 +93,6 @@ function render(props = {}) {
       label="React"
       onChange={action('change')}
       {...defaultProps}
-      {...props}
-    />
+      {...props} />
   );
 }

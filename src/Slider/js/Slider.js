@@ -103,22 +103,22 @@ export default class Slider extends React.Component {
         aria-valuenow={value}
         aria-orientation={orientation}
         aria-disabled={disabled}>
-          <div className="spectrum-Slider-controls">
-            <div className="spectrum-Slider-track" />
-            <div
-              className={classNames('spectrum-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
-              onMouseDown={!disabled && this.onMouseDown}
-              style={{[styleKey]: percent * 100 + '%'}}
-              aria-disabled={disabled}>
-                <input
-                  type="range"
-                  className="spectrum-Slider-input"
-                  step={step}
-                  max={max}
-                  min={min}
-                  disabled={disabled} />
-            </div>
+        <div className="spectrum-Slider-controls">
+          <div className="spectrum-Slider-track" />
+          <div
+            className={classNames('spectrum-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
+            onMouseDown={!disabled && this.onMouseDown}
+            style={{[styleKey]: percent * 100 + '%'}}
+            aria-disabled={disabled}>
+            <input
+              type="range"
+              className="spectrum-Slider-input"
+              step={step}
+              max={max}
+              min={min}
+              disabled={disabled} />
           </div>
+        </div>
       </div>
     );
   }

@@ -90,8 +90,7 @@ describe('SelectList', () => {
         options={testOptions}
         onChange={(value) => {
           assert.deepEqual(value, testOptions[0].value);
-        }}
-      />
+        }} />
     );
     tree.find(ListItem).first().simulate('select');
   });
@@ -105,8 +104,7 @@ describe('SelectList', () => {
         multiple
         onChange={(value) => {
           finalValue = value;
-        }}
-      />
+        }} />
     );
     tree.find(ListItem).first()
       .simulate('select');
@@ -122,8 +120,7 @@ describe('SelectList', () => {
         multiple
         onChange={(value) => {
           finalValue = value;
-        }}
-      />
+        }} />
     );
     tree.find(ListItem).first()
       .simulate('select');

@@ -1,7 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
-import Icon from '../../Icon';
 import {Menu} from '../../Menu';
 import React from 'react';
 import '../style/index.styl';

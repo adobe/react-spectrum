@@ -19,8 +19,7 @@ export default function Switch({
       inputClassName="spectrum-ToggleSwitch-input"
       markClassName="spectrum-ToggleSwitch-content"
       labelClassName="spectrum-ToggleSwitch-label"
-      {...otherProps}
-    />
+      {...otherProps} />
   );
 }
 

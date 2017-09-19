@@ -48,7 +48,6 @@ storiesOf('Slider', module)
 function render(props = {}) {
   return (
     <Slider
-      {...props}
-    />
+      {...props} />
   );
 }

@@ -4,12 +4,6 @@ import Icon from '../../Icon';
 import React from 'react';
 import '../style/index.styl';
 
-const sizeMap = {
-  L: 'large',
-  M: 'medium',
-  S: 'small'
-};
-
 export default function Tag({
   value,
   children,
