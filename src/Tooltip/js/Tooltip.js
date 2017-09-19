@@ -21,7 +21,8 @@ export default class Tooltip extends Component {
       variant,
       children,
       className,
-      placement
+      placement,
+      open
     } = this.props;
 
     return (
