@@ -41,6 +41,9 @@ export default class TabList extends React.Component {
 
   onChange(selectedIndex) {
     this.setState({selectedIndex});
+    if (this.props.onChange) {
+      this.props.onChange(selectedIndex);
+    }
   }
 
   render() {

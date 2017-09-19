@@ -9,17 +9,11 @@ describe('Tab', () => {
     const tree = shallow(<Tab />);
     assert.equal(tree.prop('className'), 'spectrum-Tab');
     assert.equal(tree.prop('role'), 'tab');
-    assert.equal(tree.prop('tabIndex'), '0');
     assert.equal(tree.prop('aria-invalid'), false);
     assert.equal(tree.prop('aria-disabled'), false);
     assert.equal(tree.prop('aria-selected'), false);
     assert.equal(tree.prop('selected'), false);
     assert.equal(tree.prop('disabled'), false);
-  });
-
-  it('supports tabIndex', () => {
-    const tree = shallow(<Tab tabIndex="10" />);
-    assert.equal(tree.prop('tabIndex'), '10');
   });
 
   it('supports selected', () => {

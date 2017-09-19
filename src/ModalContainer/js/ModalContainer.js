@@ -17,7 +17,6 @@ export default class ModalContainer {
         show={true}
         onHide={hide}
         backdropClassName="spectrum-Underlay"
-        className="coral3-modal"
         key={key}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}

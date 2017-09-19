@@ -8,24 +8,34 @@ describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />);
     const innerTree = tree.shallow();
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal');
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel');
     assert.equal(innerTree.type(), 'div');
     assert.equal(innerTree.prop('role'), 'tablist');
   });
 
   it('supports large size', () => {
     const tree = shallow(<TabList size="L" />);
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--large spectrum-TabList--horizontal');
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--large spectrum-TabList--horizontal spectrum-TabList--panel');
   });
 
   it('supports vertical orientation', () => {
     const tree = shallow(<TabList orientation="vertical" />);
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--vertical');
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--vertical spectrum-TabList--panel');
+  });
+
+  it('supports anchored variant', () => {
+    const tree = shallow(<TabList variant="anchored" />);
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--anchored');
+  });
+
+  it('supports page variant', () => {
+    const tree = shallow(<TabList variant="page" />);
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--page');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<TabList className="myClass" />);
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal myClass');
+    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel myClass');
   });
 
   it('supports additional properties', () => {

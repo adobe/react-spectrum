@@ -101,12 +101,12 @@ describe('Button', () => {
   describe('label', () => {
     it('doesn\'t render a label by default', () => {
       const tree = shallow(<Button />);
-      assert(!tree.find('.spectrum-Button-label').children().node);
+      assert(!tree.children().last().node);
     });
 
     it('supports label text', () => {
       const tree = shallow(<Button label="My Label" />);
-      assert.equal(tree.find('.spectrum-Button-label').children().node, 'My Label');
+      assert.equal(tree.children().last().node, 'My Label');
     });
   });
 });
