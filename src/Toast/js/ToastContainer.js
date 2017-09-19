@@ -1,4 +1,5 @@
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Toast from './Toast';
@@ -30,15 +31,13 @@ export class ToastContainer extends React.Component {
 
   render() {
     return (
-      <CSSTransitionGroup
-        className="coral-ToastContainer"
-        transitionName="coral-Toast-slide"
-        transitionEnterTimeout={TOAST_ANIMATION_TIME}
-        transitionLeaveTimeout={TOAST_ANIMATION_TIME}>
-          {this.state.toasts.map((toast, i) =>
-            React.cloneElement(toast, {key: i, onClose: this.remove.bind(this, toast)})
-          )}
-      </CSSTransitionGroup>
+      <TransitionGroup className="coral-ToastContainer">
+        {this.state.toasts.map((toast, i) =>
+          <CSSTransition key={i} classNames="coral-Toast-slide" timeout={TOAST_ANIMATION_TIME}>
+            {React.cloneElement(toast, {onClose: this.remove.bind(this, toast)})}
+          </CSSTransition>
+        )}
+      </TransitionGroup>
     );
   }
 }
