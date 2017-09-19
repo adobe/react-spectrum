@@ -52,7 +52,6 @@ export default class Tab extends Component {
           )
         }
         id={id}
-        tabIndex={tabIndex}
         role="tab"
         selected={selected}
         disabled={disabled}

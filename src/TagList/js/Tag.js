@@ -11,13 +11,10 @@ const sizeMap = {
 };
 
 export default function Tag({
-  size = 'L', // L, M, S
   value,
   children,
-  color,
   avatar,
   icon,
-  multiline = false,
   quiet = false,
   closable = false,
   disabled = false,
@@ -33,13 +30,11 @@ export default function Tag({
     <div
       className={
         classNames(
-          'coral-Tag',
-          `coral-Tag--${sizeMap[size]}`,
-          color ? `coral-Tag--${color}` : null,
+          'spectrum-Tag',
           {
-            'coral-Tag--multiline': multiline,
-            'coral-Tag--quiet': quiet,
-            'is-closable': closable
+            'spectrum-Tag--quiet': quiet,
+            'is-selected': selected,
+            'is-disabled': disabled
           },
           className
         )
@@ -47,35 +42,23 @@ export default function Tag({
       tabIndex={!disabled && selected ? 0 : -1}
       aria-selected={!disabled && selected}
       aria-label={ariaLabel}
-      {...otherProps}
-    >
-      {
-        closable &&
-        <Button
-          className="coral-Tag-removeButton"
-          role="button"
-          tabIndex="-1"
-          title="Remove"
-          variant="minimal"
-          size="M"
-          iconSize="XS"
-          icon="close"
-          disabled={disabled}
-          square
-          onClick={!disabled && (e => {onClose(value || children, e); })}
-        />
+      {...otherProps}>
+      {avatar &&
+        <img className="spectrum-Tag-avatar" src={avatar} />
       }
-      {
-        avatar &&
-        <img className="coral-Tag-avatar" src={avatar}/>
+      {icon &&
+        <Icon className="spectrum-Tag-icon" size="S" icon={icon} />
       }
-      {
-        icon &&
-        <Icon className="coral-Tag-icon" size="S" icon={icon}/>
-      }
-      <span className="coral-Tag-label">
+      <span className="spectrum-Tag-label">
         {childContent}
       </span>
+      {closable &&
+        <Button
+          className="spectrum-Tag-removeButton"
+          variant="icon"
+          title="Remove"
+          onClick={!disabled && (e => {onClose(value || children, e); })} />
+      }
     </div>
   );
 }

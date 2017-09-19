@@ -40,8 +40,13 @@ storiesOf('TabList', module)
     {inline: true}
   )
   .addWithInfo(
-    'anchored',
-    () => render({anchored: true}),
+    'variant: anchored',
+    () => render({variant: 'anchored'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: page',
+    () => render({variant: 'page'}),
     {inline: true}
   )
   .addWithInfo(

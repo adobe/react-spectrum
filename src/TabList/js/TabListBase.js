@@ -14,28 +14,25 @@ import React, {Component} from 'react';
  * childMappingFunction: allows you to map additional properties for each tab child
  */
 export default class TabListBase extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    selectedIndex: TabListBase.getDefaultSelectedIndex(this.props)
+  };
 
-    const {
-      selectedIndex,
-      defaultSelectedIndex,
-      children
-    } = props;
+  static getDefaultSelectedIndex(props) {
+    if (props.selectedIndex != null) {
+      return props.selectedIndex;
+    }
 
-    let firstSelectedIndex;
-    React.Children.forEach(children, (child, index) => {
-      if (child.props.selected) {
-        firstSelectedIndex = index;
-      }
-    });
+    if (props.defaultSelectedIndex != null) {
+      return props.defaultSelectedIndex;
+    }
 
-    const defaultSelected = firstSelectedIndex || defaultSelectedIndex;
+    let firstSelected = React.Children.toArray(props.children).findIndex(c => c && c.props.selected);
+    if (firstSelected !== -1) {
+      return firstSelected;
+    }
 
-    const currentSelectedIndex = selectedIndex !== undefined ? selectedIndex : defaultSelected;
-    this.state = {
-      selectedIndex: currentSelectedIndex
-    };
+    return 0;
   }
 
   componentWillReceiveProps(nextProps) {
