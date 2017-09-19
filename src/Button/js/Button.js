@@ -35,6 +35,7 @@ export default class Button extends Component {
       block,
       className,
       disabled,
+      invalid,
       ...otherProps
     } = this.props;
 
@@ -57,6 +58,7 @@ export default class Button extends Component {
             {
               'is-selected': selected,
               'is-disabled': disabled,
+              'is-invalid': invalid,
               'spectrum-Button--block': block,
               ['spectrum-Button--action--' + quietClass + 'icon-only']: iconOnly
             },
@@ -69,9 +71,7 @@ export default class Button extends Component {
         {icon &&
           <Icon className="spectrum-Icon" size={iconSize} icon={icon} />
         }
-        {(label || children) &&
-          <span className="spectrum-Button-label">{label}{children}</span>
-        }
+        {label}{children}
       </Element>
     );
   }
