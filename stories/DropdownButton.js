@@ -16,13 +16,18 @@ storiesOf('DropdownButton', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: primary',
-    () => render({label: 'Action', variant: 'primary'}),
+    'Icon only',
+    () => render(),
     {inline: true}
   )
   .addWithInfo(
-    'noArrow',
-    () => render({label: 'Action', variant: 'primary', noArrow: true}),
+    'alignRight',
+    () => render({alignRight: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabled',
+    () => render({disabled: true}),
     {inline: true}
   );
 
