@@ -1,5 +1,6 @@
 
 import autobind from 'autobind-decorator';
+import OpenTransition from '../../utils/OpenTransition';
 import Overlay from 'react-overlays/lib/Overlay';
 import React, {cloneElement, Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
@@ -185,7 +186,8 @@ export default class OverlayTrigger extends Component {
         show={this.state.show}
         onHide={this.handleHide}
         target={this}
-        rootClose={isOneOf('click', this.props.trigger)}>
+        rootClose={isOneOf('click', this.props.trigger)}
+        transition={OpenTransition}>
         <OverlayContainer>
           {cloneElement(overlay, props)}
         </OverlayContainer>
@@ -238,7 +240,7 @@ export default class OverlayTrigger extends Component {
   }
 }
 
-function OverlayContainer({arrowOffsetLeft, arrowOffsetTop, children, placement, style}) {
+function OverlayContainer({arrowOffsetLeft, arrowOffsetTop, children, placement, style, open}) {
   let arrowStyle = {
     top: arrowOffsetTop,
     left: arrowOffsetLeft
@@ -246,7 +248,7 @@ function OverlayContainer({arrowOffsetLeft, arrowOffsetTop, children, placement,
 
   return (
     <div className="coral-OverlayTrigger-overlay-container" style={style}>
-      {React.cloneElement(React.Children.only(children), {arrowStyle, placement})}
+      {React.cloneElement(React.Children.only(children), {arrowStyle, placement, open})}
     </div>
   );
 }
