@@ -1,8 +1,14 @@
 import {action, storiesOf} from '@kadira/storybook';
 import NumberInput from '../src/NumberInput';
 import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('NumberInput', module)
+  .addDecorator(story => (
+    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
+    </VerticalCenter>
+  ))
   .addWithInfo(
     'default',
     `
@@ -30,6 +36,12 @@ storiesOf('NumberInput', module)
     'disabled',
     'Demonstrating disabled',
     () => render({disabled: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet',
+    'Demonstrating quiet',
+    () => render({quiet: true}),
     {inline: true}
   );
 
