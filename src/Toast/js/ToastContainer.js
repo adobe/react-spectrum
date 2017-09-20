@@ -31,9 +31,9 @@ export class ToastContainer extends React.Component {
 
   render() {
     return (
-      <TransitionGroup className="coral-ToastContainer">
+      <TransitionGroup className="react-spectrum-ToastContainer">
         {this.state.toasts.map((toast, i) =>
-          (<CSSTransition key={i} classNames="coral-Toast-slide" timeout={TOAST_ANIMATION_TIME}>
+          (<CSSTransition key={i} classNames="react-spectrum-Toast-slide" timeout={TOAST_ANIMATION_TIME}>
             {React.cloneElement(toast, {onClose: this.remove.bind(this, toast)})}
           </CSSTransition>)
         )}
