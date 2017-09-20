@@ -1,7 +1,5 @@
 import assert from 'assert';
 import Dialog from '../../src/Dialog';
-import DialogContent from '../../src/Dialog/js/DialogContent';
-import DialogFooter from '../../src/Dialog/js/DialogFooter';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
 import React from 'react';
 import {shallow} from 'enzyme';
@@ -12,7 +10,7 @@ describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
     assert(tree.hasClass('spectrum-Dialog--default'));
-    assert(tree.hasClass('spectrum-Dialog--M'));
+    assert(tree.hasClass('spectrum-Dialog--centered'));
   });
 
   it('supports optional title', () => {
@@ -24,16 +22,9 @@ describe('Dialog', () => {
 
   it('supports optional footer', () => {
     const tree = shallow(<Dialog />);
-    assert.equal(tree.find(DialogFooter).length, 0);
+    assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
     tree.setProps({confirmLabel: 'Go'});
-    assert.equal(tree.find(DialogFooter).length, 1);
-  });
-
-  it('supports different sizes', () => {
-    const tree = shallow(<Dialog size="S" />);
-    assert(tree.hasClass('spectrum-Dialog--S'));
-    tree.setProps({size: 'L'});
-    assert(tree.hasClass('spectrum-Dialog--L'));
+    assert.equal(tree.find('.spectrum-Dialog-footer').length, 1);
   });
 
   it('supports different variants', () => {
@@ -49,9 +40,21 @@ describe('Dialog', () => {
     assert(tree.hasClass('spectrum-Dialog--warning'));
   });
 
+  it('supports fullscreen mode', () => {
+    const tree = shallow(<Dialog mode="fullscreen" confirmLabel="Go" />);
+    assert(tree.hasClass('spectrum-Dialog--fullscreen'));
+    assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
+  });
+
+  it('supports fullscreen takeover mode', () => {
+    const tree = shallow(<Dialog mode="fullscreenTakeover" confirmLabel="Go" />);
+    assert(tree.hasClass('spectrum-Dialog--fullscreenTakeover'));
+    assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
+  });
+
   it('renders content comp', () => {
     const tree = shallow(<Dialog><span>bar</span></Dialog>);
-    let content = tree.find(DialogContent);
+    let content = tree.find('.spectrum-Dialog-content');
     assert.equal(content.length, 1);
     assert.equal(content.prop('children')[0].type, 'span');
   });
@@ -59,7 +62,7 @@ describe('Dialog', () => {
   it('calls props.onClose', () => {
     var onClose = sinon.spy();
     const tree = shallow(<Dialog confirmLabel="Close" onClose={onClose} />);
-    tree.find(DialogFooter).simulate('close');
+    tree.find('.spectrum-Dialog-footer').simulate('close');
     assert(onClose.calledOnce);
   });
 
@@ -69,7 +72,7 @@ describe('Dialog', () => {
 
     var onClose = sinon.spy();
     const tree = shallow(<Dialog onClose={onClose} onConfirm={stub} confirmLabel="Go" />);
-    tree.find(DialogFooter).simulate('confirm');
+    tree.find('.spectrum-Dialog-footer').simulate('confirm');
     assert(stub.calledOnce);
     await sleep(1);
     assert(onClose.calledOnce);
@@ -81,7 +84,7 @@ describe('Dialog', () => {
 
     var onClose = sinon.spy();
     const tree = shallow(<Dialog onClose={onClose} onConfirm={stub} confirmLabel="Go" />);
-    tree.find(DialogFooter).simulate('confirm');
+    tree.find('.spectrum-Dialog-footer').simulate('confirm');
     assert(stub.calledOnce);
     await sleep(1);
     assert(!onClose.calledOnce);

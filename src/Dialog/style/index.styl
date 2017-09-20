@@ -3,37 +3,3 @@
 @import '@spectrum/spectrum-css/dist/components/dialog/multiStops/lightest.css';
 @import '@spectrum/spectrum-css/dist/components/dialog/multiStops/dark.css';
 @import '@spectrum/spectrum-css/dist/components/dialog/multiStops/darkest.css';
-
-// react-spectrum Dialog works slightly differently from how spectrum-css expects, so there are some overrides.
-// TODO: determine how to get rid of these.
-$spectrum-dialog-margin = 40px;
-$spectrum-dialog-width-small = 300px;
-$spectrum-dialog-width-medium = 600px;
-$spectrum-dialog-width-large = 90%;
-
-.spectrum-Dialog {
-  position: relative;
-  margin: $spectrum-dialog-margin auto;
-  display: block;
-  outline: none;
-
-  &.spectrum-Dialog--S {
-    width: $spectrum-dialog-width-small;
-  }
-
-  &.spectrum-Dialog--M {
-    width: $spectrum-dialog-width-medium;
-  }
-
-  &.spectrum-Dialog--L {
-    width: $spectrum-dialog-width-large;
-  }
-}
-
-.spectrum-Dialog-wrapper {
-  margin: 0;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}

@@ -1,4 +1,5 @@
-import Modal from 'react-overlays/lib/Modal';
+import autobind from 'autobind-decorator';
+import BaseModal from 'react-overlays/lib/Modal';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
@@ -10,18 +11,12 @@ let MODAL_KEY = 1;
 export default class ModalContainer {
   static show(content) {
     let key = MODAL_KEY++;
-    let hide = this.hide.bind(this, key);
 
     let modal = (
       <Modal
-        show
-        onHide={hide}
-        backdropClassName="spectrum-Underlay"
         key={key}
-        renderBackdrop={(props) => <Underlay {...props} />}
-        transition={OpenTransition}
-        backdropTransition={OpenTransition}>
-        {cloneElement(content, {onClose: hide})}
+        onHide={this.hide.bind(this, key)}>
+        {content}
       </Modal>
     );
 
@@ -31,6 +26,35 @@ export default class ModalContainer {
 
   static hide(key) {
     PortalContainer.remove({key});
+  }
+}
+
+@autobind
+class Modal extends React.Component {
+  state = {
+    show: true
+  };
+
+  onClose() {
+    this.setState({show: false});
+  }
+
+  render() {
+    // I am sorry for this atrocity. I needed a way to detect when not to have a backdrop.
+    let hasBackdrop = this.props.children.props.mode !== 'fullscreenTakeover';
+
+    return (
+      <BaseModal
+        show={this.state.show}
+        onExited={this.props.onHide}
+        onHide={this.onClose}
+        backdrop={hasBackdrop}
+        renderBackdrop={(props) => <Underlay {...props} />}
+        transition={OpenTransition}
+        backdropTransition={OpenTransition}>
+        {cloneElement(this.props.children, {onClose: this.onClose})}
+      </BaseModal>
+    );
   }
 }
 

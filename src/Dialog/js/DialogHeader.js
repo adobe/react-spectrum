@@ -1,12 +1,16 @@
 import classNames from 'classnames';
+import DialogButtons from './DialogButtons';
 import Heading from '../../Heading';
 import React from 'react';
 
 export default function DialogHeader({
   title,
   variant,
-  closable,
+  fullscreen,
   onClose,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
   className,
   ...otherProps
 }) {
@@ -18,10 +22,15 @@ export default function DialogHeader({
         `spectrum-Dialog-header--${variant}`,
         className
       )}>
+      <Heading size={3} className="spectrum-Dialog-title">{title}</Heading>
       <div className="spectrum-Dialog-typeIcon" />
-      <Heading size={3} className="spectrum-Dialog-title">
-        {title}
-      </Heading>
+      {fullscreen && confirmLabel &&
+        <DialogButtons
+          cancelLabel={cancelLabel}
+          confirmLabel={confirmLabel}
+          onClose={onClose}
+          onConfirm={onConfirm} />
+      }
     </div>
   );
 }
