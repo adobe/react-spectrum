@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
-const LIST_ITEM_SELECTOR = '.spectrum-List-option';
+const LIST_ITEM_SELECTOR = '.spectrum-List-option:not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + '.is-selected';
 
 export default class List extends Component {

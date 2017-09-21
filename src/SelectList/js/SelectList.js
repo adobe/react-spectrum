@@ -77,7 +77,6 @@ export default class SelectList extends Component {
   render() {
     const {
       options = [],
-      className,
       multiple = false,
       disabled = false,
       invalid = false,
@@ -91,8 +90,7 @@ export default class SelectList extends Component {
         aria-disabled={disabled}
         aria-invalid={invalid}
         aria-required={required}
-        {...otherProps}
-        className={classNames('coral3-SelectList', className)}>
+        {...otherProps}>
         {this.renderListOfOptions(options)}
       </List>
     );
