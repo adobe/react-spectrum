@@ -8,7 +8,7 @@ import sinon from 'sinon';
 describe('Clock', () => {
   it('default', () => {
     const tree = shallow(<Clock />);
-    assert.equal(tree.hasClass('coral-Clock'), true);
+    assert.equal(tree.hasClass('react-spectrum-Clock'), true);
     assert.equal(tree.prop('aria-disabled'), false);
     assert.equal(tree.prop('aria-invalid'), false);
     assert.equal(tree.prop('aria-readonly'), false);
@@ -155,5 +155,5 @@ describe('Clock', () => {
   });
 });
 
-const findHourTextfield = tree => tree.find('.coral-Clock-hour');
-const findMinuteTextfield = tree => tree.find('.coral-Clock-minute');
+const findHourTextfield = tree => tree.find('.react-spectrum-Clock-hour');
+const findMinuteTextfield = tree => tree.find('.react-spectrum-Clock-minute');

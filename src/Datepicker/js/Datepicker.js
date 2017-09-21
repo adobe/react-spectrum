@@ -202,7 +202,7 @@ export default class Datepicker extends Component {
 
   renderClock(props) {
     return (
-      <div className="coral-Datepicker-clockContainer">
+      <div className="react-spectrum-Datepicker-clockContainer">
         <Clock
           {...props}
           onChange={this.handleClockChange}
