@@ -49,6 +49,7 @@ describe('Autocomplete', () => {
     assert.equal(tree.find('input').prop('value'), 'test');
     assert.equal(tree.childAt(1).prop('show'), true);
     assert.equal(tree.find(MenuItem).length, 2);
+    assert.equal(tree.find(MenuItem).nodes[0].key, 'item-0');
   });
 
   it('should call getCompletions and render a menu with results asynchronously', async () => {

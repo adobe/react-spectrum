@@ -188,6 +188,7 @@ export default class Autocomplete extends React.Component {
           <Menu onSelect={this.onSelect} style={{width: this.state.width}}>
             {results.map((result, i) => (
               <MenuItem
+                key={`item-${i}`}
                 value={result}
                 icon={result.icon}
                 focused={selectedIndex === i}
