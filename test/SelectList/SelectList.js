@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {ListGroup, ListItem} from '../../src/List';
+import {ListItem} from '../../src/List';
 import React from 'react';
 import SelectList from '../../src/SelectList';
 import {shallow} from 'enzyme';
@@ -20,19 +20,6 @@ const selectedValue = [
   'logVal'
 ];
 
-const groupedOptions = {
-  'Group 1': [
-    {label: 'Chocolate', value: 'chocolate'},
-    {label: 'Vanilla', value: 'vanilla'},
-    {label: 'Strawberry', value: 'strawberry'}
-  ],
-  'Group 2': [
-    {label: 'Caramel', value: 'caramel'},
-    {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
-    {label: 'Peppermint', value: 'peppermint'}
-  ]
-};
-
 describe('SelectList', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<SelectList className="bell" />);
@@ -42,18 +29,6 @@ describe('SelectList', () => {
   it('supports a list of options', () => {
     const tree = shallow(<SelectList options={testOptions} />);
     assert.equal(tree.find(ListItem).length, 7);
-  });
-
-  it('supports a list of grouped options', () => {
-    const tree = shallow(<SelectList options={groupedOptions} />);
-    assert.equal(tree.find(ListGroup).length, 2);
-    assert.equal(tree.find(ListItem).length, 6);
-  });
-
-  it('supports a list of grouped options', () => {
-    const tree = shallow(<SelectList options={groupedOptions} />);
-    assert.equal(tree.find(ListGroup).length, 2);
-    assert.equal(tree.find(ListItem).length, 6);
   });
 
   it('supports an item being selected', () => {

@@ -67,7 +67,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'spectrum-Flyout-option',
+            'spectrum-List-option',
             {
               'is-selected': selected,
               'is-disabled': disabled,

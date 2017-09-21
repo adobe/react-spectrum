@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {List, ListGroup, ListItem} from '../../List';
+import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 
 export default class SelectList extends Component {
@@ -74,14 +74,6 @@ export default class SelectList extends Component {
     ))
   )
 
-  renderGroupsOfOptions = (options) => (
-    Object.keys(options).map((optionKey) => (
-      <ListGroup label={optionKey}>
-        {this.renderListOfOptions(options[optionKey])}
-      </ListGroup>
-    ))
-  )
-
   render() {
     const {
       options = [],
@@ -101,7 +93,7 @@ export default class SelectList extends Component {
         aria-required={required}
         {...otherProps}
         className={classNames('coral3-SelectList', className)}>
-        {!Array.isArray(options) ? this.renderGroupsOfOptions(options) : this.renderListOfOptions(options)}
+        {this.renderListOfOptions(options)}
       </List>
     );
   }
