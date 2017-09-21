@@ -5,7 +5,12 @@ import '../style/index.styl';
 
 export default class Tooltip extends Component {
   static propTypes = {
-    placement: PropTypes.string,
+    placement: PropTypes.oneOf([
+      'bottom', 'bottom left', 'bottom right',
+      'top', 'top left', 'top right',
+      'left', 'left top', 'left bottom',
+      'right', 'right top', 'right bottom'
+    ]),
     variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
     className: PropTypes.string
   };
@@ -32,7 +37,7 @@ export default class Tooltip extends Component {
           classNames(
             'spectrum-Tooltip',
             `spectrum-Tooltip--${variant}`,
-            `spectrum-Tooltip--${placement}`,
+            `spectrum-Tooltip--${placement.split(' ')[0]}`,
             {
               'is-open': open
             },

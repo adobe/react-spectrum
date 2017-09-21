@@ -2,9 +2,7 @@ import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {Menu, MenuItem} from '../../Menu';
-import OpenTransition from '../../utils/OpenTransition';
-import Overlay from 'devongovett-react-overlays/lib/Overlay';
-import OverlayContainer from '../../OverlayTrigger/js/OverlayContainer';
+import Overlay from '../../OverlayTrigger/js/Overlay';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -41,9 +39,11 @@ export default class Autocomplete extends React.Component {
   }
 
   updateSize() {
-    let width = ReactDOM.findDOMNode(this.trigger).offsetWidth;
-    if (width !== this.state.width) {
-      this.setState({width});
+    if (this.trigger) {
+      let width = ReactDOM.findDOMNode(this.trigger).offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
     }
   }
 
@@ -184,21 +184,19 @@ export default class Autocomplete extends React.Component {
           return child;
         })}
 
-        <Overlay target={this} show={showDropdown && results.length > 0} transition={OpenTransition} placement="bottom left">
-          <OverlayContainer>
-            <Menu className="spectrum-Dropdown-flyout" onSelect={this.onSelect} style={{width: this.state.width}}>
-              {results.map((result, i) =>
-                (<MenuItem
-                  value={result}
-                  icon={result.icon}
-                  focused={selectedIndex === i}
-                  onMouseEnter={this.onMouseEnter.bind(this, i)}
-                  onMouseDown={e => e.preventDefault()}>
-                  {typeof result === 'string' ? result : result.label}
-                </MenuItem>)
-              )}
-            </Menu>
-          </OverlayContainer>
+        <Overlay target={this} show={showDropdown && results.length > 0} placement="bottom left">
+          <Menu onSelect={this.onSelect} style={{width: this.state.width}}>
+            {results.map((result, i) => (
+              <MenuItem
+                value={result}
+                icon={result.icon}
+                focused={selectedIndex === i}
+                onMouseEnter={this.onMouseEnter.bind(this, i)}
+                onMouseDown={e => e.preventDefault()}>
+                {typeof result === 'string' ? result : result.label}
+              </MenuItem>
+            ))}
+          </Menu>
         </Overlay>
       </div>
     );

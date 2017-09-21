@@ -6,7 +6,7 @@ import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('DropdownButton', module)
   .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+    <VerticalCenter style={{textAlign: 'left', margin: '0 200px 50px', position: 'static', transform: 'none'}}>
       {story()}
     </VerticalCenter>
   ))

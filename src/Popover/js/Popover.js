@@ -7,7 +7,12 @@ import '../../Dialog/style/index.styl';
 export default class Popover extends Component {
   static propTypes = {
     variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
-    placement: PropTypes.oneOf(['bottom', 'top', 'left', 'right']),
+    placement: PropTypes.oneOf([
+      'bottom', 'bottom left', 'bottom right',
+      'top', 'top left', 'top right',
+      'left', 'left top', 'left bottom',
+      'right', 'right top', 'right bottom'
+    ]),
     open: PropTypes.bool,
     title: PropTypes.node,
     className: PropTypes.string
@@ -36,7 +41,7 @@ export default class Popover extends Component {
         className={
           classNames(
             'spectrum-Popover',
-            `spectrum-Popover--${placement}`,
+            `spectrum-Popover--${placement.split(' ')[0]}`,
             `spectrum-Dialog--${variant}`,
             {
               'is-open': open
