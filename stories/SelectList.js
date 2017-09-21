@@ -12,30 +12,14 @@ const defaultProps = {
     {label: 'Caramel', value: 'caramel'},
     {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
     {label: 'Peppermint', value: 'peppermint'},
-    {label: 'Some crazy long value that should be cut off', value: 'logVal'}
-  ]
-};
-
-const groupedOptions = {
-  'Group 1': [
-    {label: 'Chocolate', value: 'chocolate'},
-    {label: 'Vanilla', value: 'vanilla'},
-    {label: 'Strawberry', value: 'strawberry'}
-  ],
-  'Group 2': [
-    {label: 'Caramel', value: 'caramel'},
-    {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
-    {label: 'Peppermint', value: 'peppermint'}
-  ],
-  'Group 3': [
-    {label: 'Some crazy long value that should be cut off', value: 'logVal'}
+    {label: 'Some crazy long value that should be cut off', value: 'longVal'}
   ]
 };
 
 const selectedValue = [
   'chocolate',
   'vanilla',
-  'logVal'
+  'longVal'
 ];
 
 
@@ -48,16 +32,6 @@ storiesOf('SelectList', module)
   .addWithInfo(
     'Default',
     () => (render({...defaultProps})),
-    {inline: true}
-  )
-  .addWithInfo(
-    'grouped: true',
-    () => (render({options: groupedOptions})),
-    {inline: true}
-  )
-  .addWithInfo(
-    'grouped multiple: true',
-    () => (render({multiple: true, value: selectedValue, options: groupedOptions})),
     {inline: true}
   )
   .addWithInfo(
@@ -82,7 +56,7 @@ storiesOf('SelectList', module)
   )
   .addWithInfo(
     'value: longVal',
-    () => (render({value: 'logVal'})),
+    () => (render({value: 'longVal'})),
     {inline: true}
   );
 

@@ -1,113 +1,28 @@
-/*
- * ADOBE CONFIDENTIAL
- *
- * Copyright 2016 Adobe Systems Incorporated
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Adobe Systems Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Adobe Systems Incorporated and its
- * suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Adobe Systems Incorporated.
- */
+@import '@spectrum/spectrum-css/dist/components/list/index.css';
+@import '@spectrum/spectrum-css/dist/components/list/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/list/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/list/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/list/multiStops/darkest.css';
 
 @require '../../commons'
 
-$spectrum-basiclist-border-radius = $spectrum-border-radius;
-$spectrum-basiclist-border-width = $px;
-
-$spectrum-basiclist-item-height = 40*$px;
-$spectrum-basiclist-item-padding-left = 14*$px;
-$spectrum-basiclist-item-padding-top = 6*$px;
-$spectrum-basiclist-item-focus-width = 2*$px;
-$spectrum-basiclist-item-contentheight = $spectrum-basiclist-item-height - ($spectrum-basiclist-item-padding-top * 2);
-$spectrum-basiclist-item-tick-size = 16*$px;
-
-.coral-BasicList {
-  display: block;
-  overflow-y: auto;
-  box-sizing: border-box;
-  border-radius: $spectrum-basiclist-border-radius;
-  border-width: $spectrum-basiclist-border-width;
-  border-style: solid;
-  margin: 0;
-  padding: 0;
-  outline: none; // removes the outline in FF
-}
-
-.coral-BasicList-item {
-  display: flex;
-  box-sizing: border-box;
-  position: relative;
-
-  align-items: center;
-  padding: $spectrum-basiclist-item-padding-top $spectrum-basiclist-item-padding-left $spectrum-basiclist-item-padding-top ($spectrum-basiclist-item-padding-left - 2 * $spectrum-basiclist-item-focus-width);
-
-  text-decoration: none;
-  text-align: left;
-  cursor: pointer;
-  user-select: none;
-
-  border-left: solid $spectrum-basiclist-item-focus-width transparent;
-  transition: background-color $spectrum-transition-time ease-out,
-              border-left-color $spectrum-transition-time ease-out;
-
-  &.is-focused,
-  &:focus {
-    outline: none;
-    text-decoration: none;
-  }
-
-  &.is-disabled {
-    cursor: default;
-  }
-
-  &.is-selected {
-    // give the item more space for the icon.
-    padding-right: ($spectrum-basiclist-item-padding-left + $spectrum-basiclist-item-tick-size);
-
-    &:after {
-      position: absolute;
-      top: 50%;
-      right: ($spectrum-basiclist-item-padding-left - 4*$px);
-
-      padding: 0 ($spectrum-basiclist-item-tick-size / 2);
-      height: $spectrum-basiclist-item-tick-size;
-
-      margin-left: $spectrum-padding;
-
-      transform: translateY(-50%);
-
-      content: '';
-
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-  }
-}
-
-.coral-BasicList-item-icon {
+.react-spectrum-List-option-icon {
   width: 18*$px;
   margin-right: 7*$px;
   text-align: center;
 }
 
-.coral-BasicList-item-content {
-  flex: 1;
+.react-spectrum-List-option-content {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.coral-BasicList-group {
+.react-spectrum-List-group {
   padding: 0;
 }
 
-.coral-BasicList-group:before {
+.react-spectrum-List-group:before {
   display: block;
 
   font-weight: bold;
@@ -118,19 +33,3 @@ $spectrum-basiclist-item-tick-size = 16*$px;
 
   content: attr(label);
 }
-
-.coral-ButtonList-item,
-.coral-AnchorList-item {
-  // We can't do this as it causes the cursor flickers in FF and sometimes in Chrome
-  // cursor: pointer;
-
-  // Avoid selection on interactive elements
-  user-select: none;
-}
-
-.coral-ButtonList-item {
-  border: none;
-}
-
-@require 'light.styl'
-@require 'dark.styl'
