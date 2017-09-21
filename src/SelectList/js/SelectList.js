@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 
