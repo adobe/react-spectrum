@@ -1,5 +1,4 @@
 import autobind from 'autobind-decorator';
-import classNames from 'classnames';
 import {Menu} from '../../Menu';
 import OverlayTrigger from '../../OverlayTrigger';
 import React from 'react';
@@ -38,7 +37,6 @@ export default class Dropdown extends React.Component {
                 onHide={onClose}>
                 {trigger}
                 {React.cloneElement(menu, {
-                  className: classNames(menu.props.className, 'spectrum-Dropdown-flyout'),
                   onClose: this.onClose,
                   onSelect: this.onSelect
                 })}

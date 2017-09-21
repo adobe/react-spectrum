@@ -141,7 +141,7 @@ export default class Select extends React.Component {
             invalid={invalid}
             required={required}
             style={{width: this.state.width}}
-            className="spectrum-Flyout spectrum-Dropdown-flyout"
+            className="spectrum-Flyout spectrum-Flyout--bottom"
             autoFocus />
         }
       </Dropdown>

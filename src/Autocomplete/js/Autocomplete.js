@@ -185,7 +185,7 @@ export default class Autocomplete extends React.Component {
         })}
 
         <Overlay target={this} show={showDropdown && results.length > 0} placement="bottom left">
-          <Menu className="spectrum-Dropdown-flyout" onSelect={this.onSelect} style={{width: this.state.width}}>
+          <Menu onSelect={this.onSelect} style={{width: this.state.width}}>
             {results.map((result, i) => (
               <MenuItem
                 value={result}
