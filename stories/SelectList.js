@@ -16,22 +16,6 @@ const defaultProps = {
   ]
 };
 
-const groupedOptions = {
-  'Group 1': [
-    {label: 'Chocolate', value: 'chocolate'},
-    {label: 'Vanilla', value: 'vanilla'},
-    {label: 'Strawberry', value: 'strawberry'}
-  ],
-  'Group 2': [
-    {label: 'Caramel', value: 'caramel'},
-    {label: 'Cookies and Cream', value: 'cookiescream', disabled: true},
-    {label: 'Peppermint', value: 'peppermint'}
-  ],
-  'Group 3': [
-    {label: 'Some crazy long value that should be cut off', value: 'longVal'}
-  ]
-};
-
 const selectedValue = [
   'chocolate',
   'vanilla',
