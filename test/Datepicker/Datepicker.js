@@ -16,11 +16,11 @@ const DEFAULT_DATE_TIME_VAL_FORMAT = `${DEFAULT_DATE_VAL_FORMAT} ${DEFAULT_TIME_
 describe('Datepicker', () => {
   it('default', () => {
     const tree = shallow(<Datepicker type="datetime" />);
-    assert.equal(tree.hasClass('coral-Datepicker'), true);
+    assert.equal(tree.hasClass('spectrum-Datepicker'), true);
     assert.equal(tree.hasClass('is-invalid'), false);
 
     const textfield = findTextfield(tree);
-    assert.equal(textfield.hasClass('coral-InputGroup-input'), true);
+    assert.equal(textfield.hasClass('spectrum-InputGroup-input'), true);
     assert.equal(textfield.prop('aria-invalid'), false);
     assert.equal(textfield.prop('readOnly'), false);
     assert.equal(textfield.prop('disabled'), false);
@@ -28,13 +28,12 @@ describe('Datepicker', () => {
     assert.equal(textfield.prop('quiet'), false);
 
     const button = findButton(tree);
-    assert.equal(button.hasClass('coral-InputGroup-button'), true);
+    assert.equal(button.hasClass('spectrum-InputGroup-button'), true);
     assert.equal(button.prop('icon'), 'calendar');
     assert.equal(button.prop('disabled'), false);
-    assert.equal(button.hasClass('coral-Button--quiet'), false);
+    assert.equal(button.prop('quiet'), false);
 
     const calendar = tree.find(Calendar);
-    assert.equal(calendar.hasClass('u-coral-borderless'), true);
     assert.equal(calendar.prop('disabled'), false);
     assert.equal(calendar.prop('invalid'), false);
     assert.equal(calendar.prop('readOnly'), false);
@@ -226,7 +225,7 @@ describe('Datepicker', () => {
     const tree = shallow(<Datepicker quiet />);
     assert.equal(tree.childAt(0).prop('quiet'), true);
     assert.equal(findTextfield(tree).prop('quiet'), true);
-    assert.equal(findButton(tree).hasClass('coral-Button--quiet'), true);
+    assert.equal(findButton(tree).prop('quiet'), true);
   });
 
   it('supports disabled', () => {

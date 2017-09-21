@@ -6,15 +6,15 @@ import Textfield from '../../src/Textfield';
 describe('Textfield', () => {
   it('default', () => {
     const tree = shallow(<Textfield />);
-    assert.equal(tree.prop('className'), 'coral-Textfield');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield');
     assert.equal(tree.prop('aria-invalid'), false);
   });
 
   it('supports quiet variation', () => {
     const tree = shallow(<Textfield quiet />);
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--quiet');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--quiet');
     tree.setProps({quiet: false});
-    assert.equal(tree.prop('className'), 'coral-Textfield');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield');
   });
 
   it('supports name', () => {
@@ -47,12 +47,12 @@ describe('Textfield', () => {
 
   it('supports invalid', () => {
     const tree = shallow(<Textfield invalid />);
-    assert.equal(tree.prop('className'), 'coral-Textfield is-invalid');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield is-invalid');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Textfield className="myClass" />);
-    assert.equal(tree.prop('className'), 'coral-Textfield myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield myClass');
   });
 
   it('supports additional properties', () => {

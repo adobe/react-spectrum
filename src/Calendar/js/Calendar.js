@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
@@ -7,6 +8,7 @@ import moment from 'moment';
 import React, {Component, PropTypes} from 'react';
 import '../style/index.styl';
 
+@autobind
 export default class Calendar extends Component {
   static displayName = 'Calendar';
 
@@ -67,6 +69,7 @@ export default class Calendar extends Component {
     const newMax = toMoment(max, valueFormat);
 
     this.setState({
+      isFocused: false,
       min: newMin && newMin.startOf('day'),
       max: newMax && newMax.startOf('day')
     });
@@ -160,17 +163,21 @@ export default class Calendar extends Component {
     return `${id}-${date.format('l')}`;
   }
 
-  handleClickPrevious = () => {
-    const {focusedDate} = this.state;
-    this.focusTimeUnit(focusedDate.clone().subtract(1, 'month'));
+  handleClickPrevious() {
+    const {currentMonth} = this.state;
+    this.setState({
+      currentMonth: currentMonth.clone().add(-1, 'month').startOf('month')
+    });
   }
 
-  handleClickNext = () => {
-    const {focusedDate} = this.state;
-    this.focusTimeUnit(focusedDate.clone().add(1, 'month'));
+  handleClickNext() {
+    const {currentMonth} = this.state;
+    this.setState({
+      currentMonth: currentMonth.clone().add(1, 'month').startOf('month')
+    });
   }
 
-  handleDayClick = (e, date) => {
+  handleDayClick(e, date) {
     this.selectFocused(date);
   }
 
@@ -180,7 +187,7 @@ export default class Calendar extends Component {
     return new DateRange(min, max);
   }
 
-  onHighlight = (e, date) => {
+  onHighlight(e, date) {
     if (this.state.selectingRange) {
       this.setState({
         selectingRange: this.getSelectingRange(date)
@@ -188,7 +195,21 @@ export default class Calendar extends Component {
     }
   }
 
-  handleKeyDown = e => {
+  onFocus(e) {
+    this.setState({isFocused: true});
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
+  onBlur(e) {
+    this.setState({isFocused: false});
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
+  }
+
+  handleKeyDown(e) {
     const {focusedDate} = this.state;
     const nextMoment = focusedDate.clone();
 
@@ -293,13 +314,13 @@ export default class Calendar extends Component {
 
   renderTable(date) {
     return (
-      <div key={date.format('MM/Y')}>
-        <table
-          role="presentation">
-          {this.renderTableHeader()}
-          {this.renderTableBody(date)}
-        </table>
-      </div>
+      <table
+        key={date.format('MM/Y')}
+        role="presentation"
+        className="spectrum-Calendar-table">
+        {this.renderTableHeader()}
+        {this.renderTableBody(date)}
+      </table>
     );
   }
 
@@ -316,9 +337,10 @@ export default class Calendar extends Component {
                 <th
                   key={index}
                   role="columnheader"
-                  scope="col">
+                  scope="col"
+                  className="spectrum-Calendar-tableCell">
                   <abbr
-                    className="coral-Calendar-dayOfWeek"
+                    className="spectrum-Calendar-dayOfWeek"
                     title={dayMoment.format('dddd')}>
                     {dayMoment.format('dd')}
                   </abbr>
@@ -333,7 +355,7 @@ export default class Calendar extends Component {
 
   renderTableBody(date) {
     const {startDay, disabled} = this.props;
-    const {highlightedRange, selectingRange, min, max, focusedDate, currentMonth} = this.state;
+    const {highlightedRange, selectingRange, min, max, isFocused, focusedDate, currentMonth} = this.state;
     const range = selectingRange || highlightedRange;
 
     const month = date.month();
@@ -356,6 +378,8 @@ export default class Calendar extends Component {
                   const cursor = moment(new Date(year, month, day));
                   const isCurrentMonth = (cursor.month()) === parseFloat(month);
                   const cursorLocal = cursor.clone().startOf('day');
+                  const isRangeStart = range && (dayIndex === 0 || day === 1 || cursorLocal.isSame(range.start, 'day'));
+                  const isRangeEnd = range && (dayIndex === 6 || day === cursor.daysInMonth() || cursorLocal.isSame(range.end, 'day'));
                   return (
                     <CalendarCell
                       key={dayIndex}
@@ -366,9 +390,9 @@ export default class Calendar extends Component {
                       isCurrentMonth={isCurrentMonth}
                       selected={range && range.contains(cursorLocal)}
                       isRangeSelection={this.props.selectionType === 'range'}
-                      isRangeStart={range && cursorLocal.isSame(range.start, 'day')}
-                      isRangeEnd={range && cursorLocal.isSame(range.end, 'day')}
-                      focused={dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
+                      isRangeStart={isRangeStart}
+                      isRangeEnd={isRangeEnd}
+                      focused={isFocused && dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
                       onClick={this.handleDayClick}
                       onHighlight={this.onHighlight} />
                   );
@@ -388,7 +412,6 @@ export default class Calendar extends Component {
       valueFormat,
       className,
       disabled,
-      focused,
       invalid,
       required,
       readOnly,
@@ -403,12 +426,7 @@ export default class Calendar extends Component {
       <div
         className={
           classNames(
-            'coral-Calendar',
-            {
-              'is-disabled': disabled,
-              'is-invalid': invalid,
-              'coral-focus': focused
-            },
+            'spectrum-Calendar',
             className
           )
         }
@@ -418,29 +436,25 @@ export default class Calendar extends Component {
         aria-disabled={disabled}
         {...otherProps}>
         <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
-        <div className="coral-Calendar-calendarHeader">
-          <div
-            className="coral-Heading coral-Heading--2"
+        <div className="spectrum-Calendar-header">
+          <h2
+            className="spectrum-Heading spectrum-Calendar-heading"
             role="heading"
             aria-live="assertive"
             aria-atomic="true">
             {currentMonth.format(headerFormat)}
-          </div>
+          </h2>
           <Button
-            className="coral-Calendar-prevMonth"
-            icon="chevronLeft"
-            variant="minimal"
-            iconSize="XS"
+            className="spectrum-Calendar-prevMonth"
+            variant="icon"
             aria-label="Previous"
             title="Previous"
             disabled={disabled}
             square
             onClick={this.handleClickPrevious} />
           <Button
-            className="coral-Calendar-nextMonth"
-            icon="chevronRight"
-            variant="minimal"
-            iconSize="XS"
+            className="spectrum-Calendar-nextMonth"
+            variant="icon"
             aria-label="Next"
             title="Next"
             disabled={disabled}
@@ -449,13 +463,15 @@ export default class Calendar extends Component {
         </div>
         <div
           ref={el => {this.calendarBody = el; }}
-          className="coral-Calendar-calendarBody"
+          className="spectrum-Calendar-body"
           role="grid"
           tabIndex={disabled ? null : '0'}
           aria-readonly="true"
           aria-disabled={disabled}
           aria-activedescendant={focusedDate && this.generateDateId(focusedDate)}
-          onKeyDown={this.handleKeyDown}>
+          onKeyDown={this.handleKeyDown}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}>
           {this.renderTable(currentMonth)}
         </div>
       </div>
@@ -482,6 +498,7 @@ const CalendarCell = function CalendarCell({
   if (isToday) {
     title = `Today, ${title}`;
   }
+
   if (selected) {
     title = `${title} selected`;
   }
@@ -489,17 +506,8 @@ const CalendarCell = function CalendarCell({
   return (
     <td
       id={id}
-      className={
-        classNames(
-          {
-            'is-today': isToday,
-            'is-selected': selected,
-            'coral-focus': focused,
-            'is-currentMonth': isCurrentMonth
-          }
-        )
-      }
       role="gridcell"
+      className="spectrum-Calendar-tableCell"
       aria-disabled={disabled}
       aria-selected={selected}
       aria-invalid={invalid}
@@ -508,9 +516,12 @@ const CalendarCell = function CalendarCell({
       onMouseEnter={(e => { !disabled && onHighlight(e, date.clone()); })}>
       <span
         role="presentation"
-        className={classNames({
-          'coral-Calendar-secondaryDate': disabled,
-          'coral-Calendar-date': !disabled,
+        className={classNames('spectrum-Calendar-date', {
+          'is-today': isToday,
+          'is-selected': selected,
+          'is-focused': focused,
+          'is-disabled': disabled,
+          'is-outsideMonth': !isCurrentMonth,
           'is-range-selection': isRangeSelection && selected,
           'is-range-start': isRangeSelection && isRangeStart,
           'is-range-end': isRangeSelection && isRangeEnd

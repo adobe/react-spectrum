@@ -1,9 +1,8 @@
 
 import autobind from 'autobind-decorator';
-import Overlay from 'react-overlays/lib/Overlay';
+import Overlay from './Overlay';
 import React, {cloneElement, Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
-import '../style/index.styl';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
 /**
@@ -26,7 +25,6 @@ function isOneOf(one, of) {
  */
 @autobind
 export default class OverlayTrigger extends Component {
-
   static propTypes = {
     ...Overlay.propTypes,
      /**
@@ -60,7 +58,8 @@ export default class OverlayTrigger extends Component {
     onFocus: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
-    onHide: PropTypes.oneOf([null]),
+    onShow: PropTypes.func,
+    onHide: PropTypes.func,
     show: PropTypes.oneOf([null])
   };
 
@@ -172,10 +171,16 @@ export default class OverlayTrigger extends Component {
 
   show() {
     this.setState({show: true});
+    if (this.props.onShow) {
+      this.props.onShow();
+    }
   }
 
   hide() {
     this.setState({show: false});
+    if (this.props.onHide) {
+      this.props.onHide();
+    }
   }
 
   makeOverlay(overlay, props) {
@@ -184,11 +189,9 @@ export default class OverlayTrigger extends Component {
         {...props}
         show={this.state.show}
         onHide={this.handleHide}
-        target={this}
+        target={this.props.target || this}
         rootClose={isOneOf('click', this.props.trigger)}>
-        <div className="coral-OverlayTrigger-overlay-container">
-          {cloneElement(overlay, props)}
-        </div>
+        {cloneElement(overlay, props)}
       </Overlay>
     );
   }
@@ -209,11 +212,13 @@ export default class OverlayTrigger extends Component {
     delete props.delayShow;
     delete props.delayHide;
     delete props.defaultOverlayShown;
+    delete props.onShow;
+    delete props.onHide;
 
     const [triggerChild, overlayChild] = React.Children.toArray(this.props.children);
     const triggerProps = {};
     delete props.children;
-    
+
 
     if (this.state.show) {
       triggerProps['aria-describedby'] = overlayChild.props.id;
@@ -232,6 +237,8 @@ export default class OverlayTrigger extends Component {
       triggerProps.onFocus = this.handleDelayedShow;
       triggerProps.onBlur = this.handleDelayedHide;
     }
+
+    triggerProps.selected = this.state.show;
 
     this._overlay = this.makeOverlay(overlayChild, props);
     return cloneElement(triggerChild, triggerProps);

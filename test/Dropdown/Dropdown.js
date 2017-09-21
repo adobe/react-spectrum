@@ -2,6 +2,7 @@ import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
 import {Menu, MenuItem} from '../../src/Menu';
+import OverlayTrigger from '../../src/OverlayTrigger';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -17,9 +18,9 @@ describe('Dropdown', function () {
       </Dropdown>
     );
 
-    assert.equal(tree.find(Button).length, 1);
-    assert(tree.find(Button).prop('onClick'));
-    assert.equal(tree.find(Menu).length, 0);
+    assert.equal(tree.find(OverlayTrigger).length, 1);
+    assert.equal(tree.find(OverlayTrigger).find(Button).length, 1);
+    assert.equal(tree.find(OverlayTrigger).find(Menu).length, 1);
   });
 
   it('renders other children', function () {
@@ -33,10 +34,9 @@ describe('Dropdown', function () {
       </Dropdown>
     );
 
-    assert.equal(tree.find(Button).length, 1);
-    assert(tree.find(Button).prop('onClick'));
+    assert.equal(tree.find(OverlayTrigger).find(Button).length, 1);
     assert(tree.children().find('div').length, 1);
-    assert.equal(tree.find(Menu).length, 0);
+    assert.equal(tree.find(OverlayTrigger).length, 1);
   });
 
   it('allows any child to be the trigger', function () {
@@ -51,13 +51,13 @@ describe('Dropdown', function () {
     );
 
     assert.equal(tree.find(Button).length, 1);
-    assert(!tree.find(Button).prop('onClick'));
-    assert(tree.children().find('div').length, 1);
-    assert(tree.children().find('div').prop('onClick'));
-    assert.equal(tree.find(Menu).length, 0);
+    assert.equal(tree.find(OverlayTrigger).find(Button).length, 0);
+    assert(tree.find(OverlayTrigger).find('div').length, 1);
+    assert.equal(tree.find(OverlayTrigger).find(Menu).length, 1);
   });
 
-  it('toggles menu on click', function () {
+  it('closes the menu onClose', function () {
+    const spy = sinon.spy();
     const tree = shallow(
       <Dropdown>
         <Button>Test</Button>
@@ -67,35 +67,11 @@ describe('Dropdown', function () {
       </Dropdown>
     );
 
-    assert.equal(tree.find(Menu).length, 0);
-
-    tree.find(Button).simulate('click');
-    assert.equal(tree.find(Menu).length, 1);
-    assert.equal(tree.find(Menu).prop('className'), 'coral-Dropdown-menu');
-
-    tree.find(Button).simulate('click');
-    assert.equal(tree.find(Menu).length, 0);
-  });
-
-  it('closes the menu onClose', function () {
-    const spy = sinon.spy();
-    const tree = shallow(
-      <Dropdown onClose={spy}>
-        <Button>Test</Button>
-        <Menu>
-          <MenuItem>Test</MenuItem>
-        </Menu>
-      </Dropdown>
-    );
-
-    assert.equal(tree.find(Menu).length, 0);
-
-    tree.find(Button).simulate('click');
-    assert.equal(tree.find(Menu).length, 1);
+    tree.instance().overlayTrigger = {
+      hide: spy
+    };
 
     tree.find(Menu).simulate('close');
-    assert.equal(tree.find(Menu).length, 0);
-
     assert.equal(spy.callCount, 1);
   });
 
@@ -103,7 +79,7 @@ describe('Dropdown', function () {
     const onClose = sinon.spy();
     const onSelect = sinon.spy();
     const tree = shallow(
-      <Dropdown onClose={onClose} onSelect={onSelect}>
+      <Dropdown onSelect={onSelect}>
         <Button>Test</Button>
         <Menu>
           <MenuItem>Test</MenuItem>
@@ -111,25 +87,23 @@ describe('Dropdown', function () {
       </Dropdown>
     );
 
-    assert.equal(tree.find(Menu).length, 0);
-
-    tree.find(Button).simulate('click');
-    assert.equal(tree.find(Menu).length, 1);
+    tree.instance().overlayTrigger = {
+      hide: onClose
+    };
 
     tree.find(Menu).simulate('select', 'test');
-    assert.equal(tree.find(Menu).length, 0);
 
     assert.equal(onClose.callCount, 1);
     assert.equal(onSelect.callCount, 1);
     assert.equal(onSelect.getCall(0).args[0], 'test');
   });
 
-  it('calls focus & blur', function () {
-    const onFocus = sinon.spy();
-    const onBlur = sinon.spy();
+  it('calls onOpen and onClose', function () {
+    const onOpen = sinon.spy();
+    const onClose = sinon.spy();
 
     const tree = shallow(
-      <Dropdown onFocus={onFocus} onBlur={onBlur}>
+      <Dropdown onOpen={onOpen} onClose={onClose}>
         <Button>Test</Button>
         <Menu>
           <MenuItem>Test</MenuItem>
@@ -137,10 +111,10 @@ describe('Dropdown', function () {
       </Dropdown>
     );
 
-    tree.find(Button).simulate('click');
-    assert.equal(onFocus.callCount, 1);
+    tree.find(OverlayTrigger).simulate('show');
+    assert.equal(onOpen.callCount, 1);
 
-    tree.find(Button).simulate('click');
-    assert.equal(onBlur.callCount, 1);
+    tree.find(OverlayTrigger).simulate('hide');
+    assert.equal(onClose.callCount, 1);
   });
 });

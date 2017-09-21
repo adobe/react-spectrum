@@ -60,6 +60,26 @@ storiesOf('Popover', module)
     {inline: true}
   )
   .addWithInfo(
+    'placement: top',
+    () => render('Content', {placement: 'top'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: bottom',
+    () => render('Content', {placement: 'bottom'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: left',
+    () => render('Content', {placement: 'left'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: right',
+    () => render('Content', {placement: 'right'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'no title',
     () => render('Content', {title: null}),
     {inline: true}

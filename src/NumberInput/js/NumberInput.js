@@ -1,11 +1,14 @@
+import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import InputGroup from '../../InputGroup';
 import React, {Component, PropTypes} from 'react';
+import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
+@autobind
 export default class NumberInput extends Component {
   static propTypes = {
     defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -63,6 +66,11 @@ export default class NumberInput extends Component {
         valueInvalid: this.isInputValueInvalid(nextProps.defaultValue)
       });
     }
+  }
+
+  onMouseDown(e) {
+    e.preventDefault();
+    ReactDOM.findDOMNode(this.textfield).focus();
   }
 
   handleDecrementButtonClick = e => {
@@ -252,21 +260,6 @@ export default class NumberInput extends Component {
       || (max !== null && value > max || min !== null && value < min);
   }
 
-  renderStepButton(props) {
-    const {inputId} = this.state;
-
-    return (
-      <Button
-        {...props}
-        type="button"
-        aria-controls={inputId}
-        variant="secondary"
-        iconSize="XS"
-        tabIndex="-1"
-        square />
-    );
-  }
-
   render() {
     const {
       defaultValue,
@@ -278,6 +271,7 @@ export default class NumberInput extends Component {
       incrementTitle,
       invalid,
       disabled,
+      quiet,
       className,
       readOnly,
       ...otherProps
@@ -294,30 +288,40 @@ export default class NumberInput extends Component {
       <InputGroup
         focused={focused}
         invalid={invalid}
+        quiet={quiet}
         disabled={disabled}
-        className={classNames('coral3-NumberInput', className)}>
-        <span className="coral-InputGroup-button" role="presentation">
-          {
-            this.renderStepButton({
-              className: 'coral-InputGroup-button coral3-NumberInput-stepUp',
-              icon: 'chevronUp',
-              title: incrementTitle,
-              disabled: disabled || max != null && value >= max || readOnly,
-              onClick: this.handleIncrementButtonClick
-            })
-          }
-          {
-            this.renderStepButton({
-              className: 'coral-InputGroup-button coral3-NumberInput-stepDown',
-              icon: 'chevronDown',
-              title: decrementTitle,
-              disabled: disabled || min != null && value <= min || readOnly,
-              onClick: this.handleDecrementButtonClick
-            })
-          }
+        className={classNames('spectrum-Stepper', {'spectrum-Stepper--quiet': quiet}, className)}>
+        <span className="spectrum-Stepper-buttons" role="presentation">
+          <Button
+            className="spectrum-Stepper-stepUp"
+            type="button"
+            tabIndex="-1"
+            aria-controls={inputId}
+            variant="action"
+            quiet={quiet}
+            title={incrementTitle}
+            disabled={disabled || max != null && value >= max || readOnly}
+            onClick={this.handleIncrementButtonClick}
+            onMouseDown={this.onMouseDown}>
+            <div className="spectrum-Stepper-stepUpIcon" />
+          </Button>
+          <Button
+            className="spectrum-Stepper-stepDown"
+            type="button"
+            tabIndex="-1"
+            aria-controls={inputId}
+            variant="action"
+            quiet={quiet}
+            title={decrementTitle}
+            disabled={disabled || min != null && value <= min || readOnly}
+            onClick={this.handleDecrementButtonClick}
+            onMouseDown={this.onMouseDown}>
+            <div className="spectrum-Stepper-stepDownIcon" />
+          </Button>
         </span>
         <Textfield
-          className="coral-InputGroup-input"
+          ref={t => this.textfield = t}
+          className="spectrum-Stepper-input"
           id={inputId}
           value={value}
           defaultValue={defaultValue}
@@ -331,6 +335,7 @@ export default class NumberInput extends Component {
           placeholder={placeholder}
           disabled={disabled}
           readOnly={readOnly}
+          quiet={quiet}
           onKeyDown={this.handleInputKeyDown}
           onWheel={this.handleInputScrollWheel}
           onFocus={this.handleInputFocus}
@@ -341,5 +346,3 @@ export default class NumberInput extends Component {
     );
   }
 }
-
-NumberInput.displayName = 'NumberInput';

@@ -1,19 +1,18 @@
 import assert from 'assert';
 import Button from '../../src/Button';
-import DialogFooter from '../../src/Dialog/js/DialogFooter';
+import DialogButtons from '../../src/Dialog/js/DialogButtons';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
-describe('DialogFooter', () => {
+describe('DialogButtons', () => {
   it('renders no buttons on default', () => {
-    const tree = shallow(<DialogFooter />);
-    assert(tree.hasClass('coral-Dialog-footer'));
+    const tree = shallow(<DialogButtons />);
     assert.equal(tree.find(Button).length, 0);
   });
 
   it('renders an OK button using confirmLabel', () => {
-    const tree = shallow(<DialogFooter confirmLabel="OK" />);
+    const tree = shallow(<DialogButtons confirmLabel="OK" />);
     let button = tree.find(Button);
     assert.equal(button.length, 1);
     assert.equal(button.prop('variant'), 'primary');
@@ -21,7 +20,7 @@ describe('DialogFooter', () => {
   });
 
   it('renders an OK and close button', () => {
-    const tree = shallow(<DialogFooter confirmLabel="OK" cancelLabel="Close" />);
+    const tree = shallow(<DialogButtons confirmLabel="OK" cancelLabel="Close" />);
     let buttons = tree.find(Button);
     assert.equal(buttons.length, 2);
     assert.equal(buttons.at(0).prop('label'), 'Close');
@@ -32,7 +31,7 @@ describe('DialogFooter', () => {
 
   it('Supports the onClose and onConfirm', () => {
     const spy = sinon.spy();
-    const tree = shallow(<DialogFooter confirmLabel="OK" cancelLabel="Close" onClose={spy} onConfirm={spy} />);
+    const tree = shallow(<DialogButtons confirmLabel="OK" cancelLabel="Close" onClose={spy} onConfirm={spy} />);
     let buttons = tree.find(Button);
     buttons.at(0).simulate('click');
     assert(spy.calledOnce);

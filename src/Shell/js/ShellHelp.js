@@ -90,7 +90,7 @@ export default class ShellHelp extends Component {
               <ListItem
                 element="a"
                 key="all-results"
-                className="coral-AnchorList-item coral-Link coral3-Shell-help-allResults"
+                className="coral-AnchorList-item spectrum-Link coral3-Shell-help-allResults"
                 href={`${moreSearchResultsUrl}?q=${searchTerm}`}
                 label={`See all ${numTotalResults} results`}
                 target="undefined" />

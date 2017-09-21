@@ -1,10 +1,18 @@
 import {action, storiesOf} from '@kadira/storybook';
+import Button from '../src/Button';
 import Dialog from '../src/Dialog';
+import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
+import {VerticalCenter} from '../.storybook/layout';
 
 const dialogChildren = <span>Content of the dialog</span>;
 
 storiesOf('Dialog', module)
+  .addDecorator(story => (
+    <VerticalCenter className="test-dialog" style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+      {story()}
+    </VerticalCenter>
+  ))
   .addWithInfo(
     'Default',
     () => render(dialogChildren, {title: 'Dialog title'}),
@@ -27,63 +35,56 @@ storiesOf('Dialog', module)
   )
   .addWithInfo(
     'Long content',
-    () => render(longMarkup, {title: 'Dialog title'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'open: false',
-    () => render(dialogChildren, {open: false}),
+    () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: error',
-    () => render(dialogChildren, {title: 'Error', variant: 'error'}),
+    () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: warning',
-    () => render(dialogChildren, {title: 'Warning', variant: 'warning'}),
+    () => render(dialogChildren, {title: 'Warning', variant: 'warning', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: success',
-    () => render(dialogChildren, {title: 'Success', variant: 'success'}),
+    () => render(dialogChildren, {title: 'Success', variant: 'success', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: help',
-    () => render(dialogChildren, {title: 'Help', variant: 'help'}),
+    () => render(dialogChildren, {title: 'Help', variant: 'help', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
     'variant: info',
-    () => render(dialogChildren, {title: 'Info', variant: 'info'}),
+    () => render(dialogChildren, {title: 'Info', variant: 'info', confirmLabel: 'OK'}),
     {inline: true}
   )
   .addWithInfo(
-    'size: S',
-    () => render(dialogChildren, {title: 'Dialog title', size: 'S'}),
+    'mode: fullscreen',
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreen', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
   )
   .addWithInfo(
-    'size: M',
-    () => render(dialogChildren, {title: 'Dialog title', size: 'M'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: L',
-    () => render(dialogChildren, {title: 'Dialog title', size: 'L'}),
+    'mode: fullscreenTakeover',
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
   );
 
 function render(children, props = {}) {
   return (
-    <Dialog
-      open
-      onClose={action('close')}
-      {...props}>
-      {children}
-    </Dialog>
+    <ModalTrigger>
+      <Button label="Open Dialog" variant="primary" />
+      <Dialog
+        open
+        onClose={action('close')}
+        {...props}>
+        {children}
+      </Dialog>
+    </ModalTrigger>
   );
 }
 

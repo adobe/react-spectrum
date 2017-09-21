@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React from 'react';
-
 import '../style/index.styl';
 
 export default class Slider extends React.Component {
@@ -88,15 +87,15 @@ export default class Slider extends React.Component {
     let {isDragging, isFocused, value} = this.state;
     let percent = (value - min) / (max - min);
     let styleKey = this.props.orientation === 'vertical' ? 'bottom' : 'left';
-    let sliderClasses = classNames('coral3-Slider', {
-      'is-disabled': disabled,
-      'coral3-Slider--vertical': orientation === 'vertical'},
-      this.props.className
-    );
+    let sliderClasses = classNames('spectrum-Slider', this.props.className, {
+      'spectrum-Slider--disabled': disabled,
+      'spectrum-Slider--vertical': orientation === 'vertical'
+    });
+
     return (
       <div
         className={sliderClasses}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={!disabled && this.onMouseDown}
         ref={d => this.dom = d}
         role="slider"
         aria-valuemin={min}
@@ -104,19 +103,21 @@ export default class Slider extends React.Component {
         aria-valuenow={value}
         aria-orientation={orientation}
         aria-disabled={disabled}>
-        <div className="coral3-Slider-bar" />
-        <div
-          className={classNames('coral3-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
-          onMouseDown={!disabled && this.onMouseDown}
-          style={{[styleKey]: percent * 100 + '%'}}
-          aria-disabled={disabled}>
-          <input
-            type="range"
-            className="coral3-Slider-input"
-            step={step}
-            max={max}
-            min={min}
-            disabled={disabled} />
+        <div className="spectrum-Slider-controls">
+          <div className="spectrum-Slider-track" />
+          <div
+            className={classNames('spectrum-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
+            onMouseDown={!disabled && this.onMouseDown}
+            style={{[styleKey]: percent * 100 + '%'}}
+            aria-disabled={disabled}>
+            <input
+              type="range"
+              className="spectrum-Slider-input"
+              step={step}
+              max={max}
+              min={min}
+              disabled={disabled} />
+          </div>
         </div>
       </div>
     );

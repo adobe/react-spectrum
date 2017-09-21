@@ -1,4 +1,4 @@
-import {List, ListGroup, ListItem} from '../src/List';
+import {List, ListItem} from '../src/List';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
@@ -13,15 +13,11 @@ storiesOf('List', module)
     'Default',
     () => (
       <List>
-        <ListGroup label="Group 1">
-          <ListItem selected>Foo</ListItem>
-          <ListItem icon="twitter">Bar</ListItem>
-          <ListItem disabled>Baz</ListItem>
-        </ListGroup>
-        <ListGroup label="Group 2">
-          <ListItem>Test</ListItem>
-          <ListItem>Hi</ListItem>
-        </ListGroup>
+        <ListItem selected>Foo</ListItem>
+        <ListItem icon="twitter">Bar</ListItem>
+        <ListItem disabled>Baz</ListItem>
+        <ListItem>Test</ListItem>
+        <ListItem>Hi</ListItem>
       </List>
     ),
     {inline: true}

@@ -1,6 +1,6 @@
 {
   "name": "@react/react-spectrum",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -17,10 +17,10 @@
   "dependencies": {
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
+    "devongovett-react-overlays": "^0.8.3",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
-    "react-overlays": "^0.7.0",
-    "react-transition-group": "^1.1.3",
+    "react-transition-group": "^2.2.0",
     "stringify": "^5.1.0"
   },
   "devDependencies": {
@@ -29,6 +29,7 @@
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
     "@spectrum/spectrum-abstract-stylus": "0.2.8",
+    "@spectrum/spectrum-css": "^2.0.0-beta.19",
     "@spectrum/spectrum-flexbox-grid": "1.0.2",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",

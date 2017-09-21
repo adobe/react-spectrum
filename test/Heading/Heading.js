@@ -7,17 +7,17 @@ import {shallow} from 'enzyme';
 describe('Heading', () => {
   it('supports different sizes', () => {
     const tree = shallow(<Heading>Testing</Heading>);
-    assertSize(tree, 1);
-    changeAndAssertSize(tree, 2);
-    changeAndAssertSize(tree, 3);
-    changeAndAssertSize(tree, 4);
-    changeAndAssertSize(tree, 5);
-    changeAndAssertSize(tree, 6);
+    assertSize(tree, 1, 'h1', 'display');
+    changeAndAssertSize(tree, 2, 'h2', 'page-title');
+    changeAndAssertSize(tree, 3, 'h2', 'subtitle1');
+    changeAndAssertSize(tree, 4, 'h3', 'subtitle2');
+    changeAndAssertSize(tree, 5, 'h4', 'subtitle3');
+    changeAndAssertSize(tree, 6, 'h4', 'subtitle3');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Heading className="myClass">Testing</Heading>);
-    assert.equal(tree.prop('className'), 'coral-Heading coral-Heading--1 myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Heading spectrum-Heading--display myClass');
   });
 
   it('supports additional properties', () => {
@@ -32,12 +32,12 @@ describe('Heading', () => {
 });
 
 
-function changeAndAssertSize(tree, size) {
+function changeAndAssertSize(tree, size, element, className) {
   tree.setProps({size});
-  assertSize(tree, size);
+  assertSize(tree, size, element, className);
 }
 
-function assertSize(tree, size) {
-  assert.equal(tree.type(), `h${size}`);
-  assert.equal(tree.prop('className'), `coral-Heading coral-Heading--${size}`);
+function assertSize(tree, size, element, className) {
+  assert.equal(tree.type(), element);
+  assert.equal(tree.prop('className'), `spectrum-Heading spectrum-Heading--${className}`);
 }

@@ -13,15 +13,15 @@ describe('Textarea', () => {
 
   it('should render a textarea', () => {
     const tree = shallow(<Textfield multiLine />);
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--multiline');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline');
     assert.equal(tree.prop('aria-invalid'), false);
   });
 
   it('supports quiet variation', () => {
     const tree = shallow(<Textfield multiLine quiet />);
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--multiline coral-Textfield--quiet');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline spectrum-Textfield--quiet');
     tree.setProps({quiet: false});
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--multiline');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline');
   });
 
   it('supports name', () => {
@@ -54,12 +54,12 @@ describe('Textarea', () => {
 
   it('supports invalid', () => {
     const tree = shallow(<Textfield multiLine invalid />);
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--multiline is-invalid');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline is-invalid');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Textfield multiLine className="myClass" />);
-    assert.equal(tree.prop('className'), 'coral-Textfield coral-Textfield--multiline myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline myClass');
   });
 
   it('supports additional properties', () => {

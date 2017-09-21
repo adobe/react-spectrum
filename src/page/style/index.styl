@@ -8,10 +8,14 @@
 @import '@coralui/coralui-core/styles/utilities/responsiveness.styl'
 @import '@coralui/coralui-core/styles/utilities/space.styl'
 
-@import '@spectrum/spectrum-abstract-stylus/dist/components/page'
+@import '@spectrum/spectrum-css/dist/components/page/index.css';
+@import '@spectrum/spectrum-css/dist/components/page/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/page/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/page/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/page/multiStops/darkest.css';
 
-// holds global styles, like body:background-color and font-family
-// we should define a global '.spectrum' class, once we have css for each colorstop
-
-@import './light.styl'
-@import './dark.styl'
+@import '@spectrum/spectrum-css/dist/components/typography/index.css';
+@import '@spectrum/spectrum-css/dist/components/typography/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/typography/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/typography/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/typography/multiStops/darkest.css';

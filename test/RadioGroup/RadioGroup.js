@@ -8,18 +8,18 @@ import sinon from 'sinon';
 describe('RadioGroup', () => {
   it('has correct defaults', () => {
     const tree = shallow(<RadioGroup />);
-    assert.equal(tree.prop('className'), 'coral-RadioGroup');
+    assert.equal(tree.prop('className'), 'spectrum-RadioGroup');
     assert.equal(tree.type(), 'div');
   });
 
   it('supports vertical layout', () => {
     const tree = shallow(<RadioGroup vertical />);
-    assert.equal(tree.hasClass('coral-RadioGroup--vertical'), true);
+    assert.equal(tree.hasClass('spectrum-RadioGroup--vertical'), true);
   });
 
   it('supports labelsBelow layout', () => {
     const tree = shallow(<RadioGroup labelsBelow />);
-    assert.equal(tree.hasClass('coral-RadioGroup--labelsBelow'), true);
+    assert.equal(tree.hasClass('spectrum-RadioGroup--labelsBelow'), true);
   });
 
   describe('selectedValue', () => {

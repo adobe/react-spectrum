@@ -7,7 +7,7 @@ import {sleep} from '../utils';
 describe('ToastContainer', () => {
   it('should render toasts', () => {
     const tree = shallow(<ToastContainer />);
-    assert.equal(tree.prop('className'), 'coral-ToastContainer');
+    assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer');
     assert.equal(tree.children().length, 0);
 
     const toast = <Toast>Test</Toast>;
@@ -44,10 +44,10 @@ describe('ToastContainer', () => {
     const toast = <Toast>Test</Toast>;
     addToast(toast);
 
-    const container = document.querySelector('.coral-ToastContainer');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
     assert(container);
     assert.equal(container.childNodes.length, 1);
-    assert(container.childNodes[0].classList.contains('coral-Toast'));
+    assert(container.childNodes[0].classList.contains('spectrum-Toast'));
 
     removeToast(toast);
     await sleep(500); // wait for animation
@@ -57,8 +57,8 @@ describe('ToastContainer', () => {
   it('should render a success toast', () => {
     success('Success');
 
-    const container = document.querySelector('.coral-ToastContainer');
-    const toast = container.querySelector('.coral-Toast.coral-Toast--success');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
+    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--success');
     assert(toast);
     assert.equal(toast.textContent, 'Success');
   });
@@ -66,8 +66,8 @@ describe('ToastContainer', () => {
   it('should render a warning toast', () => {
     warning('Warning');
 
-    const container = document.querySelector('.coral-ToastContainer');
-    const toast = container.querySelector('.coral-Toast.coral-Toast--warning');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
+    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--warning');
     assert(toast);
     assert.equal(toast.textContent, 'Warning');
   });
@@ -75,8 +75,8 @@ describe('ToastContainer', () => {
   it('should render an error toast', () => {
     error('Error');
 
-    const container = document.querySelector('.coral-ToastContainer');
-    const toast = container.querySelector('.coral-Toast.coral-Toast--error');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
+    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--error');
     assert(toast);
     assert.equal(toast.textContent, 'Error');
   });
@@ -84,8 +84,8 @@ describe('ToastContainer', () => {
   it('should render an info toast', () => {
     info('Info');
 
-    const container = document.querySelector('.coral-ToastContainer');
-    const toast = container.querySelector('.coral-Toast.coral-Toast--info');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
+    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--info');
     assert(toast);
     assert.equal(toast.textContent, 'Info');
   });
@@ -93,8 +93,8 @@ describe('ToastContainer', () => {
   it('should render a help toast', () => {
     help('Help');
 
-    const container = document.querySelector('.coral-ToastContainer');
-    const toast = container.querySelector('.coral-Toast.coral-Toast--help');
+    const container = document.querySelector('.react-spectrum-ToastContainer');
+    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--help');
     assert(toast);
     assert.equal(toast.textContent, 'Help');
   });

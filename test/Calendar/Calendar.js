@@ -14,7 +14,7 @@ describe('Calendar', () => {
     const now = moment();
 
     const tree = shallow(<Calendar />);
-    assert.equal(tree.hasClass('coral-Calendar'), true);
+    assert.equal(tree.hasClass('spectrum-Calendar'), true);
 
     const headerTitle = findHeaderTitle(tree);
     assert.equal(headerTitle.text(), now.format(DEFAULT_HEADER_FORMAT));
@@ -68,7 +68,7 @@ describe('Calendar', () => {
   it('supports startDay', () => {
     const tree = shallow(<Calendar startDay={2} />); // Weeks start on Tuesday
     // Grab first column to see if it is Tuesday
-    const head = tree.find('.coral-Calendar-calendarBody thead tr th').first();
+    const head = tree.find('.spectrum-Calendar-body thead tr th').first();
     assert.equal(head.childAt(0).prop('title'), 'Tuesday');
     assert.equal(head.childAt(0).text(), 'Tu');
   });
@@ -193,10 +193,8 @@ describe('Calendar', () => {
     it('changes currentMonth when previous or next buttons are clicked', () => {
       const previousMonth = now.clone().subtract(1, 'month');
       findPreviousButton(tree).simulate('click');
-      assert.equal(+tree.state('focusedDate'), +previousMonth.clone());
       assert.equal(+tree.state('currentMonth'), +previousMonth.clone().startOf('month'));
       findNextButton(tree).simulate('click');
-      assert.equal(+tree.state('focusedDate'), +now.clone());
       assert.equal(+tree.state('currentMonth'), +now.clone().startOf('month'));
     });
   });
@@ -208,6 +206,7 @@ describe('Calendar', () => {
     let body;
 
     const assertDateAfterKeyDown = ({keyCode, date, meta = false}) => {
+      body.simulate('focus');
       body.simulate('keydown', {preventDefault: preventDefaultSpy, keyCode, metaKey: meta});
       assert.equal(+tree.state('focusedDate'), +date.clone());
       assert.equal(+tree.state('currentMonth'), +date.clone().startOf('month'));
@@ -339,13 +338,15 @@ describe('Calendar', () => {
     beforeEach(() => {
       now = moment();
       tree = shallow(<Calendar value={now} />);
+      findBody(tree).simulate('focus');
     });
 
     describe('selected cell', () => {
-      let cellTree;
+      let cellTree, dateNode;
 
       beforeEach(() => {
         cellTree = shallow(findFocusedCell(tree).node);
+        dateNode = cellTree.find('.spectrum-Calendar-date');
       });
 
       it('props', () => {
@@ -359,10 +360,9 @@ describe('Calendar', () => {
       });
 
       it('classes', () => {
-        assert.equal(cellTree.hasClass('is-today'), true);
-        assert.equal(cellTree.hasClass('is-selected'), true);
-        assert.equal(cellTree.hasClass('coral-focus'), true);
-        assert.equal(cellTree.childAt(0).hasClass('coral-Calendar-date'), true);
+        assert.equal(dateNode.hasClass('is-today'), true);
+        assert.equal(dateNode.hasClass('is-selected'), true);
+        assert.equal(dateNode.hasClass('is-focused'), true);
       });
 
       it('supports range selections', function () {
@@ -389,7 +389,7 @@ describe('Calendar', () => {
     });
 
     describe('disabled cell', () => {
-      let cellTree;
+      let cellTree, dateNode;
       let startOfNextMonth;
 
       beforeEach(() => {
@@ -398,6 +398,7 @@ describe('Calendar', () => {
           .add(1, 'day')
           .startOf('day');
         cellTree = shallow(findCellByDate(tree, startOfNextMonth).node);
+        dateNode = cellTree.find('.spectrum-Calendar-date');
       });
 
       it('props', () => {
@@ -411,10 +412,10 @@ describe('Calendar', () => {
       });
 
       it('classes', () => {
-        assert.equal(cellTree.hasClass('is-today'), false);
-        assert.equal(cellTree.hasClass('is-selected'), false);
-        assert.equal(cellTree.hasClass('coral-focus'), false);
-        assert.equal(cellTree.childAt(0).hasClass('coral-Calendar-secondaryDate'), true);
+        assert.equal(dateNode.hasClass('is-today'), false);
+        assert.equal(dateNode.hasClass('is-selected'), false);
+        assert.equal(dateNode.hasClass('is-focused'), false);
+        assert.equal(dateNode.hasClass('is-disabled'), true);
       });
     });
   });
@@ -422,18 +423,11 @@ describe('Calendar', () => {
   it('supports disabled', () => {
     const tree = shallow(<Calendar disabled />);
     assert.equal(tree.prop('aria-disabled'), true);
-    assert.equal(tree.hasClass('is-disabled'), true);
 
     const body = findBody(tree);
     // every cell should be disabled
     assert.equal(body.find('tbody tr CalendarCell[disabled]').length, 42);
     assert.equal(body.prop('aria-disabled'), true);
-  });
-
-  it('supports invalid', () => {
-    const tree = shallow(<Calendar invalid />);
-    assert.equal(tree.prop('aria-invalid'), true);
-    assert.equal(tree.hasClass('is-invalid'), true);
   });
 
   it('supports readOnly', () => {
@@ -457,10 +451,10 @@ describe('Calendar', () => {
   });
 });
 
-const findHeaderTitle = tree => tree.find('.coral-Calendar-calendarHeader').childAt(0);
-const findPreviousButton = tree => tree.find('.coral-Calendar-calendarHeader').childAt(1);
-const findNextButton = tree => tree.find('.coral-Calendar-calendarHeader').childAt(2);
-const findBody = tree => tree.find('.coral-Calendar-calendarBody');
+const findHeaderTitle = tree => tree.find('.spectrum-Calendar-header').childAt(0);
+const findPreviousButton = tree => tree.find('.spectrum-Calendar-header').childAt(1);
+const findNextButton = tree => tree.find('.spectrum-Calendar-header').childAt(2);
+const findBody = tree => tree.find('.spectrum-Calendar-body');
 const findAllCells = tree => findBody(tree).find('tbody tr CalendarCell');
 const findAllSelectableCells = tree => (
   findAllCells(tree)

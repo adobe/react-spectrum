@@ -86,7 +86,7 @@ export default class TagList extends React.Component {
         {...otherProps}
         className={
           classNames(
-            'coral-TagList',
+            'spectrum-TagList',
             {
               'is-disabled': disabled
             },

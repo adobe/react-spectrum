@@ -1,36 +1,5 @@
-@import '../../commons'
-
-// Spectrum relies on variables from a skin for sizing etc.
-// See https://git.corp.adobe.com/Spectrum/spectrum-abstract-stylus/issues/10
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-light.styl'
-@import '@spectrum/spectrum-abstract-stylus/dist/components/button'
-
-.coral-SplitButton {
-  display: inline-block;
-  margin-right: $spectrum-margin;
-
-  .coral-SplitButton-action {
-    margin-right: 0;
-    border-radius: $spectrum-button-border-corner-radius-default 0 0 $spectrum-button-border-corner-radius-default;
-  }
-
-  .coral-SplitButton-trigger {
-    margin-right: 0;
-    border-radius: 0 $spectrum-button-border-corner-radius-default $spectrum-button-border-corner-radius-default 0;
-    border-left-width: 0;
-    padding-left: ($spectrum-padding / 2);
-    padding-right: ($spectrum-padding * 2/3);
-  }
-
-  .coral-SplitButton-action.coral-Button--cta {
-    margin-right: $spectrum-button-border-size-default;
-    border-right: 0;
-  }
-
-  .coral-SplitButton-action,
-  .coral-SplitButton-trigger {
-    &:focus {
-      box-shadow: none;
-    }
-  }
-}
+@import '@spectrum/spectrum-css/dist/components/splitbutton/index.css';
+@import '@spectrum/spectrum-css/dist/components/splitbutton/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/splitbutton/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/splitbutton/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/splitbutton/multiStops/darkest.css';

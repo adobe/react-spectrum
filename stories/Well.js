@@ -17,5 +17,5 @@ storiesOf('Well', module)
   );
 
 function render(props = {}) {
-  return (<Well {...props}>This is a React Coral Well</Well>);
+  return (<Well {...props}>This is a React Spectrum Well</Well>);
 }
