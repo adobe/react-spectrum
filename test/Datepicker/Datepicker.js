@@ -40,7 +40,7 @@ describe('Datepicker', () => {
     assert.equal(calendar.prop('required'), false);
 
     const clock = tree.find(Clock);
-    assert.equal(clock.parent().hasClass('coral-Datepicker-clockContainer'), true);
+    assert.equal(clock.parent().hasClass('react-spectrum-Datepicker-clockContainer'), true);
     assert.equal(clock.prop('disabled'), false);
     assert.equal(clock.prop('invalid'), false);
     assert.equal(clock.prop('readOnly'), false);
@@ -187,7 +187,7 @@ describe('Datepicker', () => {
       const date = new Date(2001, 0, 1);
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
-        const clockEl = shallow(wrapper.find(Clock).node).find(`.coral-Clock-${field}`);
+        const clockEl = shallow(wrapper.find(Clock).node).find(`.react-spectrum-Clock-${field}`);
         clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${value}`}});
         return spy.lastCall.args[1];
       };

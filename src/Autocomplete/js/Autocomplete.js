@@ -186,18 +186,18 @@ export default class Autocomplete extends React.Component {
 
         <Overlay target={this} show={showDropdown && results.length > 0} transition={OpenTransition} placement="bottom left">
           <OverlayContainer>
-          <Menu className="spectrum-Dropdown-flyout" onSelect={this.onSelect} style={{width: this.state.width}}>
-            {results.map((result, i) =>
-              (<MenuItem
-                value={result}
-                icon={result.icon}
-                focused={selectedIndex === i}
-                onMouseEnter={this.onMouseEnter.bind(this, i)}
-                onMouseDown={e => e.preventDefault()}>
-                {typeof result === 'string' ? result : result.label}
-              </MenuItem>)
-            )}
-          </Menu>
+            <Menu className="spectrum-Dropdown-flyout" onSelect={this.onSelect} style={{width: this.state.width}}>
+              {results.map((result, i) =>
+                (<MenuItem
+                  value={result}
+                  icon={result.icon}
+                  focused={selectedIndex === i}
+                  onMouseEnter={this.onMouseEnter.bind(this, i)}
+                  onMouseDown={e => e.preventDefault()}>
+                  {typeof result === 'string' ? result : result.label}
+                </MenuItem>)
+              )}
+            </Menu>
           </OverlayContainer>
         </Overlay>
       </div>

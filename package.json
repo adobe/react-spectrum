@@ -17,6 +17,7 @@
   "dependencies": {
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
+    "devongovett-react-overlays": "^0.8.2",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
     "react-overlays": "^0.8.1",

@@ -47,7 +47,7 @@ export default class TabView extends React.Component {
     );
 
     return (
-      <div className={classNames('coral-TabView', 'coral-TabView--' + orientation, className)}>
+      <div className={classNames('react-spectrum-TabView', 'react-spectrum-TabView--' + orientation, className)}>
         <TabList
           {...props}
           orientation={orientation}
@@ -55,7 +55,7 @@ export default class TabView extends React.Component {
           onChange={this.onChange}>
           {children}
         </TabList>
-        <div className="coral-TabView-body">
+        <div className="react-spectrum-TabView-body">
           {body}
         </div>
       </div>
