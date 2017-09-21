@@ -98,14 +98,9 @@ storiesOf('Select', module)
 function render(props = {}) {
   return (
     <Select
-      label="React"
       onChange={action('change')}
-      onBlur={action('blur')}
-      onClose={action('close')}
-      onFocus={action('focus')}
-      onInputChange={action('inputChange')}
       onOpen={action('open')}
-      onValueClick={action('valueClick')}
+      onClose={action('close')}
       {...defaultProps}
       {...props} />
   );

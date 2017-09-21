@@ -43,9 +43,11 @@ export default class Select extends React.Component {
   }
 
   updateSize() {
-    let width = ReactDOM.findDOMNode(this).querySelector('.spectrum-Dropdown-trigger').offsetWidth;
-    if (width !== this.state.width) {
-      this.setState({width});
+    if (this.button) {
+      let width = ReactDOM.findDOMNode(this.button).offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
     }
   }
 
@@ -61,6 +63,9 @@ export default class Select extends React.Component {
 
   onClose = () => {
     ReactDOM.findDOMNode(this.button).focus();
+    if (this.props.onClose) {
+      this.props.onClose();
+    }
   }
 
   onKeyDown = (e) => {
@@ -78,8 +83,7 @@ export default class Select extends React.Component {
     const {
       options = [],
       quiet,
-      onFocus,
-      onBlur,
+      onOpen,
       disabled = false,
       invalid = false,
       multiple = false,
@@ -104,9 +108,8 @@ export default class Select extends React.Component {
           'is-invalid': invalid
         }, className)}
         onSelect={this.onSelect}
+        onOpen={onOpen}
         onClose={this.onClose}
-        onFocus={onFocus}
-        onBlur={onBlur}
         aria-required={required}
         aria-multiselectable={multiple}
         aria-disabled={disabled}
