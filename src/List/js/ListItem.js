@@ -76,7 +76,7 @@ export default class ListItem extends Component {
             className
           )
         }
-        onKeyDown={interpretKeyboardEvent.bind(this)}
+        onKeyDown={!disabled && interpretKeyboardEvent.bind(this)}
         onMouseEnter={disabled ? null : this.handleMouseEnter}
         onClick={!disabled && this.handleClick}
         tabIndex="0"
