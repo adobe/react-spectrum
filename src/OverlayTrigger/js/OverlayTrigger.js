@@ -1,10 +1,10 @@
 
 import autobind from 'autobind-decorator';
 import OpenTransition from '../../utils/OpenTransition';
-import Overlay from 'react-overlays/lib/Overlay';
+import Overlay from 'devongovett-react-overlays/lib/Overlay';
+import OverlayContainer from './OverlayContainer';
 import React, {cloneElement, Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
-import '../style/index.styl';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
 /**
@@ -27,7 +27,6 @@ function isOneOf(one, of) {
  */
 @autobind
 export default class OverlayTrigger extends Component {
-
   static propTypes = {
     ...Overlay.propTypes,
      /**
@@ -235,20 +234,9 @@ export default class OverlayTrigger extends Component {
       triggerProps.onBlur = this.handleDelayedHide;
     }
 
+    triggerProps.selected = this.state.show;
+
     this._overlay = this.makeOverlay(overlayChild, props);
     return cloneElement(triggerChild, triggerProps);
   }
-}
-
-function OverlayContainer({arrowOffsetLeft, arrowOffsetTop, children, placement, style, open}) {
-  let arrowStyle = {
-    top: arrowOffsetTop,
-    left: arrowOffsetLeft
-  };
-
-  return (
-    <div className="coral-OverlayTrigger-overlay-container" style={style}>
-      {React.cloneElement(React.Children.only(children), {arrowStyle, placement, open})}
-    </div>
-  );
 }

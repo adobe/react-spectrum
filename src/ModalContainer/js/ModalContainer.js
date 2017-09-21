@@ -1,5 +1,5 @@
 import autobind from 'autobind-decorator';
-import BaseModal from 'react-overlays/lib/Modal';
+import BaseModal from 'devongovett-react-overlays/lib/Modal';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';

@@ -22,7 +22,8 @@ export default class Tooltip extends Component {
       children,
       className,
       placement,
-      open
+      open,
+      ...otherProps
     } = this.props;
 
     return (
@@ -37,7 +38,8 @@ export default class Tooltip extends Component {
             },
             className
           )
-        }>
+        }
+        {...otherProps}>
         <div className="spectrum-Tooltip-content">{children}</div>
         <div className="spectrum-Tooltip-tip" />
       </div>

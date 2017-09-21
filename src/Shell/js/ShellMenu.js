@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import {getTransitionEvent} from '../../utils/transition';
-import Portal from 'react-overlays/lib/Portal';
+import Portal from 'devongovett-react-overlays/lib/Portal';
 import React, {Component} from 'react';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import RootCloseWrapper from 'devongovett-react-overlays/lib/RootCloseWrapper';
 import '../style/ShellMenu.styl';
 
 export default class ShellMenu extends Component {

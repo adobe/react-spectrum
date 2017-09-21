@@ -4,7 +4,7 @@ import Dropdown from '../../Dropdown';
 import Icon from '../../Icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import RootCloseWrapper from 'devongovett-react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
 import '../../Menu/style/index.styl';
@@ -31,6 +31,21 @@ export default class Select extends React.Component {
   componentWillReceiveProps(props) {
     if ('value' in props && props.value !== this.state.value) {
       this.setState({value: props.value});
+    }
+  }
+
+  componentDidMount() {
+    this.updateSize();
+  }
+
+  componentDidUpdate() {
+    this.updateSize();
+  }
+
+  updateSize() {
+    let width = ReactDOM.findDOMNode(this).querySelector('.spectrum-Dropdown-trigger').offsetWidth;
+    if (width !== this.state.width) {
+      this.setState({width});
     }
   }
 
@@ -122,7 +137,8 @@ export default class Select extends React.Component {
             disabled={disabled}
             invalid={invalid}
             required={required}
-            className="coral-Menu coral3-Select-selectList"
+            style={{width: this.state.width}}
+            className="spectrum-Flyout spectrum-Dropdown-flyout"
             autoFocus />
         }
       </Dropdown>
@@ -130,10 +146,10 @@ export default class Select extends React.Component {
   }
 }
 
-export function SelectMenu({onClose, onSelect, ...props}) {
+export function SelectMenu({onClose, onSelect, className, open, ...props}) {
   return (
     <RootCloseWrapper onRootClose={onClose}>
-      <SelectList {...props} onChange={onSelect} />
+      <SelectList className={classNames(className, {'is-open': open})} {...props} onChange={onSelect} />
     </RootCloseWrapper>
   );
 }

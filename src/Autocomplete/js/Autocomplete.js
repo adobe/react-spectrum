@@ -2,8 +2,11 @@ import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {Menu, MenuItem} from '../../Menu';
+import OpenTransition from '../../utils/OpenTransition';
+import Overlay from 'devongovett-react-overlays/lib/Overlay';
+import OverlayContainer from '../../OverlayTrigger/js/OverlayContainer';
 import React from 'react';
-import '../style/index.styl';
+import ReactDOM from 'react-dom';
 
 @autobind
 export default class Autocomplete extends React.Component {
@@ -26,6 +29,21 @@ export default class Autocomplete extends React.Component {
   componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.state.value) {
       this.setValue(props.value);
+    }
+  }
+
+  componentDidMount() {
+    this.updateSize();
+  }
+
+  componentDidUpdate() {
+    this.updateSize();
+  }
+
+  updateSize() {
+    let width = ReactDOM.findDOMNode(this.trigger).offsetWidth;
+    if (width !== this.state.width) {
+      this.setState({width});
     }
   }
 
@@ -150,7 +168,7 @@ export default class Autocomplete extends React.Component {
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
 
     return (
-      <div className={classNames('coral-Autocomplete', {'is-focused': isFocused}, className)}>
+      <div className={classNames({'is-focused': isFocused}, className)}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {
@@ -158,15 +176,17 @@ export default class Autocomplete extends React.Component {
               onChange: chain(child.props.onChange, this.onChange),
               onKeyDown: chain(child.props.onKeyDown, interpretKeyboardEvent.bind(this)),
               onFocus: chain(child.props.onFocus, this.onFocus),
-              onBlur: chain(child.props.onBlur, this.onBlur)
+              onBlur: chain(child.props.onBlur, this.onBlur),
+              ref: (t) => this.trigger = t
             });
           }
 
           return child;
         })}
 
-        {showDropdown && results.length > 0 &&
-          <Menu className="coral-Autocomplete-menu" onSelect={this.onSelect}>
+        <Overlay target={this} show={showDropdown && results.length > 0} transition={OpenTransition} placement="bottom left">
+          <OverlayContainer>
+          <Menu className="spectrum-Dropdown-flyout" onSelect={this.onSelect} style={{width: this.state.width}}>
             {results.map((result, i) =>
               (<MenuItem
                 value={result}
@@ -178,7 +198,8 @@ export default class Autocomplete extends React.Component {
               </MenuItem>)
             )}
           </Menu>
-        }
+          </OverlayContainer>
+        </Overlay>
       </div>
     );
   }

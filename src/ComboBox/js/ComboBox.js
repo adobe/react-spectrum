@@ -59,8 +59,8 @@ export default class ComboBox extends React.Component {
           quiet={quiet} />
 
         {icon &&
-        <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="XS" />
-          }
+          <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="XS" />
+        }
 
         <Button
           className="spectrum-InputGroup-button"

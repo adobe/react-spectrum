@@ -62,7 +62,6 @@ export default class List extends Component {
         className={
           classNames(
             'spectrum-List',
-            'is-open',
             className
           )
         }

@@ -1,8 +1,9 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {Menu} from '../../Menu';
+import OverlayTrigger from '../../OverlayTrigger';
 import React from 'react';
-import '../style/index.styl';
+import ReactDOM from 'react-dom';
 
 @autobind
 export default class Dropdown extends React.Component {
@@ -33,7 +34,7 @@ export default class Dropdown extends React.Component {
   }
 
   onClose() {
-    this.hide();
+    this.overlayTrigger.hide();
     if (this.props.onClose) {
       this.props.onClose();
     }
@@ -47,7 +48,7 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const {alignRight, className, ...otherProps} = this.props;
+    const {alignRight, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
@@ -55,17 +56,20 @@ export default class Dropdown extends React.Component {
     delete otherProps.onFocus;
 
     return (
-      <div className={classNames('coral-Dropdown', {'is-openBelow': this.state.showingMenu}, className)} {...otherProps}>
+      <div {...otherProps}>
         {children.map(child => {
           if (child === trigger) {
-            return React.cloneElement(child, {onClick: menu ? this.onClick : null, selected: this.state.showingMenu});
-          } else if (child === menu) {
-            return this.state.showingMenu && React.cloneElement(child, {
-              className: classNames(child.props.className, 'coral-Dropdown-menu', {'align-right': alignRight}),
-              onClose: this.onClose,
-              onSelect: this.onSelect
-            });
-          } else {
+            return (
+              <OverlayTrigger trigger="click" placement={alignRight ? 'bottom right' : 'bottom left'} ref={t => this.overlayTrigger = t}>
+                {trigger}
+                {React.cloneElement(menu, {
+                  className: classNames(menu.props.className, 'spectrum-Dropdown-flyout'),
+                  onClose: this.onClose,
+                  onSelect: this.onSelect
+                })}
+              </OverlayTrigger>
+            );
+          } else if (child !== menu) {
             return child;
           }
         })}
