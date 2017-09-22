@@ -11,7 +11,7 @@ describe('Rating', function () {
   it('renders a top level div and passes through className', function () {
     var rating = shallow(<Rating className="abc" />);
     assert.equal(rating.type(), 'div');
-    assert.equal(rating.prop('className'), 'coral-Rating abc');
+    assert.equal(rating.prop('className'), 'spectrum-Rating abc');
   });
 
   it('provides default currentRating and max', function () {
@@ -90,8 +90,8 @@ describe('Rating', function () {
     assert.equal(rating.find('.is-active').length, 4);
   });
 
-  it('does not highlight if readOnly', function () {
-    var rating = shallow(<Rating max={10} value={4} readOnly />);
+  it('does not highlight if disabled', function () {
+    var rating = shallow(<Rating max={10} value={4} disabled />);
     rating.childAt(8).simulate('mouseEnter');
     assert.equal(rating.find({icon: 'starFill'}).length, 4);
     assert.equal(rating.find('.is-active').length, 4);

@@ -55,12 +55,10 @@ export default class Rating extends React.Component {
   }
 
   render() {
-    let {filledIcon, unfilledIcon, max, disabled, readOnly, className, size} = this.props;
+    let {filledIcon, unfilledIcon, max, disabled, className, size} = this.props;
     let {currentRating, currentRatingHover, hovering} = this.state;
     let rating = hovering ? currentRatingHover : currentRating;
     let ratings = [];
-
-    readOnly = readOnly || disabled;
 
     for (let i = 1; i <= max; ++i) {
       let active = i <= Math.round(currentRating);
@@ -71,15 +69,15 @@ export default class Rating extends React.Component {
           icon={icon}
           size={size}
           key={i}
-          className={classNames('coral-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
-          onMouseEnter={!readOnly && this.onMouseEnter.bind(this, i)}
-          onClick={!readOnly && this.onClickRating.bind(this, i)} />
+          className={classNames('spectrum-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
+          onMouseEnter={!disabled && this.onMouseEnter.bind(this, i)}
+          onClick={!disabled && this.onClickRating.bind(this, i)} />
       );
     }
 
     return (
       <div
-        className={classNames('coral-Rating', {'is-readonly': readOnly}, className)}
+        className={classNames('spectrum-Rating', {'is-disabled': disabled}, className)}
         onMouseLeave={this.onMouseLeave}>
         {ratings}
       </div>
