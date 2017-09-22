@@ -50,16 +50,14 @@ export default class Popover extends Component {
           )
         }
         {...otherProps}>
-        <div className="spectrum-Dialog-wrapper">
-          {title &&
-            <DialogHeader
-              className="spectrum-Popover-header"
-              title={title}
-              variant={variant} />
-          }
-          <div className="spectrum-Dialog-content">
-            {children}
-          </div>
+        {title &&
+          <DialogHeader
+            className="spectrum-Popover-header"
+            title={title}
+            variant={variant} />
+        }
+        <div className="spectrum-Dialog-content">
+          {children}
         </div>
         <div className="spectrum-Popover-tip" style={arrowStyle} />
       </div>
