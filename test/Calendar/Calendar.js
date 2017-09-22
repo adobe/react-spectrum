@@ -327,7 +327,7 @@ describe('Calendar', () => {
   it('generateDateId', () => {
     const today = moment(new Date(2016, 7, 24));
     const tree = shallow(<Calendar value={today} />);
-    assert.equal(tree.instance().generateDateId(today), 'react-coral-1-8/24/2016');
+    assert.equal(tree.instance().generateDateId(today), 'react-spectrum-1-8/24/2016');
   });
 
   describe('CalendarCell', () => {

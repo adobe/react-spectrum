@@ -4,8 +4,6 @@ import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import './Popover.styl';
-
 storiesOf('Popover', module)
   .addDecorator(story => (
     <VerticalCenter

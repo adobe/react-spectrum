@@ -2,7 +2,6 @@ import {action, storiesOf} from '@kadira/storybook';
 import Alert from '../src/Alert';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
-import './Alert.styl';
 
 storiesOf('Alert', module)
   .addDecorator(story => (
