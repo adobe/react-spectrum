@@ -126,12 +126,6 @@ describe('TagList', () => {
       assert.equal(child1.prop('role'), 'option');
     });
 
-    it('sets selectedIndex when child is focused', () => {
-      run();
-      child2.simulate('focus');
-      assert.equal(tree.state('selectedIndex'), 1);
-    });
-
     it('passes down the onClose', () => {
       const onClose = sinon.spy();
       run({onClose});
