@@ -2,7 +2,7 @@ import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import classNames from 'classnames';
 import React from 'react';
-import {Tag} from '../../TagList';
+import {TagList} from '../../TagList';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
@@ -67,9 +67,7 @@ export default class TagField extends React.Component {
         onSelect={this.onSelect}
         value={value}
         onChange={this.onTextfieldChange}>
-        {tags.map((tag, i) =>
-          <Tag key={i} size="S" onClose={this.onRemove} closable disabled={disabled}>{tag}</Tag>)
-          }
+        <TagList disabled={disabled} onClose={this.onRemove} values={tags} />
         <Textfield
           className="coral-TagField-input"
           autocompleteInput
