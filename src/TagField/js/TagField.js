@@ -57,8 +57,8 @@ export default class TagField extends React.Component {
 
     return (
       <Autocomplete
-        className={classNames('coral-TagField', {
-          'coral-TagField--quiet': quiet,
+        className={classNames('react-spectrum-TagField', {
+          'react-spectrum-TagField--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid
         })}
@@ -69,7 +69,7 @@ export default class TagField extends React.Component {
         onChange={this.onTextfieldChange}>
         <TagList disabled={disabled} onClose={this.onRemove} values={tags} />
         <Textfield
-          className="coral-TagField-input"
+          className="react-spectrum-TagField-input"
           autocompleteInput
           disabled={disabled}
           {...props} />
