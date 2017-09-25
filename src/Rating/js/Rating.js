@@ -12,9 +12,7 @@ export default class Rating extends React.Component {
   };
 
   state = {
-    currentRating: this.props.value || 0,
-    currentRatingHover: 0,
-    hovering: false
+    currentRating: this.props.value || 0
   };
 
   componentWillReceiveProps(props) {
@@ -23,19 +21,6 @@ export default class Rating extends React.Component {
         currentRating: props.value || 0
       });
     }
-  }
-
-  onMouseEnter(rating, e) {
-    this.setState({
-      currentRatingHover: rating,
-      hovering: true
-    });
-  }
-
-  onMouseLeave() {
-    this.setState({
-      hovering: false
-    });
   }
 
   onClickRating(currentRating, e) {
@@ -52,8 +37,7 @@ export default class Rating extends React.Component {
 
   render() {
     let {max, disabled, className} = this.props;
-    let {currentRating, currentRatingHover, hovering} = this.state;
-    let rating = hovering ? currentRatingHover : currentRating;
+    let {currentRating} = this.state;
     let ratings = [];
 
     for (let i = 1; i <= max; ++i) {
@@ -63,15 +47,13 @@ export default class Rating extends React.Component {
         <span
           key={i}
           className={classNames('spectrum-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
-          onMouseEnter={!disabled && this.onMouseEnter.bind(this, i)}
           onClick={!disabled && this.onClickRating.bind(this, i)} />
       );
     }
 
     return (
       <div
-        className={classNames('spectrum-Rating', {'is-disabled': disabled}, className)}
-        onMouseLeave={this.onMouseLeave}>
+        className={classNames('spectrum-Rating', {'is-disabled': disabled}, className)}>
         {ratings}
       </div>
     );
