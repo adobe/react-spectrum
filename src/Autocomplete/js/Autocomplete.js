@@ -40,9 +40,11 @@ export default class Autocomplete extends React.Component {
   }
 
   updateSize() {
-    let width = ReactDOM.findDOMNode(this).offsetWidth;
-    if (width !== this.state.width) {
-      this.setState({width});
+    if (this.wrapper) {
+      let width = this.wrapper.offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
     }
   }
 
@@ -167,7 +169,7 @@ export default class Autocomplete extends React.Component {
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
 
     return (
-      <div className={classNames('react-spectrum-Autocomplete', {'is-focused': isFocused}, className)}>
+      <div className={classNames('react-spectrum-Autocomplete', {'is-focused': isFocused}, className)} ref={w => this.wrapper = w}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {
