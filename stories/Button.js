@@ -10,16 +10,6 @@ storiesOf('Button', module)
     </VerticalCenter>
   ))
   .addWithInfo(
-    'Default',
-    () => render(),
-    {inline: true}
-  )
-  .addWithInfo(
-    'block: true',
-    () => render({block: true}),
-    {inline: true}
-  )
-  .addWithInfo(
     'variant: cta',
     () => render({variant: 'cta'}),
     {inline: true}
@@ -46,7 +36,7 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'variant: action icon only',
-    () => render({variant: 'action', label: null}),
+    () => render({variant: 'action', label: null, icon: 'bell'}),
     {inline: true}
   )
   .addWithInfo(
@@ -81,7 +71,7 @@ storiesOf('Button', module)
   )
  .addWithInfo(
     'quiet: true, variant: action icon only',
-    () => render({quiet: true, variant: 'action', label: null}),
+    () => render({quiet: true, variant: 'action', label: null, icon: 'bell'}),
     {inline: true}
   )
   .addWithInfo(
@@ -101,17 +91,17 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'iconSize: XS',
-    () => render({iconSize: 'XS', variant: 'primary'}),
+    () => render({iconSize: 'XS', icon: 'bell', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'iconSize: M',
-    () => render({iconSize: 'M', variant: 'primary'}),
+    () => render({iconSize: 'M', icon: 'bell', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
     'iconSize: L',
-    () => render({iconSize: 'L', variant: 'primary'}),
+    () => render({iconSize: 'L', icon: 'bell', variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(
@@ -123,18 +113,21 @@ storiesOf('Button', module)
     'element: a',
     () => render({element: 'a', href: 'http://example.com'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'block: true',
+    () => render({block: true, variant: 'cta'}),
+    {inline: true}
   );
 
 function render(props = {}) {
   return (
     <div>
       <Button
-        icon="checkCircle"
         label="React"
         onClick={action('click')}
         {...props} />
       <Button
-        icon="checkCircle"
         label="React"
         onClick={action('click')}
         disabled
