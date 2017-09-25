@@ -10,7 +10,7 @@ export default function TBody({
     <tbody
       className={
         classNames(
-          'coral-Table-body',
+          'spectrum-Table-body',
           className
         )
       }

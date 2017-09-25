@@ -3,8 +3,7 @@ import React from 'react';
 import '../style/index.styl';
 
 export default function Table({
-  hover = false,
-  bordered = false,
+  quiet,
   className,
   children,
   ...otherProps
@@ -13,10 +12,9 @@ export default function Table({
     <table
       className={
         classNames(
-          'coral-Table',
+          'spectrum-Table',
           {
-            'coral-Table--hover': hover,
-            'coral-Table--bordered': bordered
+            'spectrum-Table--quiet': quiet
           },
           className
         )

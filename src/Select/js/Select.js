@@ -131,19 +131,17 @@ export default class Select extends React.Component {
             </span>
           </span>
         </Button>
-        {options.length > 0 &&
-          <SelectMenu
-            dropdownMenu
-            options={options}
-            value={value}
-            multiple={multiple}
-            disabled={disabled}
-            invalid={invalid}
-            required={required}
-            style={{width: this.state.width}}
-            className="spectrum-Flyout spectrum-Flyout--bottom"
-            autoFocus />
-        }
+        <SelectMenu
+          dropdownMenu
+          options={options}
+          value={value}
+          multiple={multiple}
+          disabled={disabled}
+          invalid={invalid}
+          required={required}
+          style={{width: this.state.width}}
+          className="spectrum-Flyout spectrum-Flyout--bottom"
+          autoFocus />
       </Dropdown>
     );
   }

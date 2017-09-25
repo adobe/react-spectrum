@@ -41,14 +41,3 @@ $clock-gap-width = 16*$px;
   text-align: center;
   width: $clock-gap-width;
 }
-
-.react-spectrum-Clock-period {
-  display: table-cell;
-  width: $clock-period-width;
-  padding-left: $clock-gap-width;
-
-  .react-spectrum-Overlay {
-    // Override coral-select internal overlay styling
-    min-width: $clock-period-width - $clock-gap-width !important;
-  }
-}
