@@ -8,11 +8,8 @@ import '../style/index.styl';
 export default class Rating extends React.Component {
   static defaultProps = {
     disabled: false,
-    filledIcon: 'starFill',
-    unfilledIcon: 'starStroke',
     className: '',
     max: 5,
-    size: 'S'
   };
 
   state = {
@@ -65,9 +62,7 @@ export default class Rating extends React.Component {
       let icon = i <= Math.round(rating) ? filledIcon : unfilledIcon;
 
       ratings.push(
-        <Icon
-          icon={icon}
-          size={size}
+        <span
           key={i}
           className={classNames('spectrum-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
           onMouseEnter={!disabled && this.onMouseEnter.bind(this, i)}
