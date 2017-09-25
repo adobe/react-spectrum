@@ -68,6 +68,6 @@ describe('Rating', function () {
   it('does not highlight if disabled', function () {
     var rating = shallow(<Rating max={10} value={4} disabled />);
     assert.equal(rating.find('.is-active').length, 4);
-    assert.equal(rating.find('.is-disabled').length, 4);
+    assert.equal(rating.find('.is-disabled').length, 11);
   });
 });
