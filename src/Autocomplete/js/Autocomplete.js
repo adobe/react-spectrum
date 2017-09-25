@@ -5,6 +5,7 @@ import {Menu, MenuItem} from '../../Menu';
 import Overlay from '../../OverlayTrigger/js/Overlay';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import '../style/index.styl';
 
 @autobind
 export default class Autocomplete extends React.Component {
@@ -39,11 +40,9 @@ export default class Autocomplete extends React.Component {
   }
 
   updateSize() {
-    if (this.trigger) {
-      let width = ReactDOM.findDOMNode(this.trigger).offsetWidth;
-      if (width !== this.state.width) {
-        this.setState({width});
-      }
+    let width = ReactDOM.findDOMNode(this).offsetWidth;
+    if (width !== this.state.width) {
+      this.setState({width});
     }
   }
 
@@ -168,7 +167,7 @@ export default class Autocomplete extends React.Component {
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
 
     return (
-      <div className={classNames({'is-focused': isFocused}, className)}>
+      <div className={classNames('react-spectrum-Autocomplete', {'is-focused': isFocused}, className)}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {
@@ -176,8 +175,7 @@ export default class Autocomplete extends React.Component {
               onChange: chain(child.props.onChange, this.onChange),
               onKeyDown: chain(child.props.onKeyDown, interpretKeyboardEvent.bind(this)),
               onFocus: chain(child.props.onFocus, this.onFocus),
-              onBlur: chain(child.props.onBlur, this.onBlur),
-              ref: (t) => this.trigger = t
+              onBlur: chain(child.props.onBlur, this.onBlur)
             });
           }
 
