@@ -1,7 +1,6 @@
 /** @fileoverview Rating unit tests */
 
 import assert from 'assert';
-import Icon from '../../src/Icon';
 import Rating from '../../src/Rating';
 import React from 'react';
 import {shallow} from 'enzyme';
@@ -11,19 +10,13 @@ describe('Rating', function () {
   it('renders a top level div and passes through className', function () {
     var rating = shallow(<Rating className="abc" />);
     assert.equal(rating.type(), 'div');
-    assert.equal(rating.prop('className'), 'coral-Rating abc');
+    assert.equal(rating.prop('className'), 'spectrum-Rating abc');
   });
 
   it('provides default currentRating and max', function () {
     var rating = shallow(<Rating />);
     assert.equal(rating.state('currentRating'), 0);
     assert.equal(rating.instance().props.max, 5);
-  });
-
-  it('provides default star icons', function () {
-    var rating = shallow(<Rating />);
-    assert.equal(rating.instance().props.filledIcon, 'starFill');
-    assert.equal(rating.instance().props.unfilledIcon, 'starStroke');
   });
 
   it('renders a max number of ratings', function () {
@@ -33,14 +26,7 @@ describe('Rating', function () {
 
   it('renders a current number of ratings', function () {
     var rating = shallow(<Rating max={10} value={5} />);
-    assert.equal(rating.find(Icon).length, 10);
     assert.equal(rating.find('.is-active').length, 5);
-  });
-
-  it('has pluggible toggled and untoggled icons', function () {
-    var rating = shallow(<Rating max={10} value={5} filledIcon="abc" unfilledIcon="def" />);
-    assert.equal(rating.find({icon: 'abc'}).length, 5);
-    assert.equal(rating.find({icon: 'def'}).length, 5);
   });
 
   it('sends back the number of stars selected in props.onChange', function () {
@@ -62,7 +48,7 @@ describe('Rating', function () {
   it('provides a hook to change a rating', function () {
     var spyChange = sinon.spy();
     var rating = shallow(<Rating max={10} onChange={spyChange} value={4} />);
-    rating.find(Icon).first().simulate('click', {stopPropagation: function () {}});
+    rating.find('span').first().simulate('click', {stopPropagation: function () {}});
     assert(spyChange.called);
     assert.equal(spyChange.lastCall.args[0], 1);
   });
@@ -70,7 +56,7 @@ describe('Rating', function () {
   it('does not update state in controlled mode', function () {
     var spyChange = sinon.spy();
     var rating = shallow(<Rating max={10} onChange={spyChange} value={4} />);
-    rating.find(Icon).first().simulate('click', {stopPropagation: function () {}});
+    rating.find('span').first().simulate('click', {stopPropagation: function () {}});
     assert(spyChange.called);
     assert.equal(spyChange.lastCall.args[0], 1);
     assert.equal(rating.find('.is-active').length, 4);
@@ -79,21 +65,9 @@ describe('Rating', function () {
     assert.equal(rating.find('.is-active').length, 1);
   });
 
-  it('highlights stars on hover', function () {
-    var rating = shallow(<Rating max={10} value={4} />);
-    rating.childAt(8).simulate('mouseEnter');
-    assert.equal(rating.find({icon: 'starFill'}).length, 9);
+  it('does not highlight if disabled', function () {
+    var rating = shallow(<Rating max={10} value={4} disabled />);
     assert.equal(rating.find('.is-active').length, 4);
-
-    rating.simulate('mouseLeave');
-    assert.equal(rating.find({icon: 'starFill'}).length, 4);
-    assert.equal(rating.find('.is-active').length, 4);
-  });
-
-  it('does not highlight if readOnly', function () {
-    var rating = shallow(<Rating max={10} value={4} readOnly />);
-    rating.childAt(8).simulate('mouseEnter');
-    assert.equal(rating.find({icon: 'starFill'}).length, 4);
-    assert.equal(rating.find('.is-active').length, 4);
+    assert.equal(rating.find('.is-disabled').length, 11);
   });
 });
