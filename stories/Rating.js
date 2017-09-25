@@ -24,13 +24,6 @@ storiesOf('Rating', module)
     {inline: true}
   )
   .addWithInfo(
-    'Read Only',
-    () => (
-      <Rating readOnly value={3} onChange={action('change')} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
     'Controlled',
     () => (
       <Rating value={3} onChange={action('change')} />
