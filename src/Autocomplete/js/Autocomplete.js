@@ -40,9 +40,12 @@ export default class Autocomplete extends React.Component {
   }
 
   updateSize() {
-    let width = ReactDOM.findDOMNode(this).offsetWidth;
-    if (width !== this.state.width) {
-      this.setState({width});
+    let dom = ReactDOM.findDOMNode(this);
+    if (dom) {
+      let width = dom.offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
     }
   }
 
