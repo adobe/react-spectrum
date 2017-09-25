@@ -14,8 +14,11 @@ $coral-Shell-orgswitcher-height = 320*$px;
 }
 
 .coral3-Shell-orgSwitcher-items {
+  display: block;
   max-height: $coral-Shell-orgswitcher-height;
   overflow-y: auto;
+  border-radius: 0;
+  border: none;
 }
 
 .coral3-Shell-orgSwitcher-item-checkmark {
@@ -94,6 +97,10 @@ $coral-Shell-orgswitcher-height = 320*$px;
   background-color: $coral-Shell-orgswitcher-search-background;
 
   border-bottom: 1*$px solid rgb(235, 235, 235);
+
+  .spectrum-Search-input {
+    width: 100%;
+  }
 }
 
 .coral3-Shell-orgSwitcher-resultMessage {
@@ -128,8 +135,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
 
   text-align: center;
 
-  button[is='coral-button'],
-  a[is='coral-anchorbutton'] {
+  .spectrum-Button {
     // Force block
     width: 100%;
 

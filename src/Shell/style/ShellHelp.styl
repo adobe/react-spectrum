@@ -16,7 +16,8 @@ $coral-shell-loading-spacing = 16*$px;
 .coral3-Shell-help-search {
   width: $coral-shell-help-width;
 
-  .coral3-Search-input {
+  .spectrum-Search-input {
+    width: 100%;
     border-width: 0 0 $px 0;
 
     &:focus {
@@ -91,4 +92,10 @@ $coral-shell-loading-spacing = 16*$px;
   padding-top: ($coral-shell-loading-spacing / 2);
 
   text-align: center;
+}
+
+.spectrum-List.coral3-Shell-help-items {
+  display: block;
+  border-radius: 0;
+  border: none;
 }

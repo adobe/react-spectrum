@@ -86,7 +86,6 @@ export default class ShellOrgSwitcher extends Component {
           ref={el => {this.contentRef = el; }}
           className={
             classNames(
-              'coral-BasicList',
               'coral3-Shell-orgSwitcher',
               className
             )
