@@ -1,6 +1,5 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import Icon from '../../Icon';
 import React from 'react';
 import '../style/index.styl';
 
@@ -52,14 +51,13 @@ export default class Rating extends React.Component {
   }
 
   render() {
-    let {filledIcon, unfilledIcon, max, disabled, className, size} = this.props;
+    let {max, disabled, className} = this.props;
     let {currentRating, currentRatingHover, hovering} = this.state;
     let rating = hovering ? currentRatingHover : currentRating;
     let ratings = [];
 
     for (let i = 1; i <= max; ++i) {
       let active = i <= Math.round(currentRating);
-      let icon = i <= Math.round(rating) ? filledIcon : unfilledIcon;
 
       ratings.push(
         <span
