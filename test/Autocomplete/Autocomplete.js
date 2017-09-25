@@ -14,7 +14,7 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    assert.equal(tree.prop('className'), 'test');
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete test');
     assert.equal(tree.childAt(1).prop('show'), false);
     assert.equal(tree.find('input').prop('value'), '');
     assert.equal(typeof tree.find('input').prop('onChange'), 'function');
@@ -160,11 +160,11 @@ describe('Autocomplete', () => {
 
     await sleep(1); // Wait for async getCompletions
 
-    assert.equal(tree.prop('className'), 'is-focused');
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete is-focused');
     assert.equal(tree.find(Menu).length, 1);
 
     tree.find('input').simulate('blur');
-    assert.equal(tree.prop('className'), '');
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete');
     assert.equal(tree.childAt(1).prop('show'), false);
   });
 
