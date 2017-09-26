@@ -17,27 +17,27 @@ export default function Step({
     <div
       className={classNames(
         className,
-        'coral-Step',
+        'spectrum-Steplist-step',
         {'is-complete': complete},
         {'is-selected': selected}
       )}
       role="tab"
       aria-selected={selected}
       {...otherProps}>
-      <div className="coral-Step-label">
+      <div className="spectrum-Steplist-label">
         {(size !== SMALL) && children}
       </div>
-      <span className="coral-Step-markerContainer">
+      <span className="spectrum-Steplist-markerContainer">
         {(size === SMALL) ?
           <OverlayTrigger placement="top">
-            <span className="coral-Step-marker" />
-            <Tooltip open>
+            <span className="spectrum-Steplist-marker" />
+            <Tooltip open className="spectrum-Steplist-tooltip">
               {children}
             </Tooltip>
           </OverlayTrigger>
-          : <span className="coral-Step-marker" />}
+          : <span className="spectrum-Steplist-marker" />}
       </span>
-      <span className="coral-Step-line" />
+      <span className="spectrum-Steplist-segment" />
     </div>
   );
 }

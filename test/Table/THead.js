@@ -16,7 +16,8 @@ describe('THead', () => {
 
   it('supports children', () => {
     const tree = shallow(render({children: 'Foo'}));
-    assert.equal(tree.children().node, 'Foo');
+    assert.equal(tree.children().type(), 'tr');
+    assert.equal(tree.children().children().node, 'Foo');
   });
 });
 

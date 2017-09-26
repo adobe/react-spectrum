@@ -7,6 +7,7 @@ import '../style/index.styl';
 
 export default class Search extends Component {
   static defaultProps = {
+    icon: 'search',
     clearable: true,
     onChange: function () {},
     onClear: function () {},
@@ -93,32 +94,30 @@ export default class Search extends Component {
       <div
         className={
           classNames(
-            'coral-Search',
-            'coral-DecoratedTextfield',
+            'spectrum-Search',
+            'spectrum-DecoratedTextfield',
             {'is-disabled': disabled},
             className
           )
         }>
-        {icon !== '' &&
-          <Icon className="coral-DecoratedTextfield-icon" icon={icon || 'search'} size="S" />
-        }
         <Textfield
           ref={el => {this.inputRef = el; }}
-          className="coral-DecoratedTextfield-input coral-Search-input"
+          className={classNames('spectrum-Search-input', {'spectrum-DecoratedTextfield-input': icon})}
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
           {...otherProps}
           onKeyDown={this.handleTextKeyDown}
           onChange={this.handleTextChange} />
+        {icon !== 'search'
+          ? icon && <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="S" />
+          : <div className="spectrum-DecoratedTextfield-icon spectrum-Search-icon" />
+        }
         {
           clearable && !emptyText &&
             <Button
-              variant="minimal"
-              icon="close"
-              iconSize="XS"
-              square
-              className="coral-DecoratedTextfield-button"
+              variant="icon"
+              className="spectrum-Search-clear"
               disabled={disabled}
               onClick={this.handleClearText} />
         }

@@ -4,8 +4,6 @@ import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
-import './Popover.styl';
-
 storiesOf('Popover', module)
   .addDecorator(story => (
     <VerticalCenter
@@ -57,6 +55,26 @@ storiesOf('Popover', module)
   .addWithInfo(
     'variant: info',
     () => render('Content', {variant: 'info'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: top',
+    () => render('Content', {placement: 'top'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: bottom',
+    () => render('Content', {placement: 'bottom'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: left',
+    () => render('Content', {placement: 'left'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: right',
+    () => render('Content', {placement: 'right'}),
     {inline: true}
   )
   .addWithInfo(

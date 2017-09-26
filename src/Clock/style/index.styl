@@ -20,35 +20,24 @@
 $clock-period-width = 100*$px;
 $clock-gap-width = 16*$px;
 
-.coral-Clock {
+.react-spectrum-Clock {
   display: inline-table;
   vertical-align: top;
   width: $spectrum-component-single-line-width;
 }
 
-.coral-Clock-minute,
-.coral-Clock-hour {
+.react-spectrum-Clock-minute,
+.react-spectrum-Clock-hour {
   display: table-cell;
   width: 100%;
   min-width: 0;
 }
 
-.coral-Clock-divider {
+.react-spectrum-Clock-divider {
   display: table-cell;
   line-height: $spectrum-component-single-line-height;
   font-size: $clock-gap-width;
   vertical-align: middle;
   text-align: center;
   width: $clock-gap-width;
-}
-
-.coral-Clock-period {
-  display: table-cell;
-  width: $clock-period-width;
-  padding-left: $clock-gap-width;
-
-  .coral-Overlay {
-    // Override coral-select internal overlay styling
-    min-width: $clock-period-width - $clock-gap-width !important;
-  }
 }

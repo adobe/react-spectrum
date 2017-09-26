@@ -62,19 +62,19 @@ describe('ButtonGroup', () => {
 
   it('supports readOnly', () => {
     const tree = shallow(<ButtonGroup {...defaultProps} readOnly />);
-    tree.find(Button).forEach((node) => {
-      assert.equal(node.prop('disabled'), true);
-    });
+    tree.find(Button).first().simulate('click');
+    assert.equal(tree.find({selected: true}).length, 0);
   });
 
-  it('supports selection being returned on selection change for single select', () => {
+  it('supports selection being returned on selection change for single select', (done) => {
     const tree = shallow(
       <ButtonGroup
         {...defaultProps}
         onChange={(value) => {
-          assert.deepEqual(value, defaultProps[0].value);
+          assert.deepEqual(value, 'react');
+          done();
         }} />
     );
-    tree.find(Button).first().simulate('select');
+    tree.find(Button).first().simulate('click');
   });
 });

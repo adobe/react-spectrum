@@ -19,51 +19,10 @@ storiesOf('Breadcrumbs', module)
     {inline: true}
   )
   .addWithInfo(
-    'Disabled',
-    () => (
-      <Breadcrumbs
-        disabled
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
-        onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: M',
-    () => (
-      <Breadcrumbs
-        size="M"
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
-        onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: L',
-    () => (
-      <Breadcrumbs
-        size="L"
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
-        onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
     'icon: folder',
     () => (
       <Breadcrumbs
         icon="folder"
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
-        onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'icon: folder, size: L',
-    () => (
-      <Breadcrumbs
-        icon="folder"
-        size="L"
         items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
     ),

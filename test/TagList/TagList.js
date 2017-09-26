@@ -12,7 +12,7 @@ describe('TagList', () => {
 
   it('has coral class', () => {
     const tree = shallow(<TagList />);
-    assert.equal(tree.hasClass('coral-TagList'), true);
+    assert.equal(tree.hasClass('spectrum-TagList'), true);
   });
 
   it('passes in a custom class', () => {
@@ -124,12 +124,6 @@ describe('TagList', () => {
     it('sets the role', () => {
       run();
       assert.equal(child1.prop('role'), 'option');
-    });
-
-    it('sets selectedIndex when child is focused', () => {
-      run();
-      child2.simulate('focus');
-      assert.equal(tree.state('selectedIndex'), 1);
     });
 
     it('passes down the onClose', () => {

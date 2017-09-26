@@ -9,7 +9,7 @@ describe('InlineEditor', () => {
   it('should render a label by default', () => {
     const tree = shallow(<InlineEditor value="test" />);
     assert.equal(tree.type(), 'span');
-    assert.equal(tree.prop('className'), 'coral-InlineEditor coral-InlineEditor-label');
+    assert.equal(tree.prop('className'), 'react-spectrum-InlineEditor react-spectrum-InlineEditor-label');
     assert.equal(tree.text(), 'test');
   });
 
@@ -20,7 +20,7 @@ describe('InlineEditor', () => {
     tree.simulate('doubleClick');
 
     assert.equal(tree.type(), Textfield);
-    assert.equal(tree.prop('className'), 'coral-InlineEditor coral-InlineEditor-input');
+    assert.equal(tree.prop('className'), 'react-spectrum-InlineEditor react-spectrum-InlineEditor-input');
     assert.equal(tree.prop('value'), 'test');
   });
 

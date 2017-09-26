@@ -12,12 +12,13 @@ export default function Switch({
       inputType="checkbox"
       className={
         classNames(
-          'coral3-Switch',
+          'spectrum-ToggleSwitch',
           className
         )
       }
-      inputClassName="coral3-Switch-input"
-      markClassName="coral3-Switch-label"
+      inputClassName="spectrum-ToggleSwitch-input"
+      markClassName="spectrum-ToggleSwitch-content"
+      labelClassName="spectrum-ToggleSwitch-label"
       {...otherProps} />
   );
 }

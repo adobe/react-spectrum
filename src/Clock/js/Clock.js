@@ -178,7 +178,7 @@ export default class Clock extends Component {
       <div
         className={
           classNames(
-            'coral-Clock',
+            'react-spectrum-Clock',
             className
           )
         }
@@ -189,7 +189,7 @@ export default class Clock extends Component {
         {...otherProps}>
         <Textfield
           ref={el => {this.hourRef = el; }}
-          className="coral-Clock-hour"
+          className="react-spectrum-Clock-hour"
           type="number"
           value={hourText}
           placeholder="HH"
@@ -202,10 +202,10 @@ export default class Clock extends Component {
           quiet={quiet}
           onChange={this.handleHourChange}
           onBlur={this.handleHourBlur} />
-        <span className="coral-Clock-divider">:</span>
+        <span className="react-spectrum-Clock-divider">:</span>
         <Textfield
           ref={el => {this.minuteRef = el; }}
-          className="coral-Clock-minute"
+          className="react-spectrum-Clock-minute"
           type="number"
           value={minuteText}
           placeholder="mm"

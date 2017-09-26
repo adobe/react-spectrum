@@ -29,8 +29,23 @@ storiesOf('OverlayTrigger', module)
     {inline: true}
   )
   .addWithInfo(
-    'with overlay',
+    'placement: top',
+    () => render('popover', {trigger: 'click', placement: 'top', variant: 'warning'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: bottom',
     () => render('popover', {trigger: 'click', placement: 'bottom', variant: 'warning'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: left',
+    () => render('popover', {trigger: 'click', placement: 'left', variant: 'warning'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: right',
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning'}),
     {inline: true}
   );
 

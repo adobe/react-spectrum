@@ -1,19 +1,16 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-
 import '../style/index.styl';
-
-const ARROWS = {
-  right: 'arrowRight',
-  left: 'arrowLeft',
-  bottom: 'arrowDown',
-  top: 'arrowUp'
-};
 
 export default class Tooltip extends Component {
   static propTypes = {
-    placement: PropTypes.string,
+    placement: PropTypes.oneOf([
+      'bottom', 'bottom left', 'bottom right',
+      'top', 'top left', 'top right',
+      'left', 'left top', 'left bottom',
+      'right', 'right top', 'right bottom'
+    ]),
     variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
     className: PropTypes.string
   };
@@ -29,23 +26,27 @@ export default class Tooltip extends Component {
       variant,
       children,
       className,
-      placement
+      placement,
+      open,
+      ...otherProps
     } = this.props;
 
     return (
       <div
         className={
           classNames(
-            'coral3-Tooltip',
-            `coral3-Tooltip--${variant}`,
-            `coral3-Tooltip--${ARROWS[placement]}`,
+            'spectrum-Tooltip',
+            `spectrum-Tooltip--${variant}`,
+            `spectrum-Tooltip--${placement.split(' ')[0]}`,
             {
-              'coral3-Tooltip-drop-after-open': open
+              'is-open': open
             },
             className
           )
-        }>
-        {children}
+        }
+        {...otherProps}>
+        <div className="spectrum-Tooltip-content">{children}</div>
+        <div className="spectrum-Tooltip-tip" />
       </div>
     );
   }

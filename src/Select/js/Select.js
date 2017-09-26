@@ -4,7 +4,7 @@ import Dropdown from '../../Dropdown';
 import Icon from '../../Icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import RootCloseWrapper from 'devongovett-react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
 import '../../Menu/style/index.styl';
@@ -34,6 +34,23 @@ export default class Select extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.updateSize();
+  }
+
+  componentDidUpdate() {
+    this.updateSize();
+  }
+
+  updateSize() {
+    if (this.button) {
+      let width = ReactDOM.findDOMNode(this.button).offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
+    }
+  }
+
   onSelect = (value) => {
     if (!('value' in this.props)) {
       this.setState({value});
@@ -46,6 +63,9 @@ export default class Select extends React.Component {
 
   onClose = () => {
     ReactDOM.findDOMNode(this.button).focus();
+    if (this.props.onClose) {
+      this.props.onClose();
+    }
   }
 
   onKeyDown = (e) => {
@@ -62,9 +82,8 @@ export default class Select extends React.Component {
   render() {
     const {
       options = [],
-      variant,
-      onFocus,
-      onBlur,
+      quiet,
+      onOpen,
       disabled = false,
       invalid = false,
       multiple = false,
@@ -83,28 +102,35 @@ export default class Select extends React.Component {
 
     return (
       <Dropdown
-        className={classNames('coral3-Select', {
-          'coral3-Select--quiet': variant === 'quiet',
+        className={classNames('spectrum-Dropdown', {
+          'spectrum-Dropdown--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid
         }, className)}
         onSelect={this.onSelect}
+        onOpen={onOpen}
         onClose={this.onClose}
-        onFocus={onFocus}
-        onBlur={onBlur}
         aria-required={required}
         aria-multiselectable={multiple}
         aria-disabled={disabled}
         aria-invalid={invalid}>
         <Button
+          className="spectrum-Dropdown-trigger"
           type="button"
+          variant="dropdown"
+          quiet={quiet}
+          disabled={disabled}
+          invalid={invalid}
           ref={b => this.button = b}
-          onKeyDown={this.onKeyDown}
-          disabled={disabled}>
-          <span className="coral3-Select-label">{label}</span>
-          <Icon icon="chevronDown" size="XS" className="coral3-Select-openIcon" />
+          onKeyDown={this.onKeyDown}>
+          <span className="spectrum-Dropdown-trigger-container">
+            <span className={classNames('spectrum-Dropdown-trigger-label', {'is-placeholder': label === placeholder})}>{label}</span>
+            <span className="spectrum-Dropdown-icon-container">
+              {invalid && <Icon size="S" icon="alert" className="spectrum-Icon" />}
+              <span className="spectrum-Icon spectrum-Dropdown-open-icon" />
+            </span>
+          </span>
         </Button>
-        {options.length > 0 &&
         <SelectMenu
           dropdownMenu
           options={options}
@@ -113,18 +139,18 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           required={required}
-          className="coral-Menu coral3-Select-selectList"
+          style={{width: this.state.width}}
+          className="spectrum-Flyout spectrum-Flyout--bottom"
           autoFocus />
-          }
       </Dropdown>
     );
   }
 }
 
-export function SelectMenu({onClose, onSelect, ...props}) {
+export function SelectMenu({onClose, onSelect, className, open, ...props}) {
   return (
     <RootCloseWrapper onRootClose={onClose}>
-      <SelectList {...props} onChange={onSelect} />
+      <SelectList className={classNames(className, {'is-open': open})} {...props} onChange={onSelect} />
     </RootCloseWrapper>
   );
 }

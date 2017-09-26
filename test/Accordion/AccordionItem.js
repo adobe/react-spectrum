@@ -1,6 +1,5 @@
 import AccordionItem from '../../src/Accordion/js/AccordionItem';
 import assert from 'assert';
-import Icon from '../../src/Icon';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -9,25 +8,23 @@ describe('AccordionItem', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<AccordionItem className="myClass" />);
     assert.equal(tree.hasClass('myClass'), true);
-    assert.equal(tree.hasClass('coral3-Accordion-item'), true);
+    assert.equal(tree.hasClass('spectrum-Accordion-item'), true);
   });
 
   it('supports selected', () => {
     const tree = shallow(<AccordionItem selected />);
     const header = findHeader(tree);
-    const icon = header.find(Icon);
     const content = findContent(tree);
 
+    assert.equal(tree.prop('className'), 'spectrum-Accordion-item is-open');
     assert.equal(header.prop('aria-selected'), true);
     assert.equal(header.prop('aria-expanded'), true);
-    assert.equal(icon.prop('icon'), 'chevronDown');
     assert.equal(content.prop('aria-hidden'), false);
-    assert.equal(content.prop('className'), 'coral3-Accordion-content is-open');
   });
 
   it('supports header', () => {
     const tree = shallow(<AccordionItem header="foo" />);
-    assert.equal(tree.find('.coral3-Accordion-label').text(), 'foo');
+    assert.equal(tree.find('.spectrum-Accordion-header').text(), 'foo');
   });
 
   it('supports children', () => {
@@ -58,5 +55,5 @@ describe('AccordionItem', () => {
   });
 });
 
-const findHeader = tree => tree.find('.coral3-Accordion-header');
-const findContent = tree => tree.find('.coral3-Accordion-content');
+const findHeader = tree => tree.find('.spectrum-Accordion-header');
+const findContent = tree => tree.find('.spectrum-Accordion-content');

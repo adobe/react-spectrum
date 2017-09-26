@@ -11,11 +11,6 @@ storiesOf('SplitButton', module)
     </VerticalCenter>
   ))
   .addWithInfo(
-    'Default',
-    () => render({label: 'Action'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'variant: primary',
     () => render({label: 'Action', variant: 'primary'}),
     {inline: true}

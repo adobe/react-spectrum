@@ -1,5 +1,7 @@
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import TabListBase from './TabListBase';
 import '../style/index.styl';
 
@@ -14,24 +16,75 @@ import '../style/index.styl';
  * onChange: A function that will be called when an Tab is selected or deselected. It will be passed
  * the updated selected index.
  */
-export default function TabList({
-  className,
-  size = 'M',
-  orientation = 'horizontal',
-  ...otherProps
-}) {
-  return (
-    <TabListBase
-      {...otherProps}
-      className={
-        classNames(
-          'coral-TabList',
-          size === 'L' ? 'coral-TabList--large' : '',
-          `coral-TabList--${orientation}`,
+@autobind
+export default class TabList extends React.Component {
+  state = {
+    selectedIndex: TabListBase.getDefaultSelectedIndex(this.props),
+    layoutInfos: []
+  };
+
+  componentDidMount() {
+    // Measure the tabs so we can position the line below correctly
+    let layoutInfos = [];
+    let tabs = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-Tab');
+    for (let tab of tabs) {
+      layoutInfos.push({
+        left: tab.offsetLeft,
+        top: tab.offsetTop,
+        width: tab.offsetWidth,
+        height: tab.offsetHeight
+      });
+    }
+
+    this.setState({layoutInfos});
+  }
+
+  onChange(selectedIndex) {
+    this.setState({selectedIndex});
+    if (this.props.onChange) {
+      this.props.onChange(selectedIndex);
+    }
+  }
+
+  render() {
+    const {
+      className,
+      size = 'M',
+      orientation = 'horizontal',
+      variant = 'panel',
+      children,
+      ...otherProps
+    } = this.props;
+
+    let selectedTab = this.state.layoutInfos[this.state.selectedIndex];
+
+    return (
+      <TabListBase
+        orientation={orientation}
+        {...otherProps}
+        className={classNames(
+          'spectrum-TabList',
+          size === 'L' ? 'spectrum-TabList--large' : '',
+          `spectrum-TabList--${orientation}`,
+          `spectrum-TabList--${variant}`,
           className
-        )
-      } />
-  );
+        )}
+        onChange={this.onChange}>
+        {children}
+        {selectedTab &&
+          <TabLine orientation={orientation} selectedTab={selectedTab} />
+        }
+      </TabListBase>
+    );
+  }
 }
 
-TabList.displayName = 'TabList';
+function TabLine({orientation, selectedTab}) {
+  let style = {
+    transform: orientation === 'vertical'
+      ? `translateY(${selectedTab.top}px)`
+      : `translateX(${selectedTab.left}px) scaleX(${selectedTab.width})`
+  };
+
+  return <div className="spectrum-Tab-line" style={style} />;
+}

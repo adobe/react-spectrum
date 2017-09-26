@@ -2,7 +2,6 @@ import {action, storiesOf} from '@kadira/storybook';
 import Alert from '../src/Alert';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
-import './Alert.styl';
 
 storiesOf('Alert', module)
   .addDecorator(story => (
@@ -21,8 +20,8 @@ storiesOf('Alert', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: help',
-    () => render({header: 'help', variant: 'help'}),
+    'variant: info',
+    () => render({header: 'info', variant: 'info'}),
     {inline: true}
   )
   .addWithInfo(
@@ -39,24 +38,9 @@ storiesOf('Alert', module)
     'variant: warning',
     () => render({header: 'warning', variant: 'warning'}),
     {inline: true}
-  )
-  .addWithInfo(
-    'large: true',
-    () => render({header: 'Info', large: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'closable: true',
-    () => render({header: 'Info', closable: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'large: true, closable: true',
-    () => render({header: 'Info', large: true, closable: true}),
-    {inline: true}
   );
 
-function render(props = {}, children = 'This is a React Coral alert') {
+function render(props = {}, children = 'This is a React Spectrum alert') {
   return (
     <Alert
       onClose={action('close')}

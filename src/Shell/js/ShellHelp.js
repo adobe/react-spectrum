@@ -68,7 +68,7 @@ export default class ShellHelp extends Component {
     const separator = '\u00a0 \u2022 \u00a0';
 
     return (
-      <List className="coral-BasicList coral-AnchorList coral3-Shell-help-results">
+      <List className="coral3-Shell-help-results">
         {
           numTotalResults !== 0 && searchResults && searchResults.length
           ? searchResults.map(({tags, title, href}, index) => (
@@ -76,7 +76,6 @@ export default class ShellHelp extends Component {
               key={href}
               element="a"
               href={href}
-              className="coral-AnchorList-item"
               target="undefined"
               label={
                 <span>
@@ -90,7 +89,7 @@ export default class ShellHelp extends Component {
               <ListItem
                 element="a"
                 key="all-results"
-                className="coral-AnchorList-item coral-Link coral3-Shell-help-allResults"
+                className="spectrum-Link coral3-Shell-help-allResults"
                 href={`${moreSearchResultsUrl}?q=${searchTerm}`}
                 label={`See all ${numTotalResults} results`}
                 target="undefined" />
@@ -119,7 +118,7 @@ export default class ShellHelp extends Component {
               key={index}
               element="a"
               href={href}
-              className="coral-AnchorList-item coral3-Shell-help-item"
+              className="coral3-Shell-help-item"
               icon={icon}
               iconSize="S"
               label={label} />
@@ -154,8 +153,7 @@ export default class ShellHelp extends Component {
           ref={el => {this.contentRef = el; }}
           className={
             classNames(
-              'coral-BasicList',
-              'coral-AnchorList coral3-Shell-help',
+              'coral3-Shell-help',
               className
             )
           }>

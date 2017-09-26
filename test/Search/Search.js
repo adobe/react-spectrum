@@ -7,17 +7,15 @@ import sinon from 'sinon';
 describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
-    assert.equal(tree.hasClass('coral-DecoratedTextfield'), true);
-    assert.equal(tree.hasClass('coral-Search'), true);
+    assert.equal(tree.hasClass('spectrum-DecoratedTextfield'), true);
+    assert.equal(tree.hasClass('spectrum-Search'), true);
 
-    const icon = tree.find('.coral-DecoratedTextfield-icon');
-    assert.equal(icon.prop('className'), 'coral-DecoratedTextfield-icon');
-    assert.equal(icon.prop('icon'), 'search');
-    assert.equal(icon.prop('size'), 'S');
+    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
+    assert.equal(icon.prop('className'), 'spectrum-DecoratedTextfield-icon spectrum-Search-icon');
 
     const input = findInput(tree);
-    assert.equal(input.hasClass('coral-DecoratedTextfield-input'), true);
-    assert.equal(input.hasClass('coral-Search-input'), true);
+    assert.equal(input.hasClass('spectrum-DecoratedTextfield-input'), true);
+    assert.equal(input.hasClass('spectrum-Search-input'), true);
 
     const button = findButton(tree);
     assert(!button.node);
@@ -25,24 +23,21 @@ describe('Search', () => {
 
   it('should support custom icons', () => {
     const tree = shallow(<Search icon="refresh" />);
-    const icon = tree.find('.coral-DecoratedTextfield-icon');
+    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
     assert.equal(icon.prop('icon'), 'refresh');
   });
 
   it('should support no icon', () => {
     const tree = shallow(<Search icon="" />);
-    const icon = tree.find('.coral-DecoratedTextfield-icon');
+    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
     assert(!icon.node);
   });
 
   it('shows clear button if text exists', () => {
     const tree = shallow(<Search defaultValue="foo" />);
     const button = findButton(tree);
-    assert.equal(button.prop('variant'), 'minimal');
-    assert.equal(button.prop('icon'), 'close');
-    assert.equal(button.prop('iconSize'), 'XS');
-    assert.equal(button.prop('square'), true);
-    assert.equal(button.prop('className'), 'coral-DecoratedTextfield-button');
+    assert.equal(button.prop('variant'), 'icon');
+    assert.equal(button.prop('className'), 'spectrum-Search-clear');
   });
 
   describe('onSubmit', () => {
@@ -139,5 +134,5 @@ describe('Search', () => {
   });
 });
 
-const findInput = tree => tree.find('.coral-DecoratedTextfield-input');
-const findButton = tree => tree.find('.coral-DecoratedTextfield-button');
+const findInput = tree => tree.find('.spectrum-DecoratedTextfield-input');
+const findButton = tree => tree.find('.spectrum-Search-clear');

@@ -1,94 +1,11 @@
-/*
- * ADOBE CONFIDENTIAL
- *
- * Copyright 2016 Adobe Systems Incorporated
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Adobe Systems Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Adobe Systems Incorporated and its
- * suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Adobe Systems Incorporated.
- */
+@import '@spectrum/spectrum-css/dist/components/textfield/index.css';
+@import '@spectrum/spectrum-css/dist/components/textfield/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/textfield/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/textfield/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/textfield/multiStops/darkest.css';
 
-@require '../../commons'
-@import '@spectrum/spectrum-abstract-stylus/dist/components/textfield'
-
-.coral-Textfield  {
-  spectrum-textfield()
-}
-
-.coral-Textfield--quiet {
-  spectrum-textfield--quiet()
-}
-
-// to be used for textarea
-.coral-Textfield--multiline {
-  spectrum-textfield--multiline()
-
-  &.coral-Textfield--quiet {
-    spectrum-textfield--quiet--multiline()
-  }
-}
-
-.coral-Form--vertical .coral-Form-field.coral-Textfield{
-  display: block;
-  width: 100%;
-}
-
-.coral-Form--aligned .coral-Form-field.coral-Textfield--multiline {
-  display: block;
-}
-
-.coral-DecoratedTextfield {
-  position: relative;
-
-  component-single-line();
-}
-
-.coral-DecoratedTextfield-icon {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  margin-left: 10px;
-  z-index: 5;
-
-  // Don't get clicks
-  pointer-events: none;
-}
-
-.coral-DecoratedTextfield-input {
-  margin: 0;
-  width: 100%;
-}
-
-// Move text to right when the icon is visible
-.coral-DecoratedTextfield-icon:not([hidden]) + .coral-DecoratedTextfield-input {
-  padding-left: 25px;
-  // Reset the text-indent the spectrum textfield has
-  text-indent: 0px;
-}
-
-.coral-DecoratedTextfield-button {
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  &.is-hidden {
-    visibility: hidden;
-  }
-}
-
-.coral-Form--vertical .coral-Form-field.coral-DecoratedTextfield {
-  display: block;
-  width: 100%;
-}
-
-@require 'light.styl'
-@require 'dark.styl'
+@import '@spectrum/spectrum-css/dist/components/decoratedtextfield/index.css';
+@import '@spectrum/spectrum-css/dist/components/decoratedtextfield/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/decoratedtextfield/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/decoratedtextfield/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/decoratedtextfield/multiStops/darkest.css';

@@ -1,16 +1,18 @@
 import Button from '../../Button';
+import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
-import Icon from '../../Icon';
 import {Menu} from '../../Menu';
 import React from 'react';
 import '../style/index.styl';
 
-export default function DropdownButton({alignRight, onSelect, children, noArrow, ...props}) {
+export default function DropdownButton({alignRight, onSelect, children, ...props}) {
   return (
-    <Dropdown className="coral-DropdownButton" onSelect={onSelect} alignRight={alignRight}>
-      <Button {...props}>
-        {!noArrow && <Icon icon="chevronDown" size="XS" className="coral-DropdownButton-arrow" />}
-      </Button>
+    <Dropdown className="spectrum-ActionMenu" onSelect={onSelect} alignRight={alignRight}>
+      <Button
+        variant="action"
+        quiet
+        {...props}
+        className={classNames('spectrum-ActionMenu-button', props.className)} />
       <Menu>
         {children}
       </Menu>

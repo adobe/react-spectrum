@@ -7,23 +7,9 @@ import sinon from 'sinon';
 describe('Accordion', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<Accordion className="myClass" />);
-    const wrapper = tree.find('.coral3-Accordion');
+    const wrapper = tree.find('.spectrum-Accordion');
 
     assert.equal(wrapper.hasClass('myClass'), true);
-  });
-
-  it('supports quiet variant', () => {
-    const tree = shallow(<Accordion variant="quiet" />);
-    const wrapper = tree.find('.coral3-Accordion');
-
-    assert.equal(wrapper.hasClass('coral3-Accordion--quiet'), true);
-  });
-
-  it('supports large variant', () => {
-    const tree = shallow(<Accordion variant="large" />);
-    const wrapper = tree.find('.coral3-Accordion');
-
-    assert.equal(wrapper.hasClass('coral3-Accordion--large'), true);
   });
 
   describe('selectedKey', () => {

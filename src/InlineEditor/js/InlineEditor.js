@@ -62,7 +62,7 @@ export default class InlineEditor extends React.Component {
 
     return (
       <span
-        className={classNames('coral-InlineEditor', 'coral-InlineEditor-label', className)}
+        className={classNames('react-spectrum-InlineEditor', 'react-spectrum-InlineEditor-label', className)}
         onDoubleClick={!disabled && this.startEditing}>
         {this.state.value}
       </span>
@@ -76,7 +76,7 @@ export default class InlineEditor extends React.Component {
       <Textfield
         {...props}
         ref={this.focusTextfield}
-        className={classNames('coral-InlineEditor', 'coral-InlineEditor-input', className)}
+        className={classNames('react-spectrum-InlineEditor', 'react-spectrum-InlineEditor-input', className)}
         value={this.state.value}
         onChange={this.onChange}
         onKeyDown={this.onKeyDown}

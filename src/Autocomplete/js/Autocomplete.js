@@ -2,7 +2,9 @@ import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {Menu, MenuItem} from '../../Menu';
+import Overlay from '../../OverlayTrigger/js/Overlay';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import '../style/index.styl';
 
 @autobind
@@ -26,6 +28,23 @@ export default class Autocomplete extends React.Component {
   componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.state.value) {
       this.setValue(props.value);
+    }
+  }
+
+  componentDidMount() {
+    this.updateSize();
+  }
+
+  componentDidUpdate() {
+    this.updateSize();
+  }
+
+  updateSize() {
+    if (this.wrapper) {
+      let width = this.wrapper.offsetWidth;
+      if (width !== this.state.width) {
+        this.setState({width});
+      }
     }
   }
 
@@ -150,7 +169,7 @@ export default class Autocomplete extends React.Component {
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
 
     return (
-      <div className={classNames('coral-Autocomplete', {'is-focused': isFocused}, className)}>
+      <div className={classNames('react-spectrum-Autocomplete', {'is-focused': isFocused}, className)} ref={w => this.wrapper = w}>
         {children.map(child => {
           if (child === trigger) {
             return React.cloneElement(child, {
@@ -165,20 +184,21 @@ export default class Autocomplete extends React.Component {
           return child;
         })}
 
-        {showDropdown && results.length > 0 &&
-          <Menu className="coral-Autocomplete-menu" onSelect={this.onSelect}>
-            {results.map((result, i) =>
-              (<MenuItem
+        <Overlay target={this} show={showDropdown && results.length > 0} placement="bottom left">
+          <Menu onSelect={this.onSelect} style={{width: this.state.width}}>
+            {results.map((result, i) => (
+              <MenuItem
+                key={`item-${i}`}
                 value={result}
                 icon={result.icon}
                 focused={selectedIndex === i}
                 onMouseEnter={this.onMouseEnter.bind(this, i)}
                 onMouseDown={e => e.preventDefault()}>
                 {typeof result === 'string' ? result : result.label}
-              </MenuItem>)
-            )}
+              </MenuItem>
+            ))}
           </Menu>
-        }
+        </Overlay>
       </div>
     );
   }

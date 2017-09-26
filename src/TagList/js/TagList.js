@@ -17,7 +17,7 @@ export default class TagList extends React.Component {
   };
 
   state = {
-    selectedIndex: 0,
+    selectedIndex: null,
     focused: false
   }
 
@@ -43,7 +43,6 @@ export default class TagList extends React.Component {
       closable: !readOnly,
       disabled,
       onClose,
-      onFocus: () => {this.setState({selectedIndex: index}); },
       role: 'option'
     };
   }
@@ -78,6 +77,7 @@ export default class TagList extends React.Component {
     } = this.props;
 
     delete otherProps.onClose;
+    delete otherProps.values;
 
     const {focused} = this.state;
 
@@ -86,7 +86,7 @@ export default class TagList extends React.Component {
         {...otherProps}
         className={
           classNames(
-            'coral-TagList',
+            'spectrum-TagList',
             {
               'is-disabled': disabled
             },

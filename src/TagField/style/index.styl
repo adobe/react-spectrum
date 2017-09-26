@@ -1,43 +1,29 @@
 @import '../../commons';
 
-$coral-tagfield-margin = 6*$px;
+$react-spectrum-tagfield-margin = 6*$px;
 
-.coral-TagField {
+.react-spectrum-TagField {
   display: flex;
   flex-wrap: wrap;
   border: $px solid;
   border-radius: $spectrum-border-radius;
-  padding: $coral-tagfield-margin;
-  padding-top: 0;
   align-items: center;
   box-sizing: border-box;
   width: $spectrum-component-single-line-width;
   transition: border-color $spectrum-transition-time ease-in-out, box-shadow $spectrum-transition-time ease-in-out;
 
-  .coral-Tag {
-    margin: $coral-tagfield-margin $coral-tagfield-margin 0 0;
-    padding: $px 5*$px;
-    padding-top: $px;
-    padding-bottom: $px;
-    height: auto;
+  .spectrum-TagList {
+    margin: 0 3px 3px 3px;
+  }
 
+  .spectrum-Tag {
+    margin: 3px 3px 0 0;
     &:last-of-type {
       margin-right: 0;
     }
-
-    &.is-closable {
-      padding-right: 20*$px;
-    }
-
-    .coral-Tag-removeButton {
-      width: 18*$px;
-      .coral-Icon {
-        margin-top: 0;
-      }
-    }
   }
 
-  .coral-Textfield.coral-TagField-input {
+  .spectrum-Textfield.react-spectrum-TagField-input {
     border: none;
     flex: 1;
     width: 100%;
@@ -47,8 +33,8 @@ $coral-tagfield-margin = 6*$px;
     outline: none;
     background: transparent;
     box-shadow: none;
-    text-indent: $coral-tagfield-margin;
-    margin-top: $coral-tagfield-margin;
+    text-indent: $react-spectrum-tagfield-margin;
+    padding: $react-spectrum-tagfield-margin 0;
 
     &:focus,
     &:hover,
@@ -61,7 +47,7 @@ $coral-tagfield-margin = 6*$px;
   }
 }
 
-.coral-TagField--quiet {
+.react-spectrum-TagField--quiet {
   border-radius: 0;
   border: none;
   border-bottom: 1*$px solid;

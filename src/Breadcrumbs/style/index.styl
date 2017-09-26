@@ -1,45 +1,14 @@
-@import '../../commons'
+@import '@spectrum/spectrum-css/dist/components/breadcrumb/index.css';
+@import '@spectrum/spectrum-css/dist/components/breadcrumb/multiStops/light.css';
+@import '@spectrum/spectrum-css/dist/components/breadcrumb/multiStops/lightest.css';
+@import '@spectrum/spectrum-css/dist/components/breadcrumb/multiStops/dark.css';
+@import '@spectrum/spectrum-css/dist/components/breadcrumb/multiStops/darkest.css';
 
-.coral-Breadcrumbs {
-  .coral-Breadcrumb {
-    vertical-align: middle;
-    transition: color $spectrum-transition-time;
-    cursor: pointer;
-    font-size: 14*$px;
-    &:last-child {
-      cursor: default
-    }
-
-    .coral-Icon {
-      margin: 0 5*$px;
-      vertical-align: middle;
-    }
-  }
-
+.spectrum-Breadcrumbs {
   > .coral-Icon:first-child {
     cursor: default;
-    margin-right: 10*$px;
+    margin-right: 10px;
     vertical-align: top;
-  }
-
-  &.is-disabled {
-    .coral-Breadcrumb {
-      cursor: default;
-    }
-  }
-
-  &.coral-Breadcrumbs--M {
-    .coral-Breadcrumb {
-      font-size: 16*$px;
-    }
-  }
-
-  &.coral-Breadcrumbs--L {
-    .coral-Breadcrumb {
-      font-size: 20*$px;
-    }
   }
 }
 
-@import 'light'
-@import 'dark'

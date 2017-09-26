@@ -1,13 +1,9 @@
 import classNames from 'classnames';
-import DialogContent from './DialogContent';
-import DialogFooter from './DialogFooter';
+import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-
 import '../style/index.styl';
-
-let variantType = ['default', 'error', 'help', 'info', 'success', 'warning'];
 
 export default class Dialog extends Component {
   static propTypes = {
@@ -17,16 +13,16 @@ export default class Dialog extends Component {
     onClose: PropTypes.func,
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
-    size: PropTypes.oneOf(['S', 'M', 'L']),
     title: PropTypes.string,
-    variant: PropTypes.oneOf(variantType)
+    variant: PropTypes.oneOf(['default', 'error', 'help', 'info', 'success', 'warning']),
+    mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover'])
   };
 
   static defaultProps = {
     open: true,
     variant: 'default',
-    onClose: function () {},
-    size: 'M'
+    mode: 'centered',
+    onClose: function () {}
   };
 
   /*
@@ -49,33 +45,43 @@ export default class Dialog extends Component {
       className,
       confirmLabel,
       open,
-      size,
       title,
-      variant
+      variant,
+      mode
     } = this.props;
+
+    const fullscreen = mode === 'fullscreen' || mode === 'fullscreenTakeover';
 
     return (
       <div
         className={classNames(
-          'coral-Dialog',
-          `coral-Dialog--${variant}`,
-          `coral-Dialog--${size}`,
+          'spectrum-Dialog',
+          `spectrum-Dialog--${variant}`,
+          `spectrum-Dialog--${mode}`,
           {
             'is-open': open
           },
           className
         )}>
-        <div className="coral-Dialog-wrapper">
-          {title && <DialogHeader variant={variant} title={title} />}
-          <DialogContent>
-            {
-              React.Children.map(children, child => (
-                React.cloneElement(child, {})
-              ))
-            }
-          </DialogContent>
-          {confirmLabel && <DialogFooter {...this.props} onConfirm={this.onConfirm.bind(this)} />}
+        {title &&
+          <DialogHeader
+            variant={variant}
+            title={title}
+            fullscreen={fullscreen}
+            {...this.props}
+            onConfirm={this.onConfirm.bind(this)} />
+        }
+
+        <div className="spectrum-Dialog-content">
+          {React.Children.map(children, child => React.cloneElement(child, {}))}
         </div>
+
+        {!fullscreen && confirmLabel &&
+          <DialogButtons
+            {...this.props}
+            className="spectrum-Dialog-footer"
+            onConfirm={this.onConfirm.bind(this)} />
+        }
       </div>
     );
   }

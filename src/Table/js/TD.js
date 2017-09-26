@@ -10,7 +10,7 @@ export default function TD({
     <td
       className={
         classNames(
-          'coral-Table-cell',
+          'spectrum-Table-cell',
           className
         )
       }

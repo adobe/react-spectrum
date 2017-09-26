@@ -8,10 +8,10 @@ describe('Checkbox', () => {
     const tree = shallow(<Checkbox />);
     assert.equal(tree.prop('inputType'), 'checkbox');
     assert(!tree.prop('aria-checked'));
-    assert.equal(tree.prop('className'), 'coral-Checkbox');
-    assert.equal(tree.prop('inputClassName'), 'coral-Checkbox-input');
-    assert.equal(tree.prop('markClassName'), 'coral-Checkbox-checkmark');
-    assert.equal(tree.prop('labelClassName'), 'coral-Checkbox-description');
+    assert.equal(tree.prop('className'), 'spectrum-Checkbox');
+    assert.equal(tree.prop('inputClassName'), 'spectrum-Checkbox-input');
+    assert.equal(tree.prop('markClassName'), 'spectrum-Checkbox-checkmark');
+    assert.equal(tree.prop('labelClassName'), 'spectrum-Checkbox-label');
   });
 
   it('supports indeterminate', () => {

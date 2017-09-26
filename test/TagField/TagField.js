@@ -3,32 +3,29 @@ import Autocomplete from '../../src/Autocomplete';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
-import {Tag} from '../../src/TagList';
 import TagField from '../../src/TagField';
+import {TagList} from '../../src/TagList';
 import Textfield from '../../src/Textfield';
 
 describe('TagField', () => {
   it('should render a textfield when empty', () => {
     const tree = shallow(<TagField />);
     assert.equal(tree.type(), Autocomplete);
-    assert.equal(tree.prop('className'), 'coral-TagField');
+    assert.equal(tree.prop('className'), 'react-spectrum-TagField');
 
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
-    assert.equal(tree.find(Tag).length, 0);
+    assert.equal(tree.find(TagList).prop('values').length, 0);
   });
 
   it('should render classnames for states', () => {
     const tree = shallow(<TagField quiet disabled invalid />);
-    assert.equal(tree.prop('className'), 'coral-TagField coral-TagField--quiet is-disabled is-invalid');
+    assert.equal(tree.prop('className'), 'react-spectrum-TagField react-spectrum-TagField--quiet is-disabled is-invalid');
   });
 
   it('should render tags when a value is given', () => {
     const tree = shallow(<TagField value={['one', 'two']} />);
-    assert.equal(tree.find(Tag).length, 2);
-    assert.equal(tree.find(Tag).first().prop('closable'), true);
-    assert.equal(tree.find(Tag).first().prop('size'), 'S');
-    assert.equal(tree.find(Tag).first().childAt(0).text(), 'one');
+    assert.equal(tree.find(TagList).prop('values').length, 2);
   });
 
   it('should allow entering tags', () => {
@@ -42,8 +39,9 @@ describe('TagField', () => {
     tree.simulate('select', 'foo');
     assert.equal(tree.prop('value'), '');
 
-    assert.equal(tree.find(Tag).length, 1);
-    assert.equal(tree.find(Tag).first().childAt(0).text(), 'foo');
+    let values = tree.find(TagList).prop('values');
+    assert.equal(values.length, 1);
+    assert.equal(values[0], 'foo');
 
     assert.equal(onChange.callCount, 1);
     assert.deepEqual(onChange.getCall(0).args[0], ['foo']);
@@ -52,9 +50,10 @@ describe('TagField', () => {
     tree.simulate('select', 'hi');
     assert.equal(tree.prop('value'), '');
 
-    assert.equal(tree.find(Tag).length, 2);
-    assert.equal(tree.find(Tag).first().childAt(0).text(), 'foo');
-    assert.equal(tree.find(Tag).last().childAt(0).text(), 'hi');
+    values = tree.find(TagList).prop('values');
+    assert.equal(values.length, 2);
+    assert.equal(values[0], 'foo');
+    assert.equal(values[1], 'hi');
 
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], ['foo', 'hi']);
@@ -64,7 +63,7 @@ describe('TagField', () => {
     const tree = shallow(<TagField />);
 
     tree.simulate('select', '');
-    assert.equal(tree.find(Tag).length, 0);
+    assert.equal(tree.find(TagList).prop('values').length, 0);
   });
 
   it('should not allow duplicates by default', () => {
@@ -73,7 +72,7 @@ describe('TagField', () => {
     tree.simulate('select', 'foo');
     tree.simulate('select', 'foo');
 
-    assert.equal(tree.find(Tag).length, 1);
+    assert.equal(tree.find(TagList).prop('values').length, 1);
   });
 
   it('should allow duplicates with allowDuplicates prop', () => {
@@ -82,7 +81,7 @@ describe('TagField', () => {
     tree.simulate('select', 'foo');
     tree.simulate('select', 'foo');
 
-    assert.equal(tree.find(Tag).length, 2);
+    assert.equal(tree.find(TagList).prop('values').length, 2);
   });
 
   it('should allow removing tags', () => {
@@ -90,13 +89,13 @@ describe('TagField', () => {
     const tree = shallow(<TagField onChange={onChange} />);
 
     tree.simulate('select', 'foo');
-    assert.equal(tree.find(Tag).length, 1);
+    assert.equal(tree.find(TagList).prop('values').length, 1);
 
     assert.equal(onChange.callCount, 1);
     assert.deepEqual(onChange.getCall(0).args[0], ['foo']);
 
-    tree.find(Tag).simulate('close', 'foo');
-    assert.equal(tree.find(Tag).length, 0);
+    tree.find(TagList).simulate('close', 'foo');
+    assert.equal(tree.find(TagList).prop('values').length, 0);
 
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], []);
@@ -105,7 +104,7 @@ describe('TagField', () => {
   it('should not set state in controlled mode', () => {
     const tree = shallow(<TagField value={['one']} />);
 
-    assert.equal(tree.find(Tag).length, 1);
+    assert.equal(tree.find(TagList).prop('values').length, 1);
 
     tree.simulate('change', 'test');
     assert.equal(tree.prop('value'), 'test');
@@ -115,9 +114,9 @@ describe('TagField', () => {
     assert.equal(tree.prop('value'), '');
 
     // Doesn't add until prop change
-    assert.equal(tree.find(Tag).length, 1);
+    assert.equal(tree.find(TagList).prop('values').length, 1);
 
     tree.setProps({value: ['one', 'two']});
-    assert.equal(tree.find(Tag).length, 2);
+    assert.equal(tree.find(TagList).prop('values').length, 2);
   });
 });

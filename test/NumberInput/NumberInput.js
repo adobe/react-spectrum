@@ -12,15 +12,13 @@ describe('NumberInput', () => {
     const assertDefaultButtonProps = (button, inputId) => {
       assert.equal(button.prop('type'), 'button');
       assert.equal(button.prop('aria-controls'), inputId);
-      assert.equal(button.prop('variant'), 'secondary');
-      assert.equal(button.prop('iconSize'), 'XS');
+      assert.equal(button.prop('variant'), 'action');
       assert.equal(button.prop('tabIndex'), '-1');
-      assert.equal(button.prop('square'), true);
       assert.equal(button.prop('disabled'), false);
     };
 
     const tree = shallow(<NumberInput />);
-    assert.equal(tree.hasClass('coral3-NumberInput'), true);
+    assert.equal(tree.hasClass('spectrum-Stepper'), true);
     assert.equal(tree.type(), InputGroup);
 
     const input = findInput(tree);
@@ -35,7 +33,7 @@ describe('NumberInput', () => {
     assert.equal(input.prop('disabled'), false);
     assert.equal(input.prop('readOnly'), false);
     assert.equal(input.prop('invalid'), false);
-    assert.equal(input.hasClass('coral-InputGroup-input'), true);
+    assert.equal(input.hasClass('spectrum-Stepper-input'), true);
 
     const decButton = findDecrementButton(tree);
     assertDefaultButtonProps(decButton, inputId);
@@ -45,7 +43,7 @@ describe('NumberInput', () => {
     assertDefaultButtonProps(incButton, inputId);
     assert.equal(incButton.prop('title'), 'Increment');
 
-    const buttonWrappers = tree.find('.coral-InputGroup-button');
+    const buttonWrappers = tree.find('.spectrum-Stepper-buttons');
     assert.equal(buttonWrappers.at(0).prop('role'), 'presentation');
   });
 
@@ -357,5 +355,5 @@ describe('NumberInput', () => {
 
 const findInput = tree => tree.find(Textfield);
 const findAllButtons = tree => tree.find(Button);
-const findDecrementButton = tree => tree.find({icon: 'chevronDown'});
-const findIncrementButton = tree => tree.find({icon: 'chevronUp'});
+const findDecrementButton = tree => tree.find('.spectrum-Stepper-stepDown');
+const findIncrementButton = tree => tree.find('.spectrum-Stepper-stepUp');

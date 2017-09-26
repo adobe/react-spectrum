@@ -3,6 +3,12 @@ import Icon from '../../Icon';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
+// For backward compatibility with coral
+const VARIANTS = {
+  'quiet': 'quiet--primary',
+  'minimal': 'quiet--secondary'
+};
+
 export default class Button extends Component {
   onClick = (event, ...rest) => {
     // This is needed when `element` is an anchor or something similar.
@@ -22,21 +28,16 @@ export default class Button extends Component {
       label,
       children,
       variant = 'default',
+      quiet,
       icon,
       iconSize = 'S',
-      size = 'M',
       selected,
-      square,
       block,
       className,
       disabled,
+      invalid,
       ...otherProps
     } = this.props;
-
-    const sizes = {
-      L: 'large',
-      M: 'medium'
-    };
 
     if (Element !== 'button') {
       otherProps.role = 'button';
@@ -44,32 +45,33 @@ export default class Button extends Component {
       otherProps['aria-disabled'] = disabled;
     }
 
+    let quietClass = (quiet ? 'quiet--' : '');
+    let iconOnly = icon && !(label || children);
+
     return (
       <Element
         {...otherProps}
         className={
           classNames(
-            'coral-Button',
-            `coral-Button--${variant}`,
-            `coral-Button--${sizes[size]}`,
+            'spectrum-Button',
+            `spectrum-Button--${quietClass + (VARIANTS[variant] || variant)}`,
             {
               'is-selected': selected,
               'is-disabled': disabled,
-              'coral-Button--block': block,
-              'coral-Button--square': square
+              'is-invalid': invalid,
+              'spectrum-Button--block': block,
+              ['spectrum-Button--action--' + quietClass + 'icon-only']: iconOnly
             },
             className
           )
         }
         disabled={disabled}
         onClick={this.onClick}>
-        {
-          icon && <Icon size={iconSize} icon={icon} />
+        {icon &&
+          <Icon className="spectrum-Icon" size={iconSize} icon={icon} />
         }
-        <span className="coral-Button-label">{label}{children}</span>
+        {label}{children}
       </Element>
     );
   }
 }
-
-Button.displayName = 'Button';

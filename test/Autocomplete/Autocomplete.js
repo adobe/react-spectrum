@@ -14,8 +14,8 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    assert.equal(tree.prop('className'), 'coral-Autocomplete test');
-    assert.equal(tree.children().length, 1);
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete test');
+    assert.equal(tree.childAt(1).prop('show'), false);
     assert.equal(tree.find('input').prop('value'), '');
     assert.equal(typeof tree.find('input').prop('onChange'), 'function');
   });
@@ -28,10 +28,10 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    assert.equal(tree.children().length, 2);
     assert.equal(tree.childAt(0).type(), 'span');
     assert.equal(tree.childAt(1).type(), 'input');
     assert.equal(typeof tree.find('input').prop('onChange'), 'function');
+    assert.equal(tree.childAt(2).prop('show'), false);
   });
 
   it('should call getCompletions and render a menu with results', async () => {
@@ -47,8 +47,9 @@ describe('Autocomplete', () => {
     await sleep(1); // Wait for async getCompletions
 
     assert.equal(tree.find('input').prop('value'), 'test');
-    assert.equal(tree.children().length, 2);
+    assert.equal(tree.childAt(1).prop('show'), true);
     assert.equal(tree.find(MenuItem).length, 2);
+    assert.equal(tree.find(MenuItem).nodes[0].key, 'item-0');
   });
 
   it('should call getCompletions and render a menu with results asynchronously', async () => {
@@ -69,7 +70,7 @@ describe('Autocomplete', () => {
     await sleep(15); // Wait for async getCompletions
 
     assert.equal(tree.find('input').prop('value'), 'test');
-    assert.equal(tree.children().length, 2);
+    assert.equal(tree.childAt(1).prop('show'), true);
     assert.equal(tree.find(MenuItem).length, 2);
   });
 
@@ -126,7 +127,7 @@ describe('Autocomplete', () => {
     tree.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
     tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
 
-    assert.equal(tree.children().length, 1);
+    assert.equal(tree.childAt(1).prop('show'), false);
     assert.equal(tree.find('input').prop('value'), 'two');
   });
 
@@ -144,7 +145,7 @@ describe('Autocomplete', () => {
 
     tree.find('input').simulate('keyDown', {key: 'Escape', preventDefault: function () {}});
 
-    assert.equal(tree.children().length, 1);
+    assert.equal(tree.childAt(1).prop('show'), false);
     assert.equal(tree.find('input').prop('value'), 'test');
   });
 
@@ -159,12 +160,12 @@ describe('Autocomplete', () => {
 
     await sleep(1); // Wait for async getCompletions
 
-    assert.equal(tree.prop('className'), 'coral-Autocomplete is-focused');
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete is-focused');
     assert.equal(tree.find(Menu).length, 1);
 
     tree.find('input').simulate('blur');
-    assert.equal(tree.prop('className'), 'coral-Autocomplete');
-    assert.equal(tree.find(Menu).length, 0);
+    assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete');
+    assert.equal(tree.childAt(1).prop('show'), false);
   });
 
   it('supports a controlled mode', async () => {
@@ -232,10 +233,10 @@ describe('Autocomplete', () => {
 
     tree.instance().toggleMenu();
     await sleep(1);
-    assert.equal(tree.find(Menu).length, 1);
+    assert.equal(tree.childAt(1).prop('show'), true);
 
     tree.instance().toggleMenu();
-    assert.equal(tree.find(Menu).length, 0);
+    assert.equal(tree.childAt(1).prop('show'), false);
   });
 
   it('supports non-string completions', async () => {

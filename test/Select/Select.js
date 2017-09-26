@@ -21,7 +21,7 @@ describe('Select', () => {
   it('renders a dropdown', () => {
     const tree = shallow(<Select />);
     const dropdown = tree.find(Dropdown);
-    assert.equal(dropdown.prop('className'), 'coral3-Select');
+    assert.equal(dropdown.prop('className'), 'spectrum-Dropdown');
     assert.equal(tree.state('value'), null);
   });
 
@@ -30,54 +30,54 @@ describe('Select', () => {
     const select = tree.find(Dropdown);
 
     assert.equal(select.hasClass('myClass'), true);
-    // Check that coral3-Select is not overwritten by the provided class.
-    assert.equal(select.hasClass('coral3-Select'), true);
+    // Check that spectrum-Dropdown is not overwritten by the provided class.
+    assert.equal(select.hasClass('spectrum-Dropdown'), true);
   });
 
   it('renders options', () => {
     const tree = shallow(<Select options={testOptions} />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Chocolate');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Chocolate');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.equal(tree.find(SelectMenu).prop('value'), 'chocolate');
   });
 
   it('renders options with multiple select', () => {
     const tree = shallow(<Select options={testOptions} multiple />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Select an option');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Select an option');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.deepEqual(tree.find(SelectMenu).prop('value'), []);
   });
 
   it('should set an initial value', () => {
     const tree = shallow(<Select options={testOptions} value="vanilla" />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Vanilla');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Vanilla');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.equal(tree.find(SelectMenu).prop('value'), 'vanilla');
   });
 
   it('should set an initial value with multiple select', () => {
     const tree = shallow(<Select options={testOptions} value={['vanilla', 'caramel']} multiple />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Select an option');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Select an option');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.deepEqual(tree.find(SelectMenu).prop('value'), ['vanilla', 'caramel']);
   });
 
   it('should set a default value', () => {
     const tree = shallow(<Select options={testOptions} defaultValue="vanilla" />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Vanilla');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Vanilla');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.equal(tree.find(SelectMenu).prop('value'), 'vanilla');
   });
 
   it('should update value if passed in', () => {
     const tree = shallow(<Select options={testOptions} value="vanilla" />);
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Vanilla');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Vanilla');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.equal(tree.find(SelectMenu).prop('value'), 'vanilla');
 
     tree.setProps({value: 'chocolate'});
 
-    assert.equal(tree.find('.coral3-Select-label').text(), 'Chocolate');
+    assert.equal(tree.find('.spectrum-Dropdown-trigger-label').text(), 'Chocolate');
     assert.deepEqual(tree.find(SelectMenu).prop('options'), testOptions);
     assert.equal(tree.find(SelectMenu).prop('value'), 'chocolate');
   });

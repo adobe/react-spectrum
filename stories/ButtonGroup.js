@@ -36,18 +36,13 @@ storiesOf('ButtonGroup', module)
     {inline: true}
   )
   .addWithInfo(
-    'quiet true',
-    () => (render({quiet: true, multiple: true})),
-    {inline: true}
-  )
-  .addWithInfo(
     'disabled: true',
     () => (render({value: selectedValue, multiple: true, disabled: true})),
     {inline: true}
   )
   .addWithInfo(
     'readOnly: true',
-    () => (render({readOnly: true})),
+    () => (render({readOnly: true, onClick: action('click')})),
     {inline: true}
   );
 
@@ -56,7 +51,7 @@ function render(props = {}) {
     <ButtonGroup
       style={{textAlign: 'left'}}
       label="ButtonGroup"
-      onClick={action('click')}
+      onChange={action('change')}
       {...defaultProps}
       {...props} />
   );

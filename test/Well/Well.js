@@ -6,7 +6,7 @@ import Well from '../../src/Well';
 describe('Well', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<Well className="myClass">Testing</Well>);
-    assert.equal(tree.prop('className'), 'coral-Well myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Well myClass');
   });
 
   it('supports additional properties', () => {

@@ -12,8 +12,8 @@ export default function Link({
     <a
       className={
         classNames(
-          'coral-Link',
-          {'coral-Link--subtle': subtle},
+          'spectrum-Link',
+          {'spectrum-Link--subtle': subtle},
           className
         )
       }

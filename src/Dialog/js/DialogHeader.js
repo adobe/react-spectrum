@@ -1,15 +1,16 @@
 import classNames from 'classnames';
-import {getVariantIcon} from '../../utils/icon-variant';
+import DialogButtons from './DialogButtons';
 import Heading from '../../Heading';
-import Icon from '../../Icon';
 import React from 'react';
 
 export default function DialogHeader({
   title,
   variant,
-  icon = getVariantIcon(variant || 'default'),
-  closable,
+  fullscreen,
   onClose,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
   className,
   ...otherProps
 }) {
@@ -17,14 +18,19 @@ export default function DialogHeader({
     <div
       {...otherProps}
       className={classNames(
-        'coral-Dialog-header',
-        `coral-Dialog-header--${variant}`,
+        'spectrum-Dialog-header',
+        `spectrum-Dialog-header--${variant}`,
         className
       )}>
-      {icon && <Icon className="coral-Dialog-typeIcon" icon={icon} size="S" />}
-      <Heading size={3} className="coral-Dialog-title">
-        {title}
-      </Heading>
+      <Heading size={3} className="spectrum-Dialog-title">{title}</Heading>
+      <div className="spectrum-Dialog-typeIcon" />
+      {fullscreen && confirmLabel &&
+        <DialogButtons
+          cancelLabel={cancelLabel}
+          confirmLabel={confirmLabel}
+          onClose={onClose}
+          onConfirm={onConfirm} />
+      }
     </div>
   );
 }

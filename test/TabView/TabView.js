@@ -14,9 +14,9 @@ describe('TabView', function () {
       </TabView>
     );
 
-    assert.equal(tree.prop('className'), 'coral-TabView coral-TabView--horizontal');
+    assert.equal(tree.prop('className'), 'react-spectrum-TabView react-spectrum-TabView--horizontal');
     assert.equal(tree.find(TabList).prop('selectedIndex'), 0);
-    assert.equal(tree.find('.coral-TabView-body').text(), 'Tab 1');
+    assert.equal(tree.find('.react-spectrum-TabView-body').text(), 'Tab 1');
   });
 
   it('clicking on a tab changes the tab body', function () {
@@ -29,12 +29,12 @@ describe('TabView', function () {
     );
 
     assert.equal(tree.find(TabList).prop('selectedIndex'), 0);
-    assert.equal(tree.find('.coral-TabView-body').text(), 'Tab 1');
+    assert.equal(tree.find('.react-spectrum-TabView-body').text(), 'Tab 1');
 
     tree.find(TabList).simulate('change', 1);
 
     assert.equal(tree.find(TabList).prop('selectedIndex'), 1);
-    assert.equal(tree.find('.coral-TabView-body').text(), 'Tab 2');
+    assert.equal(tree.find('.react-spectrum-TabView-body').text(), 'Tab 2');
 
     assert(onSelect.calledOnce);
     assert.equal(onSelect.lastCall.args[0], 1);
@@ -50,12 +50,12 @@ describe('TabView', function () {
     );
 
     assert.equal(tree.find(TabList).prop('selectedIndex'), 1);
-    assert.equal(tree.find('.coral-TabView-body').text(), 'Tab 2');
+    assert.equal(tree.find('.react-spectrum-TabView-body').text(), 'Tab 2');
 
     tree.find(TabList).simulate('change', 0);
 
     assert.equal(tree.find(TabList).prop('selectedIndex'), 1);
-    assert.equal(tree.find('.coral-TabView-body').text(), 'Tab 2');
+    assert.equal(tree.find('.react-spectrum-TabView-body').text(), 'Tab 2');
 
     assert(onSelect.calledOnce);
     assert.equal(onSelect.lastCall.args[0], 0);

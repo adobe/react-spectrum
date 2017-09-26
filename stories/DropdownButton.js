@@ -6,7 +6,7 @@ import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('DropdownButton', module)
   .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+    <VerticalCenter style={{textAlign: 'left', margin: '0 200px 50px', position: 'static', transform: 'none'}}>
       {story()}
     </VerticalCenter>
   ))
@@ -16,13 +16,18 @@ storiesOf('DropdownButton', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: primary',
-    () => render({label: 'Action', variant: 'primary'}),
+    'Icon only',
+    () => render(),
     {inline: true}
   )
   .addWithInfo(
-    'noArrow',
-    () => render({label: 'Action', variant: 'primary', noArrow: true}),
+    'alignRight',
+    () => render({alignRight: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabled',
+    () => render({disabled: true}),
     {inline: true}
   );
 

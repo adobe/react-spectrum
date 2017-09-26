@@ -6,12 +6,12 @@ import Tooltip from '../../src/Tooltip';
 describe('Tooltip', () => {
   it('supports different placements', () => {
     const tree = shallow(<Tooltip placement="top" />);
-    assert(tree.hasClass('coral3-Tooltip--arrowUp'));
+    assert(tree.hasClass('spectrum-Tooltip--top'));
   });
 
   it('supports different variants', () => {
     const tree = shallow(<Tooltip variant="info" />);
-    assert(tree.hasClass('coral3-Tooltip--info'));
+    assert(tree.hasClass('spectrum-Tooltip--info'));
   });
 
   it('supports additional classNames', () => {
@@ -21,6 +21,6 @@ describe('Tooltip', () => {
 
   it('supports children', () => {
     const tree = shallow(<Tooltip>oh hey</Tooltip>);
-    assert.equal(tree.prop('children'), 'oh hey');
+    assert.equal(tree.find('.spectrum-Tooltip-content').prop('children'), 'oh hey');
   });
 });

@@ -40,23 +40,23 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet',
-    () => render({variant: 'quiet'}),
+    'quiet',
+    () => render({quiet: true}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet value: longVal',
-    () => render({variant: 'quiet', value: 'logVal'}),
+    'quiet, value: longVal',
+    () => render({quiet: true, value: 'logVal'}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet multiple',
-    () => render({variant: 'quiet', multiple: true, value: selectedValue}),
+    'quiet multiple',
+    () => render({quiet: true, multiple: true, value: selectedValue}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: quiet disabled',
-    () => render({variant: 'quiet', disabled: true}),
+    'quiet disabled',
+    () => render({quiet: true, disabled: true}),
     {inline: true}
   )
   .addWithInfo(
@@ -98,14 +98,9 @@ storiesOf('Select', module)
 function render(props = {}) {
   return (
     <Select
-      label="React"
       onChange={action('change')}
-      onBlur={action('blur')}
-      onClose={action('close')}
-      onFocus={action('focus')}
-      onInputChange={action('inputChange')}
       onOpen={action('open')}
-      onValueClick={action('valueClick')}
+      onClose={action('close')}
       {...defaultProps}
       {...props} />
   );

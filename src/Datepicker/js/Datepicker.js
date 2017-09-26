@@ -19,8 +19,6 @@ const DEFAULT_DATE_TIME_VAL_FORMAT = `${DEFAULT_DATE_VAL_FORMAT} ${DEFAULT_TIME_
 
 @autobind
 export default class Datepicker extends Component {
-  static displayName = 'Datepicker';
-
   static propTypes = {
     id: PropTypes.string,
     type: PropTypes.oneOf(['date', 'datetime', 'time']),
@@ -197,7 +195,6 @@ export default class Datepicker extends Component {
   renderCalendar(props) {
     return (
       <Calendar
-        className="u-coral-borderless"
         {...props}
         onChange={this.handleCalendarChange} />
     );
@@ -205,7 +202,7 @@ export default class Datepicker extends Component {
 
   renderClock(props) {
     return (
-      <div className="coral-Datepicker-clockContainer">
+      <div className="react-spectrum-Datepicker-clockContainer">
         <Clock
           {...props}
           onChange={this.handleClockChange}
@@ -270,9 +267,9 @@ export default class Datepicker extends Component {
         aria-required={required}
         aria-owns={id}
         aria-haspopup
-        className={classNames('coral-Datepicker', className)}>
+        className={classNames('spectrum-Datepicker', className)}>
         <Textfield
-          className="coral-InputGroup-input"
+          className="spectrum-InputGroup-input"
           aria-invalid={invalid}
           placeholder={placeholder}
           value={valueText}
@@ -286,11 +283,13 @@ export default class Datepicker extends Component {
           onBlur={this.handleTextBlur} />
         <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
           <Button
-            className={classNames('coral-InputGroup-button', {'coral-Button--quiet': quiet})}
+            className="spectrum-InputGroup-button"
+            variant="dropdown"
+            quiet={quiet}
             type="button"
             icon={type === 'time' ? 'clock' : 'calendar'}
             iconSize="S"
-            square
+            invalid={invalid}
             disabled={readOnly || disabled} />
           <Popover open>
             <div>

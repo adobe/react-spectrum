@@ -6,20 +6,20 @@ import {shallow} from 'enzyme';
 describe('Progress', () => {
   it('default', () => {
     const tree = shallow(<Progress />);
-    assert.equal(tree.hasClass('coral-Progress'), true);
-    assert.equal(tree.hasClass('coral-Progress--medium'), true);
-    assert.equal(tree.hasClass('coral-Progress--noLabel'), true);
+    assert.equal(tree.hasClass('spectrum-Progress'), true);
+    assert.equal(tree.hasClass('spectrum-Progress--medium'), true);
+    assert.equal(tree.hasClass('spectrum-Progress--noLabel'), true);
     assert.equal(tree.prop('aria-valuemin'), 0);
     assert.equal(tree.prop('aria-valuemax'), 100);
     assert.equal(tree.prop('aria-valuenow'), 0);
 
-    const bar = tree.find('.coral-Progress-bar');
-    assert.equal(bar.prop('className'), 'coral-Progress-bar');
+    const bar = tree.find('.spectrum-Progress-bar');
+    assert.equal(bar.prop('className'), 'spectrum-Progress-bar');
     const status = findStatus(tree);
-    assert.equal(status.prop('className'), 'coral-Progress-status');
+    assert.equal(status.prop('className'), 'spectrum-Progress-status');
     assert.deepEqual(status.prop('style'), {width: '0%'});
 
-    assert(!tree.find('.coral-Progress-label').node);
+    assert(!tree.find('.spectrum-Progress-label').node);
   });
 
   describe('value', () => {
@@ -45,14 +45,14 @@ describe('Progress', () => {
 
   it('supports multiple sizes', () => {
     const tree = shallow(<Progress size="L" />);
-    assert.equal(tree.hasClass('coral-Progress--large'), true);
+    assert.equal(tree.hasClass('spectrum-Progress--large'), true);
     tree.setProps({size: 'S'});
-    assert.equal(tree.hasClass('coral-Progress--small'), true);
+    assert.equal(tree.hasClass('spectrum-Progress--small'), true);
   });
 
   it('supports indeterminate', () => {
     const tree = shallow(<Progress indeterminate value="50" />);
-    assert.equal(tree.hasClass('coral-Progress--indeterminate'), true);
+    assert.equal(tree.hasClass('spectrum-Progress--indeterminate'), true);
     assert(!tree.prop('aria-valuemin'));
     assert(!tree.prop('aria-valuemax'));
     assert(!tree.prop('aria-valuenow'));
@@ -62,7 +62,7 @@ describe('Progress', () => {
   describe('label', () => {
     it('supports showPercent', () => {
       const tree = shallow(<Progress showPercent />);
-      assert.equal(tree.hasClass('coral-Progress--rightLabel'), true);
+      assert.equal(tree.hasClass('spectrum-Progress--rightLabel'), true);
       const label = findLabel(tree);
       assert(label.node);
       assert.equal(label.text(), '0%');
@@ -73,9 +73,9 @@ describe('Progress', () => {
 
     it('supports labelPosition', () => {
       const tree = shallow(<Progress showPercent labelPosition="left" />);
-      assert.equal(tree.hasClass('coral-Progress--leftLabel'), true);
+      assert.equal(tree.hasClass('spectrum-Progress--leftLabel'), true);
       tree.setProps({labelPosition: 'bottom'});
-      assert.equal(tree.hasClass('coral-Progress--bottomLabel'), true);
+      assert.equal(tree.hasClass('spectrum-Progress--bottomLabel'), true);
     });
 
     it('support custom labels', () => {
@@ -95,5 +95,5 @@ describe('Progress', () => {
   });
 });
 
-const findStatus = tree => tree.find('.coral-Progress-status');
-const findLabel = tree => tree.find('.coral-Progress-label');
+const findStatus = tree => tree.find('.spectrum-Progress-status');
+const findLabel = tree => tree.find('.spectrum-Progress-label');

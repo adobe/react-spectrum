@@ -9,8 +9,7 @@ describe('ModalContainer', () => {
 
     let node = document.querySelector('#modal-test');
     assert(node);
-    assert.equal(node.parentNode.className, 'coral3-modal');
-    assert.equal(node.previousSibling.className, 'coral3-Backdrop');
+    assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
 
     ModalContainer.hide(key);
     node = document.querySelector('#modal-test');

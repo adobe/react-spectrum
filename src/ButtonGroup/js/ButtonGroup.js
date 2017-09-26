@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React, {Component} from 'react';
-import '../style/index.styl';
 
 export default class ButtonGroup extends Component {
   constructor(props) {
@@ -35,24 +34,30 @@ export default class ButtonGroup extends Component {
   }
 
   handleSelect(button) {
-    let nextButtons;
-    if (this.props.multiple) {
-      if (this.isSelected(button)) {
-        nextButtons = this.removeSelection(button);
+    if (!this.props.readOnly) {
+      let nextButtons;
+      if (this.props.multiple) {
+        if (this.isSelected(button)) {
+          nextButtons = this.removeSelection(button);
+        } else {
+          nextButtons = this.addSelection(button);
+        }
       } else {
-        nextButtons = this.addSelection(button);
+        nextButtons = button.value;
       }
-    } else {
-      nextButtons = button.value;
-    }
 
-    // Set state if in uncontrolled mode
-    if (!('value' in this.props)) {
-      this.setState({value: nextButtons});
+      // Set state if in uncontrolled mode
+      if (!('value' in this.props)) {
+        this.setState({value: nextButtons});
+      }
+
+      if (this.props.onChange) {
+        this.props.onChange(nextButtons);
+      }
     }
 
     if (this.props.onClick) {
-      this.props.onClick(nextButtons);
+      this.props.onClick(button.value);
     }
   }
 
@@ -63,21 +68,12 @@ export default class ButtonGroup extends Component {
   }
 
   getChildProps(button, index) {
-    const disabled = this.props.disabled || button.props.disabled || this.props.readOnly;
-    var variantVal;
-    if (this.props.quiet) {
-      variantVal = 'quiet';
-    } else if (disabled) {
-      variantVal = 'secondary';
-    } else {
-      variantVal = '';
-    }
+    const disabled = this.props.disabled || button.props.disabled;
     return {
       tabIndex: index,
-      className: classNames('coral3-ButtonGroup-item', button.props.className),
       selected: this.isSelected(button.props),
       disabled: disabled,
-      variant: variantVal,
+      variant: 'toggle',
       onClick: this.handleSelect.bind(this, button.props)
     };
   }
@@ -102,6 +98,7 @@ export default class ButtonGroup extends Component {
       ...otherProps
     } = this.props;
 
+    delete otherProps.onChange;
     delete otherProps.onClick;
 
     return (
@@ -109,11 +106,11 @@ export default class ButtonGroup extends Component {
         aria-multiselectable={multiple}
         aria-invalid={invalid}
         aria-required={required}
-        aria-readOnly={readOnly}
+        aria-readonly={readOnly}
         aria-disabled={disabled}
         aria-selected={selected}
         {...otherProps}
-        className={classNames('coral3-ButtonGroup', className)}>
+        className={classNames('spectrum-ButtonGroup', className)}>
         {this.renderButtons(children)}
       </div>
     );
