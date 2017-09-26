@@ -20,8 +20,8 @@ storiesOf('Alert', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: help',
-    () => render({header: 'help', variant: 'help'}),
+    'variant: info',
+    () => render({header: 'info', variant: 'info'}),
     {inline: true}
   )
   .addWithInfo(
@@ -40,7 +40,7 @@ storiesOf('Alert', module)
     {inline: true}
   );
 
-function render(props = {}, children = 'This is a React Coral alert') {
+function render(props = {}, children = 'This is a React Spectrum alert') {
   return (
     <Alert
       onClose={action('close')}
