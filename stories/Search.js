@@ -25,11 +25,6 @@ storiesOf('Search', module)
     {inline: true}
   )
   .addWithInfo(
-    'clearable: false',
-    () => render({clearable: false, value: 'React'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'disabled: true',
     () => render({value: 'React', disabled: true}),
     {inline: true}
@@ -66,7 +61,6 @@ function render(props = {}) {
       placeholder="Enter text"
       {...props}
       onChange={action('change')}
-      onSubmit={action('submit')}
-      onClear={action('clear')} />
+      onSubmit={action('submit')} />
   );
 }

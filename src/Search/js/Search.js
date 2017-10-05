@@ -8,9 +8,7 @@ import '../style/index.styl';
 export default class Search extends Component {
   static defaultProps = {
     icon: 'search',
-    clearable: true,
     onChange: function () {},
-    onClear: function () {},
     onSubmit: function () {}
   };
 
@@ -23,7 +21,6 @@ export default class Search extends Component {
     } = props;
 
     this.state = {
-      emptyText: !value && !defaultValue,
       value: value || defaultValue || ''
     };
   }
@@ -42,7 +39,7 @@ export default class Search extends Component {
     }
 
     if (key === 27 && !disabled) {
-      this.handleClearText();
+      this.clearText(e, 'escapeKey');
     }
 
     if (onKeyDown) {
@@ -54,41 +51,40 @@ export default class Search extends Component {
     const {onChange} = this.props;
 
     this.setState({
-      value,
-      emptyText: value === ''
+      value
     });
-    onChange(value);
+    onChange(value, e, {from: 'input'});
   }
 
-  handleClearText = () => {
-    const {onClear, onChange, disabled} = this.props;
+  handleClearButtonClick = e => {
+    this.clearText(e, 'clearButton');
+  }
 
-    if (disabled) {
+  clearText = (e, from) => {
+    const {onChange, disabled} = this.props;
+
+    if (disabled || this.state.value === '') {
       return;
     }
 
-    if (this.inputRef) {
-      if (!('value' in this.props)) {
-        this.setState({
-          value: '',
-          emptyText: true
-        });
-      }
+    if (!('value' in this.props)) {
+      this.setState({
+        value: ''
+      });
     }
-    onClear();
-    onChange('');
+
+    onChange('', e, {from});
   }
 
   render() {
     const {
-      clearable,
       disabled,
       defaultValue,
       className,
       icon,
       ...otherProps
     } = this.props;
-    const {value, emptyText} = this.state;
+    const {value} = this.state;
 
     return (
       <div
@@ -101,7 +97,6 @@ export default class Search extends Component {
           )
         }>
         <Textfield
-          ref={el => {this.inputRef = el; }}
           className={classNames('spectrum-Search-input', {'spectrum-DecoratedTextfield-input': icon})}
           value={value}
           defaultValue={defaultValue}
@@ -114,12 +109,12 @@ export default class Search extends Component {
           : <div className="spectrum-DecoratedTextfield-icon spectrum-Search-icon" />
         }
         {
-          clearable && !emptyText &&
+          value !== '' &&
             <Button
               variant="icon"
               className="spectrum-Search-clear"
               disabled={disabled}
-              onClick={this.handleClearText} />
+              onClick={this.handleClearButtonClick} />
         }
       </div>
     );

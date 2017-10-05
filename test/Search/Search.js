@@ -64,7 +64,7 @@ describe('Search', () => {
     });
   });
 
-  describe('onClear', () => {
+  describe('onChange', () => {
     let spy;
     let preventDefaultSpy;
 
@@ -74,16 +74,16 @@ describe('Search', () => {
     });
 
     it('is called when escape is pressed', () => {
-      const tree = shallow(<Search onClear={spy} />);
+      const tree = shallow(<Search onChange={spy} defaultValue="foo" />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
-      assert(spy.called);
+      assert(spy.calledWith('', sinon.match.any, {from: 'escapeKey'}));
       assert(preventDefaultSpy.called);
     });
 
     it('is called when the clear button is pressed', () => {
-      const tree = shallow(<Search onClear={spy} defaultValue="foo" />);
+      const tree = shallow(<Search onChange={spy} defaultValue="foo" />);
       findButton(tree).simulate('click');
-      assert(spy.called);
+      assert(spy.calledWith('', sinon.match.any, {from: 'clearButton'}));
     });
 
     it('is not called when escape is pressed if it is disabled', () => {
@@ -93,29 +93,30 @@ describe('Search', () => {
       assert(preventDefaultSpy.called);
     });
 
-    it('is not called when the clear button is preseed if it is disabled', () => {
+    it('is not called when escape is pressed if value is empty', () => {
+      const tree = shallow(<Search onClear={spy} />);
+      findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
+      assert(!spy.called);
+      assert(preventDefaultSpy.called);
+    });
+
+    it('is not called when the clear button is pressed if it is disabled', () => {
       const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
       findButton(tree).simulate('click');
       assert(!spy.called);
     });
+
+    it('is called when text is entered', () => {
+      const spy = sinon.spy();
+      const tree = shallow(<Search onChange={spy} />);
+      assert.equal(tree.state('value'), '');
+
+      findInput(tree).simulate('change', 'a');
+      assert(spy.calledWith('a', sinon.match.any, {from: 'input'}));
+      assert.equal(tree.state('value'), 'a');
+    });
   });
 
-  it('calls onChange when text is entered', () => {
-    const spy = sinon.spy();
-    const tree = shallow(<Search onChange={spy} />);
-    assert.equal(tree.state('value'), '');
-    assert.equal(tree.state('emptyText'), true);
-
-    findInput(tree).simulate('change', 'a');
-    assert(spy.called);
-    assert.equal(tree.state('value'), 'a');
-    assert.equal(tree.state('emptyText'), false);
-  });
-
-  it('supports clearable', () => {
-    const tree = shallow(<Search defaultValue="foo" clearable={false} />);
-    assert(!findButton(tree).node);
-  });
 
   it('supports disabled', () => {
     const tree = shallow(<Search defaultValue="foo" disabled />);

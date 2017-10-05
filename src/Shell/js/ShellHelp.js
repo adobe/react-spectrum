@@ -16,7 +16,7 @@ export default class ShellHelp extends Component {
       {href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status'}
     ],
     onSearch: function () {},
-    onClear: function () {},
+    onChange: function () {},
     onHide: function () {}
   };
 
@@ -29,14 +29,6 @@ export default class ShellHelp extends Component {
     onSearch(val);
     this.setState({
       searchTerm: val
-    });
-  }
-
-  handleClear = () => {
-    const {onClear} = this.props;
-    onClear();
-    this.setState({
-      searchTerm: ''
     });
   }
 
@@ -162,7 +154,7 @@ export default class ShellHelp extends Component {
             className="coral3-Shell-help-search"
             placeholder="Search Help"
             onSubmit={this.handleSearch}
-            onClear={this.handleClear}
+            onChange={this.props.onChange}
             quiet />
           {
             loading

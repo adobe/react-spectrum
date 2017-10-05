@@ -25,8 +25,8 @@ storiesOf('ShellHelp', module)
     {inline: true}
   )
   .addWithInfo(
-    'onClear',
-    () => render({defaultResults, open: true, onClear: action('clear')}),
+    'onChange',
+    () => render({defaultResults, open: true, onChange: action('change')}),
     {inline: true}
   )
   .addWithInfo(
