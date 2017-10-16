@@ -50,7 +50,7 @@ export default class TagField extends React.Component {
   }
 
   render() {
-    const {getCompletions, disabled, invalid, quiet, ...props} = this.props;
+    const {getCompletions, disabled, invalid, quiet, className, ...props} = this.props;
     const {value, tags} = this.state;
 
     delete props.onChange;
@@ -61,7 +61,7 @@ export default class TagField extends React.Component {
           'react-spectrum-TagField--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid
-        })}
+        }, className)}
         getCompletions={getCompletions}
         allowCreate
         onSelect={this.onSelect}
