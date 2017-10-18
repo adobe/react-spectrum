@@ -27,7 +27,7 @@ export default class ListItem extends Component {
     if (this.props.onMouseEnter) {
       this.props.onMouseEnter(e);
     } else {
-      e.target.focus();
+      e.currentTarget.focus();
     }
   }
 
