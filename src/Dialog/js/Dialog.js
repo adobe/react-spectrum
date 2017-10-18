@@ -72,9 +72,7 @@ export default class Dialog extends Component {
             onConfirm={this.onConfirm.bind(this)} />
         }
 
-        <div className="spectrum-Dialog-content">
-          {React.Children.map(children, child => React.cloneElement(child, {}))}
-        </div>
+        {title ? <div className="spectrum-Dialog-content">{children}</div> : children}
 
         {!fullscreen && confirmLabel &&
           <DialogButtons
