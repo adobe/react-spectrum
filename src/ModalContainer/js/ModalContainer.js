@@ -1,5 +1,5 @@
 import autobind from 'autobind-decorator';
-import BaseModal from 'devongovett-react-overlays/lib/Modal';
+import BaseModal from 'react-overlays/lib/Modal';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
@@ -45,6 +45,7 @@ class Modal extends React.Component {
 
     return (
       <BaseModal
+        style={{zIndex: 1000, position: 'relative'}}
         show={this.state.show}
         onExited={this.props.onHide}
         onHide={this.onClose}
