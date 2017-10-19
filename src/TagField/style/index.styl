@@ -2,8 +2,8 @@
 
 $react-spectrum-tagfield-margin = 6*$px;
 
-.react-spectrum-TagField {
-  display: flex;
+.react-spectrum-Autocomplete.react-spectrum-TagField {
+  display: inline-flex;
   flex-wrap: wrap;
   border: $px solid;
   border-radius: $spectrum-border-radius;
@@ -14,12 +14,12 @@ $react-spectrum-tagfield-margin = 6*$px;
 
   .spectrum-TagList {
     margin: 0 3px 3px 3px;
-  }
 
-  .spectrum-Tag {
-    margin: 3px 3px 0 0;
-    &:last-of-type {
-      margin-right: 0;
+    > .spectrum-Tag {
+      margin: 3px 3px 0 0;
+      &:last-of-type {
+        margin-right: 0;
+      }
     }
   }
 
