@@ -45,8 +45,7 @@ function getContainerDimensions(containerNode) {
   return {width, height, scroll};
 }
 
-function getDelta(axis, offset, size, container, padding) {
-  const containerDimensions = getContainerDimensions(container);
+function getDelta(axis, offset, size, containerDimensions, padding) {
   const containerScroll = containerDimensions.scroll[axis];
   const containerHeight = containerDimensions[AXIS_SIZE[axis]];
 
@@ -106,28 +105,19 @@ function computePosition(childOffset, overlaySize, placementInfo) {
   return position;
 }
 
-export default function calculatePosition(placementInput, overlayNode, target, container, padding) {
-  const childOffset = container.tagName === 'BODY' ? getOffset(target) : getPosition(target, container);
-
-  const overlaySize = getOffset(overlayNode);
-  const margins = getMargins(overlayNode);
-  overlaySize.width += margins.left + margins.right;
-  overlaySize.height += margins.top + margins.bottom;
-
-  const containerDimensions = getContainerDimensions(container);
-
+export function calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding) {
   const placementInfo = parsePlacement(placementInput);
   const {crossAxis, crossSize} = placementInfo;
 
   let position = computePosition(childOffset, overlaySize, placementInfo);
-  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], container, padding);
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
   position[crossAxis] += delta;
 
-  let maxHeight = containerDimensions.height - position.top - margins.top - margins.bottom - padding;
+  let maxHeight = Math.max(0, containerDimensions.height - position.top - margins.top - margins.bottom - padding);
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, overlaySize, placementInfo);
-  delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], container, padding);
+  delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
 
   position[crossAxis] += delta;
 
@@ -141,4 +131,16 @@ export default function calculatePosition(placementInput, overlayNode, target, c
     arrowOffsetLeft: arrowPosition.left,
     arrowOffsetTop: arrowPosition.top
   };
+}
+
+export default function calculatePosition(placementInput, overlayNode, target, container, padding) {
+  const childOffset = container.tagName === 'BODY' ? getOffset(target) : getPosition(target, container);
+
+  const overlaySize = getOffset(overlayNode);
+  const margins = getMargins(overlayNode);
+  overlaySize.width += margins.left + margins.right;
+  overlaySize.height += margins.top + margins.bottom;
+
+  const containerDimensions = getContainerDimensions(container);
+  return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding);
 }
