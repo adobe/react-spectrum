@@ -5,6 +5,14 @@ import {shallow} from 'enzyme';
 import {sleep} from '../utils';
 
 describe('ToastContainer', () => {
+  // This is a hack to clean up toast containers after they are rendered and assertions are made.
+  const cleanup = () => {
+    const nodes = document.querySelectorAll('.react-spectrum-ToastContainer');
+    Array.prototype.forEach.call(nodes, node => {
+      node.parentNode.removeChild(node);
+    });
+  };
+
   it('should render toasts', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer');
@@ -16,6 +24,8 @@ describe('ToastContainer', () => {
 
     tree.instance().remove(toast);
     assert.equal(tree.children().length, 0);
+
+    cleanup();
   });
 
   it('should remove toasts after a timeout', async () => {
@@ -27,6 +37,8 @@ describe('ToastContainer', () => {
 
     await sleep(6);
     assert.equal(tree.children().length, 0);
+
+    cleanup();
   });
 
   it('should remove toasts when the remove button is clicked', () => {
@@ -38,6 +50,8 @@ describe('ToastContainer', () => {
 
     tree.find(Toast).simulate('close');
     assert.equal(tree.children().length, 0);
+
+    cleanup();
   });
 
   it('should render a global toast container', async () => {
@@ -54,7 +68,7 @@ describe('ToastContainer', () => {
     assert.equal(container.childNodes.length, 0);
   });
 
-  it('should render a success toast', () => {
+  it('should render a success toast', async () => {
     success('Success');
 
     const container = document.querySelector('.react-spectrum-ToastContainer');

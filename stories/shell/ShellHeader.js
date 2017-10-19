@@ -4,12 +4,10 @@ import React from 'react';
 import ShellActions from '../../src/Shell/js/ShellActions';
 import ShellHeader from '../../src/Shell/js/ShellHeader';
 import ShellHelp from '../../src/Shell/js/ShellHelp';
-import ShellOrganization from '../../src/Shell/js/ShellOrganization';
 import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
 import ShellSolution from '../../src/Shell/js/ShellSolution';
 import ShellSolutionGroup from '../../src/Shell/js/ShellSolutionGroup';
 import ShellSolutionSwitcher from '../../src/Shell/js/ShellSolutionSwitcher';
-import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
 import ShellUserProfile from '../../src/Shell/js/ShellUserProfile';
 import ShellWorkspace from '../../src/Shell/js/ShellWorkspace';
 import ShellWorkspaces from '../../src/Shell/js/ShellWorkspaces';
@@ -39,16 +37,16 @@ function render(props = {}) {
       <ShellActions>
         <Button element="a" href="#" variant="quiet">Beta Feedback</Button>
 
-        <ShellOrgSwitcher onOrgChange={action('org-change')}>
-          <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
-          <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
-          <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />
-          <ShellOrganization name="microsoft" icon="windowsColor" label="Microsoft">
-            <ShellSubOrganization name="microsoftjapan" label="Microsoft Japan" selected />
-            <ShellSubOrganization name="microsoftusa" label="Microsoft USA" />
-            <ShellSubOrganization name="microsoftsouthamerica" label="Microsoft South America" />
-          </ShellOrganization>
-        </ShellOrgSwitcher>
+        <ShellOrgSwitcher
+          options={[
+            {value: 'facebook', label: 'Facebook, Inc.', icon: 'facebookColor'},
+            {value: 'flickr', label: 'Flickr, Inc.', icon: 'flickrColor'},
+            {value: 'newsgator', label: 'Newsgator, Inc.', icon: 'newsgatorColor'},
+            {value: 'microsoft', label: 'Microsoft', icon: 'windowsColor'},
+          ]}
+          onOrgChange={action('org-change')}
+          value="facebook"
+        />
 
         <ShellHelp
           moreSearchResultsUrl="#"

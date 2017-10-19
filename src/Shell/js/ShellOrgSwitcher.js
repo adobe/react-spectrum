@@ -1,73 +1,73 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import {List} from '../../List';
 import React, {Component} from 'react';
 import Search from '../../Search';
+import SelectList from '../../SelectList';
 import ShellMenu from './ShellMenu';
 import '../style/ShellOrgSwitcher.styl';
 
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
+    value: '',
     manageOrgsUrl: '#',
-    onOrgChange: function () {}
+    options: [],
+    onOrgChange: () => {}
   };
 
   state = {
-    searchTerm: ''
+    searchTerm: '',
+    visibleOptions: this.filterVisibleOptions(this.props.options, ''),
   };
 
-  getSelectedLabel(children) {
-    let label;
-    React.Children.forEach(children, child => {
-      if (child.props.selected) {
-        label = child.props.label;
-      } else if (child.props.children) {
-        if (!label) {
-          label = this.getSelectedLabel(child.props.children);
-        }
-      }
-    });
-    return label;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.options !== this.props.options) {
+      this.setState({
+        visibleOptions: this.filterVisibleOptions(nextProps.options, this.state.searchTerm),
+      });
+    }
   }
 
-  getResultCount(children, resultCount = 0) {
-    React.Children.forEach(children, child => {
-      if (child.props.children) {
-        resultCount = this.getResultCount(child.props.children, resultCount);
-      } else if (this.visibilityFilter(child.props.label)) {
-        resultCount++;
-      }
-    });
-    return resultCount;
+  filterVisibleOptions(options, searchTerm) {
+    return options.filter(option => option.label.toLowerCase().indexOf(searchTerm) !== -1);
+  }
+
+  getSelectedLabel() {
+    const {options, value} = this.props;
+
+    const selectedOptions = options.filter(option => option.value === value);
+    if (selectedOptions.length) {
+      return selectedOptions[0].label;
+    }
+    return value || '';
   }
 
   handleVisible = () => {
     if (this.contentRef) {
-      this.contentRef.querySelector('.coral-Search-input').focus();
+      this.contentRef.querySelector('.spectrum-Search-input').focus();
     }
   }
 
-  handleSelect = e => {
-    this.props.onOrgChange(e);
-  }
-
-  visibilityFilter = label => {
-    const {searchTerm} = this.state;
-    return label.toLowerCase().indexOf(searchTerm) !== -1;
-  }
-
   handleSearchChange = searchTerm => {
-    this.setState({searchTerm});
+    const {options} = this.props;
+
+    this.setState({
+      searchTerm,
+      visibleOptions: this.filterVisibleOptions(options, searchTerm),
+    });
   }
 
   render() {
     const {
-      label,
+      value,
       className,
-      children,
       manageOrgsUrl,
+      onOrgChange,
       ...otherProps
     } = this.props;
+
+    const {
+      visibleOptions,
+    } = this.state;
 
     return (
       <ShellMenu
@@ -77,7 +77,7 @@ export default class ShellOrgSwitcher extends Component {
           <Button
             variant="minimal"
             className="coral3-Shell-menu-button">
-            {this.getSelectedLabel(children)}
+            {this.getSelectedLabel()}
           </Button>
         }
         onVisible={this.handleVisible}
@@ -97,36 +97,24 @@ export default class ShellOrgSwitcher extends Component {
             onChange={this.handleSearchChange}
             quiet />
 
-          <List
-            className="coral3-Shell-orgSwitcher-items"
-            listItemSelector={
-              [
-                '.coral3-Shell-orgSwitcher-item:not(.is-parent):not([hidden])',
-                '.coral3-Shell-orgSwitcher-subitem:not([hidden])'
-              ].join(', ')
-            }
-            onSelect={this.handleSelect}>
-            {
-              React.Children.map(children, (child, index) => (
-                React.cloneElement(
-                  child,
-                  {
-                    key: child.key || String(index),
-                    visibilityFilter: this.visibilityFilter
-                  }
-                )
-              ))
-            }
-          </List>
-          <div
-            className="coral3-Shell-orgSwitcher-resultMessage"
-            hidden={this.getResultCount(children) !== 0}>
-            <div className="coral3-Shell-orgSwitcher-resultMessage-container">
-              <div className="coral-Heading--1 coral3-Shell-orgSwitcher-resultMessage-heading">
-                No organizations found.
+          {
+            visibleOptions.length !== 0 &&
+            <SelectList
+              className="coral3-Shell-orgSwitcher-items"
+              value={value}
+              options={visibleOptions}
+              onChange={onOrgChange} />
+          }
+          {
+            visibleOptions.length === 0 &&
+            <div className="coral3-Shell-orgSwitcher-resultMessage">
+              <div className="coral3-Shell-orgSwitcher-resultMessage-container">
+                <div className="coral-Heading--1 coral3-Shell-orgSwitcher-resultMessage-heading">
+                  No organizations found.
+                </div>
               </div>
             </div>
-          </div>
+          }
           <div className="coral3-Shell-orgSwitcher-footer">
             <Button
               element="a"

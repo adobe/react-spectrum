@@ -1,8 +1,6 @@
 import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
-import ShellOrganization from '../../src/Shell/js/ShellOrganization';
 import ShellOrgSwitcher from '../../src/Shell/js/ShellOrgSwitcher';
-import ShellSubOrganization from '../../src/Shell/js/ShellSubOrganization';
 import {VerticalCenter} from '../../.storybook/layout';
 
 storiesOf('ShellOrgSwitcher', module)
@@ -13,33 +11,31 @@ storiesOf('ShellOrgSwitcher', module)
   ))
   .addWithInfo(
     'Default',
-    () => render({selected: true}),
+    () => render(),
     {inline: true}
   )
   .addWithInfo(
     'open: true',
-    () => render({selected: true, open: true}),
+    () => render({open: true}),
     {inline: true}
   )
   .addWithInfo(
     'open: true, no selected',
-    () => render({open: true}),
+    () => render({open: true, value: null}),
     {inline: true}
   );
 
-function render({selected, ...props} = {}) {
+function render({value = 'facebook', ...props} = {}) {
   return (
-    <ShellOrgSwitcher
-      onOrgChange={action('org-change')}
-      {...props}>
-      <ShellOrganization name="facebook" icon="facebookColor" label="Facebook, Inc." />
-      <ShellOrganization name="flickr" icon="flickrColor" label="Flickr, Inc." />
-      <ShellOrganization name="newsgator" icon="newsgatorColor" label="Newsgator, Inc." />
-      <ShellOrganization name="microsoft" icon="windowsColor" label="Microsoft">
-        <ShellSubOrganization name="microsoftjapan" label="Microsoft Japan" selected={selected} />
-        <ShellSubOrganization name="microsoftusa" label="Microsoft USA" />
-        <ShellSubOrganization name="microsoftsouthamerica" label="Microsoft South America" />
-      </ShellOrganization>
-    </ShellOrgSwitcher>
+    <ShellOrgSwitcher onOrgChange={action('org-change')}
+      options={[
+        {value: 'facebook', label: 'Facebook, Inc.', icon: 'facebookColor'},
+        {value: 'flickr', label: 'Flickr, Inc.', icon: 'flickrColor'},
+        {value: 'newsgator', label: 'Newsgator, Inc.', icon: 'newsgatorColor'},
+        {value: 'microsoft', label: 'Microsoft', icon: 'windowsColor'},
+      ]}
+      {...props}
+      value={value}
+    />
   );
 }

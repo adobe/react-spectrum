@@ -65,6 +65,7 @@ export default class SelectList extends Component {
     options.map((option, index) => (
       <ListItem
         key={index}
+        icon={option.icon}
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
         onSelect={this.handleSelect.bind(this, option)}>
