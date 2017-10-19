@@ -43,6 +43,7 @@ class Modal extends React.Component {
     // I am sorry for this atrocity. I needed a way to detect when not to have a backdrop.
     let hasBackdrop = this.props.children.props.mode !== 'fullscreenTakeover';
 
+    // The z-index here should match the one in Overlay
     return (
       <BaseModal
         style={{zIndex: 1000, position: 'relative'}}
