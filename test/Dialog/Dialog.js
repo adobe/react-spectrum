@@ -52,11 +52,17 @@ describe('Dialog', () => {
     assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
   });
 
-  it('renders content comp', () => {
-    const tree = shallow(<Dialog><span>bar</span></Dialog>);
+  it('renders content comp if there is a title', () => {
+    const tree = shallow(<Dialog title="test"><span>bar</span></Dialog>);
     let content = tree.find('.spectrum-Dialog-content');
     assert.equal(content.length, 1);
-    assert.equal(content.prop('children')[0].type, 'span');
+    assert.equal(content.childAt(0).type(), 'span');
+  });
+
+  it('does not render a content comp if there is no title', () => {
+    const tree = shallow(<Dialog><span>bar</span></Dialog>);
+    let content = tree.find('.spectrum-Dialog-content');
+    assert.equal(content.length, 0);
   });
 
   it('calls props.onClose', () => {

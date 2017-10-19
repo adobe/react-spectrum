@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import Icon from '../../Icon';
 import React from 'react';
 import '../style/index.styl';
@@ -10,10 +11,10 @@ export default class Breadcrumbs extends React.Component {
   };
 
   render() {
-    const {items, icon, onBreadcrumbClick} = this.props;
+    const {items, icon, onBreadcrumbClick, className} = this.props;
 
     return (
-      <div className="spectrum-Breadcrumbs">
+      <div className={classNames('spectrum-Breadcrumbs', className)}>
         {icon &&
           <Icon icon={icon} size="S" />
         }
