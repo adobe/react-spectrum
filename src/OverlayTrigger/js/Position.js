@@ -88,7 +88,7 @@ export default class Position extends React.Component {
   }
 
   getTarget() {
-    const { target } = this.props;
+    const target = this.props.target;
     const targetElement = typeof target === 'function' ? target() : target;
     return targetElement && ReactDOM.findDOMNode(targetElement) || null;
   }
