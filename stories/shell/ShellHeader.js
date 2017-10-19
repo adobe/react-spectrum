@@ -45,8 +45,7 @@ function render(props = {}) {
             {value: 'microsoft', label: 'Microsoft', icon: 'windowsColor'},
           ]}
           onOrgChange={action('org-change')}
-          value="facebook"
-        />
+          value="facebook" />
 
         <ShellHelp
           moreSearchResultsUrl="#"

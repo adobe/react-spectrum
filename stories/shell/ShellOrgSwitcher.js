@@ -27,7 +27,8 @@ storiesOf('ShellOrgSwitcher', module)
 
 function render({value = 'facebook', ...props} = {}) {
   return (
-    <ShellOrgSwitcher onOrgChange={action('org-change')}
+    <ShellOrgSwitcher
+      onOrgChange={action('org-change')}
       options={[
         {value: 'facebook', label: 'Facebook, Inc.', icon: 'facebookColor'},
         {value: 'flickr', label: 'Flickr, Inc.', icon: 'flickrColor'},
@@ -35,7 +36,6 @@ function render({value = 'facebook', ...props} = {}) {
         {value: 'microsoft', label: 'Microsoft', icon: 'windowsColor'},
       ]}
       {...props}
-      value={value}
-    />
+      value={value} />
   );
 }
