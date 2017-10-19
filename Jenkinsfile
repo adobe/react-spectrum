@@ -36,6 +36,7 @@ if (params.versionBump && params.versionBump != "noop") {
         - git checkout master
         - git reset --hard origin/master
         - make unprefix
+        - make storybook
       npm:
         versionBump: false
         registry: https://maven.livefyre.com/content/repositories/lfnpm/
