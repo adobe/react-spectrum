@@ -25,6 +25,10 @@ test: lint
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
+jenkins_test: lint
+	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter
+	find ./node_modules/ -name coverage.json -exec rm {} \;
+
 build:
 	rm -rf dist
 	cp -R src dist
@@ -37,3 +41,14 @@ build:
 	cp -R dist/* ./.
 	rm -rf dist/*
 	cp -R src/Icon/style/resources dist/.
+
+storybook:
+	build-storybook
+	mkdir -p dist
+	mv storybook-static dist/storybook
+
+unprefix:
+	find . -name *.js -not -path "./node_modules/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
+	sed -i.bak 's/@react\///g' package.json
+	find . -name "*.bak" -delete
+
