@@ -1,7 +1,7 @@
 import getOffset from 'dom-helpers/query/offset';
 import getPosition from 'dom-helpers/query/position';
-import getScrollTop from 'dom-helpers/query/scrollTop';
 import getScrollLeft from 'dom-helpers/query/scrollLeft';
+import getScrollTop from 'dom-helpers/query/scrollTop';
 import ownerDocument from 'dom-helpers/ownerDocument';
 import ReactDOM from 'react-dom';
 
@@ -37,7 +37,7 @@ function getContainerDimensions(containerNode) {
       getScrollLeft(ownerDocument(ReactDOM.findDOMNode(containerNode)).documentElement) ||
       getScrollLeft(containerNode);
   } else {
-    ({ width, height } = getOffset(containerNode));
+    ({width, height} = getOffset(containerNode));
     scroll.top = getScrollTop(containerNode);
     scroll.left = getScrollLeft(containerNode);
   }

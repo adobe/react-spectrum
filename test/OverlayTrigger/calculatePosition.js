@@ -1,10 +1,8 @@
 import assert from 'assert';
 import {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePosition';
-import pick from 'lodash/pick';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTestUtils from 'react-dom/test-utils';
-import sinon from 'sinon';
 
 describe('calculatePosition', function () {
   function checkPosition(placement, targetPosition, expected) {
@@ -37,7 +35,7 @@ describe('calculatePosition', function () {
       right: 0
     };
 
-    it('Should calculate the correct position', function() {
+    it('Should calculate the correct position', function () {
       const childOffset = {
         ...targetPosition,
         bottom: targetPosition.top + 100,
@@ -124,23 +122,23 @@ describe('calculatePosition', function () {
       offsetBefore: [100, 50, undefined, '-25%', 500],
       offsetAfter: [600, 350, undefined, '75%', 200]
     },
-  ].forEach(function(testCase) {
+  ].forEach(function (testCase) {
     const placement = testCase.placement;
 
-    describe(`placement = ${placement}`, function() {
-      describe('no viewport offset', function() {
+    describe(`placement = ${placement}`, function () {
+      describe('no viewport offset', function () {
         checkPosition(
           placement, {left: 250, top: 250}, testCase.noOffset
         );
       });
 
-      describe('viewport offset before', function() {
+      describe('viewport offset before', function () {
         checkPosition(
           placement, {left: 0, top: 0}, testCase.offsetBefore
         );
       });
 
-      describe('viewport offset after', function() {
+      describe('viewport offset after', function () {
         checkPosition(
           placement, {left: 500, top: 500}, testCase.offsetAfter
         );
