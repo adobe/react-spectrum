@@ -40,11 +40,11 @@ describe('Position', () => {
       arrowOffsetLeft: '0%',
       arrowOffsetTop: '50%'
     });
-    const tree = mount(<Position placement="bottom" target={target}><div>test</div></Position>);
+    const tree = mount(<Position placement="bottom" target={target} containerPadding={15}><div>test</div></Position>);
     const div = tree.find('div');
 
     assert(stub.calledOnce);
-    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.getNode()), ReactDOM.findDOMNode(target), document.body, 10]);
+    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.getNode()), ReactDOM.findDOMNode(target), document.body, 15]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',

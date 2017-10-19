@@ -31,6 +31,10 @@ export default class Position extends React.Component {
     this._lastTarget = null;
   }
 
+  static defaultProps = {
+    containerPadding: 10
+  }
+
   componentDidMount() {
     this.updatePosition(this.getTarget());
     window.addEventListener('resize', this.maybeUpdatePosition, false);
@@ -131,7 +135,7 @@ export default class Position extends React.Component {
       overlay,
       target,
       container,
-      10
+      this.props.containerPadding
     ));
   }
 }
