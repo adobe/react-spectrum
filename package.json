@@ -1,6 +1,6 @@
 {
   "name": "@react/react-spectrum",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   "dependencies": {
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
+    "@react/collection-view": "^2.2.0",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
     "react-overlays": "^0.7.3",
@@ -58,8 +59,10 @@
     "file-loader": "^0.9.0",
     "ignore-styles": "^5.0.1",
     "jsdom": "^9.8.0",
+    "lfcdn": "^0.4.2",
     "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
+    "mocha-junit-reporter": "^1.14.0",
     "nib": "^1.1.2",
     "nyc": "^10.2.0",
     "react": "^15.3.2",
