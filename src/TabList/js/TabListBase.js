@@ -88,7 +88,7 @@ export default class TabListBase extends Component {
 
   getItems() {
     const {children} = this.props;
-    return React.Children.map(children, (child, index) =>
+    return React.Children.toArray(children).map((child, index) =>
       child ? React.cloneElement(child, this.getChildProps(child, index)) : null
     );
   }
