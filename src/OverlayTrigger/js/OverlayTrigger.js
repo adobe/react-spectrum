@@ -5,6 +5,7 @@ import React, {cloneElement, Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
+
 /**
  * Check if value one is inside or equal to the of value
  *
@@ -17,6 +18,25 @@ function isOneOf(one, of) {
     return of.indexOf(one) >= 0;
   }
   return one === of;
+}
+
+/**
+ * Find all of the scrollable parents of a DOM node
+ */
+function getScrollParents(node) {
+  let nodes = [];
+  while (node.parentNode) {
+    var style = window.getComputedStyle(node);
+
+    // Look for scrollable nodes, both real and fake.
+    if (/auto|scroll/.test(style.overflow + style.overflowY) || node.hasAttribute('data-scrollable')) {
+      nodes.push(node);
+    }
+
+    node = node.parentNode;
+  }
+
+  return nodes;
 }
 
 /*
@@ -80,6 +100,11 @@ export default class OverlayTrigger extends Component {
   componentDidMount() {
     this._mountNode = document.createElement('div');
     this.renderOverlay();
+
+    this._scrollParents = getScrollParents(ReactDOM.findDOMNode(this));
+    for (let node of this._scrollParents) {
+      node.addEventListener('scroll', this.hide, false);
+    }
   }
 
   componentDidUpdate() {
@@ -92,6 +117,14 @@ export default class OverlayTrigger extends Component {
 
     clearTimeout(this._hoverShowDelay);
     clearTimeout(this._hoverHideDelay);
+
+    if (this._scrollParents) {
+      for (let node of this._scrollParents) {
+        node.removeEventListener('scroll', this.hide, false);
+      }
+
+      this._scrollParents = null;
+    }
   }
 
   handleToggle() {
@@ -165,21 +198,21 @@ export default class OverlayTrigger extends Component {
     }
   }
 
-  handleHide() {
-    this.hide();
-  }
-
   show() {
-    this.setState({show: true});
-    if (this.props.onShow) {
-      this.props.onShow();
+    if (!this.state.show) {
+      this.setState({show: true});
+      if (this.props.onShow) {
+        this.props.onShow();
+      }
     }
   }
 
   hide() {
-    this.setState({show: false});
-    if (this.props.onHide) {
-      this.props.onHide();
+    if (this.state.show) {
+      this.setState({show: false});
+      if (this.props.onHide) {
+        this.props.onHide();
+      }
     }
   }
 
@@ -188,7 +221,7 @@ export default class OverlayTrigger extends Component {
       <Overlay
         {...props}
         show={this.state.show}
-        onHide={this.handleHide}
+        onHide={this.hide}
         target={this.props.target || this}
         rootClose={isOneOf('click', this.props.trigger)}>
         {cloneElement(overlay, props)}

@@ -4,7 +4,7 @@ import Dropdown from '../../Dropdown';
 import Icon from '../../Icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RootCloseWrapper from 'devongovett-react-overlays/lib/RootCloseWrapper';
+import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
 import '../../Menu/style/index.styl';

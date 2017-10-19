@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {List} from '../../List';
 import React, {PropTypes} from 'react';
-import RootCloseWrapper from 'devongovett-react-overlays/lib/RootCloseWrapper';
+import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import '../style/index.styl';
 
 export default class Menu extends React.Component {

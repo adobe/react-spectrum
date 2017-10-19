@@ -57,7 +57,23 @@ function render(type, props = {}) {
         <Popover
           open
           title="Popover title">
-            Popover content goes here...
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
+            Popover content goes here...<br />
         </Popover>
       </OverlayTrigger>
     );
