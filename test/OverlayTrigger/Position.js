@@ -20,7 +20,7 @@ describe('Position', () => {
     assert.equal(tree.type(), 'div');
     assert.deepEqual(tree.prop('style'), {
       position: 'absolute',
-      zIndex: 1000,
+      zIndex: 100000,
       left: 0,
       top: 0,
       maxHeight: undefined
@@ -48,7 +48,7 @@ describe('Position', () => {
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
-      zIndex: 1000,
+      zIndex: 100000,
       left: 100,
       top: 50,
       maxHeight: 200
@@ -89,7 +89,7 @@ describe('Position', () => {
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
-      zIndex: 1000,
+      zIndex: 100000,
       left: 50,
       top: 150,
       maxHeight: 100
@@ -132,7 +132,7 @@ describe('Position', () => {
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
-      zIndex: 1000,
+      zIndex: 100000,
       left: 50,
       top: 150,
       maxHeight: 100
