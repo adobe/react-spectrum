@@ -82,7 +82,7 @@ export default class Position extends React.Component {
         style: {
           ...child.props.style,
           position: 'absolute',
-          zIndex: 1000, // should match the z-index in ModalTrigger
+          zIndex: 100000, // should match the z-index in ModalTrigger
           left: positionLeft,
           top: positionTop,
           maxHeight: maxHeight

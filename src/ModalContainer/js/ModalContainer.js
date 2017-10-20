@@ -46,7 +46,7 @@ class Modal extends React.Component {
     // The z-index here should match the one in Overlay
     return (
       <BaseModal
-        style={{zIndex: 1000, position: 'relative'}}
+        style={{zIndex: 100000, position: 'relative'}}
         show={this.state.show}
         onExited={this.props.onHide}
         onHide={this.onClose}
