@@ -6,6 +6,11 @@ import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
 
+
+const assertMenuFocusStates = (tree, expectedFocusStates) => {
+  assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), expectedFocusStates);
+};
+
 describe('Autocomplete', () => {
   it('should render children', () => {
     const tree = shallow(
@@ -86,30 +91,30 @@ describe('Autocomplete', () => {
 
     await sleep(1); // Wait for async getCompletions
 
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [true, false, false]);
+    assertMenuFocusStates(tree, [true, false, false]);
 
-    tree.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [false, true, false]);
+    tree.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [false, true, false]);
 
-    tree.find('input').simulate('keyDown', {key: 'ArrowUp', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [true, false, false]);
+    tree.find('input').simulate('keyDown', {key: 'ArrowUp', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [true, false, false]);
 
-    tree.find('input').simulate('keyDown', {key: 'End', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [false, false, true]);
+    tree.find('input').simulate('keyDown', {key: 'End', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [false, false, true]);
 
-    tree.find('input').simulate('keyDown', {key: 'Home', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [true, false, false]);
+    tree.find('input').simulate('keyDown', {key: 'Home', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [true, false, false]);
 
     // Wrapping behavior
-    tree.find('input').simulate('keyDown', {key: 'ArrowUp', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [false, false, true]);
+    tree.find('input').simulate('keyDown', {key: 'ArrowUp', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [false, false, true]);
 
-    tree.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [true, false, false]);
+    tree.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: () => {}});
+    assertMenuFocusStates(tree, [true, false, false]);
 
     // Mouse focus
     tree.find(MenuItem).at(1).simulate('mouseEnter');
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [false, true, false]);
+    assertMenuFocusStates(tree, [false, true, false]);
   });
 
   it('should select an item when the enter key is pressed', async () => {
@@ -214,7 +219,7 @@ describe('Autocomplete', () => {
     await sleep(1); // Wait for async getCompletions
 
     // No menu item selected
-    assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), [false, false, false]);
+    assertMenuFocusStates(tree, [false, false, false]);
 
     // Emits onSelect for non-selected item
     tree.find('input').simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
@@ -256,5 +261,44 @@ describe('Autocomplete', () => {
 
     assert.equal(onSelect.callCount, 1);
     assert.deepEqual(onSelect.getCall(0).args[0], {id: 1, label: 'one'});
+  });
+
+  describe('autocompletes when Tab is pressed', () => {
+    const render = async (getCompletions) => {
+      const preventDefaultSpy = sinon.spy();
+      const onSelectSpy = sinon.spy();
+
+      const tree = shallow(
+        <Autocomplete onSelect={onSelectSpy} getCompletions={getCompletions}>
+          <input />
+        </Autocomplete>
+      );
+      const input = tree.find('input');
+
+      input
+        .simulate('focus')
+        .simulate('change', 't');
+
+      await sleep(1);
+
+      input
+        .simulate('keydown', {key: 'Tab', preventDefault: preventDefaultSpy});
+
+      return {preventDefaultSpy, onSelectSpy};
+    };
+
+    it('if the menu is open', async () => {
+      const {preventDefaultSpy, onSelectSpy} = await render(v => ['one', 'two', 'three']);
+
+      assert(onSelectSpy.withArgs('one').calledOnce);
+      assert(preventDefaultSpy.calledOnce);
+    });
+
+    it('otherwise performs default behavior', async () => {
+      const {preventDefaultSpy, onSelectSpy} = await render(v => []);
+
+      assert(onSelectSpy.notCalled);
+      assert(preventDefaultSpy.notCalled);
+    });
   });
 });

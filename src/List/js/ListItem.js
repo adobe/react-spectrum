@@ -32,22 +32,27 @@ export default class ListItem extends Component {
   }
 
   onSelectFocused = e => {
+    e.preventDefault();
     this.props.onSelect(this.props.value, e);
   }
 
   onFocusFirst = e => {
+    e.preventDefault();
     this.props.onFocusFirst(e);
   }
 
   onFocusLast = e => {
+    e.preventDefault();
     this.props.onFocusLast(e);
   }
 
   onFocusPrevious = e => {
+    e.preventDefault();
     this.props.onFocusPrevious(e);
   }
 
   onFocusNext = e => {
+    e.preventDefault();
     this.props.onFocusNext(e);
   }
 

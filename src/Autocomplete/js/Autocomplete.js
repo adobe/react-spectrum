@@ -102,28 +102,34 @@ export default class Autocomplete extends React.Component {
     this.setState({isFocused: false});
   }
 
-  onEscape() {
+  onEscape(event) {
+    event.preventDefault();
     this.hideMenu();
   }
 
-  onSelectFocused() {
+  onSelectFocused(event) {
     let value = this.state.results[this.state.selectedIndex];
     if (value) {
+      event.preventDefault();
       this.onSelect(value);
     } else if (this.props.allowCreate) {
+      event.preventDefault();
       this.onSelect(this.state.value);
     }
   }
 
-  onFocusFirst() {
+  onFocusFirst(event) {
+    event.preventDefault();
     this.selectIndex(0);
   }
 
-  onFocusLast() {
+  onFocusLast(event) {
+    event.preventDefault();
     this.selectIndex(this.state.results.length - 1);
   }
 
-  onFocusPrevious() {
+  onFocusPrevious(event) {
+    event.preventDefault();
     let index = this.state.selectedIndex - 1;
     if (index < 0) {
       index = this.state.results.length - 1;
@@ -132,7 +138,8 @@ export default class Autocomplete extends React.Component {
     this.selectIndex(index);
   }
 
-  onFocusNext() {
+  onFocusNext(event) {
+    event.preventDefault();
     let index = (this.state.selectedIndex + 1) % this.state.results.length;
     this.selectIndex(index);
   }
