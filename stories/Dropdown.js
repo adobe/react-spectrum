@@ -1,8 +1,8 @@
+import {action, storiesOf} from '@kadira/storybook';
 import Button from '../src/Button';
 import Dropdown from '../src/Dropdown';
 import {Menu, MenuItem} from '../src/Menu';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Dropdown', module)
@@ -14,12 +14,12 @@ storiesOf('Dropdown', module)
   .addWithInfo(
     'Default',
     () => (
-      <Dropdown>
+      <Dropdown onSelect={action('select')}>
         <Button variant="cta">Test</Button>
         <Menu>
-          <MenuItem>Foo</MenuItem>
-          <MenuItem selected>Bar</MenuItem>
-          <MenuItem>Baz</MenuItem>
+          <MenuItem value="foo">Foo</MenuItem>
+          <MenuItem value="bar" selected>Bar</MenuItem>
+          <MenuItem value="baz">Baz</MenuItem>
         </Menu>
       </Dropdown>
     ),

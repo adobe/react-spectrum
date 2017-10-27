@@ -34,9 +34,9 @@ storiesOf('DropdownButton', module)
 function render(props = {}) {
   return (
     <DropdownButton {...props} onClick={action('click')} onSelect={action('select')}>
-      <MenuItem icon="twitter">Twitter</MenuItem>
-      <MenuItem icon="facebook">Facebook</MenuItem>
-      <MenuItem icon="instagram">Instagram</MenuItem>
+      <MenuItem icon="twitter" value="twitter">Twitter</MenuItem>
+      <MenuItem icon="facebook" value="facebook">Facebook</MenuItem>
+      <MenuItem icon="instagram" value="instagram">Instagram</MenuItem>
     </DropdownButton>
   );
 }
