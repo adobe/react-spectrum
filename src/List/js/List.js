@@ -11,30 +11,39 @@ export default class List extends Component {
   }
 
   handleFocusFirst = () => {
-    this.getItems()[0].focus();
+    const items = this.getItems();
+    if (items.length) {
+      items[0].focus();
+    }
   }
 
   handleFocusLast = () => {
     const items = this.getItems();
-    items[items.length - 1].focus();
+    if (items.length) {
+      items[items.length - 1].focus();
+    }
   }
 
   handleFocusPrevious = e => {
     const items = this.getItems();
-    let index = items.indexOf(e.target) - 1;
-    if (index < 0) {
-      index = items.length - 1;
+    if (items.length) {
+      let index = items.indexOf(e.target) - 1;
+      if (index < 0) {
+        index = items.length - 1;
+      }
+      items[index].focus();
     }
-    items[index].focus();
   }
 
   handleFocusNext = e => {
     const items = this.getItems();
-    let index = items.indexOf(e.target) + 1;
-    if (index >= items.length) {
-      index = 0;
+    if (items.length) {
+      let index = items.indexOf(e.target) + 1;
+      if (index >= items.length) {
+        index = 0;
+      }
+      items[index].focus();
     }
-    items[index].focus();
   }
 
   componentDidMount() {
