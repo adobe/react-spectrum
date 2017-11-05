@@ -70,7 +70,9 @@ export default class Button extends Component {
         {icon &&
           <Icon className="spectrum-Icon" size={iconSize} icon={icon} />
         }
-        {label}{children}
+        {(label || children) &&
+          <span className="spectrum-Button-label">{label}{children}</span>
+        }
       </Element>
     );
   }
