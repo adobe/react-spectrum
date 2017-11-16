@@ -15,13 +15,15 @@ export default class Popover extends Component {
     ]),
     open: PropTypes.bool,
     title: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    showTip: PropTypes.bool
   };
 
   static defaultProps = {
     variant: 'default',
     placement: 'bottom',
-    open: true
+    open: true,
+    showTip: true
   };
 
   render() {
@@ -33,6 +35,7 @@ export default class Popover extends Component {
       title,
       children,
       className,
+      showTip,
       ...otherProps
     } = this.props;
 
@@ -59,7 +62,7 @@ export default class Popover extends Component {
         <div className="spectrum-Dialog-content">
           {children}
         </div>
-        <div className="spectrum-Popover-tip" style={arrowStyle} />
+        {this.props.showTip && <div className="spectrum-Popover-tip" style={arrowStyle} />}
       </div>
     );
   }
