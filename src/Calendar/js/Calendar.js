@@ -522,9 +522,7 @@ const CalendarCell = function CalendarCell({
           'is-focused': focused,
           'is-disabled': disabled,
           'is-outsideMonth': !isCurrentMonth,
-          'is-range-selection': isRangeSelection && selected,
-          'is-range-start': isRangeSelection && isRangeStart,
-          'is-range-end': isRangeSelection && isRangeEnd
+          'is-range-selection': isRangeSelection && selected
         })}>
         {date.date()}
       </span>
