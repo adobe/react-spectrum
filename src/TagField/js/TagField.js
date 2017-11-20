@@ -57,7 +57,8 @@ export default class TagField extends React.Component {
 
     return (
       <Autocomplete
-        className={classNames('react-spectrum-TagField', {
+        className={classNames('react-spectrum-TagField', 'spectrum-Textfield', {
+          'spectrum-Textfield--quiet': quiet,
           'react-spectrum-TagField--quiet': quiet,
           'is-disabled': disabled,
           'is-invalid': invalid

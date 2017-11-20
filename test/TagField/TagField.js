@@ -11,7 +11,7 @@ describe('TagField', () => {
   it('should render a textfield when empty', () => {
     const tree = shallow(<TagField />);
     assert.equal(tree.type(), Autocomplete);
-    assert.equal(tree.prop('className'), 'react-spectrum-TagField');
+    assert.equal(tree.prop('className'), 'react-spectrum-TagField spectrum-Textfield');
 
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
@@ -20,7 +20,7 @@ describe('TagField', () => {
 
   it('should render classnames for states', () => {
     const tree = shallow(<TagField quiet disabled invalid />);
-    assert.equal(tree.prop('className'), 'react-spectrum-TagField react-spectrum-TagField--quiet is-disabled is-invalid');
+    assert.equal(tree.prop('className'), 'react-spectrum-TagField spectrum-Textfield spectrum-Textfield--quiet react-spectrum-TagField--quiet is-disabled is-invalid');
   });
 
   it('should render tags when a value is given', () => {

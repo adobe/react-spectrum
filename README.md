@@ -7,7 +7,7 @@
 react-spectrum is a fork of the [react-coral](http://git.corp.adobe.com/React/react-coral) project, updated for
 the new [Spectrum](http://spectrum.corp.adobe.com) design language. The styles were originally from
 [coralui-theme-spectrum](http://git.corp.adobe.com/Coral/coralui-theme-spectrum), however most of the underlying styles
-now live in [spectrum-abstract-stylus](http://git.corp.adobe.com/Spectrum/spectrum-abstract-stylus).
+now live in [spectrum-css](http://git.corp.adobe.com/Spectrum/spectrum-css).
 
 Since react-spectrum has a different DOM structure in some cases from CoralUI, it made sense to bring in the styles so we
 can adjust the selectors as necessary. We also wanted to take advantage of some modern JavaScript tooling

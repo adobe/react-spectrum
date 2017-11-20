@@ -10,7 +10,7 @@ describe('TagList', () => {
     assert.equal(tree.hasClass('is-disabled'), true);
   });
 
-  it('has coral class', () => {
+  it('has spectrum class', () => {
     const tree = shallow(<TagList />);
     assert.equal(tree.hasClass('spectrum-TagList'), true);
   });

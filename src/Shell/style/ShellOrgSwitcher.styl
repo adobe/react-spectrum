@@ -1,13 +1,12 @@
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
-@require '../../commons'
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
 @require '../../List/style'
 
-$coral-shell-orgswitcher-width = 300*$px;
-$coral-shell-orgswitcher-message-height = 200*$px
-$coral-Shell-orgswitcher-background = $spectrum-global-color-grey1
-$coral-Shell-orgswitcher-footer-background = $spectrum-global-color-grey2
-$coral-Shell-orgswitcher-search-background = $spectrum-global-color-grey2
-$coral-Shell-orgswitcher-height = 320*$px;
+$coral-shell-orgswitcher-width = 300px;
+$coral-shell-orgswitcher-message-height = 200px
+$coral-Shell-orgswitcher-background = $spectrum-global-color-grey50
+$coral-Shell-orgswitcher-footer-background = $spectrum-global-color-grey75
+$coral-Shell-orgswitcher-search-background = $spectrum-global-color-grey75
+$coral-Shell-orgswitcher-height = 320px;
 
 .coral3-Shell-orgSwitcher {
   width: $coral-shell-orgswitcher-width;
@@ -23,15 +22,15 @@ $coral-Shell-orgswitcher-height = 320*$px;
 
 .coral3-Shell-orgSwitcher-item-checkmark {
   position: absolute;
-  right: 16*$px;
-  top: 12*$px; // Fix vertical alignment
-  color: $spectrum-link-text-color-default;
+  right: 16px;
+  top: 12px; // Fix vertical alignment
+  color: $spectrum-global-color-blue600;
 }
 
 .coral3-Shell-orgSwitcher-item-icon {
   width: 2rem;
   margin-top: -0.125rem; // Fix vertical alignment
-  margin-right: 8*$px; // Differs from specs for visual alignment
+  margin-right: 8px; // Differs from specs for visual alignment
 }
 
 .coral3-Shell-orgSwitcher-item,
@@ -44,12 +43,12 @@ $coral-Shell-orgswitcher-height = 320*$px;
   position: relative;
 
   &.is-selected {
-    color: $spectrum-link-text-color-active;
+    color: $spectrum-global-color-blue700;
   }
 }
 
 .coral3-Shell-orgSwitcher-item {
-  padding-left: 10*$px;
+  padding-left: 10px;
 
   &.is-child-selected > .coral3-Shell-orgSwitcher-item-checkmark {
     // Hide the checkmark if a child is selected
@@ -71,13 +70,13 @@ $coral-Shell-orgswitcher-height = 320*$px;
 
 
 .coral3-Shell-orgSwitcher-subitem {
-  padding-left: 28*$px;
+  padding-left: 28px;
 
   // Don't overlap parent's icon
   background: none;
 
   .coral3-Shell-orgSwitcher-item-checkmark {
-    top: 10*$px;
+    top: 10px;
   }
 
   coral-list-item-content {
@@ -88,7 +87,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
 .coral3-Shell-orgSwitcher-subitem-icon {
   width: 1.25rem;
   height: 1rem;
-  margin-top: -1*$px; // Fix vertical alignment
+  margin-top: -1px; // Fix vertical alignment
 }
 
 .coral3-Shell-orgSwitcher-search {
@@ -96,7 +95,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
 
   background-color: $coral-Shell-orgswitcher-search-background;
 
-  border-bottom: 1*$px solid rgb(235, 235, 235);
+  border-bottom: 1px solid rgb(235, 235, 235);
 
   .spectrum-Search-input {
     width: 100%;
@@ -120,7 +119,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
 .coral3-Shell-orgSwitcher-resultMessage-container {
   display: table-cell;
 
-  padding: 0 20*$px;
+  padding: 0 20px;
 
   vertical-align: middle;
 
@@ -131,7 +130,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
   display: block;
   background-color: $coral-Shell-orgswitcher-footer-background;
 
-  border-top: 1*$px solid rgb(235, 235, 235);
+  border-top: 1px solid rgb(235, 235, 235);
 
   text-align: center;
 
@@ -140,7 +139,7 @@ $coral-Shell-orgswitcher-height = 320*$px;
     width: 100%;
 
     // Make them be 44px so Lindsay is happy
-    padding: 3*$px 0;
+    padding: 3px 0;
 
     border-radius: 0;
   }

@@ -1,47 +1,36 @@
-@import '@spectrum/spectrum-abstract-stylus/dist/components/textfield/skin.styl';
-
 .react-spectrum-TagField {
-  spectrum-textfield()
-
-  &:hover {
-    spectrum-textfield--hover()
-  }
-
-  &.is-focused {
-    spectrum-textfield--focus()
+  &.is-focused:not(.is-invalid) {
+    border-color: $spectrum-alias-focus-blue;
+    box-shadow: 0 0 0 1px $spectrum-alias-focus-blue;
   }
 
   &.is-disabled {
-    spectrum-textfield--disabled()
+    background-color: $spectrum-global-color-grey200;
+    border-color: transparent;
+    color: $spectrum-global-color-grey500;
   }
 
   &.is-invalid {
-    spectrum-textfield--invalid()
     &.is-focused {
-      box-shadow: 0 0 0 1*$px $spectrum-input-invalid-border-color-default;
+      box-shadow: 0 0 0 1px $spectrum-alias-text-color-invalid;
     }
   }
 }
 
 .react-spectrum-TagField--quiet {
-  spectrum-textfield--quiet()
-
-  &:hover {
-    spectrum-textfield--quiet--hover()
-  }
-
-  &.is-focused {
-    spectrum-textfield--quiet--focus()
+  &.is-focused:not(.is-invalid) {
+    border-color: $spectrum-alias-focus-blue;
+    box-shadow: 0 1px 0 $spectrum-alias-focus-blue;
   }
 
   &.is-disabled {
-    spectrum-textfield--quiet--disabled()
+    background-color: transparent;
+    border-color: $spectrum-global-color-grey300;
   }
 
   &.is-invalid {
-    spectrum-textfield--quiet--invalid()
     &.is-focused {
-      box-shadow: 0 1*$px 0 $spectrum-input-invalid-border-color-default;
+      box-shadow: 0 1px 0 $spectrum-alias-text-color-invalid;
     }
   }
 }

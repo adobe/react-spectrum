@@ -1,12 +1,11 @@
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
-@require '../../commons'
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
 
-$coral-shell-help-width = 325*$px;
-$coral-shell-help-loading-height = 300*$px
-$coral-shell-help-background = $spectrum-global-color-grey1;
+$coral-shell-help-width = 325px;
+$coral-shell-help-loading-height = 300px
+$coral-shell-help-background = $spectrum-global-color-grey50;
 
 $coral-shell-loading-middle = 48%; // Better visual centering
-$coral-shell-loading-spacing = 16*$px;
+$coral-shell-loading-spacing = 16px;
 
 .coral3-Shell-help {
   display: block;
@@ -18,7 +17,7 @@ $coral-shell-loading-spacing = 16*$px;
 
   .spectrum-Search-input {
     width: 100%;
-    border-width: 0 0 $px 0;
+    border-width: 0 0 1px 0;
 
     &:focus {
       box-shadow: none;
@@ -27,7 +26,7 @@ $coral-shell-loading-spacing = 16*$px;
 }
 
 .coral3-Shell-help-result-description {
-  color: $spectrum-body-secondary-text-color-default;
+  color: $spectrum-global-color-grey700;
   font-weight: 300;
   letter-spacing: 0.125px; // Tweak: Letters were too close
 
@@ -47,7 +46,7 @@ $coral-shell-loading-spacing = 16*$px;
 .coral3-Shell-help-allResults {
   &, .coral3-Shell-help-result-content {
     // Just look like a link
-    color: $spectrum-link-text-color-default;
+    color: $spectrum-global-color-blue600;
   }
 }
 
@@ -57,14 +56,14 @@ $coral-shell-loading-spacing = 16*$px;
 }
 
 .coral3-Shell-help-resultMessage-heading {
-  margin-bottom: 12*$px;
-  margin-top: -8*$px;
+  margin-bottom: 12px;
+  margin-top: -8px;
 }
 
 .coral3-Shell-help-resultMessage-container {
   display: table-cell;
 
-  padding: 0 20*$px;
+  padding: 0 20px;
 
   vertical-align: middle;
 
@@ -76,7 +75,7 @@ $coral-shell-loading-spacing = 16*$px;
   bottom: (100% - $coral-shell-loading-middle);
   left: 50%;
 
-  margin-left: -8*$px; // Center
+  margin-left: -8px; // Center
   margin-bottom: ($coral-shell-loading-spacing / 2);
 }
 
@@ -86,7 +85,7 @@ $coral-shell-loading-spacing = 16*$px;
   left: 0;
   right: 0;
 
-  padding-left: 5*$px; // Tweak: Make it look nicer with the ellipsis
+  padding-left: 5px; // Tweak: Make it look nicer with the ellipsis
 
   display: block;
   padding-top: ($coral-shell-loading-spacing / 2);
