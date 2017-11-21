@@ -3,8 +3,7 @@
 @import '@spectrum/spectrum-css/dist/components/toast/multiStops/lightest.css';
 @import '@spectrum/spectrum-css/dist/components/toast/multiStops/dark.css';
 @import '@spectrum/spectrum-css/dist/components/toast/multiStops/darkest.css';
-
-@import '../../commons'
+@import '@spectrum/spectrum-variables/stylus/spectrum-light.styl';
 
 .react-spectrum-ToastContainer {
   position: fixed;
@@ -18,7 +17,7 @@
   pointer-events: none;
 
   .spectrum-Toast {
-    margin-top: 5*$px;
+    margin-top: 5px;
     pointer-events: all;
   }
 }
@@ -31,7 +30,7 @@
 .react-spectrum-Toast-slide-enter-active, .react-spectrum-Toast-slide-appear-active {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  transition: all $spectrum-transition-time;
+  transition: all $spectrum-global-animation-transition-time;
   transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
 }
 
@@ -43,5 +42,5 @@
 .react-spectrum-Toast-slide-exit-active {
   opacity: 0;
   transform: translate3d(0, -100%, 0);
-  transition: all $spectrum-transition-time ease-in-out;
+  transition: all $spectrum-global-animation-transition-time ease-in-out;
 }

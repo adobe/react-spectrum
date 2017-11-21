@@ -26,13 +26,12 @@
     "stringify": "^5.1.0"
   },
   "devDependencies": {
-    "@coralui/coralui-core": "^4.4.0",
     "@kadira/react-storybook-addon-info": "^3.2.4",
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
-    "@spectrum/spectrum-abstract-stylus": "0.2.8",
     "@spectrum/spectrum-css": "2.0.0-beta.48",
-    "@spectrum/spectrum-flexbox-grid": "1.0.2",
+    "@spectrum/spectrum-flexbox-grid": "1.1.1",
+    "@spectrum/spectrum-variables": "1.0.1",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
@@ -65,6 +64,7 @@
     "mocha": "^3.1.2",
     "mocha-junit-reporter": "^1.14.0",
     "nib": "^1.1.2",
+    "normalize.css": "^7.0.0",
     "nyc": "^10.2.0",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",

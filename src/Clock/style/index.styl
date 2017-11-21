@@ -15,15 +15,15 @@
  * from Adobe Systems Incorporated.
  */
 
- @require '../../commons';
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
 
-$clock-period-width = 100*$px;
-$clock-gap-width = 16*$px;
+$clock-period-width = 100px;
+$clock-gap-width = 16px;
 
 .react-spectrum-Clock {
   display: inline-table;
   vertical-align: top;
-  width: $spectrum-component-single-line-width;
+  width: $spectrum-alias-single-line-width;
 }
 
 .react-spectrum-Clock-minute,
@@ -35,7 +35,7 @@ $clock-gap-width = 16*$px;
 
 .react-spectrum-Clock-divider {
   display: table-cell;
-  line-height: $spectrum-component-single-line-height;
+  line-height: $spectrum-alias-single-line-height;
   font-size: $clock-gap-width;
   vertical-align: middle;
   text-align: center;
