@@ -35,6 +35,11 @@ storiesOf('Checkbox', module)
     {inline: true}
   )
   .addWithInfo(
+    'invalid: true',
+    () => render({invalid: true}),
+    {inline: true}
+  )
+  .addWithInfo(
     'disabled: true',
     () => render({disabled: true}),
     {inline: true}
