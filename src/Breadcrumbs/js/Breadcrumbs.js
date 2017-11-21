@@ -16,7 +16,7 @@ export default class Breadcrumbs extends React.Component {
     return (
       <nav>
         {icon &&
-          <Icon icon={icon} size="S" />
+          <Icon icon={icon} size="S" className="react-spectrum-Breadcrumbs-icon" />
         }
         <ul className={classNames('spectrum-Breadcrumbs', className)}>
           {items.map((item, i) => (
