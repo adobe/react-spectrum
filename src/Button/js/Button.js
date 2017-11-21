@@ -28,6 +28,7 @@ export default class Button extends Component {
       label,
       children,
       variant = 'default',
+      logic,
       quiet,
       icon,
       iconSize = 'S',
@@ -45,7 +46,7 @@ export default class Button extends Component {
       otherProps['aria-disabled'] = disabled;
     }
 
-    let quietClass = (quiet ? 'quiet--' : '');
+    let variantPrefix = logic ? 'logic--' : quiet ? 'quiet--' : '';
     let iconOnly = icon && !(label || children);
 
     return (
@@ -54,13 +55,13 @@ export default class Button extends Component {
         className={
           classNames(
             'spectrum-Button',
-            `spectrum-Button--${quietClass + (VARIANTS[variant] || variant)}`,
+            `spectrum-Button--${variantPrefix + (VARIANTS[variant] || variant)}`,
             {
               'is-selected': selected,
               'is-disabled': disabled,
               'is-invalid': invalid,
               'spectrum-Button--block': block,
-              ['spectrum-Button--action--' + quietClass + 'icon-only']: iconOnly
+              ['spectrum-Button--action--' + variantPrefix + 'icon-only']: variant === 'action' && iconOnly
             },
             className
           )

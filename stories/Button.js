@@ -40,13 +40,13 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: and',
-    () => render({variant: 'and'}),
+    'logic variant: and',
+    () => render({logic: true, variant: 'and'}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: or',
-    () => render({variant: 'or'}),
+    'logic variant: or',
+    () => render({logic: true, variant: 'or'}),
     {inline: true}
   )
   .addWithInfo(
