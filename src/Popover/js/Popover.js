@@ -6,7 +6,7 @@ import '../../Dialog/style/index.styl';
 
 export default class Popover extends Component {
   static propTypes = {
-    variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
+    variant: PropTypes.oneOf(['default', 'error']),
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
       'top', 'top left', 'top right',
