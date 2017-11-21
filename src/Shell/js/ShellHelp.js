@@ -89,8 +89,8 @@ export default class ShellHelp extends Component {
           : <div className="coral3-Shell-help-resultMessage">
             <div className="coral3-Shell-help-resultMessage-container">
               <div className="coral-Heading--1 coral3-Shell-help-resultMessage-heading">
-                  No results found
-                </div>
+                No results found
+              </div>
             </div>
           </div>
         }
@@ -161,8 +161,8 @@ export default class ShellHelp extends Component {
             ? <div className="coral3-Shell-help-loading">
               <Wait className="coral3-Shell-help-loading-wait" />
               <span className="coral-Heading--2 coral3-Shell-help-loading-info">
-                  Searching Help...
-                </span>
+                Searching Help...
+              </span>
             </div>
             : this.renderResults()
           }

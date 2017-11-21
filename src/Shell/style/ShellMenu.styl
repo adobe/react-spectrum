@@ -1,15 +1,14 @@
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
 @require './Shell'
-@require '../../commons'
 
-$coral-shell-header-padding-leftright = 8*$px;
-$coral-shell-header-padding-topbottom = ($coral-shell-header-height - $spectrum-component-single-line-height) * 0.5;
+$coral-shell-header-padding-leftright = 8px;
+$coral-shell-header-padding-topbottom = ($coral-shell-header-height - $spectrum-alias-single-line-height) * 0.5;
 $coral-shell-header-area = $coral-shell-header-height - $coral-shell-header-padding-topbottom;
 
-$coral-shell-header-background-color = $spectrum-global-color-grey1;
-$coral-shell-header-background-disabled-color = $spectrum-global-color-grey5;
+$coral-shell-header-background-color = $spectrum-global-color-grey50;
+$coral-shell-header-background-disabled-color = $spectrum-global-color-grey300;
 
-$coral-shell-header-action-text-size = 12*$px;
+$coral-shell-header-action-text-size = 12px;
 
 $coral-shell-menu-background = rgb(255, 255, 255);
 $coral-shell-menu-border = rgb(220, 220, 220);
@@ -43,43 +42,43 @@ $coral-shell-menubar-badge-text-color = white;
   .coral-Icon.is-image {
     &.coral-Icon--sizeXXS {
       .coral-Icon-image {
-        border-radius : 9*$px;
+        border-radius : 9px;
       }
     }
 
     &.coral-Icon--sizeXS {
       .coral-Icon-image {
-        border-radius : 12*$px;
+        border-radius : 12px;
       }
     }
 
     &.coral-Icon--sizeS {
       .coral-Icon-image {
-        border-radius : 18*$px;
+        border-radius : 18px;
       }
     }
 
     &.coral-Icon--sizeM {
       .coral-Icon-image {
-        border-radius : 24*$px;
+        border-radius : 24px;
       }
     }
 
     &.coral-Icon--sizeL {
       .coral-Icon-image {
-        border-radius : 36*$px;
+        border-radius : 36px;
       }
     }
 
     &.coral-Icon--sizeXL {
       .coral-Icon-image {
-        border-radius : 48*$px;
+        border-radius : 48px;
       }
     }
 
     &.coral-Icon--sizeXXL {
       .coral-Icon-image {
-        border-radius : 72*$px;
+        border-radius : 72px;
       }
     }
   }
@@ -91,9 +90,9 @@ $coral-shell-menubar-badge-text-color = white;
   max-height: "calc(100% - %s)" % $coral-shell-header-height;
   overflow: auto;
 
-  border-bottom-left-radius: 3*$px;
+  border-bottom-left-radius: 3px;
   border: solid rgb(220, 220, 220);
-  border-width: 0 0 2*$px 2*$px;
+  border-width: 0 0 2px 2px;
 
   background: $coral-shell-menu-background;
 
@@ -155,24 +154,24 @@ $coral-shell-menubar-badge-text-color = white;
 .coral3-Shell-menu-button[badge]:after {
   content: attr(badge);
   position: absolute;
-  top: 5*$px;
-  left: 18*$px;
+  top: 5px;
+  left: 18px;
 
-  min-width: 5*$px;
-  height: 12*$px;
-  padding-left: 3.5*$px;
-  padding-right: 3.5*$px;
+  min-width: 5px;
+  height: 12px;
+  padding-left: 3.5px;
+  padding-right: 3.5px;
 
-  line-height: 11*$px;
+  line-height: 11px;
   text-align: center;
 
   bold-text();
-  font-size: 9*$px;
+  font-size: 9px;
   color: $coral-shell-menubar-badge-text-color;
 
-  border-radius: 16*$px;
+  border-radius: 16px;
 
   background-color: $coral-shell-menubar-badge-background-color;
 
-  border: 1*$px solid $coral-shell-menubar-badge-border-color;
+  border: 1px solid $coral-shell-menubar-badge-border-color;
 }

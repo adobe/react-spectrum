@@ -16,16 +16,16 @@
  */
 /*! icon.styl */
 
-@require '../../commons'
+@import '@spectrum/spectrum-variables/stylus/spectrum-light.styl';
 
 // Icons size
-$icon-xxsmall-size = 9*$px;
-$icon-xsmall-size = 12*$px;
-$icon-small-size = 18*$px;
-$icon-medium-size = 24*$px;
-$icon-large-size = 36*$px;
-$icon-xlarge-size = 48*$px;
-$icon-xxlarge-size = 72*$px;
+$icon-xxsmall-size = 9px;
+$icon-xsmall-size = 12px;
+$icon-small-size = 18px;
+$icon-medium-size = 24px;
+$icon-large-size = 36px;
+$icon-xlarge-size = 48px;
+$icon-xxlarge-size = 72px;
 
 .coral-Icon {
   display: inline-block;
@@ -38,7 +38,7 @@ $icon-xxlarge-size = 72*$px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  transition: color $spectrum-transition-time ease-in-out, opacity $spectrum-transition-time ease-in-out;
+  transition: color $spectrum-global-animation-transition-time ease-in-out, opacity $spectrum-global-animation-transition-time ease-in-out;
 
   opacity: 0.80;
 

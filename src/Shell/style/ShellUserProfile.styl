@@ -1,11 +1,10 @@
-@import '@spectrum/spectrum-abstract-stylus/dist/spectrum-origins/spectrum-dark.styl'
-@require '../../commons'
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
 
-$coral-shell-user-width = 200*$px;
-$coral-shell-user-image-size = 48*$px;
-$coral-shell-user-name-color = $spectrum-global-color-grey9
-$coral-shell-user-heading-color = $spectrum-global-color-grey8
-$coral-Shell-user-background = $spectrum-global-color-grey1
+$coral-shell-user-width = 200px;
+$coral-shell-user-image-size = 48px;
+$coral-shell-user-name-color = $spectrum-global-color-grey800
+$coral-shell-user-heading-color = $spectrum-global-color-grey700
+$coral-Shell-user-background = $spectrum-global-color-grey50
 
 .coral3-Shell-user {
   display: block;
@@ -14,7 +13,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 }
 
 .coral3-Shell-user-container {
-  padding: 20*$px 16*$px 16*$px 16*$px;
+  padding: 20px 16px 16px 16px;
 
   min-width: $coral-shell-user-width;
 }
@@ -24,7 +23,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 
   width: $coral-shell-user-image-size;
   height: $coral-shell-user-image-size;
-  margin-right: 16*$px;
+  margin-right: 16px;
   line-height: $coral-shell-user-image-size;
 }
 
@@ -47,7 +46,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 .coral3-Shell-user-name {
   display: block;
 
-  font-size: 15*$px;
+  font-size: 15px;
   font-weight: bold;
   color: $coral-shell-user-name-color;
 }
@@ -56,7 +55,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 .coral3-Shell-user-subheading {
   display: block;
 
-  font-size: 13*$px;
+  font-size: 13px;
   color: $coral-shell-user-heading-color;
 }
 
@@ -64,17 +63,17 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
   width: 100%;
   display: table;
 
-  margin-top: 8*$px;
+  margin-top: 8px;
 
   background-color: rgb(250, 250, 250);
 
-  border-top: 1*$px solid rgb(235, 235, 235);
+  border-top: 1px solid rgb(235, 235, 235);
 
   .spectrum-Button {
     display: table-cell;
 
     // Make them be 44px so Lindsay is happy
-    padding: 3*$px 0;
+    padding: 3px 0;
 
     border-radius: 0;
     border-width: 0;
@@ -84,7 +83,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 
     & + .spectrum-Button {
       &, &:focus {
-        border-left: 1*$px solid rgb(235, 235, 235);
+        border-left: 1px solid rgb(235, 235, 235);
       }
     }
   }
@@ -92,7 +91,7 @@ $coral-Shell-user-background = $spectrum-global-color-grey1
 
 .coral3-Shell-menu-button .coral-Icon.is-image.coral-Icon--sizeM .coral-Icon-image {
   border-radius: 1.5rem;
-  margin-top: 2.5*$px;
+  margin-top: 2.5px;
 }
 .coral3-Shell-user-container {
   overflow: hidden;
