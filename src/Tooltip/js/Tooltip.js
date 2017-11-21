@@ -32,7 +32,7 @@ export default class Tooltip extends Component {
     } = this.props;
 
     return (
-      <div
+      <span
         className={
           classNames(
             'spectrum-Tooltip',
@@ -45,9 +45,9 @@ export default class Tooltip extends Component {
           )
         }
         {...otherProps}>
-        <div className="spectrum-Tooltip-content">{children}</div>
-        <div className="spectrum-Tooltip-tip" />
-      </div>
+        <span className="spectrum-Tooltip-label">{children}</span>
+        <span className="spectrum-Tooltip-tip" />
+      </span>
     );
   }
 }

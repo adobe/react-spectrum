@@ -21,6 +21,6 @@ describe('Tooltip', () => {
 
   it('supports children', () => {
     const tree = shallow(<Tooltip>oh hey</Tooltip>);
-    assert.equal(tree.find('.spectrum-Tooltip-content').prop('children'), 'oh hey');
+    assert.equal(tree.find('.spectrum-Tooltip-label').prop('children'), 'oh hey');
   });
 });
