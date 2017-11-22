@@ -17,7 +17,7 @@ export default function Wait({
           {
             'spectrum-Loader--indeterminate--small': size === 'S',
             'spectrum-Loader--indeterminate--large': size === 'L',
-            'spectrum-Loader--centered': centered
+            'react-spectrum-Wait--centered': centered
           },
           className
         )
