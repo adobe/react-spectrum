@@ -25,11 +25,6 @@ storiesOf('Tag', module)
     {inline: true}
   )
   .addWithInfo(
-    'quiet: true',
-    () => render({quiet: true}),
-    {inline: true}
-  )
-  .addWithInfo(
     'closable: true',
     () => render({closable: true}),
     {inline: true}
