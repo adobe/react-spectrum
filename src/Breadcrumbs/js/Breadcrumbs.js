@@ -14,20 +14,25 @@ export default class Breadcrumbs extends React.Component {
     const {items, icon, onBreadcrumbClick, className} = this.props;
 
     return (
-      <div className={classNames('spectrum-Breadcrumbs', className)}>
+      <nav>
         {icon &&
-          <Icon icon={icon} size="S" />
+          <Icon icon={icon} size="S" className="react-spectrum-Breadcrumbs-icon" />
         }
-
-        {items.map((item, i) =>
-          (<span
-            key={i}
-            className="spectrum-Breadcrumb"
-            onClick={items.length > 1 && i < items.length - 1 && onBreadcrumbClick.bind(null, item, items.length - i - 1)}>
-            {item.label}
-          </span>)
-        )}
-      </div>
+        <ul className={classNames('spectrum-Breadcrumbs', className)}>
+          {items.map((item, i) => (
+            <li key={i} className="spectrum-Breadcrumb">
+              <a
+                className="spectrum-Breadcrumb-link"
+                role="link"
+                onClick={items.length > 1 && i < items.length - 1 && onBreadcrumbClick.bind(null, item, items.length - i - 1)}
+                aria-current={i === items.length - 1 ? 'page': null}
+                tabIndex={i < items.length - 1 ? 0 : null}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     );
   }
 }

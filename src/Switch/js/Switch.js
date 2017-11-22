@@ -4,6 +4,7 @@ import SwitchBase from './SwitchBase';
 import '../style/index.styl';
 
 export default function Switch({
+  variant, // 'ab'
   className,
   ...otherProps
 }) {
@@ -13,6 +14,9 @@ export default function Switch({
       className={
         classNames(
           'spectrum-ToggleSwitch',
+          {
+            [`spectrum-ToggleSwitch--${variant}`]: variant
+          },
           className
         )
       }

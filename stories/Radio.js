@@ -35,6 +35,11 @@ storiesOf('Radio', module)
     {inline: true}
   )
   .addWithInfo(
+    'invalid: true',
+    () => render({invalid: true}),
+    {inline: true}
+  )
+  .addWithInfo(
      'Label Not Set',
      () => render({label: ''}),
      {inline: true}

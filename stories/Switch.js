@@ -38,6 +38,11 @@ storiesOf('Switch', module)
     'with label',
     () => (render({label: 'Test'})),
     {inline: true}
+  )
+  .addWithInfo(
+    'variant: ab',
+    () => (render({variant: 'ab'})),
+    {inline: true}
   );
 
 function render(props = {}) {

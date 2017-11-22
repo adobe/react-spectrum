@@ -38,26 +38,6 @@ storiesOf('Popover', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: warning',
-    () => render('Content', {variant: 'warning'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: success',
-    () => render('Content', {variant: 'success'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: help',
-    () => render('Content', {variant: 'help'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: info',
-    () => render('Content', {variant: 'info'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'placement: top',
     () => render('Content', {placement: 'top'}),
     {inline: true}

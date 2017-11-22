@@ -149,7 +149,6 @@ export default class ShellHelp extends Component {
               className
             )
           }>
-          <label className="u-coral-screenReaderOnly">Search Help</label>
           <Search
             className="coral3-Shell-help-search"
             placeholder="Search Help"

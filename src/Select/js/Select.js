@@ -2,12 +2,12 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import Icon from '../../Icon';
+import Popover from '../../Popover';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
-import '../../Menu/style/index.styl';
 
 export default class Select extends React.Component {
   constructor(props) {
@@ -140,17 +140,16 @@ export default class Select extends React.Component {
           invalid={invalid}
           required={required}
           style={{width: this.state.width}}
-          className="spectrum-Flyout spectrum-Flyout--bottom"
           autoFocus />
       </Dropdown>
     );
   }
 }
 
-export function SelectMenu({onClose, onSelect, className, open, ...props}) {
+export function SelectMenu({onClose, onSelect, className, open, placement, style, ...props}) {
   return (
-    <RootCloseWrapper onRootClose={onClose}>
-      <SelectList className={classNames(className, {'is-open': open})} {...props} onChange={onSelect} />
-    </RootCloseWrapper>
+    <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+      <SelectList className={className} {...props} onChange={onSelect} />
+    </Popover>
   );
 }

@@ -9,7 +9,6 @@ export default function Tag({
   children,
   avatar,
   icon,
-  quiet = false,
   closable = false,
   disabled = false,
   selected = false,
@@ -26,7 +25,6 @@ export default function Tag({
         classNames(
           'spectrum-Tag',
           {
-            'spectrum-Tag--quiet': quiet,
             'is-selected': selected,
             'is-disabled': disabled
           },

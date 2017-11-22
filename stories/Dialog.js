@@ -44,26 +44,6 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: warning',
-    () => render(dialogChildren, {title: 'Warning', variant: 'warning', confirmLabel: 'OK'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: success',
-    () => render(dialogChildren, {title: 'Success', variant: 'success', confirmLabel: 'OK'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: help',
-    () => render(dialogChildren, {title: 'Help', variant: 'help', confirmLabel: 'OK'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: info',
-    () => render(dialogChildren, {title: 'Info', variant: 'info', confirmLabel: 'OK'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'mode: fullscreen',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreen', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}

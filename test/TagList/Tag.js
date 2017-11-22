@@ -13,11 +13,6 @@ describe('Tag', () => {
     assert.equal(tree.hasClass('spectrum-Tag'), true);
   });
 
-  it('supports a quiet variant', () => {
-    const tree = shallow(<Tag quiet />);
-    assert(tree.prop('className').indexOf('spectrum-Tag--quiet') >= 0);
-  });
-
   it('supports additional classNames', () => {
     const tree = shallow(<Tag className="myClass" />);
     assert(tree.prop('className').indexOf('myClass') >= 0);

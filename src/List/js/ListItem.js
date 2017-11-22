@@ -74,7 +74,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'spectrum-List-option',
+            'spectrum-SelectList-option',
             {
               'is-selected': selected,
               'is-disabled': disabled,

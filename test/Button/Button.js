@@ -56,6 +56,16 @@ describe('Button', () => {
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-selected');
   });
 
+  it('supports quiet', () => {
+    const tree = shallow(<Button quiet variant="primary" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet--primary');
+  });
+
+  it('supports logic', () => {
+    const tree = shallow(<Button logic variant="and" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--logic--and');
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<Button className="myClass" />);
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default myClass');

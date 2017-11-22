@@ -25,18 +25,8 @@ storiesOf('TabList', module)
     {inline: true}
   )
   .addWithInfo(
-    'size: L',
-    () => render({size: 'L'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'orientation: vertical',
     () => render({orientation: 'vertical'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'orientation: vertical, size: L',
-    () => render({orientation: 'vertical', size: 'L'}),
     {inline: true}
   )
   .addWithInfo(
@@ -57,6 +47,16 @@ storiesOf('TabList', module)
   .addWithInfo(
     'icons, orientation: vertical',
     () => render({icons: true, orientation: 'vertical'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'icons only',
+    () => (
+      <TabList onChange={action('onChange')}>
+        <Tab icon="twitter" />
+        <Tab icon="instagram" />
+      </TabList>
+    ),
     {inline: true}
   )
   .addWithInfo(

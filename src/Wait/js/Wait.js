@@ -3,22 +3,21 @@ import React from 'react';
 import '../style/index.styl';
 
 export default function Wait({
-  size = 'S',
+  size = 'M',
   centered = false,
   className,
-  variant,
   ...otherProps
 }) {
   return (
     <div
       className={
         classNames(
-          'spectrum-Wait',
+          'spectrum-Loader',
+          'spectrum-Loader--indeterminate',
           {
-            'spectrum-Wait--large': size === 'L',
-            'spectrum-Wait--medium': size === 'M',
-            'spectrum-Wait--centered': centered,
-            'spectrum-Wait--dots': variant === 'dots'
+            'spectrum-Loader--indeterminate--small': size === 'S',
+            'spectrum-Loader--indeterminate--large': size === 'L',
+            'spectrum-Loader--centered': centered
           },
           className
         )

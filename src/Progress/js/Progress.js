@@ -2,51 +2,51 @@ import classNames from 'classnames';
 import React from 'react';
 import '../style/index.styl';
 
+const SIZES = {
+  S: 'small',
+  M: 'medium'
+};
+
 export default function Progress({
   value = 0, // number between 0 - 100
-  size = 'M', // 'S', "M", "L"
+  size = 'M', // 'S', 'M'
   showPercent = false, // Whether the label should be shown or not
-  labelPosition = 'right', // 'left', 'right', 'bottom'
-  label, // If not specified, a `${value}%` is used.
-  indeterminate = false,
+  labelPosition = 'left', // 'left', 'bottom'
+  label,
   className,
   ...otherProps
 }) {
-  const sizeClassPart = {S: 'small', M: 'medium', L: 'large'}[size];
+  const sizeClassPart = SIZES[size];
   value = Math.min(Math.max(+value, 0), 100);
-
-  if (showPercent && !label) {
-    label = `${value}%`;
-  }
 
   return (
     <div
       className={
         classNames(
-          'spectrum-Progress',
-          `spectrum-Progress--${sizeClassPart}`,
-          `spectrum-Progress--${label ? `${labelPosition}Label` : 'noLabel' }`,
+          'spectrum-Loader--bar',
+          `spectrum-Loader--bar--${sizeClassPart}`,
           {
-            'spectrum-Progress--indeterminate': indeterminate
+            'spectrum-Loader--side-label': labelPosition === 'left'
           },
           className
         )
       }
-      aria-valuemin={indeterminate ? null : 0}
-      aria-valuemax={indeterminate ? null : 100}
-      aria-valuenow={indeterminate ? null : value}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={value}
       {...otherProps}>
-      <div className="spectrum-Progress-bar">
-        <div
-          className="spectrum-Progress-status"
-          style={{width: `${indeterminate ? 0 : value}%`}} />
-      </div>
-      {
-        label &&
-          <div className="spectrum-Progress-label">
-            {label}
-          </div>
+      {label &&
+        <div className="spectrum-Loader--bar-label">{label}</div>
       }
+      {showPercent &&
+        <div className="spectrum-Loader--bar-percentage">{value + '%'}</div>
+      }
+      <div className="spectrum-Loader--bar-track">
+        <div
+          className="spectrum-Loader--bar-fill"
+          style={{width: `${value}%`}} />
+      </div>
     </div>
   );
 }

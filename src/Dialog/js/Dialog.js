@@ -14,7 +14,7 @@ export default class Dialog extends Component {
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
     title: PropTypes.string,
-    variant: PropTypes.oneOf(['default', 'error', 'help', 'info', 'success', 'warning']),
+    variant: PropTypes.oneOf(['default', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover'])
   };
 
