@@ -22,4 +22,9 @@ describe('Switch', () => {
     const tree = shallow(<Switch foo />);
     assert.equal(tree.prop('foo'), true);
   });
+
+  it('supports ab variant', () => {
+    const tree = shallow(<Switch variant="ab" />);
+    assert.equal(tree.hasClass('spectrum-ToggleSwitch--ab'), true);
+  });
 });
