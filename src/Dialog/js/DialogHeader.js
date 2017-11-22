@@ -26,6 +26,7 @@ export default function DialogHeader({
       <div className="spectrum-Dialog-typeIcon" />
       {fullscreen && confirmLabel &&
         <DialogButtons
+          variant={variant}
           cancelLabel={cancelLabel}
           confirmLabel={confirmLabel}
           onClose={onClose}

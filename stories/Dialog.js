@@ -39,6 +39,21 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: confirmation',
+    () => render(dialogChildren, {title: 'Are you sure?', variant: 'confirmation', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: information',
+    () => render(dialogChildren, {title: 'Connect to WiFi', variant: 'information', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: destructive',
+    () => render(dialogChildren, {title: 'Delete 3 Documents', variant: 'destructive', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: error',
     () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'}),
     {inline: true}
