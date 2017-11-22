@@ -90,7 +90,6 @@ export default class ShellOrgSwitcher extends Component {
               className
             )
           }>
-          <label className="u-coral-screenReaderOnly">Search Organizations</label>
           <Search
             className="coral3-Shell-orgSwitcher-search"
             placeholder="Search Organizations"
