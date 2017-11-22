@@ -48,6 +48,7 @@ export default class Popover extends Component {
             'spectrum-Popover',
             `spectrum-Popover--${placement.split(' ')[0]}`,
             {
+              'spectrum-Popover--withTip': isDialog,
               'spectrum-Popover--dialog': isDialog,
               [`spectrum-Dialog--${variant}`]: isDialog,
               'is-open': open
