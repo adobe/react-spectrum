@@ -35,6 +35,8 @@ export default class Tab extends Component {
       ...otherProps
     } = this.props;
 
+    let iconSize = label || children ? 'XS' : 'S';
+
     return (
       <div
         {...otherProps}
@@ -57,7 +59,7 @@ export default class Tab extends Component {
         aria-selected={selected}
         aria-disabled={disabled}
         onClick={this.handleClick}>
-        {icon && <Icon icon={icon} size="S" className="spectrum-Tab-icon" />}
+        {icon && <Icon icon={icon} size={iconSize} className="spectrum-Tab-icon" />}
         {(label || children) && <span className="spectrum-Tab-label">{label || children}</span>}
       </div>
     );
