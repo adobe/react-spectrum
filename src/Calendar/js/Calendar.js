@@ -378,8 +378,8 @@ export default class Calendar extends Component {
                   const cursor = moment(new Date(year, month, day));
                   const isCurrentMonth = (cursor.month()) === parseFloat(month);
                   const cursorLocal = cursor.clone().startOf('day');
-                  const isRangeStart = range && (dayIndex === 0 || day === 1 || cursorLocal.isSame(range.start, 'day'));
-                  const isRangeEnd = range && (dayIndex === 6 || day === cursor.daysInMonth() || cursorLocal.isSame(range.end, 'day'));
+                  const isRangeStart = range && (cursorLocal.isSame(range.start, 'day'));
+                  const isRangeEnd = range && (cursorLocal.isSame(range.end, 'day'));
                   return (
                     <CalendarCell
                       key={dayIndex}
