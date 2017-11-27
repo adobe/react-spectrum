@@ -72,7 +72,7 @@ export default class ComboBox extends React.Component {
           required={required}
           invalid={invalid}
           quiet={quiet}>
-          <Icon icon="chevronDown" size="XS" />
+          <Icon icon="chevronDown" size="S" />
         </Button>
       </Autocomplete>
     );
