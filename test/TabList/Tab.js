@@ -7,7 +7,7 @@ import {Tab} from '../../src/TabList';
 describe('Tab', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Tab />);
-    assert.equal(tree.prop('className'), 'spectrum-Tab');
+    assert.equal(tree.prop('className'), 'spectrum-TabList-item');
     assert.equal(tree.prop('role'), 'tab');
     assert.equal(tree.prop('aria-invalid'), false);
     assert.equal(tree.prop('aria-disabled'), false);

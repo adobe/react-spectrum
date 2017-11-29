@@ -74,7 +74,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'spectrum-SelectList-option',
+            'spectrum-SelectList-item',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -93,9 +93,9 @@ export default class ListItem extends Component {
         aria-disabled={disabled}
         {...otherProps}>
         {icon &&
-          <Icon className="react-spectrum-List-option-icon" icon={icon} size={iconSize} />
+          <Icon className="react-spectrum-List-item-icon" icon={icon} size={iconSize} />
         }
-        <div className="react-spectrum-List-option-content">
+        <div className="react-spectrum-List-item-content">
           {label || children}
         </div>
       </li>

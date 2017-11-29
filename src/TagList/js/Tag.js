@@ -23,7 +23,7 @@ export default function Tag({
     <div
       className={
         classNames(
-          'spectrum-Tag',
+          'spectrum-TagList-item',
           {
             'is-selected': selected,
             'is-disabled': disabled
@@ -36,17 +36,17 @@ export default function Tag({
       aria-label={ariaLabel}
       {...otherProps}>
       {avatar &&
-        <img className="spectrum-Tag-avatar" src={avatar} />
+        <img className="spectrum-TagList-item-avatar" src={avatar} />
       }
       {icon &&
-        <Icon className="spectrum-Tag-icon" size="S" icon={icon} />
+        <Icon className="spectrum-TagList-item-icon" size="S" icon={icon} />
       }
-      <span className="spectrum-Tag-label">
+      <span className="spectrum-TagList-item-label">
         {childContent}
       </span>
       {closable &&
         <Button
-          className="spectrum-Tag-removeButton"
+          className="spectrum-TagList-item-removeButton"
           type="button"
           variant="icon"
           title="Remove"

@@ -12,7 +12,7 @@ export default function DropdownButton({alignRight, onSelect, children, ...props
         variant="action"
         quiet
         {...props}
-        className={classNames({'spectrum-ActionMenu-button': !props.icon}, props.className)} />
+        className={classNames({'spectrum-ActionMenu-label': !props.icon}, props.className)} />
       <Menu>
         {children}
       </Menu>

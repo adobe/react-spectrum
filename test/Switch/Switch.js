@@ -9,7 +9,7 @@ describe('Switch', () => {
     assert.equal(tree.prop('inputType'), 'checkbox');
     assert.equal(tree.prop('className'), 'spectrum-ToggleSwitch');
     assert.equal(tree.prop('inputClassName'), 'spectrum-ToggleSwitch-input');
-    assert.equal(tree.prop('markClassName'), 'spectrum-ToggleSwitch-content');
+    assert.equal(tree.prop('markClassName'), 'spectrum-ToggleSwitch-switch');
     assert.equal(tree.prop('labelClassName'), 'spectrum-ToggleSwitch-label');
   });
 

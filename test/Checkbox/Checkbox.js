@@ -10,7 +10,7 @@ describe('Checkbox', () => {
     assert(!tree.prop('aria-checked'));
     assert.equal(tree.prop('className'), 'spectrum-Checkbox');
     assert.equal(tree.prop('inputClassName'), 'spectrum-Checkbox-input');
-    assert.equal(tree.prop('markClassName'), 'spectrum-Checkbox-checkmark');
+    assert.equal(tree.prop('markClassName'), 'spectrum-Checkbox-box');
     assert.equal(tree.prop('labelClassName'), 'spectrum-Checkbox-label');
   });
 

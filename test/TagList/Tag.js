@@ -10,7 +10,7 @@ describe('Tag', () => {
     assert.equal(tree.prop('tabIndex'), -1);
     assert.equal(tree.prop('aria-selected'), false);
     assert.equal(tree.prop('aria-label'), 'Remove label');
-    assert.equal(tree.hasClass('spectrum-Tag'), true);
+    assert.equal(tree.hasClass('spectrum-TagList-item'), true);
   });
 
   it('supports additional classNames', () => {
@@ -20,13 +20,13 @@ describe('Tag', () => {
 
   it('supports being closable', () => {
     const tree = shallow(<Tag closable={false} />);
-    assert(!tree.find('.spectrum-Tag-removeButton').node);
+    assert(!tree.find('.spectrum-TagList-item-removeButton').node);
   });
 
   it('supports being disabled', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag disabled closable onClose={onClose} />);
-    tree.find('.spectrum-Tag-removeButton').simulate('click');
+    tree.find('.spectrum-TagList-item-removeButton').simulate('click');
     assert(!onClose.called);
   });
 
@@ -38,13 +38,13 @@ describe('Tag', () => {
 
   it('supports a value', () => {
     const tree = shallow(<Tag value="myValue" />);
-    assert.equal(tree.find('.spectrum-Tag-label').children().text(), 'myValue');
+    assert.equal(tree.find('.spectrum-TagList-item-label').children().text(), 'myValue');
   });
 
   it('supports an onClose event', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag closable value="stuff" onClose={onClose} />);
-    tree.find('.spectrum-Tag-removeButton').simulate('click', {});
+    tree.find('.spectrum-TagList-item-removeButton').simulate('click', {});
     const args = onClose.lastCall.args;
     assert.equal(args[0], 'stuff');
     assert.deepEqual(args[1], {});
@@ -67,12 +67,12 @@ describe('Tag', () => {
 
   it('supports an icon', () => {
     const tree = shallow(<Tag icon="camera" />);
-    assert(tree.find('.spectrum-Tag-icon').node);
+    assert(tree.find('.spectrum-TagList-item-icon').node);
   });
 
   it('supports an avatar', () => {
     const tree = shallow(<Tag avatar="https://www.botlibre.com/media/a12832214.png" />);
-    assert(tree.find('.spectrum-Tag-avatar').node);
+    assert(tree.find('.spectrum-TagList-item-avatar').node);
   });
 
 });

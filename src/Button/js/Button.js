@@ -61,7 +61,7 @@ export default class Button extends Component {
               'is-disabled': disabled,
               'is-invalid': invalid,
               'spectrum-Button--block': block,
-              ['spectrum-Button--action--' + variantPrefix + 'icon-only']: variant === 'action' && iconOnly
+              ['spectrum-Button--action--' + variantPrefix + 'iconOnly']: variant === 'action' && iconOnly
             },
             className
           )

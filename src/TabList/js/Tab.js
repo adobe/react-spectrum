@@ -42,7 +42,7 @@ export default class Tab extends Component {
         {...otherProps}
         className={
           classNames(
-            'spectrum-Tab',
+            'spectrum-TabList-item',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -59,8 +59,8 @@ export default class Tab extends Component {
         aria-selected={selected}
         aria-disabled={disabled}
         onClick={this.handleClick}>
-        {icon && <Icon icon={icon} size={iconSize} className="spectrum-Tab-icon" />}
-        {(label || children) && <span className="spectrum-Tab-label">{label || children}</span>}
+        {icon && <Icon icon={icon} size={iconSize} className="spectrum-TabList-item-icon" />}
+        {(label || children) && <span className="spectrum-TabList-item-label">{label || children}</span>}
       </div>
     );
   }

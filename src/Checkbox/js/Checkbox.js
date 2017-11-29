@@ -50,7 +50,7 @@ export default class Checkbox extends Component {
           )
         }
         inputClassName="spectrum-Checkbox-input"
-        markClassName="spectrum-Checkbox-checkmark"
+        markClassName="spectrum-Checkbox-box"
         labelClassName="spectrum-Checkbox-label"
         {...otherProps} />
     );
