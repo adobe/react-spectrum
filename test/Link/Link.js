@@ -21,6 +21,6 @@ describe('Link', () => {
 
   it('supports children', () => {
     const tree = shallow(<Link>My Link</Link>);
-    assert.equal(tree.children().node, 'My Link');
+    assert.equal(tree.childAt(0).text(), 'My Link');
   });
 });

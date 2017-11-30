@@ -129,7 +129,7 @@ describe('TagList', () => {
     it('passes down the onClose', () => {
       const onClose = sinon.spy();
       run({onClose});
-      child1.props().onClose('Tag 1');
+      child1.prop('onClose')('Tag 1');
       assert(onClose.calledWith('Tag 1'));
     });
 

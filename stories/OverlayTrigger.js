@@ -2,7 +2,7 @@ import Button from '../src/Button';
 import OverlayTrigger from '../src/OverlayTrigger';
 import Popover from '../src/Popover';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import Tooltip from '../src/Tooltip';
 import {VerticalCenter} from '../.storybook/layout';
 

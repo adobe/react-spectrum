@@ -1,6 +1,6 @@
 import Link from '../src/Link';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Link', module)

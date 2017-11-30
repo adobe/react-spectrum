@@ -20,9 +20,11 @@ describe('ToastContainer', () => {
 
     const toast = <Toast>Test</Toast>;
     tree.instance().add(toast);
+    tree.update();
     assert.equal(tree.children().length, 1);
 
     tree.instance().remove(toast);
+    tree.update();
     assert.equal(tree.children().length, 0);
 
     cleanup();
@@ -33,9 +35,11 @@ describe('ToastContainer', () => {
     assert.equal(tree.children().length, 0);
 
     tree.instance().add(<Toast>Test</Toast>, 5);
+    tree.update();
     assert.equal(tree.children().length, 1);
 
     await sleep(6);
+    tree.update();
     assert.equal(tree.children().length, 0);
 
     cleanup();
@@ -46,9 +50,11 @@ describe('ToastContainer', () => {
     assert.equal(tree.children().length, 0);
 
     tree.instance().add(<Toast>Test</Toast>, 5);
+    tree.update();
     assert.equal(tree.children().length, 1);
 
     tree.find(Toast).simulate('close');
+    tree.update();
     assert.equal(tree.children().length, 0);
 
     cleanup();

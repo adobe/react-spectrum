@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Calendar from '../src/Calendar';
 import moment from 'moment';
 import React from 'react';

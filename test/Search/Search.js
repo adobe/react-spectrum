@@ -18,7 +18,7 @@ describe('Search', () => {
     assert.equal(input.hasClass('spectrum-Search-input'), true);
 
     const button = findButton(tree);
-    assert(!button.node);
+    assert(!button.length);
   });
 
   it('should support custom icons', () => {
@@ -30,7 +30,7 @@ describe('Search', () => {
   it('should support no icon', () => {
     const tree = shallow(<Search icon="" />);
     const icon = tree.find('.spectrum-DecoratedTextfield-icon');
-    assert(!icon.node);
+    assert(!icon.length);
   });
 
   it('shows clear button if text exists', () => {

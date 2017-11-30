@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import React from 'react';
 import ShellHelp from '../../src/Shell/js/ShellHelp';
 import {VerticalCenter} from '../../.storybook/layout';

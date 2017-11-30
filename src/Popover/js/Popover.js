@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
-import React, {Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import '../style/index.styl';
 import '../../Dialog/style/index.styl';
 
@@ -66,4 +67,3 @@ export default class Popover extends Component {
 }
 
 Popover.displayName = 'Popover';
-

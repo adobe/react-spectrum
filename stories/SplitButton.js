@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
 import SplitButton from '../src/SplitButton';

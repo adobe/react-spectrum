@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import React from 'react';
 import Search from '../src/Search';
 import {VerticalCenter} from '../.storybook/layout';

@@ -19,7 +19,7 @@ describe('Progress', () => {
     assert.equal(status.prop('className'), 'spectrum-Progress-status');
     assert.deepEqual(status.prop('style'), {width: '0%'});
 
-    assert(!tree.find('.spectrum-Progress-label').node);
+    assert(!tree.find('.spectrum-Progress-label').length);
   });
 
   describe('value', () => {
@@ -64,7 +64,7 @@ describe('Progress', () => {
       const tree = shallow(<Progress showPercent />);
       assert.equal(tree.hasClass('spectrum-Progress--rightLabel'), true);
       const label = findLabel(tree);
-      assert(label.node);
+      assert(label.getElement());
       assert.equal(label.text(), '0%');
 
       tree.setProps({value: 50});

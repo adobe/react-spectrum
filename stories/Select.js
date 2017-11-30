@@ -1,8 +1,8 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import React from 'react';
 import Select from '../src/Select';
 import {VerticalCenter} from '../.storybook/layout';
-import {withKnobs} from '@kadira/storybook-addon-knobs';
+import {withKnobs} from '@storybook/addon-knobs';
 
 const defaultProps = {
   options: [

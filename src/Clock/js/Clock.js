@@ -3,7 +3,8 @@ import {clamp} from '../../utils/number';
 import classNames from 'classnames';
 import {formatMoment, toMoment} from '../../utils/moment';
 import moment from 'moment';
-import React, {Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 

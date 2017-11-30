@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Button from '../../src/Button';
 import React from 'react';
 import ShellActions from '../../src/Shell/js/ShellActions';

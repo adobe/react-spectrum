@@ -11,7 +11,7 @@ describe('Alert', () => {
     assertAlertClassAndIcon(tree, 'info');
     assert.equal(tree.find('.spectrum-Alert-header').length, 1);
     assert.equal(tree.find('.spectrum-Alert-content').length, 1);
-    assert(!tree.find('.spectrum-Alert-closeButton').node);
+    assert.equal(tree.find('.spectrum-Alert-closeButton').length, 0);
   });
 
   it('supports large size', () => {
@@ -47,14 +47,14 @@ describe('Alert', () => {
     const tree = shallow(<Alert header={<div>My Custom Header</div>} />);
     const child = tree.find('.spectrum-Alert-header > div');
     assert.equal(child.length, 1);
-    assert.equal(child.children().node, 'My Custom Header');
+    assert.equal(child.children().text(), 'My Custom Header');
   });
 
   it('supports children', () => {
     const tree = shallow(<Alert><div>My Custom Content</div></Alert>);
     const child = tree.find('.spectrum-Alert-content > div');
     assert.equal(child.length, 1);
-    assert.equal(child.children().node, 'My Custom Content');
+    assert.equal(child.children().text(), 'My Custom Content');
   });
 });
 

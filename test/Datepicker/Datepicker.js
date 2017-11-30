@@ -50,18 +50,18 @@ describe('Datepicker', () => {
   it('supports type (date, time, and datetime)', () => {
     const tree = shallow(<Datepicker type="date" />);
 
-    assert(tree.find(Calendar).node);
-    assert(!tree.find(Clock).node);
+    assert.equal(tree.find(Calendar).length, 1);
+    assert.equal(tree.find(Clock).length, 0);
     assert.equal(findButton(tree).prop('icon'), 'calendar');
 
     tree.setProps({type: 'datetime'});
-    assert(tree.find(Calendar).node);
-    assert(tree.find(Clock).node);
+    assert.equal(tree.find(Calendar).length, 1);
+    assert.equal(tree.find(Clock).length, 1);
     assert.equal(findButton(tree).prop('icon'), 'calendar');
 
     tree.setProps({type: 'time'});
-    assert(!tree.find(Calendar).node);
-    assert(tree.find(Clock).node);
+    assert.equal(tree.find(Calendar).length, 0);
+    assert.equal(tree.find(Clock).length, 1);
     assert.equal(findButton(tree).prop('icon'), 'clock');
   });
 
@@ -187,7 +187,7 @@ describe('Datepicker', () => {
       const date = new Date(2001, 0, 1);
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
-        const clockEl = shallow(wrapper.find(Clock).node).find(`.react-spectrum-Clock-${field}`);
+        const clockEl = shallow(wrapper.find(Clock).getElement()).find(`.react-spectrum-Clock-${field}`);
         clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${value}`}});
         return spy.lastCall.args[1];
       };

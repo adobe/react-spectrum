@@ -1,4 +1,5 @@
 import {jsdom} from 'jsdom';
+import configure from 'enzyme-adapter-react-helper';
 
 const exposedProperties = [ 'window', 'navigator', 'document' ];
 
@@ -14,3 +15,5 @@ Object.keys(document.defaultView).forEach(property => {
 global.navigator = {
   userAgent: 'node.js'
 };
+
+configure();

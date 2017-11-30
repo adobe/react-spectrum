@@ -2,7 +2,6 @@ import assert from 'assert';
 import {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePosition';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactTestUtils from 'react-dom/test-utils';
 
 describe('calculatePosition', function () {
   function checkPosition(placement, targetPosition, expected) {

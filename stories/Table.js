@@ -1,5 +1,5 @@
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {Table, TBody, TD, TH, THead, TR} from '../src/Table';
 import {VerticalCenter} from '../.storybook/layout';
 

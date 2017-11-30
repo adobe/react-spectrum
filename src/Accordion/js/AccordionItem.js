@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 /**
@@ -7,10 +8,10 @@ import React, {Component} from 'react';
  */
 export default class AccordionItem extends Component {
   static propTypes = {
-    header: React.PropTypes.string,
-    selected: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    onItemClick: React.PropTypes.func
+    header: PropTypes.string,
+    selected: PropTypes.bool,
+    disabled: PropTypes.bool,
+    onItemClick: PropTypes.func
   };
 
   static defaultProps = {

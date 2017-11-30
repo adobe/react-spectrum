@@ -1,6 +1,6 @@
 import Icon from '../src/Icon';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Icon', module)

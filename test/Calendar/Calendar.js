@@ -40,6 +40,8 @@ describe('Calendar', () => {
     const weekLater = date.clone().add(1, 'week');
     const tree = shallow(<Calendar defaultValue={date} />);
 
+    tree.instance().componentWillMount();
+
     // Setting defaultValue later doesn't change the state. Only component interactions
     // change the state.
     tree.setProps({defaultValue: weekLater});
@@ -57,6 +59,7 @@ describe('Calendar', () => {
 
     // Changing value will change the state
     tree.setProps({value: weekLater});
+
     assert.deepEqual(+tree.state('value'), +weekLater);
 
     // Component interaction should not change the state, only manually setting value
@@ -80,6 +83,7 @@ describe('Calendar', () => {
 
   it('supports valueFormat', () => {
     const tree = shallow(<Calendar value="08-01-2016" valueFormat="MM-DD-YYYY" />);
+    tree.instance().componentWillMount();
     assert.equal(+tree.state('value'), +new Date(2016, 7, 1));
     tree.setProps({value: '01-08-2016'});
     assert.equal(+tree.state('value'), +new Date(2016, 0, 8));
@@ -89,6 +93,7 @@ describe('Calendar', () => {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
+    tree.instance().componentWillMount();
     assert.deepEqual(tree.state('value'), new DateRange(start, end));
   });
 
@@ -96,6 +101,7 @@ describe('Calendar', () => {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" defaultValue={[start, end]} />);
+    tree.instance().componentWillMount();
     assert.deepEqual(tree.state('value'), new DateRange(start, end));
 
     const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
@@ -114,6 +120,7 @@ describe('Calendar', () => {
     const start = moment(new Date(2016, 7, 1));
     const end = moment(new Date(2016, 7, 5));
     const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
+    tree.instance().componentWillMount();
     assert.deepEqual(tree.state('value'), new DateRange(start, end));
 
     const weekLater = new DateRange(start.clone().add(1, 'week'), end.clone().add(1, 'week'));
@@ -218,6 +225,7 @@ describe('Calendar', () => {
       now = moment().startOf('day');
       preventDefaultSpy = sinon.spy();
       tree = shallow(<Calendar value={now} />);
+      tree.instance().componentWillMount();
       body = findBody(tree);
     });
 
@@ -255,17 +263,20 @@ describe('Calendar', () => {
     it('is set to value if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar value={date} />);
+      tree.instance().componentWillMount();
       assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
     it('is set to defaultValue if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar defaultValue={date} />);
+      tree.instance().componentWillMount();
       assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
     it('is set to now if no value or defaultValue exist', () => {
       tree = shallow(<Calendar />);
+      tree.instance().componentWillMount();
       assert.equal(tree.state('focusedDate').isSame(now, 'day'), true);
     });
   });
@@ -307,6 +318,7 @@ describe('Calendar', () => {
     const minDate = moment(new Date(2016, 9, 24, 12, 30));
     const maxDate = minDate.clone().add(3, 'day');
     const tree = shallow(<Calendar min={minDate} max={maxDate} />);
+    tree.instance().componentWillMount();
     assert.equal(+tree.state('min'), +minDate.startOf('day'));
     assert.equal(+tree.state('max'), +maxDate.startOf('day'));
 
@@ -321,6 +333,8 @@ describe('Calendar', () => {
     const date = moment('2015-01-01', DEFAULT_VALUE_FORMAT);
     const oneWeekLater = date.clone().add(1, 'week');
     const tree = shallow(<Calendar value={date} min={date} max={oneWeekLater} />);
+    tree.instance().componentWillMount();
+    tree.update();
     assert.equal(findAllSelectableCells(tree).length, 8); // includes start and end days
   });
 
@@ -345,7 +359,7 @@ describe('Calendar', () => {
       let cellTree, dateNode;
 
       beforeEach(() => {
-        cellTree = shallow(findFocusedCell(tree).node);
+        cellTree = shallow(findFocusedCell(tree).getElement());
         dateNode = cellTree.find('.spectrum-Calendar-date');
       });
 
@@ -370,9 +384,9 @@ describe('Calendar', () => {
         const end = moment(new Date(2016, 7, 5));
         const tree = shallow(<Calendar selectionType="range" value={[start, end]} />);
 
-        const startCell = shallow(findCellByDate(tree, start).node).find('span');
-        const midCell = shallow(findCellByDate(tree, start.clone().add(1, 'day')).node).find('span');
-        const endCell = shallow(findCellByDate(tree, end).node).find('span');
+        const startCell = shallow(findCellByDate(tree, start).getElement()).find('span');
+        const midCell = shallow(findCellByDate(tree, start.clone().add(1, 'day')).getElement()).find('span');
+        const endCell = shallow(findCellByDate(tree, end).getElement()).find('span');
 
         assert.equal(startCell.hasClass('is-range-selection'), true);
         assert.equal(startCell.hasClass('is-range-start'), true);
@@ -397,7 +411,7 @@ describe('Calendar', () => {
           .endOf('month')
           .add(1, 'day')
           .startOf('day');
-        cellTree = shallow(findCellByDate(tree, startOfNextMonth).node);
+        cellTree = shallow(findCellByDate(tree, startOfNextMonth).getElement());
         dateNode = cellTree.find('.spectrum-Calendar-date');
       });
 
@@ -450,6 +464,7 @@ describe('Calendar', () => {
     assert.equal(tree.prop('foo'), true);
   });
 });
+
 
 const findHeaderTitle = tree => tree.find('.spectrum-Calendar-header').childAt(0);
 const findPreviousButton = tree => tree.find('.spectrum-Calendar-header').childAt(1);

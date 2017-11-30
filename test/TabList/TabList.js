@@ -1,12 +1,12 @@
 import assert from 'assert';
-import {mount, shallow} from 'enzyme';
 import React from 'react';
+import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {TabList} from '../../src/TabList';
 
 describe('TabList', () => {
   it('has correct defaults', () => {
-    const tree = shallow(<TabList />);
+    const tree = shallow(<TabList />, {disableLifecycleMethods: true});
     const innerTree = tree.shallow();
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel');
     assert.equal(innerTree.type(), 'div');
@@ -14,40 +14,40 @@ describe('TabList', () => {
   });
 
   it('supports large size', () => {
-    const tree = shallow(<TabList size="L" />);
+    const tree = shallow(<TabList size="L" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--large spectrum-TabList--horizontal spectrum-TabList--panel');
   });
 
   it('supports vertical orientation', () => {
-    const tree = shallow(<TabList orientation="vertical" />);
+    const tree = shallow(<TabList orientation="vertical" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--vertical spectrum-TabList--panel');
   });
 
   it('supports anchored variant', () => {
-    const tree = shallow(<TabList variant="anchored" />);
+    const tree = shallow(<TabList variant="anchored" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--anchored');
   });
 
   it('supports page variant', () => {
-    const tree = shallow(<TabList variant="page" />);
+    const tree = shallow(<TabList variant="page" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--page');
   });
 
   it('supports additional classNames', () => {
-    const tree = shallow(<TabList className="myClass" />);
+    const tree = shallow(<TabList className="myClass" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel myClass');
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<TabList foo />);
+    const tree = shallow(<TabList foo />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('foo'), true);
   });
 
   it('supports children', () => {
-    const tree = shallow(<TabList><div className="someContent">My Custom Content</div></TabList>);
+    const tree = shallow(<TabList><div className="someContent">My Custom Content</div></TabList>, {disableLifecycleMethods: true});
     const child = tree.find('.someContent');
     assert.equal(child.length, 1);
-    assert.equal(child.children().node, 'My Custom Content');
+    assert.equal(child.children().text(), 'My Custom Content');
   });
 
   it('can be changed', () => {
@@ -56,7 +56,7 @@ describe('TabList', () => {
       <TabList onChange={spy}>
         <div className="one">a</div>
         <div className="two">b</div>
-      </TabList>
+      </TabList>, {disableLifecycleMethods: true}
     );
     const innerTree = tree.shallow();
 
@@ -71,13 +71,13 @@ describe('TabList', () => {
       <TabList selectedIndex={index}>
         <div className="one">a</div>
         <div className="two">b</div>
-      </TabList>
+      </TabList>, {disableLifecycleMethods: true}
     );
 
     const assertChildTwoSelected = tree => {
       const child = tree.find('[selected=true]');
       assert.equal(child.length, 1);
-      assert.equal(child.node.props.className, 'two');
+      assert.equal(child.prop('className'), 'two');
     };
 
     it('supports string index', () => {
@@ -99,24 +99,22 @@ describe('TabList', () => {
       <TabList defaultSelectedIndex="1">
         <div className="one">a</div>
         <div className="two">b</div>
-      </TabList>
+      </TabList>, {disableLifecycleMethods: true}
     );
     const innerTree = tree.shallow();
     const child = innerTree.find('[selected=true]');
 
     assert.equal(child.length, 1);
-    assert.equal(child.node.props.className, 'two');
+    assert.equal(child.prop('className'), 'two');
   });
 
   it('does not call onChange if descendant input is changed', () => {
     const onChange = sinon.spy();
 
-    // We need to use mount instead of shallow because we need our simulated change event to
-    // bubble to properly test the scenario. Simulated events don't bubble when rendering shallowly.
-    const tree = mount(
+    const tree = shallow(
       <TabList defaultSelectedIndex="0" onChange={onChange}>
         <div>a <input type="checkbox" /></div>
-      </TabList>
+      </TabList>, {disableLifecycleMethods: true}
     );
 
     tree.find('input').simulate('change');
