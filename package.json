@@ -26,13 +26,7 @@
     "stringify": "^5.1.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@kadira/react-storybook-addon-info": "^3.2.4",
-    "@kadira/storybook": "^2.24.1",
-    "@kadira/storybook-addon-knobs": "^1.3.3",
     "@react/react-spectrum-icons": "^1.0.0",
-=======
->>>>>>> 85772bbe4a2337e06b4156a947a1acf65927e383
     "@spectrum/spectrum-css": "2.0.0-beta.48",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.9",
