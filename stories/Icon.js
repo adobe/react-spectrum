@@ -2,7 +2,7 @@ import Add from '../src/Icon/Add';
 import Bell from '../src/Icon/Bell';
 import Icon from '../src/Icon';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 

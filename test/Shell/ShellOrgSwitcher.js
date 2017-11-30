@@ -33,6 +33,7 @@ describe('ShellOrgSwitcher', () => {
 
     const changeSearchTerm = (searchTerm) => {
       tree.instance().handleSearchChange(searchTerm);
+      tree.update();
       noResultsContainer = findNoResultsContainer(tree);
       selectList = findSelectList(tree);
     };

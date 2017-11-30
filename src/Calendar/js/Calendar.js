@@ -5,7 +5,8 @@ import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
 import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
 import moment from 'moment';
-import React, {Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import '../style/index.styl';
 
 @autobind

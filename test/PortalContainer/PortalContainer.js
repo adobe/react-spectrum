@@ -10,11 +10,14 @@ describe('PortalContainer', () => {
 
     let child = <div key="test">test</div>;
     tree.instance().add(child);
+    tree.update();
+
     assert.equal(tree.children().length, 1);
     assert.equal(tree.childAt(0).text(), 'test');
 
     let child2 = <div key="test2">test2</div>;
     tree.instance().add(child2);
+    tree.update();
     assert.equal(tree.children().length, 2);
     assert.equal(tree.childAt(0).text(), 'test');
     assert.equal(tree.childAt(1).text(), 'test2');
@@ -22,12 +25,13 @@ describe('PortalContainer', () => {
     // update child
     child = <div key="test">testing</div>;
     tree.instance().add(child);
+    tree.update();
     assert.equal(tree.children().length, 2);
     assert.equal(tree.childAt(0).text(), 'testing');
     assert.equal(tree.childAt(1).text(), 'test2');
 
     tree.instance().remove(child);
-    assert.equal(tree.children().length, 1);
+    assert.equal(tree.children().length, 2);
   });
 
   it('should render a global PortalContainer', async () => {

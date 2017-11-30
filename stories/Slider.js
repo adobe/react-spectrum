@@ -1,6 +1,6 @@
 import React from 'react';
 import Slider from '../src/Slider';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Slider', module)

@@ -14,7 +14,7 @@ import React from 'react';
 import ShellSolution from '../../src/Shell/js/ShellSolution';
 import ShellSolutionGroup from '../../src/Shell/js/ShellSolutionGroup';
 import ShellSolutionSwitcher from '../../src/Shell/js/ShellSolutionSwitcher';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import Sync from '../../src/Icon/Sync';
 import User from '../../src/Icon/User';
 import {VerticalCenter} from '../../.storybook/layout';

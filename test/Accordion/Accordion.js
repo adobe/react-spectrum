@@ -4,6 +4,7 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+
 describe('Accordion', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<Accordion className="myClass" />);
@@ -27,7 +28,7 @@ describe('Accordion', () => {
     const assertChildWithClassNameSelected = (tree, className) => {
       const child = tree.find('[selected=true]');
       assert.equal(child.length, 1);
-      assert.equal(child.node.props.className, className);
+      assert.equal(child.prop('className'), className);
     };
 
     it('supports string index', () => {
@@ -63,7 +64,7 @@ describe('Accordion', () => {
     const child = tree.find('[selected=true]');
 
     assert.equal(child.length, 1);
-    assert.equal(child.node.props.className, 'two');
+    assert.equal(child.prop('className'), 'two');
   });
 
   it('does not call onChange if descendant input is changed', () => {

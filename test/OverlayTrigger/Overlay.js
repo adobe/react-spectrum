@@ -18,7 +18,7 @@ describe('Overlay', () => {
   it('doesn\'t change render of an overlay if not showing', () => {
     const tree = shallow(<Overlay><span /></Overlay>);
     assert.equal(tree.state('exited'), true);
-    assert.equal(tree.node, null);
+    assert.equal(tree.getElement(), null);
   });
 
   it('renders a portal with the container prop', () => {

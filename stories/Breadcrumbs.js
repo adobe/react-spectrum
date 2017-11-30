@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Breadcrumbs from '../src/Breadcrumbs';
 import FolderIcon from '../src/Icon/Folder';
 import React from 'react';

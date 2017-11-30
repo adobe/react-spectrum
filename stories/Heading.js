@@ -1,6 +1,6 @@
 import Heading from '../src/Heading';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Heading', module)

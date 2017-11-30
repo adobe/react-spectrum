@@ -6,7 +6,6 @@ import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
 
-
 const assertMenuFocusStates = (tree, expectedFocusStates) => {
   assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), expectedFocusStates);
 };
@@ -52,9 +51,13 @@ describe('Autocomplete', () => {
     await sleep(1); // Wait for async getCompletions
 
     assert.equal(tree.find('input').prop('value'), 'test');
+
+    tree.find('input').simulate('mouseEnter');
+    await sleep(1);
+
     assert.equal(tree.childAt(1).prop('show'), true);
     assert.equal(tree.find(MenuItem).length, 2);
-    assert.equal(tree.find(MenuItem).nodes[0].key, 'item-0');
+    assert.equal(tree.find(MenuItem).getElements()[0].key, 'item-0');
   });
 
   it('should call getCompletions and render a menu with results asynchronously', async () => {
@@ -75,7 +78,14 @@ describe('Autocomplete', () => {
     await sleep(15); // Wait for async getCompletions
 
     assert.equal(tree.find('input').prop('value'), 'test');
+
+    tree.find('input').simulate('mouseEnter');
+    await sleep(1);
+
     assert.equal(tree.childAt(1).prop('show'), true);
+
+    tree.find('input').simulate('mouseEnter');
+    await sleep(1);
     assert.equal(tree.find(MenuItem).length, 2);
   });
 
@@ -90,6 +100,8 @@ describe('Autocomplete', () => {
     tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
+    tree.find('input').simulate('mouseEnter');
+    await sleep(1);
 
     assertMenuFocusStates(tree, [true, false, false]);
 
@@ -161,7 +173,8 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    tree.find('input').simulate('focus').simulate('change', 'test');
+    tree.find('input').simulate('focus');
+    tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
 
@@ -202,7 +215,6 @@ describe('Autocomplete', () => {
     assert.deepEqual(onChange.getCall(1).args[0], 'one');
     assert.equal(onSelect.callCount, 1);
     assert.equal(onSelect.getCall(0).args[0], 'one');
-
     assert.equal(tree.find('input').prop('value'), 'foo');
   });
 
@@ -214,9 +226,12 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    tree.find('input').simulate('focus').simulate('change', 'test');
+    tree.find('input').simulate('focus');
+    tree.find('input').simulate('change', 'test');
 
     await sleep(1); // Wait for async getCompletions
+
+    tree.find('input').simulate('focus');
 
     // No menu item selected
     assertMenuFocusStates(tree, [false, false, false]);
@@ -237,10 +252,14 @@ describe('Autocomplete', () => {
     );
 
     tree.instance().toggleMenu();
+
     await sleep(1);
+    tree.update();
     assert.equal(tree.childAt(1).prop('show'), true);
 
     tree.instance().toggleMenu();
+    tree.update();
+
     assert.equal(tree.childAt(1).prop('show'), false);
   });
 
@@ -252,7 +271,8 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    tree.find('input').simulate('focus').simulate('change', 'test');
+    tree.find('input').simulate('focus');
+    tree.find('input').simulate('change', 'test');
 
     await sleep(1);
 
@@ -275,9 +295,8 @@ describe('Autocomplete', () => {
       );
       const input = tree.find('input');
 
-      input
-        .simulate('focus')
-        .simulate('change', 't');
+      input.simulate('focus');
+      input.simulate('change', 't');
 
       await sleep(1);
 

@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import React from 'react';
 import Refresh from '../src/Icon/Refresh';
 import Search from '../src/Search';

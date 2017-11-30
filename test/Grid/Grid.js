@@ -16,7 +16,7 @@ describe('Grid', () => {
 
   it('supports children', () => {
     const tree = shallow(render({children: 'Foo'}));
-    assert.equal(tree.children().node, 'Foo');
+    assert.equal(tree.childAt(0).text(), 'Foo');
   });
 
   it('supports fixed variant', () => {

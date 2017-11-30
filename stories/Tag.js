@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Camera from '../src/Icon/Camera';
 import React from 'react';
 import {Tag} from '../src/TagList';

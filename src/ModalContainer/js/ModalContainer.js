@@ -60,6 +60,9 @@ class Modal extends React.Component {
   }
 }
 
-function Underlay({open, ...props}) {
-  return <div {...props} className={classNames('spectrum-Underlay', {'is-open': open})} />;
+class Underlay extends React.Component {
+  render() {
+    let {open, ...props} = this.props;
+    return <div {...props} className={classNames('spectrum-Underlay', {'is-open': open})} />;
+  }
 }

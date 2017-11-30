@@ -21,7 +21,7 @@ describe('Tag', () => {
 
   it('supports being closable', () => {
     const tree = shallow(<Tag closable={false} />);
-    assert(!tree.find('.spectrum-TagList-item-removeButton').node);
+    assert(!tree.find('.spectrum-TagList-item-removeButton').length);
   });
 
   it('supports being disabled', () => {
@@ -68,12 +68,12 @@ describe('Tag', () => {
 
   it('supports an icon', () => {
     const tree = shallow(<Tag icon={<Camera />} />);
-    assert(tree.find('.spectrum-TagList-item-icon').node);
+    assert(tree.find('.spectrum-TagList-item-icon').length);
   });
 
   it('supports an avatar', () => {
     const tree = shallow(<Tag avatar="https://www.botlibre.com/media/a12832214.png" />);
-    assert(tree.find('.spectrum-TagList-item-avatar').node);
+    assert(tree.find('.spectrum-TagList-item-avatar').length);
   });
 
 });

@@ -23,7 +23,7 @@ describe('SwitchBase', () => {
     assert.equal(checkmark.prop('className'), 'coral-Foo-checkmark');
     const label = findLabel(tree, 'Foo');
     assert.equal(label.prop('className'), 'coral-Foo-description');
-    assert.equal(label.children().node, 'React');
+    assert.equal(label.children().text(), 'React');
   });
 
   it('uncontrolled switchBase will toggle', () => {
@@ -108,30 +108,30 @@ describe('SwitchBase', () => {
         labelClassName="coral-Foo-description"
         renderLabel={false} />
     );
-    assert(!findLabel(tree).node);
+    assert(!findLabel(tree).length);
     tree.setProps({renderLabel: true});
     tree.setProps({label: 'React'});
-    assert(findLabel(tree).node);
+    assert(findLabel(tree).length);
   });
 
   it('supports overriding the input className', () => {
     const tree = shallow(<SwitchBase inputClassName="my-input-class" />);
     const input = tree.find('.my-input-class');
-    assert(input.node);
+    assert(input.getElement());
     assert.equal(input.type(), 'input');
   });
 
   it('supports overriding the mark className', () => {
     const tree = shallow(<SwitchBase markClassName="my-mark-class" />);
     const mark = tree.find('.my-mark-class');
-    assert(mark.node);
+    assert(mark.getElement());
     assert.equal(mark.type(), 'span');
   });
 
   it('supports overriding the label className', () => {
     const tree = shallow(<SwitchBase labelClassName="my-label-class" label="React" />);
     const mark = tree.find('.my-label-class');
-    assert(mark.node);
+    assert(mark.getElement());
     assert.equal(mark.type(), 'label');
   });
 });

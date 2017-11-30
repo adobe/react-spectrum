@@ -33,10 +33,6 @@ export default class ShellMenu extends Component {
     };
   }
 
-  componentDidMount() {
-    this.menuRef.addEventListener(getTransitionEvent(), this.handleTransitionEnd);
-  }
-
   componentWillReceiveProps(nextProps) {
     if ('open' in nextProps) {
       this.setState({open: nextProps.open});
@@ -46,6 +42,16 @@ export default class ShellMenu extends Component {
   componentWillUnmount() {
     if (this.menuRef) {
       this.menuRef.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    }
+  }
+
+  bindMenuRef(ref) {
+    if (this.menuRef) {
+      this.menuRef.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    }
+    this.menuRef = ref;
+    if (this.menuRef) {
+      this.menuRef.addEventListener(getTransitionEvent(), this.handleTransitionEnd);
     }
   }
 
@@ -134,7 +140,7 @@ export default class ShellMenu extends Component {
         <Portal>
           <RootCloseWrapper onRootClose={this.handleMenuClose} disabled={!open}>
             <div
-              ref={el => {this.menuRef = el; }}
+              ref={el => {this.bindMenuRef(el); }}
               style={{zIndex}}
               className={
                 classNames(

@@ -16,7 +16,7 @@ describe('Position', () => {
   const target = ReactDOM.render(<Target />, container);
 
   it('passes props to child', () => {
-    const tree = shallow(<Position target={target}><div>test</div></Position>);
+    const tree = shallow(<Position target={target}><div>test</div></Position>, {disableLifecycleMethods: true});
     assert.equal(tree.type(), 'div');
     assert.deepEqual(tree.prop('style'), {
       position: 'absolute',
@@ -44,7 +44,7 @@ describe('Position', () => {
     const div = tree.find('div');
 
     assert(stub.calledOnce);
-    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.getNode()), ReactDOM.findDOMNode(target), document.body, 15]);
+    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 15]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
@@ -82,10 +82,11 @@ describe('Position', () => {
     });
 
     tree.setProps({placement: 'left'});
+    tree.update();
     const div = tree.find('div');
 
     assert(stub.calledTwice);
-    assert.deepEqual(stub.getCall(1).args, ['left', ReactDOM.findDOMNode(tree.getNode()), ReactDOM.findDOMNode(target), document.body, 10]);
+    assert.deepEqual(stub.getCall(1).args, ['left', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
@@ -125,10 +126,11 @@ describe('Position', () => {
     let event = document.createEvent('Event');
     event.initEvent('resize', false, false);
     window.dispatchEvent(event);
+    tree.update(); // update after event dispatch
 
     const div = tree.find('div');
     assert(stub.calledTwice);
-    assert.deepEqual(stub.getCall(1).args, ['bottom', ReactDOM.findDOMNode(tree.getNode()), ReactDOM.findDOMNode(target), document.body, 10]);
+    assert.deepEqual(stub.getCall(1).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',

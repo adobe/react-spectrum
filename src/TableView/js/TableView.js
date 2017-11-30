@@ -1,7 +1,8 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {EditableCollectionView} from '@react/collection-view';
-import React, {Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
 import TableViewLayout from './TableViewLayout';

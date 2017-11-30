@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Radio from '../src/Radio';
 import RadioGroup from '../src/RadioGroup';
 import React from 'react';

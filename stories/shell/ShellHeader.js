@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import AdobeAnalytics from '../../src/Icon/AdobeAnalytics';
 import AdobeAudienceManager from '../../src/Icon/AdobeAudienceManager';
 import AdobeCampaign from '../../src/Icon/AdobeCampaign';

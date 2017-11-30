@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Autocomplete from '../src/Autocomplete';
 import React from 'react';
 import Textfield from '../src/Textfield';

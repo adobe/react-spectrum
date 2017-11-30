@@ -1,7 +1,7 @@
 import Heading from '../src/Heading';
 import Popover from '../src/Popover';
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Popover', module)

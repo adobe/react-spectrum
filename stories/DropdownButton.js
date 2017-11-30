@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import DropdownButton from '../src/DropdownButton';
 import {MenuItem} from '../src/Menu';
 import React from 'react';

@@ -1,7 +1,8 @@
 
 import autobind from 'autobind-decorator';
 import Overlay from './Overlay';
-import React, {cloneElement, Component, PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React, {cloneElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
 const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);

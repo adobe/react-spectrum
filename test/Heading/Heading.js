@@ -1,4 +1,3 @@
-
 import assert from 'assert';
 import Heading from '../../src/Heading';
 import React from 'react';
@@ -27,7 +26,7 @@ describe('Heading', () => {
 
   it('supports children', () => {
     const tree = shallow(<Heading>My Heading</Heading>);
-    assert.equal(tree.children().node, 'My Heading');
+    assert.equal(tree.childAt(0).text(), 'My Heading');
   });
 });
 

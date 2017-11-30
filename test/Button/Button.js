@@ -80,7 +80,7 @@ describe('Button', () => {
     const tree = shallow(<Button><div>My Custom Content</div></Button>);
     const child = tree.find('div');
     assert.equal(child.length, 1);
-    assert.equal(child.children().node, 'My Custom Content');
+    assert.equal(child.children().text(), 'My Custom Content');
   });
 
   it('can be clicked', () => {
@@ -106,12 +106,12 @@ describe('Button', () => {
   describe('label', () => {
     it('doesn\'t render a label by default', () => {
       const tree = shallow(<Button />);
-      assert(!tree.children().last().node);
+      assert(!tree.children().last().text());
     });
 
     it('supports label text', () => {
       const tree = shallow(<Button label="My Label" />);
-      assert.equal(tree.find('.spectrum-Button-label').children().last().node, 'My Label');
+      assert.equal(tree.find('.spectrum-Button-label').children().last().text(), 'My Label');
     });
   });
 });

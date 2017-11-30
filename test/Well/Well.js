@@ -16,6 +16,6 @@ describe('Well', () => {
 
   it('supports children', () => {
     const tree = shallow(<Well>My Well</Well>);
-    assert.equal(tree.children().node, 'My Well');
+    assert.equal(tree.childAt(0).text(), 'My Well');
   });
 });

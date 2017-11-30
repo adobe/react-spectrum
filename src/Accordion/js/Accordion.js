@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -141,7 +142,7 @@ Accordion.displayName = 'Accordion';
 
 Accordion.propTypes = {
   onChange() {},
-  multiselectable: React.PropTypes.bool
+  multiselectable: PropTypes.bool
 };
 
 Accordion.defaultProps = {

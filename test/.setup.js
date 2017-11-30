@@ -1,6 +1,7 @@
 import {jsdom} from 'jsdom';
 import {Module} from 'module';
 import path from 'path';
+import configure from 'enzyme-adapter-react-helper';
 
 const exposedProperties = [ 'window', 'navigator', 'document' ];
 
@@ -28,3 +29,5 @@ Module._resolveFilename = function (request, parent, isMain) {
 
   return oldResolveFilename.call(this, request, parent, isMain);
 };
+
+configure();

@@ -19,7 +19,7 @@ describe('Progress', () => {
     assert.equal(status.prop('className'), 'spectrum-Loader--bar-fill');
     assert.deepEqual(status.prop('style'), {width: '0%'});
 
-    assert(!tree.find('.spectrum-Loader--bar-label').node);
+    assert(!tree.find('.spectrum-Loader--bar-label').length);
   });
 
   describe('value', () => {
@@ -52,7 +52,7 @@ describe('Progress', () => {
     it('supports showPercent', () => {
       const tree = shallow(<Progress showPercent />);
       const label = tree.find('.spectrum-Loader--bar-percentage');
-      assert(label.node);
+      assert(label.getElement());
       assert.equal(label.text(), '0%');
 
       tree.setProps({value: 50});

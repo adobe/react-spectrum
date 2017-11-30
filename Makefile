@@ -2,6 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
+REACT := 0.14 15.5 16
 
 all: node_modules
 
@@ -13,21 +14,28 @@ run:
 	start-storybook -p 9002
 
 clean:
-	rm -rf node_modules dist
+	rm -rf node_modules dist storybook-static
 	bash -c 'for f in src/*; do rm -rf $$(basename $$f); done'
 
 lint:
 	lfeslint
 
-test: lint
+test:
 	NODE_ENV=test mocha
 
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 jenkins_test: lint
-	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter
-	find ./node_modules/ -name coverage.json -exec rm {} \;
+	# Test each version of react
+	@for version in $(REACT); do \
+		enzyme-adapter-react-install $$version; \
+		NODE_ENV=test mocha; \
+	done
+
+	# Test latest and generate coverage report
+	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter; \
+	find ./node_modules/ -name coverage.json -exec rm {} \; ;\
 
 build:
 	rm -rf dist

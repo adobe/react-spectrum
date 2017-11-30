@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@kadira/storybook';
+import {action, storiesOf} from '@storybook/react';
 import Facebook from '../../src/Icon/Facebook';
 import Flickr from '../../src/Icon/Flickr';
 import Newsgator from '../../src/Icon/Newsgator';
