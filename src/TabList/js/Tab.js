@@ -1,6 +1,6 @@
 import classNames from 'classnames';
+import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
-import Icon from '../../Icon';
 import React, {Component} from 'react';
 
 /**
@@ -59,7 +59,7 @@ export default class Tab extends Component {
         aria-selected={selected}
         aria-disabled={disabled}
         onClick={this.handleClick}>
-        {icon && <Icon icon={icon} size={iconSize} className="spectrum-TabList-item-icon" />}
+        {cloneIcon(icon, {size: iconSize, className: 'spectrum-TabList-item-icon'})}
         {(label || children) && <span className="spectrum-TabList-item-label">{label || children}</span>}
       </div>
     );

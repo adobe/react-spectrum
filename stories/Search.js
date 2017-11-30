@@ -1,5 +1,6 @@
 import {action, storiesOf} from '@kadira/storybook';
 import React from 'react';
+import Refresh from '../src/Icon/Refresh';
 import Search from '../src/Search';
 import {VerticalCenter} from '../.storybook/layout';
 
@@ -31,7 +32,7 @@ storiesOf('Search', module)
   )
   .addWithInfo(
     'icon: refresh',
-    () => render({value: 'React', icon: 'refresh'}),
+    () => render({value: 'React', icon: <Refresh />}),
     {inline: true}
   )
   .addWithInfo(
@@ -51,7 +52,7 @@ storiesOf('Search', module)
   )
   .addWithInfo(
     'quiet icon: refresh',
-    () => render({quiet: true, icon: 'refresh'}),
+    () => render({quiet: true, icon: <Refresh />}),
     {inline: true}
   );
 

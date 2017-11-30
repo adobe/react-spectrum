@@ -16,9 +16,9 @@
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
+    "@react/collection-view": "^2.2.0",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
-    "@react/collection-view": "^2.2.0",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
     "react-overlays": "0.8.1",
@@ -29,8 +29,10 @@
     "@kadira/react-storybook-addon-info": "^3.2.4",
     "@kadira/storybook": "^2.24.1",
     "@kadira/storybook-addon-knobs": "^1.3.3",
+    "@react/react-spectrum-icons": "^1.0.0",
     "@spectrum/spectrum-css": "2.0.0-beta.48",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
+    "@spectrum/spectrum-icons": "1.0.0-beta.9",
     "@spectrum/spectrum-variables": "1.0.1",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",

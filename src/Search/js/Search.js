@@ -1,6 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
@@ -105,7 +105,7 @@ export default class Search extends Component {
           onKeyDown={this.handleTextKeyDown}
           onChange={this.handleTextChange} />
         {icon !== 'search'
-          ? icon && <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="S" />
+          ? cloneIcon(icon, {className: 'spectrum-DecoratedTextfield-icon', size: 'S'})
           : <div className="spectrum-DecoratedTextfield-icon spectrum-Search-icon" />
         }
         {

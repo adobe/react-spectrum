@@ -60,5 +60,5 @@ describe('Alert', () => {
 
 const assertAlertClassAndIcon = (tree, variant) => {
   assert.equal(tree.hasClass(`spectrum-Alert--${variant}`), true);
-  assert.equal(tree.find('.spectrum-Alert-typeIcon').prop('aria-label'), variant);
+  assert.equal(tree.find('.spectrum-Alert-icon').prop('aria-label'), variant);
 };

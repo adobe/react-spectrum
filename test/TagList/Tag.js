@@ -1,4 +1,5 @@
 import assert from 'assert';
+import Camera from '../../src/Icon/Camera';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -66,7 +67,7 @@ describe('Tag', () => {
   });
 
   it('supports an icon', () => {
-    const tree = shallow(<Tag icon="camera" />);
+    const tree = shallow(<Tag icon={<Camera />} />);
     assert(tree.find('.spectrum-TagList-item-icon').node);
   });
 

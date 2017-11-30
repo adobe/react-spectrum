@@ -1,6 +1,7 @@
 import {List, ListItem} from '../src/List';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
+import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('List', module)
@@ -14,7 +15,7 @@ storiesOf('List', module)
     () => (
       <List>
         <ListItem selected>Foo</ListItem>
-        <ListItem icon="twitter">Bar</ListItem>
+        <ListItem icon={<Twitter />}>Bar</ListItem>
         <ListItem disabled>Baz</ListItem>
         <ListItem>Test</ListItem>
         <ListItem>Hi</ListItem>

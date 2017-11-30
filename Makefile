@@ -34,13 +34,13 @@ build:
 	cp -R src dist
 	babel dist -d dist
 	find dist \( -name index.styl -o -name "Shell*.styl" \) -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
-	find dist -name *.styl -delete
-	find dist -name *.js -exec sed -i.bak 's/index.styl/index.css/g' {} \;
-	find dist -name *.js -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
-	find dist -name *.bak -delete
+	find dist -name "*.styl" -delete
+	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;
+	find dist -name "*.js" -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
+	find dist -name "*.bak" -delete
+	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
 	cp -R dist/* ./.
 	rm -rf dist/*
-	cp -R src/Icon/style/resources dist/.
 
 storybook:
 	build-storybook

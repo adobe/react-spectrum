@@ -44,7 +44,9 @@ export default class ShellMenu extends Component {
   }
 
   componentWillUnmount() {
-    this.menuRef.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    if (this.menuRef) {
+      this.menuRef.removeEventListener(getTransitionEvent(), this.handleTransitionEnd);
+    }
   }
 
   setOpen(open) {

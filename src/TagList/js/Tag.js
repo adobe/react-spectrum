@@ -1,6 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 import '../style/index.styl';
 
@@ -38,9 +38,10 @@ export default function Tag({
       {avatar &&
         <img className="spectrum-TagList-item-avatar" src={avatar} />
       }
-      {icon &&
-        <Icon className="spectrum-TagList-item-icon" size="S" icon={icon} />
-      }
+      {cloneIcon(icon, {
+        size: 'S',
+        className: 'spectrum-TagList-item-icon'
+      })}
       <span className="spectrum-TagList-item-label">
         {childContent}
       </span>

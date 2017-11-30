@@ -1,7 +1,9 @@
 import assert from 'assert';
 import Button from '../../src/Button';
 import Calendar from '../../src/Calendar';
+import CalendarIcon from '../../src/Icon/Calendar';
 import Clock from '../../src/Clock';
+import ClockIcon from '../../src/Icon/Clock';
 import Datepicker from '../../src/Datepicker';
 import moment from 'moment';
 import React from 'react';
@@ -29,7 +31,7 @@ describe('Datepicker', () => {
 
     const button = findButton(tree);
     assert.equal(button.hasClass('spectrum-InputGroup-button'), true);
-    assert.equal(button.prop('icon'), 'calendar');
+    assert.equal(button.prop('icon').type, CalendarIcon);
     assert.equal(button.prop('disabled'), false);
     assert.equal(button.prop('quiet'), false);
 
@@ -52,17 +54,17 @@ describe('Datepicker', () => {
 
     assert(tree.find(Calendar).node);
     assert(!tree.find(Clock).node);
-    assert.equal(findButton(tree).prop('icon'), 'calendar');
+    assert.equal(findButton(tree).prop('icon').type, CalendarIcon);
 
     tree.setProps({type: 'datetime'});
     assert(tree.find(Calendar).node);
     assert(tree.find(Clock).node);
-    assert.equal(findButton(tree).prop('icon'), 'calendar');
+    assert.equal(findButton(tree).prop('icon').type, CalendarIcon);
 
     tree.setProps({type: 'time'});
     assert(!tree.find(Calendar).node);
     assert(tree.find(Clock).node);
-    assert.equal(findButton(tree).prop('icon'), 'clock');
+    assert.equal(findButton(tree).prop('icon').type, ClockIcon);
   });
 
   it('supports defaultValue uncontrolled behavior', () => {

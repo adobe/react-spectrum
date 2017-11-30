@@ -1,8 +1,9 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import Button from '../../Button';
+import ChevronDown from '../../Icon/ChevronDown';
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
@@ -58,9 +59,10 @@ export default class ComboBox extends React.Component {
           autocompleteInput
           quiet={quiet} />
 
-        {icon &&
-          <Icon className="spectrum-DecoratedTextfield-icon" icon={icon} size="XS" />
-        }
+        {cloneIcon(icon, {
+          className: 'spectrum-DecoratedTextfield-icon',
+          size: 'XS'
+        })}
 
         <Button
           className="spectrum-InputGroup-button"
@@ -72,7 +74,7 @@ export default class ComboBox extends React.Component {
           required={required}
           invalid={invalid}
           quiet={quiet}>
-          <Icon icon="chevronDown" size="S" />
+          <ChevronDown size="XS" />
         </Button>
       </Autocomplete>
     );

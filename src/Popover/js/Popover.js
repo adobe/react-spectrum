@@ -15,8 +15,7 @@ export default class Popover extends Component {
     ]),
     open: PropTypes.bool,
     title: PropTypes.node,
-    className: PropTypes.string,
-    showTip: PropTypes.bool
+    className: PropTypes.string
   };
 
   static defaultProps = {
@@ -34,7 +33,6 @@ export default class Popover extends Component {
       title,
       children,
       className,
-      showTip,
       isDialog = true, // private. for use only by Menu.
       ...otherProps
     } = this.props;

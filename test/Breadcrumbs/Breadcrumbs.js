@@ -1,6 +1,6 @@
 import assert from 'assert';
 import Breadcrumbs from '../../src/Breadcrumbs';
-import Icon from '../../src/Icon';
+import FolderIcon from '../../src/Icon/Folder';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -13,9 +13,8 @@ describe('Breadcrumbs', function () {
   });
 
   it('should support putting an icon at the start', function () {
-    const tree = shallow(<Breadcrumbs icon="folder" items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
-    assert.equal(tree.childAt(0).type(), Icon);
-    assert.equal(tree.childAt(0).prop('icon'), 'folder');
+    const tree = shallow(<Breadcrumbs icon={<FolderIcon />} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    assert.equal(tree.childAt(0).type(), FolderIcon);
   });
 
   it('should support clicking on a breadcrumb', function () {

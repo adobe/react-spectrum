@@ -1,4 +1,5 @@
 import {action, storiesOf} from '@kadira/storybook';
+import Camera from '../src/Icon/Camera';
 import React from 'react';
 import {Tag} from '../src/TagList';
 import {VerticalCenter} from '../.storybook/layout';
@@ -21,7 +22,7 @@ storiesOf('Tag', module)
   )
   .addWithInfo(
     'icon',
-    () => render({icon: 'camera'}),
+    () => render({icon: <Camera />}),
     {inline: true}
   )
   .addWithInfo(

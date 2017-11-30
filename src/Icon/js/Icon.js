@@ -1,39 +1,36 @@
 import classNames from 'classnames';
-import {isUrl} from '../../utils/string';
 import React from 'react';
 import '../style/index.styl';
+
+const SIZES = {
+  XXS: 18,
+  XS: 24,
+  S: 18,
+  M: 24,
+  L: 18,
+  XL: 24,
+  XXL: 24
+};
 
 export default function Icon({
   icon, // add, bell, heart, star
   size = 'M', // XS, S, M, L
   className,
+  children,
   ...otherProps
 }) {
-  const isImage = isUrl(icon);
-  const isColorIcon = !isImage && icon && icon.indexOf('Color') >= 0;
+  const sizeKey = SIZES[size];
+  let svg = (icon && icon[sizeKey]) || icon || children;
+  if (typeof svg === 'string') {
+    throw new Error('String icon names are deprecated. Please import icons from react-spectrum/Icon/IconName and render as <IconName />.');
+  }
 
-  return (
-    <span
-      className={
-        classNames(
-          'coral-Icon',
-          `coral-Icon--size${size}`,
-          {
-            [`coral-Icon--${icon}`]: !isImage,
-            'coral-ColorIcon': isColorIcon,
-            'is-image': isImage
-          },
-          className
-        )
-      }
-      role="img"
-      {...otherProps}>
-      {
-        isImage &&
-        <img className="coral-Icon-image" src={icon} role="presentation" />
-      }
-    </span>
-  );
+  return React.cloneElement(svg, {
+    focusable: 'false',
+    'aria-hidden': 'true',
+    role: 'img',
+    className: classNames('spectrum-Icon', `spectrum-Icon--size${size}`, className)
+  });
 }
 
 Icon.displayName = 'Icon';

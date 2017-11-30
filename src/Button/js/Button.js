@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -31,7 +31,6 @@ export default class Button extends Component {
       logic,
       quiet,
       icon,
-      iconSize = 'S',
       selected,
       block,
       className,
@@ -46,7 +45,13 @@ export default class Button extends Component {
       otherProps['aria-disabled'] = disabled;
     }
 
-    let variantPrefix = logic ? 'logic--' : quiet ? 'quiet--' : '';
+    let variantPrefix = '';
+    if (logic) {
+      variantPrefix = 'logic--';
+    } else if (quiet) {
+      variantPrefix = 'quiet--';
+    }
+
     let iconOnly = icon && !(label || children);
 
     return (
@@ -68,9 +73,7 @@ export default class Button extends Component {
         }
         disabled={disabled}
         onClick={this.onClick}>
-        {icon &&
-          <Icon className="spectrum-Icon" size={iconSize} icon={icon} />
-        }
+        {cloneIcon(icon, {size: 'S'})}
         {(label || children) &&
           <span className="spectrum-Button-label">{label}{children}</span>
         }

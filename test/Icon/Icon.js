@@ -1,32 +1,33 @@
 import assert from 'assert';
+import Bell from '../../src/Icon/Bell';
+import Bell18 from '@react/react-spectrum-icons/dist/Bell/18';
+import Bell24 from '@react/react-spectrum-icons/dist/Bell/24';
 import Icon from '../../src/Icon';
 import React from 'react';
 import {shallow} from 'enzyme';
 
 describe('Icon', () => {
   it('supports icons', () => {
-    const tree = shallow(<Icon icon="bell" />);
-    assert.equal(tree.prop('className'), 'coral-Icon coral-Icon--sizeM coral-Icon--bell');
-    assert.equal(tree.type(), 'span');
-  });
-
-  it('supports color icons', () => {
-    const tree = shallow(<Icon icon="twitterColor" />);
-    assert.equal(tree.prop('className'), 'coral-Icon coral-Icon--sizeM coral-Icon--twitterColor coral-ColorIcon');
+    const tree = shallow(<Bell />);
+    assert.equal(tree.type(), Icon);
+    assert.equal(typeof tree.prop('icon'), 'object');
   });
 
   it('supports multiple sizes', () => {
-    const tree = shallow(<Icon icon="bell" size="L" />);
-    assert.equal(tree.prop('className'), 'coral-Icon coral-Icon--sizeL coral-Icon--bell');
+    const tree = shallow(<Icon icon={Bell18} size="L" />);
+    assert.equal(tree.prop('className'), 'spectrum-Icon spectrum-Icon--sizeL');
   });
 
   it('supports additional classNames', () => {
-    const tree = shallow(<Icon icon="bell" className="myClass" />);
-    assert.equal(tree.prop('className'), 'coral-Icon coral-Icon--sizeM coral-Icon--bell myClass');
+    const tree = shallow(<Icon icon={Bell18} className="myClass" />);
+    assert.equal(tree.prop('className'), 'spectrum-Icon spectrum-Icon--sizeM myClass');
   });
 
-  it('supports additional properties', () => {
-    const tree = shallow(<Icon icon="bell" foo />);
-    assert.equal(tree.prop('foo'), true);
+  it('switches between sizes appropriately', () => {
+    let tree = shallow(<Icon icon={{18: Bell18, 24: Bell24}} size="L" />);
+    assert.equal(tree.prop('viewBox'), Bell18.props.viewBox);
+
+    tree = shallow(<Icon icon={{18: Bell18, 24: Bell24}} size="M" />);
+    assert.equal(tree.prop('viewBox'), Bell24.props.viewBox);
   });
 });

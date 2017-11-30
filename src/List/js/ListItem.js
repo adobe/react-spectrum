@@ -1,11 +1,10 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import {interpretKeyboardEvent} from '../../utils/events';
 import React, {Component} from 'react';
 
 export default class ListItem extends Component {
   static defaultProps = {
-    iconSize: 'S',
     selected: false,
     disabled: false,
     onSelect: function () {},
@@ -59,7 +58,6 @@ export default class ListItem extends Component {
   render() {
     const {
       icon,
-      iconSize,
       label,
       className,
       children,
@@ -92,9 +90,10 @@ export default class ListItem extends Component {
         aria-selected={selected}
         aria-disabled={disabled}
         {...otherProps}>
-        {icon &&
-          <Icon className="react-spectrum-List-item-icon" icon={icon} size={iconSize} />
-        }
+        {cloneIcon(icon, {
+          className: 'react-spectrum-List-item-icon',
+          size: 'S'
+        })}
         <div className="react-spectrum-List-item-content">
           {label || children}
         </div>

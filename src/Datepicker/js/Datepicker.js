@@ -1,8 +1,10 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import Calendar from '../../Calendar';
+import CalendarIcon from '../../Icon/Calendar';
 import classNames from 'classnames';
 import Clock from '../../Clock';
+import ClockIcon from '../../Icon/Clock';
 import createId from '../../utils/createId';
 import InputGroup from '../../InputGroup';
 import moment from 'moment';
@@ -287,8 +289,7 @@ export default class Datepicker extends Component {
             variant="dropdown"
             quiet={quiet}
             type="button"
-            icon={type === 'time' ? 'clock' : 'calendar'}
-            iconSize="S"
+            icon={type === 'time' ? <ClockIcon /> : <CalendarIcon />}
             invalid={invalid}
             disabled={readOnly || disabled} />
           <Popover open>

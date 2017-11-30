@@ -1,11 +1,10 @@
+import AlertIcon from '../../Icon/Alert';
 import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
-import Icon from '../../Icon';
 import Popover from '../../Popover';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
 
@@ -126,7 +125,7 @@ export default class Select extends React.Component {
           <span className="spectrum-Dropdown-trigger-container">
             <span className={classNames('spectrum-Dropdown-trigger-label', {'is-placeholder': label === placeholder})}>{label}</span>
             <span className="spectrum-Dropdown-icon-container">
-              {invalid && <Icon size="S" icon="alert" className="spectrum-Icon" />}
+              {invalid && <AlertIcon size="S" />}
               <span className="spectrum-Icon spectrum-Dropdown-open-icon" />
             </span>
           </span>

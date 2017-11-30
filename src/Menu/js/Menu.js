@@ -1,8 +1,6 @@
-import classNames from 'classnames';
 import {List} from '../../List';
 import Popover from '../../Popover';
 import React, {PropTypes} from 'react';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 
 export default class Menu extends React.Component {
   static propTypes = {

@@ -1,11 +1,10 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
 import React from 'react';
 import '../style/ShellHeader.styl';
 
 export default function ShellHeader({
   homeURL = '#',
-  homeIcon = 'adobeExperienceManagerColor',
+  homeIcon,
   homeTitle = 'Adobe Experience Manager',
   className,
   children,
@@ -23,7 +22,7 @@ export default function ShellHeader({
       {...otherProps}>
       <div className="coral3-Shell-header-home" aria-level="2">
         <a className="coral3-Shell-homeAnchor" href={homeURL} role="heading" aria-level="2">
-          <Icon icon={homeIcon} />
+          {homeIcon}
           <div className="coral3-Shell-homeAnchor-label">{homeTitle}</div>
         </a>
       </div>

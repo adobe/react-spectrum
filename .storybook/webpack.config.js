@@ -1,6 +1,13 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = (config, env) => {
+  // Hack to get icons loading in the storybook without copying them over
+  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/Icon\/([^\/\.]+)$/, function (resource) {
+    resource.request = require.resolve('@react/react-spectrum-icons/dist/' + path.basename(resource.request));
+  }));
+  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\.\/js\/Icon/, path.resolve(__dirname + '/../src/Icon/js/Icon.js')));
+
   return Object.assign(config, {
     module: {
       loaders: [

@@ -1,4 +1,5 @@
 import ComboBox from '../src/ComboBox';
+import FilterIcon from '../Icon/Filter';
 import React from 'react';
 import {storiesOf} from '@kadira/storybook';
 import {VerticalCenter} from '../.storybook/layout';
@@ -30,7 +31,7 @@ storiesOf('ComboBox', module)
   .addWithInfo(
     'icon: filter',
     () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" icon="filter" />
+      <ComboBox options={OPTIONS} placeholder="Combo Box" icon={<FilterIcon />} />
     ),
     {inline: true}
   )
@@ -58,7 +59,7 @@ storiesOf('ComboBox', module)
   .addWithInfo(
     'quiet with icon: filter',
     () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" quiet icon="filter" />
+      <ComboBox options={OPTIONS} placeholder="Combo Box" quiet icon={<FilterIcon />} />
     ),
     {inline: true}
   )

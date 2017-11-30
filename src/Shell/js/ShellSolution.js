@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 
 export default function ShellSolution({
@@ -22,7 +22,7 @@ export default function ShellSolution({
       }
       href={href}
       {...otherProps}>
-      <Icon icon={icon} size="L" className="coral3-Shell-solution-icon" />
+      {cloneIcon(icon, {className: 'coral3-Shell-solution-icon', size: 'L'})}
       <div className="coral3-Shell-solution-label">{label}{children}</div>
     </a>
   );

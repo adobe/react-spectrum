@@ -22,7 +22,7 @@ describe('Wait', () => {
 
   it('supports centered', () => {
     const tree = shallow(<Wait centered />);
-    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--centered');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate react-spectrum-Wait--centered');
   });
 
   it('supports additional classNames', () => {

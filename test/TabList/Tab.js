@@ -1,3 +1,4 @@
+import AddIcon from '../../src/Icon/Add';
 import assert from 'assert';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
@@ -29,8 +30,8 @@ describe('Tab', () => {
   });
 
   it('supports icon', () => {
-    const tree = mount(<Tab icon="add" />);
-    const child = tree.find('.coral-Icon');
+    const tree = mount(<Tab icon={<AddIcon />} />);
+    const child = tree.find(AddIcon);
     assert.equal(child.length, 1);
   });
 

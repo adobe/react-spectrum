@@ -1,7 +1,9 @@
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
 import Button from '../../src/Button';
+import ChevronDown from '../../src/Icon/ChevronDown';
 import ComboBox from '../../src/ComboBox';
+import Filter from '../../src/Icon/Filter';
 import React from 'react';
 import {shallow} from 'enzyme';
 import Textfield from '../../src/Textfield';
@@ -15,7 +17,7 @@ describe('ComboBox', () => {
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
     assert.equal(tree.find(Button).length, 1);
-    assert.equal(tree.find(Button).childAt(0).prop('icon'), 'chevronDown');
+    assert.equal(tree.find(Button).childAt(0).type(), ChevronDown);
   });
 
   it('should render classnames for states', () => {
@@ -24,7 +26,7 @@ describe('ComboBox', () => {
   });
 
   it('should support rendering an icon', () => {
-    const tree = shallow(<ComboBox icon="filter" />);
+    const tree = shallow(<ComboBox icon={<Filter />} />);
     assert.equal(tree.find('.spectrum-DecoratedTextfield-icon').length, 1);
   });
 

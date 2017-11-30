@@ -1,5 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
+import HelpCircle from '../../src/Icon/Help-Circle';
 import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 import Search from '../../Search';
@@ -9,12 +10,7 @@ import '../style/ShellHelp.styl';
 
 export default class ShellHelp extends Component {
   static defaultProps = {
-    defaultResults: [
-      {href: '/learn', icon: 'globe', label: 'Marketing Cloud Help'},
-      {href: '/community', icon: 'users', label: 'Community'},
-      {href: '/customercare', icon: 'callCenter', label: 'Customer Care'},
-      {href: '/status', icon: 'servers', label: 'Adobe Marketing Cloud Status'}
-    ],
+    defaultResults: [],
     onSearch: function () {},
     onChange: function () {},
     onHide: function () {}
@@ -104,7 +100,7 @@ export default class ShellHelp extends Component {
     return (
       <List className="coral3-Shell-help-items">
         {
-          defaultResults && defaultResults.length &&
+          defaultResults && defaultResults.length ?
           defaultResults.map(({href, icon, label}, index) => (
             <ListItem
               key={index}
@@ -112,9 +108,8 @@ export default class ShellHelp extends Component {
               href={href}
               className="coral3-Shell-help-item"
               icon={icon}
-              iconSize="S"
               label={label} />
-          ))
+          )) : null
         }
       </List>
     );
@@ -135,7 +130,7 @@ export default class ShellHelp extends Component {
           <Button
             className="coral3-Shell-menu-button"
             variant="minimal"
-            icon="helpCircle"
+            icon={<HelpCircle />}
             square />
         }
         onVisible={this.handleVisible}

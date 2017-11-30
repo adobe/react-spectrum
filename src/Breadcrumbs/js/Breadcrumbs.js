@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 import '../style/index.styl';
 
@@ -15,9 +15,7 @@ export default class Breadcrumbs extends React.Component {
 
     return (
       <nav>
-        {icon &&
-          <Icon icon={icon} size="S" className="react-spectrum-Breadcrumbs-icon" />
-        }
+        {cloneIcon(icon, {size: 'S', className: 'spectrum-Breadcrumbs-icon'})}
         <ul className={classNames('spectrum-Breadcrumbs', className)}>
           {items.map((item, i) => (
             <li key={i} className="spectrum-Breadcrumb">
@@ -25,7 +23,7 @@ export default class Breadcrumbs extends React.Component {
                 className="spectrum-Breadcrumb-link"
                 role="link"
                 onClick={items.length > 1 && i < items.length - 1 && onBreadcrumbClick.bind(null, item, items.length - i - 1)}
-                aria-current={i === items.length - 1 ? 'page': null}
+                aria-current={i === items.length - 1 ? 'page' : null}
                 tabIndex={i < items.length - 1 ? 0 : null}>
                 {item.label}
               </a>

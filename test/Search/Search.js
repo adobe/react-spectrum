@@ -1,5 +1,6 @@
 import assert from 'assert';
 import React from 'react';
+import Refresh from '../../src/Icon/Refresh';
 import Search from '../../src/Search';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -22,9 +23,9 @@ describe('Search', () => {
   });
 
   it('should support custom icons', () => {
-    const tree = shallow(<Search icon="refresh" />);
+    const tree = shallow(<Search icon={<Refresh />} />);
     const icon = tree.find('.spectrum-DecoratedTextfield-icon');
-    assert.equal(icon.prop('icon'), 'refresh');
+    assert.equal(icon.type(), Refresh);
   });
 
   it('should support no icon', () => {
