@@ -21,8 +21,8 @@ global.navigator = {
 // Override require resolution so icons work without copying them into src/
 var oldResolveFilename = Module._resolveFilename;
 Module._resolveFilename = function (request, parent, isMain) {
-  if (/Icon\/([^\/\.]+)$/.test(request)) {
-    request = '@react/react-spectrum-icons/dist/' + path.basename(request);
+  if (/Icon\/(core\/)?([^\/\.]+)$/.test(request)) {
+    request = '@react/react-spectrum-icons/dist/' + (/core/.test(request) ? 'core/' : '') + path.basename(request);
   } else if (/\.\.\/js\/Icon/.test(request)) {
     request = path.resolve(__dirname + '/../src/Icon/js/Icon.js');
   }
