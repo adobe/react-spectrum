@@ -5,6 +5,7 @@ import Dropdown from '../../Dropdown';
 import Popover from '../../Popover';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
 
@@ -122,13 +123,9 @@ export default class Select extends React.Component {
           invalid={invalid}
           ref={b => this.button = b}
           onKeyDown={this.onKeyDown}>
-          <span className="spectrum-Dropdown-trigger-container">
-            <span className={classNames('spectrum-Dropdown-trigger-label', {'is-placeholder': label === placeholder})}>{label}</span>
-            <span className="spectrum-Dropdown-icon-container">
-              {invalid && <AlertIcon size="S" />}
-              <span className="spectrum-Icon spectrum-Dropdown-open-icon" />
-            </span>
-          </span>
+          <span className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
+          {invalid && <AlertIcon size="S" />}
+          <SelectDownChevron size={null} className="spectrum-Dropdown-icon" />
         </Button>
         <SelectMenu
           dropdownMenu

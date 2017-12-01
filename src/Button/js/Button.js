@@ -53,6 +53,7 @@ export default class Button extends Component {
     }
 
     let iconOnly = icon && !(label || children);
+    let labelContents = label || (typeof children === 'string' ? children : null);
 
     return (
       <Element
@@ -74,9 +75,10 @@ export default class Button extends Component {
         disabled={disabled}
         onClick={this.onClick}>
         {cloneIcon(icon, {size: 'S'})}
-        {(label || children) &&
-          <span className="spectrum-Button-label">{label}{children}</span>
+        {labelContents &&
+          <span className="spectrum-Button-label">{labelContents}</span>
         }
+        {typeof children !== 'string' && children}
       </Element>
     );
   }
