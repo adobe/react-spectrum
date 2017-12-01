@@ -1,3 +1,4 @@
+import BreadcrumbChevron from '../../src/Icon/core/BreadcrumbChevron';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import React from 'react';
@@ -15,7 +16,7 @@ export default class Breadcrumbs extends React.Component {
 
     return (
       <nav>
-        {cloneIcon(icon, {size: 'S', className: 'spectrum-Breadcrumbs-icon'})}
+        {cloneIcon(icon, {size: 'S', className: 'react-spectrum-Breadcrumbs-icon'})}
         <ul className={classNames('spectrum-Breadcrumbs', className)}>
           {items.map((item, i) => (
             <li key={i} className="spectrum-Breadcrumb">
@@ -27,6 +28,9 @@ export default class Breadcrumbs extends React.Component {
                 tabIndex={i < items.length - 1 ? 0 : null}>
                 {item.label}
               </a>
+              {i < items.length - 1 &&
+                <BreadcrumbChevron size={null} className="spectrum-Breadcrumb-separator" />
+              }
             </li>
           ))}
         </ul>
