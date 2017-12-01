@@ -1,7 +1,12 @@
+import AlertError from '../../Icon/core/AlertError';
 import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
 import Heading from '../../Heading';
 import React from 'react';
+
+const VARIANT_ICONS = {
+  error: AlertError
+};
 
 export default function DialogHeader({
   title,
@@ -14,6 +19,8 @@ export default function DialogHeader({
   className,
   ...otherProps
 }) {
+  let Icon = VARIANT_ICONS[variant];
+
   return (
     <div
       {...otherProps}
@@ -23,7 +30,7 @@ export default function DialogHeader({
         className
       )}>
       <Heading size={3} className="spectrum-Dialog-title">{title}</Heading>
-      <div className="spectrum-Dialog-typeIcon" />
+      {Icon && <Icon size={null} className="spectrum-Dialog-typeIcon" />}
       {fullscreen && confirmLabel &&
         <DialogButtons
           variant={variant}
