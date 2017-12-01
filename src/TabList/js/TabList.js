@@ -26,7 +26,7 @@ export default class TabList extends React.Component {
   componentDidMount() {
     // Measure the tabs so we can position the line below correctly
     let layoutInfos = [];
-    let tabs = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-Tab');
+    let tabs = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-TabList-item');
     for (let tab of tabs) {
       layoutInfos.push({
         left: tab.offsetLeft,
@@ -86,5 +86,5 @@ function TabLine({orientation, selectedTab}) {
       : `translateX(${selectedTab.left}px) scaleX(${selectedTab.width})`
   };
 
-  return <div className="spectrum-Tab-line" style={style} />;
+  return <div className="spectrum-TabList-item-line" style={style} />;
 }
