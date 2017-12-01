@@ -1,11 +1,10 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import Button from '../../Button';
-import ChevronDown from '../../Icon/ChevronDown';
 import classNames from 'classnames';
-import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import Textfield from '../../Textfield';
 import '../../InputGroup/style/index.styl';
 
@@ -19,6 +18,10 @@ export default class ComboBox extends React.Component {
     quiet: false
   };
 
+  state = {
+    open: false
+  };
+
   onButtonClick() {
     ReactDOM.findDOMNode(this.textfield).focus();
     this.autocomplete.toggleMenu();
@@ -26,6 +29,14 @@ export default class ComboBox extends React.Component {
 
   getCompletions(text) {
     return this.props.options.filter(o => o.toLowerCase().startsWith(text.toLowerCase()));
+  }
+
+  onMenuShow() {
+    this.setState({open: true});
+  }
+
+  onMenuHide() {
+    this.setState({open: false});
   }
 
   render() {
@@ -36,21 +47,22 @@ export default class ComboBox extends React.Component {
       invalid,
       quiet,
       onChange,
-      icon,
       ...props
     } = this.props;
 
     return (
       <Autocomplete
-        className={classNames('spectrum-ComboBox', 'spectrum-InputGroup', 'spectrum-DecoratedTextfield', {
+        className={classNames('spectrum-InputGroup', {
           'spectrum-InputGroup--quiet': quiet
         })}
         ref={a => this.autocomplete = a}
         getCompletions={this.getCompletions}
         value={value}
-        onChange={onChange}>
+        onChange={onChange}
+        onMenuShow={this.onMenuShow}
+        onMenuHide={this.onMenuHide}>
         <Textfield
-          className={classNames('spectrum-InputGroup-input', 'spectrum-ComboBox-input', {'spectrum-DecoratedTextfield-input': icon})}
+          className={classNames('spectrum-InputGroup-input')}
           {...props}
           ref={t => this.textfield = t}
           disabled={disabled}
@@ -58,12 +70,6 @@ export default class ComboBox extends React.Component {
           invalid={invalid}
           autocompleteInput
           quiet={quiet} />
-
-        {cloneIcon(icon, {
-          className: 'spectrum-DecoratedTextfield-icon',
-          size: 'XS'
-        })}
-
         <Button
           className="spectrum-InputGroup-button"
           type="button"
@@ -73,8 +79,9 @@ export default class ComboBox extends React.Component {
           disabled={disabled}
           required={required}
           invalid={invalid}
-          quiet={quiet}>
-          <ChevronDown size="XS" />
+          quiet={quiet}
+          selected={this.state.open}>
+          <SelectDownChevron size={null} className="spectrum-InputGroup-icon" />
         </Button>
       </Autocomplete>
     );

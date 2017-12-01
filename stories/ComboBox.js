@@ -1,5 +1,4 @@
 import ComboBox from '../src/ComboBox';
-import FilterIcon from '../Icon/Filter';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
@@ -29,13 +28,6 @@ storiesOf('ComboBox', module)
     {inline: true}
   )
   .addWithInfo(
-    'icon: filter',
-    () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" icon={<FilterIcon />} />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
     'invalid',
     () => (
       <ComboBox options={OPTIONS} placeholder="Combo Box" invalid />
@@ -53,13 +45,6 @@ storiesOf('ComboBox', module)
     'quiet',
     () => (
       <ComboBox options={OPTIONS} placeholder="Combo Box" quiet />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'quiet with icon: filter',
-    () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" quiet icon={<FilterIcon />} />
     ),
     {inline: true}
   )
