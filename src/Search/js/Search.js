@@ -2,12 +2,14 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import React, {Component} from 'react';
+import SearchClear from '../../Icon/core/SearchClear';
+import SearchMagGlass from '../../Icon/core/SearchMagGlass';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
 export default class Search extends Component {
   static defaultProps = {
-    icon: 'search',
+    icon: <SearchMagGlass />,
     onChange: function () {},
     onSubmit: function () {}
   };
@@ -91,27 +93,24 @@ export default class Search extends Component {
         className={
           classNames(
             'spectrum-Search',
-            'spectrum-DecoratedTextfield',
             {'is-disabled': disabled},
             className
           )
         }>
         <Textfield
-          className={classNames('spectrum-Search-input', {'spectrum-DecoratedTextfield-input': icon})}
+          className="spectrum-Search-input"
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
           {...otherProps}
           onKeyDown={this.handleTextKeyDown}
           onChange={this.handleTextChange} />
-        {icon !== 'search'
-          ? cloneIcon(icon, {className: 'spectrum-DecoratedTextfield-icon', size: 'S'})
-          : <div className="spectrum-DecoratedTextfield-icon spectrum-Search-icon" />
-        }
+        {cloneIcon(icon, {className: 'spectrum-Search-icon', size: 'S'})}
         {
           value !== '' &&
             <Button
               variant="icon"
+              icon={<SearchClear />}
               className="spectrum-Search-clear"
               disabled={disabled}
               onClick={this.handleClearButtonClick} />
