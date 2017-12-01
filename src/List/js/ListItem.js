@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import {interpretKeyboardEvent} from '../../utils/events';
+import MenuCheckmark from '../../Icon/core/MenuCheckmark';
 import React, {Component} from 'react';
 
 export default class ListItem extends Component {
@@ -96,6 +97,7 @@ export default class ListItem extends Component {
         })}
         <div className="react-spectrum-List-item-content">
           {label || children}
+          {selected && <MenuCheckmark size={null} className="spectrum-SelectList-checkmark" />}
         </div>
       </li>
     );
