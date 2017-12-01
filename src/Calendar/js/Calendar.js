@@ -1,5 +1,7 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
+import CarouselLeftChevron from '../../src/Icon/core/CarouselLeftChevron';
+import CarouselRightChevron from '../../src/Icon/core/CarouselRightChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
@@ -452,6 +454,7 @@ export default class Calendar extends Component {
           <Button
             className="spectrum-Calendar-prevMonth"
             variant="icon"
+            icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
             aria-label="Previous"
             title="Previous"
             disabled={disabled}
@@ -460,6 +463,7 @@ export default class Calendar extends Component {
           <Button
             className="spectrum-Calendar-nextMonth"
             variant="icon"
+            icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
             aria-label="Next"
             title="Next"
             disabled={disabled}
