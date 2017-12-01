@@ -6,6 +6,8 @@ import InputGroup from '../../InputGroup';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
+import StepperUpChevron from '../../Icon/core/StepperUpChevron';
+import StepperDownChevron from '../../Icon/core/StepperDownChevron';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
@@ -304,7 +306,7 @@ export default class NumberInput extends Component {
             disabled={disabled || max != null && value >= max || readOnly}
             onClick={this.handleIncrementButtonClick}
             onMouseDown={this.onMouseDown}>
-            <div className="spectrum-Stepper-stepUpIcon" />
+            <StepperUpChevron size={null} className="spectrum-Stepper-stepUpIcon" />
           </Button>
           <Button
             className="spectrum-Stepper-stepDown"
@@ -317,7 +319,7 @@ export default class NumberInput extends Component {
             disabled={disabled || min != null && value <= min || readOnly}
             onClick={this.handleDecrementButtonClick}
             onMouseDown={this.onMouseDown}>
-            <div className="spectrum-Stepper-stepDownIcon" />
+            <StepperDownChevron size={null} className="spectrum-Stepper-stepDownIcon" />
           </Button>
         </span>
         <Textfield
