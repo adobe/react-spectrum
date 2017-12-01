@@ -1,6 +1,8 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import React from 'react';
+import Star from '../../Icon/core/Star';
+import StarOutline from '../../Icon/core/StarOutline';
 import '../style/index.styl';
 
 @autobind
@@ -47,7 +49,10 @@ export default class Rating extends React.Component {
         <span
           key={i}
           className={classNames('spectrum-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
-          onClick={!disabled && this.onClickRating.bind(this, i)} />
+          onClick={!disabled && this.onClickRating.bind(this, i)}>
+          <Star size={null} className="spectrum-Rating-starActive" />
+          <StarOutline size={null} className="spectrum-Rating-starInactive" />
+        </span>
       );
     }
 
