@@ -1,3 +1,4 @@
+import CheckboxCheckmark from '../../src/Icon/core/CheckboxCheckmark';
 import classNames from 'classnames';
 import React, {Component} from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
@@ -51,6 +52,7 @@ export default class Checkbox extends Component {
         }
         inputClassName="spectrum-Checkbox-input"
         markClassName="spectrum-Checkbox-box"
+        markIcon={<CheckboxCheckmark size={null} className="spectrum-Checkbox-checkmark" />}
         labelClassName="spectrum-Checkbox-label"
         {...otherProps} />
     );
