@@ -2,6 +2,7 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
+import More from '../../src/Icon/core/More';
 import React from 'react';
 import '../style/index.styl';
 
@@ -11,8 +12,8 @@ export default function DropdownButton({alignRight, onSelect, children, ...props
       <Button
         variant="action"
         quiet
-        {...props}
-        className={classNames({'spectrum-ActionMenu-label': !props.icon}, props.className)} />
+        icon={<More className="spectrum-ActionMenu-icon" />}
+        {...props} />
       <Menu>
         {children}
       </Menu>
