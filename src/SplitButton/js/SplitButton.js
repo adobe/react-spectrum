@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
 import React from 'react';
+import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import '../style/index.styl';
 
 export default function SplitButton({className, onSelect, children, ...props}) {
@@ -12,7 +13,9 @@ export default function SplitButton({className, onSelect, children, ...props}) {
       <Button
         variant={props.variant}
         className="spectrum-SplitButton-trigger"
-        dropdownTrigger />
+        dropdownTrigger>
+        <SelectDownChevron size={null} className="spectrum-SplitButton-icon" />
+      </Button>
       <Menu>
         {children}
       </Menu>

@@ -1,7 +1,10 @@
 import {action, storiesOf} from '@storybook/react';
+import Facebook from '../src/Icon/Facebook';
+import Instagram from '../src/Icon/Instagram';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
 import SplitButton from '../src/SplitButton';
+import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('SplitButton', module)
@@ -29,9 +32,9 @@ storiesOf('SplitButton', module)
 function render(props = {}) {
   return (
     <SplitButton {...props} onClick={action('click')} onSelect={action('select')}>
-      <MenuItem icon="twitter">Twitter</MenuItem>
-      <MenuItem icon="facebook">Facebook</MenuItem>
-      <MenuItem icon="instagram">Instagram</MenuItem>
+      <MenuItem icon={<Twitter />} value="twitter">Twitter</MenuItem>
+      <MenuItem icon={<Facebook />} value="facebook">Facebook</MenuItem>
+      <MenuItem icon={<Instagram />} value="instagram">Instagram</MenuItem>
     </SplitButton>
   );
 }
