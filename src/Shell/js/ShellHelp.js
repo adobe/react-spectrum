@@ -1,6 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import HelpCircle from '../../src/Icon/Help-Circle';
+import HelpOutline from '../../src/Icon/HelpOutline';
 import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 import Search from '../../Search';
@@ -130,7 +130,7 @@ export default class ShellHelp extends Component {
           <Button
             className="coral3-Shell-menu-button"
             variant="minimal"
-            icon={<HelpCircle />}
+            icon={<HelpOutline />}
             square />
         }
         onVisible={this.handleVisible}

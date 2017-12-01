@@ -1,3 +1,4 @@
+import AccordionChevron from '../../src/Icon/core/AccordionChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
@@ -67,6 +68,7 @@ export default class AccordionItem extends Component {
           onKeyPress={this.onHeaderKeyDown.bind(this)}>
           {header}
         </div>
+        <AccordionChevron size={null} className="spectrum-Accordion-indicator" />
         <div
           id={this.contentId}
           role="tabpanel"

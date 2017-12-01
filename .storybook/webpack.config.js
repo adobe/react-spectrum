@@ -3,8 +3,8 @@ const webpack = require('webpack');
 
 module.exports = (config, env) => {
   // Hack to get icons loading in the storybook without copying them over
-  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/Icon\/([^\/\.]+)$/, function (resource) {
-    resource.request = require.resolve('@react/react-spectrum-icons/dist/' + path.basename(resource.request));
+  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/Icon\/(core\/)?([^\/\.]+)$/, function (resource) {
+    resource.request = '@react/react-spectrum-icons/dist/' + (/core/.test(resource.request) ? 'core/' : '') + path.basename(resource.request);
   }));
   config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\.\/js\/Icon/, path.resolve(__dirname + '/../src/Icon/js/Icon.js')));
 
@@ -12,6 +12,8 @@ module.exports = (config, env) => {
     // see https://github.com/storybooks/storybook/issues/1570
     config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'UglifyJsPlugin')
   }
+
+  config.resolve.symlinks = false;
 
   return Object.assign(config, {
     module: {

@@ -2,7 +2,7 @@ import {action, storiesOf} from '@storybook/react';
 import Launch from '../../src/Icon/Launch';
 import React from 'react';
 import ShellHelp from '../../src/Shell/js/ShellHelp';
-import Users from '../../src/Icon/Users';
+import User from '../../src/Icon/User';
 import {VerticalCenter} from '../../.storybook/layout';
 
 storiesOf('ShellHelp', module)
@@ -86,7 +86,7 @@ const defaultResults = [
   },
   {
     href: '/community',
-    icon: <Users />,
+    icon: <User />,
     label: 'Community'
   }
 ];

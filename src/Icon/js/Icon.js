@@ -29,7 +29,8 @@ export default function Icon({
     focusable: 'false',
     'aria-hidden': 'true',
     role: 'img',
-    className: classNames('spectrum-Icon', `spectrum-Icon--size${size}`, className)
+    className: classNames('spectrum-Icon', {[`spectrum-Icon--size${size}`]: size}, className),
+    ...otherProps
   });
 }
 

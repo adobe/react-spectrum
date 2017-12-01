@@ -32,7 +32,6 @@ import ShellWorkspace from '../../src/Shell/js/ShellWorkspace';
 import ShellWorkspaces from '../../src/Shell/js/ShellWorkspaces';
 import Sync from '../../src/Icon/Sync';
 import User from '../../src/Icon/User';
-import Users from '../../src/Icon/Users';
 import {VerticalTop} from '../../.storybook/layout';
 import Windows from '../../src/Icon/Windows8';
 
@@ -70,7 +69,7 @@ function render(props = {}) {
           onSearch={action('search')}
           defaultResults={[
             {href: '/learn', icon: <Globe />, label: 'Marketing Cloud Help'},
-            {href: '/community', icon: <Users />, label: 'Community'},
+            {href: '/community', icon: <User />, label: 'Community'},
             {href: '/customercare', icon: <CallCenter />, label: 'Customer Care'},
             {href: '/status', icon: <Servers />, label: 'Adobe Marketing Cloud Status'}
           ]} />
