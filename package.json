@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@react/react-spectrum-icons": "^1.0.0",
-    "@spectrum/spectrum-css": "2.0.0-beta.48",
+    "@spectrum/spectrum-css": "2.0.0-beta.65",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.9",
     "@spectrum/spectrum-variables": "1.0.1",
