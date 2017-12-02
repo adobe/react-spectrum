@@ -6,8 +6,8 @@ import InputGroup from '../../InputGroup';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import StepperUpChevron from '../../Icon/core/StepperUpChevron';
 import StepperDownChevron from '../../Icon/core/StepperDownChevron';
+import StepperUpChevron from '../../Icon/core/StepperUpChevron';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 

@@ -1,5 +1,4 @@
 import Button from '../../Button';
-import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
 import More from '../../src/Icon/core/More';

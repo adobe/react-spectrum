@@ -1,10 +1,9 @@
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
 import Button from '../../src/Button';
-import SelectDownChevron from '../../src/Icon/core/SelectDownChevron';
 import ComboBox from '../../src/ComboBox';
-import Filter from '../../src/Icon/Filter';
 import React from 'react';
+import SelectDownChevron from '../../src/Icon/core/SelectDownChevron';
 import {shallow} from 'enzyme';
 import Textfield from '../../src/Textfield';
 
