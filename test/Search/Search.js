@@ -8,14 +8,12 @@ import sinon from 'sinon';
 describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
-    assert.equal(tree.hasClass('spectrum-DecoratedTextfield'), true);
     assert.equal(tree.hasClass('spectrum-Search'), true);
 
-    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
-    assert.equal(icon.prop('className'), 'spectrum-DecoratedTextfield-icon spectrum-Search-icon');
+    const icon = tree.find('.spectrum-Search-icon');
+    assert.equal(icon.prop('className'), 'spectrum-Search-icon');
 
     const input = findInput(tree);
-    assert.equal(input.hasClass('spectrum-DecoratedTextfield-input'), true);
     assert.equal(input.hasClass('spectrum-Search-input'), true);
 
     const button = findButton(tree);
@@ -24,13 +22,13 @@ describe('Search', () => {
 
   it('should support custom icons', () => {
     const tree = shallow(<Search icon={<Refresh />} />);
-    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
+    const icon = tree.find('.spectrum-Search-icon');
     assert.equal(icon.type(), Refresh);
   });
 
   it('should support no icon', () => {
     const tree = shallow(<Search icon="" />);
-    const icon = tree.find('.spectrum-DecoratedTextfield-icon');
+    const icon = tree.find('.spectrum-Search-icon');
     assert(!icon.length);
   });
 
@@ -136,5 +134,5 @@ describe('Search', () => {
   });
 });
 
-const findInput = tree => tree.find('.spectrum-DecoratedTextfield-input');
+const findInput = tree => tree.find('.spectrum-Search-input');
 const findButton = tree => tree.find('.spectrum-Search-clear');
