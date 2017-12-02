@@ -91,21 +91,6 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
-    'icon size: XS',
-    () => render({icon: <Bell size="XS" />, variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'icon size: M',
-    () => render({icon: <Bell size="M" />, variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'icon size: L',
-    () => render({icon: <Bell size="L" />, variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'selected: true',
     () => render({selected: true, variant: 'primary'}),
     {inline: true}
