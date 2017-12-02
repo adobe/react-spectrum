@@ -2,6 +2,7 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import React from 'react';
+import TagClose from '../../Icon/core/TagClose';
 import '../style/index.styl';
 
 export default function Tag({
@@ -50,6 +51,7 @@ export default function Tag({
           className="spectrum-TagList-item-removeButton"
           type="button"
           variant="icon"
+          icon={<TagClose />}
           title="Remove"
           onClick={!disabled && (e => {onClose(value || children, e); })} />
       }
