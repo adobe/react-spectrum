@@ -36,11 +36,6 @@ storiesOf('Search', module)
     {inline: true}
   )
   .addWithInfo(
-    'icon: (none)',
-    () => render({value: 'React', icon: ''}),
-    {inline: true}
-  )
-  .addWithInfo(
     'quiet',
     () => render({quiet: true}),
     {inline: true}

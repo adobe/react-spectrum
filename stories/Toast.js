@@ -36,11 +36,6 @@ storiesOf('Toast', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant = help',
-    () => <Toast closable variant="help">Toast is high carb.</Toast>,
-    {inline: true}
-  )
-  .addWithInfo(
     'variant = success',
     () => <Toast closable variant="success">Toast is golden brown.</Toast>,
     {inline: true}
