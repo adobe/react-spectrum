@@ -16,8 +16,9 @@ setDefaults({
     s.infoBody.backgroundColor = 'transparent';
     s.infoBody.border = 'none';
     s.infoBody.boxShadow = 'none';
-    s.infoBody.padding = 0;
+    s.infoBody.padding = '10px 0';
     s.infoBody.marginTop = 0;
+    s.infoBody.clear = 'both'
     return s;
   }
 });
