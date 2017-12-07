@@ -28,13 +28,6 @@ storiesOf('ComboBox', module)
     {inline: true}
   )
   .addWithInfo(
-    'icon: filter',
-    () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" icon="filter" />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
     'invalid',
     () => (
       <ComboBox options={OPTIONS} placeholder="Combo Box" invalid />
@@ -52,13 +45,6 @@ storiesOf('ComboBox', module)
     'quiet',
     () => (
       <ComboBox options={OPTIONS} placeholder="Combo Box" quiet />
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'quiet with icon: filter',
-    () => (
-      <ComboBox options={OPTIONS} placeholder="Combo Box" quiet icon="filter" />
     ),
     {inline: true}
   )

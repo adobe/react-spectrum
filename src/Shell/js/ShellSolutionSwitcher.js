@@ -1,3 +1,4 @@
+import AppsIcon from '../../Icon/Apps';
 import Button from '../../Button';
 import classNames from 'classnames';
 import React from 'react';
@@ -20,7 +21,7 @@ export default function ShellSolutionSwitcher({
         <Button
           className="coral3-Shell-menu-button"
           variant="minimal"
-          icon="apps"
+          icon={<AppsIcon />}
           square />
       }
       {...otherProps}>

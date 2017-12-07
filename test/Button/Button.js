@@ -1,6 +1,6 @@
 import assert from 'assert';
+import Bell from '../../src/Icon/Bell';
 import Button from '../../src/Button';
-import Icon from '../../src/Icon';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -56,6 +56,16 @@ describe('Button', () => {
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-selected');
   });
 
+  it('supports quiet', () => {
+    const tree = shallow(<Button quiet variant="primary" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet--primary');
+  });
+
+  it('supports logic', () => {
+    const tree = shallow(<Button logic variant="and" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--logic--and');
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<Button className="myClass" />);
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default myClass');
@@ -81,20 +91,15 @@ describe('Button', () => {
   });
 
   describe('icon', () => {
-    it('doesn\'t render an icon by default', () => {
-      const tree = shallow(<Button />);
-      assert.equal(tree.find(Icon).length, 0);
-    });
-
     it('supports different icons', () => {
-      const tree = shallow(<Button icon="bell" />);
-      assert.equal(tree.find(Icon).prop('icon'), 'bell');
-      assert.equal(tree.find(Icon).prop('size'), 'S');
+      const tree = shallow(<Button icon={<Bell />} />);
+      assert.equal(tree.find(Bell).length, 1);
+      assert.equal(tree.find(Bell).prop('size'), 'S');
     });
 
     it('supports different sizes', () => {
-      const tree = shallow(<Button icon="bell" iconSize="L" />);
-      assert.equal(tree.find(Icon).prop('size'), 'L');
+      const tree = shallow(<Button icon={<Bell size="L" />} />);
+      assert.equal(tree.find(Bell).prop('size'), 'L');
     });
   });
 

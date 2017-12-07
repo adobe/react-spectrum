@@ -1,17 +1,23 @@
 import {action, storiesOf} from '@storybook/react';
+import Add from '../src/Icon/Add';
+import Bell from '../src/Icon/Bell';
 import Button from '../src/Button';
 import ButtonGroup from '../src/ButtonGroup';
+import Camera from '../src/Icon/Camera';
+import CheckmarkCircle from '../src/Icon/CheckmarkCircle';
+import Delete from '../src/Icon/Delete';
 import React from 'react';
+import Undo from '../src/Icon/Undo';
 import {VerticalCenter} from '../.storybook/layout';
 
 const defaultProps = {
   children: [
-    <Button label="React" value="react" icon="checkCircle" />,
-    <Button label="Add" value="add" icon="add" />,
-    <Button label="Delete" value="delete" icon="delete" />,
-    <Button label="Bell" value="bell" icon="bell" />,
-    <Button label="Camera" value="camera" icon="camera" />,
-    <Button label="Undo" value="undo" icon="undo" />
+    <Button label="React" value="react" icon={<CheckmarkCircle />} />,
+    <Button label="Add" value="add" icon={<Add />} />,
+    <Button label="Delete" value="delete" icon={<Delete />} />,
+    <Button label="Bell" value="bell" icon={<Bell />} />,
+    <Button label="Camera" value="camera" icon={<Camera />} />,
+    <Button label="Undo" value="undo" icon={<Undo />} />
   ]
 };
 

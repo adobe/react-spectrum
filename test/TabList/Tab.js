@@ -1,3 +1,4 @@
+import AddIcon from '../../src/Icon/Add';
 import assert from 'assert';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
@@ -7,7 +8,7 @@ import {Tab} from '../../src/TabList';
 describe('Tab', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Tab />);
-    assert.equal(tree.prop('className'), 'spectrum-Tab');
+    assert.equal(tree.prop('className'), 'spectrum-TabList-item');
     assert.equal(tree.prop('role'), 'tab');
     assert.equal(tree.prop('aria-invalid'), false);
     assert.equal(tree.prop('aria-disabled'), false);
@@ -29,8 +30,8 @@ describe('Tab', () => {
   });
 
   it('supports icon', () => {
-    const tree = mount(<Tab icon="add" />);
-    const child = tree.find('.coral-Icon');
+    const tree = mount(<Tab icon={<AddIcon />} />);
+    const child = tree.find(AddIcon);
     assert.equal(child.length, 1);
   });
 

@@ -7,7 +7,7 @@ import '../../Dialog/style/index.styl';
 
 export default class Popover extends Component {
   static propTypes = {
-    variant: PropTypes.oneOf(['default', 'error', 'warning', 'success', 'info', 'help']),
+    variant: PropTypes.oneOf(['default', 'error']),
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
       'top', 'top left', 'top right',
@@ -34,8 +34,11 @@ export default class Popover extends Component {
       title,
       children,
       className,
+      isDialog = true, // private. for use only by Menu.
       ...otherProps
     } = this.props;
+
+    let content = isDialog ? <div className="spectrum-Dialog-content">{children}</div> : children;
 
     return (
       <div
@@ -43,24 +46,23 @@ export default class Popover extends Component {
           classNames(
             'spectrum-Popover',
             `spectrum-Popover--${placement.split(' ')[0]}`,
-            `spectrum-Dialog--${variant}`,
             {
+              'spectrum-Popover--withTip': isDialog,
+              'spectrum-Popover--dialog': isDialog,
+              [`spectrum-Dialog--${variant}`]: isDialog,
               'is-open': open
             },
             className
           )
         }
         {...otherProps}>
-        {title &&
+        {isDialog && title &&
           <DialogHeader
-            className="spectrum-Popover-header"
             title={title}
             variant={variant} />
         }
-        <div className="spectrum-Dialog-content">
-          {children}
-        </div>
-        <div className="spectrum-Popover-tip" style={arrowStyle} />
+        {content}
+        {isDialog && <div className="spectrum-Popover-tip" style={arrowStyle} />}
       </div>
     );
   }

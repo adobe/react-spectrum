@@ -6,33 +6,28 @@ import Wait from '../../src/Wait';
 describe('Wait', () => {
   it('default', () => {
     const tree = shallow(<Wait />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate');
     assert.equal(tree.type(), 'div');
   });
 
   it('supports size L', () => {
     const tree = shallow(<Wait size="L" />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait spectrum-Wait--large');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--indeterminate--large');
   });
 
-  it('supports size M', () => {
-    const tree = shallow(<Wait size="M" />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait spectrum-Wait--medium');
-  });
-
-  it('supports dots variant', () => {
-    const tree = shallow(<Wait variant="dots" />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait spectrum-Wait--dots');
+  it('supports size S', () => {
+    const tree = shallow(<Wait size="S" />);
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--indeterminate--small');
   });
 
   it('supports centered', () => {
     const tree = shallow(<Wait centered />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait spectrum-Wait--centered');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate react-spectrum-Wait--centered');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<Wait className="myClass" />);
-    assert.equal(tree.prop('className'), 'spectrum-Wait myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate myClass');
   });
 
   it('supports additional properties', () => {

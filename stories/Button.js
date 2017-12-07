@@ -1,4 +1,5 @@
 import {action, storiesOf} from '@storybook/react';
+import Bell from '../src/Icon/Bell';
 import Button from '../src/Button';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
@@ -36,17 +37,17 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'variant: action icon only',
-    () => render({variant: 'action', label: null, icon: 'bell'}),
+    () => render({variant: 'action', label: null, icon: <Bell />}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: and',
-    () => render({variant: 'and'}),
+    'logic variant: and',
+    () => render({logic: true, variant: 'and', label: 'and'}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: or',
-    () => render({variant: 'or'}),
+    'logic variant: or',
+    () => render({logic: true, variant: 'or', label: 'or'}),
     {inline: true}
   )
   .addWithInfo(
@@ -71,7 +72,7 @@ storiesOf('Button', module)
   )
  .addWithInfo(
     'quiet: true, variant: action icon only',
-    () => render({quiet: true, variant: 'action', label: null, icon: 'bell'}),
+    () => render({quiet: true, variant: 'action', label: null, icon: <Bell />}),
     {inline: true}
   )
   .addWithInfo(
@@ -86,22 +87,7 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'icon: bell',
-    () => render({icon: 'bell', variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'iconSize: XS',
-    () => render({iconSize: 'XS', icon: 'bell', variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'iconSize: M',
-    () => render({iconSize: 'M', icon: 'bell', variant: 'primary'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'iconSize: L',
-    () => render({iconSize: 'L', icon: 'bell', variant: 'primary'}),
+    () => render({icon: <Bell />, variant: 'primary'}),
     {inline: true}
   )
   .addWithInfo(

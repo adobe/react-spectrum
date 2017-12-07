@@ -9,7 +9,7 @@ describe('Switch', () => {
     assert.equal(tree.prop('inputType'), 'checkbox');
     assert.equal(tree.prop('className'), 'spectrum-ToggleSwitch');
     assert.equal(tree.prop('inputClassName'), 'spectrum-ToggleSwitch-input');
-    assert.equal(tree.prop('markClassName'), 'spectrum-ToggleSwitch-content');
+    assert.equal(tree.prop('markClassName'), 'spectrum-ToggleSwitch-switch');
     assert.equal(tree.prop('labelClassName'), 'spectrum-ToggleSwitch-label');
   });
 
@@ -21,5 +21,10 @@ describe('Switch', () => {
   it('supports additional properties', () => {
     const tree = shallow(<Switch foo />);
     assert.equal(tree.prop('foo'), true);
+  });
+
+  it('supports ab variant', () => {
+    const tree = shallow(<Switch variant="ab" />);
+    assert.equal(tree.hasClass('spectrum-ToggleSwitch--ab'), true);
   });
 });

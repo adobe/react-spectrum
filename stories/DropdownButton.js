@@ -1,7 +1,10 @@
 import {action, storiesOf} from '@storybook/react';
 import DropdownButton from '../src/DropdownButton';
+import Facebook from '../src/Icon/Facebook';
+import Instagram from '../src/Icon/Instagram';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
+import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('DropdownButton', module)
@@ -34,9 +37,9 @@ storiesOf('DropdownButton', module)
 function render(props = {}) {
   return (
     <DropdownButton {...props} onClick={action('click')} onSelect={action('select')}>
-      <MenuItem icon="twitter" value="twitter">Twitter</MenuItem>
-      <MenuItem icon="facebook" value="facebook">Facebook</MenuItem>
-      <MenuItem icon="instagram" value="instagram">Instagram</MenuItem>
+      <MenuItem icon={<Twitter />} value="twitter">Twitter</MenuItem>
+      <MenuItem icon={<Facebook />} value="facebook">Facebook</MenuItem>
+      <MenuItem icon={<Instagram />} value="instagram">Instagram</MenuItem>
     </DropdownButton>
   );
 }

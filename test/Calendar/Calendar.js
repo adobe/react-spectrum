@@ -389,16 +389,8 @@ describe('Calendar', () => {
         const endCell = shallow(findCellByDate(tree, end).getElement()).find('span');
 
         assert.equal(startCell.hasClass('is-range-selection'), true);
-        assert.equal(startCell.hasClass('is-range-start'), true);
-        assert.equal(startCell.hasClass('is-range-end'), false);
-
         assert.equal(midCell.hasClass('is-range-selection'), true);
-        assert.equal(midCell.hasClass('is-range-start'), false);
-        assert.equal(midCell.hasClass('is-range-end'), false);
-
         assert.equal(endCell.hasClass('is-range-selection'), true);
-        assert.equal(endCell.hasClass('is-range-start'), false);
-        assert.equal(endCell.hasClass('is-range-end'), true);
       });
     });
 

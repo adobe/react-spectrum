@@ -17,7 +17,7 @@ export default function Step({
     <div
       className={classNames(
         className,
-        'spectrum-Steplist-step',
+        'spectrum-Steplist-item',
         {'is-complete': complete},
         {'is-selected': selected}
       )}

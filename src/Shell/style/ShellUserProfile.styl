@@ -28,19 +28,9 @@ $coral-Shell-user-background = $spectrum-global-color-grey50
 }
 
 .coral3-Shell-user-avatar {
-  &:before {
-    width: $coral-shell-user-image-size !important;
-    height: $coral-shell-user-image-size !important;
-    border-radius: $coral-shell-user-image-size;
-    font-size: $coral-shell-user-image-size;
-  }
-  &.is-image {
-    .coral-Icon-image {
-      width: $coral-shell-user-image-size !important;
-      height: $coral-shell-user-image-size !important;
-      border-radius: $coral-shell-user-image-size;
-    }
-  }
+  width: $coral-shell-user-image-size;
+  height: $coral-shell-user-image-size;
+  border-radius: $coral-shell-user-image-size;
 }
 
 .coral3-Shell-user-name {
@@ -89,9 +79,11 @@ $coral-Shell-user-background = $spectrum-global-color-grey50
   }
 }
 
-.coral3-Shell-menu-button .coral-Icon.is-image.coral-Icon--sizeM .coral-Icon-image {
+.coral3-Shell-menu-button img {
   border-radius: 1.5rem;
   margin-top: 2.5px;
+  width: 24px;
+  height: 24px;
 }
 .coral3-Shell-user-container {
   overflow: hidden;

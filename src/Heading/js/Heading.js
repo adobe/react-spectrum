@@ -3,7 +3,7 @@ import React from 'react';
 
 const VARIANTS = {
   1: 'display',
-  2: 'page-title',
+  2: 'pageTitle',
   3: 'subtitle1',
   4: 'subtitle2',
   5: 'subtitle3',
@@ -12,7 +12,7 @@ const VARIANTS = {
 
 const ELEMENTS = {
   'display': 'h1',
-  'page-title': 'h2',
+  'pageTitle': 'h2',
   'subtitle1': 'h2',
   'subtitle2': 'h3',
   'subtitle3': 'h4'

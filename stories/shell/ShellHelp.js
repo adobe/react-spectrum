@@ -1,6 +1,8 @@
 import {action, storiesOf} from '@storybook/react';
+import Launch from '../../src/Icon/Launch';
 import React from 'react';
 import ShellHelp from '../../src/Shell/js/ShellHelp';
+import User from '../../src/Icon/User';
 import {VerticalCenter} from '../../.storybook/layout';
 
 storiesOf('ShellHelp', module)
@@ -79,12 +81,12 @@ const moreSearchResultsUrl = 'https://marketing.adobe.com/resources/help/en_US/h
 const defaultResults = [
   {
     href: '/foo',
-    icon: 'launch',
+    icon: <Launch />,
     label: 'React Coral'
   },
   {
     href: '/community',
-    icon: 'users',
+    icon: <User />,
     label: 'Community'
   }
 ];

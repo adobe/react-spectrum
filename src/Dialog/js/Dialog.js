@@ -14,13 +14,12 @@ export default class Dialog extends Component {
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
     title: PropTypes.string,
-    variant: PropTypes.oneOf(['default', 'error', 'help', 'info', 'success', 'warning']),
+    variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover'])
   };
 
   static defaultProps = {
     open: true,
-    variant: 'default',
     mode: 'centered',
     onClose: function () {}
   };
@@ -43,6 +42,7 @@ export default class Dialog extends Component {
     const {
       children,
       className,
+      cancelLabel,
       confirmLabel,
       open,
       title,
@@ -51,21 +51,22 @@ export default class Dialog extends Component {
     } = this.props;
 
     const fullscreen = mode === 'fullscreen' || mode === 'fullscreenTakeover';
+    const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
 
     return (
       <div
         className={classNames(
           'spectrum-Dialog',
-          `spectrum-Dialog--${variant}`,
           `spectrum-Dialog--${mode}`,
           {
+            'spectrum-Dialog--error': variant === 'error',
             'is-open': open
           },
           className
         )}>
         {title &&
           <DialogHeader
-            variant={variant}
+            variant={derivedVariant}
             title={title}
             fullscreen={fullscreen}
             {...this.props}
@@ -77,6 +78,7 @@ export default class Dialog extends Component {
         {!fullscreen && confirmLabel &&
           <DialogButtons
             {...this.props}
+            variant={derivedVariant}
             className="spectrum-Dialog-footer"
             onConfirm={this.onConfirm.bind(this)} />
         }

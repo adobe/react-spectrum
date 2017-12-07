@@ -1,13 +1,13 @@
+import AlertIcon from '../../Icon/Alert';
 import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
-import Icon from '../../Icon';
+import Popover from '../../Popover';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import SelectList from '../../SelectList';
 import '../style/index.styl';
-import '../../Menu/style/index.styl';
 
 export default class Select extends React.Component {
   constructor(props) {
@@ -123,13 +123,9 @@ export default class Select extends React.Component {
           invalid={invalid}
           ref={b => this.button = b}
           onKeyDown={this.onKeyDown}>
-          <span className="spectrum-Dropdown-trigger-container">
-            <span className={classNames('spectrum-Dropdown-trigger-label', {'is-placeholder': label === placeholder})}>{label}</span>
-            <span className="spectrum-Dropdown-icon-container">
-              {invalid && <Icon size="S" icon="alert" className="spectrum-Icon" />}
-              <span className="spectrum-Icon spectrum-Dropdown-open-icon" />
-            </span>
-          </span>
+          <span className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
+          {invalid && <AlertIcon size="S" />}
+          <SelectDownChevron size={null} className="spectrum-Dropdown-icon" />
         </Button>
         <SelectMenu
           dropdownMenu
@@ -140,17 +136,16 @@ export default class Select extends React.Component {
           invalid={invalid}
           required={required}
           style={{width: this.state.width}}
-          className="spectrum-Flyout spectrum-Flyout--bottom"
           autoFocus />
       </Dropdown>
     );
   }
 }
 
-export function SelectMenu({onClose, onSelect, className, open, ...props}) {
+export function SelectMenu({onClose, onSelect, className, open, placement, style, ...props}) {
   return (
-    <RootCloseWrapper onRootClose={onClose}>
-      <SelectList className={classNames(className, {'is-open': open})} {...props} onChange={onSelect} />
-    </RootCloseWrapper>
+    <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+      <SelectList className={className} {...props} onChange={onSelect} />
+    </Popover>
   );
 }

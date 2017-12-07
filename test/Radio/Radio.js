@@ -9,7 +9,7 @@ describe('Radio', () => {
     assert.equal(tree.prop('inputType'), 'radio');
     assert.equal(tree.prop('className'), 'spectrum-Radio');
     assert.equal(tree.prop('inputClassName'), 'spectrum-Radio-input');
-    assert.equal(tree.prop('markClassName'), 'spectrum-Radio-checkmark');
+    assert.equal(tree.prop('markClassName'), 'spectrum-Radio-button');
     assert.equal(tree.prop('labelClassName'), 'spectrum-Radio-label');
   });
 

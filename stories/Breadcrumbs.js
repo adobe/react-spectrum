@@ -1,5 +1,6 @@
 import {action, storiesOf} from '@storybook/react';
 import Breadcrumbs from '../src/Breadcrumbs';
+import FolderIcon from '../src/Icon/Folder';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
 
@@ -22,7 +23,7 @@ storiesOf('Breadcrumbs', module)
     'icon: folder',
     () => (
       <Breadcrumbs
-        icon="folder"
+        icon={<FolderIcon />}
         items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
     ),

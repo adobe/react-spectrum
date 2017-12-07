@@ -1,6 +1,5 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import Icon from '../../Icon';
 import React from 'react';
 import ShellMenu from './ShellMenu';
 import '../style/ShellUserProfile.styl';
@@ -24,9 +23,9 @@ export default function ShellUserProfile({
         <Button
           className="coral3-Shell-menu-button"
           variant="minimal"
-          icon={avatarUrl}
-          iconSize="M"
-          square />
+          square>
+          <img src={avatarUrl} role="presentation" />
+        </Button>
       }
       {...otherProps}>
       <div
@@ -38,7 +37,7 @@ export default function ShellUserProfile({
         }>
         <div className="coral3-Shell-user-container">
           <div className="coral3-Shell-user-image">
-            <Icon icon={avatarUrl} size="L" className="coral3-Shell-user-avatar is-image" />
+            <img src={avatarUrl} role="presentation" className="coral3-Shell-user-avatar" />
           </div>
           <div className="coral3-Shell-user-name">{name}</div>
           <div className="coral3-Shell-user-heading">

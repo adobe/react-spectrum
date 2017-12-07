@@ -16,23 +16,18 @@ storiesOf('Wait', module)
     {inline: true}
   )
   .addWithInfo(
-    'size: medium',
-    () => render({size: 'M'}),
+    'size: S',
+    () => render({size: 'S'}),
     {inline: true}
   )
   .addWithInfo(
-    'size: large',
+    'size: L',
     () => render({size: 'L'}),
     {inline: true}
   )
   .addWithInfo(
     'centered: true',
     () => render({centered: true}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: dots',
-    () => render({variant: 'dots'}),
     {inline: true}
   );
 

@@ -72,6 +72,7 @@ export default class SwitchBase extends Component {
       renderLabel,
       inputClassName,
       markClassName,
+      markIcon,
       labelClassName,
       onBlur,
       onFocus,
@@ -113,9 +114,8 @@ export default class SwitchBase extends Component {
           onChange={this.handleChange}
           onBlur={onBlur}
           onFocus={onFocus} />
-        <span className={markClassName} />
-        {
-          shouldRenderLabel &&
+        <span className={markClassName}>{markIcon}</span>
+        {shouldRenderLabel &&
           <label className={labelClassName} >
             {label}
             {children}

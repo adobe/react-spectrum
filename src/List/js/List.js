@@ -70,7 +70,7 @@ export default class List extends Component {
         ref={l => this.list = l}
         className={
           classNames(
-            'spectrum-List',
+            'spectrum-SelectList',
             className
           )
         }

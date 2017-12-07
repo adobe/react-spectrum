@@ -1,6 +1,9 @@
+import Add from '../src/Icon/Add';
+import Bell from '../src/Icon/Bell';
 import Icon from '../src/Icon';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Icon', module)
@@ -16,12 +19,12 @@ storiesOf('Icon', module)
   )
   .addWithInfo(
     'icon: bell',
-    () => render({icon: 'bell'}),
+    () => <Bell />,
     {inline: true}
   )
   .addWithInfo(
-    'icon: twitterColor',
-    () => render({icon: 'twitterColor'}),
+    'icon: Twitter',
+    () => <Twitter />,
     {inline: true}
   )
   .addWithInfo(
@@ -43,10 +46,15 @@ storiesOf('Icon', module)
     'size: XL',
     () => render({size: 'XL'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'custom SVG',
+    () => <Icon><svg viewBox="0 0 25 25"><rect x="0" y="0" width="25" height="25" /></svg></Icon>,
+    {inline: true}
   );
 
 function render(props = {}) {
   return (
-    <Icon icon="add" {...props} />
+    <Add {...props} />
   );
 }

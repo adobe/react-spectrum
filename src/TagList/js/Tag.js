@@ -1,7 +1,8 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React from 'react';
+import TagClose from '../../Icon/core/TagClose';
 import '../style/index.styl';
 
 export default function Tag({
@@ -9,7 +10,6 @@ export default function Tag({
   children,
   avatar,
   icon,
-  quiet = false,
   closable = false,
   disabled = false,
   selected = false,
@@ -24,9 +24,8 @@ export default function Tag({
     <div
       className={
         classNames(
-          'spectrum-Tag',
+          'spectrum-TagList-item',
           {
-            'spectrum-Tag--quiet': quiet,
             'is-selected': selected,
             'is-disabled': disabled
           },
@@ -38,19 +37,21 @@ export default function Tag({
       aria-label={ariaLabel}
       {...otherProps}>
       {avatar &&
-        <img className="spectrum-Tag-avatar" src={avatar} />
+        <img className="spectrum-TagList-item-avatar" src={avatar} />
       }
-      {icon &&
-        <Icon className="spectrum-Tag-icon" size="S" icon={icon} />
-      }
-      <span className="spectrum-Tag-label">
+      {cloneIcon(icon, {
+        size: 'S',
+        className: 'spectrum-TagList-item-icon'
+      })}
+      <span className="spectrum-TagList-item-label">
         {childContent}
       </span>
       {closable &&
         <Button
-          className="spectrum-Tag-removeButton"
+          className="spectrum-TagList-item-removeButton"
           type="button"
           variant="icon"
+          icon={<TagClose />}
           title="Remove"
           onClick={!disabled && (e => {onClose(value || children, e); })} />
       }

@@ -163,10 +163,16 @@ export default class Autocomplete extends React.Component {
   showMenu() {
     this.setState({showDropdown: true, selectedIndex: 0});
     this.getCompletions(this.state.value);
+    if (this.props.onMenuShow) {
+      this.props.onMenuShow();
+    }
   }
 
   hideMenu() {
     this.setState({showDropdown: false, selectedIndex: -1});
+    if (this.props.onMenuHide) {
+      this.props.onMenuHide();
+    }
   }
 
   render() {

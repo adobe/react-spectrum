@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -28,9 +28,9 @@ export default class Button extends Component {
       label,
       children,
       variant = 'default',
+      logic,
       quiet,
       icon,
-      iconSize = 'S',
       selected,
       block,
       className,
@@ -45,8 +45,15 @@ export default class Button extends Component {
       otherProps['aria-disabled'] = disabled;
     }
 
-    let quietClass = (quiet ? 'quiet--' : '');
+    let variantPrefix = '';
+    if (logic) {
+      variantPrefix = 'logic--';
+    } else if (quiet) {
+      variantPrefix = 'quiet--';
+    }
+
     let iconOnly = icon && !(label || children);
+    let labelContents = label || (typeof children === 'string' ? children : null);
 
     return (
       <Element
@@ -54,25 +61,24 @@ export default class Button extends Component {
         className={
           classNames(
             'spectrum-Button',
-            `spectrum-Button--${quietClass + (VARIANTS[variant] || variant)}`,
+            `spectrum-Button--${variantPrefix + (VARIANTS[variant] || variant)}`,
             {
               'is-selected': selected,
               'is-disabled': disabled,
               'is-invalid': invalid,
               'spectrum-Button--block': block,
-              ['spectrum-Button--action--' + quietClass + 'icon-only']: iconOnly
+              ['spectrum-Button--action--' + variantPrefix + 'iconOnly']: variant === 'action' && iconOnly
             },
             className
           )
         }
         disabled={disabled}
         onClick={this.onClick}>
-        {icon &&
-          <Icon className="spectrum-Icon" size={iconSize} icon={icon} />
+        {cloneIcon(icon, {size: 'S'})}
+        {labelContents &&
+          <span className="spectrum-Button-label">{labelContents}</span>
         }
-        {(label || children) &&
-          <span className="spectrum-Button-label">{label}{children}</span>
-        }
+        {typeof children !== 'string' && children}
       </Element>
     );
   }

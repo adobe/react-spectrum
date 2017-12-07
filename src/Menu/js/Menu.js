@@ -1,9 +1,7 @@
-import classNames from 'classnames';
 import {List} from '../../List';
+import Popover from '../../Popover';
 import PropTypes from 'prop-types';
 import React from 'react';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
-import '../style/index.styl';
 
 export default class Menu extends React.Component {
   static propTypes = {
@@ -20,18 +18,14 @@ export default class Menu extends React.Component {
   };
 
   render() {
-    const {className, open, onClose, onSelect, placement, ...otherProps} = this.props;
-    let placementClass = '';
-    if (placement) {
-      placementClass = `spectrum-Flyout--${placement.split(' ')[0]}`;
-    }
+    const {className, open, onClose, onSelect, placement, children, style, ...otherProps} = this.props;
 
     return (
-      <RootCloseWrapper onRootClose={onClose}>
-        <List role="menu" className={classNames('spectrum-Flyout', placementClass, {'is-open': open}, className)} {...otherProps}>
-          {React.Children.map(this.props.children, child => React.cloneElement(child, {onSelect}))}
+      <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+        <List role="menu" className={className} {...otherProps}>
+          {React.Children.map(children, child => React.cloneElement(child, {onSelect}))}
         </List>
-      </RootCloseWrapper>
+      </Popover>
     );
   }
 }

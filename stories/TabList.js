@@ -1,6 +1,8 @@
 import {action, storiesOf} from '@storybook/react';
+import Instagram from '../src/Icon/Instagram';
 import React from 'react';
 import {Tab, TabList} from '../src/TabList';
+import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('TabList', module)
@@ -25,18 +27,8 @@ storiesOf('TabList', module)
     {inline: true}
   )
   .addWithInfo(
-    'size: L',
-    () => render({size: 'L'}),
-    {inline: true}
-  )
-  .addWithInfo(
     'orientation: vertical',
     () => render({orientation: 'vertical'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'orientation: vertical, size: L',
-    () => render({orientation: 'vertical', size: 'L'}),
     {inline: true}
   )
   .addWithInfo(
@@ -60,11 +52,21 @@ storiesOf('TabList', module)
     {inline: true}
   )
   .addWithInfo(
+    'icons only',
+    () => (
+      <TabList onChange={action('onChange')}>
+        <Tab icon={<Twitter />} />
+        <Tab icon={<Instagram />} />
+      </TabList>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
     'disabled tabs',
     () => (
       <TabList onChange={action('onChange')}>
-        <Tab icon="twitter">Tab 1</Tab>
-        <Tab icon="instagram" disabled>Tab 2</Tab>
+        <Tab icon={<Twitter />}>Tab 1</Tab>
+        <Tab icon={<Instagram />} disabled>Tab 2</Tab>
       </TabList>
     ),
     {inline: true}
@@ -73,8 +75,8 @@ storiesOf('TabList', module)
 function render(props = {}) {
   return (
     <TabList {...props} onChange={action('onChange')}>
-      <Tab icon={props.icons && 'twitter'}>Tab 1</Tab>
-      <Tab icon={props.icons && 'instagram'}>Tab 2</Tab>
+      <Tab icon={props.icons && <Twitter />}>Tab 1</Tab>
+      <Tab icon={props.icons && <Instagram />}>Tab 2</Tab>
     </TabList>
   );
 }

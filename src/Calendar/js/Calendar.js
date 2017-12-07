@@ -1,5 +1,7 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
+import CarouselLeftChevron from '../../src/Icon/core/CarouselLeftChevron';
+import CarouselRightChevron from '../../src/Icon/core/CarouselRightChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
@@ -379,8 +381,10 @@ export default class Calendar extends Component {
                   const cursor = moment(new Date(year, month, day));
                   const isCurrentMonth = (cursor.month()) === parseFloat(month);
                   const cursorLocal = cursor.clone().startOf('day');
-                  const isRangeStart = range && (dayIndex === 0 || day === 1 || cursorLocal.isSame(range.start, 'day'));
-                  const isRangeEnd = range && (dayIndex === 6 || day === cursor.daysInMonth() || cursorLocal.isSame(range.end, 'day'));
+                  const isRangeStart = range && (dayIndex === 0 || day === 1);
+                  const isRangeEnd = range && (dayIndex === 6 || day === cursor.daysInMonth());
+                  const isSelectionStart = range && cursorLocal.isSame(range.start, 'day');
+                  const isSelectionEnd = range && cursorLocal.isSame(range.end, 'day');
                   return (
                     <CalendarCell
                       key={dayIndex}
@@ -391,6 +395,8 @@ export default class Calendar extends Component {
                       isCurrentMonth={isCurrentMonth}
                       selected={range && range.contains(cursorLocal)}
                       isRangeSelection={this.props.selectionType === 'range'}
+                      isSelectionStart={isSelectionStart}
+                      isSelectionEnd={isSelectionEnd}
                       isRangeStart={isRangeStart}
                       isRangeEnd={isRangeEnd}
                       focused={isFocused && dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
@@ -448,6 +454,7 @@ export default class Calendar extends Component {
           <Button
             className="spectrum-Calendar-prevMonth"
             variant="icon"
+            icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
             aria-label="Previous"
             title="Previous"
             disabled={disabled}
@@ -456,6 +463,7 @@ export default class Calendar extends Component {
           <Button
             className="spectrum-Calendar-nextMonth"
             variant="icon"
+            icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
             aria-label="Next"
             title="Next"
             disabled={disabled}
@@ -492,6 +500,8 @@ const CalendarCell = function CalendarCell({
   isRangeSelection = false,
   isRangeStart = false,
   isRangeEnd = false,
+  isSelectionStart = false,
+  isSelectionEnd = false,
   onClick = function () {},
   onHighlight = function () {}
 }) {
@@ -523,9 +533,11 @@ const CalendarCell = function CalendarCell({
           'is-focused': focused,
           'is-disabled': disabled,
           'is-outsideMonth': !isCurrentMonth,
-          'is-range-selection': isRangeSelection && selected,
           'is-range-start': isRangeSelection && isRangeStart,
-          'is-range-end': isRangeSelection && isRangeEnd
+          'is-range-end': isRangeSelection && isRangeEnd,
+          'is-range-selection': isRangeSelection && selected,
+          'is-selection-start': isRangeSelection && isSelectionStart,
+          'is-selection-end': isRangeSelection && isSelectionEnd
         })}>
         {date.date()}
       </span>

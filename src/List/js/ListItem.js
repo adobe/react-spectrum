@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import Icon from '../../Icon';
+import {cloneIcon} from '../../utils/icon';
 import {interpretKeyboardEvent} from '../../utils/events';
+import MenuCheckmark from '../../Icon/core/MenuCheckmark';
 import React, {Component} from 'react';
 
 export default class ListItem extends Component {
   static defaultProps = {
-    iconSize: 'S',
     selected: false,
     disabled: false,
     onSelect: function () {},
@@ -59,7 +59,6 @@ export default class ListItem extends Component {
   render() {
     const {
       icon,
-      iconSize,
       label,
       className,
       children,
@@ -74,7 +73,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'spectrum-List-option',
+            'spectrum-SelectList-item',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -92,11 +91,13 @@ export default class ListItem extends Component {
         aria-selected={selected}
         aria-disabled={disabled}
         {...otherProps}>
-        {icon &&
-          <Icon className="react-spectrum-List-option-icon" icon={icon} size={iconSize} />
-        }
-        <div className="react-spectrum-List-option-content">
+        {cloneIcon(icon, {
+          className: 'react-spectrum-List-item-icon',
+          size: 'S'
+        })}
+        <div className="react-spectrum-List-item-content">
           {label || children}
+          {selected && <MenuCheckmark size={null} className="spectrum-SelectList-checkmark" />}
         </div>
       </li>
     );

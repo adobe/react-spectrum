@@ -36,7 +36,6 @@ const render = (props = {}) => (
       confirmLabel="Do it"
       size="S"
       cancelLabel="close"
-      variant="help"
       {...props}>
       <span>the modal dialog content goes here</span>
     </Dialog>

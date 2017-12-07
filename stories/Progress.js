@@ -25,18 +25,8 @@ storiesOf('Progress', module)
     {inline: true}
   )
   .addWithInfo(
-    'indeterminate: true',
-    () => render({indeterminate: true, value: 50}),
-    {inline: true}
-  )
-  .addWithInfo(
     'size: S',
     () => render({size: 'S', value: 50}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'size: L',
-    () => render({size: 'L', value: 50}),
     {inline: true}
   )
   .addWithInfo(
@@ -45,18 +35,18 @@ storiesOf('Progress', module)
     {inline: true}
   )
   .addWithInfo(
-    'labelPosition: left',
-    () => render({showPercent: true, labelPosition: 'left', value: 50}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'labelPosition: bottom',
-    () => render({showPercent: true, labelPosition: 'bottom', value: 50}),
-    {inline: true}
-  )
-  .addWithInfo(
     'label: React',
     () => render({label: 'React', value: 50}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'labelPosition: left',
+    () => render({label: 'React', showPercent: true, labelPosition: 'left', value: 50}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'labelPosition: top',
+    () => render({label: 'React', showPercent: true, labelPosition: 'top', value: 50}),
     {inline: true}
   );
 

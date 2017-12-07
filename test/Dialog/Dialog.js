@@ -9,7 +9,7 @@ import {sleep} from '../utils';
 describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
-    assert(tree.hasClass('spectrum-Dialog--default'));
+    assert(tree.hasClass('spectrum-Dialog'));
     assert(tree.hasClass('spectrum-Dialog--centered'));
   });
 
@@ -25,19 +25,35 @@ describe('Dialog', () => {
     assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
     tree.setProps({confirmLabel: 'Go'});
     assert.equal(tree.find('.spectrum-Dialog-footer').length, 1);
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'information');
+  });
+
+  it('defaults to information variant with only confirm button', () => {
+    const tree = shallow(<Dialog confirmLabel="OK" />);
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'information');
+  });
+
+  it('defaults to information variant with confirm and cancel button', () => {
+    const tree = shallow(<Dialog confirmLabel="OK" cancelLabel="Cancel" />);
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'confirmation');
   });
 
   it('supports different variants', () => {
-    const tree = shallow(<Dialog variant="error" />);
+    const tree = shallow(<Dialog variant="error" confirmLabel="OK" />);
     assert(tree.hasClass('spectrum-Dialog--error'));
-    tree.setProps({variant: 'info'});
-    assert(tree.hasClass('spectrum-Dialog--info'));
-    tree.setProps({variant: 'help'});
-    assert(tree.hasClass('spectrum-Dialog--help'));
-    tree.setProps({variant: 'success'});
-    assert(tree.hasClass('spectrum-Dialog--success'));
-    tree.setProps({variant: 'warning'});
-    assert(tree.hasClass('spectrum-Dialog--warning'));
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'error');
+
+    tree.setProps({variant: 'information'});
+    assert(!tree.hasClass('spectrum-Dialog--error'));
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'information');
+
+    tree.setProps({variant: 'confirmation'});
+    assert(!tree.hasClass('spectrum-Dialog--error'));
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'confirmation');
+
+    tree.setProps({variant: 'destructive'});
+    assert(!tree.hasClass('spectrum-Dialog--error'));
+    assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'destructive');
   });
 
   it('supports fullscreen mode', () => {

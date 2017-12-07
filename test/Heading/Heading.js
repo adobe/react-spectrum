@@ -7,7 +7,7 @@ describe('Heading', () => {
   it('supports different sizes', () => {
     const tree = shallow(<Heading>Testing</Heading>);
     assertSize(tree, 1, 'h1', 'display');
-    changeAndAssertSize(tree, 2, 'h2', 'page-title');
+    changeAndAssertSize(tree, 2, 'h2', 'pageTitle');
     changeAndAssertSize(tree, 3, 'h2', 'subtitle1');
     changeAndAssertSize(tree, 4, 'h3', 'subtitle2');
     changeAndAssertSize(tree, 5, 'h4', 'subtitle3');
