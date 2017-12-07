@@ -1,4 +1,4 @@
-import AccordionChevron from '../../src/Icon/core/AccordionChevron';
+import AccordionChevron from '../../Icon/core/AccordionChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';

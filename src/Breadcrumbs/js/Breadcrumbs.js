@@ -1,4 +1,4 @@
-import BreadcrumbChevron from '../../src/Icon/core/BreadcrumbChevron';
+import BreadcrumbChevron from '../../Icon/core/BreadcrumbChevron';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import React from 'react';
