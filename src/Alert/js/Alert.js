@@ -1,7 +1,7 @@
-import AlertError from '../../src/Icon/core/AlertError';
-import AlertHelp from '../../src/Icon/core/AlertHelp';
-import AlertInfo from '../../src/Icon/core/AlertInfo';
-import AlertSuccess from '../../src/Icon/core/AlertSuccess';
+import AlertError from '../../Icon/core/AlertError';
+import AlertHelp from '../../Icon/core/AlertHelp';
+import AlertInfo from '../../Icon/core/AlertInfo';
+import AlertSuccess from '../../Icon/core/AlertSuccess';
 import classNames from 'classnames';
 import React from 'react';
 import '../style/index.styl';

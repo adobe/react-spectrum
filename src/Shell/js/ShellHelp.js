@@ -1,6 +1,6 @@
 import Button from '../../Button';
 import classNames from 'classnames';
-import HelpOutline from '../../src/Icon/HelpOutline';
+import HelpOutline from '../../Icon/HelpOutline';
 import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 import Search from '../../Search';
