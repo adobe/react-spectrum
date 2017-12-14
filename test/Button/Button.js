@@ -23,9 +23,10 @@ describe('Button', () => {
     assert.equal(tree.type(), 'button');
     tree.setProps({element: 'a', href: 'http://example.com', disabled: true});
     assert.equal(tree.type(), 'a');
-    assert.equal(tree.prop('tabIndex'), -1);
+    assert.equal(tree.prop('href'), undefined);
+    assert.equal(tree.prop('tabIndex'), undefined);
     assert.equal(tree.prop('aria-disabled'), true);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-disabled');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary is-disabled');
 
     tree.simulate('click', {preventDefault: preventDefaultSpy});
     assert(!onClickSpy.called);
@@ -39,7 +40,7 @@ describe('Button', () => {
 
   it('supports block', () => {
     const tree = shallow(<Button block />);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default spectrum-Button--block');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary spectrum-Button--block');
   });
 
   it('supports disabled', () => {
@@ -51,9 +52,9 @@ describe('Button', () => {
 
   it('supports selected', () => {
     const tree = shallow(<Button />);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary');
     tree.setProps({selected: true});
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default is-selected');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary is-selected');
   });
 
   it('supports quiet', () => {
@@ -68,7 +69,7 @@ describe('Button', () => {
 
   it('supports additional classNames', () => {
     const tree = shallow(<Button className="myClass" />);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--default myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary myClass');
   });
 
   it('supports additional properties', () => {
