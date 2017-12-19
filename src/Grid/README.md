@@ -16,9 +16,9 @@ A property that is `Responsive` defines values for the following sizes:
 | Size | Viewport Width |
 | ---- | --------------:|
 | xs   |       < 768 px |
-| s    |      < 1280 px |
-| m    |      < 1768 px |
-| l    |      < 2160 px |
+| sm   |      < 1280 px |
+| md   |      < 1768 px |
+| lg   |      < 2160 px |
 | xl   |     >= 2160 px |
 
 A property that is Responsive can be an object, an array, or a value.
@@ -27,7 +27,7 @@ Let’s use the column size example for the following:
 
 **Object:**
 ```
-<GridColumn size={{ xs: 12, s: 10, m: 8, l: 4: xl: 2 }} />
+<GridColumn size={{ xs: 12, sm: 10, md: 8, lg: 4: xl: 2 }} />
 ```
 _Here we’ve defined the number of columns for all five spectrum viewports sizes_
 
