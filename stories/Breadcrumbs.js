@@ -14,7 +14,7 @@ storiesOf('Breadcrumbs', module)
     'Default',
     () => (
       <Breadcrumbs
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+        items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
     ),
     {inline: true}
@@ -24,7 +24,18 @@ storiesOf('Breadcrumbs', module)
     () => (
       <Breadcrumbs
         icon={<FolderIcon />}
-        items={[{label: 'Folder 1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+        items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+        onBreadcrumbClick={action('breadcrumbClick')} />
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: "title"',
+    () => (
+      <Breadcrumbs
+        variant="title"
+        ariaLevel={3}
+        items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
     ),
     {inline: true}
