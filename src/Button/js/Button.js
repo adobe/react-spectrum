@@ -27,7 +27,7 @@ export default class Button extends Component {
       element: Element = 'button',
       label,
       children,
-      variant = 'default',
+      variant = 'secondary',
       logic,
       quiet,
       icon,
@@ -41,8 +41,11 @@ export default class Button extends Component {
 
     if (Element !== 'button') {
       otherProps.role = 'button';
-      otherProps.tabIndex = disabled ? -1 : otherProps.tabIndex || 0;
+      otherProps.tabIndex = disabled ? undefined : otherProps.tabIndex || 0;
       otherProps['aria-disabled'] = disabled;
+      if (Element === 'a' && disabled && otherProps.href) {
+        otherProps.href = undefined;
+      }
     }
 
     let variantPrefix = '';
