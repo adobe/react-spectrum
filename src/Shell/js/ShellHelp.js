@@ -64,7 +64,8 @@ export default class ShellHelp extends Component {
               key={href}
               element="a"
               href={href}
-              target="undefined"
+              target="_blank"
+              rel="noopener noreferrer"
               label={
                 <span>
                   {title}
@@ -79,8 +80,9 @@ export default class ShellHelp extends Component {
                 key="all-results"
                 className="spectrum-Link coral3-Shell-help-allResults"
                 href={`${moreSearchResultsUrl}?q=${searchTerm}`}
-                label={`See all ${numTotalResults} results`}
-                target="undefined" />
+                target="_blank"
+                rel="noopener noreferrer"
+                label={`See all ${numTotalResults} results`} />
             )
           : <div className="coral3-Shell-help-resultMessage">
             <div className="coral3-Shell-help-resultMessage-container">
@@ -106,6 +108,8 @@ export default class ShellHelp extends Component {
               key={index}
               element="a"
               href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="coral3-Shell-help-item"
               icon={icon}
               label={label} />
