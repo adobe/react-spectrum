@@ -11,27 +11,27 @@ storiesOf('Switch', module)
   ))
   .addWithInfo(
     'Default',
-    () => (render()),
+    () => (render({'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
     'defaultChecked: true',
-    () => (render({defaultChecked: true})),
+    () => (render({defaultChecked: true, 'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
     'checked: true',
-    () => (render({checked: true})),
+    () => (render({checked: true, 'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
     'checked: false',
-    () => (render({checked: false})),
+    () => (render({checked: false, 'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
     'disabled: true',
-    () => (render({disabled: true})),
+    () => (render({disabled: true, 'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
@@ -41,7 +41,7 @@ storiesOf('Switch', module)
   )
   .addWithInfo(
     'variant: ab',
-    () => (render({variant: 'ab'})),
+    () => (render({variant: 'ab', 'aria-label': 'React'})),
     {inline: true}
   );
 

@@ -80,26 +80,20 @@ export default class SwitchBase extends Component {
     } = this.props;
     const {checked} = this.state;
     const shouldRenderLabel = renderLabel && (label || children);
+    const Element = shouldRenderLabel ? 'label' : 'div';
 
     // Don't let native browser change events bubble up to the root div.
     // Otherwise we double dispatch.
     delete otherProps.onChange;
 
     return (
-      <div
+      <Element
         className={
           classNames(
             className,
             {'is-invalid': invalid, 'is-disabled': disabled}
           )
-        }
-        required={required ? true : null}
-        aria-disabled={disabled}
-        aria-required={required}
-        aria-invalid={invalid}
-        aria-readonly={readOnly}
-        aria-checked={checked}
-        {...otherProps}>
+        }>
         <input
           ref={el => {this.inputRef = el; }}
           type={inputType}
@@ -113,15 +107,17 @@ export default class SwitchBase extends Component {
           readOnly={readOnly}
           onChange={this.handleChange}
           onBlur={onBlur}
-          onFocus={onFocus} />
+          onFocus={onFocus}
+          aria-invalid={invalid || null}
+          {...otherProps} />
         <span className={markClassName}>{markIcon}</span>
         {shouldRenderLabel &&
-          <label className={labelClassName} >
+          <span className={labelClassName}>
             {label}
             {children}
-          </label>
+          </span>
         }
-      </div>
+      </Element>
     );
   }
 }

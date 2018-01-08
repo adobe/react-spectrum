@@ -46,7 +46,7 @@ storiesOf('Checkbox', module)
   )
   .addWithInfo(
     'Label Not Set',
-    () => render({label: ''}),
+    () => render({label: '', 'aria-label': 'React'}),
     {inline: true}
   );
 

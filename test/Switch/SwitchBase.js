@@ -56,29 +56,31 @@ describe('SwitchBase', () => {
   it('supports disabled', () => {
     const tree = shallow(<SwitchBase />);
     assert(!findInput(tree).prop('disabled'));
-    assert.equal(tree.prop('aria-disabled'), false);
     tree.setProps({disabled: true});
+    tree.update();
     assert.equal(findInput(tree).prop('disabled'), true);
-    assert.equal(tree.prop('aria-disabled'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<SwitchBase />);
-    assert.equal(tree.prop('aria-required'), false);
+    assert(!findInput(tree).prop('required'));
     tree.setProps({required: true});
-    assert.equal(tree.prop('aria-required'), true);
+    tree.update();
+    assert.equal(findInput(tree).prop('required'), true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<SwitchBase />);
-    assert.equal(tree.prop('aria-readonly'), false);
+    assert(!findInput(tree).prop('readOnly'));
     tree.setProps({readOnly: true});
-    assert.equal(tree.prop('aria-readonly'), true);
+    tree.update();
+    assert.equal(findInput(tree).prop('readOnly'), true);
   });
 
   it('supports invalid', () => {
     const tree = shallow(<SwitchBase invalid />);
     assert.equal(tree.prop('className'), 'is-invalid');
+    assert.equal(findInput(tree).prop('aria-invalid'), true);
   });
 
   it('supports children', () => {
@@ -99,7 +101,7 @@ describe('SwitchBase', () => {
 
   it('supports additional properties', () => {
     const tree = shallow(<SwitchBase foo />);
-    assert.equal(tree.prop('foo'), true);
+    assert.equal(findInput(tree).prop('foo'), true);
   });
 
   it('supports not rendering a label', () => {
@@ -132,7 +134,7 @@ describe('SwitchBase', () => {
     const tree = shallow(<SwitchBase labelClassName="my-label-class" label="React" />);
     const mark = tree.find('.my-label-class');
     assert(mark.getElement());
-    assert.equal(mark.type(), 'label');
+    assert.equal(mark.type(), 'span');
   });
 });
 
@@ -141,6 +143,5 @@ const findCheckmark = (tree) => tree.find('.coral-Foo-checkmark');
 const findLabel = (tree) => tree.find('.coral-Foo-description');
 
 const expectChecked = (tree, checked) => {
-  assert.equal(tree.prop('aria-checked'), checked);
   assert.equal(findInput(tree).prop('checked'), checked);
 };

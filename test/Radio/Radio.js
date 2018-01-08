@@ -21,5 +21,6 @@ describe('Radio', () => {
   it('supports additional properties', () => {
     const tree = shallow(<Radio foo />);
     assert.equal(tree.prop('foo'), true);
+    assert.equal(tree.shallow().find('input').prop('foo'), true);
   });
 });

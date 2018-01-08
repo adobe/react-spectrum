@@ -20,17 +20,21 @@ describe('Checkbox', () => {
     const tree = shallow(<Checkbox indeterminate />);
     let innerTree = tree.shallow();
     assert.equal(tree.prop('aria-checked'), 'mixed');
-    assert.equal(innerTree.prop('aria-checked'), 'mixed');
+    assert.equal(findInput(innerTree).prop('aria-checked'), 'mixed');
+    assert.equal(findInput(innerTree).prop('checked'), false);
+
 
     tree.setProps({indeterminate: false});
     innerTree = tree.shallow();
     assert(!tree.prop('aria-checked'));
-    assert.equal(innerTree.prop('aria-checked'), false);
+    assert(!findInput(innerTree).prop('aria-checked'));
+    assert.equal(findInput(innerTree).prop('checked'), false);
 
     tree.setProps({checked: true});
     innerTree = tree.shallow();
     assert(!tree.prop('aria-checked'));
-    assert.equal(innerTree.prop('aria-checked'), true);
+    assert(!findInput(innerTree).prop('aria-checked'));
+    assert.equal(findInput(innerTree).prop('checked'), true);
   });
 
   it('supports additional classNames', () => {
@@ -40,6 +44,11 @@ describe('Checkbox', () => {
 
   it('supports additional properties', () => {
     const tree = shallow(<Checkbox foo />);
+    let innerTree = tree.shallow();
     assert.equal(tree.prop('foo'), true);
+    assert.equal(findInput(innerTree).prop('foo'), true);
   });
 });
+
+const findInput = tree => tree.find('input');
+
