@@ -25,7 +25,7 @@ export default class Dropdown extends React.Component {
 
     return (
       <div {...otherProps}>
-        {children.map(child => {
+        {children.map((child, index) => {
           if (child === trigger) {
             return (
               <OverlayTrigger
@@ -34,6 +34,7 @@ export default class Dropdown extends React.Component {
                 placement={alignRight ? 'bottom right' : 'bottom left'}
                 ref={t => this.overlayTrigger = t}
                 onShow={onOpen}
+                key={index}
                 onHide={onClose}>
                 {trigger}
                 {React.cloneElement(menu, {
