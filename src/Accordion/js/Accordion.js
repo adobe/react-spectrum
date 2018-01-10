@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -17,6 +18,9 @@ import '../style/index.styl';
  * onChange: A function that will be called when an AccordionItem is selected (opened) or
  * deselected (closed). It will be passed the updated selected index.
  */
+
+const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-header';
+
 export default class Accordion extends Component {
   constructor(props) {
     super(props);
@@ -82,14 +86,16 @@ export default class Accordion extends Component {
 
   getItems() {
     const selectedIndex = this.state.selectedIndex;
-    const {multiselectable, children} = this.props;
+    const {multiselectable, ariaLevel, children} = this.props;
     return React.Children.map(children, (child, index) => {
       const selected = multiselectable
         ? selectedIndex.indexOf(index) !== -1
         : selectedIndex[0] === index;
 
       const props = {
+        itemRef: child,
         selected,
+        ariaLevel: ariaLevel,
         onItemClick: this.onClickItem.bind(this, index)
       };
 
@@ -116,6 +122,7 @@ export default class Accordion extends Component {
     // warning.
     delete otherProps.selectedIndex;
     delete otherProps.defaultSelectedIndex;
+    delete otherProps.ariaLevel;
 
     // We don't need/want to add onChange to the div because we call it manually when we hear that
     // an accordion item has been clicked. If we were to add the handler to the div, it would be
@@ -123,17 +130,21 @@ export default class Accordion extends Component {
     delete otherProps.onChange;
 
     return (
-      <div
-        {...otherProps}
-        className={
-          classNames(
-            'spectrum-Accordion',
-            className
-          )
-        }
-        aria-multiselectable={multiselectable}>
-        {this.getItems()}
-      </div>
+      <FocusManager itemSelector={ACCORDION_ITEM_HEADER_SELECTOR}>
+        <div
+          {...otherProps}
+          className={
+            classNames(
+              'spectrum-Accordion',
+              className
+            )
+          }
+          role="tablist"
+          aria-orientation="vertical"
+          aria-multiselectable={multiselectable}>
+          {this.getItems()}
+        </div>
+      </FocusManager>
     );
   }
 }
@@ -142,10 +153,12 @@ Accordion.displayName = 'Accordion';
 
 Accordion.propTypes = {
   onChange() {},
-  multiselectable: PropTypes.bool
+  multiselectable: PropTypes.bool,
+  ariaLevel: PropTypes.number
 };
 
 Accordion.defaultProps = {
   onChange() {},
   multiselectable: false,
+  ariaLevel: 3
 };

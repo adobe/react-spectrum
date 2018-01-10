@@ -12,6 +12,7 @@ export default class AccordionItem extends Component {
     header: PropTypes.string,
     selected: PropTypes.bool,
     disabled: PropTypes.bool,
+    ariaLevel: PropTypes.number,
     onItemClick: PropTypes.func
   };
 
@@ -19,6 +20,7 @@ export default class AccordionItem extends Component {
     header: '',
     selected: false,
     disabled: false,
+    ariaLevel: 3,
     onItemClick() {}
   };
 
@@ -28,8 +30,9 @@ export default class AccordionItem extends Component {
     this.contentId = createId();
   }
 
-  onHeaderKeyDown(event) {
+  onHeaderKeyPress(event) {
     if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
       this.props.onItemClick();
     }
   }
@@ -42,6 +45,8 @@ export default class AccordionItem extends Component {
       header,
       selected,
       disabled,
+      ariaLevel,
+      tabIndex = 0,
       ...otherProps
     } = this.props;
 
@@ -59,14 +64,17 @@ export default class AccordionItem extends Component {
         <div
           id={this.headerId}
           className="spectrum-Accordion-header"
-          onClick={onItemClick}
           aria-controls={this.contentId}
           aria-selected={selected}
           aria-expanded={selected}
-          aria-disabled="false"
-          tabIndex="0"
-          onKeyPress={this.onHeaderKeyDown.bind(this)}>
-          {header}
+          aria-disabled={disabled}
+          role="tab"
+          tabIndex={disabled ? undefined : tabIndex}
+          onClick={disabled ? undefined : onItemClick}
+          onKeyPress={disabled ? undefined : this.onHeaderKeyPress.bind(this)}>
+          <span role="heading" aria-level={ariaLevel}>
+            {header}
+          </span>
         </div>
         <AccordionChevron size={null} className="spectrum-Accordion-indicator" />
         <div
@@ -74,6 +82,7 @@ export default class AccordionItem extends Component {
           role="tabpanel"
           aria-labelledby={this.headerId}
           aria-hidden={!selected}
+          aria-expanded={selected}
           className="spectrum-Accordion-content">
           {children}
         </div>

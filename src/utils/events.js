@@ -22,12 +22,14 @@ export function interpretKeyboardEvent(event) {
       break;
 
     case 'ArrowUp':
+    case 'Up':
       if (this.onFocusPrevious) {
         this.onFocusPrevious(event);
       }
       break;
 
     case 'ArrowDown':
+    case 'Down':
       if (this.onFocusNext) {
         this.onFocusNext(event);
       }

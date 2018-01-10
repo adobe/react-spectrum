@@ -32,6 +32,12 @@ storiesOf('Accordion', module)
     'This is a controlled Accordion where the the second accordion item is opened by default.',
     () => render({selectedIndex: 1}),
     {inline: true}
+  )
+  .addWithInfo(
+    'ariaLevel',
+    'This is an Accordion where heading level for Accordion item headings has been changed from its default value of 3 to 4. This allows a developer to place Accordion headings with in the heading hierarchy of the application.',
+    () => render({ariaLevel: 4}),
+    {inline: true}
   );
 
 function render(props = {}) {
@@ -39,6 +45,8 @@ function render(props = {}) {
     <Accordion {...props} onChange={action('onChange')}>
       <AccordionItem header="Header 1">Item 1</AccordionItem>
       <AccordionItem header="Header 2">Item 2</AccordionItem>
+      <AccordionItem header="Header 3" disabled>Item 3</AccordionItem>
+      <AccordionItem header="Header 4">Item 4</AccordionItem>
     </Accordion>
   );
 }

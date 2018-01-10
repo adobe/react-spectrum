@@ -12,14 +12,10 @@ describe('AccordionItem', () => {
   });
 
   it('supports selected', () => {
-    const tree = shallow(<AccordionItem selected />);
-    const header = findHeader(tree);
-    const content = findContent(tree);
-
-    assert.equal(tree.prop('className'), 'spectrum-Accordion-item is-open');
-    assert.equal(header.prop('aria-selected'), true);
-    assert.equal(header.prop('aria-expanded'), true);
-    assert.equal(content.prop('aria-hidden'), false);
+    let tree = shallow(<AccordionItem selected />);
+    assert.equal(tree.hasClass('is-open'), true);
+    tree = shallow(<AccordionItem />);
+    assert.equal(tree.hasClass('is-open'), false);
   });
 
   it('supports header', () => {
@@ -49,8 +45,108 @@ describe('AccordionItem', () => {
     });
 
     it('when enter key pressed', () => {
-      header.simulate('keypress', {key: 'Enter'});
+      header.simulate('keypress', {key: 'Enter', preventDefault: () => {}});
       assert(spy.called);
+    });
+
+    it('when space key pressed', () => {
+      header.simulate('keypress', {key: ' ', preventDefault: () => {}});
+      assert(spy.called);
+    });
+  });
+
+  describe('Accessibility', () => {
+    describe('WAI-ARIA', () => {
+      let tree;
+      let header;
+      let content;
+
+      beforeEach(() => {
+        tree = shallow(<AccordionItem header="One">One content</AccordionItem>);
+        header = findHeader(tree);
+        content = findContent(tree);
+      });
+
+      it('header role equals \'tab\'', () => {
+        assert.equal(header.prop('role'), 'tab');
+      });
+
+      it('header has tabIndex so that it can receive keyboard focus', () => {
+        assert.equal(header.prop('tabIndex'), '0');
+      });
+
+      it('relationship between header and content is defined using aria-controls', () => {
+        assert.equal(header.prop('aria-controls'), content.prop('id'));
+      });
+
+      it('content role equals \'tabpanel\'', () => {
+        assert.equal(content.prop('role'), 'tabpanel');
+      });
+
+      it('content region is labelled by the header using aria-labelledby', () => {
+        assert.equal(content.prop('aria-labelledby'), header.prop('id'));
+      });
+
+      it('header has child with role equal to \'heading\' that supports aria-level', () => {
+        let heading = header.find('span').first();
+        assert.equal(heading.prop('role'), 'heading');
+        assert.equal(heading.prop('aria-level'), 3);
+      });
+
+      it('supports aria-level', () => {
+        tree = shallow(<AccordionItem header="One" ariaLevel={4}>One content</AccordionItem>);
+        let heading = tree.find('.spectrum-Accordion-header > span');
+        assert.equal(heading.prop('aria-level'), 4);
+      });
+
+      describe('default WAI-ARIA state properties', () => {
+        it('aria-selected is false', () => {
+          assert.equal(header.prop('aria-selected'), false);
+        });
+
+        it('aria-expanded is false', () => {
+          assert.equal(header.prop('aria-expanded'), false);
+        });
+
+        it('aria-hidden on content region is true', () => {
+          assert.equal(content.prop('aria-hidden'), true);
+        });
+      });
+
+      describe('selected WAI-ARIA state properties', () => {
+        beforeEach(() => {
+          tree = shallow(<AccordionItem selected />);
+          header = findHeader(tree);
+          content = findContent(tree);
+        });
+
+        it('aria-selected is true', () => {
+          assert.equal(header.prop('aria-selected'), true);
+        });
+
+        it('aria-expanded is false', () => {
+          assert.equal(header.prop('aria-expanded'), true);
+        });
+
+        it('aria-hidden on content region is true', () => {
+          assert.equal(content.prop('aria-hidden'), false);
+        });
+      });
+
+      describe('disabled WAI-ARIA state property', () => {
+        beforeEach(() => {
+          tree = shallow(<AccordionItem disabled />);
+          header = findHeader(tree);
+        });
+
+        it('aria-disabled is true', () => {
+          assert.equal(header.prop('aria-disabled'), true);
+        });
+
+        it('header has tabIndex equal to undefined, so that it cannot receive keyboard focus', () => {
+          assert.equal(header.prop('tabIndex'), undefined);
+        });
+      });
     });
   });
 });
