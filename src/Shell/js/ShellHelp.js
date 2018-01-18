@@ -1,6 +1,7 @@
 import Button from '../../Button';
 import classNames from 'classnames';
 import HelpOutline from '../../Icon/HelpOutline';
+import Link from '../../Link';
 import {List, ListItem} from '../../List';
 import React, {Component} from 'react';
 import Search from '../../Search';
@@ -13,7 +14,8 @@ export default class ShellHelp extends Component {
     defaultResults: [],
     onSearch: function () {},
     onChange: function () {},
-    onHide: function () {}
+    onHide: function () {},
+    onResultClick: function () {}
   };
 
   state = {
@@ -30,7 +32,13 @@ export default class ShellHelp extends Component {
 
   handleVisible = () => {
     if (this.contentRef) {
-      this.contentRef.querySelector('.coral-Search-input').focus();
+      this.contentRef.querySelector('.spectrum-Search-input').focus();
+    }
+  }
+
+  handleResultClick = (...args) => {
+    if (this.props.onResultClick) {
+      this.props.onResultClick(...args);
     }
   }
 
@@ -54,35 +62,43 @@ export default class ShellHelp extends Component {
     // https://git.corp.adobe.com/React/react-coral/issues/134
     // unicode for: '&nbsp; &bull; &nbsp';
     const separator = '\u00a0 \u2022 \u00a0';
+    const allResults = {
+      href: `${moreSearchResultsUrl}?q=${searchTerm}`,
+      title: `See all ${numTotalResults} results`
+    };
 
     return (
       <List className="coral3-Shell-help-results">
         {
           numTotalResults !== 0 && searchResults && searchResults.length
-          ? searchResults.map(({tags, title, href}, index) => (
+          ? searchResults.map((result, index) => (
             <ListItem
-              key={href}
-              element="a"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              label={
+              key={index}
+              onClick={this.handleResultClick.bind(this, result)} >
+              <Link
+                href={result.href}
+                target="_blank"
+                rel="noopener noreferrer" >
                 <span>
-                  {title}
+                  {result.title}
                   <div className="coral3-Shell-help-result-description">
-                    {tags.join(separator)}
+                    {Array.isArray(result.tags) ? result.tags.join(separator) : ''}
                   </div>
                 </span>
-                } />
+              </Link>
+            </ListItem>
             )).concat(
               <ListItem
-                element="a"
                 key="all-results"
-                className="spectrum-Link coral3-Shell-help-allResults"
-                href={`${moreSearchResultsUrl}?q=${searchTerm}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                label={`See all ${numTotalResults} results`} />
+                onClick={this.handleResultClick.bind(this, allResults)} >
+                <Link
+                  className="spectrum-Link coral3-Shell-help-allResults"
+                  href={allResults.href}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  {allResults.title}
+                </Link>
+              </ListItem>
             )
           : <div className="coral3-Shell-help-resultMessage">
             <div className="coral3-Shell-help-resultMessage-container">
@@ -103,16 +119,19 @@ export default class ShellHelp extends Component {
       <List className="coral3-Shell-help-items">
         {
           defaultResults && defaultResults.length ?
-          defaultResults.map(({href, icon, label}, index) => (
+          defaultResults.map((result, index) => (
             <ListItem
               key={index}
-              element="a"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="coral3-Shell-help-item"
-              icon={icon}
-              label={label} />
+              onClick={this.handleResultClick.bind(this, result)} >
+              <Link
+                icon={result.icon}
+                className="coral3-Shell-help-item"
+                href={result.href}
+                target="_blank"
+                rel="noopener noreferrer" >
+                {result.label}
+              </Link>
+            </ListItem>
           )) : null
         }
       </List>

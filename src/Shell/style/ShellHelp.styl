@@ -93,9 +93,17 @@ $coral-shell-loading-spacing = 16px;
   text-align: center;
 }
 
-.spectrum-List.coral3-Shell-help-items,
-.spectrum-List.coral3-Shell-help-results {
+.spectrum-SelectList.coral3-Shell-help-items,
+.spectrum-SelectList.coral3-Shell-help-results {
   display: block;
   border-radius: 0;
   border: none;
+  
+  .spectrum-Link {
+    color: inherit;
+    
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
