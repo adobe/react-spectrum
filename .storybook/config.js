@@ -12,14 +12,15 @@ setAddon(infoAddon);
 // addon-info
 setDefaults({
   inline: true,
-  styles: (s) => {
-    s.infoBody.backgroundColor = 'transparent';
-    s.infoBody.border = 'none';
-    s.infoBody.boxShadow = 'none';
-    s.infoBody.padding = '10px 0';
-    s.infoBody.marginTop = 0;
-    s.infoBody.clear = 'both'
-    return s;
+  styles: {
+    infoBody: {
+      backgroundColor: 'transparent',
+      border: 'none',
+      boxShadow: 'none',
+      padding: '10px 0',
+      marginTop: '0',
+      clear: 'both'
+    }
   }
 });
 
