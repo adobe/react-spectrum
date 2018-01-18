@@ -38,7 +38,10 @@ export default class TabView extends React.Component {
 
   render() {
     let {className, orientation = 'horizontal', ...props} = this.props;
-    let children = React.Children.toArray(this.props.children);
+
+    let children = React.Children.map(this.props.children, c =>
+      typeof c === 'object' ? React.cloneElement(c, {renderChildren: false}) : c
+    );
 
     // Clone children so that they get componentWillReceiveProps when clicking on the same tab
     let selected = children[this.state.selectedIndex];

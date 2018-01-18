@@ -13,7 +13,8 @@ export default class Tab extends Component {
     id: createId(),
     invalid: false,
     disabled: false,
-    selected: false
+    selected: false,
+    renderChildren: true
   };
 
   handleClick = e => {
@@ -32,10 +33,11 @@ export default class Tab extends Component {
       disabled,
       invalid,
       icon,
+      renderChildren, // Temporary, will be removed in next major version bump
       ...otherProps
     } = this.props;
 
-    let iconSize = label || children ? 'XS' : 'S';
+    let iconSize = label || (renderChildren && children) ? 'XS' : 'S';
 
     return (
       <div
@@ -60,7 +62,7 @@ export default class Tab extends Component {
         aria-disabled={disabled}
         onClick={this.handleClick}>
         {cloneIcon(icon, {size: iconSize, className: 'spectrum-TabList-item-icon'})}
-        {(label || children) && <span className="spectrum-TabList-item-label">{label || children}</span>}
+        {(label || (renderChildren && children)) && <span className="spectrum-TabList-item-label">{label || (renderChildren && children)}</span>}
       </div>
     );
   }

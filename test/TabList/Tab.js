@@ -54,4 +54,14 @@ describe('Tab', () => {
     const tree = shallow(<Tab foo />);
     assert.equal(tree.prop('foo'), true);
   });
+
+  it('stops from rendering the props.children as tab content if prop is set', () => {
+    const tree = shallow(<Tab renderChildren={false}>foo</Tab>);
+    assert.equal(tree.childAt(1).text(), '');
+  });
+
+  it('renders the props.children as tab content if no label', () => {
+    const tree = shallow(<Tab>foo</Tab>);
+    assert.equal(tree.children().childAt(0).text(), 'foo');
+  });
 });

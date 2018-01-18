@@ -73,12 +73,12 @@ export default class TabListBase extends Component {
 
   getMappedChildProps(child, index) {
     const {childMappingFunction} = this.props;
-    if (!childMappingFunction) {return {}; }
+    if (!childMappingFunction) { return {}; }
     return childMappingFunction(this, child, index);
   }
 
   getChildOnClick(child, index) {
-    if (this.props.disabled) {return null; }
+    if (this.props.disabled) { return null; }
     const tabListOnClick = this.onClickItem.bind(this, index);
     return () => {
       if (child.props.onClick) {child.props.onClick(index); }

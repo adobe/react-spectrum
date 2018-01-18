@@ -79,4 +79,15 @@ describe('TabView', function () {
 
     assert.equal(tree.find(TabList).prop('selectedIndex'), 0);
   });
+
+  it('children should have renderChildren prop', function () {
+    const tree = shallow(
+      <TabView>
+        <Tab label="Foo">Tab 1</Tab>
+        <Tab label="Bar">Tab 2</Tab>
+      </TabView>
+    );
+
+    assert.equal(tree.find(Tab).at(0).prop('renderChildren'), false);
+  });
 });
