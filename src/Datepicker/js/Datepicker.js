@@ -50,7 +50,8 @@ export default class Datepicker extends Component {
     readOnly: PropTypes.bool,
     required: PropTypes.bool,
     invalid: PropTypes.bool,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    placement: PropTypes.string
   };
 
   static defaultProps = {
@@ -66,7 +67,8 @@ export default class Datepicker extends Component {
     readOnly: false,
     required: false,
     placeholder: 'Choose a date',
-    onChange: function () {}
+    onChange: function () {},
+    placement: 'right'
   };
 
   constructor(props) {
@@ -229,6 +231,7 @@ export default class Datepicker extends Component {
       readOnly,
       required,
       className,
+      placement,
       ...otherProps
     } = this.props;
 
@@ -260,6 +263,7 @@ export default class Datepicker extends Component {
     // We are using state for these.
     delete otherProps.value;
     delete otherProps.defaultValue;
+
     return (
       <InputGroup
         quiet={quiet}
@@ -284,7 +288,7 @@ export default class Datepicker extends Component {
           onChange={this.handleTextChange}
           onFocus={this.onFocus}
           onBlur={this.handleTextBlur} />
-        <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement="right">
+        <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement={placement}>
           <Button
             className="spectrum-InputGroup-button"
             variant="dropdown"

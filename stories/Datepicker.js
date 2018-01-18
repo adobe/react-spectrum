@@ -73,6 +73,11 @@ storiesOf('Datepicker', module)
     'placeholder=foo',
     () => render({placeholder: 'foo'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with placement',
+    () => render({type: 'datetime', placement: 'bottom'}),
+    {inline: true}
   );
 
 function render(props = {}) {

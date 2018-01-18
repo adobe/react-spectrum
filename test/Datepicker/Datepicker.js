@@ -47,6 +47,8 @@ describe('Datepicker', () => {
     assert.equal(clock.prop('invalid'), false);
     assert.equal(clock.prop('readOnly'), false);
     assert.equal(clock.prop('required'), false);
+
+    assert.equal(tree.find('OverlayTrigger').prop('placement'), 'right');
   });
 
   it('supports type (date, time, and datetime)', () => {
@@ -272,6 +274,11 @@ describe('Datepicker', () => {
   it('supports additional properties', () => {
     const tree = shallow(<Datepicker foo />);
     assert.equal(findTextfield(tree).prop('foo'), true);
+  });
+
+  it('supports popover placement', () => {
+    const tree = shallow(<Datepicker placement="top" />);
+    assert.equal(tree.find('OverlayTrigger').prop('placement'), 'top');
   });
 });
 
