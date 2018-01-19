@@ -80,11 +80,12 @@ describe('TabView', function () {
     assert.equal(tree.find(TabList).prop('selectedIndex'), 0);
   });
 
-  it('children should have renderChildren prop', function () {
+  it('children should have renderChildren prop and allow null in children', function () {
     const tree = shallow(
       <TabView>
         <Tab label="Foo">Tab 1</Tab>
         <Tab label="Bar">Tab 2</Tab>
+        {null}
       </TabView>
     );
 
