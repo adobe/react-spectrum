@@ -1,4 +1,5 @@
 import Add from '../src/Icon/Add';
+import AdobeExperienceManagerColorLight from '../src/Icon/AdobeExperienceManagerColorLight';
 import Bell from '../src/Icon/Bell';
 import Icon from '../src/Icon';
 import React from 'react';
@@ -46,6 +47,10 @@ storiesOf('Icon', module)
     'size: XL',
     () => render({size: 'XL'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'Color icon',
+    () => <AdobeExperienceManagerColorLight size="XL" />
   )
   .addWithInfo(
     'custom SVG',
