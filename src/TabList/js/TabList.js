@@ -23,6 +23,14 @@ export default class TabList extends React.Component {
     layoutInfos: []
   };
 
+  componentWillReceiveProps(nextProps) {
+    if ('selectedIndex' in nextProps) {
+      this.setState({
+        selectedIndex: nextProps.selectedIndex
+      });
+    }
+  }
+
   componentDidMount() {
     // Measure the tabs so we can position the line below correctly
     let layoutInfos = [];
