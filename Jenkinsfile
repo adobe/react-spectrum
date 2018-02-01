@@ -45,4 +45,4 @@ if (params.versionBump && params.versionBump != "noop") {
   ''')
 }
 
-properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npublish only', description: 'Bump npm version', name: 'versionBump')])])
+properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'versionBump')])])
