@@ -23,4 +23,15 @@ storiesOf('InlineEditor', module)
     'controlled',
     () => <InlineEditor value="test" onChange={action('onChange')} />,
     {inline: true}
+  )
+  .addWithInfo(
+    'validate',
+    () => (<InlineEditor
+      defaultValue="0000000000"
+      placeholder="Enter 10 digit cell no"
+      onChange={(value) => {
+        action('onChange')(value);
+        return RegExp(/^\d{10}$/).test(value);
+      }} />),
+    {inline: true}
   );

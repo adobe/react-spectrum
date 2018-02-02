@@ -8,8 +8,9 @@ import '../style/index.styl';
 @autobind
 export default class InlineEditor extends React.Component {
   state = {
-    editing: false,
-    value: this.props.value || this.props.defaultValue || ''
+    editing: !!this.props.autoFocus,
+    value: this.props.value || this.props.defaultValue || '',
+    invalid: false
   };
 
   componentWillReceiveProps(props) {
@@ -33,20 +34,22 @@ export default class InlineEditor extends React.Component {
   startEditing() {
     this.setState({
       editing: true,
-      startValue: this.state.value
+      startValue: this.state.value,
+      invalid: false
     });
   }
 
-  endEditing(shouldSave = true) {
+  async endEditing(shouldSave = true) {
+    let contEditing = false;
     let value = shouldSave ? this.state.value : this.state.startValue;
-    this.setState({
-      editing: false,
-      value: this.props.value == null ? value : this.props.value
-    });
-
     if (shouldSave && this.props.onChange) {
-      this.props.onChange(value);
+      contEditing = (await this.props.onChange(value) === false);
     }
+    this.setState({
+      editing: contEditing,
+      value: this.props.value == null ? value : this.props.value,
+      invalid: contEditing
+    });
   }
 
   focusTextfield(textfield) {
@@ -80,7 +83,8 @@ export default class InlineEditor extends React.Component {
         value={this.state.value}
         onChange={this.onChange}
         onKeyDown={this.onKeyDown}
-        onBlur={this.endEditing} />
+        onBlur={this.endEditing}
+        invalid={this.state.invalid} />
     );
   }
 

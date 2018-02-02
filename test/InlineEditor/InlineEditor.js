@@ -13,6 +13,13 @@ describe('InlineEditor', () => {
     assert.equal(tree.text(), 'test');
   });
 
+  it('should render a textfield in autofocus mode', () => {
+    const tree = shallow(<InlineEditor value="test" autoFocus />);
+    assert.equal(tree.type(), Textfield);
+    assert.equal(tree.prop('className'), 'react-spectrum-InlineEditor react-spectrum-InlineEditor-input');
+    assert.equal(tree.prop('value'), 'test');
+  });
+
   it('should render a textfield on double click', () => {
     const tree = shallow(<InlineEditor value="test" />);
     assert.equal(tree.type(), 'span');
@@ -43,11 +50,59 @@ describe('InlineEditor', () => {
     assert.equal(tree.prop('value'), 'foo');
 
     tree.simulate('keyDown', {key: 'Enter'});
-    assert.equal(tree.type(), 'span');
-    assert.equal(tree.text(), 'foo');
+    setImmediate(() => {
+      assert.equal(tree.type(), 'span');
+      assert.equal(tree.text(), 'foo');
 
-    assert(onChange.calledOnce);
-    assert.equal(onChange.lastCall.args[0], 'foo');
+      assert(onChange.calledOnce);
+      assert.equal(onChange.lastCall.args[0], 'foo');
+      done();
+    });
+  });
+
+  it('should save the value on enter when onChange returns success in validate mode', () => {
+    const onChange = sinon.stub();
+    onChange.resolves(true);
+    const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} />);
+
+    tree.simulate('doubleClick');
+    assert.equal(tree.prop('value'), 'test');
+
+    tree.simulate('change', 'foo');
+    assert.equal(tree.prop('value'), 'foo');
+
+    tree.simulate('keyDown', {key: 'Enter'});
+    setTimeout(() => {
+      assert.equal(tree.type(), 'span');
+      assert.equal(tree.text(), 'foo');
+
+      sinon.assert.calledOnce(onChange);
+      assert.equal(onChange.lastCall.args[0], 'foo');
+      done();
+    }, 0);
+  });
+
+  it('should remain a textfield on enter when onChange returns failure in validate mode', () => {
+    const onChange = sinon.stub();
+    onChange.resolves(false);
+    const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} />);
+
+    tree.simulate('doubleClick');
+    assert.equal(tree.prop('value'), 'test');
+
+    tree.simulate('change', 'foo');
+    assert.equal(tree.prop('value'), 'foo');
+
+    tree.simulate('keyDown', {key: 'Enter'});
+    setTimeout(() => {
+      assert.equal(tree.type(), Textfield);
+      assert.equal(tree.prop('value'), 'foo');
+      assert.equal(tree.prop('invalid'), true);
+
+      sinon.assert.calledOnce(onChange);
+      assert.equal(onChange.lastCall.args[0], 'foo');
+      done();
+    }, 0);
   });
 
   it('should revert to the previous value on escape', () => {
@@ -78,11 +133,14 @@ describe('InlineEditor', () => {
     assert.equal(tree.prop('value'), 'foo');
 
     tree.simulate('keyDown', {key: 'Enter'});
-    assert.equal(tree.type(), 'span');
-    assert.equal(tree.text(), 'test');
+    setImmediate(() => {
+      assert.equal(tree.type(), 'span');
+      assert.equal(tree.text(), 'test');
 
-    assert(onChange.calledOnce);
-    assert.equal(onChange.lastCall.args[0], 'foo');
+      assert(onChange.calledOnce);
+      assert.equal(onChange.lastCall.args[0], 'foo');
+      done();
+    });
   });
 
   it('should update the value on value prop change', () => {
