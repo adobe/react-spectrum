@@ -32,7 +32,9 @@ export default class Position extends React.Component {
   }
 
   static defaultProps = {
-    containerPadding: 10
+    containerPadding: 10,
+    offset: 0,
+    crossOffset: 0
   }
 
   componentDidMount() {
@@ -112,6 +114,7 @@ export default class Position extends React.Component {
   }
 
   updatePosition(target) {
+    const {placement, containerPadding, offset, crossOffset} = this.props;
     this._lastTarget = target;
 
     if (!target) {
@@ -131,11 +134,13 @@ export default class Position extends React.Component {
     );
 
     this.setState(calculatePosition(
-      this.props.placement,
+      placement,
       overlay,
       target,
       container,
-      this.props.containerPadding
+      containerPadding,
+      offset,
+      crossOffset
     ));
   }
 }

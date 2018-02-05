@@ -44,7 +44,7 @@ describe('Position', () => {
     const div = tree.find('div');
 
     assert(stub.calledOnce);
-    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 15]);
+    assert.deepEqual(stub.getCall(0).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 15, 0, 0]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
@@ -86,7 +86,7 @@ describe('Position', () => {
     const div = tree.find('div');
 
     assert(stub.calledTwice);
-    assert.deepEqual(stub.getCall(1).args, ['left', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10]);
+    assert.deepEqual(stub.getCall(1).args, ['left', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10, 0, 0]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',
@@ -130,7 +130,7 @@ describe('Position', () => {
 
     const div = tree.find('div');
     assert(stub.calledTwice);
-    assert.deepEqual(stub.getCall(1).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10]);
+    assert.deepEqual(stub.getCall(1).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10, 0, 0]);
 
     assert.deepEqual(div.prop('style'), {
       position: 'absolute',

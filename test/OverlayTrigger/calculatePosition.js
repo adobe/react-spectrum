@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('calculatePosition', function () {
-  function checkPosition(placement, targetPosition, expected) {
+  function checkPosition(placement, targetPosition, expected, offset = 0, crossOffset = 0) {
     const expectedPosition = {
       positionLeft: expected[0],
       positionTop: expected[1],
@@ -43,7 +43,7 @@ describe('calculatePosition', function () {
         height: 100
       };
 
-      const result = calculatePositionInternal(placement, containerDimensions, childOffset, overlaySize, margins, 50);
+      const result = calculatePositionInternal(placement, containerDimensions, childOffset, overlaySize, margins, 50, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
     });
   }
@@ -51,78 +51,102 @@ describe('calculatePosition', function () {
   [
     {
       placement: 'left',
-      noOffset: [50, 200, undefined, '50%', 350],
-      offsetBefore: [-200, 50, undefined, '0%', 500],
-      offsetAfter: [300, 350, undefined, '100%', 200]
+      noOffset: [50, 200, undefined, 100, 350],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
+      crossAxisOffset: [50, 210, undefined, 90, 340],
+      mainAxisOffset: [60, 200, undefined, 100, 350]
     },
     {
       placement: 'left top',
-      noOffset: [50, 250, undefined, '50%', 300],
-      offsetBefore: [-200, 50, undefined, '25%', 500],
-      offsetAfter: [300, 350, undefined, '125%', 200]
+      noOffset: [50, 250, undefined, 50, 300],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
+      crossAxisOffset: [50, 250, undefined, 50, 300],
+      mainAxisOffset: [60, 250, undefined, 50, 300]
     },
     {
       placement: 'left bottom',
-      noOffset: [50, 150, undefined, '50%', 400],
-      offsetBefore: [-200, 50, undefined, '-25%', 500],
-      offsetAfter: [300, 350, undefined, '75%', 200]
+      noOffset: [50, 150, undefined, 150, 400],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
+      crossAxisOffset: [50, 160, undefined, 140, 390],
+      mainAxisOffset: [60, 150, undefined, 150, 400]
     },
     {
       placement: 'top',
-      noOffset: [200, 50, '50%', undefined, 500],
-      offsetBefore: [50, -200, '0%', undefined, 750],
-      offsetAfter: [350, 300, '100%', undefined, 250]
+      noOffset: [200, 50, 100, undefined, 500],
+      offsetBefore: [50, -200, 0, undefined, 750],
+      offsetAfter: [350, 300, 200, undefined, 250],
+      mainAxisOffset: [200, 60, 100, undefined, 490],
+      crossAxisOffset: [210, 50, 90, undefined, 500]
     },
     {
       placement: 'top left',
-      noOffset: [250, 50, '50%', undefined, 500],
-      offsetBefore: [50, -200, '25%', undefined, 750],
-      offsetAfter: [350, 300, '125%', undefined, 250]
+      noOffset: [250, 50, 50, undefined, 500],
+      offsetBefore: [50, -200, 0, undefined, 750],
+      offsetAfter: [350, 300, 200, undefined, 250],
+      mainAxisOffset: [250, 60, 50, undefined, 490],
+      crossAxisOffset: [250, 50, 50, undefined, 500]
     },
     {
       placement: 'top right',
-      noOffset: [150, 50, '50%', undefined, 500],
-      offsetBefore: [50, -200, '-25%', undefined, 750],
-      offsetAfter: [350, 300, '75%', undefined, 250]
+      noOffset: [150, 50, 150, undefined, 500],
+      offsetBefore: [50, -200, 0, undefined, 750],
+      offsetAfter: [350, 300, 200, undefined, 250],
+      mainAxisOffset: [150, 60, 150, undefined, 490],
+      crossAxisOffset: [160, 50, 140, undefined, 500]
     },
     {
       placement: 'bottom',
-      noOffset: [200, 350, '50%', undefined, 200],
-      offsetBefore: [50, 100, '0%', undefined, 450],
-      offsetAfter: [350, 600, '100%', undefined, 0]
+      noOffset: [200, 350, 100, undefined, 200],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
+      mainAxisOffset: [200, 360, 100, undefined, 190],
+      crossAxisOffset: [210, 350, 90, undefined, 200]
     },
     {
       placement: 'bottom left',
-      noOffset: [250, 350, '50%', undefined, 200],
-      offsetBefore: [50, 100, '25%', undefined, 450],
-      offsetAfter: [350, 600, '125%', undefined, 0]
+      noOffset: [250, 350, 50, undefined, 200],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
+      mainAxisOffset: [250, 360, 50, undefined, 190],
+      crossAxisOffset: [250, 350, 50, undefined, 200]
     },
     {
       placement: 'bottom right',
-      noOffset: [150, 350, '50%', undefined, 200],
-      offsetBefore: [50, 100, '-25%', undefined, 450],
-      offsetAfter: [350, 600, '75%', undefined, 0]
+      noOffset: [150, 350, 150, undefined, 200],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
+      mainAxisOffset: [150, 360, 150, undefined, 190],
+      crossAxisOffset: [160, 350, 140, undefined, 200]
     },
     {
       placement: 'right',
-      noOffset: [350, 200, undefined, '50%', 350],
-      offsetBefore: [100, 50, undefined, '0%', 500],
-      offsetAfter: [600, 350, undefined, '100%', 200]
+      noOffset: [350, 200, undefined, 100, 350],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
+      crossAxisOffset: [350, 210, undefined, 90, 340],
+      mainAxisOffset: [360, 200, undefined, 100, 350]
     },
     {
       placement: 'right top',
-      noOffset: [350, 250, undefined, '50%', 300],
-      offsetBefore: [100, 50, undefined, '25%', 500],
-      offsetAfter: [600, 350, undefined, '125%', 200]
+      noOffset: [350, 250, undefined, 50, 300],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
+      crossAxisOffset: [350, 250, undefined, 50, 300],
+      mainAxisOffset: [360, 250, undefined, 50, 300]
     },
     {
       placement: 'right bottom',
-      noOffset: [350, 150, undefined, '50%', 400],
-      offsetBefore: [100, 50, undefined, '-25%', 500],
-      offsetAfter: [600, 350, undefined, '75%', 200]
-    },
+      noOffset: [350, 150, undefined, 150, 400],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
+      crossAxisOffset: [350, 160, undefined, 140, 390],
+      mainAxisOffset: [360, 150, undefined, 150, 400]
+    }
   ].forEach(function (testCase) {
-    const placement = testCase.placement;
+    const {placement} = testCase;
 
     describe(`placement = ${placement}`, function () {
       describe('no viewport offset', function () {
@@ -140,6 +164,18 @@ describe('calculatePosition', function () {
       describe('viewport offset after', function () {
         checkPosition(
           placement, {left: 500, top: 500}, testCase.offsetAfter
+        );
+      });
+
+      describe('main axis offset', function () {
+        checkPosition(
+          placement, {left: 250, top: 250}, testCase.mainAxisOffset, 10, 0
+        );
+      });
+
+      describe('cross axis offset', function () {
+        checkPosition(
+          placement, {left: 250, top: 250}, testCase.crossAxisOffset, 0, 10
         );
       });
     });

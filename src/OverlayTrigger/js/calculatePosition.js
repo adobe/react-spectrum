@@ -55,7 +55,7 @@ function getDelta(axis, offset, size, containerDimensions, padding) {
   if (startEdgeOffset < 0) {
     return -startEdgeOffset;
   } else if (endEdgeOffset > containerHeight) {
-    return containerHeight - endEdgeOffset;
+    return Math.max(containerHeight - endEdgeOffset, -startEdgeOffset);
   } else {
     return 0;
   }
@@ -85,44 +85,43 @@ function parsePlacement(input) {
   return {placement, crossPlacement, axis, crossAxis, size, crossSize};
 }
 
-function computePosition(childOffset, overlaySize, placementInfo) {
+function computePosition(childOffset, overlaySize, placementInfo, offset, crossOffset) {
   const {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position = {};
 
-  position[crossAxis] = childOffset[crossAxis];
+  position[crossAxis] = childOffset[crossAxis] + crossOffset;
   if (crossPlacement === 'center') {
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]) / 2;
   } else if (crossPlacement !== crossAxis) {
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]);
   }
-
+  position[crossAxis] = Math.min(position[crossAxis], childOffset[crossAxis]);
   if (placement === axis) {
-    position[axis] = childOffset[axis] - overlaySize[size];
+    position[axis] = childOffset[axis] - overlaySize[size] + offset;
   } else {
-    position[axis] = childOffset[axis] + childOffset[size];
+    position[axis] = childOffset[axis] + childOffset[size] + offset;
   }
 
   return position;
 }
 
-export function calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding) {
+export function calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, offset = 0, crossOffset = 0) {
   const placementInfo = parsePlacement(placementInput);
   const {crossAxis, crossSize} = placementInfo;
-
-  let position = computePosition(childOffset, overlaySize, placementInfo);
+  let position = computePosition(childOffset, overlaySize, placementInfo, offset, crossOffset);
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
   position[crossAxis] += delta;
 
-  let maxHeight = Math.max(0, containerDimensions.height - position.top - margins.top - margins.bottom - padding);
+  let maxHeight = Math.max(0, containerDimensions.height + containerDimensions.scroll.top - position.top - margins.top - margins.bottom - padding);
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, overlaySize, placementInfo);
+  position = computePosition(childOffset, overlaySize, placementInfo, offset, crossOffset);
   delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
 
   position[crossAxis] += delta;
 
-  let arrowPosition = {};
-  arrowPosition[crossAxis] = 50 * (1 - 2 * delta / overlaySize[crossSize]) + '%';
+  const arrowPosition = {};
+  arrowPosition[crossAxis] = childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2;
 
   return {
     positionLeft: position.left,
@@ -133,7 +132,7 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
   };
 }
 
-export default function calculatePosition(placementInput, overlayNode, target, container, padding) {
+export default function calculatePosition(placementInput, overlayNode, target, container, padding, offset = 0, crossOffset = 0) {
   const childOffset = container.tagName === 'BODY' ? getOffset(target) : getPosition(target, container);
 
   const overlaySize = getOffset(overlayNode);
@@ -142,5 +141,5 @@ export default function calculatePosition(placementInput, overlayNode, target, c
   overlaySize.height += margins.top + margins.bottom;
 
   const containerDimensions = getContainerDimensions(container);
-  return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding);
+  return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, offset, crossOffset);
 }

@@ -47,6 +47,16 @@ storiesOf('OverlayTrigger', module)
     'placement: right',
     () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with: offset',
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', offset: 100}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with: offsetCross',
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', offsetCross: 100}),
+    {inline: true}
   );
 
 function render(type, props = {}) {
