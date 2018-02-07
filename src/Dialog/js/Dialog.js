@@ -7,6 +7,7 @@ import '../style/index.styl';
 
 export default class Dialog extends Component {
   static propTypes = {
+    backdropClickable: PropTypes.bool,
     cancelLabel: PropTypes.string,
     className: PropTypes.string,
     confirmLabel: PropTypes.string,
@@ -19,6 +20,8 @@ export default class Dialog extends Component {
   };
 
   static defaultProps = {
+    backdropClickable: false,
+    backdropEnabled: true,
     open: true,
     mode: 'centered',
     onClose: function () {}
@@ -65,22 +68,22 @@ export default class Dialog extends Component {
           className
         )}>
         {title &&
-          <DialogHeader
-            variant={derivedVariant}
-            title={title}
-            fullscreen={fullscreen}
-            {...this.props}
-            onConfirm={this.onConfirm.bind(this)} />
+        <DialogHeader
+          variant={derivedVariant}
+          title={title}
+          fullscreen={fullscreen}
+          {...this.props}
+          onConfirm={this.onConfirm.bind(this)} />
         }
 
         {title ? <div className="spectrum-Dialog-content">{children}</div> : children}
 
         {!fullscreen && confirmLabel &&
-          <DialogButtons
-            {...this.props}
-            variant={derivedVariant}
-            className="spectrum-Dialog-footer"
-            onConfirm={this.onConfirm.bind(this)} />
+        <DialogButtons
+          {...this.props}
+          variant={derivedVariant}
+          className="spectrum-Dialog-footer"
+          onConfirm={this.onConfirm.bind(this)} />
         }
       </div>
     );

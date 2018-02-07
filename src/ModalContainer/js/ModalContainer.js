@@ -30,7 +30,8 @@ export default class ModalContainer {
 }
 
 @autobind
-class Modal extends React.Component {
+export class Modal extends React.Component {
+
   state = {
     show: true
   };
@@ -39,9 +40,30 @@ class Modal extends React.Component {
     this.setState({show: false});
   }
 
-  render() {
+  backdropMode() {
     // I am sorry for this atrocity. I needed a way to detect when not to have a backdrop.
-    let hasBackdrop = this.props.children.props.mode !== 'fullscreenTakeover';
+    const fullscreenTakeover = this.props.children.props.mode === 'fullscreenTakeover';
+
+    /*
+     * backdropClickable (bc), backdropEnabled (be)
+     *     bc | !bc
+     *     ---|------
+     *      t |static
+     * if fullscreenTakeover, then always false
+     */
+    let {backdropClickable} = this.props.children.props;
+    let backdrop = 'static';
+    if (backdropClickable) {
+      backdrop = true;
+    }
+    if (fullscreenTakeover) {
+      backdrop = false;
+    }
+    return backdrop;
+  }
+
+  render() {
+    const backdrop = this.backdropMode();
 
     // The z-index here should match the one in Overlay
     return (
@@ -50,7 +72,7 @@ class Modal extends React.Component {
         show={this.state.show}
         onExited={this.props.onHide}
         onHide={this.onClose}
-        backdrop={hasBackdrop}
+        backdrop={backdrop}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}
         backdropTransition={OpenTransition}>

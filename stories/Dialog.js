@@ -67,6 +67,11 @@ storiesOf('Dialog', module)
     'mode: fullscreenTakeover',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'backdropClickable: true',
+    () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
   );
 
 function render(children, props = {}) {
