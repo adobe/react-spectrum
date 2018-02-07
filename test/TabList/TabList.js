@@ -93,6 +93,23 @@ describe('TabList', () => {
     });
   });
 
+  it('does not control state if selectedIndex is defined', () => {
+    const onChange = sinon.spy();
+
+    const tree = shallow(
+      <TabList selectedIndex="0" onChange={onChange}>
+        <div className="one">a</div>
+        <div className="two">b</div>
+      </TabList>, {disableLifecycleMethods: true}
+    );
+
+    const innerTree = tree.shallow();
+
+    const child = innerTree.find('.two');
+    child.simulate('click');
+
+    assert.equal(tree.props().selectedIndex, 0);
+  });
 
   it('supports defaultSelectedIndex', () => {
     const tree = shallow(

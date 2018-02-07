@@ -48,7 +48,14 @@ export default class TabList extends React.Component {
   }
 
   onChange(selectedIndex) {
-    this.setState({selectedIndex});
+    // If selectedIndex is defined on props then this is a controlled component and we shouldn't
+    // change our own state.
+    if (!('selectedIndex' in this.props)) {
+      this.setState({
+        selectedIndex
+      });
+    }
+    
     if (this.props.onChange) {
       this.props.onChange(selectedIndex);
     }
