@@ -20,7 +20,7 @@ describe('Breadcrumbs', function () {
   it('should support clicking on a breadcrumb', function () {
     const onBreadcrumbClick = sinon.spy();
     const tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
-    tree.find('.spectrum-Breadcrumb').at(1).find('a').simulate('click');
+    tree.find('.spectrum-Breadcrumb').at(1).find('.spectrum-Breadcrumb-link').simulate('click');
     assert(onBreadcrumbClick.calledOnce);
     assert.deepEqual(onBreadcrumbClick.lastCall.args[0], {label: 'Bar'});
     assert.deepEqual(onBreadcrumbClick.lastCall.args[1], 1);
@@ -29,7 +29,7 @@ describe('Breadcrumbs', function () {
   it('clicking on the last breadcrumb should do nothing', function () {
     const onBreadcrumbClick = sinon.spy();
     const tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
-    tree.find('.spectrum-Breadcrumb').at(2).find('a').simulate('click');
+    tree.find('.spectrum-Breadcrumb').at(2).find('.spectrum-Breadcrumb-link').simulate('click');
     assert(onBreadcrumbClick.notCalled);
   });
 

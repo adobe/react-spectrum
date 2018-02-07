@@ -29,23 +29,25 @@ export default class Breadcrumbs extends React.Component {
   render() {
     const {items, icon, onBreadcrumbClick, className, variant, ariaLevel} = this.props;
     const isTitleVariant = variant === Breadcrumbs.variant.TITLE;
-
     const isCurrent = (i) => i === items.length - 1;
 
-    const getLinkMarkup = (item, i) => (
-      <a
-        className="spectrum-Breadcrumb-link"
-        role={!item.href ? 'link' : null}
-        href={!isCurrent(i) ? item.href : null}
-        target={!isCurrent(i) && item.href ? '_self' : null}
-        onClick={items.length > 1 && !isCurrent(i) ? onBreadcrumbClick.bind(null, item, items.length - i - 1) : undefined}
-        onFocus={items.length > 1 && !isCurrent(i) ? this.handleFocus.bind(this) : null}
-        onBlur={items.length > 1 && !isCurrent(i) ? this.handleBlur.bind(this) : null}
-        aria-current={isCurrent(i) ? 'page' : null}
-        tabIndex={!item.href && !isCurrent(i) ? 0 : null}>
-        {item.label}
-      </a>
-    );
+    const getLinkMarkup = (item, i) => {
+      let Element = !item.href ? 'div' : 'a';
+      return (
+        <Element
+          className="spectrum-Breadcrumb-link"
+          role={!item.href ? 'link' : null}
+          href={!isCurrent(i) ? item.href : null}
+          target={!isCurrent(i) && item.href ? '_self' : null}
+          onClick={items.length > 1 && !isCurrent(i) ? onBreadcrumbClick.bind(null, item, items.length - i - 1) : undefined}
+          onFocus={items.length > 1 && !isCurrent(i) ? this.handleFocus.bind(this) : null}
+          onBlur={items.length > 1 && !isCurrent(i) ? this.handleBlur.bind(this) : null}
+          aria-current={isCurrent(i) ? 'page' : null}
+          tabIndex={!item.href && !isCurrent(i) ? 0 : null}>
+          {item.label}
+        </Element>
+      );
+    };
 
     return (
       <nav>

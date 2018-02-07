@@ -71,9 +71,9 @@ export default class AccordionItem extends Component {
           aria-expanded={selected}
           aria-disabled={disabled}
           role="tab"
-          tabIndex={disabled ? undefined : tabIndex}
-          onClick={disabled ? undefined : onItemClick}
-          onKeyPress={disabled ? undefined : this.onHeaderKeyPress.bind(this)}>
+          tabIndex={!disabled ? tabIndex : null}
+          onClick={!disabled ? onItemClick : null}
+          onKeyPress={!disabled ? this.onHeaderKeyPress.bind(this) : null}>
           <span role="heading" aria-level={ariaLevel}>
             {header}
           </span>

@@ -23,7 +23,7 @@ export default function ShellUserProfile({
         <Button
           className="coral3-Shell-menu-button"
           variant="minimal">
-          <img src={avatarUrl} role="presentation" />
+          <img src={avatarUrl} alt="" aria-hidden="true" />
         </Button>
       }
       {...otherProps}>
@@ -36,7 +36,7 @@ export default function ShellUserProfile({
         }>
         <div className="coral3-Shell-user-container">
           <div className="coral3-Shell-user-image">
-            <img src={avatarUrl} role="presentation" className="coral3-Shell-user-avatar" />
+            <img src={avatarUrl} alt="" aria-hidden="true" className="coral3-Shell-user-avatar" />
           </div>
           <div className="coral3-Shell-user-name">{name}</div>
           <div className="coral3-Shell-user-heading">

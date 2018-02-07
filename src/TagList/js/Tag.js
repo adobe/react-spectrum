@@ -37,7 +37,7 @@ export default function Tag({
       aria-label={ariaLabel}
       {...otherProps}>
       {avatar &&
-        <img className="spectrum-TagList-item-avatar" src={avatar} />
+        <img className="spectrum-TagList-item-avatar" alt="" src={avatar} aria-hidden="true" />
       }
       {cloneIcon(icon, {
         size: 'S',
