@@ -153,8 +153,7 @@ export default class ShellHelp extends Component {
           <Button
             className="coral3-Shell-menu-button"
             variant="minimal"
-            icon={<HelpOutline />}
-            square />
+            icon={<HelpOutline />} />
         }
         onVisible={this.handleVisible}
         onHidden={this.props.onHide}

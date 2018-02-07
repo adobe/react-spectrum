@@ -22,8 +22,7 @@ export default function ShellUserProfile({
       target={
         <Button
           className="coral3-Shell-menu-button"
-          variant="minimal"
-          square>
+          variant="minimal">
           <img src={avatarUrl} role="presentation" />
         </Button>
       }

@@ -128,15 +128,15 @@ export default class OverlayTrigger extends Component {
     }
   }
 
-  handleToggle() {
+  handleToggle(e) {
     if (this.state.show) {
-      this.hide();
+      this.hide(e);
     } else {
-      this.show();
+      this.show(e);
     }
   }
 
-  handleDelayedShow() {
+  handleDelayedShow(e) {
     if (this._hoverHideDelay != null) {
       clearTimeout(this._hoverHideDelay);
       this._hoverHideDelay = null;
@@ -151,17 +151,17 @@ export default class OverlayTrigger extends Component {
       this.props.delayShow : this.props.delay;
 
     if (!delay) {
-      this.show();
+      this.show(e);
       return;
     }
 
     this._hoverShowDelay = setTimeout(() => {
       this._hoverShowDelay = null;
-      this.show();
+      this.show(e);
     }, delay);
   }
 
-  handleDelayedHide() {
+  handleDelayedHide(e) {
     if (this._hoverShowDelay != null) {
       clearTimeout(this._hoverShowDelay);
       this._hoverShowDelay = null;
@@ -176,13 +176,13 @@ export default class OverlayTrigger extends Component {
       this.props.delayHide : this.props.delay;
 
     if (!delay) {
-      this.hide();
+      this.hide(e);
       return;
     }
 
     this._hoverHideDelay = setTimeout(() => {
       this._hoverHideDelay = null;
-      this.hide();
+      this.hide(e);
     }, delay);
   }
 
@@ -199,20 +199,20 @@ export default class OverlayTrigger extends Component {
     }
   }
 
-  show() {
+  show(e) {
     if (!this.state.show) {
       this.setState({show: true});
       if (this.props.onShow) {
-        this.props.onShow();
+        this.props.onShow(e);
       }
     }
   }
 
-  hide() {
+  hide(e) {
     if (this.state.show) {
       this.setState({show: false});
       if (this.props.onHide) {
-        this.props.onHide();
+        this.props.onHide(e);
       }
     }
   }

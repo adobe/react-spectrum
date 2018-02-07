@@ -18,10 +18,20 @@ export default class Menu extends React.Component {
   };
 
   render() {
-    const {className, open, onClose, onSelect, placement, children, style, ...otherProps} = this.props;
+    const {
+      arrowStyle,
+      children,
+      className,
+      open,
+      onClose, 
+      onSelect,
+      placement,
+      style,
+      ...otherProps
+    } = this.props;
 
     return (
-      <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+      <Popover arrowStyle={arrowStyle} isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
         <List role="menu" className={className} {...otherProps}>
           {React.Children.map(children, child => React.cloneElement(child, {onSelect}))}
         </List>
