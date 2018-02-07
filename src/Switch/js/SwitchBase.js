@@ -1,6 +1,8 @@
 import classNames from 'classnames';
+import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
+@focusRing
 export default class SwitchBase extends Component {
   static defaultProps = {
     renderLabel: true,

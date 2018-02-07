@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -9,6 +10,7 @@ const VARIANTS = {
   'minimal': 'quiet--secondary'
 };
 
+@focusRing
 export default class Button extends Component {
   onClick = (event, ...rest) => {
     // This is needed when `element` is an anchor or something similar.

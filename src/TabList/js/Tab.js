@@ -1,11 +1,13 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
+import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
 /**
  * header: A string or node which will be placed at the top of the accordion item.
  */
+@focusRing
 export default class Tab extends Component {
   static displayName = 'Tab';
 

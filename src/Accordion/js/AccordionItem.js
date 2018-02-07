@@ -1,12 +1,14 @@
 import AccordionChevron from '../../Icon/core/AccordionChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 /**
  * header: A string or node which will be placed at the top of the accordion item.
  */
+@focusRing
 export default class AccordionItem extends Component {
   static propTypes = {
     header: PropTypes.string,

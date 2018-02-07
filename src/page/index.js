@@ -1,3 +1,4 @@
+import '@spectrum/focus-ring-polyfill';
 import './style/index.styl';
 import configureTypekit from '../utils/configureTypekit';
 
