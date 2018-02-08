@@ -24,6 +24,26 @@ describe('Textarea', () => {
     assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline');
   });
 
+  describe('growing quiet variant', () => {
+    let e;
+    beforeEach(() => {
+
+      const tree = shallow(<Textarea quiet />);
+      e = {
+        target: {
+          scrollHeight: 200,
+          style: {}
+        }
+      };
+
+      tree.instance().handleHeightChange(null, e);
+    });
+
+    it('height should equal scrollHeight', () => {
+      assert.equal(e.target.style.height, e.target.scrollHeight + 'px');
+    });
+  });
+
   it('supports name', () => {
     const tree = shallow(<Textfield multiLine name="foo" />);
     assert.equal(tree.prop('name'), 'foo');
