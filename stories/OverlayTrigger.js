@@ -54,8 +54,8 @@ storiesOf('OverlayTrigger', module)
     {inline: true}
   )
   .addWithInfo(
-    'with: offsetCross',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', offsetCross: 100}),
+    'with: crossOffset',
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', crossOffset: 100}),
     {inline: true}
   );
 

@@ -81,13 +81,17 @@ export default class OverlayTrigger extends Component {
     onMouseOver: PropTypes.func,
     onShow: PropTypes.func,
     onHide: PropTypes.func,
-    show: PropTypes.oneOf([null])
+    show: PropTypes.oneOf([null]),
+    offset: PropTypes.number,
+    crossOffset: PropTypes.number,
   };
 
   static defaultProps = {
     defaultShow: false,
     trigger: ['hover', 'focus'],
-    placement: 'left'
+    placement: 'left',
+    offset: 0,
+    crossOffset: 0
   };
 
   constructor(props, context) {
