@@ -96,9 +96,11 @@ function computePosition(childOffset, overlaySize, placementInfo, offset, crossO
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]);
   }
 
-  // To ensure overlay sticks to target
-  const positionForPositiveSideOverflow = Math.min(position[crossAxis], childOffset[crossAxis]);
-  position[crossAxis] = Math.max(positionForPositiveSideOverflow, childOffset[crossAxis] - overlaySize[crossSize] + childOffset[crossSize]);
+  // Ensure overlay sticks to target(ignore for overlays smaller than target) 
+  if (childOffset[crossSize] < overlaySize[crossSize]) {
+    const positionForPositiveSideOverflow = Math.min(position[crossAxis], childOffset[crossAxis]);
+    position[crossAxis] = Math.max(positionForPositiveSideOverflow, childOffset[crossAxis] - overlaySize[crossSize] + childOffset[crossSize]);
+  }
 
   if (placement === axis) {
     position[axis] = childOffset[axis] - overlaySize[size] + offset;
