@@ -46,6 +46,8 @@ build:
 	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;
 	find dist -name "*.js" -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
 	find dist -name "*.bak" -delete
+	find dist -name "*.js" -exec sed -i.bak 's/@spectrum\/focus-ring-polyfill/..\/focus-ring-polyfill/g' {} \;
+	cp -R node_modules/@spectrum/focus-ring-polyfill dist/focus-ring-polyfill
 	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
 	cp -R dist/* ./.
 	rm -rf dist/*
