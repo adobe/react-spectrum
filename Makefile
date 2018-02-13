@@ -14,7 +14,7 @@ run:
 	start-storybook -p 9002
 
 clean:
-	rm -rf node_modules dist storybook-static
+	rm -rf node_modules dist storybook-static focus-ring-polyfill
 	bash -c 'for f in src/*; do rm -rf $$(basename $$f); done'
 
 lint:
