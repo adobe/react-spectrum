@@ -20,7 +20,7 @@ import '../style/index.styl';
 export default class TabList extends React.Component {
   state = {
     selectedIndex: TabListBase.getDefaultSelectedIndex(this.props),
-    layoutInfos: []
+    tabArray: []
   };
 
   componentWillReceiveProps(nextProps) {
@@ -32,19 +32,19 @@ export default class TabList extends React.Component {
   }
 
   componentDidMount() {
-    // Measure the tabs so we can position the line below correctly
-    let layoutInfos = [];
-    let tabs = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-TabList-item');
-    for (let tab of tabs) {
-      layoutInfos.push({
-        left: tab.offsetLeft,
-        top: tab.offsetTop,
-        width: tab.offsetWidth,
-        height: tab.offsetHeight
-      });
-    }
+    this.updateTabs();
+  }
 
-    this.setState({layoutInfos});
+  componentDidUpdate(prevProps) {
+    if (prevProps.children !== this.props.children) {
+      this.updateTabs();
+    }
+  }
+
+  updateTabs() {
+    // Measure the tabs so we can position the line below correctly
+    const tabArray = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-TabList-item');
+    this.setState({tabArray});
   }
 
   onChange(selectedIndex) {
@@ -55,7 +55,7 @@ export default class TabList extends React.Component {
         selectedIndex
       });
     }
-    
+
     if (this.props.onChange) {
       this.props.onChange(selectedIndex);
     }
@@ -71,7 +71,7 @@ export default class TabList extends React.Component {
       ...otherProps
     } = this.props;
 
-    let selectedTab = this.state.layoutInfos[this.state.selectedIndex];
+    let selectedTab = this.state.tabArray[this.state.selectedIndex];
 
     return (
       <TabListBase
@@ -97,8 +97,8 @@ export default class TabList extends React.Component {
 function TabLine({orientation, selectedTab}) {
   let style = {
     transform: orientation === 'vertical'
-      ? `translateY(${selectedTab.top}px)`
-      : `translateX(${selectedTab.left}px) scaleX(${selectedTab.width})`
+      ? `translateY(${selectedTab.offsetTop}px)`
+      : `translateX(${selectedTab.offsetLeft}px) scaleX(${selectedTab.offsetWidth})`
   };
 
   return <div className="spectrum-TabList-item-line" style={style} />;
