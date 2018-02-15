@@ -7,6 +7,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../style/index.styl';
 
+const getLabel = o => (typeof o === 'string' ? o : o.label);
+
 @autobind
 export default class Autocomplete extends React.Component {
   static defaultProps = {
@@ -81,7 +83,10 @@ export default class Autocomplete extends React.Component {
     // Avoid race condition where two getCompletions calls are made in parallel.
     if (this._value === value) {
       this.setState({results});
+      return results;
     }
+
+    return this.state.results;
   }
 
   onSelect(value) {
@@ -160,9 +165,16 @@ export default class Autocomplete extends React.Component {
     }
   }
 
-  showMenu() {
+  async showMenu() {
     this.setState({showDropdown: true, selectedIndex: 0});
-    this.getCompletions(this.state.value);
+    let results = await this.getCompletions(this.state.value);
+
+    // Reset the selected index based on the value
+    let selectedIndex = results.findIndex(result => getLabel(result) === this.state.value);
+    if (selectedIndex !== -1) {
+      this.setState({selectedIndex});
+    }
+
     if (this.props.onMenuShow) {
       this.props.onMenuShow();
     }
@@ -199,17 +211,21 @@ export default class Autocomplete extends React.Component {
 
         <Overlay target={this} show={showDropdown && results.length > 0} placement="bottom left">
           <Menu onSelect={this.onSelect} style={{width: this.state.width}}>
-            {results.map((result, i) => (
-              <MenuItem
-                key={`item-${i}`}
-                value={result}
-                icon={result.icon}
-                focused={selectedIndex === i}
-                onMouseEnter={this.onMouseEnter.bind(this, i)}
-                onMouseDown={e => e.preventDefault()}>
-                {typeof result === 'string' ? result : result.label}
-              </MenuItem>
-            ))}
+            {results.map((result, i) => {
+              let label = getLabel(result);
+              return (
+                <MenuItem
+                  key={`item-${i}`}
+                  value={result}
+                  icon={result.icon}
+                  focused={selectedIndex === i}
+                  selected={label === value}
+                  onMouseEnter={this.onMouseEnter.bind(this, i)}
+                  onMouseDown={e => e.preventDefault()}>
+                  {label}
+                </MenuItem>
+              );
+            })}
           </Menu>
         </Overlay>
       </div>

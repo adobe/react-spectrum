@@ -7,6 +7,9 @@ import ReactDOM from 'react-dom';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import Textfield from '../../Textfield';
 import '../../InputGroup/style/index.styl';
+import {chain} from '../../utils/events';
+
+const getLabel = o => (typeof o === 'string' ? o : o.label);
 
 @autobind
 export default class ComboBox extends React.Component {
@@ -28,7 +31,21 @@ export default class ComboBox extends React.Component {
   }
 
   getCompletions(text) {
-    return this.props.options.filter(o => o.toLowerCase().startsWith(text.toLowerCase()));
+    if (this.shouldFilter(text)) {
+      return this.props.options.filter(o => getLabel(o).toLowerCase().startsWith(text.toLowerCase()));
+    }
+
+    return this.props.options;
+  }
+
+  shouldFilter(text) {
+    // if any input has been made since we opened the menu, let's filter
+    if (this.changeSinceOpen) {
+      return true;
+    }
+
+    // if the current value isn't in the list, let's filter
+    return !this.props.options.some(o => getLabel(o) === text);
   }
 
   onMenuShow() {
@@ -36,7 +53,12 @@ export default class ComboBox extends React.Component {
   }
 
   onMenuHide() {
+    this.changeSinceOpen = false;
     this.setState({open: false});
+  }
+
+  onChange() {
+    this.changeSinceOpen = true;
   }
 
   render() {
@@ -47,6 +69,7 @@ export default class ComboBox extends React.Component {
       invalid,
       quiet,
       onChange,
+      onSelect,
       ...props
     } = this.props;
 
@@ -58,7 +81,8 @@ export default class ComboBox extends React.Component {
         ref={a => this.autocomplete = a}
         getCompletions={this.getCompletions}
         value={value}
-        onChange={onChange}
+        onChange={chain(onChange, this.onChange)}
+        onSelect={onSelect}
         onMenuShow={this.onMenuShow}
         onMenuHide={this.onMenuHide}>
         <Textfield

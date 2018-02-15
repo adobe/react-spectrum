@@ -283,6 +283,41 @@ describe('Autocomplete', () => {
     assert.deepEqual(onSelect.getCall(0).args[0], {id: 1, label: 'one'});
   });
 
+  it('should show a checkmark on the currently selected menu item', async () => {
+    const tree = shallow(
+      <Autocomplete getCompletions={v => ['one', 'two']}>
+        <input />
+      </Autocomplete>
+    );
+
+    tree.find('input').simulate('focus');
+    tree.find('input').simulate('change', 'two');
+
+    await sleep(1); // Wait for async getCompletions
+    tree.update();
+
+    assert.equal(tree.find('input').prop('value'), 'two');
+
+    assert.equal(tree.find(MenuItem).length, 2);
+    assert.equal(tree.find(MenuItem).at(1).prop('selected'), true);
+  });
+
+  it('should focus the selected index when showing the menu', async () => {
+    const tree = shallow(
+      <Autocomplete value="two" getCompletions={v => ['one', 'two']}>
+        <input />
+      </Autocomplete>
+    );
+
+    await tree.instance().showMenu();
+    tree.update();
+
+    assert.equal(tree.find(MenuItem).length, 2);
+    assert.equal(tree.find(MenuItem).at(1).prop('selected'), true);
+
+    assertMenuFocusStates(tree, [false, true]);
+  });
+
   describe('autocompletes when Tab is pressed', () => {
     const render = async (getCompletions) => {
       const preventDefaultSpy = sinon.spy();

@@ -1,6 +1,11 @@
+import Bell from '../src/Icon/Bell';
 import ComboBox from '../src/ComboBox';
 import React from 'react';
+import Seat from '../src/Icon/Seat';
+import Send from '../src/Icon/Send';
+import Stop from '../src/Icon/Stop';
 import {storiesOf} from '@storybook/react';
+import Trap from '../src/Icon/Trap';
 import {VerticalCenter} from '../.storybook/layout';
 
 const OPTIONS = [
@@ -13,6 +18,15 @@ const OPTIONS = [
   'Peppermint',
   'Some crazy long value that should be cut off'
 ];
+
+const OPTION_ICONS = [
+  {label: 'Bell', icon: <Bell />},
+  {label: 'Stop', icon: <Stop />},
+  {label: 'Trap', icon: <Trap />},
+  {label: 'Send', icon: <Send />},
+  {label: 'Seat', icon: <Seat />}
+];
+
 
 storiesOf('ComboBox', module)
   .addDecorator(story => (
@@ -59,6 +73,13 @@ storiesOf('ComboBox', module)
     'quiet disabled',
     () => (
       <ComboBox options={OPTIONS} placeholder="Combo Box" quiet disabled />
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'with icons',
+    () => (
+      <ComboBox options={OPTION_ICONS} placeholder="Combo Box" />
     ),
     {inline: true}
   );
