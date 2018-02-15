@@ -12,8 +12,9 @@ export default class Slider extends React.Component {
   };
 
   state = {
-    value: null,
-    isDragging: false
+    startValue: null,
+    endValue: null,
+    draggingHandle: null
   };
 
   componentWillMount() {
@@ -21,17 +22,32 @@ export default class Slider extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    let value = props.value == null ? props.defaultValue : props.value;
-    if (value == null && (this.state.value == null || this.props.max !== props.max || this.props.min !== props.min)) {
-      value = props.min + (props.max - props.min) / 2;
+    // For range slider
+    if (props.variant === 'range') {
+      let startValue = (props.startValue == null) ? props.defaultStartValue : props.startValue;
+      let endValue = (props.endValue == null) ? props.defaultEndValue : props.endValue;
+      if (startValue == null && (this.state.startValue == null || this.props.min !== props.min)) {
+        startValue = props.min;
+      }
+      if (endValue == null && (this.state.endValue == null || this.props.max !== props.max)) {
+        endValue = props.max;
+      }
+      if (startValue != null && endValue != null) {
+        this.setState({startValue, endValue});
+      }
+    } else {
+      // For single slider
+      let startValue = props.value == null ? props.defaultValue : props.value;
+      if (startValue == null && (this.state.startValue == null || this.props.max !== props.max || this.props.min !== props.min)) {
+        startValue = props.min + (props.max - props.min) / 2;
+      }
+      this.setState({startValue});
     }
-
-    this.setState({value});
   }
 
-  onMouseDown = (e) => {
+  onMouseDown = (e, sliderHandle) => {
     this.setState({
-      isDragging: true
+      draggingHandle: sliderHandle
     });
 
     window.addEventListener('mouseup', this.onMouseUp);
@@ -45,9 +61,28 @@ export default class Slider extends React.Component {
     window.removeEventListener('mousemove', this.onMouseMove);
 
     this.setState({
-      isDragging: false
+      draggingHandle: null
     });
   };
+
+  getHandleValues = (value, step) => {
+    let {startValue, endValue} = this.state;
+
+    if (this.state.draggingHandle === 'startHandle') {
+      startValue = value;
+    }
+
+    if (this.state.draggingHandle === 'endHandle') {
+      endValue = value;
+    }
+
+    step = (!step) ? 0.05 : step;
+    if (startValue + step > endValue) {
+      return [this.state.startValue, this.state.endValue];
+    } else {
+      return [startValue, endValue];
+    }
+  }
 
   onMouseMove = (e) => {
     e.preventDefault();
@@ -71,53 +106,70 @@ export default class Slider extends React.Component {
       value = Math.round(value / step) * step;
     }
 
-    // Emit onChange event
-    if (this.props.onChange && value !== this.state.value) {
-      this.props.onChange(value);
-    }
+    if (this.props.variant === 'range') {
+      let [startValue, endValue] = this.getHandleValues(value, step);
+      if (this.props.onChange && (startValue !== this.state.startValue || endValue !== this.state.endValue)) {
+        this.props.onChange(startValue, endValue);
+      }
 
-    // If value is not set in props (uncontrolled component), set state
-    if (this.props.value == null) {
-      this.setState({value});
+      if (this.props.startValue == null && this.props.endValue == null) {
+        this.setState({startValue, endValue});
+      }
+    } else {
+      if (this.props.onChange && value !== this.state.startValue) {
+        this.props.onChange(value);
+      }
+
+      if (this.props.value == null) {
+        this.setState({startValue: value});
+      }
     }
   };
 
-  render() {
-    let {disabled, max, min, orientation, step} = this.props;
-    let {isDragging, isFocused, value} = this.state;
+
+  renderSliderHandle = (sliderHandle) => {
+    let {disabled, max, min, variant} = this.props;
+    let {draggingHandle, isFocused} = this.state;
+    let value = (sliderHandle === 'startHandle') ? this.state.startValue : this.state.endValue;
     let percent = (value - min) / (max - min);
     let styleKey = this.props.orientation === 'vertical' ? 'bottom' : 'left';
+    return (
+      <div
+        className={classNames('spectrum-Slider-handle', {'is-dragged': draggingHandle === sliderHandle, 'is-focused': isFocused})}
+        onMouseDown={e => !disabled && variant === 'range' ? this.onMouseDown(e, sliderHandle) : null}
+        style={{[styleKey]: percent * 100 + '%'}}
+        aria-disabled={disabled}>
+        <input
+          type="range"
+          max={max}
+          min={min}
+          className="spectrum-Slider-input"
+          aria-valuenow={value}
+          disabled={disabled} />
+      </div>
+    );
+  }
+
+  render() {
+    let {disabled, max, min, orientation, variant} = this.props;
     let sliderClasses = classNames('spectrum-Slider', this.props.className, {
       'spectrum-Slider--disabled': disabled,
       'spectrum-Slider--vertical': orientation === 'vertical'
     });
-
     return (
       <div
         className={sliderClasses}
-        onMouseDown={!disabled && this.onMouseDown}
+        onMouseDown={e => !disabled && variant !== 'range' ? this.onMouseDown(e, 'startHandle') : null}
         ref={d => this.dom = d}
         role="slider"
         aria-valuemin={min}
         aria-valuemax={max}
-        aria-valuenow={value}
         aria-orientation={orientation}
         aria-disabled={disabled}>
         <div className="spectrum-Slider-controls">
           <div className="spectrum-Slider-track" />
-          <div
-            className={classNames('spectrum-Slider-handle', {'is-dragged': isDragging, 'is-focused': isFocused})}
-            onMouseDown={!disabled && this.onMouseDown}
-            style={{[styleKey]: percent * 100 + '%'}}
-            aria-disabled={disabled}>
-            <input
-              type="range"
-              className="spectrum-Slider-input"
-              step={step}
-              max={max}
-              min={min}
-              disabled={disabled} />
-          </div>
+          {this.renderSliderHandle('startHandle')}
+          {(variant === 'range') ? this.renderSliderHandle('endHandle') : null}
         </div>
       </div>
     );

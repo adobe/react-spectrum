@@ -40,8 +40,33 @@ storiesOf('Slider', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant:range',
+    () => render({variant: 'range'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant:range Default values',
+    () => render({variant: 'range', defaultStartValue: 0.2, defaultEndValue: 0.6}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant:range Controlled values',
+    () => render({variant: 'range', startValue: 0.45, endValue: 0.75}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant:range Min = 10, max = 20, Step = 1',
+    () => render({variant: 'range', min: 10, max: 20, step: 1}),
+    {inline: true}
+  )
+  .addWithInfo(
     'disabled',
     () => render({disabled: true}),
+    {inline: true}
+  )
+   .addWithInfo(
+    'variant:range disabled',
+    () => render({disabled: true, variant: 'range'}),
     {inline: true}
   );
 

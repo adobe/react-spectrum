@@ -11,26 +11,25 @@ describe('Slider', function () {
     assert.equal(tree.find('.spectrum-Slider-track').length, 1);
     assert.equal(tree.find('.spectrum-Slider-handle').length, 1);
     assert.equal(tree.find('.spectrum-Slider-input').length, 1);
-
-    assert.equal(tree.state('value'), 0.5);
+    assert.equal(tree.state('startValue'), 0.5);
     assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '50%');
   });
 
   it('should support setting a default value', function () {
     const tree = shallow(<Slider defaultValue={0.75} />);
-    assert.equal(tree.state('value'), 0.75);
+    assert.equal(tree.state('startValue'), 0.75);
     assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '75%');
   });
 
   it('should support setting a min and max value', function () {
     const tree = shallow(<Slider min={10} max={20} />);
-    assert.equal(tree.state('value'), 15);
+    assert.equal(tree.state('startValue'), 15);
     assert.equal(tree.find('.spectrum-Slider-handle').prop('style').left, '50%');
   });
 
   it('should support vertical orientation', function () {
     const tree = shallow(<Slider min={10} max={20} defaultValue={18} orientation="vertical" />);
-    assert.equal(tree.state('value'), 18);
+    assert.equal(tree.state('startValue'), 18);
     assert.equal(tree.find('.spectrum-Slider-handle').prop('style').bottom, '80%');
   });
 
@@ -53,7 +52,7 @@ describe('Slider', function () {
     });
 
     assert.deepEqual(onChange.getCall(0).args[0], 0.6);
-    assert.equal(tree.state('value'), 0.6);
+    assert.equal(tree.state('startValue'), 0.6);
   });
 
   it('should support clicking on the track to set the value', function () {
@@ -75,6 +74,7 @@ describe('Slider', function () {
     });
 
     assert.deepEqual(onChange.getCall(0).args[0], 0.6);
+    assert.equal(tree.state('draggingHandle'), 'startHandle');
   });
 
   it('should support drag and drop to set the slider value with step', function () {
@@ -136,7 +136,7 @@ describe('Slider', function () {
       clientX: 80
     });
 
-    assert.equal(tree.state('value'), 0.75);
+    assert.equal(tree.state('startValue'), 0.75);
   });
 
   it('should stop dragging on mouse up', function () {
@@ -157,8 +157,8 @@ describe('Slider', function () {
       clientX: 80
     });
 
-    assert.equal(tree.state('value'), 0.6);
-    assert.equal(tree.state('isDragging'), true);
+    assert.equal(tree.state('startValue'), 0.6);
+    assert.equal(tree.state('draggingHandle'), 'startHandle');
 
     // Mouse move
     tree.instance().dom = dom;
@@ -167,11 +167,121 @@ describe('Slider', function () {
     });
 
     window.dispatchEvent(event);
-    assert.equal(tree.state('value'), 0.7);
+    assert.equal(tree.state('startValue'), 0.7);
 
     // Mouse up
     event = new window.MouseEvent('mouseup');
     window.dispatchEvent(event);
-    assert.equal(tree.state('isDragging'), false);
+    assert.equal(tree.state('draggingHandle'), null);
   });
+
+  it('should support range slider', function () {
+    const tree = shallow(<Slider variant="range" />);
+    assert.equal(tree.prop('className'), 'spectrum-Slider');
+    assert.equal(tree.find('.spectrum-Slider-track').length, 1);
+    assert.equal(tree.find('.spectrum-Slider-handle').length, 2);
+    assert.equal(tree.find('.spectrum-Slider-input').length, 2);
+    assert.equal(tree.state('startValue'), 0);
+    assert.equal(tree.state('endValue'), 1);
+    assert.equal(tree.find('.spectrum-Slider-handle').getElements()[0].props.style.left, '0%');
+    assert.equal(tree.find('.spectrum-Slider-handle').getElements()[1].props.style.left, '100%');
+  });
+
+  it('should render a range slider with startValue and endValue', function () {
+    const tree = shallow(<Slider variant="range" startValue="0.2" endValue="0.6" />);
+    assert.equal(tree.prop('className'), 'spectrum-Slider');
+    assert.equal(tree.find('.spectrum-Slider-track').length, 1);
+    assert.equal(tree.find('.spectrum-Slider-handle').length, 2);
+    assert.equal(tree.find('.spectrum-Slider-input').length, 2);
+    assert.equal(tree.state('startValue'), 0.2);
+    assert.equal(tree.state('endValue'), 0.6);
+    assert.equal(tree.find('.spectrum-Slider-handle').getElements()[0].props.style.left, '20%');
+    assert.equal(tree.find('.spectrum-Slider-handle').getElements()[1].props.style.left, '60%');
+  });
+
+  it('should not allow crossing of sliders for range slider', function () {
+    const onChange = sinon.spy();
+    const tree = shallow(<Slider variant="range" onChange={onChange} />);
+    tree.setState({startValue: 0.7, endValue: 0.8, draggingHandle: 'endHandle'});
+    tree.instance().dom = {
+      getBoundingClientRect() {
+        return {
+          left: 20,
+          width: 100
+        };
+      }
+    };
+
+    let innerTree = shallow(tree.find('.spectrum-Slider-handle').getElements()[1]);
+    innerTree.simulate('mouseDown', {
+      preventDefault() {},
+      clientX: 80
+    });
+
+    // endHandle crossed startHandle each other 0.6<0.7
+    assert.equal(tree.state('draggingHandle'), 'endHandle');
+    assert(onChange.notCalled);
+
+    // The value does not get updated
+    assert.equal(tree.state('startValue'), 0.7);
+    assert.equal(tree.state('endValue'), 0.8);
+  });
+
+  it('should not set state if values are controlled in range slider', function () {
+    const tree = shallow(<Slider variant="range" startValue="0.1" endValue="0.6" />);
+
+    tree.instance().dom = {
+      getBoundingClientRect() {
+        return {
+          left: 20,
+          width: 100
+        };
+      }
+    };
+
+    let innerTree = shallow(tree.find('.spectrum-Slider-handle').getElements()[0]);
+    innerTree.simulate('mouseDown', {
+      preventDefault() {},
+      clientX: 80
+    });
+
+    innerTree = shallow(tree.find('.spectrum-Slider-handle').getElements()[1]);
+    innerTree.simulate('mouseDown', {
+      preventDefault() {},
+      clientX: 90
+    });
+
+
+    assert.equal(tree.state('startValue'), 0.1);
+    assert.equal(tree.state('endValue'), 0.6);
+  });
+
+  it('should set state if values are uncontrolled in range slider', function () {
+    const tree = shallow(<Slider variant="range" defaultStartValue="0.1" defaultEndValue="0.6" />);
+
+    tree.instance().dom = {
+      getBoundingClientRect() {
+        return {
+          left: 20,
+          width: 100
+        };
+      }
+    };
+
+    let innerTree = shallow(tree.find('.spectrum-Slider-handle').getElements()[0]);
+    innerTree.simulate('mouseDown', {
+      preventDefault() {},
+      clientX: 60
+    });
+
+    assert.equal(tree.state('startValue'), 0.4);
+
+    innerTree = shallow(tree.find('.spectrum-Slider-handle').getElements()[1]);
+    innerTree.simulate('mouseDown', {
+      preventDefault() {},
+      clientX: 90
+    });
+    assert.equal(tree.state('endValue'), 0.7);
+  });
+
 });
