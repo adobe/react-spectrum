@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import focusRing from '../../utils/focusRing';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -12,6 +13,35 @@ const VARIANTS = {
 
 @focusRing
 export default class Button extends Component {
+  static propTypes = {
+    block: PropTypes.bool,
+    disabled: PropTypes.bool,
+    element: PropTypes.string,
+    icon: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.element
+    ]),
+    invalid: PropTypes.bool,
+    label: PropTypes.string,
+    logic: PropTypes.bool,
+    quiet: PropTypes.bool,
+    selected: PropTypes.bool,
+    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal']),
+    onClick: PropTypes.func
+  };
+
+  static defaultProps = {
+    block: false,
+    disabled: false,
+    element: 'button',
+    invalid: false,
+    label: '',
+    logic: false,
+    quiet: false,
+    selected: false,
+    variant: 'secondary'
+  };
+
   onClick = (event, ...rest) => {
     // This is needed when `element` is an anchor or something similar.
     // When `element` is a button, we won't even get here if it's disabled and clicked.
@@ -23,6 +53,13 @@ export default class Button extends Component {
       this.props.onClick(event, ...rest);
     }
   };
+
+  onKeyDownSpace = (event) => {
+    if (event.key === ' ') {
+      event.preventDefault();
+      event.target.click();
+    }
+  }
 
   render() {
     const {
@@ -43,11 +80,12 @@ export default class Button extends Component {
 
     if (Element !== 'button') {
       otherProps.role = 'button';
-      otherProps.tabIndex = disabled ? undefined : otherProps.tabIndex || 0;
-      otherProps['aria-disabled'] = disabled;
+      otherProps.tabIndex = disabled ? null : otherProps.tabIndex || 0;
+      otherProps['aria-disabled'] = disabled || null;
       if (Element === 'a' && disabled && otherProps.href) {
-        otherProps.href = undefined;
+        otherProps.href = null;
       }
+      otherProps.onKeyDown = disabled ? null : this.onKeyDownSpace;
     }
 
     let variantPrefix = '';
@@ -78,6 +116,7 @@ export default class Button extends Component {
           )
         }
         disabled={disabled}
+        aria-invalid={invalid || null}
         onClick={this.onClick}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&

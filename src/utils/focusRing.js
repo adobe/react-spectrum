@@ -35,11 +35,16 @@ export default function focusRing(WrappedComponent) {
       componentDidUpdate.apply(this, arguments);
     }
 
-    if (elementWithFocusRing &&
-        document.activeElement === elementWithFocusRing &&
-        !elementWithFocusRing.classList.contains(FOCUS_RING_CLASSNAME)) {
-      elementWithFocusRing.classList.add(FOCUS_RING_CLASSNAME);
-      elementWithFocusRing = null;
+    try {
+      const node = ReactDOM.findDOMNode(this);
+      if (elementWithFocusRing &&
+          (document.activeElement === elementWithFocusRing || node.contains(document.activeElement)) &&
+          !elementWithFocusRing.classList.contains(FOCUS_RING_CLASSNAME)) {
+        document.activeElement.classList.add(FOCUS_RING_CLASSNAME);
+        elementWithFocusRing = null;
+      }
+    } catch (error) {
+      // do nothing if component is not mounted
     }
   };
 }

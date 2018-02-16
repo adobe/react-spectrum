@@ -56,7 +56,7 @@ function render(props = {}) {
   return (
     <ButtonGroup
       style={{textAlign: 'left'}}
-      label="ButtonGroup"
+      aria-label="ButtonGroup"
       onChange={action('change')}
       {...defaultProps}
       {...props} />
