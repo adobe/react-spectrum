@@ -1,20 +1,40 @@
-export function interpretKeyboardEvent(event) {
+export function interpretKeyboardEvent(event, isHorizontal = false) {
   switch (event.key) {
     case 'Enter':
-    case 'Tab':
+    case ' ':
       if (this.onSelectFocused) {
         this.onSelectFocused(event);
       }
       break;
 
+    case 'Tab':
+      if (this.onTab) {
+        this.onTab(event);
+      }
+      break;
+
     case 'PageUp':
+      if (this.onPageUp) {
+        this.onPageUp(event);
+      } else if (this.onFocusFirst) {
+        this.onFocusFirst(event);
+      }
+      break;
+
+    case 'PageDown':
+      if (this.onPageDown) {
+        this.onPageDown(event);
+      } else if (this.onFocusLast) {
+        this.onFocusLast(event);
+      }
+      break;
+
     case 'Home':
       if (this.onFocusFirst) {
         this.onFocusFirst(event);
       }
       break;
 
-    case 'PageDown':
     case 'End':
       if (this.onFocusLast) {
         this.onFocusLast(event);
@@ -23,14 +43,32 @@ export function interpretKeyboardEvent(event) {
 
     case 'ArrowUp':
     case 'Up':
-      if (this.onFocusPrevious) {
+      if (event.altKey && this.onAltArrowUp) {
+        this.onAltArrowUp(event);
+      } else if (this.onFocusPrevious) {
         this.onFocusPrevious(event);
       }
       break;
 
     case 'ArrowDown':
     case 'Down':
-      if (this.onFocusNext) {
+      if (event.altKey && this.onAltArrowDown) {
+        this.onAltArrowDown(event);
+      } else if (this.onFocusNext) {
+        this.onFocusNext(event);
+      }
+      break;
+
+    case 'ArrowLeft':
+    case 'Left':
+      if (isHorizontal && this.onFocusPrevious) {
+        this.onFocusPrevious(event);
+      }
+      break;
+
+    case 'ArrowRight':
+    case 'Right':
+      if (isHorizontal && this.onFocusNext) {
         this.onFocusNext(event);
       }
       break;

@@ -153,6 +153,10 @@ export default class Autocomplete extends React.Component {
     this.selectIndex(index);
   }
 
+  onTab(event) {
+    this.onSelectFocused(event);
+  }
+
   selectIndex(selectedIndex) {
     this.setState({selectedIndex});
   }

@@ -1,6 +1,7 @@
 import {jsdom} from 'jsdom';
 import {Module} from 'module';
 import path from 'path';
+import 'raf/polyfill';
 import configure from 'enzyme-adapter-react-helper';
 
 const exposedProperties = [ 'window', 'navigator', 'document' ];
