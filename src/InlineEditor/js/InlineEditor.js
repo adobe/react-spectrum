@@ -44,6 +44,8 @@ export default class InlineEditor extends React.Component {
     let value = shouldSave ? this.state.value : this.state.startValue;
     if (shouldSave && this.props.onChange) {
       contEditing = (await this.props.onChange(value) === false);
+    } else if (!shouldSave && this.props.onCancel) {
+      this.props.onCancel();
     }
     this.setState({
       editing: contEditing,

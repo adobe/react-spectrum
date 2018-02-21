@@ -39,7 +39,7 @@ describe('InlineEditor', () => {
     assert(tree.hasClass('foo'));
   });
 
-  it('should save the value on enter', () => {
+  it('should save the value on enter', (done) => {
     const onChange = sinon.spy();
     const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} />);
 
@@ -51,6 +51,7 @@ describe('InlineEditor', () => {
 
     tree.simulate('keyDown', {key: 'Enter'});
     setImmediate(() => {
+      tree.update();
       assert.equal(tree.type(), 'span');
       assert.equal(tree.text(), 'foo');
 
@@ -60,7 +61,7 @@ describe('InlineEditor', () => {
     });
   });
 
-  it('should save the value on enter when onChange returns success in validate mode', () => {
+  it('should save the value on enter when onChange returns success in validate mode', (done) => {
     const onChange = sinon.stub();
     onChange.resolves(true);
     const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} />);
@@ -72,17 +73,18 @@ describe('InlineEditor', () => {
     assert.equal(tree.prop('value'), 'foo');
 
     tree.simulate('keyDown', {key: 'Enter'});
-    setTimeout(() => {
+    setImmediate(() => {
+      tree.update();
       assert.equal(tree.type(), 'span');
       assert.equal(tree.text(), 'foo');
 
       sinon.assert.calledOnce(onChange);
       assert.equal(onChange.lastCall.args[0], 'foo');
       done();
-    }, 0);
+    });
   });
 
-  it('should remain a textfield on enter when onChange returns failure in validate mode', () => {
+  it('should remain a textfield on enter when onChange returns failure in validate mode', (done) => {
     const onChange = sinon.stub();
     onChange.resolves(false);
     const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} />);
@@ -94,7 +96,8 @@ describe('InlineEditor', () => {
     assert.equal(tree.prop('value'), 'foo');
 
     tree.simulate('keyDown', {key: 'Enter'});
-    setTimeout(() => {
+    setImmediate(() => {
+      tree.update();
       assert.equal(tree.type(), Textfield);
       assert.equal(tree.prop('value'), 'foo');
       assert.equal(tree.prop('invalid'), true);
@@ -103,6 +106,41 @@ describe('InlineEditor', () => {
       assert.equal(onChange.lastCall.args[0], 'foo');
       done();
     }, 0);
+  });
+
+  it('should not execute onCancel hook on Enter', (done) => {
+    const onChange = sinon.spy();
+    const handleCancel = sinon.spy();
+    const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} onCancel={handleCancel} />);
+
+    tree.simulate('doubleClick');
+
+    tree.simulate('change', 'foo');
+
+    tree.simulate('keyDown', {key: 'Enter'});
+    setImmediate(() => {
+      tree.update();
+
+      sinon.assert.notCalled(handleCancel);
+      assert(onChange.calledOnce);
+
+      done();
+    });
+  });
+
+  it('should execute onCancel hook on Escape key down', () => {
+    const onChange = sinon.spy();
+    const handleCancel = sinon.spy();
+    const tree = shallow(<InlineEditor defaultValue="test" onChange={onChange} onCancel={handleCancel} />);
+
+    tree.simulate('doubleClick');
+
+    tree.simulate('change', 'foo');
+
+    tree.simulate('keyDown', {key: 'Escape'});
+
+    sinon.assert.notCalled(onChange);
+    sinon.assert.called(handleCancel);
   });
 
   it('should revert to the previous value on escape', () => {
@@ -122,7 +160,7 @@ describe('InlineEditor', () => {
     assert(onChange.notCalled);
   });
 
-  it('should not set state on save in controlled mode', () => {
+  it('should not set state on save in controlled mode', (done) => {
     const onChange = sinon.spy();
     const tree = shallow(<InlineEditor value="test" onChange={onChange} />);
 
@@ -134,6 +172,7 @@ describe('InlineEditor', () => {
 
     tree.simulate('keyDown', {key: 'Enter'});
     setImmediate(() => {
+      tree.update();
       assert.equal(tree.type(), 'span');
       assert.equal(tree.text(), 'test');
 
