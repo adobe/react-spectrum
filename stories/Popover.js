@@ -3,6 +3,7 @@ import Popover from '../src/Popover';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
+import './Popover.styl';
 
 storiesOf('Popover', module)
   .addDecorator(story => (

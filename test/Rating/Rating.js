@@ -1,9 +1,9 @@
 /** @fileoverview Rating unit tests */
 
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import Rating from '../../src/Rating';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Rating', function () {
@@ -11,6 +11,12 @@ describe('Rating', function () {
     var rating = shallow(<Rating className="abc" />);
     assert.equal(rating.type(), 'div');
     assert.equal(rating.prop('className'), 'spectrum-Rating abc');
+  });
+
+  it('assigns id to input', function () {
+    var rating = mount(<Rating />);
+    assert.equal(rating.find('input').getDOMNode().getAttribute('id'), rating.instance().inputId);
+    assert.equal(rating.find('input').getDOMNode(), rating.instance().input);
   });
 
   it('provides default currentRating and max', function () {
@@ -21,27 +27,32 @@ describe('Rating', function () {
 
   it('renders a max number of ratings', function () {
     var rating = shallow(<Rating max={10} />);
-    assert.equal(rating.children().length, 10);
+    assert.equal(rating.children('.spectrum-Rating-icon').length, 10);
+    assert.equal(rating.find('input').prop('max'), 10);
   });
 
   it('renders a current number of ratings', function () {
     var rating = shallow(<Rating max={10} value={5} />);
     assert.equal(rating.find('.is-active').length, 5);
+    assert.equal(rating.find('input').prop('value'), 5);
   });
 
   it('sends back the number of stars selected in props.onChange', function () {
     var onChange = sinon.spy();
     var rating = shallow(<Rating max={10} onChange={onChange} />);
-    rating.childAt(1).simulate('click', {stopPropagation: function () {}});
+    rating.find('span').at(1).simulate('click', {stopPropagation: function () {}});
     assert(onChange.calledOnce);
     assert.deepEqual(onChange.getCall(0).args, [2]);
     assert.equal(rating.find('.is-active').length, 2);
+    assert.equal(rating.find('input').prop('value'), 2);
   });
 
   it('Provides the ability to disable setting the star functionality', function () {
     var onChange = sinon.spy();
     var rating = shallow(<Rating onChange={onChange} disabled />);
-    rating.childAt(1).simulate('click');
+    rating.find('span').at(1).simulate('click');
+    assert(!onChange.called);
+    rating.find('input').simulate('input');
     assert(!onChange.called);
   });
 
@@ -60,14 +71,67 @@ describe('Rating', function () {
     assert(spyChange.called);
     assert.equal(spyChange.lastCall.args[0], 1);
     assert.equal(rating.find('.is-active').length, 4);
+    assert.equal(rating.find('input').prop('value'), 4);
 
     rating.setProps({value: 1});
     assert.equal(rating.find('.is-active').length, 1);
+    assert.equal(rating.find('input').prop('value'), 1);
   });
 
   it('does not highlight if disabled', function () {
     var rating = shallow(<Rating max={10} value={4} disabled />);
     assert.equal(rating.find('.is-active').length, 4);
     assert.equal(rating.find('.is-disabled').length, 11);
+    assert.equal(rating.find('input').prop('disabled'), true);
+  });
+
+  it('Provides the ability to set rating to 0', function () {
+    var onChange = sinon.spy();
+    var rating = shallow(<Rating onChange={onChange} />);
+    // Set rating to 1 by clicking first icon
+    rating.find('span').at(0).simulate('click', {stopPropagation: function () {}});
+    assert(onChange.calledOnce);
+    assert.deepEqual(onChange.getCall(0).args, [1]);
+    assert.equal(rating.find('.is-active').length, 1);
+    assert.equal(rating.find('input').prop('value'), 1);
+
+    // Set rating to 0 by clicking first icon with .is-active
+    rating.find('span').at(0).simulate('click', {stopPropagation: function () {}});
+    assert(onChange.calledTwice);
+    assert.deepEqual(onChange.getCall(1).args, [0]);
+    assert.equal(rating.find('.is-active').length, 0);
+    assert.equal(rating.find('input').prop('value'), 0);
+  });
+
+  it('Clicking on rating icon sets focus to input', function () {
+    var onChange = sinon.spy();
+    var rating = mount(<Rating onChange={onChange} />);
+    // Set rating to 1 by clicking first icon
+    rating.find('span').at(2).simulate('click', {stopPropagation: function () {}});
+    assert(onChange.calledOnce);
+    assert.deepEqual(onChange.getCall(0).args, [3]);
+    assert.equal(rating.find('.is-active').length, 3);
+    assert.equal(rating.find('input').prop('value'), 3);
+    assert.equal(rating.find('input').getDOMNode(), document.activeElement);
+  });
+
+  it('Permits changing value by adjusting value of input slider', function () {
+    var onChange = sinon.spy();
+    var rating = mount(<Rating onChange={onChange} />);
+    // Set rating to 4 by adjusting the input
+    rating.find('input').getDOMNode().value = 4;
+    rating.find('input').simulate('input', {stopPropagation: function () {}});
+    assert(onChange.calledOnce);
+    assert.deepEqual(onChange.getCall(0).args, [4]);
+    assert.equal(rating.find('.is-active').length, 4);
+    assert.equal(rating.find('input').prop('value'), 4);
+    assert.equal(rating.find('input').getDOMNode(), document.activeElement);
+  });
+
+  it('Keydown on rating icon does nothing', function () {
+    var onChange = sinon.spy();
+    var rating = mount(<Rating onChange={onChange} />);
+    rating.find('span').at(2).simulate('keydown', {key: 'ArrowLeft'});
+    assert(!onChange.called);
   });
 });

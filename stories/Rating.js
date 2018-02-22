@@ -12,21 +12,21 @@ storiesOf('Rating', module)
   .addWithInfo(
     'Default',
     () => (
-      <Rating onChange={action('change')} />
+      <Rating aria-label="Default rating" onChange={action('change')} />
     ),
     {inline: true}
   )
   .addWithInfo(
     'Disabled',
     () => (
-      <Rating disabled value={3} onChange={action('change')} />
+      <Rating aria-label="Disabled rating" disabled value={3} onChange={action('change')} />
     ),
     {inline: true}
   )
   .addWithInfo(
     'Controlled',
     () => (
-      <Rating value={3} onChange={action('change')} />
+      <Rating aria-label="Controlled rating" value={3} onChange={action('change')} />
     ),
     {inline: true}
   );
