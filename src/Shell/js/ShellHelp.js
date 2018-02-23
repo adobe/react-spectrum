@@ -121,10 +121,10 @@ export default class ShellHelp extends Component {
           defaultResults && defaultResults.length ?
           defaultResults.map((result, index) => (
             <ListItem
+              icon={result.icon}
               key={index}
               onClick={this.handleResultClick.bind(this, result)} >
               <Link
-                icon={result.icon}
                 className="coral3-Shell-help-item"
                 href={result.href}
                 target="_blank"
