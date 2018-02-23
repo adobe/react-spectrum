@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
@@ -5,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
+@autobind
 export default class Dialog extends Component {
   static propTypes = {
     backdropClickable: PropTypes.bool,
@@ -12,6 +14,7 @@ export default class Dialog extends Component {
     className: PropTypes.string,
     confirmLabel: PropTypes.string,
     onClose: PropTypes.func,
+    onCancel: PropTypes.func,
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
     title: PropTypes.string,
@@ -29,17 +32,25 @@ export default class Dialog extends Component {
   };
 
   /*
-   * Calls the props.onConfirm() asynchronously if present,
+   * Calls the props.onConfirm() or props.onCancel() asynchronously if present,
    * then props.onClose() on any response except false
    */
-  async onConfirm() {
+  async _onAction(action) {
     let shouldClose = true;
-    if (this.props.onConfirm) {
-      shouldClose = await this.props.onConfirm();
+    if (action) {
+      shouldClose = await action();
     }
     if (shouldClose !== false) {
       this.props.onClose();
     }
+  }
+
+  onConfirm() {
+    this._onAction(this.props.onConfirm);
+  }
+
+  onCancel() {
+    this._onAction(this.props.onCancel);
   }
 
   render() {
@@ -83,7 +94,8 @@ export default class Dialog extends Component {
             title={title}
             fullscreen={fullscreen}
             {...otherProps}
-            onConfirm={this.onConfirm.bind(this)} />
+            onConfirm={this.onConfirm}
+            onCancel={this.onCancel} />
         }
 
         {title ? <div className="spectrum-Dialog-content">{children}</div> : children}
@@ -93,7 +105,8 @@ export default class Dialog extends Component {
           {...this.props}
           variant={derivedVariant}
           className="spectrum-Dialog-footer"
-          onConfirm={this.onConfirm.bind(this)} />
+          onConfirm={this.onConfirm}
+          onCancel={this.onCancel} />
         }
       </div>
     );

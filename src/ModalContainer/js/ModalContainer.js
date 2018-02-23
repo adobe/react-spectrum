@@ -15,7 +15,8 @@ export default class ModalContainer {
     let modal = (
       <Modal
         key={key}
-        onHide={this.hide.bind(this, key)}>
+        onHide={this.hide.bind(this, key)}
+        onClose={content.props.onClose}>
         {content}
       </Modal>
     );
@@ -38,6 +39,9 @@ export class Modal extends React.Component {
 
   onClose() {
     this.setState({show: false});
+    if (this.props.onClose) {
+      this.props.onClose();
+    }
   }
 
   onEntering() {

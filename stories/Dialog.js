@@ -29,8 +29,8 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
-    'with confirm function',
-    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm')}),
+    'with confirm and cancel function',
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
   .addWithInfo(

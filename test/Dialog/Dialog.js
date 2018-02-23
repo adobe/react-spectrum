@@ -100,6 +100,18 @@ describe('Dialog', () => {
     assert(onClose.calledOnce);
   });
 
+  it('calls props.onCancel and onClose', async () => {
+    var stub = sinon.stub();
+    stub.returns(true);
+
+    var onClose = sinon.spy();
+    const tree = shallow(<Dialog onClose={onClose} onCancel={stub} confirmLabel="Go" />);
+    tree.find('.spectrum-Dialog-footer').simulate('cancel');
+    assert(stub.calledOnce);
+    await sleep(1);
+    assert(onClose.calledOnce);
+  });
+
   it('calls props.onConfirm but not onClose', async () => {
     var stub = sinon.stub();
     stub.returns(false);
@@ -111,4 +123,17 @@ describe('Dialog', () => {
     await sleep(1);
     assert(!onClose.calledOnce);
   });
+
+  it('calls props.onCancel but not onClose', async () => {
+    var stub = sinon.stub();
+    stub.returns(false);
+
+    var onClose = sinon.spy();
+    const tree = shallow(<Dialog onClose={onClose} onCancel={stub} confirmLabel="Go" />);
+    tree.find('.spectrum-Dialog-footer').simulate('cancel');
+    assert(stub.calledOnce);
+    await sleep(1);
+    assert(!onClose.calledOnce);
+  });
+
 });

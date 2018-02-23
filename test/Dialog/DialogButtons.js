@@ -29,9 +29,9 @@ describe('DialogButtons', () => {
     assert.equal(buttons.at(1).prop('variant'), 'primary');
   });
 
-  it('Supports the onClose and onConfirm', () => {
+  it('Supports the onCancel and onConfirm', () => {
     const spy = sinon.spy();
-    const tree = shallow(<DialogButtons confirmLabel="OK" cancelLabel="Close" onClose={spy} onConfirm={spy} />);
+    const tree = shallow(<DialogButtons confirmLabel="OK" cancelLabel="Close" onCancel={spy} onConfirm={spy} />);
     let buttons = tree.find(Button);
     buttons.at(0).simulate('click');
     assert(spy.calledOnce);

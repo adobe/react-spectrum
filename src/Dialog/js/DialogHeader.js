@@ -12,10 +12,10 @@ export default function DialogHeader({
   title,
   variant,
   fullscreen,
-  onClose,
   confirmLabel,
   cancelLabel,
   onConfirm,
+  onCancel,
   className,
   ...otherProps
 }) {
@@ -38,8 +38,8 @@ export default function DialogHeader({
           variant={variant}
           cancelLabel={cancelLabel}
           confirmLabel={confirmLabel}
-          onClose={onClose}
-          onConfirm={onConfirm} />
+          onConfirm={onConfirm}
+          onCancel={onCancel} />
       }
     </div>
   );
