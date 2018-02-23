@@ -61,4 +61,3 @@ unprefix:
 	find . -name *.js -not -path "./node_modules/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
 	sed -i.bak 's/@react\///g' package.json
 	find . -name "*.bak" -delete
-

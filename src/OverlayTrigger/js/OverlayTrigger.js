@@ -84,6 +84,8 @@ export default class OverlayTrigger extends Component {
     show: PropTypes.oneOf([null]),
     offset: PropTypes.number,
     crossOffset: PropTypes.number,
+    flip: PropTypes.bool,
+    boundariesElement: PropTypes.object
   };
 
   static defaultProps = {
@@ -91,7 +93,9 @@ export default class OverlayTrigger extends Component {
     trigger: ['hover', 'focus'],
     placement: 'left',
     offset: 0,
-    crossOffset: 0
+    crossOffset: 0,
+    flip: true,
+    boundariesElement: 'container'
   };
 
   constructor(props, context) {
@@ -222,6 +226,11 @@ export default class OverlayTrigger extends Component {
   }
 
   makeOverlay(overlay, props) {
+    const overlayProps = {...props};
+    delete overlayProps.crossOffset;
+    delete overlayProps.defaultShow;
+    delete overlayProps.flip;
+    delete overlayProps.boundariesElement;
     return (
       <Overlay
         {...props}
@@ -229,7 +238,7 @@ export default class OverlayTrigger extends Component {
         onHide={this.hide}
         target={this.props.target || this}
         rootClose={isOneOf('click', this.props.trigger)}>
-        {cloneElement(overlay, props)}
+        {cloneElement(overlay, overlayProps)}
       </Overlay>
     );
   }

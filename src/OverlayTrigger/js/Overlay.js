@@ -35,6 +35,8 @@ export default class Overlay extends React.Component {
       placement,
       offset,
       crossOffset,
+      flip,
+      boundariesElement,
       shouldUpdatePosition,
       rootClose,
       children,
@@ -53,7 +55,7 @@ export default class Overlay extends React.Component {
     // Position is be inner-most because it adds inline styles into the child,
     // which the other wrappers don't forward correctly.
     child = (
-      <Position {...{container, containerPadding, target, placement, shouldUpdatePosition, offset, crossOffset}}>
+      <Position {...{container, containerPadding, target, placement, shouldUpdatePosition, offset, crossOffset, flip, boundariesElement}}>
         {child}
       </Position>
     );

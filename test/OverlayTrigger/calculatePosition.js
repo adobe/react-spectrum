@@ -3,52 +3,62 @@ import {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePo
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const FLIPPED_DIRECTION = {
+  left: 'right'
+};
+
+function getTargetDimension(targetPosition, height = 100, width = 100) {
+  return {
+    ...targetPosition,
+    bottom: targetPosition.top + height,
+    right: targetPosition.left + width,
+    width,
+    height
+  };
+}
+
+const containerDimensions = {
+  width: 600,
+  height: 600,
+  scroll: {
+    top: 0,
+    left: 0
+  },
+  top: 0,
+  left: 0
+};
+
+const margins = {
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0
+};
+
+const overlaySize = {
+  width: 200,
+  height: 200
+};
+
 describe('calculatePosition', function () {
-  function checkPosition(placement, targetPosition, expected, offset = 0, crossOffset = 0) {
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+    const placementAxis = placement.split(' ')[0];
     const expectedPosition = {
       positionLeft: expected[0],
       positionTop: expected[1],
       arrowOffsetLeft: expected[2],
       arrowOffsetTop: expected[3],
-      maxHeight: expected[4]
-    };
-
-    const containerDimensions = {
-      width: 600,
-      height: 600,
-      scroll: {
-        top: 0,
-        left: 0
-      }
-    };
-
-    const overlaySize = {
-      width: 200,
-      height: 200
-    };
-
-    const margins = {
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0
+      maxHeight: expected[4],
+      placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
     };
 
     it('Should calculate the correct position', function () {
-      const childOffset = {
-        ...targetPosition,
-        bottom: targetPosition.top + 100,
-        right: targetPosition.left + 100,
-        width: 100,
-        height: 100
-      };
-
-      const result = calculatePositionInternal(placement, containerDimensions, childOffset, overlaySize, margins, 50, offset, crossOffset);
+      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, 'container', offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
     });
   }
 
-  [
+  const testCases = [
     {
       placement: 'left',
       noOffset: [50, 200, undefined, 100, 350],
@@ -145,39 +155,55 @@ describe('calculatePosition', function () {
       crossAxisOffset: [350, 160, undefined, 140, 390],
       mainAxisOffset: [360, 150, undefined, 150, 400]
     }
-  ].forEach(function (testCase) {
+  ];
+  
+  testCases.forEach(function (testCase) {
     const {placement} = testCase;
 
     describe(`placement = ${placement}`, function () {
       describe('no viewport offset', function () {
         checkPosition(
-          placement, {left: 250, top: 250}, testCase.noOffset
+          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
         );
       });
 
       describe('viewport offset before', function () {
         checkPosition(
-          placement, {left: 0, top: 0}, testCase.offsetBefore
+          placement, getTargetDimension({left: 0, top: 0}), testCase.offsetBefore
         );
       });
 
       describe('viewport offset after', function () {
         checkPosition(
-          placement, {left: 500, top: 500}, testCase.offsetAfter
+          placement, getTargetDimension({left: 500, top: 500}), testCase.offsetAfter
         );
       });
 
       describe('main axis offset', function () {
         checkPosition(
-          placement, {left: 250, top: 250}, testCase.mainAxisOffset, 10, 0
+          placement, getTargetDimension({left: 250, top: 250}), testCase.mainAxisOffset, 10, 0
         );
       });
 
       describe('cross axis offset', function () {
         checkPosition(
-          placement, {left: 250, top: 250}, testCase.crossAxisOffset, 0, 10
+          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffset, 0, 10
         );
       });
     });
   });
+
+  describe('flip from left to right', function () {
+    checkPosition(
+      // testCases[9] is for right placement
+      'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
+    );
+  });
+
+  describe('overlay smaller than target aligns in center', function () {
+    checkPosition(
+      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
+    );
+  });
+
 });

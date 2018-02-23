@@ -30,32 +30,37 @@ storiesOf('OverlayTrigger', module)
   )
   .addWithInfo(
     'placement: top',
-    () => render('popover', {trigger: 'click', placement: 'top', variant: 'warning'}),
+    () => render('popover', {trigger: 'click', placement: 'top', variant: 'error'}),
     {inline: true}
   )
   .addWithInfo(
     'placement: bottom',
-    () => render('popover', {trigger: 'click', placement: 'bottom', variant: 'warning'}),
+    () => render('popover', {trigger: 'click', placement: 'bottom', variant: 'error'}),
     {inline: true}
   )
   .addWithInfo(
-    'placement: left',
-    () => render('popover', {trigger: 'click', placement: 'left', variant: 'warning'}),
+    'placement: left (flip: false)',
+    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error', flip: false}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'placement: left (flip: true)',
+    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error'}),
     {inline: true}
   )
   .addWithInfo(
     'placement: right',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning'}),
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error'}),
     {inline: true}
   )
   .addWithInfo(
     'with: offset',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', offset: 100}),
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', offset: 100}),
     {inline: true}
   )
   .addWithInfo(
     'with: crossOffset',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'warning', crossOffset: 100}),
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', crossOffset: 100}),
     {inline: true}
   );
 
