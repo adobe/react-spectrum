@@ -52,7 +52,7 @@ export class Modal extends React.Component {
     const fullscreenTakeover = this.props.children.props.mode === 'fullscreenTakeover';
 
     /*
-     * backdropClickable (bc), backdropEnabled (be)
+     * backdropClickable (bc)
      *     bc | !bc
      *     ---|------
      *      t |static

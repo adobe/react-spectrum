@@ -22,7 +22,6 @@ export default class Dialog extends Component {
 
   static defaultProps = {
     backdropClickable: false,
-    backdropEnabled: true,
     open: true,
     mode: 'centered',
     role: 'dialog',

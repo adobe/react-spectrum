@@ -5,7 +5,7 @@ import React from 'react';
 
 describe('ModalContainer', () => {
   it('should wrap contents in a modal and call PortalContainer', () => {
-    let content = <div id="modal-test" backdropEnabled>Contents</div>;
+    let content = <div id="modal-test">Contents</div>;
     let key = ModalContainer.show(content);
 
     let node = document.querySelector('#modal-test');
@@ -16,11 +16,11 @@ describe('ModalContainer', () => {
     node = document.querySelector('#modal-test');
     assert(!node);
   });
-  it('should use "static" for backdrop if it hosts a node with backdropEnabled: true', () => {
+  it('should use "static" for backdrop by default', () => {
     const tree = shallow(<Modal><div id="modal-test">Contents</div></Modal>);
     assert.equal(tree.props().backdrop, 'static');
   });
-  it('should use true for backdrop if it hosts a node with backdropEnabled: true and backdropClickable: true', () => {
+  it('should use true for backdrop if it hosts a node with backdropClickable: true', () => {
     const tree = shallow(<Modal><div id="modal-test" backdropClickable>Contents</div></Modal>);
     assert.equal(tree.props().backdrop, true);
   });
