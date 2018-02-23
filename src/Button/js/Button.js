@@ -26,7 +26,7 @@ export default class Button extends Component {
     logic: PropTypes.bool,
     quiet: PropTypes.bool,
     selected: PropTypes.bool,
-    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal']),
+    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown']),
     onClick: PropTypes.func
   };
 
@@ -117,6 +117,7 @@ export default class Button extends Component {
         }
         disabled={disabled}
         aria-invalid={invalid || null}
+        aria-expanded={otherProps['aria-haspopup'] ? selected : undefined}
         onClick={this.onClick}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&

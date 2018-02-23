@@ -3,9 +3,11 @@ import Autocomplete from '../../src/Autocomplete';
 import Bell from '../../src/Icon/Bell';
 import Button from '../../src/Button';
 import ComboBox from '../../src/ComboBox';
+import {MenuItem} from '../../src/Menu';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
 import SelectDownChevron from '../../src/Icon/core/SelectDownChevron';
-import {shallow} from 'enzyme';
+import {sleep} from '../utils';
 import Stop from '../../src/Icon/Stop';
 import Textfield from '../../src/Textfield';
 import Trap from '../../src/Icon/Trap';
@@ -40,6 +42,41 @@ describe('ComboBox', () => {
     assert.deepEqual(tree.prop('getCompletions')('tw'), ['two']);
   });
 
+  it('should toggle menu on button click', async () => {
+    const tree = mount(<ComboBox options={['one', 'two', 'three']} />);
+    const button = tree.find(Button);
+    const buttonNode = button.getDOMNode();
+    const textfield = tree.find(Textfield);
+    const textfieldNode = textfield.getDOMNode();
+    const instance = tree.instance();
+
+    button.simulate('mousedown', {preventDefault: () => {}});
+    assert.notEqual(buttonNode, document.activeElement);
+
+    // focus button
+    buttonNode.focus();
+    assert.equal(buttonNode, document.activeElement);
+
+    // click button to show menu
+    button.simulate('click');
+    await sleep(1);
+    assert(instance.state.open);
+    assert.equal(textfieldNode, document.activeElement);
+
+    tree.update();
+
+    // navigate to "focus" first menu item (autocomplete uses aria-activedescendant)
+    assert.equal(tree.find(MenuItem).at(0).prop('focused'), false);
+    textfield.simulate('keydown', {key: 'ArrowDown', preventDefault: () => {}});
+    assert.equal(tree.find(MenuItem).at(0).prop('focused'), true);
+
+    // click button to hide menu
+    button.simulate('click');
+    await sleep(1);
+    assert(!instance.state.open);
+    assert.equal(textfieldNode, document.activeElement);
+  });
+
   it('should not filter if we havent changed', () => {
     const tree = shallow(<ComboBox options={['one', 'two', 'three']} />);
     assert.deepEqual(tree.prop('getCompletions')('two'), ['one', 'two', 'three']);
@@ -52,5 +89,4 @@ describe('ComboBox', () => {
     assert.equal(tree.prop('getCompletions')('t').length, 2);
     assert.equal(tree.prop('getCompletions')('tw').length, 1);
   });
-
 });

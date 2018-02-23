@@ -22,7 +22,7 @@ function getCompletions(text) {
 function getCompletionsAsync(input) {
   return fetch(`https://api.github.com/search/users?q=${input}`)
     .then((response) => response.json())
-    .then((json) => json.items.map(item => ({label: item.login, id: item.id})));
+    .then((json) => json.items && json.items.map(item => ({label: item.login, id: item.id})));
 }
 
 storiesOf('Autocomplete', module)
@@ -35,6 +35,15 @@ storiesOf('Autocomplete', module)
     'Default',
     () => (
       <Autocomplete getCompletions={getCompletions} onSelect={action('select')}>
+        <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'allowCreate',
+    () => (
+      <Autocomplete allowCreate getCompletions={getCompletions} onSelect={action('select')}>
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
     ),

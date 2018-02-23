@@ -68,7 +68,8 @@ export default class SelectList extends Component {
         icon={option.icon}
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
-        onSelect={this.handleSelect.bind(this, option)}>
+        onSelect={this.handleSelect.bind(this, option)}
+        onTab={this.props.onTab}>
         {option.label}
       </ListItem>
     ))
@@ -83,6 +84,8 @@ export default class SelectList extends Component {
       required = false,
       ...otherProps
     } = this.props;
+
+    delete otherProps.onTab;
 
     return (
       <List

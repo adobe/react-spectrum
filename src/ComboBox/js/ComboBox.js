@@ -104,7 +104,8 @@ export default class ComboBox extends React.Component {
           required={required}
           invalid={invalid}
           quiet={quiet}
-          selected={this.state.open}>
+          selected={this.state.open}
+          tabIndex="-1">
           <SelectDownChevron size={null} className="spectrum-InputGroup-icon" />
         </Button>
       </Autocomplete>

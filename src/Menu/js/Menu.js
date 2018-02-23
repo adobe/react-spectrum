@@ -17,6 +17,10 @@ export default class Menu extends React.Component {
     className: PropTypes.string
   };
 
+  getListRef() {
+    return this.listRef;
+  }
+
   render() {
     const {
       arrowStyle,
@@ -26,14 +30,20 @@ export default class Menu extends React.Component {
       onClose, 
       onSelect,
       placement,
+      role = 'menu',
       style,
       ...otherProps
     } = this.props;
 
+    delete otherProps.target;
+
     return (
       <Popover arrowStyle={arrowStyle} isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
-        <List role="menu" className={className} {...otherProps}>
-          {React.Children.map(children, child => React.cloneElement(child, {onSelect}))}
+        <List ref={l => this.listRef = l} role={role} className={className} {...otherProps}>
+          {React.Children.map(children, child => React.cloneElement(child, {
+            onTab: e => e.preventDefault(),
+            onSelect
+          }))}
         </List>
       </Popover>
     );

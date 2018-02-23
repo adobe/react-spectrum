@@ -145,7 +145,7 @@ export default class Select extends React.Component {
 export function SelectMenu({onClose, onSelect, className, open, placement, style, ...props}) {
   return (
     <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
-      <SelectList className={className} {...props} onChange={onSelect} />
+      <SelectList className={className} {...props} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>
   );
 }

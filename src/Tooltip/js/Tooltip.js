@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -12,7 +13,8 @@ export default class Tooltip extends Component {
       'right', 'right top', 'right bottom'
     ]),
     variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
-    className: PropTypes.string
+    className: PropTypes.string,
+    id: PropTypes.string
   };
 
   static defaultProps = {
@@ -21,6 +23,11 @@ export default class Tooltip extends Component {
     open: true
   };
 
+  constructor(props) {
+    super(props);
+    this.tooltipId = createId();
+  }
+
   render() {
     const {
       variant,
@@ -28,6 +35,7 @@ export default class Tooltip extends Component {
       className,
       placement,
       open,
+      id = this.tooltipId,
       ...otherProps
     } = this.props;
 
@@ -44,6 +52,7 @@ export default class Tooltip extends Component {
             className
           )
         }
+        id={id}
         {...otherProps}>
         <span className="spectrum-Tooltip-label">{children}</span>
         <span className="spectrum-Tooltip-tip" />

@@ -1,10 +1,11 @@
 import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
 import Select, {SelectMenu} from '../../src/Select';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
+import {sleep} from '../utils';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -114,5 +115,34 @@ describe('Select', () => {
       tree.find(Button).simulate('keyDown', {key, preventDefault: function () {}});
       assert(spy.called);
     }
+  });
+
+  it('supports caching of width when componentDidUpdate is called', async () => {
+    const tree = mount(<Select options={testOptions} />);
+
+    // stub offsetWidth getter
+    const stubWidth = 192;
+    const stub = sinon.stub(tree.find(Button).getDOMNode(), 'offsetWidth').get(() => stubWidth);
+
+    // show menu
+    tree.instance().componentDidUpdate();
+    await sleep(1);
+    assert.equal(tree.instance().state.width, stubWidth);
+
+    // restore original offsetWidth getter
+    stub.restore();
+  });
+
+  it('onClose restores focus to button and calls onClose method if defined', () => {
+    const spy = sinon.spy();
+    const tree = mount(<Select options={testOptions} onClose={spy} />);
+    tree.find(Button).simulate('click');
+    assert.equal(tree.find(Button).prop('selected'), true);
+    assert.notEqual(tree.find(Button).getDOMNode(), document.activeElement);
+    tree.find(Button).simulate('click');
+    tree.update();
+    assert(spy.calledOnce);
+    assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
+    assert.equal(tree.find(Button).prop('selected'), false);
   });
 });

@@ -249,7 +249,7 @@ export default class OverlayTrigger extends Component {
     delete props.delay;
     delete props.delayShow;
     delete props.delayHide;
-    delete props.defaultOverlayShown;
+    delete props.defaultShow;
     delete props.onShow;
     delete props.onHide;
 
@@ -258,7 +258,7 @@ export default class OverlayTrigger extends Component {
     delete props.children;
 
 
-    if (this.state.show) {
+    if (this.state.show && overlayChild.type.name === 'Tooltip') {
       triggerProps['aria-describedby'] = overlayChild.props.id;
     }
 

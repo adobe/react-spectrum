@@ -32,6 +32,8 @@ export default class Textfield extends Component {
 
     var Tag = multiLine ? 'textarea' : 'input';
 
+    delete otherProps.autocompleteInput;
+
     return (
       <Tag
         type="text"
