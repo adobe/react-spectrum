@@ -21,6 +21,7 @@ export default function DialogHeader({
 }) {
   let Icon = VARIANT_ICONS[variant];
   delete otherProps.backdropClickable;
+  delete otherProps.backdropEnabled;
 
   return (
     <div

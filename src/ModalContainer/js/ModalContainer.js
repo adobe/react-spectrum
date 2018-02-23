@@ -40,6 +40,13 @@ export class Modal extends React.Component {
     this.setState({show: false});
   }
 
+  onEntering() {
+    // Make sure that autoFocus actually moves focus to the Modal.
+    if (this.baseModal.lastFocus === document.activeElement) {
+      this.baseModal.autoFocus();
+    }
+  }
+
   backdropMode() {
     // I am sorry for this atrocity. I needed a way to detect when not to have a backdrop.
     const fullscreenTakeover = this.props.children.props.mode === 'fullscreenTakeover';
@@ -64,19 +71,29 @@ export class Modal extends React.Component {
 
   render() {
     const backdrop = this.backdropMode();
+    const {role} = this.props.children.props;
+
+    let hasDialogRole = role && role.indexOf('dialog') !== -1;
 
     // The z-index here should match the one in Overlay
     return (
       <BaseModal
         style={{zIndex: 100000, position: 'relative'}}
         show={this.state.show}
+        ref={baseModal => this.baseModal = baseModal}
+        onEntering={this.onEntering}
         onExited={this.props.onHide}
         onHide={this.onClose}
         backdrop={backdrop}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}
-        backdropTransition={OpenTransition}>
-        {cloneElement(this.props.children, {onClose: this.onClose})}
+        backdropTransition={OpenTransition}
+        role={hasDialogRole ? 'presentation' : 'dialog'}
+        aria-modal={!hasDialogRole ? 'true' : null}>
+        {cloneElement(this.props.children, {
+          onClose: this.onClose,
+          'aria-modal': (hasDialogRole ? 'true' : null)
+        })}
       </BaseModal>
     );
   }

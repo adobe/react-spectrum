@@ -16,7 +16,8 @@ export default class Dialog extends Component {
     open: PropTypes.bool,
     title: PropTypes.string,
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
-    mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover'])
+    mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
+    role: PropTypes.oneOf(['dialog', 'alertdialog']),
   };
 
   static defaultProps = {
@@ -24,6 +25,7 @@ export default class Dialog extends Component {
     backdropEnabled: true,
     open: true,
     mode: 'centered',
+    role: 'dialog',
     onClose: function () {}
   };
 
@@ -44,17 +46,23 @@ export default class Dialog extends Component {
   render() {
     const {
       children,
-      className,
+      className = '',
       cancelLabel,
       confirmLabel,
       open,
       title,
       variant,
-      mode
+      mode,
+      role,
+      ...otherProps
     } = this.props;
 
     const fullscreen = mode === 'fullscreen' || mode === 'fullscreenTakeover';
     const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
+
+    delete otherProps.modalContent;
+    delete otherProps['aria-modal'];
+    delete otherProps.tabIndex;
 
     return (
       <div
@@ -66,14 +74,17 @@ export default class Dialog extends Component {
             'is-open': open
           },
           className
-        )}>
+        )}
+        role={role}
+        aria-modal="true"
+        tabIndex={-1}>
         {title &&
-        <DialogHeader
-          variant={derivedVariant}
-          title={title}
-          fullscreen={fullscreen}
-          {...this.props}
-          onConfirm={this.onConfirm.bind(this)} />
+          <DialogHeader
+            variant={derivedVariant}
+            title={title}
+            fullscreen={fullscreen}
+            {...otherProps}
+            onConfirm={this.onConfirm.bind(this)} />
         }
 
         {title ? <div className="spectrum-Dialog-content">{children}</div> : children}

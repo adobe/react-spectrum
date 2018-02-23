@@ -98,6 +98,8 @@ export default class Button extends Component {
     let iconOnly = icon && !(label || children);
     let labelContents = label || (typeof children === 'string' ? children : null);
 
+    delete otherProps.modalTrigger;
+
     return (
       <Element
         {...otherProps}
