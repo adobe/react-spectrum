@@ -1,6 +1,7 @@
 import {arraysEqual} from '../../utils/array';
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import React from 'react';
 import {TabList} from '../../TabList';
 import '../style/index.styl';
@@ -9,6 +10,7 @@ import '../style/index.styl';
 export default class TabView extends React.Component {
   constructor(props) {
     super(props);
+    this.tabViewId = createId();
     this.state = {
       selectedIndex: props.selectedIndex || 0
     };
@@ -37,10 +39,22 @@ export default class TabView extends React.Component {
   }
 
   render() {
-    let {className, orientation = 'horizontal', ...props} = this.props;
+    let {
+      className,
+      id = this.tabViewId,
+      orientation = 'horizontal',
+      ...props
+    } = this.props;
 
-    let children = React.Children.map(this.props.children, c =>
-      typeof c === 'object' && c ? React.cloneElement(c, {renderChildren: false}) : c
+    const tabId = id + '-tab';
+    const tabPanelId = id + '-tabpanel';
+
+    let children = React.Children.map(this.props.children, (c, i) =>
+      typeof c === 'object' && c ? React.cloneElement(c, {
+        'aria-controls': tabPanelId,
+        id: tabId + '-' + i,
+        renderChildren: false
+      }) : c
     );
 
     // Clone children so that they get componentWillReceiveProps when clicking on the same tab
@@ -58,7 +72,7 @@ export default class TabView extends React.Component {
           onChange={this.onChange}>
           {children}
         </TabList>
-        <div className="react-spectrum-TabView-body">
+        <div className="react-spectrum-TabView-body" role="tabpanel" id={tabPanelId} aria-labelledby={selected.props.id} >
           {body}
         </div>
       </div>

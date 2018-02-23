@@ -1,4 +1,5 @@
 import {action, storiesOf} from '@storybook/react';
+import Facebook from '../src/Icon/Facebook';
 import Instagram from '../src/Icon/Instagram';
 import React from 'react';
 import {Tab, TabList} from '../src/TabList';
@@ -24,6 +25,17 @@ storiesOf('TabList', module)
   .addWithInfo(
     'selectedIndex: 1',
     () => render({selectedIndex: 1}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'selected set on Tab',
+    () => (
+      <TabList onChange={action('onChange')}>
+        <Tab>Tab 1</Tab>
+        <Tab selected>Tab 2</Tab>
+        <Tab>Tab 3</Tab>
+      </TabList>
+    ),
     {inline: true}
   )
   .addWithInfo(
@@ -55,8 +67,9 @@ storiesOf('TabList', module)
     'icons only',
     () => (
       <TabList onChange={action('onChange')}>
-        <Tab icon={<Twitter />} />
-        <Tab icon={<Instagram />} />
+        <Tab icon={<Twitter />} title="Twitter" aria-label="Tab 1" />
+        <Tab icon={<Instagram />} title="Instagram" aria-label="Tab 2" />
+        <Tab icon={<Facebook />} title="Facebook" aria-label="Tab 3" />
       </TabList>
     ),
     {inline: true}
@@ -65,18 +78,26 @@ storiesOf('TabList', module)
     'disabled tabs',
     () => (
       <TabList onChange={action('onChange')}>
-        <Tab icon={<Twitter />}>Tab 1</Tab>
-        <Tab icon={<Instagram />} disabled>Tab 2</Tab>
+        <Tab icon={<Twitter />} title="Twitter">Tab 1</Tab>
+        <Tab icon={<Instagram />} title="Instagram" disabled>Tab 2</Tab>
+        <Tab icon={<Facebook />} title="Facebook">Tab 3</Tab>
       </TabList>
     ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'keyboardActivation: manual',
+    () => render({icons: true, keyboardActivation: 'manual'}),
     {inline: true}
   );
 
 function render(props = {}) {
+  const {icons, ...otherProps} = props;
   return (
-    <TabList {...props} onChange={action('onChange')}>
-      <Tab icon={props.icons && <Twitter />}>Tab 1</Tab>
-      <Tab icon={props.icons && <Instagram />}>Tab 2</Tab>
+    <TabList {...otherProps} onChange={action('onChange')}>
+      <Tab icon={icons && <Twitter />} title={icons && 'Twitter'}>Tab 1</Tab>
+      <Tab icon={icons && <Instagram />} title={icons && 'Instagram'}>Tab 2</Tab>
+      <Tab icon={icons && <Facebook />} title={icons && 'Facebook'}>Tab 3</Tab>
     </TabList>
   );
 }

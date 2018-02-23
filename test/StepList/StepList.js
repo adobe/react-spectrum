@@ -2,12 +2,12 @@ import assert from 'assert';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
-import {StepList} from '../../src/StepList';
+import {Step, StepList} from '../../src/StepList';
 
 describe('StepList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<StepList />);
-    const innerTree = tree.shallow();
+    const innerTree = tree.shallow().shallow();
     assert.equal(tree.hasClass('spectrum-Steplist'), true);
     assert.equal(tree.hasClass('spectrum-Steplist--interactive'), true);
     assert.equal(innerTree.type(), 'div');
@@ -71,5 +71,32 @@ describe('StepList', () => {
     child.simulate('click');
 
     assert(!spy.called);
+  });
+
+  describe('Step', () => {
+    it('has correct defaults', () => {
+      const tree = shallow(<Step />);
+      assert.equal(tree.hasClass('spectrum-Steplist-item'), true);
+      assert.equal(tree.type(), 'div');
+      assert.equal(tree.prop('role'), 'tab');
+      assert.equal(tree.childAt(0).hasClass('spectrum-Steplist-label'), true);
+      assert.equal(tree.childAt(1).hasClass('spectrum-Steplist-markerContainer'), true);
+      assert.equal(tree.childAt(2).hasClass('spectrum-Steplist-segment'), true);
+      tree.setProps({
+        selected: true,
+        complete: true
+      });
+      tree.update();
+      assert.equal(tree.hasClass('is-selected'), true);
+      assert.equal(tree.hasClass('is-complete'), true);
+      assert.equal(tree.prop('aria-selected'), true);
+      tree.setProps({
+        selected: false,
+        complete: false
+      });
+      assert.equal(tree.hasClass('is-selected'), false);
+      assert.equal(tree.hasClass('is-complete'), false);
+      assert.equal(tree.prop('aria-selected'), false);
+    });
   });
 });

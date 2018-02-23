@@ -48,6 +48,8 @@ export default class TabList extends React.Component {
   }
 
   onChange(selectedIndex) {
+    var lastSelectedIndex = this.state.selectedIndex;
+
     // If selectedIndex is defined on props then this is a controlled component and we shouldn't
     // change our own state.
     if (!('selectedIndex' in this.props)) {
@@ -55,8 +57,7 @@ export default class TabList extends React.Component {
         selectedIndex
       });
     }
-
-    if (this.props.onChange) {
+    if (lastSelectedIndex !== selectedIndex && this.props.onChange) {
       this.props.onChange(selectedIndex);
     }
   }
@@ -68,14 +69,22 @@ export default class TabList extends React.Component {
       orientation = 'horizontal',
       variant = 'panel',
       children,
+      defaultSelectedIndex,
       ...otherProps
     } = this.props;
 
-    let selectedTab = this.state.tabArray[this.state.selectedIndex];
+    const {
+      selectedIndex,
+      tabArray
+    } = this.state;
+
+    let selectedTab = tabArray[selectedIndex];
 
     return (
       <TabListBase
         orientation={orientation}
+        defaultSelectedIndex={defaultSelectedIndex || null}
+        selectedIndex={selectedIndex}
         {...otherProps}
         className={classNames(
           'spectrum-TabList',
@@ -101,5 +110,5 @@ function TabLine({orientation, selectedTab}) {
       : `translateX(${selectedTab.offsetLeft}px) scaleX(${selectedTab.offsetWidth})`
   };
 
-  return <div className="spectrum-TabList-item-line" style={style} />;
+  return <div className="spectrum-TabList-item-line" role="presentation" style={style} />;
 }

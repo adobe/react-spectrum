@@ -1,4 +1,11 @@
+import autobind from 'autobind-decorator';
+import FocusManager from '../../utils/FocusManager';
+import focusRing from '../../utils/focusRing';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+
+const TAB_ITEM_SELECTOR = '[role=tab]:not([aria-disabled])';
+const TAB_ITEM_SELECTED_SELECTOR = TAB_ITEM_SELECTOR + '[aria-selected=true]';
 
 /**
  * selectedIndex: The index of the StepList that should be selected. When selectedIndex is
@@ -13,6 +20,7 @@ import React, {Component} from 'react';
  *
  * childMappingFunction: allows you to map additional properties for each tab child
  */
+@focusRing
 export default class TabListBase extends Component {
   state = {
     selectedIndex: TabListBase.getDefaultSelectedIndex(this.props)
@@ -43,12 +51,33 @@ export default class TabListBase extends Component {
     }
   }
 
-
-  onClickItem(selectedIndex) {
-    this.setSelectedIndex(selectedIndex);
+  onClickItem(selectedIndex, e) {
+    this.setSelectedIndex(selectedIndex, e);
   }
 
-  setSelectedIndex(selectedIndex) {
+  onFocus(selectedIndex, e) {
+    if (this.props.keyboardActivation === 'automatic' && !this.isMouseDown) {
+      this.setSelectedIndex(selectedIndex, e);
+    }
+  }
+
+  onMouseDown(e) {
+    this.isMouseDown = true;
+    window.addEventListener('mouseup', this.onMouseUp);
+
+    // ensure Tab receives keyboard focus in Safari
+    e.currentTarget.focus();
+  }
+
+  @autobind
+  onMouseUp(e) {
+    this.isMouseDown = false;
+    window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
+  setSelectedIndex(selectedIndex, e) {
+    const lastSelectedIndex = this.state.selectedIndex;
+
     // If selectedIndex is defined on props then this is a controlled component and we shouldn't
     // change our own state.
     if (!('selectedIndex' in this.props)) {
@@ -57,7 +86,9 @@ export default class TabListBase extends Component {
       });
     }
 
-    this.props.onChange(selectedIndex);
+    if (lastSelectedIndex !== selectedIndex) {
+      this.props.onChange(selectedIndex);
+    }
   }
 
   getChildProps(child, index) {
@@ -67,7 +98,10 @@ export default class TabListBase extends Component {
     return {
       ...this.getMappedChildProps(child, index),
       selected,
-      onClick: this.getChildOnClick(child, index)
+      tabIndex: (selected ? 0 : -1),
+      onClick: this.getChildOnClick(child, index),
+      onFocus: this.getChildOnFocus(child, index),
+      onMouseDown: this.getChildOnMouseDown(child)
     };
   }
 
@@ -80,9 +114,33 @@ export default class TabListBase extends Component {
   getChildOnClick(child, index) {
     if (this.props.disabled) { return null; }
     const tabListOnClick = this.onClickItem.bind(this, index);
-    return () => {
+    return (e) => {
       if (child.props.onClick) {child.props.onClick(index); }
-      tabListOnClick();
+      tabListOnClick(e);
+    };
+  }
+
+  getChildOnFocus(child, index) {
+    if (this.props.disabled) {
+      return null;
+    }
+    return (e) => {
+      if (child.props.onFocus) {
+        child.props.onFocus(index);
+      }
+      this.onFocus(index, e);
+    };
+  }
+
+  getChildOnMouseDown(child, index) {
+    if (this.props.disabled) {
+      return null;
+    }
+    return (e) => {
+      if (child.props.onMouseDown) {
+        child.props.onMouseDown(e);
+      }
+      this.onMouseDown(e);
     };
   }
 
@@ -104,23 +162,41 @@ export default class TabListBase extends Component {
     delete otherProps.onChange;
     delete otherProps.disabled;
     delete otherProps.childMappingFunction;
+    delete otherProps.keyboardActivation;
+
+    // div element should have aria-orientation rather than orientation
+    otherProps['aria-orientation'] = otherProps.orientation;
+    delete otherProps.orientation;
+
     return otherProps;
   }
 
   render() {
     return (
-      <div
-        {...this.cleanProps()}
-        role="tablist">
-        {this.getItems()}
-      </div>
+      <FocusManager itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation}>
+        <div
+          {...this.cleanProps()}
+          role="tablist">
+          {this.getItems()}
+        </div>
+      </FocusManager>
     );
   }
 }
 
+TabListBase.propTypes = {
+  defaultSelectedIndex: PropTypes.number,
+  disabled: PropTypes.bool,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  keyboardActivation: PropTypes.oneOf(['automatic', 'manual']),
+  onChange() {}
+};
+
 TabListBase.defaultProps = {
   defaultSelectedIndex: 0,
   disabled: false,
+  orientation: 'horizontal',
+  keyboardActivation: 'automatic',
   onChange() {}
 };
 

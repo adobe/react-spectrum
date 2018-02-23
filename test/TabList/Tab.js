@@ -10,11 +10,9 @@ describe('Tab', () => {
     const tree = shallow(<Tab />);
     assert.equal(tree.prop('className'), 'spectrum-TabList-item');
     assert.equal(tree.prop('role'), 'tab');
-    assert.equal(tree.prop('aria-invalid'), false);
-    assert.equal(tree.prop('aria-disabled'), false);
+    assert.equal(tree.prop('aria-invalid'), null);
+    assert.equal(tree.prop('aria-disabled'), null);
     assert.equal(tree.prop('aria-selected'), false);
-    assert.equal(tree.prop('selected'), false);
-    assert.equal(tree.prop('disabled'), false);
   });
 
   it('supports selected', () => {
@@ -35,10 +33,25 @@ describe('Tab', () => {
     assert.equal(child.length, 1);
   });
 
+  it('supports onClick', () => {
+    const spy = sinon.spy();
+    const tree = shallow(<Tab onClick={spy} />);
+    tree.simulate('click');
+    assert(spy.called);
+  });
+
+  it('supports keyboard activation with Enter or Space ', () => {
+    const spy = sinon.spy();
+    const tree = shallow(<Tab onClick={spy} />);
+    tree.simulate('keypress', {key: 'Enter', preventDefault: () => {}});
+    assert(spy.calledOnce);
+    tree.simulate('keypress', {key: ' ', preventDefault: () => {}});
+    assert(spy.calledTwice);
+  });
+
   it('supports disabled', () => {
     const spy = sinon.spy();
     const tree = shallow(<Tab onClick={spy} disabled />);
-    assert.equal(tree.prop('disabled'), true);
     assert.equal(tree.prop('aria-disabled'), true);
     assert.equal(tree.hasClass('is-disabled'), true);
     tree.simulate('click');

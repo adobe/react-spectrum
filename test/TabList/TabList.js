@@ -1,13 +1,13 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
-import {TabList} from '../../src/TabList';
+import {Tab, TabList} from '../../src/TabList';
 
 describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />, {disableLifecycleMethods: true});
-    const innerTree = tree.shallow();
+    const innerTree = tree.shallow().shallow();
     assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel');
     assert.equal(innerTree.type(), 'div');
     assert.equal(innerTree.prop('role'), 'tablist');
@@ -113,7 +113,7 @@ describe('TabList', () => {
 
   it('supports defaultSelectedIndex', () => {
     const tree = shallow(
-      <TabList defaultSelectedIndex="1">
+      <TabList defaultSelectedIndex={1}>
         <div className="one">a</div>
         <div className="two">b</div>
       </TabList>, {disableLifecycleMethods: true}
@@ -129,7 +129,7 @@ describe('TabList', () => {
     const onChange = sinon.spy();
 
     const tree = shallow(
-      <TabList defaultSelectedIndex="0" onChange={onChange}>
+      <TabList defaultSelectedIndex={0} onChange={onChange}>
         <div>a <input type="checkbox" /></div>
       </TabList>, {disableLifecycleMethods: true}
     );
@@ -137,5 +137,109 @@ describe('TabList', () => {
     tree.find('input').simulate('change');
 
     assert(!onChange.called);
+  });
+
+  it('supports dynamic setting of props', () => {
+    const tree = mount(
+      <TabList>
+        <Tab className="one">a</Tab>
+        <Tab className="two">b</Tab>
+      </TabList>
+    );
+    tree.setProps({selectedIndex: 1});
+    const child = tree.find('[selected=true]');
+
+    assert.equal(child.length, 1);
+    assert.notEqual(child.prop('className').indexOf('two'), -1);
+  });
+
+  it('supports selectedIndex by setting selected on child', () => {
+    const tree = mount(
+      <TabList>
+        <Tab className="one">a</Tab>
+        <Tab className="two" selected>b</Tab>
+      </TabList>
+    );
+    const child = tree.find('[selected=true]');
+    assert.equal(child.length, 1);
+    assert.notEqual(child.prop('className').indexOf('two'), -1);
+  });
+
+  it('supports mousedown/mouseup on child', () => {
+    const focusSpy = sinon.spy();
+    const mouseDownSpy = sinon.spy();
+    const tree = shallow(
+      <TabList>
+        <div className="one">a</div>
+        <div className="two" onMouseDown={mouseDownSpy}>b</div>
+      </TabList>, {disableLifecycleMethods: true}
+    );
+    const innerTree = tree.shallow();
+
+    const child = innerTree.find('.two');
+    child.simulate('mousedown', {currentTarget: {focus: focusSpy}});
+    assert(mouseDownSpy.called);
+    assert(focusSpy.called);
+    assert(innerTree.instance().isMouseDown);
+    let event = new window.MouseEvent('mouseup');
+    window.dispatchEvent(event);
+    assert(!innerTree.instance().isMouseDown);
+  });
+
+  it('supports onClick on child', () => {
+    const focusSpy = sinon.spy();
+    const spy = sinon.spy();
+    const tree = shallow(
+      <TabList>
+        <div className="one">a</div>
+        <div className="two" onClick={spy}>b</div>
+      </TabList>, {disableLifecycleMethods: true}
+    );
+    const innerTree = tree.shallow();
+
+    const child = innerTree.find('.two');
+    child.simulate('click', {currentTarget: {focus: focusSpy}});
+    assert(spy.called);
+  });
+
+  it('supports selection on focus when keyboardActivation="automatic"', () => {
+    const focusSpy = sinon.spy();
+    const tree = shallow(
+      <TabList>
+        <div tabIndex={0} className="one">a</div>
+        <div tabIndex={0} className="two" onFocus={focusSpy}>b</div>
+      </TabList>, {disableLifecycleMethods: true}
+    );
+    const innerTree = tree.shallow();
+
+    let child = innerTree.find('.two');
+    child.simulate('focus');
+    assert(focusSpy.calledWith(1));
+
+    tree.update();
+
+    assert(tree.state('selectedIndex'), 1);
+
+    child = tree.shallow().find('[selected=true]');
+    assert.notEqual(child.prop('className').indexOf('two'), -1);
+
+    tree.setProps({
+      keyboardActivation: 'manual'
+    });
+
+    tree.setState({
+      selectedIndex: 0
+    });
+
+    tree.update();
+
+    child = innerTree.find('.two');
+    child.simulate('focus');
+    assert(focusSpy.calledWith(1));
+
+    assert(tree.state('selectedIndex'), 0);
+
+    child = tree.shallow().find('[selected=true]');
+    assert.notEqual(child.prop('className').indexOf('one'), -1);
   });
 });
