@@ -14,6 +14,7 @@
     "transform-decorators-legacy",
     "transform-object-rest-spread",
     "transform-export-extensions",
-    "transform-async-to-generator"
+    "transform-async-to-generator",
+    "transform-glob-import"
   ]
 }

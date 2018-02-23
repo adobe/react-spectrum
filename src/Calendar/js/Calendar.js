@@ -6,10 +6,14 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
 import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
+
+const formatMessage = messageFormatter(intlMessages);
 
 @autobind
 export default class Calendar extends Component {
@@ -455,7 +459,7 @@ export default class Calendar extends Component {
             className="spectrum-Calendar-prevMonth"
             variant="icon"
             icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
-            aria-label="Previous"
+            aria-label={formatMessage('previous')}
             title="Previous"
             disabled={disabled}
             square
