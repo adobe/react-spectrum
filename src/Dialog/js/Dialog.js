@@ -93,6 +93,8 @@ export default class Dialog extends Component {
             variant={derivedVariant}
             title={title}
             fullscreen={fullscreen}
+            confirmLabel={confirmLabel}
+            cancelLabel={cancelLabel}
             {...otherProps}
             onConfirm={this.onConfirm}
             onCancel={this.onCancel} />
