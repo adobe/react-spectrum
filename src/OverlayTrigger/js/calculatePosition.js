@@ -77,8 +77,8 @@ function shouldFlip(axis, offset, size, containerDimensions, padding, placement,
   const containerScroll = flipContainerDimensions.scroll[axis];
   const containerHeight = flipContainerDimensions[AXIS_SIZE[axis]];
 
-  const startEdgeOffset = offset - padding - containerScroll - (flipContainerDimensions[axis] || 0);
-  const endEdgeOffset = offset + padding - containerScroll + size - (flipContainerDimensions[axis] || 0);
+  const startEdgeOffset = offset - padding - containerScroll;
+  const endEdgeOffset = offset + padding - containerScroll + size;
 
   if (startEdgeOffset < 0 && (placement === 'top' || placement === 'left')) {
     return true;
@@ -121,7 +121,7 @@ function computePosition(childOffset, containerDimensions, overlaySize, placemen
   const {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position = {};
 
-  position[crossAxis] = childOffset[crossAxis] + crossOffset + containerDimensions[crossAxis];
+  position[crossAxis] = childOffset[crossAxis] + crossOffset;
   if (crossPlacement === 'center') {
     position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]) / 2;
   } else if (crossPlacement !== crossAxis) {
@@ -135,9 +135,9 @@ function computePosition(childOffset, containerDimensions, overlaySize, placemen
   }
 
   if (placement === axis) {
-    position[axis] = childOffset[axis] - overlaySize[size] + offset + containerDimensions[axis];
+    position[axis] = childOffset[axis] - overlaySize[size] + offset;
   } else {
-    position[axis] = childOffset[axis] + childOffset[size] + offset + containerDimensions[axis];
+    position[axis] = childOffset[axis] + childOffset[size] + offset;
   }
 
   return position;
