@@ -85,7 +85,9 @@ export default class OverlayTrigger extends Component {
     offset: PropTypes.number,
     crossOffset: PropTypes.number,
     flip: PropTypes.bool,
-    boundariesElement: PropTypes.object
+    boundariesElement: PropTypes.oneOfType([
+      PropTypes.func, PropTypes.string
+    ])
   };
 
   static defaultProps = {
@@ -231,6 +233,7 @@ export default class OverlayTrigger extends Component {
     delete overlayProps.defaultShow;
     delete overlayProps.flip;
     delete overlayProps.boundariesElement;
+    delete overlayProps.shouldUpdatePosition;
     return (
       <Overlay
         {...props}
