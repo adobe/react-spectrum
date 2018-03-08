@@ -1,6 +1,6 @@
 import IntlMessageFormat from 'intl-messageformat';
 
-let currentLocale = navigator.language || navigator.userLanguage || 'en-US';
+let currentLocale = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
 export function setLocale(locale) {
   currentLocale = locale;
 }
