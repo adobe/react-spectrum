@@ -39,6 +39,8 @@ export default class Tooltip extends Component {
       ...otherProps
     } = this.props;
 
+    delete otherProps.arrowStyle;
+
     return (
       <span
         className={
