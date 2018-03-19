@@ -96,8 +96,12 @@ React Spectrum allows you to import only the components you need rather than blo
 
 ## Development
 
-We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open http://localhost:9002
-in your browser to play around with the components and test your changes.
+### Contributing
+Please read the [CONTRIBUTING](CONTRIBUTING.md) guide for an overview of how to contribute.
+
+### Local Development
+
+We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open (http://localhost:9002)[http://localhost:9002] in your browser to play around with the components and test your changes.
 
 ### File Layout
 

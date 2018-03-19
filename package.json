@@ -9,6 +9,7 @@
   "scripts": {
     "start": "make run",
     "test": "make test",
+    "lint": "make lint",
     "test:watch": "mocha --watch --reporter dot"
   },
   "peerDependencies": {
