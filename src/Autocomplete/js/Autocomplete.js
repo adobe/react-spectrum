@@ -170,9 +170,12 @@ export default class Autocomplete extends React.Component {
 
   onFocusNext(event) {
     event.preventDefault();
-    const {results = [], selectedIndex} = this.state;
+    const {results = [], selectedIndex, showDropdown} = this.state;
     let index = (selectedIndex + 1) % results.length;
     this.selectIndex(index);
+    if (!showDropdown) {
+      this.showMenu();
+    }
   }
 
   onPageDown(event) {
@@ -266,7 +269,7 @@ export default class Autocomplete extends React.Component {
 
   async showMenu() {
     this.setState({showDropdown: true, selectedIndex: -1});
-    let results = await this.getCompletions(this.state.value);
+    let results = await this.getCompletions(this.state.value) || [];
 
     // Reset the selected index based on the value
     let selectedIndex = results.findIndex(result => getLabel(result) === this.state.value);

@@ -249,6 +249,26 @@ describe('Autocomplete', () => {
     assert.equal(findInput(tree).prop('value'), 'test');
   });
 
+  it('should show the menu when ArrowDown is pressed', async () => {
+    const spy = sinon.spy();
+    const tree = shallow(
+      <Autocomplete getCompletions={v => ['one', 'two', 'three']} onMenuShow={spy}>
+        <input />
+      </Autocomplete>
+    );
+
+    findInput(tree).simulate('focus');
+
+    findInput(tree).simulate('keydown', {key: 'ArrowDown', preventDefault: function () {}});
+
+    await sleep(1); // Wait for async getCompletions
+    tree.update();
+
+    assert.equal(tree.childAt(1).prop('show'), true);
+
+    assert(spy.called);
+  });
+
   it('should show the menu when the Alt + ArrowDown is pressed', async () => {
     const spy = sinon.spy();
     const tree = shallow(
@@ -555,6 +575,10 @@ describe('Autocomplete', () => {
 
       findInput(tree).simulate('keydown', {key: 'ArrowDown', preventDefault: function () {}});
       assert.equal(findInput(tree).prop('aria-activedescendant'), menuItems.at(2).prop('id'));
+
+      let mouseDownPreventDefault = sinon.spy();
+      menuItems.at(2).simulate('mouseDown', {preventDefault: mouseDownPreventDefault});
+      assert(mouseDownPreventDefault.called);
 
       findInput(tree).simulate('keydown', {key: 'Enter', preventDefault: function () {}});
 
