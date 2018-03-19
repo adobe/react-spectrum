@@ -25,4 +25,13 @@ describe('DialogHeader', () => {
     const tree = shallow(<DialogHeader fullscreen confirmLabel="Go" />);
     assert.equal(tree.find(DialogButtons).length, 1);
   });
+
+  it('supports disabling confirm button', () => {
+    const tree = shallow(<DialogHeader fullscreen confirmLabel="OK" confirmDisabled />);
+    assert(tree.find(DialogButtons).prop('confirmDisabled'));
+    assert(tree.find(DialogButtons).shallow().find('Button').prop('disabled'));
+    tree.setProps({confirmDisabled: false});
+    assert(!tree.find(DialogButtons).prop('confirmDisabled'));
+    assert(!tree.find(DialogButtons).shallow().find('Button').prop('disabled'));
+  });
 });

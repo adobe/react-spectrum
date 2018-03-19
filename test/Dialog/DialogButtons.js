@@ -38,4 +38,11 @@ describe('DialogButtons', () => {
     buttons.at(1).simulate('click');
     assert(spy.calledTwice);
   });
+
+  it('supports disabling confirm button', () => {
+    const tree = shallow(<DialogButtons confirmLabel="OK" confirmDisabled />);
+    assert(tree.find(Button).prop('disabled'));
+    tree.setProps({confirmDisabled: false});
+    assert(!tree.find(Button).prop('disabled'));
+  });
 });

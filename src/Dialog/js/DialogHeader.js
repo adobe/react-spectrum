@@ -12,6 +12,7 @@ export default function DialogHeader({
   title,
   variant,
   fullscreen,
+  confirmDisabled,
   confirmLabel,
   cancelLabel,
   onConfirm,
@@ -38,6 +39,7 @@ export default function DialogHeader({
           variant={variant}
           cancelLabel={cancelLabel}
           confirmLabel={confirmLabel}
+          confirmDisabled={confirmDisabled}
           onConfirm={onConfirm}
           onCancel={onCancel} />
       }

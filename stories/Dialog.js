@@ -34,6 +34,11 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
+    'with confirm disabled',
+    () => render(dialogChildren, {title: 'Dialog title', confirmDisabled: true, confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
+    {inline: true}
+  )
+  .addWithInfo(
     'Long content',
     () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'}),
     {inline: true}

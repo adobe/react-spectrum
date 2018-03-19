@@ -136,4 +136,14 @@ describe('Dialog', () => {
     assert(!onClose.calledOnce);
   });
 
+  it('supports disabling confirm button', () => {
+    const tree = shallow(<Dialog confirmLabel="OK" confirmDisabled />);
+    let dialogButtons = tree.find('DialogButtons');
+    assert(dialogButtons.prop('confirmDisabled'));
+    assert(dialogButtons.shallow().find('Button').prop('disabled'));
+    tree.setProps({confirmDisabled: false});
+    dialogButtons = tree.find('DialogButtons');
+    assert(!dialogButtons.prop('confirmDisabled'));
+    assert(!dialogButtons.shallow().find('Button').prop('disabled'));
+  });
 });

@@ -12,6 +12,7 @@ export default class Dialog extends Component {
     backdropClickable: PropTypes.bool,
     cancelLabel: PropTypes.string,
     className: PropTypes.string,
+    confirmDisabled: PropTypes.bool,
     confirmLabel: PropTypes.string,
     onClose: PropTypes.func,
     onCancel: PropTypes.func,
@@ -20,11 +21,12 @@ export default class Dialog extends Component {
     title: PropTypes.string,
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
-    role: PropTypes.oneOf(['dialog', 'alertdialog']),
+    role: PropTypes.oneOf(['dialog', 'alertdialog'])
   };
 
   static defaultProps = {
     backdropClickable: false,
+    confirmDisabled: false,
     open: true,
     mode: 'centered',
     role: 'dialog',

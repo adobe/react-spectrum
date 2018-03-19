@@ -11,6 +11,7 @@ const BUTTON_VARIANTS = {
 export default function DialogButtons({
   confirmLabel,
   cancelLabel,
+  confirmDisabled,
   onConfirm,
   onCancel,
   className,
@@ -25,7 +26,7 @@ export default function DialogButtons({
         <Button variant="secondary" label={cancelLabel} onClick={onCancel} />
       }
       {confirmLabel &&
-        <Button variant={confirmVariant} label={confirmLabel} onClick={onConfirm} />
+        <Button variant={confirmVariant} label={confirmLabel} onClick={onConfirm} disabled={confirmDisabled || null} />
       }
     </div>
   );
