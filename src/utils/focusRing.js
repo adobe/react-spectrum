@@ -19,7 +19,7 @@ export default function focusRing(WrappedComponent) {
       componentWillUpdate.apply(this, arguments);
     }
 
-    if (elementWithFocusRing == null) {
+    if (elementWithFocusRing == null || elementWithFocusRing !== document.activeElement) {
       try {
         const node = ReactDOM.findDOMNode(this);
         elementWithFocusRing = node.parentNode.querySelector('.' + FOCUS_RING_CLASSNAME);
