@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TreeItem from './TreeItem';
 import '../style/index.styl';
+import classNames from 'classnames';
 
 /**
  * TreeView renders a collapseable heirarchical tree
@@ -34,7 +35,10 @@ export default class TreeView extends React.Component {
     delegate: PropTypes.object,
 
     /* The timeout after which items automatically expand when dragging over them. */
-    dragHoverTimeout: PropTypes.number
+    dragHoverTimeout: PropTypes.number,
+
+    /* Custom CSS class to add to the tree view */
+    className: PropTypes.string
   };
 
   static defaultProps = {
@@ -69,7 +73,7 @@ export default class TreeView extends React.Component {
       <EditableCollectionView
         {...this.props}
         ref={c => this.collection = c}
-        className="spectrum-TreeView"
+        className={classNames('spectrum-TreeView', this.props.className)}
         layout={this.layout}
         delegate={this.delegate}
         transitionDuration={300}
