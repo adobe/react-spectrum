@@ -1,9 +1,11 @@
 import assert from 'assert';
 import Calendar from '../../src/Calendar';
+import createId from '../../src/utils/createId';
 import {DateRange} from 'moment-range';
 import moment from 'moment';
+import {mount, shallow} from 'enzyme';
+import {rAF} from '../utils';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Calendar', () => {
@@ -15,9 +17,11 @@ describe('Calendar', () => {
 
     const tree = shallow(<Calendar />);
     assert.equal(tree.hasClass('spectrum-Calendar'), true);
+    assert.equal(tree.prop('role'), 'group');
 
     const headerTitle = findHeaderTitle(tree);
     assert.equal(headerTitle.text(), now.format(DEFAULT_HEADER_FORMAT));
+    assert.equal(tree.prop('aria-labelledby'), headerTitle.prop('id'));
 
     const prevBtn = findPreviousButton(tree);
     assert.equal(prevBtn.prop('aria-label'), 'Previous');
@@ -181,6 +185,32 @@ describe('Calendar', () => {
     });
   });
 
+  describe('dispatches onFocus', () => {
+    it('when table body receives focus', () => {
+      const spy = sinon.spy();
+      const tree = shallow(<Calendar onFocus={spy} />);
+      tree.instance().componentWillMount();
+      const body = findBody(tree);
+      body.simulate('focus');
+      assert(tree.state('isFocused'));
+      assert(spy.called);
+    });
+  });
+
+  describe('dispatches onBlur', () => {
+    it('when table body loses focus', () => {
+      const spy = sinon.spy();
+      const tree = shallow(<Calendar onBlur={spy} />);
+      tree.instance().componentWillMount();
+      const body = findBody(tree);
+      body.simulate('focus');
+      assert(tree.state('isFocused'));
+      body.simulate('blur');
+      assert(!tree.state('isFocused'));
+      assert(spy.called);
+    });
+  });
+
   describe('currentMonth', () => {
     let now;
     let tree;
@@ -197,12 +227,22 @@ describe('Calendar', () => {
       assert.equal(+tree.state('currentMonth'), +date3MonthsLater.clone().startOf('month'));
     });
 
-    it('changes currentMonth when previous or next buttons are clicked', () => {
+    it('changes currentMonth when previous or next buttons are clicked', (done) => {
       const previousMonth = now.clone().subtract(1, 'month');
+      findPreviousButton(tree).simulate('focus');
+      assert.equal(tree.instance().state.ariaLiveHeading, 'assertive');
       findPreviousButton(tree).simulate('click');
       assert.equal(+tree.state('currentMonth'), +previousMonth.clone().startOf('month'));
+      findPreviousButton(tree).simulate('blur');
+      assert.equal(tree.instance().state.ariaLiveHeading, 'assertive');
+      findNextButton(tree).simulate('focus');
       findNextButton(tree).simulate('click');
       assert.equal(+tree.state('currentMonth'), +now.clone().startOf('month'));
+      findNextButton(tree).simulate('blur');
+      requestAnimationFrame(() => {
+        assert.equal(tree.instance().state.ariaLiveHeading, 'off');
+        done();
+      });
     });
   });
 
@@ -212,13 +252,19 @@ describe('Calendar', () => {
     let tree;
     let body;
 
-    const assertDateAfterKeyDown = ({keyCode, date, meta = false}) => {
+    const assertDateAfterKeyDown = async ({keyCode, date, meta = false}) => {
       body.simulate('focus');
       body.simulate('keydown', {preventDefault: preventDefaultSpy, keyCode, metaKey: meta});
       assert.equal(+tree.state('focusedDate'), +date.clone());
       assert.equal(+tree.state('currentMonth'), +date.clone().startOf('month'));
       assert.equal(+findFocusedCell(tree).prop('date'), +date.clone().startOf('day'));
       assert(preventDefaultSpy.called);
+
+      // wait for render to test aria-activedescendant attribute
+      await rAF(() => {
+        tree.update();
+        assert.equal(body.prop('aria-activedescendant'), findFocusedCell(tree).prop('id'));
+      });
     };
 
     beforeEach(() => {
@@ -260,24 +306,33 @@ describe('Calendar', () => {
       assertDateAfterKeyDown({keyCode: 34, date: now, meta: true});
     });
 
-    it('is set to value if it exists', () => {
+    it('is set to value if it exists', async () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar value={date} />);
       tree.instance().componentWillMount();
-      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
+      await rAF(() => {
+        tree.update();
+        assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
+      });
     });
 
-    it('is set to defaultValue if it exists', () => {
+    it('is set to defaultValue if it exists', async () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar defaultValue={date} />);
       tree.instance().componentWillMount();
-      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
+      await rAF(() => {
+        tree.update();
+        assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
+      });
     });
 
-    it('is set to now if no value or defaultValue exist', () => {
+    it('is set to now if no value or defaultValue exist', async () => {
       tree = shallow(<Calendar />);
       tree.instance().componentWillMount();
-      assert.equal(tree.state('focusedDate').isSame(now, 'day'), true);
+      await rAF(() => {
+        tree.update();
+        assert(tree.state('focusedDate').isSame(now, 'day'));
+      });
     });
   });
 
@@ -298,6 +353,30 @@ describe('Calendar', () => {
       assert.deepEqual(tree.state('selectingRange').toDate(), [start.toDate(), after.toDate()]);
     });
 
+    it('indicates the selected range using table caption and aria-describedby on the body', function () {
+      const before = moment().startOf('month').startOf('day');
+      const start = before.clone().add(5, 'days');
+      const after = start.clone().add(5, 'days');
+      const tree = shallow(<Calendar selectionType="range" />);
+
+      findCellByDate(tree, start).simulate('click', {}, start);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [start.toDate(), start.clone().endOf('day').toDate()]);
+
+      findCellByDate(tree, before).simulate('highlight', {}, before);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [before.toDate(), start.toDate()]);
+
+      findCellByDate(tree, after).simulate('highlight', {}, after);
+      assert.deepEqual(tree.state('selectingRange').toDate(), [start.toDate(), after.toDate()]);
+
+      findCellByDate(tree, after).simulate('click', {}, after);
+      assert.deepEqual(tree.state('highlightedRange').toDate(), [start.toDate(), after.toDate()]);
+
+      const tableCaption = findTableCaption(tree);
+      assert.equal(tableCaption.text(), `Selected Range: ${start.format('LL')} to ${after.format('LL')}`);
+
+      assert.equal(findBody(tree).prop('aria-describedby'), tableCaption.prop('id'));
+    });
+
     it('resets the selection when the escape key is pressed', function () {
       const before = moment().startOf('month').startOf('day');
       const start = before.clone().add(5, 'days');
@@ -311,6 +390,100 @@ describe('Calendar', () => {
       body.simulate('keydown', {keyCode: 27});
 
       assert.equal(tree.state('selectingRange'), null);
+    });
+
+    describe('highlights the selected range when navigating using the keyboard', () => {
+      let now;
+      let tree;
+      let body;
+
+      const assertDateAfterKeyDown = async ({keyCode, meta = false}) => {
+        body.simulate('focus');
+        body.simulate('keydown', {preventDefault: () => {}, keyCode, metaKey: meta});
+        // wait for render
+        await rAF(() => {
+          tree.update();
+        });
+      };
+
+      beforeEach(() => {
+        now = moment().startOf('day');
+        tree = shallow(<Calendar selectionType="range" />);
+        tree.instance().componentWillMount();
+        body = findBody(tree);
+        body.simulate('focus');
+        tree.instance().focusTimeUnit(now);
+      });
+
+      it('adds appropriate selection prompt to aria-label of focused cell', () => {
+        const nextWeek = now.clone().add(1, 'week');
+        const rangeSelectionStartPrompt = ' (Click to start selecting date range)';
+        const rangeSelectionFinishPrompt = ' (Click to finish selecting date range)';
+        let renderedCell = findCellByDate(tree, now).render();
+        assert.equal(renderedCell.prop('aria-label').indexOf(rangeSelectionStartPrompt), renderedCell.prop('aria-label').length - rangeSelectionStartPrompt.length);
+        findCellByDate(tree, now).simulate('click', {}, now);
+        renderedCell = findCellByDate(tree, now).render();
+        assert.equal(renderedCell.prop('aria-label').indexOf(rangeSelectionFinishPrompt), renderedCell.prop('aria-label').length - rangeSelectionFinishPrompt.length);
+        assertDateAfterKeyDown({keyCode: 40}); // down arrow
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), nextWeek.toDate()]);
+        renderedCell = findCellByDate(tree, nextWeek).render();
+        assert.equal(renderedCell.prop('aria-label').indexOf(rangeSelectionFinishPrompt), renderedCell.prop('aria-label').length - rangeSelectionFinishPrompt.length);
+        findCellByDate(tree, nextWeek).simulate('click', {}, nextWeek);
+        renderedCell = findCellByDate(tree, nextWeek).render();
+        assert.equal(renderedCell.prop('aria-label').indexOf(rangeSelectionFinishPrompt), -1);
+        assert.equal(renderedCell.prop('aria-label').indexOf(rangeSelectionStartPrompt), -1);
+      });
+
+      it('increments/decrements one day with left/right arrows', async () => {
+        const previousDay = now.clone().subtract(1, 'day');
+        findCellByDate(tree, now).simulate('click', {}, now);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.clone().endOf('day').toDate()]);
+        assertDateAfterKeyDown({keyCode: 37}); // left arrow
+        assert.deepEqual(tree.state('selectingRange').toDate(), [previousDay.toDate(), now.toDate()]);
+        assertDateAfterKeyDown({keyCode: 39}); // right arrow
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.toDate()]);
+      });
+
+      it('increments/decrements one week with up/down arrows', () => {
+        const previousWeek = now.clone().subtract(1, 'week');
+        findCellByDate(tree, now).simulate('click', {}, now);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.clone().endOf('day').toDate()]);
+        assertDateAfterKeyDown({keyCode: 38}); // up arrow
+        assert.deepEqual(tree.state('selectingRange').toDate(), [previousWeek.toDate(), now.toDate()]);
+        assertDateAfterKeyDown({keyCode: 40}); // down arrow
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.toDate()]);
+      });
+
+      it('goes to beginning/end of month with home and end keys', () => {
+        const monthBegin = now.clone().startOf('month').startOf('day');
+        const monthEnd = now.clone().endOf('month').startOf('day');
+        findCellByDate(tree, now).simulate('click', {}, now);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.clone().endOf('day').toDate()]);
+        assertDateAfterKeyDown({keyCode: 36}); // home
+        assert.deepEqual(tree.state('selectingRange').toDate(), [monthBegin.toDate(), now.toDate()]);
+        assertDateAfterKeyDown({keyCode: 35}); // end
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), monthEnd.toDate()]);
+      });
+
+      it('increments/decrements one month with page up/down', () => {
+        const previousMonth = now.clone().subtract(1, 'month');
+        findCellByDate(tree, now).simulate('click', {}, now);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.clone().endOf('day').toDate()]);
+        assertDateAfterKeyDown({keyCode: 33});
+        assert.deepEqual(tree.state('selectingRange').toDate(), [previousMonth.toDate(), now.toDate()]);
+        assertDateAfterKeyDown({keyCode: 34});
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.toDate()]);
+      });
+
+      it('increments/decrements one year with cmd + page up/down', () => {
+        const previousYear = now.clone().subtract(1, 'year');
+        findCellByDate(tree, now).simulate('click', {}, now);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.clone().endOf('day').toDate()]);
+        assertDateAfterKeyDown({keyCode: 33, meta: true});
+        assert.deepEqual(tree.state('selectingRange').toDate(), [previousYear.toDate(), now.toDate()]);
+        assertDateAfterKeyDown({keyCode: 34, meta: true});
+        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.toDate()]);
+      });
     });
   });
 
@@ -336,12 +509,22 @@ describe('Calendar', () => {
     tree.instance().componentWillMount();
     tree.update();
     assert.equal(findAllSelectableCells(tree).length, 8); // includes start and end days
+    findCellByDate(tree, date).simulate('click', {}, date);
+    const body = findBody(tree);
+    body.simulate('focus');
+    body.simulate('keydown', {preventDefault: () => {}, keyCode: 37});
+    assert(tree.state('focusedDate').isSame(date));
+    findCellByDate(tree, oneWeekLater).simulate('click', {}, oneWeekLater);
+    body.simulate('focus');
+    body.simulate('keydown', {preventDefault: () => {}, keyCode: 39});
+    assert(tree.state('focusedDate').isSame(oneWeekLater));
   });
 
   it('generateDateId', () => {
+    const index = parseInt(createId().substring(15), 10) + 1;
     const today = moment(new Date(2016, 7, 24));
     const tree = shallow(<Calendar value={today} />);
-    assert.equal(tree.instance().generateDateId(today), 'react-spectrum-1-8/24/2016');
+    assert.equal(tree.instance().generateDateId(today), 'react-spectrum-' + index + '-2016/08/24');
   });
 
   describe('CalendarCell', () => {
@@ -428,7 +611,6 @@ describe('Calendar', () => {
 
   it('supports disabled', () => {
     const tree = shallow(<Calendar disabled />);
-    assert.equal(tree.prop('aria-disabled'), true);
 
     const body = findBody(tree);
     // every cell should be disabled
@@ -438,12 +620,8 @@ describe('Calendar', () => {
 
   it('supports readOnly', () => {
     const tree = shallow(<Calendar readOnly />);
-    assert.equal(tree.prop('aria-readonly'), true);
-  });
-
-  it('supports required', () => {
-    const tree = shallow(<Calendar required />);
-    assert.equal(tree.prop('aria-required'), true);
+    const body = findBody(tree);
+    assert.equal(body.prop('aria-readonly'), true);
   });
 
   it('supports additional classNames', () => {
@@ -455,8 +633,69 @@ describe('Calendar', () => {
     const tree = shallow(<Calendar foo />);
     assert.equal(tree.prop('foo'), true);
   });
-});
 
+  describe('When aria-labelledby prop', () => {
+    describe('is undefined,', () => {
+      it('calendar has aria-labelledby prop referencing header element id.', () => {
+        const tree = shallow(<Calendar />);
+        const body = findBody(tree);
+        const headerTitle = findHeaderTitle(tree);
+        assert.equal(tree.prop('aria-labelledby'), headerTitle.prop('id'));
+        assert.equal(body.prop('aria-labelledby'), headerTitle.prop('id'));
+      });
+    });
+    describe('is defined,', () => {
+      it('calendar has aria-labelledby prop that includes both the aria-labelledby prop and the header element id.', () => {
+        const tree = shallow(<Calendar aria-labelledby="foo" />);
+        const body = findBody(tree);
+        const headerTitle = findHeaderTitle(tree);
+        assert.equal(tree.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
+        assert.equal(body.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
+      });
+    });
+  });
+
+  it('sets aria-live="off" to live regions on blur', (done) => {
+    const tree = shallow(<Calendar />);
+    const body = findBody(tree);
+    tree.setState({
+      ariaLiveHeading: 'polite',
+      ariaLiveCaption: 'polite'
+    });
+    tree.update();
+    body.simulate('blur');
+    body.simulate('focus');
+    assert.equal(findHeaderTitle(tree).prop('aria-live'), 'polite');
+    assert.equal(findTableCaption(tree).prop('aria-live'), 'polite');
+    body.simulate('blur');
+    requestAnimationFrame(() => {
+      assert.equal(tree.instance().state.ariaLiveHeading, 'off');
+      assert.equal(tree.instance().state.ariaLiveCaption, 'off');
+      tree.update();
+      assert.equal(findHeaderTitle(tree).prop('aria-live'), 'off');
+      assert.equal(findTableCaption(tree).prop('aria-live'), 'off');
+      done();
+    });
+  });
+
+  it('focusCalendarBody moves focus to calendarBody', async () => {
+    const tree = mount(<Calendar />);
+    const body = findBody(tree);
+    tree.instance().focusCalendarBody();
+
+    await rAF(async () => {
+      // body should be focused on next animation frame
+      assert.equal(body.getDOMNode(), document.activeElement);
+
+      // test blur before restoring focus
+      tree.instance().focusCalendarBody();
+      assert.equal(document.body, document.activeElement);
+      await rAF(() => {
+        assert.equal(body.getDOMNode(), document.activeElement);
+      });
+    });
+  });
+});
 
 const findHeaderTitle = tree => tree.find('.spectrum-Calendar-header').childAt(0);
 const findPreviousButton = tree => tree.find('.spectrum-Calendar-header').childAt(1);
@@ -471,3 +710,4 @@ const findFirstNonSelectedCell = tree => findAllSelectableCells(tree).first();
 const findFocusedCell = tree => findBody(tree).find('tbody tr CalendarCell[focused=true]');
 const findCellByDate = (tree, date) =>
   findAllCells(tree).filterWhere(c => +c.prop('date') === +date);
+const findTableCaption = tree => tree.find('.react-spectrum-Calendar-tableCaption');

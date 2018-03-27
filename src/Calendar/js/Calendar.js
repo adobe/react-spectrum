@@ -6,8 +6,8 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
 import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
+import {getLocale, messageFormatter} from '../../utils/intl';
 import intlMessages from '../intl/*.json';
-import {messageFormatter} from '../../utils/intl';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -35,7 +35,8 @@ export default class Calendar extends Component {
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
-      PropTypes.number
+      PropTypes.number,
+      PropTypes.array
     ]),
     valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     selectionType: PropTypes.string,
@@ -48,7 +49,6 @@ export default class Calendar extends Component {
   };
 
   static defaultProps = {
-    id: createId(),
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
@@ -61,6 +61,11 @@ export default class Calendar extends Component {
     required: false,
     onChange: function () {}
   };
+
+  constructor(props) {
+    super(props);
+    this.calendarId = createId();
+  }
 
   componentWillMount() {
     const {
@@ -78,7 +83,11 @@ export default class Calendar extends Component {
     this.setState({
       isFocused: false,
       min: newMin && newMin.startOf('day'),
-      max: newMax && newMax.startOf('day')
+      max: newMax && newMax.startOf('day'),
+      // Calendar Month/Year heading should have aria-live="off" to start
+      ariaLiveHeading: 'off',
+      // Calendar table caption describing the selected range of dates should have aria-live="off" to start
+      ariaLiveCaption: 'off'
     });
 
     this.setSelected(newValue);
@@ -164,24 +173,78 @@ export default class Calendar extends Component {
     });
   }
 
-  generateDateId(date) {
-    const {id} = this.props;
+  /**
+   * Generates a unique id for the Calendar Month/Year heading element
+   * @returns {String} A unique id for the Calendar Month/Year heading element
+   */
+  generateHeadingId() {
+    const {id = this.calendarId} = this.props;
 
-    return `${id}-${date.format('l')}`;
+    return `${id}-heading`;
   }
 
+  /**
+   * Generates a unique id for the Calendar table caption element
+   * @returns {String} A unique id for the Calendar table caption element
+   */
+  generateDescriptionId() {
+    const {id = this.calendarId} = this.props;
+
+    return `${id}-description`;
+  }
+
+  /**
+   * Generates a unique id for a Calendar table cell
+   * @param   {Object} date Moment object
+   * @returns {String} A unique id for the Calendar table cell
+   */
+  generateDateId(date) {
+    const {id = this.calendarId} = this.props;
+
+    return `${id}-${date.format('YYYY/MM/DD')}`;
+  }
+
+  /**
+   * Handles click on previous arrow button to navigate to the previous month.
+   */
   handleClickPrevious() {
     const {currentMonth} = this.state;
     this.setState({
-      currentMonth: currentMonth.clone().add(-1, 'month').startOf('month')
+      currentMonth: currentMonth.clone().add(-1, 'month').startOf('month'),
+      // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
+      ariaLiveHeading: 'assertive'
     });
   }
 
+  /**
+   * Handles click on next arrow button to navigate to the next month.
+   */
   handleClickNext() {
     const {currentMonth} = this.state;
     this.setState({
-      currentMonth: currentMonth.clone().add(1, 'month').startOf('month')
+      currentMonth: currentMonth.clone().add(1, 'month').startOf('month'),
+      // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
+      ariaLiveHeading: 'assertive'
     });
+  }
+
+  /**
+   * Handles focus on previuous or next arrow button set aria-live="assertive" on Calendar Month/Year heading
+   */
+  handleFocusPreviousNext() {
+    if (this.blurPreviousNextTimeout) {
+      cancelAnimationFrame(this.blurPreviousNextTimeout);
+    }
+    this.setState({ariaLiveHeading: 'assertive'});
+  }
+
+  /**
+   * Handles blur on previuous or next arrow button set aria-live="off" on Calendar Month/Year heading
+   */
+  handleBlurPreviousNext() {
+    this.blurPreviousNextTimeout = requestAnimationFrame(
+      () => this.setState({ariaLiveHeading: 'off'})
+    );
   }
 
   handleDayClick(e, date) {
@@ -189,8 +252,8 @@ export default class Calendar extends Component {
   }
 
   getSelectingRange(date) {
-    let min = moment.min(this.state.focusedDate, date).clone();
-    let max = moment.max(this.state.focusedDate, date).clone();
+    let min = moment.min((this.state.anchorDate || this.state.focusedDate), date).clone();
+    let max = moment.max((this.state.anchorDate || this.state.focusedDate), date).clone();
     return new DateRange(min, max);
   }
 
@@ -204,13 +267,25 @@ export default class Calendar extends Component {
 
   onFocus(e) {
     this.setState({isFocused: true});
+    if (this.blurTimeout) {
+      cancelAnimationFrame(this.blurTimeout);
+    }
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
   }
 
   onBlur(e) {
-    this.setState({isFocused: false});
+    this.setState({
+      isFocused: false
+    }, () => {
+      this.blurTimeout = requestAnimationFrame(
+        () => this.setState({
+          ariaLiveCaption: 'off',
+          ariaLiveHeading: 'off'
+        })
+      );
+    });
     if (this.props.onBlur) {
       this.props.onBlur(e);
     }
@@ -260,7 +335,7 @@ export default class Calendar extends Component {
         break;
       case 27: // escape
         if (this.state.selectingRange) {
-          this.setState({selectingRange: null});
+          this.setState({selectingRange: null, anchorDate: null});
         }
         break;
       default: // default, do nothing
@@ -269,16 +344,26 @@ export default class Calendar extends Component {
   }
 
   focusTimeUnit(date) {
-    const {currentMonth} = this.state;
+    const {currentMonth, min, max} = this.state;
+
+    // Don't move focus if the date is not in range.
+    if (!isDateInRange(date, min, max)) {
+      return;
+    }
+
     const sameMonthAsVisible = currentMonth.isSame(date, 'month');
     const newCurrentMonth = sameMonthAsVisible ? currentMonth : date.clone().startOf('month');
 
     this.setState({
       focusedDate: date,
-      currentMonth: newCurrentMonth
+      currentMonth: newCurrentMonth,
+      ariaLiveHeading: (sameMonthAsVisible ? 'off' : 'polite'),
+      ariaLiveCaption: 'off'
+    }, () => {
+      // wait for render before highlighting the date range and focusing the Calendar body
+      this.onHighlight(null, date);
+      this.focusCalendarBody();
     });
-
-    this.focusCalendarBody();
   }
 
   selectFocused(date) {
@@ -293,38 +378,76 @@ export default class Calendar extends Component {
     }
 
     let selectingRange = null;
+    let anchorDate = null;
+    let newValue = null;
+    let ariaLiveCaption = 'polite';
     if (this.props.selectionType === 'range') {
       // If this is the second date selected, set the value.
       // Otherwise, setup the selecting range.
       if (this.state.selectingRange) {
-        this.setValue(this.getSelectingRange(date));
+        newValue = this.getSelectingRange(date);
       } else {
         selectingRange = this.getRange(date);
+        anchorDate = date;
       }
     } else {
-      this.setValue(date);
+      newValue = date;
+    }
+
+    if (newValue) {
+      ariaLiveCaption = 'assertive';
+      this.setValue(newValue);
     }
 
     this.setState({
+      anchorDate,
       focusedDate: date,
-      selectingRange
-    });
-
-    this.focusCalendarBody();
+      selectingRange,
+      ariaLiveCaption
+    }, () => this.focusCalendarBody()); // wait for render before setting focus to Calendar body
   }
 
+  /**
+   * Ensure Calendar body receives focus after clicking on a cell
+   */
   focusCalendarBody() {
-    if (this.calendarBody) {
-      this.calendarBody.focus();
+    const calendarBody = this.calendarBody;
+    if (calendarBody) {
+      // this forces assistive technology to announce the current active descendant of the calendar body
+      if (calendarBody === document.activeElement) {
+        calendarBody.blur();
+      }
+      requestAnimationFrame(() => calendarBody.focus());
     }
   }
 
   renderTable(date) {
+    const {selectionType} = this.props;
+    const {highlightedRange, anchorDate, ariaLiveCaption} = this.state;
+    const descriptionId = this.generateDescriptionId();
+    const isRangeSelection = selectionType === 'range';
+    let selectedRangeDescription = '';
+
+    // Provide localized description of selected date or range of dates.
+    if (highlightedRange) {
+      if (isRangeSelection && !anchorDate) {
+        selectedRangeDescription = formatMessage('selectedRangeDescription', {
+          start: highlightedRange.start.toDate(),
+          end: highlightedRange.end.toDate()
+        });
+      } else if (!isRangeSelection) {
+        selectedRangeDescription = formatMessage('selectedDateDescription', {
+          date: highlightedRange.start.toDate()
+        });
+      }
+    }
+
     return (
       <table
         key={date.format('MM/Y')}
-        role="presentation"
         className="spectrum-Calendar-table">
+        {/* caption serves as live region to announce selected date or range of dates */}
+        <caption className="react-spectrum-Calendar-tableCaption" id={descriptionId} aria-live={ariaLiveCaption} aria-atomic="true" aria-relevant="additions text">{selectedRangeDescription}</caption>
         {this.renderTableHeader()}
         {this.renderTableBody(date)}
       </table>
@@ -335,7 +458,7 @@ export default class Calendar extends Component {
     const {startDay} = this.props;
 
     return (
-      <thead role="presentation">
+      <thead>
         <tr role="row">
           {
             [...new Array(7).keys()].map(index => {
@@ -362,7 +485,7 @@ export default class Calendar extends Component {
 
   renderTableBody(date) {
     const {startDay, disabled} = this.props;
-    const {highlightedRange, selectingRange, min, max, isFocused, focusedDate, currentMonth} = this.state;
+    const {highlightedRange, selectingRange, min, max, isFocused, focusedDate, currentMonth, anchorDate} = this.state;
     const range = selectingRange || highlightedRange;
 
     const month = date.month();
@@ -375,7 +498,7 @@ export default class Calendar extends Component {
     }
 
     return (
-      <tbody role="presentation">
+      <tbody>
         {
           [...new Array(6).keys()].map(weekIndex => (
             <tr key={weekIndex} role="row">
@@ -389,6 +512,11 @@ export default class Calendar extends Component {
                   const isRangeEnd = range && (dayIndex === 6 || day === cursor.daysInMonth());
                   const isSelectionStart = range && cursorLocal.isSame(range.start, 'day');
                   const isSelectionEnd = range && cursorLocal.isSame(range.end, 'day');
+                  const isSelected = isSelectionStart || isSelectionEnd || (range && range.contains(cursorLocal));
+                  const isRangeSelection = this.props.selectionType === 'range';
+                  const isRangeSelected = isRangeSelection && range && !anchorDate;
+                  const isRangeSelectionInProgress = isRangeSelection && anchorDate;
+
                   return (
                     <CalendarCell
                       key={dayIndex}
@@ -397,8 +525,10 @@ export default class Calendar extends Component {
                       disabled={disabled || !isCurrentMonth || !isDateInRange(cursor, min, max)}
                       isToday={cursor.isSame(moment(), 'day')}
                       isCurrentMonth={isCurrentMonth}
-                      selected={range && range.contains(cursorLocal)}
-                      isRangeSelection={this.props.selectionType === 'range'}
+                      selected={isSelected}
+                      isRangeSelected={isRangeSelected}
+                      isRangeSelection={isRangeSelection}
+                      isRangeSelectionInProgress={isRangeSelectionInProgress}
                       isSelectionStart={isSelectionStart}
                       isSelectionEnd={isSelectionEnd}
                       isRangeStart={isRangeStart}
@@ -424,14 +554,29 @@ export default class Calendar extends Component {
       className,
       disabled,
       invalid,
-      required,
       readOnly,
+      selectionType,
       ...otherProps
     } = this.props;
 
-    const {focusedDate, highlightedRange, currentMonth} = this.state;
+    const {focusedDate, highlightedRange, currentMonth, ariaLiveHeading} = this.state;
+    const headingId = this.generateHeadingId();
+    const descriptionId = this.generateDescriptionId();
+    const isRangeSelection = selectionType === 'range';
+    let ariaLabelledby = headingId;
 
     delete otherProps.startDay;
+    delete otherProps.required;
+
+    // If Calendar is labelled by an external element, concatenate id to include the external label and the Calendar Month/Year heading
+    if (otherProps['aria-labelledby']) {
+      ariaLabelledby = otherProps['aria-labelledby'] + ' ' + ariaLabelledby;
+      delete otherProps['aria-labelledby'];
+    }
+
+    // Make sure moment localizes date formatting per Intl.locale
+    moment.locale(getLocale());
+    currentMonth.locale(getLocale());
 
     return (
       <div
@@ -441,17 +586,16 @@ export default class Calendar extends Component {
             className
           )
         }
-        aria-required={required}
-        aria-readonly={readOnly}
-        aria-invalid={invalid}
-        aria-disabled={disabled}
+        role="group"
+        aria-labelledby={ariaLabelledby}
         {...otherProps}>
         <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
         <div className="spectrum-Calendar-header">
+          {/* Calendar Month/Year is the default aria-labelledby element and is a live region that should announce when the Month/Year changes */}
           <h2
             className="spectrum-Heading spectrum-Calendar-heading"
-            role="heading"
-            aria-live="assertive"
+            id={headingId}
+            aria-live={ariaLiveHeading}
             aria-atomic="true">
             {currentMonth.format(headerFormat)}
           </h2>
@@ -460,28 +604,34 @@ export default class Calendar extends Component {
             variant="icon"
             icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
             aria-label={formatMessage('previous')}
-            title="Previous"
+            title={formatMessage('previous')}
             disabled={disabled}
-            square
-            onClick={this.handleClickPrevious} />
+            onClick={this.handleClickPrevious}
+            onFocus={this.handleFocusPreviousNext}
+            onBlur={this.handleBlurPreviousNext} />
           <Button
             className="spectrum-Calendar-nextMonth"
             variant="icon"
             icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
-            aria-label="Next"
-            title="Next"
+            aria-label={formatMessage('next')}
+            title={formatMessage('next')}
             disabled={disabled}
-            square
-            onClick={this.handleClickNext} />
+            onClick={this.handleClickNext}
+            onFocus={this.handleFocusPreviousNext}
+            onBlur={this.handleBlurPreviousNext} />
         </div>
         <div
           ref={el => {this.calendarBody = el; }}
           className="spectrum-Calendar-body"
           role="grid"
           tabIndex={disabled ? null : '0'}
-          aria-readonly="true"
+          aria-invalid={invalid}
+          aria-readonly={readOnly}
           aria-disabled={disabled}
-          aria-activedescendant={focusedDate && this.generateDateId(focusedDate)}
+          aria-activedescendant={focusedDate ? this.generateDateId(focusedDate) : null}
+          aria-labelledby={ariaLabelledby}
+          aria-describedby={highlightedRange ? descriptionId : null}
+          aria-multiselectable={isRangeSelection || null}
           onKeyDown={this.handleKeyDown}
           onFocus={this.onFocus}
           onBlur={this.onBlur}>
@@ -501,7 +651,9 @@ const CalendarCell = function CalendarCell({
   disabled = false,
   focused = false,
   invalid = false,
+  isRangeSelected = false,
   isRangeSelection = false,
+  isRangeSelectionInProgress = false,
   isRangeStart = false,
   isRangeEnd = false,
   isSelectionStart = false,
@@ -509,13 +661,36 @@ const CalendarCell = function CalendarCell({
   onClick = function () {},
   onHighlight = function () {}
 }) {
-  let title = `${date.format('dddd')}, ${date.format('LL')}`;
+  // title should be localize Day of week, Month, Day and Year without Time.
+  let title = date.format('LLLL').replace(date.format('LT'), '').trim();
+  let rangeSelectionPrompt = '';
+
+  // Localized string for cell title/aria-label
   if (isToday) {
-    title = `Today, ${title}`;
+    // If date is today, set appropriate string depending on selected state:
+    title = formatMessage(selected ? 'todayDateSelected' : 'todayDate', {
+      date: date.toDate()
+    });
+  } else if (selected) {
+    // If date is selected but not today:
+    title = formatMessage('dateSelected', {
+      date: date.toDate()
+    });
   }
 
-  if (selected) {
-    title = `${title} selected`;
+  // When cell is focused and selection mode is range,
+  if (isRangeSelection && focused) {
+    // If selection has started add "click to finish selecting range"
+    if (isRangeSelectionInProgress) {
+      rangeSelectionPrompt = formatMessage('finishRangeSelectionPrompt');
+    // Otherwise, if no range is selected, add "click to start selecting range" prompt
+    } else if (!isRangeSelected) {
+      rangeSelectionPrompt = formatMessage('startRangeSelectionPrompt');
+    }
+    // If rangeSelectionPrompt has been set, add parentheses
+    if (rangeSelectionPrompt.length) {
+      rangeSelectionPrompt = ` (${rangeSelectionPrompt})`;
+    }
   }
 
   return (
@@ -526,9 +701,11 @@ const CalendarCell = function CalendarCell({
       aria-disabled={disabled}
       aria-selected={selected}
       aria-invalid={invalid}
+      aria-label={title + rangeSelectionPrompt}
       title={title}
-      onClick={!disabled && (e => {onClick(e, date.clone()); })}
-      onMouseEnter={(e => { !disabled && onHighlight(e, date.clone()); })}>
+      onClick={disabled ? null : e => onClick(e, date.clone())}
+      onMouseEnter={disabled ? null : e => onHighlight(e, date.clone())}
+      tabIndex={disabled ? null : -1}>
       <span
         role="presentation"
         className={classNames('spectrum-Calendar-date', {
