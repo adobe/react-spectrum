@@ -29,9 +29,9 @@ storiesOf('ModalTrigger', module)
 
 const render = (props = {}) => (
   <ModalTrigger>
-    <Button label="Click Me" variant="primary" modalTrigger />
+    <Button label="Click Me" variant="primary" modaltrigger />
     <Dialog
-      modalContent
+      modalcontent
       title="The title"
       confirmLabel="Do it"
       size="S"

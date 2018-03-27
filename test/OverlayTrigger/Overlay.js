@@ -1,8 +1,13 @@
 import assert from 'assert';
+import Button from '../../src/Button/js/Button';
+import {mount} from 'enzyme';
 import OpenTransition from '../../src/utils/OpenTransition';
 import Overlay from '../../src/OverlayTrigger/js/Overlay';
+import OverlayTrigger from '../../src/OverlayTrigger/js/OverlayTrigger';
+import Popover from '../../src/Popover/js/Popover';
 import Portal from 'react-overlays/lib/Portal';
 import Position from '../../src/OverlayTrigger/js/Position';
+import PropTypes from 'prop-types';
 import React from 'react';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import {shallow} from 'enzyme';
@@ -83,5 +88,37 @@ describe('Overlay', () => {
     const tree = shallow(<Overlay show><span /></Overlay>);
     tree.instance().componentWillReceiveProps({foo: 'bar'});
     assert.equal(tree.state('exited'), true);
+  });
+
+  it('context overlay', () => {
+    function SimpleContainer(props, context) {
+      return props.children;
+    }
+    function SimpleComponent(props, context) {
+      return <div id="modal-test">{context.name}</div>;
+    }
+    SimpleContainer.contextTypes = {
+      name: PropTypes.string
+    };
+
+    SimpleComponent.contextTypes = {
+      name: PropTypes.string
+    };
+
+    const context = {
+      name: 'a context has no name'
+    };
+
+    const overlayTrigger = mount(
+      <SimpleContainer>
+        <OverlayTrigger defaultShow placement="right">
+          <Button label="Click Me" variant="primary" />
+          <Popover><SimpleComponent /></Popover>
+        </OverlayTrigger>
+      </SimpleContainer>,
+      {context});
+
+    assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
+    overlayTrigger.unmount();
   });
 });

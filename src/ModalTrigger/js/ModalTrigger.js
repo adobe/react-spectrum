@@ -1,14 +1,13 @@
 import autobind from 'autobind-decorator';
 import ModalContainer from '../../ModalContainer';
 import React, {cloneElement, Component} from 'react';
-import ReactDOM from 'react-dom';
 
 @autobind
 export default class ModalTrigger extends Component {
   show() {
     const children = React.Children.toArray(this.props.children);
     const modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
-    this.modalKey = ModalContainer.show(modalChild);
+    this.modalKey = ModalContainer.show(modalChild, this);
   }
 
   hide() {

@@ -1,48 +1,33 @@
 import assert from 'assert';
 import PortalContainer from '../../src/PortalContainer';
 import React from 'react';
-import {shallow} from 'enzyme';
+import ReactDOM from 'react-dom';
+import sinon from 'sinon';
 
 describe('PortalContainer', () => {
-  it('should render children', () => {
-    let tree = shallow(<PortalContainer />);
-    assert.equal(tree.children().length, 0);
-
-    let child = <div key="test">test</div>;
-    tree.instance().add(child);
-    tree.update();
-
-    assert.equal(tree.children().length, 1);
-    assert.equal(tree.childAt(0).text(), 'test');
-
-    let child2 = <div key="test2">test2</div>;
-    tree.instance().add(child2);
-    tree.update();
-    assert.equal(tree.children().length, 2);
-    assert.equal(tree.childAt(0).text(), 'test');
-    assert.equal(tree.childAt(1).text(), 'test2');
-
-    // update child
-    child = <div key="test">testing</div>;
-    tree.instance().add(child);
-    tree.update();
-    assert.equal(tree.children().length, 2);
-    assert.equal(tree.childAt(0).text(), 'testing');
-    assert.equal(tree.childAt(1).text(), 'test2');
-
-    tree.instance().remove(child);
-    assert.equal(tree.children().length, 2);
+  let renderStub;
+  let renderUnstableStub;
+  beforeEach(() => {
+    renderStub = sinon.stub(ReactDOM, 'render');
+    renderUnstableStub = sinon.stub(ReactDOM, 'unstable_renderSubtreeIntoContainer');
   });
-
-  it('should render a global PortalContainer', async () => {
-    let child = <div id="portal-test">test</div>;
+  afterEach(() => {
+    ReactDOM.render.restore();
+    ReactDOM.unstable_renderSubtreeIntoContainer.restore();
+  });
+  it('should safe render if no context is supplied', () => {
+    const child = <div />;
     PortalContainer.add(child);
-
-    let node = document.querySelector('#portal-test');
-    assert(node);
-    assert(document.body.contains(node));
-
+    assert(renderStub.calledOnce);
+    assert(renderUnstableStub.notCalled);
     PortalContainer.remove(child);
-    assert(!document.querySelector('#portal-test'));
+  });
+  it('should unsafe render if context is supplied', () => {
+    const component = {context: 'pretend this is a component'};
+    const child = <div />;
+    PortalContainer.add(child, component);
+    assert(renderUnstableStub.calledOnce);
+    assert(renderStub.notCalled);
+    PortalContainer.remove(child);
   });
 });

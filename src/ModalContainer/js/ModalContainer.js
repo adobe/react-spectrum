@@ -9,7 +9,7 @@ import classNames from 'classnames';
 let MODAL_KEY = 1;
 
 export default class ModalContainer {
-  static show(content) {
+  static show(content, context) {
     let key = MODAL_KEY++;
 
     let modal = (
@@ -21,7 +21,7 @@ export default class ModalContainer {
       </Modal>
     );
 
-    PortalContainer.add(modal);
+    PortalContainer.add(modal, context);
     return key;
   }
 
