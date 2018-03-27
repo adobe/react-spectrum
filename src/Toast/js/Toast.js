@@ -17,12 +17,18 @@ export default function Toast({
   variant,
   children,
   closable,
-  onClose
+  onClose,
+  className
 }) {
   let Icon = ICONS[variant];
 
   return (
-    <div className={classNames('spectrum-Toast', {['spectrum-Toast--' + variant]: variant})}>
+    <div
+      className={classNames(
+        'spectrum-Toast',
+        {['spectrum-Toast--' + variant]: variant},
+        className
+      )}>
       {Icon && <Icon size={null} className="spectrum-Toast-typeIcon" aria-label={variant} />}
       <div className="spectrum-Toast-content">{children}</div>
       {closable &&
