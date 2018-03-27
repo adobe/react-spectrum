@@ -19,7 +19,7 @@ export default class PortalContainer {
     } else {
       ReactDOM.unstable_renderSubtreeIntoContainer(context, child, node);
     }
-    children[child.key] = {element: child, parent: context, container: node};
+    children[child.key] = node;
   }
 
   /**
@@ -27,7 +27,7 @@ export default class PortalContainer {
    * @param child
    */
   static remove(child) {
-    ReactDOM.unmountComponentAtNode(children[child.key].container);
+    ReactDOM.unmountComponentAtNode(children[child.key]);
     delete children[child.key];
   }
 }
