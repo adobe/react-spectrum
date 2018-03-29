@@ -19,7 +19,17 @@ import Sync from '../../src/Icon/Sync';
 import User from '../../src/Icon/User';
 import {VerticalCenter} from '../../.storybook/layout';
 
-storiesOf('ShellSolutionSwitcher', module)
+const options = {inline: true};
+const storyTitle = 'ShellSolutionSwitcher - @deprecated';
+const deprecatedFlag = (<div>
+  <h2 style={{'color': '#990000'}}>{ storyTitle }</h2>
+  <p>ShellSolutionSwitcher component has been deprecated in favor of
+    <a href="http://excsdk.corp.adobe.com" target="blank"> ExC SDK </a>and its corresponding component
+    <a href="http://excsdk.corp.adobe.com/#!/SuperComponents/SolutionSwitcher" target="blank"> SolutionSwitcher </a>
+  </p>
+</div>);
+
+storiesOf(storyTitle, module)
   .addDecorator(story => (
     <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
       {story()}
@@ -27,13 +37,15 @@ storiesOf('ShellSolutionSwitcher', module)
   ))
   .addWithInfo(
     'Default',
+    deprecatedFlag,
     () => render(),
-    {inline: true}
+    options
   )
   .addWithInfo(
     'open: true',
+    deprecatedFlag,
     () => render({open: true}),
-    {inline: true}
+    options
   );
 
 function render(props) {
