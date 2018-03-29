@@ -39,7 +39,7 @@ if (params.versionBump && params.versionBump != "noop") {
         - make unprefix
       npm:
         versionBump: false
-        registry: https://maven.livefyre.com/content/repositories/lfnpm/
+        registry: https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-livefyre-release/
       lfcdn:
         env: prod
   ''')
