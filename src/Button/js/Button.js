@@ -42,6 +42,12 @@ export default class Button extends Component {
     variant: 'secondary'
   };
 
+  focus() {
+    if (this.buttonRef && !this.props.disabled) {
+      this.buttonRef.focus();
+    }
+  }
+
   onClick = (event, ...rest) => {
     // This is needed when `element` is an anchor or something similar.
     // When `element` is a button, we won't even get here if it's disabled and clicked.
@@ -55,9 +61,9 @@ export default class Button extends Component {
   };
 
   onKeyDownSpace = (event) => {
-    if (event.key === ' ') {
+    if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
-      event.target.click();
+      this.buttonRef.click();
     }
   }
 
@@ -120,7 +126,8 @@ export default class Button extends Component {
         disabled={disabled}
         aria-invalid={invalid || null}
         aria-expanded={otherProps['aria-haspopup'] ? selected : undefined}
-        onClick={this.onClick}>
+        onClick={this.onClick}
+        ref={b => this.buttonRef = b}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&
           <span className="spectrum-Button-label">{labelContents}</span>

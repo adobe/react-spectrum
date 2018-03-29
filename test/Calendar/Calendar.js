@@ -297,7 +297,7 @@ describe('Calendar', () => {
     it('increments/decrements one month with page up/down', () => {
       const previousMonth = now.clone().subtract(1, 'month');
       assertDateAfterKeyDown({keyCode: 33, date: previousMonth});
-      assertDateAfterKeyDown({keyCode: 34, date: now});
+      assertDateAfterKeyDown({keyCode: 34, date: previousMonth.clone().add(1, 'month')});
     });
 
     it('increments/decrements one year with cmd + page up/down', () => {
@@ -472,7 +472,7 @@ describe('Calendar', () => {
         assertDateAfterKeyDown({keyCode: 33});
         assert.deepEqual(tree.state('selectingRange').toDate(), [previousMonth.toDate(), now.toDate()]);
         assertDateAfterKeyDown({keyCode: 34});
-        assert.deepEqual(tree.state('selectingRange').toDate(), [now.toDate(), now.toDate()]);
+        assert.deepEqual(tree.state('selectingRange').toDate(), [previousMonth.clone().add(1, 'month').toDate(), now.toDate()]);
       });
 
       it('increments/decrements one year with cmd + page up/down', () => {
@@ -553,6 +553,7 @@ describe('Calendar', () => {
         assert.equal(cellTree.prop('aria-selected'), true);
         assert.equal(cellTree.prop('aria-invalid'), false);
         assert(cellTree.prop('onClick'));
+        assert(cellTree.prop('onMouseEnter'));
         assert.equal(cellTree.childAt(0).text(), `${now.date()}`);
       });
 
@@ -574,6 +575,40 @@ describe('Calendar', () => {
         assert.equal(startCell.hasClass('is-range-selection'), true);
         assert.equal(midCell.hasClass('is-range-selection'), true);
         assert.equal(endCell.hasClass('is-range-selection'), true);
+      });
+
+      it('supports click event', function () {
+        const start = moment(new Date(2016, 7, 14));
+        const tree = shallow(<Calendar value={start} />);
+        findBody(tree).simulate('focus');
+
+        assert(start.isSame(tree.state('focusedDate')));
+
+        const nextDate = start.clone().add(-7, 'day');
+
+        const nextCell = shallow(findCellByDate(tree, nextDate).getElement());
+
+        nextCell.simulate('click', {preventDefault: () => {}});
+
+        assert(nextDate.isSame(tree.state('focusedDate')));
+      });
+
+      it('supports mouseEnter event', function () {
+        const spy = sinon.spy();
+        const start = moment(new Date(2016, 7, 14));
+        const tree = shallow(<Calendar selectionType="range" value={start} />);
+        tree.instance().onHighlight = spy;
+        findBody(tree).simulate('focus');
+
+        const nextDate = start.clone().add(-7, 'day');
+
+        const nextCell = shallow(findCellByDate(tree, nextDate).getElement());
+
+        nextCell.simulate('click', {preventDefault: () => {}});
+
+        nextCell.simulate('mouseenter');
+
+        assert(spy.called);
       });
     });
 
@@ -693,6 +728,16 @@ describe('Calendar', () => {
       await rAF(() => {
         assert.equal(body.getDOMNode(), document.activeElement);
       });
+    });
+  });
+
+  it('supports autoFocus', async () => {
+    const tree = mount(<Calendar autoFocus />);
+    const body = findBody(tree);
+
+    await rAF(() => {
+      // body should be focused on next animation frame
+      assert.equal(body.getDOMNode(), document.activeElement);
     });
   });
 });

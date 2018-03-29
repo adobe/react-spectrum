@@ -20,6 +20,7 @@ export default class Calendar extends Component {
   static displayName = 'Calendar';
 
   static propTypes = {
+    autoFocus: PropTypes.bool,
     id: PropTypes.string,
     headerFormat: PropTypes.string,
     max: PropTypes.oneOfType([
@@ -49,6 +50,7 @@ export default class Calendar extends Component {
   };
 
   static defaultProps = {
+    autoFocus: false,
     headerFormat: 'MMMM YYYY',
     max: null,
     min: null,
@@ -92,6 +94,12 @@ export default class Calendar extends Component {
 
     this.setSelected(newValue);
     this.setCurrentMonth(newValue);
+  }
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      this.focus();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -174,23 +182,14 @@ export default class Calendar extends Component {
   }
 
   /**
-   * Generates a unique id for the Calendar Month/Year heading element
-   * @returns {String} A unique id for the Calendar Month/Year heading element
+   * Generates a unique id for a DOM element descendant
+   * * @param   {Sting} string String value
+   * @returns {String} A unique id
    */
-  generateHeadingId() {
+  generateId(string) {
     const {id = this.calendarId} = this.props;
 
-    return `${id}-heading`;
-  }
-
-  /**
-   * Generates a unique id for the Calendar table caption element
-   * @returns {String} A unique id for the Calendar table caption element
-   */
-  generateDescriptionId() {
-    const {id = this.calendarId} = this.props;
-
-    return `${id}-description`;
+    return `${id}-${string}`;
   }
 
   /**
@@ -199,20 +198,27 @@ export default class Calendar extends Component {
    * @returns {String} A unique id for the Calendar table cell
    */
   generateDateId(date) {
-    const {id = this.calendarId} = this.props;
-
-    return `${id}-${date.format('YYYY/MM/DD')}`;
+    return date ? this.generateId(date.format('YYYY/MM/DD')) : null;
   }
 
   /**
    * Handles click on previous arrow button to navigate to the previous month.
    */
   handleClickPrevious() {
-    const {currentMonth} = this.state;
+    const {currentMonth, focusedDate} = this.state;
+
+    // set focus to the appropriate date within the previous month
+    if (focusedDate) {
+      this.focusTimeUnit(focusedDate.clone().add(-1, 'month'));
+    }
+
     this.setState({
       currentMonth: currentMonth.clone().add(-1, 'month').startOf('month'),
       // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
       ariaLiveHeading: 'assertive'
+    }, () => {
+      // restore focus from the calendar body to the previous month button
+      requestAnimationFrame(() => this.prevMonthButton.focus());
     });
   }
 
@@ -220,11 +226,20 @@ export default class Calendar extends Component {
    * Handles click on next arrow button to navigate to the next month.
    */
   handleClickNext() {
-    const {currentMonth} = this.state;
+    const {currentMonth, focusedDate} = this.state;
+
+    // set focus to the appropriate date within the previous month
+    if (focusedDate) {
+      this.focusTimeUnit(focusedDate.clone().add(1, 'month'));
+    }
+
     this.setState({
       currentMonth: currentMonth.clone().add(1, 'month').startOf('month'),
       // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
       ariaLiveHeading: 'assertive'
+    }, () => {
+      // restore focus from the calendar body to the next month button
+      requestAnimationFrame(() => this.nextMonthButton.focus());
     });
   }
 
@@ -338,8 +353,6 @@ export default class Calendar extends Component {
           this.setState({selectingRange: null, anchorDate: null});
         }
         break;
-      default: // default, do nothing
-        break;
     }
   }
 
@@ -404,7 +417,17 @@ export default class Calendar extends Component {
       focusedDate: date,
       selectingRange,
       ariaLiveCaption
-    }, () => this.focusCalendarBody()); // wait for render before setting focus to Calendar body
+    }, () => {
+      // wait for render before setting focus to Calendar body
+      this.focusCalendarBody();
+    });
+  }
+
+  /**
+   * Focus calendar
+   */
+  focus() {
+    this.focusCalendarBody();
   }
 
   /**
@@ -424,7 +447,7 @@ export default class Calendar extends Component {
   renderTable(date) {
     const {selectionType} = this.props;
     const {highlightedRange, anchorDate, ariaLiveCaption} = this.state;
-    const descriptionId = this.generateDescriptionId();
+    const descriptionId = this.generateId('description');
     const isRangeSelection = selectionType === 'range';
     let selectedRangeDescription = '';
 
@@ -560,11 +583,13 @@ export default class Calendar extends Component {
     } = this.props;
 
     const {focusedDate, highlightedRange, currentMonth, ariaLiveHeading} = this.state;
-    const headingId = this.generateHeadingId();
-    const descriptionId = this.generateDescriptionId();
+    const headingId = this.generateId('heading');
+    const descriptionId = this.generateId('description');
+    const activeDescendantId = this.generateDateId(focusedDate);
     const isRangeSelection = selectionType === 'range';
     let ariaLabelledby = headingId;
 
+    delete otherProps.autoFocus;
     delete otherProps.startDay;
     delete otherProps.required;
 
@@ -600,6 +625,7 @@ export default class Calendar extends Component {
             {currentMonth.format(headerFormat)}
           </h2>
           <Button
+            ref={b => this.prevMonthButton = b}
             className="spectrum-Calendar-prevMonth"
             variant="icon"
             icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
@@ -610,6 +636,7 @@ export default class Calendar extends Component {
             onFocus={this.handleFocusPreviousNext}
             onBlur={this.handleBlurPreviousNext} />
           <Button
+            ref={b => this.nextMonthButton = b}
             className="spectrum-Calendar-nextMonth"
             variant="icon"
             icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
@@ -621,14 +648,14 @@ export default class Calendar extends Component {
             onBlur={this.handleBlurPreviousNext} />
         </div>
         <div
-          ref={el => {this.calendarBody = el; }}
+          ref={el => this.calendarBody = el}
           className="spectrum-Calendar-body"
           role="grid"
           tabIndex={disabled ? null : '0'}
           aria-invalid={invalid}
           aria-readonly={readOnly}
           aria-disabled={disabled}
-          aria-activedescendant={focusedDate ? this.generateDateId(focusedDate) : null}
+          aria-activedescendant={activeDescendantId}
           aria-labelledby={ariaLabelledby}
           aria-describedby={highlightedRange ? descriptionId : null}
           aria-multiselectable={isRangeSelection || null}

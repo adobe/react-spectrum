@@ -1,8 +1,8 @@
 import assert from 'assert';
 import Bell from '../../src/Icon/Bell';
 import Button from '../../src/Button';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Button', () => {
@@ -31,6 +31,25 @@ describe('Button', () => {
     tree.simulate('click', {preventDefault: preventDefaultSpy});
     assert(!onClickSpy.called);
     assert(preventDefaultSpy.called);
+  });
+
+  it('support different element activation using the Space or Enter key', () => {
+    const onClickSpy = sinon.spy();
+    const preventDefaultSpy = sinon.spy();
+    const tree = shallow(<Button element="a" onClick={onClickSpy} />);
+    const instance = tree.instance();
+    instance.buttonRef = {
+      click: () => instance.onClick({preventDefault: preventDefaultSpy})
+    };
+    tree.simulate('keyDown', {key: 'Esc', preventDefault: preventDefaultSpy});
+    assert(!onClickSpy.called);
+    assert(!preventDefaultSpy.called);
+    tree.simulate('keyDown', {key: ' ', preventDefault: preventDefaultSpy});
+    assert(onClickSpy.callCount, 1);
+    assert(preventDefaultSpy.callCount, 2);
+    tree.simulate('keyDown', {key: 'Enter', preventDefault: preventDefaultSpy});
+    assert(onClickSpy.callCount, 2);
+    assert(preventDefaultSpy.callCount, 4);
   });
 
   it('supports different variants', () => {
@@ -114,5 +133,12 @@ describe('Button', () => {
       const tree = shallow(<Button label="My Label" />);
       assert.equal(tree.find('.spectrum-Button-label').children().last().text(), 'My Label');
     });
+  });
+
+  it('supports focus method', async () => {
+    const tree = mount(<Button />);
+    tree.instance().focus();
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
   });
 });

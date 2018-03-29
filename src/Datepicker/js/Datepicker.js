@@ -201,6 +201,7 @@ export default class Datepicker extends Component {
     return (
       <Calendar
         {...props}
+        autoFocus
         onChange={this.handleCalendarChange} />
     );
   }
@@ -288,7 +289,7 @@ export default class Datepicker extends Component {
           onChange={this.handleTextChange}
           onFocus={this.onFocus}
           onBlur={this.handleTextBlur} />
-        <OverlayTrigger {...clockProps} {...calendarProps} trigger="click" placement={placement}>
+        <OverlayTrigger trigger="click" placement={placement}>
           <Button
             className="spectrum-InputGroup-button"
             variant="dropdown"
