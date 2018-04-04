@@ -135,3 +135,7 @@
 
     It is our goal to have react-spectrum be completely accessible, but that is currently a work in progress. If you find an accessibility bug,
     please check JIRA to be sure we aren't already aware of it, and if not please file a ticket.
+    
+10. **I get an error `Uncaught ReferenceError: regeneratorRuntime is not defined` on instantiating some components like `Dialog`. How do I resolve it?**
+
+    Installing `babel-polyfill` should solve it for you. It's needed to get async/await working. Refer [this link](https://stackoverflow.com/a/33527883/4741998) for more details.
