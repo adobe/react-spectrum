@@ -31,11 +31,17 @@
 }
 .react-spectrum-TableView-row {
   display: flex
-  align-items: center;
+  align-items: center
 
   &.spectrum-Table-row {
     box-sizing: border-box;
-    height: 48px;
+    height: 48px
+  }
+
+  .spectrum-Table-cell {
+    // Needed to pass an implied width to the child elements (so truncating can be added in children)
+    // % because IE
+    min-width: 0%
   }
 }
 
