@@ -531,7 +531,7 @@ describe('Autocomplete', () => {
     it('should have appropriate role and aria-* attributes', async () => {
       const tree = shallow(
         <Autocomplete getCompletions={v => ['one', 'two', 'three']}>
-          <input />
+          <input id="foo" />
         </Autocomplete>
       );
 
@@ -541,7 +541,7 @@ describe('Autocomplete', () => {
       assert.equal(tree.prop('aria-haspopup'), 'true');
       assert.equal(tree.prop('aria-owns'), undefined);
 
-
+      assert.equal(findInput(tree).prop('id'), 'foo');
       assert.equal(findInput(tree).prop('role'), 'textbox');
       assert.equal(findInput(tree).prop('aria-autocomplete'), 'list');
       assert.equal(findInput(tree).prop('aria-controls'), undefined);

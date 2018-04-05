@@ -309,7 +309,7 @@ export default class Autocomplete extends React.Component {
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
     const menuShown = showDropdown && results.length > 0;
-    const inputId = trigger.id || this.autocompleteId;
+    const inputId = trigger.props.id || this.autocompleteId;
 
     return (
       <div
