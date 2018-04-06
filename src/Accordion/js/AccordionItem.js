@@ -11,7 +11,7 @@ import React, {Component} from 'react';
 @focusRing
 export default class AccordionItem extends Component {
   static propTypes = {
-    header: PropTypes.string,
+    header: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     selected: PropTypes.bool,
     disabled: PropTypes.bool,
     ariaLevel: PropTypes.number,
