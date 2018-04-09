@@ -72,6 +72,7 @@ describe('Accordion', () => {
       assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'false');
       assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'true');
       assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'true');
+      tree.unmount();
     });
   });
 
@@ -89,6 +90,7 @@ describe('Accordion', () => {
       </Accordion>,
       {appendTo: div}
     );
+    tree.setProps({multiselectable: true});
     const wrapper = tree.find('.spectrum-Accordion');
     assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'false');
     assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'false');
@@ -100,6 +102,51 @@ describe('Accordion', () => {
     assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'true');
     assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'true');
     assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'true');
+    findAccordionHeaderAt(wrapper, 1).simulate('click');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'false');
+    tree.unmount();
+  });
+
+  it('sets selection with selectedIndex prop', () => {
+    const div = global.document.createElement('div');
+    global.document.body.appendChild(div);
+    const tree = mount(
+      <Accordion>
+        <AccordionItem header="One" className="one">
+          One content.
+        </AccordionItem>
+        <AccordionItem header="Two" className="two">
+          Two content.
+        </AccordionItem>
+      </Accordion>,
+      {appendTo: div}
+    );
+    const wrapper = tree.find('.spectrum-Accordion');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'false');
+    tree.setProps({selectedIndex: 0});
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'true');
+    tree.setProps({selectedIndex: 1});
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'true');
+    tree.setProps({multiselectable: true});
+    tree.setProps({selectedIndex: []});
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'false');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'false');
+    tree.setProps({selectedIndex: [0, 1]});
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-selected'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 0).getDOMNode().getAttribute('aria-expanded'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-selected'), 'true');
+    assert.equal(findAccordionHeaderAt(wrapper, 1).getDOMNode().getAttribute('aria-expanded'), 'true');
+    tree.unmount();
   });
 
   it('supports defaultSelectedIndex', () => {
@@ -136,6 +183,7 @@ describe('Accordion', () => {
     tree.find('input').simulate('change');
 
     assert(!onChange.called);
+    tree.unmount();
   });
 
 
@@ -194,6 +242,10 @@ describe('Accordion', () => {
           </AccordionItem>
         </Accordion>);
         wrapper = tree.find('.spectrum-Accordion');
+      });
+
+      after(() => {
+        tree.unmount();
       });
 
       it('when ArrowDown key is pressed, focus next not disabled item header', () => {

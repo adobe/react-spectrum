@@ -130,7 +130,7 @@ export default class Accordion extends Component {
     delete otherProps.onChange;
 
     return (
-      <FocusManager itemSelector={ACCORDION_ITEM_HEADER_SELECTOR}>
+      <FocusManager itemSelector={ACCORDION_ITEM_HEADER_SELECTOR} manageTabIndex={false}>
         <div
           {...otherProps}
           className={

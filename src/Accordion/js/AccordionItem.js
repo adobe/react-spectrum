@@ -48,9 +48,10 @@ export default class AccordionItem extends Component {
       selected,
       disabled,
       ariaLevel,
-      tabIndex = 0,
       ...otherProps
     } = this.props;
+
+    delete otherProps.tabIndex;
 
     return (
       <div
@@ -71,14 +72,14 @@ export default class AccordionItem extends Component {
           aria-expanded={selected}
           aria-disabled={disabled}
           role="tab"
-          tabIndex={!disabled ? tabIndex : null}
+          tabIndex={!disabled ? 0 : null}
           onClick={!disabled ? onItemClick : null}
           onKeyPress={!disabled ? this.onHeaderKeyPress.bind(this) : null}>
           <span role="heading" aria-level={ariaLevel}>
             {header}
           </span>
         </div>
-        <AccordionChevron size={null} className="spectrum-Accordion-indicator" />
+        <AccordionChevron role="presentation" size={null} className="spectrum-Accordion-indicator" />
         <div
           id={this.contentId}
           role="tabpanel"

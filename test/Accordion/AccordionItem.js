@@ -67,6 +67,10 @@ describe('AccordionItem', () => {
         content = findContent(tree);
       });
 
+      it('item div role equals \'presentation\'', () => {
+        assert.equal(tree.prop('role'), 'presentation');
+      });
+
       it('header role equals \'tab\'', () => {
         assert.equal(header.prop('role'), 'tab');
       });
