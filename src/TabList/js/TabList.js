@@ -104,11 +104,15 @@ export default class TabList extends React.Component {
 }
 
 function TabLine({orientation, selectedTab}) {
-  let style = {
+  const style = {
     transform: orientation === 'vertical'
       ? `translateY(${selectedTab.offsetTop}px)`
-      : `translateX(${selectedTab.offsetLeft}px) scaleX(${selectedTab.offsetWidth})`
+      : `translateX(${selectedTab.offsetLeft}px) `
   };
+
+  if (orientation === 'horizontal') {
+    style.width = `${selectedTab.offsetWidth}px`;
+  }
 
   return <div className="spectrum-TabList-item-line" role="presentation" style={style} />;
 }
