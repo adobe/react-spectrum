@@ -94,6 +94,30 @@ describe('Select', () => {
     assert(onChange.called);
   });
 
+  it('should not close menu if closeOnSelect is set to false', () => {
+    const onClose = sinon.spy();
+    const onChange = sinon.spy();
+    const tree = shallow(<Select options={testOptions} onChange={onChange} closeOnSelect={false} />);
+    assert.equal(tree.state('value'), 'chocolate');
+
+    tree.find(Dropdown).simulate('select', 'vanilla');
+
+    assert.equal(onClose.callCount, 0);
+    assert.equal(onChange.callCount, 1);
+  });
+
+  it('should not close menu if multiple selection is enabled', () => {
+    const onClose = sinon.spy();
+    const onChange = sinon.spy();
+    const tree = shallow(<Select options={testOptions} onChange={onChange} multiple />);
+    assert.deepEqual(tree.state('value'), []);
+
+    tree.find(Dropdown).simulate('select', ['vanilla']);
+
+    assert.equal(onClose.callCount, 0);
+    assert.equal(onChange.callCount, 1);
+  });
+
   it('should not update state if value prop is passed', () => {
     const onChange = sinon.spy();
     const tree = shallow(<Select options={testOptions} value="vanilla" onChange={onChange} />);

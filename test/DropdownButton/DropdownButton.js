@@ -20,7 +20,7 @@ const render = (props = {}) => shallow(
 
 describe('DropdownButton', function () {
   it('renders a default', function () {
-    
+
     const wrapper = render({});
 
     assert.equal(wrapper.find(Button).length, 1);
@@ -31,12 +31,14 @@ describe('DropdownButton', function () {
     const onClose = sinon.spy();
     const onOpen = sinon.spy();
     const onSelect = sinon.spy();
-    const wrapper = render({onClose, onOpen, onSelect});
+    const closeOnSelect = sinon.spy();
+    const wrapper = render({onClose, onOpen, onSelect, closeOnSelect});
 
     const dropdown = wrapper.find(Dropdown);
 
     assert.equal(dropdown.prop('onClose'), onClose);
     assert.equal(dropdown.prop('onOpen'), onOpen);
     assert.equal(dropdown.prop('onSelect'), onSelect);
+    assert.equal(dropdown.prop('closeOnSelect'), closeOnSelect);
   });
 });

@@ -5,9 +5,9 @@ import More from '../../Icon/core/More';
 import React from 'react';
 import '../style/index.styl';
 
-export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, ...props}) {
+export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, ...props}) {
   return (
-    <Dropdown className="spectrum-ActionMenu" onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight}>
+    <Dropdown className="spectrum-ActionMenu" onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect}>
       <Button
         variant="action"
         quiet

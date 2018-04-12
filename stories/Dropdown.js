@@ -13,15 +13,24 @@ storiesOf('Dropdown', module)
   ))
   .addWithInfo(
     'Default',
-    () => (
-      <Dropdown onSelect={action('select')}>
-        <Button variant="cta">Test</Button>
-        <Menu>
-          <MenuItem value="foo">Foo</MenuItem>
-          <MenuItem value="bar" selected>Bar</MenuItem>
-          <MenuItem value="baz">Baz</MenuItem>
-        </Menu>
-      </Dropdown>
-    ),
+    () => render(),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Stay open on select',
+    () => render({closeOnSelect: false}),
     {inline: true}
   );
+
+function render(props = {}) {
+  return (
+    <Dropdown onSelect={action('select')} {...props}>
+      <Button variant="cta">Test</Button>
+      <Menu>
+        <MenuItem value="foo">Foo</MenuItem>
+        <MenuItem value="bar" selected>Bar</MenuItem>
+        <MenuItem value="baz">Baz</MenuItem>
+      </Menu>
+    </Dropdown>
+  );
+}

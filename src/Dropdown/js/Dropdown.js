@@ -2,11 +2,20 @@ import autobind from 'autobind-decorator';
 import createId from '../../utils/createId';
 import {Menu} from '../../Menu';
 import OverlayTrigger from '../../OverlayTrigger';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 @autobind
 export default class Dropdown extends React.Component {
+  static propTypes = {
+    closeOnSelect: PropTypes.bool
+  };
+
+  static defaultProps = {
+    closeOnSelect: true
+  };
+
   constructor(props) {
     super(props);
     this.dropdownId = createId();
@@ -27,7 +36,9 @@ export default class Dropdown extends React.Component {
   }
 
   onSelect(...args) {
-    this.onMenuClose();
+    if (this.props.closeOnSelect) {
+      this.onMenuClose();
+    }
     if (this.props.onSelect) {
       this.props.onSelect(...args);
     }
@@ -41,7 +52,7 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const {alignRight, onOpen, ...otherProps} = this.props;
+    const {alignRight, onOpen, closeOnSelect, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
@@ -60,6 +71,7 @@ export default class Dropdown extends React.Component {
                 placement={alignRight ? 'bottom right' : 'bottom left'}
                 ref={t => this.overlayTrigger = t}
                 onShow={onOpen}
+                closeOnSelect={closeOnSelect}
                 key={index}
                 onHide={this.onClose} >
                 {React.cloneElement(trigger, {

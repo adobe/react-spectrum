@@ -98,6 +98,29 @@ describe('Dropdown', function () {
     assert.equal(onSelect.getCall(0).args[0], 'test');
   });
 
+  it('menu remains open onSelect when closeOnSelect set to false', function () {
+    const onClose = sinon.spy();
+    const onSelect = sinon.spy();
+    const tree = shallow(
+      <Dropdown onSelect={onSelect} closeOnSelect={false}>
+        <Button>Test</Button>
+        <Menu>
+          <MenuItem>Test</MenuItem>
+        </Menu>
+      </Dropdown>
+    );
+
+    tree.instance().overlayTrigger = {
+      hide: onClose
+    };
+
+    tree.find(Menu).simulate('select', 'test');
+
+    assert.equal(onClose.callCount, 0);
+    assert.equal(onSelect.callCount, 1);
+    assert.equal(onSelect.getCall(0).args[0], 'test');
+  });
+
   it('calls onOpen and onClose', function () {
     const onOpen = sinon.spy();
     const onClose = sinon.spy();

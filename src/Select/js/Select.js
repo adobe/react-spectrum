@@ -3,6 +3,7 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import Popover from '../../Popover';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
@@ -10,6 +11,10 @@ import SelectList from '../../SelectList';
 import '../style/index.styl';
 
 export default class Select extends React.Component {
+  static propTypes = {
+    closeOnSelect: PropTypes.bool
+  };
+
   constructor(props) {
     super(props);
 
@@ -80,10 +85,11 @@ export default class Select extends React.Component {
   }
 
   render() {
-    const {
+    let {
       options = [],
       quiet,
       onOpen,
+      closeOnSelect,
       disabled = false,
       invalid = false,
       multiple = false,
@@ -92,13 +98,15 @@ export default class Select extends React.Component {
       className
     } = this.props;
 
-    const {value} = this.state;
+    let {value} = this.state;
 
     let label = placeholder;
     if (!multiple) {
       const selectedOption = options.find(o => o.value === value);
       label = selectedOption ? selectedOption.label : placeholder;
     }
+
+    closeOnSelect = typeof closeOnSelect === 'boolean' ? closeOnSelect : !multiple;
 
     return (
       <Dropdown
@@ -107,6 +115,7 @@ export default class Select extends React.Component {
           'is-disabled': disabled,
           'is-invalid': invalid
         }, className)}
+        closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={onOpen}
         onClose={this.onClose}
@@ -142,9 +151,9 @@ export default class Select extends React.Component {
   }
 }
 
-export function SelectMenu({onClose, onSelect, className, open, placement, style, ...props}) {
+export function SelectMenu({onClose, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
   return (
-    <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+    <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style} closeOnSelect={closeOnSelect}>
       <SelectList className={className} {...props} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>
   );

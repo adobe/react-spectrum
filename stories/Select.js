@@ -61,7 +61,7 @@ storiesOf('Select', module)
   )
   .addWithInfo(
     'multiple: true',
-    () => render({multiple: true, value: selectedValue}),
+    () => render({multiple: true, defaultValue: selectedValue}),
     {inline: true}
   )
   .addWithInfo(
@@ -90,8 +90,8 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
-    'no results',
-    () => render({options: [], noResultsText: 'Nothing to see here folks'}),
+    'Stay open on select',
+    () => render({closeOnSelect: false}),
     {inline: true}
   );
 

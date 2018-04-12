@@ -32,6 +32,11 @@ storiesOf('DropdownButton', module)
     'disabled',
     () => render({disabled: true}),
     {inline: true}
+  )
+  .addWithInfo(
+    'Stay open on select',
+    () => render({closeOnSelect: false}),
+    {inline: true}
   );
 
 function render(props = {}) {
