@@ -39,14 +39,14 @@ npm install @react/react-spectrum --save
 ### Example
 
 ```javascript
-// Import global page styles (CSS reset, fonts, icons, etc.)
-import '@react/react-spectrum/page';
+// Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
+import '@react/react-spectrum/Provider';
 
 // Import the component you want to use
 import Button from '@react/react-spectrum/Button';
 
 // Render it!
-ReactDOM.render(<Button>Hello World</Button>, dom);
+ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
 ```
 
 ### Browserify

@@ -1,19 +1,27 @@
 import autobind from 'autobind-decorator';
 import BaseModal from 'react-overlays/lib/Modal';
+import classNames from 'classnames';
+import closest from 'dom-helpers/query/closest';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
+import ReactDOM from 'react-dom';
 import '../style/index.styl';
-import classNames from 'classnames';
 
 let MODAL_KEY = 1;
 
 export default class ModalContainer {
-  static show(content, context) {
+  static show(content, context, container) {
     let key = MODAL_KEY++;
+
+    // If container is not specified, look for the provider of context
+    if (!container && context) {
+      container = () => closest(ReactDOM.findDOMNode(context), '.react-spectrum-provider');
+    }
 
     let modal = (
       <Modal
+        container={container}
         key={key}
         onHide={this.hide.bind(this, key)}
         onClose={content.props.onClose}>
@@ -82,6 +90,7 @@ export class Modal extends React.Component {
     // The z-index here should match the one in Overlay
     return (
       <BaseModal
+        container={this.props.container}
         style={{zIndex: 100000, position: 'relative'}}
         show={this.state.show}
         ref={baseModal => this.baseModal = baseModal}

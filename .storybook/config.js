@@ -1,13 +1,17 @@
 import 'babel-polyfill';
-import {configure, setAddon} from '@storybook/react';
-import infoAddon, {setDefaults} from '@storybook/addon-info';
-
+import {configure, setAddon, addDecorator} from '@storybook/react';
 import configureTypekit from '../src/utils/configureTypekit';
+import infoAddon, {setDefaults} from '@storybook/addon-info';
+import React from 'react';
+import {StoryWrapper} from './layout';
 
 import './storybook.styl';
-import '../src/page';
 
 setAddon(infoAddon);
+
+addDecorator(story => (
+  <StoryWrapper> {story()} </StoryWrapper>
+));
 
 // addon-info
 setDefaults({

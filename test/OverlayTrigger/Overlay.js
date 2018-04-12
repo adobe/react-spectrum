@@ -59,11 +59,12 @@ describe('Overlay', () => {
   });
 
   it('passes props to Position', () => {
+    const target = document.createElement('div');
     let props = {
       show: true,
       container: noop,
       containerPadding: 5,
-      target: noop,
+      target,
       placement: 'left',
       shouldUpdatePosition: true
     };
@@ -71,7 +72,7 @@ describe('Overlay', () => {
 
     assert.equal(tree.find(Position).prop('container'), noop);
     assert.equal(tree.find(Position).prop('containerPadding'), 5);
-    assert.equal(tree.find(Position).prop('target'), noop);
+    assert.equal(tree.find(Position).prop('target'), target);
     assert.equal(tree.find(Position).prop('placement'), 'left');
     assert.equal(tree.find(Position).prop('shouldUpdatePosition'), true);
   });

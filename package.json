@@ -20,6 +20,7 @@
     "@react/collection-view": "^2.2.0",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
+    "dom-helpers": "^3.3.1",
     "intl-messageformat": "^2.2.0",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",

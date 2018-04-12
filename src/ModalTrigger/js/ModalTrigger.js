@@ -7,7 +7,7 @@ export default class ModalTrigger extends Component {
   show() {
     const children = React.Children.toArray(this.props.children);
     const modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
-    this.modalKey = ModalContainer.show(modalChild, this);
+    this.modalKey = ModalContainer.show(modalChild, this, this.props.container);
   }
 
   hide() {

@@ -1,22 +1,28 @@
 import autobind from 'autobind-decorator';
+import closest from 'dom-helpers/query/closest';
 import OpenTransition from '../../utils/OpenTransition';
 import Portal from 'react-overlays/lib/Portal';
 import Position from './Position';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 
 @autobind
 export default class Overlay extends React.Component {
   state = {
-    exited: !this.props.show
+    exited: !this.props.show,
+    targetNode: ReactDOM.findDOMNode(this.props.target)
   };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.show) {
-      this.setState({exited: false});
+      this.setState({...this.state, exited: false});
     } else if (!nextProps.transition) {
       // Otherwise let handleHidden take care of marking exited.
-      this.setState({exited: true});
+      this.setState({...this.state, exited: true});
+    }
+    if (nextProps.target && nextProps.target !== this.props.target) {
+      this.setState({...this.state, targetNode: ReactDOM.findDOMNode(nextProps.target)});
     }
   }
 
@@ -27,11 +33,16 @@ export default class Overlay extends React.Component {
     }
   }
 
+  getOverlayContainer(target) {
+    let immediateAvailableContainer = closest(this.state.targetNode, '.react-spectrum-provider');
+    return this.props.container || immediateAvailableContainer;
+  }
+
   render() {
     let {
-      container,
       containerPadding,
       target,
+      container = this.getOverlayContainer(target),
       placement,
       offset,
       crossOffset,

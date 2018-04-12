@@ -1,4 +1,6 @@
+import Provider from '../src/Provider';
 import React from 'react';
+import Select from '../src/Select';
 
 export function VerticalCenter({children, className, style}) {
   return (
@@ -38,4 +40,18 @@ export function VerticalTop({children, className, style}) {
       { children }
     </div>
   );
+}
+
+export class StoryWrapper extends React.Component {
+  state= {
+    theme: 'light'
+  }
+  render() {
+    return <Provider theme={this.state.theme}>
+      <div style={{position: 'absolute', right: 100}}>
+        Select Theme: <Select placeholder="Select theme" onChange={theme => this.setState({theme})} options={[{label: "Light", value: "light"}, {label: "Lightest", value: "lightest"}, {label: "Dark", value: "dark"}, {label: "Darkest", value: "darkest"}]}/>
+      </div>
+      {this.props.children}
+    </Provider>
+  }
 }
