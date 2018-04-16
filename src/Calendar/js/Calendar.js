@@ -266,6 +266,10 @@ export default class Calendar extends Component {
     this.selectFocused(date);
   }
 
+  handleDayMouseDown(e, date) {
+    this.focusTimeUnit(date);
+  }
+
   getSelectingRange(date) {
     let min = moment.min((this.state.anchorDate || this.state.focusedDate), date).clone();
     let max = moment.max((this.state.anchorDate || this.state.focusedDate), date).clone();
@@ -558,6 +562,7 @@ export default class Calendar extends Component {
                       isRangeEnd={isRangeEnd}
                       focused={isFocused && dateFocusedLocal && cursorLocal.isSame(dateFocusedLocal, 'day')}
                       onClick={this.handleDayClick}
+                      onMouseDown={this.handleDayMouseDown}
                       onHighlight={this.onHighlight} />
                   );
                 })
@@ -686,6 +691,7 @@ const CalendarCell = function CalendarCell({
   isSelectionStart = false,
   isSelectionEnd = false,
   onClick = function () {},
+  onMouseDown = function () {},
   onHighlight = function () {}
 }) {
   // title should be localize Day of week, Month, Day and Year without Time.
@@ -731,6 +737,7 @@ const CalendarCell = function CalendarCell({
       aria-label={title + rangeSelectionPrompt}
       title={title}
       onClick={disabled ? null : e => onClick(e, date.clone())}
+      onMouseDown={disabled ? null : e => onMouseDown(e, date.clone())}
       onMouseEnter={disabled ? null : e => onHighlight(e, date.clone())}
       tabIndex={disabled ? null : -1}>
       <span

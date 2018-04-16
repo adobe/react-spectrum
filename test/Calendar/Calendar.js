@@ -593,6 +593,22 @@ describe('Calendar', () => {
         assert(nextDate.isSame(tree.state('focusedDate')));
       });
 
+      it('supports mouseDown event', function () {
+        const start = moment(new Date(2016, 7, 14));
+        const tree = shallow(<Calendar value={start} />);
+        findBody(tree).simulate('focus');
+
+        assert(start.isSame(tree.state('focusedDate')));
+
+        const nextDate = start.clone().add(-7, 'day');
+
+        const nextCell = shallow(findCellByDate(tree, nextDate).getElement());
+
+        nextCell.simulate('mouseDown', {preventDefault: () => {}});
+
+        assert(nextDate.isSame(tree.state('focusedDate')));
+      });
+
       it('supports mouseEnter event', function () {
         const spy = sinon.spy();
         const start = moment(new Date(2016, 7, 14));
