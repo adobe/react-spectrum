@@ -46,7 +46,6 @@ build:
 	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;
 	find dist -name "*.js" -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
 	find dist -name "*.bak" -delete
-	find dist -name "*.js" -exec sed -i.bak 's/@spectrum\/focus-ring-polyfill/..\/focus-ring-polyfill/g' {} \;
 	cp -R node_modules/@spectrum/focus-ring-polyfill dist/focus-ring-polyfill
 	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
 	cp -R dist/* ./.
@@ -58,6 +57,6 @@ storybook:
 	mv storybook-static dist/storybook
 
 unprefix:
-	find . -name *.js -not -path "./node_modules/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
+	find . -name *.js -not -path "./node_modules/*" -not -path "./src/*" -not -path "./test/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
 	sed -i.bak 's/@react\///g' package.json
 	find . -name "*.bak" -delete

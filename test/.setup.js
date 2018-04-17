@@ -27,6 +27,8 @@ Module._resolveFilename = function (request, parent, isMain) {
     request = '@react/react-spectrum-icons/dist/' + (/core/.test(request) ? 'core/' : '') + path.basename(request);
   } else if (/\.\.\/js\/Icon/.test(request)) {
     request = path.resolve(__dirname + '/../src/Icon/js/Icon.js');
+  } else if (/\.\/focus-ring-polyfill/.test(request)) {
+    request = '@spectrum/focus-ring-polyfill';
   }
 
   return oldResolveFilename.call(this, request, parent, isMain);

@@ -7,6 +7,7 @@ module.exports = (config, env) => {
     resource.request = '@react/react-spectrum-icons/dist/' + (/core/.test(resource.request) ? 'core/' : '') + path.basename(resource.request);
   }));
   config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\/js\/Icon/, path.resolve(__dirname + '/../src/Icon/js/Icon.js')));
+  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\/focus-ring-polyfill/, '@spectrum/focus-ring-polyfill'));
 
   if (env === 'PRODUCTION') {
     // see https://github.com/storybooks/storybook/issues/1570
