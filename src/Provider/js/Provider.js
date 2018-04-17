@@ -3,6 +3,7 @@ import configureTypekit from '../../utils/configureTypekit';
 import {defaultLocale, setLocale} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import '@spectrum/focus-ring-polyfill';
 import '../style/index.styl';
 
 export default class Provider extends Component {
