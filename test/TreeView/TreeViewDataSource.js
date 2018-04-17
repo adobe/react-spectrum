@@ -12,7 +12,7 @@ var data = [
   {name: 'Root 2', children: []}
 ];
 
-class TestDataSource extends TreeViewDataSource {
+export class TestDataSource extends TreeViewDataSource {
   async getChildren(parent) {
     return parent ? parent.children : data;
   }
@@ -105,7 +105,9 @@ describe('TreeViewDataSource', function () {
     await ds.expandItem(data[0]);
 
     assert.deepEqual(ds.emittedEvents, [
-      ['reloadItem', new IndexPath(0, 0), false],
+      ['reloadItem', new IndexPath(0, 0), false], // isExpanded = true
+      ['reloadItem', new IndexPath(0, 0), false], // isLoading = true
+      ['reloadItem', new IndexPath(0, 0), false], // isLoading = false
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
@@ -127,7 +129,9 @@ describe('TreeViewDataSource', function () {
     await ds.expandItem(data[0].children[0]);
 
     assert.deepEqual(ds.emittedEvents, [
-      ['reloadItem', new IndexPath(0, 1), false],
+      ['reloadItem', new IndexPath(0, 1), false], // isExpanded = true
+      ['reloadItem', new IndexPath(0, 1), false], // isLoading = true
+      ['reloadItem', new IndexPath(0, 1), false], // isLoading = false
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 2), undefined],
       ['endTransaction', undefined]
@@ -200,7 +204,9 @@ describe('TreeViewDataSource', function () {
     await ds.toggleItem(data[0]);
 
     assert.deepEqual(ds.emittedEvents, [
-      ['reloadItem', new IndexPath(0, 0), false],
+      ['reloadItem', new IndexPath(0, 0), false], // isExpanded = true
+      ['reloadItem', new IndexPath(0, 0), false], // isLoading = true
+      ['reloadItem', new IndexPath(0, 0), false], // isLoading = false
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],

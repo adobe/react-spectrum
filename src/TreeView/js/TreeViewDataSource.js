@@ -12,6 +12,7 @@ class TreeItem {
     this.isToggleable = true;
     this.isExpanded = false;
     this.isVisible = false;
+    this.isLoading = false;
     this.parent = parent;
     this.level = parent ? parent.level + 1 : -1;
   }
@@ -59,6 +60,7 @@ export default class TreeDataSource extends ArrayDataSource {
 
     let items = [];
     this.root.walk(child => {
+      child.isVisible = true;
       items.push(child);
     });
 
@@ -67,6 +69,9 @@ export default class TreeDataSource extends ArrayDataSource {
   }
 
   async loadChildren(parent) {
+    parent.isLoading = true;
+    this.reloadItem(parent.item);
+
     let items = await this.getChildren(parent.item);
     let res = [];
 
@@ -83,6 +88,8 @@ export default class TreeDataSource extends ArrayDataSource {
 
     parent.children = res;
     parent.hasChildren = res.length > 0;
+    parent.isLoading = false;
+    this.reloadItem(parent.item);
   }
 
   getTreeItem(item, parent) {

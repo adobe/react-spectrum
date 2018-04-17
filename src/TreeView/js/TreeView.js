@@ -161,6 +161,16 @@ export default class TreeView extends React.Component {
     }
   }
 
+  getDropTarget(target) {
+    let item = this.collection.getItem(target.indexPath).item;
+
+    if (this.props.delegate && !this.props.delegate.shouldAcceptDrop(item)) {
+      return null;
+    }
+
+    return target;
+  }
+
   dropTargetUpdated(dropTarget) {
     clearTimeout(this._dragHoverTimer);
 

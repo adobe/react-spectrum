@@ -31,9 +31,10 @@ export default class TreeItem extends React.Component {
             <AccordionChevron
               className="spectrum-TreeView-indicator"
               size={null}
-              onClick={allowsSelection ? onToggle : null} />
+              onClick={allowsSelection ? onToggle : null}
+              onMouseDown={e => e.stopPropagation()} />
           }
-          {renderItem(content.item)}
+          {renderItem(content.item, content)}
         </a>
       </div>
     );

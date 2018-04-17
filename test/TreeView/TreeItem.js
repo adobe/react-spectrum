@@ -105,6 +105,23 @@ describe('TreeItem', function () {
     assert(link.hasClass('is-drop-target'));
   });
 
+  it('should pass tree item as a second argument to renderItem', function () {
+    let renderItem = (item, content) => <span>{content.isLoading ? 'loading' : item}</span>;
+    let onToggle = sinon.spy();
+    let wrapper = shallow(
+      <TreeItem
+        content={{item: 'world', isLoading: true}}
+        renderItem={renderItem}
+        onToggle={onToggle}
+        drop-target />
+    );
+
+    let span = wrapper.find('span');
+
+    assert.equal(span.length, 1);
+    assert.equal(span.text(), 'loading');
+  });
+
   it('should support clicking anywhere on the item to toggle it if selection is not enabled', function () {
     let renderItem = (item) => <span>{item}</span>;
     let onToggle = sinon.spy();
@@ -146,5 +163,23 @@ describe('TreeItem', function () {
     icon.simulate('click');
     assert(onToggle.calledOnce);
     assert.equal(onToggle.getCall(0).args[0], 'world');
+  });
+
+  it('should stop propagation on mouse down on the chevron so selection does not occur', function () {
+    let renderItem = (item) => <span>{item}</span>;
+    let onToggle = sinon.spy();
+    let wrapper = shallow(
+      <TreeItem
+        content={{hasChildren: true, isToggleable: true, item: 'world'}}
+        renderItem={renderItem}
+        onToggle={onToggle}
+        allowsSelection />
+    );
+
+    let icon = wrapper.find('.spectrum-TreeView-indicator');
+    let stopPropagation = sinon.spy();
+    icon.simulate('mousedown', {stopPropagation});
+
+    assert(stopPropagation.calledOnce);
   });
 });
