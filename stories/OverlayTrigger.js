@@ -1,8 +1,11 @@
+import Autocomplete from '../src/Autocomplete';
 import Button from '../src/Button';
+import Calendar from '../src/Calendar';
 import OverlayTrigger from '../src/OverlayTrigger';
 import Popover from '../src/Popover';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import Textfield from '../src/Textfield';
 import Tooltip from '../src/Tooltip';
 import {VerticalCenter} from '../.storybook/layout';
 
@@ -62,10 +65,15 @@ storiesOf('OverlayTrigger', module)
     'with: crossOffset',
     () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', crossOffset: 100}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with: nested overlay (autocomplete)',
+    () => render('nestedPopover', {trigger: 'click', placement: 'right', variant: 'error'}),
+    {inline: true}
   );
 
 function render(type, props = {}) {
-  if (type === 'popover') {
+  if (type === 'popover' || type === 'nestedPopover') {
     return (
       <OverlayTrigger {...props}>
         <Button label="Click Me" variant="primary" />
@@ -89,6 +97,21 @@ function render(type, props = {}) {
             Popover content goes here...<br />
             Popover content goes here...<br />
             Popover content goes here...<br />
+          {type === 'nestedPopover' &&
+            <OverlayTrigger {...props}>
+              <Button label="Click Me" variant="primary" />
+              <Popover>
+                <Autocomplete getCompletions={() => ['a', 'b', 'c']}>
+                  <Textfield placeholder="Autocomplete..." />
+                </Autocomplete>
+                <Autocomplete getCompletions={() => ['a', 'b', 'c']}>
+                  <Textfield placeholder="Autocomplete..." />
+                </Autocomplete>
+                <br />
+                <Calendar />
+              </Popover>
+            </OverlayTrigger>
+            }
         </Popover>
       </OverlayTrigger>
     );

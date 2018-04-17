@@ -449,6 +449,7 @@ describe('Autocomplete', () => {
 
     // restore original offsetWidth getter
     stub.restore();
+    tree.unmount();
   });
 
   it('should show a checkmark on the currently selected menu item', async () => {

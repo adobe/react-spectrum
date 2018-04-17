@@ -53,9 +53,8 @@ describe('Overlay', () => {
   });
 
   it('wraps in a close wrapper when true', () => {
-    const tree = shallow(<Overlay show rootClose onHide={noop}><span /></Overlay>);
+    const tree = shallow(<Overlay show rootClose><span /></Overlay>);
     assert(tree.find(RootCloseWrapper));
-    assert.equal(tree.find(RootCloseWrapper).prop('onRootClose'), noop);
   });
 
   it('passes props to Position', () => {
@@ -83,12 +82,6 @@ describe('Overlay', () => {
     tree.instance().onExited({foo: 'bar'});
     assert(onExited.calledOnce);
     assert(onExited.withArgs({foo: 'bar'}));
-  });
-
-  it('changes state if props change', () => {
-    const tree = shallow(<Overlay show><span /></Overlay>);
-    tree.instance().componentWillReceiveProps({foo: 'bar'});
-    assert.equal(tree.state('exited'), true);
   });
 
   it('context overlay', () => {
@@ -121,5 +114,55 @@ describe('Overlay', () => {
 
     assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
     overlayTrigger.unmount();
+  });
+
+  it('should only hide if it is the top-most overlay', (done) => {
+    let onHideOuter = sinon.spy();
+    let onHideInner = sinon.spy();
+    let overlay = mount(
+      <Overlay show onHide={onHideOuter}>
+        <OverlayTrigger onHide={onHideInner} trigger="click">
+          <Button>Click me</Button>
+          <Popover>Popover</Popover>
+        </OverlayTrigger>
+      </Overlay>
+    );
+
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+    // Hiding the outer overlay should work fine since the inner overlay hasn't been shown yet
+    overlay.instance().hide();
+    assert(onHideOuter.calledOnce);
+    assert(onHideInner.notCalled);
+
+    onHideOuter.reset();
+
+    overlay.find('button').simulate('click');
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+
+    // Hiding the outer overlay should now do nothing since it is no longer the top overlay
+    overlay.instance().hide();
+    assert(onHideOuter.notCalled);
+    assert(onHideInner.notCalled);
+
+    // Hiding the inner overlay should work since it is the top overlay
+    overlay.find('button').simulate('click');
+    assert(onHideOuter.notCalled);
+    assert(onHideInner.calledOnce);
+
+    onHideInner.reset();
+
+    // Wait for animation
+    setTimeout(() => {
+      assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+      // Hiding the outer overlay should work now since it is the top overlay
+      overlay.instance().hide();
+      assert(onHideOuter.calledOnce);
+      assert(onHideInner.notCalled);
+
+      overlay.unmount();
+      done();
+    }, 200);
   });
 });

@@ -155,6 +155,7 @@ describe('Select', () => {
 
     // restore original offsetWidth getter
     stub.restore();
+    tree.unmount();
   });
 
   it('onClose restores focus to button and calls onClose method if defined', () => {
@@ -168,5 +169,7 @@ describe('Select', () => {
     assert(spy.calledOnce);
     assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
     assert.equal(tree.find(Button).prop('selected'), false);
+
+    tree.unmount();
   });
 });

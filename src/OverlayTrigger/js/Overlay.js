@@ -7,6 +7,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 
+const visibleOverlays = [];
+
 @autobind
 export default class Overlay extends React.Component {
   state = {
@@ -14,13 +16,36 @@ export default class Overlay extends React.Component {
     targetNode: ReactDOM.findDOMNode(this.props.target)
   };
 
+  componentDidMount() {
+    this.mounted = true;
+    this.addOverlay();
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+    this.removeOverlay();
+  }
+
+  addOverlay(props = this.props) {
+    if (props.show && this.mounted && !visibleOverlays.includes(this)) {
+      visibleOverlays.push(this);
+    }
+  }
+
+  removeOverlay() {
+    // Remove overlay from the stack of visible overlays
+    let index = visibleOverlays.indexOf(this);
+    if (index >= 0) {
+      visibleOverlays.splice(index, 1);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.show) {
       this.setState({...this.state, exited: false});
-    } else if (!nextProps.transition) {
-      // Otherwise let handleHidden take care of marking exited.
-      this.setState({...this.state, exited: true});
+      this.addOverlay(nextProps);
     }
+
     if (nextProps.target && nextProps.target !== this.props.target) {
       this.setState({...this.state, targetNode: ReactDOM.findDOMNode(nextProps.target)});
     }
@@ -28,6 +53,8 @@ export default class Overlay extends React.Component {
 
   onExited(...args) {
     this.setState({exited: true});
+    this.removeOverlay();
+
     if (this.props.onExited) {
       this.props.onExited(...args);
     }
@@ -36,6 +63,13 @@ export default class Overlay extends React.Component {
   getOverlayContainer(target) {
     let immediateAvailableContainer = closest(this.state.targetNode, '.react-spectrum-provider');
     return this.props.container || immediateAvailableContainer;
+  }
+
+  hide() {
+    // Only hide if this is the top overlay
+    if (visibleOverlays[visibleOverlays.length - 1] === this && this.props.onHide) {
+      this.props.onHide();
+    }
   }
 
   render() {
@@ -91,7 +125,7 @@ export default class Overlay extends React.Component {
     // This goes after everything else because it adds a wrapping div.
     if (rootClose) {
       child = (
-        <RootCloseWrapper onRootClose={props.onHide}>
+        <RootCloseWrapper onRootClose={this.hide}>
           {child}
         </RootCloseWrapper>
       );

@@ -131,7 +131,7 @@ describe('Position', () => {
     tree.update(); // update after event dispatch
 
     const div = tree.find('div');
-    assert(stub.calledThrice);
+    assert(stub.calledTwice);
     assert.deepEqual(stub.getCall(stub.callCount - 1).args, ['bottom', ReactDOM.findDOMNode(tree.instance()), ReactDOM.findDOMNode(target), document.body, 10, false, undefined, 0, 0]);
 
     assert.deepEqual(div.prop('style'), {

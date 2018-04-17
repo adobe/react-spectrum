@@ -75,6 +75,8 @@ describe('ComboBox', () => {
     await sleep(1);
     assert(!instance.state.open);
     assert.equal(textfieldNode, document.activeElement);
+
+    tree.unmount();
   });
 
   it('should not filter if we havent changed', () => {
