@@ -12,3 +12,9 @@ if (process.browser) {
     document.body.classList.add('spectrum--light');
   }
 }
+
+console.warn(
+  'react-spectrum/page is deprecated and will be removed in the next major version. ' +
+  'Please wrap your app in a <Provider> component instead. ' +
+  'See https://git.corp.adobe.com/React/react-spectrum/releases/tag/v2.6.0'
+);
