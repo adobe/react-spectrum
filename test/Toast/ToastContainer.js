@@ -1,6 +1,7 @@
 import {addToast, error, help, info, removeToast, success, Toast, ToastContainer, warning} from '../../src/Toast';
 import assert from 'assert';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {shallow} from 'enzyme';
 import {sleep} from '../utils';
 
@@ -72,6 +73,15 @@ describe('ToastContainer', () => {
     removeToast(toast);
     await sleep(500); // wait for animation
     assert.equal(container.childNodes.length, 0);
+  });
+
+  it('should render a toast inside custom container', async() => {
+    const customContainer = ReactDOM.render(<div />, document.createElement('div'));
+    const toast = <Toast>Test</Toast>;
+    const customContainerDOM = ReactDOM.findDOMNode(customContainer);
+    addToast(toast, 0, customContainerDOM);
+    const container = customContainer.childNodes[0].childNodes[0];
+    assert(container.classList.contains('react-spectrum-ToastContainer'));
   });
 
   it('should render a success toast', async () => {

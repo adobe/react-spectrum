@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import Toast from './Toast';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
-let TOAST_CONTAINER = null;
+const TOAST_CONTAINERS = new Map;
 const TOAST_TIMEOUT = 5000;
 const TOAST_ANIMATION_TIME = 200;
 
@@ -42,41 +42,50 @@ export class ToastContainer extends React.Component {
   }
 }
 
-function ensureToastContainer() {
-  if (TOAST_CONTAINER) {
-    return TOAST_CONTAINER;
+function createToastNode(container) {
+  let parent = container || document.querySelector('.react-spectrum-provider') || document.body;
+  let node = document.createElement('div');
+  parent.appendChild(node);
+  return node;
+}
+
+function ensureToastContainer(container) {
+  let toastContainer = TOAST_CONTAINERS.get(container);
+
+  // Make sure that toastContainer is a real DOM node, not only a memory footprint of previously cached node.
+  if (toastContainer && document.body.contains(ReactDOM.findDOMNode(toastContainer))) {
+    return toastContainer;
   }
 
-  let node = document.createElement('div');
-  document.body.appendChild(node);
-  TOAST_CONTAINER = ReactDOM.render(<ToastContainer />, node);
-  return TOAST_CONTAINER;
+  toastContainer = ReactDOM.render(<ToastContainer />, createToastNode(container));
+  TOAST_CONTAINERS.set(container, toastContainer);
+  return toastContainer;
 }
 
-export function addToast(toast, timeout) {
-  ensureToastContainer().add(toast, timeout);
+export function addToast(toast, timeout, container) {
+  ensureToastContainer(container).add(toast, timeout);
 }
 
-export function removeToast(toast) {
-  ensureToastContainer().remove(toast);
+export function removeToast(toast, container) {
+  ensureToastContainer(container).remove(toast);
 }
 
 export function success(message, options = {}) {
-  addToast(<Toast closable variant="success" {...options}>{message}</Toast>, options.timeout);
+  addToast(<Toast closable variant="success" {...options}>{message}</Toast>, options.timeout, options.container);
 }
 
 export function warning(message, options = {}) {
-  addToast(<Toast closable variant="warning" {...options}>{message}</Toast>, options.timeout);
+  addToast(<Toast closable variant="warning" {...options}>{message}</Toast>, options.timeout, options.container);
 }
 
 export function error(message, options = {}) {
-  addToast(<Toast closable variant="error" {...options}>{message}</Toast>, options.timeout);
+  addToast(<Toast closable variant="error" {...options}>{message}</Toast>, options.timeout, options.container);
 }
 
 export function info(message, options = {}) {
-  addToast(<Toast closable variant="info" {...options}>{message}</Toast>, options.timeout);
+  addToast(<Toast closable variant="info" {...options}>{message}</Toast>, options.timeout, options.container);
 }
 
 export function help(message, options = {}) {
-  addToast(<Toast closable variant="help" {...options}>{message}</Toast>, options.timeout);
+  addToast(<Toast closable variant="help" {...options}>{message}</Toast>, options.timeout, options.container);
 }
