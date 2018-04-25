@@ -40,7 +40,6 @@ describe('SwitchBase', () => {
 
   it('supports defaultChecked and checked', () => {
     let tree = shallow(<SwitchBase defaultChecked />);
-    assert.equal(findInput(tree).prop('defaultChecked'), true);
     expectChecked(tree, true);
     tree = shallow(<SwitchBase checked />);
     assert.equal(findInput(tree).prop('checked'), true);

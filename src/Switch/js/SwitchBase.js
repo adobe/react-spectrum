@@ -60,7 +60,6 @@ export default class SwitchBase extends Component {
 
   render() {
     const {
-      defaultChecked,
       label,
       value,
       name,
@@ -100,7 +99,6 @@ export default class SwitchBase extends Component {
           ref={el => {this.inputRef = el; }}
           type={inputType}
           className={inputClassName}
-          defaultChecked={defaultChecked}
           checked={checked}
           disabled={disabled}
           name={name}
