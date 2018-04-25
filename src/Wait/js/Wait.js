@@ -15,14 +15,28 @@ export default function Wait({
           'spectrum-Loader',
           'spectrum-Loader--indeterminate',
           {
-            'spectrum-Loader--indeterminate--small': size === 'S',
-            'spectrum-Loader--indeterminate--large': size === 'L',
+            'spectrum-Loader--small': size === 'S',
+            'spectrum-Loader--large': size === 'L',
             'react-spectrum-Wait--centered': centered
           },
           className
         )
       }
-      {...otherProps} />
+      {...otherProps}>
+      <div className="spectrum-Loader-track" />
+      <div className="spectrum-Loader-fills">
+        <div className="spectrum-Loader-fill-mask-1">
+          <div className="spectrum-Loader-fill-submask-1">
+            <div className="spectrum-Loader-fill" />
+          </div>
+        </div>
+        <div className="spectrum-Loader-fill-mask-2">
+          <div className="spectrum-Loader-fill-submask-2">
+            <div className="spectrum-Loader-fill" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

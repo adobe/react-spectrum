@@ -12,12 +12,12 @@ describe('Wait', () => {
 
   it('supports size L', () => {
     const tree = shallow(<Wait size="L" />);
-    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--indeterminate--large');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--large');
   });
 
   it('supports size S', () => {
     const tree = shallow(<Wait size="S" />);
-    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--indeterminate--small');
+    assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--small');
   });
 
   it('supports centered', () => {
