@@ -8,34 +8,39 @@ describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />, {disableLifecycleMethods: true});
     const innerTree = tree.shallow().shallow();
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel');
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal');
     assert.equal(innerTree.type(), 'div');
     assert.equal(innerTree.prop('role'), 'tablist');
   });
 
-  it('supports large size', () => {
-    const tree = shallow(<TabList size="L" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--large spectrum-TabList--horizontal spectrum-TabList--panel');
-  });
-
   it('supports vertical orientation', () => {
     const tree = shallow(<TabList orientation="vertical" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--vertical spectrum-TabList--panel');
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--vertical');
   });
 
-  it('supports anchored variant', () => {
+  it('renders normally when anchored is passed', () => {
     const tree = shallow(<TabList variant="anchored" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--anchored');
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal');
   });
 
-  it('supports page variant', () => {
+  it('renders normally when panel is passed', () => {
+    const tree = shallow(<TabList variant="panel" />, {disableLifecycleMethods: true});
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal');
+  });
+
+  it('renders compact when page is passed', () => {
     const tree = shallow(<TabList variant="page" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--page');
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--compact');
+  });
+
+  it('supports compact variant', () => {
+    const tree = shallow(<TabList variant="page" />, {disableLifecycleMethods: true});
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--compact');
   });
 
   it('supports additional classNames', () => {
     const tree = shallow(<TabList className="myClass" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('className'), 'spectrum-TabList spectrum-TabList--horizontal spectrum-TabList--panel myClass');
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal myClass');
   });
 
   it('supports additional properties', () => {

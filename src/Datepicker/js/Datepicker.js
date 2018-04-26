@@ -291,8 +291,7 @@ export default class Datepicker extends Component {
           onBlur={this.handleTextBlur} />
         <OverlayTrigger trigger="click" placement={placement}>
           <Button
-            className="spectrum-InputGroup-button"
-            variant="dropdown"
+            variant="field"
             quiet={quiet}
             type="button"
             icon={type === 'time' ? <ClockIcon /> : <CalendarIcon />}

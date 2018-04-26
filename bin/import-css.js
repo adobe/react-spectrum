@@ -44,6 +44,8 @@ module.exports = function ({types: t}) {
 
     if (fs.existsSync(realpath)) {
       return path;
+    } else if (!theme) {
+      console.error('Could not find Spectrum CSS import: ', realpath);
     }
   }
 

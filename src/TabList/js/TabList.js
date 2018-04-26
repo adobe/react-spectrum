@@ -1,10 +1,18 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TabListBase from './TabListBase';
 
-importSpectrumCSS('tablist');
+importSpectrumCSS('tabs');
+
+// For backward compatibility
+const VARIANTS = {
+  'panel': '',
+  'anchored': '',
+  'page': 'compact'
+};
 
 /**
  * selectedIndex: The index of the Tab that should be selected (open). When selectedIndex is
@@ -19,6 +27,18 @@ importSpectrumCSS('tablist');
  */
 @autobind
 export default class TabList extends React.Component {
+  static propTypes = {
+    variant: PropTypes.oneOf(['compact', 'panel', 'anchored']),
+    quiet: PropTypes.bool,
+    orientation: PropTypes.oneOf(['horizontal', 'vertical'])
+  };
+
+  static defaultProps = {
+    variant: '',
+    quiet: false,
+    orientation: 'horizontal'
+  };
+
   state = {
     selectedIndex: TabListBase.getDefaultSelectedIndex(this.props),
     tabArray: []
@@ -44,7 +64,7 @@ export default class TabList extends React.Component {
 
   updateTabs() {
     // Measure the tabs so we can position the line below correctly
-    const tabArray = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-TabList-item');
+    const tabArray = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-Tabs-item');
     this.setState({tabArray});
   }
 
@@ -66,9 +86,8 @@ export default class TabList extends React.Component {
   render() {
     const {
       className,
-      size = 'M',
       orientation = 'horizontal',
-      variant = 'panel',
+      variant = '',
       children,
       defaultSelectedIndex,
       ...otherProps
@@ -81,6 +100,9 @@ export default class TabList extends React.Component {
 
     let selectedTab = tabArray[selectedIndex];
 
+    // For backwards compatibility
+    let mappedVariant = VARIANTS[variant] !== undefined ? VARIANTS[variant] : variant;
+
     return (
       <TabListBase
         orientation={orientation}
@@ -88,10 +110,9 @@ export default class TabList extends React.Component {
         selectedIndex={selectedIndex}
         {...otherProps}
         className={classNames(
-          'spectrum-TabList',
-          size === 'L' ? 'spectrum-TabList--large' : '',
-          `spectrum-TabList--${orientation}`,
-          `spectrum-TabList--${variant}`,
+          'spectrum-Tabs',
+          `spectrum-Tabs--${orientation}`,
+          mappedVariant ? `spectrum-Tabs--${mappedVariant}` : '',
           className
         )}
         onChange={this.onChange}>
@@ -105,15 +126,20 @@ export default class TabList extends React.Component {
 }
 
 function TabLine({orientation, selectedTab}) {
+  // Ideally this would be a DNA variable, but vertical tabs aren't even in DNA, soo...
+  let verticalSelectionIndicatorOffset = 12;
+
   const style = {
     transform: orientation === 'vertical'
-      ? `translateY(${selectedTab.offsetTop}px)`
+      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
       : `translateX(${selectedTab.offsetLeft}px) `
   };
 
   if (orientation === 'horizontal') {
     style.width = `${selectedTab.offsetWidth}px`;
+  } else {
+    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
   }
 
-  return <div className="spectrum-TabList-item-line" role="presentation" style={style} />;
+  return <div className="spectrum-Tabs-selectionIndicator" role="presentation" style={style} />;
 }

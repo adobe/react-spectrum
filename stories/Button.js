@@ -1,5 +1,6 @@
 import {action, storiesOf} from '@storybook/react';
 import Bell from '../src/Icon/Bell';
+import Brush from '../src/Icon/Brush';
 import Button from '../src/Button';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
@@ -32,12 +33,17 @@ storiesOf('Button', module)
   )
   .addWithInfo(
     'variant: action',
-    () => render({variant: 'action'}),
+    () => renderSelected({variant: 'action'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: tool',
+    () => renderSelected({variant: 'tool', label: null, icon: <Brush />}),
     {inline: true}
   )
   .addWithInfo(
     'variant: action icon only',
-    () => render({variant: 'action', label: null, icon: <Bell />}),
+    () => renderSelected({variant: 'action', label: null, icon: <Bell />}),
     {inline: true}
   )
   .addWithInfo(
@@ -67,12 +73,12 @@ storiesOf('Button', module)
   )
  .addWithInfo(
     'quiet: true, variant: action',
-    () => render({quiet: true, variant: 'action'}),
+    () => renderSelected({quiet: true, variant: 'action'}),
     {inline: true}
   )
  .addWithInfo(
     'quiet: true, variant: action icon only',
-    () => render({quiet: true, variant: 'action', label: null, icon: <Bell />}),
+    () => renderSelected({quiet: true, variant: 'action', label: null, icon: <Bell />}),
     {inline: true}
   )
   .addWithInfo(
@@ -105,6 +111,27 @@ storiesOf('Button', module)
     () => render({block: true, variant: 'cta'}),
     {inline: true}
   );
+
+function renderSelected(props = {}) {
+  return (
+    <div>
+      <Button
+        label="React"
+        onClick={action('click')}
+        {...props} />
+      <Button
+        label="React"
+        onClick={action('click')}
+        selected
+        {...props} />
+      <Button
+        label="React"
+        onClick={action('click')}
+        disabled
+        {...props} />
+    </div>
+  );
+}
 
 function render(props = {}) {
   return (

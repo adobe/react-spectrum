@@ -127,7 +127,7 @@ export default class Select extends React.Component {
         <Button
           className="spectrum-Dropdown-trigger"
           type="button"
-          variant="dropdown"
+          variant="field"
           quiet={quiet}
           disabled={disabled}
           invalid={invalid}

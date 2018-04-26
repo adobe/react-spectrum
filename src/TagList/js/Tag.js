@@ -5,7 +5,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import TagClose from '../../Icon/core/TagClose';
 
-importSpectrumCSS('taglist');
+importSpectrumCSS('tags');
 
 export default function Tag({
   value,
@@ -26,10 +26,11 @@ export default function Tag({
     <div
       className={
         classNames(
-          'spectrum-TagList-item',
+          'spectrum-Tags-item',
           {
             'is-selected': selected,
-            'is-disabled': disabled
+            'is-disabled': disabled,
+            'spectrum-Tags-item--deletable': closable
           },
           className
         )
@@ -39,18 +40,18 @@ export default function Tag({
       aria-label={ariaLabel}
       {...filterDOMProps(otherProps)}>
       {avatar &&
-        <img className="spectrum-TagList-item-avatar" alt="" src={avatar} aria-hidden="true" />
+        <img className="spectrum-Tags-item-avatar" alt="" src={avatar} aria-hidden="true" />
       }
       {cloneIcon(icon, {
         size: 'S',
-        className: 'spectrum-TagList-item-icon'
+        className: 'spectrum-Tags-item-icon'
       })}
-      <span className="spectrum-TagList-item-label">
+      <span className="spectrum-Tags-item-label">
         {childContent}
       </span>
       {closable &&
         <Button
-          className="spectrum-TagList-item-removeButton"
+          className="spectrum-ClearButton spectrum-ClearButton--small"
           type="button"
           variant="icon"
           icon={<TagClose />}

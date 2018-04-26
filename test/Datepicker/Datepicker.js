@@ -30,7 +30,7 @@ describe('Datepicker', () => {
     assert.equal(textfield.prop('quiet'), false);
 
     const button = findButton(tree);
-    assert.equal(button.hasClass('spectrum-InputGroup-button'), true);
+    assert.equal(button.prop('variant'), 'field');
     assert.equal(button.prop('icon').type, CalendarIcon);
     assert.equal(button.prop('disabled'), false);
     assert.equal(button.prop('quiet'), false);

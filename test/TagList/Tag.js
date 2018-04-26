@@ -11,7 +11,7 @@ describe('Tag', () => {
     assert.equal(tree.prop('tabIndex'), -1);
     assert.equal(tree.prop('aria-selected'), false);
     assert.equal(tree.prop('aria-label'), 'Remove label');
-    assert.equal(tree.hasClass('spectrum-TagList-item'), true);
+    assert.equal(tree.hasClass('spectrum-Tags-item'), true);
   });
 
   it('supports additional classNames', () => {
@@ -21,13 +21,13 @@ describe('Tag', () => {
 
   it('supports being closable', () => {
     const tree = shallow(<Tag closable={false} />);
-    assert(!tree.find('.spectrum-TagList-item-removeButton').length);
+    assert(!tree.find('.spectrum-ClearButton').length);
   });
 
   it('supports being disabled', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag disabled closable onClose={onClose} />);
-    tree.find('.spectrum-TagList-item-removeButton').simulate('click');
+    tree.find('.spectrum-ClearButton').simulate('click');
     assert(!onClose.called);
   });
 
@@ -39,13 +39,13 @@ describe('Tag', () => {
 
   it('supports a value', () => {
     const tree = shallow(<Tag value="myValue" />);
-    assert.equal(tree.find('.spectrum-TagList-item-label').children().text(), 'myValue');
+    assert.equal(tree.find('.spectrum-Tags-item-label').children().text(), 'myValue');
   });
 
   it('supports an onClose event', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag closable value="stuff" onClose={onClose} />);
-    tree.find('.spectrum-TagList-item-removeButton').simulate('click', {});
+    tree.find('.spectrum-ClearButton').simulate('click', {});
     const args = onClose.lastCall.args;
     assert.equal(args[0], 'stuff');
     assert.deepEqual(args[1], {});
@@ -68,12 +68,12 @@ describe('Tag', () => {
 
   it('supports an icon', () => {
     const tree = shallow(<Tag icon={<Camera />} />);
-    assert(tree.find('.spectrum-TagList-item-icon').length);
+    assert(tree.find('.spectrum-Tags-item-icon').length);
   });
 
   it('supports an avatar', () => {
     const tree = shallow(<Tag avatar="https://www.botlibre.com/media/a12832214.png" />);
-    assert(tree.find('.spectrum-TagList-item-avatar').length);
+    assert(tree.find('.spectrum-Tags-item-avatar').length);
   });
 
 });

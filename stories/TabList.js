@@ -14,6 +14,7 @@ storiesOf('TabList', module)
   ))
   .addWithInfo(
     'Default',
+    'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.',
     () => render(),
     {inline: true}
   )

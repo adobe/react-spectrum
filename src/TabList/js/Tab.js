@@ -61,7 +61,7 @@ export default class Tab extends Component {
         {...filterDOMProps(otherProps)}
         className={
           classNames(
-            'spectrum-TabList-item',
+            'spectrum-Tabs-item',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -78,8 +78,8 @@ export default class Tab extends Component {
         tabIndex={!disabled ? tabIndex : null}
         onClick={!disabled ? this.handleClick : null}
         onKeyPress={!disabled ? this.handleKeyPress : null}>
-        {cloneIcon(icon, {size: iconSize, className: 'spectrum-TabList-item-icon'})}
-        {(label || (renderChildren && children)) && <span className="spectrum-TabList-item-label">{label || (renderChildren && children)}</span>}
+        {cloneIcon(icon, {size: iconSize, className: 'spectrum-Tabs-item-icon'})}
+        {(label || (renderChildren && children)) && <span className="spectrum-Tabs-item-label">{label || (renderChildren && children)}</span>}
       </div>
     );
   }

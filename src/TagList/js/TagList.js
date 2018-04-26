@@ -3,7 +3,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import Tag from './Tag';
 
-importSpectrumCSS('taglist');
+importSpectrumCSS('tags');
 
 export default class TagList extends React.Component {
   static displayName = 'TagList';
@@ -85,7 +85,7 @@ export default class TagList extends React.Component {
         {...filterDOMProps(otherProps)}
         className={
           classNames(
-            'spectrum-TagList',
+            'spectrum-Tags',
             {
               'is-disabled': disabled
             },

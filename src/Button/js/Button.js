@@ -30,7 +30,7 @@ export default class Button extends Component {
     logic: PropTypes.bool,
     quiet: PropTypes.bool,
     selected: PropTypes.bool,
-    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown']),
+    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown', 'clear', 'field', 'tool']),
     onClick: PropTypes.func
   };
 
@@ -80,7 +80,7 @@ export default class Button extends Component {
   }
 
   render() {
-    const {
+    let {
       element: Element = 'button',
       label,
       children,
@@ -98,6 +98,43 @@ export default class Button extends Component {
       ...otherProps
     } = this.props;
 
+    // The icon variant was deprecated; quiet action button should be used instead
+    if (variant === 'icon') {
+      quiet = true;
+      variant = 'action';
+    }
+
+    // Some button variants were broken out into their own components, map them appropriately
+    let baseButtonClass = 'spectrum-Button';
+    if (variant === 'action' || variant === 'toggle') {
+      baseButtonClass = 'spectrum-ActionButton';
+      variant = '';
+    } else if (logic) {
+      baseButtonClass = 'spectrum-LogicButton';
+    } else if (variant === 'clear') {
+      baseButtonClass = 'spectrum-ClearButton';
+      variant = '';
+    } else if (variant === 'field') {
+      baseButtonClass = 'spectrum-FieldButton';
+      variant = '';
+    } else if (variant === 'tool') {
+      baseButtonClass = 'spectrum-Tool';
+      variant = '';
+    }
+
+    // Map variants for backwards compatibility
+    let mappedVariant = (VARIANTS[variant] || variant);
+    let variantClass = '';
+    if (mappedVariant) {
+      variantClass = `${baseButtonClass}`;
+      if (quiet) {
+        variantClass += '--quiet';
+      }
+      variantClass += `--${mappedVariant}`;
+    } else if (quiet) {
+      variantClass = `${baseButtonClass}--quiet`;
+    }
+
     if (Element !== 'button') {
       otherProps.role = 'button';
       otherProps.tabIndex = disabled ? null : otherProps.tabIndex || 0;
@@ -108,14 +145,6 @@ export default class Button extends Component {
       otherProps.onKeyDown = disabled ? null : this.onKeyDownSpace;
     }
 
-    let variantPrefix = '';
-    if (logic) {
-      variantPrefix = 'logic--';
-    } else if (quiet) {
-      variantPrefix = 'quiet--';
-    }
-
-    let iconOnly = icon && !(label || children);
     let labelContents = label || (typeof children === 'string' ? children : null);
 
     return (
@@ -123,14 +152,13 @@ export default class Button extends Component {
         {...filterDOMProps(otherProps)}
         className={
           classNames(
-            'spectrum-Button',
-            `spectrum-Button--${variantPrefix + (VARIANTS[variant] || variant)}`,
+            baseButtonClass,
+            variantClass,
             {
               'is-selected': selected,
               'is-disabled': disabled,
               'is-invalid': invalid,
-              'spectrum-Button--block': block,
-              ['spectrum-Button--action--' + variantPrefix + 'iconOnly']: variant === 'action' && iconOnly
+              'spectrum-Button--block': block
             },
             className
           )
@@ -144,7 +172,7 @@ export default class Button extends Component {
         ref={b => this.buttonRef = b}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&
-          <span className="spectrum-Button-label">{labelContents}</span>
+          <span className={baseButtonClass + '-label'}>{labelContents}</span>
         }
         {typeof children !== 'string' && children}
       </Element>

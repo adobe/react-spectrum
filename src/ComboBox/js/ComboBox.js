@@ -96,9 +96,8 @@ export default class ComboBox extends React.Component {
           autocompleteInput
           quiet={quiet} />
         <Button
-          className="spectrum-InputGroup-button"
           type="button"
-          variant="dropdown"
+          variant="field"
           onClick={this.onButtonClick}
           onMouseDown={e => e.preventDefault()}
           onMouseUp={e => e.preventDefault()}

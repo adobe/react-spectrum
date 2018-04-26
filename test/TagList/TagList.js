@@ -12,7 +12,7 @@ describe('TagList', () => {
 
   it('has spectrum class', () => {
     const tree = shallow(<TagList />);
-    assert.equal(tree.hasClass('spectrum-TagList'), true);
+    assert.equal(tree.hasClass('spectrum-Tags'), true);
   });
 
   it('passes in a custom class', () => {

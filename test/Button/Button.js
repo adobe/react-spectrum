@@ -84,7 +84,7 @@ describe('Button', () => {
 
   it('supports logic', () => {
     const tree = shallow(<Button logic variant="and" />);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--logic--and');
+    assert.equal(tree.prop('className'), 'spectrum-LogicButton spectrum-LogicButton--and');
   });
 
   it('supports additional classNames', () => {
