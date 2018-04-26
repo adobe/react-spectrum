@@ -1,13 +1,14 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
+import sinon from 'sinon';
+import {sleep} from '../utils';
 import Textfield from '../../src/Textfield';
 
 describe('Textfield', () => {
   it('default', () => {
     const tree = shallow(<Textfield />);
     assert.equal(tree.prop('className'), 'spectrum-Textfield');
-    assert.equal(tree.prop('aria-invalid'), false);
   });
 
   it('supports quiet variation', () => {
@@ -25,29 +26,30 @@ describe('Textfield', () => {
   it('supports disabled', () => {
     const tree = shallow(<Textfield />);
     assert(!tree.prop('disabled'));
-    assert.equal(tree.prop('aria-disabled'), false);
     tree.setProps({disabled: true});
     assert.equal(tree.prop('disabled'), true);
-    assert.equal(tree.prop('aria-disabled'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<Textfield />);
-    assert.equal(tree.prop('aria-required'), false);
+    assert(!tree.prop('required'));
     tree.setProps({required: true});
-    assert.equal(tree.prop('aria-required'), true);
+    assert.equal(tree.prop('required'), true);
   });
 
   it('supports readOnly', () => {
     const tree = shallow(<Textfield />);
-    assert.equal(tree.prop('aria-readonly'), false);
+    assert(!tree.prop('readOnly'));
     tree.setProps({readOnly: true});
-    assert.equal(tree.prop('aria-readonly'), true);
+    assert.equal(tree.prop('readOnly'), true);
   });
 
   it('supports invalid', () => {
-    const tree = shallow(<Textfield invalid />);
+    const tree = shallow(<Textfield />);
+    assert(!tree.prop('aria-invalid'));
+    tree.setProps({invalid: true});
     assert.equal(tree.prop('className'), 'spectrum-Textfield is-invalid');
+    assert.equal(tree.prop('aria-invalid'), true);
   });
 
   it('supports additional classNames', () => {
@@ -58,5 +60,23 @@ describe('Textfield', () => {
   it('supports additional properties', () => {
     const tree = shallow(<Textfield foo />);
     assert.equal(tree.prop('foo'), true);
+  });
+
+  it('supports autoFocus', async () => {
+    const tree = mount(<Textfield autoFocus />);
+    assert(!tree.getDOMNode().getAttribute('autoFocus'));
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
+  it('supports onChange event handler', () => {
+    const spy = sinon.spy();
+    const val = 'foo';
+    const tree = mount(<Textfield onChange={spy} />);
+    tree.getDOMNode().value = val;
+    tree.simulate('change');
+    assert(spy.calledOnce);
+    assert.equal(spy.lastCall.args[0], val);
   });
 });

@@ -1,17 +1,32 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 
 importSpectrumCSS('textfield');
 
 @autobind
 export default class Textfield extends Component {
   static defaultProps = {
+    autoFocus: false,
     disabled: false,
     required: false,
     invalid: false,
     readOnly: false
   };
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      // wait a frame to make sure the textfield in the DOM and focusable
+      requestAnimationFrame(() => this.focus());
+    }
+  }
+
+  focus() {
+    if (!this.props.disabled) {
+      ReactDOM.findDOMNode(this).focus();
+    }
+  }
 
   onChange(e) {
     if (this.props.onChange) {
@@ -33,6 +48,7 @@ export default class Textfield extends Component {
 
     var Tag = multiLine ? 'textarea' : 'input';
 
+    delete otherProps.autoFocus;
     delete otherProps.autocompleteInput;
 
     return (
@@ -49,13 +65,10 @@ export default class Textfield extends Component {
             className
           )
         }
-        aria-disabled={disabled}
-        aria-required={required}
-        aria-invalid={invalid}
-        aria-readonly={readOnly}
         disabled={disabled}
         required={required}
         readOnly={readOnly}
+        aria-invalid={invalid || null}
         {...otherProps}
         onChange={this.onChange} />
     );

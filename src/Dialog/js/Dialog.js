@@ -22,7 +22,8 @@ export default class Dialog extends Component {
     title: PropTypes.string,
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
-    role: PropTypes.oneOf(['dialog', 'alertdialog'])
+    role: PropTypes.oneOf(['dialog', 'alertdialog']),
+    autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', null])
   };
 
   static defaultProps = {
@@ -31,6 +32,7 @@ export default class Dialog extends Component {
     open: true,
     mode: 'centered',
     role: 'dialog',
+    autoFocusButton: null,
     onClose: function () {}
   };
 

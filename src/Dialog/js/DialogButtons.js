@@ -9,6 +9,7 @@ const BUTTON_VARIANTS = {
 };
 
 export default function DialogButtons({
+  autoFocusButton,
   confirmLabel,
   cancelLabel,
   confirmDisabled,
@@ -23,10 +24,10 @@ export default function DialogButtons({
   return (
     <div className={className}>
       {cancelLabel &&
-        <Button variant="secondary" label={cancelLabel} onClick={onCancel} />
+        <Button variant="secondary" label={cancelLabel} onClick={onCancel} autoFocus={autoFocusButton === 'cancel'} />
       }
       {confirmLabel &&
-        <Button variant={confirmVariant} label={confirmLabel} onClick={onConfirm} disabled={confirmDisabled || null} />
+        <Button variant={confirmVariant} label={confirmLabel} onClick={onConfirm} autoFocus={autoFocusButton === 'confirm'} disabled={confirmDisabled || null} />
       }
     </div>
   );

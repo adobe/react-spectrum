@@ -17,6 +17,7 @@ const VARIANTS = {
 @focusRing
 export default class Button extends Component {
   static propTypes = {
+    autoFocus: PropTypes.bool,
     block: PropTypes.bool,
     disabled: PropTypes.bool,
     element: PropTypes.string,
@@ -34,6 +35,7 @@ export default class Button extends Component {
   };
 
   static defaultProps = {
+    autoFocus: false,
     block: false,
     disabled: false,
     element: 'button',
@@ -44,6 +46,13 @@ export default class Button extends Component {
     selected: false,
     variant: 'secondary'
   };
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      // wait a frame to make sure the button in the DOM and focusable
+      requestAnimationFrame(() => this.focus());
+    }
+  }
 
   focus() {
     if (this.buttonRef && !this.props.disabled) {

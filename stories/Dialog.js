@@ -3,9 +3,11 @@ import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
+import Textfield from '../src/Textfield';
 import {VerticalCenter} from '../.storybook/layout';
 
 const dialogChildren = <span>Content of the dialog</span>;
+const childTextfield = <label>autoFocus<br /><Textfield autoFocus /></label>;
 
 storiesOf('Dialog', module)
   .addDecorator(story => (
@@ -76,6 +78,21 @@ storiesOf('Dialog', module)
   .addWithInfo(
     'backdropClickable: true',
     () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'autoFocusButton: \'cancel\'',
+    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'autoFocusButton: \'confirm\'',
+    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'autoFocus descendant TextField',
+    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
   );
 

@@ -4,6 +4,7 @@ import Button from '../../src/Button';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
+import {sleep} from '../utils';
 
 describe('Button', () => {
   it('supports different elements', () => {
@@ -142,6 +143,14 @@ describe('Button', () => {
     tree.unmount();
   });
 
+  it('supports autoFocus', async () => {
+    const tree = mount(<Button autoFocus />);
+    assert(!tree.getDOMNode().getAttribute('autoFocus'));
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+  
   describe('receives focus', () => {
     let tree;
     const focusSpy = sinon.spy();

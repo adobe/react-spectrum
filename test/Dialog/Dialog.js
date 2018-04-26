@@ -1,8 +1,8 @@
 import assert from 'assert';
 import Dialog from '../../src/Dialog';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
 
@@ -134,6 +134,28 @@ describe('Dialog', () => {
     assert(stub.calledOnce);
     await sleep(1);
     assert(!onClose.calledOnce);
+  });
+
+  it('supports autoFocusButton=\'confirm\'', async () => {
+    let tree = mount(<Dialog cancelLabel="Cancel" confirmLabel="Go" autoFocusButton="confirm" />);
+    let dialogButtons = tree.find('DialogButtons');
+    assert.equal(dialogButtons.prop('autoFocusButton'), 'confirm');
+    let buttons = dialogButtons.find('Button');
+    await sleep(17);
+    assert(!buttons.at(1).getDOMNode().getAttribute('autoFocus'));
+    assert.equal(document.activeElement, buttons.at(1).getDOMNode());
+    tree.unmount();
+  });
+
+  it('supports autoFocusButton=\'cancel\'', async () => {
+    let tree = mount(<Dialog cancelLabel="Cancel" confirmLabel="Go" autoFocusButton="cancel" />);
+    let dialogButtons = tree.find('DialogButtons');
+    assert.equal(dialogButtons.prop('autoFocusButton'), 'cancel');
+    let buttons = dialogButtons.find('Button');
+    await sleep(17);
+    assert(!buttons.at(0).getDOMNode().getAttribute('autoFocus'));
+    assert.equal(document.activeElement, buttons.at(0).getDOMNode());
+    tree.unmount();
   });
 
   it('supports disabling confirm button', () => {
