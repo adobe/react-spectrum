@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -170,7 +171,7 @@ export default class ButtonGroup extends Component {
           aria-invalid={invalid || null}
           aria-required={required || null}
           aria-disabled={disabled || null}
-          {...otherProps}
+          {...filterDOMProps(otherProps)}
           className={classNames('spectrum-ButtonGroup', className)}>
           {this.renderButtons(children)}
         </div>

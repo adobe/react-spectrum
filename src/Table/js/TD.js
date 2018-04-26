@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 
 export default function TD({
@@ -14,7 +15,7 @@ export default function TD({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </td>
   );

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 
 export default function TBody({
@@ -14,7 +15,7 @@ export default function TBody({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </tbody>
   );

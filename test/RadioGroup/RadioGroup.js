@@ -70,7 +70,7 @@ describe('RadioGroup', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<RadioGroup foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<RadioGroup aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 });

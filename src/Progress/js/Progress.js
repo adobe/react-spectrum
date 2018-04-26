@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
@@ -35,7 +36,7 @@ export default function Progress({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={value}
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {label &&
         <div className="spectrum-Loader--bar-label">{label}</div>
       }

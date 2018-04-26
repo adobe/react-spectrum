@@ -1,3 +1,4 @@
+import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
@@ -11,7 +12,7 @@ export default function StatusLight({variant = variants[0], children, ...otherPr
   return (
     <div
       className={`spectrum-StatusLight spectrum-StatusLight--${variant}`}
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </div>
   );

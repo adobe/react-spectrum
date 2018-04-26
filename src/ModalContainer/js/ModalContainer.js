@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator';
 import BaseModal from 'react-overlays/lib/Modal';
 import classNames from 'classnames';
 import closest from 'dom-helpers/query/closest';
+import filterDOMProps from '../../utils/filterDOMProps';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
@@ -115,6 +116,6 @@ export class Modal extends React.Component {
 class Underlay extends React.Component {
   render() {
     let {open, ...props} = this.props;
-    return <div {...props} className={classNames('spectrum-Underlay', {'is-open': open})} />;
+    return <div {...filterDOMProps(props)} className={classNames('spectrum-Underlay', {'is-open': open})} />;
   }
 }

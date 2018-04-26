@@ -92,8 +92,8 @@ describe('Button', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Button foo>My Heading</Button>);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Button data-foo>My Heading</Button>);
+    assert.equal(tree.prop('data-foo'), true);
   });
 
   it('supports children', () => {

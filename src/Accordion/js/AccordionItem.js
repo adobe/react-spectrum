@@ -1,6 +1,7 @@
 import AccordionChevron from '../../Icon/core/AccordionChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -51,11 +52,9 @@ export default class AccordionItem extends Component {
       ...otherProps
     } = this.props;
 
-    delete otherProps.tabIndex;
-
     return (
       <div
-        {...otherProps}
+        {...filterDOMProps(otherProps)}
         className={
           classNames(
             'spectrum-Accordion-item',

@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import Star from '../../Icon/core/Star';
 import StarOutline from '../../Icon/core/StarOutline';
@@ -95,7 +96,7 @@ export default class Rating extends React.Component {
           style={{width: (24 * max) + 'px'}}
           disabled={disabled || null}
           onInput={!disabled ? this.onInput.bind(this) : null}
-          {...otherProps} />
+          {...filterDOMProps(otherProps)} />
         {ratings}
       </div>
     );

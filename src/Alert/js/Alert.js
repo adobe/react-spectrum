@@ -3,6 +3,7 @@ import AlertHelp from '../../Icon/core/AlertHelp';
 import AlertInfo from '../../Icon/core/AlertInfo';
 import AlertSuccess from '../../Icon/core/AlertSuccess';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
@@ -33,7 +34,7 @@ export default function Alert({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       <AlertIcon size={null} className="spectrum-Alert-icon" aria-label={variant} />
       <div className="spectrum-Alert-header">{header}</div>
       <div className="spectrum-Alert-content">{children}</div>

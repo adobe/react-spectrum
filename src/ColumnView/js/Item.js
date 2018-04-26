@@ -1,5 +1,6 @@
 import Checkbox from '../../Checkbox';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import MillerColumnRightChevron from '../../Icon/core/MillerColumnRightChevron';
 import React from 'react';
 
@@ -26,7 +27,7 @@ export default class Item extends React.Component {
     });
 
     return (
-      <div className={className} {...props}>
+      <div className={className} {...filterDOMProps(props)}>
         {allowsSelection && allowsBranchSelection && this.renderCheckbox()}
         <span className="spectrum-MillerColumn-itemLabel">{renderItem(item.item)}</span>
         {item.hasChildren && this.renderChevron()}

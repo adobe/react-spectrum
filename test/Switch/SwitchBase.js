@@ -99,8 +99,8 @@ describe('SwitchBase', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<SwitchBase foo />);
-    assert.equal(findInput(tree).prop('foo'), true);
+    const tree = shallow(<SwitchBase aria-foo />);
+    assert.equal(findInput(tree).prop('aria-foo'), true);
   });
 
   it('supports not rendering a label', () => {

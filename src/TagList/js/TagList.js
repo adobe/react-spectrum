@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import Tag from './Tag';
 import '../style/index.styl';
@@ -76,14 +77,11 @@ export default class TagList extends React.Component {
       ...otherProps
     } = this.props;
 
-    delete otherProps.onClose;
-    delete otherProps.values;
-
     const {focused} = this.state;
 
     return (
       <div
-        {...otherProps}
+        {...filterDOMProps(otherProps)}
         className={
           classNames(
             'spectrum-TagList',

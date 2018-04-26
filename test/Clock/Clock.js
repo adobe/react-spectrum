@@ -150,8 +150,8 @@ describe('Clock', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Clock foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Clock aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 });
 

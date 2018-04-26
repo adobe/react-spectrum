@@ -62,8 +62,8 @@ describe('Tag', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Tag foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Tag aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('supports an icon', () => {

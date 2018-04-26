@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -118,12 +119,6 @@ export default class Accordion extends Component {
       ...otherProps
     } = this.props;
 
-    // Prevent defaultSelectedIndex and selectedIndex from getting passed to div and causing a
-    // warning.
-    delete otherProps.selectedIndex;
-    delete otherProps.defaultSelectedIndex;
-    delete otherProps.ariaLevel;
-
     // We don't need/want to add onChange to the div because we call it manually when we hear that
     // an accordion item has been clicked. If we were to add the handler to the div, it would be
     // called every time any input inside the accordion is changed.
@@ -132,7 +127,7 @@ export default class Accordion extends Component {
     return (
       <FocusManager itemSelector={ACCORDION_ITEM_HEADER_SELECTOR} manageTabIndex={false}>
         <div
-          {...otherProps}
+          {...filterDOMProps(otherProps)}
           className={
             classNames(
               'spectrum-Accordion',

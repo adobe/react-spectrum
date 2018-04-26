@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import OverlayTrigger from '../../OverlayTrigger';
 import React from 'react';
 import Tooltip from '../../Tooltip';
@@ -23,7 +24,7 @@ export default function Step({
       )}
       role="tab"
       aria-selected={selected}
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       <div className="spectrum-Steplist-label">
         {(size !== SMALL) && children}
       </div>

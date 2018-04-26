@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
@@ -109,7 +110,7 @@ export default class SwitchBase extends Component {
           onBlur={onBlur}
           onFocus={onFocus}
           aria-invalid={invalid || null}
-          {...otherProps} />
+          {...filterDOMProps(otherProps)} />
         <span className={markClassName}>{markIcon}</span>
         {shouldRenderLabel &&
           <span className={labelClassName}>

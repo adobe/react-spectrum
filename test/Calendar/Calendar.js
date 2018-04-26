@@ -681,8 +681,8 @@ describe('Calendar', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Calendar foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Calendar aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   describe('When aria-labelledby prop', () => {

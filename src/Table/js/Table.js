@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
@@ -19,7 +20,7 @@ export default function Table({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </table>
   );

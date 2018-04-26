@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -104,11 +105,9 @@ export default class Button extends Component {
     let iconOnly = icon && !(label || children);
     let labelContents = label || (typeof children === 'string' ? children : null);
 
-    delete otherProps.modalTrigger;
-
     return (
       <Element
-        {...otherProps}
+        {...filterDOMProps(otherProps)}
         className={
           classNames(
             'spectrum-Button',

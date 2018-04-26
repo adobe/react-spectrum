@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
@@ -19,7 +20,7 @@ export default function Label({size, children, variant = variants[0], ...otherPr
           {[`spectrum-Label--${sizeClassPart}`]: !!sizeClassPart}
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </span>
   );

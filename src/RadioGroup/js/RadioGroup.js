@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -77,7 +78,7 @@ export default class RadioGroup extends Component {
             className
           )
         }
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         {
           React.Children.map(children, child => {
             const {value, onChange} = child.props;

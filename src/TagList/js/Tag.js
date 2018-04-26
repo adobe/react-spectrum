@@ -1,6 +1,7 @@
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import TagClose from '../../Icon/core/TagClose';
 import '../style/index.styl';
@@ -35,7 +36,7 @@ export default function Tag({
       tabIndex={!disabled && selected ? 0 : -1}
       aria-selected={!disabled && selected}
       aria-label={ariaLabel}
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {avatar &&
         <img className="spectrum-TagList-item-avatar" alt="" src={avatar} aria-hidden="true" />
       }

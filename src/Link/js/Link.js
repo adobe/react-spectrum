@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
@@ -17,7 +18,7 @@ export default function Link({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       {children}
     </a>
   );

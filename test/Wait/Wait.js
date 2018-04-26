@@ -31,7 +31,7 @@ describe('Wait', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Wait foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Wait aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 });

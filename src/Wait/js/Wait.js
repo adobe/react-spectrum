@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
@@ -22,7 +23,7 @@ export default function Wait({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       <div className="spectrum-Loader-track" />
       <div className="spectrum-Loader-fills">
         <div className="spectrum-Loader-fill-mask-1">

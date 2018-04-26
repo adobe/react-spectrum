@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
@@ -57,7 +58,7 @@ export default class Tab extends Component {
 
     return (
       <div
-        {...otherProps}
+        {...filterDOMProps(otherProps)}
         className={
           classNames(
             'spectrum-TabList-item',

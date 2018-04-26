@@ -10,8 +10,8 @@ describe('TBody', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(render({foo: true}));
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(render({'aria-foo': true}));
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('supports children', () => {

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -21,7 +22,7 @@ export default class Grid extends Component {
     }, className);
 
     return (
-      <div className={classes} {...otherProps}>
+      <div className={classes} {...filterDOMProps(otherProps)}>
         {children}
       </div>
     );

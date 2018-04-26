@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -24,15 +25,6 @@ export default class List extends Component {
       ...otherProps
     } = this.props;
 
-    delete otherProps.arrowOffsetLeft;
-    delete otherProps.arrowOffsetTop;
-    delete otherProps.arrowStyle;
-    delete otherProps.crossOffset;
-    delete otherProps.dropdownMenu;
-    delete otherProps.positionLeft;
-    delete otherProps.positionTop;
-    delete otherProps.maxHeight;
-
     return (
       <FocusManager itemSelector={LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR} selectedItemSelector={SELECTED_LIST_ITEM_SELECTOR} autoFocus={autoFocus}>
         <ul
@@ -44,7 +36,7 @@ export default class List extends Component {
             )
           }
           role={role}
-          {...otherProps}>
+          {...filterDOMProps(otherProps)}>
           {children}
         </ul>
       </FocusManager>

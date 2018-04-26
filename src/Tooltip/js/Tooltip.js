@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -39,8 +40,6 @@ export default class Tooltip extends Component {
       ...otherProps
     } = this.props;
 
-    delete otherProps.arrowStyle;
-
     return (
       <span
         className={
@@ -55,7 +54,7 @@ export default class Tooltip extends Component {
           )
         }
         id={id}
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         <span className="spectrum-Tooltip-label">{children}</span>
         <span className="spectrum-Tooltip-tip" />
       </span>

@@ -31,8 +31,8 @@ describe('Pagination', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Pagination foo className="className" />, {disableLifecycleMethods: true});
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Pagination aria-foo className="className" />, {disableLifecycleMethods: true});
+    assert.equal(tree.prop('aria-foo'), true);
     assert.equal(tree.prop('className'), 'className');
   });
 

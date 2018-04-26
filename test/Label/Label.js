@@ -23,8 +23,8 @@ describe('Label', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Label foo>Testing</Label>);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Label data-foo>Testing</Label>);
+    assert.equal(tree.prop('data-foo'), true);
   });
 
   it('supports children', () => {

@@ -1,6 +1,7 @@
 import AlertError from '../../Icon/core/AlertError';
 import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
+import filterDOMProps from '../../utils/filterDOMProps';
 import Heading from '../../Heading';
 import React from 'react';
 
@@ -21,12 +22,10 @@ export default function DialogHeader({
   ...otherProps
 }) {
   let Icon = VARIANT_ICONS[variant];
-  delete otherProps.backdropClickable;
-  delete otherProps.backdropEnabled;
 
   return (
     <div
-      {...otherProps}
+      {...filterDOMProps(otherProps)}
       className={classNames(
         'spectrum-Dialog-header',
         `spectrum-Dialog-header--${variant}`,

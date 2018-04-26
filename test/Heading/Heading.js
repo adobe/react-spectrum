@@ -20,8 +20,8 @@ describe('Heading', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Heading foo>My Heading</Heading>);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Heading data-foo>My Heading</Heading>);
+    assert.equal(tree.prop('data-foo'), true);
   });
 
   it('supports children', () => {

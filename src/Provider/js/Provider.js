@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import configureTypekit from '../../utils/configureTypekit';
 import {defaultLocale, setLocale} from '../../utils/intl';
+import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../../focus-ring-polyfill';
@@ -48,7 +49,7 @@ export default class Provider extends Component {
     return (
       <div
         className={classNames(className, 'react-spectrum-provider', 'spectrum', `spectrum--${theme}`)}
-        {...props}>
+        {...filterDOMProps(props)}>
         {children}
       </div>
     );

@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
+import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -55,7 +56,7 @@ export default class Popover extends Component {
             className
           )
         }
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         {isDialog && title &&
           <DialogHeader
             title={title}

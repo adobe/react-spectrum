@@ -16,8 +16,8 @@ describe('Provider', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Provider foo />);
-    assert.equal(tree.prop('foo'), true);
-    assert.equal(tree.shallow().find('div').prop('foo'), true);
+    const tree = shallow(<Provider aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
+    assert.equal(tree.shallow().find('div').prop('aria-foo'), true);
   });
 });

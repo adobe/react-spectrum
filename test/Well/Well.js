@@ -10,8 +10,8 @@ describe('Well', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Well foo>My Well</Well>);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Well aria-foo>My Well</Well>);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('supports children', () => {

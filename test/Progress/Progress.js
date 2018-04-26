@@ -78,8 +78,8 @@ describe('Progress', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Progress foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Progress aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 });
 

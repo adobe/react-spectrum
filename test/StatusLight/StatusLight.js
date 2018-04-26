@@ -15,8 +15,8 @@ describe('StatusLight', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<StatusLight foo>Testing</StatusLight>);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<StatusLight aria-foo>Testing</StatusLight>);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('supports children', () => {

@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import {Menu} from '../../Menu';
 import OverlayTrigger from '../../OverlayTrigger';
 import PropTypes from 'prop-types';
@@ -58,10 +59,8 @@ export default class Dropdown extends React.Component {
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
     const menuId = menu.props.id || this.dropdownId + '-menu';
 
-    delete otherProps.onClose;
-
     return (
-      <div {...otherProps}>
+      <div {...filterDOMProps(otherProps)}>
         {children.map((child, index) => {
           if (child === trigger) {
             return (

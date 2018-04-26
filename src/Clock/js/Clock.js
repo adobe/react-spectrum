@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import {clamp} from '../../utils/number';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, toMoment} from '../../utils/moment';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -187,7 +188,7 @@ export default class Clock extends Component {
         aria-invalid={invalid}
         aria-readonly={readOnly}
         aria-required={required}
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         <Textfield
           ref={el => {this.hourRef = el; }}
           className="react-spectrum-Clock-hour"

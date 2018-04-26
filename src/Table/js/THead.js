@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 
 export default function THead({
@@ -14,7 +15,7 @@ export default function THead({
           className
         )
       }
-      {...otherProps}>
+      {...filterDOMProps(otherProps)}>
       <tr>{children}</tr>
     </thead>
   );

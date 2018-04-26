@@ -25,8 +25,8 @@ describe('Alert', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Alert foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Alert aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('supports multiple variants', () => {

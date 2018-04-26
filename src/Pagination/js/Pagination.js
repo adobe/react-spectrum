@@ -3,6 +3,7 @@ import Button from '../../Button';
 import CarouselLeftChevron from '../../Icon/core/CarouselLeftChevron';
 import CarouselRightChevron from '../../Icon/core/CarouselRightChevron';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
@@ -102,18 +103,14 @@ export default class Pagination extends Component {
       ...otherProps
     } = this.props;
 
-    delete otherProps.currentPage;
-    delete otherProps.defaultPage;
     delete otherProps.onChange;
-    delete otherProps.onPrevious;
-    delete otherProps.onNext;
 
     const {pageInput} = this.state;
     const isButtonMode = variant === 'button';
     const buttonVariant = isButtonMode ? mode : 'icon';
 
     return (
-      <nav {...otherProps}>
+      <nav {...filterDOMProps(otherProps)}>
         <Button
           onClick={this.onPrevious}
           variant={buttonVariant}

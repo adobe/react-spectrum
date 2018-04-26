@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import responsive from './responsive';
 
@@ -28,7 +29,7 @@ export default class GridRow extends Component {
     );
 
     return (
-      <div className={classes} {...otherProps}>
+      <div className={classes} {...filterDOMProps(otherProps)}>
         {children}
       </div>
     );

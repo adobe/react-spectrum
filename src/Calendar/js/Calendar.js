@@ -5,6 +5,7 @@ import CarouselRightChevron from '../../Icon/core/CarouselRightChevron';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
+import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
 import {getLocale, messageFormatter} from '../../utils/intl';
 import intlMessages from '../intl/*.json';
@@ -595,7 +596,6 @@ export default class Calendar extends Component {
     let ariaLabelledby = headingId;
 
     delete otherProps.autoFocus;
-    delete otherProps.startDay;
     delete otherProps.required;
 
     // If Calendar is labelled by an external element, concatenate id to include the external label and the Calendar Month/Year heading
@@ -618,7 +618,7 @@ export default class Calendar extends Component {
         }
         role="group"
         aria-labelledby={ariaLabelledby}
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
         <div className="spectrum-Calendar-header">
           {/* Calendar Month/Year is the default aria-labelledby element and is a live region that should announce when the Month/Year changes */}

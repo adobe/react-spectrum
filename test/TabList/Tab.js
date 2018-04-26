@@ -64,8 +64,8 @@ describe('Tab', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Tab foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Tab aria-foo />);
+    assert.equal(tree.prop('aria-foo'), true);
   });
 
   it('stops from rendering the props.children as tab content if prop is set', () => {
