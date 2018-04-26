@@ -7,7 +7,8 @@ import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
 import ReactDOM from 'react-dom';
-import '../style/index.styl';
+
+importSpectrumCSS('underlay');
 
 let MODAL_KEY = 1;
 

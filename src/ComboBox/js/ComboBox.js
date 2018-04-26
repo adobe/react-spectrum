@@ -1,13 +1,14 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import Button from '../../Button';
+import {chain} from '../../utils/events';
 import classNames from 'classnames';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import Textfield from '../../Textfield';
-import '../../InputGroup/style/index.styl';
-import {chain} from '../../utils/events';
+
+importSpectrumCSS('inputgroup');
 
 const getLabel = o => (typeof o === 'string' ? o : o.label);
 

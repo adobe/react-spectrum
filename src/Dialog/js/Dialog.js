@@ -4,7 +4,8 @@ import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('dialog');
 
 @autobind
 export default class Dialog extends Component {

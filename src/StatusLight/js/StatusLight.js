@@ -1,7 +1,8 @@
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('statuslight');
 
 const variants = [
   'celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple',

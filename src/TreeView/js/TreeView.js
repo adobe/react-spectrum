@@ -1,11 +1,13 @@
 import autobind from 'autobind-decorator';
+import classNames from 'classnames';
 import {CSSLayout, DragTarget, EditableCollectionView} from '@react/collection-view';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TreeItem from './TreeItem';
 import '../style/index.styl';
-import classNames from 'classnames';
+
+importSpectrumCSS('treeview');
 
 /**
  * TreeView renders a collapseable heirarchical tree

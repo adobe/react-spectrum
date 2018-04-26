@@ -7,6 +7,9 @@ import React, {Component} from 'react';
 import '../../focus-ring-polyfill';
 import '../style/index.styl';
 
+importSpectrumCSS('page');
+importSpectrumCSS('typography');
+
 export default class Provider extends Component {
   static propTypes = {
     theme: PropTypes.oneOf(['light', 'lightest', 'dark', 'darkest']),

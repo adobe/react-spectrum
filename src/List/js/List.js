@@ -5,6 +5,8 @@ import FocusManager from '../../utils/FocusManager';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
+importSpectrumCSS('selectlist');
+
 const LIST_ITEM_SELECTOR = '.spectrum-SelectList-item';
 const NOT_DISABLED_SELECTOR = ':not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR + '.is-selected';

@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('fieldlabel');
 
 export default function FieldLabel({label, position, children, className, labelFor, ...otherProps}) {
   // There are 3 cases:

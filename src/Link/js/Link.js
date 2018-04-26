@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('link');
 
 export default function Link({
   subtle,

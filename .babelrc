@@ -15,6 +15,7 @@
     "transform-object-rest-spread",
     "transform-export-extensions",
     "transform-async-to-generator",
-    "transform-glob-import"
+    "transform-glob-import",
+    "./bin/import-css.js"
   ]
 }

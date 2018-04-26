@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
+importSpectrumCSS('slider');
+
 const formatMessage = messageFormatter(intlMessages);
 
 const INPUT_POSTFIX = 'Input';

@@ -3,6 +3,8 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
+importSpectrumCSS('loader');
+
 export default function Wait({
   size = 'M',
   centered = false,

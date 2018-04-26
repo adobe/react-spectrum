@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import SwitchBase from './SwitchBase';
-import '../style/index.styl';
+
+importSpectrumCSS('toggle');
 
 export default function Switch({
   variant, // 'ab'

@@ -4,7 +4,8 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('button');
 
 // For backward compatibility with coral
 const VARIANTS = {

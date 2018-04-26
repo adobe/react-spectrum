@@ -1,7 +1,8 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('textfield');
 
 @autobind
 export default class Textfield extends Component {

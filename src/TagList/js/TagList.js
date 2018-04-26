@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import Tag from './Tag';
-import '../style/index.styl';
+
+importSpectrumCSS('taglist');
 
 export default class TagList extends React.Component {
   static displayName = 'TagList';

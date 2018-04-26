@@ -3,7 +3,8 @@ import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
 import More from '../../Icon/core/More';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('actionmenu');
 
 export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, ...props}) {
   return (

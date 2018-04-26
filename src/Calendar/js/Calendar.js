@@ -14,6 +14,8 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
+importSpectrumCSS('calendar');
+
 const formatMessage = messageFormatter(intlMessages);
 
 @autobind

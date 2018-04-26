@@ -3,7 +3,8 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('accordion');
 
 /**
  * selectedIndex: The index of the AccordionItem that should be selected (open). If multiselectable

@@ -3,7 +3,8 @@ import classNames from 'classnames';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TabListBase from './TabListBase';
-import '../style/index.styl';
+
+importSpectrumCSS('tablist');
 
 /**
  * selectedIndex: The index of the Tab that should be selected (open). When selectedIndex is

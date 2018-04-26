@@ -3,7 +3,8 @@ import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('tooltip');
 
 export default class Tooltip extends Component {
   static propTypes = {

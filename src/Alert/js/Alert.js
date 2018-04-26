@@ -5,7 +5,8 @@ import AlertSuccess from '../../Icon/core/AlertSuccess';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('alert');
 
 const ICONS = {
   error: AlertError,

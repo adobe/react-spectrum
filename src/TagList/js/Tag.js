@@ -4,7 +4,8 @@ import {cloneIcon} from '../../utils/icon';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import TagClose from '../../Icon/core/TagClose';
-import '../style/index.styl';
+
+importSpectrumCSS('taglist');
 
 export default function Tag({
   value,

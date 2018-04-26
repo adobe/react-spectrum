@@ -4,6 +4,9 @@ import configureTypekit from '../utils/configureTypekit';
 
 export {setLocale} from '../utils/intl';
 
+importSpectrumCSS('page');
+importSpectrumCSS('typography');
+
 if (process.browser) {
   configureTypekit('ruf7eed');
   if (!/coral--/.test(document.body.className)) {

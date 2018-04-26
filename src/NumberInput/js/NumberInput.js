@@ -9,7 +9,8 @@ import ReactDOM from 'react-dom';
 import StepperDownChevron from '../../Icon/core/StepperDownChevron';
 import StepperUpChevron from '../../Icon/core/StepperUpChevron';
 import Textfield from '../../Textfield';
-import '../style/index.styl';
+
+importSpectrumCSS('stepper');
 
 @autobind
 export default class NumberInput extends Component {

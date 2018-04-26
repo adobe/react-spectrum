@@ -4,7 +4,8 @@ import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
 import React from 'react';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
-import '../style/index.styl';
+
+importSpectrumCSS('splitbutton');
 
 export default function SplitButton({className, onSelect, children, ...props}) {
   return (

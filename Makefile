@@ -40,7 +40,9 @@ jenkins_test: lint
 build:
 	rm -rf dist
 	cp -R src dist
-	babel dist -d dist
+	cp -R node_modules/@spectrum/spectrum-css/dist/components dist/spectrum-css
+	find dist/spectrum-css -name colorStops -exec rm -rf {} +;
+	BUILD_ENV=production babel dist -d dist
 	find dist \( -name index.styl -o -name "Shell*.styl" \) -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
 	find dist -name "*.styl" -delete
 	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;

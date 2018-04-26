@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import TabListBase from '../../TabList/js/TabListBase';
-import '../style/index.styl';
+
+importSpectrumCSS('steplist');
 
 const SMALL = 'S';
 const LARGE = 'L';

@@ -2,7 +2,8 @@ import CheckboxCheckmark from '../../Icon/core/CheckboxCheckmark';
 import classNames from 'classnames';
 import React, {Component} from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
-import '../style/index.styl';
+
+importSpectrumCSS('checkbox');
 
 export default class Checkbox extends Component {
   static defaultProps = {

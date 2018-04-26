@@ -8,7 +8,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import SelectList from '../../SelectList';
-import '../style/index.styl';
+
+importSpectrumCSS('dropdown');
 
 export default class Select extends React.Component {
   static propTypes = {

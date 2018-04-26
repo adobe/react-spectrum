@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('label');
 
 const variants = [
   'grey', 'green', 'blue', 'red', 'orange', 'and', 'or', 'active', 'inactive'

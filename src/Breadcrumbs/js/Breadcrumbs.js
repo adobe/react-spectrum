@@ -4,6 +4,8 @@ import {cloneIcon} from '../../utils/icon';
 import React from 'react';
 import '../style/index.styl';
 
+importSpectrumCSS('breadcrumb');
+
 export default class Breadcrumbs extends React.Component {
   static variant = {
     NONE: 'none',

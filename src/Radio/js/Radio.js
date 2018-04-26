@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
-import '../style/index.styl';
+
+importSpectrumCSS('radio');
 
 export default function Radio({
   className,

@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('fieldgroup');
 
 export default class RadioGroup extends Component {
   static defaultProps = {

@@ -5,6 +5,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../style/index.styl';
 
+importSpectrumCSS('miller');
+
 /**
  * The top-level column view renders a list of columns
  */

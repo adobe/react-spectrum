@@ -90,6 +90,23 @@ module.exports = {
 }
 ```
 
+### Specify themes which you want to include
+
+You can specify the themes which you want to be included/excluded in build by passing enviroment variables to your application's build process, for example: `THEME_LIGHT=true THEME_DARK=true make build`. If you don't pass anything, all themes are imported.
+
+In webpack, you can use `DefinePlugin` to specify environment variables.
+
+```javascript
+module.exports = {
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.THEME_LIGHTEST': 'true',
+      'process.env.THEME_DARKEST': 'true'
+    })
+  ]
+}
+```
+
 ### Manifest
 
 React Spectrum allows you to import only the components you need rather than bloating your application with unused components. If you would like to import multiple components in one import statement, you can add a manifest to your own application.

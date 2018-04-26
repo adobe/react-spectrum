@@ -5,7 +5,8 @@ import React, {Component} from 'react';
 import SearchClear from '../../Icon/core/SearchClear';
 import SearchMagGlass from '../../Icon/core/SearchMagGlass';
 import Textfield from '../../Textfield';
-import '../style/index.styl';
+
+importSpectrumCSS('search');
 
 export default class Search extends Component {
   static defaultProps = {

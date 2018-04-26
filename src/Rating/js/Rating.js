@@ -5,7 +5,8 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import Star from '../../Icon/core/Star';
 import StarOutline from '../../Icon/core/StarOutline';
-import '../style/index.styl';
+
+importSpectrumCSS('rating');
 
 @autobind
 export default class Rating extends React.Component {

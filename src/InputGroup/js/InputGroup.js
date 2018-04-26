@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('inputgroup');
 
 export default function InputGroup({quiet, focused, invalid, disabled, className, children, ...otherProps}) {
   return (

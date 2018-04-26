@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('well');
 
 export default function Well({
   children,

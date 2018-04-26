@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Toast from './Toast';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
+import '../style/index.styl';
 
 const TOAST_CONTAINERS = new Map;
 const TOAST_TIMEOUT = 5000;

@@ -9,7 +9,8 @@ import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
-import '../style/index.styl';
+
+importSpectrumCSS('pagination');
 
 const formatMessage = messageFormatter(intlMessages);
 

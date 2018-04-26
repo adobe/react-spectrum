@@ -4,7 +4,8 @@ import AlertSuccess from '../../Icon/core/AlertSuccess';
 import classNames from 'classnames';
 import React from 'react';
 import ToastClose from '../../Icon/core/ToastClose';
-import '../style/index.styl';
+
+importSpectrumCSS('toast');
 
 const ICONS = {
   error: AlertError,

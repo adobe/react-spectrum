@@ -4,7 +4,9 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
-import '../../Dialog/style/index.styl';
+
+importSpectrumCSS('popover');
+importSpectrumCSS('dialog');
 
 export default class Popover extends Component {
   static propTypes = {

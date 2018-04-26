@@ -6,8 +6,9 @@ import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
 import TableViewLayout from './TableViewLayout';
-import '../../Table/style/index.styl';
 import '../style/index.styl';
+
+importSpectrumCSS('table');
 
 @autobind
 export default class TableView extends Component {
