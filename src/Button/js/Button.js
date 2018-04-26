@@ -147,6 +147,13 @@ export default class Button extends Component {
 
     let labelContents = label || (typeof children === 'string' ? children : null);
 
+    let ariaExpanded = null;
+    if (otherProps['aria-expanded'] !== undefined) {
+      ariaExpanded = otherProps['aria-expanded'];
+    } else if (otherProps['aria-haspopup']) {
+      ariaExpanded = selected || null;
+    }
+
     return (
       <Element
         {...filterDOMProps(otherProps)}
@@ -165,7 +172,7 @@ export default class Button extends Component {
         }
         disabled={disabled}
         aria-invalid={invalid || null}
-        aria-expanded={otherProps['aria-haspopup'] ? selected : undefined}
+        aria-expanded={ariaExpanded}
         onClick={this.onClick}
         onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
         onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}

@@ -77,6 +77,22 @@ describe('Button', () => {
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--secondary is-selected');
   });
 
+  describe('supports aria-expanded', () => {
+    it('when aria-haspopup is true', () => {
+      const tree = shallow(<Button aria-haspopup />);
+      assert.equal(tree.prop('aria-expanded'), null);
+      tree.setProps({selected: true});
+      assert.equal(tree.prop('aria-expanded'), true);
+    });
+
+    it('when prop is explicitly set', () => {
+      const tree = shallow(<Button aria-expanded />);
+      assert.equal(tree.prop('aria-expanded'), true);
+      tree.setProps({'aria-expanded': false});
+      assert.equal(tree.prop('aria-expanded'), false);
+    });
+  });
+
   it('supports quiet', () => {
     const tree = shallow(<Button quiet variant="primary" />);
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet--primary');
