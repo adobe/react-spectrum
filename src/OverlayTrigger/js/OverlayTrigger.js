@@ -85,6 +85,7 @@ export default class OverlayTrigger extends Component {
     offset: PropTypes.number,
     crossOffset: PropTypes.number,
     flip: PropTypes.bool,
+    disabled: PropTypes.bool,
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
     ])
@@ -97,6 +98,7 @@ export default class OverlayTrigger extends Component {
     offset: 0,
     crossOffset: 0,
     flip: true,
+    disabled: false,
     boundariesElement: 'container'
   };
 
@@ -118,7 +120,12 @@ export default class OverlayTrigger extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const isDisabled = prevProps.disabled;
+    const shouldDisable = this.props.disabled;
+    if (!isDisabled && shouldDisable) {
+      this.hide();
+    }
     this.renderOverlay();
   }
 
@@ -210,7 +217,7 @@ export default class OverlayTrigger extends Component {
   }
 
   show(e) {
-    if (!this.state.show) {
+    if (!this.state.show && !this.props.disabled) {
       this.setState({show: true});
       if (this.props.onShow) {
         this.props.onShow(e);

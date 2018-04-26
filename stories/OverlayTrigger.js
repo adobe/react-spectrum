@@ -67,6 +67,11 @@ storiesOf('OverlayTrigger', module)
     {inline: true}
   )
   .addWithInfo(
+    'disabled',
+    () => render('popover', {disabled: true, trigger: 'hover', placement: 'right'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'with: nested overlay (autocomplete)',
     () => render('nestedPopover', {trigger: 'click', placement: 'right', variant: 'error'}),
     {inline: true}
