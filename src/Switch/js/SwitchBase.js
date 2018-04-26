@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
@@ -36,6 +37,12 @@ export default class SwitchBase extends Component {
       this.setState({
         checked: nextProps.checked
       });
+    }
+  }
+
+  focus() {
+    if (this.inputRef && !this.disabled) {
+      this.inputRef.focus();
     }
   }
 
@@ -78,6 +85,8 @@ export default class SwitchBase extends Component {
       labelClassName,
       onBlur,
       onFocus,
+      onMouseDown,
+      onMouseUp,
       ...otherProps
     } = this.props;
     const {checked} = this.state;
@@ -97,7 +106,7 @@ export default class SwitchBase extends Component {
           )
         }>
         <input
-          ref={el => {this.inputRef = el; }}
+          ref={el => this.inputRef = el}
           type={inputType}
           className={inputClassName}
           checked={checked}
@@ -109,6 +118,8 @@ export default class SwitchBase extends Component {
           onChange={this.handleChange}
           onBlur={onBlur}
           onFocus={onFocus}
+          onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
+          onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
           aria-invalid={invalid || null}
           {...filterDOMProps(otherProps)} />
         <span className={markClassName}>{markIcon}</span>

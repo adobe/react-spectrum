@@ -141,4 +141,61 @@ describe('Button', () => {
     assert.equal(document.activeElement, tree.getDOMNode());
     tree.unmount();
   });
+
+  describe('receives focus', () => {
+    let tree;
+    const focusSpy = sinon.spy();
+    const mouseDownSpy = sinon.spy();
+    const mouseUpSpy = sinon.spy();
+    before(() => {
+      tree = shallow(<Button />);
+      tree.instance().buttonRef = {
+        focus: focusSpy
+      };
+    });
+
+    after(() => {
+      tree.unmount();
+    });
+
+    it('on mouse down', () => {
+      tree.simulate('mouseDown', {type: 'mousedown'});
+      assert.equal(focusSpy.callCount, 1);
+      tree.setProps({onMouseDown: (e) => {
+        e.preventDefault();
+        e.isDefaultPrevented = () => true;
+        mouseDownSpy(e);
+      }});
+      tree.simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 1);
+      assert.equal(mouseDownSpy.callCount, 1);
+      tree.setProps({onMouseDown: (e) => {
+        e.isDefaultPrevented = () => false;
+        mouseDownSpy(e);
+      }});
+      tree.simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 2);
+      assert.equal(mouseDownSpy.callCount, 2);
+    });
+
+    it('on mouse up', () => {
+      tree.simulate('mouseUp', {type: 'mouseup'});
+      assert.equal(focusSpy.callCount, 3);
+      tree.setProps({onMouseUp: (e) => {
+        e.preventDefault();
+        e.isDefaultPrevented = () => true;
+        mouseUpSpy(e);
+      }});
+      tree.simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 3);
+      assert.equal(mouseUpSpy.callCount, 1);
+      tree.setProps({onMouseUp: (e) => {
+        e.isDefaultPrevented = () => false;
+        mouseUpSpy(e);
+      }});
+      tree.simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 4);
+      assert.equal(mouseUpSpy.callCount, 2);
+    });
+  });
 });

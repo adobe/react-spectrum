@@ -93,3 +93,15 @@ export function chain(...callbacks) {
     }
   };
 }
+
+export function focusAfterMouseEvent(handler, event) {
+  if (handler) {
+    handler(event);
+    if (event.isDefaultPrevented()) {
+      return;
+    }
+  }
+  if (typeof this.focus === 'function') {
+    this.focus();
+  }
+}

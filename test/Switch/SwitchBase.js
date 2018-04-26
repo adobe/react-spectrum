@@ -1,6 +1,7 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import SwitchBase from '../../src/Switch/js/SwitchBase';
 
 describe('SwitchBase', () => {
@@ -46,6 +47,14 @@ describe('SwitchBase', () => {
     assert.equal(findInput(tree).prop('defaultChecked'), undefined);
     expectChecked(tree, true);
   });
+
+  it('supports setting checked state through props', () => {
+    let tree = shallow(<SwitchBase />);
+    tree.setProps({checked: true});
+    tree.update();
+    assert.equal(tree.state.checked);
+  });
+
 
   it('supports name', () => {
     const tree = shallow(<SwitchBase name="foo" />);
@@ -134,6 +143,75 @@ describe('SwitchBase', () => {
     const mark = tree.find('.my-label-class');
     assert(mark.getElement());
     assert.equal(mark.type(), 'span');
+  });
+
+  describe('getInput', () => {
+    it('returns ref for input element', () => {
+      const tree = mount(<SwitchBase />);
+      assert.equal(tree.instance().getInput(), findInput(tree).getDOMNode());
+    });
+  });
+
+  describe('receives focus', () => {
+    let tree;
+    const focusSpy = sinon.spy();
+    const mouseDownSpy = sinon.spy();
+    const mouseUpSpy = sinon.spy();
+
+    before(() => {
+      tree = shallow(<SwitchBase />);
+      tree.instance().inputRef = {
+        focus: focusSpy
+      };
+    });
+
+    after(() => {
+      tree.unmount();
+    });
+
+    it('on mouse down', () => {
+      findInput(tree).simulate('mouseDown', {type: 'mousedown'});
+      assert.equal(focusSpy.callCount, 1);
+      tree.setProps({onMouseDown: (e) => {
+        e.preventDefault();
+        e.isDefaultPrevented = () => true;
+        mouseDownSpy(e);
+      }});
+      tree.update();
+      findInput(tree).simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 1);
+      assert.equal(mouseDownSpy.callCount, 1);
+      tree.setProps({onMouseDown: (e) => {
+        e.isDefaultPrevented = () => false;
+        mouseDownSpy(e);
+      }});
+      tree.update();
+      findInput(tree).simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 2);
+      assert.equal(mouseDownSpy.callCount, 2);
+    });
+
+    it('on mouse up', () => {
+      findInput(tree).simulate('mouseUp', {type: 'mouseup'});
+      assert.equal(focusSpy.callCount, 3);
+      tree.setProps({onMouseUp: (e) => {
+        e.preventDefault();
+        e.isDefaultPrevented = () => true;
+        mouseUpSpy(e);
+      }});
+      tree.update();
+      findInput(tree).simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 3);
+      assert.equal(mouseUpSpy.callCount, 1);
+      tree.setProps({onMouseUp: (e) => {
+        e.isDefaultPrevented = () => false;
+        mouseUpSpy(e);
+      }});
+      tree.update();
+      findInput(tree).simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
+      assert.equal(focusSpy.callCount, 4);
+      assert.equal(mouseUpSpy.callCount, 2);
+    });
   });
 });
 

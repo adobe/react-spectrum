@@ -101,6 +101,7 @@ export default class ComboBox extends React.Component {
           variant="dropdown"
           onClick={this.onButtonClick}
           onMouseDown={e => e.preventDefault()}
+          onMouseUp={e => e.preventDefault()}
           disabled={disabled}
           required={required}
           invalid={invalid}

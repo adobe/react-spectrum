@@ -23,17 +23,22 @@ describe('RadioGroup', () => {
   });
 
   describe('selectedValue', () => {
+    const onChangeRadioItem = sinon.spy();
     const renderRadioGroupWithChildren = ({childSelectedIndex, ...otherProps} = {}) => shallow(
       <RadioGroup {...otherProps}>
-        <Radio value="foo" checked={childSelectedIndex === 0} />
-        <Radio value="bar" checked={childSelectedIndex === 1} />
-        <Radio value="foobar" checked={childSelectedIndex === 2} />
+        <Radio value="foo" checked={childSelectedIndex === 0} onChange={onChangeRadioItem} />
+        <Radio value="bar" checked={childSelectedIndex === 1} onChange={onChangeRadioItem} />
+        <Radio value="foobar" checked={childSelectedIndex === 2} onChange={onChangeRadioItem} />
       </RadioGroup>
     );
 
     it('makes the child checked', () => {
       const tree = renderRadioGroupWithChildren({selectedValue: 'bar'});
       assert.equal(tree.childAt(1).prop('checked'), true);
+      tree.setProps({selectedValue: 'foobar'});
+      tree.update();
+      assert.equal(tree.childAt(2).prop('checked'), true);
+      assert.equal(tree.state('selectedValue'), 'foobar');
     });
 
     it('makes the child checked with defaultSelectedValue', () => {
@@ -52,11 +57,16 @@ describe('RadioGroup', () => {
 
       const tree = renderRadioGroupWithChildren({onChange: spy});
       assert(tree.prop('onChange'));
+      assert(tree.childAt(0).prop('onChange'));
+      assert(tree.childAt(1).prop('onChange'));
+      assert(tree.childAt(2).prop('onChange'));
       tree.childAt(1).simulate('change', true, {stopPropagation: stopPropagationSpy});
 
       assert(spy.called);
       assert(spy.calledWith('bar'));
       assert(stopPropagationSpy.called);
+      assert(onChangeRadioItem.called);
+      assert(onChangeRadioItem.calledWith('bar'));
     });
 
     it('throws if child doesn\'t have a value prop', () => {

@@ -50,7 +50,8 @@ describe('ComboBox', () => {
     const textfieldNode = textfield.getDOMNode();
     const instance = tree.instance();
 
-    button.simulate('mousedown', {preventDefault: () => {}});
+    button.simulate('mousedown', {preventDefault: () => {}, isDefaultPrevented: () => true});
+    button.simulate('mouseup', {preventDefault: () => {}, isDefaultPrevented: () => true});
     assert.notEqual(buttonNode, document.activeElement);
 
     // focus button

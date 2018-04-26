@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Checkbox from '../../src/Checkbox';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 
 describe('Checkbox', () => {
   it('has correct defaults', () => {
@@ -17,7 +17,7 @@ describe('Checkbox', () => {
   it('supports indeterminate', () => {
     // Render the Checkbox AND it's SwitchBase component and make sure overriding
     // aria-checked happens properly.
-    const tree = shallow(<Checkbox indeterminate />);
+    let tree = shallow(<Checkbox indeterminate />);
     let innerTree = tree.shallow();
     assert.equal(tree.prop('aria-checked'), 'mixed');
     assert.equal(findInput(innerTree).prop('aria-checked'), 'mixed');
@@ -35,6 +35,20 @@ describe('Checkbox', () => {
     assert(!tree.prop('aria-checked'));
     assert(!findInput(innerTree).prop('aria-checked'));
     assert.equal(findInput(innerTree).prop('checked'), true);
+
+    // test mounted for code coverage of indeterminate property on input element
+    tree = mount(<Checkbox indeterminate />);
+    let inputRef = tree.instance().inputRef.getInput();
+    assert.equal(inputRef.getAttribute('aria-checked'), 'mixed');
+    assert.equal(inputRef.checked, false);
+    tree.setProps({indeterminate: false});
+    tree.update();
+    assert(!inputRef.hasAttribute('aria-checked'));
+    assert.equal(inputRef.checked, false);
+    tree.setProps({checked: true});
+    assert(!inputRef.hasAttribute('aria-checked'));
+    assert.equal(inputRef.checked, true);
+    tree.unmount();
   });
 
   it('supports additional classNames', () => {

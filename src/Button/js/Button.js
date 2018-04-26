@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import filterDOMProps from '../../utils/filterDOMProps';
+import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -83,6 +84,8 @@ export default class Button extends Component {
       className,
       disabled,
       invalid,
+      onMouseDown,
+      onMouseUp,
       ...otherProps
     } = this.props;
 
@@ -127,6 +130,8 @@ export default class Button extends Component {
         aria-invalid={invalid || null}
         aria-expanded={otherProps['aria-haspopup'] ? selected : undefined}
         onClick={this.onClick}
+        onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
+        onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
         ref={b => this.buttonRef = b}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&
