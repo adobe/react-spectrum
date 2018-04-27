@@ -3,14 +3,16 @@ import Autocomplete from '../../Autocomplete';
 import Button from '../../Button';
 import {chain} from '../../utils/events';
 import classNames from 'classnames';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import Textfield from '../../Textfield';
 
 importSpectrumCSS('inputgroup');
 
 const getLabel = o => (typeof o === 'string' ? o : o.label);
+const formatMessage = messageFormatter(intlMessages);
 
 @autobind
 export default class ComboBox extends React.Component {
@@ -23,11 +25,12 @@ export default class ComboBox extends React.Component {
   };
 
   state = {
-    open: false
+    open: false,
+    count: null
   };
 
   onButtonClick() {
-    ReactDOM.findDOMNode(this.textfield).focus();
+    this.textfield.focus();
     this.autocomplete.toggleMenu();
   }
 
@@ -58,12 +61,35 @@ export default class ComboBox extends React.Component {
     this.setState({open: false});
   }
 
-  onChange() {
+  onChange(value) {
     this.changeSinceOpen = true;
+    const count = value ? this.getCompletions(value).length : null;
+    this.setState({count});
+  }
+
+  getButtonLabel() {
+    const {options} = this.props;
+    let {count} = this.state;
+    let key = 'Show suggestions';
+
+    if (count === null && options.length > 0) {
+      count = options.length;
+    }
+
+    if (count === 0) {
+      key = 'No matching results';
+    } else if (count > 1) {
+      key = 'Show {0} suggestions';
+    } else if (count === 1) {
+      key = 'Show suggestion';
+    }
+
+    return formatMessage(key, [count]);
   }
 
   render() {
     const {
+      id,
       value,
       disabled,
       required,
@@ -89,6 +115,7 @@ export default class ComboBox extends React.Component {
         <Textfield
           className={classNames('spectrum-InputGroup-input')}
           {...props}
+          id={id}
           ref={t => this.textfield = t}
           disabled={disabled}
           required={required}
@@ -106,6 +133,7 @@ export default class ComboBox extends React.Component {
           invalid={invalid}
           quiet={quiet}
           selected={this.state.open}
+          aria-label={this.getButtonLabel()}
           tabIndex="-1">
           <SelectDownChevron size={null} className="spectrum-InputGroup-icon" />
         </Button>

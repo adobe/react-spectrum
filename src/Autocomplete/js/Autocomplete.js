@@ -170,12 +170,13 @@ export default class Autocomplete extends React.Component {
 
   onFocusNext(event) {
     event.preventDefault();
-    const {results = [], selectedIndex, showDropdown} = this.state;
-    let index = (selectedIndex + 1) % results.length;
-    this.selectIndex(index);
-    if (!showDropdown) {
+    // make sure menu is shown
+    if (!this.state.showDropdown) {
       this.showMenu();
     }
+    const {results = [], selectedIndex} = this.state;
+    const index = results.length ? (selectedIndex + 1) % results.length : 0;
+    this.selectIndex(index);
   }
 
   onPageDown(event) {
@@ -304,12 +305,12 @@ export default class Autocomplete extends React.Component {
   }
 
   render() {
-    const {className} = this.props;
+    const {id, className} = this.props;
     const {isFocused, results = [], selectedIndex, showDropdown, value} = this.state;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.autocompleteInput) || children[0];
     const menuShown = showDropdown && results.length > 0;
-    const inputId = trigger.props.id || this.autocompleteId;
+    const inputId = id || trigger.props.id || this.autocompleteId;
 
     return (
       <div

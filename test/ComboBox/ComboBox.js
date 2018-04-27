@@ -27,6 +27,7 @@ describe('ComboBox', () => {
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
     assert.equal(tree.find(Button).length, 1);
+    assert.equal(tree.find(Button).prop('aria-label'), 'Show suggestions');
     assert.equal(tree.find(Button).childAt(0).type(), SelectDownChevron);
   });
 
@@ -84,12 +85,47 @@ describe('ComboBox', () => {
     const tree = shallow(<ComboBox options={['one', 'two', 'three']} />);
     assert.deepEqual(tree.prop('getCompletions')('two'), ['one', 'two', 'three']);
     tree.prop('onChange')();
-    assert.deepEqual(tree.prop('getCompletions')('two'), ['two']);
+    assert.deepEqual(tree.prop('getCompletions')('t'), ['two', 'three']);
   });
 
   it('should support icons', function () {
     const tree = shallow(<ComboBox options={OPTION_ICONS} />);
     assert.equal(tree.prop('getCompletions')('t').length, 2);
     assert.equal(tree.prop('getCompletions')('tw').length, 1);
+  });
+
+  it('should update accessibility label for button on change', async () => {
+    const tree = shallow(<ComboBox />);
+    assert.equal(tree.state.count, null);
+    assert.equal(tree.find(Button).prop('aria-label'), 'Show suggestions');
+
+    tree.setProps({options: ['one', 'two', 'three']});
+
+    // Set properties
+    tree.prop('onChange')('b');
+    tree.update();
+    await sleep(1);
+    assert.equal(tree.state('count'), 0);
+    assert.equal(tree.find(Button).prop('aria-label'), 'No matching results.');
+    tree.prop('onChange')('');
+    tree.update();
+    await sleep(1);
+    assert.equal(tree.state('count'), null);
+    assert.equal(tree.find(Button).prop('aria-label'), 'Show 3 suggestions');
+    tree.prop('onChange')('b');
+    tree.update();
+    await sleep(1);
+    assert.equal(tree.state('count'), 0);
+    assert.equal(tree.find(Button).prop('aria-label'), 'No matching results.');
+    tree.prop('onChange')('t');
+    tree.update();
+    await sleep(1);
+    assert.equal(tree.state('count'), 2);
+    assert.equal(tree.find(Button).prop('aria-label'), 'Show 2 suggestions');
+    tree.prop('onChange')('tw');
+    tree.update();
+    await sleep(1);
+    assert.equal(tree.state('count'), 1);
+    assert.equal(tree.find(Button).prop('aria-label'), 'Show suggestion');
   });
 });
