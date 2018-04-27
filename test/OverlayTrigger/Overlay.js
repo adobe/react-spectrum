@@ -49,7 +49,6 @@ describe('Overlay', () => {
     assert.equal(tree.find(OpenTransition).prop('onExiting'), noop);
     assert.equal(tree.find(OpenTransition).prop('onEnter'), noop);
     assert.equal(tree.find(OpenTransition).prop('onEntering'), noop);
-    assert.equal(tree.find(OpenTransition).prop('onEntered'), noop);
   });
 
   it('wraps in a close wrapper when true', () => {
@@ -132,6 +131,8 @@ describe('Overlay', () => {
 
     // Hiding the outer overlay should work fine since the inner overlay hasn't been shown yet
     overlay.instance().hide();
+
+
     assert(onHideOuter.calledOnce);
     assert(onHideInner.notCalled);
 
@@ -140,29 +141,32 @@ describe('Overlay', () => {
     overlay.find('button').simulate('click');
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
 
-    // Hiding the outer overlay should now do nothing since it is no longer the top overlay
-    overlay.instance().hide();
-    assert(onHideOuter.notCalled);
-    assert(onHideInner.notCalled);
-
-    // Hiding the inner overlay should work since it is the top overlay
-    overlay.find('button').simulate('click');
-    assert(onHideOuter.notCalled);
-    assert(onHideInner.calledOnce);
-
-    onHideInner.reset();
-
     // Wait for animation
     setTimeout(() => {
-      assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
-
-      // Hiding the outer overlay should work now since it is the top overlay
+      // Hiding the outer overlay should now do nothing since it is no longer the top overlay
       overlay.instance().hide();
-      assert(onHideOuter.calledOnce);
+      assert(onHideOuter.notCalled);
       assert(onHideInner.notCalled);
 
-      overlay.unmount();
-      done();
+      // Hiding the inner overlay should work since it is the top overlay
+      overlay.find('button').simulate('click');
+      assert(onHideOuter.notCalled);
+      assert(onHideInner.calledOnce);
+
+      onHideInner.reset();
+
+      // Wait for animation
+      setTimeout(() => {
+        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+        // Hiding the outer overlay should work now since it is the top overlay
+        overlay.instance().hide();
+        assert(onHideOuter.calledOnce);
+        assert(onHideInner.notCalled);
+
+        overlay.unmount();
+        done();
+      }, 200);
     }, 200);
   });
 });

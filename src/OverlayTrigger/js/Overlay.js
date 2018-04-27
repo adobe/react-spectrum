@@ -41,18 +41,22 @@ export default class Overlay extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.show) {
-      this.setState({...this.state, exited: false});
-      this.addOverlay(nextProps);
-    }
-
     if (nextProps.target && nextProps.target !== this.props.target) {
       this.setState({...this.state, targetNode: ReactDOM.findDOMNode(nextProps.target)});
     }
   }
 
+  onEntered(...args) {
+    this.setState({...this.state, exited: false});
+    this.addOverlay();
+
+    if (this.props.onEntered) {
+      this.props.onEntered(...args);
+    }
+  }
+
   onExited(...args) {
-    this.setState({exited: true});
+    this.setState({...this.state, exited: true});
     this.removeOverlay();
 
     if (this.props.onExited) {
@@ -107,7 +111,7 @@ export default class Overlay extends React.Component {
 
     // This animates the child node by injecting props, so it must precede
     // anything that adds a wrapping div.
-    let {onExit, onExiting, onEnter, onEntering, onEntered} = props;
+    let {onExit, onExiting, onEnter, onEntering} = props;
     child = (
       <OpenTransition
         in={props.show}
@@ -117,7 +121,7 @@ export default class Overlay extends React.Component {
         onExited={this.onExited}
         onEnter={onEnter}
         onEntering={onEntering}
-        onEntered={onEntered}>
+        onEntered={this.onEntered}>
         {child}
       </OpenTransition>
     );
