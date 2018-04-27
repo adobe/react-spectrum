@@ -1,31 +1,30 @@
 import assert from 'assert';
 import Clock from '../../src/Clock';
 import moment from 'moment';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Clock', () => {
   it('default', () => {
     const tree = shallow(<Clock />);
-    assert.equal(tree.hasClass('react-spectrum-Clock'), true);
-    assert.equal(tree.prop('aria-disabled'), false);
-    assert.equal(tree.prop('aria-invalid'), false);
-    assert.equal(tree.prop('aria-readonly'), false);
-    assert.equal(tree.prop('aria-required'), false);
+    assert(tree.hasClass('react-spectrum-Clock'));
+    assert.equal(tree.prop('role'), 'group');
+    assert(!tree.prop('aria-disabled'));
+    assert(!tree.prop('aria-invalid'));
 
     const hour = findHourTextfield(tree);
-    assert.equal(hour.prop('invalid'), false);
-    assert.equal(hour.prop('disabled'), false);
-    assert.equal(hour.prop('readOnly'), false);
-    assert.equal(hour.prop('quiet'), false);
+    assert(!hour.prop('invalid'));
+    assert(!hour.prop('disabled'));
+    assert(!hour.prop('readOnly'));
+    assert(!hour.prop('quiet'));
     assert.equal(hour.prop('value'), '');
 
     const minute = findMinuteTextfield(tree);
-    assert.equal(minute.prop('invalid'), false);
-    assert.equal(minute.prop('disabled'), false);
-    assert.equal(minute.prop('readOnly'), false);
-    assert.equal(minute.prop('quiet'), false);
+    assert(!minute.prop('invalid'));
+    assert(!minute.prop('disabled'));
+    assert(!minute.prop('readOnly'));
+    assert(!minute.prop('quiet'));
     assert.equal(minute.prop('value'), '');
   });
 
@@ -39,7 +38,7 @@ describe('Clock', () => {
       assert(stopPropagationSpy.called);
 
       const args = spy.lastCall.args;
-      assert.deepEqual(args[0], compareDate.format(format));
+      assert.deepEqual(args[0], compareDate.format ? compareDate.format(format) : compareDate);
       assert.deepEqual(+args[1], +compareDate);
     };
 
@@ -53,12 +52,18 @@ describe('Clock', () => {
       const tree = shallow(<Clock onChange={spy} value={now} />);
       const hour = findHourTextfield(tree);
       assertChangeArgs(hour, '10', now.hour(10));
+      assertChangeArgs(hour, '', '');
+      tree.setState({value: null});
+      assertChangeArgs(hour, '24', now.hour(23));
     });
 
     it('when minute changes', () => {
       const tree = shallow(<Clock onChange={spy} value={now} />);
       const minute = findMinuteTextfield(tree);
       assertChangeArgs(minute, '50', now.minute(50));
+      assertChangeArgs(minute, '', '');
+      tree.setState({value: null});
+      assertChangeArgs(minute, '60', now.minute(59));
     });
 
     it('maintains month, day, and year of value when hour/minute changes are made', () => {
@@ -132,14 +137,12 @@ describe('Clock', () => {
 
   it('supports readOnly', () => {
     const tree = shallow(<Clock readOnly />);
-    assert.equal(tree.prop('aria-readonly'), true);
     assert.equal(findHourTextfield(tree).prop('readOnly'), true);
     assert.equal(findMinuteTextfield(tree).prop('readOnly'), true);
   });
 
   it('supports required', () => {
     const tree = shallow(<Clock required />);
-    assert.equal(tree.prop('aria-required'), true);
     assert.equal(findHourTextfield(tree).prop('required'), true);
     assert.equal(findMinuteTextfield(tree).prop('required'), true);
   });
@@ -153,7 +156,76 @@ describe('Clock', () => {
     const tree = shallow(<Clock aria-foo />);
     assert.equal(tree.prop('aria-foo'), true);
   });
-});
 
+  it('supports setting value as a prop', () => {
+    const tree = shallow(<Clock />);
+    // set valid value
+    tree.setProps({value: '23:59'});
+    assert.equal(tree.state('hourText'), '23');
+    assert.equal(tree.state('minuteText'), '59');
+    // set invalid value
+    tree.setProps({value: '24:60'});
+    assert.equal(tree.state('hourText'), '23');
+    assert.equal(tree.state('minuteText'), '59');
+    // invalid data without hourText or minuteText
+    tree.setState({hourText: null, minuteText: null});
+    tree.setProps({value: '24:60'});
+    assert.equal(tree.state('hourText'), '');
+    assert.equal(tree.state('minuteText'), '');
+  });
+
+  it('supports focus method', () => {
+    const tree = mount(<Clock />);
+    tree.instance().focus();
+    assert.equal(document.activeElement, findHourTextfield(tree).at(0).getDOMNode());
+    tree.unmount();
+  });
+
+  it('supports handleFocus, handleHourBlur, handleMinuteBlur', () => {
+    const tree = shallow(<Clock />);
+    findHourTextfield(tree).simulate('focus');
+    assert(tree.state('focused'));
+    findHourTextfield(tree).simulate('blur', {target: {value: '1'}});
+    assert(!tree.state('focused'));
+    assert.equal(tree.state('hourText'), '01');
+    findMinuteTextfield(tree).simulate('focus');
+    assert(tree.state('focused'));
+    findMinuteTextfield(tree).simulate('blur', {target: {value: '1'}});
+    assert(!tree.state('focused'));
+    assert.equal(tree.state('minuteText'), '01');
+    findHourTextfield(tree).simulate('blur', {target: {value: '10'}});
+    assert(!tree.state('focused'));
+    assert.equal(tree.state('hourText'), '10');
+    findMinuteTextfield(tree).simulate('blur', {target: {value: '10'}});
+    assert(!tree.state('focused'));
+    assert.equal(tree.state('minuteText'), '10');
+  });
+
+  describe('Accessibility', () => {
+    it('supports aria-labelledby', () => {
+      const tree = shallow(<Clock />);
+      const clockId = tree.instance().clockId;
+      const timeValueId = findTimeValue(tree).prop('id');
+      assert.equal(findFieldset(tree).prop('aria-labelledby'), timeValueId);
+      assert.equal(findHourTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId].join(' '));
+      assert.equal(findMinuteTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId + '-minutes'].join(' '));
+      tree.setProps({'aria-labelledby': 'foo'});
+      assert.equal(findHourTextfield(tree).prop('aria-labelledby'), ['foo', clockId].join(' '));
+      assert.equal(findMinuteTextfield(tree).prop('aria-labelledby'), ['foo', clockId + '-minutes'].join(' '));
+    });
+
+    it('supports aria-label', () => {
+      const tree = shallow(<Clock aria-label="foo" />);
+      const clockId = tree.instance().clockId;
+      const timeValueId = findTimeValue(tree).prop('id');
+      assert.equal(findFieldset(tree).prop('aria-labelledby'), [clockId + '-group', timeValueId].join(' '));
+      assert.equal(findFieldset(tree).prop('aria-label'), 'foo');
+      assert.equal(findHourTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId].join(' '));
+      assert.equal(findMinuteTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId + '-minutes'].join(' '));
+    });
+  });
+});
+const findFieldset = tree => tree.find('.react-spectrum-Clock');
 const findHourTextfield = tree => tree.find('.react-spectrum-Clock-hour');
 const findMinuteTextfield = tree => tree.find('.react-spectrum-Clock-minute');
+const findTimeValue = tree => tree.find('time');

@@ -1,13 +1,19 @@
 import autobind from 'autobind-decorator';
 import {clamp} from '../../utils/number';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, toMoment} from '../../utils/moment';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
+import '../../utils/style/index.styl';
+
+const formatMessage = messageFormatter(intlMessages);
 
 @autobind
 export default class Clock extends Component {
@@ -42,6 +48,8 @@ export default class Clock extends Component {
 
   constructor(props) {
     super(props);
+
+    this.clockId = createId();
 
     const {value, defaultValue, valueFormat} = this.props;
 
@@ -81,18 +89,40 @@ export default class Clock extends Component {
     }
   }
 
+  /**
+   * Handles change event on hour text input
+   * @param {Event} e Change event
+   */
   handleHourChange(value, e) {
     const {minuteText} = this.state;
     e.stopPropagation();
     this.changeTime(value, minuteText);
   }
 
+  /**
+   * Handles change event on minute text input
+   * @param {Event} e Change event
+   */
   handleMinuteChange(value, e) {
     const {hourText} = this.state;
     e.stopPropagation();
     this.changeTime(hourText, value);
   }
 
+  /**
+   * Handles focus event on text input
+   * @param {FocusEvent} e Focus event
+   */
+  handleFocus(e) {
+    this.setState({
+      focused: true
+    });
+  }
+
+  /**
+   * Handles blur event on hour text input
+   * @param {FocusEvent} e Blur event
+   */
   handleHourBlur(e) {
     let value = e.target.value;
     // normalize the hourText displayed in the input
@@ -101,10 +131,15 @@ export default class Clock extends Component {
     }
 
     this.setState({
-      hourText: value
+      hourText: value,
+      focused: false
     });
   }
 
+  /**
+   * Handles blur event on minute text input
+   * @param {FocusEvent} e Blur event
+   */
   handleMinuteBlur(e) {
     let value = e.target.value;
     // normalize the minuteText displayed in the input
@@ -113,10 +148,16 @@ export default class Clock extends Component {
     }
 
     this.setState({
-      minuteText: value
+      minuteText: value,
+      focused: false
     });
   }
 
+  /**
+   * Updates time based on hour and minute text values.
+   * @param {String} hourText   Hour text value
+   * @param {String} minuteText Minute text value
+   */
   changeTime(hourText, minuteText) {
     const {valueFormat, onChange} = this.props;
     const {value} = this.state;
@@ -139,7 +180,8 @@ export default class Clock extends Component {
     }
     this.setState({
       hourText,
-      minuteText
+      minuteText,
+      newTime
     });
 
     if (!('value' in this.props)) {
@@ -158,6 +200,35 @@ export default class Clock extends Component {
     }
   }
 
+  /**
+   * Sets focus to appropriate descendant.
+   */
+  focus() {
+    if (document.activeElement !== this.minuteRef) {
+      this.hourRef && this.hourRef.focus();
+    }
+  }
+
+  /**
+   * Returns concatentated string of the ids for elements that label the clock field inputs.
+   * @param {String} labelId Field label id
+   * @param {String} groupId Fieldset id
+   * @return {String}   aria-labelledby string
+   * @private
+   */
+  getAriaLabelledbyForTextfield(labelId, groupId) {
+    const ariaLabel = this.props['aria-label'];
+    const ariaLabelledby = this.props['aria-labelledby'];
+    let ariaLabelledbyId = groupId;
+    if (ariaLabel) {
+      ariaLabelledbyId = groupId;
+    }
+    if (ariaLabelledby) {
+      ariaLabelledbyId = ariaLabelledby;
+    }
+    return [ariaLabelledbyId, labelId].join(' ');
+  }
+
   render() {
     const {
       quiet,
@@ -166,10 +237,33 @@ export default class Clock extends Component {
       readOnly,
       required,
       className,
+      id = this.clockId,
+      valueFormat,
       ...otherProps
     } = this.props;
 
-    const {hourText, minuteText} = this.state;
+    const {hourText, minuteText, newTime, value, focused} = this.state;
+
+    const groupId = id + '-group';
+    const timeLabelId = id + '-time-label';
+    const ariaLabel = otherProps['aria-label'];
+    const ariaLabelledby = otherProps['aria-labelledby'];
+    let groupAriaLabel = null;
+    let groupAriaLabelledby = null;
+    let formattedMoment = formatMoment(newTime || value, valueFormat);
+
+    if (ariaLabel) {
+      groupAriaLabel = ariaLabel;
+      groupAriaLabelledby = [groupId, timeLabelId].join(' ');
+      delete otherProps['aria-label'];
+    } else {
+      groupAriaLabelledby = timeLabelId;
+    }
+
+    if (ariaLabelledby) {
+      groupAriaLabelledby = [ariaLabelledby, timeLabelId].join(' ');
+      delete otherProps['aria-labelledby'];
+    }
 
     delete otherProps.valueFormat;
     delete otherProps.displayFormat;
@@ -186,11 +280,14 @@ export default class Clock extends Component {
         }
         aria-disabled={disabled}
         aria-invalid={invalid}
-        aria-readonly={readOnly}
-        aria-required={required}
+        role="group"
+        id={groupId}
+        aria-label={groupAriaLabel}
+        aria-labelledby={groupAriaLabelledby}
         {...filterDOMProps(otherProps)}>
+        <time id={timeLabelId} className="u-react-spectrum-screenReaderOnly" aria-live={focused ? 'polite' : 'off'} hidden={!focused}>{formattedMoment}</time>
         <Textfield
-          ref={el => {this.hourRef = el; }}
+          ref={el => this.hourRef = el}
           className="react-spectrum-Clock-hour"
           type="number"
           value={hourText}
@@ -202,11 +299,15 @@ export default class Clock extends Component {
           readOnly={readOnly}
           required={required}
           quiet={quiet}
+          id={id}
+          aria-label={formatMessage('Hours')}
+          aria-labelledby={this.getAriaLabelledbyForTextfield(id, groupId)}
+          onFocus={this.handleFocus}
           onChange={this.handleHourChange}
           onBlur={this.handleHourBlur} />
         <span className="react-spectrum-Clock-divider">:</span>
         <Textfield
-          ref={el => {this.minuteRef = el; }}
+          ref={el => this.minuteRef = el}
           className="react-spectrum-Clock-minute"
           type="number"
           value={minuteText}
@@ -218,6 +319,10 @@ export default class Clock extends Component {
           readOnly={readOnly}
           required={required}
           quiet={quiet}
+          id={id + '-minutes'}
+          aria-label={formatMessage('Minutes')}
+          aria-labelledby={this.getAriaLabelledbyForTextfield(id + '-minutes', groupId)}
+          onFocus={this.handleFocus}
           onChange={this.handleMinuteChange}
           onBlur={this.handleMinuteBlur} />
       </div>

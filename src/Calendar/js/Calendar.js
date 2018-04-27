@@ -13,6 +13,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
+import '../../utils/style/index.styl';
 
 importSpectrumCSS('calendar');
 
@@ -477,7 +478,7 @@ export default class Calendar extends Component {
         key={date.format('MM/Y')}
         className="spectrum-Calendar-table">
         {/* caption serves as live region to announce selected date or range of dates */}
-        <caption className="react-spectrum-Calendar-tableCaption" id={descriptionId} aria-live={ariaLiveCaption} aria-atomic="true" aria-relevant="additions text">{selectedRangeDescription}</caption>
+        <caption className="u-react-spectrum-screenReaderOnly" id={descriptionId} aria-live={ariaLiveCaption}>{selectedRangeDescription}</caption>
         {this.renderTableHeader()}
         {this.renderTableBody(date)}
       </table>
