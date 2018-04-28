@@ -87,7 +87,7 @@
     "stylus-loader": "^3.0.1",
     "svg-stylus": "^0.0.5",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.2",
+    "webpack": "^3.11.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.0"
   },

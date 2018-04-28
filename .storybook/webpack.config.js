@@ -16,6 +16,12 @@ module.exports = (config, env) => {
 
   config.resolve.symlinks = false;
 
+  // enable both scales for the storybook
+  config.plugins.push(new webpack.DefinePlugin({
+    'process.env.SCALE_MEDIUM': 'true',
+    'process.env.SCALE_LARGE': 'true'
+  }));
+
   return Object.assign(config, {
     module: {
       rules: [

@@ -4,9 +4,18 @@ const Path = require('path');
 
 const THEMES = ['light', 'dark', 'lightest', 'darkest'];
 
-const requireTemplate = template('require(PATH)');
 const notThemeTemplate = template('!process.env.THEME_NAME');
 const themeTemplate = template('if (NO_THEMES || process.env.THEME_NAME) require(PATH);');
+const scaleTemplate = template(`
+  if (process.env.SCALE_MEDIUM && process.env.SCALE_LARGE) {
+    require(INDEX_PATH);
+    require(DIFF_PATH);
+  } else if (process.env.SCALE_LARGE) {
+    require(LARGE_PATH);
+  } else {
+    require(INDEX_PATH);
+  }
+`);
 
 module.exports = function ({types: t}) {
   // Produce an && chain to check if none of the theme variables are set.
@@ -62,8 +71,10 @@ module.exports = function ({types: t}) {
         // Get index.css
         let main = getCSS(component, null, path.hub.file.opts.filename);
         if (main) {
-          statements.push(requireTemplate({
-            PATH: t.stringLiteral(main)
+          statements.push(scaleTemplate({
+            INDEX_PATH: t.stringLiteral(main),
+            DIFF_PATH: t.stringLiteral(main.replace('index.css', 'index-diff.css')),
+            LARGE_PATH: t.stringLiteral(main.replace('index.css', 'index-lg.css'))
           }));
         }
 

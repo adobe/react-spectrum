@@ -1,3 +1,4 @@
+import FieldLabel from '../src/FieldLabel';
 import Provider from '../src/Provider';
 import React from 'react';
 import Select from '../src/Select';
@@ -44,12 +45,18 @@ export function VerticalTop({children, className, style}) {
 
 export class StoryWrapper extends React.Component {
   state= {
-    theme: 'light'
+    theme: 'light',
+    scale: 'medium'
   }
   render() {
-    return <Provider theme={this.state.theme}>
+    return <Provider theme={this.state.theme} scale={this.state.scale}>
       <div style={{position: 'absolute', right: 100}}>
-        Select Theme: <Select placeholder="Select theme" onChange={theme => this.setState({theme})} options={[{label: "Light", value: "light"}, {label: "Lightest", value: "lightest"}, {label: "Dark", value: "dark"}, {label: "Darkest", value: "darkest"}]}/>
+        <FieldLabel label="Theme" position="left">
+          <Select onChange={theme => this.setState({theme})} options={[{label: "Light", value: "light"}, {label: "Lightest", value: "lightest"}, {label: "Dark", value: "dark"}, {label: "Darkest", value: "darkest"}]} />
+        </FieldLabel>
+        <FieldLabel label="Scale" position="left">
+          <Select onChange={scale => this.setState({scale})} options={[{label: "Medium", value: "medium"}, {label: "Large", value: "large"}]} />
+        </FieldLabel>
       </div>
       {this.props.children}
     </Provider>

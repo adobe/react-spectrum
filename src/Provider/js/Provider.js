@@ -13,6 +13,7 @@ importSpectrumCSS('typography');
 export default class Provider extends Component {
   static propTypes = {
     theme: PropTypes.oneOf(['light', 'lightest', 'dark', 'darkest']),
+    scale: PropTypes.oneOf(['medium', 'large']),
     typekitId: PropTypes.string,
     locale: PropTypes.string,
     className: PropTypes.string
@@ -20,6 +21,7 @@ export default class Provider extends Component {
 
   static defaultProps = {
     theme: 'light',
+    scale: 'medium',
     typekitId: 'ruf7eed',
     locale: defaultLocale
   };
@@ -39,19 +41,17 @@ export default class Provider extends Component {
   }
 
   render() {
-    const {
+    let {
       theme,
       className,
       children,
+      scale,
       ...props
     } = this.props;
 
-    delete props.typekitId;
-    delete props.locale;
-
     return (
       <div
-        className={classNames(className, 'react-spectrum-provider', 'spectrum', `spectrum--${theme}`)}
+        className={classNames(className, 'react-spectrum-provider', 'spectrum', `spectrum--${theme}`, `spectrum--${scale}`)}
         {...filterDOMProps(props)}>
         {children}
       </div>

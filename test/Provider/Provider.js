@@ -20,4 +20,14 @@ describe('Provider', () => {
     assert.equal(tree.prop('aria-foo'), true);
     assert.equal(tree.shallow().find('div').prop('aria-foo'), true);
   });
+
+  it('supports other themes', () => {
+    const tree = shallow(<Provider theme="dark" />);
+    assert(tree.hasClass('spectrum--dark'));
+  });
+
+  it('supports scaling', () => {
+    const tree = shallow(<Provider scale="large" />);
+    assert(tree.hasClass('spectrum--large'));
+  });
 });
