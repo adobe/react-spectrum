@@ -108,6 +108,9 @@ export default class Button extends Component {
     let baseButtonClass = 'spectrum-Button';
     if (variant === 'action' || variant === 'toggle') {
       baseButtonClass = 'spectrum-ActionButton';
+      if (variant === 'toggle') {
+        quiet = true;
+      }
       variant = '';
     } else if (logic) {
       baseButtonClass = 'spectrum-LogicButton';
