@@ -139,11 +139,11 @@ export default class Pagination extends Component {
         <Button
           onClick={this.onNext}
           variant={buttonVariant}
-          label={isButtonMode ? formatMessage('next') : ''}
           aria-label={formatMessage('next')}
           className={classNames({
             'spectrum-Pagination-nextButton': isButtonMode
           })}>
+          {isButtonMode ? formatMessage('next') : ''}
           <CarouselRightChevron />
         </Button>
       </nav>);

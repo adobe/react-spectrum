@@ -36,7 +36,7 @@ describe('Search', () => {
     const tree = shallow(<Search defaultValue="foo" />);
     const button = findButton(tree);
     assert.equal(button.prop('variant'), 'icon');
-    assert.equal(button.prop('className'), 'spectrum-Search-clear');
+    assert.equal(button.prop('className'), 'spectrum-ClearButton');
   });
 
   describe('onSubmit', () => {
@@ -135,4 +135,4 @@ describe('Search', () => {
 });
 
 const findInput = tree => tree.find('.spectrum-Search-input');
-const findButton = tree => tree.find('.spectrum-Search-clear');
+const findButton = tree => tree.find('.spectrum-ClearButton');
