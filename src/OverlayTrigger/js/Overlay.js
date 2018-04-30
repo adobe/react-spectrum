@@ -80,7 +80,7 @@ export default class Overlay extends React.Component {
     let {
       containerPadding,
       target,
-      container = this.getOverlayContainer(target),
+      container,
       placement,
       offset,
       crossOffset,
@@ -136,7 +136,7 @@ export default class Overlay extends React.Component {
     }
 
     return (
-      <Portal container={container}>
+      <Portal container={container || this.getOverlayContainer(target)}>
         {child}
       </Portal>
     );
