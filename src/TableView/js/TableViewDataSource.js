@@ -48,6 +48,10 @@ export default class TableViewDataSource extends DataSource {
     this.sort(column, this.sortDir);
   }
 
+  async loadMore() {
+    // if you want infinite scrolling, override this with your logic
+  }
+
   sort(column, dir) {
     throw new Error('sort must be implemented by subclasses');
   }

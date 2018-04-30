@@ -114,6 +114,13 @@ export default class TableView extends Component {
     }
   }
 
+  onScroll() {
+    let scrollOffset = this.collection.contentHeight - this.collection.size.height * 2;
+    if (this.collection.contentOffset > scrollOffset) {
+      this.collection.dataSource.loadMore();
+    }
+  }
+
   render() {
     var tableClasses = classNames(
       this.props.className,
@@ -135,7 +142,8 @@ export default class TableView extends Component {
           allowsMultipleSelection={this.props.allowsMultipleSelection}
           selectionMode="toggle"
           selectedIndexPaths={this.props.selectedIndexPaths}
-          onSelectionChanged={this.onSelectionChange} />
+          onSelectionChanged={this.onSelectionChange}
+          onScroll={this.onScroll} />
       </div>
     );
   }

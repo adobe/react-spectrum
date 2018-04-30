@@ -1,7 +1,8 @@
 import assert from 'assert';
+import {EditableCollectionView} from '@react/collection-view';
 import React from 'react';
 import {shallow} from 'enzyme';
-import sinon from 'sinon';
+import sinon, {stub} from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
 import {TableView, TableViewDataSource} from '../../src/TableView';
@@ -181,5 +182,26 @@ describe('TableView', function () {
     table.instance().onSelectionChange();
     assert.equal(onSelectionChange.callCount, 1);
     assert.equal(onSelectionChange.getCall(0).args[0][0].index, 0);
+  });
+
+  it('should render an infiniteScroll table', function () {
+    const loadMoreStub = stub(ds, 'loadMore').callsFake(() => {});
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell} />
+    );
+    const tableInstance = tree.instance();
+
+    // shallow doesn't render down far enough to make this, so create the collection instance
+    tableInstance.collection = {contentOffset: 0, contentHeight: 1000, size: {height: 100}, dataSource: ds};
+    tree.find(EditableCollectionView).simulate('scroll');
+
+    assert.equal(loadMoreStub.callCount, 0);
+
+    tableInstance.collection.contentOffset = 900;
+    tree.find(EditableCollectionView).simulate('scroll');
+
+    assert.equal(loadMoreStub.callCount, 1);
   });
 });
