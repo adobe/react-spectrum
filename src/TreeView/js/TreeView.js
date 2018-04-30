@@ -24,6 +24,13 @@ export default class TreeView extends React.Component {
     /* A function that is called when the selection changes. Passes a list of all selected items. */
     onSelectionChange: PropTypes.func,
 
+    /*
+     * A function that is called when an item is toggled (expanded/collapsed).
+     * Will only fire if item is toggleable and has children.
+     * Passes the item being toggled and the isExpanded state.
+     */
+    onToggleItem: PropTypes.func,
+
     /* Sets the selected items. Optional. */
     selectedItems: PropTypes.arrayOf(PropTypes.object),
 
@@ -122,6 +129,13 @@ export default class TreeView extends React.Component {
 
   toggleItem(item) {
     this.props.dataSource.toggleItem(item);
+
+    if (this.props.onToggleItem) {
+      const treeItem = this.props.dataSource._getItem(item);
+      if (treeItem && treeItem.isToggleable && treeItem.hasChildren) {
+        this.props.onToggleItem(treeItem.item, treeItem.isExpanded);
+      }
+    }
   }
 
   expandItem(item) {

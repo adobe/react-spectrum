@@ -81,6 +81,7 @@ function render(props = {}) {
       dataSource={new ExampleDS}
       renderItem={renderItem.bind(null, props.icons)}
       onSelectionChange={action('selectionChange')}
+      onToggleItem={action('toggleItem')}
       {...props} />
   );
 }

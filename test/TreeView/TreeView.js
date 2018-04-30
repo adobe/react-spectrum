@@ -2,6 +2,7 @@ import assert from 'assert';
 import {DragTarget, EditableCollectionView, IndexPath} from '@react/collection-view';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import {TestDataSource} from './TreeViewDataSource';
 import TreeItem from '../../src/TreeView/js/TreeItem';
 import {TreeView} from '../../src/TreeView';
@@ -49,6 +50,46 @@ describe('TreeView', function () {
 
       assert.equal(wrapper.instance().getDropTarget(target), target);
       assert.equal(wrapper.instance().getDropTarget(new DragTarget('item', new IndexPath(0, 1))), null);
+    });
+  });
+
+  describe('onToggle event callback', function () {
+    it('should fire for items with isToggleable: true && hasChildren: true', async function () {
+      let dataSource = new TestDataSource;
+      await dataSource.loadData();
+
+      let onToggleItem = sinon.spy();
+      sinon.stub(dataSource, 'toggleItem');
+
+      let wrapper = shallow(<TreeView dataSource={dataSource} onToggleItem={onToggleItem} />);
+      let item = wrapper.wrap(wrapper.instance().renderItemView('item', dataSource.getItem(0, 0)));
+
+      item.simulate('toggle');
+      assert.equal(dataSource.toggleItem.calledOnce, true);
+      assert.equal(onToggleItem.calledOnce, true);
+    });
+
+    it('should not fire for items with isToggleable: false || hasChildren: false', async function () {
+      let dataSource = new TestDataSource;
+      await dataSource.loadData();
+
+      let onToggleItem = sinon.spy();
+      sinon.stub(dataSource, 'toggleItem');
+
+      let wrapper = shallow(<TreeView dataSource={dataSource} onToggleItem={onToggleItem} />);
+      let item = wrapper.wrap(wrapper.instance().renderItemView('item', dataSource.getItem(0, 1)));
+
+      item.simulate('toggle');
+      assert.equal(dataSource.toggleItem.calledOnce, true);
+      assert.equal(onToggleItem.called, false);
+
+      let content = dataSource.getItem(0, 0);
+      content.isToggleable = false;
+      item = wrapper.wrap(wrapper.instance().renderItemView('item', content));
+
+      item.simulate('toggle');
+      assert.equal(dataSource.toggleItem.calledTwice, true);
+      assert.equal(onToggleItem.called, false);
     });
   });
 });
