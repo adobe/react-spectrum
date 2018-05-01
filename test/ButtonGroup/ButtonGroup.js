@@ -22,6 +22,20 @@ const defaultProps = {
   ]
 };
 
+const badButtonProps = {
+  children: [
+    <Button variant="primary" label="React" value="react" icon={<CheckmarkCircle />} />,
+    <Button variant="primary" label="Add" value="add" icon={<Add />} />,
+  ]
+};
+
+const toolButtonProps = {
+  children: [
+    <Button variant="tool" value="react" icon={<CheckmarkCircle />} />,
+    <Button variant="tool" value="add" icon={<Add />} />,
+  ]
+};
+
 const selectedValue = [
   'react',
   'add',
@@ -37,6 +51,23 @@ describe('ButtonGroup', () => {
   it('supports numerous buttons', () => {
     const tree = shallow(<ButtonGroup {...defaultProps} />);
     assert.equal(tree.find(Button).length, 6);
+  });
+
+  it('should default to quiet action button', () => {
+    const tree = shallow(<ButtonGroup {...defaultProps} />);
+    assert.equal(tree.find(Button).first().prop('variant'), 'action');
+    assert.equal(tree.find(Button).first().prop('quiet'), true);
+  });
+
+  it('should default to quiet action button if invalid variant is provided', () => {
+    const tree = shallow(<ButtonGroup {...badButtonProps} />);
+    assert.equal(tree.find(Button).first().prop('variant'), 'action');
+    assert.equal(tree.find(Button).first().prop('quiet'), true);
+  });
+
+  it('should support tool buttons', () => {
+    const tree = shallow(<ButtonGroup {...toolButtonProps} />);
+    assert.equal(tree.find(Button).first().prop('variant'), 'tool');
   });
 
   it('supports an item being selected', () => {

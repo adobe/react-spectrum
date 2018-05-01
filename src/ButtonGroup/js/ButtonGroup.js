@@ -4,8 +4,14 @@ import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
+importSpectrumCSS('buttongroup');
+
 const BUTTONGROUP_ITEM_SELECTOR = '.spectrum-ButtonGroup-item:not([disabled]):not([aria-disabled])';
 const BUTTONGROUP_SELECTED_ITEM_SELECTOR = BUTTONGROUP_ITEM_SELECTOR + '[aria-checked=true].is-selected';
+const ALLOWED_BUTTON_VARIANTS = {
+  tool: true,
+  action: true
+};
 
 export default class ButtonGroup extends Component {
   static propTypes = {
@@ -15,7 +21,8 @@ export default class ButtonGroup extends Component {
     readOnly: PropTypes.bool,
     required: PropTypes.bool,
     onChange: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   };
 
   static defaultProps = {
@@ -23,7 +30,8 @@ export default class ButtonGroup extends Component {
     invalid: false,
     multiple: false,
     readOnly: false,
-    required: false
+    required: false,
+    orientation: 'horizontal'
   };
 
   constructor(props) {
@@ -119,11 +127,13 @@ export default class ButtonGroup extends Component {
     const selected = this.isSelected(button.props);
     const role = this.getChildRole();
     const onClick = (!disabled ? this.handleSelect.bind(this, button.props) : null);
+    const allowedVariant = ALLOWED_BUTTON_VARIANTS[button.props.variant];
     return {
       className: classNames('spectrum-ButtonGroup-item'),
       selected: selected,
       disabled: disabled,
-      variant: 'toggle',
+      variant: allowedVariant ? button.props.variant : 'action',
+      quiet: allowedVariant ? button.props.quiet : true,
       onClick: onClick,
       onKeyDown: button.props.onKeyDown,
       role: role,
@@ -149,6 +159,7 @@ export default class ButtonGroup extends Component {
       readOnly,
       invalid,
       required,
+      orientation,
       ...otherProps
     } = this.props;
 
@@ -166,13 +177,21 @@ export default class ButtonGroup extends Component {
     }
 
     return (
-      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation="horizontal">
+      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation={orientation}>
         <div
           aria-invalid={invalid || null}
           aria-required={required || null}
           aria-disabled={disabled || null}
           {...filterDOMProps(otherProps)}
-          className={classNames('spectrum-ButtonGroup', className)}>
+          className={
+            classNames(
+              'spectrum-ButtonGroup',
+              {
+                'spectrum-ButtonGroup--vertical': orientation === 'vertical'
+              },
+              className
+            )
+          }>
           {this.renderButtons(children)}
         </div>
       </FocusManager>
