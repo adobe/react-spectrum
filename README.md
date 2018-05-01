@@ -107,6 +107,30 @@ module.exports = {
 }
 ```
 
+You can specify what theme to use at runtime using the `Provider` component which wraps your app.
+
+```javascript
+<Provider theme="dark">
+  {/* YOUR APP HERE */}
+</Provider>
+```
+
+### Scale support for mobile
+
+For mobile, Spectrum has a larger scale that enables larger tap targets on all controls. By default, this scale is not built into react-spectrum's CSS. However, you can enable it using some additional environment variables, similar to the ones for themes described above. There are three cases:
+
+* To get only the default (medium) scale, you do not need to specify any environment variables.
+* To get only the large scale for mobile, specify `SCALE_LARGE=true` when building.
+* To get both medium and large scale, specify `SCALE_MEDIUM=true SCALE_LARGE=true` when building.
+
+Once you have built in the required themes into your CSS, you can switch between scales using the `Provider` component.
+
+```javascript
+<Provider theme="dark" scale="large">
+  {/* YOUR APP HERE */}
+</Provider>
+```
+
 ### Manifest
 
 React Spectrum allows you to import only the components you need rather than bloating your application with unused components. If you would like to import multiple components in one import statement, you can add a manifest to your own application.
