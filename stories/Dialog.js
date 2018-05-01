@@ -7,7 +7,6 @@ import Textfield from '../src/Textfield';
 import {VerticalCenter} from '../.storybook/layout';
 
 const dialogChildren = <span>Content of the dialog</span>;
-const childTextfield = <label>autoFocus<br /><Textfield autoFocus /></label>;
 
 storiesOf('Dialog', module)
   .addDecorator(story => (
@@ -82,17 +81,17 @@ storiesOf('Dialog', module)
   )
   .addWithInfo(
     'autoFocusButton: \'cancel\'',
-    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel'}),
+    () => render(<Textfield placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
   .addWithInfo(
     'autoFocusButton: \'confirm\'',
-    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm'}),
+    () => render(<Textfield placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
   .addWithInfo(
     'autoFocus descendant TextField',
-    () => render(childTextfield, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    () => render(<Textfield placeholder="Autofocus" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
   );
 
