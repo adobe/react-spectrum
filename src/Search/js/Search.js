@@ -110,9 +110,8 @@ export default class Search extends Component {
         {
           value !== '' &&
             <Button
-              variant="icon"
+              variant="clear"
               icon={<SearchClear />}
-              className="spectrum-ClearButton"
               disabled={disabled}
               onClick={this.handleClearButtonClick} />
         }

@@ -45,13 +45,18 @@ storiesOf('TabList', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: anchored',
-    () => render({variant: 'anchored'}),
+    'variant: compact',
+    () => render({variant: 'compact'}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: page',
-    () => render({variant: 'page'}),
+    'quiet',
+    () => render({quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet, variant: compact',
+    () => render({quiet: true, variant: 'compact'}),
     {inline: true}
   )
   .addWithInfo(
@@ -62,6 +67,11 @@ storiesOf('TabList', module)
   .addWithInfo(
     'icons, orientation: vertical',
     () => render({icons: true, orientation: 'vertical'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: compact, orientation: vertical',
+    () => render({variant: 'compact', orientation: 'vertical'}),
     {inline: true}
   )
   .addWithInfo(

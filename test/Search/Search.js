@@ -35,8 +35,7 @@ describe('Search', () => {
   it('shows clear button if text exists', () => {
     const tree = shallow(<Search defaultValue="foo" />);
     const button = findButton(tree);
-    assert.equal(button.prop('variant'), 'icon');
-    assert.equal(button.prop('className'), 'spectrum-ClearButton');
+    assert.equal(button.prop('variant'), 'clear');
   });
 
   describe('onSubmit', () => {
@@ -135,4 +134,4 @@ describe('Search', () => {
 });
 
 const findInput = tree => tree.find('.spectrum-Search-input');
-const findButton = tree => tree.find('.spectrum-ClearButton');
+const findButton = tree => tree.find('Button');

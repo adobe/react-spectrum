@@ -21,13 +21,13 @@ describe('Tag', () => {
 
   it('supports being closable', () => {
     const tree = shallow(<Tag closable={false} />);
-    assert(!tree.find('.spectrum-ClearButton').length);
+    assert(!tree.find('Button[variant="clear"]').length);
   });
 
   it('supports being disabled', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag disabled closable onClose={onClose} />);
-    tree.find('.spectrum-ClearButton').simulate('click');
+    tree.find('Button[variant="clear"]').simulate('click');
     assert(!onClose.called);
   });
 
@@ -45,7 +45,7 @@ describe('Tag', () => {
   it('supports an onClose event', () => {
     const onClose = sinon.spy();
     const tree = shallow(<Tag closable value="stuff" onClose={onClose} />);
-    tree.find('.spectrum-ClearButton').simulate('click', {});
+    tree.find('Button[variant="clear"]').simulate('click', {});
     const args = onClose.lastCall.args;
     assert.equal(args[0], 'stuff');
     assert.deepEqual(args[1], {});
@@ -73,7 +73,8 @@ describe('Tag', () => {
 
   it('supports an avatar', () => {
     const tree = shallow(<Tag avatar="https://www.botlibre.com/media/a12832214.png" />);
-    assert(tree.find('.spectrum-Tags-item-avatar').length);
+    assert(tree.find('Avatar').length);
+    assert.equal(tree.find('Avatar').prop('src'), 'https://www.botlibre.com/media/a12832214.png');
   });
 
 });

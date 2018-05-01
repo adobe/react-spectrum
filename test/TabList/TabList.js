@@ -34,8 +34,18 @@ describe('TabList', () => {
   });
 
   it('supports compact variant', () => {
-    const tree = shallow(<TabList variant="page" />, {disableLifecycleMethods: true});
+    const tree = shallow(<TabList variant="compact" />, {disableLifecycleMethods: true});
     assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--compact');
+  });
+
+  it('supports quiet variant', () => {
+    const tree = shallow(<TabList quiet />, {disableLifecycleMethods: true});
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--quiet');
+  });
+
+  it('supports quiet compact variant', () => {
+    const tree = shallow(<TabList quiet variant="compact" />, {disableLifecycleMethods: true});
+    assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--quiet spectrum-Tabs--compact');
   });
 
   it('supports additional classNames', () => {

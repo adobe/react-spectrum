@@ -84,16 +84,17 @@ export default class TabList extends React.Component {
   }
 
   render() {
-    const {
+    let {
       className,
       orientation = 'horizontal',
       variant = '',
+      quiet,
       children,
       defaultSelectedIndex,
       ...otherProps
     } = this.props;
 
-    const {
+    let {
       selectedIndex,
       tabArray
     } = this.state;
@@ -101,7 +102,18 @@ export default class TabList extends React.Component {
     let selectedTab = tabArray[selectedIndex];
 
     // For backwards compatibility
-    let mappedVariant = VARIANTS[variant] !== undefined ? VARIANTS[variant] : variant;
+    // let mappedVariant = VARIANTS[variant] !== undefined ? VARIANTS[variant] : variant;
+    if (VARIANTS[variant] != null) {
+      let message = `The "${variant}" variant of TabList has been deprecated.`;
+      if (VARIANTS[variant]) {
+        message += ` Please use the "${VARIANTS[variant]}" variant instead.`;
+      } else {
+        message += ' Please remove the variant prop to use the default variant instead.';
+      }
+
+      console.warn(message);
+      variant = VARIANTS[variant];
+    }
 
     return (
       <TabListBase
@@ -112,7 +124,8 @@ export default class TabList extends React.Component {
         className={classNames(
           'spectrum-Tabs',
           `spectrum-Tabs--${orientation}`,
-          mappedVariant ? `spectrum-Tabs--${mappedVariant}` : '',
+          {'spectrum-Tabs--quiet': quiet},
+          variant ? `spectrum-Tabs--${variant}` : '',
           className
         )}
         onChange={this.onChange}>

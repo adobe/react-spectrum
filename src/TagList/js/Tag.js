@@ -1,3 +1,4 @@
+import Avatar from '../../Avatar';
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
@@ -40,7 +41,7 @@ export default function Tag({
       aria-label={ariaLabel}
       {...filterDOMProps(otherProps)}>
       {avatar &&
-        <img className="spectrum-Tags-item-avatar" alt="" src={avatar} aria-hidden="true" />
+        <Avatar alt="" src={avatar} aria-hidden="true" />
       }
       {cloneIcon(icon, {
         size: 'S',
@@ -51,12 +52,11 @@ export default function Tag({
       </span>
       {closable &&
         <Button
-          className="spectrum-ClearButton spectrum-ClearButton--small"
-          type="button"
-          variant="icon"
+          className="spectrum-ClearButton--small"
+          variant="clear"
           icon={<TagClose />}
           title="Remove"
-          onClick={!disabled && (e => {onClose(value || children, e); })} />
+          onClick={!disabled ? (e => {onClose(value || children, e); }) : null} />
       }
     </div>
   );

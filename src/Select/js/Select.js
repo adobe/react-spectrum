@@ -132,7 +132,8 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           ref={b => this.button = b}
-          onKeyDown={this.onKeyDown}>
+          onKeyDown={this.onKeyDown}
+          style={{minWidth: 192}}> {/* temporary fix for spectrum-css issue */}
           <span className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
           {invalid && <AlertIcon size="S" />}
           <SelectDownChevron size={null} className="spectrum-Dropdown-icon" />

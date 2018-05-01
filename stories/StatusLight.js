@@ -46,24 +46,24 @@ storiesOf('StatusLight', module)
     () => render({variant: 'purple'}),
     {inline: true}
   ).addWithInfo(
-    'variant: negative',
-    () => render({variant: 'negative'}),
-    {inline: true}
-  ).addWithInfo(
-    'variant: notice',
-    () => render({variant: 'notice'}),
-    {inline: true}
-  ).addWithInfo(
-    'variant: positive',
-    () => render({variant: 'positive'}),
+    'variant: neutral',
+    () => render({variant: 'neutral'}),
     {inline: true}
   ).addWithInfo(
     'variant: active',
     () => render({variant: 'active'}),
     {inline: true}
   ).addWithInfo(
-    'variant: archived',
-    () => render({variant: 'archived'}),
+    'variant: positive',
+    () => render({variant: 'positive'}),
+    {inline: true}
+  ).addWithInfo(
+    'variant: notice',
+    () => render({variant: 'notice'}),
+    {inline: true}
+  ).addWithInfo(
+    'variant: negative',
+    () => render({variant: 'negative'}),
     {inline: true}
   );
 

@@ -32,6 +32,15 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: overBackground',
+    () => (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {render({variant: 'overBackground'})}
+      </div>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: action',
     () => renderSelected({variant: 'action'}),
     {inline: true}
@@ -71,6 +80,15 @@ storiesOf('Button', module)
     () => render({quiet: true, variant: 'warning'}),
     {inline: true}
   )
+  .addWithInfo(
+    'quiet: true, variant: overBackground',
+    () => (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {render({quiet: true, variant: 'overBackground'})}
+      </div>
+    ),
+    {inline: true}
+  )
  .addWithInfo(
     'quiet: true, variant: action',
     () => renderSelected({quiet: true, variant: 'action'}),
@@ -79,16 +97,6 @@ storiesOf('Button', module)
  .addWithInfo(
     'quiet: true, variant: action icon only',
     () => renderSelected({quiet: true, variant: 'action', label: null, icon: <Bell />}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: quiet',
-    () => render({variant: 'quiet'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: minimal',
-    () => render({variant: 'minimal'}),
     {inline: true}
   )
   .addWithInfo(

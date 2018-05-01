@@ -16,10 +16,19 @@ storiesOf('Link', module)
   )
   .addWithInfo(
     'Subtle',
-    () => render({subtle: true}),
+    () => render({variant: 'subtle'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Over background',
+    () => (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {render({variant: 'overBackground'})}
+      </div>
+    ),
     {inline: true}
   );
 
 function render(props = {}) {
-  return (<Link href="#" {...props}>This is a React Coral Link</Link>);
+  return (<Link href="#" {...props}>This is a React Spectrum Link</Link>);
 }

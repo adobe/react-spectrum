@@ -635,7 +635,8 @@ export default class Calendar extends Component {
           <Button
             ref={b => this.prevMonthButton = b}
             className="spectrum-Calendar-prevMonth"
-            variant="icon"
+            variant="action"
+            quiet
             icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
             aria-label={formatMessage('previous')}
             title={formatMessage('previous')}
@@ -646,7 +647,8 @@ export default class Calendar extends Component {
           <Button
             ref={b => this.nextMonthButton = b}
             className="spectrum-Calendar-nextMonth"
-            variant="icon"
+            variant="action"
+            quiet
             icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
             aria-label={formatMessage('next')}
             title={formatMessage('next')}

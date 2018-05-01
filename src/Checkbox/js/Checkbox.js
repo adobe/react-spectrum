@@ -1,4 +1,5 @@
 import CheckboxCheckmark from '../../Icon/core/CheckboxCheckmark';
+import CheckboxPartialCheckmark from '../../Icon/core/CheckboxPartialCheckmark';
 import classNames from 'classnames';
 import React, {Component} from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
@@ -40,6 +41,10 @@ export default class Checkbox extends Component {
       otherProps['aria-checked'] = 'mixed';
     }
 
+    let markIcon = indeterminate
+      ? <CheckboxPartialCheckmark size={null} className="spectrum-Checkbox-partialCheckmark" />
+      : <CheckboxCheckmark size={null} className="spectrum-Checkbox-checkmark" />;
+
     return (
       <SwitchBase
         ref={el => this.inputRef = el}
@@ -53,7 +58,7 @@ export default class Checkbox extends Component {
         }
         inputClassName="spectrum-Checkbox-input"
         markClassName="spectrum-Checkbox-box"
-        markIcon={<CheckboxCheckmark size={null} className="spectrum-Checkbox-checkmark" />}
+        markIcon={markIcon}
         labelClassName="spectrum-Checkbox-label"
         {...otherProps} />
     );

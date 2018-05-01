@@ -5,8 +5,13 @@ import {shallow} from 'enzyme';
 
 describe('Link', () => {
   it('supports the subtle variation', () => {
-    const tree = shallow(<Link subtle className="myClass">Testing</Link>);
+    const tree = shallow(<Link variant="subtle" className="myClass">Testing</Link>);
     assert(tree.prop('className').indexOf('spectrum-Link--subtle') >= 0);
+  });
+
+  it('supports the overBackground variation', () => {
+    const tree = shallow(<Link variant="overBackground" className="myClass">Testing</Link>);
+    assert(tree.prop('className').indexOf('spectrum-Link--overBackground') >= 0);
   });
 
   it('supports additional classNames', () => {

@@ -10,8 +10,18 @@ importSpectrumCSS('button');
 
 // For backward compatibility with coral
 const VARIANTS = {
-  'quiet': 'quiet--primary',
-  'minimal': 'quiet--secondary'
+  quiet: {
+    variant: 'primary',
+    quiet: true
+  },
+  minimal: {
+    variant: 'secondary',
+    quiet: true
+  },
+  icon: {
+    variant: 'action',
+    quiet: true
+  }
 };
 
 @focusRing
@@ -98,10 +108,12 @@ export default class Button extends Component {
       ...otherProps
     } = this.props;
 
-    // The icon variant was deprecated; quiet action button should be used instead
-    if (variant === 'icon') {
-      quiet = true;
-      variant = 'action';
+    // Map variants for backwards compatibility
+    if (VARIANTS[variant]) {
+      let mappedVariant = VARIANTS[variant];
+      let variantName = (mappedVariant.quiet ? 'quiet ' : '') + `"${mappedVariant.variant}"`;
+      console.warn(`The "${variant}" variant of Button is deprecated. Please use the ${variantName} variant instead.`);
+      ({variant, quiet} = mappedVariant);
     }
 
     // Some button variants were broken out into their own components, map them appropriately
@@ -125,17 +137,13 @@ export default class Button extends Component {
       variant = '';
     }
 
-    // Map variants for backwards compatibility
-    let mappedVariant = (VARIANTS[variant] || variant);
-    let variantClass = '';
-    if (mappedVariant) {
-      variantClass = `${baseButtonClass}`;
-      if (quiet) {
-        variantClass += '--quiet';
-      }
-      variantClass += `--${mappedVariant}`;
-    } else if (quiet) {
-      variantClass = `${baseButtonClass}--quiet`;
+    let variantClass = baseButtonClass;
+    if (quiet) {
+      variantClass += '--quiet';
+    }
+
+    if (variant) {
+      variantClass += `--${variant}`;
     }
 
     if (Element !== 'button') {

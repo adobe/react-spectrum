@@ -4,12 +4,22 @@ import React from 'react';
 
 importSpectrumCSS('statuslight');
 
-const variants = [
+const VARIANTS = [
   'celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple',
-  'negative', 'notice', 'positive', 'active', 'archived'
+  'neutral', 'active', 'positive', 'notice', 'negative', 'archived'
 ];
 
-export default function StatusLight({variant = variants[0], children, ...otherProps}) {
+// For backward compatibility
+const DEPRECATED_VARIANTS = {
+  archived: 'neutral'
+};
+
+export default function StatusLight({variant = VARIANTS[0], children, ...otherProps}) {
+  if (DEPRECATED_VARIANTS[variant]) {
+    console.warn(`The "${variant}" variant of StatusLight is deprecated. Please use "${DEPRECATED_VARIANTS[variant]}" instead.`);
+    variant = DEPRECATED_VARIANTS[variant];
+  }
+
   return (
     <div
       className={`spectrum-StatusLight spectrum-StatusLight--${variant}`}
@@ -22,5 +32,5 @@ export default function StatusLight({variant = variants[0], children, ...otherPr
 StatusLight.displayName = 'StatusLight';
 
 StatusLight.propTypes = {
-  variant: PropTypes.oneOf(variants)
+  variant: PropTypes.oneOf(VARIANTS)
 };

@@ -2,7 +2,6 @@ import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import CarouselLeftChevron from '../../Icon/core/CarouselLeftChevron';
 import CarouselRightChevron from '../../Icon/core/CarouselRightChevron';
-import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
@@ -116,9 +115,7 @@ export default class Pagination extends Component {
           onClick={this.onPrevious}
           variant={buttonVariant}
           aria-label={formatMessage('previous')}
-          className={classNames({
-            'spectrum-Pagination-prevButton': isButtonMode
-          })}>
+          className="spectrum-Pagination-prevButton">
           <CarouselLeftChevron />
         </Button>
         { variant === 'explicit' &&
@@ -140,9 +137,7 @@ export default class Pagination extends Component {
           onClick={this.onNext}
           variant={buttonVariant}
           aria-label={formatMessage('next')}
-          className={classNames({
-            'spectrum-Pagination-nextButton': isButtonMode
-          })}>
+          className="spectrum-Pagination-nextButton">
           {isButtonMode ? formatMessage('next') : ''}
           <CarouselRightChevron />
         </Button>

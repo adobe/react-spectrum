@@ -17,7 +17,7 @@ storiesOf('Tag', module)
   )
   .addWithInfo(
     'avatar',
-    () => render({avatar: 'https://www.botlibre.com/media/a12832214.png', closable: true}),
+    () => render({avatar: 'https://git.corp.adobe.com/pages/Spectrum/spectrum-css/docs/img/example-ava.jpg', closable: true}),
     {inline: true}
   )
   .addWithInfo(
