@@ -12,7 +12,7 @@ export default function DropdownButton({alignRight, onClose, onOpen, onSelect, c
       <Button
         variant="action"
         quiet
-        icon={<More className="spectrum-ActionMenu-icon" />}
+        icon={<More />}
         {...props} />
       <Menu>
         {children}
