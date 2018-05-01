@@ -88,16 +88,11 @@ storiesOf('Slider', module)
     {inline: true}
   )
   .addWithInfo(
-    'variant: range with aria-label',
-    () => render({variant: 'range', filled: true, renderLabel: true, 'aria-label': 'variant: range with aria-label'}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'variant: range with aria-labelledby',
+    'labeled using aria-labelledby',
     () => (
       <div>
         <FieldLabel label="variant: range with aria-labelledby" labelFor="foo" id="bar" />
-        {render({variant: 'range', filled: true, id: 'foo', 'aria-labelledby': 'bar', 'aria-label': 'variant: range with aria-label'})}
+        {render({variant: 'range', filled: true, id: 'foo', 'aria-labelledby': 'bar', 'aria-label': 'labeled using aria-labelledby'})}
       </div>
     ),
     {inline: true}

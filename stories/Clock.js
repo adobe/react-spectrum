@@ -29,7 +29,8 @@ storiesOf('Clock', module)
     {inline: true}
   )
   .addWithInfo(
-    'Using aria-labelledby',
+    'using aria-labelledby',
+    'Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.',
     () => render({value: 'today', id: clockId, 'aria-labelledby': clockId + '-label', labelText: 'Start time'}),
     {inline: true}
   );

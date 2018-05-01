@@ -1,6 +1,5 @@
 import {action, storiesOf} from '@storybook/react';
 import Autocomplete from '../src/Autocomplete';
-import FieldLabel from '../src/FieldLabel';
 import React from 'react';
 import Textfield from '../src/Textfield';
 import {VerticalCenter} from '../.storybook/layout';
@@ -35,53 +34,26 @@ storiesOf('Autocomplete', module)
   .addWithInfo(
     'Default',
     () => (
-      <FieldLabel label="Autocomplete...">
-        <Autocomplete getCompletions={getCompletions} onSelect={action('select')}>
-          <Textfield placeholder="Autocomplete..." />
-        </Autocomplete>
-      </FieldLabel>
+      <Autocomplete getCompletions={getCompletions} onSelect={action('select')}>
+        <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
     ),
     {inline: true}
   )
   .addWithInfo(
     'allowCreate',
     () => (
-      <FieldLabel label="Autocomplete...">
-        <Autocomplete allowCreate getCompletions={getCompletions} onSelect={action('select')}>
-          <Textfield placeholder="Autocomplete..." />
-        </Autocomplete>
-      </FieldLabel>
+      <Autocomplete allowCreate getCompletions={getCompletions} onSelect={action('select')}>
+        <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
     ),
     {inline: true}
   )
   .addWithInfo(
     'Async',
     () => (
-      <FieldLabel label="Github usernames...">
-        <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
-          <Textfield placeholder="Github usernames..." />
-        </Autocomplete>
-      </FieldLabel>
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'labelled with FieldLabel and labelFor',
-    () => (
-      <div>
-        <FieldLabel label="Github usernames..." labelFor="autocomplete-input-id" />
-        <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
-          <Textfield id="autocomplete-input-id" placeholder="Github usernames..." />
-        </Autocomplete>
-      </div>
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'labelled with aria-label',
-    () => (
       <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
-        <Textfield aria-label="Github usernames..." placeholder="Github usernames..." />
+        <Textfield placeholder="Github usernames..." />
       </Autocomplete>
     ),
     {inline: true}

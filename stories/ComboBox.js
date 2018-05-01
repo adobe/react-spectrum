@@ -1,6 +1,5 @@
 import Bell from '../src/Icon/Bell';
 import ComboBox from '../src/ComboBox';
-import FieldLabel from '../src/FieldLabel';
 import React from 'react';
 import Seat from '../src/Icon/Seat';
 import Send from '../src/Icon/Send';
@@ -38,78 +37,49 @@ storiesOf('ComboBox', module)
   .addWithInfo(
     'Default',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="Default" placeholder="Combo Box" />
     ),
     {inline: true}
   )
   .addWithInfo(
     'invalid',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" invalid />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="invalid" placeholder="Combo Box" invalid />
     ),
     {inline: true}
   )
    .addWithInfo(
     'disabled',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" disabled />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="disabled" placeholder="Combo Box" disabled />
     ),
     {inline: true}
   )
   .addWithInfo(
     'quiet',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" quiet />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="quiet" placeholder="Combo Box" quiet />
     ),
     {inline: true}
   )
   .addWithInfo(
     'quiet invalid',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" quiet invalid />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="quiet invalid" placeholder="Combo Box" quiet invalid />
     ),
     {inline: true}
   )
   .addWithInfo(
     'quiet disabled',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTIONS} placeholder="Combo Box" quiet disabled />
-      </FieldLabel>
+      <ComboBox options={OPTIONS} aria-label="quiet disabled" placeholder="Combo Box" quiet disabled />
     ),
     {inline: true}
   )
   .addWithInfo(
     'with icons',
     () => (
-      <FieldLabel label="Combo Box">
-        <ComboBox options={OPTION_ICONS} placeholder="Combo Box" />
-      </FieldLabel>
-    ),
-    {inline: true}
-  ).addWithInfo(
-    'labelled with FieldLabel and labelFor',
-    () => (
-      <div>
-        <FieldLabel label="Combo Box" labelFor="combobox-id" />
-        <ComboBox id="combobox-id" options={OPTION_ICONS} placeholder="Combo Box" />
-      </div>
-    ),
-    {inline: true}
-  ).addWithInfo(
-    'labelled with aria-label',
-    () => (
-      <ComboBox aria-label="Combo Box" options={OPTION_ICONS} placeholder="Combo Box" />
+      <ComboBox options={OPTION_ICONS} aria-label="with icons" placeholder="Combo Box" />
     ),
     {inline: true}
   );

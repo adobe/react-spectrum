@@ -1,4 +1,3 @@
-import ComboBox from '../src/ComboBox';
 import FieldLabel from '../src/FieldLabel';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -21,15 +20,6 @@ storiesOf('FieldLabel', module)
     () => (
       <FieldLabel label="React" labelFor="foo">
         <Textfield placeholder="React" id="foo" />
-      </FieldLabel>
-    ),
-    {inline: true}
-  )
-  .addWithInfo(
-    'labelFor ComboBox',
-    () => (
-      <FieldLabel label="React" labelFor="bar">
-        <ComboBox options={['Chocolate', 'Vanilla', 'Strawberry']} placeholder="Combo Box" id="bar" />
       </FieldLabel>
     ),
     {inline: true}
