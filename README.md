@@ -1,4 +1,4 @@
-# react-spectrum ![spectrum-version](https://git.corp.adobe.com/brownlee/stupid-stuff/blob/master/spectrum-badge.png)
+# react-spectrum <img src='https://git.corp.adobe.com/pages/brownlee/stupid-stuff/spectrum-badge.svg' height=20 />
 
 [Spectrum](http://spectrum.corp.adobe.com) UI components in React.
 
