@@ -16,7 +16,7 @@ which modules you `import` or `require`.
 
 ## Using react-spectrum in your project
 
-react-spectrum is usable with a module bundler like [Browserify](http://browserify.org) or [Webpack](https://webpack.js.org).
+react-spectrum is usable with a module bundler like [Parcel](https://parceljs.org) or [Webpack](https://webpack.js.org).
 Components are then `require`able as in the following example. The styles for each component you import will be bundled
 along-side the JavaScript (more on configuring this below). Each component should be imported independently -
 this way only the components you use will be included in the output JavaScript and CSS files.
@@ -49,27 +49,6 @@ import Button from '@react/react-spectrum/Button';
 ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
 ```
 
-### Browserify
-
-To use react-spectrum with browserify, you will need a plugin to extract the CSS into a separate file.
-One such plugin is [text-extractify](https://github.com/TiddoLangerak/text-extractify). This will build
-a CSS file containing all of the required styles for the components you imported.
-
-With the browserify CLI:
-
-```bash
-browserify app.js -p [ text-extractify --exts css --dest out.css ] -o out.js
-```
-
-Or with the browserify API:
-
-```javascript
-b.plugin('text-extractify', {
-  exts: ['css'],
-  dest: 'out.css'
-});
-```
-
 ### Webpack
 
 To use react-spectrum, you'll need [css-loader](https://github.com/webpack-contrib/css-loader) and either
@@ -90,18 +69,26 @@ module.exports = {
 }
 ```
 
+### Parcel
+
+No additional configuration is needed to use react-spectrum with Parcel. 😇
+
 ### Specify themes which you want to include
 
 You can specify the themes which you want to be included/excluded in build by passing enviroment variables to your application's build process, for example: `THEME_LIGHT=true THEME_DARK=true make build`. If you don't pass anything, all themes are imported.
 
-In webpack, you can use `DefinePlugin` to specify environment variables.
+In webpack, you can use `DefinePlugin` to specify environment variables. Unfortunately, you must explicitly set all of the environment variables, including the ones for themes/scales you are not using.
 
 ```javascript
 module.exports = {
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.THEME_LIGHTEST': 'true',
-      'process.env.THEME_DARKEST': 'true'
+      'process.env.SCALE_MEDIUM': 'true',
+      'process.env.SCALE_LARGE': 'false',
+      'process.env.THEME_LIGHT': 'true',
+      'process.env.THEME_LIGHTEST': 'false',
+      'process.env.THEME_DARK': 'false',
+      'process.env.THEME_DARKEST': 'false'
     })
   ]
 }
