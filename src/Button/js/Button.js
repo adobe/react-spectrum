@@ -165,9 +165,11 @@ export default class Button extends Component {
       ariaExpanded = selected || null;
     }
 
+    const filteredProps = typeof Element === 'string' ? filterDOMProps(otherProps) : otherProps;
+
     return (
       <Element
-        {...filterDOMProps(otherProps)}
+        {...filteredProps}
         className={
           classNames(
             baseButtonClass,
