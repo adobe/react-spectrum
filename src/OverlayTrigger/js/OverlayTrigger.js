@@ -1,6 +1,7 @@
 
 import autobind from 'autobind-decorator';
 import Overlay from './Overlay';
+import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
 import PropTypes from 'prop-types';
 import React, {cloneElement, Component} from 'react';
 import ReactDOM from 'react-dom';
@@ -99,7 +100,7 @@ export default class OverlayTrigger extends Component {
     crossOffset: 0,
     flip: true,
     disabled: false,
-    boundariesElement: 'container'
+    boundariesElement: () => ownerDocument(this).body
   };
 
   constructor(props, context) {

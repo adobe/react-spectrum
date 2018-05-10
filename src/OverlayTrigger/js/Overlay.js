@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import closest from 'dom-helpers/query/closest';
 import OpenTransition from '../../utils/OpenTransition';
+import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
 import Portal from 'react-overlays/lib/Portal';
 import Position from './Position';
 import React from 'react';
@@ -80,12 +81,12 @@ export default class Overlay extends React.Component {
     let {
       containerPadding,
       target,
-      container,
+      container = this.getOverlayContainer(target),
       placement,
       offset,
       crossOffset,
       flip,
-      boundariesElement,
+      boundariesElement = () => ownerDocument(this).body,
       shouldUpdatePosition,
       rootClose,
       children,
@@ -136,7 +137,7 @@ export default class Overlay extends React.Component {
     }
 
     return (
-      <Portal container={container || this.getOverlayContainer(target)}>
+      <Portal container={container}>
         {child}
       </Portal>
     );

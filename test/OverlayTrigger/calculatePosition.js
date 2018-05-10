@@ -40,6 +40,8 @@ const overlaySize = {
   height: 200
 };
 
+const PROVIDER_OFFSET = 50;
+
 describe('calculatePosition', function () {
   function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
     const placementAxis = placement.split(' ')[0];
@@ -53,7 +55,24 @@ describe('calculatePosition', function () {
     };
 
     it('Should calculate the correct position', function () {
-      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, 'container', offset, crossOffset);
+      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, {top: 0, height: 600, left: 0, scroll: {top: 0, left: 0}}, {top: 0, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
+      assert.deepEqual(result, expectedPosition);
+    });
+  }
+
+  function checkPositionForProvider(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+    const placementAxis = placement.split(' ')[0];
+    const expectedPosition = {
+      positionLeft: expected[0],
+      positionTop: expected[1],
+      arrowOffsetLeft: expected[2],
+      arrowOffsetTop: expected[3],
+      maxHeight: expected[4] - PROVIDER_OFFSET,
+      placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
+    };
+
+    it('Should calculate the correct position when provider does not start at top of screen', function () {
+      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, {top: 0, height: 600, left: 0, scroll: {top: 0, left: 0}}, {top: PROVIDER_OFFSET, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
     });
   }
@@ -156,7 +175,7 @@ describe('calculatePosition', function () {
       mainAxisOffset: [360, 150, undefined, 150, 400]
     }
   ];
-  
+
   testCases.forEach(function (testCase) {
     const {placement} = testCase;
 
@@ -165,11 +184,17 @@ describe('calculatePosition', function () {
         checkPosition(
           placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
         );
+        checkPositionForProvider(
+          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
+        );
       });
 
       describe('viewport offset before', function () {
         checkPosition(
           placement, getTargetDimension({left: 0, top: 0}), testCase.offsetBefore
+        );
+        checkPositionForProvider(
+          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
         );
       });
 

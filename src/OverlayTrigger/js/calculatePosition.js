@@ -72,13 +72,12 @@ function getDelta(axis, offset, size, containerDimensions, padding) {
   }
 }
 
-function shouldFlip(axis, offset, size, containerDimensions, padding, placement, flipBoundary) {
-  const flipContainerDimensions = flipBoundary && flipBoundary !== 'container' ? getContainerDimensions(typeof flipBoundary === 'function' ? flipBoundary() : flipBoundary) : containerDimensions;
+function shouldFlip(axis, offset, size, padding, placement, flipContainerDimensions, containerOffsetWithBoundary) {
   const containerScroll = flipContainerDimensions.scroll[axis];
   const containerHeight = flipContainerDimensions[AXIS_SIZE[axis]];
 
-  const startEdgeOffset = offset - padding - containerScroll;
-  const endEdgeOffset = offset + padding - containerScroll + size;
+  const startEdgeOffset = containerOffsetWithBoundary[axis] + offset - padding - containerScroll;
+  const endEdgeOffset = containerOffsetWithBoundary[axis] + offset + padding - containerScroll + size;
 
   if (startEdgeOffset < 0 && (placement === 'top' || placement === 'left')) {
     return true;
@@ -143,19 +142,19 @@ function computePosition(childOffset, containerDimensions, overlaySize, placemen
   return position;
 }
 
-export function calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, flip, boundariesElement, offset, crossOffset) {
+export function calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, flip, boundaryDimensions, containerOffsetWithBoundary, offset, crossOffset) {
   let placementInfo = parsePlacement(placementInput);
-  const {axis, size, crossAxis, crossSize} = placementInfo;
+  const {axis, size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
   let position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, offset, crossOffset);
 
   // First check if placement should be flipped
-  if (flip && shouldFlip(axis, position[axis], overlaySize[size], containerDimensions, padding, placementInput, boundariesElement)) {
-    const flippedPlacementInfo = parsePlacement(FLIPPED_DIRECTION[placementInput]);
+  if (flip && shouldFlip(axis, position[axis], overlaySize[size], padding, placement, boundaryDimensions, containerOffsetWithBoundary)) {
+    const flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}`);
     const {axis, size} = flippedPlacementInfo;
     const flippedPosition = computePosition(childOffset, containerDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset);
 
     // Check if flipped placement has enough space otherwise flip is not possible
-    if (!shouldFlip(axis, flippedPosition[axis], overlaySize[size], containerDimensions, padding, FLIPPED_DIRECTION[placementInput], boundariesElement)) {
+    if (!shouldFlip(axis, flippedPosition[axis], overlaySize[size], padding, FLIPPED_DIRECTION[placement], boundaryDimensions, containerOffsetWithBoundary)) {
       placementInfo = flippedPlacementInfo;
       position = flippedPosition;
     }
@@ -164,7 +163,7 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
   position[crossAxis] += delta;
 
-  let maxHeight = Math.max(0, containerDimensions.height + containerDimensions.top + containerDimensions.scroll.top - position.top - margins.top - margins.bottom - padding);
+  let maxHeight = Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding);
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, offset, crossOffset);
@@ -194,5 +193,8 @@ export default function calculatePosition(placementInput, overlayNode, target, c
   overlaySize.height += margins.top + margins.bottom;
 
   const containerDimensions = getContainerDimensions(container);
-  return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, flip, boundariesElement, offset, crossOffset);
+  const boundaryContainer = boundariesElement === 'container' ? container : boundariesElement();
+  const boundaryDimensions = getContainerDimensions(boundaryContainer);
+  const containerOffsetWithBoundary = getPosition(container, boundaryContainer);
+  return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, flip, boundaryDimensions, containerOffsetWithBoundary, offset, crossOffset);
 }

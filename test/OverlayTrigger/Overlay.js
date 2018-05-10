@@ -73,6 +73,7 @@ describe('Overlay', () => {
     assert.equal(tree.find(Position).prop('target'), target);
     assert.equal(tree.find(Position).prop('placement'), 'left');
     assert.equal(tree.find(Position).prop('shouldUpdatePosition'), true);
+    assert(tree.find(Position).prop('boundariesElement'));
   });
 
   it('calls props onExcited with args', () => {
