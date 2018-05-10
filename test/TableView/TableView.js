@@ -204,4 +204,34 @@ describe('TableView', function () {
 
     assert.equal(loadMoreStub.callCount, 1);
   });
+
+  it('should allow a row height override', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        rowHeight={56} />
+    );
+    assert.equal(tree.instance().layout.rowHeight, 56);
+  });
+
+  it('should have a row height ceiling of 72', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        rowHeight={80} />
+    );
+    assert.equal(tree.instance().layout.rowHeight, 72);
+  });
+
+  it('should have a row height floor of 48', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        rowHeight={24} />
+    );
+    assert.equal(tree.instance().layout.rowHeight, 48);
+  });
 });

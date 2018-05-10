@@ -38,16 +38,20 @@ export default class TableView extends Component {
     onCellClick: PropTypes.func,
 
     /* Whether to use the spectrum quiet variant. */
-    quiet: PropTypes.bool
+    quiet: PropTypes.bool,
+
+    /* The height each row should be in the table. It has a maximum of 72 */
+    rowHeight: PropTypes.number
   };
 
   static defaultProps = {
     allowsSelection: true
   };
 
-  constructor() {
-    super();
-    this.layout = new TableViewLayout;
+  constructor(props) {
+    super(props);
+    const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
+    this.layout = new TableViewLayout({rowHeight});
   }
 
   setSelectAll(select) {

@@ -30,6 +30,11 @@ storiesOf('TableView', module)
     'allowsMultipleSelection: false',
     () => render({allowsMultipleSelection: false}),
     {inline: true}
+  )
+  .addWithInfo(
+    'rowHeight: 72',
+    () => render({rowHeight: 72}),
+    {inline: true}
   );
 
 var tableData = [
