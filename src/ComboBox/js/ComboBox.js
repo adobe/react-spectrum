@@ -90,6 +90,7 @@ export default class ComboBox extends React.Component {
   render() {
     const {
       id,
+      className,
       value,
       disabled,
       required,
@@ -102,9 +103,15 @@ export default class ComboBox extends React.Component {
 
     return (
       <Autocomplete
-        className={classNames('spectrum-InputGroup', {
-          'spectrum-InputGroup--quiet': quiet
-        })}
+        className={
+          classNames(
+            'spectrum-InputGroup',
+            {
+              'spectrum-InputGroup--quiet': quiet
+            },
+            className
+          )
+        }
         ref={a => this.autocomplete = a}
         getCompletions={this.getCompletions}
         value={value}

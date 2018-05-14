@@ -94,6 +94,11 @@ describe('ComboBox', () => {
     assert.equal(tree.prop('getCompletions')('tw').length, 1);
   });
 
+  it('should support additional classNames', () => {
+    const tree = shallow(<ComboBox options={OPTION_ICONS} className="myClass" />);
+    assert.equal(tree.prop('className'), 'spectrum-InputGroup myClass');
+  });
+
   it('should update accessibility label for button on change', async () => {
     const tree = shallow(<ComboBox />);
     assert.equal(tree.state.count, null);
