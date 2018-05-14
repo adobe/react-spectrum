@@ -58,8 +58,8 @@ describe('Textfield', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Textfield foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Textfield data-foo />);
+    assert.equal(tree.prop('data-foo'), true);
   });
 
   it('supports autoFocus', async () => {

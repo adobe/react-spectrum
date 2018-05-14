@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -69,7 +70,7 @@ export default class Textfield extends Component {
         required={required}
         readOnly={readOnly}
         aria-invalid={invalid || null}
-        {...otherProps}
+        {...filterDOMProps(otherProps)}
         onChange={this.onChange} />
     );
   }

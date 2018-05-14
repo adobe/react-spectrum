@@ -87,8 +87,8 @@ describe('Textarea', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Textfield multiLine foo />);
-    assert.equal(tree.prop('foo'), true);
+    const tree = shallow(<Textfield multiLine data-foo />);
+    assert.equal(tree.prop('data-foo'), true);
   });
 
   it('supports autoFocus', async () => {
