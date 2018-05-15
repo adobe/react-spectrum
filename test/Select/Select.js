@@ -1,7 +1,8 @@
 import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
-import {mount, shallow} from 'enzyme';
+import FieldLabel from '../../src/FieldLabel';
+import {mount, render, shallow} from 'enzyme';
 import React from 'react';
 import Select, {SelectMenu} from '../../src/Select';
 import sinon from 'sinon';
@@ -116,6 +117,37 @@ describe('Select', () => {
 
     assert.equal(onClose.callCount, 0);
     assert.equal(onChange.callCount, 1);
+  });
+
+  it('Labelling of the Select with parent FieldLabel is handled correctly', () => {
+    const tree = render(
+      <FieldLabel label="foo">
+        <Select options={testOptions} value="vanilla" />
+      </FieldLabel>
+      );
+   
+    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id')); 
+
+  });
+
+  it('Labelling of the Select with aria-labelledby is handled correctly', () => {
+    const tree = render(
+      <div>
+        <FieldLabel id="bar" label="test" htmlFor="foo" />
+        <Select id="foo" options={testOptions} value="vanilla" aria-labelledby="bar" />
+      </div>
+    );
+    
+    assert.equal(tree.find('button').prop('aria-labelledby'), 'bar ' + tree.find('span').prop('id')); 
+
+  });
+
+  it('Labelling of the Select with aria-label is handled correctly', () => {
+    const tree = render(
+      <Select options={testOptions} value="vanilla" aria-label="test" />
+      );
+
+    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('button').prop('id') + ' ' + tree.find('span').prop('id'));
   });
 
   it('should not update state if value prop is passed', () => {

@@ -20,9 +20,21 @@ export default class Dropdown extends React.Component {
   constructor(props) {
     super(props);
     this.dropdownId = createId();
+    this.state = {
+      open: false,
+    };
+  }
+
+  onOpen(e) {
+    this.setState({open: true});    
+    if (this.props.onOpen) {
+      this.props.onOpen(e);
+    }
+    
   }
 
   onClose(e) {
+    this.setState({open: false});
     if (e && e.type === 'keyup') {
       this.restoreFocusOnClose();
     }
@@ -53,11 +65,13 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const {alignRight, onOpen, closeOnSelect, ...otherProps} = this.props;
+    const {alignRight, closeOnSelect, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
     const menuId = menu.props.id || this.dropdownId + '-menu';
+    delete otherProps.onOpen;
+    delete otherProps.onClose;
 
     return (
       <div {...filterDOMProps(otherProps)}>
@@ -69,13 +83,13 @@ export default class Dropdown extends React.Component {
                 trigger="click"
                 placement={alignRight ? 'bottom right' : 'bottom left'}
                 ref={t => this.overlayTrigger = t}
-                onShow={onOpen}
+                onShow={this.onOpen}
                 closeOnSelect={closeOnSelect}
                 key={index}
                 onHide={this.onClose} >
                 {React.cloneElement(trigger, {
-                  'aria-haspopup': 'true',
-                  'aria-controls': menuId,
+                  'aria-haspopup': trigger.props['aria-haspopup'] || 'true',
+                  'aria-controls': (this.state.open ? menuId : null),
                   ref: (node) => {
                     this.triggerRef = node;
                     const {ref} = trigger;

@@ -1,6 +1,7 @@
 import AlertIcon from '../../Icon/Alert';
 import Button from '../../Button';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import Dropdown from '../../Dropdown';
 import Popover from '../../Popover';
 import PropTypes from 'prop-types';
@@ -32,6 +33,7 @@ export default class Select extends React.Component {
     }
 
     this.state = {value};
+    this.selectId = createId();
   }
 
   componentWillReceiveProps(props) {
@@ -96,10 +98,26 @@ export default class Select extends React.Component {
       multiple = false,
       required = false,
       placeholder = 'Select an option',
-      className
+      className,
+      labelId,
+      id = this.selectId,
+      ...otherProps
     } = this.props;
 
     let {value} = this.state;
+
+    let ariaLabelledby = '';
+    const valueId = this.selectId + '-value';
+    if (otherProps['aria-labelledby']) {
+      ariaLabelledby = otherProps['aria-labelledby'] + ' ' + valueId;
+      delete otherProps['aria-labelledby'];
+    } else if (otherProps['aria-label']) {
+      ariaLabelledby = id + ' ' + valueId;
+    } else if (labelId) {
+      ariaLabelledby = labelId + ' ' + valueId;
+    } else {
+      ariaLabelledby = valueId;
+    }
 
     let label = placeholder;
     if (!multiple) {
@@ -119,22 +137,22 @@ export default class Select extends React.Component {
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={onOpen}
-        onClose={this.onClose}
-        aria-required={required}
-        aria-multiselectable={multiple}
-        aria-disabled={disabled}
-        aria-invalid={invalid}>
+        onClose={this.onClose}>
         <Button
           className="spectrum-Dropdown-trigger"
           type="button"
           variant="field"
+          aria-haspopup="listbox"
           quiet={quiet}
           disabled={disabled}
           invalid={invalid}
           ref={b => this.button = b}
           onKeyDown={this.onKeyDown}
+          aria-labelledby={ariaLabelledby}
+          id={id}
+          {...otherProps}
           style={{minWidth: 192}}> {/* temporary fix for spectrum-css issue */}
-          <span className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
+          <span id={valueId} className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
           {invalid && <AlertIcon size="S" />}
           <SelectDownChevron size={null} className="spectrum-Dropdown-icon" />
         </Button>

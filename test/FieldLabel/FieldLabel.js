@@ -32,6 +32,16 @@ describe('FieldLabel', () => {
     assert.equal(tree.find('label').prop('htmlFor'), tree.find('Textfield').prop('id'));
   });
 
+  it('if an id is specified on the label it should remain unchanged', () => {
+    const tree = shallow(<FieldLabel label="foo" id="bar" />);
+    assert.equal(tree.find('label').prop('id'), 'bar');
+  });
+
+  it('if an id is not specified on the label one should be generated', () => {
+    const tree = shallow(<FieldLabel label="foo" />);
+    assert(tree.find('label').prop('id'));
+  });
+
   it('should render a label positioned on the left side', () => {
     const tree = render({position: 'left'});
 

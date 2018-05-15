@@ -93,8 +93,8 @@ export default class ListItem extends Component {
         onBlur={this.handleBlur}
         tabIndex={!disabled ? tabIndex : undefined}
         role={role}
-        aria-checked={selected || undefined}
-        aria-selected={selected || focused || undefined}
+        aria-checked={role !== 'option' && selected || undefined}
+        aria-selected={selected || focused ? 'true' : 'false'}
         aria-disabled={disabled || undefined}
         {...otherProps}>
         {cloneIcon(icon, {

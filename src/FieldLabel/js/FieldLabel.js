@@ -12,10 +12,14 @@ export default function FieldLabel({label, position, children, className, labelF
   // 3. > 1 children - render wrapping <div>. `labelFor` required, along with `id` on child.
   let childArray = React.Children.toArray(children);
   let id;
+  let labelId = otherProps.id || createId(); 
+  delete otherProps.id;
+
+
   if (childArray.length === 1) {
     // Use the existing id prop, or generate one.
     id = childArray[0].props.id || createId();
-    childArray[0] = React.cloneElement(childArray[0], {id});
+    childArray[0] = React.cloneElement(childArray[0], {id, labelId});
   }
 
   if (id && !labelFor) {
@@ -35,6 +39,7 @@ export default function FieldLabel({label, position, children, className, labelF
         },
         childArray.length === 0 ? className : null
       )}
+      id={labelId}
       htmlFor={labelFor}
       {...otherProps}>
       {label}

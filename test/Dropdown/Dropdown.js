@@ -2,9 +2,9 @@ import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
 import {Menu, MenuItem} from '../../src/Menu';
+import {mount, shallow} from 'enzyme';
 import OverlayTrigger from '../../src/OverlayTrigger';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Dropdown', function () {
@@ -140,4 +140,27 @@ describe('Dropdown', function () {
     tree.find(OverlayTrigger).simulate('hide');
     assert.equal(onClose.callCount, 1);
   });
+
+  it('aria-expanded is set correctly after open/close', function () {
+
+    const tree = mount(
+      <Dropdown>
+        <Button>Test</Button>
+        <Menu>
+          <MenuItem>Test</MenuItem>
+        </Menu>
+      </Dropdown>
+    );
+
+    // After a click we expand the list -  aria-expanded should be true.
+    tree.find(OverlayTrigger).simulate('click');
+    assert.equal(tree.find('button').prop('aria-expanded'), true);
+
+    // Ensure that aria-expanded gets removed when we click to collapse the list. Prop should return null.
+    tree.find(OverlayTrigger).simulate('click');
+    assert.ifError(tree.find('button').prop('aria-expanded'));
+    tree.unmount();
+
+  });
+
 });

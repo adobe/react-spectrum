@@ -1,8 +1,8 @@
 import assert from 'assert';
 import {ListItem} from '../../src/List';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
 import SelectList from '../../src/SelectList';
-import {shallow} from 'enzyme';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -45,6 +45,13 @@ describe('SelectList', () => {
   it('supports multiple items being selected', () => {
     const tree = shallow(<SelectList options={testOptions} multiple value={selectedValue} />);
     assert.equal(tree.find({selected: true}).length, 3);
+  });
+
+  it('Aria-selected is set correctly when multiple items are selected', () => {
+    const tree = mount(<SelectList options={testOptions} multiple value={selectedValue} />);
+    assert.equal(tree.find({'aria-selected': 'true'}).length, 3);
+    assert.equal(tree.find({'aria-selected': 'false'}).length, 4);
+  
   });
 
   it('supports all items being disabled', () => {
