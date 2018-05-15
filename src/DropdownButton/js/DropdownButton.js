@@ -6,7 +6,7 @@ import React from 'react';
 
 importSpectrumCSS('actionmenu');
 
-export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, ...props}) {
+export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, ...props}) {
   return (
     <Dropdown className="spectrum-ActionMenu" onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect}>
       <Button
@@ -14,7 +14,7 @@ export default function DropdownButton({alignRight, onClose, onOpen, onSelect, c
         quiet
         icon={<More />}
         {...props} />
-      <Menu>
+      <Menu className={menuClassName}>
         {children}
       </Menu>
     </Dropdown>
