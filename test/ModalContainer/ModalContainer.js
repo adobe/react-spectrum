@@ -66,8 +66,6 @@ describe('ModalContainer', () => {
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
       assert.equal(node.parentElement.getAttribute('role'), 'dialog');
-      assert.equal(node.parentElement.getAttribute('aria-modal'), 'true');
-      assert(!node.getAttribute('aria-modal'));
 
       ModalContainer.hide(key);
       node = document.querySelector('#modal-test');
@@ -82,8 +80,6 @@ describe('ModalContainer', () => {
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
       assert.equal(node.parentElement.getAttribute('role'), 'presentation');
-      assert(!node.parentElement.getAttribute('aria-modal'));
-      assert.equal(node.getAttribute('aria-modal'), 'true');
 
       ModalContainer.hide(key);
       node = document.querySelector('#modal-test');

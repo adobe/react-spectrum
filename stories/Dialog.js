@@ -81,17 +81,17 @@ storiesOf('Dialog', module)
   )
   .addWithInfo(
     'autoFocusButton: \'cancel\'',
-    () => render(<Textfield placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
   .addWithInfo(
     'autoFocusButton: \'confirm\'',
-    () => render(<Textfield placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')}),
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
   .addWithInfo(
     'autoFocus descendant TextField',
-    () => render(<Textfield placeholder="Autofocus" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
   );
 

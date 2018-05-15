@@ -76,7 +76,6 @@ export default class Dialog extends Component {
     const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
 
     delete otherProps.modalContent;
-    delete otherProps['aria-modal'];
     delete otherProps.tabIndex;
 
     return (
@@ -91,7 +90,6 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
-        aria-modal="true"
         tabIndex={-1}>
         {title &&
           <DialogHeader
