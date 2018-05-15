@@ -91,6 +91,9 @@
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.0"
   },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "browserify": {
     "transform": [
       [
