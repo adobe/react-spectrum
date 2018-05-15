@@ -10,6 +10,14 @@ describe('Wait', () => {
     assert.equal(tree.type(), 'div');
   });
 
+  it('accessibility props', () => {
+    const tree = shallow(<Wait />);
+    assert.equal(tree.prop('role'), 'progressbar');
+    assert.equal(tree.prop('aria-valuemin'), 0);
+    assert.equal(tree.prop('aria-valuemax'), 100);
+    assert.equal(tree.prop('aria-valuenow'), null);
+  });
+
   it('supports size L', () => {
     const tree = shallow(<Wait size="L" />);
     assert.equal(tree.prop('className'), 'spectrum-Loader spectrum-Loader--indeterminate spectrum-Loader--large');

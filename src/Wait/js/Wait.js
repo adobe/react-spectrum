@@ -25,6 +25,9 @@ export default function Wait({
           className
         )
       }
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
       {...filterDOMProps(otherProps)}>
       <div className="spectrum-Loader-track" />
       <div className="spectrum-Loader-fills">
