@@ -49,6 +49,13 @@ import Button from '@react/react-spectrum/Button';
 ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
 ```
 
+A few community members have created example apps to help you get started:
+- Using Webpack / react-scripts: https://git.corp.adobe.com/timk/react-spectrum-template
+- Using Webpack / react-scripts: https://git.corp.adobe.com/acevedoc/react-spectrum-app-example
+- Using Parcel: https://git.corp.adobe.com/pfahler/react-spectrum-template
+
+Be sure to [check if your team is already using it](https://wiki.corp.adobe.com/display/RSP/Teams+using+react+spectrum)! It could save you time!
+
 ### Webpack
 
 To use react-spectrum, you'll need [css-loader](https://github.com/webpack-contrib/css-loader) and either
