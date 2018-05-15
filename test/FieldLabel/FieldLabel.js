@@ -8,7 +8,7 @@ const render = (props = {}) => shallow(
   <FieldLabel label="foo" {...props}>
     <Textfield value="test" />
   </FieldLabel>
-);
+).dive();
 
 describe('FieldLabel', () => {
   it('should render a label and its children', () => {
@@ -20,7 +20,7 @@ describe('FieldLabel', () => {
   });
 
   it('should render only a label', () => {
-    const tree = shallow(<FieldLabel label="foo" labelFor="foo" className="test" />);
+    const tree = shallow(<FieldLabel label="foo" labelFor="foo" className="test" />).dive();
     assert.equal(tree.type(), 'label');
     assert.equal(tree.text(), 'foo');
     assert.equal(tree.prop('className'), 'spectrum-FieldLabel test');
@@ -33,12 +33,12 @@ describe('FieldLabel', () => {
   });
 
   it('if an id is specified on the label it should remain unchanged', () => {
-    const tree = shallow(<FieldLabel label="foo" id="bar" />);
+    const tree = shallow(<FieldLabel label="foo" id="bar" />).dive();
     assert.equal(tree.find('label').prop('id'), 'bar');
   });
 
   it('if an id is not specified on the label one should be generated', () => {
-    const tree = shallow(<FieldLabel label="foo" />);
+    const tree = shallow(<FieldLabel label="foo" />).dive();
     assert(tree.find('label').prop('id'));
   });
 
