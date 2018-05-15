@@ -66,9 +66,41 @@ describe('Progress', () => {
       assert.equal(tree.hasClass('spectrum-Loader--side-label'), false);
     });
 
-    it('support custom labels', () => {
+    it('supports custom labels', () => {
       const tree = shallow(<Progress label="foo" />);
       assert.equal(findLabel(tree).text(), 'foo');
+      assert.equal(tree.prop('aria-labelledby'), findLabel(tree).prop('id'));
+    });
+
+    it('supports aria-label and aria-labelledby', () => {
+      const labelId = 'label-id';
+      const labelTxt = 'foo';
+      let tree = shallow(<Progress aria-labelledby={labelId} />);
+      assert.equal(tree.prop('aria-labelledby'), labelId);
+
+      // labelled by an external label and aria-label
+      tree.setProps({'aria-label': labelTxt});
+      assert.equal(
+        tree.prop('aria-labelledby'),
+        labelId + ' ' + tree.prop('id'));
+      assert.equal(
+        tree.prop('aria-label'),
+        labelTxt);
+
+      // labelled by an external label and a label prop
+      tree.setProps({'aria-label': null, 'label': labelTxt});
+      assert.equal(
+        tree.prop('aria-labelledby'),
+        labelId + ' ' + findLabel(tree).prop('id'));
+
+      // labelled by just aria-label
+      tree = shallow(<Progress aria-label={labelTxt} />);
+      assert.equal(
+        tree.prop('aria-labelledby'),
+        null);
+      assert.equal(
+        tree.prop('aria-label'),
+        labelTxt);
     });
   });
 
