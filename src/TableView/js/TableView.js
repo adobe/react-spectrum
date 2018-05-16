@@ -37,6 +37,9 @@ export default class TableView extends Component {
     /* A function that is called when a cell is clicked. Passed a column object and row index. */
     onCellClick: PropTypes.func,
 
+    /* A function that is called when a cell is double clicked. Passed a column object and row index. */
+    onCellDoubleClick: PropTypes.func,
+
     /* Whether to use the spectrum quiet variant. */
     quiet: PropTypes.bool,
 
@@ -82,7 +85,8 @@ export default class TableView extends Component {
         columns={this.props.dataSource.columns}
         renderCell={this.renderCell.bind(this, data)}
         allowsSelection={this.props.allowsSelection}
-        onCellClick={this.props.onCellClick} />
+        onCellClick={this.props.onCellClick}
+        onCellDoubleClick={this.props.onCellDoubleClick} />
     );
   }
 

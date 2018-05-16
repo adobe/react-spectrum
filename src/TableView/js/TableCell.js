@@ -20,7 +20,7 @@ export default class TableCell extends React.Component {
   }
 
   render() {
-    let {column, isHeaderRow, sortDir, onClick, className, children} = this.props;
+    let {column, isHeaderRow, sortDir, onClick, onDoubleClick, className, children} = this.props;
     let isSortable = isHeaderRow && column && column.sortable;
     className = classNames(className, {
       'spectrum-Table-headCell': isHeaderRow,
@@ -34,7 +34,7 @@ export default class TableCell extends React.Component {
     });
 
     return (
-      <div className={className} style={column && this.getCellStyle(column)} onClick={onClick}>
+      <div className={className} style={column && this.getCellStyle(column)} onClick={onClick} onDoubleClick={onDoubleClick}>
         {children}
         {isSortable &&
           <TableSortArrow className="spectrum-Table-sortedIcon" size={null} />

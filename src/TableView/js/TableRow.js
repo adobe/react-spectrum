@@ -4,7 +4,7 @@ import React from 'react';
 import TableCell from './TableCell';
 
 export default class TableRow extends React.Component {
-  onCellClick(column) {
+  onCellClick(column, isDoubleClick) {
     let rowIndex = null;
 
     if (this.props.collectionView) {
@@ -12,8 +12,12 @@ export default class TableRow extends React.Component {
       rowIndex = indexPath && indexPath.index;
     }
 
-    if (this.props.onCellClick) {
+    if (!isDoubleClick && this.props.onCellClick) {
       this.props.onCellClick(column, rowIndex);
+    }
+
+    if (isDoubleClick && this.props.onCellDoubleClick) {
+      this.props.onCellDoubleClick(column, rowIndex);
     }
   }
 
@@ -41,7 +45,8 @@ export default class TableRow extends React.Component {
         }
         {columns.map((column, i) => React.cloneElement(renderCell(column, i), {
           key: i,
-          onClick: this.onCellClick.bind(this, column)
+          onClick: this.onCellClick.bind(this, column, false),
+          onDoubleClick: this.onCellClick.bind(this, column, true)
         }))}
       </div>
     );

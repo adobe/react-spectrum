@@ -62,4 +62,13 @@ describe('TableRow', function () {
     assert(onCellClick.calledOnce);
     assert.deepEqual(onCellClick.getCall(0).args, [columns[1], 5]);
   });
+
+  it('should trigger onCellDoubleClick when double clicking on a cell', function () {
+    let collectionView = {indexPathForComponent: () => ({section: 0, index: 5})};
+    let onCellDoubleClick = sinon.spy();
+    let wrapper = shallow(<TableRow columns={columns} renderCell={renderCell} collectionView={collectionView} onCellDoubleClick={onCellDoubleClick} />);
+    wrapper.childAt(1).simulate('doubleClick');
+    assert(onCellDoubleClick.calledOnce);
+    assert.deepEqual(onCellDoubleClick.getCall(0).args, [columns[1], 5]);
+  });
 });

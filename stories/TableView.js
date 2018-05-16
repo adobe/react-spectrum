@@ -102,6 +102,7 @@ function render(props = {}) {
       dataSource={ds}
       renderCell={renderCell}
       onCellClick={action('cellClick')}
+      onCellDoubleClick={action('cellDoubleClick')}
       onSelectionChange={action('selectionChange')}
       {...props} />
   );
