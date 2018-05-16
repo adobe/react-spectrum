@@ -4,11 +4,12 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, toMoment} from '../../utils/moment';
+import {getLocale, messageFormatter} from '../../utils/intl';
 import intlMessages from '../intl/*.json';
-import {messageFormatter} from '../../utils/intl';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import Select from '../../Select';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 import '../../utils/style/index.styl';
@@ -51,15 +52,19 @@ export default class Clock extends Component {
 
     this.clockId = createId();
 
-    const {value, defaultValue, valueFormat} = this.props;
+    const {value, defaultValue, displayFormat, valueFormat} = this.props;
 
+    moment.locale(getLocale());
     const val = toMoment(value || defaultValue || '', valueFormat);
     const isValid = val && val.isValid();
+    const displayMeridiem = /a/i.test(displayFormat);
 
     this.state = {
       value: val,
-      hourText: isValid ? val.format('HH') : '',
-      minuteText: isValid ? val.format('mm') : ''
+      hourText: isValid ? this.getDisplayHour(val.hour(), displayMeridiem) : '',
+      minuteText: isValid ? val.format('mm') : '',
+      meridiemVal: this.getMeridiemVal(val),
+      displayMeridiem: displayMeridiem
     };
   }
 
@@ -71,15 +76,22 @@ export default class Clock extends Component {
       if (!isValid) {
         this.setState({
           hourText: this.state.hourText || '',
-          minuteText: this.state.minuteText || ''
+          minuteText: this.state.minuteText || '',
+          meridiemVal: this.state.meridiemVal || ''
         });
       } else {
-        if (!this.state.hourText || +this.state.hourText !== val.hour()) {
-          this.setState({hourText: val.hour()});
+        const hourTextVal = this.getDisplayHour(val.hour(), this.state.displayMeridiem);
+        const meridiemVal = this.getMeridiemVal(val);
+        if (!this.state.hourText || +this.state.hourText !== hourTextVal) {
+          this.setState({hourText: hourTextVal});
         }
 
         if (!this.state.minuteText || +this.state.minuteText !== val.minute()) {
           this.setState({minuteText: val.minute()});
+        }
+
+        if (!this.state.meridiemVal || this.state.meridiemVal !== meridiemVal) {
+          this.setState({meridiemVal: meridiemVal});
         }
       }
 
@@ -94,9 +106,9 @@ export default class Clock extends Component {
    * @param {Event} e Change event
    */
   handleHourChange(value, e) {
-    const {minuteText} = this.state;
+    const {minuteText, meridiemVal} = this.state;
     e.stopPropagation();
-    this.changeTime(value, minuteText);
+    this.changeTime(value, minuteText, meridiemVal);
   }
 
   /**
@@ -104,9 +116,18 @@ export default class Clock extends Component {
    * @param {Event} e Change event
    */
   handleMinuteChange(value, e) {
-    const {hourText} = this.state;
+    const {hourText, meridiemVal} = this.state;
     e.stopPropagation();
-    this.changeTime(hourText, value);
+    this.changeTime(hourText, value, meridiemVal);
+  }
+
+  /**
+   * Handles AM/PM Change
+   * @param {Event} e Change event
+   */
+  handleMeridiemChange(value, e) {
+    const {hourText, minuteText} = this.state;
+    this.changeTime(hourText, minuteText, value);
   }
 
   /**
@@ -157,12 +178,16 @@ export default class Clock extends Component {
    * Updates time based on hour and minute text values.
    * @param {String} hourText   Hour text value
    * @param {String} minuteText Minute text value
+   * @param {String} meridiemVal    'am' or 'pm'
    */
-  changeTime(hourText, minuteText) {
+  changeTime(hourText, minuteText, meridiemVal) {
     const {valueFormat, onChange} = this.props;
-    const {value} = this.state;
-
-    const hours = parseInt(hourText, 10);
+    const {value, displayMeridiem} = this.state;
+    const meridiemOffset = displayMeridiem && meridiemVal === 'pm' ? 12 : 0;
+    let hours = parseInt(hourText, 10);
+    if (hours < 12) {
+      hours += meridiemOffset;
+    }
     const minutes = parseInt(minuteText, 10);
 
     let newTime = moment.isMoment(value) && value.clone();
@@ -181,6 +206,7 @@ export default class Clock extends Component {
     this.setState({
       hourText,
       minuteText,
+      meridiemVal,
       newTime
     });
 
@@ -229,6 +255,42 @@ export default class Clock extends Component {
     return [ariaLabelledbyId, labelId].join(' ');
   }
 
+  /**
+   * Returns display hour for a given 24-hour value
+   * @param {Number} hour Hour in range 0-23
+   * @param {Boolean} displayMeridiem Output should be converted to 12-hour clock
+   * @return {String} in range 1-12 (12-hour) or 0-23 (24-hour)
+   */
+  getDisplayHour(hour, displayMeridiem) {
+    const newHour = displayMeridiem ? (hour + 11) % 12 + 1 : hour;
+    return newHour.toString();
+  }
+
+   /**
+   * Returns localized label for AM/PM dropdown
+   * @param {String} meridiem 'am' or 'pm'
+   * @param {String} displayFormat from props
+   * @return {String} in range 1-12 (12-hour) or 0-23 (24-hour)
+   */
+  getMeridiemLabel(meridiem, displayFormat) {
+    const localizedMeridiem = formatMessage(meridiem);
+    const upperCase = /A/.test(displayFormat);
+    return upperCase ? localizedMeridiem.toUpperCase() : localizedMeridiem;
+  }
+
+  /**
+   * Returns AM/PM (meridiem) value for a given moment
+   * @param {Object} moment
+   * @return {String} 'am', 'pm', or '' (for invalid moment values)
+   */
+  getMeridiemVal(moment) {
+    if (!moment || !moment.isValid()) {
+      return '';
+    } else {
+      return moment.hour() >= 12 ? 'pm' : 'am';
+    }
+  }
+
   render() {
     const {
       quiet,
@@ -238,19 +300,20 @@ export default class Clock extends Component {
       required,
       className,
       id = this.clockId,
-      valueFormat,
+      displayFormat,
       ...otherProps
     } = this.props;
 
-    const {hourText, minuteText, newTime, value, focused} = this.state;
-
+    const {hourText, minuteText, meridiemVal, newTime, value, focused, displayMeridiem} = this.state;
+    const hourMax = displayMeridiem ? '12' : '23';
+    const hourMin = displayMeridiem ? '1' : '0';
     const groupId = id + '-group';
     const timeLabelId = id + '-time-label';
     const ariaLabel = otherProps['aria-label'];
     const ariaLabelledby = otherProps['aria-labelledby'];
     let groupAriaLabel = null;
     let groupAriaLabelledby = null;
-    let formattedMoment = formatMoment(newTime || value, valueFormat);
+    let formattedMoment = formatMoment(newTime || value, displayFormat);
 
     if (ariaLabel) {
       groupAriaLabel = ariaLabel;
@@ -266,7 +329,6 @@ export default class Clock extends Component {
     }
 
     delete otherProps.valueFormat;
-    delete otherProps.displayFormat;
     delete otherProps.value;
     delete otherProps.defaultValue;
 
@@ -292,8 +354,8 @@ export default class Clock extends Component {
           type="number"
           value={hourText}
           placeholder="HH"
-          min="0"
-          max="23"
+          min={hourMin}
+          max={hourMax}
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
@@ -306,6 +368,7 @@ export default class Clock extends Component {
           onChange={this.handleHourChange}
           onBlur={this.handleHourBlur} />
         <span className="react-spectrum-Clock-divider">:</span>
+
         <Textfield
           ref={el => this.minuteRef = el}
           className="react-spectrum-Clock-minute"
@@ -325,6 +388,19 @@ export default class Clock extends Component {
           onFocus={this.handleFocus}
           onChange={this.handleMinuteChange}
           onBlur={this.handleMinuteBlur} />
+        {displayMeridiem &&
+          <Select
+            className="react-spectrum-Clock-meridiem"
+            aria-label={formatMessage('AM/PM')}
+            aria-labelledby={this.getAriaLabelledbyForTextfield(id + '-meridiem', groupId)}
+            onChange={this.handleMeridiemChange}
+            options={[
+              {label: this.getMeridiemLabel('am', displayFormat), value: 'am'},
+              {label: this.getMeridiemLabel('pm', displayFormat), value: 'pm'}
+            ]}
+            value={meridiemVal}
+            alignRight />
+        }
       </div>
     );
   }

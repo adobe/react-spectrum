@@ -224,8 +224,74 @@ describe('Clock', () => {
       assert.equal(findMinuteTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId + '-minutes'].join(' '));
     });
   });
+
+  describe('AM/PM Support', () => {
+    it('supports AM/PM format', () => {
+      const tree = shallow(<Clock displayFormat="hh:mm a" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.length, 1);
+      assert.equal(tree.state('displayMeridiem'), true);
+    });
+
+    it('does not display AM/PM dropdown by default', () => {
+      const tree = shallow(<Clock />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.length, 0);
+      assert.equal(tree.state('displayMeridiem'), false);
+    });
+
+    it('displays am for 01:00', () => {
+      const tree = shallow(<Clock value="01:00" displayFormat="hh:mm a" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.prop('value'), 'am');
+    });
+
+    it('displays pm for 13:00', () => {
+      const tree = shallow(<Clock value="13:00" displayFormat="hh:mm a" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.prop('value'), 'pm');
+    });
+
+    it('supports lowercase AM', () => {
+      const tree = mount(<Clock value="01:00" displayFormat="hh:mm a" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.find('.spectrum-Dropdown-label').text(), 'am');
+    });
+
+    it('supports uppercase AM', () => {
+      const tree = mount(<Clock value="01:00" displayFormat="hh:mm A" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(meridiemDropdown.find('.spectrum-Dropdown-label').text(), 'AM');
+    });
+
+    it('handles 13:00 as 1pm', () => {
+      const tree = shallow(<Clock value="13:00" displayFormat="hh:mm a" />);
+      assert.equal(tree.state('hourText'), '1');
+      assert.equal(tree.state('meridiemVal'), 'pm');
+      assert.equal(findTimeValue(tree).text(), '01:00 pm');
+    });
+
+    it('handles 00:30 as 12:30am', () => {
+      const tree = shallow(<Clock value="00:30" displayFormat="hh:mm a" />);
+      assert.equal(tree.state('hourText'), '12');
+      assert.equal(tree.state('minuteText'), '30');
+      assert.equal(tree.state('meridiemVal'), 'am');
+      assert.equal(findTimeValue(tree).text(), '12:30 am');
+    });
+
+    it('can change from AM to PM', () => {
+      const tree = shallow(<Clock value="00:30" displayFormat="hh:mm a" />);
+      const meridiemDropdown = findMeridiemDropdown(tree);
+      assert.equal(tree.state('meridiemVal'), 'am');
+      meridiemDropdown.simulate('change', 'pm');
+      assert.equal(tree.state('meridiemVal'), 'pm');
+      assert.equal(findTimeValue(tree).text(), '12:30 pm');
+    });
+  });
+
 });
 const findFieldset = tree => tree.find('.react-spectrum-Clock');
 const findHourTextfield = tree => tree.find('.react-spectrum-Clock-hour');
 const findMinuteTextfield = tree => tree.find('.react-spectrum-Clock-minute');
 const findTimeValue = tree => tree.find('time');
+const findMeridiemDropdown = tree => tree.find('.react-spectrum-Clock-meridiem');

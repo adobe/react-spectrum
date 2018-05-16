@@ -23,14 +23,26 @@ $clock-gap-width = 16px;
 .react-spectrum-Clock {
   display: inline-table;
   vertical-align: top;
-  width: $spectrum-alias-single-line-width;
+  min-width: $spectrum-alias-single-line-width;
 }
 
 .react-spectrum-Clock-minute,
 .react-spectrum-Clock-hour {
   display: table-cell;
   width: 100%;
-  min-width: 0;
+  min-width: 0px;
+}
+
+.react-spectrum-Clock-meridiem {
+  display: table-cell;
+  min-width: 0px;
+  padding-left: "calc(%s / 2)" % $clock-gap-width;
+  vertical-align: top;
+  /* This doesn't work because Select puts in explicit <button style={min-width: 192px} in. */
+  .spectrum-Dropdown-trigger {
+    min-width: 100% !important;
+    width: 100%;
+  }
 }
 
 .react-spectrum-Clock-divider {

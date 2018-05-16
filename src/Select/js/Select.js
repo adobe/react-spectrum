@@ -99,6 +99,7 @@ export default class Select extends React.Component {
       required = false,
       placeholder = 'Select an option',
       className,
+      alignRight,
       labelId,
       id = this.selectId,
       ...otherProps
@@ -137,7 +138,8 @@ export default class Select extends React.Component {
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={onOpen}
-        onClose={this.onClose}>
+        onClose={this.onClose}
+        alignRight={alignRight}>
         <Button
           className="spectrum-Dropdown-trigger"
           type="button"
