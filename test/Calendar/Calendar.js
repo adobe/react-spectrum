@@ -643,7 +643,7 @@ describe('Calendar', () => {
 
       it('props', () => {
         assert.equal(cellTree.prop('id'), tree.instance().generateDateId(startOfNextMonth));
-        assert.equal(cellTree.prop('title'), dateStringForTitle(startOfNextMonth));
+        assert.equal(cellTree.prop('title'), null);
         assert.equal(cellTree.prop('aria-disabled'), true);
         assert.equal(cellTree.prop('aria-selected'), false);
         assert.equal(cellTree.prop('aria-invalid'), false);

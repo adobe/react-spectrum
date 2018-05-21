@@ -740,7 +740,7 @@ const CalendarCell = function CalendarCell({
       aria-selected={selected}
       aria-invalid={invalid}
       aria-label={title + rangeSelectionPrompt}
-      title={title}
+      title={disabled ? null : title}
       onClick={disabled ? null : e => onClick(e, date.clone())}
       onMouseDown={disabled ? null : e => onMouseDown(e, date.clone())}
       onMouseEnter={disabled ? null : e => onHighlight(e, date.clone())}
