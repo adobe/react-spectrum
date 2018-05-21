@@ -50,25 +50,27 @@ function createToastNode(container) {
   return node;
 }
 
-function ensureToastContainer(container) {
+function ensureToastContainer(container, callback) {
   let toastContainer = TOAST_CONTAINERS.get(container);
 
   // Make sure that toastContainer is a real DOM node, not only a memory footprint of previously cached node.
   if (toastContainer && document.body.contains(ReactDOM.findDOMNode(toastContainer))) {
-    return toastContainer;
+    callback(toastContainer);
+  } else {
+    let toastContainerRef;
+    ReactDOM.render(<ToastContainer ref={ref => toastContainerRef = ref} />, createToastNode(container), () => {
+      TOAST_CONTAINERS.set(container, toastContainerRef);
+      callback(toastContainerRef);
+    });
   }
-
-  toastContainer = ReactDOM.render(<ToastContainer />, createToastNode(container));
-  TOAST_CONTAINERS.set(container, toastContainer);
-  return toastContainer;
 }
 
 export function addToast(toast, timeout, container) {
-  ensureToastContainer(container).add(toast, timeout);
+  ensureToastContainer(container, toastContainer => toastContainer.add(toast, timeout));
 }
 
 export function removeToast(toast, container) {
-  ensureToastContainer(container).remove(toast);
+  ensureToastContainer(container, toastContainer => toastContainer.remove(toast));
 }
 
 export function success(message, options = {}) {
