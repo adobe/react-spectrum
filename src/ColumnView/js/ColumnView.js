@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator';
+import classNames from 'classnames';
 import Column from './Column';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -53,7 +54,10 @@ export default class ColumnView extends React.Component {
     minWidth: PropTypes.number, // TODO
 
     /* Max width of a column */
-    maxWidth: PropTypes.number // TODO
+    maxWidth: PropTypes.number, // TODO
+
+    /* Custom class name to apply */
+    className: PropTypes.string
   };
 
   static defaultProps = {
@@ -136,7 +140,7 @@ export default class ColumnView extends React.Component {
     }
 
     return (
-      <div className="spectrum-MillerColumns">
+      <div className={classNames('spectrum-MillerColumns', this.props.className)}>
         {stack.map((node, index) => (
           <Column
             key={index}
