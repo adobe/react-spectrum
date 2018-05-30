@@ -17,6 +17,7 @@ export default function Icon({
   size = 'M', // XS, S, M, L
   className,
   children,
+  alt,
   ...otherProps
 }) {
   const sizeKey = SIZES[size];
@@ -27,7 +28,8 @@ export default function Icon({
 
   return React.cloneElement(svg, {
     focusable: 'false',
-    'aria-hidden': 'true',
+    'aria-label': alt,
+    'aria-hidden': (alt ? null : 'true'),
     role: 'img',
     className: classNames('spectrum-Icon', {[`spectrum-Icon--size${size}`]: size}, className),
     ...otherProps

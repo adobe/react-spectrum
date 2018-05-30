@@ -23,6 +23,17 @@ describe('Icon', () => {
     assert.equal(tree.prop('className'), 'spectrum-Icon spectrum-Icon--sizeM myClass');
   });
 
+  it('no alt specificed. Icon is hidden from AT', () => {
+    const tree = shallow(<Icon icon={Bell18} className="myClass" />);
+    assert.equal(tree.prop('aria-hidden'), 'true');
+  });
+
+  it('alt text gets rendered appropriately', () => {
+    const tree = shallow(<Icon icon={Bell18} className="myClass" alt="Test" />);
+    assert.equal(tree.prop('aria-label'), 'Test');
+    assert.ifError(tree.prop('aria-hidden'));
+  });
+
   it('switches between sizes appropriately', () => {
     let tree = shallow(<Icon icon={{18: Bell18, 24: Bell24}} size="L" />);
     assert.equal(tree.prop('viewBox'), Bell18.props.viewBox);

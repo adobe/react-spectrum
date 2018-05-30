@@ -25,7 +25,7 @@ storiesOf('Icon', module)
   )
   .addWithInfo(
     'icon: Twitter',
-    () => <Twitter />,
+    () => <Twitter alt="Twitter" />,
     {inline: true}
   )
   .addWithInfo(
@@ -50,7 +50,7 @@ storiesOf('Icon', module)
   )
   .addWithInfo(
     'Color icon',
-    () => <AdobeExperienceManagerColorLight size="XL" />
+    () => <AdobeExperienceManagerColorLight size="XL" alt="Adobe Experience Manager" />
   )
   .addWithInfo(
     'custom SVG',
