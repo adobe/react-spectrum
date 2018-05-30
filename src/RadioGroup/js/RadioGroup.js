@@ -79,6 +79,7 @@ export default class RadioGroup extends Component {
             className
           )
         }
+        role="group"
         {...filterDOMProps(otherProps)}>
         {
           React.Children.map(children, child => {

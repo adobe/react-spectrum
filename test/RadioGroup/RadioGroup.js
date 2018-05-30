@@ -9,6 +9,7 @@ describe('RadioGroup', () => {
   it('has correct defaults', () => {
     const tree = shallow(<RadioGroup />);
     assert.equal(tree.prop('className'), 'spectrum-FieldGroup');
+    assert.equal(tree.prop('role'), 'group');
     assert.equal(tree.type(), 'div');
   });
 
