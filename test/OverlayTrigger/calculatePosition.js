@@ -28,6 +28,17 @@ const containerDimensions = {
   left: 0
 };
 
+const boundaryDimensions = {
+  width: 600,
+  height: 600,
+  scroll: {
+    top: 0,
+    left: 0
+  },
+  top: 0,
+  left: 0
+};
+
 const margins = {
   top: 0,
   left: 0,
@@ -55,7 +66,7 @@ describe('calculatePosition', function () {
     };
 
     it('Should calculate the correct position', function () {
-      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, {top: 0, height: 600, left: 0, scroll: {top: 0, left: 0}}, {top: 0, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
+      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, boundaryDimensions, {top: 0, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
     });
   }
@@ -72,7 +83,7 @@ describe('calculatePosition', function () {
     };
 
     it('Should calculate the correct position when provider does not start at top of screen', function () {
-      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, {top: 0, height: 600, left: 0, scroll: {top: 0, left: 0}}, {top: PROVIDER_OFFSET, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
+      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, boundaryDimensions, {top: PROVIDER_OFFSET, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
     });
   }

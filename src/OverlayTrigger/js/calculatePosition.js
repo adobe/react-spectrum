@@ -160,14 +160,14 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
     }
   }
 
-  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
   let maxHeight = Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding);
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, offset, crossOffset);
-  delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], containerDimensions, padding);
+  delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
 
   position[crossAxis] += delta;
 
