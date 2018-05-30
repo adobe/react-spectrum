@@ -28,7 +28,7 @@ export default class FocusManager extends React.Component {
 
   onFocusFirst(e) {
     const items = this.getItems();
-    if (items.length) {
+    if (items.length && (!e || items.indexOf(e.target) !== -1)) {
       if (e) {
         e.preventDefault();
       }
@@ -39,7 +39,7 @@ export default class FocusManager extends React.Component {
 
   onFocusLast(e) {
     const items = this.getItems();
-    if (items.length) {
+    if (items.length && (!e || items.indexOf(e.target) !== -1)) {
       if (e) {
         e.preventDefault();
       }
@@ -50,10 +50,8 @@ export default class FocusManager extends React.Component {
 
   onFocusPrevious(e) {
     const items = this.getItems();
-    if (items.length) {
-      if (e) {
-        e.preventDefault();
-      }
+    if (items.length && e && items.indexOf(e.target) !== -1) {
+      e.preventDefault();
 
       let index = items.indexOf(e.target) - 1;
       if (index < 0) {
@@ -65,10 +63,8 @@ export default class FocusManager extends React.Component {
 
   onFocusNext(e) {
     const items = this.getItems();
-    if (items.length) {
-      if (e) {
-        e.preventDefault();
-      }
+    if (items.length && e && items.indexOf(e.target) !== -1) {
+      e.preventDefault();
 
       let index = items.indexOf(e.target) + 1;
       if (index >= items.length) {
@@ -80,10 +76,8 @@ export default class FocusManager extends React.Component {
 
   onPageUp(e) {
     const items = this.getItems();
-    if (items.length) {
-      if (e) {
-        e.preventDefault();
-      }
+    if (items.length && e && items.indexOf(e.target) !== -1) {
+      e.preventDefault();
 
       const listNode = ReactDOM.findDOMNode(this);
       const nextPage = Math.max(e.target.offsetTop + e.target.offsetHeight - listNode.clientHeight, 0);
@@ -101,10 +95,8 @@ export default class FocusManager extends React.Component {
 
   onPageDown(e) {
     const items = this.getItems();
-    if (items.length) {
-      if (e) {
-        e.preventDefault();
-      }
+    if (items.length && e && items.indexOf(e.target) !== -1) {
+      e.preventDefault();
 
       const listNode = ReactDOM.findDOMNode(this);
       const nextPage = Math.min(e.target.offsetTop + listNode.clientHeight, listNode.scrollHeight + listNode.clientHeight);
