@@ -121,6 +121,7 @@ export default class SwitchBase extends Component {
           onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
           onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
           aria-invalid={invalid || null}
+          aria-checked={checked}
           {...filterDOMProps(otherProps)} />
         <span className={markClassName}>{markIcon}</span>
         {shouldRenderLabel &&

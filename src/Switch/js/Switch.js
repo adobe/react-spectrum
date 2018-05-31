@@ -24,6 +24,7 @@ export default function Switch({
       inputClassName="spectrum-ToggleSwitch-input"
       markClassName="spectrum-ToggleSwitch-switch"
       labelClassName="spectrum-ToggleSwitch-label"
+      role="switch"
       {...otherProps} />
   );
 }

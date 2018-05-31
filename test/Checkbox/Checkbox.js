@@ -26,14 +26,12 @@ describe('Checkbox', () => {
 
     tree.setProps({indeterminate: false});
     innerTree = tree.shallow();
-    assert(!tree.prop('aria-checked'));
-    assert(!findInput(innerTree).prop('aria-checked'));
+    assert.equal(findInput(innerTree).prop('aria-checked'), false);
     assert.equal(findInput(innerTree).prop('checked'), false);
 
     tree.setProps({checked: true});
     innerTree = tree.shallow();
-    assert(!tree.prop('aria-checked'));
-    assert(!findInput(innerTree).prop('aria-checked'));
+    assert.equal(findInput(innerTree).prop('aria-checked'), true);
     assert.equal(findInput(innerTree).prop('checked'), true);
 
     // test mounted for code coverage of indeterminate property on input element
@@ -43,10 +41,10 @@ describe('Checkbox', () => {
     assert.equal(inputRef.checked, false);
     tree.setProps({indeterminate: false});
     tree.update();
-    assert(!inputRef.hasAttribute('aria-checked'));
+    assert(inputRef.getAttribute('aria-checked'), 'false');
     assert.equal(inputRef.checked, false);
     tree.setProps({checked: true});
-    assert(!inputRef.hasAttribute('aria-checked'));
+    assert(inputRef.getAttribute('aria-checked'), 'true');
     assert.equal(inputRef.checked, true);
     tree.unmount();
   });

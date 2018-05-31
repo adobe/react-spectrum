@@ -27,4 +27,10 @@ describe('Switch', () => {
     const tree = shallow(<Switch variant="ab" />);
     assert.equal(tree.hasClass('spectrum-ToggleSwitch--ab'), true);
   });
+
+  it('has appropriate WAI-ARIA role for a switch', () => {
+    const tree = shallow(<Switch />);
+    assert.equal(tree.prop('role'), 'switch');
+    console.log(tree.debug());
+  });
 });
