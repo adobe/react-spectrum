@@ -12,16 +12,19 @@ storiesOf('RadioGroup', module)
   ))
   .addWithInfo(
     'Default',
+    'Remember to import Radio before RadioGroup',
     () => render(),
     {inline: true}
   )
   .addWithInfo(
     'labelsBelow: true',
+    'Remember to import Radio before RadioGroup',
     () => render({labelsBelow: true}),
     {inline: true}
   )
   .addWithInfo(
     'vertical: true',
+    'Remember to import Radio before RadioGroup',
     () => render({vertical: true}),
     {inline: true}
   );
