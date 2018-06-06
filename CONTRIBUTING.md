@@ -55,3 +55,27 @@ We welcome pull requests! Ensure that you have either created an issue in [JIRA]
 9. Commit your code.
 10. Push your branch.
 11. Open a pull request against react-spectrum's master branch.
+
+### Accessibility
+
+Adobe products must support accessibility requirements and comply with regulatory requirements which enable people with disabilities to access Adobe's applications, services, and content created by Adobe tools. As such, React-Spectrum components have to support accessibility out of the box and in a way that makes it easy for application developers to use them while supporting accessibility. These requirements come from the [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/TR/WCAG21/) are summarized in the [Adobe Accessibility Standard](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard); the most relevant to React-spectrum include:
+ * **[Keyboard requirements](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard#AdobeAccessibilityStandard-KeyboardRequirements)**
+ * **[Assistive Technology Requirements](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard#AdobeAccessibilityStandard-AssistiveTechnologyRequirements)**
+ * **[Low Vision Requirements](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard#AdobeAccessibilityStandard-LowVisionRequirements)**
+ * **[Color Requirements](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard#AdobeAccessibilityStandard-ColorRequirements)**
+
+#### Getting Started with Accessibility
+1. When beginning work on a new component, be sure to include contributors from the accessibility team, Michael Jordan ([mijordan@adobe.com](mailto:mijordan@adobe.com)) and James Nurthen ([nurthen@adobe.com](mailto:nurthen@adobe.com)) in your kickoff meeting. They can help clarify accessibility design patterns and requirements.
+2. Figure out the appropriate accessibility design pattern for your component.
+ * For a simple control, like a text input, you may not need to do much more than follow the [appropriate guidance for labeling an input](https://www.w3.org/TR/html50/forms.html#the-label-element) in HTML and test to ensure the rendered component is labeled appropriately.
+ * For more complicated custom or composite controls, like for example a TreeView or Data Grid, [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/) can be used to communicate a component's label, role, state and property information, as well as the role, state and property information of descendent elements, to assistive technology via the accessibility API. To get started with WAI-ARIA:
+    1. First, check [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/) to see if an appropriate design pattern exists for the type of component you are developing. Each design patterns provides guidance on the appropriate keyboard interaction behavior for the component and instructions on the appropriate attributes to add to communicate the component and its descendants' label, role, state and property information to assistive technology.
+    2. Next, if the design pattern you're looking for isn't in the [Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.1/) guide, check the [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-1.1/) specification for the appropriate role under [5.3.2 Widget Roles](https://www.w3.org/TR/wai-aria-1.1/#widget_roles). Each role description, and particularly those for composite controls, provides some implementation guidance. For example: [combobox](https://www.w3.org/TR/wai-aria-1.1/#combobox).
+    3. If you are unsure of what design pattern the component should use, don't hesitate to ask via [#react_spectrum_eng](https://adobespectrum.slack.com/messages/C91HN6UCD) or ping the accessibility team, [mijordan@adobe.com](mailto:mijordan@adobe.com) and [nurthen@adobe.com](mailto:nurthen@adobe.com), directly.
+3. A few questions to ask as you develop your component to support accessibility:
+  * How does a developer add a label to this control?
+  * If the component can be labeled using FieldLabel, does clicking the FieldLabel set focus to the component?
+  * When you add a mouse event handler, like click or mousedown, ask how will a user perform this action using the keyboard?
+  * If a task causes the element with focus to go away, to where should the keyboard focus be restored?
+  * Is the current state of the control properly communicated when using a screen reader?
+  * When the user changes the value of a control is the value change communicated to the user when using a screen reader?
