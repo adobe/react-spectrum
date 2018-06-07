@@ -23,9 +23,14 @@ describe('AccordionItem', () => {
     assert.equal(tree.find('.spectrum-Accordion-header').text(), 'foo');
   });
 
-  it('supports children', () => {
-    const tree = shallow(<AccordionItem>foo</AccordionItem>);
+  it('renders children when selected', () => {
+    const tree = shallow(<AccordionItem selected>foo</AccordionItem>);
     assert.equal(findContent(tree).text(), 'foo');
+  });
+
+  it('doesn\'t render children when not selected', () => {
+    const tree = shallow(<AccordionItem>foo</AccordionItem>);
+    assert.equal(findContent(tree).text(), '');
   });
 
   describe('supports onItemClick', () => {

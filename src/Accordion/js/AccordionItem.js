@@ -86,7 +86,7 @@ export default class AccordionItem extends Component {
           aria-hidden={!selected}
           aria-expanded={selected}
           className="spectrum-Accordion-content">
-          {children}
+          {selected ? children : null}
         </div>
       </div>
     );
