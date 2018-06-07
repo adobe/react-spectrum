@@ -184,3 +184,76 @@ export default class FocusManager extends React.Component {
     });
   }
 }
+
+const focusableElements = [
+  'input:not([disabled]):not([type=hidden])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'button:not([disabled])',
+  'a[href]',
+  'area[href]',
+  'summary',
+  'iframe',
+  'object',
+  'embed',
+  'audio[controls]',
+  'video[controls]',
+  '[contenteditable]'
+];
+
+export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',');
+
+focusableElements.push('[tabindex]:not([tabindex="-1"])');
+
+export const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+
+export function trapFocus(componentOrElement, event) {
+  const {
+    type,
+    key,
+    shiftKey,
+    target
+  } = event;
+
+  let node;
+  let tabbables;
+  let tabbable;
+  let first;
+  let last;
+
+  if (type === 'keydown' || type === 'focus') {
+    node = ReactDOM.findDOMNode(componentOrElement);
+    if (node) {
+      // find tabbable elements within container element
+      tabbables = Array.from(node.querySelectorAll(TABBABLE_ELEMENT_SELECTOR)).filter(el => el !== node);
+      first = tabbables[0];
+      last = tabbables[tabbables.length - 1];
+    }
+  }
+
+  // If navigating using the tab key,
+  if (type === 'keydown' && key === 'Tab') {
+    if (node) {
+      if (shiftKey) {
+        // with focus on first tabbable element, navigating backwards,
+        if (target === first) {
+          // focus the last tabbable element
+          tabbable = last;
+        }
+      // otherwise, with focus on last tabbable element, navigating forwards,
+      } else if (target === last) {
+        // focus the first tabbable element.
+        tabbable = first;
+      }
+    }
+  } else if (type === 'focus') {
+    if (target === node) {
+      tabbable = first;
+    }
+  }
+  if (tabbable) {
+    event.preventDefault();
+    event.stopPropagation();
+    tabbable.focus();
+  }
+}

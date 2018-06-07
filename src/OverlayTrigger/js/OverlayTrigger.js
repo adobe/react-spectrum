@@ -1,5 +1,6 @@
 
 import autobind from 'autobind-decorator';
+import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
 import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
 import PropTypes from 'prop-types';
@@ -131,6 +132,7 @@ export default class OverlayTrigger extends Component {
   }
 
   componentWillUnmount() {
+    modalManager.removeFromModal(this._overlay);
     ReactDOM.unmountComponentAtNode(this._mountNode);
     this._mountNode = null;
 
@@ -255,6 +257,11 @@ export default class OverlayTrigger extends Component {
   }
 
   renderOverlay() {
+    // Only add overlay to modalManager when it is shown.
+    if (this._overlay.props.show) {
+      modalManager.addToModal(this._overlay);
+    }
+
     ReactDOM.unstable_renderSubtreeIntoContainer(
       this, this._overlay, this._mountNode
     );
@@ -297,6 +304,11 @@ export default class OverlayTrigger extends Component {
     }
 
     triggerProps.selected = this.state.show;
+
+    // Remove previous overlay from modalManager
+    if (this._overlay) {
+      modalManager.removeFromModal(this._overlay);
+    }
 
     this._overlay = this.makeOverlay(overlayChild, props);
     return cloneElement(triggerChild, triggerProps);

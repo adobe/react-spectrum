@@ -1,5 +1,6 @@
 import assert from 'assert';
 import Button from '../../src/Button/js/Button';
+import * as ModalContainer from '../../src/ModalContainer/js/ModalContainer.js';
 import {mount} from 'enzyme';
 import OpenTransition from '../../src/utils/OpenTransition';
 import Overlay from '../../src/OverlayTrigger/js/Overlay';
@@ -82,6 +83,28 @@ describe('Overlay', () => {
     tree.instance().onExited({foo: 'bar'});
     assert(onExited.calledOnce);
     assert(onExited.withArgs({foo: 'bar'}));
+  });
+
+  it('calls modalManager when rendering and unmounting', () => {
+    const stub = sinon.stub(require('../../src/OverlayTrigger/js/calculatePosition'), 'default').returns({
+      positionLeft: 100,
+      positionTop: 50,
+      maxHeight: 200,
+      arrowOffsetLeft: '0%',
+      arrowOffsetTop: '50%'
+    });
+    const addspy = sinon.spy();
+    const removespy = sinon.spy();
+    const addstub = sinon.stub(ModalContainer.modalManager, 'addToModal').callsFake(addspy);
+    const removestub = sinon.stub(ModalContainer.modalManager, 'removeFromModal').callsFake(removespy);
+    const tree = mount(<OverlayTrigger><button /><Overlay><span>hi</span></Overlay></OverlayTrigger>);
+    assert(!addstub.called);
+    tree.setState({'show': true});
+    assert(addstub.called);
+    stub.restore();
+    stub.reset();
+    tree.unmount();
+    assert(removestub.called);
   });
 
   it('context overlay', () => {

@@ -1,13 +1,16 @@
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import DialogHeader from '../../Dialog/js/DialogHeader';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import {trapFocus} from '../../utils/FocusManager';
 import '../style/index.styl';
 
 importSpectrumCSS('popover');
 importSpectrumCSS('dialog');
 
+@autobind
 export default class Popover extends Component {
   static propTypes = {
     variant: PropTypes.oneOf(['default', 'error']),
@@ -19,14 +22,34 @@ export default class Popover extends Component {
     ]),
     open: PropTypes.bool,
     title: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    trapFocus: PropTypes.bool
   };
 
   static defaultProps = {
     variant: 'default',
     placement: 'bottom',
-    open: true
+    open: true,
+    trapFocus: true
   };
+
+  onFocus(e) {
+    if (this.props.trapFocus) {
+      trapFocus(this, e);
+    }
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
+  onKeyDown(e) {
+    if (this.props.trapFocus) {
+      trapFocus(this, e);
+    }
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(e);
+    }
+  }
 
   render() {
     const {
@@ -38,10 +61,15 @@ export default class Popover extends Component {
       children,
       className,
       isDialog = true, // private. for use only by Menu.
+      trapFocus,
+      tabIndex = null,
       ...otherProps
     } = this.props;
 
     let content = isDialog ? <div className="spectrum-Dialog-content">{children}</div> : children;
+
+    delete otherProps.onFocus;
+    delete otherProps.onKeyDown;
 
     return (
       <div
@@ -58,6 +86,9 @@ export default class Popover extends Component {
             className
           )
         }
+        onFocus={this.onFocus}
+        onKeyDown={this.onKeyDown}
+        tabIndex={trapFocus && tabIndex === null ? 1 : tabIndex}
         {...filterDOMProps(otherProps)}>
         {isDialog && title &&
           <DialogHeader

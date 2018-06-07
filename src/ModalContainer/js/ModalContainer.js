@@ -3,6 +3,7 @@ import BaseModal from 'react-overlays/lib/Modal';
 import classNames from 'classnames';
 import closest from 'dom-helpers/query/closest';
 import filterDOMProps from '../../utils/filterDOMProps';
+import ModalManager from './ModalManager';
 import OpenTransition from '../../utils/OpenTransition';
 import PortalContainer from '../../PortalContainer';
 import React, {cloneElement} from 'react';
@@ -10,6 +11,7 @@ import ReactDOM from 'react-dom';
 
 importSpectrumCSS('underlay');
 
+const MANAGER_SINGLETON = new ModalManager();
 let MODAL_KEY = 1;
 
 export default class ModalContainer {
@@ -100,6 +102,7 @@ export class Modal extends React.Component {
         onExited={this.props.onHide}
         onHide={this.onClose}
         backdrop={backdrop}
+        manager={MANAGER_SINGLETON}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}
         backdropTransition={OpenTransition}
@@ -119,3 +122,4 @@ class Underlay extends React.Component {
     return <div {...filterDOMProps(props)} className={classNames('spectrum-Underlay', {'is-open': open})} />;
   }
 }
+export {MANAGER_SINGLETON as modalManager};
