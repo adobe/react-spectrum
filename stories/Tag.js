@@ -17,7 +17,7 @@ storiesOf('Tag', module)
   )
   .addWithInfo(
     'avatar',
-    () => render({avatar: 'https://git.corp.adobe.com/pages/Spectrum/spectrum-css/docs/img/example-ava.jpg', closable: true}),
+    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg', closable: true}),
     {inline: true}
   )
   .addWithInfo(
