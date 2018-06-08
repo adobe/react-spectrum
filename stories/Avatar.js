@@ -12,14 +12,14 @@ storiesOf('Avatar', module)
   .addWithInfo(
     'Default',
     () => (
-      <Avatar src="https://git.corp.adobe.com/pages/Spectrum/spectrum-css/docs/img/example-ava.jpg" />
+      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" />
     ),
     {inline: true}
   )
   .addWithInfo(
     'Disabled',
     () => (
-      <Avatar src="https://git.corp.adobe.com/pages/Spectrum/spectrum-css/docs/img/example-ava.jpg" disabled />
+      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" disabled />
     ),
     {inline: true}
   );
