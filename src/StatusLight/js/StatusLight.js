@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -22,7 +23,7 @@ export default function StatusLight({variant = VARIANTS[0], children, ...otherPr
 
   return (
     <div
-      className={`spectrum-StatusLight spectrum-StatusLight--${variant}`}
+      className={classNames('spectrum-StatusLight', `spectrum-StatusLight--${variant}`, this.props.className)}
       {...filterDOMProps(otherProps)}>
       {children}
     </div>
@@ -32,5 +33,6 @@ export default function StatusLight({variant = VARIANTS[0], children, ...otherPr
 StatusLight.displayName = 'StatusLight';
 
 StatusLight.propTypes = {
+  className: PropTypes.string,
   variant: PropTypes.oneOf(VARIANTS)
 };
