@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export default class Menu extends React.Component {
+  static displayName = 'Menu';
+
   static propTypes = {
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
@@ -27,7 +29,7 @@ export default class Menu extends React.Component {
       children,
       className,
       open,
-      onClose, 
+      onClose,
       onSelect,
       placement,
       role = 'menu',
