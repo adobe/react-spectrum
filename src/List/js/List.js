@@ -24,11 +24,12 @@ export default class List extends Component {
       role = 'listbox',
       autoFocus,
       id = this.listId,
+      typeToSelect = true,
       ...otherProps
     } = this.props;
 
     return (
-      <FocusManager itemSelector={LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR} selectedItemSelector={SELECTED_LIST_ITEM_SELECTOR} autoFocus={autoFocus}>
+      <FocusManager itemSelector={LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR} selectedItemSelector={SELECTED_LIST_ITEM_SELECTOR} typeToSelect={typeToSelect} autoFocus={autoFocus}>
         <ul
           id={id}
           className={

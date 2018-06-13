@@ -3,7 +3,10 @@ import {interpretKeyboardEvent} from './events';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {removeDiacritics} from './string';
 import scrollToDOMNode from './scrollToDOMNode';
+
+const WHITESPACE_REGEXP = /[\n\r]+|[\s]{1,}/g;
 
 @autobind
 export default class FocusManager extends React.Component {
@@ -12,12 +15,14 @@ export default class FocusManager extends React.Component {
     manageTabIndex: PropTypes.bool,
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
     selectedItemSelector: PropTypes.string,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    typeToSelect: PropTypes.bool
   };
 
   static defaultProps = {
     manageTabIndex: true,
-    orientation: 'vertical'
+    orientation: 'vertical',
+    typeToSelect: false
   };
 
   getItems(selected = false) {
@@ -112,12 +117,89 @@ export default class FocusManager extends React.Component {
     }
   }
 
+  keysSoFar = '';
+  keyClearTimeout = null;
+
+  findItemToFocus(e) {
+    const {
+      target,
+      shiftKey,
+      charCode
+    } = e;
+
+    const character = removeDiacritics(String.fromCharCode(charCode)).toUpperCase();
+
+    let items = this.getItems();
+
+    if (this.keysSoFar === '' || character === this.keysSoFar || shiftKey) {
+      // reverse order if shiftKey is pressed
+      if (shiftKey) {
+        items = items.reverse();
+      }
+      this.searchIndex = items.indexOf(target);
+    }
+
+    if (character !== this.keysSoFar) {
+      this.keysSoFar += character;
+    }
+
+    this.clearKeysSoFarAfterDelay();
+
+    let item = this.findMatchInRange(
+      items,
+      this.searchIndex + 1,
+      items.length
+    );
+
+    if (!item) {
+      item = this.findMatchInRange(
+        items,
+        0,
+        this.searchIndex
+      );
+    }
+
+    if (item) {
+      item.focus();
+    }
+  }
+
+  clearKeysSoFarAfterDelay() {
+    if (this.keyClearTimeout) {
+      clearTimeout(this.keyClearTimeout);
+    }
+    this.keyClearTimeout = setTimeout(() => this.keysSoFar = '', 500);
+  }
+
+  findMatchInRange(items, startIndex, endIndex) {
+    // Find the first item starting with the keysSoFar substring, searching in the specified range of items
+    for (let i = startIndex; i < endIndex; i++) {
+      const label = items[i].innerText || items[i].textContent;
+      if (label &&
+          removeDiacritics(label)
+          .replace(WHITESPACE_REGEXP, '')
+          .toUpperCase()
+          .indexOf(this.keysSoFar) === 0) {
+        return items[i];
+      }
+    }
+    return null;
+  }
+
   /**
    * Handle keydown event
    * @param {Event} e Event object
    */
   onKeyDown(e) {
     interpretKeyboardEvent.call(this, e, this.props.orientation === 'horizontal');
+  }
+
+  /**
+   * Handle keypress event
+   * @param {Event} e Event object
+   */
+  onKeyPress(e) {
+    this.findItemToFocus(e);
   }
 
   /**
@@ -176,9 +258,15 @@ export default class FocusManager extends React.Component {
   }
 
   render() {
-    const {children, disabled, manageTabIndex} = this.props;
+    const {
+      children,
+      disabled,
+      manageTabIndex,
+      typeToSelect
+    } = this.props;
     return React.cloneElement(React.Children.only(children), {
       onKeyDown: !disabled ? this.onKeyDown : null,
+      onKeyPress: typeToSelect && !disabled ? this.onKeyPress : null,
       onFocus: manageTabIndex && !disabled ? this.onFocus : null,
       onBlur: manageTabIndex && !disabled ? this.onBlur : null
     });

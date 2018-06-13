@@ -3,7 +3,7 @@ import FocusManager from '../../src/utils/FocusManager';
 import {mount} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-
+import {sleep} from '../utils';
 
 describe('FocusManager', function () {
   let tree;
@@ -18,6 +18,10 @@ describe('FocusManager', function () {
         </ul>
       </FocusManager>
     );
+  });
+
+  afterEach(() => {
+    tree.unmount();
   });
 
   it('when ArrowDown key is pressed, focus next not disabled item', () => {
@@ -295,5 +299,80 @@ describe('FocusManager', function () {
     assert.equal(tree.find('ul').prop('onKeyDown'), null);
     assert.equal(tree.find('ul').prop('onFocus'), null);
     assert.equal(tree.find('ul').prop('onBlur'), null);
+  });
+
+  describe('typeToSelect', () => {
+    beforeEach(() => {
+      tree = mount(
+        <FocusManager itemSelector=".item:not(.disabled)">
+          <ul>
+            <li className="item" tabIndex="-1">Afghanistan</li>
+            <li className="item" tabIndex="-1">Åland Islands</li>
+            <li className="item" tabIndex="-1">Albania</li>
+            <li className="item" tabIndex="-1">Côte d'Ivoire</li>
+            <li className="item" tabIndex="-1">Curaçao</li>
+            <li className="item" tabIndex="-1">Korea, Democratic People's Republic of</li>
+            <li className="item" tabIndex="-1">Korea, Republic of</li>
+            <li className="item" tabIndex="-1">United Arab Emirates</li>
+            <li className="item" tabIndex="-1">United Kingdom</li>
+            <li className="item" tabIndex="-1">United States</li>
+          </ul>
+        </FocusManager>
+      );
+    });
+
+    afterEach(() => {
+      tree.unmount();
+    });
+
+    it('should be false by default', () => {
+      assert.equal(tree.prop('typeToSelect'), false);
+      assert.equal(tree.find('ul').prop('onKeyPress'), null);
+    });
+
+    it('should add onKeyPress event handler if true', () => {
+      tree.setProps({typeToSelect: true});
+      assert.equal(typeof tree.find('ul').prop('onKeyPress'), 'function');
+    });
+
+    it('should navigate between items when characters are typed', async () => {
+      tree.setProps({typeToSelect: true});
+      tree.find('.item').at(9).simulate('keypress', {charCode: 65});
+      assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
+      tree.find('.item').at(0).simulate('keypress', {charCode: 65});
+      assert.equal(tree.find('.item').at(1).getDOMNode(), document.activeElement);
+      tree.find('.item').at(1).simulate('keypress', {charCode: 65});
+      assert.equal(tree.find('.item').at(2).getDOMNode(), document.activeElement);
+      tree.find('.item').at(2).simulate('keypress', {charCode: 65, shiftKey: true});
+      assert.equal(tree.find('.item').at(1).getDOMNode(), document.activeElement);
+      tree.find('.item').at(1).simulate('keypress', {charCode: 197, shiftKey: true});
+      assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
+      await sleep(500);
+      tree.find('.item').at(0).simulate('keypress', {charCode: 67});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 244});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 116});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 101});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 32});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 100});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 39});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      tree.find('.item').at(3).simulate('keypress', {charCode: 73});
+      assert.equal(tree.find('.item').at(3).getDOMNode(), document.activeElement);
+      await sleep(500);
+      tree.find('.item').at(0).simulate('keypress', {charCode: 85});
+      assert.equal(tree.find('.item').at(7).getDOMNode(), document.activeElement);
+      tree.find('.item').at(7).simulate('keypress', {charCode: 85});
+      assert.equal(tree.find('.item').at(8).getDOMNode(), document.activeElement);
+      tree.find('.item').at(8).simulate('keypress', {charCode: 85});
+      assert.equal(tree.find('.item').at(9).getDOMNode(), document.activeElement);
+      tree.find('.item').at(9).simulate('keypress', {charCode: 85});
+      assert.equal(tree.find('.item').at(7).getDOMNode(), document.activeElement);
+    });
   });
 });
