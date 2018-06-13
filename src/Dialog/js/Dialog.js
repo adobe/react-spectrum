@@ -23,12 +23,14 @@ export default class Dialog extends Component {
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
-    autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', null])
+    autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', null]),
+    keyboardConfirm: PropTypes.bool
   };
 
   static defaultProps = {
     backdropClickable: false,
     confirmDisabled: false,
+    keyboardConfirm: false,
     open: true,
     mode: 'centered',
     role: 'dialog',
@@ -56,6 +58,24 @@ export default class Dialog extends Component {
 
   onCancel() {
     this._onAction(this.props.onCancel);
+  }
+
+  onKeyDown(e) {
+    const {confirmDisabled, keyboardConfirm, onKeyDown} = this.props;
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
+    switch (e.key) {
+      case 'Enter':
+        if (!confirmDisabled && keyboardConfirm) {
+          this.onConfirm();
+        }
+        break;
+      case 'Esc':
+      case 'Escape':
+        this.onCancel();
+        break;
+    }
   }
 
   render() {
@@ -90,7 +110,8 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
-        tabIndex={-1}>
+        tabIndex={-1}
+        onKeyDown={this.onKeyDown}>
         {title &&
           <DialogHeader
             variant={derivedVariant}

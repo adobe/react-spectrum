@@ -168,4 +168,67 @@ describe('Dialog', () => {
     assert(!dialogButtons.prop('confirmDisabled'));
     assert(!dialogButtons.shallow().find('Button').prop('disabled'));
   });
+
+  it('supports keyboardConfirm', async () => {
+    var stub = sinon.stub();
+    stub.returns(true);
+
+    var onClose = sinon.spy();
+    var onKeyDown = sinon.spy();
+    const tree = shallow(<Dialog keyboardConfirm confirmDisabled onClose={onClose} onConfirm={stub} onKeyDown={onKeyDown} confirmLabel="Go" />);
+    tree.simulate('keydown', {key: 'Enter'});
+    assert(onKeyDown.calledOnce);
+    assert(!stub.calledOnce);
+    await sleep(1);
+    assert(!onClose.calledOnce);
+
+    onKeyDown.reset();
+
+    tree.setProps({'confirmDisabled': false});
+    tree.simulate('keydown', {key: 'Enter'});
+    assert(onKeyDown.calledOnce);
+    assert(stub.calledOnce);
+    await sleep(1);
+    assert(onClose.calledOnce);
+
+    stub.reset();
+    onClose.reset();
+    onKeyDown.reset();
+
+    tree.setProps({'confirmDisabled': false});
+    tree.simulate('keydown', {key: 'ArrowDown'});
+    assert(onKeyDown.calledOnce);
+    assert(!stub.calledOnce);
+    await sleep(1);
+    assert(!onClose.calledOnce);
+
+    onKeyDown.reset();
+
+    tree.setProps({'confirmDisabled': false, 'keyboardConfirm': false});
+    tree.simulate('keydown', {key: 'Enter'});
+    assert(onKeyDown.calledOnce);
+    assert(!stub.calledOnce);
+    await sleep(1);
+    assert(!onClose.calledOnce);
+  });
+
+  it('Esc key triggers onCancel', async () => {
+    var stub = sinon.stub();
+    stub.returns(true);
+
+    var onClose = sinon.spy();
+    var onKeyDown = sinon.spy();
+    const tree = shallow(<Dialog onClose={onClose} onCancel={stub} onKeyDown={onKeyDown} cancelLabel="Cancel" />);
+    tree.simulate('keydown', {key: 'Esc'});
+    assert(onKeyDown.calledOnce);
+    assert(stub.calledOnce);
+    await sleep(1);
+    assert(onClose.calledOnce);
+    tree.simulate('keydown', {key: 'Escape'});
+
+    assert(onKeyDown.calledTwice);
+    assert(stub.calledTwice);
+    await sleep(1);
+    assert(onClose.calledTwice);
+  });
 });
