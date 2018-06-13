@@ -1,7 +1,7 @@
 import {action, storiesOf} from '@storybook/react';
 import Button from '../src/Button';
+import {error, success, Toast, warning} from '../src/Toast';
 import React from 'react';
-import {success, Toast} from '../src/Toast';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Toast', module)
@@ -41,7 +41,17 @@ storiesOf('Toast', module)
     {inline: true}
   )
   .addWithInfo(
-    'trigger',
+    'success trigger',
     () => <Button onClick={() => success('Great success!')} variant="primary">Show Toast</Button>,
+    {inline: true}
+  )
+  .addWithInfo(
+    'error trigger',
+    () => <Button onClick={() => error('Dismal Failure!')} variant="primary">Show Toast</Button>,
+    {inline: true}
+  )
+  .addWithInfo(
+    'warning trigger',
+    () => <Button onClick={() => warning('Could be serious!', {role: 'region', 'aria-live': 'off'})} variant="primary">Show Toast</Button>,
     {inline: true}
   );
