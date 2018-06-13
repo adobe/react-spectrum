@@ -1,10 +1,13 @@
 import assert from 'assert';
 import Button from '../../src/Button';
 import InputGroup from '../../src/InputGroup';
+import LiveRegionAnnouncer from '../../src/utils/LiveRegionAnnouncer';
+import {mount, shallow} from 'enzyme';
 import NumberInput from '../../src/NumberInput';
 import React from 'react';
-import {shallow} from 'enzyme';
+import ReactDOM from 'react-dom';
 import sinon from 'sinon';
+import {sleep} from '../utils';
 import Textfield from '../../src/Textfield';
 
 describe('NumberInput', () => {
@@ -26,8 +29,8 @@ describe('NumberInput', () => {
     assert(inputId);
     assert.equal(input.prop('defaultValue'), undefined);
     assert.equal(input.prop('role'), 'spinbutton');
-    assert.equal(input.prop('aria-valuenow'), '');
-    assert.equal(input.prop('aria-valuetext'), '');
+    assert.equal(input.prop('aria-valuenow'), null);
+    assert.equal(input.prop('aria-valuetext'), null);
     assert.equal(input.prop('step'), 1);
     assert.equal(input.prop('placeholder'), 'Enter a number');
     assert.equal(input.prop('disabled'), false);
@@ -45,6 +48,16 @@ describe('NumberInput', () => {
 
     const buttonWrappers = tree.find('.spectrum-Stepper-buttons');
     assert.equal(buttonWrappers.at(0).prop('role'), 'presentation');
+  });
+
+  it('supports defaultValue', () => {
+    const tree = shallow(<NumberInput defaultValue={5} />);
+    assert(!tree.state('valueInvalid'));
+    assert.equal(tree.state('value'), 5);
+    tree.setProps({defaultValue: 'foo'});
+    assert(tree.state('valueInvalid'));
+    // don't change to invalid value
+    assert.equal(tree.state('value'), 5);
   });
 
   it('supports placeholder', () => {
@@ -119,6 +132,18 @@ describe('NumberInput', () => {
         assert(preventDefaultSpy.called);
       });
 
+      it('supports step="any"', () => {
+        tree.setProps({step: 'any', value: '-'});
+        findIncrementButton(tree).simulate('click', {preventDefault: preventDefaultSpy});
+        assert(spy.calledWith(1));
+        assert(preventDefaultSpy.calledOnce);
+
+        tree.setProps({value: '-'});
+        findDecrementButton(tree).simulate('click', {preventDefault: preventDefaultSpy});
+        assert(spy.calledWith(-1));
+        assert(preventDefaultSpy.calledTwice);
+      });
+
       describe('when mouse wheel is scrolled', () => {
         const simulateWheel = (deltaY = 5) => {
           findInput(tree).simulate('wheel', {deltaY, preventDefault: preventDefaultSpy});
@@ -170,6 +195,41 @@ describe('NumberInput', () => {
         input.simulate('keyDown', {keyCode: 34, preventDefault: preventDefaultSpy}); // page down
         assert(spy.calledWith(-1));
         assert.deepEqual(preventDefaultSpy.callCount, 2);
+      });
+
+      it('when arrow key is pressed announce value change using live region', async () => {
+        sinon.stub(LiveRegionAnnouncer, 'announceAssertive').callsFake(sinon.spy());
+        sinon.stub(LiveRegionAnnouncer, 'clearMessage').callsFake(sinon.spy());
+
+        const input = findInput(tree);
+
+        input.simulate('keyDown', {keyCode: 38, preventDefault: preventDefaultSpy, defaultPrevented: true}); // up arrow
+        assert(spy.calledWith(0.5));
+        assert.equal(tree.state('value'), 0.5);
+
+        await sleep(1);
+
+        input.simulate('keyDown', {keyCode: 33, preventDefault: preventDefaultSpy, defaultPrevented: true}); // page up arrow
+        assert(spy.calledWith(1));
+        assert.equal(tree.state('value'), 1);
+        assert(LiveRegionAnnouncer.announceAssertive.calledWith('1'));
+        input.simulate('blur');
+
+        input.simulate('keyDown', {keyCode: 34, preventDefault: preventDefaultSpy, defaultPrevented: true}); // page down arrow
+        assert(spy.calledWith(0.5));
+        assert.equal(tree.state('value'), 0.5);
+        assert(LiveRegionAnnouncer.announceAssertive.calledWith('0.5'));
+        input.simulate('focus');
+
+        input.simulate('keyDown', {keyCode: 40, preventDefault: preventDefaultSpy, defaultPrevented: true}); // down arrow
+        assert(spy.calledWith(0));
+        assert.equal(tree.state('value'), 0);
+        assert(LiveRegionAnnouncer.announceAssertive.calledWith('0'));
+        await sleep(1001);
+        assert(LiveRegionAnnouncer.clearMessage.calledWith('assertive'));
+
+        LiveRegionAnnouncer.announceAssertive.restore();
+        LiveRegionAnnouncer.clearMessage.restore();
       });
     });
   });
@@ -351,9 +411,85 @@ describe('NumberInput', () => {
     const tree = shallow(<NumberInput foo />);
     assert.equal(findInput(tree).prop('foo'), true);
   });
+
+  it('clicking increment or decrement should focus input.', async () => {
+    const focusSpy = sinon.spy();
+    const tree = shallow(<NumberInput />);
+    const instance = tree.instance();
+    instance.textfield = {
+      focus: focusSpy
+    };
+
+    findStepperButtons(tree).simulate('mousedown', {preventDefault: () => {}});
+    assert(focusSpy.called);
+  });
+
+  describe('on mobile, ', () => {
+    it('clicking increment or decrement should not focus input.', async () => {
+      const focusSpy = sinon.spy();
+      const tree = shallow(<NumberInput />);
+      const instance = tree.instance();
+      instance.textfield = {
+        focus: focusSpy
+      };
+
+      findStepperButtons(tree).simulate('touchstart');
+      assert(instance.flagTouchStart);
+      findStepperButtons(tree).simulate('mousedown', {preventDefault: () => {}});
+      assert(!focusSpy.called);
+    });
+
+    it('clicking increment or decrement should announce value change using live region.', async () => {
+      sinon.stub(LiveRegionAnnouncer, 'announceAssertive').callsFake(sinon.spy());
+      sinon.stub(LiveRegionAnnouncer, 'clearMessage').callsFake(sinon.spy());
+      const focusSpy = sinon.spy();
+      const tree = shallow(<NumberInput />);
+      const instance = tree.instance();
+      instance.textfield = {
+        focus: focusSpy
+      };
+
+      findStepperButtons(tree).simulate('touchstart');
+      assert(instance.flagTouchStart);
+      findStepperButtons(tree).simulate('mousedown', {preventDefault: () => {}});
+      assert(!focusSpy.called);
+      findIncrementButton(tree).simulate('click', {preventDefault: () => {}});
+      assert.equal(tree.state('value'), 1);
+      assert(LiveRegionAnnouncer.announceAssertive.calledWith('1'));
+      await sleep(1001);
+      assert(LiveRegionAnnouncer.clearMessage.calledWith('assertive'));
+
+      LiveRegionAnnouncer.announceAssertive.restore();
+      LiveRegionAnnouncer.clearMessage.restore();
+    });
+  });
+
+  it('preventDefault on mouse event for increment or decrement button', () => {
+    const preventDefault = sinon.spy();
+    const tree = shallow(<NumberInput />);
+    findIncrementButton(tree).simulate('mousedown', {preventDefault});
+    assert.equal(preventDefault.callCount, 1);
+    findIncrementButton(tree).simulate('mouseup', {preventDefault});
+    assert.equal(preventDefault.callCount, 2);
+
+    findDecrementButton(tree).simulate('mousedown', {preventDefault});
+    assert.equal(preventDefault.callCount, 3);
+    findDecrementButton(tree).simulate('mouseup', {preventDefault});
+    assert.equal(preventDefault.callCount, 4);
+  });
+
+  it('has textfield ref when mounted', () => {
+    const tree = mount(<NumberInput />);
+    assert.deepEqual(
+      ReactDOM.findDOMNode(tree.instance().textfield),
+      tree.find(Textfield).getDOMNode()
+    );
+    tree.unmount();
+  });
 });
 
 const findInput = tree => tree.find(Textfield);
 const findAllButtons = tree => tree.find(Button);
+const findStepperButtons = tree => tree.find('.spectrum-Stepper-buttons');
 const findDecrementButton = tree => tree.find('.spectrum-Stepper-stepDown');
 const findIncrementButton = tree => tree.find('.spectrum-Stepper-stepUp');

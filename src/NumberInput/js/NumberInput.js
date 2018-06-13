@@ -1,16 +1,23 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
+import {clamp, handleDecimalOperation} from '../../utils/number';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import InputGroup from '../../InputGroup';
+import intlMessages from '../intl/*.json';
+import LiveRegionAnnouncer from '../../utils/LiveRegionAnnouncer';
+import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import StepperDownChevron from '../../Icon/core/StepperDownChevron';
 import StepperUpChevron from '../../Icon/core/StepperUpChevron';
 import Textfield from '../../Textfield';
+import '../../utils/style/index.styl';
 
 importSpectrumCSS('stepper');
+
+const formatMessage = messageFormatter(intlMessages);
 
 @autobind
 export default class NumberInput extends Component {
@@ -20,7 +27,7 @@ export default class NumberInput extends Component {
     min: PropTypes.number,
     max: PropTypes.number,
     placeholder: PropTypes.string,
-    step: PropTypes.number,
+    step: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['any'])]),
     disabled: PropTypes.bool,
     invalid: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -30,13 +37,13 @@ export default class NumberInput extends Component {
   };
 
   static defaultProps = {
-    placeholder: 'Enter a number',
+    placeholder: formatMessage('Enter a number'),
     step: 1,
     disabled: false,
     invalid: false,
     readOnly: false,
-    decrementTitle: 'Decrement',
-    incrementTitle: 'Increment',
+    decrementTitle: formatMessage('Decrement'),
+    incrementTitle: formatMessage('Increment'),
     onChange: function () {}
   };
 
@@ -74,28 +81,41 @@ export default class NumberInput extends Component {
 
   onMouseDown(e) {
     e.preventDefault();
-    ReactDOM.findDOMNode(this.textfield).focus();
+
+    // Don't shift focus to textfield when increment/decrement button is pressed on a mobile device.
+    !this.flagTouchStart && this.textfield.focus();
   }
 
-  handleDecrementButtonClick = e => {
+  /**
+  * Keep track of when increment/decrement button is pressed on a mobile device.
+  */
+  onTouchStart() {
+    this.flagTouchStart = true;
+  }
+
+  handleDecrementButtonClick(e) {
     e.preventDefault();
+
     this.decrementValue();
   }
 
-  handleIncrementButtonClick = e => {
+  handleIncrementButtonClick(e) {
     e.preventDefault();
+
     this.incrementValue();
   }
 
-  handleInputFocus = () => {
+  handleFocus() {
     this.setState({focused: true});
   }
 
-  handleInputBlur = () => {
+  handleBlur() {
+    this.flagTouchStart = false;
     this.setState({focused: false});
+    LiveRegionAnnouncer.clearMessage();
   }
 
-  handleInputKeyDown = e => {
+  handleInputKeyDown(e) {
     switch (e.keyCode) {
       case 38: // up arrow
       case 33: // page up
@@ -120,7 +140,7 @@ export default class NumberInput extends Component {
     }
   }
 
-  handleInputScrollWheel = e => {
+  handleInputScrollWheel(e) {
     e.preventDefault();
 
     // If the input isn't supposed to receive input, do nothing.
@@ -135,7 +155,7 @@ export default class NumberInput extends Component {
     }
   }
 
-  handleInputChange = (value, e) => {
+  handleInputChange(value, e) {
     e.stopPropagation();
 
     const {onChange} = this.props;
@@ -174,14 +194,18 @@ export default class NumberInput extends Component {
    * If value is undefined, sets it to the step.
    */
   incrementValue() {
-    const {max, step} = this.props;
+    let {min, max, step} = this.props;
     const {value} = this.state;
+
+    if (isNaN(step)) {
+      step = 1;
+    }
 
     let newValue = +value;
     if (isNaN(newValue)) {
       newValue = max != null ? Math.min(step, max) : step;
     } else {
-      newValue = max != null ? Math.min(newValue + step, max) : newValue + step;
+      newValue = clamp(handleDecimalOperation('+', newValue, step), min, max);
     }
 
     this.triggerChange(newValue);
@@ -208,14 +232,18 @@ export default class NumberInput extends Component {
    * defined). If value is undefined, sets it to the step.
    */
   decrementValue() {
-    const {min, step} = this.props;
+    let {min, max, step} = this.props;
     const {value} = this.state;
+
+    if (isNaN(step)) {
+      step = 1;
+    }
 
     let newValue = +value;
     if (isNaN(newValue)) {
       newValue = min != null ? Math.max(-step, min) : -step;
     } else {
-      newValue = min != null ? Math.max(newValue - step, min) : newValue - step;
+      newValue = clamp(handleDecimalOperation('-', newValue, step), min, max);
     }
 
     this.triggerChange(newValue);
@@ -246,6 +274,10 @@ export default class NumberInput extends Component {
 
     // Only trigger change event and setState if the value changed
     if (value !== newValue) {
+
+      // Announce new value using a live region
+      LiveRegionAnnouncer.announceAssertive(newValue.toString());
+
       this.setState({
         value: newValue,
         valueInvalid: this.isInputValueInvalid(newValue)
@@ -267,12 +299,12 @@ export default class NumberInput extends Component {
   render() {
     const {
       defaultValue,
-      placeholder,
+      placeholder = formatMessage('Enter a number'),
       min,
       max,
       step,
-      decrementTitle,
-      incrementTitle,
+      decrementTitle = formatMessage('Decrement'),
+      incrementTitle = formatMessage('Increment'),
       invalid,
       disabled,
       quiet,
@@ -294,35 +326,10 @@ export default class NumberInput extends Component {
         invalid={invalid}
         quiet={quiet}
         disabled={disabled}
-        className={classNames('spectrum-Stepper', {'spectrum-Stepper--quiet': quiet}, className)}>
-        <span className="spectrum-Stepper-buttons" role="presentation">
-          <Button
-            className="spectrum-Stepper-stepUp"
-            type="button"
-            tabIndex="-1"
-            aria-controls={inputId}
-            variant="action"
-            quiet={quiet}
-            title={incrementTitle}
-            disabled={disabled || max != null && value >= max || readOnly}
-            onClick={this.handleIncrementButtonClick}
-            onMouseDown={this.onMouseDown}>
-            <StepperUpChevron size={null} className="spectrum-Stepper-stepUpIcon" />
-          </Button>
-          <Button
-            className="spectrum-Stepper-stepDown"
-            type="button"
-            tabIndex="-1"
-            aria-controls={inputId}
-            variant="action"
-            quiet={quiet}
-            title={decrementTitle}
-            disabled={disabled || min != null && value <= min || readOnly}
-            onClick={this.handleDecrementButtonClick}
-            onMouseDown={this.onMouseDown}>
-            <StepperDownChevron size={null} className="spectrum-Stepper-stepDownIcon" />
-          </Button>
-        </span>
+        className={classNames('spectrum-Stepper', 'react-spectrum-Stepper', {'spectrum-Stepper--quiet': quiet}, className)}
+        role="group"
+        aria-label={otherProps['aria-label'] || null}
+        aria-labelledby={otherProps['aria-labelledby'] || null}>
         <Textfield
           ref={t => this.textfield = t}
           className="spectrum-Stepper-input"
@@ -330,8 +337,12 @@ export default class NumberInput extends Component {
           value={value}
           defaultValue={defaultValue}
           role="spinbutton"
-          aria-valuenow={value || ''}
-          aria-valuetext={value || ''}
+          type="number"
+          autoComplete="off"
+          aria-label={otherProps['aria-label'] || null}
+          aria-labelledby={otherProps['aria-labelledby'] || null}
+          aria-valuenow={value || null}
+          aria-valuetext={value || null}
           aria-valuemin={min}
           aria-valuemax={max}
           invalid={invalid || valueInvalid}
@@ -342,10 +353,51 @@ export default class NumberInput extends Component {
           quiet={quiet}
           onKeyDown={this.handleInputKeyDown}
           onWheel={this.handleInputScrollWheel}
-          onFocus={this.handleInputFocus}
-          onBlur={this.handleInputBlur}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
           {...otherProps}
           onChange={this.handleInputChange} />
+        <span
+          className="spectrum-Stepper-buttons"
+          role="presentation"
+          onMouseDown={this.onMouseDown}
+          onMouseUp={this.onMouseUp}
+          onTouchStart={this.onTouchStart}>
+          <Button
+            className="spectrum-Stepper-stepUp"
+            type="button"
+            tabIndex="-1"
+            aria-controls={inputId}
+            variant="action"
+            quiet={quiet}
+            title={incrementTitle}
+            aria-label={incrementTitle}
+            disabled={disabled || max != null && value >= max || readOnly}
+            onClick={this.handleIncrementButtonClick}
+            onMouseDown={e => e.preventDefault()}
+            onMouseUp={e => e.preventDefault()}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}>
+            <StepperUpChevron size={null} className="spectrum-Stepper-stepUpIcon" />
+          </Button>
+          <Button
+            className="spectrum-Stepper-stepDown"
+            type="button"
+            tabIndex="-1"
+            aria-controls={inputId}
+            variant="action"
+            quiet={quiet}
+            title={decrementTitle}
+            aria-label={decrementTitle}
+            disabled={disabled || min != null && value <= min || readOnly}
+            onClick={this.handleDecrementButtonClick}
+            onMouseDown={e => e.preventDefault()}
+            onMouseUp={e => e.preventDefault()}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}>
+            <StepperDownChevron size={null} className="spectrum-Stepper-stepDownIcon" />
+          </Button>
+        </span>
       </InputGroup>
     );
   }

@@ -1,4 +1,4 @@
-export function clamp(number, min, max) {
+export function clamp(number, min = -Infinity, max = Infinity) {
   return Math.min(Math.max(number, min), max);
 }
 
@@ -35,3 +35,36 @@ export function snapValueToStep(rawValue, min, max, step) {
 
   return snappedValue;
 }
+
+/**
+ * Corrects floating point errors when adding or subtracting values.
+ * @param   {String} operator '+' or '-'
+ * @param   {Number} value1   Starting value
+ * @param   {Number} value1   Value to be added or subtracted
+ * @returns {Number} The returned value
+ */
+export function handleDecimalOperation(operator, value1, value2) {
+  let result = operator === '+' ? value1 + value2 : value1 - value2;
+
+  // Check if we have decimals
+  if (value1 % 1 !== 0 || value2 % 1 !== 0) {
+    const value1Decimal = value1.toString().split('.');
+    const value2Decimal = value2.toString().split('.');
+    const value1DecimalLength = (value1Decimal[1] && value1Decimal[1].length) || 0;
+    const value2DecimalLength = (value2Decimal[1] && value2Decimal[1].length) || 0;
+    const multiplier = Math.pow(10, Math.max(value1DecimalLength, value2DecimalLength));
+
+    // Transform the decimals to integers based on the precision
+    value1 = Math.round(value1 * multiplier);
+    value2 = Math.round(value2 * multiplier);
+
+    // Perform the operation on integers values to make sure we don't get a fancy decimal value
+    result = operator === '+' ? value1 + value2 : value1 - value2;
+
+    // Transform the integer result back to decimal
+    result /= multiplier;
+  }
+
+  return result;
+}
+
