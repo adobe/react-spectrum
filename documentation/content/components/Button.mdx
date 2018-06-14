@@ -1,0 +1,125 @@
+import Button from '@react/react-spectrum/Button';
+import Bell from '@react/react-spectrum/Icon/Bell';
+import Brush from '@react/react-spectrum/Icon/Brush';
+
+## Overview
+
+A **button** represents an action a user can take. Buttons can be clicked or tapped to perform an action or to navigate to another page. Buttons in Spectrum have several variations for different uses and multiple levels of loudness for various attention-getting needs.
+
+## Example
+
+<Button variant="cta">Hello world</Button>
+
+```jsx
+import Button from '@react/react-spectrum/Button';
+
+<Button variant="cta">Hello world</Button>
+```
+
+## Variants
+
+There are many button variants to choose from in Spectrum. The `variant` prop controls the main variant of the button, and a few other boolean props can be combined to apply sub-variants, e.g. `quiet` and `logic`.
+
+### Normal Buttons
+
+<Button variant="cta">CTA</Button>
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="warning">Warning</Button>
+
+```jsx
+<Button variant="cta">CTA</Button>
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="warning">Warning</Button>
+```
+
+### Quiet Buttons
+
+<Button quiet variant="primary">Quiet Primary</Button>
+<Button quiet variant="secondary">Quiet Secondary</Button>
+<Button quiet variant="warning">Quiet Warning</Button>
+
+```jsx
+<Button quiet variant="primary">Quiet Primary</Button>
+<Button quiet variant="secondary">Quiet Secondary</Button>
+<Button quiet variant="warning">Quiet Warning</Button>
+```
+
+### Action Buttons
+
+<Button variant="action">Action</Button>
+<Button quiet variant="action">Quiet Action</Button>
+
+```jsx
+<Button variant="action">Action</Button>
+<Button quiet variant="action">Quiet Action</Button>
+```
+
+### Tool Buttons
+
+<Button variant="tool" icon={<Brush />} />
+
+```jsx
+<Button variant="tool" icon={<Brush />} />
+```
+
+### Logic Buttons
+
+<Button logic variant="and">And</Button>
+<Button logic variant="or">Or</Button>
+
+```jsx
+<Button logic variant="and">And</Button>
+<Button logic variant="or">Or</Button>
+```
+
+## Content
+
+Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop. A label can either be provided as a child to the button, or through the `label` prop.
+
+<Button variant="primary">Label only</Button>
+<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
+<Button variant="primary" icon={<Bell />} />
+
+```jsx
+<Button variant="primary">Label only</Button>
+<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
+<Button variant="primary" icon={<Bell />} />
+```
+
+## States
+
+In addition to the variant, buttons have a number of props for controlling their visual state. All button variants support the `disabled` prop, which applies a disabled style to the button, and also prevents clicks from activating it. The `action` and `tool` variants also support the `selected` prop to apply a selected appearance to the button.
+
+<Button variant="action">Normal</Button>
+<Button variant="action" disabled>Disabled</Button>
+<Button variant="action" selected>Selected</Button>
+
+```jsx
+<Button variant="action">Normal</Button>
+<Button variant="action" disabled>Disabled</Button>
+<Button variant="action" selected>Selected</Button>
+```
+
+## Handling Events
+
+Events handlers for clicks and other user actions can be registered on a `Button` just as a normal `button` element in React.
+
+```jsx
+<Button onClick={e => alert('Button clicked!')}>Click me!</Button>
+```
+
+<Button onClick={e => alert('Button clicked!')}>Click me!</Button>
+
+## Internationalization
+
+To internationalize a button, a localized string should be passed to the `label` prop of the button, or as a child.
+
+## Accessibility
+
+Buttons are accessible by default. The correct aria roles will automatically be applied. For icon only labels, an alternative label should be provided using the `aria-label` prop.
+
+```jsx
+<Button icon={<Bell />} aria-label="Notifications" />
+```

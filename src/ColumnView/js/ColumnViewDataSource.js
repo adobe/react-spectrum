@@ -30,15 +30,17 @@ export default class ColumnViewDataSource extends EventEmitter {
    * Returns an array of children for an item
    * @param {object} item
    * @return {object[]}
+   * @abstract
    */
   async getChildren(item) {
     throw new Error('Must be implemented by subclass');
   }
 
-  /*
+  /**
    * Returns whether an item has children
    * @param {object} item
    * @return {boolean}
+   * @abstract
    */
   hasChildren(item) {
     throw new Error('Must be implemented by subclass');

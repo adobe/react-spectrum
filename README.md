@@ -40,7 +40,7 @@ npm install @react/react-spectrum --save
 
 ```javascript
 // Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
-import '@react/react-spectrum/Provider';
+import Provider from '@react/react-spectrum/Provider';
 
 // Import the component you want to use
 import Button from '@react/react-spectrum/Button';

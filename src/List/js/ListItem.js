@@ -5,6 +5,9 @@ import {interpretKeyboardEvent} from '../../utils/events';
 import MenuCheckmark from '../../Icon/core/MenuCheckmark';
 import React, {Component} from 'react';
 
+/**
+ * An item in a list
+ */
 @autobind
 export default class ListItem extends Component {
   static defaultProps = {

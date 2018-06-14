@@ -13,37 +13,37 @@ importSpectrumCSS('table');
 @autobind
 export default class TableView extends Component {
   static propTypes = {
-    /* The datasource for the column view. Should be a subclass of TableViewDataSource. */
+    /** The datasource for the column view. Should be a subclass of `TableViewDataSource`. */
     dataSource: PropTypes.object.isRequired,
 
-    /* A function which renders a cell. Passed a column object and cell data. */
+    /** A function which renders a cell. Passed a column object and cell data. */
     renderCell: PropTypes.func.isRequired,
 
-    /* An optional function which overrides the rendering for a column header. Passed the column object. */
+    /** An optional function which overrides the rendering for a column header. Passed the column object. */
     renderColumnHeader: PropTypes.func,
 
-    /* Whether to allow the user to select items */
+    /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
 
-    /* Whether to allow multiple selection of items */
+    /** Whether to allow multiple selection of items */
     allowsMultipleSelection: PropTypes.bool,
 
-    /* A function that is called when the selection changes. Passed an IndexPathSet object. */
+    /** A function that is called when the selection changes. Passed an IndexPathSet object. */
     onSelectionChange: PropTypes.func,
 
-    /* Sets the selected rows. Should be an IndexPathSet object or an array of IndexPaths. */
+    /** Sets the selected rows. Should be an IndexPathSet object or an array of IndexPaths. */
     selectedIndexPaths: PropTypes.object,
 
-    /* A function that is called when a cell is clicked. Passed a column object and row index. */
+    /** A function that is called when a cell is clicked. Passed a column object and row index. */
     onCellClick: PropTypes.func,
 
     /* A function that is called when a cell is double clicked. Passed a column object and row index. */
     onCellDoubleClick: PropTypes.func,
 
-    /* Whether to use the spectrum quiet variant. */
+    /** Whether to use the spectrum quiet variant. */
     quiet: PropTypes.bool,
 
-    /* The height each row should be in the table. It has a maximum of 72 */
+    /** The height each row should be in the table. It has a maximum of 72 */
     rowHeight: PropTypes.number
   };
 

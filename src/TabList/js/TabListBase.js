@@ -19,6 +19,7 @@ const TAB_ITEM_SELECTED_SELECTOR = TAB_ITEM_SELECTOR + '[aria-selected=true]';
  * It will be passed the updated selected index.
  *
  * childMappingFunction: allows you to map additional properties for each tab child
+ * @private
  */
 @focusRing
 export default class TabListBase extends Component {

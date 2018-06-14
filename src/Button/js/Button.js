@@ -24,23 +24,72 @@ const VARIANTS = {
   }
 };
 
+/**
+ * A **button** represents an action a user can take. Buttons can be clicked or tapped to
+ * perform an action or to navigate to another page. Buttons in Spectrum have several variations
+ * for different uses and multiple levels of loudness for various attention-getting needs.
+ */
 @focusRing
 export default class Button extends Component {
   static propTypes = {
-    autoFocus: PropTypes.bool,
-    block: PropTypes.bool,
-    disabled: PropTypes.bool,
-    element: PropTypes.string,
-    icon: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.element
-    ]),
-    invalid: PropTypes.bool,
-    label: PropTypes.string,
-    logic: PropTypes.bool,
-    quiet: PropTypes.bool,
-    selected: PropTypes.bool,
+    /**
+     * The variant of button to display
+     */
     variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown', 'clear', 'field', 'tool']),
+
+    /**
+     * Whether the button should render using a quiet variant
+     */
+    quiet: PropTypes.bool,
+
+    /**
+     * Whether the button is a logic button variant
+     */
+    logic: PropTypes.bool,
+
+    /**
+     * Whether the button is disabled
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * Whether the button represents a selected state
+     */
+    selected: PropTypes.bool,
+
+    /**
+     * Whether the button represents an invalid state
+     */
+    invalid: PropTypes.bool,
+
+    /**
+     * An icon to render in the button.
+     */
+    icon: PropTypes.element,
+
+    /**
+     * The label to display in the button
+     */
+    label: PropTypes.string,
+
+    /**
+     * Whether the button is a block element
+     */
+    block: PropTypes.bool,
+
+    /**
+     * The DOM element to use to render the button
+     */
+    element: PropTypes.string,
+
+    /**
+     * Whether the button should be auto focused on mount
+     */
+    autoFocus: PropTypes.bool,
+
+    /**
+     * A click handler for the button
+     */
     onClick: PropTypes.func
   };
 
@@ -64,6 +113,9 @@ export default class Button extends Component {
     }
   }
 
+  /**
+   * Focus the button
+   */
   focus() {
     if (this.buttonRef && !this.props.disabled && this.buttonRef.focus) {
       this.buttonRef.focus();

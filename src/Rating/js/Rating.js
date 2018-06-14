@@ -13,7 +13,8 @@ export default class Rating extends React.Component {
   static defaultProps = {
     disabled: false,
     className: '',
-    max: 5
+    max: 5,
+    readOnly: false
   };
 
   state = {

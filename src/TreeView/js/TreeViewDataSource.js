@@ -37,13 +37,13 @@ class TreeItem {
 }
 
 /**
- * TreeDataSource is the super class for all data sources used
+ * TreeViewDataSource is the super class for all data sources used
  * by TreeView. It manages expanding and collapsing items, loading
  * children on demand, and manipulation of that data. Because it
  * uses content objects as the keys for many of its methods, all
  * items in the tree must be unique.
  */
-export default class TreeDataSource extends ArrayDataSource {
+export default class TreeViewDataSource extends ArrayDataSource {
   constructor() {
     super([[]]);
 
@@ -126,7 +126,7 @@ export default class TreeDataSource extends ArrayDataSource {
    * increments it by the given number of rows.
    * @param {object} item
    * @param {number?} inc
-   * @return {IndexPath}
+   * @returns {IndexPath}
    */
   indexPathForItem(item, inc = 0) {
     let content = this._getItem(item);

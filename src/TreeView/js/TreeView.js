@@ -15,38 +15,38 @@ importSpectrumCSS('treeview');
 @autobind
 export default class TreeView extends React.Component {
   static propTypes = {
-    /* The datasource for the tree view. Should be a subclass of TreeViewDataSource. */
+    /** The datasource for the tree view. Should be a subclass of `TreeViewDataSource`. */
     dataSource: PropTypes.object.isRequired,
 
-    /* A function which renders an item in the tree */
+    /** A function which renders an item in the tree */
     renderItem: PropTypes.func.isRequired,
 
     /* A function that is called when the selection changes. Passes a list of all selected items. */
     onSelectionChange: PropTypes.func,
 
-    /*
+    /**
      * A function that is called when an item is toggled (expanded/collapsed).
      * Will only fire if item is toggleable and has children.
      * Passes the item being toggled and the isExpanded state.
      */
     onToggleItem: PropTypes.func,
 
-    /* Sets the selected items. Optional. */
+    /** Sets the selected items. Optional. */
     selectedItems: PropTypes.arrayOf(PropTypes.object),
 
-    /* Whether to allow the user to select items */
+    /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
 
-    /* Whether to allow the user to select multiple items */
+    /** Whether to allow the user to select multiple items */
     allowsMultipleSelection: PropTypes.bool,
 
-    /* An optional delegate for the tree view. */
+    /** An optional delegate for the tree view. */
     delegate: PropTypes.object,
 
-    /* The timeout after which items automatically expand when dragging over them. */
+    /** The timeout after which items automatically expand when dragging over them. */
     dragHoverTimeout: PropTypes.number,
 
-    /* Custom CSS class to add to the tree view */
+    /** Custom CSS class to add to the tree view */
     className: PropTypes.string
   };
 

@@ -4,7 +4,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import MillerColumnRightChevron from '../../Icon/core/MillerColumnRightChevron';
 import React from 'react';
 
-/**
+/*
  * A wrapper for an Item within an ItemColumn that will manage the Item's state
  */
 export default class Item extends React.Component {

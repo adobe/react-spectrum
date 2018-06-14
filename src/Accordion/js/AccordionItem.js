@@ -7,11 +7,12 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 /**
- * header: A string or node which will be placed at the top of the accordion item.
+ * An AccordionItem component represents an item in an accordion
  */
 @focusRing
 export default class AccordionItem extends Component {
   static propTypes = {
+    /** A string or node which will be placed at the top of the accordion item. */
     header: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     selected: PropTypes.bool,
     disabled: PropTypes.bool,

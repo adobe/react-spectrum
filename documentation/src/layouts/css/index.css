@@ -1,0 +1,113 @@
+.page-main {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0
+}
+
+.main {
+  flex: 1;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  min-height: 100vh
+}
+
+.component-page table {
+  width: 100%;
+}
+
+.component-page .type-column {
+  max-width: 150px;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.5;
+}
+
+h2 {
+  margin: 0.67em 0;
+  font-weight: 300;
+  font-size: 28px;
+  line-height: 1.5;
+}
+
+p, li {
+  font-size: 16px;
+  line-height: 22px;
+}
+
+li {
+  margin: 5px 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.page main {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  border-bottom: 2px solid rgb(57, 57, 57);
+}
+
+header nav h2 {
+  margin: 0 20px 0 10px;
+}
+
+header nav h2 a {
+  color: white;
+  text-decoration: none;
+  font-size: inherit;
+}
+
+header nav a {
+  padding: 0 10px;
+  font-size: 16px;
+}
+
+.homepage .hero {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.homepage .hero h1 {
+  font-size: 60px;
+  line-height: 1em;
+}
+
+.homepage .hero h2 {
+  margin-bottom: 60px;
+  line-height: 1em;
+  margin-top: -20px;
+}
+
+.homepage .features {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -20px;
+}
+
+.homepage .feature {
+  width: 33%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.homepage .example h1 {
+  font-size: 30px;
+}

@@ -5,6 +5,9 @@ import Tag from './Tag';
 
 importSpectrumCSS('tags');
 
+/**
+ * A TagList displays a list of Tags
+ */
 export default class TagList extends React.Component {
   static displayName = 'TagList';
 

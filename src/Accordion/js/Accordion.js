@@ -6,24 +6,45 @@ import React, {Component} from 'react';
 
 importSpectrumCSS('accordion');
 
-/**
- * selectedIndex: The index of the AccordionItem that should be selected (open). If multiselectable
- * is true, selectedIndex can be an array of indices. When selectedIndex is specified, the component
- * is in a controlled state and an AccordionItem can only be selected by changing the selectedIndex
- * prop value. By default, no AccordionItems will be selected.
- *
- * defaultSelectedIndex: The same as selectedIndex except that the component is in an uncontrolled
- * state. AccordionItems can be opened or closed without prop values having changed.
- *
- * multiselectable: Whether multiple AccordionItems can be selected (open) at the same time.
- *
- * onChange: A function that will be called when an AccordionItem is selected (opened) or
- * deselected (closed). It will be passed the updated selected index.
- */
-
 const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-header';
 
+/**
+ * An accordion is a list of expandable and collapsible sections.
+ */
 export default class Accordion extends Component {
+  static propTypes = {
+    /**
+     * The index of the AccordionItem that should be selected (open). If multiselectable
+     * is true, selectedIndex can be an array of indices. When selectedIndex is specified, the component
+     * is in a controlled state and an AccordionItem can only be selected by changing the selectedIndex
+     * prop value. By default, no AccordionItems will be selected.
+     */
+    selectedIndex: PropTypes.number,
+
+    /**
+     * The same as selectedIndex except that the component is in an uncontrolled
+     * state. AccordionItems can be opened or closed without prop values having changed.
+     */
+    defaultSelectedIndex: PropTypes.number,
+
+    /** Whether multiple AccordionItems can be selected (open) at the same time. */
+    multiselectable: PropTypes.bool,
+
+    /** A function that will be called when an AccordionItem is selected (opened) or
+     * deselected (closed). It will be passed the updated selected index.
+     */
+    onChange: PropTypes.func,
+
+    /** The aria heading level of the accordion items */
+    ariaLevel: PropTypes.number
+  };
+
+  static defaultProps = {
+    onChange() {},
+    multiselectable: false,
+    ariaLevel: 3
+  };
+
   constructor(props) {
     super(props);
 
@@ -144,17 +165,3 @@ export default class Accordion extends Component {
     );
   }
 }
-
-Accordion.displayName = 'Accordion';
-
-Accordion.propTypes = {
-  onChange() {},
-  multiselectable: PropTypes.bool,
-  ariaLevel: PropTypes.number
-};
-
-Accordion.defaultProps = {
-  onChange() {},
-  multiselectable: false,
-  ariaLevel: 3
-};

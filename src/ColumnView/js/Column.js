@@ -5,7 +5,7 @@ import Item from './Item';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-/**
+/*
  * An individual column in a ColumnView
  */
 @autobind

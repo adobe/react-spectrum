@@ -14,47 +14,47 @@ importSpectrumCSS('miller');
 @autobind
 export default class ColumnView extends React.Component {
   static propTypes = {
-    /* The datasource for the column view. Should be a subclass of ColumnViewDataSource. */
+    /** The datasource for the column view. Should be a subclass of `ColumnViewDataSource`. */
     dataSource: PropTypes.object.isRequired,
 
-    /* A function which renders an item in a column */
+    /** A function which renders an item in a column */
     renderItem: PropTypes.func.isRequired,
 
-    /* A function which renders a detail column for the navigated item */
+    /** A function which renders a detail column for the navigated item */
     renderDetail: PropTypes.func,
 
     /* A function which renders a component when there are no items */
-    renderEmpty: PropTypes.func, // TODO
+    // renderEmpty: PropTypes.func, // TODO
 
-    /* A function that is called when the selection changes. Passes a list of all selected items. */
+    /** A function that is called when the selection changes. Passes a list of all selected items. */
     onSelectionChange: PropTypes.func,
 
-    /* A function that is called when the navigation path changes. */
+    /** A function that is called when the navigation path changes. */
     onNavigate: PropTypes.func,
 
     /* Sets the navigated path. Optional. */
-    navigatedPath: PropTypes.arrayOf(PropTypes.object), // TODO
+    // navigatedPath: PropTypes.arrayOf(PropTypes.object), // TODO
 
-    /* Sets the selected items. Optional. */
+    /** Sets the selected items. Optional. */
     selectedItems: PropTypes.arrayOf(PropTypes.object),
 
-    /* Whether to allow the user to select items */
+    /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
 
-    /* Whether to allow selecting branches. On by default. If off, only leaf nodes can be selected. */
+    /** Whether to allow selecting branches. On by default. If off, only leaf nodes can be selected. */
     allowsBranchSelection: PropTypes.bool,
 
     /* Whether to allow resizing the columns */
-    allowsColumnResizing: PropTypes.bool, // TODO
+    // allowsColumnResizing: PropTypes.bool, // TODO
 
     /* Default width of a column */
-    columnWidth: PropTypes.number, // TODO
+    // columnWidth: PropTypes.number, // TODO
 
     /* Min width of a column */
-    minWidth: PropTypes.number, // TODO
+    // minWidth: PropTypes.number, // TODO
 
     /* Max width of a column */
-    maxWidth: PropTypes.number, // TODO
+    // maxWidth: PropTypes.number // TODO
 
     /* Custom class name to apply */
     className: PropTypes.string
@@ -63,8 +63,8 @@ export default class ColumnView extends React.Component {
   static defaultProps = {
     allowsSelection: false,
     allowsBranchSelection: false,
-    allowsColumnResizing: false,
-    columnWidth: 272
+    // allowsColumnResizing: false,
+    // columnWidth: 272
   };
 
   componentWillMount() {

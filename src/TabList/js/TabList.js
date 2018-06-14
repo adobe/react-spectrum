@@ -15,22 +15,38 @@ const VARIANTS = {
 };
 
 /**
- * selectedIndex: The index of the Tab that should be selected (open). When selectedIndex is
- * specified, the component is in a controlled state and a Tab can only be selected by changing the
- * selectedIndex prop value. By default, the first Tab will be selected.
- *
- * defaultSelectedIndex: The same as selectedIndex except that the component is in an uncontrolled
- * state.
- *
- * onChange: A function that will be called when an Tab is selected or deselected. It will be passed
- * the updated selected index.
+ * A TabList displays a list of tabs
  */
 @autobind
 export default class TabList extends React.Component {
   static propTypes = {
+    /** The visual style of the tab list */
     variant: PropTypes.oneOf(['compact', 'panel', 'anchored']),
+
+    /** Whether the tab list should render using a quiet style */
     quiet: PropTypes.bool,
-    orientation: PropTypes.oneOf(['horizontal', 'vertical'])
+
+    /** The layout orientation of the tabs */
+    orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+
+    /**
+     * The index of the Tab that should be selected (open). When selectedIndex is
+     * specified, the component is in a controlled state and a Tab can only be selected by changing the
+     * selectedIndex prop value. By default, the first Tab will be selected.
+     */
+    selectedIndex: PropTypes.number,
+
+    /**
+     * The same as selectedIndex except that the component is in an uncontrolled
+     * state.
+     */
+    defaultSelectedIndex: PropTypes.number,
+
+    /**
+     * A function that will be called when an Tab is selected or deselected. It will be passed
+     * the updated selected index.
+     */
+    onChange: PropTypes.func
   };
 
   static defaultProps = {

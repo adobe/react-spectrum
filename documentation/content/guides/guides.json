@@ -1,0 +1,19 @@
+[
+  {
+    "title": "Getting Started",
+    "name": "getting_started.mdx"
+  },
+  {
+    "title": "Contributing",
+    "name": "../../../CONTRIBUTING.md"
+  },
+  {
+    "title": "Contributing Documentation",
+    "name": "../../README.md",
+    "slug": "contributing_docs"
+  },
+  {
+    "title": "FAQ",
+    "name": "../../../FAQ.md"
+  }
+]

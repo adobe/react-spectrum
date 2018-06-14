@@ -31,40 +31,40 @@ const CURSORS = {
 @focusRing
 export default class SplitView extends React.Component {
   static propTypes = {
-    /* A custom class name to apply to the split view */
+    /** A custom class name to apply to the split view */
     className: PropTypes.string,
 
-    /* The orientation of the split view panes - horizontal or vertical */
+    /** The orientation of the split view panes - horizontal or vertical */
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 
-    /* Whether the split view is resizable */
+    /** Whether the split view is resizable */
     resizable: PropTypes.bool,
 
-    /* Whether the primary pane of the split view is collapsible */
+    /** Whether the primary pane of the split view is collapsible */
     collapsible: PropTypes.bool,
 
-    /* A function that should be applied when the split view is dragged */
+    /** A function that should be applied when the split view is dragged */
     onResize: PropTypes.func,
 
-    /* A function that should be applied when dragging ends on the split view */
+    /** A function that should be applied when dragging ends on the split view */
     onResizeEnd: PropTypes.func,
 
-    /* The child index of the primary pane of the split view. 0 by default, meaning either left or top depending on orientation. */
+    /** The child index of the primary pane of the split view. 0 by default, meaning either left or top depending on orientation. */
     primaryPane: PropTypes.oneOf([0, 1]),
 
-    /* The minimum size of the primary pane */
+    /** The minimum size of the primary pane */
     primaryMin: PropTypes.number,
 
-    /* The maximum size of the primary pane */
+    /** The maximum size of the primary pane */
     primaryMax: PropTypes.number,
 
-    /* The default size of the primary pane */
+    /** The default size of the primary pane */
     primaryDefault: PropTypes.number,
 
-    /* The minimum size of the secondary pane */
+    /** The minimum size of the secondary pane */
     secondaryMin: PropTypes.number,
 
-    /* The maximum size of the secondary pane */
+    /** The maximum size of the secondary pane */
     secondaryMax: PropTypes.number
   };
 

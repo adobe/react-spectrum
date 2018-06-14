@@ -1,7 +1,11 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * A table header row
+ */
 export default function THead({
   className,
   children,
@@ -22,3 +26,6 @@ export default function THead({
 }
 
 THead.displayName = 'THead';
+THead.propTypes = {
+  className: PropTypes.string
+};

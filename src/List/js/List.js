@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
@@ -12,6 +13,16 @@ const NOT_DISABLED_SELECTOR = ':not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR + '.is-selected';
 
 export default class List extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    role: PropTypes.string,
+    autoFocus: PropTypes.bool
+  };
+
+  static defaultProps = {
+    role: 'listbox'
+  };
+
   constructor(props) {
     super(props);
     this.listId = createId();

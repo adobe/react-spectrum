@@ -1,0 +1,39 @@
+{
+  "name": "react-spectrum-docs",
+  "version": "1.0.0",
+  "dependencies": {
+    "@mapbox/rehype-prism": "^0.2.0",
+    "@react/react-spectrum": "^2.8.0",
+    "babel-plugin-lodash": "^3.2.11",
+    "babel-runtime": "^6.26.0",
+    "documentation": "^8.0.0",
+    "gatsby": "^1.9.231",
+    "gatsby-link": "^1.6.7",
+    "gatsby-plugin-catch-links": "^1.0.4",
+    "gatsby-plugin-meta-redirect": "^1.1.0",
+    "gatsby-plugin-nprogress": "^1.0.2",
+    "gatsby-plugin-sitemap": "^1.2.1",
+    "gatsby-source-filesystem": "^1.4.2",
+    "gatsby-transformer-json": "^1.0.16",
+    "gatsby-transformer-react-docgen": "^1.0.17",
+    "gatsby-transformer-remark": "^1.7.0",
+    "lodash": "^4.17.4",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "devDependencies": {
+    "@mdx-js/loader": "^0.9.0",
+    "@mdx-js/mdx": "^0.9.0",
+    "cli-glob": "^0.1.0",
+    "loader-utils": "^1.1.0"
+  },
+  "keywords": [
+    "gatsby"
+  ],
+  "license": "MIT",
+  "main": "n/a",
+  "scripts": {
+    "develop": "gatsby develop",
+    "build": "gatsby build --prefix-paths"
+  }
+}

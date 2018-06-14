@@ -1,6 +1,9 @@
 import {ListItem} from '../../List';
 import React, {Component} from 'react';
 
+/**
+ * An item in a Menu
+ */
 export default class MenuItem extends Component {
   static displayName = 'MenuItem';
 

@@ -103,5 +103,10 @@
         ]
       ]
     ]
+  },
+  "lfeslint": {
+    "ignore": [
+      "documentation/**"
+    ]
   }
 }

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import SwitchBase from './SwitchBase';
 
@@ -30,3 +31,7 @@ export default function Switch({
 }
 
 Switch.displayName = 'Switch';
+Switch.propTypes = {
+  variant: PropTypes.oneOf(['ab']),
+  className: PropTypes.string
+};

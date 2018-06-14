@@ -3,6 +3,9 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import responsive from './responsive';
 
+/**
+ * A row in a grid
+ */
 export default class GridRow extends Component {
   static defaultProps = {
     reverse: false

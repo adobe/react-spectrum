@@ -7,7 +7,7 @@ import focusRing from '../../utils/focusRing';
 import React, {Component} from 'react';
 
 /**
- * header: A string or node which will be placed at the top of the accordion item.
+ * An individual tab in a TabList or TabView
  */
 @focusRing
 @autobind

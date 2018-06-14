@@ -59,6 +59,6 @@ storybook:
 	mv storybook-static dist/storybook
 
 unprefix:
-	find . -name *.js -not -path "./node_modules/*" -not -path "./src/*" -not -path "./test/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
+	find . -name *.js -not -path "./node_modules/*" -not -path "./src/*" -not -path "./test/*" -not -path "./documentation/*" -exec sed -i.bak 's/@react\/collection-view/collection-view/g' {} \;
 	sed -i.bak 's/@react\///g' package.json
 	find . -name "*.bak" -delete

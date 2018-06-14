@@ -3,6 +3,9 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 import responsive from './responsive';
 
+/**
+ * A column in a grid
+ */
 export default class GridColumn extends Component {
   static defaultProps = {
     size: 'auto'

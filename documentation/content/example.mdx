@@ -1,0 +1,16 @@
+```jsx
+// Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
+import Provider from '@react/react-spectrum/Provider';
+
+// Import the component you want to use
+import Button from '@react/react-spectrum/Button';
+
+// Render it!
+let app = (
+  <Provider theme="dark">
+    <Button>Hello World</Button>
+  </Provider>
+);
+
+ReactDOM.render(app, dom);
+```

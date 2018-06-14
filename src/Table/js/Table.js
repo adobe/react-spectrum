@@ -1,9 +1,13 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('table');
 
+/**
+ * A table
+ */
 export default function Table({
   quiet,
   className,
@@ -28,3 +32,7 @@ export default function Table({
 }
 
 Table.displayName = 'Table';
+Table.propTypes = {
+  quiet: PropTypes.bool,
+  className: PropTypes.string
+};
