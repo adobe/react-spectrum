@@ -65,7 +65,7 @@ export default class Button extends Component {
   }
 
   focus() {
-    if (this.buttonRef && !this.props.disabled) {
+    if (this.buttonRef && !this.props.disabled && this.buttonRef.focus) {
       this.buttonRef.focus();
     }
   }
