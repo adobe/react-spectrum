@@ -15,7 +15,7 @@ const DEPRECATED_VARIANTS = {
   archived: 'neutral'
 };
 
-export default function StatusLight({variant = VARIANTS[0], children, ...otherProps}) {
+export default function StatusLight({variant = VARIANTS[0], children, className, ...otherProps}) {
   if (DEPRECATED_VARIANTS[variant]) {
     console.warn(`The "${variant}" variant of StatusLight is deprecated. Please use "${DEPRECATED_VARIANTS[variant]}" instead.`);
     variant = DEPRECATED_VARIANTS[variant];
@@ -23,7 +23,7 @@ export default function StatusLight({variant = VARIANTS[0], children, ...otherPr
 
   return (
     <div
-      className={classNames('spectrum-StatusLight', `spectrum-StatusLight--${variant}`, this.props.className)}
+      className={classNames('spectrum-StatusLight', `spectrum-StatusLight--${variant}`, className)}
       {...filterDOMProps(otherProps)}>
       {children}
     </div>
