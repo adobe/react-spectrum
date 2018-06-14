@@ -10,11 +10,13 @@ import Textfield from '../../src/Textfield';
 describe('TagField', () => {
   it('should render a textfield when empty', () => {
     const tree = shallow(<TagField />);
+    let autoComplete = tree.find(Autocomplete);
     assert.equal(tree.type(), Autocomplete);
     assert.equal(tree.prop('className'), 'react-spectrum-TagField spectrum-Textfield');
 
     assert.equal(tree.find(Textfield).length, 1);
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
+    assert.equal(autoComplete.prop('allowCreate'), true);
     assert.equal(tree.find(TagList).prop('values').length, 0);
   });
 
@@ -24,7 +26,7 @@ describe('TagField', () => {
   });
 
   it('should render tags when a value is given', () => {
-    const tree = shallow(<TagField value={['one', 'two']} />);
+    const tree = shallow(<TagField value={[{label: 'one'}, {label: 'two'}]} />);
     assert.equal(tree.find(TagList).prop('values').length, 2);
   });
 
@@ -58,12 +60,50 @@ describe('TagField', () => {
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], ['foo', 'hi']);
   });
+  it('should allow check if the option is string or  array of object tags', () => {
+    const onChange = sinon.spy();
+    const OBJECT_OPTIONS = [
+        {label: 'Chocolate', id: '1'},
+        {label: 'Vanilla', id: '2'},
+        {label: 'Strawberry', id: '3'},
 
+    ];
+    let text = 'ta';
+    const tree = shallow(<TagField onChange={onChange} getCompletions={OBJECT_OPTIONS.filter(o => o.label.toLowerCase().startsWith(text.toLowerCase()))} />);
+
+    tree.simulate('change', 'test');
+    assert.equal(tree.prop('value'), 'test');
+
+    // Add one
+    tree.simulate('select', 'Chocolate');
+    assert.equal(tree.prop('value'), '');
+
+    let values = tree.find(TagList).prop('values');
+    assert.equal(values.length, 1);
+    assert.equal(values[0], 'Chocolate');
+
+    assert.equal(onChange.callCount, 1);
+    assert.deepEqual(onChange.getCall(0).args[0], ['Chocolate']);
+
+  });
   it('should not allow empty tags', () => {
     const tree = shallow(<TagField />);
 
     tree.simulate('select', '');
     assert.equal(tree.find(TagList).prop('values').length, 0);
+  });
+
+  it('should allowCreate prop to false in Autocomplete', () => {
+    const tree = shallow(<TagField allowCreate={false} />);
+    let autoComplete = tree.find(Autocomplete);
+    assert.equal(autoComplete.prop('allowCreate'), false);
+  });
+
+  it('should allow tags creation by default', () => {
+    const tree = shallow(<TagField />);
+
+    tree.simulate('change', 'foo');
+    assert.equal(tree.prop('value'), 'foo');
   });
 
   it('should not allow duplicates by default', () => {

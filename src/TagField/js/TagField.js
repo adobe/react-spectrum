@@ -8,6 +8,10 @@ import '../style/index.styl';
 
 @autobind
 export default class TagField extends React.Component {
+  static defaultProps = {
+    allowCreate: true
+  };
+
   state = {
     value: '',
     tags: this.props.value || []
@@ -24,6 +28,7 @@ export default class TagField extends React.Component {
   }
 
   onSelect(value) {
+    value = value.label || value;
     if (!value || (!this.props.allowDuplicates && this.state.tags.includes(value))) {
       return;
     }
@@ -50,7 +55,7 @@ export default class TagField extends React.Component {
   }
 
   render() {
-    const {getCompletions, disabled, invalid, quiet, className, ...props} = this.props;
+    const {getCompletions, allowCreate, disabled, invalid, quiet, className, ...props} = this.props;
     const {value, tags} = this.state;
 
     delete props.onChange;
@@ -64,11 +69,11 @@ export default class TagField extends React.Component {
           'is-invalid': invalid
         }, className)}
         getCompletions={getCompletions}
-        allowCreate
+        allowCreate={allowCreate}
         onSelect={this.onSelect}
         value={value}
         onChange={this.onTextfieldChange}>
-        <TagList disabled={disabled} onClose={this.onRemove} values={tags} />
+        <TagList disabled={disabled} onClose={this.onRemove} values={tags.map(tag => tag.label || tag)} />
         <Textfield
           className="react-spectrum-TagField-input"
           autocompleteInput
