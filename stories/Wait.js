@@ -49,11 +49,29 @@ storiesOf('Wait', module)
     {inline: true},
   )
   .addWithInfo(
+    'variant: determinate, size: S',
+    'Adjust the slider in the knobs tab below to change the value',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({variant: 'determinate', size: 'S', value});
+    },
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: determinate, size: L',
     'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       return render({variant: 'determinate', size: 'L', value});
+    },
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: determinate, centered: true',
+    'Adjust the slider in the knobs tab below to change the value',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({variant: 'determinate', centered: true, value});
     },
     {inline: true}
   );
