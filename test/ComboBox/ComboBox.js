@@ -37,9 +37,9 @@ describe('ComboBox', () => {
   });
 
   it('should get completions from options', () => {
-    const tree = shallow(<ComboBox options={['pineapple', 'crabapple', 'banana', 'apple']} />);
-    assert.deepEqual(tree.prop('getCompletions')('app'), ['apple', 'pineapple', 'crabapple']);
-    assert.deepEqual(tree.prop('getCompletions')('App'), ['apple', 'pineapple', 'crabapple']);
+    const tree = shallow(<ComboBox options={['pineapple', 'Crabapple', 'banana', 'apple']} />);
+    assert.deepEqual(tree.prop('getCompletions')('app'), ['apple', 'pineapple', 'Crabapple']);
+    assert.deepEqual(tree.prop('getCompletions')('App'), ['apple', 'pineapple', 'Crabapple']);
     assert.deepEqual(tree.prop('getCompletions')('eapp'), ['pineapple']);
   });
 

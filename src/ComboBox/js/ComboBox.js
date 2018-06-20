@@ -38,11 +38,11 @@ export default class ComboBox extends React.Component {
     if (this.shouldFilter(text)) {
       // show options that start with the text first, then
       // show other options containing the text
-      return this.props.options.map(o => getLabel(o).toLowerCase())
-        .filter(label => label.includes(text.toLowerCase()))
+      return this.props.options
+        .filter(option => getLabel(option).toLowerCase().includes(text.toLowerCase()))
         .sort((a, b) => {
-          const aStartsWithText = a.startsWith(text.toLowerCase());
-          const bStartsWithText = b.startsWith(text.toLowerCase());
+          const aStartsWithText = getLabel(a).toLowerCase().startsWith(text.toLowerCase());
+          const bStartsWithText = getLabel(b).toLowerCase().startsWith(text.toLowerCase());
 
           if (aStartsWithText && !bStartsWithText) {
             return -1;
