@@ -4,7 +4,7 @@ import createId from '../../src/utils/createId';
 import {DateRange} from 'moment-range';
 import moment from 'moment';
 import {mount, shallow} from 'enzyme';
-import {rAF} from '../utils';
+import {rAF, sleep} from '../utils';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -227,22 +227,26 @@ describe('Calendar', () => {
       assert.equal(+tree.state('currentMonth'), +date3MonthsLater.clone().startOf('month'));
     });
 
-    it('changes currentMonth when previous or next buttons are clicked', (done) => {
+    it('changes currentMonth when previous or next buttons are clicked', async () => {
       const previousMonth = now.clone().subtract(1, 'month');
       findPreviousButton(tree).simulate('focus');
-      assert.equal(tree.instance().state.ariaLiveHeading, 'assertive');
       findPreviousButton(tree).simulate('click');
+      tree.instance().prevMonthButton = {
+        focus: sinon.spy()
+      };
+      await sleep(20);
       assert.equal(+tree.state('currentMonth'), +previousMonth.clone().startOf('month'));
+      assert(tree.instance().prevMonthButton.focus.calledOnce);
       findPreviousButton(tree).simulate('blur');
-      assert.equal(tree.instance().state.ariaLiveHeading, 'assertive');
+      await sleep(20);
       findNextButton(tree).simulate('focus');
       findNextButton(tree).simulate('click');
+      tree.instance().nextMonthButton = {
+        focus: sinon.spy()
+      };
+      await sleep(20);
+      assert(tree.instance().nextMonthButton.focus.calledOnce);
       assert.equal(+tree.state('currentMonth'), +now.clone().startOf('month'));
-      findNextButton(tree).simulate('blur');
-      requestAnimationFrame(() => {
-        assert.equal(tree.instance().state.ariaLiveHeading, 'off');
-        done();
-      });
     });
   });
 
@@ -703,29 +707,6 @@ describe('Calendar', () => {
         assert.equal(tree.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
         assert.equal(body.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
       });
-    });
-  });
-
-  it('sets aria-live="off" to live regions on blur', (done) => {
-    const tree = shallow(<Calendar />);
-    const body = findBody(tree);
-    tree.setState({
-      ariaLiveHeading: 'polite',
-      ariaLiveCaption: 'polite'
-    });
-    tree.update();
-    body.simulate('blur');
-    body.simulate('focus');
-    assert.equal(findHeaderTitle(tree).prop('aria-live'), 'polite');
-    assert.equal(findTableCaption(tree).prop('aria-live'), 'polite');
-    body.simulate('blur');
-    requestAnimationFrame(() => {
-      assert.equal(tree.instance().state.ariaLiveHeading, 'off');
-      assert.equal(tree.instance().state.ariaLiveCaption, 'off');
-      tree.update();
-      assert.equal(findHeaderTitle(tree).prop('aria-live'), 'off');
-      assert.equal(findTableCaption(tree).prop('aria-live'), 'off');
-      done();
     });
   });
 

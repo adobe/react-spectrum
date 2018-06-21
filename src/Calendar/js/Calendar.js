@@ -9,6 +9,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, isDateInRange, toMoment} from '../../utils/moment';
 import {getLocale, messageFormatter} from '../../utils/intl';
 import intlMessages from '../intl/*.json';
+import LiveRegionAnnouncer from '../../utils/LiveRegionAnnouncer';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -89,11 +90,7 @@ export default class Calendar extends Component {
     this.setState({
       isFocused: false,
       min: newMin && newMin.startOf('day'),
-      max: newMax && newMax.startOf('day'),
-      // Calendar Month/Year heading should have aria-live="off" to start
-      ariaLiveHeading: 'off',
-      // Calendar table caption describing the selected range of dates should have aria-live="off" to start
-      ariaLiveCaption: 'off'
+      max: newMax && newMax.startOf('day')
     });
 
     this.setSelected(newValue);
@@ -217,10 +214,11 @@ export default class Calendar extends Component {
     }
 
     this.setState({
-      currentMonth: currentMonth.clone().add(-1, 'month').startOf('month'),
-      // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
-      ariaLiveHeading: 'assertive'
+      currentMonth: currentMonth.clone().add(-1, 'month').startOf('month')
     }, () => {
+      // announce new currentMonth using a live region.
+      this.announceCurrentMonth();
+
       // restore focus from the calendar body to the previous month button
       requestAnimationFrame(() => this.prevMonthButton.focus());
     });
@@ -238,32 +236,13 @@ export default class Calendar extends Component {
     }
 
     this.setState({
-      currentMonth: currentMonth.clone().add(1, 'month').startOf('month'),
-      // Calendar Month/Year heading should have aria-live="assertive" so that month change will be announced
-      ariaLiveHeading: 'assertive'
+      currentMonth: currentMonth.clone().add(1, 'month').startOf('month')
     }, () => {
+      this.announceCurrentMonth();
+
       // restore focus from the calendar body to the next month button
       requestAnimationFrame(() => this.nextMonthButton.focus());
     });
-  }
-
-  /**
-   * Handles focus on previuous or next arrow button set aria-live="assertive" on Calendar Month/Year heading
-   */
-  handleFocusPreviousNext() {
-    if (this.blurPreviousNextTimeout) {
-      cancelAnimationFrame(this.blurPreviousNextTimeout);
-    }
-    this.setState({ariaLiveHeading: 'assertive'});
-  }
-
-  /**
-   * Handles blur on previuous or next arrow button set aria-live="off" on Calendar Month/Year heading
-   */
-  handleBlurPreviousNext() {
-    this.blurPreviousNextTimeout = requestAnimationFrame(
-      () => this.setState({ariaLiveHeading: 'off'})
-    );
   }
 
   handleDayClick(e, date) {
@@ -290,25 +269,13 @@ export default class Calendar extends Component {
 
   onFocus(e) {
     this.setState({isFocused: true});
-    if (this.blurTimeout) {
-      cancelAnimationFrame(this.blurTimeout);
-    }
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
   }
 
   onBlur(e) {
-    this.setState({
-      isFocused: false
-    }, () => {
-      this.blurTimeout = requestAnimationFrame(
-        () => this.setState({
-          ariaLiveCaption: 'off',
-          ariaLiveHeading: 'off'
-        })
-      );
-    });
+    this.setState({isFocused: false});
     if (this.props.onBlur) {
       this.props.onBlur(e);
     }
@@ -377,14 +344,67 @@ export default class Calendar extends Component {
 
     this.setState({
       focusedDate: date,
-      currentMonth: newCurrentMonth,
-      ariaLiveHeading: (sameMonthAsVisible ? 'off' : 'polite'),
-      ariaLiveCaption: 'off'
+      currentMonth: newCurrentMonth
     }, () => {
       // wait for render before highlighting the date range and focusing the Calendar body
       this.onHighlight(null, date);
       this.focusCalendarBody();
+
+      if (!sameMonthAsVisible) {
+        this.announceCurrentMonth('polite');
+      }
     });
+  }
+
+  /**
+   * Announces current month using a live region
+   */
+  announceCurrentMonth(assertiveness = 'assertive') {
+    const method = assertiveness === 'polite' ? 'announcePolite' : 'announceAssertive';
+    const {currentMonth} = this.state;
+    currentMonth.locale(getLocale());
+    LiveRegionAnnouncer[method](currentMonth.format(this.props.headerFormat));
+  }
+
+  /**
+   * Announces selected date or selected range of dates
+   */
+  announceSelection(assertiveness = 'polite') {
+    const selectedRangeDescription = this.getSelectedRangeDescription();
+    if (selectedRangeDescription === '') {
+      LiveRegionAnnouncer.clearMessage();
+    } else {
+      const method = assertiveness === 'polite' ? 'announcePolite' : 'announceAssertive';
+      LiveRegionAnnouncer[method](selectedRangeDescription);
+    }
+  }
+
+  getSelectedRangeDescription() {
+    const {highlightedRange, anchorDate = false} = this.state;
+    const isRangeSelection = this.props.selectionType === 'range';
+    let selectedRangeDescription = '';
+
+    // Provide localized description of selected date or range of dates.
+    if (highlightedRange) {
+      highlightedRange.start.locale(getLocale());
+      if (isRangeSelection) {
+        highlightedRange.end.locale(getLocale());
+      }
+      const start = highlightedRange.start.toDate();
+      const end = isRangeSelection ? highlightedRange.end.toDate() : start;
+      if (isRangeSelection && !anchorDate && start.valueOf() !== end.valueOf()) {
+        selectedRangeDescription = formatMessage('selectedRangeDescription', {
+          start,
+          end
+        });
+      } else if (!anchorDate) {
+        selectedRangeDescription = formatMessage('selectedDateDescription', {
+          date: start
+        });
+      }
+    }
+
+    return selectedRangeDescription;
   }
 
   selectFocused(date) {
@@ -401,7 +421,7 @@ export default class Calendar extends Component {
     let selectingRange = null;
     let anchorDate = null;
     let newValue = null;
-    let ariaLiveCaption = 'polite';
+    let assertiveness = 'polite';
     if (this.props.selectionType === 'range') {
       // If this is the second date selected, set the value.
       // Otherwise, setup the selecting range.
@@ -416,18 +436,20 @@ export default class Calendar extends Component {
     }
 
     if (newValue) {
-      ariaLiveCaption = 'assertive';
+      assertiveness = 'assertive';
       this.setValue(newValue);
     }
 
     this.setState({
       anchorDate,
       focusedDate: date,
-      selectingRange,
-      ariaLiveCaption
+      selectingRange
     }, () => {
       // wait for render before setting focus to Calendar body
       this.focusCalendarBody();
+
+      // announce newly selected date or range of dates
+      this.announceSelection(assertiveness);
     });
   }
 
@@ -453,32 +475,14 @@ export default class Calendar extends Component {
   }
 
   renderTable(date) {
-    const {selectionType} = this.props;
-    const {highlightedRange, anchorDate, ariaLiveCaption} = this.state;
     const descriptionId = this.generateId('description');
-    const isRangeSelection = selectionType === 'range';
-    let selectedRangeDescription = '';
-
-    // Provide localized description of selected date or range of dates.
-    if (highlightedRange) {
-      if (isRangeSelection && !anchorDate) {
-        selectedRangeDescription = formatMessage('selectedRangeDescription', {
-          start: highlightedRange.start.toDate(),
-          end: highlightedRange.end.toDate()
-        });
-      } else if (!isRangeSelection) {
-        selectedRangeDescription = formatMessage('selectedDateDescription', {
-          date: highlightedRange.start.toDate()
-        });
-      }
-    }
+    const selectedRangeDescription = this.getSelectedRangeDescription();
 
     return (
       <table
         key={date.format('MM/Y')}
         className="spectrum-Calendar-table">
-        {/* caption serves as live region to announce selected date or range of dates */}
-        <caption className="u-react-spectrum-screenReaderOnly" id={descriptionId} aria-live={ariaLiveCaption}>{selectedRangeDescription}</caption>
+        <caption className="u-react-spectrum-screenReaderOnly" id={descriptionId} >{selectedRangeDescription}</caption>
         {this.renderTableHeader()}
         {this.renderTableBody(date)}
       </table>
@@ -591,7 +595,7 @@ export default class Calendar extends Component {
       ...otherProps
     } = this.props;
 
-    const {focusedDate, highlightedRange, currentMonth, ariaLiveHeading} = this.state;
+    const {focusedDate, highlightedRange, currentMonth} = this.state;
     const headingId = this.generateId('heading');
     const descriptionId = this.generateId('description');
     const activeDescendantId = this.generateDateId(focusedDate);
@@ -610,6 +614,7 @@ export default class Calendar extends Component {
     // Make sure moment localizes date formatting per Intl.locale
     moment.locale(getLocale());
     currentMonth.locale(getLocale());
+    const currentMonthFormatted = currentMonth.format(headerFormat);
 
     return (
       <div
@@ -627,10 +632,8 @@ export default class Calendar extends Component {
           {/* Calendar Month/Year is the default aria-labelledby element and is a live region that should announce when the Month/Year changes */}
           <h2
             className="spectrum-Heading spectrum-Calendar-heading"
-            id={headingId}
-            aria-live={ariaLiveHeading}
-            aria-atomic="true">
-            {currentMonth.format(headerFormat)}
+            id={headingId}>
+            {currentMonthFormatted}
           </h2>
           <Button
             ref={b => this.prevMonthButton = b}
@@ -641,9 +644,7 @@ export default class Calendar extends Component {
             aria-label={formatMessage('previous')}
             title={formatMessage('previous')}
             disabled={disabled}
-            onClick={this.handleClickPrevious}
-            onFocus={this.handleFocusPreviousNext}
-            onBlur={this.handleBlurPreviousNext} />
+            onClick={this.handleClickPrevious} />
           <Button
             ref={b => this.nextMonthButton = b}
             className="spectrum-Calendar-nextMonth"
@@ -653,9 +654,7 @@ export default class Calendar extends Component {
             aria-label={formatMessage('next')}
             title={formatMessage('next')}
             disabled={disabled}
-            onClick={this.handleClickNext}
-            onFocus={this.handleFocusPreviousNext}
-            onBlur={this.handleBlurPreviousNext} />
+            onClick={this.handleClickNext} />
         </div>
         <div
           ref={el => this.calendarBody = el}

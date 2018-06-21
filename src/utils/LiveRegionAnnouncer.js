@@ -48,7 +48,6 @@ export default class LiveRegionAnnouncer extends Component {
 
   componentWillUnmount() {
     if (node) {
-      ReactDOM.unmountComponentAtNode(node);
       document.body.removeChild(node);
     }
     liveRegionAnnouncer = null;
