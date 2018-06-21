@@ -356,6 +356,7 @@ export default class Clock extends Component {
           placeholder="HH"
           min={hourMin}
           max={hourMax}
+          pattern="^[0-9]*$"
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
@@ -377,6 +378,7 @@ export default class Clock extends Component {
           placeholder="mm"
           min="0"
           max="59"
+          pattern="^[0-9]*$"
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
