@@ -9,6 +9,9 @@ const variants = [
   'info', 'warning', 'error'
 ];
 
+/**
+ * A banner is a label with a few specific states that optionally allows for corner placement.
+ */
 export default function Banner({header, content, variant = variants[0], corner, ...otherProps}) {
   return (
     <div
@@ -29,8 +32,12 @@ export default function Banner({header, content, variant = variants[0], corner, 
 Banner.displayName = 'Banner';
 
 Banner.propTypes = {
+  /** Content to show in the larger header portion of the Banner */
   header: PropTypes.string,
+  /** Content to show below the header portion of the Banner */
   content: PropTypes.string,
+  /** Variant of Banner to render */
   variant: PropTypes.oneOf(variants),
+  /** Whether to absolutely place the Banner in the top-right corner of the containing element */
   corner: PropTypes.bool
 };
