@@ -66,14 +66,14 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
 
         let groups = _.groupBy(result.data.allComponentMetadata.edges, (edge) => {
           let p = edge.node.id.split(' ')[0].split('/');
-          let i = p.indexOf('src');
+          let i = p.lastIndexOf('src');
           return p[i + 1];
         });
 
         let relatedClasses = {};
         for (let edge of result.data.allDocumentationJs.edges) {
           let p = edge.node.id.split(' ')[1].split('/');
-          let i = p.indexOf('src');
+          let i = p.lastIndexOf('src');
           let group = p[i + 1];
 
           if (!groups[group] || groups[group].find(e => e.node.displayName === edge.node.name)) {
