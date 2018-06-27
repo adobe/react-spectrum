@@ -113,11 +113,6 @@ storiesOf('Button', module)
     'element: a',
     () => render({element: 'a', href: 'http://example.com'}),
     {inline: true}
-  )
-  .addWithInfo(
-    'block: true',
-    () => render({block: true, variant: 'cta'}),
-    {inline: true}
   );
 
 function renderSelected(props = {}) {
