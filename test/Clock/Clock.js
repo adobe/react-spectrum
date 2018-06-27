@@ -115,10 +115,6 @@ describe('Clock', () => {
     assert.deepEqual(+tree.state('value'), +dateWeekLater);
   });
 
-  it('supports only numeric value', () => {
-    const tree = shallow(<Clock />);
-    assert.equal(findHourTextfield(tree).prop('pattern'), '^[0-9]*$');
-  });
   it('supports quiet', () => {
     const tree = shallow(<Clock quiet />);
     assert.equal(findHourTextfield(tree).prop('quiet'), true);

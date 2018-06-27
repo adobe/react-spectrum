@@ -108,7 +108,11 @@ export default class Clock extends Component {
   handleHourChange(value, e) {
     const {minuteText, meridiemVal} = this.state;
     e.stopPropagation();
-    this.changeTime(value, minuteText, meridiemVal);
+    let newValue = value;
+    if (value.replace) {
+      newValue = value.replace(/\D/g, '');
+    }
+    this.changeTime(newValue, minuteText, meridiemVal);
   }
 
   /**
@@ -118,7 +122,11 @@ export default class Clock extends Component {
   handleMinuteChange(value, e) {
     const {hourText, meridiemVal} = this.state;
     e.stopPropagation();
-    this.changeTime(hourText, value, meridiemVal);
+    let newValue = value;
+    if (value.replace) {
+      newValue = value.replace(/\D/g, '');
+    }
+    this.changeTime(hourText, newValue, meridiemVal);
   }
 
   /**
@@ -332,6 +340,13 @@ export default class Clock extends Component {
     delete otherProps.value;
     delete otherProps.defaultValue;
 
+    // cant use input text with pattern to handle our validation
+    // IE 11 requires that no two options in an alternation be able to start with the
+    // same character (for the regex in a pattern attribute). If multiple options can
+    // start with the same character (or blank), all but the first will be ignored
+    // for that case.
+    //
+    // cant use input number by itself because IE 11 won't prevent other characters
     return (
       <div
         className={
@@ -356,7 +371,6 @@ export default class Clock extends Component {
           placeholder="HH"
           min={hourMin}
           max={hourMax}
-          pattern="^[0-9]*$"
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
@@ -378,7 +392,6 @@ export default class Clock extends Component {
           placeholder="mm"
           min="0"
           max="59"
-          pattern="^[0-9]*$"
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
