@@ -3,18 +3,23 @@ import ModalContainer, {Modal} from '../../src/ModalContainer';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 
+
 describe('ModalContainer', () => {
-  it('should wrap contents in a modal and call PortalContainer', () => {
+  it('should wrap contents in a modal and call PortalContainer', (done) => {
     let content = <div id="modal-test">Contents</div>;
     let key = ModalContainer.show(content);
 
     let node = document.querySelector('#modal-test');
     assert(node);
-    assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+    assert.equal(node.previousSibling.className, 'spectrum-Underlay');
+    setTimeout(() => {
+      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
 
-    ModalContainer.hide(key);
-    node = document.querySelector('#modal-test');
-    assert(!node);
+      ModalContainer.hide(key);
+      node = document.querySelector('#modal-test');
+      assert(!node);
+      done();
+    }, 0);
   });
   it('should use "static" for backdrop by default', () => {
     const tree = shallow(<Modal><div id="modal-test">Contents</div></Modal>);
@@ -58,32 +63,40 @@ describe('ModalContainer', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have role="dialog" when child has no role', () => {
+    it('should have role="dialog" when child has no role', (done) => {
       let content = <div id="modal-test">Contents</div>;
       let key = ModalContainer.show(content);
 
       let node = document.querySelector('#modal-test');
       assert(node);
-      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
-      assert.equal(node.parentElement.getAttribute('role'), 'dialog');
+      assert.equal(node.previousSibling.className, 'spectrum-Underlay');
+      setTimeout(() => {
+        assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+        assert.equal(node.parentElement.getAttribute('role'), 'dialog');
 
-      ModalContainer.hide(key);
-      node = document.querySelector('#modal-test');
-      assert(!node);
+        ModalContainer.hide(key);
+        node = document.querySelector('#modal-test');
+        assert(!node);
+        done();
+      }, 0);
     });
 
-    it('should have role="presentation" when child has role="dialog"', () => {
+    it('should have role="presentation" when child has role="dialog"', (done) => {
       let content = <div id="modal-test" role="dialog">Contents</div>;
       let key = ModalContainer.show(content);
 
       let node = document.querySelector('#modal-test');
       assert(node);
-      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
-      assert.equal(node.parentElement.getAttribute('role'), 'presentation');
+      assert.equal(node.previousSibling.className, 'spectrum-Underlay');
+      setTimeout(() => {
+        assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+        assert.equal(node.parentElement.getAttribute('role'), 'presentation');
 
-      ModalContainer.hide(key);
-      node = document.querySelector('#modal-test');
-      assert(!node);
+        ModalContainer.hide(key);
+        node = document.querySelector('#modal-test');
+        assert(!node);
+        done();
+      }, 0);
     });
   });
 
