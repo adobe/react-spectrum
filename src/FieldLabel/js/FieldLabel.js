@@ -14,7 +14,8 @@ export default function FieldLabel({label, position, children, className, labelF
       labelClassName={classNames(
         'spectrum-FieldLabel',
         {
-          'spectrum-FieldLabel--left': position === 'left'
+          'spectrum-FieldLabel--left': position === 'left',
+          'spectrum-FieldLabel--right': position === 'right'
         }
       )}
       labelFor={labelFor}

@@ -48,6 +48,12 @@ describe('FieldLabel', () => {
     assert.equal(tree.find('label').hasClass('spectrum-FieldLabel spectrum-FieldLabel--left'), true);
   });
 
+  it('should render a label positioned on the right side', () => {
+    const tree = render({position: 'right'});
+
+    assert.equal(tree.find('label').hasClass('spectrum-FieldLabel spectrum-FieldLabel--right'), true);
+  });
+
   it('supports label for', () => {
     const tree = render({labelFor: 'bar'});
 

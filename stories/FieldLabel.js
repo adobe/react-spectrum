@@ -30,6 +30,11 @@ storiesOf('FieldLabel', module)
     {inline: true}
   )
   .addWithInfo(
+    'position: right',
+    () => render({label: 'React', position: 'right'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'label only',
     () => (
       <div>
