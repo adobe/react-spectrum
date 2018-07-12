@@ -154,7 +154,11 @@ export default class ColumnViewDataSource extends EventEmitter {
 
     let node = this._lookupItem(item);
     if (node) {
-      node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+      // Reload all parents in case they are e.g. displaying the selected child count
+      while (node.parent !== null) {
+        node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+        node = node.parent;
+      }
     }
 
     if (emit) {
@@ -177,7 +181,11 @@ export default class ColumnViewDataSource extends EventEmitter {
 
     let node = this._lookupItem(selectedItem);
     if (node) {
-      node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+      // Reload all parents in case they are e.g. displaying the selected child count
+      while (node.parent !== null) {
+        node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+        node = node.parent;
+      }
     }
 
     if (emit) {

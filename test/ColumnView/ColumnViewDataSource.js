@@ -1,10 +1,20 @@
 import assert from 'assert';
 import {data, TestDS} from './utils';
+import {IndexPath} from '@react/collection-view';
 import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('ColumnViewDataSource', function () {
   let ds;
+
+  function testEmitter(emitter) {
+    emitter.emittedEvents = [];
+
+    emitter.emit = function (...args) {
+      emitter.emittedEvents.push(args.map(arg => arg && arg.copy ? arg.copy() : arg));
+    };
+  }
+
   beforeEach(function (done) {
     ds = new TestDS;
     setTimeout(done, 0); // initial navigateToItem is async
@@ -100,23 +110,32 @@ describe('ColumnViewDataSource', function () {
     assert.equal(ds.getDetailItem(), null);
   });
 
-  it('should select an item', async function () {
+  it('should select an item and reloadItems items up to parent level', async function () {
     let spy = sinon.spy();
+    let parentValue = ds._lookupItem(data[0]);
+
     ds.on('selectionChange', spy);
+    testEmitter(parentValue.parent.children);
 
     ds.selectItem(data[0]);
+    assert.deepEqual(parentValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
     assert.equal(ds.selectedItems.size, 1);
     assert(spy.calledOnce);
     assert.deepEqual(spy.getCall(0).args[0], [data[0]]);
 
     await ds.navigateToItem(data[0]);
+    let childValue = ds._lookupItem(data[0].children[0]);
+    testEmitter(childValue.parent.children);
+
     ds.selectItem(data[0].children[0]);
+    assert.deepEqual(parentValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
+    assert.deepEqual(childValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
     assert.equal(ds.selectedItems.size, 2);
     assert(spy.calledTwice);
     assert.deepEqual(spy.getCall(1).args[0], [data[0], data[0].children[0]]);
   });
 
-  it('should deselect an item', async function () {
+  it('should deselect an item and reloadItems items up to parent level', async function () {
     ds.selectItem(data[0]);
     assert.equal(ds.selectedItems.size, 1);
 
@@ -125,14 +144,22 @@ describe('ColumnViewDataSource', function () {
     assert.equal(ds.selectedItems.size, 2);
 
     let spy = sinon.spy();
+    let parentValue = ds._lookupItem(data[0]);
     ds.on('selectionChange', spy);
+    testEmitter(parentValue.parent.children);
 
     ds.deselectItem(data[0]);
+    assert.deepEqual(parentValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
     assert.equal(ds.selectedItems.size, 1);
     assert(spy.calledOnce);
     assert.deepEqual(spy.getCall(0).args[0], [data[0].children[0]]);
 
+    let childValue = ds._lookupItem(data[0].children[0]);
+    testEmitter(childValue.parent.children);
+
     ds.deselectItem(data[0].children[0]);
+    assert.deepEqual(parentValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
+    assert.deepEqual(childValue.parent.children.emittedEvents[0], ['reloadItem', new IndexPath(0, 0), false]);
     assert.equal(ds.selectedItems.size, 0);
     assert(spy.calledTwice);
     assert.deepEqual(spy.getCall(1).args[0], []);
