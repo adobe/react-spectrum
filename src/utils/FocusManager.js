@@ -7,6 +7,7 @@ import {removeDiacritics} from './string';
 import scrollToDOMNode from './scrollToDOMNode';
 
 const WHITESPACE_REGEXP = /[\n\r]+|[\s]{1,}/g;
+const DELAY_BEFORE_AUTOFOCUS = 20;
 
 @autobind
 export default class FocusManager extends React.Component {
@@ -16,7 +17,8 @@ export default class FocusManager extends React.Component {
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
     selectedItemSelector: PropTypes.string,
     disabled: PropTypes.bool,
-    typeToSelect: PropTypes.bool
+    typeToSelect: PropTypes.bool,
+    autoFocus: PropTypes.bool
   };
 
   static defaultProps = {
@@ -247,13 +249,13 @@ export default class FocusManager extends React.Component {
         : null;
 
       // wait a frame before trying to shift focus
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         if (selectedItem) {
           selectedItem.focus();
         } else {
           this.onFocusFirst();
         }
-      });
+      }, DELAY_BEFORE_AUTOFOCUS);
     }
   }
 

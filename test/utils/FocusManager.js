@@ -271,10 +271,10 @@ describe('FocusManager', function () {
     it('should set focus the first item by default when component mounts', (done) => {
       tree.setProps({autoFocus: true});
       tree.instance().componentDidMount();
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
         done();
-      });
+      }, 20);
     });
 
     it('should set focus the first selected item when component mounts if selectedItemSelector is defined', (done) => {
@@ -282,15 +282,15 @@ describe('FocusManager', function () {
       let item = tree.find('.item').at(2);
       item.getDOMNode().classList.add('selected');
       tree.instance().componentDidMount();
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         assert.equal(item.getDOMNode(), document.activeElement);
         item.getDOMNode().classList.remove('selected');
         tree.instance().componentDidMount();
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
           done();
-        });
-      });
+        }, 20);
+      }, 20);
     });
   });
 
