@@ -13,6 +13,15 @@ describe('Accordion', () => {
     assert.equal(wrapper.hasClass('myClass'), true);
   });
 
+  it('supports invalid children', () => {
+    shallow(
+      <Accordion>
+        <AccordionItem />
+        {null}
+      </Accordion>,
+    );
+  });
+
   describe('selectedKey', () => {
     const renderAccordionWithSelectedIndex = index => shallow(
       <Accordion selectedIndex={index}>

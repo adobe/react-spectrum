@@ -111,6 +111,9 @@ export default class Accordion extends Component {
     const selectedIndex = this.state.selectedIndex;
     const {multiselectable, ariaLevel, children} = this.props;
     return React.Children.map(children, (child, index) => {
+      if (!React.isValidElement(child)) {
+        return null;
+      }
       const selected = multiselectable
         ? selectedIndex.indexOf(index) !== -1
         : selectedIndex[0] === index;
