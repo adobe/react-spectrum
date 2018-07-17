@@ -1,5 +1,6 @@
 import AlertIcon from '../../Icon/Alert';
 import Button from '../../Button';
+import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import Dropdown from '../../Dropdown';
@@ -7,7 +8,6 @@ import Popover from '../../Popover';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import SelectList from '../../SelectList';
 
 importSpectrumCSS('dropdown');
@@ -156,7 +156,7 @@ export default class Select extends React.Component {
           style={{minWidth: 192}}> {/* temporary fix for spectrum-css issue */}
           <span id={valueId} className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
           {invalid && <AlertIcon size="S" />}
-          <SelectDownChevron size={null} className="spectrum-Dropdown-icon" />
+          <ChevronDownMedium size={null} className="spectrum-Dropdown-icon" />
         </Button>
         <SelectMenu
           dropdownMenu

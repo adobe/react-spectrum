@@ -4,10 +4,11 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('slider');
 
 const LABEL_POSTFIX = '-label';
-const DRAGGED_BODY_CLASS_NAME = 'react-spectrum-Slider--round--is-dragged';
+const DRAGGED_BODY_CLASS_NAME = 'u-isGrabbing';
 
 @autobind
 export default class Dial extends React.Component {
@@ -62,7 +63,7 @@ export default class Dial extends React.Component {
   }
 
   onMouseDown(e) {
-    // stop propagation of event up to .spectrum-Slider-controls
+    // stop propagation of event up to .spectrum-Dial-controls
     e.stopPropagation();
 
     if (this.input) {
@@ -220,7 +221,7 @@ export default class Dial extends React.Component {
 
     return (
       <div
-        className={classNames('spectrum-Slider-handle', {
+        className={classNames('spectrum-Dial-handle', {
           'is-dragged': isDragging,
           'is-focused': isFocused
         })}
@@ -232,7 +233,7 @@ export default class Dial extends React.Component {
           id={this.getInputId()}
           ref={i => this.input = i}
           type="range"
-          className="spectrum-Slider-input"
+          className="spectrum-Dial-input"
           step={step}
           max={max}
           min={min}
@@ -263,12 +264,9 @@ export default class Dial extends React.Component {
     } = this.props;
     const {startValue} = this.state;
     const sliderClasses = classNames(
-      'spectrum-Slider',
-      'spectrum-Slider--vertical',
-      'spectrum-Slider--round',
-      'react-spectrum-Slider--round',
+      'spectrum-Dial',
       this.props.className, {
-        'spectrum-Slider--round--small': size === 'S',
+        'spectrum-Dial--small': size === 'S',
         'is-disabled': disabled
       });
     const shouldRenderLabel = renderLabel && label;
@@ -282,24 +280,24 @@ export default class Dial extends React.Component {
         ref={d => this.dom = d}
         role="presentation">
         {(shouldRenderLabel || (label && ariaLabelledby) || ariaLabel) &&
-          <div className="spectrum-Slider-labelContainer">
+          <div className="spectrum-Dial-labelContainer">
             <label
               id={this.getLabelId()}
-              className="spectrum-Slider-label"
+              className="spectrum-Dial-label"
               htmlFor={id}
               hidden={!shouldRenderLabel || null}
               aria-label={!otherProps['aria-labelledby'] ? ariaLabel : null}>
               {label}
             </label>
             {shouldRenderLabel &&
-              <div className="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? this.onClickValue : null}>
+              <div className="spectrum-Dial-value" role="textbox" aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? this.onClickValue : null}>
                 {labelValue}
               </div>
             }
           </div>
         }
         <div
-          className="spectrum-Slider-controls"
+          className="spectrum-Dial-controls"
           role="presentation"
           onMouseDown={!disabled ? this.onMouseDown : null}>
           {this.renderHandle()}

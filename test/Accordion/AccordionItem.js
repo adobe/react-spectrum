@@ -20,7 +20,7 @@ describe('AccordionItem', () => {
 
   it('supports header', () => {
     const tree = shallow(<AccordionItem header="foo" />);
-    assert.equal(tree.find('.spectrum-Accordion-header').text(), 'foo');
+    assert.equal(tree.find('.spectrum-Accordion-itemHeader').text(), 'foo');
   });
 
   it('renders children when selected', () => {
@@ -104,7 +104,7 @@ describe('AccordionItem', () => {
 
       it('supports aria-level', () => {
         tree = shallow(<AccordionItem header="One" ariaLevel={4}>One content</AccordionItem>);
-        let heading = tree.find('.spectrum-Accordion-header > span');
+        let heading = tree.find('.spectrum-Accordion-itemHeader > span');
         assert.equal(heading.prop('aria-level'), 4);
       });
 
@@ -160,5 +160,5 @@ describe('AccordionItem', () => {
   });
 });
 
-const findHeader = tree => tree.find('.spectrum-Accordion-header');
-const findContent = tree => tree.find('.spectrum-Accordion-content');
+const findHeader = tree => tree.find('.spectrum-Accordion-itemHeader');
+const findContent = tree => tree.find('.spectrum-Accordion-itemContent');

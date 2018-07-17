@@ -1,9 +1,9 @@
 import Button from '../../Button';
+import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
 import React from 'react';
-import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 
 importSpectrumCSS('splitbutton');
 
@@ -15,7 +15,7 @@ export default function SplitButton({className, onSelect, children, ...props}) {
         variant={props.variant}
         className="spectrum-SplitButton-trigger"
         dropdownTrigger>
-        <SelectDownChevron size={null} className="spectrum-SplitButton-icon" />
+        <ChevronDownMedium size={null} className="spectrum-SplitButton-icon" />
       </Button>
       <Menu>
         {children}

@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 
 importSpectrumCSS('accordion');
 
-const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-header';
+const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-itemHeader';
 
 /**
  * An accordion is a list of expandable and collapsible sections.

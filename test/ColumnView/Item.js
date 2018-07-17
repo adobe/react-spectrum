@@ -16,7 +16,7 @@ describe('Column Item', () => {
 
   it('sets the correct branch classes based on props', () => {
     const tree = shallow(<Item item={item} renderItem={renderItem} allowsBranchSelection allowsSelection={false} selected isSelected={false} />);
-    assert(tree.hasClass('spectrum-MillerColumn-item'));
+    assert(tree.hasClass('spectrum-AssetList-item'));
     assert(tree.hasClass('is-branch-selectable'));
     assert(tree.hasClass('is-branch'));
     assert(tree.hasClass('is-navigated'));
@@ -26,7 +26,7 @@ describe('Column Item', () => {
 
   it('sets the correct selected classes based on props', () => {
     const tree = shallow(<Item item={item} renderItem={renderItem} allowsBranchSelection={false} allowsSelection={false} isSelected selected />);
-    assert(tree.hasClass('spectrum-MillerColumn-item'));
+    assert(tree.hasClass('spectrum-AssetList-item'));
     assert(!tree.hasClass('is-branch-selectable'));
     assert(tree.hasClass('is-branch'));
     assert(!tree.hasClass('is-navigated'));

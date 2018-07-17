@@ -10,14 +10,33 @@ storiesOf('Rule', module)
       {story()}
     </VerticalCenter>
   ))
-  .addWithInfo(
-    'Default',
+  .addWithInfo('Large (Default)',
     () => (
       <section>
-        <Heading variant="subtitle1">Main Section</Heading>
+        <Heading variant="subtitle1">Large</Heading>
         <Rule />
-        <p>Body text</p>
+        <p>Page or Section Titles.</p>
       </section>
     ),
     {inline: true}
+  )
+  .addWithInfo('Medium',
+  () => (
+    <section>
+      <Heading variant="subtitle2">Medium</Heading>
+      <Rule variant="medium" />
+      <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
+    </section>
+  ),
+  {inline: true}
+  )
+  .addWithInfo('Small',
+  () => (
+    <section>
+      <Heading variant="subtitle3">Small</Heading>
+      <Rule variant="small" />
+      <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
+    </section>
+  ),
+  {inline: true}
   );

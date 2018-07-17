@@ -1,4 +1,4 @@
-import AccordionChevron from '../../Icon/core/AccordionChevron';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -66,7 +66,7 @@ export default class AccordionItem extends Component {
         role="presentation">
         <div
           id={this.headerId}
-          className="spectrum-Accordion-header"
+          className="spectrum-Accordion-itemHeader"
           aria-controls={this.contentId}
           aria-selected={selected}
           aria-expanded={selected}
@@ -79,14 +79,14 @@ export default class AccordionItem extends Component {
             {header}
           </span>
         </div>
-        <AccordionChevron role="presentation" size={null} className="spectrum-Accordion-indicator" />
+        <ChevronRightMedium role="presentation" size={null} className="spectrum-Accordion-itemIndicator" />
         <div
           id={this.contentId}
           role="tabpanel"
           aria-labelledby={this.headerId}
           aria-hidden={!selected}
           aria-expanded={selected}
-          className="spectrum-Accordion-content">
+          className="spectrum-Accordion-itemContent">
           {selected ? children : null}
         </div>
       </div>

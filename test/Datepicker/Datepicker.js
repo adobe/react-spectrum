@@ -22,7 +22,7 @@ describe('Datepicker', () => {
     assert.equal(tree.hasClass('is-invalid'), false);
 
     const textfield = findTextfield(tree);
-    assert.equal(textfield.hasClass('spectrum-InputGroup-input'), true);
+    assert.equal(textfield.hasClass('spectrum-InputGroup-field'), true);
     assert.equal(textfield.prop('aria-invalid'), false);
     assert.equal(textfield.prop('readOnly'), false);
     assert.equal(textfield.prop('disabled'), false);

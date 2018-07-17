@@ -79,7 +79,7 @@ export default class Tab extends Component {
         onClick={!disabled ? this.handleClick : null}
         onKeyPress={!disabled ? this.handleKeyPress : null}>
         {cloneIcon(icon, {size: iconSize, className: 'spectrum-Tabs-item-icon'})}
-        {(label || (renderChildren && children)) && <span className="spectrum-Tabs-item-label">{label || (renderChildren && children)}</span>}
+        {(label || (renderChildren && children)) && <span className="spectrum-Tabs-itemLabel">{label || (renderChildren && children)}</span>}
       </div>
     );
   }

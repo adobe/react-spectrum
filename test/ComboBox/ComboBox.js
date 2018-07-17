@@ -2,11 +2,11 @@ import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
 import Bell from '../../src/Icon/Bell';
 import Button from '../../src/Button';
+import ChevronDownMedium from '../../src/Icon/core/ChevronDownMedium';
 import ComboBox from '../../src/ComboBox';
 import {MenuItem} from '../../src/Menu';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import SelectDownChevron from '../../src/Icon/core/SelectDownChevron';
 import {sleep} from '../utils';
 import Stop from '../../src/Icon/Stop';
 import Textfield from '../../src/Textfield';
@@ -28,7 +28,7 @@ describe('ComboBox', () => {
     assert.equal(tree.find(Textfield).prop('autocompleteInput'), true);
     assert.equal(tree.find(Button).length, 1);
     assert.equal(tree.find(Button).prop('aria-label'), 'Show suggestions');
-    assert.equal(tree.find(Button).childAt(0).type(), SelectDownChevron);
+    assert.equal(tree.find(Button).childAt(0).type(), ChevronDownMedium);
   });
 
   it('should render classnames for states', () => {

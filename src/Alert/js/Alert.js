@@ -1,19 +1,19 @@
-import AlertError from '../../Icon/core/AlertError';
-import AlertHelp from '../../Icon/core/AlertHelp';
-import AlertInfo from '../../Icon/core/AlertInfo';
-import AlertSuccess from '../../Icon/core/AlertSuccess';
+import AlertMedium from '../../Icon/core/AlertMedium';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import HelpMedium from '../../Icon/core/HelpMedium';
+import InfoMedium from '../../Icon/core/InfoMedium';
 import React from 'react';
+import SuccessMedium from '../../Icon/core/SuccessMedium';
 
 importSpectrumCSS('alert');
 
 const ICONS = {
-  error: AlertError,
-  warning: AlertError,
-  info: AlertInfo,
-  help: AlertHelp,
-  success: AlertSuccess
+  error: AlertMedium,
+  warning: AlertMedium,
+  info: InfoMedium,
+  help: HelpMedium,
+  success: SuccessMedium
 };
 
 export default function Alert({

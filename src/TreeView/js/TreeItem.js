@@ -1,4 +1,4 @@
-import AccordionChevron from '../../Icon/core/AccordionChevron';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -19,7 +19,7 @@ export default class TreeItem extends React.Component {
       'is-open': content.isExpanded
     });
 
-    let linkClassName = classNames('spectrum-TreeView-link', {
+    let linkClassName = classNames('spectrum-TreeView-itemLink', {
       'is-selected': selected,
       'is-drop-target': isDropTarget
     });
@@ -28,7 +28,7 @@ export default class TreeItem extends React.Component {
       <div className={itemClassName}>
         <a className={linkClassName} onClick={!allowsSelection ? onToggle : null}>
           {content.isToggleable && content.hasChildren &&
-            <AccordionChevron
+            <ChevronRightMedium
               className="spectrum-TreeView-indicator"
               size={null}
               onClick={allowsSelection ? onToggle : null}

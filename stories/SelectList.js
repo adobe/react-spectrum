@@ -63,7 +63,7 @@ storiesOf('SelectList', module)
 function render(props = {}) {
   return (
     <SelectList
-      style={{textAlign: 'left'}}
+      style={{textAlign: 'left', maxWidth: '192px'}}
       label="React"
       onChange={action('change')}
       {...defaultProps}

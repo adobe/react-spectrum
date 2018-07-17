@@ -25,6 +25,11 @@ storiesOf('Alert', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: help',
+    () => render({header: 'help', variant: 'help'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: success',
     () => render({header: 'success', variant: 'success'}),
     {inline: true}

@@ -6,6 +6,7 @@ importSpectrumCSS('radio');
 
 export default function Radio({
   className,
+  labelBelow,
   ...otherProps
 }) {
   return (
@@ -14,6 +15,9 @@ export default function Radio({
       className={
         classNames(
           'spectrum-Radio',
+          {
+            'spectrum-Radio--labelBelow': labelBelow
+          },
           className
         )
       }

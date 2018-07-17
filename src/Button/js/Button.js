@@ -5,6 +5,7 @@ import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import '../style/Button.styl';
 
 importSpectrumCSS('button');
 
@@ -189,15 +190,6 @@ export default class Button extends Component {
       variant = '';
     }
 
-    let variantClass = baseButtonClass;
-    if (quiet) {
-      variantClass += '--quiet';
-    }
-
-    if (variant) {
-      variantClass += `--${variant}`;
-    }
-
     if (Element !== 'button') {
       otherProps.role = 'button';
       otherProps.tabIndex = disabled ? null : otherProps.tabIndex || 0;
@@ -225,7 +217,8 @@ export default class Button extends Component {
         className={
           classNames(
             baseButtonClass,
-            variantClass,
+            quiet ? `${baseButtonClass}--quiet` : '',
+            variant ? `${baseButtonClass}--${variant}` : '',
             {
               'is-selected': selected,
               'is-disabled': disabled,

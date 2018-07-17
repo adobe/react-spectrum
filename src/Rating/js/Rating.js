@@ -75,7 +75,7 @@ export default class Rating extends React.Component {
       ratings.push(
         <span
           key={i}
-          className={classNames('spectrum-Rating-icon', {'is-active': active, 'is-disabled': disabled})}
+          className={classNames('spectrum-Rating-icon', {'is-selected': active, 'is-disabled': disabled})}
           onClick={!disabled ? this.onClickRating.bind(this, i) : null}
           onKeyDown={!disabled ? () => {} : null}>
           <Star size={null} className="spectrum-Rating-starActive" />

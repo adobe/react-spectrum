@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../style/index.styl';
 
+importSpectrumCSS('assetlist');
 importSpectrumCSS('miller');
 
 /**
@@ -151,7 +152,7 @@ export default class ColumnView extends React.Component {
             allowsBranchSelection={this.props.allowsBranchSelection} />
         ))}
         {detail && this.props.renderDetail &&
-          <div className="spectrum-MillerColumn">
+          <div className="spectrum-MillerColumns-item">
             {this.props.renderDetail(detail)}
           </div>
         }

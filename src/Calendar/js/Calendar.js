@@ -1,7 +1,7 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
-import CarouselLeftChevron from '../../Icon/core/CarouselLeftChevron';
-import CarouselRightChevron from '../../Icon/core/CarouselRightChevron';
+import ChevronLeftLarge from '../../Icon/core/ChevronLeftLarge';
+import ChevronRightLarge from '../../Icon/core/ChevronRightLarge';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
@@ -631,7 +631,7 @@ export default class Calendar extends Component {
         <div className="spectrum-Calendar-header">
           {/* Calendar Month/Year is the default aria-labelledby element and is a live region that should announce when the Month/Year changes */}
           <h2
-            className="spectrum-Heading spectrum-Calendar-heading"
+            className="spectrum-Calendar-title"
             id={headingId}>
             {currentMonthFormatted}
           </h2>
@@ -640,7 +640,7 @@ export default class Calendar extends Component {
             className="spectrum-Calendar-prevMonth"
             variant="action"
             quiet
-            icon={<CarouselLeftChevron className="spectrum-Calendar-chevron" />}
+            icon={<ChevronLeftLarge className="spectrum-Calendar-chevron" />}
             aria-label={formatMessage('previous')}
             title={formatMessage('previous')}
             disabled={disabled}
@@ -650,7 +650,7 @@ export default class Calendar extends Component {
             className="spectrum-Calendar-nextMonth"
             variant="action"
             quiet
-            icon={<CarouselRightChevron className="spectrum-Calendar-chevron" />}
+            icon={<ChevronRightLarge className="spectrum-Calendar-chevron" />}
             aria-label={formatMessage('next')}
             title={formatMessage('next')}
             disabled={disabled}

@@ -3,7 +3,7 @@ import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 
-importSpectrumCSS('loader');
+importSpectrumCSS('barloader');
 
 const SIZES = {
   S: 'small',
@@ -47,8 +47,8 @@ export default function Progress({
     <div
       className={
         classNames(
-          'spectrum-Loader--bar',
-          `spectrum-Loader--bar--${sizeClassPart}`,
+          'spectrum-BarLoader',
+          `spectrum-BarLoader--${sizeClassPart}`,
           {
             'spectrum-Loader--side-label': labelPosition === 'left'
           },
@@ -63,14 +63,14 @@ export default function Progress({
       id={id}
       {...filterDOMProps(otherProps)}>
       {label &&
-        <div className="spectrum-Loader--bar-label" id={labelId}>{label}</div>
+        <div className="spectrum-BarLoader-label" id={labelId}>{label}</div>
       }
       {showPercent &&
-        <div className="spectrum-Loader--bar-percentage">{value + '%'}</div>
+        <div className="spectrum-BarLoader-percentage">{value + '%'}</div>
       }
-      <div className="spectrum-Loader--bar-track">
+      <div className="spectrum-BarLoader-track">
         <div
-          className="spectrum-Loader--bar-fill"
+          className="spectrum-BarLoader-fill"
           style={{width: `${value}%`}} />
       </div>
     </div>

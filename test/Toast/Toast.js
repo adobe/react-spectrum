@@ -14,7 +14,7 @@ describe('Toast', () => {
   it('should render a close button', () => {
     const tree = shallow(<Toast closable>Test</Toast>);
     assert.equal(tree.find('button').length, 1);
-    assert.equal(tree.find('button').prop('className'), 'spectrum-Toast-closeButton');
+    assert.equal(tree.find('button').prop('className'), 'spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground');
   });
 
   it('should render a success variant', () => {

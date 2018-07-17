@@ -1,7 +1,7 @@
 import Checkbox from '../../Checkbox';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
-import MillerColumnRightChevron from '../../Icon/core/MillerColumnRightChevron';
 import React from 'react';
 
 /*
@@ -19,7 +19,7 @@ export default class Item extends React.Component {
       ...props
     } = this.props;
 
-    let className = classNames('spectrum-MillerColumn-item', {
+    let className = classNames('spectrum-AssetList-item', {
       'is-branch-selectable': allowsBranchSelection,
       'is-branch': item.hasChildren,
       'is-navigated': highlighted && !isSelected,
@@ -29,7 +29,7 @@ export default class Item extends React.Component {
     return (
       <div className={className} {...filterDOMProps(props)}>
         {allowsSelection && allowsBranchSelection && this.renderCheckbox()}
-        <span className="spectrum-MillerColumn-itemLabel">{renderItem(item.item)}</span>
+        <span className="spectrum-AssetList-itemLabel">{renderItem(item.item)}</span>
         {item.hasChildren && this.renderChevron()}
         {allowsSelection && !allowsBranchSelection && !item.hasChildren && this.renderCheckbox()}
       </div>
@@ -38,7 +38,7 @@ export default class Item extends React.Component {
 
   renderChevron() {
     return (
-      <MillerColumnRightChevron className="spectrum-MillerColumn-childIndicator" size="XS" />
+      <ChevronRightMedium className="spectrum-AssetList-itemChildIndicator" size="XS" />
     );
   }
 

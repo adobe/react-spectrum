@@ -1,5 +1,7 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
+import ChevronDownSmall from '../../Icon/core/ChevronDownSmall';
+import ChevronUpSmall from '../../Icon/core/ChevronUpSmall';
 import {clamp, handleDecimalOperation} from '../../utils/number';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
@@ -10,8 +12,6 @@ import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import StepperDownChevron from '../../Icon/core/StepperDownChevron';
-import StepperUpChevron from '../../Icon/core/StepperUpChevron';
 import Textfield from '../../Textfield';
 import '../../utils/style/index.styl';
 
@@ -378,7 +378,7 @@ export default class NumberInput extends Component {
             onMouseUp={e => e.preventDefault()}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}>
-            <StepperUpChevron size={null} className="spectrum-Stepper-stepUpIcon" />
+            <ChevronUpSmall size={null} className="spectrum-Stepper-stepUpIcon" />
           </Button>
           <Button
             className="spectrum-Stepper-stepDown"
@@ -395,7 +395,7 @@ export default class NumberInput extends Component {
             onMouseUp={e => e.preventDefault()}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}>
-            <StepperDownChevron size={null} className="spectrum-Stepper-stepDownIcon" />
+            <ChevronDownSmall size={null} className="spectrum-Stepper-stepDownIcon" />
           </Button>
         </span>
       </InputGroup>

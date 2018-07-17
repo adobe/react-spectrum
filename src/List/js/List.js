@@ -4,11 +4,10 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/index.styl';
 
-importSpectrumCSS('selectlist');
+importSpectrumCSS('menu');
 
-const LIST_ITEM_SELECTOR = '.spectrum-SelectList-item';
+const LIST_ITEM_SELECTOR = '.spectrum-Menu-item';
 const NOT_DISABLED_SELECTOR = ':not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR + '.is-selected';
 
@@ -45,7 +44,7 @@ export default class List extends Component {
           id={id}
           className={
             classNames(
-              'spectrum-SelectList',
+              'spectrum-Menu',
               className
             )
           }

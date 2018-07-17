@@ -7,9 +7,7 @@ import sinon from 'sinon';
 describe('Dial', function () {
   it('should render a dial', function () {
     const tree = shallow(<Dial />);
-    assert(tree.hasClass('spectrum-Slider'));
-    assert(tree.hasClass('spectrum-Slider--round'));
-    assert(tree.hasClass('react-spectrum-Slider--round'));
+    assert(tree.hasClass('spectrum-Dial'));
     assert.equal(findHandles(tree).length, 1);
     assert.equal(findInputs(tree).length, 1);
     assert.equal(tree.state('startValue'), 50);
@@ -185,8 +183,8 @@ describe('Dial', function () {
 
   it('should support small size', function () {
     const tree = shallow(<Dial size="S" />);
-    assert(tree.hasClass('spectrum-Slider--round'));
-    assert(tree.hasClass('spectrum-Slider--round--small'));
+    assert(tree.hasClass('spectrum-Dial'));
+    assert(tree.hasClass('spectrum-Dial--small'));
     assert.equal(findHandles(tree).prop('style').transform, 'rotate(90deg)');
   });
 
@@ -345,9 +343,9 @@ describe('Dial', function () {
   });
 });
 
-const findLabel = tree => tree.find('.spectrum-Slider-label');
-const findValue = tree => tree.find('.spectrum-Slider-value');
-const findControls = tree => tree.find('.spectrum-Slider-controls');
-const findHandles = tree => tree.find('.spectrum-Slider-handle');
-const findInputs = tree => tree.find('.spectrum-Slider-input');
+const findLabel = tree => tree.find('.spectrum-Dial-label');
+const findValue = tree => tree.find('.spectrum-Dial-value');
+const findControls = tree => tree.find('.spectrum-Dial-controls');
+const findHandles = tree => tree.find('.spectrum-Dial-handle');
+const findInputs = tree => tree.find('.spectrum-Dial-input');
 const findInput = tree => findInputs(tree).first();

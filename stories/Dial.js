@@ -12,7 +12,7 @@ storiesOf('Dial', module)
   ))
   .addWithInfo(
     'renderLabel: true',
-    () => render({renderLabel: true, label: 'Rendered Label'}),
+    () => render({renderLabel: true, label: 'Label'}),
     {inline: true}
   )
   .addWithInfo(
@@ -39,7 +39,7 @@ storiesOf('Dial', module)
     'variant: with aria-labelledby',
     () => (
       <div>
-        <FieldLabel label="variant: with aria-labelledby" labelFor="foo" id="bar" />
+        <FieldLabel label="Label" labelFor="foo" id="bar" />
         {render({id: 'foo', 'aria-labelledby': 'bar'})}
       </div>
     ),

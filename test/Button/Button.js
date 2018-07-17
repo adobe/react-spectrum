@@ -95,7 +95,7 @@ describe('Button', () => {
 
   it('supports quiet', () => {
     const tree = shallow(<Button quiet variant="primary" />);
-    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet--primary');
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet spectrum-Button--primary');
   });
 
   it('supports logic', () => {

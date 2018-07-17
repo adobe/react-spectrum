@@ -43,6 +43,11 @@ storiesOf('Radio', module)
      'Label Not Set',
      () => render({label: '', 'aria-label': 'React'}),
      {inline: true}
+  )
+  .addWithInfo(
+    'Label Below',
+    () => render({labelBelow: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

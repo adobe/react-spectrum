@@ -278,7 +278,7 @@ describe('Accordion', () => {
         header.simulate('keydown', {key: 'ArrowUp', preventDefault: () => {}});
         assert.notEqual(findAccordionHeaderAt(wrapper, 3).prop('id'), document.activeElement.id);
         assert.equal(findAccordionHeaderAt(wrapper, 2).prop('id'), document.activeElement.id);
-        header = wrapper.find(AccordionItem).at(2).find('.spectrum-Accordion-header');
+        header = wrapper.find(AccordionItem).at(2).find('.spectrum-Accordion-itemHeader');
         header.simulate('keydown', {key: 'ArrowUp', preventDefault: () => {}});
         assert.equal(findAccordionHeaderAt(wrapper, 1).prop('id'), document.activeElement.id);
       });
@@ -306,4 +306,4 @@ describe('Accordion', () => {
 });
 
 const findAccordionItemAt = (wrapper, index) => wrapper.find(AccordionItem).at(index);
-const findAccordionHeaderAt = (wrapper, index) => findAccordionItemAt(wrapper, index).find('.spectrum-Accordion-header');
+const findAccordionHeaderAt = (wrapper, index) => findAccordionItemAt(wrapper, index).find('.spectrum-Accordion-itemHeader');

@@ -1,4 +1,4 @@
-import AlertError from '../../Icon/core/AlertError';
+import AlertMedium from '../../Icon/core/AlertMedium';
 import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -6,7 +6,7 @@ import Heading from '../../Heading';
 import React from 'react';
 
 const VARIANT_ICONS = {
-  error: AlertError
+  error: AlertMedium
 };
 
 export default function DialogHeader({

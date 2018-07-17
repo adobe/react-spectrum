@@ -2,11 +2,11 @@ import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import Button from '../../Button';
 import {chain} from '../../utils/events';
+import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import React from 'react';
-import SelectDownChevron from '../../Icon/core/SelectDownChevron';
 import Textfield from '../../Textfield';
 
 importSpectrumCSS('inputgroup');
@@ -137,7 +137,7 @@ export default class ComboBox extends React.Component {
         onMenuShow={this.onMenuShow}
         onMenuHide={this.onMenuHide}>
         <Textfield
-          className={classNames('spectrum-InputGroup-input')}
+          className={classNames('spectrum-InputGroup-field')}
           {...props}
           id={id}
           ref={t => this.textfield = t}
@@ -159,7 +159,7 @@ export default class ComboBox extends React.Component {
           selected={this.state.open}
           aria-label={this.getButtonLabel()}
           tabIndex="-1">
-          <SelectDownChevron size={null} className="spectrum-InputGroup-icon" />
+          <ChevronDownMedium size={null} className="spectrum-InputGroup-icon" />
         </Button>
       </Autocomplete>
     );

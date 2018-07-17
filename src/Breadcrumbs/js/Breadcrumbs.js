@@ -1,4 +1,4 @@
-import BreadcrumbChevron from '../../Icon/core/BreadcrumbChevron';
+import ChevronRightSmall from '../../Icon/core/ChevronRightSmall';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import React from 'react';
@@ -37,7 +37,7 @@ export default class Breadcrumbs extends React.Component {
       let Element = !item.href ? 'div' : 'a';
       return (
         <Element
-          className="spectrum-Breadcrumb-link"
+          className="spectrum-Breadcrumbs-itemLink"
           role={!item.href ? 'link' : null}
           href={!isCurrent(i) ? item.href : null}
           target={!isCurrent(i) && item.href ? '_self' : null}
@@ -63,7 +63,7 @@ export default class Breadcrumbs extends React.Component {
             className
           )}>
           {items.map((item, i) => (
-            <li key={`spectrum-Breadcrumb-${i}`} className="spectrum-Breadcrumb">
+            <li key={`spectrum-Breadcrumb-${i}`} className="spectrum-Breadcrumbs-item">
               {
                 isCurrent(i) && isTitleVariant ?
                   <h1 className="spectrum-Heading--pageTitle" aria-level={ariaLevel}>
@@ -72,9 +72,9 @@ export default class Breadcrumbs extends React.Component {
                   : getLinkMarkup(item, i)
               }
               {!isCurrent(i) &&
-                <BreadcrumbChevron size={null} className="spectrum-Breadcrumb-separator" />
+                <ChevronRightSmall size={null} className="spectrum-Breadcrumbs-itemSeparator" />
               }
-            </li>
+            </li> 
           ))}
         </ul>
       </nav>

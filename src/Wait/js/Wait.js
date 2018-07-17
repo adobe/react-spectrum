@@ -3,7 +3,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
 import '../style/index.styl';
 
-importSpectrumCSS('loader');
+importSpectrumCSS('circleloader');
 
 const DETERMINATE = 'determinate';
 const INDETERMINATE = 'indeterminate';
@@ -46,11 +46,11 @@ export default function Wait({
     <div
       className={
         classNames(
-          'spectrum-Loader',
+          'spectrum-CircleLoader',
           {
-            'spectrum-Loader--indeterminate': variant === INDETERMINATE,
-            'spectrum-Loader--small': size === 'S',
-            'spectrum-Loader--large': size === 'L',
+            'spectrum-CircleLoader--indeterminate': variant === INDETERMINATE,
+            'spectrum-CircleLoader--small': size === 'S',
+            'spectrum-CircleLoader--large': size === 'L',
             'react-spectrum-Wait--centered': centered
           },
           className
@@ -61,16 +61,16 @@ export default function Wait({
       aria-valuemin={0}
       aria-valuemax={100}
       {...filterDOMProps(otherProps)}>
-      <div className="spectrum-Loader-track" />
-      <div className="spectrum-Loader-fills">
-        <div className="spectrum-Loader-fill-mask-1">
-          <div className="spectrum-Loader-fill-submask-1" style={fillSubmask1Style}>
-            <div className="spectrum-Loader-fill" />
+      <div className="spectrum-CircleLoader-track" />
+      <div className="spectrum-CircleLoader-fills">
+        <div className="spectrum-CircleLoader-fillMask1">
+          <div className="spectrum-CircleLoader-fillSubMask1" style={fillSubmask1Style}>
+            <div className="spectrum-CircleLoader-fill" />
           </div>
         </div>
-        <div className="spectrum-Loader-fill-mask-2">
-          <div className="spectrum-Loader-fill-submask-2" style={fillSubmask2Style}>
-            <div className="spectrum-Loader-fill" />
+        <div className="spectrum-CircleLoader-fillMask2">
+          <div className="spectrum-CircleLoader-fillSubMask2" style={fillSubmask2Style}>
+            <div className="spectrum-CircleLoader-fill" />
           </div>
         </div>
       </div>

@@ -73,8 +73,7 @@ export default class RadioGroup extends Component {
           classNames(
             'spectrum-FieldGroup',
             {
-              'spectrum-FieldGroup--vertical': vertical,
-              'spectrum-FieldGroup--labelsBelow': labelsBelow
+              'spectrum-FieldGroup--vertical': vertical
             },
             className
           )
@@ -91,6 +90,7 @@ export default class RadioGroup extends Component {
 
             return React.cloneElement(child, {
               checked: selectedValue === value,
+              labelBelow: labelsBelow,
               name,
               onChange: (checked, e) => {
                 if (onChange) {

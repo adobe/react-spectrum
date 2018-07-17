@@ -1,8 +1,8 @@
 import autobind from 'autobind-decorator';
+import CheckmarkMedium from '../../Icon/core/CheckmarkMedium';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import {interpretKeyboardEvent} from '../../utils/events';
-import MenuCheckmark from '../../Icon/core/MenuCheckmark';
 import React, {Component} from 'react';
 
 /**
@@ -80,7 +80,7 @@ export default class ListItem extends Component {
       <li
         className={
           classNames(
-            'spectrum-SelectList-item',
+            'spectrum-Menu-item',
             {
               'is-selected': selected,
               'is-disabled': disabled,
@@ -101,13 +101,10 @@ export default class ListItem extends Component {
         aria-disabled={disabled || undefined}
         {...otherProps}>
         {cloneIcon(icon, {
-          className: 'react-spectrum-List-item-icon',
           size: 'S'
         })}
-        <div className="react-spectrum-List-item-content">
-          {label || children}
-          {selected && <MenuCheckmark size={null} className="spectrum-SelectList-checkmark" />}
-        </div>
+        <span className="spectrum-Menu-itemLabel">{label || children}</span>
+        {selected && <CheckmarkMedium size={null} className="spectrum-Menu-checkmark" />}
       </li>
     );
   }

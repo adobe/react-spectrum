@@ -277,7 +277,7 @@ export default class Datepicker extends Component {
         aria-haspopup
         className={classNames('spectrum-Datepicker', className)}>
         <Textfield
-          className="spectrum-InputGroup-input"
+          className="spectrum-InputGroup-field"
           aria-invalid={invalid}
           placeholder={placeholder}
           value={valueText}

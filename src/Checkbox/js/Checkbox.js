@@ -1,6 +1,6 @@
-import CheckboxCheckmark from '../../Icon/core/CheckboxCheckmark';
-import CheckboxPartialCheckmark from '../../Icon/core/CheckboxPartialCheckmark';
+import CheckmarkSmall from '../../Icon/core/CheckmarkSmall';
 import classNames from 'classnames';
+import DashSmall from '../../Icon/core/DashSmall';
 import React, {Component} from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
 
@@ -42,8 +42,8 @@ export default class Checkbox extends Component {
     }
 
     let markIcon = indeterminate
-      ? <CheckboxPartialCheckmark size={null} className="spectrum-Checkbox-partialCheckmark" />
-      : <CheckboxCheckmark size={null} className="spectrum-Checkbox-checkmark" />;
+      ? <DashSmall size={null} className="spectrum-Checkbox-partialCheckmark" />
+      : <CheckmarkSmall size={null} className="spectrum-Checkbox-checkmark" />;
 
     return (
       <SwitchBase

@@ -10,9 +10,9 @@ describe('Pagination', () => {
   it('has correct defaults', () => {
     const tree = shallow(<Pagination />, {disableLifecycleMethods: true});
     const buttons = tree.find('Button');
-    assert.equal(buttons.at(0).prop('className'), 'spectrum-Pagination-prevButton');
+    assert.equal(buttons.at(0).prop('className'), 'spectrum-SplitButton-trigger');
     assert.equal(buttons.at(0).prop('variant'), 'primary');
-    assert.equal(buttons.at(1).prop('className'), 'spectrum-Pagination-nextButton');
+    assert.equal(buttons.at(1).prop('className'), 'spectrum-SplitButton-action');
   });
 
   it('supports button:cta', () => {

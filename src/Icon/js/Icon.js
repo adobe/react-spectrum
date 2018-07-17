@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import '../style/index.styl';
+importSpectrumCSS('icon');
 
 const SIZES = {
   XXS: 18,
@@ -31,7 +31,7 @@ export default function Icon({
     'aria-label': alt,
     'aria-hidden': (alt ? null : 'true'),
     role: 'img',
-    className: classNames('spectrum-Icon', {[`spectrum-Icon--size${size}`]: size}, className),
+    className: classNames(svg.props.className, 'spectrum-Icon', {[`spectrum-Icon--size${size}`]: size}, className),
     ...otherProps
   });
 }

@@ -39,7 +39,7 @@ describe('Tag', () => {
 
   it('supports a value', () => {
     const tree = shallow(<Tag value="myValue" />);
-    assert.equal(tree.find('.spectrum-Tags-item-label').children().text(), 'myValue');
+    assert.equal(tree.find('.spectrum-Tags-itemLabel').children().text(), 'myValue');
   });
 
   it('supports an onClose event', () => {
@@ -68,7 +68,7 @@ describe('Tag', () => {
 
   it('supports an icon', () => {
     const tree = shallow(<Tag icon={<Camera />} />);
-    assert(tree.find('.spectrum-Tags-item-icon').length);
+    assert(tree.find('.spectrum-Tags-itemIcon').length);
   });
 
   it('supports an avatar', () => {

@@ -45,7 +45,7 @@ export default class Column extends React.Component {
 
     return (
       <EditableCollectionView
-        className={classNames('spectrum-MillerColumn')}
+        className={classNames('spectrum-MillerColumns-item spectrum-AssetList')}
         dataSource={this.props.item.children}
         layout={this.layout}
         delegate={this}

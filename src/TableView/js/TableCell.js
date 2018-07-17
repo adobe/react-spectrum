@@ -1,6 +1,6 @@
+import ArrowDownSmall from '../../Icon/core/ArrowDownSmall';
 import classNames from 'classnames';
 import React from 'react';
-import TableSortArrow from '../../Icon/core/TableSortArrow';
 
 export default class TableCell extends React.Component {
   getCellStyle(column) {
@@ -37,7 +37,7 @@ export default class TableCell extends React.Component {
       <div className={className} style={column && this.getCellStyle(column)} onClick={onClick} onDoubleClick={onDoubleClick}>
         {children}
         {isSortable &&
-          <TableSortArrow className="spectrum-Table-sortedIcon" size={null} />
+          <ArrowDownSmall className="spectrum-Table-sortedIcon" size={null} />
         }
       </div>
     );

@@ -27,7 +27,7 @@ describe('ColumnView', () => {
 
     await ds.navigateToItem(data[1]);
     assert(tree.find(Column));
-    assert(tree.find('.spectrum-MillerColumn'));
+    assert(tree.find('.spectrum-MillerColumns-item'));
     assert(renderDetail.calledOnce);
     await ds.navigateToItem(null);
   });

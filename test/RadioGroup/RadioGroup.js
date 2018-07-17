@@ -18,9 +18,12 @@ describe('RadioGroup', () => {
     assert.equal(tree.hasClass('spectrum-FieldGroup--vertical'), true);
   });
 
+
   it('supports labelsBelow layout', () => {
-    const tree = shallow(<RadioGroup labelsBelow />);
-    assert.equal(tree.hasClass('spectrum-FieldGroup--labelsBelow'), true);
+    const tree = shallow(<RadioGroup labelsBelow><Radio value="1" /><Radio value="2" /><Radio value="3" /></RadioGroup>);
+    assert.equal(tree.childAt(0).prop('labelBelow'), true);
+    assert.equal(tree.childAt(1).prop('labelBelow'), true);
+    assert.equal(tree.childAt(2).prop('labelBelow'), true);
   });
 
   describe('selectedValue', () => {

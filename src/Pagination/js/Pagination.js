@@ -1,7 +1,8 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
-import CarouselLeftChevron from '../../Icon/core/CarouselLeftChevron';
-import CarouselRightChevron from '../../Icon/core/CarouselRightChevron';
+import ChevronLeftMedium from '../../Icon/core/ChevronLeftMedium';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
+import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
@@ -10,6 +11,7 @@ import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 
 importSpectrumCSS('pagination');
+importSpectrumCSS('splitbutton');
 
 const formatMessage = messageFormatter(intlMessages);
 
@@ -107,18 +109,31 @@ export default class Pagination extends Component {
 
     const {pageInput} = this.state;
     const isButtonMode = variant === 'button';
+    const isExplicitMode = variant === 'explicit';
     const buttonVariant = isButtonMode ? mode : 'icon';
 
     return (
-      <nav {...filterDOMProps(otherProps)}>
+      <nav
+        className={
+          classNames({
+            'spectrum-SplitButton': isButtonMode,
+            'spectrum-SplitButton--left': isButtonMode,
+            'spectrum-Pagination--explicit': isExplicitMode
+          })
+        }
+        {...filterDOMProps(otherProps)}>
         <Button
           onClick={this.onPrevious}
           variant={buttonVariant}
           aria-label={formatMessage('previous')}
-          className="spectrum-Pagination-prevButton">
-          <CarouselLeftChevron />
+          className={
+            classNames({
+              'spectrum-SplitButton-trigger': isButtonMode
+            })
+          }>
+          <ChevronLeftMedium />
         </Button>
-        { variant === 'explicit' &&
+        { isExplicitMode &&
           [
             <Textfield
               key={1}
@@ -137,9 +152,13 @@ export default class Pagination extends Component {
           onClick={this.onNext}
           variant={buttonVariant}
           aria-label={formatMessage('next')}
-          className="spectrum-Pagination-nextButton">
-          {isButtonMode ? formatMessage('next') : ''}
-          <CarouselRightChevron />
+          className={
+            classNames({
+              'spectrum-SplitButton-action': isButtonMode
+            })
+          }>
+          <span className="spectrum-Button-label">{isButtonMode ? formatMessage('next') : ''}</span>
+          <ChevronRightMedium />
         </Button>
       </nav>);
   }

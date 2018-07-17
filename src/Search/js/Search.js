@@ -1,16 +1,16 @@
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import CrossSmall from '../../Icon/core/CrossSmall';
+import Magnifier from '../../Icon/core/Magnifier';
 import React, {Component} from 'react';
-import SearchClear from '../../Icon/core/SearchClear';
-import SearchMagGlass from '../../Icon/core/SearchMagGlass';
 import Textfield from '../../Textfield';
 
 importSpectrumCSS('search');
 
 export default class Search extends Component {
   static defaultProps = {
-    icon: <SearchMagGlass />,
+    icon: <Magnifier />,
     onChange: function () {},
     onSubmit: function () {}
   };
@@ -111,7 +111,7 @@ export default class Search extends Component {
           value !== '' &&
             <Button
               variant="clear"
-              icon={<SearchClear />}
+              icon={<CrossSmall />}
               disabled={disabled}
               onClick={this.handleClearButtonClick} />
         }

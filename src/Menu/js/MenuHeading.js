@@ -11,7 +11,7 @@ export default class MenuHeading extends Component {
     } = this.props;
 
     return (
-      <h4 className="spectrum-SelectList-sectionHeading" {...otherProps}>
+      <h4 className="spectrum-Menu-sectionHeading" {...otherProps}>
         { label || children }
       </h4>
     );

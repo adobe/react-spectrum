@@ -8,7 +8,7 @@ describe('Slider', function () {
   it('should render a basic slider', function () {
     const tree = shallow(<Slider />);
     assert.equal(tree.prop('className'), 'spectrum-Slider');
-    assert.equal(findTrack(tree).length, 1);
+    assert.equal(findTrack(tree).length, 2);
     assert.equal(findHandles(tree).length, 1);
     assert.equal(findInputs(tree).length, 1);
     assert.equal(tree.state('startValue'), 50);
@@ -224,8 +224,8 @@ describe('Slider', function () {
 
   it('should support range slider', function () {
     const tree = shallow(<Slider variant="range" />);
-    assert.equal(tree.prop('className'), 'spectrum-Slider');
-    assert.equal(findTrack(tree).length, 1);
+    assert.equal(tree.prop('className'), 'spectrum-Slider spectrum-Slider--range');
+    assert.equal(findTrack(tree).length, 3);
     assert.equal(findHandles(tree).length, 2);
     assert.equal(findInputs(tree).length, 2);
     assert.equal(tree.state('startValue'), 0);
@@ -238,8 +238,8 @@ describe('Slider', function () {
 
   it('should render a range slider with startValue and endValue', function () {
     const tree = shallow(<Slider variant="range" startValue="20" endValue="60" />);
-    assert.equal(tree.prop('className'), 'spectrum-Slider');
-    assert.equal(findTrack(tree).length, 1);
+    assert.equal(tree.prop('className'), 'spectrum-Slider spectrum-Slider--range');
+    assert.equal(findTrack(tree).length, 3);
     assert.equal(findHandles(tree).length, 2);
     assert.equal(findInputs(tree).length, 2);
     assert.equal(tree.state('startValue'), 20);
@@ -386,13 +386,13 @@ describe('Slider', function () {
 
   it('should support filled variant', function () {
     const tree = shallow(<Slider defaultValue={75} filled />);
-    assert.equal(tree.find('.spectrum-Slider-track--fill').prop('style').width, 'calc(75% + 4px)');
+    assert.equal(tree.find('.spectrum-Slider-track').first().prop('style').width, '75%');
   });
 
   it('should support ramp variant', function () {
     const tree = shallow(<Slider variant="ramp" />);
     assert(tree.hasClass('spectrum-Slider--ramp'));
-    assert.equal(tree.find('.spectrum-Slider-track--ramp').length, 1);
+    assert.equal(tree.find('.spectrum-Slider-ramp').length, 1);
   });
 
   it('should support adding label, hidden by default, but still accessible', function () {

@@ -5,7 +5,6 @@ import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
 
 importSpectrumCSS('slider');
 
@@ -21,6 +20,10 @@ const STYLE_KEY = {
   OFFSET: {
     horizontal: 'left',
     vertical: 'bottom'
+  },
+  OPPOSITE_OFFSET: {
+    horizontal: 'right',
+    vertical: 'top'
   }
 };
 
@@ -94,7 +97,7 @@ export default class Slider extends React.Component {
         this.setState({startValue});
       }
     }
-    this.isDraggedBodyClassName = 'react-spectrum-Slider--is-dragged';
+    this.isDraggedBodyClassName = 'u-isGrabbing';
   }
 
   /**
@@ -443,6 +446,8 @@ export default class Slider extends React.Component {
     const sliderClasses = classNames('spectrum-Slider', this.props.className, {
       'spectrum-Slider--vertical': isVertical,
       'spectrum-Slider--ramp': isRamp,
+      'spectrum-Slider--range': isRange,
+      'spectrum-Slider--filled': filled,
       'is-disabled': disabled
     });
     const shouldRenderLabel = renderLabel && label;
@@ -452,9 +457,12 @@ export default class Slider extends React.Component {
     const delta = isRange ? (endValue - startValue) : (startValue - min);
     const valueRange = max - min;
     const percent = delta / valueRange;
-    const offsetPercent = isRange ? (startValue - min) / valueRange : 0;
     const styleKeyFill = STYLE_KEY.FILL[orientation];
     const styleKeyOffset = STYLE_KEY.OFFSET[orientation];
+    const styleKeyOppositeOffset = STYLE_KEY.OPPOSITE_OFFSET[orientation];
+
+    const startPercent = (startValue - min) / (max - min);
+    const endPercent = (endValue - min) / (max - min);
 
     if (isRamp) {
       children = null;
@@ -492,25 +500,41 @@ export default class Slider extends React.Component {
           className="spectrum-Slider-controls"
           role="presentation"
           onMouseDown={!disabled ? e => this.onMouseDown(e) : null}>
-          <div className="spectrum-Slider-track" role="presentation">
-            {filled &&
-              <div
-                className="spectrum-Slider-track--fill"
-                role="presentation"
-                style={{
-                  [styleKeyFill]: 'calc(' + (percent * 100) + '% + 4px)',
-                  [styleKeyOffset]: (isRange ? 'calc(' + (offsetPercent * 100) + '% + 4px)' : offsetPercent * 100 + '%'),
-                }} />
-            }
-            {isRamp &&
-              <svg className="spectrum-Slider-track--ramp" width="100%" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          {!isRamp &&
+            <div
+              className="spectrum-Slider-track"
+              role="presentation"
+              style={{
+                [styleKeyFill]: (isRange ? startPercent : percent) * 100 + '%'
+              }} />
+          }
+          {isRamp &&
+            <div className="spectrum-Slider-ramp">
+              <svg width="100%" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                 <path d="M240,4v8c0,2.3-1.9,4.1-4.2,4L1,9C0.4,9,0,8.5,0,8c0-0.5,0.4-1,1-1l234.8-7C238.1-0.1,240,1.7,240,4z" />
               </svg>
-            }
-          </div>
+            </div>
+          }
           {children}
           {this.renderSliderHandle('startHandle')}
+          {isRange &&
+            <div
+              className="spectrum-Slider-track"
+              role="presentation"
+              style={{
+                [styleKeyOffset]: startPercent * 100 + '%',
+                [styleKeyOppositeOffset]: (1 - endPercent) * 100 + '%'
+              }} />
+          }
           {isRange ? this.renderSliderHandle('endHandle') : null}
+          {!isRamp &&
+            <div
+              className="spectrum-Slider-track"
+              role="presentation"
+              style={{
+                [styleKeyFill]: (1 - (isRange ? endPercent : percent)) * 100 + '%'
+              }} />
+          }
         </div>
       </div>
     );

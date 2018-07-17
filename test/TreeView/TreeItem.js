@@ -1,5 +1,5 @@
-import AccordionChevron from '../../Icon/core/AccordionChevron';
 import assert from 'assert';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import React from 'react';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
@@ -16,8 +16,8 @@ describe('TreeItem', function () {
         onToggle={onToggle} />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
-    let icon = wrapper.find(AccordionChevron);
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    let icon = wrapper.find(ChevronRightMedium);
     let span = wrapper.find('span');
 
     assert.equal(wrapper.prop('className'), 'spectrum-TreeView-item');
@@ -37,8 +37,8 @@ describe('TreeItem', function () {
         onToggle={onToggle} />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
-    let icon = wrapper.find(AccordionChevron);
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    let icon = wrapper.find(ChevronRightMedium);
     let span = wrapper.find('span');
 
     assert.equal(wrapper.prop('className'), 'spectrum-TreeView-item');
@@ -59,8 +59,8 @@ describe('TreeItem', function () {
         onToggle={onToggle} />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
-    let icon = wrapper.find(AccordionChevron);
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    let icon = wrapper.find(ChevronRightMedium);
     let span = wrapper.find('span');
 
     assert.equal(wrapper.prop('className'), 'spectrum-TreeView-item is-open');
@@ -82,7 +82,7 @@ describe('TreeItem', function () {
         selected />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
 
     assert.equal(link.length, 1);
     assert(link.hasClass('is-selected'));
@@ -99,7 +99,7 @@ describe('TreeItem', function () {
         drop-target />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
 
     assert.equal(link.length, 1);
     assert(link.hasClass('is-drop-target'));
@@ -132,8 +132,8 @@ describe('TreeItem', function () {
         onToggle={onToggle} />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
-    let icon = wrapper.find('.spectrum-TreeView-indicator');
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    let icon = wrapper.find(ChevronRightMedium);
 
     icon.simulate('click');
     assert(!onToggle.called);
@@ -154,8 +154,8 @@ describe('TreeItem', function () {
         allowsSelection />
     );
 
-    let link = wrapper.find('.spectrum-TreeView-link');
-    let icon = wrapper.find('.spectrum-TreeView-indicator');
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    let icon = wrapper.find(ChevronRightMedium);
 
     link.simulate('click');
     assert(!onToggle.called);
@@ -176,7 +176,7 @@ describe('TreeItem', function () {
         allowsSelection />
     );
 
-    let icon = wrapper.find('.spectrum-TreeView-indicator');
+    let icon = wrapper.find(ChevronRightMedium);
     let stopPropagation = sinon.spy();
     icon.simulate('mousedown', {stopPropagation});
 

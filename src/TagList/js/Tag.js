@@ -2,9 +2,9 @@ import Avatar from '../../Avatar';
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import CrossSmall from '../../Icon/core/CrossSmall';
 import filterDOMProps from '../../utils/filterDOMProps';
 import React from 'react';
-import TagClose from '../../Icon/core/TagClose';
 
 importSpectrumCSS('tags');
 
@@ -50,16 +50,16 @@ export default class Tag extends React.Component {
         }
         {cloneIcon(icon, {
           size: 'S',
-          className: 'spectrum-Tags-item-icon'
+          className: 'spectrum-Tags-itemIcon'
         })}
-        <span className="spectrum-Tags-item-label">
+        <span className="spectrum-Tags-itemLabel">
           {childContent}
         </span>
         {closable &&
           <Button
             className="spectrum-ClearButton--small"
             variant="clear"
-            icon={<TagClose />}
+            icon={<CrossSmall />}
             title="Remove"
             onClick={!disabled ? (e => {onClose(value || children, e); }) : null} />
         }
