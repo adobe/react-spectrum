@@ -5,7 +5,7 @@ import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../style/Button.styl';
+import '../style/index.styl';
 
 importSpectrumCSS('button');
 
