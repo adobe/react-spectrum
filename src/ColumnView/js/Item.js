@@ -45,6 +45,7 @@ export default class Item extends React.Component {
   renderCheckbox() {
     return (
       <Checkbox
+        className="spectrum-AssetList-itemSelector"
         onMouseDown={e => e.stopPropagation()}
         checked={this.props.isSelected}
         onChange={this.props.onSelect} />

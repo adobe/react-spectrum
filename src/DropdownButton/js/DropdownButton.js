@@ -6,7 +6,7 @@ import React from 'react';
 
 export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, ...props}) {
   return (
-    <Dropdown onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect}>
+    <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect}>
       <Button
         variant="action"
         quiet
