@@ -20,7 +20,7 @@ export default class Item extends React.Component {
     } = this.props;
 
     let className = classNames('spectrum-AssetList-item', {
-      'is-branch-selectable': allowsBranchSelection,
+      'is-selectable': allowsBranchSelection,
       'is-branch': item.hasChildren,
       'is-navigated': highlighted && !isSelected,
       'is-selected': isSelected
