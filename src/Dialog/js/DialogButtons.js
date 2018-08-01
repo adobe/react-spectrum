@@ -1,5 +1,7 @@
 import Button from '../../Button';
+import classNames from 'classnames';
 import React from 'react';
+import '../style/index.styl';
 
 const BUTTON_VARIANTS = {
   confirmation: 'cta',
@@ -22,7 +24,11 @@ export default function DialogButtons({
   const confirmVariant = BUTTON_VARIANTS[variant] || 'primary';
 
   return (
-    <div className={className}>
+    <div
+      className={classNames(
+        'react-spectrum-Dialog-buttons',
+        className
+      )}>
       {cancelLabel &&
         <Button variant="secondary" label={cancelLabel} onClick={onCancel} autoFocus={autoFocusButton === 'cancel'} />
       }

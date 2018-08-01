@@ -7,6 +7,11 @@ import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('DialogButtons', () => {
+  it('default', () => {
+    const tree = shallow(<DialogButtons />);
+    assert(tree.hasClass('react-spectrum-Dialog-buttons'));
+  });
+
   it('renders no buttons on default', () => {
     const tree = shallow(<DialogButtons />);
     assert.equal(tree.find(Button).length, 0);
