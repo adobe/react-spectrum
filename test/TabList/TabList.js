@@ -219,15 +219,14 @@ describe('TabList', () => {
 
   it('supports selection on focus when keyboardActivation="automatic"', () => {
     const focusSpy = sinon.spy();
-    const tree = shallow(
+    const tree = mount(
       <TabList>
         <div tabIndex={0} className="one">a</div>
         <div tabIndex={0} className="two" onFocus={focusSpy}>b</div>
-      </TabList>, {disableLifecycleMethods: true}
+      </TabList>
     );
-    const innerTree = tree.shallow();
 
-    let child = innerTree.find('.two');
+    let child = tree.find('.two');
     child.simulate('focus');
     assert(focusSpy.calledWith(1));
 
@@ -235,7 +234,7 @@ describe('TabList', () => {
 
     assert(tree.state('selectedIndex'), 1);
 
-    child = tree.shallow().find('[selected=true]');
+    child = tree.find('[selected=true]');
     assert.notEqual(child.prop('className').indexOf('two'), -1);
 
     tree.setProps({
@@ -248,13 +247,17 @@ describe('TabList', () => {
 
     tree.update();
 
-    child = innerTree.find('.two');
+    assert.equal(tree.prop('keyboardActivation'), 'manual');
+
+    child = tree.find('.two');
     child.simulate('focus');
     assert(focusSpy.calledWith(1));
 
-    assert(tree.state('selectedIndex'), 0);
+    assert.equal(tree.state('selectedIndex'), 0);
 
-    child = tree.shallow().find('[selected=true]');
+    child = tree.find('[selected=true]');
     assert.notEqual(child.prop('className').indexOf('one'), -1);
+
+    tree.unmount();
   });
 });

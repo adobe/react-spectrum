@@ -114,7 +114,9 @@ describe('LiveRegionMessage', () => {
   afterEach(() => {
     LiveRegionAnnouncer.announcePolite.reset();
     LiveRegionAnnouncer.announceAssertive.reset();
-    wrapper.unmount();
+    if (wrapper.exists()) {
+      wrapper.unmount();
+    }
   });
 
   after(() => {
@@ -170,7 +172,7 @@ describe('LiveRegionMessage', () => {
     assert(LiveRegionAnnouncer.announcePolite.calledWith(''));
   });
 
-  it('should broadcast not clearall message if clearOnUnmount is set to false', () => {
+  it('should not broadcast clearall message if clearOnUnmount is set to false', () => {
     wrapper = mount(
       <LiveRegionMessage message="Demo" aria-live="polite" clearOnUnmount={false} />
     );
@@ -181,7 +183,7 @@ describe('LiveRegionMessage', () => {
     assert(!LiveRegionAnnouncer.announcePolite.calledWith(''));
   });
 
-  it('should broadcast not clearall message if clearOnUnmount is omitted', () => {
+  it('should not broadcast clearall message if clearOnUnmount is omitted', () => {
     wrapper = mount(<LiveRegionMessage message="Demo" aria-live="polite" />);
 
     wrapper.unmount();
