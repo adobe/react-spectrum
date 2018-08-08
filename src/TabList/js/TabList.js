@@ -79,11 +79,9 @@ export default class TabList extends React.Component {
   }
 
   updateTabs() {
-    if (this.tablistRef) {
-      // Measure the tabs so we can position the line below correctly
-      const tabArray = ReactDOM.findDOMNode(this.tablistRef).querySelectorAll('.spectrum-Tabs-item');
-      this.setState({tabArray});
-    }
+    // Measure the tabs so we can position the line below correctly
+    const tabArray = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-Tabs-item');
+    this.setState({tabArray});
   }
 
   onChange(selectedIndex) {
@@ -99,10 +97,6 @@ export default class TabList extends React.Component {
     if (lastSelectedIndex !== selectedIndex && this.props.onChange) {
       this.props.onChange(selectedIndex);
     }
-  }
-
-  setTabListRef(tablist) {
-    this.tablistRef = tablist;
   }
 
   render() {
@@ -139,7 +133,6 @@ export default class TabList extends React.Component {
 
     return (
       <TabListBase
-        ref={this.setTabListRef.bind(this)}
         orientation={orientation}
         defaultSelectedIndex={defaultSelectedIndex || null}
         selectedIndex={selectedIndex}
