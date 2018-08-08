@@ -21,7 +21,9 @@ describe('FocusManager', function () {
   });
 
   afterEach(() => {
-    tree.unmount();
+    if (tree.exists()) {
+      tree.unmount();
+    }
   });
 
   it('when ArrowDown key is pressed, focus next not disabled item', () => {
@@ -184,7 +186,6 @@ describe('FocusManager', function () {
       stub.restore();
       stub.reset();
     });
-    tree.unmount();
   });
 
   describe('onFocus', () => {
@@ -322,7 +323,9 @@ describe('FocusManager', function () {
     });
 
     afterEach(() => {
-      tree.unmount();
+      if (tree.exists()) {
+        tree.unmount();
+      }
     });
 
     it('should be false by default', () => {

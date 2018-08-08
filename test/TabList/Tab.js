@@ -70,7 +70,7 @@ describe('Tab', () => {
 
   it('stops from rendering the props.children as tab content if prop is set', () => {
     const tree = shallow(<Tab renderChildren={false}>foo</Tab>);
-    assert.equal(tree.childAt(1).text(), '');
+    assert(!tree.children().length);
   });
 
   it('renders the props.children as tab content if no label', () => {
