@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@mapbox/rehype-prism": "^0.2.0",
-    "@react/react-spectrum": "^2.11.0",
+    "@react/react-spectrum": "file:../",
     "babel-plugin-lodash": "^3.2.11",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
@@ -34,6 +34,7 @@
   "license": "MIT",
   "main": "n/a",
   "scripts": {
+    "preinstall": "cd .. && make build && cd documentation",
     "develop": "gatsby develop",
     "build": "gatsby build --prefix-paths"
   }
