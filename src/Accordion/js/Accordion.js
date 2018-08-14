@@ -19,13 +19,21 @@ export default class Accordion extends Component {
      * is in a controlled state and an AccordionItem can only be selected by changing the selectedIndex
      * prop value. By default, no AccordionItems will be selected.
      */
-    selectedIndex: PropTypes.number,
+    selectedIndex: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
+    ]),
 
     /**
      * The same as selectedIndex except that the component is in an uncontrolled
      * state. AccordionItems can be opened or closed without prop values having changed.
      */
-    defaultSelectedIndex: PropTypes.number,
+    defaultSelectedIndex: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
+    ]),
 
     /** Whether multiple AccordionItems can be selected (open) at the same time. */
     multiselectable: PropTypes.bool,
