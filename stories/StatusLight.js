@@ -65,6 +65,10 @@ storiesOf('StatusLight', module)
     'variant: negative',
     () => render({variant: 'negative'}),
     {inline: true}
+  ).addWithInfo(
+    'disabled: true',
+    () => render({disabled: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

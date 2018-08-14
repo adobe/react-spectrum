@@ -9,6 +9,11 @@ describe('StatusLight', () => {
     assert(tree.hasClass('spectrum-StatusLight--celery'));
   });
 
+  it('supports a disabled state', () => {
+    const tree = shallow(<StatusLight disabled>Testing</StatusLight>);
+    assert(tree.hasClass('is-disabled'));
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<StatusLight className="myClass">Testing</StatusLight>);
     assert(tree.hasClass('myClass'));
