@@ -12,6 +12,12 @@ const render = (props) => {
 };
 
 describe('ListItem', () => {
+  it('li elements from ListItem shouldn\'t be passed a value prop', () => {
+    const tree = render({value: 'test'});
+    assert(!tree.props().value);
+    assert(tree.instance().props.value === 'test');
+  });
+
   describe('handleMouseEnter', () => {
     let focusSpy;
 

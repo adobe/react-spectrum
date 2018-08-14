@@ -75,6 +75,7 @@ export default class ListItem extends Component {
     delete otherProps.onTab;
     delete otherProps.onFocus;
     delete otherProps.onBlur;
+    delete otherProps.value;
 
     return (
       <li
