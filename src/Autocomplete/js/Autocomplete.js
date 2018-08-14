@@ -344,6 +344,7 @@ export default class Autocomplete extends React.Component {
         <Overlay target={this.wrapper} show={menuShown} placement="bottom left" role="presentation">
           <Menu
             onSelect={this.onSelect}
+            onMouseDown={e => e.preventDefault()}
             style={{width: this.state.width + 'px'}}
             role="listbox"
             ref={m => this.menu = m}
