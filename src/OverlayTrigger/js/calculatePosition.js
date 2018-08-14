@@ -1,3 +1,4 @@
+import getCss from 'dom-helpers/style';
 import getOffset from 'dom-helpers/query/offset';
 import getPosition from 'dom-helpers/query/position';
 import getScrollLeft from 'dom-helpers/query/scrollLeft';
@@ -185,7 +186,13 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
 }
 
 export default function calculatePosition(placementInput, overlayNode, target, container, padding, flip, boundariesElement, offset, crossOffset) {
-  const childOffset = container.tagName === 'BODY' ? getOffset(target) : getPosition(target, container);
+  const isBodyContainer = container.tagName === 'BODY';
+  const childOffset = isBodyContainer ? getOffset(target) : getPosition(target, container);
+
+  if (!isBodyContainer) {
+    childOffset.top += parseInt(getCss(target, 'marginTop'), 10) || 0;
+    childOffset.left += parseInt(getCss(target, 'marginLeft'), 10) || 0;
+  }
 
   const overlaySize = getOffset(overlayNode);
   const margins = getMargins(overlayNode);

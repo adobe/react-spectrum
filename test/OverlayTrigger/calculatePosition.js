@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePosition';
+import calculatePosition, {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePosition';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -240,6 +240,20 @@ describe('calculatePosition', function () {
     checkPosition(
       'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
     );
+  });
+
+  describe('overlay target has margin', () => {
+    it('checks if overlay positions correctly', () => {
+      const target = document.createElement('div');
+      const overlayNode = document.createElement('div');
+      const container = document.createElement('div');
+
+      target.style = 'margin:20px';
+      document.body.appendChild(target);
+
+      const {positionTop} = calculatePosition('bottom', overlayNode, target, container, 0, false, 'container', 0, 0);
+      assert.equal(positionTop, 0);
+    });
   });
 
 });

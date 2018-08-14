@@ -75,13 +75,18 @@ storiesOf('OverlayTrigger', module)
     'with: nested overlay (autocomplete)',
     () => render('nestedPopover', {trigger: 'click', placement: 'right', variant: 'error'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with: margin on target',
+    () => render('popover', {trigger: 'click', placement: 'bottom'}, {style: {margin: 40}}),
+    {inline: true}
   );
 
-function render(type, props = {}) {
+function render(type, props = {}, targetProps = {}) {
   if (type === 'popover' || type === 'nestedPopover') {
     return (
       <OverlayTrigger {...props}>
-        <Button label="Click Me" variant="primary" />
+        <Button label="Click Me" variant="primary" {...targetProps} />
         <Popover
           open
           title="Popover title">
