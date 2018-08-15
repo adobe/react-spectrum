@@ -14,8 +14,17 @@ run:
 	start-storybook -p 9002
 
 clean:
-	rm -rf node_modules dist storybook-static focus-ring-polyfill
+	rm -rf node_modules dist storybook-static focus-ring-polyfill spectrum-css documentation/public documentation/node_modules
 	bash -c 'for f in src/*; do rm -rf $$(basename $$f); done'
+
+# --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
+docs:
+	npm --prefix ./documentation install
+	npm --prefix ./documentation run build
+
+docs_local:
+	npm --prefix ./documentation install
+	npm --prefix ./documentation run develop
 
 lint:
 	lfeslint

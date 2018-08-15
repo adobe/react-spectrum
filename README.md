@@ -136,7 +136,20 @@ Please read the [CONTRIBUTING](CONTRIBUTING.md) guide for an overview of how to 
 
 ### Local Development
 
+#### Storybook
 We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open (http://localhost:9002)[http://localhost:9002] in your browser to play around with the components and test your changes.
+
+#### Gatsby Documentation
+Follow these steps to run documentation locally.
+
+```
+npm install
+make docs_local
+```
+
+`make docs_local` will run a pre-install (documentation project) that will build the react-spectrum project.  
+It will the create a file link to the build output so that gatsby can use it for imports.  
+To update the documentation while working on both the component and documentation, you can use a new terminal to run `make build` after updates which will update in gatsby (you can quickly restart the documentation with `npm run develop` from the documentation project root if an error occurs)
 
 ### File Layout
 
