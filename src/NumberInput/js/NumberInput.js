@@ -22,17 +22,65 @@ const formatMessage = messageFormatter(intlMessages);
 @autobind
 export default class NumberInput extends Component {
   static propTypes = {
+    /**
+     * The default value.
+     */
     defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+    /**
+     * The input value.
+     */
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+    /**
+     * The minimal value.
+     */
     min: PropTypes.number,
+
+    /**
+     * The maximum value.
+     */
     max: PropTypes.number,
+
+    /**
+     * The placeholder.
+     */
     placeholder: PropTypes.string,
+
+    /**
+     * Increment/decrement by step based on the current value. This differs from the w3 spec,
+     * which will increment/decrement to the next multiple of the current step, regardless of current value.
+     */
     step: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['any'])]),
+
+    /**
+     * Whether the input is disabled.
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Whether the input is invalid. Will display a red border around the input.
+     */
     invalid: PropTypes.bool,
+
+    /**
+     * Whether the input is read only.
+     */
     readOnly: PropTypes.bool,
+
+    /**
+     * Should be a localized string, it's the tooltip and what a screenreader will announce for the decrement button.
+     */
     decrementTitle: PropTypes.string,
+
+    /**
+     * Should be a localized string, it's the tooltip and what a screenreader will announce for the increment button.
+     */
     incrementTitle: PropTypes.string,
+
+    /**
+     * The callback function when the input number is changed.
+     */
     onChange: PropTypes.func
   };
 
@@ -180,6 +228,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * Returns true if the Textfield cannot receive any input.
    */
   isInactive() {
@@ -190,6 +239,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * Adds step number to the value number so long as it stays within min/max (if they are defined).
    * If value is undefined, sets it to the step.
    */
@@ -212,6 +262,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * If max is defined, sets value to the max value.
    */
   incrementToMaxValue() {
@@ -228,6 +279,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * Subtracts step number from the value number so long as it stays within min/max (if they are
    * defined). If value is undefined, sets it to the step.
    */
@@ -250,6 +302,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * If min is defined, sets value to the max value.
    */
   decrementToMinValue() {
@@ -266,6 +319,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * Updates state to the new value and notifies the onChange handler.
    */
   triggerChange(newValue) {
@@ -287,6 +341,7 @@ export default class NumberInput extends Component {
   }
 
   /**
+   * @private
    * If true, the input's value is currently invalid.
    */
   isInputValueInvalid(value) {

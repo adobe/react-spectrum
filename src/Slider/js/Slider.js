@@ -29,17 +29,67 @@ const STYLE_KEY = {
 
 export default class Slider extends React.Component {
   static propTypes = {
+
+    /**
+     * ID of the slider.
+     */
     id: PropTypes.string,
+
+    /**
+     * The minimal number of the range.
+     */
     min: PropTypes.number,
+
+    /**
+     * The maximum number of the range.
+     */
     max: PropTypes.number,
+
+    /**
+     * The size of the incremental or decremental step.
+     */
     step: PropTypes.number,
+
+    /**
+     * Disable the slider if value is set to true.
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * The orientation of the slider.
+     */
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+
+    /**
+     * Set to true to render label.
+     */
     renderLabel: PropTypes.bool,
+
+    /**
+     * The label of the slider.
+     */
     label: PropTypes.node,
+
+    /**
+     * Whether the line of the slider should be filled.
+     */
     filled: PropTypes.bool,
+
+    /**
+     * The variant
+     */
     variant: PropTypes.oneOf([null, 'ramp', 'range']),
+
+    /**
+     * The size of the slider. Small (S) or large (L) are available.
+     */
     size: PropTypes.oneOf([null, 'S', 'L']),
+
+    /**
+     * Callback function when the slider is changed.  If the variant is range, starting value
+     * and ending value are passed to the callback function.  Otherwise, only the starting value
+     * is passed into the callback function.
+     */
     onChange: PropTypes.func
   };
 
@@ -131,7 +181,7 @@ export default class Slider extends React.Component {
     });
 
     return closestHandle;
-  }
+  };
 
 
   onMouseDown = (e, sliderHandle) => {

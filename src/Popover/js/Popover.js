@@ -13,16 +13,41 @@ importSpectrumCSS('dialog');
 @autobind
 export default class Popover extends Component {
   static propTypes = {
+
+    /**
+     * The variant will affect color and add an icon.
+     */
     variant: PropTypes.oneOf(['default', 'error']),
+
+    /**
+     * The position of the popover. If used with overlay trigger and there isn't enough room
+     * for the tooltip in that position, it will make a limited attempt to find a new position.
+     */
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
       'top', 'top left', 'top right',
       'left', 'left top', 'left bottom',
       'right', 'right top', 'right bottom'
     ]),
+
+    /**
+     * Whether the popover is opened.
+     */
     open: PropTypes.bool,
+
+    /**
+     * The title of the popover.
+     */
     title: PropTypes.node,
+
+    /**
+     * The css class name of the popover.
+     */
     className: PropTypes.string,
+
+    /**
+     * Whether the focus should be trapped.
+     */
     trapFocus: PropTypes.bool
   };
 

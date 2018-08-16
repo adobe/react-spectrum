@@ -12,10 +12,31 @@ importSpectrumCSS('typography');
 
 export default class Provider extends Component {
   static propTypes = {
+    /**
+     * Theme.
+     */
     theme: PropTypes.oneOf(['light', 'lightest', 'dark', 'darkest']),
+
+    /**
+     * Scale.
+     */
     scale: PropTypes.oneOf(['medium', 'large']),
+
+    /**
+     * Type kit ID. This is required and products must get their own id's.
+     * https://typekit.com/account/kits
+     * There is a default provided, but it's only intended for prototyping work.
+     */
     typekitId: PropTypes.string,
+
+    /**
+     * Locale, takes format primary-region ex. en-US, cs-CZ
+     */
     locale: PropTypes.string,
+
+    /**
+     * CSS class name.
+     */
     className: PropTypes.string
   };
 

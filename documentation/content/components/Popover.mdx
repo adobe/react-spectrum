@@ -1,0 +1,62 @@
+import Button from '@react/react-spectrum/Button';
+import Popover from '@react/react-spectrum/Popover';
+import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
+
+## Overview
+
+A popover is used to display transient content (menus, options, additional actions etc.)
+and appears when clicking/tapping on a source (tools, buttons, etc.) It stands out via its
+visual style (stroke and drop shadow) and floats on top of the rest of the interface.
+
+## Example
+
+<OverlayTrigger trigger="click" placement="right">
+  <Button label="Click" variant="primary" />
+  <Popover title="Popover title">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+
+```jsx
+  <Popover title="Popover title">
+    Popover content goes here...
+  </Popover>
+```
+
+### Variant
+
+#### Default
+
+<OverlayTrigger trigger="click" placement="right">
+  <Button label="default" variant="primary" />
+  <Popover title="Popover title" variant="default">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+
+```jsx
+<OverlayTrigger trigger="click" placement="right">
+  <Button label="default" variant="primary" />
+  <Popover title="Popover title" variant="default">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+```
+
+#### Error
+
+<OverlayTrigger trigger="click" placement="right">
+  <Button label="error" variant="primary" />
+  <Popover title="Popover title" variant="error">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+
+```jsx
+<OverlayTrigger trigger="click" placement="right">
+  <Button label="error" variant="primary" />
+  <Popover title="Popover title" variant="error">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+```

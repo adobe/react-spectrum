@@ -18,28 +18,66 @@ const formatMessage = messageFormatter(intlMessages);
 @autobind
 export default class Pagination extends Component {
   static propTypes = {
+    /**
+     * Button will give two button controls, one for increment and one for decrement.
+     * Explicit will give a text field input that accepts numbers between 1 and totalPages.
+     * When a number is typed in explicit mode, an onChange is fired only when enter is pressed.
+     * If the user tabs off without hitting enter and then uses the increment button, it will resume
+     * from the number it was at before the user typed anything.
+     */
     variant: PropTypes.oneOf(['button', 'explicit']),
+
+    /**
+     * The mode of pagination. This is purely cosmetic.
+     */
     mode: PropTypes.oneOf(['cta', 'primary', 'secondary']),
+
+    /**
+     * The current page number.
+     */
     currentPage: PropTypes.number,
+
+    /**
+     * The default page number.
+     */
     defaultPage: PropTypes.number,
+
+    /**
+     * The total page number. If user hits the total number, the pagination will be capped and will not
+     * progress any higher. It also can't go lower than 1.
+     */
     totalPages: PropTypes.number,
+
+    /**
+     * The callback function when the pagination is changed. It sends the value of the new current page.
+     */
     onChange: PropTypes.func,
+
+    /**
+     * The callback function when the pagination is changed to previous page.
+     * It sends the value of the new current page.
+     */
     onPrevious: PropTypes.func,
+
+    /**
+     * The callback function when the pagination is changed to next page.
+     * It sends the value of the new current page.
+     */
     onNext: PropTypes.func
-  }
+  };
 
   static defaultProps = {
     variant: 'button',
     mode: 'primary',
     defaultPage: 1
-  }
+  };
 
   defaultPage = this.props.currentPage || this.props.defaultPage;
 
   state = {
     currentPage: this.defaultPage,
     pageInput: this.defaultPage
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     const currentPage = nextProps.currentPage;

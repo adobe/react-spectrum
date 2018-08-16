@@ -8,15 +8,35 @@ importSpectrumCSS('tooltip');
 
 export default class Tooltip extends Component {
   static propTypes = {
+    /**
+     * The placement of the tooltip.
+     */
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
       'top', 'top left', 'top right',
       'left', 'left top', 'left bottom',
       'right', 'right top', 'right bottom'
     ]),
+
+    /**
+     * The variant will affect color.
+     */
     variant: PropTypes.oneOf(['inspect', 'info', 'success', 'error']),
+
+    /**
+     * The class name of the tooltip.
+     */
     className: PropTypes.string,
-    id: PropTypes.string
+
+    /**
+     * The ID of the tooltip.
+     */
+    id: PropTypes.string,
+
+    /**
+     * Control if the tooltip should be opened or not.
+     */
+    open: PropTypes.bool,
   };
 
   static defaultProps = {

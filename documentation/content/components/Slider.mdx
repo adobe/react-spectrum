@@ -1,0 +1,66 @@
+import Slider from '@react/react-spectrum/Slider';
+
+## Overview
+
+Sliders allow users to quickly and efficiently select a value within a predefined
+range of values. Therefore sliders should be used in cases where there are upper
+and lower bounds to the selection.
+
+## Example
+
+### Basic slider
+
+<Slider></Slider>
+
+```jsx
+<Slider></Slider>
+```
+
+### Variant
+
+#### Ramp
+
+<Slider variant="ramp"></Slider>
+
+```
+<Slider variant="ramp"></Slider>
+```
+
+The variant `ramp` gives you a slightly different look and feel on the slider.
+
+#### Range
+
+<Slider variant="range"></Slider>
+
+```
+<Slider variant="range"></Slider>
+```
+
+### Slider with step
+
+<Slider step={ 10 }></Slider>
+
+```jsx
+<Slider step={ 10 }></Slider>
+```
+
+`Step` allows you set the incremental or decremental step value.
+
+### Filled slider
+
+<Slider filled={ true }></Slider>
+
+```jsx
+<Slider filled={ true }></Slider>
+```
+
+Setting `filled` to true highlights the line from the `min` value
+to the selected value.
+
+### Render label
+
+<Slider min={ 1 } max={ 100 } renderLabel label="label"></Slider>
+
+```jsx
+<Slider min={ 1 } max={ 100 } renderLabel label="label"></Slider>
+```

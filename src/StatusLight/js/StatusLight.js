@@ -35,7 +35,14 @@ export default function StatusLight({variant = VARIANTS[0], children, disabled, 
 StatusLight.displayName = 'StatusLight';
 
 StatusLight.propTypes = {
+  /**
+   * The css class for the status light.
+   */
   className: PropTypes.string,
+
+  /**
+   * The variant changes the color of the status light.
+   */
   variant: PropTypes.oneOf(VARIANTS),
   disabled: PropTypes.bool
 };
