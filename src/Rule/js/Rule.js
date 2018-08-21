@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('rule');
@@ -13,10 +14,17 @@ export default function Rule({
   return (
     <hr
       {...filterDOMProps(otherProps)}
-      className={classNames(
-        'spectrum-Rule',
-        `spectrum-Rule--${variant}`,
-        className
-      )} />
+      className={
+        classNames(
+          'spectrum-Rule',
+          `spectrum-Rule--${variant}`,
+          className
+        )
+      } />
   );
 }
+
+Rule.propTypes = {
+  variant: PropTypes.oneOf(['large', 'medium', 'small']),
+  className: PropTypes.string
+};
