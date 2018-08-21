@@ -21,6 +21,7 @@ export default class Tag extends React.Component {
       closable = false,
       disabled = false,
       selected = false,
+      invalid = false,
       className,
       onClose = function () {},
       ...otherProps
@@ -36,7 +37,8 @@ export default class Tag extends React.Component {
             {
               'is-selected': selected,
               'is-disabled': disabled,
-              'spectrum-Tags-item--deletable': closable
+              'spectrum-Tags-item--deletable': closable,
+              'is-invalid': invalid
             },
             className
           )

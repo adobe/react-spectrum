@@ -16,7 +16,17 @@ storiesOf('Tag', module)
     {inline: true}
   )
   .addWithInfo(
+    'closable: true',
+    () => render({closable: true}),
+    {inline: true}
+  )
+  .addWithInfo(
     'avatar',
+    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'avatar, closable: true',
     () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg', closable: true}),
     {inline: true}
   )
@@ -26,8 +36,18 @@ storiesOf('Tag', module)
     {inline: true}
   )
   .addWithInfo(
-    'closable: true',
-    () => render({closable: true}),
+    'icon, closable: true',
+    () => render({icon: <Camera />, closable: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'invalid: true',
+    () => render({invalid: true, closable: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'avatar, invalid: true',
+    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg', invalid: true, closable: true}),
     {inline: true}
   );
 
@@ -38,6 +58,13 @@ function render(props = {}, children = 'Cool Tag') {
         value="testValue"
         onClose={action('close')}
         {...props}>
+        {props.children || children}
+      </Tag>
+      <Tag
+        value="testValue"
+        onClose={action('close')}
+        {...props}
+        disabled>
         {props.children || children}
       </Tag>
     </div>
