@@ -4,6 +4,11 @@ import {shallow} from 'enzyme';
 import TD from '../../src/Table/js/TD';
 
 describe('TD', () => {
+  it('supports dividers', () => {
+    const tree = shallow(render({divider: true}));
+    assert.equal(tree.hasClass('spectrum-Table-cell--divider'), true);
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(render({className: 'myClass'}));
     assert.equal(tree.hasClass('myClass'), true);

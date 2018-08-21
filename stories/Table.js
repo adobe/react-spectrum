@@ -18,6 +18,11 @@ storiesOf('Table', module)
     'quiet: true',
     () => render({quiet: true}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with dividers',
+    () => render({divider: true}),
+    {inline: true}
   );
 
 function render(props = {}) {
@@ -31,17 +36,17 @@ function render(props = {}) {
       <TBody>
         <TR>
           <TD>Mongo</TD>
-          <TD>Chihuahua</TD>
+          <TD divider={props.divider}>Chihuahua</TD>
           <TD>Bad</TD>
         </TR>
         <TR>
           <TD>Tiny</TD>
-          <TD>Great Dane</TD>
+          <TD divider={props.divider}>Great Dane</TD>
           <TD>Bad</TD>
         </TR>
         <TR>
           <TD>Jaws</TD>
-          <TD>Pit Bull</TD>
+          <TD divider={props.divider}>Pit Bull</TD>
           <TD>Good</TD>
         </TR>
       </TBody>

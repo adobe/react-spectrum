@@ -9,6 +9,7 @@ import React from 'react';
 export default function TD({
   className,
   children,
+  divider,
   ...otherProps
 }) {
   return (
@@ -16,6 +17,9 @@ export default function TD({
       className={
         classNames(
           'spectrum-Table-cell',
+          {
+            'spectrum-Table-cell--divider': divider
+          },
           className
         )
       }
@@ -27,5 +31,6 @@ export default function TD({
 
 TD.displayName = 'TD';
 TD.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  isDivider: PropTypes.bool
 };
