@@ -125,8 +125,8 @@ describe('Select', () => {
         <Select options={testOptions} value="vanilla" />
       </FieldLabel>
       );
-   
-    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id')); 
+
+    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id'));
 
   });
 
@@ -137,8 +137,8 @@ describe('Select', () => {
         <Select id="foo" options={testOptions} value="vanilla" aria-labelledby="bar" />
       </div>
     );
-    
-    assert.equal(tree.find('button').prop('aria-labelledby'), 'bar ' + tree.find('span').prop('id')); 
+
+    assert.equal(tree.find('button').prop('aria-labelledby'), 'bar ' + tree.find('span').prop('id'));
 
   });
 
@@ -188,6 +188,14 @@ describe('Select', () => {
     // restore original offsetWidth getter
     stub.restore();
     tree.unmount();
+  });
+
+  it('should not have a minimum width if noMinWidth prop is passed', () => {
+    const tree = shallow(
+      <Select options={testOptions} noMinWidth />
+    );
+
+    assert.deepEqual(tree.find(Button).prop('style'), null);
   });
 
   it('onClose restores focus to button and calls onClose method if defined', () => {

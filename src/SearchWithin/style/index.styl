@@ -1,0 +1,22 @@
+.react-spectrum-SearchWithin {
+  .spectrum-Textfield {
+    width: 100%;
+  }
+
+  .spectrum-FieldButton {
+    max-width: 150px; /* prevent whole field from being taken up by long Select */
+  }
+
+  .spectrum-Textfield,
+  .spectrum-FieldButton {
+    &:focus {
+      z-index: 1; /* focused field or dropdown button should be on top in z-index order */
+    }
+  }
+}
+
+.spectrum-SearchWithin.react-spectrum-SearchWithin { /* added extra layer of specificity to override spectrum-css */
+  .spectrum-Textfield:focus {
+    position: static;
+  }
+}

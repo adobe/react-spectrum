@@ -2,11 +2,14 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import CrossSmall from '../../Icon/core/CrossSmall';
+import intlMessages from '../intl/*.json';
 import Magnifier from '../../Icon/core/Magnifier';
+import {messageFormatter} from '../../utils/intl';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 
 importSpectrumCSS('search');
+const formatMessage = messageFormatter(intlMessages);
 
 export default class Search extends Component {
   static defaultProps = {
@@ -37,11 +40,15 @@ export default class Search extends Component {
       e.preventDefault();
     }
 
-    if (key === 13 && !disabled) {
+    if (disabled) {
+      return;
+    }
+
+    if (key === 13) {
       onSubmit(value);
     }
 
-    if (key === 27 && !disabled) {
+    if (key === 27) {
       this.clearText(e, 'escapeKey');
     }
 
@@ -61,6 +68,11 @@ export default class Search extends Component {
 
   handleClearButtonClick = e => {
     this.clearText(e, 'clearButton');
+
+    // restore focus to the searchbox
+    if (this.searchbox) {
+      this.searchbox.focus();
+    }
   }
 
   clearText = (e, from) => {
@@ -85,12 +97,14 @@ export default class Search extends Component {
       defaultValue,
       className,
       icon,
+      role = 'search',
       ...otherProps
     } = this.props;
     const {value} = this.state;
 
     return (
       <div
+        role={role}
         className={
           classNames(
             'spectrum-Search',
@@ -99,6 +113,8 @@ export default class Search extends Component {
           )
         }>
         <Textfield
+          role="searchbox"
+          ref={s => this.searchbox = s}
           className="spectrum-Search-input"
           value={value}
           defaultValue={defaultValue}
@@ -110,6 +126,7 @@ export default class Search extends Component {
         {
           value !== '' &&
             <Button
+              aria-label={formatMessage('Clear search')}
               variant="clear"
               icon={<CrossSmall />}
               disabled={disabled}

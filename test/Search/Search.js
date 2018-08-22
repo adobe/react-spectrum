@@ -1,20 +1,22 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
 import Refresh from '../../src/Icon/Refresh';
 import Search from '../../src/Search';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
     assert.equal(tree.hasClass('spectrum-Search'), true);
+    assert.equal(tree.prop('role'), 'search');
 
     const icon = tree.find('.spectrum-Search-icon');
     assert.equal(icon.prop('className'), 'spectrum-Search-icon');
 
     const input = findInput(tree);
     assert.equal(input.hasClass('spectrum-Search-input'), true);
+    assert.equal(input.prop('role'), 'searchbox');
 
     const button = findButton(tree);
     assert(!button.length);
@@ -35,47 +37,55 @@ describe('Search', () => {
   it('shows clear button if text exists', () => {
     const tree = shallow(<Search defaultValue="foo" />);
     const button = findButton(tree);
+    assert.equal(button.prop('aria-label'), 'Clear search');
     assert.equal(button.prop('variant'), 'clear');
   });
 
   describe('onSubmit', () => {
     let spy;
     let preventDefaultSpy;
+    let keyDownSpy;
 
     beforeEach(() => {
       spy = sinon.spy();
       preventDefaultSpy = sinon.spy();
+      keyDownSpy = sinon.spy();
     });
 
     it('is called when enter is pressed', () => {
-      const tree = shallow(<Search onSubmit={spy} />);
+      const tree = shallow(<Search onSubmit={spy} onKeyDown={keyDownSpy} />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       assert(spy.called);
       assert(preventDefaultSpy.called);
+      assert(keyDownSpy.called);
     });
 
     it('is not called when enter is pressed if it is disabled', () => {
-      const tree = shallow(<Search onSubmit={spy} disabled />);
+      const tree = shallow(<Search onSubmit={spy} onKeyDown={keyDownSpy} disabled />);
       findInput(tree).simulate('keyDown', {which: 13, preventDefault: preventDefaultSpy});
       assert(!spy.called);
       assert(preventDefaultSpy.called);
+      assert(!keyDownSpy.called);
     });
   });
 
   describe('onChange', () => {
     let spy;
     let preventDefaultSpy;
+    let keyDownSpy;
 
     beforeEach(() => {
       spy = sinon.spy();
       preventDefaultSpy = sinon.spy();
+      keyDownSpy = sinon.spy();
     });
 
     it('is called when escape is pressed', () => {
-      const tree = shallow(<Search onChange={spy} defaultValue="foo" />);
+      const tree = shallow(<Search onChange={spy} onKeyDown={keyDownSpy} defaultValue="foo" />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       assert(spy.calledWith('', sinon.match.any, {from: 'escapeKey'}));
       assert(preventDefaultSpy.called);
+      assert(keyDownSpy.called);
     });
 
     it('is called when the clear button is pressed', () => {
@@ -85,17 +95,19 @@ describe('Search', () => {
     });
 
     it('is not called when escape is pressed if it is disabled', () => {
-      const tree = shallow(<Search onClear={spy} defaultValue="foo" disabled />);
+      const tree = shallow(<Search onClear={spy} onKeyDown={keyDownSpy} defaultValue="foo" disabled />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       assert(!spy.called);
       assert(preventDefaultSpy.called);
+      assert(!keyDownSpy.called);
     });
 
     it('is not called when escape is pressed if value is empty', () => {
-      const tree = shallow(<Search onClear={spy} />);
+      const tree = shallow(<Search onClear={spy} onKeyDown={keyDownSpy} />);
       findInput(tree).simulate('keyDown', {which: 27, preventDefault: preventDefaultSpy});
       assert(!spy.called);
       assert(preventDefaultSpy.called);
+      assert(keyDownSpy.called);
     });
 
     it('is not called when the clear button is pressed if it is disabled', () => {
@@ -130,6 +142,27 @@ describe('Search', () => {
   it('supports additional properties', () => {
     const tree = shallow(<Search foo />);
     assert.equal(findInput(tree).prop('foo'), true);
+  });
+
+  it('supports overiding role of wrapping div', () => {
+    const tree = shallow(<Search role="presentation" />);
+    assert.equal(tree.prop('role'), 'presentation');
+  });
+
+  it('restores focus to input when clear button is clicked', () => {
+    const tree = shallow(<Search defaultValue="foo" />);
+    tree.instance().searchbox = {
+      focus: sinon.spy()
+    };
+    const button = findButton(tree);
+    button.simulate('click');
+    assert(tree.instance().searchbox.focus.called);
+  });
+
+  it('has searchbox ref', () => {
+    const tree = mount(<Search />);
+    assert(tree.instance().searchbox);
+    tree.unmount();
   });
 });
 

@@ -59,7 +59,7 @@ export default class Select extends React.Component {
     }
   }
 
-  onSelect = (value) => {
+  onSelect = value => {
     if (!('value' in this.props)) {
       this.setState({value});
     }
@@ -67,16 +67,16 @@ export default class Select extends React.Component {
     if (this.props.onChange) {
       this.props.onChange(value);
     }
-  }
+  };
 
   onClose = () => {
     ReactDOM.findDOMNode(this.button).focus();
     if (this.props.onClose) {
       this.props.onClose();
     }
-  }
+  };
 
-  onKeyDown = (e) => {
+  onKeyDown = e => {
     switch (e.key) {
       case 'Enter':
       case 'ArrowDown':
@@ -85,7 +85,7 @@ export default class Select extends React.Component {
         this.button.onClick();
         break;
     }
-  }
+  };
 
   render() {
     let {
@@ -101,6 +101,7 @@ export default class Select extends React.Component {
       className,
       alignRight,
       labelId,
+      noMinWidth,
       id = this.selectId,
       ...otherProps
     } = this.props;
@@ -130,11 +131,15 @@ export default class Select extends React.Component {
 
     return (
       <Dropdown
-        className={classNames('spectrum-Dropdown', {
-          'spectrum-Dropdown--quiet': quiet,
-          'is-disabled': disabled,
-          'is-invalid': invalid
-        }, className)}
+        className={classNames(
+          'spectrum-Dropdown',
+          {
+            'spectrum-Dropdown--quiet': quiet,
+            'is-disabled': disabled,
+            'is-invalid': invalid
+          },
+          className
+        )}
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={onOpen}
@@ -148,13 +153,17 @@ export default class Select extends React.Component {
           quiet={quiet}
           disabled={disabled}
           invalid={invalid}
-          ref={b => this.button = b}
+          ref={b => (this.button = b)}
           onKeyDown={this.onKeyDown}
           aria-labelledby={ariaLabelledby}
           id={id}
           {...otherProps}
-          style={{minWidth: 192}}> {/* temporary fix for spectrum-css issue */}
-          <span id={valueId} className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>{label}</span>
+          style={noMinWidth ? null : {minWidth: 192}}>
+          <span
+            id={valueId}
+            className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>
+            {label}
+          </span>
           {invalid && <AlertIcon size="S" />}
           <ChevronDownMedium size={null} className="spectrum-Dropdown-icon" />
         </Button>
@@ -175,7 +184,13 @@ export default class Select extends React.Component {
 
 export function SelectMenu({onClose, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
   return (
-    <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style} closeOnSelect={closeOnSelect}>
+    <Popover
+      isDialog={false}
+      placement={placement}
+      open={open}
+      onClose={onClose}
+      style={style}
+      closeOnSelect={closeOnSelect}>
       <SelectList className={className} {...props} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>
   );
