@@ -24,5 +24,3 @@ storiesOf('IllustratedMessage', module)
     ),
     {inline: true}
   );
-
-

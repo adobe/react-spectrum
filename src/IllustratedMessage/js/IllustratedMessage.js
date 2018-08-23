@@ -4,8 +4,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import Heading from '../../Heading';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-importSpectrumCSS('illustratedmessage');
+import '../style/index.styl';
 
 @autobind
 export default class IllustratedMessage extends React.Component {
