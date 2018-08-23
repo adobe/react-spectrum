@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import HelpMedium from '../../Icon/core/HelpMedium';
 import InfoMedium from '../../Icon/core/InfoMedium';
+import PropTypes from 'prop-types';
 import React from 'react';
 import SuccessMedium from '../../Icon/core/SuccessMedium';
 
@@ -21,7 +22,6 @@ export default function Alert({
   children,
   variant = 'info', // info, help, success, error, warning
   className,
-  onClose = function () {},
   ...otherProps
 }) {
   let AlertIcon = ICONS[variant];
@@ -42,5 +42,22 @@ export default function Alert({
     </div>
   );
 }
+
+Alert.propTypes = {
+  /**
+   * A string for the Header of the Alert
+   */
+  header: PropTypes.string,
+
+  /**
+   * Any arbitrary node to render into content area
+   */
+  children: PropTypes.node,
+
+  /**
+   * Affects the color and icon used by the Alert
+   */
+  variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success']),
+};
 
 Alert.displayName = 'Alert';

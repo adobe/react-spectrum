@@ -1,6 +1,7 @@
 import ChevronRightSmall from '../../Icon/core/ChevronRightSmall';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
@@ -11,6 +12,33 @@ export default class Breadcrumbs extends React.Component {
     NONE: 'none',
     TITLE: 'title'
   }
+
+  static propTypes = {
+    items: PropTypes.arrayOf(PropTypes.shape({href: PropTypes.string, label: PropTypes.string})),
+
+    /**
+     * For best results, use a React Spectrum Icon
+     */
+    icon: PropTypes.node,
+
+    /**
+     * Will set the last breadcrumb on a new line and give it a <h> tag
+     */
+    variant: PropTypes.oneOf([Breadcrumbs.variant.NONE, Breadcrumbs.variant.TITLE]),
+
+    /**
+     * Will not change the appearance
+     */
+    ariaLevel: PropTypes.number,
+
+    /**
+     * Called when a breadcrumb is clicked with an object containing the label of the clicked breadcrumb
+     * @callback Breadcrumbs~onBreadcrumbClick
+     * @param {Object} event - Event object
+     * @param {string} event.label - label of breadcrumb clicked
+     */
+    onBreadcrumbClick: PropTypes.func
+  };
 
   static defaultProps = {
     items: [],
@@ -74,7 +102,7 @@ export default class Breadcrumbs extends React.Component {
               {!isCurrent(i) &&
                 <ChevronRightSmall size={null} className="spectrum-Breadcrumbs-itemSeparator" />
               }
-            </li> 
+            </li>
           ))}
         </ul>
       </nav>

@@ -1,0 +1,59 @@
+import Clock from '@react/react-spectrum/Clock';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
+
+## Overview
+
+The **Clock** in Spectrum have several props for different uses and multiple levels of loudness for various attention-getting needs. It allows time in hour : minute
+
+## Example
+
+<Clock value="today" aria-label="Start time" />
+
+```jsx
+<Clock  value="today" aria-label="Start time" />
+```
+
+## Handling Events
+
+Events handlers like onChange and other user actions can be registered on a `Clock`. A function that will be called when an clock is changed.
+
+<Clock onChange={e => console.log(e)} />
+
+```jsx
+<Clock onChange={e => console.log(e)} />
+```
+
+## Quiet Clock
+
+Visual representation is changed for clocked with this prop.
+
+<Clock quiet value="today" />
+
+```jsx
+<Clock quiet value="today" />
+```
+
+## Using aria-labelledby
+
+Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.
+
+<div>
+  <FieldLabel label="Start time" id="react-spectrum-1-label" labelFor="react-spectrum-1" />
+    <Clock
+      value="today"
+      id="react-spectrum-1"
+      aria-labelledby="react-spectrum-1-label"
+    />
+</div>
+
+
+## AM / PM
+
+Handles AM / PM changes
+
+<Clock  defaultValue="today" displayFormat="hh:mm a" />
+
+
+```jsx
+<Clock defaultValue="today" displayFormat="hh:mm a" />
+```

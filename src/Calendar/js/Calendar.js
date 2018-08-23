@@ -25,32 +25,89 @@ export default class Calendar extends Component {
   static displayName = 'Calendar';
 
   static propTypes = {
+    /**
+     * If focus should immediately be given to the calendar upon render.
+     */
     autoFocus: PropTypes.bool,
+
+    /**
+     * A unique identifying string for forms.
+     */
     id: PropTypes.string,
+
+    /**
+     * Formats the date string at the top of the calendar,
+     */
     headerFormat: PropTypes.string,
+
+    /**
+     * Max date selectable, everything past it will be disabled. Can accept anything Moment understands.
+     */
     max: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
     ]),
+
+    /**
+     * Min date selectable, everything past it will be disabled. Can accept anything Moment understands.
+     */
     min: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
     ]),
+
+    /**
+     * Starting value. Can accept anything Moment understands. Causes component to be Controlled.
+     */
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number,
       PropTypes.array
     ]),
+
+    /**
+     * Format of the value that should be returned. Anything Moment understands.
+     */
     valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    selectionType: PropTypes.string,
+
+    /**
+     * Tells the calendar if the user can select a range or just a single day.
+     */
+    selectionType: PropTypes.oneOf(['single', 'range']),
+
+    /**
+     * Start day refers to what day of the week should be left most, 0 = Sunday, 1 = Monday...
+     */
     startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
+
+    /**
+     * Disables the calendar, it cannot be interacted with and renders greyed out
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Fill in.
+     */
     readOnly: PropTypes.bool,
+
+    /**
+     * For forms.
+     */
     required: PropTypes.bool,
+
+    /**
+     * Fill in.
+     */
     invalid: PropTypes.bool,
+
+    /**
+     * Called when a date is selected or a range is selected
+     * @callback Calendar~onChange
+     * @param {Object} event - Moment object
+     */
     onChange: PropTypes.func
   };
 

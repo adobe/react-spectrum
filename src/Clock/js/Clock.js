@@ -33,6 +33,12 @@ export default class Clock extends Component {
     invalid: PropTypes.bool,
     readOnly: PropTypes.bool,
     required: PropTypes.bool,
+
+    /**
+     * Called when a breadcrumb is clicked with an object containing the label of the clicked breadcrumb
+     * @callback Clock~onChange
+     * @param {Object} event - Moment object
+     */
     onChange: PropTypes.func
   };
 

@@ -15,13 +15,44 @@ const ALLOWED_BUTTON_VARIANTS = {
 
 export default class ButtonGroup extends Component {
   static propTypes = {
+    /**
+     * All buttons in ButtonGroup are disabled, greyed out and cannot be interacted with.
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Will override all child buttons invalid
+     */
     invalid: PropTypes.bool,
+
+    /**
+     * Allows multi select
+     */
     multiple: PropTypes.bool,
+
+    /**
+     * Won't allow a permanent selection
+     */
     readOnly: PropTypes.bool,
+
+    /**
+     * Will override all child buttons required
+     */
     required: PropTypes.bool,
+
+    /**
+     * Called whenever a button is selected (non-readonly mode)
+     */
     onChange: PropTypes.func,
+
+    /**
+     * Called whenever a button is clicked (readonly mode)
+     */
     onClick: PropTypes.func,
+
+    /**
+     * Renders the button group as a row or a column
+     */
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   };
 
@@ -94,6 +125,7 @@ export default class ButtonGroup extends Component {
   }
 
   /**
+   * @private
    * Evaluates whether button element is selected.
    * @param   {Object}  button Button properties object
    * @returns {Boolean} true if button is selected
@@ -108,6 +140,7 @@ export default class ButtonGroup extends Component {
   }
 
   /**
+   * @private
    * The role to be used by buttons within the group. If the button group is readOnly,
    * button should retain their implicit role of button. With multiple selection, buttons
    * should have role of checkbox, and with single selection buttons should have role of radio.

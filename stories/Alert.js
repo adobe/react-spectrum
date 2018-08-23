@@ -1,6 +1,6 @@
-import {action, storiesOf} from '@storybook/react';
 import Alert from '../src/Alert';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Alert', module)
@@ -48,7 +48,6 @@ storiesOf('Alert', module)
 function render(props = {}, children = 'This is a React Spectrum alert') {
   return (
     <Alert
-      onClose={action('close')}
       {...props}>
       {children}
     </Alert>

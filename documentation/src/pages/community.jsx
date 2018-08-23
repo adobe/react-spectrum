@@ -1,4 +1,4 @@
-import Community from '../../content/Community.mdx';
+import Community from '../../content/community.mdx';
 import mdxComponents from '../mdx_components';
 import React from 'react';
 

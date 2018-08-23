@@ -1,0 +1,101 @@
+import AddCircle from '@react/react-spectrum/Icon/AddCircle';
+import Button from '@react/react-spectrum/Button';
+import ButtonGroup from '@react/react-spectrum/ButtonGroup';
+import Bell from '@react/react-spectrum/Icon/Bell';
+import Brush from '@react/react-spectrum/Icon/Brush';
+import Select from '@react/react-spectrum/Icon/Select';
+import RegionSelect from '@react/react-spectrum/Icon/RegionSelect';
+
+## Overview
+
+A **ButtonGroup** represents list of action buttons a user can take. Buttons inside the group can be clicked or tapped to perform an action. ButtonGroup in Spectrum have several props for different uses and multiple levels of loudness for various attention-getting needs.
+ButtonGroup allows two kinds of Button variants, tool and action. If a button is not one of these, its variant will be overridden to be action.
+
+## Example
+
+<ButtonGroup>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```
+
+## Group Orientation
+
+Spectrum ButtonGroup can displayed vertically, Default is horizontal. 'orientation' prop is passed with appropriate orientation value. This can also be used with different variant like `tool`.
+
+<ButtonGroup orientation="vertical">
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup orientation="vertical">
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```
+
+## Mutliple Selection
+
+To allow multiple selection of Buttons in ButtonGroup 'mulitple' props is passed. Allows selection of more than more button at a time.
+
+<ButtonGroup multiple>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup multiple>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```
+
+## State
+
+### Disabled
+
+All the ButtonGroup supports `disabled` prop like other props. It will disable all the Buttons in the group and the changes the visual representation as well.
+
+<ButtonGroup disabled>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup disabled>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```
+
+### Readonly
+The Readonly prop disables selections of any kind, instead of onChange being fired, all clicks go through the onClick handler.
+
+<ButtonGroup readOnly>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup readOnly>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```

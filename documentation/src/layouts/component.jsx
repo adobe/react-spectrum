@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import React from 'react';
 import Heading from '@react/react-spectrum/Heading';
 import Provider from '@react/react-spectrum/Provider';

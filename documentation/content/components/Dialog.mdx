@@ -1,0 +1,366 @@
+import Button from '@react/react-spectrum/Button';
+import Dialog from '@react/react-spectrum/Dialog';
+import ModalTrigger from '@react/react-spectrum/ModalTrigger';
+import Textfield from '@react/react-spectrum/Textfield';
+
+## Overview
+
+An **Dialog** in Spectrum is modal window that forces the user to take some action before resuming to backgroud.
+
+## Example
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog title="Dialog title" confirmLabel="OK">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog  title="Dialog title" confirmLabel="OK">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+## Buttons
+
+Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordingly.
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel" >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel" >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+### Cancel and Confirm with functions.
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    onConfirm={e => console.log(e)}
+    onCancel={e => console.log(e)} >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    onConfirm={e => console.log(e)}
+    onCancel={e => console.log(e)}
+  >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+### Confirm disable
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    confirmDisabled
+    onConfirm={e => console.log(e)}
+    onCancel={e => console.log(e)} >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    confirmDisabled
+    cancelLabel="Cancel"
+    onConfirm={e => console.log(e)}
+    onCancel={e => console.log(e)}>
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+## Variants
+
+There are many Dialog variants to choose from in Spectrum. The `variant` prop controls the main variant of the Dialog.
+
+### Information
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    variant="information"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog title"
+    confirmLabel="OK"
+    variant="information"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+### Destructive
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="destructive"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="destructive"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+### Confirmation
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="confirmation"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    confirmDisabled >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="confirmation"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+### Error
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="error"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    confirmDisabled >
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    variant="error"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+## Keyboard Confirm
+
+Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the “Confirm” button.
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog Title"
+    backdropClickable
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    keyboardConfirm
+    onConfirm={e => console.log(e)}>
+    <Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog Title"
+    backdropClickable
+    confirmLabel="OK"
+    cancelLabel="Cancel"
+    keyboardConfirm
+    onConfirm={e => console.log(e)}>
+    <Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />
+  </Dialog>
+</ModalTrigger>
+```
+
+## Mode
+
+### Fullscreeen
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog Title"
+    mode="fullscreen"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog Title"
+    mode="fullscreen"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+### Fullscreen takeover
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    onClose={close}
+    title="Dialog Title"
+    mode="fullscreen"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    <span>
+    Content of the dialog
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+  <ModalTrigger>
+    <Button label="Open Dialog" variant="primary" />
+    <Dialog
+      onClose={close}
+      title="Dialog Title"
+      mode="fullscreenTakeover"
+      confirmLabel="OK"
+      cancelLabel="Cancel">
+      <span>
+      Content of the dialog
+      </span>
+    </Dialog>
+</ModalTrigger>
+```
+
+
+
