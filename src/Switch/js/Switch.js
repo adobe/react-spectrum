@@ -31,7 +31,23 @@ export default function Switch({
 }
 
 Switch.displayName = 'Switch';
+
 Switch.propTypes = {
-  variant: PropTypes.oneOf(['ab']),
-  className: PropTypes.string
+  /** Class given to switch */
+  className: PropTypes.string,
+  
+  /** Whether the switch is checked or not (controlled state) */
+  checked: PropTypes.bool,
+  
+  /** Whether the switch should be checked (uncontrolled state) */
+  defaultChecked: PropTypes.bool,
+  
+  /** Text to add to switch */
+  label: PropTypes.string,
+  
+  /** Function called when switch is changed */
+  onChange: PropTypes.func,
+  
+  /** Change switch to A/B variant rather an on/off */
+  variant: PropTypes.oneOf(['ab'])
 };

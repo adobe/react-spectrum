@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import OverlayTrigger from '../../OverlayTrigger';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Tooltip from '../../Tooltip';
 
@@ -44,3 +45,17 @@ export default function Step({
 }
 
 Step.displayName = 'Step';
+
+Step.propTypes = {
+  /** Class to add to the step */
+  className: PropTypes.string,
+  
+  /** Whether the current step is completed */
+  complete: PropTypes.bool,
+  
+  /** Whether the current step is selected */
+  selected: PropTypes.bool,
+  
+  /** Define the size of the step */
+  size: PropTypes.oneOf(['S'])
+};

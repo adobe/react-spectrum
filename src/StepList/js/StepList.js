@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import TabListBase from '../../TabList/js/TabListBase';
 
@@ -41,3 +42,25 @@ function getChildProps(size, tabList, child, index) {
 }
 
 StepList.displayName = 'StepList';
+
+StepList.propTypes = {
+  /** Class to add to the step list */
+  className: PropTypes.string,
+  
+  /** Index of the selected step (uncontrolled state) */
+  defaultSelectedIndex: PropTypes.number,
+  
+  /** Turn step list interaction (clickable to progress) on or off */
+  interaction: PropTypes.oneOf([ON, 'off']),
+  
+  /** Index of the selected step */
+  selectedIndex: PropTypes.number,
+  
+  /** Size of the steps and step list */
+  size: PropTypes.oneOf(['S', 'L'])
+};
+
+StepList.defaultProps = {
+  interaction: ON,
+  size: LARGE
+};

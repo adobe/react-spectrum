@@ -2,12 +2,35 @@ import {arraysEqual} from '../../utils/array';
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {TabList} from '../../TabList';
 import '../style/index.styl';
 
 @autobind
 export default class TabView extends React.Component {
+  static propTypes = {
+    /** Class to add to the tab view */
+    className: PropTypes.string,
+    
+    /** Id for tab view */
+    id: PropTypes.string,
+    
+    /** Function called when a tab is selected */
+    onSelect: PropTypes.func,
+    
+    /** Tab orientation */
+    orientation: PropTypes.oneOf(['veritcal', 'horizontal']),
+    
+    /** Selected tab */
+    selectedIndex: PropTypes.number
+  };
+  
+  static defaultProps = {
+    id: createId(),
+    orientation: 'horizontal'
+  };
+  
   constructor(props) {
     super(props);
     this.tabViewId = createId();

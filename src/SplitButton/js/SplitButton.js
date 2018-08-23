@@ -3,6 +3,7 @@ import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 import Dropdown from '../../Dropdown';
 import {Menu} from '../../Menu';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('splitbutton');
@@ -23,3 +24,14 @@ export default function SplitButton({className, onSelect, children, ...props}) {
     </Dropdown>
   );
 }
+
+SplitButton.propTypes = {
+  /** Class to add to the SplitButton */
+  className: PropTypes.string,
+  
+  /** Function to trigger once button is selected */
+  onSelect: PropTypes.func,
+  
+  /** SplitButton variant */
+  variant: PropTypes.oneOf(['primary', 'secondary', 'cta'])
+};

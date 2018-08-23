@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import CrossSmall from '../../Icon/core/CrossSmall';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('tags');
@@ -12,6 +13,29 @@ importSpectrumCSS('tags');
  * A tag is used to categorize content and display filters.
  */
 export default class Tag extends React.Component {
+  static propTypes = {
+    /** Avatar to use in the tag */
+    avatar: PropTypes.string,
+    
+    /** Whether the tag is removable from the tag list */
+    closeable: PropTypes.bool,
+    
+    /** Whether the tag is disabled from user interaction */
+    disabled: PropTypes.bool,
+    
+    /** Icon to use in the tag */
+    icon: PropTypes.string,
+    
+    /** Whether the tag is selected */
+    selected: PropTypes.bool
+  };
+  
+  static defaultProps = {
+    closeable: false,
+    disabled: false,
+    selected: false
+  }
+  
   render() {
     let {
       value,

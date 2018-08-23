@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
@@ -79,3 +80,23 @@ export default function Wait({
 }
 
 Wait.displayName = 'Wait';
+
+Wait.propTypes = {
+  /** Whether to center the Wait compnent in the parent container. */
+  centered: PropTypes.bool,
+  
+  /** Custom CSS class to add to the Wait component */
+  className: PropTypes.string,
+  
+  /** Size of the Wait component */
+  size: PropTypes.string,
+  
+  /** Adjust the filled portion of the Wait component to a determined value */
+  value: PropTypes.number,
+  
+  /**
+   * Determines if the Wait component should endlessly spin (indeterminate) or
+   * if it should be controlled manually.
+   */
+  variant: PropTypes.string
+};

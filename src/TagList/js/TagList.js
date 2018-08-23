@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Tag from './Tag';
 
@@ -10,12 +11,36 @@ importSpectrumCSS('tags');
  */
 export default class TagList extends React.Component {
   static displayName = 'TagList';
+  
+  static propTypes = {
+    /** Custom CSS class to add to the tag list */
+    className: PropTypes.string,
+  
+    /** Whether to disable the tag list */
+    disabled: PropTypes.bool,
+  
+    /** Name of tag list **/
+    name: PropTypes.string,
+  
+    /** Function called when focus is taken away from the tag list */
+    onBlur: PropTypes.func,
+  
+    /** Function called when a tag  in the tag list is closed */
+    onClose: PropTypes.func,
+  
+    /** Function called when focus is put on the tag list */
+    onFocus: PropTypes.func,
+  
+    /** Whether the tag list can only be read */
+    readOnly: PropTypes.bool,
+  
+    /** Initial tags in the tag list */
+    values: PropTypes.arrayOf(PropTypes.string)
+  };
 
   static defaultProps = {
     readOnly: false,
     disabled: false,
-    required: false,
-    invalid: false,
     onClose: function () {},
     onFocus: function () {},
     onBlur: function () {}

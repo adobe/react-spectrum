@@ -1,0 +1,95 @@
+import Textfield from '@react/react-spectrum/Textfield';
+
+## Overview
+
+The **Textfield** provides an input element for users to enter in data (for forms and such). It is restricted to a single line of text.
+
+## Examples
+
+<Textfield placeholder="Text here" />
+
+```jsx
+<Textfield placeholder="Text here" />
+```
+
+## Variants
+
+### Quiet
+
+<Textfield quiet placeholder="Quiet variant" />
+
+```jsx
+<Textfield quiet placeholder="Quiet variant" />
+```
+
+### Disabled
+
+Disables text field from interaction
+
+<Textfield disabled="true" placeholder="Disabled variant" />
+
+```jsx
+<Textfield disabled="true" placeholder="Disabled variant" />
+```
+
+### Invalid
+
+Shows the warning symbol and red border
+
+<Textfield invalid="true" placeholder="Invalid variant" />
+
+```jsx
+<Textfield invalid="true" placeholder="Invalid variant" />
+```
+
+### Read-only
+
+Allows text to be selected but not changed
+
+<Textfield readOnly="true" value="Read-only variant" />
+
+```jsx
+<Textfield readOnly="true" value="Read-only variant" />
+```
+
+### Required
+
+Shows warning if text field is empty
+
+<Textfield required="true" placeholder="Required variant" />
+
+```jsx
+<Textfield required="true" placeholder="Required variant" />
+```
+
+## Events
+
+### onChange
+
+Function fired when value of textfield is changed.
+
+<Textfield onChange={e => console.log(e)} />
+
+```jsx
+<Textfield onChange={e => console.log(e)} />
+```
+
+### onFocus
+
+Function fired when the textfield is focused.
+
+<Textfield onFocus={e => console.log(e)} />
+
+```jsx
+<Textfield onFocus={e => console.log(e)} />
+```
+
+### onBlur
+
+Function fired when the focus on the textfield is lost.
+
+<Textfield onBlur={e => console.log(e)} />
+
+```jsx
+<Textfield onBlur={e => console.log(e)} />
+```

@@ -21,7 +21,7 @@ const VARIANTS = {
 export default class TabList extends React.Component {
   static propTypes = {
     /** The visual style of the tab list */
-    variant: PropTypes.oneOf(['compact', 'panel', 'anchored']),
+    variant: PropTypes.oneOf(['compact', 'panel', 'anchored', '']),
 
     /** Whether the tab list should render using a quiet style */
     quiet: PropTypes.bool,

@@ -4,6 +4,7 @@ import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 /**
@@ -14,10 +15,37 @@ import React, {Component} from 'react';
 export default class Tab extends Component {
   static displayName = 'Tab';
 
+  static propTypes = {
+    /** Class to add to tab */
+    className: PropTypes.string,
+    
+    /** Whether the tab should be disabled or not */
+    disabled: PropTypes.bool,
+    
+    /** Icon to add to tab */
+    icon: PropTypes.string,
+    
+    /** Whether to disable the invalid icon on the tab */
+    invalid: PropTypes.bool,
+    
+    /** Tab label */
+    label: PropTypes.string,
+    
+    /** Whether to render children in the tab */
+    renderChildren: PropTypes.bool,
+    
+    /** Whether the tab is selected */
+    selected: PropTypes.bool,
+    
+    /** Index of the tab in the grouping */
+    tabIndex: PropTypes.number
+  };
+  
   static defaultProps = {
-    invalid: false,
     disabled: false,
+    invalid: false,
     selected: false,
+    tabIndex: 0,
     renderChildren: true
   };
 

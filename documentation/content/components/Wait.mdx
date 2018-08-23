@@ -1,0 +1,57 @@
+import Wait from '@react/react-spectrum/Wait';
+
+## Overview
+
+A **Wait** component provides a visual indicator that work is being done.
+
+## Example
+
+<Wait />
+
+```jsx
+import Wait from '@react/react-spectrum/Wait';
+
+<Wait />
+```
+
+## Styling
+### Sizing
+
+<Wait size="S" />
+
+```jsx
+<Wait size="S" />
+```
+
+<Wait size="L" />
+
+```jsx
+<Wait size="L" />
+```
+
+### Alignment
+
+Centers the wait in the container.
+It is set with CSS, the parent needs to have "position: relative;" and it needs to take up the full vertical and horizontal space that the Wait should be centered into. If it is only taking up the full width, then it will get rendered at the "top" because the parent won't have a height as absolute removes the Wait from the flow.
+
+There may also be an issue if used inside a dialog or any other parents in the hierarchy have the CSS transform applied, if that's the case, it's recommended to center it yourself using something like flexbox.
+
+<div style={{height: '100px', position: 'relative'}}>
+  <Wait centered />
+</div>
+
+```jsx
+<Wait centered />
+```
+
+## Variants
+
+### Determinate
+
+Set the wait progress to a determined value.
+
+<Wait variant="determinate" value={42} />
+
+```jsx
+<Wait variant="determinate" value={42} />
+```

@@ -1,0 +1,95 @@
+import Textarea from '@react/react-spectrum/Textarea';
+
+## Overview
+
+The **Textarea** provides an input element for users to enter in data (for forms and such).
+
+## Examples
+
+<Textarea placeholder="Text here" />
+
+```jsx
+<Textarea placeholder="Text here" />
+```
+
+## Variants
+
+### Quiet
+
+<Textarea quiet placeholder="Quiet variant" />
+
+```jsx
+<Textarea quiet placeholder="Quiet variant" />
+```
+
+### Disabled
+
+Disables text field from interaction
+
+<Textarea disabled="true" placeholder="Disabled variant" />
+
+```jsx
+<Textarea disabled="true" placeholder="Disabled variant" />
+```
+
+### Invalid
+
+Shows the warning symbol and red border
+
+<Textarea invalid="true" placeholder="Invalid variant" />
+
+```jsx
+<Textarea invalid="true" placeholder="Invalid variant" />
+```
+
+### Read-only
+
+Allows text to be selected but not changed
+
+<Textarea readOnly="true" value="Read-only variant" />
+
+```jsx
+<Textarea readOnly="true" value="Read-only variant" />
+```
+
+### Required
+
+Shows warning if text field is empty
+
+<Textarea required="true" placeholder="Required variant" />
+
+```jsx
+<Textarea required="true" placeholder="Required variant" />
+```
+
+## Events
+
+### onChange
+
+Function fired when value of textarea is changed.
+
+<Textarea onChange={e => console.log(e)} />
+
+```jsx
+<Textarea onChange={e => console.log(e)} />
+```
+
+### onFocus
+
+Function fired when the textarea is focused.
+
+<Textarea onFocus={e => console.log(e)} />
+
+```jsx
+<Textarea onFocus={e => console.log(e)} />
+```
+
+### onBlur
+
+Function fired when the focus on the textarea is lost.
+
+<Textarea onBlur={e => console.log(e)} />
+
+```jsx
+<Textarea onBlur={e => console.log(e)} />
+```

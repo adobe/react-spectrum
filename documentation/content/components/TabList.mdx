@@ -1,0 +1,199 @@
+import {Tab} from '@react/react-spectrum/TabList';
+import {TabList} from '@react/react-spectrum/TabList';
+import Twitter from '@react/react-spectrum/Icon/Twitter';
+import Facebook from '@react/react-spectrum/Icon/Facebook';
+import Instagram from '@react/react-spectrum/Icon/Instagram';
+
+## Overview
+
+## Example
+
+<TabList>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+
+```jsx
+<TabList>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+```
+
+## Tabs
+
+### Default selected index
+
+<TabList defaultSelectedIndex={1}>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+
+```jsx
+<TabList defaultSelectedIndex={1}>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+```
+
+### Selected index
+
+<TabList selectedIndex={1}>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+
+```jsx
+<TabList selectedIndex={1}>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+```
+
+### Tab select
+
+<TabList>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab selected>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+
+```jsx
+<TabList>
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab selected>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+```
+
+### Icons
+
+<TabList>
+  <Tab icon={<Twitter />} title="Twitter" />
+  <Tab icon={<Facebook />} title="Facebook" />
+  <Tab icon={<Instagram />} title="Instagram" />
+</TabList>
+
+```jsx
+<TabList>
+  <Tab icon={<Twitter />} title="Twitter" />
+  <Tab icon={<Facebook />} title="Facebook" />
+  <Tab icon={<Instagram />} title="Instagram" />
+</TabList>
+```
+
+### Disabled
+
+<TabList>
+  <Tab>Tab 1</Tab>
+  <Tab disabled>Tab 2</Tab>
+  <Tab>Tab 3</Tab>
+</TabList>
+
+```jsx
+<TabList>
+  <Tab>Tab 1</Tab>
+  <Tab disabled>Tab 2</Tab>
+  <Tab>Tab 3</Tab>
+</TabList>
+```
+
+## Orientation
+
+### Default selected index
+
+<TabList orientation="vertical">
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+
+```jsx
+<TabList orientation="vertical">
+  <Tab>
+    Tab 1
+  </Tab>
+  <Tab>
+    Tab 2
+  </Tab>
+  <Tab>
+    Tab 3
+  </Tab>
+</TabList>
+```
+
+## Variants
+
+### Compact
+
+<TabList variant="compact">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+
+```jsx
+<TabList variant="compact">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+```

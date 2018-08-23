@@ -1,0 +1,108 @@
+import {Tag} from '@react/react-spectrum/TagList';
+import {TagList} from '@react/react-spectrum/TagList';
+
+## Overview
+
+
+## Example
+
+<TagList onClose={e => console.log(e)}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+  <Tag>This is a longer tab</Tag>
+  <Tag>This is another longer tab</Tag>
+</TagList>
+
+```jsx
+<TagList onClose={e => console.log(e)}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+  <Tag>This is a longer tab</Tag>
+  <Tag>This is another longer tab</Tag>
+</TagList>
+```
+
+## Variants
+
+### Read-only
+
+<TagList readOnly>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+
+```jsx
+<TagList readOnly>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+```
+
+### Disabled
+
+<TagList disabled>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+
+```jsx
+<TagList disabled>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+```
+
+## Using values
+
+Use provided values rather than tag text
+
+<TagList values={["Leonardo", "Donatello", "Michelangelo", "Raphael"]}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+  <Tag>Tag 3</Tag>
+  <Tag>Tag 4</Tag>
+</TagList>
+
+```jsx
+<TagList values={["Leonardo", "Donatello", "Michelangelo", "Raphael"]}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+  <Tag>Tag 3</Tag>
+  <Tag>Tag 4</Tag>
+</TagList>
+```
+
+## Events
+
+### onClose
+
+Function fired when a tag is closed.
+
+<TagList onClose={e => console.log(e)}>
+  <Tag closable>Tag 1</Tag>
+  <Tag closable>Tag 2</Tag>
+</TagList>
+
+```jsx
+<TagList onClose={e => console.log(e)}>
+  <Tag closable>Tag 1</Tag>
+  <Tag closable>Tag 2</Tag>
+</TagList>
+```
+
+
+### onFocus
+
+Function fired when a tag is focused (clicked).
+
+<TagList onFocus={e => console.log(e)}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+
+```jsx
+<TagList onFocus={e => console.log(e)}>
+  <Tag>Tag 1</Tag>
+  <Tag>Tag 2</Tag>
+</TagList>
+```

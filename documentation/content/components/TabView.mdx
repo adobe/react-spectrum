@@ -1,0 +1,99 @@
+import {Tab} from '@react/react-spectrum/TabView';
+import {TabView} from '@react/react-spectrum/TabView';
+import Twitter from '@react/react-spectrum/Icon/Twitter';
+import Facebook from '@react/react-spectrum/Icon/Facebook';
+
+## Overview
+
+
+## Example
+
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+
+```jsx
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```
+
+## Orientation
+
+<TabView orientation="vertical">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+```jsx
+<TabView orientation="vertical">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```
+
+## Icons
+
+<TabView>
+  <Tab icon={<Twitter />}>
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook />}>
+    Facebook!
+  </Tab>
+</TabView>
+
+```jsx
+<TabView>
+  <Tab icon={<Twitter />}>
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook />}>
+    Facebook!
+  </Tab>
+</TabView>
+```
+
+## Events
+
+### onSelect
+
+<TabView onSelect={(e) => console.log(e)}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+
+```jsx
+<TabView onSelect={(e) => console.log(e)}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```

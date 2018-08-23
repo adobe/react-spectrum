@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {TagList} from '../../TagList';
 import Textfield from '../../Textfield';
@@ -8,6 +9,26 @@ import '../style/index.styl';
 
 @autobind
 export default class TagField extends React.Component {
+  static propTypes = {
+    /** Allow tag creation in tag field */
+    allowCreate: PropTypes.bool,
+    
+    /** Class to add to the tag field */
+    className: PropTypes.string,
+    
+    /** Whether the tag field is disabled */
+    disabled: PropTypes.bool,
+    
+    /** Function to retrieve autocomplete options */
+    getCompletions: PropTypes.func,
+    
+    /** Whether to disable the invalid icon and styling */
+    invalid: PropTypes.bool,
+    
+    /** Whether to use the quiet styling for the tag field */
+    quiet: PropTypes.bool
+  };
+  
   static defaultProps = {
     allowCreate: true
   };
