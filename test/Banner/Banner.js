@@ -20,6 +20,7 @@ describe('Banner', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<Banner className="myClass" />);
     assert(tree.hasClass('myClass'));
+    assert(tree.hasClass('spectrum-Banner'));
   });
 
   it('supports additional properties', () => {

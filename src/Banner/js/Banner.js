@@ -12,14 +12,15 @@ const variants = [
 /**
  * A banner is a label with a few specific states that optionally allows for corner placement.
  */
-export default function Banner({header, content, variant = variants[0], corner, ...otherProps}) {
+export default function Banner({header, content, variant = variants[0], corner, className, ...otherProps}) {
   return (
     <div
       className={
         classNames(
           'spectrum-Banner',
           `spectrum-Banner--${variant}`,
-          {['spectrum-Banner--corner']: !!corner}
+          {['spectrum-Banner--corner']: !!corner},
+          className
         )
       }
       {...filterDOMProps(otherProps)}>
