@@ -1,0 +1,38 @@
+import Heading from '@react/react-spectrum/Heading';
+
+
+## Overview
+
+**Headings** in Spectrum are available in several variations for different uses and multiple levels of loudness for various attention-getting needs just as a normal `heading` element in React. The 'size' prop defines the heading analogous to the normal heading element in react. Eg. 'size={2}' refers to `<h2>` tag of HTML.
+
+## Example
+
+<Heading>React</Heading>
+
+```jsx
+<Heading>React</Heading>
+```
+
+## Variants
+
+Headings in Spectrum are available in 6 variants, each having a different size and style. Size '1' (default) should be used for main headings, followed by size '2' headings, then the less important size '3' headings, and so on. Note that right now 5 and 6 are the same.
+
+<Heading>React</Heading>
+<Heading size={2}>React</Heading>
+<Heading size={3}>React</Heading>
+<Heading size={4}>React</Heading>
+<Heading size={5}>React</Heading>
+<Heading size={6}>React</Heading>
+
+```jsx
+<Heading>React</Heading>
+<Heading size={2}>React</Heading>
+<Heading size={3}>React</Heading>
+<Heading size={4}>React</Heading>
+<Heading size={5}>React</Heading>
+<Heading size={6}>React</Heading>
+```
+
+## Internationalization
+
+To internationalize a heading, a localized string should be passed to as a child.

@@ -1,0 +1,125 @@
+import {Menu, MenuDivider, MenuHeading, MenuItem} from '@react/react-spectrum/Menu';
+
+## Overview
+
+The **Menu** component is used for creating a menu list. The various elements inside a menu are given as `<MenuItem/>`  or `<MenuHeading/>` in case of Menu Heading. A prop `open` is also available to open the menu by default.
+
+## Example
+
+<Menu open style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuHeading label="Menu Heading 2" />
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuDivider/>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+
+```jsx
+<Menu open style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuHeading label="Menu Heading 2" />
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuDivider/>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+```
+
+## Placement
+
+Menus can be placed in one of the bottom, top, left, right, top-right etc using the `placement` prop.
+
+<Menu placement ="bottom" style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+
+```jsx
+<Menu placement ="bottom" style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+```
+
+## Handling Events
+
+Events handlers for select can be registered on a `Menu` as shown below. In addition to this close event is also available.
+
+
+<Menu onSelect={e => console.log(e)} style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+
+```jsx
+<Menu onSelect={e => console.log(e)} style={{display: 'contents'}}>
+  <MenuHeading>
+    Menu Heading 1
+  </MenuHeading>
+  <MenuItem>
+    Menu Item 1
+  </MenuItem>
+  <MenuItem>
+    Menu Item 2
+  </MenuItem>
+  <MenuItem>
+    Menu Item 3
+  </MenuItem>
+</Menu>
+```
+
+
+## Internationalization
+
+To internationalize a MenuItem, a localized string should be passed to the `label` prop of the menuitem, or as a child.
+
+## Accessibility
+
+MenuItems are accessible by default. The correct aria roles will automatically be applied. `role` is assigned a value `menu` for this purpose.

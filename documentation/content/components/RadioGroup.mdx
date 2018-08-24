@@ -1,0 +1,129 @@
+import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+
+
+## Overview
+
+A **Radio Group** allow users to select only one single option from a list of mutually exclusive options. Unlike dropdowns, radio groups expose all possible choices up front for comparison. It is mandatory to import Radio before RadioGroup. Also each Radio Button must have a value property.
+
+## Example
+
+<RadioGroup name="radio-group">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+```jsx
+<RadioGroup name="radio-group">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+
+## Variants
+
+RadioGroup offers a couple of variants in terms of buttons alignment and the position of labels across the buttons.
+
+### Alignment
+
+The various Radio buttons of the group can either be horizontally (default) or vertically aligned. The latter can be achieved via the 'vertical' prop.
+
+#### Horizontal (Default)
+
+<RadioGroup name="horizontal-group">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+```jsx
+<RadioGroup name="horizontal-group">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+#### Vertical
+
+<RadioGroup name="vertical-group" vertical>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+```jsx
+<RadioGroup name="vertical-group" vertical>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+
+### Placement of Labels
+
+The button labels can either be adjacent (default) or below the buttons. The latter can be achieved via the 'labelsBelow' prop.
+
+#### Labels Adjacent
+
+<RadioGroup name="adjacent">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+```jsx
+<RadioGroup name="adjacent">
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+
+#### Labels Below
+
+<RadioGroup name="below" labelsBelow>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+```jsx
+<RadioGroup name="below" labelsBelow>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+
+
+## Handling Events
+
+Events handlers for change can be registered on a `RadioGroup` as shown below.
+
+```jsx
+<RadioGroup name="group" onChange={e => console.log(e)}>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+```
+
+<RadioGroup name="group" onChange={e => console.log(e)}>
+  <Radio label="1" value="1" />
+  <Radio label="2" value="2" />
+  <Radio label="3" value="3" />
+</RadioGroup>
+
+## Internationalization
+
+To internationalize a radio button, a localized string should be passed to the `label` prop of the radio button.
+
+## Accessibility
+
+Radio buttons are accessible by default. The correct aria roles will automatically be applied. For radio buttons with no labels set, an alternative label should be provided using the `aria-label` prop.
+
+```jsx
+<Radio label="" aria-label="React" />
+```

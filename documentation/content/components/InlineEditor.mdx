@@ -1,0 +1,72 @@
+import InlineEditor from '@react/react-spectrum/InlineEditor';
+
+## Overview
+
+**InlineEditor** allows any text element to be made editable. The user double clicks on it, and it turns into a textbox.
+
+
+## Example
+
+Inline Editors, should use `defaultValue` prop to remain uncontrolled yet also provide a starting value. Otherwise it can be hard to find the inline editor to double click again.
+
+<InlineEditor defaultValue="test" />
+
+```jsx
+<InlineEditor defaultValue="test" />
+```
+
+## Content
+
+`placeholder` will render a typical placeholder as long as the text box is empty and has focus.
+
+<InlineEditor defaultValue="test" placeholder="Enter text"/>
+
+```jsx
+<InlineEditor defaultValue="test" placeholder="Enter text"/>
+```
+
+## States
+
+InlineEditors have a number of props for controlling their visual state. It supports the `disabled` prop, which applies a disabled style to the editor, and also prevents clicks from activating it. The editor can also be controlled by passing a text to the `value` prop.
+
+
+### Disabled
+
+<InlineEditor defaultValue="test" disabled />
+
+```jsx
+<InlineEditor defaultValue="test" disabled />
+```
+
+### Controlled
+<InlineEditor value="test" />
+
+```jsx
+<InlineEditor value="test" />
+```
+
+## Validate
+
+<InlineEditor defaultValue="0000000000" placeholder="Enter 10 digit cell no" onChange={(value) => {return RegExp(/^\d{10}$/).test(value);}} />
+
+```jsx
+<InlineEditor defaultValue="0000000000" placeholder="Enter 10 digit cell no" onChange={(value) => {return RegExp(/^\d{10}$/).test(value);}} />
+```
+
+## Handling Events
+
+Events handlers for change can be registered on a `InlineEditor` as shown below.
+
+```jsx
+<InlineEditor value="test" onChange={e => console.log(e)}/>
+```
+
+<InlineEditor value="test" onChange={e => console.log(e)}/>
+
+## Internationalization
+
+To internationalize an editor, a localized string should be passed to the `value` prop of the editor.
+
+## Accessibility
+
+InlineEditors are accessible by default. The correct aria roles will automatically be applied.

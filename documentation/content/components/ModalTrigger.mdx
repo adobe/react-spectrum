@@ -1,0 +1,86 @@
+import Button from '@react/react-spectrum/Button';
+import Datepicker from '@react/react-spectrum/Datepicker';
+import Dialog from '@react/react-spectrum/Dialog';
+import ModalTrigger from '@react/react-spectrum/ModalTrigger';
+
+## Overview
+
+**ModalTriggers** are used to open a modal on button trigger for instance.
+
+## Example
+
+<ModalTrigger>
+  <Button label="Click Me" variant="primary" modaltrigger />
+  <Dialog
+    modalcontent
+    title="The title"
+    confirmLabel="Do it"
+    size="S"
+    cancelLabel="close"
+  >
+    <span>
+    the modal dialog content goes here
+    </span>
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+<Button label="Click Me" variant="primary" modaltrigger />
+  <Dialog
+    modalcontent
+    title="The title"
+    confirmLabel="Do it"
+    size="S"
+    cancelLabel="close"
+  >
+    <span>
+    the modal dialog content goes here
+    </span>
+  </Dialog>
+</ModalTrigger>
+```
+
+## Variants
+
+ModalTriggers can have `nested popovers` as well as shown in the example below.
+
+<ModalTrigger>
+  <Button label="Click Me" variant="primary" modalTrigger />
+  <Dialog
+    modalContent
+    title="The title"
+    confirmLabel="Do it"
+    size="S"
+    cancelLabel="close"
+  >
+    <Datepicker type="time" placeholder="Choose a time" autoFocus />
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Click Me" variant="primary" modalTrigger />
+  <Dialog
+    modalContent
+    title="The title"
+    confirmLabel="Do it"
+    size="S"
+    cancelLabel="close"
+  >
+    <Datepicker type="time" placeholder="Choose a time" autoFocus />
+  </Dialog>
+</ModalTrigger>
+```
+
+## Handling Events
+
+Events handlers for close, cancel and confirm can be provided to the `Dialog` component. For more information please visit the `Dialog` component documentation.
+
+## Internationalization
+
+To internationalize a modaltrigger, a localized string should be passed to the `label` prop of its child buttons, or to the `title` prop of its child Dialogs.
+
+## Accessibility
+
+ModalTriggers are accessible by default. The correct aria roles will automatically be applied.

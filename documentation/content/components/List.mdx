@@ -1,0 +1,196 @@
+import {List, ListItem} from '@react/react-spectrum/List';
+import Twitter from '@react/react-spectrum/Icon/Twitter';
+
+## Overview
+
+Lists are used to group together related pieces of information so they are clearly associated with each other and easy to read. The various items in the list are provided using the `<ListItem/>` component, which can have a icon, label or both.
+
+## Example
+
+<List>
+  <ListItem selected>
+    Foo
+  </ListItem>
+  <ListItem icon={<Twitter />}>
+    Bar
+  </ListItem>
+  <ListItem disabled>
+    Baz
+  </ListItem>
+  <ListItem>
+    Test
+  </ListItem>
+  <ListItem>
+    Hi
+  </ListItem>
+</List>
+
+```jsx
+<List>
+  <ListItem selected>
+    Foo
+  </ListItem>
+  <ListItem icon={<Twitter />}>
+    Bar
+  </ListItem>
+  <ListItem disabled>
+    Baz
+  </ListItem>
+  <ListItem>
+    Test
+  </ListItem>
+  <ListItem>
+    Hi
+  </ListItem>
+</List>
+```
+
+## Scrolling
+
+<List style={{height: '56px'}}>
+  <ListItem value="AF">
+    Afghanistan
+  </ListItem>
+  <ListItem value="AX">
+    Åland Islands
+  </ListItem>
+  <ListItem value="AL">
+    Albania
+  </ListItem>
+  <ListItem value="DZ">
+    Algeria
+  </ListItem>
+  <ListItem value="AS">
+    American Samoa
+  </ListItem>
+  <ListItem value="AD">
+    Andorra
+  </ListItem>
+  <ListItem value="AO"> 
+    Angola
+  </ListItem>
+  <ListItem value="AI">
+    Anguilla
+  </ListItem>
+  <ListItem value="AQ">
+    Antarctica
+  </ListItem>
+  <ListItem value="AG">
+    Antigua and Barbuda
+  </ListItem>
+</List>
+
+```jsx
+<List style={{height: '56px'}}>
+  <ListItem value="AF">
+    Afghanistan
+  </ListItem>
+  <ListItem value="AX">
+    Åland Islands
+  </ListItem>
+  <ListItem value="AL">
+    Albania
+  </ListItem>
+  <ListItem value="DZ">
+    Algeria
+  </ListItem>
+  <ListItem value="AS">
+    American Samoa
+  </ListItem>
+  <ListItem value="AD">
+    Andorra
+  </ListItem>
+  <ListItem value="AO"> 
+    Angola
+  </ListItem>
+  <ListItem value="AI">
+    Anguilla
+  </ListItem>
+  <ListItem value="AQ">
+    Antarctica
+  </ListItem>
+  <ListItem value="AG">
+    Antigua and Barbuda
+  </ListItem>
+</List>
+```
+
+## States
+
+ListItems have a couple of props for controlling their visual state. The `disabled` prop applies a disabled style to the listItem, and also prevents clicks from activating it. The `selected` prop applies a selected appearance to the listItem.
+
+### Selected
+
+<List>
+  <ListItem selected>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+
+```jsx
+<List>
+  <ListItem selected>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+```
+
+### Disabled
+
+<List>
+  <ListItem disabled>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+
+```jsx
+<List>
+  <ListItem disabled>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+```
+
+## Handling Events
+
+Events handlers for select can be registered on a `ListItem` as shown below.
+
+<List>
+  <ListItem onSelect={e => console.log(e)}>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+
+```jsx
+<List>
+  <ListItem onSelect={e => console.log(e)}>
+    Hello
+  </ListItem>
+  <ListItem>
+    World
+  </ListItem>
+</List>
+```
+
+## Internationalization
+
+To internationalize a MenuItem, a localized string should be passed as a child.
+
+## Accessibility
+
+Lists are accessible by default. The `listbox` role is used for this purpose. When this role is added to an element, the browser will send out an accessible listbox event to assistive technology products which can then notify the user about it.

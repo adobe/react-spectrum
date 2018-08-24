@@ -1,0 +1,114 @@
+import Progress from '@react/react-spectrum/Progress';
+
+## Overview
+
+A **progress bar** represents the progress of a task. Progress bars in Spectrum have variations in terms of size and have the `value` prop signifying the state/progress of the task.
+
+## Example
+
+<Progress value={50}/>
+
+```jsx
+<Progress value={50}/>
+```
+
+## Variants
+
+There are a couple of variants to choose from in Spectrum in trems of size. The `size` prop controls the width of the bar, with `M` being the default.
+
+<Progress size="S" value={50} />
+
+```jsx
+<Progress size="S" value={50} />
+```
+
+<Progress size="M" value={50} />
+
+```jsx
+<Progress size="M" value={50} />
+```
+
+## Content
+
+Progress bars can have a label, and percentage, or both. A percentage progression of the task is provided by passing a `showPercent` prop, which is false by default. A label can be provided through the `label` prop. In addition to this, the label position can also be controlled via the prop `labelPosition`, with left as the default value.
+
+<Progress showPercent value={50} />
+
+```jsx
+<Progress showPercent value={50} />
+```
+
+<Progress label="React" value={50} />
+
+```jsx
+<Progress label="React" value={50} />
+```
+
+### Label Position
+
+<Progress
+  label="React"
+  showPercent
+  labelPosition="left"
+  value={50}
+/>
+
+```jsx
+<Progress
+  label="React"
+  showPercent
+  labelPosition="left"
+  value={50}
+/>
+```
+
+<Progress
+  label="React"
+  showPercent
+  labelPosition="top"
+  value={50}
+/>
+
+```jsx
+<Progress
+  label="React"
+  showPercent
+  labelPosition="top"
+  value={50}
+/>
+```
+
+## States
+
+Progress bars have the `value` prop which showcases the state/progress of the bar. The `value` takes a number between 0 - 100, with 0 as the default value signifying 0 progress and 100 signifying that the task is completed.
+
+<Progress showPercent />
+
+```jsx
+<Progress />
+```
+
+<Progress value={50} showPercent />
+
+```jsx
+<Progress value={50} />
+```
+
+<Progress value={100} showPercent />
+
+```jsx
+<Progress value={100} />
+```
+
+
+## Internationalization
+
+To internationalize a progress bar, a localized string should be passed to the `label` prop of the progress component.
+
+## Accessibility
+
+Progress bars are made accessible by using any of the label, aria-label or aria-labelledby prop.
+
+```jsx
+<Progress aria-labelledby="hello" />
+```

@@ -1,0 +1,67 @@
+import Link from '@react/react-spectrum/Link';
+
+## Overview
+
+**Links** are words or phrases presented in-line with other strings of text that users can click or tap to go to a new page. Links can follow any of the character styles defined in Spectrum and can be used over backgrounds as well.
+
+## Example
+
+<Link href="#">
+This is a React Spectrum Link
+</Link>
+
+```jsx
+<Link href="#">
+This is a React Spectrum Link
+</Link>
+```
+
+## Variants
+
+### Subtle
+
+In addition to the default usage of Link, Spectrum provides another variant 'subtle' which can be passed to 'variant' prop.
+
+<Link href="#" variant="subtle">
+This is a React Spectrum Link
+</Link>
+
+```jsx
+<Link href="#" variant="subtle">
+This is a React Spectrum Link
+</Link>
+```
+
+### Over Background
+
+When a link needs to be placed on top of a colored background or a visual, we use the over background link. This link uses a white opaque color instead of a blue color(standard) and stands out from the rest of the text with the addition of an underline.
+
+<div style={{
+    backgroundColor: 'rgb(15, 121, 125)',
+    color: 'rgb(15, 121, 125)',
+    padding: '15px 20px'
+  }}>
+<Link href="#" variant="overBackground">
+This is a React Spectrum Link
+</Link>
+</div>
+
+```jsx
+<div style={{
+    backgroundColor: 'rgb(15, 121, 125)',
+    color: 'rgb(15, 121, 125)',
+    padding: '15px 20px'
+  }}>
+<Link href="#" variant="overBackground">
+This is a React Spectrum Link
+</Link>
+</div>
+```
+
+## Internationalization
+
+To internationalize a link, a localized string should be passed as a child.
+
+## Accessibility
+
+Links are accessible by default. The correct aria roles will automatically be applied.

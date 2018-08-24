@@ -1,0 +1,74 @@
+import Radio from '@react/react-spectrum/Radio';
+
+
+## Overview
+
+A **Radio button** allow users to select/deselect a particular option. It can be checked or unchecked depending on the user needs.
+
+## Example
+
+<Radio label="React" />
+
+```jsx
+<Radio label="React" />
+```
+
+## Content
+
+Radio Buttons can have a label or not. A label describes what the button represents, and tell users what to do. This is important for accessibility, since a screen reader will read the label before each option. A label can be provided to the radio button through the `label` prop.
+
+### Label Set
+
+<Radio label="React" />
+
+```jsx
+<Radio label="React" />
+```
+
+### Label Not Set
+
+<Radio label="" aria-label="React" />
+
+```jsx
+<Radio label="" aria-label="React" />
+```
+
+## States
+
+Radio buttons have a number of props for controlling their visual/checked state. The `disabled` prop, which applies a disabled style to the button, and also prevents clicks from activating it. The 'checked' prop is also available to apply a checked appearance to the radio button. In addition to this 'defaultChecked' and 'invalid' prop is also provided.
+
+<Radio label="React" disabled />
+<Radio label="React" checked={false} />
+<Radio label="React" checked />
+<Radio label="React" invalid />
+<Radio label="React" defaultChecked />
+
+```jsx
+<Radio label="React" disabled />
+<Radio label="React" checked={false} />
+<Radio label="React" checked />
+<Radio label="React" invalid />
+<Radio label="React" defaultChecked />
+```
+
+## Handling Events
+
+Events handlers for change can be registered on a `Radio Button` as shown below.
+
+```jsx
+<Radio label="ClickMe" onChange={e => alert('Radio Button clicked!')} />
+```
+
+<Radio label="ClickMe" onChange={e => alert('Radio Button clicked!')} />
+
+## Internationalization
+
+To internationalize a radio button, a localized string should be passed to the `label` prop of the radio button.
+
+## Accessibility
+
+Radio buttons are accessible by default. The correct aria roles will automatically be applied. For radio buttons with no labels set, an alternative label should be provided using the `aria-label` prop.
+
+```jsx
+<Radio label="" aria-label="React" />
+```

@@ -1,0 +1,130 @@
+import Search from '@react/react-spectrum/Search';
+import Refresh from '@react/react-spectrum/Icon/Refresh';
+
+## Overview
+
+**Search** provides a way to the user to exactly find what they are looking for.
+
+## Example
+
+<Search placeholder="Enter text" />
+
+```jsx
+<Search placeholder="Enter text" />
+```
+
+## Variants
+
+### Quiet
+
+The `quiet` prop applies a quiet appearance to the search. `icon` allows the programmer to specify a custom icon for the search box.
+
+<Search
+  placeholder="Enter text"
+  quiet
+  icon={<Refresh />}
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  quiet
+  icon={<Refresh />}
+/>
+```
+
+## Content
+
+Search can have a default value(uncontrolled) or value(controlled), and icon, or both.
+
+<Search
+  placeholder="Enter text"
+  defaultValue="React"
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  defaultValue="React"
+/>
+```
+
+<Search
+  placeholder="Enter text"
+  value="React"
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  value="React"
+/>
+```
+
+<Search
+  placeholder="Enter text"
+  value="React"
+  icon={<Refresh />}
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  value="React"
+  icon={<Refresh />}
+/>
+```
+
+## States
+
+Search has a number of props for controlling its visual state. It supports the `disabled` prop, which applies a disabled style to the search, and also prevents clicks from activating it. Also disabled and quiet can be applied together too.
+
+### Disabled
+
+<Search
+  placeholder="Enter text"
+  value="React"
+  disabled
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  value="React"
+  disabled
+/>
+```
+
+### Disabled and Quiet
+
+<Search
+  placeholder="Enter text"
+  quiet
+  disabled
+/>
+
+```jsx
+<Search
+  placeholder="Enter text"
+  quiet
+  disabled
+/>
+```
+
+## Handling Events
+
+Events handlers for change and submit can be registered on a `Search` as shown below.
+
+```jsx
+<Search placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
+```
+
+<Search placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
+
+## Internationalization
+
+To internationalize a search, a localized string should be passed to the `value`, `defaultValue`, `placeholder` prop of the search.
+
+## Accessibility
+
+Search is accessible by default. The correct aria roles will automatically be applied.
