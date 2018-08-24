@@ -2,6 +2,7 @@ import 'babel-polyfill';
 import React from 'react';
 import Heading from '@react/react-spectrum/Heading';
 import Provider from '@react/react-spectrum/Provider';
+import 'babel-polyfill';
 import {Table, TR, TD, TH, THead, TBody} from '@react/react-spectrum/Table';
 import {TabView, Tab} from '@react/react-spectrum/TabView';
 import Link from '../components/Link';

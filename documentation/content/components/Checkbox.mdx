@@ -1,0 +1,71 @@
+import Checkbox from '@react/react-spectrum/Checkbox';
+
+## Overview
+
+**Checkboxes**  allow users to select multiple items from a list of independent options, or to mark an individual option as selected.
+
+Should I use a checkbox or a switch? Use a switch when activating something instead of selecting.
+
+### Example
+
+<Checkbox label="React"/>
+
+```jsx
+<Checkbox label="React"/>
+```
+
+### Standard Checkboxes
+Standard checkboxes are the default style for checkboxes. The blue color provides a visual prominence that is optimal for forms, settings, lists or grids of assets, etc. where the checkboxes need to be noticed.
+
+
+<Checkbox label="React" defaultChecked/>
+
+```jsx
+<Checkbox label="React" defaultChecked/>
+```
+
+### States
+
+In addition to the variant, Checkboxes have a number of props for controlling their visual state. All checkbox variants support the `disabled`, `indeterminate`, `invalid`   prop, which applies a disabled style to the checkbox, and also prevents clicks from activating it.
+
+<div>defaultChecked: </div><Checkbox label="React" defaultChecked/>
+
+<div>checked: </div><Checkbox label="React" checked/>
+
+<div>indeterminate: </div><Checkbox label="React" indeterminate/>
+
+<div>invalid: </div><Checkbox label="React" invalid/>
+
+<div>disabled: </div><Checkbox label="React" disabled/>
+
+```jsx
+
+<div>defaultChecked: </div><Checkbox label="React" defaultChecked/>
+
+<div>checked: </div><Checkbox label="React" checked/>
+
+<div>indeterminate: </div><Checkbox label="React" indeterminate/>
+
+<div>invalid: </div><Checkbox label="React" invalid/>
+
+<div>disabled: </div><Checkbox label="React" disabled/>
+
+```
+
+### Handling Events
+
+Event handlers for clicks and other user actions can be registered on a `Checkbox` just as a normal `Checkbox` element in React.
+
+<Checkbox onChange={e => console.log(e)}>Click me!</Checkbox>
+
+```jsx
+<Checkbox onChange={e => console.log(e)}>Click me!</Checkbox>
+```
+
+## Internationalization
+
+To internationalize a checkbox, a localized string should be passed to the `label` prop of the checkbox, or as a child.
+
+## Accessibility
+
+Checkboxes are accessible by default. The correct aria roles will automatically be applied. For icon only labels, an alternative label should be provided using the `aria-label` prop.

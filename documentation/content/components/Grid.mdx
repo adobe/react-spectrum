@@ -1,0 +1,246 @@
+import {Grid, GridColumn, GridRow} from '@react/react-spectrum/Grid';
+
+## Overview
+A declarative way to divide up an elements space. Please contribute more to this doc.
+
+## Example
+
+<Grid>
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 6, 8, 10]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[12, 9, 10, 11]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[10, 6, 8, 10]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[2, 6, 4, 2]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+</Grid>
+
+
+```jsx
+<Grid>
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 6, 8, 10]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 3, 2, 1]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[12, 9, 10, 11]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[10, 6, 8, 10]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[2, 6, 4, 2]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+</Grid>
+```
+
+## Variants
+There are mainly two variants to choose from in Spectrum. The `variant` prop controls the main variant of the grid, fixed or fluid.
+
+
+<Grid variant="fixed">
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 6, 8, 10]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[6, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[12, 3, 2, 1]}>
+      <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[12, 9, 10, 11]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+  <GridRow>
+    <GridColumn size={[10, 6, 8, 10]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+    <GridColumn size={[2, 6, 4, 2]}>
+      <div  style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+    </GridColumn>
+  </GridRow>
+ </Grid>
+
+
+
+```jsx
+<Grid variant="fixed">
+  ...
+</Grid>
+```
+
+### Grid with Offset
+
+ <Grid>
+        <GridRow>
+          <GridColumn size={1} offsetSize={11}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={2} offsetSize={10}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={3} offsetSize={9}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={4} offsetSize={8}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={5} offsetSize={7}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={6} offsetSize={6}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={7} offsetSize={5}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={8} offsetSize={4}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={9} offsetSize={3}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={10} offsetSize={2}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn size={11} offsetSize={1}>
+            <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                        background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                        borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+          </GridColumn>
+        </GridRow>
+      </Grid>
+
+```jsx
+ <GridRow>
+   <GridColumn size={1} offsetSize={11}>
+     <div style={{position: 'relative', boxSizing: 'border-box', minHeight: '2.25rem', marginBottom: '1em',
+                  background: 'rgba(41, 75, 105, 0.1)',overflow: 'hidden',textAlign: 'center',color: '#294b69',
+                  borderRadius: '2px',border: '1px solid #6f9dc7',padding: '1rem'}} />
+  </GridColumn>
+  ...
+ </Grid>
+```
