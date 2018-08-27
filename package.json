@@ -40,6 +40,7 @@
     "@storybook/addon-knobs": "3.2.13",
     "@storybook/addon-links": "3.2.13",
     "@storybook/react": "3.2.13",
+    "axe-core": "3.0.3",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.26.0",
