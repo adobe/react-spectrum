@@ -2,9 +2,8 @@
 
 .react-spectrum-ToastContainer {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  bottom: 16px;
+  right: 16px;
   z-index: 100050; /* above modals */
   display: flex;
   flex-direction: column;
@@ -19,7 +18,7 @@
 
 .react-spectrum-Toast-slide-enter, .react-spectrum-Toast-slide-appear {
   opacity: 0;
-  transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, 100%, 0);
 }
 
 .react-spectrum-Toast-slide-enter-active, .react-spectrum-Toast-slide-appear-active {
@@ -36,6 +35,6 @@
 
 .react-spectrum-Toast-slide-exit-active {
   opacity: 0;
-  transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, 100%, 0);
   transition: all $spectrum-global-animation-transition-time ease-in-out;
 }
