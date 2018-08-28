@@ -39,7 +39,7 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
   <Dialog
     title="Dialog title"
     confirmLabel="OK"
-    cancelLabel="Cancel" >
+    cancelLabel="Cancel">
     <span>
     Content of the dialog
     </span>
@@ -50,10 +50,9 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
-    cancelLabel="Cancel" >
+    cancelLabel="Cancel">
     <span>
     Content of the dialog
     </span>
@@ -65,7 +64,6 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel"
@@ -81,13 +79,11 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel"
     onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)}
-  >
+    onCancel={e => console.log(e)}>
     <span>
     Content of the dialog
     </span>
@@ -100,13 +96,12 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel"
     confirmDisabled
     onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)} >
+    onCancel={e => console.log(e)}>
     <span>
     Content of the dialog
     </span>
@@ -117,7 +112,6 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     confirmDisabled
@@ -140,7 +134,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     variant="information"
@@ -155,7 +148,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog title"
     confirmLabel="OK"
     variant="information"
@@ -171,7 +163,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="destructive"
     title="Dialog title"
     confirmLabel="OK"
@@ -186,7 +177,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="destructive"
     title="Dialog title"
     confirmLabel="OK"
@@ -202,12 +192,11 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="confirmation"
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel"
-    confirmDisabled >
+    confirmDisabled>
     <span>
     Content of the dialog
     </span>
@@ -218,7 +207,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="confirmation"
     title="Dialog title"
     confirmLabel="OK"
@@ -234,12 +222,11 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="error"
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel"
-    confirmDisabled >
+    confirmDisabled>
     <span>
     Content of the dialog
     </span>
@@ -250,7 +237,6 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     variant="error"
     title="Dialog title"
     confirmLabel="OK"
@@ -269,7 +255,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog Title"
     backdropClickable
     confirmLabel="OK"
@@ -284,7 +269,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog Title"
     backdropClickable
     confirmLabel="OK"
@@ -303,7 +287,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog Title"
     mode="fullscreen"
     confirmLabel="OK"
@@ -318,7 +301,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog Title"
     mode="fullscreen"
     confirmLabel="OK"
@@ -335,7 +317,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
-    onClose={close}
     title="Dialog Title"
     mode="fullscreen"
     confirmLabel="OK"
@@ -350,7 +331,6 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
   <ModalTrigger>
     <Button label="Open Dialog" variant="primary" />
     <Dialog
-      onClose={close}
       title="Dialog Title"
       mode="fullscreenTakeover"
       confirmLabel="OK"

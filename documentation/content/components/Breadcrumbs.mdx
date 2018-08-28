@@ -7,10 +7,10 @@ A **Breadcrumbs** in Spectrum is a type of secondary navigation that reveals the
 
 ## Example
 
-<Breadcrumbs items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]} />
+<Breadcrumbs items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 
 ```jsx
-<Breadcrumbs items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]} />
+<Breadcrumbs items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 ```
 
 ## Content
@@ -19,41 +19,40 @@ Breadcrumbs can have icon. An icon is provided by passing an icon component to t
 
 <Breadcrumbs
   icon={<Folder />}
-  items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]} />
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 
 ```jsx
 <Breadcrumbs
-icon={<Folder />}
-items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]} />
+  icon={<Folder />}
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 ```
+
 ## Variant
 
 Breadcrumbs can also be set to `title` variant. Title will cause the last breadcrumb to be rendered as a Header and should be used with the accesibility ariaLevel prop, the ariaLevel will not change the appearance.
+
 <Breadcrumbs
   variant="title"
   ariaLevel={3}
-  items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]}
-/>
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 
 ```jsx
 <Breadcrumbs
   variant="title"
   ariaLevel={3}
-  items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]}
-/>
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 ```
 
 ## Events
 
-Breadcrumbs has an event, onBreadcrumbClick which will pass an object {label: 'LabelOfBreadcrumbClicked'}
+Breadcrumbs has an event, onBreadcrumbClick which will pass an object `{label: 'LabelOfBreadcrumbClicked'}`
+
 <Breadcrumbs
-  items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]}
-  onBreadcrumbClick={e => console.log(e)}
-/>
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+  onBreadcrumbClick={e => console.log(e)} />
 
 ```jsx
 <Breadcrumbs
-  items={[{label: 'Folder 1',href: '#Folder-1'},{label: 'Folder 2'},{label: 'Folder 3'}]}
-  onBreadcrumbClick={e => console.log(e)}
-/>
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+  onBreadcrumbClick={e => console.log(e)} />
 ```

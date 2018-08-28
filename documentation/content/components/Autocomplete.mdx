@@ -2,10 +2,8 @@ import Autocomplete from '@react/react-spectrum/Autocomplete';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Textfield from '@react/react-spectrum/Textfield';
 
-
-
 ## Overview
-An Autocomplete relies on a method, getCompletions, to predict the string a user will want. getCompletions can implement
+An Autocomplete relies on a method, `getCompletions`, to predict the string a user will want. `getCompletions` can implement
 any kind of predictive algorithm, could be based on past strings, could be a predefined list. A user must select a string
 from the list by default. Using allowCreate we can allow the user to enter any string, regardless of its existence in
 the list.
@@ -17,7 +15,7 @@ the list.
   </Autocomplete>
 
 ```jsx
- <Autocomplete  getCompletions={() => ['Chocolate', 'Vanilla']}>
+ <Autocomplete getCompletions={() => ['Chocolate', 'Vanilla']}>
    <Textfield placeholder="Autocomplete..." />
  </Autocomplete>
 ```
