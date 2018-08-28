@@ -1,5 +1,5 @@
-
 import autobind from 'autobind-decorator';
+import createId from '../../utils/createId';
 import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
 import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
@@ -101,11 +101,13 @@ export default class OverlayTrigger extends Component {
     crossOffset: 0,
     flip: true,
     disabled: false,
-    boundariesElement: () => ownerDocument(this).body
+    boundariesElement: () => ownerDocument(this).body,
+    delayHide: 100
   };
 
   constructor(props, context) {
     super(props, context);
+    this.overlayId = createId();
     this._mountNode = null;
     this.state = {
       show: props.defaultShow
@@ -192,8 +194,7 @@ export default class OverlayTrigger extends Component {
       return;
     }
 
-    const delay = this.props.delayHide != null ?
-      this.props.delayHide : this.props.delay;
+    let delay = (!this.props.delayHide || this.props.delayHide === OverlayTrigger.defaultProps.delayHide) && this.props.delay != null ? this.props.delay : this.props.delayHide;
 
     if (!delay) {
       this.hide(e);
@@ -238,19 +239,31 @@ export default class OverlayTrigger extends Component {
   }
 
   makeOverlay(overlay, props) {
-    const overlayProps = {...props};
+    const {
+      target = this
+    } = this.props;
+    const {
+      rootClose = true,
+      ...overlayProps
+    } = props;
     delete overlayProps.crossOffset;
     delete overlayProps.defaultShow;
     delete overlayProps.flip;
     delete overlayProps.boundariesElement;
     delete overlayProps.shouldUpdatePosition;
+    if (!overlay.props.id) {
+      overlayProps.id = this.overlayId;
+    }
+    if (!props.id) {
+      props.id = overlay.props.id || overlayProps.id;
+    }
     return (
       <Overlay
         {...props}
         show={this.state.show}
         onHide={this.hide}
-        target={this.props.target || this}
-        rootClose={isOneOf('click', this.props.trigger)}>
+        target={target}
+        rootClose={rootClose}>
         {cloneElement(overlay, overlayProps)}
       </Overlay>
     );
@@ -284,9 +297,15 @@ export default class OverlayTrigger extends Component {
     const triggerProps = {};
     delete props.children;
 
+    // When Tooltip is shown,
+    if (this.state.show && overlayChild.type && overlayChild.props.role === 'tooltip') {
+      // Tooltip element id should match trigger element's aria-describedby value,
+      if (!props.id) {
+        props.id = overlayChild.props.id || this.overlayId;
+      }
 
-    if (this.state.show && overlayChild.type.name === 'Tooltip') {
-      triggerProps['aria-describedby'] = overlayChild.props.id;
+      // Tooltip should add aria-describedby attribute to trigger element.
+      triggerProps['aria-describedby'] = props.id;
     }
 
     if (isOneOf('click', trigger)) {
@@ -296,11 +315,15 @@ export default class OverlayTrigger extends Component {
     if (isOneOf('hover', trigger)) {
       triggerProps.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
       triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+      props.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
+      props.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
     }
 
     if (isOneOf('focus', trigger)) {
       triggerProps.onFocus = this.handleDelayedShow;
       triggerProps.onBlur = this.handleDelayedHide;
+      props.onFocus = this.handleDelayedShow;
+      props.onBlur = this.handleDelayedHide;
     }
 
     triggerProps.selected = this.state.show;
@@ -311,6 +334,7 @@ export default class OverlayTrigger extends Component {
     }
 
     this._overlay = this.makeOverlay(overlayChild, props);
+
     return cloneElement(triggerChild, triggerProps);
   }
 }

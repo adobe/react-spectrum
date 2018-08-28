@@ -55,6 +55,11 @@ storiesOf('Tooltip', module)
     'with OverlayTrigger: using click',
     () => render('This is a tooltip.', {trigger: 'click'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'with OverlayTrigger: using hover and focus',
+    () => render('This is a tooltip.', {trigger: ['hover', 'focus']}),
+    {inline: true}
   );
 
 function render(content, props = {}) {

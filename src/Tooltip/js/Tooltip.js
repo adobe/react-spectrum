@@ -32,6 +32,11 @@ export default class Tooltip extends Component {
      * The ID of the tooltip.
      */
     id: PropTypes.string,
+    
+    /**
+     * The WAI-ARIA role for the tooltip
+     */
+    role: PropTypes.oneOf(['tooltip']),
 
     /**
      * Control if the tooltip should be opened or not.
@@ -42,7 +47,8 @@ export default class Tooltip extends Component {
   static defaultProps = {
     variant: 'inspect',
     placement: 'right',
-    open: true
+    open: true,
+    role: 'tooltip'
   };
 
   constructor(props) {

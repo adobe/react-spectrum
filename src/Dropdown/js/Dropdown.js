@@ -26,11 +26,10 @@ export default class Dropdown extends React.Component {
   }
 
   onOpen(e) {
-    this.setState({open: true});    
+    this.setState({open: true});
     if (this.props.onOpen) {
       this.props.onOpen(e);
     }
-    
   }
 
   onClose(e) {
@@ -86,7 +85,8 @@ export default class Dropdown extends React.Component {
                 onShow={this.onOpen}
                 closeOnSelect={closeOnSelect}
                 key={index}
-                onHide={this.onClose} >
+                onHide={this.onClose}
+                delayHide={0}>
                 {React.cloneElement(trigger, {
                   'aria-haspopup': trigger.props['aria-haspopup'] || 'true',
                   'aria-controls': (this.state.open ? menuId : null),

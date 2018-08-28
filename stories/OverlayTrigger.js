@@ -28,7 +28,7 @@ storiesOf('OverlayTrigger', module)
   )
   .addWithInfo(
     'with tooltip',
-    () => render('tooltip', {trigger: 'click', placement: 'right'}),
+    () => render('tooltip', {placement: 'right'}),
     {inline: true}
   )
   .addWithInfo(

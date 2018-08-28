@@ -23,4 +23,9 @@ describe('Tooltip', () => {
     const tree = shallow(<Tooltip>oh hey</Tooltip>);
     assert.equal(tree.find('.spectrum-Tooltip-label').prop('children'), 'oh hey');
   });
+
+  it('has WAI-ARIA role="tooltip"', () => {
+    const tree = shallow(<Tooltip>oh hey</Tooltip>);
+    assert.equal(tree.prop('role'), 'tooltip');
+  });
 });
