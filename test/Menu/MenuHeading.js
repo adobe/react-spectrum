@@ -4,13 +4,23 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 
 describe('MenuHeading', () => {
-  it('renders an h4 element with a SelectList sectionHeading class', () => {
+  it('renders a li element with a Menu sectionHeading class and role="heading"', () => {
     let tree = shallow(<MenuHeading label="foo" />);
-    assert.equal(tree.find('h4.spectrum-Menu-sectionHeading').length, 1);
+    let heading = tree.find('li.spectrum-Menu-sectionHeading');
+    assert.equal(heading.length, 1);
+    assert.equal(heading.childAt(0).prop('role'), 'heading');
+    assert.equal(heading.childAt(0).prop('aria-level'), 3);
   });
-  it('places label text as children of the h4 element', () => {
+  it('should set aria-level', () => {
+    let tree = shallow(<MenuHeading label="foo" />);
+    let heading = tree.find('li.spectrum-Menu-sectionHeading');
+    assert.equal(heading.childAt(0).prop('aria-level'), 3);
+    tree.setProps({'aria-level': 4});
+    assert.equal(tree.find('li.spectrum-Menu-sectionHeading').childAt(0).prop('aria-level'), 4);
+  });
+  it('places label text as children of the li element', () => {
     let tree = mount(<MenuHeading label="foo" />);
-    let heading = tree.find('h4').at(0);
+    let heading = tree.find('li.spectrum-Menu-sectionHeading').at(0);
     assert.equal(heading.text(), 'foo');
   });
 });

@@ -7,13 +7,19 @@ export default class MenuHeading extends Component {
     const {
       label,
       children,
+      role = 'presentation',
       ...otherProps
     } = this.props;
 
+    let ariaLevel = otherProps['aria-level'];
+    delete otherProps['aria-level'];
+
     return (
-      <h4 className="spectrum-Menu-sectionHeading" {...otherProps}>
-        { label || children }
-      </h4>
+      <li role={role} className="spectrum-Menu-sectionHeading" {...otherProps} >
+        <span role="heading" aria-level={ariaLevel || 3}>
+          { label || children }
+        </span>
+      </li>
     );
   }
 }

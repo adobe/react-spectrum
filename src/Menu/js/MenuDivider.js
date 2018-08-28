@@ -4,6 +4,6 @@ export default class MenuDivider extends Component {
   static displayName = 'MenuDivider';
 
   render() {
-    return <hr className="spectrum-Menu-divider" role="separator" />;
+    return <li className="spectrum-Menu-divider" role="separator" />;
   }
 }
