@@ -90,16 +90,16 @@ export default class ListItem extends Component {
             className
           )
         }
-        onKeyDown={disabled ? undefined : interpretKeyboardEvent.bind(this)}
-        onMouseEnter={disabled ? undefined : this.handleMouseEnter}
-        onClick={disabled ? undefined : this.handleClick}
-        onFocus={disabled ? undefined : this.handleFocus}
+        onKeyDown={disabled ? null : interpretKeyboardEvent.bind(this)}
+        onMouseEnter={disabled ? null : this.handleMouseEnter}
+        onClick={disabled ? null : this.handleClick}
+        onFocus={disabled ? null : this.handleFocus}
         onBlur={this.handleBlur}
-        tabIndex={!disabled ? tabIndex : undefined}
+        tabIndex={!disabled ? tabIndex : null}
         role={role}
-        aria-checked={role !== 'option' && selected || undefined}
-        aria-selected={selected || focused ? 'true' : 'false'}
-        aria-disabled={disabled || undefined}
+        aria-checked={role === 'menuitemcheckbox' || role === 'menuitemradio' ? !!selected : null}
+        aria-selected={role === 'option' ? (!!selected || !!focused) : null}
+        aria-disabled={disabled || null}
         {...otherProps}>
         {cloneIcon(icon, {
           size: 'S'

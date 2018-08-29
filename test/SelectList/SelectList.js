@@ -47,11 +47,10 @@ describe('SelectList', () => {
     assert.equal(tree.find({selected: true}).length, 3);
   });
 
-  it('Aria-selected is set correctly when multiple items are selected', () => {
+  it('aria-selected is set correctly when multiple items are selected', () => {
     const tree = mount(<SelectList options={testOptions} multiple value={selectedValue} />);
-    assert.equal(tree.find({'aria-selected': 'true'}).length, 3);
-    assert.equal(tree.find({'aria-selected': 'false'}).length, 4);
-  
+    assert.equal(tree.find({'aria-selected': true}).length, 3);
+    assert.equal(tree.find({'aria-selected': false}).length, 4);
   });
 
   it('supports all items being disabled', () => {

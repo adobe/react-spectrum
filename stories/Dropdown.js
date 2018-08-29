@@ -27,9 +27,9 @@ function render(props = {}) {
     <Dropdown onSelect={action('select')} {...props}>
       <Button variant="cta">Test</Button>
       <Menu>
-        <MenuItem value="foo">Foo</MenuItem>
-        <MenuItem value="bar" selected>Bar</MenuItem>
-        <MenuItem value="baz">Baz</MenuItem>
+        <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
+        <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
+        <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
       </Menu>
     </Dropdown>
   );

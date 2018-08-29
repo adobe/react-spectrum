@@ -94,4 +94,27 @@ describe('ListItem', () => {
       assert(blurSpy.called);
     });
   });
+
+  describe('when role=menuitemcheckbox or role=menuitemradio', () => {
+    it('should include aria-checked', () => {
+      const tree = render({role: 'menuitemcheckbox'});
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-checked'), false);
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-selected'), null);
+
+      tree.setProps({selected: true});
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-checked'), true);
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-selected'), null);
+
+      tree.setProps({role: 'menuitemradio'});
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-checked'), true);
+
+      tree.setProps({role: 'option'});
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-checked'), null);
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-selected'), true);
+
+      tree.setProps({role: 'menuitem'});
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-checked'), null);
+      assert.equal(tree.find('.spectrum-SelectList-item').prop('aria-selected'), null);
+    });
+  });
 });
