@@ -35,11 +35,15 @@ export default class TableRow extends React.Component {
       'spectrum-Table-row': !isHeaderRow,
       'is-selected': selected
     });
+    const checkboxCellClassNames = classNames(
+      'spectrum-Table-checkboxCell',
+      'react-spectrum-TableView-checkboxCell'
+    );
 
     return (
       <div className={className}>
         {allowsSelection &&
-          <TableCell isHeaderRow={isHeaderRow} className="spectrum-Table-checkboxCell">
+          <TableCell isHeaderRow={isHeaderRow} className={checkboxCellClassNames}>
             <Checkbox className="spectrum-Table-checkbox" checked={selected} onChange={onSelectChange} />
           </TableCell>
         }

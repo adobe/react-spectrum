@@ -27,7 +27,7 @@ describe('TableRow', function () {
     assert.equal(wrapper.prop('className'), 'react-spectrum-TableView-row spectrum-Table-row');
 
     let checkboxCell = wrapper.childAt(0);
-    assert.equal(checkboxCell.prop('className'), 'spectrum-Table-checkboxCell');
+    assert.equal(checkboxCell.prop('className'), 'spectrum-Table-checkboxCell react-spectrum-TableView-checkboxCell');
     assert.equal(checkboxCell.childAt(0).prop('className'), 'spectrum-Table-checkbox');
     assert(!checkboxCell.childAt(0).prop('checked'));
 
@@ -39,7 +39,7 @@ describe('TableRow', function () {
     assert.equal(wrapper.prop('className'), 'react-spectrum-TableView-row spectrum-Table-row is-selected');
 
     let checkboxCell = wrapper.childAt(0);
-    assert.equal(checkboxCell.prop('className'), 'spectrum-Table-checkboxCell');
+    assert.equal(checkboxCell.prop('className'), 'spectrum-Table-checkboxCell react-spectrum-TableView-checkboxCell');
     assert.equal(checkboxCell.childAt(0).prop('className'), 'spectrum-Table-checkbox');
     assert(checkboxCell.childAt(0).prop('checked'));
 
