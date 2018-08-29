@@ -137,7 +137,7 @@ Please read the [CONTRIBUTING](CONTRIBUTING.md) guide for an overview of how to 
 ### Local Development
 
 #### Storybook
-We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open (http://localhost:9002)[http://localhost:9002] in your browser to play around with the components and test your changes.
+We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open [http://localhost:9002](http://localhost:9002) in your browser to play around with the components and test your changes.
 
 #### Gatsby Documentation
 Follow these steps to run documentation locally.
