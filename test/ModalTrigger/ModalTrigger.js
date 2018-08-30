@@ -55,4 +55,14 @@ describe('ModalTrigger', () => {
 
     assert.equal(modalTrigger.text(), 'a context has no name');
   });
+
+  it('adds a wrapping div only when necessary', () => {
+    let wrapper = mount(<ModalTrigger><button /><div modalContent>text</div></ModalTrigger>);
+    assert.equal(wrapper.find('button').length, 1);
+    assert.equal(wrapper.find('div').length, 0);
+
+    wrapper = mount(<ModalTrigger><button /><button /><div modalContent>text</div></ModalTrigger>);
+    assert.equal(wrapper.find('button').length, 2);
+    assert.equal(wrapper.find('div').length, 1);
+  });
 });

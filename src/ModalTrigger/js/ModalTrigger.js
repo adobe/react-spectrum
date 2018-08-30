@@ -21,18 +21,23 @@ export default class ModalTrigger extends Component {
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.modalTrigger) || children[0];
     const modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
+    
+    let nodes = [];
+    children.forEach(child => {
+      if (child === trigger) {
+        nodes.push(cloneElement(child, {onClick: this.show}));
+      } else if (child !== modalChild) {
+        nodes.push(child);
+      }
+    });
+
+    if (nodes.length === 1) {
+      return nodes;
+    }
 
     return (
       <div>
-        {children.map((child) => {
-          if (child === trigger) {
-            return cloneElement(child, {onClick: this.show});
-          } else if (child === modalChild) {
-            return null;
-          } else {
-            return child;
-          }
-        }, this)}
+        {nodes}
       </div>
     );
   }
