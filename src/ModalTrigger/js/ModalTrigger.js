@@ -32,7 +32,7 @@ export default class ModalTrigger extends Component {
     });
 
     if (nodes.length === 1) {
-      return nodes;
+      return nodes[0];
     }
 
     return (
