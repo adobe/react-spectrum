@@ -1,9 +1,11 @@
 import AlertIcon from '../../Icon/Alert';
+import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import Dropdown from '../../Dropdown';
+import filterDOMProps from '../../utils/filterDOMProps';
 import Popover from '../../Popover';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,7 +13,11 @@ import ReactDOM from 'react-dom';
 import SelectList from '../../SelectList';
 
 importSpectrumCSS('dropdown');
+require('../style/index.styl');
 
+let POPOVER_MAX_WIDTH = null;
+
+@autobind
 export default class Select extends React.Component {
   static propTypes = {
     closeOnSelect: PropTypes.bool
@@ -43,7 +49,22 @@ export default class Select extends React.Component {
   }
 
   componentDidMount() {
+    if (POPOVER_MAX_WIDTH == null) {
+      // Render a fake popover we can measure the styles of, place it inside ourselves
+      // so it gets styles dictated by the current scale
+      let dummyPopover = document.createElement('div');
+      dummyPopover.className = 'spectrum-Dropdown-popover';
+      document.body.appendChild(dummyPopover);
+      POPOVER_MAX_WIDTH = parseInt(window.getComputedStyle(dummyPopover).maxWidth, 10);
+      document.body.removeChild(dummyPopover);
+    }
+
+    window.addEventListener('resize', this.updateSize);
     this.updateSize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateSize);
   }
 
   componentDidUpdate() {
@@ -59,7 +80,7 @@ export default class Select extends React.Component {
     }
   }
 
-  onSelect = value => {
+  onSelect(value) {
     if (!('value' in this.props)) {
       this.setState({value});
     }
@@ -67,16 +88,16 @@ export default class Select extends React.Component {
     if (this.props.onChange) {
       this.props.onChange(value);
     }
-  };
+  }
 
-  onClose = () => {
+  onClose() {
     ReactDOM.findDOMNode(this.button).focus();
     if (this.props.onClose) {
       this.props.onClose();
     }
-  };
+  }
 
-  onKeyDown = e => {
+  onKeyDown(e) {
     switch (e.key) {
       case 'Enter':
       case 'ArrowDown':
@@ -85,7 +106,7 @@ export default class Select extends React.Component {
         this.button.onClick();
         break;
     }
-  };
+  }
 
   render() {
     let {
@@ -97,11 +118,11 @@ export default class Select extends React.Component {
       invalid = false,
       multiple = false,
       required = false,
+      flexible = false,
       placeholder = 'Select an option',
       className,
       alignRight,
       labelId,
-      noMinWidth,
       id = this.selectId,
       ...otherProps
     } = this.props;
@@ -129,12 +150,19 @@ export default class Select extends React.Component {
 
     closeOnSelect = typeof closeOnSelect === 'boolean' ? closeOnSelect : !multiple;
 
+    // Pass ARIA props to the button, and others to the Dropdown.
+    let domProps = Object.entries(filterDOMProps(otherProps));
+    let buttonProps = domProps.filter(x => /^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
+    let dropdownProps = domProps.filter(x => !/^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
+
     return (
       <Dropdown
         className={classNames(
           'spectrum-Dropdown',
           {
             'spectrum-Dropdown--quiet': quiet,
+            'react-spectrum-Dropdown-fixed': quiet && !flexible,
+            'react-spectrum-Dropdown-flexible': flexible,
             'is-disabled': disabled,
             'is-invalid': invalid
           },
@@ -142,9 +170,10 @@ export default class Select extends React.Component {
         )}
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
-        onOpen={onOpen}
         onClose={this.onClose}
-        alignRight={alignRight}>
+        onOpen={onOpen}
+        alignRight={alignRight}
+        {...dropdownProps}>
         <Button
           className="spectrum-Dropdown-trigger"
           type="button"
@@ -157,8 +186,7 @@ export default class Select extends React.Component {
           onKeyDown={this.onKeyDown}
           aria-labelledby={ariaLabelledby}
           id={id}
-          {...otherProps}
-          style={noMinWidth ? null : {minWidth: 192}}>
+          {...buttonProps}>
           <span
             id={valueId}
             className={classNames('spectrum-Dropdown-label', {'is-placeholder': label === placeholder})}>
@@ -175,21 +203,26 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           required={required}
-          style={{width: this.state.width}}
+          style={{
+            minWidth: quiet && flexible ? null : this.state.width,
+            maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null
+          }}
           autoFocus />
       </Dropdown>
     );
   }
 }
 
-export function SelectMenu({onClose, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
+export function SelectMenu({onClose, onOpen, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
   return (
     <Popover
       isDialog={false}
       placement={placement}
       open={open}
       onClose={onClose}
+      onOpen={onOpen}
       style={style}
+      className="spectrum-Dropdown-popover"
       closeOnSelect={closeOnSelect}>
       <SelectList className={className} {...props} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>

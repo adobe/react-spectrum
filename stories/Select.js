@@ -4,22 +4,42 @@ import Select from '../src/Select';
 import {VerticalCenter} from '../.storybook/layout';
 import {withKnobs} from '@storybook/addon-knobs';
 
-const defaultProps = {
+const defaultList = {
   options: [
     {label: 'Chocolate', value: 'chocolate'},
     {label: 'Vanilla', value: 'vanilla'},
     {label: 'Strawberry', value: 'strawberry'},
     {label: 'Caramel', value: 'caramel'},
     {label: 'Cookies and Cream', value: 'cookiescream'},
-    {label: 'Peppermint', value: 'peppermint'},
-    {label: 'Some crazy long value that should be cut off', value: 'logVal'}
+    {label: 'Peppermint', value: 'peppermint'}
   ]
+};
+
+const longList = {
+  options: [
+    ...defaultList.options,
+    {label: 'Crispity, crunchity, peanut-buttery munchity', value: 'butterfinger'}
+  ]
+};
+
+const defaultProps = {
+  selectedValue: ['Peppermint']
+};
+
+const tinyList = {
+  options: [
+    {label: 'AM', value: 'am'},
+    {label: 'PM', value: 'PM'}
+  ]
+};
+
+const tinyProps = {
+  selectedValue: ['am']
 };
 
 const selectedValue = [
   'chocolate',
-  'vanilla',
-  'logVal'
+  'vanilla'
 ];
 
 storiesOf('Select', module)
@@ -35,8 +55,18 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
+    'Various widths',
+    () => renderMany(),
+    {inline: true}
+  )
+  .addWithInfo(
     'placeholder: other placeholder',
     () => render({placeholder: 'other placeholder'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'flexible',
+    () => render({flexible: true}),
     {inline: true}
   )
   .addWithInfo(
@@ -45,23 +75,28 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
+    'quiet flexible',
+    () => render({quiet: true, flexible: true}),
+    {inline: true}
+  )
+  .addWithInfo(
     'quiet, value: longVal',
-    () => render({quiet: true, value: 'logVal'}),
+    () => render({quiet: true, flexible: true, selectedValue: 'butterfinger'}),
     {inline: true}
   )
   .addWithInfo(
     'quiet multiple',
-    () => render({quiet: true, multiple: true, value: selectedValue}),
+    () => render({quiet: true, flexible: true, multiple: true, value: selectedValue}),
     {inline: true}
   )
   .addWithInfo(
     'quiet disabled',
-    () => render({quiet: true, disabled: true}),
+    () => render({quiet: true, flexible: true, disabled: true}),
     {inline: true}
   )
   .addWithInfo(
     'multiple: true',
-    () => render({multiple: true, defaultValue: selectedValue}),
+    () => render({multiple: true, flexible: true, defaultValue: selectedValue}),
     {inline: true}
   )
   .addWithInfo(
@@ -101,7 +136,38 @@ function render(props = {}) {
       onChange={action('change')}
       onOpen={action('open')}
       onClose={action('close')}
+      {...defaultList}
       {...defaultProps}
       {...props} />
+  );
+}
+
+function renderMany(props = {}) {
+  return (
+    <div>
+      <p>A. Default width:</p>
+      <Select
+        onChange={action('change')}
+        onOpen={action('open')}
+        onClose={action('close')}
+        {...longList}
+        {...defaultProps} />
+      <p>B. Fixed width:</p>
+      <Select
+        style={{width: '72px'}}
+        onChange={action('change')}
+        onOpen={action('open')}
+        onClose={action('close')}
+        {...tinyList}
+        {...tinyProps} />
+      <p>B. 100% of container</p>
+      <Select
+        style={{width: '100%'}}
+        onChange={action('change')}
+        onOpen={action('open')}
+        onClose={action('close')}
+        {...longList}
+        {...defaultProps} />
+    </div>
   );
 }

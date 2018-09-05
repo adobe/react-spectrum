@@ -23,7 +23,7 @@ const selectedValue = [
 describe('SelectList', () => {
   it('supports additional classNames', () => {
     const tree = shallow(<SelectList className="bell" />);
-    assert(tree.prop('className').indexOf('bell') >= 0);
+    assert.equal(tree.hasClass('bell'), true);
   });
 
   it('supports a list of options', () => {

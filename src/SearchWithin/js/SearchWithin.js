@@ -101,7 +101,7 @@ export default class SearchWithin extends React.Component {
         options={this.state.scopeOptions}
         disabled={disabled}
         required
-        noMinWidth
+        flexible
         {...selectProps} />
     );
 

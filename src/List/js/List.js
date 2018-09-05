@@ -15,6 +15,7 @@ export default class List extends Component {
   static propTypes = {
     className: PropTypes.string,
     role: PropTypes.string,
+    selectable: PropTypes.bool,
     autoFocus: PropTypes.bool
   };
 
@@ -33,6 +34,7 @@ export default class List extends Component {
       children,
       role = 'listbox',
       autoFocus,
+      selectable = false,
       id = this.listId,
       typeToSelect = true,
       ...otherProps
@@ -45,6 +47,7 @@ export default class List extends Component {
           className={
             classNames(
               'spectrum-Menu',
+              {'is-selectable': selectable},
               className
             )
           }

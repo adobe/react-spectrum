@@ -19,7 +19,7 @@ export default class SelectList extends Component {
     onChange: PropTypes.func,
     
     /** Array of strings of options in list */
-    options: PropTypes.arrayOf(PropTypes.string),
+    options: PropTypes.arrayOf(PropTypes.object),
     
     /** Whether an input is required */
     required: PropTypes.bool,
@@ -116,6 +116,7 @@ export default class SelectList extends Component {
       disabled = false,
       invalid = false,
       required = false,
+      className,
       ...otherProps
     } = this.props;
 
@@ -123,10 +124,12 @@ export default class SelectList extends Component {
 
     return (
       <List
+        className={className}
         aria-multiselectable={multiple}
         aria-disabled={disabled}
         aria-invalid={invalid}
         aria-required={required}
+        selectable
         {...otherProps}>
         {this.renderListOfOptions(options)}
       </List>

@@ -150,6 +150,24 @@ describe('Select', () => {
     assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('button').prop('id') + ' ' + tree.find('span').prop('id'));
   });
 
+  it('should pass aria-* properties and id to the button', () => {
+    const tree = render(
+      <Select options={testOptions} value="vanilla" aria-describedby="test" id="myid" />
+      );
+
+    assert.equal(tree.find('button').prop('aria-describedby'), 'test');
+    assert.equal(tree.find('button').prop('id'), 'myid');
+  });
+
+  it('shound pass non-aria DOM properties to the dropdown', () => {
+    const tree = mount(
+      <Select options={testOptions} value="vanilla" style={{width: '192px'}} lang="jp" />
+      );
+
+    assert.equal(tree.find(Dropdown).prop('lang'), 'jp');
+    assert.equal(tree.find(Dropdown).prop('style').width, '192px');
+  });
+
   it('should not update state if value prop is passed', () => {
     const onChange = sinon.spy();
     const tree = shallow(<Select options={testOptions} value="vanilla" onChange={onChange} />);
