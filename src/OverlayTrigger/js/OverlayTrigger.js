@@ -74,20 +74,57 @@ export default class OverlayTrigger extends Component {
      */
     defaultShow: PropTypes.bool,
     /**
-     * An element or text to overlay next to the target.
+     * Callback when the overlay trigger is blurred.
      */
     onBlur: PropTypes.func,
+    /**
+     * Callback when the overlay trigger is clicked.
+     */
     onClick: PropTypes.func,
+    /**
+     * Callback when the overlay trigger receives focus.
+     */
     onFocus: PropTypes.func,
+    /**
+     * Callback when the mouse leaves the overlay trigger.
+     */
     onMouseOut: PropTypes.func,
+    /**
+     * Callback when the mouse is over the overlay trigger.
+     */
     onMouseOver: PropTypes.func,
+    /**
+     * Callback when the overlay show is invoked, determined by the 'trigger' prop.
+     */
     onShow: PropTypes.func,
+    /**
+     * Callback when the overlay is hidden.
+     */
     onHide: PropTypes.func,
+    /**
+     * Will cause the overlay to show, but will not place it in a controlled state. You're probably looking for 'defaultShow'.
+     */
     show: PropTypes.oneOf([null]),
+    /**
+     * Passed through to Overlay.
+     */
     offset: PropTypes.number,
+    /**
+     * Passed through to Overlay.
+     */
     crossOffset: PropTypes.number,
+    /**
+     * Passed through.
+     */
     flip: PropTypes.bool,
+    /**
+     * Grey's out the trigger and removes interaction.
+     */
     disabled: PropTypes.bool,
+    /**
+     * By default, the body of the owning document. The overlay will do a hit test to see if it
+     * extends outside the boundaries and move it to a new position if it collides.
+     */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
     ])

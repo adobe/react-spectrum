@@ -36,7 +36,7 @@ StatusLight.displayName = 'StatusLight';
 
 StatusLight.propTypes = {
   /**
-   * The css class for the status light.
+   * The css class for the status light, it's applied to the top level div.
    */
   className: PropTypes.string,
 
@@ -44,5 +44,9 @@ StatusLight.propTypes = {
    * The variant changes the color of the status light.
    */
   variant: PropTypes.oneOf(VARIANTS),
+
+  /**
+   * Greys out the light and label
+   */
   disabled: PropTypes.bool
 };
