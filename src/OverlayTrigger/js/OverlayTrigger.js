@@ -106,15 +106,15 @@ export default class OverlayTrigger extends Component {
      */
     show: PropTypes.oneOf([null]),
     /**
-     * Passed through to Overlay.
+     * Overlay will be shifted by specified units in the placement's axis direction.
      */
     offset: PropTypes.number,
     /**
-     * Passed through to Overlay.
+     * Overlay will be shifted by specified units in the placement's cross-axis direction.
      */
     crossOffset: PropTypes.number,
     /**
-     * Passed through.
+     * Whether overlay should be allowed to flip if it hits the boundary
      */
     flip: PropTypes.bool,
     /**
