@@ -1,7 +1,5 @@
 import assert from 'assert';
-import calculatePosition, {calculatePositionInternal} from '../../src/OverlayTrigger/js/calculatePosition';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import calculatePosition from '../../src/OverlayTrigger/js/calculatePosition';
 
 const FLIPPED_DIRECTION = {
   left: 'right'
@@ -27,6 +25,36 @@ const containerDimensions = {
   top: 0,
   left: 0
 };
+
+function createElementWithDimensions(elemName, dimensions, margins) {
+  margins = margins || {};
+  let elem = document.createElement(elemName);
+
+  Object.assign(elem.style, {
+    width: 'width' in dimensions ? `${dimensions.width}px` : '0px',
+    height: 'height' in dimensions ? `${dimensions.height}px` : '0px',
+    top: 'top' in dimensions ? `${dimensions.top}px` : '0px',
+    left: 'left' in dimensions ? `${dimensions.left}px` : '0px',
+    marginTop: 'top' in margins ? `${margins.top}px` : '0px',
+    marginBottom: 'bottom' in margins ? `${margins.bottom}px` : '0px',
+    marginRight: 'right' in margins ? `${margins.right}px` : '0px',
+    marginLeft: 'left' in margins ? `${margins.left}px` : '0px',
+  });
+
+  elem.scrollTop = 'scroll' in dimensions ? dimensions.scroll.top : 0;
+  elem.scrollLeft = 'scroll' in dimensions ? dimensions.scroll.left : 0;
+
+  elem.getBoundingClientRect = () => ({
+    width: dimensions.width || 0,
+    height: dimensions.height || 0,
+    top: dimensions.top || 0,
+    left: dimensions.left || 0,
+    right: dimensions.right || 0,
+    bottom: dimensions.bottom || 0,
+  });
+
+  return elem;
+}
 
 const boundaryDimensions = {
   width: 600,
@@ -65,9 +93,28 @@ describe('calculatePosition', function () {
       placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
     };
 
+    const container = createElementWithDimensions('div', containerDimensions);
+    const target = createElementWithDimensions('div', targetDimension);
+    const overlay = createElementWithDimensions('div', overlaySize, margins);
+
+    const parentElement = document.createElement('div');
+
+    parentElement.appendChild(container);
+    parentElement.appendChild(target);
+    parentElement.appendChild(overlay);
+
+    document.documentElement.appendChild(parentElement);
+
+    const getBoundariesElement = () => {
+      const boundariesElem = createElementWithDimensions('div', boundaryDimensions);
+      parentElement.appendChild(boundariesElem);
+      return boundariesElem;
+    };
+
     it('Should calculate the correct position', function () {
-      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, boundaryDimensions, {top: 0, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
+      const result = calculatePosition(placement, overlay, target, container, 50, flip, getBoundariesElement, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
+      document.documentElement.removeChild(parentElement);
     });
   }
 
@@ -82,9 +129,31 @@ describe('calculatePosition', function () {
       placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
     };
 
+    const container = createElementWithDimensions('div', containerDimensions);
+    const target = createElementWithDimensions('div', targetDimension);
+    const overlay = createElementWithDimensions('div', overlaySize);
+
+    const parentElement = document.createElement('div');
+
+    parentElement.appendChild(container);
+    parentElement.appendChild(target);
+    parentElement.appendChild(overlay);
+
+    document.documentElement.appendChild(parentElement);
+
+    const getBoundariesElement = () => {
+      const boundariesElem = createElementWithDimensions('div', {
+        ...boundaryDimensions,
+        height: boundaryDimensions.height - PROVIDER_OFFSET
+      });
+      parentElement.appendChild(boundariesElem);
+      return boundariesElem;
+    };
+
     it('Should calculate the correct position when provider does not start at top of screen', function () {
-      const result = calculatePositionInternal(placement, containerDimensions, targetDimension, {...overlaySize}, margins, 50, flip, boundaryDimensions, {top: PROVIDER_OFFSET, left: 0, scroll: {top: 0, left: 0}}, offset, crossOffset);
+      const result = calculatePosition(placement, overlay, target, container, 50, flip, getBoundariesElement, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
+      document.documentElement.removeChild(parentElement);
     });
   }
 
@@ -253,6 +322,8 @@ describe('calculatePosition', function () {
 
       const {positionTop} = calculatePosition('bottom', overlayNode, target, container, 0, false, 'container', 0, 0);
       assert.equal(positionTop, 0);
+
+      document.body.removeChild(target);
     });
   });
 
