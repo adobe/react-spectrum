@@ -45,6 +45,31 @@ storiesOf('Checkbox', module)
     {inline: true}
   )
   .addWithInfo(
+    'quiet: true',
+    () => render({quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, indeterminate: true',
+    () => render({quiet: true, indeterminate: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, invalid: true',
+    () => render({quiet: true, invalid: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, invalid: true, indeterminate: true',
+    () => render({quiet: true, invalid: true, indeterminate: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, disabled: true',
+    () => render({quiet: true, disabled: true}),
+    {inline: true}
+  )
+  .addWithInfo(
     'Label Not Set',
     () => render({label: '', 'aria-label': 'React'}),
     {inline: true}

@@ -7,6 +7,7 @@ importSpectrumCSS('toggle');
 
 export default function Switch({
   variant, // 'ab'
+  quiet,
   className,
   ...otherProps
 }) {
@@ -17,7 +18,8 @@ export default function Switch({
         classNames(
           'spectrum-ToggleSwitch',
           {
-            [`spectrum-ToggleSwitch--${variant}`]: variant
+            [`spectrum-ToggleSwitch--${variant}`]: variant,
+            'spectrum-ToggleSwitch--quiet': quiet
           },
           className
         )
@@ -31,23 +33,40 @@ export default function Switch({
 }
 
 Switch.displayName = 'Switch';
-
 Switch.propTypes = {
-  /** Class given to switch */
+  /**
+  * Class given to switch
+  */
   className: PropTypes.string,
-  
-  /** Whether the switch is checked or not (controlled state) */
+
+  /**
+  * Whether the switch is checked or not (controlled state)
+  */
   checked: PropTypes.bool,
-  
-  /** Whether the switch should be checked (uncontrolled state) */
+
+  /**
+  * Whether the switch should be checked (uncontrolled state)
+  */
   defaultChecked: PropTypes.bool,
-  
-  /** Text to add to switch */
+
+  /**
+  * Text to add to switch
+  */
   label: PropTypes.string,
-  
-  /** Function called when switch is changed */
+
+  /**
+  * Function called when switch is changed
+  */
   onChange: PropTypes.func,
-  
-  /** Change switch to A/B variant rather an on/off */
+
+  /**
+  * Whether switch is a quiet variation
+  */
+  quiet: PropTypes.bool,
+
+  /**
+  * Change switch to A/B variant rather an on/off
+  */
   variant: PropTypes.oneOf(['ab'])
+
 };

@@ -49,6 +49,11 @@ describe('Checkbox', () => {
     tree.unmount();
   });
 
+  it('supports quiet', () => {
+    const tree = shallow(<Checkbox quiet />);
+    assert.equal(tree.prop('className'), 'spectrum-Checkbox spectrum-Checkbox--quiet');
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<Checkbox className="foo" />);
     assert.equal(tree.hasClass('foo'), true);

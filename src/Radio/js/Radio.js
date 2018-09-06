@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import SwitchBase from '../../Switch/js/SwitchBase';
 
@@ -7,6 +8,7 @@ importSpectrumCSS('radio');
 export default function Radio({
   className,
   labelBelow,
+  quiet,
   ...otherProps
 }) {
   return (
@@ -16,7 +18,8 @@ export default function Radio({
         classNames(
           'spectrum-Radio',
           {
-            'spectrum-Radio--labelBelow': labelBelow
+            'spectrum-Radio--labelBelow': labelBelow,
+            'spectrum-Radio--quiet': quiet
           },
           className
         )
@@ -29,3 +32,19 @@ export default function Radio({
 }
 
 Radio.displayName = 'Radio';
+Radio.propTypes = {
+  /**
+  * Class given to radio
+  */
+  className: PropTypes.string,
+
+  /**
+  * Whether label is below radio
+  */
+  labelBelow: PropTypes.bool,
+
+  /**
+  * Whether switch is a quiet variation
+  */
+  quiet: PropTypes.bool
+};

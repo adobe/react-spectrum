@@ -18,6 +18,11 @@ describe('Radio', () => {
     assert.equal(tree.hasClass('spectrum-Radio--labelBelow'), true);
   });
 
+  it('supports quiet', () => {
+    const tree = shallow(<Radio quiet />);
+    assert.equal(tree.prop('className'), 'spectrum-Radio spectrum-Radio--quiet');
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<Radio className="foo" />);
     assert.equal(tree.hasClass('foo'), true);

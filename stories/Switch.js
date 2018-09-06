@@ -43,6 +43,16 @@ storiesOf('Switch', module)
     'variant: ab',
     () => (render({variant: 'ab', 'aria-label': 'React'})),
     {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true',
+    () => render({quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet: true, disabled: true',
+    () => render({quiet: true, disabled: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

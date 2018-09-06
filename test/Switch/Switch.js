@@ -28,6 +28,11 @@ describe('Switch', () => {
     assert.equal(tree.hasClass('spectrum-ToggleSwitch--ab'), true);
   });
 
+  it('supports quiet', () => {
+    const tree = shallow(<Switch quiet />);
+    assert.equal(tree.prop('className'), 'spectrum-ToggleSwitch spectrum-ToggleSwitch--quiet');
+  });
+
   it('has appropriate WAI-ARIA role for a switch', () => {
     const tree = shallow(<Switch />);
     assert.equal(tree.prop('role'), 'switch');

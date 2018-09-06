@@ -49,7 +49,12 @@ export default class Checkbox extends Component {
     /**
      * Uses a dash instead of a check to indicate an in between or "unknown" state
      */
-    indeterminate: PropTypes.bool
+    indeterminate: PropTypes.bool,
+
+    /**
+    * Whether the checkbox is a quiet variation
+    */
+    quiet: PropTypes.bool
 
   };
   static defaultProps = {
@@ -60,7 +65,8 @@ export default class Checkbox extends Component {
     invalid: false,
     readOnly: false,
     onChange: function () {},
-    indeterminate: false
+    indeterminate: false,
+    quiet: false
   };
 
   componentDidMount() {
@@ -84,6 +90,7 @@ export default class Checkbox extends Component {
   render() {
     const {
       indeterminate,
+      quiet,
       className,
       ...otherProps
     } = this.props;
@@ -104,7 +111,10 @@ export default class Checkbox extends Component {
         className={
           classNames(
             'spectrum-Checkbox',
-            {'is-indeterminate': indeterminate},
+            {
+              'is-indeterminate': indeterminate,
+              'spectrum-Checkbox--quiet': quiet
+            },
             className
           )
         }
