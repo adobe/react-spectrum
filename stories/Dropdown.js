@@ -1,7 +1,7 @@
 import {action, storiesOf} from '@storybook/react';
 import Button from '../src/Button';
 import Dropdown from '../src/Dropdown';
-import {Menu, MenuItem} from '../src/Menu';
+import {Menu, MenuItem, SubMenu} from '../src/Menu';
 import React from 'react';
 import {VerticalCenter} from '../.storybook/layout';
 
@@ -30,6 +30,11 @@ function render(props = {}) {
         <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
         <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
         <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
+        <SubMenu label="zaa">
+          <MenuItem value="1">zaa 1</MenuItem>
+          <MenuItem value="2">zaa 2</MenuItem>
+          <MenuItem value="3">zaa 3</MenuItem>
+        </SubMenu>
       </Menu>
     </Dropdown>
   );

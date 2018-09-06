@@ -1,6 +1,8 @@
 import CheckmarkMedium from '../../Icon/core/CheckmarkMedium';
+import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import filterDOMProps from '../../utils/filterDOMProps';
 import {interpretKeyboardEvent} from '../../utils/events';
 import React, {Component} from 'react';
 
@@ -49,6 +51,15 @@ export default class ListItem extends Component {
     }
   }
 
+  onKeyDown = e => {
+    const {onKeyDown, disabled} = this.props;
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
+    if (!disabled) {
+      interpretKeyboardEvent.call(this, e);
+    }
+  }
   render() {
     const {
       icon,
@@ -58,22 +69,17 @@ export default class ListItem extends Component {
       selected,
       disabled,
       focused,
+      hasNestedMenu,
       tabIndex = 0,
       role = 'option',
       ...otherProps
     } = this.props;
 
     // We don't need/want to add onFocusNext to the accordion header div because we call it manually when arrow key, home or end is pressed with focus on accordion header.
-    delete otherProps.onFocusNext;
-    delete otherProps.onFocusPrevious;
-    delete otherProps.onFocusFirst;
-    delete otherProps.onFocusLast;
-    delete otherProps.onPageDown;
-    delete otherProps.onPageUp;
-    delete otherProps.onTab;
     delete otherProps.onFocus;
     delete otherProps.onBlur;
     delete otherProps.value;
+    delete otherProps.onKeyDown;
 
     return (
       <li
@@ -88,7 +94,7 @@ export default class ListItem extends Component {
             className
           )
         }
-        onKeyDown={disabled ? null : interpretKeyboardEvent.bind(this)}
+        onKeyDown={this.onKeyDown}
         onMouseEnter={disabled ? null : this.handleMouseEnter}
         onClick={disabled ? null : this.handleClick}
         onFocus={disabled ? null : this.handleFocus}
@@ -98,12 +104,13 @@ export default class ListItem extends Component {
         aria-checked={role === 'menuitemcheckbox' || role === 'menuitemradio' ? !!selected : null}
         aria-selected={role === 'option' ? (!!selected || !!focused) : null}
         aria-disabled={disabled || null}
-        {...otherProps}>
+        {...filterDOMProps(otherProps)}>
         {cloneIcon(icon, {
           size: 'S'
         })}
         <span className="spectrum-Menu-itemLabel">{label || children}</span>
         {selected && <CheckmarkMedium size={null} className="spectrum-Menu-checkmark" />}
+        {hasNestedMenu && <ChevronRightMedium className="spectrum-Menu-chevron" />}
       </li>
     );
   }

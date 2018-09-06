@@ -147,8 +147,14 @@ export default class OverlayTrigger extends Component {
     this.overlayId = createId();
     this._mountNode = null;
     this.state = {
-      show: props.defaultShow
+      show: props.show === undefined ? props.defaultShow : props.show
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.show !== this.props.show) {
+      nextProps.show ? this.handleDelayedShow() : this.handleDelayedHide();
+    }
   }
 
   componentDidMount() {
@@ -320,6 +326,8 @@ export default class OverlayTrigger extends Component {
   render() {
     const {
       trigger,
+      show,
+      selected = this.state.show,
       ...props
     } = this.props;
 
@@ -345,25 +353,28 @@ export default class OverlayTrigger extends Component {
       triggerProps['aria-describedby'] = props.id;
     }
 
-    if (isOneOf('click', trigger)) {
-      triggerProps.onClick = this.handleToggle;
+    // Attach trigger events in case on un-controlled overlay
+    if (show === undefined) {
+      if (isOneOf('click', trigger)) {
+        triggerProps.onClick = this.handleToggle;
+      }
+
+      if (isOneOf('hover', trigger)) {
+        triggerProps.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
+        triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+        props.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
+        props.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+      }
+
+      if (isOneOf('focus', trigger)) {
+        triggerProps.onFocus = this.handleDelayedShow;
+        triggerProps.onBlur = this.handleDelayedHide;
+        props.onFocus = this.handleDelayedShow;
+        props.onBlur = this.handleDelayedHide;
+      }
     }
 
-    if (isOneOf('hover', trigger)) {
-      triggerProps.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
-      triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
-      props.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
-      props.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
-    }
-
-    if (isOneOf('focus', trigger)) {
-      triggerProps.onFocus = this.handleDelayedShow;
-      triggerProps.onBlur = this.handleDelayedHide;
-      props.onFocus = this.handleDelayedShow;
-      props.onBlur = this.handleDelayedHide;
-    }
-
-    triggerProps.selected = this.state.show;
+    triggerProps.selected = selected;
 
     // Remove previous overlay from modalManager
     if (this._overlay) {

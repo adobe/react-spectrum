@@ -147,17 +147,19 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
   let placementInfo = parsePlacement(placementInput);
   const {axis, size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
   let position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, offset, crossOffset);
+  let normalizedOffset = offset;
 
   // First check if placement should be flipped
   if (flip && shouldFlip(axis, position[axis], overlaySize[size], padding, placement, boundaryDimensions, containerOffsetWithBoundary)) {
     const flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}`);
     const {axis, size} = flippedPlacementInfo;
-    const flippedPosition = computePosition(childOffset, containerDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset);
+    const flippedPosition = computePosition(childOffset, containerDimensions, overlaySize, flippedPlacementInfo, -1 * offset, crossOffset);
 
     // Check if flipped placement has enough space otherwise flip is not possible
     if (!shouldFlip(axis, flippedPosition[axis], overlaySize[size], padding, FLIPPED_DIRECTION[placement], boundaryDimensions, containerOffsetWithBoundary)) {
       placementInfo = flippedPlacementInfo;
       position = flippedPosition;
+      normalizedOffset = -1 * offset;
     }
   }
 
@@ -167,7 +169,7 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
   let maxHeight = Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding);
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, offset, crossOffset);
+  position = computePosition(childOffset, containerDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset);
   delta = delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
 
   position[crossAxis] += delta;
