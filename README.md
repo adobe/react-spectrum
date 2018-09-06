@@ -22,7 +22,12 @@ along-side the JavaScript (more on configuring this below). Each component shoul
 this way only the components you use will be included in the output JavaScript and CSS files.
 
 ### Installation
+#### Node
+We recommend that you use [NVM](https://github.com/creationix/nvm#installation) to manage your node version.  
+NVM has a section in their documentation to handle using the right version automatically when cd'ing into a project with a `.nvmrc` file [documentation](https://github.com/creationix/nvm#nvmrc)  
+If you are manually managing your version of Node, then refer to `.nvmrc` for the version you should run with.
 
+#### NPM
 Add the following to your `~/.npmrc`:
 
 ```
