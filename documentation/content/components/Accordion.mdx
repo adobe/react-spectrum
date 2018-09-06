@@ -1,0 +1,193 @@
+import {Accordion,AccordionItem} from '@react/react-spectrum/Accordion';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import Radio from '@react/react-spectrum/Radio';
+
+## Overview
+
+An Accordion is a list of expandable and collapsible sections. Accordion items can be toggled by clicking or tapping.
+
+### Example
+
+<Accordion>
+  <AccordionItem header="Header 1">
+    Item 1
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion>
+  <AccordionItem header="Header 1">
+    Item 1
+  </AccordionItem>
+</Accordion>
+```
+
+### Default State
+
+<Accordion>
+  <AccordionItem header="Header 2">
+  Item 1
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion>
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+</Accordion>
+```
+
+### Multi Selection
+`multiselectable` allows multiple open accordion items at same time.
+
+<Accordion multiselectable>
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion multiselectable>
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+```
+
+### Default Selected Index
+`defaultSelectedIndex` will render the Accordion with the specified item open. The Accordion will be uncontrolled.
+
+<Accordion defaultSelectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion defaultSelectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+```
+
+### Selected Index
+`selectedIndex` will put the Accordion in a controlled state and render with the specified item open. AccordionItems can be opened or closed only by changing selectedIndex prop value.
+
+<Accordion selectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion selectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+```
+
+### Arialevel
+
+An Accordion 'arialLevel' prop handles the heading level for 'Accordion item' headings, allowing a developer to place Accordion headings within the heading hierarchy of the application.
+
+<Accordion ariaLevel={4} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion ariaLevel={4} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+```
+
+
+### Handling Events
+
+Events handlers onChange and other user actions can be registered on a `Accordion`. `onChange` is a function that will be called when an AccordionItem is selected (opened) or deselected (closed). It will be passed the updated selected index into the callback.
+
+<Accordion ariaLevel={4} onChange={e => console.log('Accordion clicked!', e)}>
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion ariaLevel={4} onChange={e => console.log('Accordion clicked!', e)}>
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+  Item 2
+  </AccordionItem>
+</Accordion>
+```
+
+### Component Nesting
+
+This is an Accordion containing a nested radio group to demonstrate that keyboard selection of RadioGroup items does not propagate to ancestor Accordion element.
+
+<Accordion defaultSelectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+    <FieldLabel label="Radio Group" id="radio-group-label">
+      <RadioGroup name="radio-group" aria-labelledby="radio-group-label">
+        <Radio label="this" value="this" checked />
+        <Radio label="that" value="that" />
+      </RadioGroup>
+    </FieldLabel>
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Accordion defaultSelectedIndex={1} >
+  <AccordionItem header="Header 1">
+  Item 1
+  </AccordionItem>
+  <AccordionItem header="Header 2">
+    <FieldLabel label="Radio Group" id="radio-group-label">
+      <RadioGroup name="radio-group" aria-labelledby="radio-group-label" >
+        <Radio label="this" value="this" checked />
+        <Radio label="that" value="that" />
+      </RadioGroup>
+    </FieldLabel>
+  </AccordionItem>
+</Accordion>
+```
+

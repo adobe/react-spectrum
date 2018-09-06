@@ -1,0 +1,161 @@
+import Datepicker from '@react/react-spectrum/Datepicker';
+
+## Overview
+
+The `Datepicker` component is a textfield input with a button that opens a popover calendar for easy date selection.
+
+### Example
+
+<Datepicker />
+
+```jsx
+<Datepicker />
+```
+
+### Controlled
+
+The controlled Datepicker is loaded with value prop that takes either String, Object or Number type. In below example the `Datepicker` is loaded with today's date.
+
+<Datepicker  value="today" />
+
+```jsx
+
+<Datepicker  value="today" />
+```
+
+## Type
+
+There are many Datepicker `types` to choose from in Spectrum. The default type is 'date'. Apart from that user can have `datetime`, `time`. These can also be used in combination with controlled type component.
+
+### date
+This is the default value for type prop. Opens up the calendar that allows selection of date and populates the same in input control.
+
+<Datepicker type="date" />
+
+```jsx
+<Datepicker type="date" />
+```
+
+### datetime
+
+The `type` prop with value `datetime` shows the popover with a calendar and input control to enter hour and minutes. Once selected the input box is populated with date and time.
+
+<Datepicker type="datetime" />
+
+```jsx
+<Datepicker type="datetime" />
+```
+
+### time
+
+The `type` prop with value 'time' shows only time. Validations for incorrect input values of time is shown by highlighting the input control with error class.
+
+<Datepicker placeholder="Choose a time" type="time" />
+
+```jsx
+<Datepicker placeholder="Choose a time" type="time" />
+```
+
+## Type with controlled
+
+All the three `type` of datepicker can be `controlled`.
+
+<Datepicker type="time" value="today" />
+
+```jsx
+<Datepicker type="time" value="today" />
+```
+
+<Datepicker type="datetime" value="today" />
+
+```jsx
+<Datepicker value="today" />
+```
+
+<Datepicker type="date" value="today" />
+
+```jsx
+<Datepicker type="date" value="today" />
+```
+
+## startDay
+
+Start day refers to what day of the week should be left most, 0 = Sunday, 1 = Monday... 6 = Saturday. Default value is 0.
+
+<Datepicker value="today" startDay={2} />
+
+```jsx
+<Datepicker value="today" startDay={2} />
+```
+
+## quiet
+
+The `quiet` prop is a style change to match Spectrum Quiet.
+
+<Datepicker value="today" quiet />
+
+```jsx
+<Datepicker value="today" quiet />
+```
+
+## invalid
+
+The Datepicker can be triggered to show some validations with different css on error. The invalid prop if set to true, it shows the red border for the input control.
+
+<Datepicker  invalid />
+
+```jsx
+<Datepicker invalid />
+```
+
+## disabled
+
+This prop is used to disable the datepicker. The cursor pointer wont be available and datepicker will no longer be clickable.
+
+<Datepicker  disabled />
+
+```jsx
+<Datepicker disabled />
+```
+## readonly
+
+This prop is used to make the textfield of datepicker readonly.
+
+<Datepicker readonly />
+
+```jsx
+<Datepicker readonly />
+```
+
+## placeholder
+
+If not specified, the default is `choose a date`.
+
+<Datepicker type="time" placedholder="Please choose time" />
+
+```jsx
+<Datepicker type="time" placedholder="Please choose time" />
+```
+
+## placement
+
+This prop allow the user to customise the placment of popover that shows the calendar. Default is right. Other possible values are 'top', 'bottom', 'left'.
+
+### left
+<Datepicker  placement="left" />
+
+```jsx
+<Datepicker  placement="left" />
+```
+### top
+<Datepicker  placement="top" />
+
+```jsx
+<Datepicker  placement="top" />
+```
+### bottom
+<Datepicker  placement="bottom" />
+
+```jsx
+<Datepicker  placement="bottom" />
+```
