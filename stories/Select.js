@@ -1,4 +1,7 @@
 import {action, storiesOf} from '@storybook/react';
+import Illustrator from '../src/Icon/Illustrator';
+import Lightroom from '../src/Icon/Lightroom';
+import Photoshop from '../src/Icon/Photoshop';
 import React from 'react';
 import Select from '../src/Select';
 import {VerticalCenter} from '../.storybook/layout';
@@ -127,6 +130,18 @@ storiesOf('Select', module)
   .addWithInfo(
     'Stay open on select',
     () => render({closeOnSelect: false}),
+    {inline: true}
+  ).addWithInfo(
+    'with icons',
+    () =>
+      render({
+        options: [
+          {label: 'Photoshop', value: 'PHSP', icon: <Photoshop />},
+          {label: 'Lightroom', value: 'LTRM', icon: <Lightroom />},
+          {label: 'Illustrator', value: 'ILST', icon: <Illustrator />},
+          {label: 'Other', value: 'OTHER'}
+        ]
+      }),
     {inline: true}
   );
 

@@ -124,6 +124,7 @@ export default class Select extends React.Component {
       alignRight,
       labelId,
       id = this.selectId,
+      icon,
       ...otherProps
     } = this.props;
 
@@ -146,6 +147,7 @@ export default class Select extends React.Component {
     if (!multiple) {
       const selectedOption = options.find(o => o.value === value);
       label = selectedOption ? selectedOption.label : placeholder;
+      icon = selectedOption && selectedOption.icon;
     }
 
     closeOnSelect = typeof closeOnSelect === 'boolean' ? closeOnSelect : !multiple;
@@ -170,8 +172,8 @@ export default class Select extends React.Component {
         )}
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
-        onClose={this.onClose}
         onOpen={onOpen}
+        onClose={this.onClose}
         alignRight={alignRight}
         {...dropdownProps}>
         <Button
@@ -186,6 +188,7 @@ export default class Select extends React.Component {
           onKeyDown={this.onKeyDown}
           aria-labelledby={ariaLabelledby}
           id={id}
+          icon={icon}
           {...buttonProps}>
           <span
             id={valueId}

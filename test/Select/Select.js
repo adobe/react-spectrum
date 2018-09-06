@@ -2,7 +2,10 @@ import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
 import FieldLabel from '../../src/FieldLabel';
+import Illustrator from '../src/Icon/Illustrator';
+import Lightroom from '../src/Icon/Lightroom';
 import {mount, render, shallow} from 'enzyme';
+import Photoshop from '../src/Icon/Photoshop';
 import React from 'react';
 import Select, {SelectMenu} from '../../src/Select';
 import sinon from 'sinon';
@@ -229,5 +232,24 @@ describe('Select', () => {
     assert.equal(tree.find(Button).prop('selected'), false);
 
     tree.unmount();
+  });
+
+  it('supports icons in items', () => {
+    const optionsWithIcons = [
+      {label: 'Photoshop', value: 'PHSP', icon: <Photoshop />},
+      {label: 'Lightroom', value: 'LTRM', icon: <Lightroom />},
+      {label: 'Illustrator', value: 'ILST', icon: <Illustrator />},
+      {label: 'Other', value: 'OTHER'}
+    ];
+    const tree = shallow(<Select options={optionsWithIcons} />);
+
+    const selectMenu = tree.find(SelectMenu).prop('options');
+
+    assert.equal(selectMenu.length, 4);
+    assert.deepStrictEqual(selectMenu[0].icon, <Photoshop />);
+    assert.equal(selectMenu[3].icon, null);
+
+    const button = tree.find(Button);
+    assert.deepStrictEqual(button.prop('icon'), <Photoshop />);
   });
 });
