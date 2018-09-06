@@ -6,28 +6,31 @@ export default class SelectList extends Component {
   static propTypes = {
     /** Whether the SelectList is disabled */
     disabled: PropTypes.bool,
-    
+
     /** Whether to show the invalid icon and styling */
     invalid: PropTypes.bool,
-    
+
     label: PropTypes.string,
-    
-    /** Whether µultiple options are able to be selected */
+
+    /** Whether multiple options are able to be selected */
     multiple: PropTypes.bool,
-    
+
     /** Function called when the selected options are changed */
     onChange: PropTypes.func,
-    
+
     /** Array of strings of options in list */
     options: PropTypes.arrayOf(PropTypes.object),
     
     /** Whether an input is required */
     required: PropTypes.bool,
-    
+
     /** Array of pre-selected values*/
-    value: PropTypes.arrayOf(PropTypes.string)
+    value: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.string
+    ])
   };
-  
+
   static defaultProps = {
     options: [],
     multiple: false,
@@ -35,7 +38,7 @@ export default class SelectList extends Component {
     invalid: false,
     required: false,
   };
-  
+
   constructor(props) {
     super(props);
     this.state = {
