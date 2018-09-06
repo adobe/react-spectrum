@@ -1,0 +1,10 @@
+## Overview
+
+To programmatically open a Modal, you can use the ModalContainer class.
+```
+ModalContainer.show(<Modal>...</Modal>, this);
+```
+`show` takes 3 arguments, a Modal, a context, and a container. Typically, `this`, is the context that should be provided
+and container usually doesn't need to be specified, it will automatically go to the closest provider. It will
+pick up the context as provided by the React Spectrum `<Provider>`. Do not wrap the `<Modal>` in a `<Provider>` as that
+will result in the `<Modal>` not getting the right props.

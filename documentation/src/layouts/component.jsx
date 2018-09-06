@@ -23,33 +23,35 @@ export default class ComponentLayout extends React.Component {
 
     return (
       <Provider className="page component-page" theme="dark">
-        <Header />
+        <Header className="page-header" />
         <div className="page-main">
           <ul className="sidebar">
-            {allComponents.map(edge => <li><Link href={`/components/${edge.node.displayName}`}>{edge.node.displayName}</Link></li>)}
+            {allComponents.map(edge => <li key={edge.node.displayName}><Link href={`/components/${edge.node.displayName}`}>{edge.node.displayName}</Link></li>)}
           </ul>
-          <main>
-            <Heading size={1}>{component.displayName}</Heading>
-            <TabView>
-              <Tab label="Overview">
-                {children({
-                  ...this.props,
-                  components: mdxComponents
-                })}
-              </Tab>
-              <Tab label="API">
-                <ComponentAPI component={component} />
-                {related.map(edge =>
-                  <section>
-                    <Heading size={1}>{edge.node.displayName}</Heading>
-                    <ComponentAPI component={edge.node} />
-                  </section>
-                )}
-                {this.props.data.relatedClasses && this.props.data.relatedClasses.edges.map(edge =>
-                  <ClassAPI node={edge.node} />
-                )}
-              </Tab>
-            </TabView>
+          <main className="page-content">
+            <div className="documentation">
+              <Heading size={1}>{component.displayName}</Heading>
+              <TabView>
+                <Tab label="Overview">
+                  {children({
+                    ...this.props,
+                    components: mdxComponents
+                  })}
+                </Tab>
+                <Tab label="API">
+                  <ComponentAPI component={component} />
+                  {related.map(edge =>
+                    <section key={edge.node.displayName}>
+                      <Heading size={1}>{edge.node.displayName}</Heading>
+                      <ComponentAPI component={edge.node} />
+                    </section>
+                  )}
+                  {this.props.data.relatedClasses && this.props.data.relatedClasses.edges.map(edge =>
+                    <ClassAPI key={edge.node.id} node={edge.node} />
+                  )}
+                </Tab>
+              </TabView>
+            </div>
           </main>
         </div>
       </Provider>
@@ -78,15 +80,15 @@ function ComponentAPI({component}) {
               <TH>Description</TH>
             </THead>
             <TBody>
-              {component.props.map(prop =>
-                <TR>
-                  <TD><code>{prop.name}</code></TD>
-                  <TD className="type-column"><code>{formatType(prop.type)}</code></TD>
-                  <TD>{prop.required ? <Checkmark size="S" /> : null}</TD>
-                  <TD><code>{prop.defaultValue && prop.defaultValue.value}</code></TD>
-                  <TD><div dangerouslySetInnerHTML={{__html: prop.description && prop.description.childMarkdownRemark.html.slice(3, -4)}} /></TD>
-                </TR>
-              )}
+              {component.props.map(prop => (
+                  <TR key={prop.name}>
+                    <TD><code>{prop.name}</code></TD>
+                    <TD className="type-column"><code>{formatType(prop.type)}</code></TD>
+                    <TD>{prop.required ? <Checkmark size="S" /> : null}</TD>
+                    <TD><code>{prop.defaultValue && prop.defaultValue.value}</code></TD>
+                    <TD><div dangerouslySetInnerHTML={{__html: prop.description && prop.description.childMarkdownRemark.html.slice(3, -4)}} /></TD>
+                  </TR>
+              ))}
             </TBody>
           </Table>
         </section>
@@ -102,7 +104,7 @@ function ComponentAPI({component}) {
             </THead>
             <TBody>
               {methods.map(method =>
-                <TR>
+                <TR key={method.name}>
                   <TD><code>{formatMethod(method)}</code></TD>
                   <TD>{method.description}</TD>
                 </TR>
@@ -134,7 +136,7 @@ function ClassAPI({node}) {
             </THead>
             <TBody>
               {node.members.instance.map(method =>
-                <TR>
+                <TR key={method.name}>
                   <TD><code>{formatMethod(method)}</code></TD>
                   <TD>{method.abstract ? <Checkmark size="S" /> : null}</TD>
                   <TD><div dangerouslySetInnerHTML={{__html: method.description && method.description.childMarkdownRemark.html.slice(3, -4)}} /></TD>
@@ -148,17 +150,82 @@ function ClassAPI({node}) {
   );
 }
 
-function formatType(type) {
+const indentDefault = '10px';
+
+function renderShape(value, indent) {
+  const startObject = 'shape: {';
+  const endObject = '}';
+  if(value.value) {
+    return (
+      <div style={{paddingLeft: indent}}>
+        <div>{startObject}</div>
+        <div style={{paddingLeft: indent}}>
+          {Object.keys(value.value).map(key => {
+            return (
+              <div key={key}>
+                {key}: {formatType(value.value[key], indentDefault)}
+              </div>
+            );
+          })}
+        </div>
+        <div>{endObject}</div>
+      </div>
+    );
+  }
+  return (
+    <div style={{paddingLeft: indent}}>
+      <div>{startObject}{endObject}</div>
+    </div>
+  );
+}
+
+function renderArrayOf(value, indent) {
+  if(value.value) {
+    return (
+      <div style={{paddingLeft: indent}}>
+        <div>arrayOf: [</div>
+        {formatType(value.value, indentDefault)}
+        <div>]</div>
+      </div>
+    );
+  }
+  return <div style={{paddingLeft: indent}}>{value.name}</div>;
+}
+
+function renderOneOf(value, indent) {
+  return (
+    <div style={{paddingLeft: indent}}>
+      <div>oneOf: [</div>
+      {value.value.map(v => <div key={v.name}>{formatType(v, indentDefault)}</div>)}
+      <div>]</div>
+    </div>
+  );
+}
+
+
+function formatType(type, indent='0px') {
   if (!type) return '';
-  if (type.name === 'arrayOf' && type.value) {
-    return type.value.name + '[]';
+  if (type.name === 'arrayOf') {
+    return renderArrayOf(type, indent);
+  }
+  if (type.name === 'shape') {
+    return renderShape(type, indent);
   }
 
-  if (type.name === 'union' || type.name === 'enum') {
+  if (type.name === 'union') {
+    if(Array.isArray(type.value)) {
+      return renderOneOf(type, indent);
+    }
+    return <div style={{paddingLeft: indent}}>{type.value}</div>;
+  }
+  if (type.name === 'enum') {
     return type.value.map(v => v.value || v.name).join(' | ');
   }
+  if (type.name === 'instanceOf') {
+    return <div style={{paddingLeft: indent}}>{`instanceOf: ${type.value}`}</div>;
+  }
 
-  return type.name;
+  return <div style={{paddingLeft: indent}}>{type.name}</div>;
 }
 
 function formatMethod(method) {

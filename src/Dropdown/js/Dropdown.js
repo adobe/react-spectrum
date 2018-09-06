@@ -10,7 +10,30 @@ import ReactDOM from 'react-dom';
 @autobind
 export default class Dropdown extends React.Component {
   static propTypes = {
-    closeOnSelect: PropTypes.bool
+    /**
+     * If true, dropdown will close on selection of an item
+     */
+    closeOnSelect: PropTypes.bool,
+
+    /**
+     * Callback for when the dropdown is opened
+     */
+    onOpen: PropTypes.func,
+
+    /**
+     * Callback for when the dropdown is closed
+     */
+    onClose: PropTypes.func,
+
+    /**
+     * Callback for when an item is selected from the dropdown
+     */
+    onSelect: PropTypes.func,
+
+    /**
+     * Aligns the dropdown to the right or left of the button opening the dropdown
+     */
+    alignRight: PropTypes.bool
   };
 
   static defaultProps = {

@@ -21,17 +21,48 @@ export default class Clock extends Component {
   static displayName = 'Clock';
 
   static propTypes = {
+    /**
+     * Clock can accept a number of different value represenationas
+     */
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
     ]),
+
+    /**
+     * Moment formats
+     */
     valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+
+    /**
+     * Moment formats
+     */
     displayFormat: PropTypes.string,
+
+    /**
+     * Removes borders around inputs
+     */
     quiet: PropTypes.bool,
+
+    /**
+     * Greys out the control and makes it so you can't interact with it
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Marks the input red as invalid input
+     */
     invalid: PropTypes.bool,
+
+    /**
+     * Makes it so the value can't be changed by the user
+     */
     readOnly: PropTypes.bool,
+
+    /**
+     * Mark a form input as required, also necessary for the form to be submitted
+     */
     required: PropTypes.bool,
 
     /**
@@ -110,6 +141,7 @@ export default class Clock extends Component {
   /**
    * Handles change event on hour text input
    * @param {Event} e Change event
+   * @private
    */
   handleHourChange(value, e) {
     const {minuteText, meridiemVal} = this.state;
@@ -124,6 +156,7 @@ export default class Clock extends Component {
   /**
    * Handles change event on minute text input
    * @param {Event} e Change event
+   * @private
    */
   handleMinuteChange(value, e) {
     const {hourText, meridiemVal} = this.state;
@@ -138,6 +171,7 @@ export default class Clock extends Component {
   /**
    * Handles AM/PM Change
    * @param {Event} e Change event
+   * @private
    */
   handleMeridiemChange(value, e) {
     const {hourText, minuteText} = this.state;
@@ -147,6 +181,7 @@ export default class Clock extends Component {
   /**
    * Handles focus event on text input
    * @param {FocusEvent} e Focus event
+   * @private
    */
   handleFocus(e) {
     this.setState({
@@ -157,6 +192,7 @@ export default class Clock extends Component {
   /**
    * Handles blur event on hour text input
    * @param {FocusEvent} e Blur event
+   * @private
    */
   handleHourBlur(e) {
     let value = e.target.value;
@@ -174,6 +210,7 @@ export default class Clock extends Component {
   /**
    * Handles blur event on minute text input
    * @param {FocusEvent} e Blur event
+   * @private
    */
   handleMinuteBlur(e) {
     let value = e.target.value;
@@ -193,6 +230,7 @@ export default class Clock extends Component {
    * @param {String} hourText   Hour text value
    * @param {String} minuteText Minute text value
    * @param {String} meridiemVal    'am' or 'pm'
+   * @private
    */
   changeTime(hourText, minuteText, meridiemVal) {
     const {valueFormat, onChange} = this.props;
@@ -242,6 +280,7 @@ export default class Clock extends Component {
 
   /**
    * Sets focus to appropriate descendant.
+   * @private
    */
   focus() {
     if (document.activeElement !== this.minuteRef) {
@@ -274,17 +313,19 @@ export default class Clock extends Component {
    * @param {Number} hour Hour in range 0-23
    * @param {Boolean} displayMeridiem Output should be converted to 12-hour clock
    * @return {String} in range 1-12 (12-hour) or 0-23 (24-hour)
+   * @private
    */
   getDisplayHour(hour, displayMeridiem) {
     const newHour = displayMeridiem ? (hour + 11) % 12 + 1 : hour;
     return newHour.toString();
   }
 
-   /**
+  /**
    * Returns localized label for AM/PM dropdown
    * @param {String} meridiem 'am' or 'pm'
    * @param {String} displayFormat from props
    * @return {String} in range 1-12 (12-hour) or 0-23 (24-hour)
+   * @private
    */
   getMeridiemLabel(meridiem, displayFormat) {
     const localizedMeridiem = formatMessage(meridiem);
@@ -296,6 +337,7 @@ export default class Clock extends Component {
    * Returns AM/PM (meridiem) value for a given moment
    * @param {Object} moment
    * @return {String} 'am', 'pm', or '' (for invalid moment values)
+   * @private
    */
   getMeridiemVal(moment) {
     if (!moment || !moment.isValid()) {

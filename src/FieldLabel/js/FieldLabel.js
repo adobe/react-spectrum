@@ -28,8 +28,23 @@ export default function FieldLabel({label, position, children, className, labelF
 FieldLabel.displayName = 'FieldLabel';
 
 FieldLabel.propTypes = {
+  /**
+   * String to display
+   */
   label: PropTypes.string.isRequired,
+
+  /**
+   * Position of the label relative to the Field
+   */
   position: PropTypes.string,
+
+  /**
+   * Custom classname to apply to the label
+   */
   className: PropTypes.string,
+
+  /**
+   * Like in a form, what input should the label be associated with
+   */
   labelFor: PropTypes.string
 };

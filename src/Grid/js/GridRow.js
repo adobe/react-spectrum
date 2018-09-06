@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import responsive from './responsive';
 
@@ -7,9 +8,36 @@ import responsive from './responsive';
  * A row in a grid
  */
 export default class GridRow extends Component {
+  static propTypes = {
+    /**
+     * Fill me in and fix my prop type
+     */
+    align: PropTypes.any,
+
+    /**
+     * Fill me in and fix my prop type
+     */
+    valign: PropTypes.any,
+
+    /**
+     * Fill me in and fix my prop type
+     */
+    distribution: PropTypes.any,
+
+    /**
+     * Fill me in and fix my prop type
+     */
+    reverse: PropTypes.any,
+
+    /**
+     * Fill me in and fix my prop type
+     */
+    className: PropTypes.string,
+  };
+
   static defaultProps = {
     reverse: false
-  }
+  };
 
   render() {
     const {

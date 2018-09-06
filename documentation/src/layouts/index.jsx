@@ -9,9 +9,13 @@ export default class MainLayout extends React.Component {
     return (
       <Provider theme="dark" className="page">
         <Header />
-        <main>
-          {children()}
-        </main>
+        <div className="page-main">
+          <main className="page-content">
+            <div className="documentation">
+              {children()}
+            </div>
+          </main>
+        </div>
       </Provider>
     );
   }

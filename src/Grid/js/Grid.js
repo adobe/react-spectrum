@@ -1,12 +1,22 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
 
 export default class Grid extends Component {
+  static propTypes = {
+    /**
+     * Based on http://flexboxgrid.com/
+     * Fluid is percentage based
+     * Fixed is a
+     */
+    variant: PropTypes.oneOf(['fixed', 'fluid'])
+  };
+
   static defaultProps = {
     variant: 'fluid'
-  }
+  };
 
   render() {
     const {

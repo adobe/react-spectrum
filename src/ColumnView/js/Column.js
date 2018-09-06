@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {CSSLayout, EditableCollectionView, IndexPath} from '@react/collection-view';
 import Item from './Item';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -10,6 +11,33 @@ import ReactDOM from 'react-dom';
  */
 @autobind
 export default class Column extends React.Component {
+  static propTypes = {
+    /*
+     * An instance of an EventEmitter. Usually a ColumnViewDataSource.
+     */
+    dataSource: PropTypes.object,
+
+    /*
+     * Item to be rendered.
+     */
+    item: PropTypes.any,
+
+    /*
+     * Determines if a checkbox should be rendered.
+     */
+    allowsSelection: PropTypes.bool,
+
+    /*
+     * Determines if a checkbox should be rendered on chevron sections.
+     */
+    allowsBranchSelection: PropTypes.bool,
+
+    /*
+     * Custom rendering function for the item contents.
+     */
+    renderItem: PropTypes.func
+  };
+
   constructor(props) {
     super(props);
 

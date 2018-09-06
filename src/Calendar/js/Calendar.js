@@ -243,6 +243,7 @@ export default class Calendar extends Component {
    * Generates a unique id for a DOM element descendant
    * * @param   {Sting} string String value
    * @returns {String} A unique id
+   * @private
    */
   generateId(string) {
     const {id = this.calendarId} = this.props;
@@ -254,6 +255,7 @@ export default class Calendar extends Component {
    * Generates a unique id for a Calendar table cell
    * @param   {Object} date Moment object
    * @returns {String} A unique id for the Calendar table cell
+   * @private
    */
   generateDateId(date) {
     return date ? this.generateId(date.format('YYYY/MM/DD')) : null;
@@ -261,6 +263,7 @@ export default class Calendar extends Component {
 
   /**
    * Handles click on previous arrow button to navigate to the previous month.
+   * @private
    */
   handleClickPrevious() {
     const {currentMonth, focusedDate} = this.state;
@@ -283,6 +286,7 @@ export default class Calendar extends Component {
 
   /**
    * Handles click on next arrow button to navigate to the next month.
+   * @private
    */
   handleClickNext() {
     const {currentMonth, focusedDate} = this.state;
@@ -415,6 +419,7 @@ export default class Calendar extends Component {
 
   /**
    * Announces current month using a live region
+   * @private
    */
   announceCurrentMonth(assertiveness = 'assertive') {
     const method = assertiveness === 'polite' ? 'announcePolite' : 'announceAssertive';
@@ -425,6 +430,7 @@ export default class Calendar extends Component {
 
   /**
    * Announces selected date or selected range of dates
+   * @private
    */
   announceSelection(assertiveness = 'polite') {
     const selectedRangeDescription = this.getSelectedRangeDescription();
@@ -512,6 +518,7 @@ export default class Calendar extends Component {
 
   /**
    * Focus calendar
+   * @private
    */
   focus() {
     this.focusCalendarBody();
@@ -519,6 +526,7 @@ export default class Calendar extends Component {
 
   /**
    * Ensure Calendar body receives focus after clicking on a cell
+   * @private
    */
   focusCalendarBody() {
     const calendarBody = this.calendarBody;

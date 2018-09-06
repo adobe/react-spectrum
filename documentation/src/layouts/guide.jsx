@@ -14,21 +14,21 @@ export default class Guide extends React.Component {
     return (
       <Provider className="page" theme="dark">
         <Header />
-        <section className="page-main">
-          <nav className="sidebar">
-            <ul>
-              {guides.map(guide =>
-                <li><Link href={`/guides/${guide.node.slug || path.basename(guide.node.name, path.extname(guide.node.name)).toLowerCase()}`}>{guide.node.title}</Link></li>
-              )}
-            </ul>
-          </nav>
-          <main>
-            {this.props.children({
-              ...this.props,
-              components: mdxComponents
-            })}
+        <div className="page-main">
+          <ul className="sidebar">
+            {guides.map(guide =>
+              <li><Link href={`/guides/${guide.node.slug || path.basename(guide.node.name, path.extname(guide.node.name)).toLowerCase()}`}>{guide.node.title}</Link></li>
+            )}
+          </ul>
+          <main className="page-content">
+            <div className="documentation">
+                {this.props.children({
+                  ...this.props,
+                  components: mdxComponents
+                })}
+            </div>
           </main>
-        </section>
+        </div>
       </Provider>
     );
   }

@@ -81,7 +81,7 @@ export default class Button extends Component {
     /**
      * The DOM element to use to render the button
      */
-    element: PropTypes.string,
+    element: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
     /**
      * Whether the button should be auto focused on mount
