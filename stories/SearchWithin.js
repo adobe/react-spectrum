@@ -45,5 +45,5 @@ function render(props = {}) {
       <SearchWithin onValueChange={action('change')} onSubmit={action('submit')} {...defaultProps} {...props} />
     </FieldLabel>);
   }
-  return <SearchWithin onValueChange={action('change')} onSubmit={action('submit')} {...defaultProps} {...props} />;
+  return <SearchWithin onValueChange={action('change')} onSubmit={action('submit')} onScopeChange={action('change')} {...defaultProps} {...props} />;
 }

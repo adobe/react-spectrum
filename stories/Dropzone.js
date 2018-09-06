@@ -16,6 +16,7 @@ storiesOf('Dropzone', module)
   ))
   .addWithInfo(
     'With children content',
+    'Dropzone accepts children components as content. This example uses IllustratedMessage',
     () => render({
       onDrop
     }),

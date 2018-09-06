@@ -10,8 +10,6 @@ import '../style/index.styl';
 @autobind
 export default class Dropzone extends React.Component {
   static defaultProps = {
-    heading: 'Drag and Drop Your File',
-    description: 'Drag and drop files here.',
     dropEffect: 'copy'
   };
 
@@ -66,7 +64,7 @@ export default class Dropzone extends React.Component {
 
   onDragLeave(e) {
     this.clearDebouncedDragLeave();
-    
+
     this.debouncedDragLeave = setTimeout(() => {
       if (this.state.draggingOver) {
         this.setState({
