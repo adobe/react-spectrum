@@ -87,6 +87,21 @@ describe('Overlay', () => {
     assert(onExited.withArgs({foo: 'bar'}));
   });
 
+  it('should not apply extra css to body', () => {
+    let overlay = mount(
+      <OverlayTrigger trigger="click">
+        <Button>Click me</Button>
+        <Popover>Popover</Popover>
+      </OverlayTrigger>
+    );
+    const prevText = document.body.style.cssText;
+    
+    overlay.setState({'show': true});
+    assert.equal(document.body.style.cssText, prevText);
+    overlay.setState({'show': false});
+    overlay.unmount();
+  });
+
   it('calls modalManager when rendering and unmounting', () => {
     const stub = sinon.stub(require('../../src/OverlayTrigger/js/calculatePosition'), 'default').returns({
       positionLeft: 100,

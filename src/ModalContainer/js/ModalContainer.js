@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 
 importSpectrumCSS('underlay');
 
-const MANAGER_SINGLETON = new ModalManager();
+const MANAGER_SINGLETON = new ModalManager({handleContainerOverflow: false});
 let MODAL_KEY = 1;
 
 export default class ModalContainer {
