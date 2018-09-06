@@ -19,7 +19,7 @@ export default class Textfield extends Component {
     /** Whether to disable the text field */
     disabled: PropTypes.bool,
   
-    /** Whether to show the warning icon and red border */
+    /** Whether to show the warning icon and red border. DEPRECATED: use validationState instead */
     invalid: PropTypes.bool,
   
     /** Function called when focus is taken away from the text field */
@@ -41,7 +41,10 @@ export default class Textfield extends Component {
     readOnly: PropTypes.bool,
     
     /** Whether the text field requires user input (shows warning if empty) */
-    required: PropTypes.bool
+    required: PropTypes.bool,
+
+    /** Show either checkmark or warning icons */
+    validationState: PropTypes.oneOf(['valid', 'invalid'])
   };
   
   static defaultProps = {
@@ -81,13 +84,20 @@ export default class Textfield extends Component {
       invalid,
       readOnly,
       multiLine,
+      validationState,
       ...otherProps
     } = this.props;
 
     var Tag = multiLine ? 'textarea' : 'input';
 
+    const isInvalid = invalid || validationState === 'invalid';
+
     delete otherProps.autoFocus;
     delete otherProps.autocompleteInput;
+
+    if (invalid) {
+      console.warn('The "invalid" prop of Textfield is deprecated. Please use validationState="invalid" instead.');
+    }
 
     return (
       <Tag
@@ -97,7 +107,8 @@ export default class Textfield extends Component {
             'spectrum-Textfield',
             {
               'spectrum-Textfield--multiline': multiLine,
-              'is-invalid': invalid,
+              'is-invalid': isInvalid,
+              'is-valid': validationState === 'valid',
               'spectrum-Textfield--quiet': quiet
             },
             className
@@ -106,7 +117,7 @@ export default class Textfield extends Component {
         disabled={disabled}
         required={required}
         readOnly={readOnly}
-        aria-invalid={invalid || null}
+        aria-invalid={isInvalid || null}
         {...filterDOMProps(otherProps)}
         onChange={this.onChange} />
     );

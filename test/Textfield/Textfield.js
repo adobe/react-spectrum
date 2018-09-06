@@ -44,10 +44,22 @@ describe('Textfield', () => {
     assert.equal(tree.prop('readOnly'), true);
   });
 
+  // Deprecated
   it('supports invalid', () => {
     const tree = shallow(<Textfield />);
     assert(!tree.prop('aria-invalid'));
     tree.setProps({invalid: true});
+    assert.equal(tree.prop('className'), 'spectrum-Textfield is-invalid');
+    assert.equal(tree.prop('aria-invalid'), true);
+  });
+
+  it('supports validationState', () => {
+    const tree = shallow(<Textfield />);
+    tree.setProps({validationState: 'valid'});
+    assert.equal(tree.prop('className'), 'spectrum-Textfield is-valid');
+    assert(!tree.prop('aria-invalid'));
+
+    tree.setProps({validationState: 'invalid'});
     assert.equal(tree.prop('className'), 'spectrum-Textfield is-invalid');
     assert.equal(tree.prop('aria-invalid'), true);
   });

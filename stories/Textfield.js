@@ -25,8 +25,18 @@ storiesOf('Textfield', module)
     {inline: true}
   )
   .addWithInfo(
-    'invalid: true',
+    'invalid: true (deprecated)',
     () => render({invalid: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'validationState: invalid',
+    () => render({validationState: 'invalid'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'validationState: valid',
+    () => render({validationState: 'valid'}),
     {inline: true}
   )
   .addWithInfo(
