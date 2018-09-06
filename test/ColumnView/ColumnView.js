@@ -40,7 +40,7 @@ describe('ColumnView', () => {
     assert(onSelectionChange.calledOnce);
   });
 
-  it.skip('calls the onNavigate prop', async () => {
+  it('calls the onNavigate prop', async () => {
     let onNavigate = sinon.spy();
     let wrapper = mount(<ColumnView dataSource={ds} renderItem={renderItem} onNavigate={onNavigate} />);
 
@@ -48,6 +48,7 @@ describe('ColumnView', () => {
     await ds.navigateToItem(data[0]);
     await ds.navigateToItem(data[0].children[0]);
     await sleep(50);
+    wrapper.update();
     let cols = wrapper.find(Column).at(1).getDOMNode();
     assert.deepEqual(cols, document.activeElement);
 

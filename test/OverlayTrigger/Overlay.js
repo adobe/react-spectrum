@@ -138,10 +138,11 @@ describe('Overlay', () => {
       {context});
 
     assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
+    
     overlayTrigger.unmount();
   });
 
-  it('should only hide if it is the top-most overlay', (done) => {
+  it('should only hide if it is the top-most overlay', async () => {
     let onHideOuter = sinon.spy();
     let onHideInner = sinon.spy();
     let overlay = mount(
@@ -158,42 +159,49 @@ describe('Overlay', () => {
     // Hiding the outer overlay should work fine since the inner overlay hasn't been shown yet
     overlay.instance().hide();
 
-
     assert(onHideOuter.calledOnce);
     assert(onHideInner.notCalled);
 
     onHideOuter.reset();
 
-    overlay.find('button').simulate('click');
+    // Trigger click
+    let event = new window.MouseEvent('click', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    document.querySelector('button').dispatchEvent(event);
+    await sleep(1);
+    overlay.update();
+    
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
 
     // Wait for animation
-    setTimeout(() => {
-      // Hiding the outer overlay should now do nothing since it is no longer the top overlay
-      overlay.instance().hide();
-      assert(onHideOuter.notCalled);
-      assert(onHideInner.notCalled);
+    await sleep(200);
 
-      // Hiding the inner overlay should work since it is the top overlay
-      overlay.find('button').simulate('click');
-      assert(onHideOuter.notCalled);
-      assert(onHideInner.calledOnce);
+    // Hiding the outer overlay should now do nothing since it is no longer the top overlay
+    overlay.instance().hide();
+    assert(onHideOuter.notCalled);
+    assert(onHideInner.notCalled);
 
-      onHideInner.reset();
+    // Hiding the inner overlay should work since it is the top overlay
+    document.querySelector('button').dispatchEvent(event);
+    assert(onHideOuter.notCalled);
+    assert(onHideInner.calledOnce);
 
-      // Wait for animation
-      setTimeout(() => {
-        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+    onHideInner.reset();
 
-        // Hiding the outer overlay should work now since it is the top overlay
-        overlay.instance().hide();
-        assert(onHideOuter.calledOnce);
-        assert(onHideInner.notCalled);
+    // Wait for animation
+    await sleep(200);
 
-        overlay.unmount();
-        done();
-      }, 200);
-    }, 200);
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+    // Hiding the outer overlay should work now since it is the top overlay
+    overlay.instance().hide();
+    assert(onHideOuter.calledOnce);
+    assert(onHideInner.notCalled);
+
+    overlay.unmount();
   });
 });
 

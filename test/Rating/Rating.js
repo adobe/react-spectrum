@@ -17,6 +17,8 @@ describe('Rating', function () {
     var rating = mount(<Rating />);
     assert.equal(rating.find('input').getDOMNode().getAttribute('id'), rating.instance().inputId);
     assert.equal(rating.find('input').getDOMNode(), rating.instance().input);
+
+    rating.unmount();
   });
 
   it('provides default currentRating and max', function () {
@@ -113,6 +115,8 @@ describe('Rating', function () {
     assert.equal(rating.find('.is-selected').length, 3);
     assert.equal(rating.find('input').prop('value'), 3);
     assert.equal(rating.find('input').getDOMNode(), document.activeElement);
+
+    rating.unmount();
   });
 
   it('Permits changing value by adjusting value of input slider', function () {
@@ -126,6 +130,8 @@ describe('Rating', function () {
     assert.equal(rating.find('.is-selected').length, 4);
     assert.equal(rating.find('input').prop('value'), 4);
     assert.equal(rating.find('input').getDOMNode(), document.activeElement);
+
+    rating.unmount();
   });
 
   it('Keydown on rating icon does nothing', function () {
@@ -133,5 +139,7 @@ describe('Rating', function () {
     var rating = mount(<Rating onChange={onChange} />);
     rating.find('span').at(2).simulate('keydown', {key: 'ArrowLeft'});
     assert(!onChange.called);
+
+    rating.unmount();
   });
 });

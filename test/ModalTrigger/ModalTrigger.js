@@ -30,6 +30,8 @@ describe('ModalTrigger', () => {
     const wrapper = mount(<RootComponent />, {context});
 
     assert.equal(wrapper.text(), 'Julia is from Mexico');
+
+    wrapper.unmount();
   });
 
   it('should pass context', () => {
@@ -54,6 +56,8 @@ describe('ModalTrigger', () => {
       {context});
 
     assert.equal(modalTrigger.text(), 'a context has no name');
+
+    modalTrigger.unmount();
   });
 
   it('adds a wrapping div only when necessary', () => {
@@ -61,8 +65,12 @@ describe('ModalTrigger', () => {
     assert.equal(wrapper.find('button').length, 1);
     assert.equal(wrapper.find('div').length, 0);
 
+    wrapper.unmount();
+
     wrapper = mount(<ModalTrigger><button /><button /><div modalContent>text</div></ModalTrigger>);
     assert.equal(wrapper.find('button').length, 2);
     assert.equal(wrapper.find('div').length, 1);
+
+    wrapper.unmount();
   });
 });

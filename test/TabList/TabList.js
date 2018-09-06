@@ -166,6 +166,8 @@ describe('TabList', () => {
 
     assert.equal(child.length, 1);
     assert.notEqual(child.prop('className').indexOf('two'), -1);
+
+    tree.unmount();
   });
 
   it('supports selectedIndex by setting selected on child', () => {
@@ -178,6 +180,8 @@ describe('TabList', () => {
     const child = tree.find('[selected=true]');
     assert.equal(child.length, 1);
     assert.notEqual(child.prop('className').indexOf('two'), -1);
+
+    tree.unmount();
   });
 
   it('supports mousedown/mouseup on child', () => {

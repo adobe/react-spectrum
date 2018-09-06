@@ -256,12 +256,16 @@ describe('Clock', () => {
       const tree = mount(<Clock value="01:00" displayFormat="hh:mm a" />);
       const meridiemDropdown = findMeridiemDropdown(tree);
       assert.equal(meridiemDropdown.find('.spectrum-Dropdown-label').text(), 'am');
+
+      tree.unmount();
     });
 
     it('supports uppercase AM', () => {
       const tree = mount(<Clock value="01:00" displayFormat="hh:mm A" />);
       const meridiemDropdown = findMeridiemDropdown(tree);
       assert.equal(meridiemDropdown.find('.spectrum-Dropdown-label').text(), 'AM');
+
+      tree.unmount();
     });
 
     it('handles 13:00 as 1pm', () => {

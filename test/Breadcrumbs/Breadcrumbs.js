@@ -38,6 +38,7 @@ describe('Breadcrumbs', function () {
     let link = tree.find('.spectrum-Breadcrumbs-itemLink').at(0);
     link.simulate('focus', {target: link.getDOMNode()});
     assert(link.getDOMNode().classList.contains('focus-ring'));
+    tree.unmount();
   });
 
   it('on losing focus, a breadcrumb should not display focus-ring style', function () {
@@ -47,6 +48,7 @@ describe('Breadcrumbs', function () {
     assert(link.getDOMNode().classList.contains('focus-ring'));
     link.simulate('blur', {target: link.getDOMNode()});
     assert(!link.getDOMNode().classList.contains('focus-ring'));
+    tree.unmount();
   });
 
   describe('variant="title"', () => {

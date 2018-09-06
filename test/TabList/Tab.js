@@ -31,6 +31,8 @@ describe('Tab', () => {
     const tree = mount(<Tab icon={<AddIcon />} />);
     const child = tree.find(AddIcon);
     assert.equal(child.length, 1);
+
+    tree.unmount();
   });
 
   it('supports onClick', () => {

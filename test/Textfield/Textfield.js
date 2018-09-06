@@ -78,5 +78,7 @@ describe('Textfield', () => {
     tree.simulate('change');
     assert(spy.calledOnce);
     assert.equal(spy.lastCall.args[0], val);
+
+    tree.unmount();
   });
 });

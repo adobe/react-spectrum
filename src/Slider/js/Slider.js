@@ -475,6 +475,8 @@ export default class Slider extends React.Component {
     );
   };
 
+  setDOMReference = d => this.dom = d;
+
   render() {
     let {
       children,
@@ -526,7 +528,7 @@ export default class Slider extends React.Component {
     return (
       <div
         className={sliderClasses}
-        ref={d => this.dom = d}
+        ref={this.setDOMReference}
         role={isRange ? 'group' : 'presentation'}
         aria-labelledby={isRange ? ariaLabelledby : null}>
         {(shouldRenderLabel || (label && ariaLabelledby) || ariaLabel) &&

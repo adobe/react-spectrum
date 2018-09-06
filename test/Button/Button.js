@@ -179,10 +179,6 @@ describe('Button', () => {
       };
     });
 
-    after(() => {
-      tree.unmount();
-    });
-
     it('on mouse down', () => {
       tree.simulate('mouseDown', {type: 'mousedown'});
       assert.equal(focusSpy.callCount, 1);

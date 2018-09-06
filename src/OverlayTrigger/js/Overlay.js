@@ -12,6 +12,10 @@ const visibleOverlays = [];
 
 @autobind
 export default class Overlay extends React.Component {
+  static defaultProps = {
+    placement: 'left'
+  };
+
   state = {
     exited: !this.props.show,
     targetNode: ReactDOM.findDOMNode(this.props.target)

@@ -30,6 +30,7 @@ lint:
 	lfeslint
 
 test:
+	enzyme-adapter-react-install 16
 	NODE_ENV=test mocha
 
 cover:

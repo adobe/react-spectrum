@@ -382,6 +382,8 @@ describe('Slider', function () {
     findStartHandleInput(tree).simulate('change');
     assert.equal(tree.state('startValue'), findStartHandleInput(tree).prop('value'));
     assert.equal(tree.state('startValue'), 100);
+
+    tree.unmount();
   });
 
   it('should support filled variant', function () {
@@ -548,6 +550,8 @@ describe('Slider', function () {
     });
 
     assert.equal(tree.instance().startHandleInput, document.activeElement);
+
+    tree.unmount();
   });
 
   it('should set focus to input on mouseup', function () {
@@ -576,6 +580,8 @@ describe('Slider', function () {
     });
 
     assert.equal(tree.instance().startHandleInput, document.activeElement);
+
+    tree.unmount();
   });
 
   describe('Range slider', () => {
@@ -625,6 +631,8 @@ describe('Slider', function () {
       findEndHandleInput(tree).simulate('change');
       assert.equal(tree.state('endValue'), findEndHandleInput(tree).prop('value'));
       assert.equal(tree.state('endValue'), 80);
+
+      tree.unmount();
     });
 
     it('should support setting a min and max value', function () {

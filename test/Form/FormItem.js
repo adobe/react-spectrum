@@ -16,7 +16,6 @@ describe('FormItem', () => {
     assert.equal(wrapper.find('.spectrum-Form-item').length, 1);
     assert.equal(wrapper.find('label').length, 1);
     assert.equal(wrapper.find(Textfield).length, 1);
-    wrapper.unmount();
   });
 
   it('label should have the correct inner text and reference', () => {
@@ -24,12 +23,10 @@ describe('FormItem', () => {
     const label = wrapper.find('label');
     assert.equal(label.text(), 'Company Title');
     assert.equal(label.prop('htmlFor'), 'company-title');
-    wrapper.unmount();
   });
 
   it('label text should be right aligned', () => {
     const wrapper = shallow(<FormItem label="Test" labelAlign="right"><input type="text" /></FormItem>).dive();
     assert.equal(wrapper.find('label').hasClass('spectrum-FieldLabel--right'), true);
-    wrapper.unmount();
   });
 });

@@ -10,6 +10,10 @@ const assertMenuFocusStates = (tree, expectedFocusStates) => {
   assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), expectedFocusStates);
 };
 
+const assertMenuFocusStatesDOM = (listNode, expectedFocusStates) => {
+  assert.deepEqual(Array.from(listNode.childNodes).map(item => item.classList[1] === 'is-focused'), expectedFocusStates);
+};
+
 const findInput = tree => tree.find('input');
 
 describe('Autocomplete', () => {
@@ -154,38 +158,36 @@ describe('Autocomplete', () => {
     await sleep(1);
 
     // Stub DOM dimensions
-    const listNode = tree.find('ul').getDOMNode();
-    const items = tree.find(MenuItem);
-    let itemNode;
+    const listNode = document.querySelector('ul');
+    const items = listNode.childNodes;
     const stubs = [];
     stubs.push(sinon.stub(listNode, 'clientHeight').get(() => itemHeight * 2));
     stubs.push(sinon.stub(listNode, 'scrollHeight').get(() => itemHeight * items.length));
     items.forEach((item, index) => {
-      itemNode = item.getDOMNode();
-      stubs.push(sinon.stub(itemNode, 'offsetHeight').get(() => itemHeight));
-      stubs.push(sinon.stub(itemNode, 'offsetTop').get(() => itemHeight * index));
+      stubs.push(sinon.stub(item, 'offsetHeight').get(() => itemHeight));
+      stubs.push(sinon.stub(item, 'offsetTop').get(() => itemHeight * index));
     });
 
-    assertMenuFocusStates(tree, [true, false, false, false, false, false]);
+    assertMenuFocusStatesDOM(listNode, [true, false, false, false, false, false]);
 
     // Page up/Page down tests rely on offsetTop and clientHeight
     findInput(tree).simulate('keyDown', {key: 'PageDown', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [false, false, true, false, false, false]);
+    assertMenuFocusStatesDOM(listNode, [false, false, true, false, false, false]);
 
     findInput(tree).simulate('keyDown', {key: 'PageDown', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [false, false, false, false, true, false]);
+    assertMenuFocusStatesDOM(listNode, [false, false, false, false, true, false]);
 
     findInput(tree).simulate('keyDown', {key: 'PageDown', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [false, false, false, false, false, true]);
+    assertMenuFocusStatesDOM(listNode, [false, false, false, false, false, true]);
 
     findInput(tree).simulate('keyDown', {key: 'PageUp', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [false, false, false, true, false, false]);
+    assertMenuFocusStatesDOM(listNode, [false, false, false, true, false, false]);
 
     findInput(tree).simulate('keyDown', {key: 'PageUp', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [false, true, false, false, false, false]);
+    assertMenuFocusStatesDOM(listNode, [false, true, false, false, false, false]);
 
     findInput(tree).simulate('keyDown', {key: 'PageUp', preventDefault: () => {}});
-    assertMenuFocusStates(tree, [true, false, false, false, false, false]);
+    assertMenuFocusStatesDOM(listNode, [true, false, false, false, false, false]);
 
     stubs.forEach(stub => {
       stub.restore();

@@ -104,6 +104,10 @@ export default class ComboBox extends React.Component {
     return formatMessage(key, [count]);
   }
 
+  setAutocompleteRef = a => this.autocomplete = a;
+
+  setTextFieldRef = t => this.textfield = t;
+
   render() {
     const {
       id,
@@ -129,7 +133,7 @@ export default class ComboBox extends React.Component {
             className
           )
         }
-        ref={a => this.autocomplete = a}
+        ref={this.setAutocompleteRef}
         getCompletions={this.getCompletions}
         value={value}
         onChange={chain(onChange, this.onChange)}
@@ -140,7 +144,7 @@ export default class ComboBox extends React.Component {
           className={classNames('spectrum-InputGroup-field')}
           {...props}
           id={id}
-          ref={t => this.textfield = t}
+          ref={this.setTextFieldRef}
           disabled={disabled}
           required={required}
           invalid={invalid}

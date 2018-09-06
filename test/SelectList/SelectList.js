@@ -51,6 +51,8 @@ describe('SelectList', () => {
     const tree = mount(<SelectList options={testOptions} multiple value={selectedValue} />);
     assert.equal(tree.find({'aria-selected': true}).length, 3);
     assert.equal(tree.find({'aria-selected': false}).length, 4);
+
+    tree.unmount();
   });
 
   it('supports all items being disabled', () => {

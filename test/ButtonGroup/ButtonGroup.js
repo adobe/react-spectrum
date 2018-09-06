@@ -217,20 +217,15 @@ describe('ButtonGroup', () => {
         });
       });
 
-      it('supports aria-checked updating with selection', (done) => {
-        const tree = shallow(
-          <ButtonGroup
-            {...defaultProps}
-            onChange={(value, e) => {
-              assert.deepEqual(value, 'react');
-              tree.update();
-              tree.find(Button).forEach((node, i) => {
-                assert.equal(node.prop('aria-checked'), i === 0);
-              });
-              done();
-            }} />
-        );
+      it('supports aria-checked updating with selection', () => {
+        const tree = shallow(<ButtonGroup {...defaultProps} />);
+        tree.find(Button).forEach((node, i) => {
+          assert.equal(node.prop('aria-checked'), false);
+        });
         tree.find(Button).first().simulate('click');
+        tree.find(Button).forEach((node, i) => {
+          assert.equal(node.prop('aria-checked'), i === 0);
+        });
       });
     });
 
@@ -242,6 +237,8 @@ describe('ButtonGroup', () => {
             let tabIndex = !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
         it('focused button should have tabIndex=0, while not focused buttons should have tabIndex=-1', () => {
           const tree = mount(<ButtonGroup {...defaultProps} readOnly />);
@@ -260,6 +257,8 @@ describe('ButtonGroup', () => {
             let tabIndex = i === 5 && !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
       });
 
@@ -270,6 +269,8 @@ describe('ButtonGroup', () => {
             let tabIndex = !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
 
         it('focused button should have tabIndex=0, while not focused buttons should have tabIndex=-1', () => {
@@ -295,6 +296,8 @@ describe('ButtonGroup', () => {
             let tabIndex = (i === 0 || i === 4) && !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
       });
 
@@ -305,6 +308,8 @@ describe('ButtonGroup', () => {
             let tabIndex = !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
 
         it('focused button should have tabIndex=0, while not focused buttons should have tabIndex=-1', () => {
@@ -327,6 +332,8 @@ describe('ButtonGroup', () => {
             let tabIndex = i === 0 && !node.prop('disabled') ? 0 : -1;
             assert.equal(node.getDOMNode().tabIndex, tabIndex);
           });
+
+          tree.unmount();
         });
       });
 
@@ -337,6 +344,10 @@ describe('ButtonGroup', () => {
         before(() => {
           tree = mount(<ButtonGroup {...defaultProps} />);
           wrapper = tree.find('.spectrum-ButtonGroup');
+        });
+
+        after(() => {
+          tree.unmount();
         });
 
         const findButtonAt = (wrapper, index) => wrapper.find(Button).at(index);

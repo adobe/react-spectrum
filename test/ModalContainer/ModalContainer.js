@@ -2,24 +2,24 @@ import assert from 'assert';
 import ModalContainer, {Modal} from '../../src/ModalContainer';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-
+import {sleep} from '../utils';
 
 describe('ModalContainer', () => {
-  it('should wrap contents in a modal and call PortalContainer', (done) => {
+  it('should wrap contents in a modal and call PortalContainer', async () => {
     let content = <div id="modal-test">Contents</div>;
     let key = ModalContainer.show(content);
 
     let node = document.querySelector('#modal-test');
     assert(node);
     assert.equal(node.previousSibling.className, 'spectrum-Underlay');
-    setTimeout(() => {
-      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
 
-      ModalContainer.hide(key);
-      node = document.querySelector('#modal-test');
-      assert(!node);
-      done();
-    }, 0);
+    await sleep(1);
+
+    assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+
+    ModalContainer.hide(key);
+    node = document.querySelector('#modal-test');
+    assert(!node);
   });
   it('should use "static" for backdrop by default', () => {
     const tree = shallow(<Modal><div id="modal-test">Contents</div></Modal>);
@@ -63,44 +63,44 @@ describe('ModalContainer', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have role="dialog" when child has no role', (done) => {
+    it('should have role="dialog" when child has no role', async () => {
       let content = <div id="modal-test">Contents</div>;
       let key = ModalContainer.show(content);
 
       let node = document.querySelector('#modal-test');
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay');
-      setTimeout(() => {
-        assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
-        assert.equal(node.parentElement.getAttribute('role'), 'dialog');
 
-        ModalContainer.hide(key);
-        node = document.querySelector('#modal-test');
-        assert(!node);
-        done();
-      }, 0);
+      await sleep(1);
+
+      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+      assert.equal(node.parentElement.getAttribute('role'), 'dialog');
+
+      ModalContainer.hide(key);
+      node = document.querySelector('#modal-test');
+      assert(!node);
     });
 
-    it('should have role="presentation" when child has role="dialog"', (done) => {
+    it('should have role="presentation" when child has role="dialog"', async () => {
       let content = <div id="modal-test" role="dialog">Contents</div>;
       let key = ModalContainer.show(content);
 
       let node = document.querySelector('#modal-test');
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay');
-      setTimeout(() => {
-        assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
-        assert.equal(node.parentElement.getAttribute('role'), 'presentation');
+      
+      await sleep(1);
 
-        ModalContainer.hide(key);
-        node = document.querySelector('#modal-test');
-        assert(!node);
-        done();
-      }, 0);
+      assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
+      assert.equal(node.parentElement.getAttribute('role'), 'presentation');
+
+      ModalContainer.hide(key);
+      node = document.querySelector('#modal-test');
+      assert(!node);
     });
   });
 
-  it('should hide with Escape key', (done) => {
+  it('should hide with Escape key', async () => {
     const tree = mount(<button>Last focus</button>);
 
     // set focus to a trigger element
@@ -124,11 +124,12 @@ describe('ModalContainer', () => {
     node.ownerDocument.dispatchEvent(event);
 
     // wait for fade out and ensure that focus is restored to trigger element
-    setTimeout(() => {
-      assert.equal(document.activeElement, triggerNode);
-      node = document.querySelector('#modal-test');
-      assert(!node);
-      done();
-    }, 125);
+    await sleep(125);
+
+    assert.equal(document.activeElement, triggerNode);
+    node = document.querySelector('#modal-test');
+    assert(!node);
+
+    tree.unmount();
   });
 });

@@ -726,6 +726,8 @@ describe('Calendar', () => {
         assert.equal(body.getDOMNode(), document.activeElement);
       });
     });
+    
+    tree.unmount();
   });
 
   it('supports autoFocus', async () => {
@@ -736,6 +738,8 @@ describe('Calendar', () => {
       // body should be focused on next animation frame
       assert.equal(body.getDOMNode(), document.activeElement);
     });
+
+    tree.unmount();
   });
 });
 

@@ -22,5 +22,6 @@ describe('MenuHeading', () => {
     let tree = mount(<MenuHeading label="foo" />);
     let heading = tree.find('li.spectrum-Menu-sectionHeading').at(0);
     assert.equal(heading.text(), 'foo');
+    tree.unmount();
   });
 });

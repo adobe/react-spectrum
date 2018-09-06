@@ -36,18 +36,18 @@ describe('Popover', () => {
       stopPropagation
     };
     assert.equal(tree.childAt(0).prop('tabIndex'), 1);
-    tree.simulate('focus', event);
+    tree.simulate('focus', {...event, type: 'focus'});
     assert(preventDefault.called);
     assert(stopPropagation.called);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     event.key = 'Tab';
     event.shiftKey = true;
-    tree.find('button').first().simulate('keydown', event);
+    tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
     assert(preventDefault.calledTwice);
     assert(stopPropagation.calledTwice);
     assert.equal(document.activeElement, tree.find('button').last().getDOMNode());
     event.shiftKey = false;
-    tree.find('button').last().simulate('keydown', event);
+    tree.find('button').last().simulate('keydown', {...event, type: 'keydown'});
     assert(preventDefault.calledThrice);
     assert(stopPropagation.calledThrice);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());

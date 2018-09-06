@@ -4,7 +4,6 @@ import Bell from '../../src/Icon/Bell';
 import Button from '../../src/Button';
 import ChevronDownMedium from '../../src/Icon/core/ChevronDownMedium';
 import ComboBox from '../../src/ComboBox';
-import {MenuItem} from '../../src/Menu';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {sleep} from '../utils';
@@ -67,10 +66,12 @@ describe('ComboBox', () => {
 
     tree.update();
 
+    const getFocusedProp = () => document.querySelector('li.spectrum-Menu-item').classList[1] === 'is-focused';
+
     // navigate to "focus" first menu item (autocomplete uses aria-activedescendant)
-    assert.equal(tree.find(MenuItem).at(0).prop('focused'), false);
+    assert.equal(getFocusedProp(), false);
     textfield.simulate('keydown', {key: 'ArrowDown', preventDefault: () => {}});
-    assert.equal(tree.find(MenuItem).at(0).prop('focused'), true);
+    assert.equal(getFocusedProp(), true);
 
     // click button to hide menu
     button.simulate('click');

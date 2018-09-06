@@ -142,6 +142,8 @@ export default class Button extends Component {
     }
   }
 
+  setButtonRef = b => this.buttonRef = b;
+
   render() {
     let {
       element: Element = 'button',
@@ -234,7 +236,7 @@ export default class Button extends Component {
         onClick={this.onClick}
         onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
         onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
-        ref={b => this.buttonRef = b}>
+        ref={this.setButtonRef}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&
           <span className={baseButtonClass + '-label'}>{labelContents}</span>
