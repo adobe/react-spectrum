@@ -200,6 +200,7 @@ export default class Datepicker extends Component {
   renderCalendar(props) {
     return (
       <Calendar
+        className="spectrum-Calendar--padded"
         {...props}
         autoFocus
         onChange={this.handleCalendarChange} />
@@ -297,7 +298,7 @@ export default class Datepicker extends Component {
             icon={type === 'time' ? <ClockIcon /> : <CalendarIcon />}
             invalid={invalid}
             disabled={readOnly || disabled} />
-          <Popover open>
+          <Popover isDialog={false} open>
             <div>
               {type !== 'time' && this.renderCalendar(calendarProps)}
               {type !== 'date' && this.renderClock(clockProps)}
