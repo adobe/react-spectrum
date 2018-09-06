@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import CheckmarkMedium from '../../Icon/core/CheckmarkMedium';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
@@ -8,7 +7,6 @@ import React, {Component} from 'react';
 /**
  * An item in a list
  */
-@autobind
 export default class ListItem extends Component {
   static defaultProps = {
     selected: false,

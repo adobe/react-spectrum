@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
@@ -11,7 +10,6 @@ import React, {Component} from 'react';
  * An individual tab in a TabList or TabView
  */
 @focusRing
-@autobind
 export default class Tab extends Component {
   static displayName = 'Tab';
 

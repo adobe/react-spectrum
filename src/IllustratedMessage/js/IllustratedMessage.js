@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import Heading from '../../Heading';
@@ -6,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
-@autobind
 export default class IllustratedMessage extends React.Component {
   static propTypes = {
     /** Heading */

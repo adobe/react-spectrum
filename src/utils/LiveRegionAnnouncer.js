@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
@@ -11,7 +10,6 @@ let clearAssertiveTimeoutId = null;
 let clearPoliteTimeoutId = null;
 const LIVEREGION_TIMEOUT_DELAY = 1000;
 
-@autobind
 export default class LiveRegionAnnouncer extends Component {
   state = {
     assertiveMessage: '',
@@ -192,7 +190,6 @@ MessageBlock.propTypes = {
   'aria-live': PropTypes.string.isRequired
 };
 
-@autobind
 export class LiveRegionMessage extends Component {
   static propTypes = {
     message: PropTypes.string.isRequired,
