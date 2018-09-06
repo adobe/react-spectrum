@@ -32,6 +32,11 @@ storiesOf('OverlayTrigger', module)
     {inline: true}
   )
   .addWithInfo(
+    'with tooltip:bottom',
+    () => render('tooltip', {trigger: 'click', placement: 'bottom'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'placement: top',
     () => render('popover', {trigger: 'click', placement: 'top', variant: 'error'}),
     {inline: true}

@@ -60,6 +60,7 @@ export default class Tooltip extends Component {
     const {
       variant,
       children,
+      arrowStyle,
       className,
       placement,
       open,
@@ -83,7 +84,7 @@ export default class Tooltip extends Component {
         id={id}
         {...filterDOMProps(otherProps)}>
         <span className="spectrum-Tooltip-label">{children}</span>
-        <span className="spectrum-Tooltip-tip" />
+        <span className="spectrum-Tooltip-tip" style={arrowStyle} />
       </span>
     );
   }
