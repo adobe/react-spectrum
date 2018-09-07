@@ -3,7 +3,8 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import Heading from '../../Heading';
 import PropTypes from 'prop-types';
 import React from 'react';
-import '../style/index.styl';
+
+importSpectrumCSS('illustratedmessage');
 
 export default class IllustratedMessage extends React.Component {
   static propTypes = {
@@ -13,7 +14,7 @@ export default class IllustratedMessage extends React.Component {
     /** Description */
     description: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 
-    /** Illustration to be rendered above heading */
+    /** Illustration to be rendered above heading. Should be an SVG element. */
     illustration: PropTypes.element
   };
 

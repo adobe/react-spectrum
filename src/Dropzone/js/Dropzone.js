@@ -4,8 +4,7 @@ import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-// importSpectrumCSS('dropzone');
-import '../style/index.styl';
+importSpectrumCSS('dropzone');
 
 @autobind
 export default class Dropzone extends React.Component {
