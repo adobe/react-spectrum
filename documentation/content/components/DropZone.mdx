@@ -1,22 +1,22 @@
-import Dropzone from '@react/react-spectrum/Dropzone';
+import DropZone from '@react/react-spectrum/DropZone';
 import IllustratedMessage from '@react/react-spectrum/IllustratedMessage';
 
-A Dropzone is an area on the screen into which an object can be dragged and dropped to accomplish a task. For example, a Dropzone might be used in an upload workflow to enable the user to simply drop a file from their operating system into the Dropzone, which is a more efficient and intuitive action, rather than utilize the standard "Choose File" dialog.
+A DropZone is an area on the screen into which an object can be dragged and dropped to accomplish a task. For example, a DropZone might be used in an upload workflow to enable the user to simply drop a file from their operating system into the DropZone, which is a more efficient and intuitive action, rather than utilize the standard "Choose File" dialog.
 
-Dropzones should be used with an [IllustratedMessage](/components/IllustratedMessage) component as a child if the drop zone is empty, otherwise the existing content should be passed as a child.
+DropZones should be used with an [IllustratedMessage](/components/IllustratedMessage) component as a child if the drop zone is empty, otherwise the existing content should be passed as a child.
 
 ## Example
 
 ```jsx
-<Dropzone onDrop={() => alert('Dropped!')}>
+<DropZone onDrop={() => alert('Dropped!')}>
   <IllustratedMessage
     heading="Drag and Drop Your Files"
     description="Drop your files here."
     illustration={<svg>...</svg>} />
-</Dropzone>
+</DropZone>
 ```
 
-<Dropzone onDrop={() => alert('Dropped!')}>
+<DropZone onDrop={() => alert('Dropped!')}>
   <IllustratedMessage
     heading="Drag and Drop Your Files"
     description="Drop your files here."
@@ -36,12 +36,12 @@ Dropzones should be used with an [IllustratedMessage](/components/IllustratedMes
         </g>
       </svg>
     } />
-</Dropzone>
+</DropZone>
 
 ## Internationalization
 
-To internationalize an Dropzone, localized children should be passed as needed.
+To internationalize an DropZone, localized children should be passed as needed.
 
 ## Accessibility
 
-It is up to the application to ensure that there is an alternative method of accomplishing the task that the dropzone provides, such as a button with a file dialog. Drag and drop should never be the only way to interact with a feature.
+It is up to the application to ensure that there is an alternative method of accomplishing the task that the DropZone provides, such as a button with a file dialog. Drag and drop should never be the only way to interact with a feature.

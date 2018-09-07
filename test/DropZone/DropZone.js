@@ -1,25 +1,25 @@
 import assert from 'assert';
-import Dropzone from '../../src/Dropzone';
+import DropZone from '../../src/DropZone';
 import Heading from '../../src/Heading/js/Heading';
 import IllustratedMessage from '../../src/IllustratedMessage';
 import React from 'react';
 import {shallow} from 'enzyme';
 import {sleep} from '../utils';
 
-describe('Dropzone', () => {
+describe('DropZone', () => {
   it('should support custom children', () => {
-    let headerText = 'This is a dropzone, drop data in it.';
+    let headerText = 'This is a DropZone, drop data in it.';
 
-    const tree = shallow(<Dropzone>
+    const tree = shallow(<DropZone>
       <Heading>{headerText}</Heading>
-    </Dropzone>);
+    </DropZone>);
 
     assert.equal(tree.find(IllustratedMessage).length, 0);
     assert.equal(tree.find(Heading).children().text(), headerText);
   });
 
   it('should animate onDragOver', async () => {
-    const tree = shallow(<Dropzone />);
+    const tree = shallow(<DropZone />);
 
     let dummyEvent = {
       preventDefault: () => {},
@@ -28,20 +28,20 @@ describe('Dropzone', () => {
       }
     };
 
-    let dropzone = tree.find('.spectrum-Dropzone');
-    assert.equal(dropzone.prop('className'), 'spectrum-Dropzone');
+    let dropZone = tree.find('.spectrum-Dropzone');
+    assert.equal(dropZone.prop('className'), 'spectrum-Dropzone');
 
-    dropzone.simulate('dragover', dummyEvent);
+    dropZone.simulate('dragover', dummyEvent);
 
-    let dragDropzone = tree.find('.is-dragged');
-    assert.equal(dragDropzone.prop('className'), 'spectrum-Dropzone is-dragged');
+    let dragDropZone = tree.find('.is-dragged');
+    assert.equal(dragDropZone.prop('className'), 'spectrum-Dropzone is-dragged');
 
-    dropzone.simulate('dragleave', dummyEvent);
+    dropZone.simulate('dragleave', dummyEvent);
 
     await sleep(105);
 
-    dropzone = tree.find('.spectrum-Dropzone');
-    assert.equal(dropzone.prop('className'), 'spectrum-Dropzone');
+    dropZone = tree.find('.spectrum-Dropzone');
+    assert.equal(dropZone.prop('className'), 'spectrum-Dropzone');
   });
 
   it('should pass EventListeners', async () => {
@@ -53,7 +53,7 @@ describe('Dropzone', () => {
     const onDragOver = () => dragOver = true;
     const onDrop = () => dropped = true;
 
-    const dropzone = shallow(<Dropzone onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={onDrop} />);
+    const dropZone = shallow(<DropZone onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={onDrop} />);
 
     let dummyEvent = {
       preventDefault: () => {},
@@ -62,12 +62,12 @@ describe('Dropzone', () => {
       }
     };
 
-    dropzone.simulate('dragover', dummyEvent);
+    dropZone.simulate('dragover', dummyEvent);
     assert.equal(dragOver, true);
-    dropzone.simulate('dragleave', dummyEvent);
+    dropZone.simulate('dragleave', dummyEvent);
     await sleep(105);
     assert.equal(dragLeave, true);
-    dropzone.simulate('drop', dummyEvent);
+    dropZone.simulate('drop', dummyEvent);
     assert.equal(dropped, true);
   });
 
@@ -87,7 +87,7 @@ describe('Dropzone', () => {
     };
     const shouldAccept = () => dropped === 0;
 
-    const dropzone = shallow(<Dropzone onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={onDrop} shouldAccept={shouldAccept} />);
+    const dropZone = shallow(<DropZone onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={onDrop} shouldAccept={shouldAccept} />);
 
     let dummyEvent = {
       preventDefault: () => {},
@@ -97,15 +97,15 @@ describe('Dropzone', () => {
       }
     };
 
-    dropzone.prop('onDragOver')(dummyEvent);
-    dropzone.simulate('dragleave', dummyEvent);
+    dropZone.prop('onDragOver')(dummyEvent);
+    dropZone.simulate('dragleave', dummyEvent);
     await sleep(105);
 
-    dropzone.prop('onDragOver')(dummyEvent);
-    dropzone.simulate('drop', dummyEvent);
+    dropZone.prop('onDragOver')(dummyEvent);
+    dropZone.simulate('drop', dummyEvent);
 
-    dropzone.prop('onDragOver')(dummyEvent);
-    dropzone.simulate('drop', dummyEvent);
+    dropZone.prop('onDragOver')(dummyEvent);
+    dropZone.simulate('drop', dummyEvent);
 
     assert(dragOver === 2, true);
     assert(dragLeft === 1);

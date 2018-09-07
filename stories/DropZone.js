@@ -1,4 +1,4 @@
-import Dropzone from '../src/Dropzone';
+import DropZone from '../src/DropZone';
 import IllustratedMessage from '../src/IllustratedMessage';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -8,7 +8,7 @@ function onDrop() {
   alert('Something got dropped.');
 }
 
-storiesOf('Dropzone', module)
+storiesOf('DropZone', module)
   .addDecorator(story => (
     <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
       {story()}
@@ -16,7 +16,7 @@ storiesOf('Dropzone', module)
   ))
   .addWithInfo(
     'With children content',
-    'Dropzone accepts children components as content. This example uses IllustratedMessage',
+    'DropZone accepts children components as content. This example uses IllustratedMessage',
     () => render({
       onDrop
     }),
@@ -24,7 +24,7 @@ storiesOf('Dropzone', module)
   );
 
 function render(props = {}) {
-  return <Dropzone {...props}><IllustratedMessage heading="Drag and Drop Your Files" description="Drop your files here." illustration={illustration} /></Dropzone>;
+  return <DropZone {...props}><IllustratedMessage heading="Drag and Drop Your Files" description="Drop your files here." illustration={illustration} /></DropZone>;
 }
 
 let illustration = (

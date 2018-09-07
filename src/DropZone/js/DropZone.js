@@ -7,10 +7,10 @@ import React from 'react';
 importSpectrumCSS('dropzone');
 
 /**
- * A Dropzone component is an area that accepts drag and drop of files and other objects.
+ * A DropZone component is an area that accepts drag and drop of files and other objects.
  */
 @autobind
-export default class Dropzone extends React.Component {
+export default class DropZone extends React.Component {
   static defaultProps = {
     dropEffect: 'copy'
   };
