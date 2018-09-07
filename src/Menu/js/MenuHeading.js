@@ -1,3 +1,4 @@
+import filterDOMProps from '../../utils/filterDOMProps';
 import React, {Component} from 'react';
 
 export default class MenuHeading extends Component {
@@ -15,7 +16,7 @@ export default class MenuHeading extends Component {
     delete otherProps['aria-level'];
 
     return (
-      <li role={role} className="spectrum-Menu-sectionHeading" {...otherProps} >
+      <li role={role} className="spectrum-Menu-sectionHeading" {...filterDOMProps(otherProps)} >
         <span role="heading" aria-level={ariaLevel || 3}>
           { label || children }
         </span>

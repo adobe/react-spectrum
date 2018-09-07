@@ -102,9 +102,9 @@ export default class OverlayTrigger extends Component {
      */
     onHide: PropTypes.func,
     /**
-     * Will cause the overlay to show, but will not place it in a controlled state. You're probably looking for 'defaultShow'.
+     * Will cause the overlay to show in a controlled state.
      */
-    show: PropTypes.oneOf([null]),
+    show: PropTypes.bool,
     /**
      * Overlay will be shifted by specified units in the placement's axis direction.
      */
