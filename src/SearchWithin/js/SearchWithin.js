@@ -6,9 +6,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Search from '../../Search';
 import Select from '../../Select';
-import '../style/index.styl';
 
 importSpectrumCSS('searchwithin');
+require('../style/index.styl');
+
 const formatMessage = messageFormatter(intlMessages);
 
 export default class SearchWithin extends React.Component {

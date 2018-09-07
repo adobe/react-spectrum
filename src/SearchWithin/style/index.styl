@@ -3,17 +3,14 @@
     width: 100%;
   }
 
-  .spectrum-FieldButton {
-    max-width: 150px; /* prevent whole field from being taken up by long Select */
-  }
-
   .spectrum-Dropdown {
     min-width: inherit; /* Fit width until the max is hit */
   }
 
   .spectrum-Textfield,
   .spectrum-FieldButton {
-    &:focus {
+    &:focus,
+    &.is-selected {
       z-index: 1; /* focused field or dropdown button should be on top in z-index order */
     }
   }
@@ -24,4 +21,3 @@
     position: static;
   }
 }
-
