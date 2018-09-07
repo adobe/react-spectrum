@@ -3,7 +3,8 @@ async function mdxLoader(content) {
   const callback = this.async()
 
   const result = await mdx(content, {
-    hastPlugins: [require('@mapbox/rehype-prism')]
+    hastPlugins: [require('@mapbox/rehype-prism')],
+    preserveNewlines: true
   });
 
   const code = `

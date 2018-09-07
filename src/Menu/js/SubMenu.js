@@ -8,16 +8,20 @@ import PropTypes from 'prop-types';
 import React, {cloneElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
+/**
+ * A menu item that has a sub menu under it that is opened on hover.
+ */
 @autobind
 export default class SubMenu extends Component {
-
   static displayName = 'SubMenu';
-
   static propTypes = {
+    ...MenuItem.propTypes,
+
     /**
-     * A custom classname to be applied to parent menuItem
+     * A custom classname to be applied to the menu item
      */
     className: PropTypes.string,
+
     /**
      * A select handler for the submenu, triggered whenever an item is selected.
      */

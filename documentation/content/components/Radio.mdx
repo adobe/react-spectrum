@@ -33,6 +33,28 @@ Radio Buttons can have a label or not. A label describes what the button represe
 <Radio label="" aria-label="React" />
 ```
 
+## Variants
+
+### Standard Radio Buttons
+
+Standard radio buttons are the default style for radio buttons. The blue color provides a visual prominence that is optimal for forms, settings, etc. where the radio buttons need to be noticed.
+
+<Radio label="React" defaultChecked />
+
+```jsx
+<Radio label="React" defaultChecked />
+```
+
+### Quiet Radio Buttons
+
+Standard checkboxes are the default style for checkboxes. The blue color provides a visual prominence that is optimal for forms, settings, lists or grids of assets, etc. where the checkboxes need to be noticed.
+
+<Radio label="React" defaultChecked quiet />
+
+```jsx
+<Radio label="React" defaultChecked quiet />
+```
+
 ## States
 
 Radio buttons have a number of props for controlling their visual/checked state. The `disabled` prop, which applies a disabled style to the button, and also prevents clicks from activating it. The 'checked' prop is also available to apply a checked appearance to the radio button. In addition to this 'defaultChecked' and 'invalid' prop is also provided.

@@ -26,20 +26,22 @@ The **Textfield** provides an input element for users to enter in data (for form
 
 Disables text field from interaction
 
-<Textfield disabled="true" placeholder="Disabled variant" />
+<Textfield disabled placeholder="Disabled variant" />
 
 ```jsx
-<Textfield disabled="true" placeholder="Disabled variant" />
+<Textfield disabled placeholder="Disabled variant" />
 ```
 
-### Invalid
+### Validation State
 
-Shows the warning symbol and red border
+There are two validation states: valid, and invalid.
 
-<Textfield invalid="true" placeholder="Invalid variant" />
+<Textfield validationState="valid" placeholder="Valid" style={{marginRight: 20}} />
+<Textfield validationState="invalid" placeholder="Invalid" />
 
 ```jsx
-<Textfield invalid="true" placeholder="Invalid variant" />
+<Textfield validationState="valid" placeholder="Valid" />
+<Textfield validationState="invalid" placeholder="Invalid" />
 ```
 
 ### Read-only

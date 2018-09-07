@@ -1,0 +1,26 @@
+import SearchWithin from '@react/react-spectrum/SearchWithin';
+
+A SearchWithin component is a specialized search field, with a dropdown used to determine the scope of the user's search. For example, the list of options in the dropdown control might allow the user to constrain the scope of their search to just one category of the marketplace as opposed to searching the entire marketplace.
+
+## Example
+
+```jsx
+<SearchWithin
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  placeholder="Search"
+  onScopeChange={...}
+  onValueChange={...}
+  onSubmit={...} />
+```
+
+<SearchWithin
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  placeholder="Search" />
+
+## Internationalization
+
+To internationalize a SearchWithin, localized strings should be passed to the `scopeOptions` prop, along with a localized `placeholder`.
+
+## Accessibility
+
+A SearchWithin component should typically be put inside a [FieldLabel](/components/FieldLabel) or [Form](/components/Form) component to provide proper labels for accessibility. The dropdown and input inside the SearchWithin itself are accessible by default.

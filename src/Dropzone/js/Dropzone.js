@@ -6,6 +6,9 @@ import React from 'react';
 
 importSpectrumCSS('dropzone');
 
+/**
+ * A Dropzone component is an area that accepts drag and drop of files and other objects.
+ */
 @autobind
 export default class Dropzone extends React.Component {
   static defaultProps = {
@@ -13,13 +16,16 @@ export default class Dropzone extends React.Component {
   };
 
   static propTypes = {
-    /** dropEffect */
-    dropEffect: PropTypes.string,
-    /** ShouldAccept, allows blocking of dropping */
+    /** Controls the cursor displayed when dragging over the drop zone */
+    dropEffect: PropTypes.oneOf(['copy', 'move', 'link', 'none']),
+
+    /** A function that should return a boolean indicating whether a drop is accepted */
     shouldAccept: PropTypes.func,
-    /** onDragOver, emits on dragOver event */
+
+    /** A callback that is called when dragging over the drop zone */
     onDragOver: PropTypes.func,
-    /** onDrop, emits on drop event */
+
+    /** A callback that is called when a drop occurs */
     onDrop: PropTypes.func
   };
 

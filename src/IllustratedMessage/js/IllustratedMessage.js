@@ -6,15 +6,18 @@ import React from 'react';
 
 importSpectrumCSS('illustratedmessage');
 
+/**
+ * An IllustratedMessage displays an illustration icon and a message, usually in an empty state or on an error page.
+ */
 export default class IllustratedMessage extends React.Component {
   static propTypes = {
-    /** Heading */
+    /** The heading to be displayed */
     heading: PropTypes.string,
 
-    /** Description */
+    /** The description to be displayed */
     description: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 
-    /** Illustration to be rendered above heading. Should be an SVG element. */
+    /** The illustration to be rendered above heading. Should be an SVG element. */
     illustration: PropTypes.element
   };
 

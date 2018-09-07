@@ -2,6 +2,7 @@ import Switch from '@react/react-spectrum/Switch';
 
 ## Overview
 
+A **Switch** is used to turn an option on or off. Switches allow users to select the state of a single option at a time. Use a switch rather than a checkbox when activating (or deactivating) an option, instead of selecting.
 
 ## Example
 
@@ -10,6 +11,27 @@ import Switch from '@react/react-spectrum/Switch';
 ```jsx
 <Switch label="Switch" onChange={e => console.log(e)} />
 ```
+
+## Variants
+
+### Standard Switches
+
+Standard switches are the default style for switches. The blue color provides a visual prominence that is optimal for forms, settings, etc. where the switches need to be noticed.
+
+<Switch label="React" defaultChecked />
+
+```jsx
+<Switch label="React" defaultChecked />
+```
+
+### Quiet Switches
+
+Quiet switches are a secondary style for switches. The gray color provides a less prominent style than the standard switches. They are optimal for application panels where all visual elements are monochrome in order to direct focus to the content.
+
+<Switch label="React" defaultChecked quiet />
+
+```jsx
+<Switch label="React" defaultChecked quiet />
 
 ## State
 

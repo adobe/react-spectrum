@@ -37,6 +37,6 @@
   "scripts": {
     "preinstall": "cd .. && make build && cd documentation",
     "develop": "gatsby develop",
-    "build": "gatsby build --prefix-paths"
+    "build": "gatsby build"
   }
 }

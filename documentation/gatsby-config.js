@@ -1,5 +1,4 @@
 module.exports = {
-  pathPrefix: '/beta',
   siteMetadata: {
     siteUrl: 'http://react-spectrum.corp.adobe.com'
   },

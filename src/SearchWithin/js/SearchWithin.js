@@ -12,8 +12,15 @@ require('../style/index.styl');
 
 const formatMessage = messageFormatter(intlMessages);
 
+/**
+ * A SearchWithin component displays a dropdown next to a search input, typically
+ * used to select the scope of a search.
+ */
 export default class SearchWithin extends React.Component {
   static propTypes = {
+    /**
+     * Scope options to be shown in the dropdown
+     */
     scopeOptions: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.string,
@@ -23,16 +30,51 @@ export default class SearchWithin extends React.Component {
         })
       ])
     ).isRequired,
+
+    /**
+     * The currently selected scope value (controlled).
+     */
     scope: PropTypes.string,
+
+    /**
+     * The default selected scope value (uncontrolled).
+     */
     defaultScope: PropTypes.string,
+
+    /**
+     * The current value of the textfield (controlled).
+     */
     value: PropTypes.string,
+
+    /**
+     * The default value of the textfield (uncontrolled).
+     */
     defaultValue: PropTypes.string,
+
+    /**
+     * A placeholder for the textfield.
+     */
     placeholder: PropTypes.string,
+
+    /**
+     * Whether the field is disabled
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * A callback for when the field is submitted
+     */
     onSubmit: PropTypes.func,
+
+    /**
+     * A callback for when the textfield changes.
+     */
     onValueChange: PropTypes.func,
-    onScopeChange: PropTypes.func,
-    ariaLabel: PropTypes.string
+
+    /**
+     * A callback for when the scope changes
+     */
+    onScopeChange: PropTypes.func
   };
 
   constructor(props) {

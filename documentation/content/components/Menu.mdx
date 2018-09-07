@@ -1,12 +1,12 @@
-import {Menu, MenuDivider, MenuHeading, MenuItem} from '@react/react-spectrum/Menu';
+import {Menu, MenuDivider, MenuHeading, MenuItem, SubMenu} from '@react/react-spectrum/Menu';
 
 ## Overview
 
-The **Menu** component is used for creating a menu list. The various elements inside a menu are given as `<MenuItem/>`  or `<MenuHeading/>` in case of Menu Heading. A prop `open` is also available to open the menu by default.
+The **Menu** component is used for creating a menu list. The various elements inside a menu are given as `<MenuItem/>`  or `<MenuHeading/>` in case of Menu Heading. A prop `open` is also available to open the menu by default. Menus can also have nested menus using a `SubMenu`.
 
 ## Example
 
-<Menu open style={{display: 'contents'}}>
+<Menu>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -23,8 +23,10 @@ The **Menu** component is used for creating a menu list. The various elements in
   </MenuItem>
 </Menu>
 
+<div style={{height: 220}} />
+
 ```jsx
-<Menu open style={{display: 'contents'}}>
+<Menu>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -46,7 +48,7 @@ The **Menu** component is used for creating a menu list. The various elements in
 
 Menus can be placed in one of the bottom, top, left, right, top-right etc using the `placement` prop.
 
-<Menu placement ="bottom" style={{display: 'contents'}}>
+<Menu placement="bottom">
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -61,8 +63,10 @@ Menus can be placed in one of the bottom, top, left, right, top-right etc using 
   </MenuItem>
 </Menu>
 
+<div style={{height: 180}} />
+
 ```jsx
-<Menu placement ="bottom" style={{display: 'contents'}}>
+<Menu placement="bottom">
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -83,7 +87,7 @@ Menus can be placed in one of the bottom, top, left, right, top-right etc using 
 Events handlers for select can be registered on a `Menu` as shown below. In addition to this close event is also available.
 
 
-<Menu onSelect={e => console.log(e)} style={{display: 'contents'}}>
+<Menu onSelect={e => console.log(e)}>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -98,8 +102,10 @@ Events handlers for select can be registered on a `Menu` as shown below. In addi
   </MenuItem>
 </Menu>
 
+<div style={{height: 180}} />
+
 ```jsx
-<Menu onSelect={e => console.log(e)} style={{display: 'contents'}}>
+<Menu onSelect={e => console.log(e)}>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -115,6 +121,45 @@ Events handlers for select can be registered on a `Menu` as shown below. In addi
 </Menu>
 ```
 
+## Sub menus
+
+Nested menus can be created using the `SubMenu` component. They will appear on hover, or equivalent keyboard navigation.
+
+<Menu>
+  <MenuHeading>Menu Heading 1</MenuHeading>
+  <MenuItem value="1">Menu Item 1</MenuItem>
+  <MenuItem value="2">Menu Item 2</MenuItem>
+  <MenuItem value="3">Menu Item 3</MenuItem>
+  <SubMenu label="Sub Menu 1">
+    <MenuItem value="0.1">Sub Menu Item 1</MenuItem>
+    <MenuItem value="0.2">Sub Menu Item 2</MenuItem>
+    <SubMenu label="Sub Menu Item 3">
+      <MenuItem value="0.3.1">Sub Menu Item 1</MenuItem>
+      <MenuItem value="0.3.2">Sub Menu Item 2</MenuItem>
+    </SubMenu>
+  </SubMenu>
+  <MenuItem value="4">Menu Item 4</MenuItem>
+</Menu>
+
+<div style={{height: 240}} />
+
+```jsx
+<Menu>
+  <MenuHeading>Menu Heading 1</MenuHeading>
+  <MenuItem value="1">Menu Item 1</MenuItem>
+  <MenuItem value="2">Menu Item 2</MenuItem>
+  <MenuItem value="3">Menu Item 3</MenuItem>
+  <SubMenu label="Sub Menu 1">
+    <MenuItem value="0.1">Sub Menu Item 1</MenuItem>
+    <MenuItem value="0.2">Sub Menu Item 2</MenuItem>
+    <SubMenu label="Sub Menu Item 3">
+      <MenuItem value="0.3.1">Sub Menu Item 1</MenuItem>
+      <MenuItem value="0.3.2">Sub Menu Item 2</MenuItem>
+    </SubMenu>
+  </SubMenu>
+  <MenuItem value="4">Menu Item 4</MenuItem>
+</Menu>
+```
 
 ## Internationalization
 
