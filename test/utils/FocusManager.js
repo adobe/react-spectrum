@@ -188,6 +188,42 @@ describe('FocusManager', function () {
     });
   });
 
+  describe('ignorePageUpPageDown = true', () => {
+    it('should ignore PageUp and PageDown events', () => {
+      tree.setProps({ignorePageUpPageDown: true});
+      const itemHeight = 32;
+      const list = tree.find('ul');
+      const listNode = list.getDOMNode();
+      const items = tree.find('.item');
+      let itemNode;
+      const stubs = [];
+      stubs.push(sinon.stub(listNode, 'clientHeight').get(() => itemHeight * 2));
+      stubs.push(sinon.stub(listNode, 'scrollHeight').get(() => itemHeight * items.length));
+
+      items.forEach((item, index) => {
+        itemNode = item.getDOMNode();
+        stubs.push(sinon.stub(itemNode, 'offsetHeight').get(() => itemHeight));
+        stubs.push(sinon.stub(itemNode, 'offsetTop').get(() => itemHeight * index));
+      });
+
+      // PageDown
+      items.at(0).getDOMNode().focus();
+      items.at(0).simulate('keydown', {key: 'PageDown', preventDefault: () => {}});
+      assert.equal(items.at(0).getDOMNode(), document.activeElement);
+
+      // PageUp
+      items.at(3).getDOMNode().focus();
+      items.at(3).simulate('keydown', {key: 'PageUp', preventDefault: () => {}});
+      assert.equal(items.at(3).getDOMNode(), document.activeElement);
+
+      stubs.forEach(stub => {
+        stub.restore();
+        stub.reset();
+      });
+      tree.unmount();
+    });
+  });
+
   describe('onFocus', () => {
     it('should support default manageTabIndex=true when items receive focus', () => {
       let items = tree.find('.item');
@@ -376,6 +412,139 @@ describe('FocusManager', function () {
       assert.equal(tree.find('.item').at(9).getDOMNode(), document.activeElement);
       tree.find('.item').at(9).simulate('keypress', {charCode: 85});
       assert.equal(tree.find('.item').at(7).getDOMNode(), document.activeElement);
+    });
+  });
+
+  describe('stopPropagation of events', () => {
+    const onKeyDownSpy = sinon.spy();
+    const onKeyDownProp = e => {
+      e.stopPropagation();
+      onKeyDownSpy(e);
+    };
+    const onKeyPressSpy = sinon.spy();
+    const onKeyPressProp = e => {
+      e.stopPropagation();
+      onKeyPressSpy(e);
+    };
+    const onFocusSpy = sinon.spy();
+    const onFocusProp = e => {
+      e.stopPropagation();
+      onFocusSpy(e);
+    };
+    const onBlurSpy = sinon.spy();
+    const onBlurProp = e => {
+      e.stopPropagation();
+      onBlurSpy(e);
+    };
+    beforeEach(() => {
+      tree = mount(
+        <FocusManager itemSelector=".item:not(.disabled)" manageTabIndex typeToSelect>
+          <ul onKeyDown={onKeyDownProp} onKeyPress={onKeyPressProp} onFocus={onFocusProp} onBlur={onBlurProp}>
+            <li className="item" tabIndex="-1">Afghanistan</li>
+            <li className="item" tabIndex="-1">Åland Islands</li>
+            <li className="item" tabIndex="-1">Albania</li>
+            <li className="item" tabIndex="-1">Côte d'Ivoire</li>
+            <li className="item" tabIndex="-1">Curaçao</li>
+            <li className="item" tabIndex="-1">Korea, Democratic People's Republic of</li>
+            <li className="item" tabIndex="-1">Korea, Republic of</li>
+            <li className="item" tabIndex="-1">United Arab Emirates</li>
+            <li className="item" tabIndex="-1">United Kingdom</li>
+            <li className="item" tabIndex="-1">United States</li>
+          </ul>
+        </FocusManager>
+      );
+    });
+
+    afterEach(() => {
+      tree.unmount();
+    });
+
+    it('should not execute FocusManager event handlers', () => {
+      tree.find('.item').at(0).getDOMNode().focus();
+      tree.find('.item').at(0).simulate('focus', {stopPropagation: () => {}, isPropagationStopped: () => true});
+      assert(onFocusSpy.called);
+      tree.find('.item').at(0).getDOMNode().blur();
+      tree.find('.item').at(0).simulate('blur', {stopPropagation: () => {}, isPropagationStopped: () => true});
+      assert(onBlurSpy.called);
+      tree.find('.item').at(0).getDOMNode().focus();
+      tree.find('.item').at(0).simulate('keypress', {charCode: 65, stopPropagation: () => {}, isPropagationStopped: () => true});
+      assert(onKeyPressSpy.called);
+      assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
+      tree.find('.item').at(0).simulate('keydown', {key: 'ArrowDown', stopPropagation: () => {}, isPropagationStopped: () => true});
+      assert(onKeyDownSpy.called);
+      assert.equal(tree.find('.item').at(0).getDOMNode(), document.activeElement);
+    });
+  });
+
+  describe('includeSelf', () => {
+    let itemSelector = '.item';
+    beforeEach(() => {
+      tree = mount(
+        <FocusManager itemSelector="[tabindex]" includeSelf orientation="horizontal">
+          <tr className="item" tabIndex="-1">
+            <td className="item" tabIndex="-1">Column 1</td>
+            <td className="item">Column 2</td>
+            <td className="item" tabIndex="-1">Column 3</td>
+            <td className="item">Column 4</td>
+          </tr>
+        </FocusManager>
+      );
+    });
+
+    afterEach(() => {
+      tree.unmount();
+    });
+
+    it('when ArrowRight key is pressed with orientation="horizontal", focus next not disabled item', () => {
+      let item = tree.find(itemSelector).at(0);
+      item.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
+      item = tree.find(itemSelector).at(1);
+      item.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(3).getDOMNode(), document.activeElement);
+
+      item = tree.find(itemSelector).at(0);
+      item.simulate('keydown', {key: 'Right', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
+      item = tree.find(itemSelector).at(1);
+      item.simulate('keydown', {key: 'Right', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(3).getDOMNode(), document.activeElement);
+    });
+
+    it('when ArrowRight key is pressed on last item, focus first not disabled item', () => {
+      let item = tree.find(itemSelector).at(3);
+      item.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(0).getDOMNode(), document.activeElement);
+
+      item = tree.find(itemSelector).at(3);
+      item.simulate('keydown', {key: 'Right', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(0).getDOMNode(), document.activeElement);
+    });
+
+    it('when ArrowLeft key is pressed, focus previous not disabled item', () => {
+      let item = tree.find(itemSelector).at(3);
+      item.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
+      item = tree.find(itemSelector).at(1);
+      item.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(0).getDOMNode(), document.activeElement);
+
+      item = tree.find(itemSelector).at(3);
+      item.simulate('keydown', {key: 'Left', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
+      item = tree.find(itemSelector).at(1);
+      item.simulate('keydown', {key: 'Left', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(0).getDOMNode(), document.activeElement);
+    });
+
+    it('when ArrowLeft key is pressed on first item, focus last not disabled item', () => {
+      let item = tree.find(itemSelector).at(0);
+      item.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(3).getDOMNode(), document.activeElement);
+
+      tree.find(itemSelector).at(0);
+      item.simulate('keydown', {key: 'Left', preventDefault: () => {}});
+      assert.equal(tree.find(itemSelector).at(3).getDOMNode(), document.activeElement);
     });
   });
 });

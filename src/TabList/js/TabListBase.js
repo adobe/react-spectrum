@@ -174,7 +174,7 @@ export default class TabListBase extends Component {
 
   render() {
     return (
-      <FocusManager itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation}>
+      <FocusManager itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation === 'vertical' ? 'both' : 'horizontal'}>
         <div
           {...this.cleanProps()}
           role="tablist">

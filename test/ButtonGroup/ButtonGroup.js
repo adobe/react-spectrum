@@ -141,6 +141,22 @@ describe('ButtonGroup', () => {
     assert.equal(tree.find({selected: true}).length, 0);
   });
 
+  it('supports orientation', () => {
+    const tree = shallow(<ButtonGroup {...defaultProps} />);
+    tree.setProps({orientation: 'horizontal'});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), null);
+    tree.setProps({orientation: 'vertical'});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), null);
+    tree.setProps({orientation: 'both'});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), null);
+    tree.setProps({orientation: 'horizontal', readOnly: true});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), 'horizontal');
+    tree.setProps({orientation: 'vertical', readOnly: true});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), 'vertical');
+    tree.setProps({orientation: 'both', readOnly: true});
+    assert.equal(tree.childAt(0).prop('aria-orientation'), null);
+  });
+
   it('supports selection being returned on selection change for single select', (done) => {
     const tree = shallow(
       <ButtonGroup

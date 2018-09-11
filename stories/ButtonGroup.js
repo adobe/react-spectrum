@@ -68,6 +68,11 @@ storiesOf('ButtonGroup', module)
     {inline: true}
   )
   .addWithInfo(
+    'readOnly: true (vertical)',
+    () => (render({readOnly: true, orientation: 'vertical', onClick: action('click')})),
+    {inline: true}
+  )
+  .addWithInfo(
     'Tool',
     () => (render({...toolProps})),
     {inline: true}
