@@ -1,10 +1,9 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import {CSSLayout, EditableCollectionView, IndexPath} from '@react/collection-view';
+import {EditableCollectionView, IndexPath, ListLayout} from '@react/collection-view';
 import Item from './Item';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 /*
  * An individual column in a ColumnView
@@ -41,17 +40,8 @@ export default class Column extends React.Component {
   constructor(props) {
     super(props);
 
-    this.layout = new CSSLayout({
-      sectionStyle: {
-        flexDirection: 'column',
-        flexWrap: 'nowrap'
-      },
-      itemStyle: {
-        height: 44
-      },
-      transitionStyle: {
-        opacity: 0
-      }
+    this.layout = new ListLayout({
+      rowHeight: 44
     });
   }
 

@@ -1,9 +1,8 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import {CSSLayout, DragTarget, EditableCollectionView} from '@react/collection-view';
+import {DragTarget, EditableCollectionView, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import TreeItem from './TreeItem';
 import '../style/index.styl';
 
@@ -59,14 +58,8 @@ export default class TreeView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.layout = new CSSLayout({
-      sectionStyle: {
-        flexDirection: 'column',
-        flexWrap: 'nowrap'
-      },
-      transitionStyle: {
-        opacity: 0
-      }
+    this.layout = new ListLayout({
+      rowHeight: 44
     });
 
     this.delegate = Object.assign({}, proxy(this.props.delegate), proxy(this));
@@ -103,12 +96,9 @@ export default class TreeView extends React.Component {
     );
   }
 
-  styleForItem(section, index) {
+  indentationForItem(section, index) {
     let content = this.collection.getItem(section, index);
-    return {
-      height: 44,
-      marginLeft: 28 * content.level
-    };
+    return 28 * content.level;
   }
 
   onKeyDown(e) {

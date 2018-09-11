@@ -1,11 +1,10 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import {EditableCollectionView} from '@react/collection-view';
+import {EditableCollectionView, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
-import TableViewLayout from './TableViewLayout';
 import '../style/index.styl';
 
 importSpectrumCSS('table');
@@ -54,7 +53,7 @@ export default class TableView extends Component {
   constructor(props) {
     super(props);
     const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
-    this.layout = new TableViewLayout({rowHeight});
+    this.layout = new ListLayout({rowHeight});
   }
 
   setSelectAll(select) {
