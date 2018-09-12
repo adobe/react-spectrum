@@ -15,6 +15,8 @@
  * from Adobe Systems Incorporated.
  */
 
+ @import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
+
 .react-spectrum-TableView {
   height: 100%
   display: flex
@@ -27,6 +29,10 @@
 
   > div > .item {
     overflow: visible !important; /* override inline styles applied by collection-view */
+
+    .spectrum-Table-row {
+      border-bottom-style: solid; /* table rows in collection-view should have bottom border */
+    }
   }
 }
 .react-spectrum-TableView-row {

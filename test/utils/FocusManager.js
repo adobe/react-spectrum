@@ -224,6 +224,42 @@ describe('FocusManager', function () {
     });
   });
 
+  describe('ignorePageUpPageDown = true', () => {
+    it('should ignore PageUp and PageDown events', () => {
+      tree.setProps({ignorePageUpPageDown: true});
+      const itemHeight = 32;
+      const list = tree.find('ul');
+      const listNode = list.getDOMNode();
+      const items = tree.find('.item');
+      let itemNode;
+      const stubs = [];
+      stubs.push(sinon.stub(listNode, 'clientHeight').get(() => itemHeight * 2));
+      stubs.push(sinon.stub(listNode, 'scrollHeight').get(() => itemHeight * items.length));
+
+      items.forEach((item, index) => {
+        itemNode = item.getDOMNode();
+        stubs.push(sinon.stub(itemNode, 'offsetHeight').get(() => itemHeight));
+        stubs.push(sinon.stub(itemNode, 'offsetTop').get(() => itemHeight * index));
+      });
+
+      // PageDown
+      items.at(0).getDOMNode().focus();
+      items.at(0).simulate('keydown', {key: 'PageDown', preventDefault: () => {}});
+      assert.equal(items.at(0).getDOMNode(), document.activeElement);
+
+      // PageUp
+      items.at(3).getDOMNode().focus();
+      items.at(3).simulate('keydown', {key: 'PageUp', preventDefault: () => {}});
+      assert.equal(items.at(3).getDOMNode(), document.activeElement);
+
+      stubs.forEach(stub => {
+        stub.restore();
+        stub.reset();
+      });
+      tree.unmount();
+    });
+  });
+
   describe('onFocus', () => {
     it('should support default manageTabIndex=true when items receive focus', () => {
       let items = tree.find('.item');

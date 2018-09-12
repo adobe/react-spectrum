@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import {EditableCollectionView, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -42,16 +43,18 @@ export default class TableView extends Component {
     /** Whether to use the spectrum quiet variant. */
     quiet: PropTypes.bool,
 
-    /** The height each row should be in the table. It has a maximum of 72 */
+    /* The height each row should be in the table. It has a maximum of 72 */
     rowHeight: PropTypes.number
   };
 
   static defaultProps = {
-    allowsSelection: true
+    allowsSelection: true,
+    allowsMultipleSelection: true
   };
 
   constructor(props) {
     super(props);
+    this.tableViewId = createId();
     const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
     this.layout = new ListLayout({rowHeight});
   }
@@ -65,45 +68,77 @@ export default class TableView extends Component {
   }
 
   renderHeader() {
-    // TODO: compute selected based on whether everything is really selected
+    const {
+      id = this.tableViewId,
+      allowsMultipleSelection,
+      allowsSelection,
+      dataSource
+    } = this.props;
+
+    const allItemsSelected = this.collection && this.collection.selectedIndexPaths.length === dataSource.getNumberOfRows();
+
     return (
-      <TableRow
-        isHeaderRow
-        columns={this.props.dataSource.columns}
-        renderCell={this.renderColumnHeader}
-        allowsSelection={this.props.allowsSelection}
-        selected={null}
-        onSelectChange={this.setSelectAll}
-        onCellClick={this.sortByColumn} />
+      <div role="rowgroup">
+        <TableRow
+          tableId={id}
+          isHeaderRow
+          columns={dataSource.columns}
+          renderCell={this.renderColumnHeader}
+          allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
+          allowsSelection={allowsSelection}
+          selected={allItemsSelected}
+          onSelectChange={this.setSelectAll}
+          onCellClick={this.sortByColumn}
+          collectionView={this.collection} />
+      </div>
     );
   }
 
   renderItemView(type, data) {
+    const {
+      id = this.tableViewId,
+      allowsMultipleSelection,
+      allowsSelection,
+      dataSource,
+      onCellClick,
+      onCellDoubleClick
+    } = this.props;
     return (
       <TableRow
-        columns={this.props.dataSource.columns}
+        tableId={id}
+        columns={dataSource.columns}
         renderCell={this.renderCell.bind(this, data)}
-        allowsSelection={this.props.allowsSelection}
-        onCellClick={this.props.onCellClick}
-        onCellDoubleClick={this.props.onCellDoubleClick} />
+        allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
+        allowsSelection={allowsSelection}
+        onCellClick={onCellClick}
+        onCellDoubleClick={onCellDoubleClick}
+        collectionView={this.collection} />
     );
   }
 
-  renderColumnHeader(column) {
+  renderColumnHeader(column, columnIndex, rowFocused) {
+    const {
+      allowsSelection,
+      allowsMultipleSelection,
+      dataSource,
+      renderColumnHeader
+    } = this.props;
     return (
       <TableCell
         isHeaderRow
         column={column}
-        sortDir={this.props.dataSource.sortColumn === column && this.props.dataSource.sortDir}>
-        {this.props.renderColumnHeader ? this.props.renderColumnHeader(column) : column.title}
+        sortDir={dataSource.sortColumn === column && dataSource.sortDir}
+        allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
+        rowFocused={rowFocused}>
+        {renderColumnHeader ? renderColumnHeader(column) : column.title}
       </TableCell>
     );
   }
 
-  renderCell(data, column, i) {
+  renderCell(data, column, columnIndex, rowFocused) {
     return (
-      <TableCell column={column}>
-        {this.props.renderCell(column, data[i])}
+      <TableCell column={column} aria-colindex={columnIndex} rowFocused={rowFocused}>
+        {this.props.renderCell(column, data[columnIndex], rowFocused)}
       </TableCell>
     );
   }
@@ -116,6 +151,9 @@ export default class TableView extends Component {
   }
 
   onSelectionChange() {
+    // Force update to properly set the state of the Select All checkbox
+    this.forceUpdate();
+
     if (this.props.onSelectionChange) {
       this.props.onSelectionChange(this.collection.selectedIndexPaths);
     }
@@ -129,28 +167,54 @@ export default class TableView extends Component {
   }
 
   render() {
-    var tableClasses = classNames(
-      this.props.className,
+    const {
+      allowsMultipleSelection,
+      allowsSelection,
+      className,
+      dataSource,
+      id = this.tableViewId,
+      quiet,
+      selectedIndexPaths,
+      ...otherProps
+    } = this.props;
+    const tableClasses = classNames(
+      className,
       'react-spectrum-TableView',
       'spectrum-Table', {
-        'spectrum-Table--quiet': this.props.quiet
+        'spectrum-Table--quiet': quiet
       }
     );
+    const rowCount = dataSource.getNumberOfRows() + 1;
+    let colCount = dataSource.columns.length;
+    if (allowsSelection) {
+      colCount += 1;
+    }
     return (
-      <div className={tableClasses}>
+      <div
+        id={id}
+        className={tableClasses}
+        role="grid"
+        aria-rowcount={rowCount}
+        aria-colcount={colCount}
+        aria-label={otherProps['aria-label']}
+        aria-labelledby={otherProps['aria-labelledby']}
+        aria-describedby={otherProps['aria-describedby']}
+        aria-multiselectable={(allowsSelection && allowsMultipleSelection) || null}>
         {this.renderHeader()}
         <EditableCollectionView
           className="react-spectrum-TableView-body spectrum-Table-body"
           delegate={this}
           layout={this.layout}
-          dataSource={this.props.dataSource}
+          dataSource={dataSource}
           ref={c => this.collection = c}
-          canSelectItems={this.props.allowsSelection}
-          allowsMultipleSelection={this.props.allowsMultipleSelection}
+          canSelectItems={allowsSelection}
+          allowsMultipleSelection={allowsMultipleSelection}
           selectionMode="toggle"
-          selectedIndexPaths={this.props.selectedIndexPaths}
+          keyboardMode="focus"
+          selectedIndexPaths={selectedIndexPaths}
           onSelectionChanged={this.onSelectionChange}
-          onScroll={this.onScroll} />
+          onScroll={this.onScroll}
+          role="rowgroup" />
       </div>
     );
   }

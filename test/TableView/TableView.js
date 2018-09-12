@@ -1,7 +1,7 @@
 import assert from 'assert';
 import {EditableCollectionView} from '@react/collection-view';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon, {stub} from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
@@ -141,12 +141,19 @@ describe('TableView', function () {
         renderCell={renderCell} />
     );
     let Wrapper = (props) => props.children;
-    let wrapper = shallow(<Wrapper>{table.instance().renderCell(['Sunshine Bear', true], col, 0)}</Wrapper>);
+    let wrapper = shallow(<Wrapper>{table.instance().renderCell(['Sunshine Bear', true], col, 0, 0, 0, 0)}</Wrapper>);
 
     assert(wrapper.find(TableCell));
     assert.deepEqual(wrapper.find(TableCell).prop('column'), col);
     assert.equal(renderCell.callCount, 1);
     assert.deepEqual(renderCell.getCall(0).args[1], 'Sunshine Bear');
+
+    wrapper = shallow(<Wrapper>{table.instance().renderCell(['Sunshine Bear', true], col, 0)}</Wrapper>);
+
+    assert(wrapper.find(TableCell));
+    assert.deepEqual(wrapper.find(TableCell).prop('column'), col);
+    assert.equal(renderCell.callCount, 2);
+    assert.deepEqual(renderCell.getCall(1).args[1], 'Sunshine Bear');
   });
 
   it('should call internal sort if column prop is set', function () {
@@ -177,11 +184,56 @@ describe('TableView', function () {
         sortable
         onSelectionChange={onSelectionChange} />
     );
-    table.instance().collection = {selectedIndexPaths: [{section: 0, index: 0}]};
+    table.instance().collection = {selectedIndexPaths: [{section: 0, index: 0}], getNumberOfSections: () => 1, getSectionLength: () => 6};
 
     table.instance().onSelectionChange();
     assert.equal(onSelectionChange.callCount, 1);
     assert.equal(onSelectionChange.getCall(0).args[0][0].index, 0);
+  });
+
+  it('setSelectAll should call selectAll or clearSelection method of collection', () => {
+    const selectAll = sinon.spy();
+    const clearSelection = sinon.spy();
+    const table = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell} />
+    );
+    table.instance().collection = {
+      selectAll,
+      clearSelection,
+      selectedIndexPaths: [],
+      getNumberOfSections: () => 1,
+      getSectionLength: () => 6
+    };
+    table.instance().setSelectAll(true);
+    assert(selectAll.calledOnce);
+    table.instance().collection.selectedIndexPaths = [
+      {section: 0, index: 0},
+      {section: 0, index: 1},
+      {section: 0, index: 2},
+      {section: 0, index: 3},
+      {section: 0, index: 4},
+      {section: 0, index: 5}
+    ];
+    table.instance().onSelectionChange();
+    assert(table.instance().collection.selectedIndexPaths.length === ds.getNumberOfRows());
+    table.instance().setSelectAll(false);
+    assert(clearSelection.calledOnce);
+    table.instance().collection.selectedIndexPaths = [];
+    table.instance().onSelectionChange();
+    assert(table.instance().collection.selectedIndexPaths.length !== ds.getNumberOfRows());
+  });
+
+  it('should have collection ref when mounted', () => {
+    const table = mount(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell} />
+    );
+
+    assert(table.instance().collection);
+    table.unmount();
   });
 
   it('should render an infiniteScroll table', function () {

@@ -56,7 +56,8 @@ class TableDS extends TableViewDataSource {
       {
         title: 'Active',
         key: 'enabled',
-        width: 100
+        width: 100,
+        announce: false
       },
       {
         title: 'Name',
@@ -89,9 +90,25 @@ class TableDS extends TableViewDataSource {
 }
 var ds = new TableDS;
 
-function renderCell(column, data, rowIndex) {
+function renderCell(column, data, rowFocused) {
   if (column.key === 'enabled') {
-    return <Switch defaultChecked={data} onChange={action('change')} onMouseDown={(e) => e.stopPropagation()} />;
+
+    // Determine how to set tabIndex of Switch based on focused state of row.
+    var tabIndex = rowFocused ? 0 : -1;
+
+    return (
+      <Switch
+        defaultChecked={data}
+        onChange={action('change')}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === ' ') {
+            e.stopPropagation();
+          }
+        }}
+        tabIndex={tabIndex}
+        title={column.title} />
+    );
   }
   return <span>{'' + data}</span>;
 }
