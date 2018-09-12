@@ -35,6 +35,20 @@ storiesOf('TableView', module)
     'rowHeight: 72',
     () => render({rowHeight: 72}),
     {inline: true}
+  )
+  .addWithInfo(
+    'canDragItems: true',
+    () => render({canDragItems: true, quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'custom drag view',
+    () => render({
+      canDragItems: true,
+      quiet: true,
+      renderDragView: () => <div style={{background: 'red', color: 'white'}}>Drag view</div>
+    }),
+    {inline: true}
   );
 
 var tableData = [

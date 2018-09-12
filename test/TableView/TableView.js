@@ -1,12 +1,12 @@
 import assert from 'assert';
-import {EditableCollectionView} from '@react/collection-view';
+import {DragTarget, EditableCollectionView, IndexPath} from '@react/collection-view';
 import {mount, shallow} from 'enzyme';
+import Provider from '../../src/Provider';
 import React from 'react';
 import sinon, {stub} from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
 import {TableView, TableViewDataSource} from '../../src/TableView';
-
 
 describe('TableView', function () {
   var ds, renderCell;
@@ -285,5 +285,67 @@ describe('TableView', function () {
         rowHeight={24} />
     );
     assert.equal(tree.instance().layout.rowHeight, 48);
+  });
+
+  it('should support dragging rows', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        canDragItems />
+    );
+
+    assert.equal(tree.find(EditableCollectionView).prop('canDragItems'), true);
+
+    tree.instance().collection = {
+      getItemView: (indexPath) => ({children: [
+        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
+      ]})
+    };
+
+    let Wrapper = (props) => props.children;
+    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
+    assert.equal(dragView.type(), Provider);
+    assert.equal(dragView.prop('theme'), 'light');
+    assert.equal(dragView.find(TableRow).length, 1);
+  });
+
+  it('should pass the correct theme to the drag view from the context', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        canDragItems />
+    , {context: {theme: 'dark'}});
+
+    tree.instance().collection = {
+      getItemView: (indexPath) => ({children: [
+        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
+      ]})
+    };
+
+    let Wrapper = (props) => props.children;
+    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
+    assert.equal(dragView.type(), Provider);
+    assert.equal(dragView.prop('theme'), 'dark');
+  });
+
+  it('should support custom drag views', function () {
+    const tree = shallow(
+      <TableView
+        dataSource={ds}
+        renderCell={renderCell}
+        canDragItems
+        renderDragView={() => <div>Drag view</div>} />
+    );
+
+    tree.instance().collection = {
+      selectedIndexPaths: []
+    };
+
+    let Wrapper = (props) => props.children;
+    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
+    assert.equal(dragView.find('div').length, 1);
+    assert.equal(dragView.find('div').text(), 'Drag view');
   });
 });

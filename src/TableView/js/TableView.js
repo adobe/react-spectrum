@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {EditableCollectionView, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
+import Provider from '../../Provider';
 import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
@@ -43,13 +44,36 @@ export default class TableView extends Component {
     /** Whether to use the spectrum quiet variant. */
     quiet: PropTypes.bool,
 
-    /* The height each row should be in the table. It has a maximum of 72 */
-    rowHeight: PropTypes.number
+    /** The height each row should be in the table. It has a maximum of 72 */
+    rowHeight: PropTypes.number,
+
+    /** Whether the user can drag rows from the table. */
+    canDragItems: PropTypes.bool,
+
+    /** A function which renders the view to display under the cursor during drag and drop. */
+    renderDragView: PropTypes.func,
+
+    /**
+     * Whether the TableView accepts drops.
+     * If `true`, the table accepts all types of drops. Alternatively,
+     * it can be set to an array of accepted drop types.
+     */
+    acceptsDrops: PropTypes.oneOf([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)])
   };
 
   static defaultProps = {
     allowsSelection: true,
-    allowsMultipleSelection: true
+    allowsMultipleSelection: true,
+    canDragItems: false,
+    acceptsDrops: false
+  };
+
+  // These come from the parent Provider. Used to set the correct props
+  // to the provider that wraps the drag view.
+  static contextTypes = {
+    theme: PropTypes.string,
+    scale: PropTypes.string,
+    locale: PropTypes.string
   };
 
   constructor(props) {
@@ -143,6 +167,26 @@ export default class TableView extends Component {
     );
   }
 
+  renderDragView(target) {
+    // Use custom drag renderer if provided,
+    // otherwise just get the existing row view.
+    let dragView;
+    if (this.props.renderDragView) {
+      dragView = this.props.renderDragView(target, this.collection.selectedIndexPaths);
+    } else {
+      // Get the row wrapper view from collection-view. The first child is the actual TableRow component.
+      let view = this.collection.getItemView(target.indexPath);
+      dragView = [...view.children][0];
+    }
+
+    // Wrap in a spectrum provider so spectrum components are themed correctly.
+    return (
+      <Provider {...this.context}>
+        {dragView}
+      </Provider>
+    );
+  }
+
   sortByColumn(column) {
     if (column.sortable) {
       this.props.dataSource._sortByColumn(column);
@@ -202,6 +246,7 @@ export default class TableView extends Component {
         aria-multiselectable={(allowsSelection && allowsMultipleSelection) || null}>
         {this.renderHeader()}
         <EditableCollectionView
+          {...this.props}
           className="react-spectrum-TableView-body spectrum-Table-body"
           delegate={this}
           layout={this.layout}
