@@ -82,14 +82,14 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0) {
     const placementAxis = placement.split(' ')[0];
     const expectedPosition = {
       positionLeft: expected[0],
       positionTop: expected[1],
       arrowOffsetLeft: expected[2],
       arrowOffsetTop: expected[3],
-      maxHeight: expected[4],
+      maxHeight: expected[4] - providerOffset,
       placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
     };
 
@@ -98,43 +98,6 @@ describe('calculatePosition', function () {
     const overlay = createElementWithDimensions('div', overlaySize, margins);
 
     const parentElement = document.createElement('div');
-
-    parentElement.appendChild(container);
-    parentElement.appendChild(target);
-    parentElement.appendChild(overlay);
-
-    document.documentElement.appendChild(parentElement);
-
-    const getBoundariesElement = () => {
-      const boundariesElem = createElementWithDimensions('div', boundaryDimensions);
-      parentElement.appendChild(boundariesElem);
-      return boundariesElem;
-    };
-
-    it('Should calculate the correct position', function () {
-      const result = calculatePosition(placement, overlay, target, container, 50, flip, getBoundariesElement, offset, crossOffset);
-      assert.deepEqual(result, expectedPosition);
-      document.documentElement.removeChild(parentElement);
-    });
-  }
-
-  function checkPositionForProvider(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
-    const placementAxis = placement.split(' ')[0];
-    const expectedPosition = {
-      positionLeft: expected[0],
-      positionTop: expected[1],
-      arrowOffsetLeft: expected[2],
-      arrowOffsetTop: expected[3],
-      maxHeight: expected[4] - PROVIDER_OFFSET,
-      placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
-    };
-
-    const container = createElementWithDimensions('div', containerDimensions);
-    const target = createElementWithDimensions('div', targetDimension);
-    const overlay = createElementWithDimensions('div', overlaySize);
-
-    const parentElement = document.createElement('div');
-
     parentElement.appendChild(container);
     parentElement.appendChild(target);
     parentElement.appendChild(overlay);
@@ -144,17 +107,44 @@ describe('calculatePosition', function () {
     const getBoundariesElement = () => {
       const boundariesElem = createElementWithDimensions('div', {
         ...boundaryDimensions,
-        height: boundaryDimensions.height - PROVIDER_OFFSET
+        height: boundaryDimensions.height - providerOffset
       });
       parentElement.appendChild(boundariesElem);
       return boundariesElem;
     };
 
-    it('Should calculate the correct position when provider does not start at top of screen', function () {
+    it(title, function () {
       const result = calculatePosition(placement, overlay, target, container, 50, flip, getBoundariesElement, offset, crossOffset);
       assert.deepEqual(result, expectedPosition);
       document.documentElement.removeChild(parentElement);
     });
+  }
+
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+    checkPositionCommon(
+      'Should calculate the correct position',
+      expected,
+      placement,
+      targetDimension,
+      boundaryDimensions,
+      offset,
+      crossOffset,
+      flip
+    );
+  }
+
+  function checkPositionForProvider(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+    checkPositionCommon(
+      'Should calculate the correct position when provider does not start at top of screen',
+      expected,
+      placement,
+      targetDimension,
+      boundaryDimensions,
+      offset,
+      crossOffset,
+      flip,
+      PROVIDER_OFFSET
+    );
   }
 
   const testCases = [
