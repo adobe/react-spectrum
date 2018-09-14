@@ -35,7 +35,19 @@ describe('DialogButtons', () => {
     assert.equal(buttons.at(1).prop('variant'), 'primary');
   });
 
-  it('Supports the onCancel and onConfirm', () => {
+  it('renders three buttons with secondaryLabel', () => {
+    const tree = shallow(<DialogButtons confirmLabel="Keep Both" secondaryLabel="Replace" cancelLabel="Cancel" />);
+    let buttons = tree.find(Button);
+    assert.equal(buttons.length, 3);
+    assert.equal(buttons.at(0).prop('label'), 'Cancel');
+    assert.equal(buttons.at(1).prop('label'), 'Replace');
+    assert.equal(buttons.at(2).prop('label'), 'Keep Both');
+    assert.equal(buttons.at(0).prop('variant'), 'secondary');
+    assert.equal(buttons.at(1).prop('variant'), 'secondary');
+    assert.equal(buttons.at(2).prop('variant'), 'primary');
+  });
+
+  it('supports onCancel and onConfirm', () => {
     const spy = sinon.spy();
     const tree = shallow(<DialogButtons confirmLabel="OK" cancelLabel="Close" onCancel={spy} onConfirm={spy} />);
     let buttons = tree.find(Button);
@@ -43,6 +55,18 @@ describe('DialogButtons', () => {
     assert(spy.calledOnce);
     buttons.at(1).simulate('click');
     assert(spy.calledTwice);
+  });
+
+  it('supports onConfirm with primary or secondary option', () => {
+    const spy = sinon.spy();
+    const tree = shallow(<DialogButtons confirmLabel="Keep Both" secondaryLabel="Replace" cancelLabel="Cancel" onConfirm={spy} />);
+    let buttons = tree.find(Button);
+    buttons.at(1).simulate('click');
+    assert(spy.calledOnce);
+    assert.equal(spy.getCall(0).args[0], 'secondary');
+    buttons.at(2).simulate('click');
+    assert(spy.calledTwice);
+    assert.equal(spy.getCall(1).args[0], 'primary');
   });
 
   it('supports autoFocus=\'confirm\'', async () => {
@@ -67,10 +91,30 @@ describe('DialogButtons', () => {
     tree.unmount();
   });
 
+  it('supports autoFocus=\'secondary\'', async () => {
+    const tree = mount(<DialogButtons confirmLabel="OK" cancelLabel="Close" autoFocusButton="secondary" secondaryLabel="Replace" />);
+    const dialogButtons = tree.find('DialogButtons');
+    assert.equal(dialogButtons.prop('autoFocusButton'), 'secondary');
+    let buttons = dialogButtons.find('Button');
+    await sleep(17);
+    assert(!buttons.at(0).getDOMNode().getAttribute('autoFocus'));
+    assert.equal(document.activeElement, buttons.at(1).getDOMNode());
+    tree.unmount();
+  });
+
   it('supports disabling confirm button', () => {
     const tree = shallow(<DialogButtons confirmLabel="OK" confirmDisabled />);
     assert(tree.find(Button).prop('disabled'));
     tree.setProps({confirmDisabled: false});
     assert(!tree.find(Button).prop('disabled'));
+  });
+
+  it('disables secondary button when confirm is disabled', () => {
+    const tree = shallow(<DialogButtons confirmLabel="OK" secondaryLabel="Secondary" confirmDisabled />);
+    assert(tree.find(Button).at(0).prop('disabled'));
+    assert(tree.find(Button).at(1).prop('disabled'));
+    tree.setProps({confirmDisabled: false});
+    assert(!tree.find(Button).at(0).prop('disabled'));
+    assert(!tree.find(Button).at(1).prop('disabled'));
   });
 });

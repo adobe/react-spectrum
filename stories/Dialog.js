@@ -35,10 +35,21 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
+    'with secondary confirmation button',
+    () => render(dialogChildren, {title: 'Conflict', confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
+    {inline: true}
+  )
+  .addWithInfo(
     'with confirm disabled',
     () => render(dialogChildren, {title: 'Dialog title', confirmDisabled: true, confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
     {inline: true}
   )
+  .addWithInfo(
+    'with secondary confirmation disabled',
+    () => render(dialogChildren, {title: 'Conflict', confirmDisabled: true, confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
+    {inline: true}
+  )
+
   .addWithInfo(
     'Long content',
     () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'}),

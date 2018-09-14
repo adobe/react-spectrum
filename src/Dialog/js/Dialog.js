@@ -15,6 +15,7 @@ export default class Dialog extends Component {
     className: PropTypes.string,
     confirmDisabled: PropTypes.bool,
     confirmLabel: PropTypes.string,
+    secondaryLabel: PropTypes.string,
     onClose: PropTypes.func,
     onCancel: PropTypes.func,
     onConfirm: PropTypes.func,
@@ -23,7 +24,7 @@ export default class Dialog extends Component {
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
-    autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', null]),
+    autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', 'secondary', null]),
     keyboardConfirm: PropTypes.bool
   };
 
@@ -42,18 +43,18 @@ export default class Dialog extends Component {
    * Calls the props.onConfirm() or props.onCancel() asynchronously if present,
    * then props.onClose() on any response except false
    */
-  async _onAction(action) {
+  async _onAction(action, ...args) {
     let shouldClose = true;
     if (action) {
-      shouldClose = await action();
+      shouldClose = await action(...args);
     }
     if (shouldClose !== false) {
       this.props.onClose();
     }
   }
 
-  onConfirm() {
-    this._onAction(this.props.onConfirm);
+  onConfirm(...args) {
+    this._onAction(this.props.onConfirm, ...args);
   }
 
   onCancel() {
@@ -84,6 +85,7 @@ export default class Dialog extends Component {
       className = '',
       cancelLabel,
       confirmLabel,
+      secondaryLabel,
       open,
       title,
       variant,
@@ -118,6 +120,7 @@ export default class Dialog extends Component {
             title={title}
             fullscreen={fullscreen}
             confirmLabel={confirmLabel}
+            secondaryLabel={secondaryLabel}
             cancelLabel={cancelLabel}
             {...otherProps}
             onConfirm={this.onConfirm}

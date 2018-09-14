@@ -21,6 +21,8 @@ export default class ModalContainer {
     // If container is not specified, look for the provider of context
     if (!container && context) {
       container = () => closest(ReactDOM.findDOMNode(context), '.react-spectrum-provider');
+    } else if (!container) {
+      container = () => document.querySelector('.react-spectrum-provider') || document.body;
     }
 
     let modal = (
