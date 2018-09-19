@@ -1,27 +1,57 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
-import {EditableCollectionView, ListLayout} from '@react/collection-view';
+import {EditableCollectionView, IndexPath, IndexPathSet} from '@react/collection-view';
+import ListDataSource from '../../ListDataSource';
 import PropTypes from 'prop-types';
 import Provider from '../../Provider';
+import proxy from '../../utils/proxyObject';
 import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
+import TableViewDataSource from './TableViewDataSource';
+import TableViewLayout from './TableViewLayout';
+import Wait from '../../Wait';
 import '../style/index.styl';
 
 importSpectrumCSS('table');
 
+const columnShape = PropTypes.shape({
+  title: PropTypes.string.isRequired,
+  sortable: PropTypes.bool,
+  width: PropTypes.number,
+  minWidth: PropTypes.number,
+  maxWidth: PropTypes.number,
+  // resizable: PropTypes.bool,
+  divider: PropTypes.bool,
+  align: PropTypes.oneOf(['left', 'center', 'right'])
+});
+
+const sortDescriptorShape = PropTypes.shape({
+  column: columnShape.isRequired,
+  direction: PropTypes.oneOf([-1, 1]).isRequired
+});
+
 @autobind
 export default class TableView extends Component {
   static propTypes = {
-    /** The datasource for the column view. Should be a subclass of `TableViewDataSource`. */
-    dataSource: PropTypes.object.isRequired,
+    /** The columns to display in the table view (controlled). */
+    columns: PropTypes.arrayOf(columnShape),
+
+    /** The initial columns to display in the table view (uncontrolled). */
+    defaultColumns: PropTypes.arrayOf(columnShape),
+
+    /** The datasource for the table view. Should be a subclass of `ListDataSource`. */
+    dataSource: PropTypes.instanceOf(ListDataSource).isRequired,
 
     /** A function which renders a cell. Passed a column object and cell data. */
     renderCell: PropTypes.func.isRequired,
 
     /** An optional function which overrides the rendering for a column header. Passed the column object. */
     renderColumnHeader: PropTypes.func,
+
+    /** An optional function which is called to render the contents of the table body when there are no rows. */
+    renderEmptyView: PropTypes.func,
 
     /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
@@ -33,7 +63,19 @@ export default class TableView extends Component {
     onSelectionChange: PropTypes.func,
 
     /** Sets the selected rows. Should be an IndexPathSet object or an array of IndexPaths. */
-    selectedIndexPaths: PropTypes.object,
+    selectedIndexPaths: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.instanceOf(IndexPath)),
+      PropTypes.instanceOf(IndexPathSet)
+    ]),
+
+    /** The sort column and direction (controlled). */
+    sortDescriptor: sortDescriptorShape,
+
+    /** The initial sort column and direction (uncontrolled). */
+    defaultSortDescriptor: sortDescriptorShape,
+    
+    /** A function that is called when the sort descriptor changes. */
+    onSortChange: PropTypes.func,
 
     /** A function that is called when a cell is clicked. Passed a column object and row index. */
     onCellClick: PropTypes.func,
@@ -58,7 +100,7 @@ export default class TableView extends Component {
      * If `true`, the table accepts all types of drops. Alternatively,
      * it can be set to an array of accepted drop types.
      */
-    acceptsDrops: PropTypes.oneOf([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)])
+    acceptsDrops: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)])
   };
 
   static defaultProps = {
@@ -76,11 +118,65 @@ export default class TableView extends Component {
     locale: PropTypes.string
   };
 
+  static SORT_ASCENDING = 1;
+  static SORT_DESCENDING = -1;
+
   constructor(props) {
     super(props);
     this.tableViewId = createId();
     const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
-    this.layout = new ListLayout({rowHeight});
+    this.layout = new TableViewLayout({rowHeight, tableView: this});
+    this.isLoading = false;
+    this.hasMore = true;
+    this.state = {
+      columns: this.props.columns || 
+        this.props.defaultColumns || 
+        this.props.dataSource.getColumns(),
+      sortDescriptor: this.props.sortDescriptor || 
+        this.props.defaultSortDescriptor || 
+        (this.props.dataSource.sortColumn && { // backward compatibility
+          column: this.props.dataSource.sortColumn,
+          direction: this.props.dataSource.sortDirection
+        })
+    };
+  }
+
+  async componentDidMount() {
+    await this.performLoad(() =>
+      this.props.dataSource.performLoad(this.state.sortDescriptor)
+    );
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.columns && props.columns !== this.props.columns) {
+      this.setState({
+        columns: this.props.columns
+      });
+    }
+    
+    if (props.sortDescriptor && props.sortDescriptor !== this.props.sortDescriptor) {
+      this.updateSort(props.sortDescriptor);
+    }
+  }
+
+  async performLoad(fn) {
+    if (this.isLoading) {
+      return;
+    }
+
+    try {
+      this.isLoading = true;
+      if (this.collection) {
+        this.collection.relayout();
+      }
+
+      await fn();
+    } finally {
+      this.isLoading = false;
+      if (this.collection) {
+        this.collection.relayout();
+      }
+    }
   }
 
   setSelectAll(select) {
@@ -95,18 +191,18 @@ export default class TableView extends Component {
     const {
       id = this.tableViewId,
       allowsMultipleSelection,
-      allowsSelection,
-      dataSource
+      allowsSelection
     } = this.props;
 
-    const allItemsSelected = this.collection && this.collection.selectedIndexPaths.length === dataSource.getNumberOfRows();
+    let numRows = this.getRowCount();
+    let allItemsSelected = this.collection && this.collection.selectedIndexPaths.length === numRows && numRows > 0;
 
     return (
       <div role="rowgroup">
         <TableRow
           tableId={id}
           isHeaderRow
-          columns={dataSource.columns}
+          columns={this.state.columns}
           renderCell={this.renderColumnHeader}
           allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
           allowsSelection={allowsSelection}
@@ -123,14 +219,13 @@ export default class TableView extends Component {
       id = this.tableViewId,
       allowsMultipleSelection,
       allowsSelection,
-      dataSource,
       onCellClick,
       onCellDoubleClick
     } = this.props;
     return (
       <TableRow
         tableId={id}
-        columns={dataSource.columns}
+        columns={this.state.columns}
         renderCell={this.renderCell.bind(this, data)}
         allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
         allowsSelection={allowsSelection}
@@ -144,14 +239,13 @@ export default class TableView extends Component {
     const {
       allowsSelection,
       allowsMultipleSelection,
-      dataSource,
       renderColumnHeader
     } = this.props;
     return (
       <TableCell
         isHeaderRow
         column={column}
-        sortDir={dataSource.sortColumn === column && dataSource.sortDir}
+        sortDir={(this.state.sortDescriptor && this.state.sortDescriptor.column === column) ? this.state.sortDescriptor.direction : null}
         allowsMultipleSelection={allowsSelection && allowsMultipleSelection}
         rowFocused={rowFocused}>
         {renderColumnHeader ? renderColumnHeader(column) : column.title}
@@ -160,9 +254,15 @@ export default class TableView extends Component {
   }
 
   renderCell(data, column, columnIndex, rowFocused) {
+    // For backwards compatibility with TableViewDataSource, support
+    // getting per-cell data instead of per-row data.
+    if (this.props.dataSource instanceof TableViewDataSource) {
+      data = data[columnIndex];
+    }
+
     return (
       <TableCell column={column} aria-colindex={columnIndex} rowFocused={rowFocused}>
-        {this.props.renderCell(column, data[columnIndex], rowFocused)}
+        {this.props.renderCell(column, data, rowFocused)}
       </TableCell>
     );
   }
@@ -187,10 +287,56 @@ export default class TableView extends Component {
     );
   }
 
-  sortByColumn(column) {
+  renderSupplementaryView(type) {
+    if (type === 'loading-indicator') {
+      return <Wait centered size="M" />;
+    }
+
+    if (type === 'empty-view' && this.props.renderEmptyView) {
+      return this.props.renderEmptyView();
+    }
+
+    return <div />;
+  }
+
+  async sortByColumn(column) {
     if (column.sortable) {
-      this.props.dataSource._sortByColumn(column);
-      this.forceUpdate();
+      let dir = TableView.SORT_ASCENDING;
+      if (this.state.sortDescriptor && this.state.sortDescriptor.column === column) {
+        dir = -this.state.sortDescriptor.direction;
+      }
+
+      let sortDescriptor = {
+        column: column,
+        direction: dir
+      };
+
+      if (this.props.onSortChange) {
+        this.props.onSortChange(sortDescriptor);
+      }
+
+      if (!('sortDescriptor' in this.props)) {
+        await this.updateSort(sortDescriptor);
+      }
+    }
+  }
+
+  async updateSort(sortDescriptor) {
+    this.setState({sortDescriptor});
+    await this.performLoad(() =>
+      this.props.dataSource.performSort(sortDescriptor)
+    );
+  }
+
+  onScroll() {
+    let scrollOffset = this.collection.contentSize.height - this.collection.size.height * 2;
+    if (this.hasMore && this.collection.contentOffset.y > scrollOffset) {
+      this.performLoad(async () => {
+        let res = await this.props.dataSource.performLoadMore();
+        if (typeof res === 'boolean') {
+          this.hasMore = res;
+        }
+      });
     }
   }
 
@@ -203,11 +349,15 @@ export default class TableView extends Component {
     }
   }
 
-  onScroll() {
-    let scrollOffset = this.collection.contentHeight - this.collection.size.height * 2;
-    if (this.collection.contentOffset > scrollOffset) {
-      this.collection.dataSource.loadMore();
+  getRowCount() {
+    let dataSource = this.props.dataSource;
+    let count = 0;
+    let numSections = dataSource.getNumberOfSections();
+    for (let section = 0; section < numSections; section++) {
+      count += dataSource.getSectionLength(section);
     }
+
+    return count;
   }
 
   render() {
@@ -228,8 +378,8 @@ export default class TableView extends Component {
         'spectrum-Table--quiet': quiet
       }
     );
-    const rowCount = dataSource.getNumberOfRows() + 1;
-    let colCount = dataSource.columns.length;
+    const rowCount = this.getRowCount(0) + 1;
+    let colCount = this.state.columns.length;
     if (allowsSelection) {
       colCount += 1;
     }
@@ -248,7 +398,7 @@ export default class TableView extends Component {
         <EditableCollectionView
           {...this.props}
           className="react-spectrum-TableView-body spectrum-Table-body"
-          delegate={this}
+          delegate={Object.assign({}, proxy(this), proxy(dataSource))}
           layout={this.layout}
           dataSource={dataSource}
           ref={c => this.collection = c}

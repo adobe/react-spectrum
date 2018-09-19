@@ -99,17 +99,17 @@ describe('TableViewDataSource', function () {
     assert.deepEqual(ds.getItem(0, 1), ['Test 1', 'Foo 1']);
   });
 
-  it('should call the sort method when sorting by a column', function () {
+  it('should call the sort method when performing a sort', function () {
     let ds = new TestDS;
     let spy = sinon.spy(ds, 'sort');
 
-    ds._sortByColumn(ds.columns[0]);
+    ds.performSort({column: ds.columns[0], direction: -1});
     assert.deepEqual(spy.getCall(0).args, [ds.columns[0], -1]);
 
-    ds._sortByColumn(ds.columns[0]);
+    ds.performSort({column: ds.columns[0], direction: 1});
     assert.deepEqual(spy.getCall(1).args, [ds.columns[0], 1]);
 
-    ds._sortByColumn(ds.columns[1]);
+    ds.performSort({column: ds.columns[1], direction: -1});
     assert.deepEqual(spy.getCall(2).args, [ds.columns[1], -1]);
   });
 
