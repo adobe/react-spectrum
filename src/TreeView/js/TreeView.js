@@ -168,6 +168,11 @@ export default class TreeView extends React.Component {
     }
   }
 
+  shouldAcceptDrop() {
+    // Override this - we check it below in getDropTarget.
+    return true;
+  }
+
   getDropTarget(target) {
     let item = this.collection.getItem(target.indexPath).item;
 

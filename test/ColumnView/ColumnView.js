@@ -28,7 +28,7 @@ describe('ColumnView', () => {
     await ds.navigateToItem(data[1]);
     assert(tree.find(Column));
     assert(tree.find('.spectrum-MillerColumns-item'));
-    assert(renderDetail.calledOnce);
+    assert(renderDetail.calledTwice);
     await ds.navigateToItem(null);
   });
 
@@ -52,7 +52,7 @@ describe('ColumnView', () => {
     let cols = wrapper.find(Column).at(1).getDOMNode();
     assert.deepEqual(cols, document.activeElement);
 
-    assert(onNavigate.calledTwice);
+    assert.equal(onNavigate.callCount, 4);
     assert.deepEqual(onNavigate.getCall(0).args[0], [data[0]]);
     let instance = wrapper.instance();
     wrapper.unmount();

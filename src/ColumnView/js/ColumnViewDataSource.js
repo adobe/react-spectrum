@@ -7,6 +7,7 @@ class ItemNode {
     this.children = null;
     this.hasChildren = hasChildren;
     this.parent = parent;
+    this.isLoading = false;
   }
 }
 
@@ -56,8 +57,24 @@ export default class ColumnViewDataSource extends EventEmitter {
       return;
     }
 
+    // Build the new navigation stack and immediately trigger a navigate
+    // so that the columns to the right of the selected item are cleared while
+    // the new column loads.
+    let stack = [];
+    let node = parentNode;
+    while (node) {
+      stack.unshift(node);
+      node = node.parent;
+    }
+
+    this.navigationStack = stack;
+    this.emit('navigate', stack.slice(1).map(i => i.item));
+
     // Load children if needed
     if (!parentNode.children) {
+      parentNode.isLoading = true;
+      this._reloadItem(parentNode);
+
       let children = await this.getChildren(item) || [];
 
       let childNodes = children.map(child => {
@@ -76,17 +93,11 @@ export default class ColumnViewDataSource extends EventEmitter {
 
       parentNode.hasChildren = childNodes.length > 0;
       parentNode.children = new ArrayDataSource([childNodes]);
-    }
+      parentNode.isLoading = false;
+      this._reloadItem(parentNode);
 
-    // Build the new navigation stack
-    let stack = [];
-    while (parentNode) {
-      stack.unshift(parentNode);
-      parentNode = parentNode.parent;
+      this.emit('navigate', stack.slice(1).map(i => i.item));
     }
-
-    this.navigationStack = stack;
-    this.emit('navigate', stack.slice(1).map(i => i.item));
   }
 
   /**
@@ -140,6 +151,12 @@ export default class ColumnViewDataSource extends EventEmitter {
     return null;
   }
 
+  _reloadItem(node) {
+    if (node && node.parent) {
+      node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+    }
+  }
+
   /**
    * Adds the item to the selection set
    * @param {object} item
@@ -156,7 +173,7 @@ export default class ColumnViewDataSource extends EventEmitter {
     if (node) {
       // Reload all parents in case they are e.g. displaying the selected child count
       while (node.parent !== null) {
-        node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+        this._reloadItem(node);
         node = node.parent;
       }
     }
@@ -183,7 +200,7 @@ export default class ColumnViewDataSource extends EventEmitter {
     if (node) {
       // Reload all parents in case they are e.g. displaying the selected child count
       while (node.parent !== null) {
-        node.parent.children.emit('reloadItem', new IndexPath(0, node.parent.children.sections[0].indexOf(node)), false);
+        this._reloadItem(node);
         node = node.parent;
       }
     }

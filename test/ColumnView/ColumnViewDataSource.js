@@ -38,7 +38,7 @@ describe('ColumnViewDataSource', function () {
     assert.equal(ds.navigationStack[1].hasChildren, true);
     assert.equal(ds.navigationStack[1].children.sections[0][0].item, data[0].children[0]);
 
-    assert(spy.calledOnce);
+    assert(spy.calledTwice);
     assert.deepEqual(spy.getCall(0).args[0], [data[0]]);
   });
 
@@ -54,8 +54,8 @@ describe('ColumnViewDataSource', function () {
     assert.equal(ds.navigationStack[2].item, data[0].children[1]);
     assert.equal(ds.navigationStack[2].hasChildren, false);
 
-    assert(spy.calledTwice);
-    assert.deepEqual(spy.getCall(1).args[0], [data[0], data[0].children[1]]);
+    assert.equal(spy.callCount, 4);
+    assert.deepEqual(spy.getCall(2).args[0], [data[0], data[0].children[1]]);
   });
 
   it('should navigate to the next column', async function () {

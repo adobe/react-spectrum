@@ -29,7 +29,7 @@ export default class Item extends React.Component {
     return (
       <div className={className} {...filterDOMProps(props)}>
         {allowsSelection && allowsBranchSelection && this.renderCheckbox()}
-        <span className="spectrum-AssetList-itemLabel">{renderItem(item.item)}</span>
+        <span className="spectrum-AssetList-itemLabel">{renderItem(item.item, item)}</span>
         {item.hasChildren && this.renderChevron()}
         {allowsSelection && !allowsBranchSelection && !item.hasChildren && this.renderCheckbox()}
       </div>
