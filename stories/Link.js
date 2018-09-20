@@ -15,8 +15,8 @@ storiesOf('Link', module)
     {inline: true}
   )
   .addWithInfo(
-    'Subtle',
-    () => render({variant: 'subtle'}),
+    'Quiet',
+    () => render({variant: 'quiet'}),
     {inline: true}
   )
   .addWithInfo(
