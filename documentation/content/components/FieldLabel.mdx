@@ -22,12 +22,26 @@ A **FieldLabel** displays a combined element of Textfield and Label.
 
 ### Position of Field Label
 
+The `position` property sets the _justification_ of the label text within its container.
+Please note that setting any value for `position` will move the **FieldLabel** to
+be inline with the form field and situate it to the left of the form field.
+
 <FieldLabel label="React" label="foo" position="left">
   <Textfield placeholder="React" id="foo" />
 </FieldLabel>
 
 ```jsx
 <FieldLabel label="React" label="foo" position="left">
+  <Textfield placeholder="React" id="foo" />
+</FieldLabel>
+```
+
+<FieldLabel label="React" label="foo" position="right" style={{width: '100px'}}>
+  <Textfield placeholder="React" id="foo" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="React" label="foo" position="right" style={{width: '100px'}}>
   <Textfield placeholder="React" id="foo" />
 </FieldLabel>
 ```

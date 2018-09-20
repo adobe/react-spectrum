@@ -26,12 +26,12 @@ storiesOf('FieldLabel', module)
   )
   .addWithInfo(
     'position: left',
-    () => render({label: 'React', position: 'left'}),
+    () => render({label: 'React', position: 'left', style: {width: '100px'}}),
     {inline: true}
   )
   .addWithInfo(
     'position: right',
-    () => render({label: 'React', position: 'right'}),
+    () => render({label: 'React', position: 'right', style: {width: '100px'}}),
     {inline: true}
   )
   .addWithInfo(

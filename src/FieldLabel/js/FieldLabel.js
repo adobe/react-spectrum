@@ -34,9 +34,11 @@ FieldLabel.propTypes = {
   label: PropTypes.string.isRequired,
 
   /**
-   * Position of the label relative to the Field
+   * Justification of the label text within its container. Setting this property
+   * will situate the label container to the left of the form field, regardless
+   * of the property value.
    */
-  position: PropTypes.string,
+  position: PropTypes.oneOf(['left', 'right']),
 
   /**
    * Custom classname to apply to the label
