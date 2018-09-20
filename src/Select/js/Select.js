@@ -92,8 +92,15 @@ export default class Select extends React.Component {
 
   onClose() {
     ReactDOM.findDOMNode(this.button).focus();
-    if (this.props.onClose) {
+    if (typeof this.props.onClose === 'function') {
       this.props.onClose();
+    }
+  }
+
+  onOpen(e) {
+    this.updateSize();
+    if (typeof this.props.onOpen === 'function') {
+      this.props.onOpen(e);
     }
   }
 
@@ -112,7 +119,6 @@ export default class Select extends React.Component {
     let {
       options = [],
       quiet,
-      onOpen,
       closeOnSelect,
       disabled = false,
       invalid = false,
@@ -172,7 +178,7 @@ export default class Select extends React.Component {
         )}
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
-        onOpen={onOpen}
+        onOpen={this.onOpen}
         onClose={this.onClose}
         alignRight={alignRight}
         {...dropdownProps}>
