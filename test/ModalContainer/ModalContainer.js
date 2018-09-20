@@ -21,18 +21,22 @@ describe('ModalContainer', () => {
     node = document.querySelector('#modal-test');
     assert(!node);
   });
+
   it('should use "static" for backdrop by default', () => {
     const tree = shallow(<Modal><div id="modal-test">Contents</div></Modal>);
     assert.equal(tree.props().backdrop, 'static');
   });
+
   it('should use true for backdrop if it hosts a node with backdropClickable: true', () => {
     const tree = shallow(<Modal><div id="modal-test" backdropClickable>Contents</div></Modal>);
     assert.equal(tree.props().backdrop, true);
   });
+
   it('should use false for backdrop if it hosts a node with fullscreenTakeover: true', () => {
     const tree = shallow(<Modal><div id="modal-test" mode="fullscreenTakeover">Contents</div></Modal>);
     assert.equal(tree.props().backdrop, false);
   });
+
   it('should use false for backdrop if it hosts a node with fullscreenTakeover: true and backdropClickable: true', () => {
     const tree = shallow(<Modal><div id="modal-test" backdropClickable mode="fullscreenTakeover">Contents</div></Modal>);
     assert.equal(tree.props().backdrop, false);
@@ -88,7 +92,7 @@ describe('ModalContainer', () => {
       let node = document.querySelector('#modal-test');
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay');
-      
+
       await sleep(1);
 
       assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');

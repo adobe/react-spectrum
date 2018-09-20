@@ -3,6 +3,9 @@ import ModalTrigger from '../../src/ModalTrigger';
 import {mount} from 'enzyme';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {shallow} from 'enzyme';
+import sinon from 'sinon';
+
 
 describe('ModalTrigger', () => {
   it('can pass advanced context to the child of mounted component', () => {
@@ -63,14 +66,30 @@ describe('ModalTrigger', () => {
   it('adds a wrapping div only when necessary', () => {
     let wrapper = mount(<ModalTrigger><button /><div modalContent>text</div></ModalTrigger>);
     assert.equal(wrapper.find('button').length, 1);
-    assert.equal(wrapper.find('div').length, 0);
+    let hasContainer = !!(wrapper.find('Fragment').length || wrapper.find('div').length);
+    assert.equal(hasContainer, false);
 
     wrapper.unmount();
 
-    wrapper = mount(<ModalTrigger><button /><button /><div modalContent>text</div></ModalTrigger>);
+    wrapper = shallow(<ModalTrigger><button /><button /><div modalContent>text</div></ModalTrigger>);
+
     assert.equal(wrapper.find('button').length, 2);
-    assert.equal(wrapper.find('div').length, 1);
+    hasContainer = !!(wrapper.find('Fragment').length || wrapper.find('div').length);
+    assert.equal(hasContainer, true);
+  });
 
-    wrapper.unmount();
+  it('calls chained onClick methods for ModalTrigger and trigger child', () => {
+    let onClickSpy = sinon.spy();
+    let onButtonClickSpy = sinon.spy();
+    let wrapper = shallow(<ModalTrigger onClick={onClickSpy}><button onClick={onButtonClickSpy} /><div modalContent>text</div></ModalTrigger>);
+
+    let component = wrapper.instance();
+    sinon.stub(component, 'show').callsFake(sinon.spy());
+    component.forceUpdate();
+
+    wrapper.find('button').at(0).simulate('click');
+    assert(onClickSpy.called);
+    assert(onButtonClickSpy.called);
+    assert(component.show.calledOnce);
   });
 });

@@ -59,11 +59,11 @@ describe('ListItem', () => {
       assert(selectSpy.called);
     });
 
-    it('should trigger onClick if both onClick and onSelect are supplied.', () => {
+    it('should trigger onClick and onSelect if both are supplied.', () => {
       const tree = render({onClick: clickSpy, onSelect: selectSpy});
       tree.simulate('click', {preventDefault: () => {}});
       assert(clickSpy.called);
-      assert(!selectSpy.called);
+      assert(selectSpy.called);
     });
   });
 

@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import CheckmarkMedium from '../../Icon/core/CheckmarkMedium';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
@@ -9,6 +10,7 @@ import React, {Component} from 'react';
 /**
  * An item in a list
  */
+@autobind
 export default class ListItem extends Component {
   static defaultProps = {
     selected: false,
@@ -16,15 +18,7 @@ export default class ListItem extends Component {
     onSelect: function () {}
   }
 
-  handleClick = e => {
-    if (this.props.onClick) {
-      this.props.onClick(e);
-    } else {
-      this.onSelectFocused(e);
-    }
-  }
-
-  handleMouseEnter = e => {
+  handleMouseEnter(e) {
     if (this.props.onMouseEnter) {
       this.props.onMouseEnter(e);
     } else {
@@ -32,26 +26,31 @@ export default class ListItem extends Component {
     }
   }
 
-  handleFocus = e => {
+  handleFocus(e) {
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
   }
 
-  handleBlur = e => {
+  handleBlur(e) {
     if (this.props.onBlur) {
       this.props.onBlur(e);
     }
   }
 
-  onSelectFocused = e => {
+  onSelectFocused(e) {
+    e.preventDefault();
+
+    if (this.props.onClick) {
+      this.props.onClick(e);
+    }
+
     if (this.props.onSelect) {
-      e.preventDefault();
       this.props.onSelect(this.props.value, e);
     }
   }
 
-  onKeyDown = e => {
+  onKeyDown(e) {
     const {onKeyDown, disabled} = this.props;
     if (onKeyDown) {
       onKeyDown(e);
@@ -75,14 +74,11 @@ export default class ListItem extends Component {
       ...otherProps
     } = this.props;
 
-    // We don't need/want to add onFocusNext to the accordion header div because we call it manually when arrow key, home or end is pressed with focus on accordion header.
-    delete otherProps.onFocus;
-    delete otherProps.onBlur;
     delete otherProps.value;
-    delete otherProps.onKeyDown;
 
     return (
       <li
+        {...filterDOMProps(otherProps)}
         className={
           classNames(
             'spectrum-Menu-item',
@@ -96,15 +92,14 @@ export default class ListItem extends Component {
         }
         onKeyDown={this.onKeyDown}
         onMouseEnter={disabled ? null : this.handleMouseEnter}
-        onClick={disabled ? null : this.handleClick}
         onFocus={disabled ? null : this.handleFocus}
+        onClick={disabled ? null : this.onSelectFocused}
         onBlur={this.handleBlur}
         tabIndex={!disabled ? tabIndex : null}
         role={role}
         aria-checked={role === 'menuitemcheckbox' || role === 'menuitemradio' ? !!selected : null}
         aria-selected={role === 'option' ? (!!selected || !!focused) : null}
-        aria-disabled={disabled || null}
-        {...filterDOMProps(otherProps)}>
+        aria-disabled={disabled || null}>
         {cloneIcon(icon, {
           size: 'S'
         })}
