@@ -2,6 +2,7 @@ import ArrowDownSmall from '../../src/Icon/core/ArrowDownSmall';
 import assert from 'assert';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 
 describe('TableCell', function () {
@@ -15,6 +16,7 @@ describe('TableCell', function () {
   it('should render a sortable header cell', function () {
     let wrapper = shallow(<TableCell isHeaderRow column={{sortable: true}}>test</TableCell>);
     assert.equal(wrapper.prop('className'), 'spectrum-Table-headCell is-sortable');
+    assert.equal(wrapper.prop('aria-sort'), 'none');
     assert.equal(wrapper.childAt(0).text(), 'test');
     assert.equal(wrapper.find(ArrowDownSmall).length, 1);
     assert.equal(wrapper.find(ArrowDownSmall).prop('className'), 'spectrum-Table-sortedIcon');
@@ -23,6 +25,7 @@ describe('TableCell', function () {
   it('should render a sorted desc header cell', function () {
     let wrapper = shallow(<TableCell isHeaderRow column={{sortable: true}} sortDir={1}>test</TableCell>);
     assert.equal(wrapper.prop('className'), 'spectrum-Table-headCell is-sortable is-sorted-desc');
+    assert.equal(wrapper.prop('aria-sort'), 'descending');
     assert.equal(wrapper.childAt(0).text(), 'test');
     assert.equal(wrapper.find(ArrowDownSmall).length, 1);
     assert.equal(wrapper.find(ArrowDownSmall).prop('className'), 'spectrum-Table-sortedIcon');
@@ -31,9 +34,27 @@ describe('TableCell', function () {
   it('should render a sorted asc header cell', function () {
     let wrapper = shallow(<TableCell isHeaderRow column={{sortable: true}} sortDir={-1}>test</TableCell>);
     assert.equal(wrapper.prop('className'), 'spectrum-Table-headCell is-sortable is-sorted-asc');
+    assert.equal(wrapper.prop('aria-sort'), 'ascending');
     assert.equal(wrapper.childAt(0).text(), 'test');
     assert.equal(wrapper.find(ArrowDownSmall).length, 1);
     assert.equal(wrapper.find(ArrowDownSmall).prop('className'), 'spectrum-Table-sortedIcon');
+  });
+
+  it('should call onClick event on Enter or Space keypress', function () {
+    let onClick = sinon.spy();
+    let wrapper = shallow(<TableCell isHeaderRow column={{sortable: true}} onClick={onClick}>test</TableCell>);
+    assert.equal(wrapper.prop('tabIndex'), 0);
+    wrapper.setProps({'allowsMultipleSelection': true});
+    assert.equal(wrapper.prop('tabIndex'), -1);
+    wrapper.simulate('keyPress', {key: 'ArrowDown', preventDefault: () => {}});
+    assert(!onClick.calledOnce);
+    wrapper.simulate('keyPress', {key: ' ', preventDefault: () => {}});
+    assert(onClick.calledOnce);
+    wrapper.simulate('keyPress', {key: 'Enter', preventDefault: () => {}});
+    assert(onClick.calledTwice);
+    wrapper.setProps({onClick: null});
+    wrapper.simulate('keyPress', {key: 'Enter', preventDefault: () => {}});
+    assert(!onClick.calledThrice);
   });
 
   it('should render a body cell', function () {

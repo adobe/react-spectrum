@@ -47,6 +47,13 @@ export default class Provider extends Component {
     locale: defaultLocale
   };
 
+  // Expose the current theme etc. on the context for children to read if needed.
+  static childContextTypes = {
+    theme: PropTypes.oneOf(['light', 'lightest', 'dark', 'darkest']),
+    scale: PropTypes.oneOf(['medium', 'large']),
+    locale: PropTypes.string
+  };
+
   constructor(props) {
     super(props);
     setLocale(props.locale);
@@ -59,6 +66,14 @@ export default class Provider extends Component {
     if ('locale' in nextProps) {
       setLocale(nextProps.locale);
     }
+  }
+
+  getChildContext() {
+    return {
+      theme: this.props.theme,
+      scale: this.props.scale,
+      locale: this.props.locale
+    };
   }
 
   render() {

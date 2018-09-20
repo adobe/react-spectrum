@@ -12,7 +12,7 @@ export default class Checkbox extends Component {
     /**
      * Label for the checkbox
      */
-    renderLabel: PropTypes.string,
+    label: PropTypes.string,
 
     /**
      * defaultChecked is undefined by default so we can respect

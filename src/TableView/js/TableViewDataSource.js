@@ -1,7 +1,8 @@
 import {DataSource} from '@react/collection-view';
 
-/**
+/*
  * TableViewDataSource is the super class for all data sources used by TableView.
+ * @deprecated
  */
 export default class TableViewDataSource extends DataSource {
   constructor() {
@@ -54,16 +55,18 @@ export default class TableViewDataSource extends DataSource {
     return null;
   }
 
-  _sortByColumn(column) {
-    let dir = -1;
-    if (this.sortColumn === column) {
-      dir = -this.sortDir;
-    }
+  async performSort(sortDescriptor) {
+    this.sortColumn = sortDescriptor.column;
+    this.sortDir = sortDescriptor.direction;
+    this.sort(this.sortColumn, this.sortDir);
+  }
 
-    this.sortColumn = column;
-    this.sortDir = dir;
-
-    this.sort(column, this.sortDir);
+  async performLoad() {
+    // For compatibility with the new ListDataSource API.
+  }
+  
+  async performLoadMore() {
+    await this.loadMore();
   }
 
   /**

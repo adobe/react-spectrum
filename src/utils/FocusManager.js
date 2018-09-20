@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator';
+import {chain} from './events';
 import {interpretKeyboardEvent} from './events';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -12,25 +13,70 @@ const DELAY_BEFORE_AUTOFOCUS = 20;
 @autobind
 export default class FocusManager extends React.Component {
   static propTypes = {
+
+    /**
+     * A selector of focusable elements to manage focus between
+     */
     itemSelector: PropTypes.string.isRequired,
+
+    /**
+     * Whether to use roving tabIndex so that only one element within the group can receive focus with tab key at a time.
+     */
     manageTabIndex: PropTypes.bool,
-    orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+
+    /**
+     * Orientation of items; "horizontal" orientation ignores up/down arrow keys, "vertical" orientation ignores left/right arrow keys, "both" handles up/left and down/right.
+     */
+    orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both']),
+
+    /**
+     * A selector of selected elements
+     */
     selectedItemSelector: PropTypes.string,
+
+    /**
+     * Whether to disable focus management
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Whether to include alphanumeric typing as a way to move focus to items in a list.
+     */
     typeToSelect: PropTypes.bool,
+
+    /**
+     * Whether to include the child wrapper element in the group of elements that can receive focus.
+     */
+    includeSelf: PropTypes.bool,
+
+    /**
+     * Whether to ignore PageUp and PageDown events to move focus between items.
+     */
+    ignorePageUpPageDown: PropTypes.bool,
+
+    /**
+     * Whether to autoFocus first selected item or first item.
+     */
     autoFocus: PropTypes.bool
   };
 
   static defaultProps = {
     manageTabIndex: true,
     orientation: 'vertical',
-    typeToSelect: false
+    typeToSelect: false,
+    includeSelf: false,
+    ignorePageUpPageDown: false
   };
 
   getItems(selected = false) {
-    const {itemSelector, selectedItemSelector} = this.props;
+    const {itemSelector, selectedItemSelector, includeSelf} = this.props;
     const selector = selected && selectedItemSelector ? selectedItemSelector : itemSelector;
-    return Array.from(ReactDOM.findDOMNode(this).querySelectorAll(selector));
+    const node = ReactDOM.findDOMNode(this);
+    const array = [];
+    if (includeSelf && node.matches(selector)) {
+      array.push(node);
+    }
+    return array.concat(Array.from(node.querySelectorAll(selector)));
   }
 
   onFocusFirst(e) {
@@ -82,6 +128,10 @@ export default class FocusManager extends React.Component {
   }
 
   onPageUp(e) {
+    if (this.props.ignorePageUpPageDown) {
+      return;
+    }
+
     const items = this.getItems();
     if (items.length && e && items.indexOf(e.target) !== -1) {
       e.preventDefault();
@@ -101,6 +151,10 @@ export default class FocusManager extends React.Component {
   }
 
   onPageDown(e) {
+    if (this.props.ignorePageUpPageDown) {
+      return;
+    }
+
     const items = this.getItems();
     if (items.length && e && items.indexOf(e.target) !== -1) {
       e.preventDefault();
@@ -193,7 +247,11 @@ export default class FocusManager extends React.Component {
    * @param {Event} e Event object
    */
   onKeyDown(e) {
-    interpretKeyboardEvent.call(this, e, this.props.orientation === 'horizontal');
+    if (e.isPropagationStopped()) {
+      return;
+    }
+
+    interpretKeyboardEvent.call(this, e, this.props.orientation);
   }
 
   /**
@@ -201,6 +259,10 @@ export default class FocusManager extends React.Component {
    * @param {Event} e Event object
    */
   onKeyPress(e) {
+    if (e.isPropagationStopped()) {
+      return;
+    }
+
     this.findItemToFocus(e);
   }
 
@@ -209,6 +271,10 @@ export default class FocusManager extends React.Component {
    * @param {Event} e Event object
    */
   onFocus(e) {
+    if (e.isPropagationStopped()) {
+      return;
+    }
+
     this.getItems().forEach(item => item.tabIndex = item === e.target ? 0 : -1);
   }
 
@@ -221,6 +287,10 @@ export default class FocusManager extends React.Component {
    * @param {Event} e Event object
    */
   onBlur(e) {
+    if (e.isPropagationStopped()) {
+      return;
+    }
+
     const selectedItems = this.getItems(true);
 
     // If there are selected items,
@@ -266,11 +336,18 @@ export default class FocusManager extends React.Component {
       manageTabIndex,
       typeToSelect
     } = this.props;
-    return React.cloneElement(React.Children.only(children), {
-      onKeyDown: !disabled ? this.onKeyDown : null,
-      onKeyPress: typeToSelect && !disabled ? this.onKeyPress : null,
-      onFocus: manageTabIndex && !disabled ? this.onFocus : null,
-      onBlur: manageTabIndex && !disabled ? this.onBlur : null
+    const child = React.Children.only(children);
+    const {
+      onKeyDown,
+      onKeyPress,
+      onFocus,
+      onBlur
+    } = child.props;
+    return React.cloneElement(child, {
+      onKeyDown: !disabled ? chain(onKeyDown, this.onKeyDown) : onKeyDown,
+      onKeyPress: typeToSelect && !disabled ? chain(onKeyPress, this.onKeyPress) : onKeyPress,
+      onFocus: manageTabIndex && !disabled ? chain(onFocus, this.onFocus) : onFocus,
+      onBlur: manageTabIndex && !disabled ? chain(onBlur, this.onBlur) : onBlur
     });
   }
 }
@@ -291,7 +368,7 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',');
+export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
 

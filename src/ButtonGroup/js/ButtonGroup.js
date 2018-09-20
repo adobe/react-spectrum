@@ -53,7 +53,7 @@ export default class ButtonGroup extends Component {
     /**
      * Renders the button group as a row or a column
      */
-    orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+    orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both']),
   };
 
   static defaultProps = {
@@ -62,7 +62,7 @@ export default class ButtonGroup extends Component {
     multiple: false,
     readOnly: false,
     required: false,
-    orientation: 'horizontal'
+    orientation: 'both'
   };
 
   constructor(props) {
@@ -210,11 +210,12 @@ export default class ButtonGroup extends Component {
     }
 
     return (
-      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation={orientation}>
+      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation={otherProps.role === 'toolbar' ? orientation : 'both'}>
         <div
           aria-invalid={invalid || null}
           aria-required={required || null}
           aria-disabled={disabled || null}
+          aria-orientation={orientation !== 'both' && otherProps.role === 'toolbar' ? orientation : null}
           {...filterDOMProps(otherProps)}
           className={
             classNames(

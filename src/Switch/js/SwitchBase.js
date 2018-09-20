@@ -76,6 +76,7 @@ export default class SwitchBase extends Component {
       invalid,
       readOnly,
       className,
+      style,
       children,
       inputType,
       renderLabel,
@@ -104,7 +105,8 @@ export default class SwitchBase extends Component {
             className,
             {'is-invalid': invalid, 'is-disabled': disabled}
           )
-        }>
+        }
+        style={style}>
         <input
           ref={el => this.inputRef = el}
           type={inputType}

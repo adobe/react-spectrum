@@ -1,4 +1,4 @@
-export function interpretKeyboardEvent(event, isHorizontal = false) {
+export function interpretKeyboardEvent(event, orientation = 'vertical') {
   switch (event.key) {
     case 'Enter':
     case ' ':
@@ -45,7 +45,7 @@ export function interpretKeyboardEvent(event, isHorizontal = false) {
     case 'Up':
       if (event.altKey && this.onAltArrowUp) {
         this.onAltArrowUp(event);
-      } else if (this.onFocusPrevious) {
+      } else if (orientation !== 'horizontal' && this.onFocusPrevious) {
         this.onFocusPrevious(event);
       }
       break;
@@ -54,26 +54,27 @@ export function interpretKeyboardEvent(event, isHorizontal = false) {
     case 'Down':
       if (event.altKey && this.onAltArrowDown) {
         this.onAltArrowDown(event);
-      } else if (this.onFocusNext) {
+      } else if (orientation !== 'horizontal' && this.onFocusNext) {
         this.onFocusNext(event);
       }
       break;
 
     case 'ArrowLeft':
     case 'Left':
-      if (isHorizontal && this.onFocusPrevious) {
+      if (orientation !== 'vertical' && this.onFocusPrevious) {
         this.onFocusPrevious(event);
       }
       break;
 
     case 'ArrowRight':
     case 'Right':
-      if (isHorizontal && this.onFocusNext) {
+      if (orientation !== 'vertical' && this.onFocusNext) {
         this.onFocusNext(event);
       }
       break;
 
     case 'Escape':
+    case 'Esc':
       if (this.onEscape) {
         this.onEscape(event);
       }

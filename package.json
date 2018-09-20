@@ -17,7 +17,7 @@
     "react-dom": "^0.14 || ^15 || ^16"
   },
   "dependencies": {
-    "@react/collection-view": "^2.2.0",
+    "@react/collection-view": "^4.0.0",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
     "dom-helpers": "^3.3.1",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@react/react-spectrum-icons": "^2.1.0",
     "@spectrum/focus-ring-polyfill": "^0.x",
-    "@spectrum/spectrum-css": "2.2.1",
+    "@spectrum/spectrum-css": "2.3.1",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.17",
     "@spectrum/spectrum-variables": "1.0.1",
