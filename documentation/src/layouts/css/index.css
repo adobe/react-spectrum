@@ -125,3 +125,8 @@ header nav a {
 .homepage .example h1 {
   font-size: 30px;
 }
+
+.example-tableview {
+  height: 300px !important;
+  min-width: 450px;
+}

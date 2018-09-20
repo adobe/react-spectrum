@@ -1,6 +1,6 @@
 import {DataSource} from '@react/collection-view';
 
-/**
+/*
  * TableViewDataSource is the super class for all data sources used by TableView.
  * @deprecated
  */
