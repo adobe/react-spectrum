@@ -400,6 +400,14 @@ describe('NumberInput', () => {
       assert.equal(findInput(tree).prop('value'), '-5');
       assert(spSpy.called);
     });
+
+    it('should set value to null when clearing the input', () => {
+      findInput(tree).simulate('change', '', {stopPropagation: spSpy});
+      assert(spy.calledWith(null));
+      assert.equal(tree.state('value'), '');
+      assert.equal(findInput(tree).prop('value'), '');
+      assert(spSpy.called);
+    });
   });
 
   it('supports additional classNames', () => {
@@ -408,8 +416,8 @@ describe('NumberInput', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<NumberInput foo />);
-    assert.equal(findInput(tree).prop('foo'), true);
+    const tree = shallow(<NumberInput aria-label="foo" />);
+    assert.equal(findInput(tree).prop('aria-label'), 'foo');
   });
 
   it('clicking increment or decrement should focus input.', async () => {
@@ -485,6 +493,16 @@ describe('NumberInput', () => {
       tree.find(Textfield).getDOMNode()
     );
     tree.unmount();
+  });
+
+  it('allows events to pass through from props', () => {
+    let handler = sinon.spy();
+    const tree = shallow(<NumberInput onKeyDown={handler} onWheel={handler} onFocus={handler} onBlur={handler} />);
+    findInput(tree).simulate('keyDown', {keyCode: 38, preventDefault: () => {}});
+    findInput(tree).simulate('wheel', {deltaY: 2, preventDefault: () => {}});
+    findInput(tree).simulate('focus');
+    findInput(tree).simulate('blur');
+    assert.equal(handler.callCount, 4);
   });
 });
 

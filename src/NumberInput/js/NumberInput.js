@@ -1,10 +1,12 @@
 import autobind from 'autobind-decorator';
 import Button from '../../Button';
+import {chain} from '../../utils/events';
 import ChevronDownSmall from '../../Icon/core/ChevronDownSmall';
 import ChevronUpSmall from '../../Icon/core/ChevronUpSmall';
 import {clamp, handleDecimalOperation} from '../../utils/number';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
+import filterDOMProps from '../../utils/filterDOMProps';
 import InputGroup from '../../InputGroup';
 import intlMessages from '../intl/*.json';
 import LiveRegionAnnouncer from '../../utils/LiveRegionAnnouncer';
@@ -207,15 +209,15 @@ export default class NumberInput extends Component {
     e.stopPropagation();
 
     const {onChange} = this.props;
-    const valueAsNumber = +value;
+    const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
 
     // They may be starting to type a negative number, we don't want to broadcast this to
     // the onChange handler, but we do want to update the value state.
-    const resemblesNumber = numeric || value === '-';
+    const resemblesNumber = numeric || value === '-' || value === '';
 
     // Only dispatch a change event if it's an actual number
-    if (numeric) {
+    if (numeric || value === '') {
       onChange(valueAsNumber);
     }
 
@@ -386,6 +388,7 @@ export default class NumberInput extends Component {
         aria-label={otherProps['aria-label'] || null}
         aria-labelledby={otherProps['aria-labelledby'] || null}>
         <Textfield
+          {...filterDOMProps(otherProps)}
           ref={t => this.textfield = t}
           className="spectrum-Stepper-input"
           id={inputId}
@@ -406,11 +409,10 @@ export default class NumberInput extends Component {
           disabled={disabled}
           readOnly={readOnly}
           quiet={quiet}
-          onKeyDown={this.handleInputKeyDown}
-          onWheel={this.handleInputScrollWheel}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-          {...otherProps}
+          onKeyDown={chain(otherProps.onKeyDown, this.handleInputKeyDown)}
+          onWheel={chain(otherProps.onWheel, this.handleInputScrollWheel)}
+          onFocus={chain(otherProps.onFocus, this.handleFocus)}
+          onBlur={chain(otherProps.onBlur, this.handleBlur)}
           onChange={this.handleInputChange} />
         <span
           className="spectrum-Stepper-buttons"
