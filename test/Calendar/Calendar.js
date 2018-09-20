@@ -689,7 +689,30 @@ describe('Calendar', () => {
     assert.equal(tree.prop('aria-foo'), true);
   });
 
-  describe('When aria-labelledby prop', () => {
+  describe('With aria-label prop', () => {
+    describe('is defined,', () => {
+      it('calendar has aria-labelledby prop that includes both the calendar id and the header element id.', () => {
+        const tree = shallow(<Calendar aria-label="foo" />);
+        const body = findBody(tree);
+        const headerTitle = findHeaderTitle(tree);
+        assert.equal(tree.prop('aria-label'), 'foo');
+        assert.equal(tree.prop('aria-labelledby'), tree.prop('id') + ' ' + headerTitle.prop('id'));
+        assert.equal(body.prop('aria-labelledby'), tree.prop('id') + ' ' + headerTitle.prop('id'));
+      });
+      describe('and aria-labelledby prop defined,', () => {
+        it('calendar has aria-labelledby prop that includes the calendar id, the aria-labelledby prop and the header element id.', () => {
+          const tree = shallow(<Calendar aria-label="foo" aria-labelledby="bar" />);
+          const body = findBody(tree);
+          const headerTitle = findHeaderTitle(tree);
+          assert.equal(tree.prop('aria-label'), 'foo');
+          assert.equal(tree.prop('aria-labelledby'), 'bar ' + tree.prop('id') + ' ' + headerTitle.prop('id'));
+          assert.equal(body.prop('aria-labelledby'), 'bar ' + tree.prop('id') + ' ' + headerTitle.prop('id'));
+        });
+      });
+    });
+  });
+
+  describe('With aria-labelledby prop', () => {
     describe('is undefined,', () => {
       it('calendar has aria-labelledby prop referencing header element id.', () => {
         const tree = shallow(<Calendar />);
@@ -704,8 +727,8 @@ describe('Calendar', () => {
         const tree = shallow(<Calendar aria-labelledby="foo" />);
         const body = findBody(tree);
         const headerTitle = findHeaderTitle(tree);
-        assert.equal(tree.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
-        assert.equal(body.prop('aria-labelledby'), 'foo' + ' ' + headerTitle.prop('id'));
+        assert.equal(tree.prop('aria-labelledby'), 'foo ' + headerTitle.prop('id'));
+        assert.equal(body.prop('aria-labelledby'), 'foo ' + headerTitle.prop('id'));
       });
     });
   });
@@ -726,7 +749,7 @@ describe('Calendar', () => {
         assert.equal(body.getDOMNode(), document.activeElement);
       });
     });
-    
+
     tree.unmount();
   });
 

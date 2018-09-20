@@ -30,7 +30,7 @@ This prop can have value between 0 and 6. Default is 0.
 <Calendar startDay={1} value="today" />
 ```
 
-## Controlled Calendar
+## Uncontrolled Calendar
 
 The calendar has defualt value set to today
 
@@ -124,4 +124,49 @@ Events handlers like onChange and other user actions can be registered on a `Cal
 ```jsx
 <Calendar onChange={e => console.log(e)} />
 ```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Calendar implements the Datepicker design pattern, per [WAI-ARIA 1.0](https://www.w3.org/TR/2016/WD-wai-aria-practices-1.1-20160317/#datepicker).
+
+Calendar supports keyboard accessibility using arrow keys, <kbd>Home</kbd>/<kbd>End</kbd>, and <kbd>PageUp</kbd>/<kbd>PageDown</kbd> to navigate between dates and months within the calendar table. A date can be selected using the <kbd>Space</kbd> key.
+
+With `selectionType="range"`, a user can first select the start date, pressing the <kbd>Space</kbd> key, navigate to focus end date using arrow keys, and then select range by pressing the <kbd>Space</kbd> key again.
+
+Calendar uses a live region to ensure that date selections are announced clearly through assistive technology.
+
+<div style={{width: '280px'}}>
+  <Calendar selectionType="range" />
+</div>
+
+```jsx
+<Calendar selectionType="range" />
+```
+
+### autoFocus
+
+The `autoFocus` prop sets focus to the Calendar body when the component mounts. This is useful for setting focus to the Calendar when a Popover or Dialog opens, as in the Datepicker control.
+
+```jsx
+<Calendar selectionType="range" autoFocus />
+```
+
+### Labelling the Calendar
+
+By default, the group of controls within the Calendar, including the Previous/Next buttons, Month/Year heading, and the Calendar table is labelled by the Month/Year heading. Use `aria-label` or `aria-labelledby` to add a custom label for accessibility.
+
+<div style={{width: '280px'}}>
+  <Calendar
+    selectionType="range"
+    aria-label="Date Range" />
+</div>
+
+```jsx
+<Calendar
+  selectionType="range"
+  aria-label="Date Range" />
+```
+
 
