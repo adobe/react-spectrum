@@ -42,7 +42,7 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'success trigger',
-    () => <Button onClick={() => success('Great success!')} variant="primary">Show Toast</Button>,
+    () => <Button onClick={() => success('Great success!', {onClose: action('onClose')})} variant="primary">Show Toast</Button>,
     {inline: true}
   )
   .addWithInfo(

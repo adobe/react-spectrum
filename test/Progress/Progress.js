@@ -8,7 +8,7 @@ describe('Progress', () => {
     const tree = shallow(<Progress />);
     assert.equal(tree.hasClass('spectrum-BarLoader'), true);
     assert.equal(tree.hasClass('spectrum-BarLoader--medium'), true);
-    assert.equal(tree.hasClass('spectrum-Loader--side-label'), true);
+    assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), true);
     assert.equal(tree.prop('aria-valuemin'), 0);
     assert.equal(tree.prop('aria-valuemax'), 100);
     assert.equal(tree.prop('aria-valuenow'), 0);
@@ -61,9 +61,9 @@ describe('Progress', () => {
 
     it('supports labelPosition', () => {
       const tree = shallow(<Progress showPercent labelPosition="left" />);
-      assert.equal(tree.hasClass('spectrum-Loader--side-label'), true);
+      assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), true);
       tree.setProps({labelPosition: 'top'});
-      assert.equal(tree.hasClass('spectrum-Loader--side-label'), false);
+      assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), false);
     });
 
     it('supports custom labels', () => {

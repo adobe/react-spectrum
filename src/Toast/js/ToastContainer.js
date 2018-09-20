@@ -25,6 +25,10 @@ export class ToastContainer extends React.Component {
   }
 
   remove(toast) {
+    if (toast.props.onClose) {
+      toast.props.onClose();
+    }
+
     this.setState({
       toasts: this.state.toasts.filter(t => t !== toast)
     });

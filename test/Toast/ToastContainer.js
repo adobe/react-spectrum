@@ -3,6 +3,7 @@ import assert from 'assert';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('ToastContainer', () => {
@@ -35,13 +36,15 @@ describe('ToastContainer', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
-    tree.instance().add(<Toast>Test</Toast>, 5);
+    const closedSpy = sinon.spy();
+    tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 5);
     tree.update();
     assert.equal(tree.children().length, 1);
 
     await sleep(6);
     tree.update();
     assert.equal(tree.children().length, 0);
+    assert(closedSpy.calledOnce);
 
     cleanup();
   });
@@ -50,13 +53,15 @@ describe('ToastContainer', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
-    tree.instance().add(<Toast>Test</Toast>, 5);
+    const closedSpy = sinon.spy();
+    tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 5);
     tree.update();
     assert.equal(tree.children().length, 1);
 
     tree.find(Toast).simulate('close');
     tree.update();
     assert.equal(tree.children().length, 0);
+    assert(closedSpy.calledOnce);
 
     cleanup();
   });

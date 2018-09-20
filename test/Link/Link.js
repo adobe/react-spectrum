@@ -4,14 +4,14 @@ import React from 'react';
 import {shallow} from 'enzyme';
 
 describe('Link', () => {
-  it('supports the subtle variation', () => {
-    const tree = shallow(<Link variant="subtle" className="myClass">Testing</Link>);
-    assert(tree.prop('className').indexOf('spectrum-Link--subtle') >= 0);
-
+  it('supports the quiet variation', () => {
+    const tree = shallow(<Link variant="quiet" className="myClass">Testing</Link>);
+    assert(tree.prop('className').indexOf('spectrum-Link--quiet') >= 0);
+    
     // deprecated subtle prop should still work
     tree.setProps({subtle: true, variant: null});
 
-    assert(tree.prop('className').indexOf('spectrum-Link--subtle') >= 0);
+    assert(tree.prop('className').indexOf('spectrum-Link--quiet') >= 0);
   });
 
   it('supports the overBackground variation', () => {

@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
@@ -11,6 +12,7 @@ import Textfield from '../../Textfield';
 importSpectrumCSS('search');
 const formatMessage = messageFormatter(intlMessages);
 
+@autobind
 export default class Search extends Component {
   static defaultProps = {
     icon: <Magnifier />,
@@ -31,7 +33,15 @@ export default class Search extends Component {
     };
   }
 
-  handleTextKeyDown = e => {
+  componentWillReceiveProps(props) {
+    if (props.value !== this.state.value) {
+      this.setState({
+        value: props.value
+      });
+    }
+  }
+
+  handleTextKeyDown(e) {
     const {onSubmit, onKeyDown, disabled} = this.props;
     const {value} = this.state;
     const key = e.which;
@@ -49,7 +59,7 @@ export default class Search extends Component {
     }
 
     if (key === 27) {
-      this.clearText(e, 'escapeKey');
+      this.handleTextChange('', e, 'escapeKey');
     }
 
     if (onKeyDown) {
@@ -57,44 +67,32 @@ export default class Search extends Component {
     }
   }
 
-  handleTextChange = (value, e) => {
-    const {onChange} = this.props;
+  handleTextChange(value, e, from = 'input') {
+    const {onChange, disabled} = this.props;
+    if (disabled || value === this.state.value) {
+      return;
+    }
 
-    this.setState({
-      value
-    });
-    onChange(value, e, {from: 'input'});
+    if (!('value' in this.props)) {
+      this.setState({
+        value
+      });
+    }
+
+    onChange(value, e, {from});
   }
 
-  handleClearButtonClick = e => {
-    this.clearText(e, 'clearButton');
-
+  handleClearButtonClick(e) {
+    this.handleTextChange('', e, 'clearButton');
     // restore focus to the searchbox
     if (this.searchbox) {
       this.searchbox.focus();
     }
   }
 
-  clearText = (e, from) => {
-    const {onChange, disabled} = this.props;
-
-    if (disabled || this.state.value === '') {
-      return;
-    }
-
-    if (!('value' in this.props)) {
-      this.setState({
-        value: ''
-      });
-    }
-
-    onChange('', e, {from});
-  }
-
   render() {
     const {
       disabled,
-      defaultValue,
       className,
       icon,
       role = 'search',
@@ -117,7 +115,6 @@ export default class Search extends Component {
           ref={s => this.searchbox = s}
           className="spectrum-Search-input"
           value={value}
-          defaultValue={defaultValue}
           disabled={disabled}
           {...otherProps}
           onKeyDown={this.handleTextKeyDown}

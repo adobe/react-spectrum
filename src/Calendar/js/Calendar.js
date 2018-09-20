@@ -657,6 +657,7 @@ export default class Calendar extends Component {
       invalid,
       readOnly,
       selectionType,
+      id = this.calendarId,
       ...otherProps
     } = this.props;
 
@@ -669,6 +670,11 @@ export default class Calendar extends Component {
 
     delete otherProps.autoFocus;
     delete otherProps.required;
+
+    // If Calendar is labelled using aria-label, concatenate id for Calendar itself to include the Calendar group as a label along with Calendar Month/Year heading
+    if (otherProps['aria-label']) {
+      ariaLabelledby = id + ' ' + ariaLabelledby;
+    }
 
     // If Calendar is labelled by an external element, concatenate id to include the external label and the Calendar Month/Year heading
     if (otherProps['aria-labelledby']) {
@@ -691,6 +697,7 @@ export default class Calendar extends Component {
         }
         role="group"
         aria-labelledby={ariaLabelledby}
+        id={id}
         {...filterDOMProps(otherProps)}>
         <input type="hidden" name={name} value={formatMoment(highlightedRange && highlightedRange.start, valueFormat)} />
         <div className="spectrum-Calendar-header">

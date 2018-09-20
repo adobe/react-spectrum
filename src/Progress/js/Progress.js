@@ -50,7 +50,7 @@ export default function Progress({
           'spectrum-BarLoader',
           `spectrum-BarLoader--${sizeClassPart}`,
           {
-            'spectrum-Loader--side-label': labelPosition === 'left'
+            'spectrum-BarLoader--sideLabel': labelPosition === 'left'
           },
           className
         )
