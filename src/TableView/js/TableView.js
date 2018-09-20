@@ -1,7 +1,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
-import {EditableCollectionView, IndexPath, IndexPathSet} from '@react/collection-view';
+import {DragTarget, EditableCollectionView, IndexPath, IndexPathSet} from '@react/collection-view';
 import ListDataSource from '../../ListDataSource';
 import PropTypes from 'prop-types';
 import Provider from '../../Provider';
@@ -100,14 +100,21 @@ export default class TableView extends Component {
      * If `true`, the table accepts all types of drops. Alternatively,
      * it can be set to an array of accepted drop types.
      */
-    acceptsDrops: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)])
+    acceptsDrops: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+
+    /**
+     * Whether drops should appear on top of rows, or between them. If you want to customize this
+     * or mix the modes, you can override `getDropTarget` on the data source.
+     */
+    dropPosition: PropTypes.oneOf(['on', 'between'])
   };
 
   static defaultProps = {
     allowsSelection: true,
     allowsMultipleSelection: true,
     canDragItems: false,
-    acceptsDrops: false
+    acceptsDrops: false,
+    dropPosition: 'between'
   };
 
   // These come from the parent Provider. Used to set the correct props
@@ -129,6 +136,7 @@ export default class TableView extends Component {
     this.isLoading = false;
     this.hasMore = true;
     this.state = {
+      delegate: Object.assign({}, proxy(this), proxy(this.props.dataSource)),
       columns: this.props.columns || 
         this.props.defaultColumns || 
         this.props.dataSource.getColumns(),
@@ -137,7 +145,8 @@ export default class TableView extends Component {
         (this.props.dataSource.sortColumn && { // backward compatibility
           column: this.props.dataSource.sortColumn,
           direction: this.props.dataSource.sortDirection
-        })
+        }),
+      isDropTarget: false
     };
   }
 
@@ -156,6 +165,12 @@ export default class TableView extends Component {
     
     if (props.sortDescriptor && props.sortDescriptor !== this.props.sortDescriptor) {
       this.updateSort(props.sortDescriptor);
+    }
+
+    if (props.dataSource !== this.props.dataSource) {
+      this.setState({
+        delegate: Object.assign({}, proxy(this), proxy(this.props.dataSource))
+      });
     }
   }
 
@@ -296,6 +311,10 @@ export default class TableView extends Component {
       return this.props.renderEmptyView();
     }
 
+    if (type === 'insertion-indicator') {
+      return <div className="react-spectrum-TableView-insertionIndicator" />;
+    }
+
     return <div />;
   }
 
@@ -360,6 +379,24 @@ export default class TableView extends Component {
     return count;
   }
 
+  dropTargetUpdated(target) {
+    // Highlight the entire table if the drop position is between, but the default
+    // drop position from props is "on". This means the drop was over a non-target item.
+    // Also do this if the drop position is "between" and the table is empty.
+    let isDropTarget = target &&
+      target.type === 'item' &&
+      target.indexPath.section === 0 &&
+      target.indexPath.index === 0 &&
+      target.dropPosition === DragTarget.DROP_BETWEEN &&
+      (this.props.dropPosition === 'on' || this.getRowCount() === 0);
+
+    if (isDropTarget && !this.state.isDropTarget) {
+      this.setState({isDropTarget: true});
+    } else if (this.state.isDropTarget) {
+      this.setState({isDropTarget: false});
+    }
+  }
+
   render() {
     const {
       allowsMultipleSelection,
@@ -397,8 +434,10 @@ export default class TableView extends Component {
         {this.renderHeader()}
         <EditableCollectionView
           {...this.props}
-          className="react-spectrum-TableView-body spectrum-Table-body"
-          delegate={Object.assign({}, proxy(this), proxy(dataSource))}
+          className={classNames('react-spectrum-TableView-body', 'spectrum-Table-body', {
+            'is-drop-target': this.state.isDropTarget
+          })}
+          delegate={this.state.delegate}
           layout={this.layout}
           dataSource={dataSource}
           ref={c => this.collection = c}

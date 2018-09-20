@@ -186,7 +186,8 @@ export default class TableRow extends React.Component {
       'spectrum-Table-head': isHeaderRow,
       'spectrum-Table-row': !isHeaderRow,
       'is-selected': selected,
-      'is-focused': focused && this.state.focused
+      'is-focused': focused && this.state.focused,
+      'is-drop-target': this.props['drop-target']
     });
     let ariaRowIndex = null;
     let tabIndex = null;

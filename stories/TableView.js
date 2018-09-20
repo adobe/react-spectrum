@@ -1,4 +1,5 @@
 import {action, storiesOf} from '@storybook/react';
+import {DragTarget, IndexPath} from '@react/collection-view';
 import IllustratedMessage from '../src/IllustratedMessage';
 import ListDataSource from '../src/ListDataSource';
 import React from 'react';
@@ -77,6 +78,30 @@ storiesOf('TableView', module)
         dataSource={new OldTableDS}
         renderCell={renderCell} />
     )
+  )
+  .addWithInfo(
+    'acceptsDrops: true',
+    'This example shows how TableView supports drag and drop between rows.',
+    () => render({acceptsDrops: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'acceptsDrops: true, quiet: true',
+    'This example shows how TableView supports drag and drop between rows.',
+    () => render({acceptsDrops: true, quiet: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'dropPosition: "on"',
+    'This example shows how TableView supports drag and drop over both rows and the whole table using dropPosition="on". In this example, "Active" rows can be dropped over, otherwise the drop goes to the entire table.',
+    () => render({acceptsDrops: true, quiet: true, dropPosition: 'on'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'canReorderItems',
+    'This example shows how TableView supports reordering rows.',
+    () => render({acceptsDrops: true, quiet: true, canReorderItems: true}),
+    {inline: true}
   );
 
 var tableData = [
@@ -155,6 +180,15 @@ class TableDS extends ListDataSource {
       }, 2000);
     });
   }
+
+  getDropTarget(target) {
+    let item = tableData[target.indexPath.index];
+    if (item && !item.enabled && target.dropPosition === DragTarget.DROP_ON) {
+      return new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN);
+    }
+
+    return target;
+  }
 }
 
 var ds = new TableDS;
@@ -166,7 +200,7 @@ function renderCell(column, data, rowFocused) {
 
     return (
       <Switch
-        defaultChecked={data}
+        defaultChecked={data[column.key] == null ? data : data[column.key]}
         onChange={action('change')}
         onMouseDown={(e) => e.stopPropagation()}
         onKeyDown={(e) => {

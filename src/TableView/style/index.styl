@@ -34,7 +34,14 @@
       border-bottom-style: solid; /* table rows in collection-view should have bottom border */
     }
   }
+
+  > div > .insertion-indicator {
+    // override collection-view
+    transition: none !important;
+    overflow: visible !important;
+  }
 }
+
 .react-spectrum-TableView-row {
   display: flex
   align-items: center
@@ -54,6 +61,8 @@
     // adding flex with align-items center puts all the contents back in the vertical middle
     display: flex;
     align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 
@@ -61,3 +70,29 @@
   flex-shrink: 0;
 }
 
+// This will be replaced with spectrum-DropIndicator once that is added to spectrum-css.
+// https://git.corp.adobe.com/Spectrum/spectrum-css/pull/589
+.react-spectrum-TableView-insertionIndicator {
+  height: 2px;
+  background: $spectrum-global-color-blue400;
+  margin: 0 12px;
+  position: relative;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: -5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid $spectrum-global-color-blue400;
+    box-sizing: border-box;
+  }
+
+  &:after {
+    left: auto;
+    right: -12px;
+  }
+}

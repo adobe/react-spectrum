@@ -70,6 +70,11 @@ describe('TableRow', function () {
     assert.deepEqual(row.children().slice(1).map(c => c.text()), ['Hi 0', 'Bye 1']);
   });
 
+  it('should render a drop target row', function () {
+    let wrapper = shallow(<TableRow columns={columns} renderCell={renderCell} drop-target />);
+    assert.equal(wrapper.childAt(0).prop('className'), 'react-spectrum-TableView-row spectrum-Table-row is-drop-target');
+  });
+
   it('should trigger onSelectChange when the checkbox value changes', function () {
     let onSelectChange = sinon.spy();
     let wrapper = shallow(<TableRow allowsSelection onSelectChange={onSelectChange} columns={columns} renderCell={renderCell} />);

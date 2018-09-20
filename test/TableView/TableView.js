@@ -431,4 +431,56 @@ describe('TableView', function () {
     assert.equal(dragView.find('div').length, 1);
     assert.equal(dragView.find('div').text(), 'Drag view');
   });
+
+  it('should support drag and drop onto the table body with dropPosition="on"', function () {
+    const tree = shallow(
+      <TableView
+        columns={columns}
+        dataSource={ds}
+        renderCell={renderCell}
+        dropPosition="on" />
+    );
+
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
+
+    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
+    tree.update();
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body is-drop-target');
+
+    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_ON));
+    tree.update();
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
+  });
+
+  it('should not highlight the table body with dropPosition="between"', function () {
+    const tree = shallow(
+      <TableView
+        columns={columns}
+        dataSource={ds}
+        renderCell={renderCell}
+        dropPosition="between" />
+    );
+
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
+
+    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
+    tree.update();
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
+  });
+
+  it('should highlight the table body if the table is empty with dropPosition="between"', function () {
+    const tree = shallow(
+      <TableView
+        columns={columns}
+        dataSource={new ListDataSource}
+        renderCell={renderCell}
+        dropPosition="between" />
+    );
+
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
+
+    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
+    tree.update();
+    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body is-drop-target');
+  });
 });
