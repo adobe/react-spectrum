@@ -1,0 +1,7 @@
+{
+  "error": "Virhe",
+  "warning": "Varoitus",
+  "info": "Tieto",
+  "help": "Ohje",
+  "success": "Onnistui"
+}

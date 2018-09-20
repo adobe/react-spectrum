@@ -1,7 +1,11 @@
 import Alert from '../../src/Alert';
 import assert from 'assert';
+import intlMessages from '../../src/Alert/intl/*.json';
+import {messageFormatter} from '../../src/utils/intl';
 import React from 'react';
 import {shallow} from 'enzyme';
+
+const formatMessage = messageFormatter(intlMessages);
 
 describe('Alert', () => {
   it('default', () => {
@@ -60,5 +64,5 @@ describe('Alert', () => {
 
 const assertAlertClassAndIcon = (tree, variant) => {
   assert.equal(tree.hasClass(`spectrum-Alert--${variant}`), true);
-  assert.equal(tree.find('.spectrum-Alert-icon').prop('aria-label'), variant);
+  assert.equal(tree.find('.spectrum-Alert-icon').prop('alt'), formatMessage(variant));
 };

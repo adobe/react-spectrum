@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import HelpMedium from '../../Icon/core/HelpMedium';
 import InfoMedium from '../../Icon/core/InfoMedium';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import SuccessMedium from '../../Icon/core/SuccessMedium';
@@ -17,11 +19,14 @@ const ICONS = {
   success: SuccessMedium
 };
 
+const formatMessage = messageFormatter(intlMessages);
+
 export default function Alert({
   header,
   children,
   variant = 'info', // info, help, success, error, warning
   className,
+  alt = formatMessage(variant || 'info'), // alt text for image icon, default is derived from variant
   ...otherProps
 }) {
   let AlertIcon = ICONS[variant];
@@ -35,8 +40,9 @@ export default function Alert({
           className
         )
       }
+      role="alert"
       {...filterDOMProps(otherProps)}>
-      <AlertIcon size={null} className="spectrum-Alert-icon" aria-label={variant} />
+      <AlertIcon size={null} className="spectrum-Alert-icon" alt={alt} />
       <div className="spectrum-Alert-header">{header}</div>
       <div className="spectrum-Alert-content">{children}</div>
     </div>

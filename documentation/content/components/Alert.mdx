@@ -76,7 +76,51 @@ Spectrum Alert with header prop.
 </Alert>
 
 ```jsx
-<Alert variant="error">
+<Alert header="Header 1">
   This is a React Spectrum alert
+</Alert>
+```
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Alert component implements the Alert design pattern, per
+[WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#alert).
+By default it uses `role` `alert` and will announce as an
+`assertive` live region. The `role` or `aria-live` politeness
+setting can be overridden to use, for example, `aria-live="polite"`
+or `aria-live="off"` rather than the implicit `assertive` politeness
+setting.
+
+<Alert header="With aria-live=&quot;polite&quot;" aria-live="polite">
+  This is a React Spectrum alert that should announce politely.
+</Alert>
+<br/>
+<Alert header="With aria-live=&quot;off&quot;" aria-live="off">
+  This is a React Spectrum alert that should not announce.
+</Alert>
+
+```jsx
+<Alert header="With aria-live=&quot;polite&quot;" aria-live="polite">
+  This is a React Spectrum alert that should announce politely
+</Alert>
+
+<Alert header="With aria-live=&quot;off&quot;" aria-live="off">
+  This is a React Spectrum alert that should not announce.
+</Alert>
+```
+
+### Custom `alt` text for Icon
+
+The Alert component uses a localized string derived on the `variant` prop to provide `alt` text to the Alert Icon, but this can be overridden by providing an `alt` prop.
+
+
+<Alert header="You can customize alt text for the icon =&gt;" alt="Hint">
+  This is a React Spectrum alert where the Icon uses custom alt text.
+</Alert>
+
+```jsx
+<Alert header="You can customize alt text for the icon =&gt;" alt="Hint">
+  This is a React Spectrum alert where the Icon uses custom alt text.
 </Alert>
 ```

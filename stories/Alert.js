@@ -43,6 +43,16 @@ storiesOf('Alert', module)
     'variant: warning',
     () => render({header: 'warning', variant: 'warning'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'aria-live: polite',
+    () => render({header: 'error', variant: 'error', 'aria-live': 'polite'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'aria-live: off',
+    () => render({header: 'error', variant: 'error', 'aria-live': 'off'}),
+    {inline: true}
   );
 
 function render(props = {}, children = 'This is a React Spectrum alert') {
