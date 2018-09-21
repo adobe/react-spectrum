@@ -5,44 +5,49 @@ import Textfield from '@react/react-spectrum/Textfield';
 
 ## Overview
 
-An **Dialog** in Spectrum is modal window that forces the user to take some action before resuming to backgroud.
+An **Dialog** in Spectrum is modal window that forces the user to take some action. They can have up to three buttons for the user
+to choose from.
 
 ## Example
+
+Dialogs are typically used with a `ModalTrigger` to open them when clicking on an action, e.g. a button or menu item.
 
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog title="Dialog title" confirmLabel="OK">
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
-
 
 ```jsx
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
-  <Dialog  title="Dialog title" confirmLabel="OK">
-    <span>
+  <Dialog title="Dialog title" confirmLabel="OK">
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 ```
 
 ## Buttons
 
-Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordingly.
+Dialogs can have up to three buttons: 2 action buttons, and a cancel button. All of them are optional. When one of the confirm buttons
+is clicked, `onConfirm` is called with the button that was clicked: either "primary" or "secondary". When the cancel button is clicked,
+`onCancel` is called. You can also optionally disable the confirm button using the `confirmDisabled` prop.
+
+Enabling the `keyboardConfirm` prop makes pressing the Enter key execute the default action for the Dialog. 
+It is the equivalent of pressing the “Confirm” button.
 
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
     title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel">
-    <span>
+    confirmLabel="Keep Both"
+    secondaryLabel="Replace"
+    cancelLabel="Cancel"
+    keyboardConfirm
+    onConfirm={action => console.log(action)}
+    onCancel={() => console.log('cancel')}>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 
@@ -51,76 +56,13 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
   <Button label="Open Dialog" variant="primary" />
   <Dialog
     title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel">
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-```
-### Cancel and Confirm with functions.
-
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
+    confirmLabel="Keep Both"
+    secondaryLabel="Replace"
     cancelLabel="Cancel"
-    onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)} >
-    <span>
+    keyboardConfirm
+    onConfirm={action => console.log(action)}
+    onCancel={() => console.log('cancel')}>
     Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-
-```jsx
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel"
-    onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)}>
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-```
-
-### Confirm disable
-
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel"
-    confirmDisabled
-    onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)}>
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-
-```jsx
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
-    confirmDisabled
-    cancelLabel="Cancel"
-    onConfirm={e => console.log(e)}
-    onCancel={e => console.log(e)}>
-    <span>
-    Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 ```
@@ -129,66 +71,11 @@ Spectrum 'Dialog' allows confirm and cancel button to dismiss the dialog accordi
 
 There are many Dialog variants to choose from in Spectrum. The `variant` prop controls the main variant of the Dialog.
 
-### Information
-
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
-    variant="information"
-    cancelLabel="Cancel">
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-
-```jsx
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog title"
-    confirmLabel="OK"
-    variant="information"
-    cancelLabel="Cancel">
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-```
-### Destructive
-
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    variant="destructive"
-    title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel">
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-
-```jsx
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    variant="destructive"
-    title="Dialog title"
-    confirmLabel="OK"
-    cancelLabel="Cancel">
-    <span>
-    Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-```
 ### Confirmation
 
+This is the default variant for dialogs. Confirmation dialogs should be used when asking users to confirm a choice. 
+The confirmation dialog has a blue button (call to action button) to highlight the strong preference for buttons.
+
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
@@ -197,9 +84,7 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
     confirmLabel="OK"
     cancelLabel="Cancel"
     confirmDisabled>
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 
@@ -211,25 +96,82 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel">
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 ```
+
+### Information
+
+Information dialogs should be used to communicate important information to users. Before using an information dialog, 
+make sure this is the right communication channel for the message.
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    title="Dialog title"
+    confirmLabel="OK"
+    variant="information"
+    cancelLabel="Cancel">
+    Content of the dialog
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    title="Dialog title"
+    confirmLabel="OK"
+    variant="information"
+    cancelLabel="Cancel">
+    Content of the dialog
+  </Dialog>
+</ModalTrigger>
+```
+
+### Destructive
+
+Destructive dialogs should be used when a user has to confirm an action that will impact their data in a destructive way, 
+like deleting files or contacts. The destructive dialog has a red (negative) button to highlight that action.
+
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    variant="destructive"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    Content of the dialog
+  </Dialog>
+</ModalTrigger>
+
+```jsx
+<ModalTrigger>
+  <Button label="Open Dialog" variant="primary" />
+  <Dialog
+    variant="destructive"
+    title="Dialog title"
+    confirmLabel="OK"
+    cancelLabel="Cancel">
+    Content of the dialog
+  </Dialog>
+</ModalTrigger>
+```
+
 ### Error
 
+Error dialogs should be used to communicate critical information to users in relation to an issue that needs to be acknowledged. 
+The error dialog has a red title and a warning icon to reinforce its importance.
+
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
     variant="error"
     title="Dialog title"
     confirmLabel="OK"
-    cancelLabel="Cancel"
-    confirmDisabled>
-    <span>
+    cancelLabel="Cancel">
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 
@@ -241,46 +183,14 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
     title="Dialog title"
     confirmLabel="OK"
     cancelLabel="Cancel">
-    <span>
     Content of the dialog
-    </span>
-  </Dialog>
-</ModalTrigger>
-```
-
-## Keyboard Confirm
-
-Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the “Confirm” button.
-
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog Title"
-    backdropClickable
-    confirmLabel="OK"
-    cancelLabel="Cancel"
-    keyboardConfirm
-    onConfirm={e => console.log(e)}>
-    <Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />
-  </Dialog>
-</ModalTrigger>
-
-```jsx
-<ModalTrigger>
-  <Button label="Open Dialog" variant="primary" />
-  <Dialog
-    title="Dialog Title"
-    backdropClickable
-    confirmLabel="OK"
-    cancelLabel="Cancel"
-    keyboardConfirm
-    onConfirm={e => console.log(e)}>
-    <Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />
   </Dialog>
 </ModalTrigger>
 ```
 
 ## Mode
+
+The `mode` prop determines whether the dialog appears as an alert, full screen, or full screen takeover dialog.
 
 ### Fullscreeen
 
@@ -291,9 +201,7 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
     mode="fullscreen"
     confirmLabel="OK"
     cancelLabel="Cancel">
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 
@@ -305,25 +213,21 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
     mode="fullscreen"
     confirmLabel="OK"
     cancelLabel="Cancel">
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 ```
 
-### Fullscreen takeover
+### Fullscreen Takeover
 
 <ModalTrigger>
   <Button label="Open Dialog" variant="primary" />
   <Dialog
     title="Dialog Title"
-    mode="fullscreen"
+    mode="fullscreenTakeover"
     confirmLabel="OK"
     cancelLabel="Cancel">
-    <span>
     Content of the dialog
-    </span>
   </Dialog>
 </ModalTrigger>
 
@@ -335,12 +239,18 @@ Setting keyboardConfirm prop to true makes it so pressing the Enter key executes
       mode="fullscreenTakeover"
       confirmLabel="OK"
       cancelLabel="Cancel">
-      <span>
       Content of the dialog
-      </span>
     </Dialog>
 </ModalTrigger>
 ```
 
+## Accessibility
 
+Dialogs automatically hide content behind them from screen readers while open, block scrolling of the page, and focus within the modal.
+Dialogs automatically close when pressing the Escape key, and when the `keyboardConfirm` prop is enabled, the default action is 
+automatically triggered when pressing the enter key. You can also automatically focus one of the buttons when a dialog opens using the
+`autoFocusButton` prop.
 
+## Internationalization
+
+To internationalize a dialog, provide localized strings for the title, buttons, and body of the dialog.

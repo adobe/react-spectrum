@@ -7,6 +7,7 @@ import {DataSource} from '@react/collection-view';
 export default class TableViewDataSource extends DataSource {
   constructor() {
     super();
+    console.warn('TableViewDataSource is deprecated and will be removed in the next major version of react-spectrum. Please switch to the new TableView API using ListDataSource. See http://react-spectrum.corp.adobe.com/components/TableView for details.');
     this.columns = this.getColumns();
     this.sortColumn = null;
     this.sortDir = -1;
