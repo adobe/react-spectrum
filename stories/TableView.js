@@ -202,12 +202,6 @@ function renderCell(column, data, rowFocused) {
       <Switch
         defaultChecked={data[column.key] == null ? data : data[column.key]}
         onChange={action('change')}
-        onMouseDown={(e) => e.stopPropagation()}
-        onKeyDown={(e) => {
-          if (e.key === ' ') {
-            e.stopPropagation();
-          }
-        }}
         tabIndex={tabIndex}
         title={column.title} />
     );

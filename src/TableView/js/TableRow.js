@@ -74,6 +74,14 @@ export default class TableRow extends React.Component {
     }
   }
 
+  onMouseDown(event) {
+    // Stop propagation on mouse down if the target is focusable.
+    // Otherwise, collection-view will try to focus the row instead.
+    if (event.target.matches(FOCUSABLE_SELECTOR) && event.target !== this.row) {
+      event.stopPropagation();
+    }
+  }
+
   /**
    * Handle key down event on a row, to navigate between focusable descendant
    * elements using the left or right arrow keys, or to navigate between the
@@ -112,6 +120,14 @@ export default class TableRow extends React.Component {
       case 'Esc':
         if (onSelectChange) {
           onSelectChange(false);
+        }
+        break;
+      case 'Enter':
+      case ' ':
+        // Stop propagation on enter and space keys if the target is focusable.
+        // Otherwise, collection-view will try to focus the row instead.
+        if (event.target.matches(FOCUSABLE_SELECTOR) && event.target !== this.row) {
+          event.stopPropagation();
         }
         break;
     }
@@ -236,6 +252,7 @@ export default class TableRow extends React.Component {
           onFocus={this.onFocus}
           onBlur={this.onBlur}
           onKeyDown={this.onKeyDown}
+          onMouseDown={this.onMouseDown}
           {...otherProps}>
           {allowsSelection &&
             <TableCell
