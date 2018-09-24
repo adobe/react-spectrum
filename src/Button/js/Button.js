@@ -36,7 +36,7 @@ export default class Button extends Component {
     /**
      * The variant of button to display
      */
-    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown', 'clear', 'field', 'tool']),
+    variant: PropTypes.oneOf(['cta', 'primary', 'secondary', 'warning', 'action', 'toggle', 'and', 'or', 'icon', 'quiet', 'minimal', 'dropdown', 'clear', 'field', 'tool', 'overBackground']),
 
     /**
      * Whether the button should render using a quiet variant
