@@ -1,4 +1,5 @@
 import Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
+import Heading from '@react/react-spectrum/Heading';
 import Folder from '@react/react-spectrum/Icon/Folder';
 
 ## Overview
@@ -29,7 +30,7 @@ Breadcrumbs can have icon. An icon is provided by passing an icon component to t
 
 ## Variant
 
-Breadcrumbs can also be set to `title` variant. Title will cause the last breadcrumb to be rendered as a Header and should be used with the accesibility ariaLevel prop, the ariaLevel will not change the appearance.
+Breadcrumbs can also be set to `title` variant. Title will cause the last breadcrumb to be rendered as a Header and may be used with the `ariaLevel` prop to ensure the appropriate heading level within the page for accessibility.  The `ariaLevel` will not change the appearance.
 
 <Breadcrumbs
   variant="title"
@@ -55,4 +56,44 @@ Breadcrumbs has an event, onBreadcrumbClick which will pass an object `{label: '
 <Breadcrumbs
   items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
   onBreadcrumbClick={e => console.log(e)} />
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Breadcrumbs component implements the Breadcrumb design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#breadcrumb).
+
+### Labelling the `nav` element
+
+By default, the Breadcrumbs component uses the localized string “Breadcrumbs” as a label for the `nav` element so that the navigation landmark region is easy to locate using assistive technology. This string can be overridden using the `aria-label` or `aria-labelledby` prop.
+
+#### Using `aria-label`
+
+<Breadcrumbs
+  aria-label="Navigation Path"
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
+
+```jsx
+  <Breadcrumbs
+    aria-label="Navigation Path"
+    items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
+```
+
+#### Using `aria-labelledby`
+
+This example uses both `id` and `aria-labelledby` props, so that the Breadcrumbs are identified by both an external heading element and the internal `nav` element using the localized string “Breadcrumbs” itself.
+
+<Heading size={5} id="label-id">Document Cloud</Heading>
+<Breadcrumbs
+  id="breadcrumbs-id"
+  aria-labelledby="label-id breadcrumbs-id"
+  items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
+
+```jsx
+  <Heading size={5} id="label-id">Document Cloud</Heading>
+  <Breadcrumbs
+    id="breadcrumbs-id"
+    aria-labelledby="label-id breadcrumbs-id"
+    items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]} />
 ```

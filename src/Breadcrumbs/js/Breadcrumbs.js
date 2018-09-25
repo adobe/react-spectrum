@@ -1,11 +1,15 @@
 import ChevronRightSmall from '../../Icon/core/ChevronRightSmall';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
 importSpectrumCSS('breadcrumb');
+
+const formatMessage = messageFormatter(intlMessages);
 
 export default class Breadcrumbs extends React.Component {
   static variant = {
@@ -14,7 +18,22 @@ export default class Breadcrumbs extends React.Component {
   }
 
   static propTypes = {
-    items: PropTypes.arrayOf(PropTypes.shape({href: PropTypes.string, label: PropTypes.string})),
+    /**
+     * Array of item objects included in list of breadcrumbs.
+     * Each item must have a label string property, which will serve as the rendered text for the breadcrumb.
+     * Each item may also have an href string property, which should be a valid URL to open the breadcrumb location.
+     */
+    items: PropTypes.arrayOf(
+      PropTypes.oneOf([
+        PropTypes.shape({
+          href: PropTypes.string,
+          label: PropTypes.string.isRequired
+        }),
+        PropTypes.shape({
+          label: PropTypes.string.isRequired
+        })
+      ])
+    ),
 
     /**
      * For best results, use a React Spectrum Icon
@@ -24,7 +43,10 @@ export default class Breadcrumbs extends React.Component {
     /**
      * Will set the last breadcrumb on a new line and give it a <h> tag
      */
-    variant: PropTypes.oneOf([Breadcrumbs.variant.NONE, Breadcrumbs.variant.TITLE]),
+    variant: PropTypes.oneOf([
+      Breadcrumbs.variant.NONE,
+      Breadcrumbs.variant.TITLE
+    ]),
 
     /**
      * Will not change the appearance
@@ -57,7 +79,16 @@ export default class Breadcrumbs extends React.Component {
   }
 
   render() {
-    const {items, icon, onBreadcrumbClick, className, variant, ariaLevel} = this.props;
+    const {
+      items,
+      icon,
+      onBreadcrumbClick,
+      className,
+      variant,
+      ariaLevel,
+      id,
+      ...otherProps
+    } = this.props;
     const isTitleVariant = variant === Breadcrumbs.variant.TITLE;
     const isCurrent = (i) => i === items.length - 1;
 
@@ -79,8 +110,15 @@ export default class Breadcrumbs extends React.Component {
       );
     };
 
+    if (!otherProps['aria-label']) {
+      otherProps['aria-label'] = formatMessage('Breadcrumbs');
+    }
+
     return (
-      <nav>
+      <nav
+        id={id}
+        aria-label={otherProps['aria-label']}
+        aria-labelledby={otherProps['aria-labelledby']}>
         {cloneIcon(icon, {size: 'S', className: 'react-spectrum-Breadcrumbs-icon'})}
         <ul
           className={classNames(
