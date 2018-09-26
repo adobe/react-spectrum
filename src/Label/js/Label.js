@@ -9,7 +9,7 @@ const variants = [
   'grey', 'green', 'blue', 'red', 'orange', 'and', 'or', 'active', 'inactive'
 ];
 
-export default function Label({size, children, variant = variants[0], ...otherProps}) {
+export default function Label({size, children, className, variant = variants[0], ...otherProps}) {
   const sizeClassPart = {L: 'large'}[size];
 
   return (
@@ -18,7 +18,8 @@ export default function Label({size, children, variant = variants[0], ...otherPr
         classNames(
           'spectrum-Label',
           `spectrum-Label--${variant}`,
-          {[`spectrum-Label--${sizeClassPart}`]: !!sizeClassPart}
+          {[`spectrum-Label--${sizeClassPart}`]: !!sizeClassPart},
+          className
         )
       }
       {...filterDOMProps(otherProps)}>
