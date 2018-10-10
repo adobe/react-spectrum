@@ -1,6 +1,7 @@
 import assert from 'assert';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 import {Toast} from '../../src/Toast';
 
 describe('Toast', () => {
@@ -15,6 +16,12 @@ describe('Toast', () => {
     const tree = shallow(<Toast closable>Test</Toast>);
     assert.equal(tree.find('button').length, 1);
     assert.equal(tree.find('button').prop('className'), 'spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground');
+  });
+
+  it('should render an action button', () => {
+    const tree = shallow(<Toast actionText="test">Test</Toast>);
+    assert.equal(tree.find('Button').length, 1);
+    assert.equal(tree.find('Button').prop('variant'), 'overBackground');
   });
 
   it('should render a success variant', () => {
@@ -40,5 +47,21 @@ describe('Toast', () => {
   it('should render a error variant', () => {
     const tree = shallow(<Toast variant="error">Info</Toast>);
     assert.equal(tree.prop('className'), 'spectrum-Toast spectrum-Toast--error');
+  });
+
+  describe('events', () => {
+    it('onAction is triggered on clicking upon action', () => {
+      const onAction = sinon.spy();
+      const tree = shallow(<Toast actionText="test" onAction={onAction}>Test</Toast>);
+      tree.find('Button').simulate('click');
+      assert(onAction.calledOnce);
+    });
+
+    it('onClose is triggered on closing toast', () => {
+      const onClose = sinon.spy();
+      const tree = shallow(<Toast closable onClose={onClose}>Test</Toast>);
+      tree.find('button').simulate('click');
+      assert(onClose.calledOnce);
+    });
   });
 });

@@ -21,6 +21,11 @@ storiesOf('Toast', module)
     {inline: true}
   )
   .addWithInfo(
+    'actionable',
+    () => <Toast closable actionText="undo" onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
+    {inline: true}
+  )
+  .addWithInfo(
     'variant = error',
     () => <Toast closable variant="error">Toast is burnt.</Toast>,
     {inline: true}
@@ -42,7 +47,13 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'success trigger',
-    () => <Button onClick={() => success('Great success!', {onClose: action('onClose')})} variant="primary">Show Toast</Button>,
+    () => (
+      <Button
+        onClick={() => success('Great success!', {onClose: action('onClose'), actionText: 'undo', onAction: action('onAction')})}
+        variant="primary">
+          Show Toast
+      </Button>
+    ),
     {inline: true}
   )
   .addWithInfo(

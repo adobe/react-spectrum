@@ -1,10 +1,12 @@
 import AlertMedium from '../../Icon/core/AlertMedium';
+import Button from '../../Button';
 import classNames from 'classnames';
 import CrossMedium from '../../Icon/core/CrossMedium';
 import filterDOMProps from '../../utils/filterDOMProps';
 import InfoMedium from '../../Icon/core/InfoMedium';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
+import PropTypes from 'prop-types';
 import React from 'react';
 import SuccessMedium from '../../Icon/core/SuccessMedium';
 
@@ -26,15 +28,18 @@ export default function Toast({
   children,
   closable,
   onClose,
+  onAction,
   className,
   timeout,
+  actionText,
   ...otherProps
 }) {
   let Icon = ICONS[variant];
   let role = otherProps.role || DEFAULT_ROLE;
+  const showToastButtons = actionText || closable;
 
   return (
-    <div 
+    <div
       role={role}
       className={classNames(
         'spectrum-Toast',
@@ -44,13 +49,38 @@ export default function Toast({
       {...filterDOMProps(otherProps)}>
       {Icon && <Icon size={null} className="spectrum-Toast-typeIcon" alt={formatMessage(variant)} />}
       <div className="spectrum-Toast-content">{children}</div>
-      {closable &&
+      {showToastButtons &&
         <div className="spectrum-Toast-buttons">
-          <button aria-label={formatMessage('close')} className="spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground" onClick={onClose}>
-            <CrossMedium size={null} />
-          </button>
+          {actionText &&
+            <Button label={actionText} quiet variant="overBackground" onClick={onAction} />
+          }
+          {closable &&
+            <button aria-label={formatMessage('close')} className="spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground" onClick={onClose}>
+              <CrossMedium size={null} />
+            </button>
+          }
         </div>
       }
     </div>
   );
 }
+
+Toast.propTypes = {
+  /** Variant of toast to use */
+  variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
+
+  /** Whether to show close button on toast*/
+  closable: PropTypes.bool,
+
+  /** Custom CSS class to add to the text field */
+  className: PropTypes.string,
+
+  /** Text for action button */
+  actionText: PropTypes.string,
+
+  /** Function called when toast is closed */
+  onClose: PropTypes.func,
+
+  /** Function called when action button is clicked */
+  onAction: PropTypes.func,
+};
