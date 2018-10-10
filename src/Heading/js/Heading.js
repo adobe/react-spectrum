@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const VARIANTS = {
@@ -45,3 +46,20 @@ export default function Heading({
 }
 
 Heading.displayName = 'Heading';
+
+Heading.propTypes = {
+  /**
+   * Variant of the heading to display. This maps to different heading HTML elements:
+   * - display: h1
+   * - pageTitle: h2
+   * - subtitle1: h2
+   * - subtitle2: h3
+   * - subtitle3: h4
+   */
+  variant: PropTypes.oneOf(['display', 'pageTitle', 'subtitle1', 'subtitle2', 'subtitle3']),
+
+  /**
+   * Custom classname to apply to the heading.
+   */
+  className: PropTypes.string,
+};

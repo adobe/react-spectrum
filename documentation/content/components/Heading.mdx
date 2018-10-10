@@ -3,7 +3,7 @@ import Heading from '@react/react-spectrum/Heading';
 
 ## Overview
 
-**Headings** in Spectrum are available in several variations for different uses and multiple levels of loudness for various attention-getting needs just as a normal `heading` element in React. The 'size' prop defines the heading analogous to the normal heading element in react. Eg. 'size={2}' refers to `<h2>` tag of HTML.
+**Headings** in Spectrum are available in several variations for different uses and multiple levels of loudness for various attention-getting needs just as a normal `heading` element in React. The `variant` property defines the heading analogous to the normal heading element in react. Eg. `variant="pageTitle"` refers to `<h2>` tag of HTML.
 
 ## Example
 
@@ -15,24 +15,22 @@ import Heading from '@react/react-spectrum/Heading';
 
 ## Variants
 
-Headings in Spectrum are available in 6 variants, each having a different size and style. Size '1' (default) should be used for main headings, followed by size '2' headings, then the less important size '3' headings, and so on. Note that right now 5 and 6 are the same.
+Headings in Spectrum are available in 5 variants, each having a different size and style. The "display" variant (default) should be used for main headings, followed by "pageTitle" variant headings, then the less important "subtitle1" variant headings. Three "subtitle" variants exist: "subtitle1", "subtitle2" and "subtitle3".
 
 <Heading>React</Heading>
-<Heading size={2}>React</Heading>
-<Heading size={3}>React</Heading>
-<Heading size={4}>React</Heading>
-<Heading size={5}>React</Heading>
-<Heading size={6}>React</Heading>
+<Heading variant="pageTitle">React</Heading>
+<Heading variant="subtitle1">React</Heading>
+<Heading variant="subtitle2">React</Heading>
+<Heading variant="subtitle3">React</Heading>
 
 ```jsx
 <Heading>React</Heading>
-<Heading size={2}>React</Heading>
-<Heading size={3}>React</Heading>
-<Heading size={4}>React</Heading>
-<Heading size={5}>React</Heading>
-<Heading size={6}>React</Heading>
+<Heading variant="pageTitle">React</Heading>
+<Heading variant="subtitle1">React</Heading>
+<Heading variant="subtitle2">React</Heading>
+<Heading variant="subtitle3">React</Heading>
 ```
 
 ## Internationalization
 
-To internationalize a heading, a localized string should be passed to as a child.
+To internationalize a heading, a localized string should be passed as a child.

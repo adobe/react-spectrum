@@ -10,33 +10,28 @@ storiesOf('Heading', module)
     </VerticalCenter>
   ))
   .addWithInfo(
-    'h1',
+    'display variant (default)',
     () => render(),
     {inline: true}
   )
   .addWithInfo(
-    'h2',
-    () => render({size: 2}),
+    'pageTitle variant',
+    () => render({variant: 'pageTitle'}),
     {inline: true}
   )
   .addWithInfo(
-    'h3',
-    () => render({size: 3}),
+    'subtitle1 variant',
+    () => render({variant: 'subtitle1'}),
     {inline: true}
   )
   .addWithInfo(
-    'h4',
-    () => render({size: 4}),
+    'subtitle2 variant',
+    () => render({variant: 'subtitle2'}),
     {inline: true}
   )
   .addWithInfo(
-    'h5',
-    () => render({size: 5}),
-    {inline: true}
-  )
-  .addWithInfo(
-    'h6',
-    () => render({size: 6}),
+    'subtitle3 variant',
+    () => render({variant: 'subtitle3'}),
     {inline: true}
   );
 
