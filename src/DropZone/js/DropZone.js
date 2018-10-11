@@ -45,7 +45,7 @@ export default class DropZone extends React.Component {
   }
 
   onDragOver(e) {
-    if (this.props.shouldAccept && !this.props.shouldAccept()) {
+    if (this.props.shouldAccept && !this.props.shouldAccept(e)) {
       e.dataTransfer.dropEffect = 'none';
       return;
     }
@@ -102,6 +102,7 @@ export default class DropZone extends React.Component {
   render() {
     const {
       children,
+      className,
       ...otherProps
     } = this.props;
 
@@ -112,7 +113,8 @@ export default class DropZone extends React.Component {
           'spectrum-Dropzone',
           {
             'is-dragged': this.state.draggingOver
-          }
+          },
+          className
         )}
         onDrop={this.onDrop}
         onDragOver={this.onDragOver}

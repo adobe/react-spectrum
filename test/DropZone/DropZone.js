@@ -18,6 +18,13 @@ describe('DropZone', () => {
     assert.equal(tree.find(Heading).children().text(), headerText);
   });
 
+  it('should support custom className', () => {
+    const tree = shallow(<DropZone className="custom-className" />);
+    let dropZone = tree.find('.spectrum-Dropzone');
+
+    assert.equal(dropZone.prop('className'), 'spectrum-Dropzone custom-className');
+  });
+
   it('should animate onDragOver', async () => {
     const tree = shallow(<DropZone />);
 
@@ -78,6 +85,7 @@ describe('DropZone', () => {
     let dragOver = 0;
     let dropped = 0;
     let droppedData = null;
+    let shouldAcceptEvent = null;
 
     const onDragLeave = () => dragLeft++;
     const onDragOver = () => dragOver++;
@@ -85,7 +93,10 @@ describe('DropZone', () => {
       dropped++;
       droppedData = e.dataTransfer.file;
     };
-    const shouldAccept = () => dropped === 0;
+    const shouldAccept = (e) => {
+      shouldAcceptEvent = e;
+      return dropped === 0;
+    };
 
     const dropZone = shallow(<DropZone onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={onDrop} shouldAccept={shouldAccept} />);
 
@@ -111,5 +122,6 @@ describe('DropZone', () => {
     assert(dragLeft === 1);
     assert(dropped === 2);
     assert.equal(droppedData, DROPPED_DATA);
+    assert.deepEqual(shouldAcceptEvent, dummyEvent);
   });
 });
