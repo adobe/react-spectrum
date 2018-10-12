@@ -31,12 +31,12 @@ export default function Toast({
   onAction,
   className,
   timeout,
-  actionText,
+  actionLabel,
   ...otherProps
 }) {
   let Icon = ICONS[variant];
   let role = otherProps.role || DEFAULT_ROLE;
-  const showToastButtons = actionText || closable;
+  const showToastButtons = actionLabel || closable;
 
   return (
     <div
@@ -51,8 +51,8 @@ export default function Toast({
       <div className="spectrum-Toast-content">{children}</div>
       {showToastButtons &&
         <div className="spectrum-Toast-buttons">
-          {actionText &&
-            <Button label={actionText} quiet variant="overBackground" onClick={onAction} />
+          {actionLabel &&
+            <Button label={actionLabel} quiet variant="overBackground" onClick={onAction} />
           }
           {closable &&
             <button aria-label={formatMessage('close')} className="spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground" onClick={onClose}>
@@ -75,8 +75,8 @@ Toast.propTypes = {
   /** Custom CSS class to add to the text field */
   className: PropTypes.string,
 
-  /** Text for action button */
-  actionText: PropTypes.string,
+  /** Label for action button */ 
+  actionLabel: PropTypes.string,
 
   /** Function called when toast is closed */
   onClose: PropTypes.func,

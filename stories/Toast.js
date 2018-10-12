@@ -22,7 +22,7 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'actionable',
-    () => <Toast closable actionText="undo" onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
+    () => <Toast closable actionLabel="undo" onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
     {inline: true}
   )
   .addWithInfo(
@@ -49,7 +49,7 @@ storiesOf('Toast', module)
     'success trigger',
     () => (
       <Button
-        onClick={() => success('Great success!', {onClose: action('onClose'), actionText: 'undo', onAction: action('onAction')})}
+        onClick={() => success('Great success!', {onClose: action('onClose'), actionLabel: 'undo', onAction: action('onAction')})}
         variant="primary">
           Show Toast
       </Button>

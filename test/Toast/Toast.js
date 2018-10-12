@@ -19,7 +19,7 @@ describe('Toast', () => {
   });
 
   it('should render an action button', () => {
-    const tree = shallow(<Toast actionText="test">Test</Toast>);
+    const tree = shallow(<Toast actionLabel="test">Test</Toast>);
     assert.equal(tree.find('Button').length, 1);
     assert.equal(tree.find('Button').prop('variant'), 'overBackground');
   });
@@ -52,7 +52,7 @@ describe('Toast', () => {
   describe('events', () => {
     it('onAction is triggered on clicking upon action', () => {
       const onAction = sinon.spy();
-      const tree = shallow(<Toast actionText="test" onAction={onAction}>Test</Toast>);
+      const tree = shallow(<Toast actionLabel="test" onAction={onAction}>Test</Toast>);
       tree.find('Button').simulate('click');
       assert(onAction.calledOnce);
     });
