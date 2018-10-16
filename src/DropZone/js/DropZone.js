@@ -26,7 +26,10 @@ export default class DropZone extends React.Component {
     onDragOver: PropTypes.func,
 
     /** A callback that is called when a drop occurs */
-    onDrop: PropTypes.func
+    onDrop: PropTypes.func,
+
+    /** Custom className to apply to this component */
+    className: PropTypes.string
   };
 
   constructor(props) {

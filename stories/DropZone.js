@@ -18,7 +18,8 @@ storiesOf('DropZone', module)
     'With children content',
     'DropZone accepts children components as content. This example uses IllustratedMessage',
     () => render({
-      onDrop
+      onDrop,
+      className: 'custom-class'
     }),
     {inline: true}
   );
