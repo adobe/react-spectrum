@@ -76,8 +76,6 @@ describe('LiveRegionAnnouncer', () => {
   let node;
   let instance;
 
-  afterEach(() => {});
-
   describe('static method getInstance', () => {
     it('should create a LiveRegionAnnouncer instance', (done) => {
       LiveRegionAnnouncer.getInstance(() => {
@@ -92,11 +90,11 @@ describe('LiveRegionAnnouncer', () => {
     });
   });
 
-  describe('static method destroyInstance', (done) => {
-    it('should destroy a LiveRegionAnnouncer instance', () => {
+  describe('static method destroyInstance', () => {
+    it('should destroy a LiveRegionAnnouncer instance', (done) => {
       LiveRegionAnnouncer.destroyInstance(() => {
-        assert(!node);
-        assert(!instance);
+        assert(!node.parentNode);
+        assert(!instance.liveRegionAnnouncer);
         done();
       });
     });
