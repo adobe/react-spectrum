@@ -24,14 +24,15 @@ export class ToastContainer extends React.Component {
     }
   }
 
-  remove(toast) {
-    if (toast.props.onClose) {
-      toast.props.onClose();
+  remove(toast, e) {
+    const {toasts: currentToasts} = this.state;
+    const toasts = currentToasts.filter(t => t !== toast);
+
+    if (toasts.length !== currentToasts.length && toast.props.onClose) {
+      toast.props.onClose(e);
     }
 
-    this.setState({
-      toasts: this.state.toasts.filter(t => t !== toast)
-    });
+    this.setState({toasts});
   }
 
   render() {

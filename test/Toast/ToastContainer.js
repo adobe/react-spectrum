@@ -58,11 +58,12 @@ describe('ToastContainer', () => {
     tree.update();
     assert.equal(tree.children().length, 1);
 
-    tree.find(Toast).simulate('close');
+    const event = {data: 'test'};
+    tree.find(Toast).simulate('close', event);
     tree.update();
     assert.equal(tree.children().length, 0);
     assert(closedSpy.calledOnce);
-
+    assert(closedSpy.calledWith(event));
     cleanup();
   });
 
@@ -133,4 +134,5 @@ describe('ToastContainer', () => {
     assert(toast);
     assert.equal(toast.textContent, 'Help');
   });
+
 });

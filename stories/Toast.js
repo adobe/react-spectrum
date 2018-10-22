@@ -49,7 +49,13 @@ storiesOf('Toast', module)
     'success trigger',
     () => (
       <Button
-        onClick={() => success('Great success!', {onClose: action('onClose'), actionLabel: 'undo', onAction: action('onAction')})}
+        onClick={() => {
+          success('Great success!', {
+            actionLabel: 'undo',
+            onClose: action('onClose'),
+            onAction: action('onAction')
+          });
+        }}
         variant="primary">
           Show Toast
       </Button>

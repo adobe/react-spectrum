@@ -75,7 +75,7 @@ Toast.propTypes = {
   /** Custom CSS class to add to the text field */
   className: PropTypes.string,
 
-  /** Label for action button */ 
+  /** Label for action button */
   actionLabel: PropTypes.string,
 
   /** Function called when toast is closed */
