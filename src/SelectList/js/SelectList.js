@@ -20,7 +20,7 @@ export default class SelectList extends Component {
 
     /** Array of strings of options in list */
     options: PropTypes.arrayOf(PropTypes.object),
-    
+
     /** Whether an input is required */
     required: PropTypes.bool,
 

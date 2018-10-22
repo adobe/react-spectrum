@@ -20,6 +20,11 @@ storiesOf('Dropdown', module)
     'Stay open on select',
     () => render({closeOnSelect: false}),
     {inline: true}
+  )
+  .addWithInfo(
+    'No flip',
+    () => render({flip: false}),
+    {inline: true}
   );
 
 function render(props = {}) {

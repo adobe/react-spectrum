@@ -39,6 +39,20 @@ describe('Select', () => {
     assert.equal(select.hasClass('spectrum-Dropdown'), true);
   });
 
+  it('exposes menuClassName', () => {
+    const tree = shallow(<Select menuClassName="myClass" />);
+    const selectMenu = tree.find(SelectMenu);
+
+    assert.equal(selectMenu.hasClass('myClass'), true);
+  });
+
+  it('supports flip prop', () => {
+    const tree = shallow(<Select flip={false} />);
+    const select = tree.find(Dropdown);
+
+    assert.equal(select.prop('flip'), false);
+  });
+
   it('renders options', () => {
     const tree = shallow(<Select options={testOptions} />);
     assert.equal(tree.find('.spectrum-Dropdown-label').text(), 'Chocolate');

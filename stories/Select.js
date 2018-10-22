@@ -143,6 +143,14 @@ storiesOf('Select', module)
         ]
       }),
     {inline: true}
+  ).addWithInfo(
+    'with menuClassName',
+    () => render({menuClassName: 'custom-class-name'}),
+    {inline: true}
+  ).addWithInfo(
+    'no flip',
+    () => render({flip: false}),
+    {inline: true}
   );
 
 function render(props = {}) {
@@ -175,7 +183,7 @@ function renderMany(props = {}) {
         onClose={action('close')}
         {...tinyList}
         {...tinyProps} />
-      <p>B. 100% of container</p>
+      <p>C. 100% of container</p>
       <Select
         style={{width: '100%'}}
         onChange={action('change')}

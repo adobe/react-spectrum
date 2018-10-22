@@ -33,7 +33,12 @@ export default class Dropdown extends React.Component {
     /**
      * Aligns the dropdown to the right or left of the button opening the dropdown
      */
-    alignRight: PropTypes.bool
+    alignRight: PropTypes.bool,
+
+    /**
+     * Sets whether the overlay is flippable
+     */
+    flip: PropTypes.bool
   };
 
   static defaultProps = {
@@ -87,7 +92,7 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const {alignRight, closeOnSelect, ...otherProps} = this.props;
+    const {alignRight, closeOnSelect, flip, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
@@ -109,6 +114,7 @@ export default class Dropdown extends React.Component {
                 closeOnSelect={closeOnSelect}
                 key={index}
                 onHide={this.onClose}
+                flip={flip}
                 delayHide={0}>
                 {React.cloneElement(trigger, {
                   'aria-haspopup': trigger.props['aria-haspopup'] || 'true',

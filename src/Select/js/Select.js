@@ -20,7 +20,8 @@ let POPOVER_MAX_WIDTH = null;
 @autobind
 export default class Select extends React.Component {
   static propTypes = {
-    closeOnSelect: PropTypes.bool
+    closeOnSelect: PropTypes.bool,
+    menuClassName: PropTypes.string
   };
 
   constructor(props) {
@@ -120,6 +121,7 @@ export default class Select extends React.Component {
       options = [],
       quiet,
       closeOnSelect,
+      menuClassName,
       disabled = false,
       invalid = false,
       multiple = false,
@@ -127,6 +129,7 @@ export default class Select extends React.Component {
       flexible = false,
       placeholder = 'Select an option',
       className,
+      flip = true,
       alignRight,
       labelId,
       id = this.selectId,
@@ -181,6 +184,7 @@ export default class Select extends React.Component {
         onOpen={this.onOpen}
         onClose={this.onClose}
         alignRight={alignRight}
+        flip={flip}
         {...dropdownProps}>
         <Button
           className="spectrum-Dropdown-trigger"
@@ -206,6 +210,7 @@ export default class Select extends React.Component {
         </Button>
         <SelectMenu
           dropdownMenu
+          className={menuClassName}
           options={options}
           value={value}
           multiple={multiple}
@@ -233,7 +238,7 @@ export function SelectMenu({onClose, onOpen, onSelect, className, open, placemen
       style={style}
       className="spectrum-Dropdown-popover"
       closeOnSelect={closeOnSelect}>
-      <SelectList className={className} {...props} onChange={onSelect} onTab={e => e.preventDefault()} />
+      <SelectList {...props} className={className} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>
   );
 }
