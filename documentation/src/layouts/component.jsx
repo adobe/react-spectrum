@@ -3,6 +3,7 @@ import React from 'react';
 import Heading from '@react/react-spectrum/Heading';
 import Provider from '@react/react-spectrum/Provider';
 import 'babel-polyfill';
+import {SideNav, SideNavItem} from '@react/react-spectrum/SideNav';
 import {Table, TR, TD, TH, THead, TBody} from '@react/react-spectrum/Table';
 import {TabView, Tab} from '@react/react-spectrum/TabView';
 import Link from '../components/Link';
@@ -25,9 +26,16 @@ export default class ComponentLayout extends React.Component {
       <Provider className="page component-page" theme="dark">
         <Header className="page-header" />
         <div className="page-main">
-          <ul className="sidebar">
-            {allComponents.map(edge => <li key={edge.node.displayName}><Link href={`/components/${edge.node.displayName}`}>{edge.node.displayName}</Link></li>)}
-          </ul>
+          <SideNav value={component.displayName} manageTabIndex typeToSelect autoFocus className="sidebar">
+            {allComponents.map(edge => (
+              <SideNavItem 
+                key={edge.node.displayName} 
+                href={`/components/${edge.node.displayName}`} 
+                value={edge.node.displayName}>
+                {edge.node.displayName}
+              </SideNavItem>
+            ))}
+          </SideNav>
           <main className="page-content">
             <div className="documentation">
               <Heading size={1}>{component.displayName}</Heading>

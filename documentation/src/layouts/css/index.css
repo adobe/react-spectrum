@@ -9,6 +9,7 @@
   flex-shrink: 0;
   overflow: auto;
   width: 250px;
+  margin-left: 10px;
 }
 
 .main {
