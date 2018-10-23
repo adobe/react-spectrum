@@ -1,16 +1,14 @@
 import assert from 'assert';
 import Camera from '../../src/Icon/Camera';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {Tag} from '../../src/TagList';
 
 describe('Tag', () => {
   it('default', () => {
     const tree = shallow(<Tag />);
-    assert.equal(tree.prop('tabIndex'), -1);
     assert.equal(tree.prop('aria-selected'), false);
-    assert.equal(tree.prop('aria-label'), 'Remove label');
     assert.equal(tree.hasClass('spectrum-Tags-item'), true);
   });
 
@@ -33,7 +31,6 @@ describe('Tag', () => {
 
   it('supports being selected', () => {
     const tree = shallow(<Tag selected />);
-    assert.equal(tree.prop('tabIndex'), 0);
     assert.equal(tree.prop('aria-selected'), true);
   });
 
@@ -51,9 +48,19 @@ describe('Tag', () => {
     assert.deepEqual(args[1], {});
   });
 
-  it('has a valid aria-label', () => {
-    const tree = shallow(<Tag>foo</Tag>);
-    assert.equal(tree.prop('aria-label'), 'Remove foo label');
+  it('supports keyboard for onClose', () => {
+    const spy = sinon.spy();
+    const tree = mount(<Tag closable value="stuff" onClose={spy} />);
+    tree.find('.spectrum-Tags-item--deletable').simulate('focus');
+    tree.find('.spectrum-Tags-item--deletable').simulate('keyDown', {keyCode: 46});
+    assert(spy.called);
+    tree.unmount();
+  });
+
+  it('child button has a valid aria-label', () => {
+    const tree = shallow(<Tag closable>foo</Tag>);
+    // The button has this label not the Tag
+    assert.equal(tree.find('Button[variant="clear"]').prop('aria-label'), 'Remove: foo');
   });
 
   it('supports additional classNames', () => {
@@ -76,5 +83,20 @@ describe('Tag', () => {
     assert(tree.find('Avatar').length);
     assert.equal(tree.find('Avatar').prop('src'), 'https://www.botlibre.com/media/a12832214.png');
   });
+
+  it('adds focus styles correctly when focused', () => {
+    const tree = shallow(<Tag closable>foo</Tag>);
+    tree.instance().handleButtonFocus();
+    assert.equal(tree.state('tagFocused'), true); 
+  });
+
+  it('removes focus styles correctly when blurred', () => {
+    const tree = shallow(<Tag closable>foo</Tag>);
+    tree.instance().handleButtonFocus();
+    assert.equal(tree.state('tagFocused'), true); 
+    tree.instance().handleButtonBlur();
+    assert.equal(tree.state('tagFocused'), false); 
+  });
+
 
 });

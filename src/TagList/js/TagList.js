@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import FocusManager from '../../utils/FocusManager';
+import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Tag from './Tag';
@@ -9,7 +11,12 @@ importSpectrumCSS('tags');
 /**
  * A TagList displays a list of Tags
  */
+const TAGLIST_SELECTOR = '[role=row]:not([aria-disabled])';
+const TAGLIST_SELECTED_SELECTOR = TAGLIST_SELECTOR + '[aria-selected=true]';
+
+@focusRing
 export default class TagList extends React.Component {
+  
   static displayName = 'TagList';
   
   static propTypes = {
@@ -43,12 +50,42 @@ export default class TagList extends React.Component {
     disabled: false,
     onClose: function () {},
     onFocus: function () {},
-    onBlur: function () {}
+    onBlur: function () {},
+    onChange: function () {}
   };
 
   state = {
     selectedIndex: null,
     focused: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ('selectedIndex' in nextProps) {
+      this.setState({
+        selectedIndex: nextProps.selectedIndex
+      });
+    }
+  }
+
+  onClickItem(selectedIndex, e) {
+    this.setSelectedIndex(selectedIndex, e);
+  }
+
+ 
+  setSelectedIndex(selectedIndex, e) {
+    const lastSelectedIndex = this.state.selectedIndex;
+
+    // If selectedIndex is defined on props then this is a controlled component and we shouldn't
+    // change our own state.
+    if (!('selectedIndex' in this.props)) {
+      this.setState({
+        selectedIndex
+      });
+    }
+
+    if (lastSelectedIndex !== selectedIndex) {
+      this.props.onChange(selectedIndex);
+    }
   }
 
   handleFocus = e => {
@@ -63,17 +100,38 @@ export default class TagList extends React.Component {
     onBlur(e);
   }
 
+
   baseChildProps(index) {
     const {readOnly, onClose, disabled} = this.props;
     const {selectedIndex, focused} = this.state;
     return {
       key: index,
       selected: !disabled && focused && selectedIndex === index,
-      tabIndex: !disabled && selectedIndex === index ? 0 : -1,
+      tabIndex: !disabled && (selectedIndex === index || (!focused && selectedIndex === null)) ? 0 : -1,
       closable: !readOnly,
       disabled,
+      onClick: this.getChildOnClick(index),
+      onFocus: this.getChildOnFocus(index),
       onClose,
-      role: 'option'
+      role: 'gridcell'
+    };
+  }
+
+  getChildOnClick(index) {
+    if (this.props.disabled) { return null; }
+    const tagListOnClick = this.onClickItem.bind(this, index);
+    return (e) => {
+      tagListOnClick(e);
+    };
+  }
+
+  getChildOnFocus(index) {
+    if (this.props.disabled) {
+      return null;
+    }
+    return (e) => {
+      this.setSelectedIndex(index, e);
+      this.handleFocus;
     };
   }
 
@@ -82,7 +140,7 @@ export default class TagList extends React.Component {
       return this.renderValues();
     }
     return React.Children.map(this.props.children, (child, index) =>
-      React.cloneElement(child, this.baseChildProps(index))
+      React.cloneElement(child, this.baseChildProps(index))   
     );
   }
 
@@ -101,7 +159,6 @@ export default class TagList extends React.Component {
       name,
       readOnly,
       disabled,
-      required,
       invalid,
       ...otherProps
     } = this.props;
@@ -109,31 +166,32 @@ export default class TagList extends React.Component {
     const {focused} = this.state;
 
     return (
-      <div
-        {...filterDOMProps(otherProps)}
-        className={
-          classNames(
-            'spectrum-Tags',
-            {
-              'is-disabled': disabled
-            },
-            className
-          )
-        }
-        name={name}
-        readOnly={readOnly}
-        disabled={disabled}
-        role="listbox"
-        aria-atomic="false"
-        aria-relevant="additions"
-        aria-live={focused ? 'polite' : 'off'}
-        aria-disabled={disabled}
-        aria-invalid={invalid}
-        aria-required={required}
-        onFocus={this.handleFocus}
-        onBlur={this.handleBlur}>
-        {this.renderChildren()}
-      </div>
+      <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal">
+        <div
+          {...filterDOMProps(otherProps)}
+          className={
+            classNames(
+              'spectrum-Tags',
+              {
+                'is-disabled': disabled
+              },
+              className
+            )
+          }
+          name={name}
+          readOnly={readOnly}
+          disabled={disabled}
+          role="grid"
+          aria-atomic="false"
+          aria-relevant="additions"
+          aria-live={focused ? 'polite' : 'off'}
+          aria-disabled={disabled}
+          aria-invalid={invalid}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}>
+          {this.renderChildren()}
+        </div>
+      </FocusManager>
     );
   }
 }

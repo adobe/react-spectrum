@@ -1,13 +1,17 @@
+import autobind from 'autobind-decorator';
 import Avatar from '../../Avatar';
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import CrossSmall from '../../Icon/core/CrossSmall';
 import filterDOMProps from '../../utils/filterDOMProps';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('tags');
+const formatMessage = messageFormatter(intlMessages);
 
 /**
  * A tag is used to categorize content and display filters.
@@ -36,6 +40,21 @@ export default class Tag extends React.Component {
     selected: false
   }
   
+  constructor(props) {
+    super(props);
+    this.state = {
+      tagFocused: false
+    };
+  }
+  @autobind
+  handleButtonFocus(e) {
+    this.setState({tagFocused: true});
+  }  
+  @autobind
+  handleButtonBlur(e) {
+    this.setState({tagFocused: false});
+  }
+
   render() {
     let {
       value,
@@ -48,13 +67,43 @@ export default class Tag extends React.Component {
       invalid = false,
       className,
       onClose = function () {},
+      tabIndex,
+      role,
       ...otherProps
-    } = this.props;
+      } = this.props;
+    let tag = this.tag;
+    const {tagFocused} = this.state;
+    const removeString = formatMessage('Remove');
     const childContent = children || value;
-    const ariaLabel = childContent ? `Remove ${childContent} label` : 'Remove label';
+    const ariaLabel = childContent ? `${removeString}: ${childContent}` : {removeString};
+   
+    function handleKeyDown(e) {
+      switch (e.keyCode) {
+        case 46: // delete
+        case 8: // backspace
+        case 32: // space
+          onClose(value || children, e);
+          e.preventDefault();
+          break;
+      }
+    }  
+    function handleButtonClick(e) {  
+      onClose(value || children, e); 
+      // If the button is clicked and this is a gridcell it must be a mouse event
+      // Set focus to the tag rather than the button as that is where focus manager
+      // expects it to be
+      if (role === 'gridcell') {
+        if (tag) {
+          tag.focus();
+        }
+      }  
+
+    }  
+
 
     return (
-      <div
+      <div 
+        ref={(t) => {this.tag = t;}} 
         className={
           classNames(
             'spectrum-Tags-item',
@@ -64,30 +113,40 @@ export default class Tag extends React.Component {
               'spectrum-Tags-item--deletable': closable,
               'is-invalid': invalid
             },
+            {'focus-ring': tagFocused},
             className
           )
-        }
-        tabIndex={!disabled && selected ? 0 : -1}
+        }      
+        tabIndex={tabIndex}
         aria-selected={!disabled && selected}
-        aria-label={ariaLabel}
-        {...filterDOMProps(otherProps)}>
+        onKeyDown={!disabled && closable ? (e => {handleKeyDown(e);}) : null}
+        {...filterDOMProps(otherProps)}
+        role={(role === 'gridcell') ? 'row' : undefined}>
         {avatar &&
           <Avatar alt="" src={avatar} aria-hidden="true" />
         }
         {cloneIcon(icon, {
           size: 'S',
           className: 'spectrum-Tags-itemIcon'
-        })}
-        <span className="spectrum-Tags-itemLabel">
+        })}  
+        <span 
+          role={role}
+          className="spectrum-Tags-itemLabel">
           {childContent}
         </span>
         {closable &&
-          <Button
-            className="spectrum-ClearButton--small"
-            variant="clear"
-            icon={<CrossSmall />}
-            title="Remove"
-            onClick={!disabled ? (e => {onClose(value || children, e); }) : null} />
+          <span role={role}>
+            <Button
+              tabIndex={(role === 'gridcell' || disabled) ? '-1' : undefined}
+              aria-label={ariaLabel}
+              className="spectrum-ClearButton--small"
+              variant="clear"
+              icon={<CrossSmall />}
+              title={removeString}
+              onClick={!disabled ? (e => {handleButtonClick(e);}) : null}
+              onBlur={this.handleButtonBlur}
+              onFocus={this.handleButtonFocus} />
+          </span>
         }
       </div>
     );

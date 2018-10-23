@@ -1,65 +1,60 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {Tag, TagList} from '../../src/TagList';
 
 describe('TagList', () => {
   it('has correct classname when disabled', () => {
     const tree = shallow(<TagList disabled />);
-    assert.equal(tree.hasClass('is-disabled'), true);
+    assert.equal(findTagList(tree).hasClass('is-disabled'), true);
   });
 
   it('has spectrum class', () => {
     const tree = shallow(<TagList />);
-    assert.equal(tree.hasClass('spectrum-Tags'), true);
+    assert.equal(findTagList(tree).hasClass('spectrum-Tags'), true);
   });
 
   it('passes in a custom class', () => {
     const tree = shallow(<TagList className="squid" />);
-    assert.equal(tree.hasClass('squid'), true);
+    assert.equal(findTagList(tree).hasClass('squid'), true);
   });
 
   it('sets the role', () => {
     const tree = shallow(<TagList />);
-    assert.equal(tree.prop('role'), 'listbox');
+    assert.equal(findTagList(tree).prop('role'), 'grid');
   });
 
   it('sets the name', () => {
     const tree = shallow(<TagList name="Friendly" />);
-    assert.equal(tree.prop('name'), 'Friendly');
+    assert.equal(findTagList(tree).prop('name'), 'Friendly');
   });
 
   it('sets the aria-disabled', () => {
     const tree = shallow(<TagList disabled />);
-    assert.equal(tree.prop('aria-disabled'), true);
+    assert.equal(findTagList(tree).prop('aria-disabled'), true);
   });
 
   it('sets the aria-invalid', () => {
     const tree = shallow(<TagList invalid />);
-    assert.equal(tree.prop('aria-invalid'), true);
+    assert.equal(findTagList(tree).prop('aria-invalid'), true);
   });
 
   it('sets readOnly', () => {
     const tree = shallow(<TagList readOnly />);
-    assert.equal(tree.prop('readOnly'), true);
-  });
-
-  it('sets the aria-required', () => {
-    const tree = shallow(<TagList required />);
-    assert.equal(tree.prop('aria-required'), true);
+    assert.equal(findTagList(tree).prop('readOnly'), true);
   });
 
   it('sets disabled on the element', () => {
     const tree = shallow(<TagList disabled />);
-    assert.equal(tree.prop('disabled'), true);
+    assert.equal(findTagList(tree).prop('disabled'), true);
   });
 
   it('sets focused state when onFocus', () => {
     const spy = sinon.spy();
     const tree = shallow(<TagList onFocus={spy} />);
     assert.equal(tree.state('focused'), false);
-    tree.simulate('focus');
+    findTagList(tree).simulate('focus');
     assert(spy.called);
     assert.equal(tree.state('focused'), true);
   });
@@ -67,7 +62,7 @@ describe('TagList', () => {
   it('removes focused state when onBlur', () => {
     const spy = sinon.spy();
     const tree = shallow(<TagList onBlur={spy} />).setState({focused: true});
-    tree.simulate('blur');
+    findTagList(tree).simulate('blur');
     assert(spy.called);
     assert.equal(tree.state('focused'), false);
   });
@@ -80,8 +75,8 @@ describe('TagList', () => {
     function run(props = {}, state = {}) {
       tree = shallow(
         <TagList {...props}>
-          <Tag className="one">Tag 1</Tag>
-          <Tag className="two">Tag 2</Tag>
+          <Tag className="one" closable>Tag 1</Tag>
+          <Tag className="two" closable>Tag 2</Tag>
         </TagList>
       ).setState(state);
       child1 = tree.find('.one');
@@ -123,7 +118,7 @@ describe('TagList', () => {
 
     it('sets the role', () => {
       run();
-      assert.equal(child1.prop('role'), 'option');
+      assert.equal(child1.prop('role'), 'gridcell');
     });
 
     it('passes down the onClose', () => {
@@ -135,22 +130,60 @@ describe('TagList', () => {
 
     it('supports values', () => {
       run({values: ['test1', 'test2', 'test3']});
-      assert.equal(tree.children().length, 3);
+      assert.equal(findTagList(tree).children().length, 3);
     });
 
     it('doesnt render passed children with values', () => {
       run({values: ['test1', 'test2']});
-      assert.equal(child1.length, 0);
+      assert.equal(child1.find('div').length, 0);
     });
 
     it('sets the value', () => {
       run({values: ['test1', 'test2']});
-      assert.equal(tree.childAt(0).prop('value'), 'test1');
+      assert.equal(findTagList(tree).childAt(0).prop('value'), 'test1');
     });
 
     it('sets the text', () => {
       run({values: ['test1', 'test2']});
-      assert.equal(tree.childAt(1).prop('children'), 'test2');
+      assert.equal(findTagList(tree).childAt(1).prop('children'), 'test2');
+    });
+
+    describe('Keyboard navigation', () => {
+      let tree;
+      let tag;
+  
+      before(() => {
+        tree = mount(
+          <TagList>
+            <Tag id="tag1" className="one" closable>Tag 1</Tag>
+            <Tag id="tag2" className="two" closable>Tag 2</Tag>
+          </TagList>
+        );
+      });   
+
+      after(() => {
+        tree.unmount();
+      });    
+
+      it('when ArrowRight key is pressed, focus next tag, ArrowLeft Focuses previous', () => {
+        tag = findTagItemAt(tree, 0);
+
+        tag.simulate('focus');
+        tag.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
+        assert.equal(findTagItemAt(tree, 1).prop('id'), document.activeElement.id);
+
+        tree.update();
+
+        tag = findTagItemAt(tree, 1);
+        tag.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
+        assert.equal(findTagItemAt(tree, 0).prop('id'), document.activeElement.id);
+        assert.equal(tree.state('selectedIndex'), 0);
+
+      });  
     });
   });
 });
+
+const findTagList = (tree) => tree.childAt(0);
+const findTagAt = (tree, index) => tree.find(Tag).at(index);
+const findTagItemAt = (tree, index) => findTagAt(findTagList(tree), index);

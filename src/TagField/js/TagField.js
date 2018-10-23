@@ -3,6 +3,7 @@ import Autocomplete from '../../Autocomplete';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {TagList} from '../../TagList';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
@@ -40,7 +41,9 @@ export default class TagField extends React.Component {
 
   componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
-      this.setState({tags: props.value});
+      const deleting = props.value.length < this.state.tags.length; 
+      const hadFocus = this.taglist && ReactDOM.findDOMNode(this).contains(document.activeElement);
+      this.setState({tags: props.value}, () => hadFocus && this.focus(deleting));
     }
   }
 
@@ -65,11 +68,25 @@ export default class TagField extends React.Component {
     this.onChange(tags);
   }
 
+  focus(deleting) {
+    if (this.taglist) {
+      const dom = ReactDOM.findDOMNode(this.taglist);
+      if (!dom.contains(document.activeElement)) {
+        const nodes = dom.querySelectorAll('[role=row]');
+        if (nodes.length && deleting) {
+          nodes[nodes.length - 1].focus();
+        } else {
+          this.textfield.focus();
+        }
+      }
+    }    
+  }
+
   onChange(tags) {
     if (this.props.value == null) {
-      this.setState({tags});
+      const deleting = tags.length < this.state.tags.length;
+      this.setState({tags}, () => this.focus(deleting));
     }
-
     if (this.props.onChange) {
       this.props.onChange(tags);
     }
@@ -94,8 +111,15 @@ export default class TagField extends React.Component {
         onSelect={this.onSelect}
         value={value}
         onChange={this.onTextfieldChange}>
-        <TagList disabled={disabled} onClose={this.onRemove} values={tags.map(tag => tag.label || tag)} />
+        <TagList 
+          ref={tl => this.taglist = tl} 
+          disabled={disabled} 
+          onClose={this.onRemove} 
+          values={tags.map(tag => tag.label || tag)} 
+          aria-labelledby={this.props['aria-labelledby']} 
+          aria-label={this.props['aria-label']} />
         <Textfield
+          ref={tf => this.textfield = tf}
           className="react-spectrum-TagField-input"
           autocompleteInput
           disabled={disabled}

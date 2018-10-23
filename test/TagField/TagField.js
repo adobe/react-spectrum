@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import TagField from '../../src/TagField';
 import {TagList} from '../../src/TagList';
@@ -147,11 +147,12 @@ describe('TagField', () => {
     assert.equal(tree.find(TagList).prop('values').length, 1);
 
     tree.simulate('change', 'test');
-    assert.equal(tree.prop('value'), 'test');
+    // prop should not change as controlled
+    assert.deepEqual(tree.find(TagList).prop('values'), ['one']);
 
     // Add one
     tree.simulate('select', 'two');
-    assert.equal(tree.prop('value'), '');
+    assert.deepEqual(tree.find(TagList).prop('values'), ['one']);
 
     // Doesn't add until prop change
     assert.equal(tree.find(TagList).prop('values').length, 1);
@@ -159,4 +160,41 @@ describe('TagField', () => {
     tree.setProps({value: ['one', 'two']});
     assert.equal(tree.find(TagList).prop('values').length, 2);
   });
+  it('focus should not be lost when deleting the last indexed value', async () => {
+    const onChange = sinon.spy();
+    const tree = mount(<TagField onChange={onChange} />);
+    tree.setState({tags: ['foo', 'hi']});
+    tree.update();
+    // remove the last item from the tagList
+    tree.find('button').last().simulate('click');
+
+    assert.equal(tree.find(TagList).prop('values').length, 1);
+    // There should be 1 tag left and it should have focus
+    assert.equal(tree.find('.spectrum-Tags-item').getDOMNode(), document.activeElement);
+
+    // remove the final item from the tagList
+    tree.find('button').last().simulate('click');
+    assert.equal(tree.find(TagList).prop('values').length, 0);
+    // There should be 0 tags left. The textfield should have focus
+    assert.equal(tree.find('input.react-spectrum-TagField-input').getDOMNode(), document.activeElement);
+    tree.unmount();
+
+  });  
+  it('focus should not be lost when removing the last indexed value when controlled', async () => {
+
+    const tree = mount(<TagField value={['one', 'two']} placeholder="Tags" />);
+    // Place focus on the last tag
+    tree.find('.spectrum-Tags-item').last().getDOMNode().focus();
+    // Update the component such that the 2nd tag is deleted.
+    tree.setProps({value: ['one']});
+    // Check focus is now on the only remaining tag
+    assert.equal(tree.find('.spectrum-Tags-item').getDOMNode(), document.activeElement);
+    // remove the final item from the tagList
+    tree.setProps({value: []});
+    // There should be 0 tags left. The textfield should have focus
+    assert.equal(tree.find('input.react-spectrum-TagField-input').getDOMNode(), document.activeElement);
+    tree.unmount();
+
+  });    
 });
+
