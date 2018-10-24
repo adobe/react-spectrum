@@ -1,3 +1,4 @@
+import createId from '../../utils/createId';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -32,7 +33,7 @@ export class ToastContainer extends React.Component {
     }
     TOAST_DATA.set(toast, {
       timer: new Timer(this.remove.bind(this, toast), timeout),
-      id: Date.now(),
+      id: createId()
     });
 
     this.setState({
