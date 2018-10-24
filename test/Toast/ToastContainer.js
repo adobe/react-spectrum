@@ -32,7 +32,22 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should remove toasts after a timeout', async () => {
+  it('should render toasts', async () => {
+    const tree = shallow(<ToastContainer />);
+    const toast = <Toast>Test</Toast>;
+    tree.instance().add(toast);
+    tree.update();
+    assert.equal(tree.children().length, 1);
+
+    await sleep(6);
+    tree.instance().remove(toast);
+    tree.update();
+    assert.equal(tree.children().length, 0);
+
+    cleanup();
+  });
+
+  it('should pause timer to remove toast when in focus', async () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
@@ -41,7 +56,28 @@ describe('ToastContainer', () => {
     tree.update();
     assert.equal(tree.children().length, 1);
 
+    tree.find(Toast).simulate('focus');
     await sleep(6);
+    tree.update();
+    assert.equal(tree.children().length, 1);
+    assert(!closedSpy.calledOnce);
+
+    cleanup();
+  });
+
+  it('should resume timer to remove toast when focus goes out', async () => {
+    const tree = shallow(<ToastContainer />);
+    assert.equal(tree.children().length, 0);
+
+    const closedSpy = sinon.spy();
+    tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 5);
+    tree.update();
+    assert.equal(tree.children().length, 1);
+    await sleep(3);
+    tree.find(Toast).simulate('focus');
+    await sleep(6);
+    tree.find(Toast).simulate('blur');
+    await sleep(3);
     tree.update();
     assert.equal(tree.children().length, 0);
     assert(closedSpy.calledOnce);
