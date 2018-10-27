@@ -31,7 +31,7 @@
   "devDependencies": {
     "@react/react-spectrum-icons": "^2.1.0",
     "@spectrum/focus-ring-polyfill": "^0.x",
-    "@spectrum/spectrum-css": "2.5.0",
+    "@spectrum/spectrum-css": "2.5.1-beta.0",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.17",
     "@spectrum/spectrum-variables": "1.0.1",
