@@ -204,6 +204,6 @@ export default function calculatePosition(placementInput, overlayNode, target, c
   const containerDimensions = getContainerDimensions(container);
   const boundaryContainer = boundariesElement === 'container' ? container : boundariesElement();
   const boundaryDimensions = getContainerDimensions(boundaryContainer);
-  const containerOffsetWithBoundary = getPosition(container, boundaryContainer);
+  const containerOffsetWithBoundary = boundaryContainer.tagName === 'BODY' ? getOffset(container) : getPosition(container, boundaryContainer);
   return calculatePositionInternal(placementInput, containerDimensions, childOffset, overlaySize, margins, padding, flip, boundaryDimensions, containerOffsetWithBoundary, offset, crossOffset);
 }

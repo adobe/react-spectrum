@@ -319,7 +319,7 @@ export default class FocusManager extends React.Component {
         : null;
 
       // wait a frame before trying to shift focus
-      setTimeout(() => {
+      this.focusTimer = setTimeout(() => {
         if (selectedItem) {
           selectedItem.focus();
         } else {
@@ -327,6 +327,10 @@ export default class FocusManager extends React.Component {
         }
       }, DELAY_BEFORE_AUTOFOCUS);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.focusTimer);
   }
 
   render() {
