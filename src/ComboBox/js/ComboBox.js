@@ -4,6 +4,7 @@ import Button from '../../Button';
 import {chain} from '../../utils/events';
 import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import React from 'react';
@@ -28,6 +29,11 @@ export default class ComboBox extends React.Component {
     open: false,
     count: null
   };
+
+  constructor(props) {
+    super(props);
+    this.comboBoxId = createId();
+  }
 
   onButtonClick() {
     this.textfield.focus();
@@ -110,7 +116,7 @@ export default class ComboBox extends React.Component {
 
   render() {
     const {
-      id,
+      id = this.comboBoxId,
       className,
       value,
       disabled,
@@ -151,6 +157,7 @@ export default class ComboBox extends React.Component {
           autocompleteInput
           quiet={quiet} />
         <Button
+          id={`${id}-button`}
           type="button"
           variant="field"
           onClick={this.onButtonClick}
@@ -162,6 +169,7 @@ export default class ComboBox extends React.Component {
           quiet={quiet}
           selected={this.state.open}
           aria-label={this.getButtonLabel()}
+          aria-labelledby={`${id} ${id}-button`}
           tabIndex="-1">
           <ChevronDownMedium size={null} className="spectrum-InputGroup-icon" />
         </Button>

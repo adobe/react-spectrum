@@ -73,7 +73,7 @@ storiesOf('ComboBox', module)
   )
   .addWithInfo(
     'Key Value Pairs',
-    () => render({options: OPTIONS_KEY_PAIRS, 'aria-label': 'with key value pairs'}),
+    () => render({options: OPTIONS_KEY_PAIRS, 'aria-label': 'key value pairs'}),
     {inline: true}
   )
   .addWithInfo(

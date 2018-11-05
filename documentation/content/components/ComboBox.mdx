@@ -1,0 +1,436 @@
+import Bell from '@react/react-spectrum/Icon/Bell';
+import ComboBox from '@react/react-spectrum/ComboBox';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
+import Heading from '@react/react-spectrum/Heading';
+import Seat from '@react/react-spectrum/Icon/Seat';
+import Send from '@react/react-spectrum/Icon/Send';
+import Stop from '@react/react-spectrum/Icon/Stop';
+import Trap from '@react/react-spectrum/Icon/Trap';
+
+## Overview
+
+**ComboBox** combines a text entry with a dropdown menu, allowing users to filter longer lists to only the selections matching a query.
+
+<Heading size={3}><label htmlFor="combobox-0">Example</label></Heading>
+
+<ComboBox
+  id="combobox-0"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-0">Example</label>
+<ComboBox
+  id="combobox-0"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-1">Invalid</label></Heading>
+
+<ComboBox
+  invalid
+  id="combobox-1"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-1">Invalid</label>
+<ComboBox
+  invalid
+  id="combobox-1"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-2">Disabled</label></Heading>
+
+<ComboBox
+  disabled
+  id="combobox-2"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-2">Disabled</label>
+<ComboBox
+  disabled
+  id="combobox-2"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-3">Quiet</label></Heading>
+
+<ComboBox
+  quiet
+  id="combobox-3"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-3">Quiet</label>
+<ComboBox
+  quiet
+  id="combobox-3"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-4">Quiet Invalid</label></Heading>
+
+<ComboBox
+  quiet
+  invalid
+  id="combobox-4"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-4">Quiet Invalid</label>
+<ComboBox
+  quiet
+  invalid
+  id="combobox-4"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-5">Quiet Disabled</label></Heading>
+
+<ComboBox
+  quiet
+  disabled
+  id="combobox-5"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+
+```jsx
+<label htmlFor="combobox-5">Quiet Disabled</label>
+<ComboBox
+  quiet
+  disabled
+  id="combobox-5"
+  placeholder="Ice Cream Flavors"
+  options={[
+    'Chocolate',
+    'Vanilla',
+    'Strawberry',
+    'Caramel',
+    'Chocolate Chip Cookie Dough',
+    'Cookies and Cream',
+    'Coconut',
+    'Peppermint'
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-6">Key Value Pairs</label></Heading>
+
+<ComboBox
+  id="combobox-6"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+
+```jsx
+<label htmlFor="combobox-6">Key Value Pairs</label>
+<ComboBox
+  id="combobox-6"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-7">With Icons</label></Heading>
+
+<ComboBox
+  id="combobox-7"
+  placeholder="Icon"
+  options={[
+    {label: 'Bell', icon: <Bell />},
+    {label: 'Stop', icon: <Stop />},
+    {label: 'Trap', icon: <Trap />},
+    {label: 'Send', icon: <Send />},
+    {label: 'Seat', icon: <Seat />}
+  ]} />
+
+```jsx
+<label htmlFor="combobox-7">With Icons</label>
+<ComboBox
+  id="combobox-7"
+  placeholder="Icon"
+  options={[
+    {label: 'Bell', icon: <Bell />},
+    {label: 'Stop', icon: <Stop />},
+    {label: 'Trap', icon: <Trap />},
+    {label: 'Send', icon: <Send />},
+    {label: 'Seat', icon: <Seat />}
+  ]} />
+```
+## Events
+
+<Heading size={3}><label htmlFor="combobox-8">onChange</label></Heading>
+
+The onChange callback executes whenever the value of the text entry changes.
+
+<ComboBox
+  onChange={val => console.log('value changed: ' + val)}
+  id="combobox-8"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+
+```jsx
+<label htmlFor="combobox-8">onChange</label>
+<ComboBox
+  onChange={val => console.log('value changed: ' + val)}
+  id="combobox-8"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+```
+
+<Heading size={3}><label htmlFor="combobox-9">onSelect</label></Heading>
+
+The onSelect callback executes whenever an item is selected within the drop down.
+
+<ComboBox
+  onSelect={obj => alert(`item selected:\n  {\n    label: "${obj.label}",\n    value: "${obj.value}"\n}`)}
+  id="combobox-9"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+
+
+```jsx
+<label htmlFor="combobox-8">onSelect</label>
+<ComboBox
+  onSelect={obj => alert(`item selected:\n  {\n    label: "${obj.label}",\n    value: "${obj.value}"\n}`)}
+  id="combobox-9"
+  placeholder="Ice Cream Flavors"
+  options={[
+    {label: 'Chocolate', value: 'chocolate'},
+    {label: 'Vanilla', value: 'vanilla'},
+    {label: 'Strawberry', value: 'strawberry'},
+    {label: 'Caramel', value: 'caramel'},
+    {label: 'Chocolate Chip Cookie Dough', value: 'chocolate chip cookie dough'},
+    {label: 'Cookies and Cream', value: 'cookies and cream'},
+    {label: 'Coconut', value: 'coconut'},
+    {label: 'Peppermint', value: 'peppermint'}
+  ]} />
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The ComboBox component implements the ComboBox design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#combobox).
+
+### Labelling
+
+An ComboBox component must be labelled for Accessibility using a FieldLabel, or either the `aria-label` or `aria-labelledby` attribute.
+
+#### Implicit labelling
+  <FieldLabel label="Ice Cream Flavors">
+    <ComboBox
+      placeholder="For example: Vanilla"
+      options={[
+        'Chocolate',
+        'Vanilla',
+        'Strawberry',
+        'Caramel',
+        'Chocolate Chip Cookie Dough',
+        'Cookies and Cream',
+        'Coconut',
+        'Peppermint'
+      ]} />
+  </FieldLabel>
+
+```jsx
+  <FieldLabel label="Ice Cream Flavors">
+    <ComboBox
+      placeholder="For example: Vanilla"
+      options={[
+        'Chocolate',
+        'Vanilla',
+        'Strawberry',
+        'Caramel',
+        'Chocolate Chip Cookie Dough',
+        'Cookies and Cream',
+        'Coconut',
+        'Peppermint'
+      ]} />
+  </FieldLabel>
+```
+#### Explicit labelling
+  <FieldLabel label="Ice Cream Flavors" labelFor="combobox-id" />
+  <ComboBox
+    id="combobox-id"
+    placeholder="For example: Vanilla"
+    options={[
+      'Chocolate',
+      'Vanilla',
+      'Strawberry',
+      'Caramel',
+      'Chocolate Chip Cookie Dough',
+      'Cookies and Cream',
+      'Coconut',
+      'Peppermint'
+    ]} />
+
+```jsx
+  <FieldLabel label="Ice Cream Flavors" labelFor="combobox-id" />
+  <ComboBox
+    id="combobox-id"
+    placeholder="For example: Vanilla"
+    options={[
+      'Chocolate',
+      'Vanilla',
+      'Strawberry',
+      'Caramel',
+      'Chocolate Chip Cookie Dough',
+      'Cookies and Cream',
+      'Coconut',
+      'Peppermint'
+    ]} />
+```
+
