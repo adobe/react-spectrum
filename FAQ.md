@@ -6,13 +6,32 @@
 
     Join the #react-spectrum room in Slack (any workspace).
 
-2. **Where do I file bugs?**
+1. **Where do I file bugs?**
 
     You can file issues or improvement tickets in our [JIRA project](https://jira.corp.adobe.com/browse/RSP).
     There is also a [JIRA board](https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=21015)
     where you can see the current Sprint and prioritized backlog.
 
-3. **Who is working on react-spectrum?**
+1. **How do I ensure feedback on issues**
+
+    - Is the issue reproducible in Storybook?
+      - This is by far the fastest approach
+    - Is there something in your project potentially interacting in an unexpected way? Here are some tips for answering this question:
+      - If I remove everything on my page except the component in question, does it still have a problem?
+      - Is there some application CSS overriding the component's CSS?
+      - Is there some application javascript hooked up to the component's CSS classes?
+      - Do I have multiple copies of React Spectrum in my project/page?
+        `npm ls @react/react-spectrum` is there more than one?  
+        Does the component work correctly if you take a different path through the application to get to it? (or a different url route)
+    - Can I fix it in React Spectrum so that it works in my project? Once done, am I now capable of reproducing with a new story in Storybook?
+    - If the above truly cannot be done, are there very detailed instructions to reproduce in your product with user credentials? + video steps? + expectations? + promise of cookies/ice cream?
+
+1. **What are some responses you should try to avoid with appropriate information**
+    - Component is working as intended, please consult [spectrum guidelines](https://spectrum.corp.adobe.com/) and/or [W3 accessibility documentation](https://www.w3.org/standards/webdesign/accessibility)
+    - There is a different component that is better suited to your needs, please refer your designer to Spectrum guidelines
+    - Are you using the `<Provider>` component
+
+1. **Who is working on react-spectrum?**
 
     Many teams across adobe are contributing, and we encourage anyone to make pull requests.
     We also have a core team which maintains the project, reviews code, etc. The current core team includes:
@@ -24,11 +43,11 @@
     * Sujai S, QE manager
     * Apoorva Shetty, QE, full time
 
-4. **Who is using react-spectrum?**
+1. **Who is using react-spectrum?**
 
     See this page on the [wiki](https://wiki.corp.adobe.com/display/RSP/Teams+using+react+spectrum).
 
-5. **Where can I find documentation about react-spectrum?**
+1. **Where can I find documentation about react-spectrum?**
 
     Full documentation is a work in progress, but the best place to look for now is the
     [Storybook](http://react-spectrum.corp.adobe.com/) examples. The storybook lists
@@ -36,7 +55,7 @@
     alongside the output. You can also check the [source](https://git.corp.adobe.com/React/react-spectrum/tree/master/stories)
     for the storybook examples to see more detailed code samples.
 
-6. **Is X feature planned/in development? What is the ETA for X?**
+1. **Is X feature planned/in development? What is the ETA for X?**
 
     Please check the [JIRA board](https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=21015) to see if
     there is a story for your feature. If there is a story, and it is not already being worked on, you can assign yourself
@@ -49,23 +68,23 @@
     If there is no story in JIRA, you can create one. Please reach out to the #react-spectrum slack room about your story
     as well, so we can discuss it and provide feedback. This is probably best done prior to writing the story.
 
-7. **What is the release process for react-spectrum?**
+1. **What is the release process for react-spectrum?**
 
     We release a new version every 2 weeks at the end of our sprints. As new features and fixes are merged into master,
     they are released immediately as beta versions. After QE signs off on the features, they are put into a release.
     Releases can be found in the Github project, for example: https://git.corp.adobe.com/React/react-spectrum/releases/tag/v2.4.0.
 
-8. **When is the next react-spectrum release?**
+1. **When is the next react-spectrum release?**
 
     You can check the [JIRA board](https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=21015) to see the current sprint.
     The next release will be at the end of the sprint.
 
-9. **How do I contribute to react-spectrum?**
+1. **How do I contribute to react-spectrum?**
 
     See [CONTRIBUTING](CONTRIBUTING.md). Generally, you should fork the project, and make a pull request. Pull requests are more than welcome.
     This is a community driven project and the stronger the community, the stronger the library.
 
-10. **How do I join the react-spectrum core team and what does that entail?**
+1. **How do I join the react-spectrum core team and what does that entail?**
 
     If you have time available, we would love to add more members of the core team. Please reach out to Danielle Robinson or Devon Govett,
     and we would be happy to add you to our sprint plannings etc. We especially need help with documentation, but will take any help we can get.
