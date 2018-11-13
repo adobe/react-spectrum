@@ -20,7 +20,7 @@ export default class TabView extends React.Component {
     onSelect: PropTypes.func,
     
     /** Tab orientation */
-    orientation: PropTypes.oneOf(['veritcal', 'horizontal']),
+    orientation: PropTypes.oneOf(['vertical', 'horizontal']),
     
     /** Selected tab */
     selectedIndex: PropTypes.number
