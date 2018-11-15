@@ -2,9 +2,19 @@ import assert from 'assert';
 import ModalContainer, {Modal} from '../../src/ModalContainer';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {sleep} from '../utils';
+import sinon from 'sinon';
 
 describe('ModalContainer', () => {
+  let clock;
+
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.restore();
+  });
+
   it('should wrap contents in a modal and call PortalContainer', async () => {
     let content = <div id="modal-test">Contents</div>;
     let key = ModalContainer.show(content);
@@ -13,7 +23,7 @@ describe('ModalContainer', () => {
     assert(node);
     assert.equal(node.previousSibling.className, 'spectrum-Underlay');
 
-    await sleep(1);
+    clock.tick(1);
 
     assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
 
@@ -75,7 +85,7 @@ describe('ModalContainer', () => {
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay');
 
-      await sleep(1);
+      clock.tick(1);
 
       assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
       assert.equal(node.parentElement.getAttribute('role'), 'dialog');
@@ -93,7 +103,7 @@ describe('ModalContainer', () => {
       assert(node);
       assert.equal(node.previousSibling.className, 'spectrum-Underlay');
 
-      await sleep(1);
+      clock.tick(1);
 
       assert.equal(node.previousSibling.className, 'spectrum-Underlay is-open');
       assert.equal(node.parentElement.getAttribute('role'), 'presentation');
@@ -128,7 +138,7 @@ describe('ModalContainer', () => {
     node.ownerDocument.dispatchEvent(event);
 
     // wait for fade out and ensure that focus is restored to trigger element
-    await sleep(125);
+    clock.tick(125);
 
     assert.equal(document.activeElement, triggerNode);
     node = document.querySelector('#modal-test');

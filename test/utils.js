@@ -12,3 +12,7 @@ export function rAF(func = () => {}) {
     )
   );
 }
+
+export function nextEventLoopIteration() {
+  return new Promise(resolve => process.nextTick(resolve));
+}

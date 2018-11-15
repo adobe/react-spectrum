@@ -191,6 +191,28 @@ You can also get a code coverage report by running:
 ```bash
 make cover
 ```
+#### Clocks
+We are attempting to make more use of the mocked out clock to improve run time of tests and remove our dependency on the clock.
+Since components are being opted into this, this needs to be added to any test suite that wants to migrate over:
+mocking of the clock object
+```js
+let clock;
+
+before(() => {
+  clock = sinon.useFakeTimers();
+});
+
+after(() => {
+  clock.restore();
+});
+```
+Once the clock is mocked, there are two things to use to trigger updates and events:
+ - clock.tick(x)
+    This function is to be used where the code in the project actually relies on real time, for instance, the `OpenTransition` component relies on the actual clock. It's also useful in tests when you want an async helper function but you want to control when it will resolve.  
+    A handy way to tell when this should be used: if `await sleep(x)` where x > 1, then clock.tick(x) should be used instead.
+ - `import {nextEventLoopIteration} from '../utils';`
+    This function can be used while the clock is mocked in order to update the enzyme wrapper for lifecycle types of events.  
+    A handy way to tell when this should be used: If setState is called during any part of the test, this should be used immediately after the line that caused it to be called.
 
 ### Linting
 

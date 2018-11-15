@@ -4,17 +4,22 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 describe('LiveRegionAnnouncer', () => {
   let wrapper;
+  let clock;
   before(() => {
     LiveRegionAnnouncer.clearMessage();
+    clock = sinon.useFakeTimers();
   });
 
   afterEach(() => {
     LiveRegionAnnouncer.destroyInstance();
     wrapper.unmount();
+  });
+
+  after(() => {
+    clock.restore();
   });
 
   it('should set polite messages', async () => {
@@ -29,15 +34,14 @@ describe('LiveRegionAnnouncer', () => {
 
     wrapper.setProps({message: 'Demo message changed'});
 
-    wrapper.update();
-
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
       politeMessage: 'Demo message changed',
     });
 
     // should clear after delay
-    await sleep(1001);
+    clock.tick(1001);
+    // don't need to wait for real time, state is updated immediately
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
       politeMessage: '',
@@ -56,15 +60,13 @@ describe('LiveRegionAnnouncer', () => {
 
     wrapper.setProps({message: 'Demo message changed'});
 
-    wrapper.update();
-
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: 'Demo message changed',
       politeMessage: '',
     });
 
     // should clear after delay
-    await sleep(1001);
+    clock.tick(1001);
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
       politeMessage: '',

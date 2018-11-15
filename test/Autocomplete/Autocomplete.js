@@ -2,9 +2,9 @@ import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
 import {Menu, MenuItem} from '../../src/Menu';
 import {mount, shallow} from 'enzyme';
+import {nextEventLoopIteration, sleep} from '../utils';
 import React from 'react';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 const assertMenuFocusStates = (tree, expectedFocusStates) => {
   assert.deepEqual(tree.find(MenuItem).map(c => c.prop('focused')), expectedFocusStates);
@@ -17,6 +17,16 @@ const assertMenuFocusStatesDOM = (listNode, expectedFocusStates) => {
 const findInput = tree => tree.find('input');
 
 describe('Autocomplete', () => {
+  let clock;
+
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.restore();
+  });
+
   it('should render children', () => {
     const tree = shallow(
       <Autocomplete className="test">
@@ -45,7 +55,7 @@ describe('Autocomplete', () => {
   });
 
   it('should call getCompletions and render a menu with results', async () => {
-    const tree = shallow(
+    let tree = shallow(
       <Autocomplete getCompletions={v => ['one', 'two']}>
         <input />
       </Autocomplete>
@@ -54,12 +64,12 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration();
 
     assert.equal(findInput(tree).prop('value'), 'test');
 
     findInput(tree).simulate('mouseEnter');
-    await sleep(1);
+    await nextEventLoopIteration();
 
     assert.equal(tree.childAt(1).prop('show'), true);
     assert.equal(tree.find(MenuItem).length, 2);
@@ -81,17 +91,19 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(15); // Wait for async getCompletions
+    clock.tick(15); // Wait for async getCompletions
+    // Dom needs actual time to pass in order to update, otherwise all we have is updated state
+    await nextEventLoopIteration();
 
     assert.equal(findInput(tree).prop('value'), 'test');
 
     findInput(tree).simulate('mouseEnter');
-    await sleep(1);
+    await nextEventLoopIteration();
 
     assert.equal(tree.childAt(1).prop('show'), true);
 
     findInput(tree).simulate('mouseEnter');
-    await sleep(1);
+    await nextEventLoopIteration();
     assert.equal(tree.find(MenuItem).length, 2);
   });
 
@@ -105,9 +117,9 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
     findInput(tree).simulate('mouseEnter');
-    await sleep(1);
+    await nextEventLoopIteration();
 
     assertMenuFocusStates(tree, [true, false, false]);
 
@@ -153,9 +165,9 @@ describe('Autocomplete', () => {
 
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
     findInput(tree).simulate('mouseEnter');
-    await sleep(1);
+    await nextEventLoopIteration();
 
     // Stub DOM dimensions
     const listNode = document.querySelector('ul');
@@ -206,7 +218,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     findInput(tree).simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
 
@@ -224,7 +236,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     findInput(tree).simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
     findInput(tree).simulate('keyDown', {key: ' ', preventDefault: function () {}});
@@ -243,7 +255,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     findInput(tree).simulate('keydown', {key: 'Escape', preventDefault: function () {}});
 
@@ -263,11 +275,12 @@ describe('Autocomplete', () => {
 
     findInput(tree).simulate('keydown', {key: 'ArrowDown', preventDefault: function () {}});
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
     tree.update();
 
     assert.equal(tree.childAt(1).prop('show'), true);
 
+    await nextEventLoopIteration(); // wait for async getCompletions
     assert(spy.called);
   });
 
@@ -283,11 +296,12 @@ describe('Autocomplete', () => {
 
     findInput(tree).simulate('keydown', {key: 'ArrowDown', altKey: true, preventDefault: function () {}});
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
     tree.update();
 
     assert.equal(tree.childAt(1).prop('show'), true);
 
+    await nextEventLoopIteration(); // Wait for async getCompletions
     assert(spy.called);
   });
 
@@ -302,7 +316,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     findInput(tree).simulate('keydown', {key: 'ArrowUp', altKey: true, preventDefault: function () {}});
 
@@ -322,7 +336,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     assert.equal(tree.prop('className'), 'react-spectrum-Autocomplete is-focused');
     assert.equal(tree.find(Menu).length, 1);
@@ -346,7 +360,7 @@ describe('Autocomplete', () => {
 
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1);
+    await nextEventLoopIteration();
 
     assert.equal(onChange.callCount, 1);
     assert.deepEqual(onChange.getCall(0).args[0], 'test');
@@ -378,7 +392,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
 
     findInput(tree).simulate('focus');
 
@@ -402,7 +416,7 @@ describe('Autocomplete', () => {
 
     tree.instance().toggleMenu();
 
-    await sleep(1);
+    await nextEventLoopIteration();
     tree.update();
     assert.equal(tree.childAt(1).prop('show'), true);
 
@@ -423,7 +437,7 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('focus');
     findInput(tree).simulate('change', 'test');
 
-    await sleep(1);
+    await nextEventLoopIteration();
 
     findInput(tree).simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
     assert.equal(findInput(tree).prop('value'), 'one');
@@ -445,7 +459,7 @@ describe('Autocomplete', () => {
 
     // show menu
     tree.instance().toggleMenu();
-    await sleep(1);
+    await nextEventLoopIteration();
     assert.equal(tree.instance().state.width, stubWidth);
     assert.equal(tree.instance().menu.props.style.width, stubWidth + 'px');
 
@@ -464,7 +478,7 @@ describe('Autocomplete', () => {
     tree.find('input').simulate('focus');
     tree.find('input').simulate('change', 'two');
 
-    await sleep(1); // Wait for async getCompletions
+    await nextEventLoopIteration(); // Wait for async getCompletions
     tree.update();
 
     assert.equal(tree.find('input').prop('value'), 'two');
@@ -504,7 +518,7 @@ describe('Autocomplete', () => {
       input.simulate('focus');
       input.simulate('change', 't');
 
-      await sleep(1);
+      await nextEventLoopIteration();
 
       input
         .simulate('keydown', {key: 'ArrowDown', preventDefault: function () {}});
@@ -552,7 +566,7 @@ describe('Autocomplete', () => {
       findInput(tree).simulate('focus');
       findInput(tree).simulate('change', 'test');
 
-      await sleep(1); // Wait for async getCompletions
+      await nextEventLoopIteration(); // Wait for async getCompletions
       tree.update();
 
       const menu = tree.find(Menu);

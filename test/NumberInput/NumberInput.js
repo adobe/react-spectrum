@@ -7,10 +7,19 @@ import NumberInput from '../../src/NumberInput';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 import Textfield from '../../src/Textfield';
 
 describe('NumberInput', () => {
+  let clock;
+
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.restore();
+  });
+
   it('default', () => {
     const assertDefaultButtonProps = (button, inputId) => {
       assert.equal(button.prop('type'), 'button');
@@ -207,7 +216,7 @@ describe('NumberInput', () => {
         assert(spy.calledWith(0.5));
         assert.equal(tree.state('value'), 0.5);
 
-        await sleep(1);
+        clock.tick(1);
 
         input.simulate('keyDown', {keyCode: 33, preventDefault: preventDefaultSpy, defaultPrevented: true}); // page up arrow
         assert(spy.calledWith(1));
@@ -225,7 +234,7 @@ describe('NumberInput', () => {
         assert(spy.calledWith(0));
         assert.equal(tree.state('value'), 0);
         assert(LiveRegionAnnouncer.announceAssertive.calledWith('0'));
-        await sleep(1001);
+        clock.tick(1001);
         assert(LiveRegionAnnouncer.clearMessage.calledWith('assertive'));
 
         LiveRegionAnnouncer.announceAssertive.restore();
@@ -464,7 +473,7 @@ describe('NumberInput', () => {
       findIncrementButton(tree).simulate('click', {preventDefault: () => {}});
       assert.equal(tree.state('value'), 1);
       assert(LiveRegionAnnouncer.announceAssertive.calledWith('1'));
-      await sleep(1001);
+      clock.tick(1001);
       assert(LiveRegionAnnouncer.clearMessage.calledWith('assertive'));
 
       LiveRegionAnnouncer.announceAssertive.restore();
