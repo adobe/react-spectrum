@@ -40,3 +40,7 @@ Avatar.propTypes = {
    */
   className: PropTypes.string,
 };
+
+Avatar.defaultProps = {
+  alt: ''
+};

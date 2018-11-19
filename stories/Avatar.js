@@ -22,4 +22,11 @@ storiesOf('Avatar', module)
       <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" disabled />
     ),
     {inline: true}
+  )
+  .addWithInfo(
+    'With alt text',
+    () => (
+      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
+    ),
+    {inline: true}
   );

@@ -1,4 +1,5 @@
 import Avatar from '@react/react-spectrum/Avatar';
+import Button from '@react/react-spectrum/Button';
 import User from '@react/react-spectrum/Icon/User';
 
 
@@ -31,4 +32,24 @@ To internationalize an avatar, a localized string should be passed to the `alt` 
 
 ## Accessibility
 
-Avatars are accessible by default. The correct aria roles will automatically be applied.
+An Avatar component renders using an `img` tag. A localized string should be passed to the `alt` prop of the Avatar to provide alternative text to the `img` using the `alt` attribute. If the avatar is used purely for decoration, and alternative text describing the avatar would be redundant, not assigning an `alt` prop will cause `img` to be rendered using an empty `alt=""` attribute.
+
+### Empty `alt` attribute
+
+<Button variant="primary" icon={<Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" />}>
+   User
+</Button>
+
+```jsx
+  <Button variant="primary" icon={<Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" />}>
+     User
+  </Button>
+```
+
+### Icon Button
+
+  <Button variant="primary" icon={<Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="User" />}></Button>
+
+```jsx
+  <Button variant="primary" icon={<Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="User" />}></Button>
+```
