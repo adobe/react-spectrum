@@ -1,4 +1,5 @@
 import FieldLabel from '@react/react-spectrum/FieldLabel';
+import SearchWithin from '@react/react-spectrum/SearchWithin';
 import Textfield from '@react/react-spectrum/Textfield';
 
 ## Overview
@@ -9,16 +10,15 @@ A **FieldLabel** displays a combined element of Textfield and Label.
 
 ### Standard Field label
 
-<FieldLabel label="React" labelFor="foo">
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-0">
+  <Textfield placeholder="React" id="textfield-0" />
 </FieldLabel>
 
 ```jsx
-<FieldLabel label="React" labelFor="foo">
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-0">
+  <Textfield placeholder="React" id="textfield-0" />
 </FieldLabel>
 ```
-
 
 ### Position of Field Label
 
@@ -26,22 +26,74 @@ The `position` property sets the _justification_ of the label text within its co
 Please note that setting any value for `position` will move the **FieldLabel** to
 be inline with the form field and situate it to the left of the form field.
 
-<FieldLabel label="React" label="foo" position="left">
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-1" position="left">
+  <Textfield placeholder="React" id="textfield-1" />
 </FieldLabel>
 
 ```jsx
-<FieldLabel label="React" label="foo" position="left">
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-1" position="left">
+  <Textfield placeholder="React" id="textfield-1" />
 </FieldLabel>
 ```
 
-<FieldLabel label="React" label="foo" position="right" style={{width: '100px'}}>
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-2" position="right" style={{width: '100px'}}>
+  <Textfield placeholder="React" id="textfield-2" />
 </FieldLabel>
 
 ```jsx
-<FieldLabel label="React" label="foo" position="right" style={{width: '100px'}}>
-  <Textfield placeholder="React" id="foo" />
+<FieldLabel label="React" labelFor="textfield-2" position="right" style={{width: '100px'}}>
+  <Textfield placeholder="React" id="textfield-2" />
+</FieldLabel>
+```
+
+## Accessibility
+
+A FieldLabel provides a name to identify a form control for accessibility. Every form control requires an accessible name so that someone using assistive technology, such as a screen reader, can understand the purpose of the control.
+
+Like the `<label>` tag in HTML, FieldLabel can either implicitly or explicitly label a control.
+
+### Implicit labelling
+
+FieldLabel can implicitly label a form control by wrapping the control.
+
+<FieldLabel label="First Name">
+  <Textfield placeholder="First Name" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="First Name">
+  <Textfield placeholder="First Name" />
+</FieldLabel>
+```
+
+### Explicit labelling
+
+FieldLabel can explicitly label a form control using the `labelFor` prop.
+
+<FieldLabel label="First Name" labelFor="textfield-3" />
+<Textfield placeholder="First Name" id="textfield-3" />
+
+```jsx
+<FieldLabel label="First Name" labelFor="textfield-3" />
+<Textfield placeholder="First Name" id="textfield-3" />
+```
+
+### Using `aria-labelledby`
+
+For composite controls that group related components into a group or fieldset, like a [ComboBox](/components/ComboBox), [Datepicker](/components/Datepicker), [NumberInput](/components/NumberInput), or [SearchWithin](/components/SearchWithin), use `aria-labelledby` prop to associate the group of controls to the FieldLabel.
+
+<FieldLabel label="Search" id="searchwithin-0-label">
+  <SearchWithin
+    aria-labelledby="searchwithin-0-label"
+    scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+    />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Search" id="searchwithin-0-label">
+  <SearchWithin
+    aria-labelledby="searchwithin-0-label"
+    scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+    />
 </FieldLabel>
 ```
