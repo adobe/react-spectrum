@@ -1,4 +1,5 @@
 import Banner from '@react/react-spectrum/Banner';
+import Bell from '@react/react-spectrum/Icon/Bell';
 import ModalTrigger from '@react/react-spectrum/ModalTrigger';
 import Button from '@react/react-spectrum/Button';
 import Dialog from '@react/react-spectrum/Dialog';
@@ -113,4 +114,32 @@ To internationalize a banner, a localized string should be passed to either `hea
 
 ## Accessibility
 
-Banners are accessible by default. The correct aria roles will automatically be applied.
+A Banner does not have a default semantic `role` communicated to assistive technology, but it does accept `id`, `role` and other `aria-` props that can be added to to improve accessibility depending on context.
+
+### Labelling of Icon Button with Banner
+
+This example uses a banner on an icon button to indicate the number of unread notifications. The control is labelled using `aria-labelledby` so that labelling elements are ordered to be read by assistive technology as “8 Notifications, button.”
+
+<Button
+  variant="tool"
+  aria-labelledby="banner-id icon-id"
+  icon={
+    <Bell
+      alt="Notifications"
+      id="icon-id" />
+  }>
+  <Banner content="8" id="banner-id" corner />
+</Button>
+
+```jsx
+  <Button
+    variant="tool"
+    aria-labelledby="banner-id icon-id"
+    icon={
+      <Bell
+        alt="Notifications"
+        id="icon-id" />
+    }>
+    <Banner content="8" id="banner-id" corner />
+  </Button>
+```
