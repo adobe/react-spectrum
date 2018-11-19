@@ -454,6 +454,7 @@ export default class Clock extends Component {
         {displayMeridiem &&
           <Select
             className="react-spectrum-Clock-meridiem"
+            id={id + '-meridiem'}
             aria-label={formatMessage('AM/PM')}
             aria-labelledby={this.getAriaLabelledbyForTextfield(id + '-meridiem', groupId)}
             onChange={this.handleMeridiemChange}

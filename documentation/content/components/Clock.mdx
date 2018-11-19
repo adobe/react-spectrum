@@ -17,43 +17,71 @@ The **Clock** in Spectrum have several props for different uses and multiple lev
 
 Events handlers like onChange and other user actions can be registered on a `Clock`. A function that will be called when an clock is changed.
 
-<Clock onChange={e => console.log(e)} />
+<Clock onChange={e => console.log(e)} aria-label="Start time" />
 
 ```jsx
-<Clock onChange={e => console.log(e)} />
+<Clock onChange={e => console.log(e)}  aria-label="Start time" />
 ```
 
 ## Quiet Clock
 
 Visual representation is changed for clocked with this prop.
 
-<Clock quiet value="today" />
+<Clock quiet value="today" aria-label="Start time" />
 
 ```jsx
-<Clock quiet value="today" />
+<Clock quiet value="today" aria-label="Start time"  />
 ```
-
-## Using aria-labelledby
-
-Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.
-
-<div>
-  <FieldLabel label="Start time" id="react-spectrum-1-label" labelFor="react-spectrum-1" />
-    <Clock
-      value="today"
-      id="react-spectrum-1"
-      aria-labelledby="react-spectrum-1-label"
-    />
-</div>
-
 
 ## AM / PM
 
 Handles AM / PM changes
 
-<Clock  defaultValue="today" displayFormat="hh:mm a" />
+<Clock defaultValue="today" displayFormat="hh:mm a" aria-label="Start time"  />
 
 
 ```jsx
-<Clock defaultValue="today" displayFormat="hh:mm a" />
+<Clock defaultValue="today" displayFormat="hh:mm a" aria-label="Start time"  />
+```
+
+## Accessibility
+
+The Clock component is treated as a fieldset containing two TextField components and, depending on the  <code>displayFormat</code>, a Select component for selecting between AM or PM.
+
+When the Clock value is updated using one of the inputs, a live region will update to announce the full Clock time to assistive technology, and the fieldset label is updated to include the value.
+
+### Labelling
+
+The fields within the Clock component are labelled internally as "Hours", "Minutes" and "AM/PM" using the appropriate translated strings for the locale.
+
+#### Using aria-labelledby
+
+Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.
+
+<div>
+  <FieldLabel label="Start time" id="react-spectrum-1-label" labelFor="react-spectrum-1" />
+  <Clock
+    value="today"
+    id="react-spectrum-1"
+    aria-labelledby="react-spectrum-1-label"
+  />
+</div>
+
+```jsx
+  <FieldLabel label="Start time" id="react-spectrum-1-label" labelFor="react-spectrum-1" />
+  <Clock
+    value="today"
+    id="react-spectrum-1"
+    aria-labelledby="react-spectrum-1-label"
+  />
+```
+
+#### Using aria-label
+
+In a composite component, such as the Datepicker, the Clock can also be labelled using aria-label.
+
+<Clock value="today" displayFormat="hh:mm a" aria-label="Start time"  />
+
+```jsx
+<Clock value="today" displayFormat="hh:mm a" aria-label="Start time"  />
 ```
