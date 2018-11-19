@@ -5,6 +5,13 @@ import Bell from '@react/react-spectrum/Icon/Bell';
 import Brush from '@react/react-spectrum/Icon/Brush';
 import Select from '@react/react-spectrum/Icon/Select';
 import RegionSelect from '@react/react-spectrum/Icon/RegionSelect';
+import TextAlignCenter from '@react/react-spectrum/Icon/TextAlignCenter';
+import TextAlignJustify from '@react/react-spectrum/Icon/TextAlignJustify';
+import TextAlignLeft from '@react/react-spectrum/Icon/TextAlignLeft';
+import TextAlignRight from '@react/react-spectrum/Icon/TextAlignRight';
+import TextItalic from '@react/react-spectrum/Icon/TextItalic';
+import TextStrikethrough from '@react/react-spectrum/Icon/TextStrikethrough';
+import TextUnderline from '@react/react-spectrum/Icon/TextUnderline';
 
 ## Overview
 
@@ -45,9 +52,9 @@ Spectrum ButtonGroup can displayed vertically, Default is horizontal. 'orientati
 </ButtonGroup>
 ```
 
-## Mutliple Selection
+## Multiple Selection
 
-To allow multiple selection of Buttons in ButtonGroup 'mulitple' props is passed. Allows selection of more than more button at a time.
+To allow multiple selection of Buttons in ButtonGroup 'multiple' props is passed. Allows selection of more than more button at a time.
 
 <ButtonGroup multiple>
   <Button label="Brush" value="Brush" icon={<Brush />} />
@@ -94,6 +101,115 @@ The Readonly prop disables selections of any kind, instead of onChange being fir
 
 ```jsx
 <ButtonGroup readOnly>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The ButtonGroup accessibility implementation depends on selection mode.
+
+#### Default (mutually exclusive selection)
+
+By default, Button selection is mutually exclusive, and ButtonGroup implements the [RadioGroup design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#radiobutton); the ButtonGroup `role` for assistive technology is `radiogroup`, and Button elements use the `radio` `role` and `aria-checked` to indicate the toggled state.
+
+The ButtonGroup should be labelled using either `aria-label` or `aria-labelledby`.
+
+<ButtonGroup aria-label="Text Alignment">
+  <Button
+    value="TextAlignLeft"
+    aria-label="Left"
+    icon={<TextAlignLeft />} />
+  <Button
+    value="TextAlignCenter"
+    aria-label="Center"
+    icon={<TextAlignCenter />} />
+  <Button
+    value="TextAlignRight"
+    aria-label="Right"
+    icon={<TextAlignRight />} />
+  <Button
+    value="TextAlignJustify"
+    aria-label="Justify"
+    icon={<TextAlignJustify />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup aria-label="Text Alignment">
+  <Button
+    value="TextAlignLeft"
+    aria-label="Left"
+    icon={<TextAlignLeft />} />
+  <Button
+    value="TextAlignCenter"
+    aria-label="Center"
+    icon={<TextAlignCenter />} />
+  <Button
+    value="TextAlignRight"
+    aria-label="Right"
+    icon={<TextAlignRight />} />
+  <Button
+    value="TextAlignJustify"
+    aria-label="Justify"
+    icon={<TextAlignJustify />} />
+</ButtonGroup>
+```
+
+#### Multiple Selection
+
+When multiple selection is set using the `multiple` prop, the ButtonGroup `role` for assistive technology is `group`, and Button elements use the `checkbox` `role` and `aria-checked` to indicate the toggled state.
+
+The ButtonGroup should be labelled using either `aria-label` or `aria-labelledby`.
+
+<ButtonGroup aria-label="Text Styling" multiple>
+  <Button
+    value="Italic"
+    aria-label="Italic"
+    icon={<TextItalic />} />
+  <Button
+    value="Underline"
+    aria-label="Underline"
+    icon={<TextUnderline />} />
+  <Button
+    value="Strikethrough"
+    aria-label="Strikethrough"
+    icon={<TextStrikethrough />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup aria-label="Text Styling" multiple>
+  <Button
+    value="Italic"
+    aria-label="Italic"
+    icon={<TextItalic />} />
+  <Button
+    value="Underline"
+    aria-label="Underline"
+    icon={<TextUnderline />} />
+  <Button
+    value="Strikethrough"
+    aria-label="Strikethrough"
+    icon={<TextStrikethrough />} />
+</ButtonGroup>
+```
+
+#### No Selection
+
+With no selection using the `readOnly` prop, ButtonGroup implements the [Toolbar design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#toolbar); the ButtonGroup `role` for assistive technology is `toolbar`, and Button elements retain their implicit `button` `role`.
+
+The ButtonGroup should be labelled using either `aria-label` or `aria-labelledby`.
+
+<ButtonGroup aria-label="Tools" readOnly>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup aria-label="Tools" readOnly>
   <Button label="Brush" value="Brush" icon={<Brush />} />
   <Button label="Bell" value="Bell" icon={<Bell />} />
   <Button label="AddCircle" value="Add" icon={<AddCircle />} />
