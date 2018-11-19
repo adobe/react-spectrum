@@ -34,7 +34,7 @@ Dialogs can have up to three buttons: 2 action buttons, and a cancel button. All
 is clicked, `onConfirm` is called with the button that was clicked: either "primary" or "secondary". When the cancel button is clicked,
 `onCancel` is called. You can also optionally disable the confirm button using the `confirmDisabled` prop.
 
-Enabling the `keyboardConfirm` prop makes pressing the Enter key execute the default action for the Dialog. 
+Enabling the `keyboardConfirm` prop makes pressing the Enter key execute the default action for the Dialog.
 It is the equivalent of pressing the “Confirm” button.
 
 <ModalTrigger>
@@ -73,7 +73,7 @@ There are many Dialog variants to choose from in Spectrum. The `variant` prop co
 
 ### Confirmation
 
-This is the default variant for dialogs. Confirmation dialogs should be used when asking users to confirm a choice. 
+This is the default variant for dialogs. Confirmation dialogs should be used when asking users to confirm a choice.
 The confirmation dialog has a blue button (call to action button) to highlight the strong preference for buttons.
 
 <ModalTrigger>
@@ -103,7 +103,7 @@ The confirmation dialog has a blue button (call to action button) to highlight t
 
 ### Information
 
-Information dialogs should be used to communicate important information to users. Before using an information dialog, 
+Information dialogs should be used to communicate important information to users. Before using an information dialog,
 make sure this is the right communication channel for the message.
 
 <ModalTrigger>
@@ -132,7 +132,7 @@ make sure this is the right communication channel for the message.
 
 ### Destructive
 
-Destructive dialogs should be used when a user has to confirm an action that will impact their data in a destructive way, 
+Destructive dialogs should be used when a user has to confirm an action that will impact their data in a destructive way,
 like deleting files or contacts. The destructive dialog has a red (negative) button to highlight that action.
 
 <ModalTrigger>
@@ -161,7 +161,7 @@ like deleting files or contacts. The destructive dialog has a red (negative) but
 
 ### Error
 
-Error dialogs should be used to communicate critical information to users in relation to an issue that needs to be acknowledged. 
+Error dialogs should be used to communicate critical information to users in relation to an issue that needs to be acknowledged.
 The error dialog has a red title and a warning icon to reinforce its importance.
 
 <ModalTrigger>
@@ -241,15 +241,20 @@ The `mode` prop determines whether the dialog appears as an alert, full screen, 
       cancelLabel="Cancel">
       Content of the dialog
     </Dialog>
-</ModalTrigger>
+  </ModalTrigger>
 ```
 
 ## Accessibility
 
 Dialogs automatically hide content behind them from screen readers while open, block scrolling of the page, and focus within the modal.
-Dialogs automatically close when pressing the Escape key, and when the `keyboardConfirm` prop is enabled, the default action is 
+Dialogs automatically close when pressing the Escape key, and when the `keyboardConfirm` prop is enabled, the default action is
 automatically triggered when pressing the enter key. You can also automatically focus one of the buttons when a dialog opens using the
 `autoFocusButton` prop.
+Dialogs automatically hide content behind them from screen readers while open, block scrolling of the page, and focus within the modal.
+Dialogs automatically close on pressing the <kbd>Escape</kbd> key, and when the `keyboardConfirm` prop is enabled, the default action is
+automatically triggered when pressing the <kbd>Enter</kbd> key. You can also automatically focus either the `cancel` or
+`confirm` button when a dialog opens using the `autoFocusButton` prop.
+When the a dialog closes, keyboard focus will be restored to the element that had focus when the dialog opened.
 
 ## Internationalization
 
