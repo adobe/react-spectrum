@@ -27,6 +27,12 @@ storiesOf('RadioGroup', module)
     'Remember to import Radio before RadioGroup',
     () => render({vertical: true}),
     {inline: true}
+  )
+  .addWithInfo(
+    'defaultSelectedValue',
+    'Remember to import Radio before RadioGroup',
+    () => render({defaultSelectedValue: '2'}),
+    {inline: true}
   );
 
 function render(props = {}) {
