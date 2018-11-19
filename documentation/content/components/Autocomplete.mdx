@@ -1,5 +1,6 @@
 import Autocomplete from '@react/react-spectrum/Autocomplete';
 import Checkbox from '@react/react-spectrum/Checkbox';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Textfield from '@react/react-spectrum/Textfield';
 
 ## Overview
@@ -31,6 +32,49 @@ Try typing 'puppy' and hitting enter on the above example and this one.
 
 ```jsx
   <Autocomplete allowCreate getCompletions={() => ['Chocolate', 'Vanilla']}>
+    <Textfield placeholder="Autocomplete..." />
+  </Autocomplete>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Autocomplete component implements the ComboBox design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#combobox).
+
+### Labelling
+
+An Autocomplete component must be labelled for Accessibility using either a FieldLabel, or either the `aria-label` or `aria-labelledby` attribute.
+
+#### Implicit labelling
+  <FieldLabel label="Ice Cream Flavors">
+    <Autocomplete
+      getCompletions={() => ['Chocolate', 'Vanilla']}>
+      <Textfield placeholder="Autocomplete..." />
+    </Autocomplete>
+  </FieldLabel>
+
+```jsx
+  <FieldLabel label="Ice Cream Flavors">
+    <Autocomplete
+      getCompletions={() => ['Chocolate', 'Vanilla']}>
+      <Textfield placeholder="Autocomplete..." />
+    </Autocomplete>
+  </FieldLabel>
+```
+#### Explicit labelling
+  <FieldLabel label="Ice Cream Flavors" labelFor="autocomplete-id" />
+  <Autocomplete
+    getCompletions={() => ['Chocolate', 'Vanilla']}
+    id="autocomplete-id">
+    <Textfield placeholder="Autocomplete..." />
+  </Autocomplete>
+
+```jsx
+  <FieldLabel label="Ice Cream Flavors"  labelFor="autocomplete-id" />
+  <Autocomplete
+    getCompletions={() => ['Chocolate', 'Vanilla']}
+    id="autocomplete-id">
     <Textfield placeholder="Autocomplete..." />
   </Autocomplete>
 ```
