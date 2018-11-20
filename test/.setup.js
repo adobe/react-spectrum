@@ -8,6 +8,9 @@ const exposedProperties = [ 'window', 'navigator', 'document' ];
 
 global.document = jsdom('<html><body></body></html>', {features: {QuerySelector: true}});
 global.window = document.defaultView;
+global.HTMLElement = window.HTMLElement;
+global.HTMLImageElement = window.HTMLImageElement;
+
 Object.keys(document.defaultView).forEach(property => {
   if (typeof global[property] === 'undefined') {
     exposedProperties.push(property);

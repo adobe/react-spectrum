@@ -24,16 +24,18 @@ describe('ListDataSource', function () {
     assert.deepEqual(insertSection.getCall(0).args, [0, [1, 2, 3, 4], false]);
   });
 
-  it('should replace a section if already loaded', async function () {
+  it('should clear the data before loading', async function () {
     let ds = new TestDS;
     await ds.performLoad();
 
-    let replaceSection = sinon.spy(ds, 'replaceSection');
+    let clear = sinon.spy(ds, 'clear');
+    let insertSection = sinon.spy(ds, 'insertSection');
 
     await ds.performLoad();
-    assert.equal(replaceSection.callCount, 1);
+    assert.equal(clear.callCount, 1);
     assert.deepEqual(ds.sections, [[1, 2, 3, 4]]);
-    assert.deepEqual(replaceSection.getCall(0).args, [0, [1, 2, 3, 4], false]);
+    assert.equal(insertSection.callCount, 1);
+    assert.deepEqual(insertSection.getCall(0).args, [0, [1, 2, 3, 4], false]);
   });
 
   it('should trigger a loadMore when calling performLoadMore', async function () {
@@ -52,11 +54,11 @@ describe('ListDataSource', function () {
     let ds = new TestDS;
     await ds.performLoad();
 
-    let replaceSection = sinon.spy(ds, 'replaceSection');
+    let insertSection = sinon.spy(ds, 'insertSection');
 
     await ds.performSort();
-    assert.equal(replaceSection.callCount, 1);
+    assert.equal(insertSection.callCount, 1);
     assert.deepEqual(ds.sections, [[1, 2, 3, 4]]);
-    assert.deepEqual(replaceSection.getCall(0).args, [0, [1, 2, 3, 4], false]);
+    assert.deepEqual(insertSection.getCall(0).args, [0, [1, 2, 3, 4], false]);
   });
 });

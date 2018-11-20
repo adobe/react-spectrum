@@ -1,0 +1,124 @@
+import Checkbox from '../../Checkbox/js/Checkbox';
+import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
+import PropTypes from 'prop-types';
+import React from 'react';
+import '../style/index.styl';
+
+importSpectrumCSS('card');
+importSpectrumCSS('quickaction');
+
+const formatMessage = messageFormatter(intlMessages);
+
+export default class Card extends React.Component {
+  static propTypes = {
+    /** Card variant */
+    variant: PropTypes.oneOf(['standard', 'quiet', 'gallery']),
+    
+    /** Card can be large or small size */
+    size: PropTypes.oneOf(['S', 'L']),
+
+    /** Whether or not the card supports selection */
+    allowsSelection: PropTypes.bool,
+
+    /** Whether or not the card is selected */
+    selected: PropTypes.bool,
+
+    /** Whether the card is currently a drop target */
+    isDropTarget: PropTypes.bool,
+
+    /** Quick actions to display on the card. */
+    quickActions: PropTypes.element,
+
+    /** Action menu to display in the body of the card. */
+    actionMenu: PropTypes.element
+  };
+
+  static defaultProps = {
+    variant: 'standard',
+    size: 'L',
+    selected: false,
+    allowsSelection: true
+  };
+
+  static childContextTypes = {
+    cardVariant: PropTypes.string,
+    cardSize: PropTypes.string,
+    actionMenu: PropTypes.element,
+    onLoad: PropTypes.func
+  };
+
+  getChildContext() {
+    let actionMenu = this.props.actionMenu;
+    if (this.props.size === 'S') {
+      actionMenu = null;
+    }
+
+    return {
+      cardVariant: this.props.variant,
+      cardSize: this.props.size,
+      actionMenu,
+      onLoad: this.props.onLoad
+    };
+  }
+
+  render() {
+    let {
+      variant,
+      size,
+      selected,
+      allowsSelection,
+      isDropTarget,
+      quickActions,
+      actionMenu,
+      children,
+      className,
+      ...otherProps
+    } = this.props;
+
+    // Small size is not supported for standard cards
+    if (variant === 'standard' && size === 'S') {
+      size = 'L';
+    }
+
+    let checkbox = null;
+    if (allowsSelection) {
+      checkbox = (
+        <div className={classNames('spectrum-QuickActions', 'spectrum-Card-quickActions')}>
+          <Checkbox
+            checked={selected}
+            title={formatMessage('select')} />
+        </div>
+      );
+    }
+
+    if (quickActions && actionMenu) {
+      throw new Error('Either quick actions or an action button can be passed to Card, not both.');
+    }
+
+    if (size === 'S' && actionMenu) {
+      quickActions = (
+        <div className="spectrum-QuickActions spectrum-Card-actions">
+          {actionMenu}
+        </div>
+      );
+    }
+
+    let assetClass = classNames('spectrum-Card', `spectrum-Card--${variant}`, {
+      'spectrum-Card--large': size === 'L',
+      'spectrum-Card--small': size === 'S',
+      'is-selected': selected,
+      'is-drop-target': isDropTarget
+    }, className);
+
+    return (
+      <div {...filterDOMProps(otherProps)} className={assetClass}>
+        {children}
+        {checkbox}
+        {quickActions}
+      </div>
+    );
+  }
+}

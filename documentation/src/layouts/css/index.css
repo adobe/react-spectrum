@@ -81,7 +81,7 @@ header nav {
 }
 
 header nav h2 {
-  margin: 0 20px 0 10px;
+  margin: 0 20px 0 10px !important;
 }
 
 header nav h2 a {
@@ -102,13 +102,10 @@ header nav a {
 
 .homepage .hero h1 {
   font-size: 60px;
-  line-height: 1em;
 }
 
 .homepage .hero h2 {
   margin-bottom: 60px;
-  line-height: 1em;
-  margin-top: -20px;
 }
 
 .homepage .features {
@@ -130,4 +127,5 @@ header nav a {
 .example-tableview {
   height: 300px !important;
   min-width: 450px;
+  flex: 1;
 }

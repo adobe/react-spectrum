@@ -1,0 +1,29 @@
+@import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
+
+.react-spectrum-GridView {
+  height: 500px;
+  outline: none;
+
+  > div > .item {
+    overflow: visible !important; /* override inline styles applied by collection-view */
+  }
+}
+
+.react-spectrum-GridView.is-drop-target {
+  background: rgba($spectrum-global-color-blue600, 0.1);
+  box-shadow: 0 0 0 2px $spectrum-global-color-blue500;
+  border-radius: 4px;
+}
+
+.react-spectrum-GridView-item {
+  > .spectrum-Card--quiet,
+  > .spectrum-Card--gallery {
+    position: absolute;
+  }
+}
+
+.react-spectrum-GridView > div[style*="transition"] {
+  * {
+    transition: inherit;
+  }
+}

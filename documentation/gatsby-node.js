@@ -130,4 +130,8 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     test: /\.mdx?$/,
     loaders: ['babel-loader?babelrc=false,presets[]=env,presets[]=react,plugins[]=transform-object-rest-spread', require.resolve('./mdx-loader')],
   });
+
+  config.merge({
+    postcss() {}
+  });
 };

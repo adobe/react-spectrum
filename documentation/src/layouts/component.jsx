@@ -21,6 +21,11 @@ export default class ComponentLayout extends React.Component {
     let related = this.props.data.relatedComponents
       ? this.props.data.relatedComponents.edges.filter(edge => edge.node.docblock && !edge.node.docblock.includes('@private'))
       : [];
+    let relatedClasses = this.props.data.relatedClasses && this.props.data.relatedClasses.edges.sort((a, b) => 
+      a.node.name < b.node.name ? -1 : 1
+    );
+
+    related.sort((a, b) => a.node.displayName < b.node.displayName ? -1 : 1);
 
     return (
       <Provider className="page component-page" theme="dark">
@@ -54,7 +59,7 @@ export default class ComponentLayout extends React.Component {
                       <ComponentAPI component={edge.node} />
                     </section>
                   )}
-                  {this.props.data.relatedClasses && this.props.data.relatedClasses.edges.map(edge =>
+                  {relatedClasses && relatedClasses.map(edge =>
                     <ClassAPI key={edge.node.id} node={edge.node} />
                   )}
                 </Tab>
@@ -126,6 +131,10 @@ function ComponentAPI({component}) {
 }
 
 function ClassAPI({node}) {
+  let methods = node.members.instance.filter(member => !member.tags || !member.tags.some(tag => tag.title === 'type'));
+  let properties = node.members.instance.filter(member => member.tags && member.tags.some(tag => tag.title === 'type'));
+  let tag;
+
   return (
     <section>
       <Heading size={1}>{node.name}</Heading>
@@ -133,7 +142,29 @@ function ClassAPI({node}) {
         <div dangerouslySetInnerHTML={{__html: node.description.childMarkdownRemark.html}} />
       }
 
-      {node.members.instance.length ?
+      {properties.length ?
+        <section>
+          <Heading size={2}>Properties</Heading>
+          <Table quiet>
+            <THead>
+              <TH>Property</TH>
+              <TH>Description</TH>
+              <TH>Default</TH>
+            </THead>
+            <TBody>
+              {properties.map(property =>
+                <TR key={property.name}>
+                  <TD><code>{property.name}</code></TD>
+                  <TD><div dangerouslySetInnerHTML={{__html: property.description && property.description.childMarkdownRemark.html.slice(3, -4)}} /></TD>
+                  <TD>{(property.tags && (tag = property.tags.find(tag => tag.title === 'default')) && tag.description) || ''}</TD>
+                </TR>
+              )}
+            </TBody>
+          </Table>
+        </section>
+      : null}
+
+      {methods.length ?
         <section>
           <Heading size={2}>Methods</Heading>
           <Table quiet>
@@ -143,7 +174,7 @@ function ClassAPI({node}) {
               <TH>Description</TH>
             </THead>
             <TBody>
-              {node.members.instance.map(method =>
+              {methods.map(method =>
                 <TR key={method.name}>
                   <TD><code>{formatMethod(method)}</code></TD>
                   <TD>{method.abstract ? <Checkmark size="S" /> : null}</TD>
@@ -334,6 +365,10 @@ export const pageQuery = graphql`
             name
           }
           default
+        }
+        tags {
+          title
+          description
         }
         returns {
           type {

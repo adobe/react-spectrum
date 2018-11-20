@@ -1,0 +1,11 @@
+@import '@spectrum/spectrum-variables/stylus/spectrum-light.styl';
+
+.react-spectrum-Image {
+  opacity: 0;
+  transition: opacity $spectrum-transition-time;
+
+  &.is-loaded,
+  &.is-placeholder {
+    opacity: 1;  
+  }
+}

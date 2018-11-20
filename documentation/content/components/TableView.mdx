@@ -191,7 +191,7 @@ The following example shows how items can be dragged from one TableView to anoth
     canDragItems />
   <TableView
     columns={[columns[1]]}
-    dataSource={new ListDataSource([[]])}
+    dataSource={new TestDS([])}
     renderCell={renderCell}
     className="example-tableview"
     acceptsDrops
@@ -219,7 +219,7 @@ along with the selected index paths for all items that would be dragged.
 #### Customizing the drag data
 
 By default, the selected item objects are serialized to JSON and passed along with the drag to the drop target. This will work
-if the only drop targets you want to support are other TableViews, but you may want to support a custom data format for your
+if the only drop targets you want to support are other TableViews or GridViews, but you may want to support a custom data format for your
 content that will work across applications and frameworks. You can also provide data in multiple representations, so that many
 different receiving applications can handle the drop. To do this, you can override the `prepareDragData` method of your
 data source.
@@ -248,7 +248,7 @@ or a list of allowed drag types (e.g. `Files`, `text/plain` or your custom forma
 
 #### Handling drops
 
-By default, TableView will handle drops from other TableViews, but you may need to support dropping files or other custom types
+By default, TableView will handle drops from other TableViews or GridViews, but you may need to support dropping files or other custom types
 of objects. To do this, you need to implement the `itemsForDrop` method on your data source. This method is passed a drop target
 and the data transfer object from the drag, and should return items that should be dropped.
 

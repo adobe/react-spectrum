@@ -35,24 +35,32 @@ module.exports = function ({types: t}) {
 
   // Get the path to a CSS file for the component + theme.
   function getCSS(component, theme, filename) {
+    let dir = Path.dirname(filename);
+
     // When building for production, we copy spectrum-css into react-spectrum.
     let base = process.env.BUILD_ENV === 'production'
-      ? Path.relative(Path.dirname(filename), 'dist/spectrum-css')
+      ? Path.relative(dir, 'dist/spectrum-css')
       : '@spectrum/spectrum-css/dist/components';
 
-    let path = `${base}/${component}/`;
+    let path = `${component}/`;
     if (theme) {
       path += `multiStops/${theme}.css`;
     } else {
       path += 'index.css';
     }
 
+    // Check if an override exists for this component
+    let overrideBase = Path.relative(dir, 'spectrum-css-overrides');
+    if (fs.existsSync(Path.resolve(dir, overrideBase, path))) {
+      return Path.join(overrideBase, path);
+    }
+
     let realpath = process.env.BUILD_ENV === 'production'
-      ? Path.resolve(Path.dirname(filename), path)
-      : __dirname + '/../node_modules/' + path;
+      ? Path.resolve(dir, base, path)
+      : Path.join(__dirname, '..', 'node_modules', base, path);
 
     if (fs.existsSync(realpath)) {
-      return path;
+      return Path.join(base, path);
     } else if (!theme) {
       console.error('Could not find Spectrum CSS import: ', realpath);
     }

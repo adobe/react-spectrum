@@ -3,7 +3,7 @@ import {ArrayDataSource, IndexPath} from '@react/collection-view';
 /**
  * ListDataSource is a common data source used by views that load a list of data.
  * It supports async loading, infinite scrolling, and sorting data.
- * Used by TableView.
+ * Used by TableView and GridView.
  */
 export default class ListDataSource extends ArrayDataSource {
   /**
@@ -33,14 +33,21 @@ export default class ListDataSource extends ArrayDataSource {
    * @param {?object} sortDescriptor - When called by a TableView, contains the sort column and direction
    */
   async performLoad(sortDescriptor) {
+    this.clear(false);
+
     let items = await this.load(sortDescriptor);
-    if (items && items.length > 0) {
-      if (this.sections.length === 0) {
-        this.insertSection(0, items.slice(), false);
-      } else {
-        this.replaceSection(0, items.slice(), false);
-      }
+    if (items) {
+      this.insertSection(0, items.slice(), false);
     }
+  }
+
+  /**
+   * Triggers a reload of the data in the attached view. Will cause the contents of the view
+   * to be cleared and `performLoad` to be called again. You should not call `performLoad` 
+   * directly since that will not allow the view an opportunity to display its loading spinner.
+   */
+  reloadData() {
+    this.emit('reloadData');
   }
 
   /**

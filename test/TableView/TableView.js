@@ -1,10 +1,9 @@
 import assert from 'assert';
-import {DragTarget, EditableCollectionView, IndexPath, Point, Size} from '@react/collection-view';
+import {IndexPath} from '@react/collection-view';
 import ListDataSource from '../../src/ListDataSource';
 import {mount, shallow} from 'enzyme';
-import Provider from '../../src/Provider';
 import React from 'react';
-import sinon, {stub} from 'sinon';
+import sinon from 'sinon';
 import {sleep} from '../utils';
 import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
@@ -163,14 +162,13 @@ describe('TableView', function () {
   it('should call internal sort if column prop is set', async function () {
     const performSort = sinon.spy(ds, 'performSort');
     const onSortChange = sinon.spy();
-    const table = shallow(
+    const table = mount(
       <TableView
         columns={columns}
         dataSource={ds}
         renderCell={renderCell}
         onSortChange={onSortChange} />
     );
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: []};
     await sleep(100);
     await table.instance().sortByColumn(columns[0]);
 
@@ -184,14 +182,14 @@ describe('TableView', function () {
     assert.deepEqual(onSortChange.getCall(0).args[0], {column: columns[1], direction: 1});
 
     table.update();
-    assert.equal(table.find(TableRow).dive().find(TableCell).at(2).prop('sortDir'), 1);
+    assert.equal(table.find(TableRow).find(TableCell).at(2).prop('sortDir'), 1);
     performSort.restore();
   });
 
   it('should sort using the passed props (controlled)', async function () {
     const performSort = sinon.spy(ds, 'performSort');
     const onSortChange = sinon.spy();
-    const table = shallow(
+    const table = mount(
       <TableView
         columns={columns}
         dataSource={ds}
@@ -200,9 +198,7 @@ describe('TableView', function () {
         onSortChange={onSortChange} />
     );
 
-    assert.equal(table.find(TableRow).dive().find(TableCell).at(2).prop('sortDir'), -1);
-
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: []};
+    assert.equal(table.find(TableRow).find(TableCell).at(2).prop('sortDir'), -1);
     await sleep(100);
 
     await table.instance().sortByColumn(columns[1]);
@@ -212,14 +208,14 @@ describe('TableView', function () {
     assert.deepEqual(onSortChange.getCall(0).args[0], {column: columns[1], direction: 1});
 
     table.update();
-    assert.equal(table.find(TableRow).dive().find(TableCell).at(2).prop('sortDir'), -1);
+    assert.equal(table.find(TableRow).find(TableCell).at(2).prop('sortDir'), -1);
     performSort.restore();
   });
 
   it('should sort using the passed props (uncontrolled)', async function () {
     const performSort = sinon.spy(ds, 'performSort');
     const onSortChange = sinon.spy();
-    const table = shallow(
+    const table = mount(
       <TableView
         columns={columns}
         dataSource={ds}
@@ -228,9 +224,7 @@ describe('TableView', function () {
         onSortChange={onSortChange} />
     );
 
-    assert.equal(table.find(TableRow).dive().find(TableCell).at(2).prop('sortDir'), -1);
-
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: []};
+    assert.equal(table.find(TableRow).find(TableCell).at(2).prop('sortDir'), -1);
     await sleep(100);
 
     await table.instance().sortByColumn(columns[1]);
@@ -241,22 +235,21 @@ describe('TableView', function () {
     assert.deepEqual(onSortChange.getCall(0).args[0], {column: columns[1], direction: 1});
 
     table.update();
-    assert.equal(table.find(TableRow).dive().find(TableCell).at(2).prop('sortDir'), 1);
+    assert.equal(table.find(TableRow).find(TableCell).at(2).prop('sortDir'), 1);
     performSort.restore();
   });
 
   it('should call selectionChange if prop is set', function () {
     const onSelectionChange = sinon.spy();
-    const table = shallow(
+    const table = mount(
       <TableView
         columns={columns}
         dataSource={ds}
         renderCell={renderCell}
         onSelectionChange={onSelectionChange} />
     );
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: [new IndexPath(0, 0)], getNumberOfSections: () => 1, getSectionLength: () => 6};
 
-    table.instance().onSelectionChange();
+    table.instance().onSelectionChange([new IndexPath(0, 0)]);
     assert.equal(onSelectionChange.callCount, 1);
     assert.equal(onSelectionChange.getCall(0).args[0][0].index, 0);
   });
@@ -307,30 +300,6 @@ describe('TableView', function () {
     table.unmount();
   });
 
-  it('should render an infiniteScroll table', async function () {
-    const loadMoreStub = stub(ds, 'loadMore').callsFake(() => {});
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell} />
-    );
-    const tableInstance = tree.instance();
-
-    // shallow doesn't render down far enough to make this, so create the collection instance
-    tableInstance.collection = {relayout: () => {}, contentOffset: new Point(0, 0), contentSize: new Size(100, 1000), size: new Size(100, 100), dataSource: ds};
-    tree.find(EditableCollectionView).simulate('scroll');
-    await sleep(100);
-
-    assert.equal(loadMoreStub.callCount, 0);
-
-    tableInstance.collection.contentOffset = new Point(0, 900);
-    tree.find(EditableCollectionView).simulate('scroll');
-    await sleep(100);
-
-    assert.equal(loadMoreStub.callCount, 1);
-  });
-
   it('should allow a row height override', function () {
     const tree = shallow(
       <TableView
@@ -362,125 +331,5 @@ describe('TableView', function () {
         rowHeight={24} />
     );
     assert.equal(tree.instance().layout.rowHeight, 48);
-  });
-
-  it('should support dragging rows', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems />
-    );
-
-    assert.equal(tree.find(EditableCollectionView).prop('canDragItems'), true);
-
-    tree.instance().collection = {
-      relayout: () => {},
-      getItemView: (indexPath) => ({children: [
-        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
-      ]})
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.type(), Provider);
-    assert.equal(dragView.prop('theme'), 'light');
-    assert.equal(dragView.find(TableRow).length, 1);
-  });
-
-  it('should pass the correct theme to the drag view from the context', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems />
-    , {context: {theme: 'dark'}});
-
-    tree.instance().collection = {
-      relayout: () => {}, 
-      getItemView: (indexPath) => ({children: [
-        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
-      ]})
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.type(), Provider);
-    assert.equal(dragView.prop('theme'), 'dark');
-  });
-
-  it('should support custom drag views', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems
-        renderDragView={() => <div>Drag view</div>} />
-    );
-
-    tree.instance().collection = {
-      relayout: () => {}, 
-      selectedIndexPaths: []
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.find('div').length, 1);
-    assert.equal(dragView.find('div').text(), 'Drag view');
-  });
-
-  it('should support drag and drop onto the table body with dropPosition="on"', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell}
-        dropPosition="on" />
-    );
-
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
-
-    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
-    tree.update();
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body is-drop-target');
-
-    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_ON));
-    tree.update();
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
-  });
-
-  it('should not highlight the table body with dropPosition="between"', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={ds}
-        renderCell={renderCell}
-        dropPosition="between" />
-    );
-
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
-
-    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
-    tree.update();
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
-  });
-
-  it('should highlight the table body if the table is empty with dropPosition="between"', function () {
-    const tree = shallow(
-      <TableView
-        columns={columns}
-        dataSource={new ListDataSource}
-        renderCell={renderCell}
-        dropPosition="between" />
-    );
-
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body');
-
-    tree.instance().dropTargetUpdated(new DragTarget('item', new IndexPath(0, 0), DragTarget.DROP_BETWEEN));
-    tree.update();
-    assert.equal(tree.find(EditableCollectionView).prop('className'), 'react-spectrum-TableView-body spectrum-Table-body is-drop-target');
   });
 });

@@ -39,10 +39,15 @@ let rows = [
 ];
 
 export class TestDS extends ListDataSource {
+  constructor(data = rows) {
+    super();
+    this.data = data;
+  }
+
   load(sortDescriptor) {
-    let data = rows.slice();
+    let data = this.data.slice();
     if (sortDescriptor) {
-      data.sort((a, b) => a[sortDescriptor.column.key] < b[sortDescriptor.column.key] ? -sortDescriptor.direction : sortDescriptor.direction);
+      this.data.sort((a, b) => a[sortDescriptor.column.key] < b[sortDescriptor.column.key] ? -sortDescriptor.direction : sortDescriptor.direction);
     }
 
     return data;

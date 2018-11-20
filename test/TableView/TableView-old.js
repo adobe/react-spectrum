@@ -1,10 +1,8 @@
 import assert from 'assert';
-import {DragTarget, EditableCollectionView, IndexPath, Point, Size} from '@react/collection-view';
+import {IndexPath} from '@react/collection-view';
 import {mount, shallow} from 'enzyme';
-import Provider from '../../src/Provider';
 import React from 'react';
-import sinon, {stub} from 'sinon';
-import {sleep} from '../utils';
+import sinon from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
 import {TableView, TableViewDataSource} from '../../src/TableView';
@@ -161,13 +159,12 @@ describe('TableView old API', function () {
     const onSort = sinon.spy(ds, 'performSort');
     const colSort = {title: 'name', sortable: true};
     const col = {title: 'name'};
-    const table = shallow(
+    const table = mount(
       <TableView
         dataSource={ds}
         renderCell={renderCell}
         sortable />
     );
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: []};
     await table.instance().sortByColumn(col);
 
     assert.equal(onSort.callCount, 0);
@@ -179,16 +176,15 @@ describe('TableView old API', function () {
 
   it('should call selectionChange if prop is set', function () {
     const onSelectionChange = sinon.spy();
-    const table = shallow(
+    const table = mount(
       <TableView
         dataSource={ds}
         renderCell={renderCell}
         sortable
         onSelectionChange={onSelectionChange} />
     );
-    table.instance().collection = {relayout: () => {}, selectedIndexPaths: [{section: 0, index: 0}], getNumberOfSections: () => 1, getSectionLength: () => 6};
 
-    table.instance().onSelectionChange();
+    table.instance().onSelectionChange([new IndexPath(0, 0)]);
     assert.equal(onSelectionChange.callCount, 1);
     assert.equal(onSelectionChange.getCall(0).args[0][0].index, 0);
   });
@@ -239,29 +235,6 @@ describe('TableView old API', function () {
     table.unmount();
   });
 
-  it('should render an infiniteScroll table', async function () {
-    const loadMoreStub = stub(ds, 'loadMore').callsFake(() => {});
-    const tree = shallow(
-      <TableView
-        dataSource={ds}
-        renderCell={renderCell} />
-    );
-    const tableInstance = tree.instance();
-
-    // shallow doesn't render down far enough to make this, so create the collection instance
-    tableInstance.collection = {relayout: () => {}, contentOffset: new Point(0, 0), contentSize: new Size(100, 1000), size: new Size(100, 100), dataSource: ds};
-    tree.find(EditableCollectionView).simulate('scroll');
-    await sleep(100);
-
-    assert.equal(loadMoreStub.callCount, 0);
-
-    tableInstance.collection.contentOffset = new Point(0, 900);
-    tree.find(EditableCollectionView).simulate('scroll');
-    await sleep(100);
-
-    assert.equal(loadMoreStub.callCount, 1);
-  });
-
   it('should allow a row height override', function () {
     const tree = shallow(
       <TableView
@@ -290,70 +263,5 @@ describe('TableView old API', function () {
         rowHeight={24} />
     );
     assert.equal(tree.instance().layout.rowHeight, 48);
-  });
-
-  it('should support dragging rows', function () {
-    const tree = shallow(
-      <TableView
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems />
-    );
-
-    assert.equal(tree.find(EditableCollectionView).prop('canDragItems'), true);
-
-    tree.instance().collection = {
-      relayout: () => {},
-      getItemView: (indexPath) => ({children: [
-        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
-      ]})
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.type(), Provider);
-    assert.equal(dragView.prop('theme'), 'light');
-    assert.equal(dragView.find(TableRow).length, 1);
-  });
-
-  it('should pass the correct theme to the drag view from the context', function () {
-    const tree = shallow(
-      <TableView
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems />
-    , {context: {theme: 'dark'}});
-
-    tree.instance().collection = {
-      relayout: () => {}, 
-      getItemView: (indexPath) => ({children: [
-        tree.instance().renderItemView('item', ds.getItem(indexPath.section, indexPath.index))
-      ]})
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.type(), Provider);
-    assert.equal(dragView.prop('theme'), 'dark');
-  });
-
-  it('should support custom drag views', function () {
-    const tree = shallow(
-      <TableView
-        dataSource={ds}
-        renderCell={renderCell}
-        canDragItems
-        renderDragView={() => <div>Drag view</div>} />
-    );
-
-    tree.instance().collection = {
-      relayout: () => {}, 
-      selectedIndexPaths: []
-    };
-
-    let Wrapper = (props) => props.children;
-    let dragView = shallow(<Wrapper>{tree.instance().renderDragView(new DragTarget('item', new IndexPath(0, 0)))}</Wrapper>);
-    assert.equal(dragView.find('div').length, 1);
-    assert.equal(dragView.find('div').text(), 'Drag view');
   });
 });

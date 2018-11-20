@@ -1,0 +1,99 @@
+import {Asset} from '@react/react-spectrum/Asset';
+
+An **Asset** represents a preview of an item in a file system or collection, such as an image, file, or folder. Asset previews support
+smart sizing to ensure that items of any aspect ratio look balanced as part of a collection. Assets also support advanced image loading
+and caching to enable a better experience when displayed in a virtual scroller such as GridView or TableView.
+
+## Images
+
+Here is an example of an Asset that displays an image.
+
+```jsx
+import {Asset} from '@react/react-spectrum/Asset';
+
+<Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" />
+```
+
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" />
+</div>
+
+## Files
+
+Here is an example of an Asset that displays a file.
+
+```jsx
+import {Asset} from '@react/react-spectrum/Asset';
+
+<Asset type="file" />
+```
+
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="file" />
+</div>
+
+## Folders
+
+Here is an example of an Asset that displays a folder.
+
+```jsx
+import {Asset} from '@react/react-spectrum/Asset';
+
+<Asset type="folder" />
+```
+
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="folder" />
+</div>
+
+## Smart Sizing
+
+By default, Asset enables smart sizing, which adjusts the size of the asset preview within its container based on its aspect
+ratio. This ensures that items of varying aspect ratios look balanced as part of a grid or list, rather than wide or tall items looking
+smaller by comparison. This behavior can be controlled using the `smartness` prop, which is a factor between 0 and 1. Setting it to 0 disables
+smartness, so that the asset can occupy the full size of its container.
+
+```jsx
+<Asset type="image" src="image.jpeg" smartness={0} />
+```
+
+## Image Caching
+
+By default, image assets are displayed using the standard browser `img` tag and browser caching sematics. However, when used as part of a virtual scroller
+such as GridView or TableView, it is useful to control this behavior more carefully in order to avoid reloading images more than necessary as they 
+scroll in and out of view. In addition, since not all assets will be displayed initially, preloading images in advance of them scrolling into view
+can make for a better experience.
+
+In order to support this, the Asset component has a built in image cache. It is turned off by default because it requires CORS headers to be enabled 
+on images by the server. If your backend supports CORS, you can enable image caching using the `cache` prop.
+
+```jsx
+<Asset type="image" src="image.jpeg" cache />
+```
+
+In addition to this, Asset supports the `placeholder` prop, which if already in the cache, will display while the full size image in the `src` prop
+is loading. This is useful if you preload small size images in advance and only load the large size ones when they scroll into view, for example.
+Or perhaps in a grid view, you display a lower resolution image than on your detail page that you can display while the full size image is loading.
+
+```jsx
+<Asset type="image" src="fullsize.jpeg" cache placeholder="thumbnail.jpeg" />
+```
+
+## Headers and Authentication
+
+Sometimes images require authentication in order to fetch them from a server. Unless this is cookie or query string based, there is no way to do this
+using a standard `img` tag, for example using an `Authorization` header. The Asset component supports a `headers` prop to add headers to the
+request using the same infrastructure as the image cache. Therefore, assets requested with headers are implictly cached the same way as using the `cache`
+prop, and require CORS headers to be enabled as well.
+
+```jsx
+<Asset type="image" src="image.jpeg" headers={{Authorization: 'token'}} />
+```
+
+## Internationalization
+
+To internationalize an Asset, a localized string should be passed to the `alt` prop of the asset.
+
+## Accessibility
+
+The `alt` prop should be used to pass alternate content for screen readers.

@@ -1,0 +1,36 @@
+ @import '@spectrum/spectrum-variables/stylus/spectrum-dark.styl'
+
+.gridview-test-item
+  width: 100%
+  height: 100%
+  line-height: 24px
+  img
+    width: 100%
+    height: 100%
+    object-fit: contain
+  .img-wrapper
+    position: relative
+    height: calc(100% - 24px)
+
+.react-spectrum-GridView
+  .selected
+    .img-wrapper:before
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      box-sizing: border-box
+      border: 2px solid $spectrum-global-color-blue400
+
+  .drop-target
+    .img-wrapper:before
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      box-sizing: border-box
+      border: 2px solid red

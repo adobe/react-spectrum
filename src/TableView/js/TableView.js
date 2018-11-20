@@ -1,17 +1,15 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import CollectionView from '../../utils/CollectionView';
 import createId from '../../utils/createId';
-import {DragTarget, EditableCollectionView, IndexPath, IndexPathSet} from '@react/collection-view';
+import {IndexPath, IndexPathSet} from '@react/collection-view';
 import ListDataSource from '../../ListDataSource';
 import PropTypes from 'prop-types';
-import Provider from '../../Provider';
-import proxy from '../../utils/proxyObject';
 import React, {Component} from 'react';
 import TableCell from './TableCell';
 import TableRow from './TableRow';
 import TableViewDataSource from './TableViewDataSource';
 import TableViewLayout from './TableViewLayout';
-import Wait from '../../Wait';
 import '../style/index.styl';
 
 importSpectrumCSS('table');
@@ -117,14 +115,6 @@ export default class TableView extends Component {
     dropPosition: 'between'
   };
 
-  // These come from the parent Provider. Used to set the correct props
-  // to the provider that wraps the drag view.
-  static contextTypes = {
-    theme: PropTypes.string,
-    scale: PropTypes.string,
-    locale: PropTypes.string
-  };
-
   static SORT_ASCENDING = 1;
   static SORT_DESCENDING = -1;
 
@@ -132,11 +122,8 @@ export default class TableView extends Component {
     super(props);
     this.tableViewId = createId();
     const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
-    this.layout = new TableViewLayout({rowHeight, tableView: this});
-    this.isLoading = false;
-    this.hasMore = true;
+    this.layout = new TableViewLayout({rowHeight});
     this.state = {
-      delegate: Object.assign({}, proxy(this), proxy(this.props.dataSource)),
       columns: this.props.columns || 
         this.props.defaultColumns || 
         this.props.dataSource.getColumns(),
@@ -145,15 +132,8 @@ export default class TableView extends Component {
         (this.props.dataSource.sortColumn && { // backward compatibility
           column: this.props.dataSource.sortColumn,
           direction: this.props.dataSource.sortDirection
-        }),
-      isDropTarget: false
+        })
     };
-  }
-
-  async componentDidMount() {
-    await this.performLoad(() =>
-      this.props.dataSource.performLoad(this.state.sortDescriptor)
-    );
   }
 
   componentWillReceiveProps(props) {
@@ -164,33 +144,7 @@ export default class TableView extends Component {
     }
     
     if (props.sortDescriptor && props.sortDescriptor !== this.props.sortDescriptor) {
-      this.updateSort(props.sortDescriptor);
-    }
-
-    if (props.dataSource !== this.props.dataSource) {
-      this.setState({
-        delegate: Object.assign({}, proxy(this), proxy(this.props.dataSource))
-      });
-    }
-  }
-
-  async performLoad(fn) {
-    if (this.isLoading) {
-      return;
-    }
-
-    try {
-      this.isLoading = true;
-      if (this.collection) {
-        this.collection.relayout();
-      }
-
-      await fn();
-    } finally {
-      this.isLoading = false;
-      if (this.collection) {
-        this.collection.relayout();
-      }
+      this.setState({sortDescriptor: props.sortDescriptor});
     }
   }
 
@@ -282,35 +236,7 @@ export default class TableView extends Component {
     );
   }
 
-  renderDragView(target) {
-    // Use custom drag renderer if provided,
-    // otherwise just get the existing row view.
-    let dragView;
-    if (this.props.renderDragView) {
-      dragView = this.props.renderDragView(target, this.collection.selectedIndexPaths);
-    } else {
-      // Get the row wrapper view from collection-view. The first child is the actual TableRow component.
-      let view = this.collection.getItemView(target.indexPath);
-      dragView = [...view.children][0];
-    }
-
-    // Wrap in a spectrum provider so spectrum components are themed correctly.
-    return (
-      <Provider {...this.context}>
-        {dragView}
-      </Provider>
-    );
-  }
-
   renderSupplementaryView(type) {
-    if (type === 'loading-indicator') {
-      return <Wait centered size="M" />;
-    }
-
-    if (type === 'empty-view' && this.props.renderEmptyView) {
-      return this.props.renderEmptyView();
-    }
-
     if (type === 'insertion-indicator') {
       return <div className="react-spectrum-TableView-insertionIndicator" />;
     }
@@ -335,36 +261,17 @@ export default class TableView extends Component {
       }
 
       if (!('sortDescriptor' in this.props)) {
-        await this.updateSort(sortDescriptor);
+        this.setState({sortDescriptor});
       }
     }
   }
 
-  async updateSort(sortDescriptor) {
-    this.setState({sortDescriptor});
-    await this.performLoad(() =>
-      this.props.dataSource.performSort(sortDescriptor)
-    );
-  }
-
-  onScroll() {
-    let scrollOffset = this.collection.contentSize.height - this.collection.size.height * 2;
-    if (this.hasMore && this.collection.contentOffset.y > scrollOffset) {
-      this.performLoad(async () => {
-        let res = await this.props.dataSource.performLoadMore();
-        if (typeof res === 'boolean') {
-          this.hasMore = res;
-        }
-      });
-    }
-  }
-
-  onSelectionChange() {
+  onSelectionChange(selectedIndexPaths) {
     // Force update to properly set the state of the Select All checkbox
     this.forceUpdate();
 
     if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(this.collection.selectedIndexPaths);
+      this.props.onSelectionChange(selectedIndexPaths);
     }
   }
 
@@ -379,24 +286,6 @@ export default class TableView extends Component {
     return count;
   }
 
-  dropTargetUpdated(target) {
-    // Highlight the entire table if the drop position is between, but the default
-    // drop position from props is "on". This means the drop was over a non-target item.
-    // Also do this if the drop position is "between" and the table is empty.
-    let isDropTarget = target &&
-      target.type === 'item' &&
-      target.indexPath.section === 0 &&
-      target.indexPath.index === 0 &&
-      target.dropPosition === DragTarget.DROP_BETWEEN &&
-      (this.props.dropPosition === 'on' || this.getRowCount() === 0);
-
-    if (isDropTarget && !this.state.isDropTarget) {
-      this.setState({isDropTarget: true});
-    } else if (this.state.isDropTarget) {
-      this.setState({isDropTarget: false});
-    }
-  }
-
   render() {
     const {
       allowsMultipleSelection,
@@ -405,7 +294,6 @@ export default class TableView extends Component {
       dataSource,
       id = this.tableViewId,
       quiet,
-      selectedIndexPaths,
       ...otherProps
     } = this.props;
     const tableClasses = classNames(
@@ -432,23 +320,21 @@ export default class TableView extends Component {
         aria-describedby={otherProps['aria-describedby']}
         aria-multiselectable={(allowsSelection && allowsMultipleSelection) || null}>
         {this.renderHeader()}
-        <EditableCollectionView
+        <CollectionView
           {...this.props}
-          className={classNames('react-spectrum-TableView-body', 'spectrum-Table-body', {
-            'is-drop-target': this.state.isDropTarget
-          })}
-          delegate={this.state.delegate}
+          ref={c => this.collection = c ? c.collection : null}
+          role="rowgroup"
+          className="spectrum-Table-body react-spectrum-TableView-body"
           layout={this.layout}
           dataSource={dataSource}
-          ref={c => this.collection = c}
+          renderItemView={this.renderItemView}
+          renderSupplementaryView={this.renderSupplementaryView}
           canSelectItems={allowsSelection}
           allowsMultipleSelection={allowsMultipleSelection}
+          sortDescriptor={this.state.sortDescriptor}
           selectionMode="toggle"
           keyboardMode="focus"
-          selectedIndexPaths={selectedIndexPaths}
-          onSelectionChanged={this.onSelectionChange}
-          onScroll={this.onScroll}
-          role="rowgroup" />
+          onSelectionChanged={this.onSelectionChange} />
       </div>
     );
   }

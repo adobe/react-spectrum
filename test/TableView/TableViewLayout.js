@@ -4,60 +4,9 @@ import sinon from 'sinon';
 import TableViewLayout from '../../src/TableView/js/TableViewLayout';
 
 describe('TableViewLayout', function () {
-  it('should get an empty view if the table is empty', function () {
-    let layout = new TableViewLayout({tableView: {}});
-    layout.collectionView = {size: new Size(100, 100), getNumberOfSections: () => 1, getSectionLength: () => 0};
-    layout.validate();
-
-    let layoutInfos = layout.getVisibleLayoutInfos(new Rect(0, 0, 100, 100));
-    let emptyView = layoutInfos.find(l => l.type === 'empty-view');
-    assert(emptyView);
-    assert.deepEqual(emptyView.rect, new Rect(0, 0, 100, 100));
-
-    emptyView = layout.getLayoutInfo('empty-view');
-    assert(emptyView);
-    assert.deepEqual(emptyView.rect, new Rect(0, 0, 100, 100));
-  });
-
-  it('should get a loading indicator if the table is loading and empty', function () {
-    let layout = new TableViewLayout({tableView: {isLoading: true}});
-    layout.collectionView = {size: new Size(100, 100), getNumberOfSections: () => 1, getSectionLength: () => 0};
-    layout.validate();
-
-    let layoutInfos = layout.getVisibleLayoutInfos(new Rect(0, 0, 100, 100));
-    let loadingIndicator = layoutInfos.find(l => l.type === 'loading-indicator');
-    assert(loadingIndicator);
-    assert.deepEqual(loadingIndicator.rect, new Rect(0, 0, 100, 100));
-
-    loadingIndicator = layout.getLayoutInfo('loading-indicator');
-    assert(loadingIndicator);
-    assert.deepEqual(loadingIndicator.rect, new Rect(0, 0, 100, 100));
-  });
-
-  it('should get a loading indicator at the bottom if the table is loading more', function () {
-    let layout = new TableViewLayout({tableView: {isLoading: true}});
-    layout.collectionView = {
-      size: new Size(100, 100),
-      getNumberOfSections: () => 1,
-      getSectionLength: () => 100,
-      delegate: {
-        indentationForItem: () => 0
-      }
-    };
-    layout.validate();
-
-    let layoutInfos = layout.getVisibleLayoutInfos(new Rect(0, 0, 100, 100));
-    let loadingIndicator = layoutInfos.find(l => l.type === 'loading-indicator');
-    assert(loadingIndicator);
-    assert.deepEqual(loadingIndicator.rect, new Rect(0, 48 * 100 - 1, 100, 100));
-
-    loadingIndicator = layout.getLayoutInfo('loading-indicator');
-    assert(loadingIndicator);
-    assert.deepEqual(loadingIndicator.rect, new Rect(0, 48 * 100 - 1, 100, 100));
-  });
-
   it('should get a drop insertion indicator', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'between'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'between'}};
     layout.collectionView = {
       size: new Size(100, 100),
       getNumberOfSections: () => 1,
@@ -80,7 +29,8 @@ describe('TableViewLayout', function () {
   });
 
   it('should not get a drop insertion indicator if the table is empty', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'between'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'between'}};
     layout.collectionView = {
       size: new Size(100, 100),
       getNumberOfSections: () => 1,
@@ -101,7 +51,8 @@ describe('TableViewLayout', function () {
   });
 
   it('should get a drop target with dropPosition="on"', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'on'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'on'}};
     let indexPathAtPoint = sinon.stub().returns(new IndexPath(0, 5));
     layout.collectionView = {
       size: new Size(100, 100),
@@ -116,7 +67,8 @@ describe('TableViewLayout', function () {
   });
 
   it('should get a drop target on the whole table with dropPosition="on"', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'on'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'on'}};
     let indexPathAtPoint = sinon.stub().returns(null);
     layout.collectionView = {
       size: new Size(100, 100),
@@ -131,7 +83,8 @@ describe('TableViewLayout', function () {
   });
 
   it('should get a drop target with dropPosition="between"', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'between'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'between'}};
     let indexPathAtPoint = sinon.stub().returns(new IndexPath(0, 5));
     layout.collectionView = {
       size: new Size(100, 100),
@@ -146,7 +99,8 @@ describe('TableViewLayout', function () {
   });
 
   it('should get a drop target at the end with dropPosition="between"', function () {
-    let layout = new TableViewLayout({tableView: {props: {dropPosition: 'between'}}});
+    let layout = new TableViewLayout();
+    layout.component = {props: {dropPosition: 'between'}};
     let indexPathAtPoint = sinon.stub().returns(null);
     layout.collectionView = {
       size: new Size(100, 100),
