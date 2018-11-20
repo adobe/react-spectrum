@@ -18,22 +18,43 @@ export default class GridColumn extends Component {
     /**
      * How many columns to span
      */
-    size: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['auto'])]),
+    size: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.oneOf(['auto']),
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.shape({
+        xs: PropTypes.number,
+        sm: PropTypes.number,
+        md: PropTypes.number,
+        lg: PropTypes.number,
+        xl: PropTypes.number,
+      }),
+    ]),
 
     /**
      * Reorders element to first depending on viewport width
      */
-    first: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+    first: PropTypes.oneOfType([PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']), PropTypes.bool]),
 
     /**
      * Reorders element to last depending on viewport width
      */
-    last: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+    last: PropTypes.oneOfType([PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']), PropTypes.bool]),
 
     /**
      * How many columns over should the element start, useful for blank area
      */
-    offsetSize: PropTypes.number,
+    offsetSize: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.shape({
+        xs: PropTypes.number,
+        sm: PropTypes.number,
+        md: PropTypes.number,
+        lg: PropTypes.number,
+        xl: PropTypes.number,
+      }),
+    ]),
   };
 
   static defaultProps = {
