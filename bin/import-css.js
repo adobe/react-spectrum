@@ -50,9 +50,8 @@ module.exports = function ({types: t}) {
     }
 
     // Check if an override exists for this component
-    let overrideBase = Path.relative(dir, 'spectrum-css-overrides');
-    if (fs.existsSync(Path.resolve(dir, overrideBase, path))) {
-      return Path.join(overrideBase, path);
+    if (fs.existsSync(Path.join(__dirname, '..', 'spectrum-css-overrides', path))) {
+      return Path.join(Path.relative(dir, 'dist/spectrum-css-overrides'), path);
     }
 
     let realpath = process.env.BUILD_ENV === 'production'
