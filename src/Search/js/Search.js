@@ -12,6 +12,8 @@ import Textfield from '../../Textfield';
 importSpectrumCSS('search');
 const formatMessage = messageFormatter(intlMessages);
 
+const normalizeValue = value => value || '';
+
 @autobind
 export default class Search extends Component {
   static defaultProps = {
@@ -29,12 +31,12 @@ export default class Search extends Component {
     } = props;
 
     this.state = {
-      value: value || defaultValue || ''
+      value: normalizeValue(value || defaultValue),
     };
   }
 
   componentWillReceiveProps(props) {
-    if (props.value !== this.state.value) {
+    if (normalizeValue(props.value) !== this.state.value) {
       this.setState({
         value: props.value
       });
