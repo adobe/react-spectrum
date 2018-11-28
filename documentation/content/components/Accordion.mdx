@@ -1,5 +1,6 @@
 import {Accordion,AccordionItem} from '@react/react-spectrum/Accordion';
 import FieldLabel from '@react/react-spectrum/FieldLabel';
+import Heading from '@react/react-spectrum/Heading';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Radio from '@react/react-spectrum/Radio';
 
@@ -108,7 +109,7 @@ An Accordion is a list of expandable and collapsible sections. Accordion items c
 </Accordion>
 ```
 
-### Arialevel
+### ariaLevel
 
 An Accordion 'arialLevel' prop handles the heading level for 'Accordion item' headings, allowing a developer to place Accordion headings within the heading hierarchy of the application.
 
@@ -187,6 +188,67 @@ This is an Accordion containing a nested radio group to demonstrate that keyboar
         <Radio label="that" value="that" />
       </RadioGroup>
     </FieldLabel>
+  </AccordionItem>
+</Accordion>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Accordion implements the Accordion design pattern, per [WAI-ARIA 1.0](https://www.w3.org/TR/2016/WD-wai-aria-practices-1.1-20160317/#accordion), with the small exceptions that all Accordion headings remain accessible via the <kbd>TAB</kbd> key as well as navigable using the arrow keys. This allows Accordion headings to be identified to assistive technology as elements with `role` `tab` within a container with `role` `tablist`, but makes navigation a bit more intuitive for keyboard users.
+
+
+### Labelling
+
+The list of Accordion headings and panels can be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide context for Accessibility.
+
+<Heading size={5} id="accordion-heading-id">
+  Checkout Steps
+</Heading>
+<Accordion ariaLevel={5} aria-labelledby="accordion-heading-id">
+  <AccordionItem header="1 - Cart Confirmation">
+  Cart Confirmation Form
+  </AccordionItem>
+  <AccordionItem header="2 - Billing Information">
+  Billing Information Form
+  </AccordionItem>
+  <AccordionItem header="3 - Shipping Information">
+  Shipping Information Form
+  </AccordionItem>
+  <AccordionItem header="4 - Shipping Method">
+  Shipping Method Form
+  </AccordionItem>
+  <AccordionItem header="5 - Payment Information">
+  Payment Information Form
+  </AccordionItem>
+  <AccordionItem header="6 - Order Review">
+  Order Review Form
+  </AccordionItem>
+</Accordion>
+
+```jsx
+<Heading size={5} id="accordion-heading-id">
+  Checkout Steps
+</Heading>
+<Accordion ariaLevel={5} aria-labelledby="accordion-heading-id">
+  <AccordionItem header="1 - Cart Confirmation">
+  Cart Confirmation Form
+  </AccordionItem>
+  <AccordionItem header="2 - Billing Information">
+  Billing Information Form
+  </AccordionItem>
+  <AccordionItem header="3 - Shipping Information">
+  Shipping Information Form
+  </AccordionItem>
+  <AccordionItem header="4 - Shipping Method">
+  Shipping Method Form
+  </AccordionItem>
+  <AccordionItem header="5 - Payment Information">
+  Payment Information Form
+  </AccordionItem>
+  <AccordionItem header="6 - Order Review">
+  Order Review Form
   </AccordionItem>
 </Accordion>
 ```

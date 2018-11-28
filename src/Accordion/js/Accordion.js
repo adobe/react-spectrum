@@ -127,7 +127,6 @@ export default class Accordion extends Component {
         : selectedIndex[0] === index;
 
       const props = {
-        itemRef: child,
         selected,
         ariaLevel: ariaLevel,
         onItemClick: this.onClickItem.bind(this, index)
