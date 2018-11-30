@@ -30,12 +30,12 @@ export default class CardBody extends React.Component {
 
     return (
       <div className="spectrum-Card-body">
-        {title || actions ?
+        {title || actionMenu ?
           <div className="spectrum-Card-header">
             {title ? <div className="spectrum-Card-title">{title}</div> : null}
             {cardVariant === 'gallery' && subtitleWrapper}
             {cardVariant === 'gallery' && descriptionWrapper}
-            {actionMenu ? 
+            {actionMenu ?
               <div className="spectrum-Card-actionButton">
                 {React.cloneElement(actionMenu, {alignRight: true})}
               </div>
