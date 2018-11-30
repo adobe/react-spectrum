@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import {DragTarget, EditableCollectionView, ListLayout} from '@react/collection-view';
+import createId from '../../utils/createId';
+import {DragTarget, EditableCollectionView, IndexPath, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
 import proxy from '../../utils/proxyObject';
 import React from 'react';
@@ -37,6 +38,9 @@ export default class TreeView extends React.Component {
     /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
 
+    /** Whether to allow the user to select no items. */
+    allowsEmptySelection: PropTypes.bool,
+
     /** Whether to allow the user to select multiple items */
     allowsMultipleSelection: PropTypes.bool,
 
@@ -52,6 +56,7 @@ export default class TreeView extends React.Component {
 
   static defaultProps = {
     allowsSelection: false,
+    allowsEmptySelection: true,
     allowsMultipleSelection: false,
     dragHoverTimeout: 800
   };
@@ -64,32 +69,50 @@ export default class TreeView extends React.Component {
     });
 
     this.delegate = Object.assign({}, proxy(this.props.delegate), proxy(this));
+
+    this.treeId = createId();
   }
 
   render() {
+    const {
+      selectedItems,
+      dataSource,
+      className,
+      id = this.treeId,
+      allowsSelection,
+      allowsEmptySelection,
+      allowsMultipleSelection
+    } = this.props;
+
     let selectedIndexPaths;
-    if (this.props.selectedItems) {
-      selectedIndexPaths = this.props.selectedItems.map(item => this.props.dataSource.indexPathForItem(item)).filter(Boolean);
+    if (selectedItems) {
+      selectedIndexPaths = selectedItems.map(item => dataSource.indexPathForItem(item)).filter(Boolean);
     }
 
     return (
       <EditableCollectionView
         {...this.props}
         ref={c => this.collection = c}
-        className={classNames('spectrum-TreeView', this.props.className)}
+        className={classNames('spectrum-TreeView', className)}
         layout={this.layout}
         delegate={this.delegate}
         transitionDuration={300}
         canSelectItems={this.props.allowsSelection}
         selectedIndexPaths={selectedIndexPaths}
         onSelectionChanged={this.onSelectionChange}
-        onKeyDown={this.onKeyDown} />
+        onKeyDown={this.onKeyDown}
+        role="tree"
+        id={id}
+        aria-multiselectable={allowsSelection && allowsMultipleSelection}
+        selectionMode={allowsSelection && (allowsMultipleSelection || allowsEmptySelection) ? 'toggle' : 'replace'}
+        keyboardMode="focus" />
     );
   }
 
   renderItemView(type, content) {
     return (
       <TreeItem
+        treeId={this.props.id || this.treeId}
         content={content}
         renderItem={this.props.renderItem}
         allowsSelection={this.props.allowsSelection}
@@ -103,18 +126,53 @@ export default class TreeView extends React.Component {
   }
 
   onKeyDown(e) {
-    switch (e.key) {
-      case 'ArrowRight':
-        for (let item of this.selectedItems) {
-          this.expandItem(item);
-        }
-        break;
+    const {
+      dataSource
+    } = this.props;
+    let focusedItem = this.focusedItem;
+    let treeItem;
+    let indexPath;
+    if (focusedItem) {
+      treeItem = dataSource._getItem(focusedItem);
+      switch (e.key) {
+        case 'ArrowRight':
+          if (treeItem && treeItem.hasChildren) {
+            if (treeItem.isExpanded) {
+              let nextItem = treeItem.children && treeItem.children[0];
+              indexPath = nextItem ? dataSource.indexPathForItem(nextItem.item) : null;
+            } else {
+              e.preventDefault();
+              this.expandItem(focusedItem);
+            }
+          }
+          break;
+        case 'ArrowLeft':
+          if (treeItem) {
+            if (treeItem.isExpanded) {
+              e.preventDefault();
+              this.collapseItem(focusedItem);
+            } else if (treeItem.parent) {
+              indexPath = dataSource.indexPathForItem(treeItem.parent.item);
+            }
+          }
+          break;
+        case 'Home':
+          indexPath = new IndexPath(0, 0);
+          break;
+        case 'End':
+          indexPath = new IndexPath(0, dataSource.sections[0].length - 1);
+          break;
+      }
 
-      case 'ArrowLeft':
-        for (let item of this.selectedItems) {
-          this.collapseItem(item);
-        }
-        break;
+      if (indexPath) {
+        e.preventDefault();
+        this.collection.scrollToItem(indexPath);
+        this.collection.focusItem(indexPath);
+      }
+    }
+
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(e);
     }
   }
 
@@ -151,6 +209,14 @@ export default class TreeView extends React.Component {
 
     return Array.from(this.collection.selectedIndexPaths)
       .map(indexPath => this.collection.getItem(indexPath).item);
+  }
+
+  get focusedItem() {
+    if (!this.collection || !this.collection.focusedIndexPath) {
+      return null;
+    }
+
+    return this.collection.getItem(this.collection.focusedIndexPath).item;
   }
 
   shouldSelectItem(indexPath) {

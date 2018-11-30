@@ -5,7 +5,7 @@ import {ArrayDataSource, IndexPath} from '@react/collection-view';
  * @private
  */
 class TreeItem {
-  constructor(item, parent, hasChildren) {
+  constructor(item, parent, hasChildren, index) {
     this.item = item;
     this.hasChildren = hasChildren;
     this.children = null;
@@ -15,6 +15,7 @@ class TreeItem {
     this.isLoading = false;
     this.parent = parent;
     this.level = parent ? parent.level + 1 : -1;
+    this.index = index;
   }
 
   walk(fn) {
@@ -32,7 +33,21 @@ class TreeItem {
     }
 
     let siblings = this.parent.children;
-    return siblings[siblings.indexOf(this) + 1];
+    return siblings[this.index + 1];
+  }
+
+  updateChildIndices(start = 0, end) {
+    if (!this.children) {
+      return;
+    }
+
+    if (end == null) {
+      end = this.children.length;
+    }
+
+    for (let i = start; i < end; i++) {
+      this.children[i].index = i;
+    }
   }
 }
 
@@ -74,9 +89,10 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     let items = await this.getChildren(parent.item);
     let res = [];
+    let index = 0;
 
     for (let item of items) {
-      let node = this.getTreeItem(item, parent);
+      let node = this.getTreeItem(item, parent, index++);
 
       if (node.isExpanded) {
         await this.loadChildren(node);
@@ -92,8 +108,8 @@ export default class TreeViewDataSource extends ArrayDataSource {
     this.reloadItem(parent.item);
   }
 
-  getTreeItem(item, parent) {
-    return new TreeItem(item, parent, this.hasChildren(item));
+  getTreeItem(item, parent, index) {
+    return new TreeItem(item, parent, this.hasChildren(item), index);
   }
 
   /**
@@ -305,8 +321,9 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // If the children have been loaded, insert the new child
     if (parentItem.children) {
       let insertionIndex = this._findInsertionIndex(parent, index);
-      let childItem = new TreeItem(child, parentItem, this.hasChildren(child));
+      let childItem = new TreeItem(child, parentItem, this.hasChildren(child), index);
       parentItem.children.splice(index, 0, childItem);
+      parentItem.updateChildIndices(index + 1);
       this.lookup.set(child, childItem);
 
       // Add to the visible items if the parent is expanded
@@ -332,6 +349,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     let child = parentItem.children[index];
     this.lookup.delete(child);
     parentItem.children.splice(index, 1);
+    parentItem.updateChildIndices(index);
 
     // Make sure the disclosure indicator is correct
     if (parentItem.children.length === 0) {
@@ -385,6 +403,14 @@ export default class TreeViewDataSource extends ArrayDataSource {
     fromItem.children.splice(fromIndex, 1);
     if (toItem.children) {
       toItem.children.splice(toIndex, 0, child);
+    }
+
+    // Update indices of changed items
+    if (fromItem === toItem) {
+      fromItem.updateChildIndices(Math.min(fromIndex, toIndex), Math.max(fromIndex, toIndex) + 1);
+    } else {
+      fromItem.updateChildIndices(fromIndex);
+      toItem.updateChildIndices(toIndex);
     }
 
     // Reload both parents to ensure the disclosure indicators are correct

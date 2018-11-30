@@ -1,40 +1,141 @@
+import autobind from 'autobind-decorator';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
+import focusRing from '../../utils/focusRing';
 import React from 'react';
 
+@autobind
+@focusRing
 export default class TreeItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.itemId = createId();
+  }
+
+  /**
+   * Sets focus to the TreeItem DOM element.
+   */
+  focus() {
+    if (this.treeitem) {
+      this.treeitem.focus();
+    }
+  }
+
+  getOwnedChildIds() {
+    const {
+      content,
+      collectionView,
+      treeId = this.itemId
+    } = this.props;
+
+    const {
+      hasChildren,
+      children,
+      isExpanded,
+      level = 0
+    } = content;
+
+    let ownedChildIds = null;
+
+    if (hasChildren && isExpanded && children && children.length > 0) {
+      // Filter visible views to only items that are children of this item, and generate ids
+      ownedChildIds = collectionView.visibleViews
+        .filter(view => view.content.parent === content)
+        .sort((a, b) => a.content.index - b.content.index)
+        .map(view => `${treeId}-${level + 1}-${view.content.index}`)
+        .join(' ');
+    }
+
+    return !ownedChildIds || !ownedChildIds.length ? null : ownedChildIds;
+  }
+
+  onToggle(e) {
+    let {content, onToggle} = this.props;
+    if (onToggle) {
+      onToggle(content.item, e);
+    }
+
+    requestAnimationFrame(() => this.focus());
+  }
+
+  stopPropagationAndPreventDefault(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  setTreeItemRef(t) {
+    this.treeitem = t;
+  }
+
   render() {
     let {
       content,
       renderItem,
       allowsSelection,
       selected,
-      onToggle,
+      focused,
+      collectionView,
+      treeId = this.itemId,
       'drop-target': isDropTarget
     } = this.props;
 
-    onToggle = onToggle.bind(null, content.item);
+    let {
+      item,
+      hasChildren,
+      isToggleable,
+      isExpanded,
+      parent,
+      level = 0
+    } = content;
 
     let itemClassName = classNames('spectrum-TreeView-item', {
-      'is-open': content.isExpanded
+      'is-open': isExpanded
     });
 
     let linkClassName = classNames('spectrum-TreeView-itemLink', {
-      'is-selected': selected,
+      'is-selected': (allowsSelection && selected),
+      'is-focused': focused,
       'is-drop-target': isDropTarget
     });
 
+    let tabIndex = null;
+    if (collectionView) {
+      tabIndex = focused || !collectionView.focusedIndexPath ? 0 : -1;
+    }
+
+    let setSize = parent.children.length;
+    let posInSet = content.index;
+    let id = `${treeId}-${level}-${posInSet}`;
+    let ownedChildIds = this.getOwnedChildIds();
+
     return (
-      <div className={itemClassName}>
-        <a className={linkClassName} onClick={!allowsSelection ? onToggle : null}>
-          {content.isToggleable && content.hasChildren &&
+      <div className={itemClassName} role="presentation">
+        <a
+          className={linkClassName}
+          ref={this.setTreeItemRef}
+          id={id}
+          role="treeitem"
+          tabIndex={tabIndex}
+          aria-selected={(allowsSelection ? selected : focused) || false}
+          aria-expanded={hasChildren ? isExpanded : null}
+          aria-level={level + 1}
+          aria-setsize={setSize}
+          aria-posinset={posInSet + 1}
+          aria-owns={ownedChildIds ? `${id}-group` : null}
+          onClick={!allowsSelection ? this.onToggle : null}
+          onMouseDown={!allowsSelection ? this.stopPropagationAndPreventDefault : null}>
+          {isToggleable && hasChildren &&
             <ChevronRightMedium
               className="spectrum-TreeView-indicator"
               size={null}
-              onClick={allowsSelection ? onToggle : null}
-              onMouseDown={e => e.stopPropagation()} />
+              onClick={allowsSelection ? this.onToggle : null}
+              onMouseDown={this.stopPropagationAndPreventDefault} />
           }
-          {renderItem(content.item, content)}
+          {renderItem(item, content)}
+          {ownedChildIds &&
+            <span className="u-react-spectrum-screenReaderOnly" role="group" id={`${id}-group`} aria-labelledby={id} aria-owns={ownedChildIds} />
+          }
         </a>
       </div>
     );

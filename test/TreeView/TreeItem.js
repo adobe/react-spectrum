@@ -5,13 +5,19 @@ import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import TreeItem from '../../src/TreeView/js/TreeItem';
 
+let root = {
+  children: [
+    {item: 'world'}
+  ]
+};
+
 describe('TreeItem', function () {
   it('should render a non-toggleable item', function () {
     let renderItem = (item) => <span>{item}</span>;
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{isToggleable: false, item: 'world'}}
+        content={{isToggleable: false, item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle} />
     );
@@ -32,7 +38,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{hasChildren: true, isToggleable: true, item: 'world'}}
+        content={{hasChildren: true, isToggleable: true, item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle} />
     );
@@ -52,11 +58,13 @@ describe('TreeItem', function () {
   it('should render an open item', function () {
     let renderItem = (item) => <span>{item}</span>;
     let onToggle = sinon.spy();
+    let content = {index: 0, hasChildren: true, isToggleable: true, isExpanded: true, item: 'world', children: [{item: 'Child 1'}, {item: 'Child 2'}], parent: root};
     let wrapper = shallow(
       <TreeItem
-        content={{hasChildren: true, isToggleable: true, isExpanded: true, item: 'world'}}
+        content={content}
         renderItem={renderItem}
-        onToggle={onToggle} />
+        onToggle={onToggle}
+        collectionView={{visibleViews: [{content: {parent: content}}]}} />
     );
 
     let link = wrapper.find('.spectrum-TreeView-itemLink');
@@ -67,8 +75,13 @@ describe('TreeItem', function () {
     assert.equal(link.length, 1);
     assert.equal(icon.length, 1);
     assert.equal(icon.prop('className'), 'spectrum-TreeView-indicator');
-    assert.equal(span.length, 1);
-    assert.equal(span.text(), 'world');
+    assert.equal(span.length, 2);
+    assert.equal(span.at(0).text(), 'world');
+    assert.equal(span.at(1).prop('role'), 'group');
+    assert.equal(span.at(1).prop('className'), 'u-react-spectrum-screenReaderOnly');
+    assert.equal(span.at(1).prop('id'), link.prop('aria-owns'));
+    assert.equal(span.at(1).prop('aria-labelledby'), link.prop('id'));
+    assert.equal(span.at(1).prop('aria-owns'), wrapper.instance().getOwnedChildIds());
   });
 
   it('should render a selected item', function () {
@@ -76,9 +89,10 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{item: 'world'}}
+        content={{item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle}
+        allowsSelection
         selected />
     );
 
@@ -93,7 +107,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{item: 'world'}}
+        content={{item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle}
         drop-target />
@@ -110,7 +124,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{item: 'world', isLoading: true}}
+        content={{item: 'world', isLoading: true, parent: root}}
         renderItem={renderItem}
         onToggle={onToggle}
         drop-target />
@@ -127,7 +141,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{hasChildren: true, isToggleable: true, item: 'world'}}
+        content={{hasChildren: true, isToggleable: true, item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle} />
     );
@@ -148,7 +162,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{hasChildren: true, isToggleable: true, item: 'world'}}
+        content={{hasChildren: true, isToggleable: true, item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle}
         allowsSelection />
@@ -170,7 +184,7 @@ describe('TreeItem', function () {
     let onToggle = sinon.spy();
     let wrapper = shallow(
       <TreeItem
-        content={{hasChildren: true, isToggleable: true, item: 'world'}}
+        content={{hasChildren: true, isToggleable: true, item: 'world', parent: root}}
         renderItem={renderItem}
         onToggle={onToggle}
         allowsSelection />
@@ -178,8 +192,26 @@ describe('TreeItem', function () {
 
     let icon = wrapper.find(ChevronRightMedium);
     let stopPropagation = sinon.spy();
-    icon.simulate('mousedown', {stopPropagation});
+    let preventDefault = sinon.spy();
+    icon.simulate('mousedown', {stopPropagation, preventDefault});
 
     assert(stopPropagation.calledOnce);
+    assert(preventDefault.calledOnce);
+  });
+
+  describe('focus', () => {
+    it('should call focus on treeitem ref', () => {
+      let renderItem = (item) => <span>{item}</span>;
+      let wrapper = shallow(
+        <TreeItem
+          content={{hasChildren: true, isToggleable: true, item: 'world', parent: root}}
+          renderItem={renderItem} />
+      );
+      wrapper.instance().treeitem = {
+        focus: sinon.spy()
+      };
+      wrapper.instance().focus();
+      assert(wrapper.instance().treeitem.focus.calledOnce);
+    });
   });
 });

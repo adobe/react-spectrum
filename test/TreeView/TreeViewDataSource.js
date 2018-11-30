@@ -30,6 +30,16 @@ function testEmitter(emitter) {
   };
 }
 
+function checkSortedChildren(node) {
+  for (let i = 0; i < node.children.length; i++) {
+    assert.equal(node.children[i].index, i);
+
+    if (node.children[i].children) {
+      checkSortedChildren(node.children[i]);
+    }
+  }
+}
+
 describe('TreeViewDataSource', function () {
   var ds;
   beforeEach(async function () {
@@ -52,6 +62,7 @@ describe('TreeViewDataSource', function () {
       assert.equal(item.children, null);
       assert.equal(item.isExpanded, false);
       assert.equal(item.level, 0);
+      checkSortedChildren(ds.root);
       done();
     });
   });
@@ -123,6 +134,7 @@ describe('TreeViewDataSource', function () {
     assert.equal(item.hasChildren, true);
     assert.equal(item.isExpanded, false);
     assert.equal(ds.getItem(0, 2).hasChildren, false);
+    checkSortedChildren(ds.root);
 
     // expand child item
     testEmitter(ds);
@@ -238,6 +250,8 @@ describe('TreeViewDataSource', function () {
       assert.deepEqual(ds.emittedEvents, [
         ['insertItem', new IndexPath(0, 1), undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
 
     it('should append a child', async function () {
@@ -250,6 +264,8 @@ describe('TreeViewDataSource', function () {
       assert.deepEqual(ds.emittedEvents, [
         ['insertItem', new IndexPath(0, 4), undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
 
     it('should insert into an empty item', async function () {
@@ -262,6 +278,8 @@ describe('TreeViewDataSource', function () {
         ['reloadItem', new IndexPath(0, 1), false],
         ['insertItem', new IndexPath(0, 2), undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
 
     it('should append to the root', async function () {
@@ -271,6 +289,8 @@ describe('TreeViewDataSource', function () {
       assert.deepEqual(ds.emittedEvents, [
         ['insertItem', new IndexPath(0, 2), undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
   });
 
@@ -291,6 +311,8 @@ describe('TreeViewDataSource', function () {
         ['removeItem', new IndexPath(0, 1), undefined],
         ['endTransaction', undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
 
     it('should remove all nested children', async function () {
@@ -305,6 +327,8 @@ describe('TreeViewDataSource', function () {
         ['removeItem', new IndexPath(0, 1), undefined],
         ['endTransaction', undefined]
       ]);
+
+      checkSortedChildren(ds.root);
     });
 
     it('should update disclosure indicator if removing last child', async function () {
@@ -336,6 +360,7 @@ describe('TreeViewDataSource', function () {
       ]);
 
       assert.equal(ds.getItem(0, 2).level, 2);
+      checkSortedChildren(ds.root);
     });
 
     it('should reload source parent when moving the last item', async function () {
@@ -350,6 +375,7 @@ describe('TreeViewDataSource', function () {
       ]);
 
       assert.equal(ds.getItem(0, 3).level, 1);
+      checkSortedChildren(ds.root);
     });
 
     it('should reload destination parent when inserting the first item', async function () {
@@ -362,6 +388,7 @@ describe('TreeViewDataSource', function () {
         ['reloadItem', new IndexPath(0, 3), false],
         ['moveItem', new IndexPath(0, 2), new IndexPath(0, 3), undefined]
       ]);
+      checkSortedChildren(ds.root);
     });
 
     it('should insert into destination if source is not expanded', async function () {
@@ -375,6 +402,7 @@ describe('TreeViewDataSource', function () {
         ['reloadItem', new IndexPath(0, 1), false],
         ['insertItem', new IndexPath(0, 2), undefined]
       ]);
+      checkSortedChildren(ds.root);
     });
 
     it('should remove from source if destination is not expanded', async function () {
@@ -385,6 +413,7 @@ describe('TreeViewDataSource', function () {
       assert.deepEqual(ds.emittedEvents, [
         ['removeItem', new IndexPath(0, 2), undefined]
       ]);
+      checkSortedChildren(ds.root);
     });
   });
 });
