@@ -97,7 +97,7 @@ function ComponentAPI({component}) {
                   <TR key={prop.name}>
                     <TD><code>{prop.name}</code></TD>
                     <TD className="type-column"><code>{formatType(prop.type)}</code></TD>
-                    <TD>{prop.required ? <Checkmark size="S" /> : null}</TD>
+                    <TD>{prop.required ? 'Yes' : 'No'}</TD>
                     <TD><code>{prop.defaultValue && prop.defaultValue.value}</code></TD>
                     <TD><div dangerouslySetInnerHTML={{__html: prop.description && prop.description.childMarkdownRemark.html.slice(3, -4)}} /></TD>
                   </TR>
