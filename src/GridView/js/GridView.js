@@ -105,7 +105,7 @@ export default class GridView extends React.Component {
 
   renderItemView(type, data) {
     return (
-      <GridItem size={this.props.cardSize}>
+      <GridItem size={this.props.cardSize} allowsSelection={this.props.allowsSelection}>
         {this.props.renderItem(data)}
       </GridItem>
     );

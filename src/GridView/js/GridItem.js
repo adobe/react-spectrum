@@ -16,7 +16,7 @@ export default class GridItem extends React.Component {
   }
 
   render() {
-    let {selected, focused, layoutInfo, collectionView, size} = this.props;
+    let {selected, focused, layoutInfo, collectionView, size, allowsSelection} = this.props;
     let tabIndex = focused || !collectionView.focusedIndexPath ? 0 : -1;
 
     return (
@@ -26,6 +26,7 @@ export default class GridItem extends React.Component {
           role: 'gridcell',
           tabIndex: tabIndex,
           'aria-selected': selected,
+          allowsSelection,
           selected,
           focused,
           isDropTarget: this.props['drop-target'],
