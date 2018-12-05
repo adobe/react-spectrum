@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import FieldLabel from '../src/FieldLabel';
 import {getLocale} from '../src/utils/intl';
 import Provider from '../src/Provider';
@@ -9,7 +10,7 @@ import Select from '../src/Select';
 export function VerticalCenter({children, className, style}) {
   return (
     <div
-      className={ className }
+      className={ classNames('react-spectrum-story', className) }
       style={
         {
           position: 'absolute',
@@ -30,7 +31,7 @@ export function VerticalCenter({children, className, style}) {
 export function VerticalTop({children, className, style}) {
   return (
     <div
-      className={ className }
+      className={ classNames('react-spectrum-story', className) }
       style={
         {
           position: 'relative',

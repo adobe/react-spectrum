@@ -8,3 +8,180 @@ body
 
 .wf-loading
   visibility: hidden
+
+/* Fix color contrast */
+.react-spectrum-provider {
+  .react-spectrum-story {
+
+    /* Make gray code sample text darker */
+    pre[class^="css-glamorous-pre"] {
+      span[style^="color: rgb(119"] {
+        color: rgb(112, 112, 112) !important;
+      }
+    }
+
+    table[class^="css-glamorous-table"] {
+      td {
+
+        /* Make gray table text darker */
+        span[style^="color: rgb(119"] {
+          color: rgb(112, 112, 112) !important;
+        }
+      }
+    }
+  }
+
+  &.spectrum--light {
+    .react-spectrum-story {
+      > div {
+        > div {
+          &:first-of-type,
+          &:last-of-type {
+
+            /* Make storybook header text and body text darker */
+            div[style]:not([class]) {
+              color: rgb(75, 75, 75) !important;
+            }
+          }
+        }
+      }
+      table[class^="css-glamorous-table"] {
+        td {
+
+          /* Make gray table text darker */
+          span[style^="color: rgb(119"] {
+            color: rgb(112, 112, 112) !important;
+          }
+        }
+      }
+    }
+  }
+
+  &.spectrum--lightest {
+    .react-spectrum-story {
+      > div {
+        > div {
+          &:first-of-type,
+          &:last-of-type {
+
+            /* Make storybook header text and body text darker */
+            div[style]:not([class]) {
+              color: rgb(80, 80, 80) !important;
+            }
+          }
+        }
+      }
+
+      table[class^="css-glamorous-table"] {
+        td {
+
+          /* Make gray table text darker */
+          span[style^="color: rgb(119"] {
+            color: rgb(112, 112, 112) !important;
+          }
+        }
+      }
+    }
+  }
+
+  &.spectrum--dark {
+    .react-spectrum-story {
+      > div {
+        > div {
+          &:first-of-type,
+          &:last-of-type {
+
+            /* Make storybook header text and body text lighter */
+            div[style]:not([class]) {
+              color: rgb(205, 205, 205) !important;
+            }
+          }
+        }
+      }
+
+      /* Make code sample attribute text darker */
+      pre[class^="css-glamorous-pre"] {
+        span[style^="color: rgb(119"] {
+          + span {
+            color: rgb(75, 75, 75) !important;
+          }
+        }
+      }
+      table[class^="css-glamorous-table"] {
+        td {
+
+          /* Make gray table text lighter */
+          span[style^="color: rgb(119\, 119\, 119)"] {
+            color: rgb(205, 205, 205) !important;
+          }
+
+          /* Make green table text lighter */
+          span[style^="color: rgb(17\, 119\, 0)"] {
+            color: rgb(17, 178, 0) !important;
+          }
+
+          /* Make red table text lighter */
+          span[style^="color: rgb(170\, 17\, 17)"] {
+            color: rgb(255, 104, 112) !important;
+          }
+
+          /* Make blue table text lighter */
+          span[style^="color: rgb(34\, 34\, 170)"] {
+            color: rgb(75, 156, 245) !important;
+          }
+        }
+      }
+    }
+  }
+
+  &.spectrum--darkest {
+    .react-spectrum-story {
+      > div {
+        > div {
+          &:first-of-type,
+          &:last-of-type {
+
+            /* Make storybook header text and body text lighter */
+            div[style]:not([class]) {
+              color: rgb(180, 180, 180) !important;
+            }
+          }
+        }
+      }
+
+      /* Make code sample attribute text darker */
+      pre[class^="css-glamorous-pre"] {
+        span[style^="color: rgb(119"] {
+          + span {
+            color: rgb(75, 75, 75) !important;
+          }
+        }
+      }
+      table[class^="css-glamorous-table"] {
+        td {
+
+          /* Make gray table text lighter */
+          span[style^="color: rgb(119\, 119\, 119)"] {
+            color: rgb(180, 180, 180) !important;
+          }
+
+          /* Make green table text lighter */
+          span[style^="color: rgb(17\, 119\, 0)"] {
+            color: rgb(17, 155, 0) !important;
+          }
+
+          /* Make red table text lighter */
+          span[style^="color: rgb(170\, 17\, 17)"] {
+            color: rgb(236, 75, 83) !important;
+          }
+
+          /* Make blue table text lighter */
+          span[style^="color: rgb(34\, 34\, 170)"] {
+            color: rgb(55, 142, 240) !important;
+          }
+        }
+      }
+    }
+  }
+}
+
