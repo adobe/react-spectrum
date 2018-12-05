@@ -2,6 +2,7 @@ import assert from 'assert';
 import Column from '../../src/ColumnView/js/Column';
 import {ColumnView} from '../../src/ColumnView';
 import {data, renderItem, TestDS} from './utils';
+import {IndexPath} from '@react/collection-view';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -43,18 +44,23 @@ describe('ColumnView', () => {
   it('calls the onNavigate prop', async () => {
     let onNavigate = sinon.spy();
     let wrapper = mount(<ColumnView dataSource={ds} renderItem={renderItem} onNavigate={onNavigate} />);
+    let instance = wrapper.instance();
+    assert.equal(instance.mounted, true);
 
     // Navigate to the first column then the 2nd
     await ds.navigateToItem(data[0]);
     await ds.navigateToItem(data[0].children[0]);
     await sleep(50);
-    wrapper.update();
-    let cols = wrapper.find(Column).at(1).getDOMNode();
-    assert.deepEqual(cols, document.activeElement);
+    let col = wrapper.find(Column).last().instance();
+    if (col.collection.focusedIndexPath) {
+      assert(col.collection.focusedIndexPath.equals(new IndexPath(0, 0)));
+    }
+    assert.equal(wrapper.state('focusedColumnIndex'), 1);
 
     assert.equal(onNavigate.callCount, 4);
     assert.deepEqual(onNavigate.getCall(0).args[0], [data[0]]);
-    let instance = wrapper.instance();
+    assert.deepEqual(onNavigate.getCall(onNavigate.callCount - 1).args[0][0], data[0]);
+    assert.deepEqual(onNavigate.getCall(onNavigate.callCount - 1).args[0][1], data[0].children[0]);
     wrapper.unmount();
     assert.equal(instance.mounted, false);
   });
@@ -70,5 +76,19 @@ describe('ColumnView', () => {
 
     shallow(<ColumnView dataSource={ds} renderItem={renderItem} selectedItems={[{label: 'Child 1'}]} />, {disableLifecycleMethods: true});
     assert.equal(ds.isSelected({label: 'Child 1'}), true);
+  });
+
+  describe('Accessibility', () => {
+    it('should have role="tree"', () => {
+      let wrapper = shallow(<ColumnView dataSource={ds} renderItem={renderItem} />, {disableLifecycleMethods: true});
+      assert.equal(wrapper.prop('role'), 'tree');
+    });
+
+    it('should have aria-multiselectable="true"', () => {
+      let wrapper = shallow(<ColumnView dataSource={ds} renderItem={renderItem} />, {disableLifecycleMethods: true});
+      assert.equal(wrapper.prop('aria-multiselectable'), false);
+      wrapper.setProps({allowsSelection: true});
+      assert.equal(wrapper.prop('aria-multiselectable'), true);
+    });
   });
 });

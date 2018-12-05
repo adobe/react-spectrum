@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import Column from './Column';
+import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -68,6 +69,16 @@ export default class ColumnView extends React.Component {
     // columnWidth: 272
   };
 
+  state = {
+    focusedColumnIndex: 0
+  };
+
+  constructor(props) {
+    super(props);
+    this.columnViewId = createId();
+    this.columns = [];
+  }
+
   componentWillMount() {
     this.setupEvents(this.props.dataSource);
     this.componentWillReceiveProps(this.props);
@@ -108,8 +119,10 @@ export default class ColumnView extends React.Component {
             // If there is a detail item highlighted but no detail column displayed,
             // focus the last column, otherwise the second to last.
             let detail = this.props.dataSource.getDetailItem();
-            let focused = dom.childNodes[dom.childNodes.length - (detail && !this.props.renderDetail ? 1 : 2)];
-            focused.focus();
+            let focusedColumnIndex = dom.childNodes.length - (detail && !this.props.renderDetail ? 1 : 2);
+            this.onColumnFocus(focusedColumnIndex, () => {
+              this.columns[focusedColumnIndex].focus();
+            });
           }
         }
       }
@@ -126,6 +139,14 @@ export default class ColumnView extends React.Component {
     }
   }
 
+  onColumnFocus(focusedColumnIndex, fn) {
+    if (focusedColumnIndex === this.state.focusedColumnIndex) {
+      return;
+    }
+
+    this.setState({focusedColumnIndex}, fn);
+  }
+
   componentWillUnmount() {
     this.mounted = false;
     this.props.dataSource.removeListener('navigate', this.onNavigate);
@@ -133,27 +154,57 @@ export default class ColumnView extends React.Component {
   }
 
   render() {
-    let stack = this.props.dataSource.navigationStack;
-    let detail = this.props.dataSource.getDetailItem();
+    let {
+      id = this.columnViewId,
+      className,
+      dataSource,
+      renderItem,
+      allowsSelection,
+      allowsBranchSelection,
+      renderDetail
+    } = this.props;
+    let stack = dataSource.navigationStack;
+    let detail = dataSource.getDetailItem();
+    let detailNode = dataSource.getDetailNode();
+
+    // array of refs for columns
+    this.columns = [];
 
     if (detail) {
       stack = stack.slice(0, -1);
     }
 
     return (
-      <div className={classNames('spectrum-MillerColumns', this.props.className)}>
+      <div
+        role="tree"
+        id={id}
+        aria-label={this.props['aria-label']}
+        aria-labelledby={this.props['aria-labelledby']}
+        aria-multiselectable={allowsSelection}
+        className={classNames('spectrum-MillerColumns react-spectrum-MillerColumns', className)}>
         {stack.map((node, index) => (
           <Column
             key={index}
             item={node}
-            renderItem={this.props.renderItem}
-            dataSource={this.props.dataSource}
-            allowsSelection={this.props.allowsSelection}
-            allowsBranchSelection={this.props.allowsBranchSelection} />
+            ref={column => this.columns[index] = column}
+            focused={this.state.focusedColumnIndex === index}
+            level={index}
+            aria-label={index === 0 ? this.props['aria-label'] : null}
+            aria-labelledby={index === 0 ? this.props['aria-labelledby'] : null}
+            renderItem={renderItem}
+            dataSource={dataSource}
+            detailNode={renderDetail ? detailNode : null}
+            allowsSelection={allowsSelection}
+            allowsBranchSelection={allowsBranchSelection}
+            onFocus={e => this.onColumnFocus(index)} />
         ))}
-        {detail && this.props.renderDetail &&
-          <div className="spectrum-MillerColumns-item">
-            {this.props.renderDetail(detail)}
+        {detail && renderDetail &&
+          <div
+            role="group"
+            id={detailNode.getColumnId()}
+            aria-labelledby={detailNode.getItemId()}
+            className="spectrum-MillerColumns-item">
+            {renderDetail(detail)}
           </div>
         }
       </div>

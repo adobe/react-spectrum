@@ -11,27 +11,27 @@ storiesOf('ColumnView', module)
   ))
   .addWithInfo(
     'Default',
-    () => render(),
+    () => render({'aria-label': 'Default'}),
     {inline: true}
   )
   .addWithInfo(
     'allowsSelection',
-    () => render({allowsSelection: true}),
+    () => render({allowsSelection: true, 'aria-label': 'allowsSelection'}),
     {inline: true}
   )
   .addWithInfo(
     'allowsBranchSelection',
-    () => render({allowsSelection: true, allowsBranchSelection: true}),
+    () => render({allowsSelection: true, allowsBranchSelection: true, 'aria-label': 'allowsBranchSelection'}),
     {inline: true}
   )
   .addWithInfo(
     'renderDetail',
-    () => render({renderDetail, allowsSelection: true}),
+    () => render({renderDetail, allowsSelection: true, 'aria-label': 'renderDetail'}),
     {inline: true}
   )
   .addWithInfo(
     'selectedItems',
-    () => render({allowsSelection: true, selectedItems: [{label: 'Sub Child 1'}]})
+    () => render({allowsSelection: true, selectedItems: [{label: 'Sub Child 1'}], 'aria-label': 'selectedItems'})
   );
 
 const data = [

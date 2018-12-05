@@ -1,13 +1,25 @@
 import {ArrayDataSource, IndexPath} from '@react/collection-view';
+import createId from '../../utils/createId';
 import {EventEmitter} from 'events';
 
 class ItemNode {
-  constructor(item, parent, hasChildren) {
+  constructor(item, parent, hasChildren, index) {
+    this.id = createId();
     this.item = item;
     this.children = null;
     this.hasChildren = hasChildren;
     this.parent = parent;
     this.isLoading = false;
+    this.index = index;
+    this.highlightedChild = null;
+  }
+
+  getItemId() {
+    return `${this.id}-item`;
+  }
+
+  getColumnId() {
+    return `${this.id}-column`;
   }
 }
 
@@ -66,6 +78,12 @@ export default class ColumnViewDataSource extends EventEmitter {
       stack.unshift(node);
       node = node.parent;
     }
+    
+    // Store the highlighted child so that when we go away and come back from this column,
+    // the same item will be highlighted.
+    if (parentNode.parent) {
+      parentNode.parent.highlightedChild = item;
+    }
 
     this.navigationStack = stack;
     this.emit('navigate', stack.slice(1).map(i => i.item));
@@ -77,8 +95,8 @@ export default class ColumnViewDataSource extends EventEmitter {
 
       let children = await this.getChildren(item) || [];
 
-      let childNodes = children.map(child => {
-        let node = new ItemNode(child, parentNode, this.hasChildren(child));
+      let childNodes = children.map((child, index) => {
+        let node = new ItemNode(child, parentNode, this.hasChildren(child), index);
         this.lookup.set(child, node);
 
         // If there is already a selected item that matches this child, map it to the same node.
@@ -115,7 +133,7 @@ export default class ColumnViewDataSource extends EventEmitter {
   async navigateToNext() {
     let item = this.navigationStack[this.navigationStack.length - 1];
     if (item && item.hasChildren) {
-      await this.navigateToItem(item.children.getItem(0, 0).item);
+      await this.navigateToItem(item.highlightedChild || item.children.getItem(0, 0).item);
     }
   }
 
@@ -138,13 +156,26 @@ export default class ColumnViewDataSource extends EventEmitter {
   }
 
   /**
+   * Returns the deepest-most leaf node in the navigation path.
+   * @return {object}
+   */
+  getDetailNode() {
+    let node = this.navigationStack[this.navigationStack.length - 1];
+    if (node && !node.hasChildren) {
+      return node;
+    }
+
+    return null;
+  }
+
+  /**
    * Returns the deepest-most leaf node in the navigation path
    * for display in the detail column.
    * @return {object}
    */
   getDetailItem() {
-    let node = this.navigationStack[this.navigationStack.length - 1];
-    if (node && !node.hasChildren) {
+    let node = this.getDetailNode();
+    if (node) {
       return node.item;
     }
 

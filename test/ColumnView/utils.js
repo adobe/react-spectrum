@@ -35,3 +35,12 @@ export class TestDS extends ColumnViewDataSource {
 export function renderItem(item) {
   return <span>{item.label}</span>;
 }
+
+export function renderDetail(item) {
+  return (
+    <div>
+      <h4>Detail</h4>
+      <div>{item.label}</div>
+    </div>
+  );
+}

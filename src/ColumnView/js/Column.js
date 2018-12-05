@@ -45,37 +45,82 @@ export default class Column extends React.Component {
     });
   }
 
+  focus() {
+    try {
+      let indexPath = this.collection.selectedIndexPaths.firstIndexPath;
+      this.collection.scrollToItem(indexPath);
+      this.collection.focusItem(indexPath);
+    } catch (err) {
+      // ignore errors in tests
+    }
+  }
+
+  onFocus(e) {
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+
+    // Wait until collection-view updates
+    requestAnimationFrame(() => {
+      // If the focused item is not selected, select it.
+      let focusedIndexPath = this.collection && this.collection.focusedIndexPath;
+      if (!this.collection.selectedIndexPaths.contains(focusedIndexPath)) {
+        this.collection.selectItem(focusedIndexPath);
+      }
+    });
+  }
+
   render() {
+    let {
+      dataSource,
+      item,
+      allowsSelection,
+      level = 0
+    } = this.props;
+
     // Find IndexPaths for the items that should be highlighted.
     // If this is the last column, nothing should be highlighted.
     // Otherwise, highlight the navigated item in that column.
     // Multi-select behavior is handled internally by the collection-view. See onHighlightChange.
     let highlightedIndexPaths = [];
-    let stack = this.props.dataSource.navigationStack;
-    if (stack[stack.length - 1] !== this.props.item) {
+    let stack = dataSource.navigationStack;
+
+    if (level !== stack.length - 1) {
       // Find the index of the navigated child (which should be next in the stack).
-      let index = stack.indexOf(this.props.item);
-      let navigatedItem = stack[index + 1];
+      let navigatedItem = stack[level + 1];
       if (navigatedItem) {
-        highlightedIndexPaths.push(new IndexPath(0, this.props.item.children.sections[0].indexOf(navigatedItem)));
+        highlightedIndexPaths.push(new IndexPath(0, navigatedItem.index));
       }
     }
+
+    let ariaLabelledby = level > 0 
+      ? item.getItemId()
+      : this.props['aria-labelledby'];
 
     return (
       <EditableCollectionView
         className={classNames('spectrum-MillerColumns-item spectrum-AssetList')}
-        dataSource={this.props.item.children}
+        dataSource={item.children}
         layout={this.layout}
         delegate={this}
         onSelectionChanged={this.onHighlightChange}
         selectedIndexPaths={highlightedIndexPaths}
-        allowsMultipleSelection={this.props.allowsSelection}
+        allowsMultipleSelection={allowsSelection}
         ref={c => this.collection = c}
-        onKeyDown={this.onKeyDown} />
+        role="group"
+        id={item.getColumnId()}
+        aria-label={this.props['aria-label']}
+        aria-labelledby={ariaLabelledby}
+        onKeyDown={this.onKeyDown}
+        onFocus={this.onFocus} />
     );
   }
 
   onHighlightChange() {
+    if (!this.collection) {
+      return;
+    }
+
     // If there is 1 item highlighted, navigate to it.
     // If there are no items highlighted, navigate to the parent.
     // Otherwise, do nothing and let the collection-view manage the multiple highlighting behavior.
@@ -89,6 +134,7 @@ export default class Column extends React.Component {
   onKeyDown(e) {
     switch (e.key) {
       case 'Enter':
+      case ' ':
         return this.commitSelection();
 
       case 'ArrowLeft':
@@ -96,6 +142,11 @@ export default class Column extends React.Component {
 
       case 'ArrowRight':
         return this.props.dataSource.navigateToNext();
+
+      case 'Escape':
+      case 'Esc':
+        e.preventDefault();
+        return;
     }
   }
 
@@ -124,13 +175,24 @@ export default class Column extends React.Component {
   }
 
   renderItemView(type, item) {
+    let {
+      renderItem,
+      allowsSelection,
+      allowsBranchSelection,
+      dataSource,
+      detailNode,
+      level
+    } = this.props;
     return (
       <Item
+        level={level}
+        column={this}
         item={item}
-        renderItem={this.props.renderItem}
-        allowsSelection={this.props.allowsSelection}
-        allowsBranchSelection={this.props.allowsBranchSelection}
-        isSelected={this.props.dataSource.isSelected(item.item)}
+        renderItem={renderItem}
+        allowsSelection={allowsSelection}
+        allowsBranchSelection={allowsBranchSelection}
+        isSelected={dataSource.isSelected(item.item)}
+        detailNode={detailNode}
         onSelect={this.onSelect.bind(this, item.item)} />
     );
   }

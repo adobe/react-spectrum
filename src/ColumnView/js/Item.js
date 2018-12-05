@@ -2,12 +2,20 @@ import Checkbox from '../../Checkbox';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import focusRing from '../../utils/focusRing';
 import React from 'react';
 
 /*
  * A wrapper for an Item within an ItemColumn that will manage the Item's state
  */
+@focusRing
 export default class Item extends React.Component {
+  focus() {
+    if (this.itemRef) {
+      this.itemRef.focus();
+    }
+  }
+
   render() {
     let {
       item,
@@ -16,6 +24,11 @@ export default class Item extends React.Component {
       allowsSelection,
       allowsBranchSelection,
       isSelected,
+      focused,
+      column,
+      level = 0,
+      detailNode,
+      collectionView,
       ...props
     } = this.props;
 
@@ -26,10 +39,37 @@ export default class Item extends React.Component {
       'is-selected': isSelected
     });
 
+    let id = item.getItemId();
+    let labelId = `${id}-label`;
+    let columnFocused = column && column.props.focused;
+    let tabIndex = columnFocused && focused ? 0 : -1;
+    if (columnFocused && !focused && collectionView && !collectionView.focusedIndexPath) {
+      tabIndex = 0;
+    }
+
+    let setSize = item.parent.children.getSectionLength(0);
+    let isExpanded = item.hasChildren ? (highlighted || false) : null;
+    let ownedColumnId = isExpanded || detailNode === item ? item.getColumnId() : null;
+    let ariaDescribedby = detailNode === item ? ownedColumnId : null;
+
     return (
-      <div className={className} {...filterDOMProps(props)}>
-        {allowsSelection && allowsBranchSelection && this.renderCheckbox()}
-        <span className="spectrum-AssetList-itemLabel">{renderItem(item.item, item)}</span>
+      <div
+        ref={i => this.itemRef = i}
+        id={id}
+        tabIndex={tabIndex}
+        role="treeitem"
+        aria-selected={allowsSelection && (allowsBranchSelection || !item.hasChildren) ? (isSelected || false) : null}
+        aria-level={level + 1}
+        aria-posinset={item.index + 1}
+        aria-setsize={setSize}
+        aria-expanded={isExpanded}
+        aria-labelledby={labelId}
+        aria-describedby={ariaDescribedby}
+        aria-owns={ownedColumnId}
+        className={className}
+        {...filterDOMProps(props)}>
+        {allowsSelection && allowsBranchSelection && this.renderCheckbox(labelId)}
+        <span role="presentation" className="spectrum-AssetList-itemLabel" id={labelId}>{renderItem(item.item, item)}</span>
         {item.hasChildren && this.renderChevron()}
         {allowsSelection && !allowsBranchSelection && !item.hasChildren && this.renderCheckbox()}
       </div>
@@ -42,13 +82,25 @@ export default class Item extends React.Component {
     );
   }
 
-  renderCheckbox() {
+  renderCheckbox(labelId) {
+    let {
+      isSelected,
+      onSelect
+    } = this.props;
+
     return (
       <Checkbox
+        aria-hidden="true"
+        aria-labelledby={labelId}
+        tabIndex={-1}
         className="spectrum-AssetList-itemSelector"
         onMouseDown={e => e.stopPropagation()}
-        checked={this.props.isSelected}
-        onChange={this.props.onSelect} />
+        onFocus={e => {
+          e.preventDefault();
+          this.focus();
+        }}
+        checked={isSelected}
+        onChange={onSelect} />
     );
   }
 }
