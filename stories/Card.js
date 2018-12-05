@@ -1,9 +1,9 @@
+import {action, storiesOf} from '@storybook/react';
 import {Asset} from '../src/Asset';
 import {Card, CardBody, CardCoverPhoto, CardFooter, CardPreview} from '../src/Card';
 import DropdownButton from '../src/DropdownButton/js/DropdownButton';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {VerticalCenter} from '../.storybook/layout';
 
 importSpectrumCSS('card');
@@ -43,6 +43,30 @@ storiesOf('Card', module)
     () => (
       <div style={{'width': '208px'}}>
         <Card variant="standard" allowsSelection={false}>
+          <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
+          <CardBody title="Card Title" subtitle="jpg" />
+        </Card>
+      </div>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Explicit onSelect',
+    () => (
+      <div style={{'width': '208px'}}>
+        <Card variant="standard" onSelect={action('onSelect')}>
+          <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
+          <CardBody title="Card Title" subtitle="jpg" />
+        </Card>
+      </div>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Explicit onSelect and onClick',
+    () => (
+      <div style={{'width': '208px'}}>
+        <Card variant="standard" onSelect={action('onSelect')} onClick={action('onClick')}>
           <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>

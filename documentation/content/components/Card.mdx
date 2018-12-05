@@ -4,13 +4,13 @@ import DropdownButton from '@react/react-spectrum/DropdownButton';
 import {MenuItem} from '@react/react-spectrum/Menu';
 
 A **Card** is a pattern that is commonly used for browsing content as part of a [GridView](/components/GridView). Cards display
-custom content, which are generally items a user can buy, own, read, or that a user has saved or created. Cards can be completely custom, 
-or built using some of the components provided out of the box. Typically, cards have a cover photo or preview image at the top, a body with 
+custom content, which are generally items a user can buy, own, read, or that a user has saved or created. Cards can be completely custom,
+or built using some of the components provided out of the box. Typically, cards have a cover photo or preview image at the top, a body with
 some information about the content, and an optional footer.
 
 ## Example
 
-Here is an example of a Card that might be used to display some basic content. 
+Here is an example of a Card that might be used to display some basic content.
 
 ```jsx
 import {Card, CardCoverPhoto, CardBody, CardFooter} from '@react/react-spectrum/Card';
@@ -41,7 +41,7 @@ cards that are provided out of the box.
 
 * **Card** - the container element for the card contents. Handles selection and keyboard focus styling, quick actions, etc.
 * **CardCoverPhoto** - a cover photo for a card. Cover photos are a fixed height and display an image cropped to fill the space.
-* **CardPreview** - a wrapper element for a preview image or other object. This is usually an [Asset](/components/Asset) component. 
+* **CardPreview** - a wrapper element for a preview image or other object. This is usually an [Asset](/components/Asset) component.
   Unlike cover photos, card previews scale the image to display the entire contents.
 * **CardBody** - the body of a card. Accepts an optional title, subtitle, and description, along with custom children to display.
 * **CardFooter** - a container for card footer contents. Displayed with a border above.
@@ -49,7 +49,7 @@ cards that are provided out of the box.
 ## Variants
 
 There are three card variants: standard, quiet, and gallery. These variants usually correspond to the layout they are displayed in
-as a part of a [GridView](/components/GridView). Standard cards are displayed in a waterfall or masonry layout, quiet cards are 
+as a part of a [GridView](/components/GridView). Standard cards are displayed in a waterfall or masonry layout, quiet cards are
 displayed in a fixed grid, and gallery cards are displayed in a horizontally oriented masonry. When displayed in a GridView, the card
 variant will be automatically applied based on the layout.
 
@@ -165,6 +165,26 @@ Cards support selection and keyboard focus styles, which are applied by [GridVie
   </Card>
 </div>
 
+### onSelect hook
+
+Cards support an explicit onSelect hook for when the Checkbox is clicked. Where present, this event will override the
+Card's onClick handler on the Checkbox. When missing, the Card's onClick handler will still apply to the Checkbox
+
+```jsx
+<Card selected onSelect={console.log}>
+  <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
+  <CardBody title="Card Title" subtitle="jpg" />
+</Card>
+```
+
+<div style={{'width': '208px'}}>
+  <Card selected onSelect={console.log}>
+    <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
+    <CardBody title="Card Title" subtitle="jpg" />
+  </Card>
+</div>
+
+
 ### Disabling selection
 
 There is also an option to disable selection by setting the `allowsSelection` prop to `false`.
@@ -187,11 +207,11 @@ There is also an option to disable selection by setting the `allowsSelection` pr
 
 Cards often have actions a user can take on them, which can be in the form of an action menu or quick action buttons.
 Action menus are displayed in the body of a card, next to the title. Quick actions are displayed above the card preview
-or cover photo. Either an action menu or quick actions should be provided, not both. In small size cards, action menus 
+or cover photo. Either an action menu or quick actions should be provided, not both. In small size cards, action menus
 are moved into the quick actions to leave more space for the title.
 
 ```jsx
-<Card 
+<Card
   actionMenu={
     <DropdownButton>
       <MenuItem>Edit</MenuItem>
@@ -208,7 +228,7 @@ are moved into the quick actions to leave more space for the title.
 ```
 
 <div style={{'width': '208px'}}>
-  <Card 
+  <Card
     actionMenu={
       <DropdownButton>
         <MenuItem>Edit</MenuItem>

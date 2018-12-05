@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import Checkbox from '../../Checkbox/js/Checkbox';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -12,11 +13,12 @@ importSpectrumCSS('quickaction');
 
 const formatMessage = messageFormatter(intlMessages);
 
+@autobind
 export default class Card extends React.Component {
   static propTypes = {
     /** Card variant */
     variant: PropTypes.oneOf(['standard', 'quiet', 'gallery']),
-    
+
     /** Card can be large or small size */
     size: PropTypes.oneOf(['S', 'L']),
 
@@ -25,6 +27,9 @@ export default class Card extends React.Component {
 
     /** Whether or not the card is selected */
     selected: PropTypes.bool,
+
+    /** What happens when the checkbox is clicked */
+    onSelect: PropTypes.func,
 
     /** Whether the card is currently a drop target */
     isDropTarget: PropTypes.bool,
@@ -64,6 +69,18 @@ export default class Card extends React.Component {
     };
   }
 
+  handleSelect(...args) {
+    if (this.props.onSelect) {
+      this.props.onSelect(...args);
+    }
+  }
+
+  handleCheckboxClick(evt) {
+    if (this.props.onSelect) {
+      evt.stopPropagation();
+    }
+  }
+
   render() {
     let {
       variant,
@@ -88,6 +105,8 @@ export default class Card extends React.Component {
       checkbox = (
         <div className={classNames('spectrum-QuickActions', 'spectrum-Card-quickActions')}>
           <Checkbox
+            onChange={this.handleSelect}
+            onClick={this.handleCheckboxClick}
             checked={selected}
             title={formatMessage('select')} />
         </div>

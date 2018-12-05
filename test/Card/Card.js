@@ -3,6 +3,7 @@ import {Card} from '../../src/Card';
 import Checkbox from '../../src/Checkbox/js/Checkbox';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('Card', () => {
   it('should display a checkbox on hover', () => {
@@ -24,5 +25,15 @@ describe('Card', () => {
     const tree = shallow(<Card allowsSelection={false}><div style={{height: 136 + 'px', width: 280 + 'px'}} /></Card>);
     const checkboxDiv = tree.find('.spectrum-Card-quickActions');
     assert.equal(checkboxDiv.exists(), false);
+  });
+
+  it('should fire event onSelect when supplied', () => {
+    const onSelect = sinon.spy();
+
+    const tree = shallow(<Card onSelect={onSelect}><div style={{height: 136 + 'px', width: 280 + 'px'}} /></Card>);
+    const checkbox = tree.find(Checkbox);
+    checkbox.simulate('change');
+
+    assert(onSelect.called);
   });
 });
