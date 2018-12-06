@@ -24,7 +24,7 @@ export default class Breadcrumbs extends React.Component {
      * Each item may also have an href string property, which should be a valid URL to open the breadcrumb location.
      */
     items: PropTypes.arrayOf(
-      PropTypes.oneOf([
+      PropTypes.oneOfType([
         PropTypes.shape({
           href: PropTypes.string,
           label: PropTypes.string.isRequired
