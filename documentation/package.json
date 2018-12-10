@@ -27,7 +27,9 @@
     "@mdx-js/loader": "^0.15.0",
     "@mdx-js/mdx": "^0.15.0",
     "cli-glob": "^0.1.0",
-    "loader-utils": "^1.1.0"
+    "loader-utils": "^1.1.0",
+    "webpack-bundle-analyzer": "^3.0.3",
+    "install-local": "^0.6.2"
   },
   "keywords": [
     "gatsby"
@@ -36,6 +38,7 @@
   "main": "n/a",
   "scripts": {
     "preinstall": "cd .. && make build && cd documentation",
+    "postinstall": "install-local ../dist",
     "develop": "gatsby develop",
     "build": "gatsby build"
   }
