@@ -60,9 +60,7 @@ build:
 	cp -R node_modules/@spectrum/focus-ring-polyfill dist/focus-ring-polyfill
 	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
 	cp -R dist/* ./.
-	mkdir dist/spectrum-css-overrides/
-	cp -R spectrum-css-overrides/* dist/spectrum-css-overrides/.
-	cp package.json dist/package.json
+	rm -rf dist/*
 
 storybook:
 	build-storybook
