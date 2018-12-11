@@ -27,13 +27,13 @@ describe('Card', () => {
     assert.equal(checkboxDiv.exists(), false);
   });
 
-  it('should fire event onSelect when supplied', () => {
-    const onSelect = sinon.spy();
+  it('should fire event onSelectionChange when supplied', () => {
+    const onSelectionChange = sinon.spy();
 
-    const tree = shallow(<Card onSelect={onSelect}><div style={{height: 136 + 'px', width: 280 + 'px'}} /></Card>);
+    const tree = shallow(<Card onSelectionChange={onSelectionChange}><div style={{height: 136 + 'px', width: 280 + 'px'}} /></Card>);
     const checkbox = tree.find(Checkbox);
     checkbox.simulate('change');
 
-    assert(onSelect.called);
+    assert(onSelectionChange.called);
   });
 });

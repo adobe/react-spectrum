@@ -69,14 +69,8 @@ export default class Card extends React.Component {
     };
   }
 
-  handleSelect(...args) {
-    if (this.props.onSelect) {
-      this.props.onSelect(...args);
-    }
-  }
-
   handleCheckboxClick(evt) {
-    if (this.props.onSelect) {
+    if (this.props.onSelectionChange) {
       evt.stopPropagation();
     }
   }
@@ -105,7 +99,7 @@ export default class Card extends React.Component {
       checkbox = (
         <div className={classNames('spectrum-QuickActions', 'spectrum-Card-quickActions')}>
           <Checkbox
-            onChange={this.handleSelect}
+            onChange={this.props.onSelectionChange}
             onClick={this.handleCheckboxClick}
             checked={selected}
             title={formatMessage('select')} />
