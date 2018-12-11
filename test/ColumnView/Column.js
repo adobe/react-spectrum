@@ -8,9 +8,9 @@ import {sleep} from '../utils';
 
 describe('Column', function () {
   let ds;
-  beforeEach(function (done) {
+  beforeEach(async function () {
     ds = new TestDS;
-    setTimeout(done, 0); // initial navigateToItem is async
+    await ds.navigateToItem(null);
   });
 
   it('should render a collection view', function () {

@@ -1,6 +1,7 @@
 import {action, storiesOf} from '@storybook/react';
-import {ColumnView, ColumnViewDataSource} from '../src/ColumnView';
+import {ColumnView} from '../src/ColumnView';
 import React from 'react';
+import TreeDataSource from '../src/TreeDataSource';
 import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('ColumnView', module)
@@ -32,6 +33,14 @@ storiesOf('ColumnView', module)
   .addWithInfo(
     'selectedItems',
     () => render({allowsSelection: true, selectedItems: [{label: 'Sub Child 1'}], 'aria-label': 'selectedItems'})
+  )
+  .addWithInfo(
+    'navigatedPath',
+    () => render({navigatedPath: [data[0], data[0].children[0], data[0].children[0].children[2]]})
+  )
+  .addWithInfo(
+    'navigatedPath using isItemEqual',
+    () => render({navigatedPath: [{label: 'Test 1'}, {label: 'Child 1'}, {label: 'Sub Child 2'}]})
   );
 
 const data = [
@@ -51,7 +60,7 @@ const data = [
   {label: 'Test 2'}
 ];
 
-class ExampleDS extends ColumnViewDataSource {
+class ExampleDS extends TreeDataSource {
   async getChildren(item) {
     if (!item) {
       return data;

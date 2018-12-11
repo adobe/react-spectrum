@@ -104,7 +104,7 @@ export default class TreeItem extends React.Component {
       tabIndex = focused || !collectionView.focusedIndexPath ? 0 : -1;
     }
 
-    let setSize = parent.children.length;
+    let setSize = parent.children ? parent.children.length : 0;
     let posInSet = content.index;
     let id = `${treeId}-${level}-${posInSet}`;
     let ownedChildIds = this.getOwnedChildIds();

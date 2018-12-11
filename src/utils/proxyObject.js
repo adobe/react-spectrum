@@ -12,7 +12,7 @@ export default function proxy(obj) {
     return res;
   }
 
-  for (let key of getAllPropertyNames(Object.getPrototypeOf(obj))) {
+  for (let key of getAllPropertyNames(obj)) {
     if (typeof obj[key] === 'function') {
       res[key] = obj[key].bind(obj);
     }

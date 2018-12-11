@@ -1,5 +1,6 @@
 import assert from 'assert';
-import {data, TestDS} from './utils';
+import {ColumnViewDataSource} from '../../src/ColumnView';
+import {data, TestDS, TreeDS} from './utils';
 import {IndexPath} from '@react/collection-view';
 import sinon from 'sinon';
 import {sleep} from '../utils';
@@ -15,9 +16,19 @@ describe('ColumnViewDataSource', function () {
     };
   }
 
-  beforeEach(function (done) {
+  function checkSortedChildren(node) {
+    for (let i = 0; i < node.children.length; i++) {
+      assert.equal(node.children[i].index, i);
+  
+      if (node.children[i].children) {
+        checkSortedChildren(node.children[i]);
+      }
+    }
+  }  
+
+  beforeEach(async function () {
     ds = new TestDS;
-    setTimeout(done, 0); // initial navigateToItem is async
+    await ds.navigateToItem(null);
   });
 
   it('should navigate to the root by default', function () {
@@ -215,6 +226,7 @@ describe('ColumnViewDataSource', function () {
   });
 
   it('should select items by object reference by default', async function () {
+    ds.isItemEqual = null;
     await ds.navigateToItem(data[0]);
 
     assert.equal(ds.isSelected({label: 'Child 1'}), false);
@@ -250,5 +262,326 @@ describe('ColumnViewDataSource', function () {
     ds.deselectItem({label: 'Child 1'});
     assert.equal(ds.isSelected({label: 'Child 1'}), false);
     assert.equal(ds.isSelected(data[0].children[0]), false);
+  });
+
+  it('should support selecting objects equivalent by isItemEqual comparator with TreeDataSource', async function () {
+    let ds = new ColumnViewDataSource(new TreeDS);
+    await sleep(10);
+    await ds.navigateToItem(data[0]);
+
+    assert.equal(ds.isSelected({label: 'Child 1'}), false);
+    assert.equal(ds.isSelected(data[0].children[0]), false);
+    ds.selectItem(data[0].children[0]);
+
+    assert.equal(ds.isSelected({label: 'Child 1'}), true);
+    assert.equal(ds.isSelected(data[0].children[0]), true);
+
+    ds.deselectItem({label: 'Child 1'});
+    assert.equal(ds.isSelected({label: 'Child 1'}), false);
+    assert.equal(ds.isSelected(data[0].children[0]), false);
+  });
+
+  describe('insertChild', function () {
+    it('should do nothing if children not yet loaded', async function () {
+      testEmitter(ds.root.children);
+      ds.insertChild(data[1], 0, {name: 'Child 0', children: []});
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['reloadItem', new IndexPath(0, 1), false]
+      ]);
+    });
+
+    it('should insert a child', async function () {
+      await ds.navigateToItem(data[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      ds.insertChild(data[0], 0, {name: 'Child 0', children: []});
+
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should append a child', async function () {
+      await ds.navigateToItem(data[0]);
+      await ds.navigateToItem(data[0].children[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      ds.insertChild(data[0], 2, {name: 'Child 3', children: []});
+
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 2), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should insert into an empty item', async function () {
+      await ds.navigateToItem(data[1]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.insertChild(data[1], 0, {name: 'Child 3', children: []});
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['reloadItem', new IndexPath(0, 1), false]
+      ]);
+
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should append to the root', async function () {
+      testEmitter(ds.root.children);
+      ds.insertChild(null, 2, {name: 'Root 3', children: []});
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 2), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+  });
+
+  describe('removeItem', function () {
+    it('should do nothing if children not yet loaded', async function () {
+      testEmitter(ds.root.children);
+      ds.removeItem(data[0].children[0]);
+      assert.deepEqual(ds.root.children.emittedEvents, []);
+    });
+
+    it('should remove a child', async function () {
+      await ds.navigateToItem(data[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+
+      ds.removeItem(data[0].children[0]);
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should update disclosure indicator if removing last child', async function () {
+      await ds.navigateToItem(data[0]);
+      await ds.removeItem(data[0].children[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.removeItem(data[0].children[1]);
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['reloadItem', new IndexPath(0, 0), false]
+      ]);
+
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined],
+      ]);
+
+      assert.equal(ds.navigationStack[1].hasChildren, false);
+      checkSortedChildren(ds.root);
+    });
+
+    it('should update the navigation stack if removing a navigated item', async function () {
+      await ds.navigateToItem(data[0]);
+      ds.removeItem(data[0]);
+
+      assert.equal(ds.navigationStack.length, 1);
+    });
+  });
+
+  describe('moveItem', function () {
+    it('should do nothing if the parent is not loaded', async function () {
+      testEmitter(ds.root.children);
+      ds.moveItem(data[0].children[0], data[0], 1);
+      assert.deepEqual(ds.root.children.emittedEvents, []);
+    });
+
+    it('should remove an item if the destination is not loaded', async function () {
+      await ds.navigateToItem(data[0]);
+      let children = ds.navigationStack[1].children;
+
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.moveItem(data[0].children[0], data[0].children[0].children[0], 0);
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should move an item within the same parent', async function () {
+      await ds.navigateToItem(data[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+
+      ds.moveItem(data[0].children[0], 1);
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['moveItem', new IndexPath(0, 0), new IndexPath(0, 1), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should move an item up the tree', async function () {
+      await ds.navigateToItem(data[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.moveItem(data[0].children[0], null, 1);
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 1), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should move an item down the tree', async function () {
+      await ds.navigateToItem(data[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.moveItem(data[0], data[0], 1);
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 1), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should reload source parent when moving the last item', async function () {
+      await ds.navigateToItem(data[0]);
+      ds.removeItem(data[0].children[0]);
+
+      let children = ds.navigationStack[1].children;
+      testEmitter(children);
+      testEmitter(ds.root.children);
+
+      ds.moveItem(data[0].children[1], null, 1);
+      assert.deepEqual(children.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 1), undefined],
+        ['reloadItem', new IndexPath(0, 0), false],
+        ['endTransaction', undefined]
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should reload destination parent when inserting the first item', async function () {
+      await ds.navigateToItem(data[1]);
+      let dest = ds.navigationStack[1].children;
+
+      await ds.navigateToItem(data[0]);
+      let source = ds.navigationStack[1].children;
+
+      testEmitter(dest);
+      testEmitter(source);
+      testEmitter(ds.root.children);
+
+      ds.moveItem(data[0].children[0], data[1], 0);
+      assert.deepEqual(source.emittedEvents, [
+        ['startTransaction'],
+        ['removeItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      assert.deepEqual(dest.emittedEvents, [
+        ['startTransaction'],
+        ['insertItem', new IndexPath(0, 0), undefined],
+        ['endTransaction', undefined]
+      ]);
+
+      assert.deepEqual(ds.root.children.emittedEvents, [
+        ['reloadItem', new IndexPath(0, 1), false],
+      ]);
+
+      checkSortedChildren(ds.root);
+    });
+
+    it('should update the navigation stack if moving a navigated item up the tree', async function () {
+      await ds.navigateToItem(data[0]);
+      await ds.navigateToItem(data[0].children[0]);
+      ds.moveItem(data[0].children[0], null, 1);
+
+      assert.deepEqual(ds.navigationStack, [ds.root]);
+    });
+
+    it('should update the navigation stack if moving a navigated item down the tree', async function () {
+      await ds.navigateToItem(data[0]);
+      await ds.navigateToItem(data[0].children[0]);
+      ds.moveItem(data[0].children[0], data[0].children[1], 1);
+
+      assert.deepEqual(ds.navigationStack, [ds.root, ds.root.children.sections[0][0]]);
+    });
+  });
+
+  describe('setNavigatedPath', function () {
+    it('should navigate to a nested item', async function () {
+      await ds.setNavigatedPath([data[0], data[0].children[0]]);
+      assert.deepEqual(ds.navigationStack, [ds.root, ds.root.children.sections[0][0], ds.root.children.sections[0][0].children.sections[0][0]]);
+    });
+
+    it('should navigate to a nested item using isItemEqual comparator', async function () {
+      await ds.setNavigatedPath([{label: 'Test 1'}, {label: 'Child 1'}]);
+      assert.deepEqual(ds.navigationStack, [ds.root, ds.root.children.sections[0][0], ds.root.children.sections[0][0].children.sections[0][0]]);
+    });
   });
 });

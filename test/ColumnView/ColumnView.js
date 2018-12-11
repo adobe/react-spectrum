@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Column from '../../src/ColumnView/js/Column';
 import {ColumnView} from '../../src/ColumnView';
-import {data, renderItem, TestDS} from './utils';
+import {data, renderItem, TestDS, TreeDS} from './utils';
 import {IndexPath} from '@react/collection-view';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
@@ -9,7 +9,11 @@ import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('ColumnView', () => {
-  let ds = new TestDS;
+  let ds;
+  beforeEach(async function () {
+    ds = new TestDS;
+    await ds.navigateToItem(null);
+  });
 
   it('passes default props to Column', () => {
     const tree = shallow(<ColumnView dataSource={ds} renderItem={renderItem} />, {disableLifecycleMethods: true});
@@ -76,6 +80,31 @@ describe('ColumnView', () => {
 
     shallow(<ColumnView dataSource={ds} renderItem={renderItem} selectedItems={[{label: 'Child 1'}]} />, {disableLifecycleMethods: true});
     assert.equal(ds.isSelected({label: 'Child 1'}), true);
+  });
+
+  it('should work with a TreeDataSource', async () => {
+    let ds = new TreeDS;
+    let tree = shallow(<ColumnView dataSource={ds} renderItem={renderItem} />, {disableLifecycleMethods: true});
+    await sleep(100);
+    let col = tree.find(Column);
+    assert.equal(col.length, 1);
+    assert.equal(col.prop('item').children.getSectionLength(0), 2);
+  });
+
+  describe('navigatedPath', function () {
+    it('should navigate to a nested item', async function () {
+      let tree = shallow(<ColumnView dataSource={ds} renderItem={renderItem} navigatedPath={[data[0], data[0].children[0]]} />, {disableLifecycleMethods: true});
+      await sleep(100);
+      let col = tree.find(Column);
+      assert.equal(col.length, 3);
+    });
+
+    it('should navigate to a nested item using isItemEqual comparator', async function () {
+      let tree = shallow(<ColumnView dataSource={ds} renderItem={renderItem} navigatedPath={[{label: 'Test 1'}, {label: 'Child 1'}]} />, {disableLifecycleMethods: true});
+      await sleep(100);
+      let col = tree.find(Column);
+      assert.equal(col.length, 3);
+    });
   });
 
   describe('Accessibility', () => {

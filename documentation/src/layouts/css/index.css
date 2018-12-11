@@ -129,3 +129,8 @@ header nav a {
   min-width: 450px;
   flex: 1;
 }
+
+.example-treeview {
+  width: 300px !important;
+  height: 200px !important;
+}

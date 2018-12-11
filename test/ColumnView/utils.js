@@ -1,5 +1,6 @@
 import {ColumnViewDataSource} from '../../src/ColumnView';
 import React from 'react';
+import TreeDataSource from '../../src/TreeDataSource';
 
 export const data = [
   {label: 'Test 1', children: [
@@ -29,6 +30,28 @@ export class TestDS extends ColumnViewDataSource {
 
   hasChildren(item) {
     return !!item.children;
+  }
+
+  isItemEqual(a, b) {
+    return a.label === b.label;
+  }
+}
+
+export class TreeDS extends TreeDataSource {
+  async getChildren(item) {
+    if (!item) {
+      return data;
+    }
+
+    return item.children;
+  }
+
+  hasChildren(item) {
+    return !!item.children;
+  }
+  
+  isItemEqual(a, b) {
+    return a.label === b.label;
   }
 }
 

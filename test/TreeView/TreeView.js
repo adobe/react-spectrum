@@ -4,28 +4,59 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import {sleep} from '../utils';
-import {TestDataSource} from './TreeViewDataSource';
+import {TestDataSource, TreeDS} from './TreeViewDataSource';
 import TreeItem from '../../src/TreeView/js/TreeItem';
 import {TreeView} from '../../src/TreeView';
 
 describe('TreeView', function () {
   it('should render an EditableCollectionView', function () {
-    let wrapper = shallow(<TreeView />);
+    let ds = new TreeDS;
+    let wrapper = shallow(<TreeView dataSource={ds} />);
     let collection = wrapper.find(EditableCollectionView);
 
     assert.equal(wrapper.length, 1);
     assert.equal(collection.length, 1);
   });
 
+  it('should render some items', async () => {
+    let ds = new TestDataSource;
+    let renderItem = (item) => <span>{item.name}</span>;
+    let wrapper = shallow(
+      <TreeView
+        dataSource={ds}
+        renderItem={renderItem} />
+    );
+    await sleep(100);
+    let collection = wrapper.find(EditableCollectionView);
+    assert.equal(collection.prop('dataSource').getSectionLength(0), 2);
+    wrapper.unmount();
+  });
+
+  it('should work with a TreeDataSource', async () => {
+    let ds = new TreeDS;
+    let renderItem = (item) => <span>{item.name}</span>;
+    let wrapper = shallow(
+      <TreeView
+        dataSource={ds}
+        renderItem={renderItem} />
+    );
+    await sleep(100);
+    let collection = wrapper.find(EditableCollectionView);
+    assert.equal(collection.prop('dataSource').getSectionLength(0), 2);
+    wrapper.unmount();
+  });
+
   describe('Accessibility implementation', () => {
     it('should have role="tree"', function () {
-      let wrapper = shallow(<TreeView />);
+      let ds = new TreeDS;
+      let wrapper = shallow(<TreeView dataSource={ds} />);
 
       assert.equal(wrapper.prop('role'), 'tree');
     });
 
     it('should include aria-multiselectable prop when allowsSelection and allowsMultipleSelection are true', function () {
-      let wrapper = shallow(<TreeView />);
+      let ds = new TreeDS;
+      let wrapper = shallow(<TreeView dataSource={ds} />);
 
       assert(!wrapper.prop('aria-multiselectable'));
 
@@ -42,10 +73,12 @@ describe('TreeView', function () {
       let dataSource = new TestDataSource;
       await dataSource.loadData();
       let renderItem = (item) => <span>{item.name}</span>;
-      let wrapper = mount(<TreeView
-        dataSource={dataSource}
-        renderItem={renderItem}
-        allowsSelection />);
+      let wrapper = mount(
+        <TreeView
+          dataSource={dataSource}
+          renderItem={renderItem}
+          allowsSelection />
+      );
       wrapper.update();
       await sleep(1);
       await dataSource.expandItem(dataSource.getItem(0, 0).item);
@@ -65,8 +98,9 @@ describe('TreeView', function () {
 
   describe('renderItemView', function () {
     it('should render a toggleable tree item', function () {
+      let ds = new TreeDS;
       let renderItem = (item) => <span>{item.name}</span>;
-      let wrapper = shallow(<TreeView renderItem={renderItem} />);
+      let wrapper = shallow(<TreeView dataSource={ds} renderItem={renderItem} />);
       let item = wrapper.wrap(wrapper.instance().renderItemView('item', {hasChildren: true, isToggleable: true, item: 'world'}));
 
       assert.equal(item.type(), TreeItem);
@@ -95,8 +129,8 @@ describe('TreeView', function () {
 
       let target = new DragTarget('item', new IndexPath(0, 0));
 
-      assert.equal(wrapper.instance().getDropTarget(target), target);
-      assert.equal(wrapper.instance().getDropTarget(new DragTarget('item', new IndexPath(0, 1))), null);
+      assert.equal(wrapper.prop('delegate').getDropTarget(target), target);
+      assert.equal(wrapper.prop('delegate').getDropTarget(new DragTarget('item', new IndexPath(0, 1))), null);
     });
   });
 

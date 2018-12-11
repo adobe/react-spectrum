@@ -1,4 +1,5 @@
 import {ArrayDataSource, IndexPath} from '@react/collection-view';
+import autobind from 'autobind-decorator';
 
 /**
  * Represents a node in the tree
@@ -18,10 +19,14 @@ class TreeItem {
     this.index = index;
   }
 
-  walk(fn) {
+  walk(fn, all = false) {
+    if (!this.children) {
+      return;
+    }
+
     for (let child of this.children) {
       fn(child);
-      if (child.isExpanded) {
+      if (child.isExpanded || all) {
         child.walk(fn);
       }
     }
@@ -51,7 +56,7 @@ class TreeItem {
   }
 }
 
-/**
+/*
  * TreeViewDataSource is the super class for all data sources used
  * by TreeView. It manages expanding and collapsing items, loading
  * children on demand, and manipulation of that data. Because it
@@ -59,18 +64,44 @@ class TreeItem {
  * items in the tree must be unique.
  */
 export default class TreeViewDataSource extends ArrayDataSource {
-  constructor() {
+  constructor(dataSource) {
     super([[]]);
 
     this.root = new TreeItem(null, null, false);
     this.root.isExpanded = true;
-    this.lookup = new WeakMap;
+    this.lookup = new Map;
+    this.dataSource = dataSource;
+
+    if (dataSource && typeof dataSource.on === 'function') {
+      // Bind methods that come from ArrayDataSource
+      this.startTransaction = this.startTransaction.bind(this);
+      this.endTransaction = this.endTransaction.bind(this);
+
+      // Setup event handlers
+      dataSource.on('startTransaction', this.startTransaction);
+      dataSource.on('endTransaction', this.endTransaction);
+      dataSource.on('insertChild', this.insertChild);
+      dataSource.on('removeItem', this.removeItem);
+      dataSource.on('moveItem', this.moveItem);
+      dataSource.on('reloadItem', this.reloadItem);
+    }
 
     process.nextTick(() => this.loadData());
   }
 
+  teardown() {
+    if (this.dataSource && typeof this.dataSource.removeListener === 'function') {
+      this.dataSource.removeListener('startTransaction', this.startTransaction);
+      this.dataSource.removeListener('endTransaction', this.endTransaction);
+      this.dataSource.removeListener('insertChild', this.insertChild);
+      this.dataSource.removeListener('removeItem', this.removeItem);
+      this.dataSource.removeListener('moveItem', this.moveItem);
+      this.dataSource.removeListener('reloadItem', this.reloadItem);
+    }
+  }
+
   async loadData() {
-    this.lookup = new WeakMap;
+    this.lookup = new Map;
     await this.loadChildren(this.root);
 
     let items = [];
@@ -120,6 +151,10 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @abstract
    */
   async getChildren(parent) {
+    if (this.dataSource) {
+      return this.dataSource.getChildren(parent);
+    }
+
     throw new Error('getChildren must be implemented by subclasses');
   }
 
@@ -130,11 +165,41 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @abstract
    */
   hasChildren(parent) {
+    if (this.dataSource) {
+      return this.dataSource.hasChildren(parent);
+    }
+
     throw new Error('hasChildren must be implemented by subclasses');
   }
 
   _getItem(parent) {
-    return parent ? this.lookup.get(parent) : this.root;
+    if (!parent) {
+      return this.root;
+    }
+
+    let node = this.lookup.get(parent);
+    if (node) {
+      return node;
+    }
+
+    // If nothing was found in the lookup, an equivalent object may exist with different object identity.
+    // Search through the map to find one that matches the isItemEqual comparator.
+    return this._findItem(this.lookup.values(), parent);
+  }
+
+  _findItem(haystack, needle) {
+    let isItemEqual = this.dataSource && this.dataSource.isItemEqual;
+    if (typeof isItemEqual !== 'function') {
+      return null;
+    }
+
+    for (let node of haystack) {
+      if (isItemEqual(node.item, needle)) {
+        return node;
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -162,6 +227,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * Reloads the given item
    * @param {object} item
    */
+  @autobind
   reloadItem(item) {
     let indexPath = this.indexPathForItem(item);
     if (indexPath) {
@@ -200,15 +266,15 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} item
    */
   async toggleItem(item) {
-    let content = this._getItem(item);
-    if (!content) {
+    let node = this._getItem(item);
+    if (!node) {
       return;
     }
 
-    if (content.isExpanded) {
-      this.collapseItem(item);
+    if (node.isExpanded) {
+      this.collapseItem(node.item);
     } else {
-      await this.expandItem(item);
+      await this.expandItem(node.item);
     }
   }
 
@@ -217,25 +283,25 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} item
    */
   async expandItem(item) {
-    let content = this._getItem(item);
-    if (!content || content.isExpanded) {
+    let node = this._getItem(item);
+    if (!node || node.isExpanded) {
       return;
     }
 
     // Update parent
-    content.isExpanded = true;
-    this.reloadItem(item);
+    node.isExpanded = true;
+    this.reloadItem(node.item);
 
     // Load children if needed.
-    if (!content.children) {
-      await this.loadChildren(content);
+    if (!node.children) {
+      await this.loadChildren(node);
     }
 
     // Add all children to the visible set
     this.startTransaction();
 
-    let indexPath = this.indexPathForItem(item);
-    content.walk(child => {
+    let indexPath = this.indexPathForItem(node.item);
+    node.walk(child => {
       indexPath.index++;
       if (!child.isVisible) {
         child.isVisible = true;
@@ -251,23 +317,23 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} item
    */
   collapseItem(item) {
-    let content = this._getItem(item);
-    if (!content || !content.isExpanded) {
+    let node = this._getItem(item);
+    if (!node || !node.isExpanded) {
       return;
     }
 
     // Update parent
-    content.isExpanded = false;
-    this.reloadItem(item);
+    node.isExpanded = false;
+    this.reloadItem(node.item);
 
     // Remove all children from visible
     this.startTransaction();
 
-    let indexPath = this.indexPathForItem(item, +1);
-    content.walk(child => {
+    let indexPath = this.indexPathForItem(node.item, +1);
+    node.walk(child => {
       if (child.isVisible) {
         child.isVisible = false;
-        this.removeItem(indexPath);
+        super.removeItem(indexPath);
       }
     });
 
@@ -282,7 +348,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     // If there are no children, insert after the parent item.
     if (parentItem.children.length === 0) {
-      return this.indexPathForItem(parent, +1);
+      return this.indexPathForItem(parentItem.item, +1);
     }
 
     // Check if appending to the parent
@@ -306,6 +372,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {number} index - The child insertion index
    * @param {object} child - The child to insert
    */
+  @autobind
   insertChild(parent, index, child) {
     let parentItem = this._getItem(parent);
     if (!parentItem) {
@@ -315,12 +382,12 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Make sure the disclosure indicator is correct
     if (!parentItem.hasChildren) {
       parentItem.hasChildren = true;
-      this.reloadItem(parent);
+      this.reloadItem(parentItem.item);
     }
 
     // If the children have been loaded, insert the new child
     if (parentItem.children) {
-      let insertionIndex = this._findInsertionIndex(parent, index);
+      let insertionIndex = this._findInsertionIndex(parentItem.item, index);
       let childItem = new TreeItem(child, parentItem, this.hasChildren(child), index);
       parentItem.children.splice(index, 0, childItem);
       parentItem.updateChildIndices(index + 1);
@@ -347,14 +414,13 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     // Remove the child
     let child = parentItem.children[index];
-    this.lookup.delete(child);
     parentItem.children.splice(index, 1);
     parentItem.updateChildIndices(index);
 
     // Make sure the disclosure indicator is correct
     if (parentItem.children.length === 0) {
       parentItem.hasChildren = false;
-      this.reloadItem(parent);
+      this.reloadItem(parentItem.item);
     }
 
     // Remove from the visible items if the parent is expanded
@@ -363,18 +429,39 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
       let indexPath = this.indexPathForItem(child.item);
       child.isVisible = false;
-      this.removeItem(indexPath);
+      super.removeItem(indexPath);
 
       // Remove all children
       if (child.isExpanded) {
         child.walk(child => {
           child.isVisible = false;
-          this.removeItem(indexPath);
+          super.removeItem(indexPath);
         });
       }
 
       this.endTransaction();
     }
+
+    // Remove all children from the lookup map
+    child.walk(child => {
+      this.lookup.delete(child.item);
+    }, true);
+
+    this.lookup.delete(child.item);
+  }
+
+  /**
+   * Removes an item from the tree view.
+   * @param {object} item - The item to remove
+   */
+  @autobind
+  removeItem(item) {
+    let node = this._getItem(item);
+    if (!node) {
+      return;
+    }
+
+    this.removeChild(node.parent.item, node.index);
   }
 
   /**
@@ -394,7 +481,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Find the visible indexes to update
     let child = fromItem.children[fromIndex];
     let fromVisibleIndex = this.indexPathForItem(child.item);
-    let toVisibleIndex = this._findInsertionIndex(toParent, toIndex);
+    let toVisibleIndex = this._findInsertionIndex(toItem.item, toIndex);
 
     // Move the child to the new parent
     child.parent = toItem;
@@ -416,12 +503,12 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Reload both parents to ensure the disclosure indicators are correct
     if (fromItem.children.length === 0) {
       fromItem.hasChildren = false;
-      this.reloadItem(fromParent);
+      this.reloadItem(fromItem.item);
     }
 
     if (!toItem.hasChildren) {
       toItem.hasChildren = true;
-      this.reloadItem(toParent);
+      this.reloadItem(toItem.item);
     }
 
     // Move, remove, or insert the item from visible depending on whether parents are expanded
@@ -430,13 +517,63 @@ export default class TreeViewDataSource extends ArrayDataSource {
         toVisibleIndex.index--;
       }
 
-      this.moveItem(fromVisibleIndex, toVisibleIndex);
+      super.moveItem(fromVisibleIndex, toVisibleIndex);
     } else if (fromItem.isExpanded) {
       child.isVisible = false;
-      this.removeItem(fromVisibleIndex);
+      super.removeItem(fromVisibleIndex);
     } else if (toItem.isExpanded) {
       child.isVisible = true;
       this.insertItem(toVisibleIndex, child);
+    }
+  }
+
+  /**
+   * Moves an item to a new parent, or to a new index within the same parent
+   * @param {object} fromParent - The item to move
+   * @param {object} [toParent] - The parent item to move to. If not provided, the item is moved within the same parent.
+   * @param {number} toIndex - The index to move the item to
+   */
+  @autobind
+  moveItem(item, toParent, toIndex) {
+    let node = this._getItem(item);
+    if (!node) {
+      return;
+    }
+
+    if (typeof toParent === 'number') {
+      toIndex = toParent;
+      toParent = node.parent.item;
+    }
+
+    this.moveChild(node.parent.item, node.index, toParent, toIndex);
+  }
+
+  performDrop(dropTarget, dropOperation, items) {
+    if (this.dataSource && typeof this.dataSource.performDrop === 'function') {
+      let target = this.getItem(dropTarget.indexPath.section, dropTarget.indexPath.index);
+      if (dropTarget.dropPosition === 'DROP_ON') {
+        this.dataSource.performDrop(target.item, 0, dropOperation, items);
+      } else {
+        this.dataSource.performDrop(target.parent.item, target.index, dropOperation, items);
+      }
+    }
+  }
+
+  performReorder(dragTarget, dropTarget, dropOperation, indexPaths) {
+    if (this.dataSource && typeof this.dataSource.performMove === 'function') {
+      let target = this.getItem(dropTarget.indexPath.section, dropTarget.indexPath.index);
+      let items = Array.from(indexPaths)
+        .map(indexPath => this.getItem(indexPath.section, indexPath.index).item)
+        .filter(item => item !== target.item);
+      if (items.length === 0) {
+        return;
+      }
+      
+      if (dropTarget.dropPosition === 'DROP_ON') {
+        this.dataSource.performMove(target.item, 0, dropOperation, items);
+      } else {
+        this.dataSource.performMove(target.parent.item, target.index, dropOperation, items);
+      }
     }
   }
 }

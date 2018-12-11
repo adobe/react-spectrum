@@ -60,6 +60,12 @@ export default class Column extends React.Component {
       this.props.onFocus(e);
     }
 
+    // Ignore this focus event if it is the entire collection-view that is
+    // focusing rather than an individual item.
+    if (e.target === this.collection.getDOMNode()) {
+      return;
+    }
+
     // Wait until collection-view updates
     requestAnimationFrame(() => {
       // If the focused item is not selected, select it.

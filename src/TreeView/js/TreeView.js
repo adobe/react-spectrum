@@ -3,10 +3,13 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import {DragTarget, EditableCollectionView, IndexPath, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
+import Provider from '../../Provider';
 import proxy from '../../utils/proxyObject';
 import React from 'react';
 import TreeItem from './TreeItem';
 import '../style/index.styl';
+import TreeViewDataSource from './TreeViewDataSource';
+import TreeViewDelegate from './TreeViewDelegate';
 
 importSpectrumCSS('treeview');
 
@@ -16,7 +19,7 @@ importSpectrumCSS('treeview');
 @autobind
 export default class TreeView extends React.Component {
   static propTypes = {
-    /** The datasource for the tree view. Should be a subclass of `TreeViewDataSource`. */
+    /** The datasource for the tree view. Should be a subclass of `TreeDataSource`. */
     dataSource: PropTypes.object.isRequired,
 
     /** A function which renders an item in the tree */
@@ -50,6 +53,19 @@ export default class TreeView extends React.Component {
     /** The timeout after which items automatically expand when dragging over them. */
     dragHoverTimeout: PropTypes.number,
 
+    /** Whether the user can drag rows from the table. */
+    canDragItems: PropTypes.bool,
+
+    /** A function which renders the view to display under the cursor during drag and drop. */
+    renderDragView: PropTypes.func,
+
+    /**
+     * Whether the TableView accepts drops.
+     * If `true`, the table accepts all types of drops. Alternatively,
+     * it can be set to an array of accepted drop types.
+     */
+    acceptsDrops: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+
     /** Custom CSS class to add to the tree view */
     className: PropTypes.string
   };
@@ -61,6 +77,14 @@ export default class TreeView extends React.Component {
     dragHoverTimeout: 800
   };
 
+  // These come from the parent Provider. Used to set the correct props
+  // to the provider that wraps the drag view.
+  static contextTypes = {
+    theme: PropTypes.string,
+    scale: PropTypes.string,
+    locale: PropTypes.string
+  };
+
   constructor(props) {
     super(props);
 
@@ -68,21 +92,72 @@ export default class TreeView extends React.Component {
       rowHeight: 44
     });
 
-    this.delegate = Object.assign({}, proxy(this.props.delegate), proxy(this));
-
     this.treeId = createId();
+
+    let dataSource = this.getDataSource(props);
+    let delegate = this.getDelegate(props, dataSource);
+    this.state = {
+      dataSource,
+      delegate
+    };
+  }
+
+  getDataSource(props) {
+    // If the data source provided is a TreeViewDataSource (old API), use it directly,
+    // otherwise wrap it.
+    let dataSource = props.dataSource instanceof TreeViewDataSource
+      ? props.dataSource 
+      : new TreeViewDataSource(props.dataSource);
+
+    // Update selected items once loaded
+    if (props.selectedItems) {
+      dataSource.once('load', () => this.forceUpdate());
+    }
+    
+    return dataSource;
+  }
+
+  getDelegate(props, dataSource) {
+    // Combine the data source and delegate objects.
+    // Providing methods on the data source has superseded providing an explicit delegate,
+    // but the old way is supported for backward compatibility.
+    let combinedDelegate = Object.assign({}, proxy(props.dataSource), proxy(props.delegate));
+
+    // Create a delegate proxy object, which ensures that the delegate methods are 
+    // called with item objects rather than IndexPaths, which don't make sense in a tree.
+    let delegate = new TreeViewDelegate(dataSource, combinedDelegate);
+
+    // Finally, combine the delegate with the TreeView itself, which is needed
+    // for UI rendering purposes.
+    return Object.assign({}, proxy(delegate), proxy(this));
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.dataSource !== this.props.dataSource) {
+      this.state.dataSource.teardown();
+      let dataSource = this.getDataSource(props);
+      let delegate = this.getDelegate(props, dataSource);
+      this.setState({
+        dataSource,
+        delegate
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.state.dataSource.teardown();
   }
 
   render() {
     const {
       selectedItems,
-      dataSource,
       className,
       id = this.treeId,
       allowsSelection,
       allowsEmptySelection,
       allowsMultipleSelection
     } = this.props;
+    let {dataSource} = this.state;
 
     let selectedIndexPaths;
     if (selectedItems) {
@@ -95,7 +170,8 @@ export default class TreeView extends React.Component {
         ref={c => this.collection = c}
         className={classNames('spectrum-TreeView', className)}
         layout={this.layout}
-        delegate={this.delegate}
+        delegate={this.state.delegate}
+        dataSource={dataSource}
         transitionDuration={300}
         canSelectItems={this.props.allowsSelection}
         selectedIndexPaths={selectedIndexPaths}
@@ -120,15 +196,40 @@ export default class TreeView extends React.Component {
     );
   }
 
+  renderDragView(target) {
+    let dragView;
+    let style = {
+      background: 'transparent'
+    };
+
+    // Use custom drag renderer if provided,
+    // otherwise just get the existing item view.
+    if (this.props.renderDragView) {
+      dragView = this.props.renderDragView(target, this.collection.selectedIndexPaths);
+    } else {
+      // Get the item wrapper view from collection-view. The first child is the actual item component.
+      let view = this.collection.getItemView(target.indexPath);
+      dragView = [...view.children][0];
+
+      style.width = view.layoutInfo.rect.width;
+      style.height = view.layoutInfo.rect.height;
+    }
+    
+    // Wrap in a spectrum provider so spectrum components are themed correctly.
+    return (
+      <Provider {...this.context} style={style}>
+        {dragView}
+      </Provider>
+    );
+  }
+
   indentationForItem(section, index) {
     let content = this.collection.getItem(section, index);
     return 28 * content.level;
   }
 
   onKeyDown(e) {
-    const {
-      dataSource
-    } = this.props;
+    const {dataSource} = this.state;
     let focusedItem = this.focusedItem;
     let treeItem;
     let indexPath;
@@ -176,27 +277,39 @@ export default class TreeView extends React.Component {
     }
   }
 
+  /**
+   * Expands or collapses the given item depending on its current state.
+   * @param {object} item
+   */
   toggleItem(item) {
-    this.props.dataSource.toggleItem(item);
+    this.state.dataSource.toggleItem(item);
 
     if (this.props.onToggleItem) {
-      const treeItem = this.props.dataSource._getItem(item);
+      const treeItem = this.state.dataSource._getItem(item);
       if (treeItem && treeItem.isToggleable && treeItem.hasChildren) {
         this.props.onToggleItem(treeItem.item, treeItem.isExpanded);
       }
     }
   }
 
+  /**
+   * Expands the given item, displaying all of its children.
+   * @param {object} item
+   */
   expandItem(item) {
-    this.props.dataSource.expandItem(item);
+    this.state.dataSource.expandItem(item);
   }
 
+  /**
+   * Collapses the given item, hiding all of its children.
+   * @param {object} item
+   */
   collapseItem(item) {
-    this.props.dataSource.collapseItem(item);
+    this.state.dataSource.collapseItem(item);
   }
 
   selectItem(item) {
-    let indexPath = this.props.dataSource.indexPathForItem(item);
+    let indexPath = this.state.dataSource.indexPathForItem(item);
     if (indexPath) {
       this.collection.selectItem(indexPath);
     }
@@ -219,34 +332,10 @@ export default class TreeView extends React.Component {
     return this.collection.getItem(this.collection.focusedIndexPath).item;
   }
 
-  shouldSelectItem(indexPath) {
-    let item = this.collection.getItem(indexPath).item;
-    if (this.props.delegate && this.props.delegate.shouldSelectItem) {
-      return this.props.delegate.shouldSelectItem(item);
-    }
-
-    return true;
-  }
-
   onSelectionChange() {
     if (this.props.onSelectionChange) {
       this.props.onSelectionChange(this.selectedItems);
     }
-  }
-
-  shouldAcceptDrop() {
-    // Override this - we check it below in getDropTarget.
-    return true;
-  }
-
-  getDropTarget(target) {
-    let item = this.collection.getItem(target.indexPath).item;
-
-    if (this.props.delegate && !this.props.delegate.shouldAcceptDrop(item)) {
-      return null;
-    }
-
-    return target;
   }
 
   dropTargetUpdated(dropTarget) {

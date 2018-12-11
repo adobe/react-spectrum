@@ -77,7 +77,7 @@ Data sources can be shared across multiple types of views that display collectio
 Data provided by a data source is two dimensional: items are grouped into sections. This can be useful, for example, if you 
 want to display headers above a group of items.
 
-There is a base class for data sources that can be used by TableView called `ListDataSource`, which supports asynchronous
+There is a base class for data sources that can be used by TableView called [ListDataSource](/classes/ListDataSource), which supports asynchronous
 loading of data, infinite scrolling, and sorting. To provide data, implement the `load` method and return the data for
 the rows you want to display. If you want to support infinite scrolling, implement the `loadMore` method as well.
 
@@ -105,7 +105,7 @@ correct sections.
 When data in the data source changes, perhaps in response to some external event such as a server update, the data source 
 should emit events. The table view listens for these events and updates its views as necessary, optionally with an animation. 
 There are helper methods as part of the base data source class that you can call to emit these events and update the data.
-You can also use transactions to group multiple updates together into a single animation. See the API docs for details.
+You can also use transactions to group multiple updates together into a single animation. See the [API docs](/classes/ListDataSource) for details.
 
 ### Cell Renderers
 
@@ -243,7 +243,7 @@ class MyDataSource extends ListDataSource {
 
 ### Drop Targets
 
-To enable dropping files or other objects in a TableView, pass the `allowsDrops` prop. This can be a boolean to accept all drops,
+To enable dropping files or other objects in a TableView, pass the `acceptsDrops` prop. This can be a boolean to accept all drops,
 or a list of allowed drag types (e.g. `Files`, `text/plain` or your custom format name).
 
 #### Handling drops

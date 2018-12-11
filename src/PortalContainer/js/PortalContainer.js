@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 let children = {};
-/**
+
+/*
  * A global portal that lives in the document body which can be used to add
  * overlays like modals outside the normal React component tree.
  */

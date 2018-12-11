@@ -2,7 +2,8 @@ import {action, storiesOf} from '@storybook/react';
 import Folder from '../src/Icon/Folder';
 import Layers from '../src/Icon/Layers';
 import React from 'react';
-import {TreeView, TreeViewDataSource} from '../src/TreeView';
+import TreeDataSource from '../src/TreeDataSource';
+import {TreeView} from '../src/TreeView';
 import {VerticalCenter} from '../.storybook/layout';
 import './TreeView.styl';
 
@@ -36,6 +37,21 @@ storiesOf('TreeView', module)
     'acceptsDrops: true',
     () => render({icons: true, acceptsDrops: true}),
     {inline: true}
+  )
+  .addWithInfo(
+    'canDragItems: true',
+    () => render({icons: true, canDragItems: true, allowsSelection: true, allowsMultipleSelection: true, acceptsDrops: true}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'selectedItems',
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [data[0]]}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'selectedItems using isItemEqual',
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]}),
+    {inline: true}
   );
 
 const data = [
@@ -55,7 +71,7 @@ const data = [
   {label: 'Test 2'}
 ];
 
-class ExampleDS extends TreeViewDataSource {
+class ExampleDS extends TreeDataSource {
   async getChildren(item) {
     if (!item) {
       return data;
@@ -66,6 +82,17 @@ class ExampleDS extends TreeViewDataSource {
 
   hasChildren(item) {
     return !!item.children;
+  }
+
+  itemsForDrop(dropTarget, dataTransfer) {
+    let files = Array.from(dataTransfer.files);
+    if (files.length) {
+      return files.map(file => ({label: file.name}));
+    }
+  }
+  
+  isItemEqual(a, b) {
+    return a.label === b.label;
   }
 }
 

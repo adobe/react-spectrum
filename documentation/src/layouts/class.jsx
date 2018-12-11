@@ -2,25 +2,19 @@ import 'babel-polyfill';
 import React from 'react';
 import Heading from '@react/react-spectrum/Heading';
 import mdxComponents from '../mdx_components';
-import ComponentAPI from '../components/ComponentAPI';
 import ClassAPI from '../components/ClassAPI';
 import DocsPage from '../components/DocsPage';
 import '../fragments';
 import './css/index.css';
 import './css/prism-okaidia.css';
 
-export default class ComponentLayout extends React.Component {
+export default class ClassLayout extends React.Component {
   render() {
     let { children } = this.props;
-    let component = this.props.data.component;
-    let related = this.props.data.relatedComponents
-      ? this.props.data.relatedComponents.edges.filter(edge => edge.node.docblock && !edge.node.docblock.includes('@private'))
-      : [];
+    let classDoc = this.props.data.classDoc;
     let relatedClasses = this.props.data.relatedClasses && this.props.data.relatedClasses.edges.sort((a, b) => 
       a.node.name < b.node.name ? -1 : 1
     );
-
-    related.sort((a, b) => a.node.displayName < b.node.displayName ? -1 : 1);
 
     let overview = children({
       ...this.props,
@@ -28,14 +22,8 @@ export default class ComponentLayout extends React.Component {
     });
 
     return (
-      <DocsPage overview={overview} data={this.props.data} selectedItem={component.displayName}>
-        <ComponentAPI component={component} />
-        {related.map(edge =>
-          <section key={edge.node.displayName}>
-            <Heading size={1}>{edge.node.displayName}</Heading>
-            <ComponentAPI component={edge.node} />
-          </section>
-        )}
+      <DocsPage overview={overview} data={this.props.data} selectedItem={classDoc.name}>
+        <ClassAPI node={classDoc} />
         {relatedClasses && relatedClasses.map(edge =>
           <section key={edge.node.id}>
             <Heading size={1}>{edge.node.name}</Heading>
@@ -48,7 +36,7 @@ export default class ComponentLayout extends React.Component {
 }
 
 export const pageQuery = graphql`
-  query ComponentLayoutQuery($componentName: String, $relatedComponents: String, $relatedClasses: String) {
+  query ClassLayoutQuery($className: String, $relatedClasses: String) {
     allComponents:allComponentMetadata(sort:{fields:[displayName]}) {
       edges {
         node {
@@ -57,7 +45,7 @@ export const pageQuery = graphql`
         }
       }
     }
-    allClasses:allDocumentationJs(sort:{fields:[name]}) {
+    allClasses:allDocumentationJs {
       edges {
         node {
           id
@@ -65,15 +53,8 @@ export const pageQuery = graphql`
         }
       }
     }
-    component:componentMetadata(displayName:{eq:$componentName}) {
-      ...componentFields
-    }
-    relatedComponents:allComponentMetadata(filter:{displayName:{regex:$relatedComponents}}) {
-      edges {
-        node {
-          ...componentFields
-        }
-      }
+    classDoc:documentationJs(name:{eq:$className}) {
+      ...docFields
     }
     relatedClasses:allDocumentationJs(filter:{name:{regex:$relatedClasses}}) {
       edges {

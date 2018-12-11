@@ -71,12 +71,23 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
         });
 
         let relatedClasses = {};
+        let classes = {};
         for (let edge of result.data.allDocumentationJs.edges) {
           let p = edge.node.id.split(' ')[1].split('/');
           let i = p.lastIndexOf('src');
           let group = p[i + 1];
 
-          if (!groups[group] || groups[group].find(e => e.node.displayName === edge.node.name)) {
+          if (!groups[group]) {
+            if (!classes[group]) {
+              classes[group] = [edge];
+            } else {
+              classes[group].push(edge);
+            }
+
+            continue;
+          }
+
+          if (groups[group].find(e => e.node.displayName === edge.node.name)) {
             continue;
           }
 
@@ -111,6 +122,33 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
             component: overview ? overview.node.absolutePath : path.resolve('./content/components/missing.mdx'),
             context: {
               componentName: edge.node.displayName
+            }
+          })
+        });
+
+        Object.keys(classes).forEach(name => {
+          let group = classes[name];
+          let edge = group.find(e => e.node.name === name);
+          if (!edge) {
+            return;
+          }
+
+          let overview = result.data.componentOverviews.edges.find(e => e.node.name === edge.node.name);
+
+          createLayout({
+            component: path.resolve(`./src/layouts/class.jsx`),
+            id: edge.node.name,
+            context: {
+              className: edge.node.name,
+              relatedClasses: new RegExp('^(' + group.map(edge => edge.node.name).filter(n => n !== name).join('|') + ')$')
+            }
+          })
+          createPage({
+            path: `/classes/${edge.node.name}`,
+            layout: edge.node.name,
+            component: overview ? overview.node.absolutePath : path.resolve('./content/components/missing.mdx'),
+            context: {
+              className: edge.node.name
             }
           })
         });
