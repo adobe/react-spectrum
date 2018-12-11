@@ -20,7 +20,7 @@ export default class Dialog extends Component {
     onCancel: PropTypes.func,
     onConfirm: PropTypes.func,
     open: PropTypes.bool,
-    title: PropTypes.string,
+    title: PropTypes.node,
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
     mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
