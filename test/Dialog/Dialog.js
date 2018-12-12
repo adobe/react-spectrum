@@ -10,7 +10,6 @@ describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
     assert(tree.hasClass('spectrum-Dialog'));
-    assert(tree.hasClass('spectrum-Dialog--centered'));
   });
 
   it('supports optional title', () => {
@@ -54,6 +53,11 @@ describe('Dialog', () => {
     tree.setProps({variant: 'destructive'});
     assert(!tree.hasClass('spectrum-Dialog--error'));
     assert(tree.find('.spectrum-Dialog-footer').prop('variant'), 'destructive');
+  });
+
+  it('supports alert mode', () => {
+    const tree = shallow(<Dialog mode="alert" confirmLabel="Go" />);
+    assert(tree.hasClass('spectrum-Dialog--alert'));
   });
 
   it('supports fullscreen mode', () => {

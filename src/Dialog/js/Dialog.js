@@ -22,7 +22,7 @@ export default class Dialog extends Component {
     open: PropTypes.bool,
     title: PropTypes.node,
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
-    mode: PropTypes.oneOf(['centered', 'fullscreen', 'fullscreenTakeover']),
+    mode: PropTypes.oneOf(['alert', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
     autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', 'secondary', null]),
     keyboardConfirm: PropTypes.bool
@@ -33,7 +33,6 @@ export default class Dialog extends Component {
     confirmDisabled: false,
     keyboardConfirm: false,
     open: true,
-    mode: 'centered',
     role: 'dialog',
     autoFocusButton: null,
     onClose: function () {}
@@ -104,8 +103,8 @@ export default class Dialog extends Component {
       <div
         className={classNames(
           'spectrum-Dialog',
-          `spectrum-Dialog--${mode}`,
           {
+            [`spectrum-Dialog--${mode}`]: mode,
             'spectrum-Dialog--error': variant === 'error',
             'is-open': open
           },

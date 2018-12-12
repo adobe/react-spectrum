@@ -76,6 +76,11 @@ storiesOf('Dialog', module)
     {inline: true}
   )
   .addWithInfo(
+    'mode: alert',
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'alert', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'mode: fullscreen',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreen', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
     {inline: true}
