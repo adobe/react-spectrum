@@ -48,12 +48,14 @@ export default function Toast({
       )}
       {...filterDOMProps(otherProps)}>
       {Icon && <Icon size={null} className="spectrum-Toast-typeIcon" alt={formatMessage(variant)} />}
-      <div className="spectrum-Toast-content">{children}</div>
+      <div className="spectrum-Toast-body">
+        <div className="spectrum-Toast-content">{children}</div>
+        {actionLabel &&
+          <Button label={actionLabel} quiet variant="overBackground" onClick={onAction} />
+        }
+      </div>
       {showToastButtons &&
         <div className="spectrum-Toast-buttons">
-          {actionLabel &&
-            <Button label={actionLabel} quiet variant="overBackground" onClick={onAction} />
-          }
           {closable &&
             <button aria-label={formatMessage('close')} className="spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground" onClick={onClose}>
               <CrossMedium size={null} />

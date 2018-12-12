@@ -22,7 +22,7 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'actionable',
-    () => <Toast closable actionLabel="undo" onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
+    () => <Toast closable actionLabel="Undo" onAction={action('onAction')} onClose={action('onClose')}>The thing that you are trying to do the thing to has been archived.</Toast>,
     {inline: true}
   )
   .addWithInfo(
@@ -37,7 +37,7 @@ storiesOf('Toast', module)
   )
   .addWithInfo(
     'variant = info',
-    () => <Toast closable variant="info">Toast is high carb.</Toast>,
+    () => <Toast closable actionLabel="Update" onAction={action('onAction')} variant="info">A new version of Lightroom Classic is now available.</Toast>,
     {inline: true}
   )
   .addWithInfo(
