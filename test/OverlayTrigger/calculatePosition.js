@@ -297,7 +297,7 @@ describe('calculatePosition', function () {
 
   describe('overlay smaller than target aligns in center', function () {
     checkPosition(
-      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
+      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, null, 250]
     );
   });
 

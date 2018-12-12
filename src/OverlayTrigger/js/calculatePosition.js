@@ -175,7 +175,7 @@ export function calculatePositionInternal(placementInput, containerDimensions, c
   position[crossAxis] += delta;
 
   const arrowPosition = {};
-  arrowPosition[crossAxis] = childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2;
+  arrowPosition[crossAxis] = childOffset[crossSize] > overlaySize[crossSize] ? null : (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
   return {
     positionLeft: position.left,
