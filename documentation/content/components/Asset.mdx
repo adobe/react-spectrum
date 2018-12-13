@@ -104,7 +104,8 @@ The `alt` prop should be used to specify alternate content for screen readers.
 
 ### Images
 
-All images that are neither decorative nor having alternative text that would be redundant with displayed text, must use the `alt` prop to provide alternate content for screen readers.
+All images that are neither decorative nor having alternative text that would be redundant with displayed text, 
+must use the `alt` prop to provide alternate content for screen readers.
 
 ```jsx
 <Asset
@@ -114,69 +115,19 @@ All images that are neither decorative nor having alternative text that would be
   Montparnasse Tower 56th Floor Observation Deck" />
 ```
 
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" alt="Sunset view of Paris featuring the Eiffel Tower as seen from the Montparnasse Tower 56th Floor Observation Deck" />
-</div>
+## Folders and files
 
-### Default label for File
-
-By default, an Asset that displays a file uses the localized string "File" as an accessibility label.
+By default, an Asset that displays a folder or file uses a default localized string as the accessibility label. 
+Use the `alt` prop to override it with a custom label.
 
 ```jsx
-<Asset type="file" />
+<Asset type="folder" alt="File Folder" />
 ```
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="file" />
-</div>
-
-Use the `alt` prop to override the default "File" label.
-
-```jsx
-<Asset type="file" alt="Document" />
-```
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="file" alt="Document" />
-</div>
-
-### Default label for Folder
-
-By default, an Asset that displays a folder uses the localized string "Folder" as an accessibility label.
-
-```jsx
-<Asset type="folder" />
-```
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="folder" />
-</div>
-
-Use the `alt` prop to override the default "Folder" label.
-
-```jsx
-<Asset type="file" alt="File Folder" />
-```
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="file" alt="File Folder" />
-</div>
 
 ### Decorative
 
-Use the `decorative` prop to indicate that the image is decorative, or redundant with displayed text, and should not announced by screen readers.
+Use the `decorative` prop to indicate that an asset is decorative, or redundant with displayed text, and should not announced by screen readers.
 
 ```jsx
-<Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" decorative />
-
 <Asset type="file" decorative />
-
-<Asset type="folder" decorative />
 ```
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" decorative />
-</div>
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="file" decorative />
-</div>
-<div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="folder" decorative />
-</div>
-
-
