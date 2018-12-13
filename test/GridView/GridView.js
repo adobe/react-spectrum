@@ -4,6 +4,7 @@ import {GridLayout, GridView} from '../../src/GridView';
 import ListDataSource from '../../src/ListDataSource';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 describe('GridView', function () {
   class TestDS extends ListDataSource {
@@ -60,5 +61,19 @@ describe('GridView', function () {
 
     let item = wrapper.wrap(wrapper.prop('renderItemView')('item', {name: 'foo'}));
     assert.equal(item.type(), GridItem);
+  });
+
+  it('should fire an onSelectionChange event', function () {
+    let onSelectionChange = sinon.spy();
+    let wrapper = shallow(
+      <GridView
+        layout={GridLayout}
+        dataSource={ds}
+        renderItem={renderItem}
+        onSelectionChange={onSelectionChange} />
+    );
+
+    wrapper.simulate('selectionChanged');
+    assert(onSelectionChange.calledOnce);
   });
 });

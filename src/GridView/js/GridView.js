@@ -117,6 +117,7 @@ export default class GridView extends React.Component {
       allowsMultipleSelection,
       className,
       dataSource,
+      onSelectionChange,
       ...otherProps
     } = this.props;
 
@@ -133,6 +134,7 @@ export default class GridView extends React.Component {
         layout={this.state.layout}
         dataSource={dataSource}
         canSelectItems={allowsSelection}
+        onSelectionChanged={onSelectionChange}
         allowsMultipleSelection={allowsMultipleSelection}
         selectionMode="toggle"
         keyboardMode="focus" />
