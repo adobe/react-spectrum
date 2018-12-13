@@ -17,7 +17,7 @@
     "react-dom": "^0.14 || ^15 || ^16"
   },
   "dependencies": {
-    "@react/collection-view": "^4.0.0",
+    "@react/collection-view": "^4.1.0",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
     "dom-helpers": "^3.3.1",
