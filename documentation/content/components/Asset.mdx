@@ -11,11 +11,15 @@ Here is an example of an Asset that displays an image.
 ```jsx
 import {Asset} from '@react/react-spectrum/Asset';
 
-<Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" />
+<Asset
+  type="image"
+  src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg"
+  alt="Sunset view of Paris featuring the Eiffel Tower as seen from the
+  Montparnasse Tower 56th Floor Observation Deck" />
 ```
 
 <div style={{'width':'208px', 'height':'208px'}}>
-  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" />
+  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" alt="Sunset view of Paris featuring the Eiffel Tower as seen from the Montparnasse Tower 56th Floor Observation Deck" />
 </div>
 
 ## Files
@@ -60,11 +64,11 @@ smartness, so that the asset can occupy the full size of its container.
 ## Image Caching
 
 By default, image assets are displayed using the standard browser `img` tag and browser caching sematics. However, when used as part of a virtual scroller
-such as GridView or TableView, it is useful to control this behavior more carefully in order to avoid reloading images more than necessary as they 
+such as GridView or TableView, it is useful to control this behavior more carefully in order to avoid reloading images more than necessary as they
 scroll in and out of view. In addition, since not all assets will be displayed initially, preloading images in advance of them scrolling into view
 can make for a better experience.
 
-In order to support this, the Asset component has a built in image cache. It is turned off by default because it requires CORS headers to be enabled 
+In order to support this, the Asset component has a built in image cache. It is turned off by default because it requires CORS headers to be enabled
 on images by the server. If your backend supports CORS, you can enable image caching using the `cache` prop.
 
 ```jsx
@@ -96,4 +100,83 @@ To internationalize an Asset, a localized string should be passed to the `alt` p
 
 ## Accessibility
 
-The `alt` prop should be used to pass alternate content for screen readers.
+The `alt` prop should be used to specify alternate content for screen readers.
+
+### Images
+
+All images that are neither decorative nor having alternative text that would be redundant with displayed text, must use the `alt` prop to provide alternate content for screen readers.
+
+```jsx
+<Asset
+  type="image"
+  src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg"
+  alt="Sunset view of Paris featuring the Eiffel Tower as seen from the
+  Montparnasse Tower 56th Floor Observation Deck" />
+```
+
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" alt="Sunset view of Paris featuring the Eiffel Tower as seen from the Montparnasse Tower 56th Floor Observation Deck" />
+</div>
+
+### Default label for File
+
+By default, an Asset that displays a file uses the localized string "File" as an accessibility label.
+
+```jsx
+<Asset type="file" />
+```
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="file" />
+</div>
+
+Use the `alt` prop to override the default "File" label.
+
+```jsx
+<Asset type="file" alt="Document" />
+```
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="file" alt="Document" />
+</div>
+
+### Default label for Folder
+
+By default, an Asset that displays a folder uses the localized string "Folder" as an accessibility label.
+
+```jsx
+<Asset type="folder" />
+```
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="folder" />
+</div>
+
+Use the `alt` prop to override the default "Folder" label.
+
+```jsx
+<Asset type="file" alt="File Folder" />
+```
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="file" alt="File Folder" />
+</div>
+
+### Decorative
+
+Use the `decorative` prop to indicate that the image is decorative, or redundant with displayed text, and should not announced by screen readers.
+
+```jsx
+<Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" decorative />
+
+<Asset type="file" decorative />
+
+<Asset type="folder" decorative />
+```
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="image" src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg" decorative />
+</div>
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="file" decorative />
+</div>
+<div style={{'width':'208px', 'height':'208px'}}>
+  <Asset type="folder" decorative />
+</div>
+
+

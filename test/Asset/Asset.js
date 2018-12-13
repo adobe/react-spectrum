@@ -9,14 +9,41 @@ describe('Asset', () => {
     assert.equal(tree.find('AssetFile').length, 1);
   });
 
+  describe('should support decorative to hide element from screen readers', () => {
+    it('when type is file as the default content', () => {
+      const tree = shallow(<Asset decorative />);
+      assert.equal(tree.find('AssetFile').prop('decorative'), true);
+      tree.setProps({decorative: false});
+      tree.update();
+      assert.equal(tree.find('AssetFile').prop('decorative'), false);
+    });
+    it('when type is image', () => {
+      let imgSrc = 'https://git.corp.adobe.com/pages/govett/photos/photos/DSC03578.jpg';
+      const tree = shallow(<Asset type="image" smartness={1} src={imgSrc} onLoad={() => {}} alt="image" decorative />);
+      assert.equal(tree.find('AssetImage').prop('alt'), 'image');
+      assert.equal(tree.find('AssetImage').prop('decorative'), true);
+      tree.setProps({decorative: false});
+      tree.update();
+      assert.equal(tree.find('AssetImage').prop('decorative'), false);
+    });
+    it('when type is folder as the default content', () => {
+      const tree = shallow(<Asset type="folder" decorative />);
+      assert.equal(tree.find('AssetFolder').prop('decorative'), true);
+      tree.setProps({decorative: false});
+      tree.update();
+      assert.equal(tree.find('AssetFolder').prop('decorative'), false);
+    });
+  });
+
   it('should support AssetImage when type is image', () => {
     let imgSrc = 'https://git.corp.adobe.com/pages/govett/photos/photos/DSC03578.jpg';
-    const tree = shallow(<Asset type="image" smartness={10} src={imgSrc} onLoad={() => {}} />);
+    const tree = shallow(<Asset type="image" smartness={1} src={imgSrc} onLoad={() => {}} alt="image" />);
     assert.equal(tree.prop('className'), 'spectrum-Asset');
     let asset = tree.find('AssetImage');
     assert.equal(asset.length, 1);
-    assert.equal(asset.prop('smartness'), 10);
+    assert.equal(asset.prop('smartness'), 1);
     assert.equal(typeof asset.prop('onLoad'), 'function');
+    assert.equal(asset.prop('alt'), 'image');
   });
 
   it('should support AssetFolder when type is folder', () => {

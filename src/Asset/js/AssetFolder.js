@@ -1,13 +1,27 @@
 import classNames from 'classnames';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import React, {Component} from 'react';
 
+const formatMessage = messageFormatter(intlMessages);
+
 /*
- * An AssetImage displays a generic folder icon within an Asset component
+ * An AssetFolder displays a generic folder icon within an Asset component
  */
 export default class AssetFolder extends Component {
   render() {
+    const {
+      alt = formatMessage('Folder'),
+      className,
+      decorative
+    } = this.props;
     return (
-      <svg viewBox="0 0 32 32" className={classNames('spectrum-Asset-folder', this.props.className)}>
+      <svg
+        viewBox="0 0 32 32"
+        className={classNames('spectrum-Asset-folder', className)}
+        aria-label={alt}
+        aria-hidden={decorative || null}
+        role="img">
         <path
           className="spectrum-Asset-folderBackground"
           d="M3,29.5c-1.4,0-2.5-1.1-2.5-2.5V5c0-1.4,1.1-2.5,2.5-2.5h10.1c0.5,0,1,0.2,1.4,0.6l3.1,3.1c0.2,0.2,0.4,0.3,0.7,0.3H29c1.4,0,2.5,1.1,2.5,2.5v18c0,1.4-1.1,2.5-2.5,2.5H3z" />

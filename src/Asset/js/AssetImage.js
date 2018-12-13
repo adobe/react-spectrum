@@ -1,3 +1,4 @@
+import {clamp} from '../../utils/number';
 import classNames from 'classnames';
 import Image from '../../Image/js/Image';
 import PropTypes from 'prop-types';
@@ -36,11 +37,14 @@ export default class AssetImage extends Component {
       return 0;
     }
 
+    // smartness should be a value between 0 and 1
+    let smartness = clamp(this.props.smartness, 0, 1);
+
     // Any asset with an aspect ratio smaller than "smallestAspectRatio" would fit the space fully (on one side).
     // Any asset with an aspect ratio bigger than "smallestAspectRatio" would fit a percentage of the space.
     let smallestAspectRatio = 0.25;
     // An asset with an aspect ratio of 1 (a square) would be displayed at the "minimumPercentage" of the space.
-    let minimumPercentage = 1 - this.props.smartness * 0.25;
+    let minimumPercentage = 1 - smartness * 0.25;
     // Aspect ratio of the asset (from 0 to 1) if longest side is 1.
     let aspectRatio = width / Math.max(width, height) * height / Math.max(width, height);
     // Ratio (from 0 to 1) between "smallestAspectRatio" and 1 (a square).

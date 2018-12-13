@@ -13,7 +13,7 @@ storiesOf('Asset', module)
     'Image',
     () => (
       <div style={{'width': '208px', 'height': '208px'}}>
-        <Asset type="image" src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" />
+        <Asset type="image" src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
       </div>
     ),
     {inline: true}
@@ -32,6 +32,24 @@ storiesOf('Asset', module)
     () => (
       <div style={{'width': '208px', 'height': '208px'}}>
         <Asset type="folder" />
+      </div>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Decorative: true',
+    'Use the decorative boolean prop to indicate that the image is decorative, or redundant with displayed text, and should not announced by screen readers.',
+    () => (
+      <div>
+        <div style={{width: '128px', height: '128px'}}>
+          <Asset type="image" src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" decorative />
+        </div>
+        <div style={{width: '128px', height: '128px'}}>
+          <Asset type="file" decorative />
+        </div>
+        <div style={{width: '128px', height: '128px'}}>
+          <Asset type="folder" decorative />
+        </div>
       </div>
     ),
     {inline: true}

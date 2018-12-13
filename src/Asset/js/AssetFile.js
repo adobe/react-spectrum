@@ -1,13 +1,27 @@
 import classNames from 'classnames';
+import intlMessages from '../intl/*.json';
+import {messageFormatter} from '../../utils/intl';
 import React, {Component} from 'react';
 
+const formatMessage = messageFormatter(intlMessages);
+
 /*
- * An AssetImage displays a generic file icon within an Asset component
+ * An AssetFile displays a generic file icon within an Asset component
  */
 export default class AssetFile extends Component {
   render() {
+    const {
+      alt = formatMessage('File'),
+      className,
+      decorative
+    } = this.props;
     return (
-      <svg viewBox="0 0 128 128" className={classNames('spectrum-Asset-file', this.props.className)}>
+      <svg
+        viewBox="0 0 128 128"
+        className={classNames('spectrum-Asset-file', className)}
+        aria-label={alt}
+        aria-hidden={decorative || null}
+        role="img">
         <g>
           <path
             className="spectrum-Asset-fileBackground"

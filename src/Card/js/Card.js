@@ -52,7 +52,8 @@ export default class Card extends React.Component {
     cardVariant: PropTypes.string,
     cardSize: PropTypes.string,
     actionMenu: PropTypes.element,
-    onLoad: PropTypes.func
+    onLoad: PropTypes.func,
+    hasTitle: PropTypes.bool
   };
 
   getChildContext() {
@@ -61,11 +62,19 @@ export default class Card extends React.Component {
       actionMenu = null;
     }
 
+    // Find the CardBody to determine if it has a title.
+    // This is used in CardPreview to decide whether to default the 
+    // image to decorative for accessibility.
+    let cardBody = React.Children.toArray(this.props.children)
+      .find(child => child.type.displayName === 'CardBody');
+    let hasTitle = Boolean(cardBody && cardBody.props.title);
+
     return {
       cardVariant: this.props.variant,
       cardSize: this.props.size,
       actionMenu,
-      onLoad: this.props.onLoad
+      onLoad: this.props.onLoad,
+      hasTitle
     };
   }
 

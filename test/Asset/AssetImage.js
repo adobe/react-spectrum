@@ -2,6 +2,7 @@ import assert from 'assert';
 import {AssetImage} from '../../src/Asset';
 import {mount} from 'enzyme';
 import React from 'react';
+import sinon from 'sinon';
 
 describe('AssetImage', () => {
   // Square Image returns the Minimum Percentage, 75%
@@ -10,12 +11,42 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'complete', {get: () => true});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 240});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 240});
-    
+
+    const onLoad = sinon.spy();
+
     const tree = mount(
       <AssetImage
-        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        onLoad={onLoad} />
     );
-        
+
+    let img = tree.find('img');
+    img.simulate('load', {target: img.getDOMNode()});
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    assert(onLoad.called);
+
+    tree.update();
+    img = tree.find('img');
+
+    assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
+    assert.deepEqual(img.prop('style'), {maxWidth: '75%', maxHeight: '75%'});
+
+    tree.unmount();
+  });
+
+  it('should include alt text for accessibility', async () => {
+    // Jsdom doesn't implement size properties, so set the height and width of the image
+    Object.defineProperty(HTMLImageElement.prototype, 'complete', {get: () => true});
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 240});
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 240});
+
+    const tree = mount(
+      <AssetImage
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        alt="image" />
+    );
+
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -23,8 +54,31 @@ describe('AssetImage', () => {
     tree.update();
     img = tree.find('img');
 
-    assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
-    assert.deepEqual(img.prop('style'), {maxWidth: '75%', maxHeight: '75%'});
+    assert.equal(img.prop('alt'), 'image');
+    tree.unmount();
+  });
+
+  it('should support decorative to hide element from screen readers', async () => {
+    // Jsdom doesn't implement size properties, so set the height and width of the image
+    Object.defineProperty(HTMLImageElement.prototype, 'complete', {get: () => true});
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 240});
+    Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 240});
+
+    const tree = mount(
+      <AssetImage
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        alt="image"
+        decorative />
+    );
+
+    let img = tree.find('img');
+    img.simulate('load', {target: img.getDOMNode()});
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    tree.update();
+    img = tree.find('img');
+
+    assert.equal(img.prop('alt'), '');
     tree.unmount();
   });
 
@@ -34,12 +88,12 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'complete', {get: () => true});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 100});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 400});
-    
+
     const tree = mount(
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
     );
-        
+
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -61,7 +115,7 @@ describe('AssetImage', () => {
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
     );
-        
+
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -83,7 +137,7 @@ describe('AssetImage', () => {
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
     );
-        
+
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
     await new Promise(resolve => requestAnimationFrame(resolve));

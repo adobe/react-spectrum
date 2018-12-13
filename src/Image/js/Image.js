@@ -15,10 +15,26 @@ const DEFAULT_STATE = {
 @autobind
 export default class Image extends React.Component {
   static propTypes = {
+    /** The image url **/
     src: PropTypes.string.isRequired,
+
+    /** Placeholder image to display while the fullsize one is loading, if cached. */
     placeholder: PropTypes.string,
+
+    /** HTTP headers to add to the request for the asset image */
     headers: PropTypes.object,
-    cache: PropTypes.bool
+
+    /** Whether to use the image cache for the image */
+    cache: PropTypes.bool,
+
+    /** Alternate content for screen readers */
+    alt: PropTypes.string,
+
+    /** Whether the image is being used for decoration and should not be announced by screen readers */
+    decorative: PropTypes.bool,
+
+    /** Load callback triggered when images load */
+    onLoad: PropTypes.func
   };
 
   static defaultProps = {
@@ -112,9 +128,13 @@ export default class Image extends React.Component {
   }
 
   onLoad() {
-    var image = this.imgRef;
-    if (image && this.props.onLoad && this.isImageLoaded()) {
-      requestAnimationFrame(() => this.props.onLoad(image));
+    if (this.props.onLoad && this.isImageLoaded()) {
+      requestAnimationFrame(() => {
+        // Image could have been unmounted or changed between frames, so double check it is still there.
+        if (this.isImageLoaded()) {
+          this.props.onLoad(this.imgRef);
+        }
+      });
     }
 
     if (!this.state.loaded && this.isImageLoaded()) {
@@ -133,17 +153,42 @@ export default class Image extends React.Component {
   }
 
   render() {
+    let {
+      alt,
+      className,
+      decorative,
+      ...otherProps
+    } = this.props;
+    let {
+      loaded,
+      isPlaceholder,
+      src
+    } = this.state;
+
+    if (decorative) {
+      alt = '';
+    }
+
+    if (alt == null) {
+      console.warn(
+        'Neither the `alt` prop or `decorative` were provided to an image. ' +
+        'Add `alt` text for screen readers, or enable the `decorative` prop to indicate that the image ' +
+        'is decorative or redundant with displayed text and should not be annouced by screen readers.'
+      );
+    }
+
     return (
       <img
-        {...filterDOMProps(this.props)}
-        className={classNames(this.props.className, 'react-spectrum-Image', {
-          'is-loaded': this.state.loaded,
-          'is-placeholder': this.state.isPlaceholder
+        {...filterDOMProps(otherProps)}
+        className={classNames(className, 'react-spectrum-Image', {
+          'is-loaded': loaded,
+          'is-placeholder': isPlaceholder
         })}
-        src={this.state.src}
+        src={src}
         onLoad={this.onLoad}
         onError={this.onError}
-        ref={r => this.imgRef = r} />
+        ref={r => this.imgRef = r}
+        alt={alt} />
     );
   }
 }

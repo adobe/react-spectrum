@@ -5,6 +5,7 @@ import React from 'react';
  * Body of a card. Allows optional title, subtitle, and description props, and custom children displayed underneath.
  */
 export default class CardBody extends React.Component {
+  static displayName = 'CardBody';
   static propTypes = {
     /** Title for the card */
     title: PropTypes.string,

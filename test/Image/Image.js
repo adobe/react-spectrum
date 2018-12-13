@@ -19,10 +19,18 @@ describe('Image', () => {
     assert.equal(tree.type(), 'img');
     assert.equal(tree.prop('className'), 'react-spectrum-Image');
     assert.equal(tree.prop('src'), 'image.jpg');
+    assert.equal(tree.prop('alt'), null);
   });
 
   it('should pass through additional DOM props', () => {
     let tree = shallow(<Image src="image.jpg" alt="image" />);
+    assert.equal(tree.prop('alt'), 'image');
+  });
+
+  it('should hide decorative image from assitive technology', () => {
+    let tree = shallow(<Image src="image.jpg" alt="image" decorative />);
+    assert.equal(tree.prop('alt'), '');
+    tree.setProps({decorative: false});
     assert.equal(tree.prop('alt'), 'image');
   });
 

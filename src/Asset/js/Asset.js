@@ -31,6 +31,9 @@ export default class Asset extends React.Component {
     /** Alternate content for screen readers */
     alt: PropTypes.string,
 
+    /** Whether the image is being used for decoration and should not be announced by screen readers */
+    decorative: PropTypes.bool,
+
     /** Load callback triggered when images load */
     onLoad: PropTypes.func
   };
@@ -51,6 +54,7 @@ export default class Asset extends React.Component {
       alt,
       className,
       onLoad,
+      decorative,
       ...otherProps
     } = this.props;
     let content;
@@ -64,12 +68,13 @@ export default class Asset extends React.Component {
           onLoad={onLoad}
           cache={cache}
           headers={headers}
-          alt={alt} />
+          alt={alt}
+          decorative={decorative} />
       );
     } else if (type === 'folder') {
-      content = <AssetFolder />;
+      content = <AssetFolder alt={alt} decorative={decorative} />;
     } else {
-      content = <AssetFile />;
+      content = <AssetFile alt={alt} decorative={decorative} />;
     }
 
     return (
