@@ -95,14 +95,29 @@ export function chain(...callbacks) {
   };
 }
 
+let mouseDownPrevented = false;
 export function focusAfterMouseEvent(handler, event) {
+  // If server side rendering, just call handler method.
+  if (!document) {
+    handler && handler.call(this, event);
+    return;
+  }
+
+  // execute the handler
   if (handler) {
-    handler(event);
+    handler.call(this, event);
     if (event.isDefaultPrevented()) {
+      mouseDownPrevented = event.type === 'mousedown';
       return;
     }
   }
-  if (typeof this.focus === 'function') {
+
+  // make sure that the element has focus by calling this.focus();
+  if (!mouseDownPrevented && typeof this.focus === 'function') {
     this.focus();
+  }
+
+  if (event.type === 'mouseup') {
+    mouseDownPrevented = false;
   }
 }

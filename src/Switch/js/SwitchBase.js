@@ -84,8 +84,6 @@ export default class SwitchBase extends Component {
       markClassName,
       markIcon,
       labelClassName,
-      onBlur,
-      onFocus,
       onMouseDown,
       onMouseUp,
       ...otherProps
@@ -118,8 +116,6 @@ export default class SwitchBase extends Component {
           required={required ? true : null}
           readOnly={readOnly}
           onChange={this.handleChange}
-          onBlur={onBlur}
-          onFocus={onFocus}
           onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
           onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
           aria-invalid={invalid || null}

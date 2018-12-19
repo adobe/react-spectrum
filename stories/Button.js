@@ -113,6 +113,12 @@ storiesOf('Button', module)
     'element: a',
     () => render({element: 'a', href: 'http://example.com'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'shift focus on mouseDown',
+    'In Safari, buttons don\'t receive focus following mousedown/mouseup events. React-spectrum provides a workaround for this issue so that components like the ButtonGroup will be navigable using the keyboard after receiving focus with the mouse. This story tests whether it is still possible to shift focus on mousedown without using preventDefault to prevent focus from being reclaimed by the button being clicked.',
+    () => renderShiftFocusOnMouseDown({variant: 'secondary'}),
+    {inline: true}
   );
 
 function renderSelected(props = {}) {
@@ -147,6 +153,32 @@ function render(props = {}) {
         label="React"
         onClick={action('click')}
         disabled
+        {...props} />
+    </div>
+  );
+}
+
+function renderShiftFocusOnMouseDown(props = {}) {
+  const buttons = [];
+  return (
+    <div>
+      <Button
+        label="Focus next button"
+        ref={b => buttons.push(b)}
+        onMouseDown={e => {e.preventDefault(); buttons[1].focus();}}
+        onClick={action('click')}
+        {...props} />
+      <Button
+        label="Focus previous button"
+        ref={b => buttons.push(b)}
+        onMouseDown={e => {e.preventDefault(); buttons[0].focus();}}
+        onClick={action('click')}
+        {...props} />
+      <Button
+        label="preventDefault"
+        ref={b => buttons.push(b)}
+        onMouseDown={e => e.preventDefault()}
+        onClick={action('click')}
         {...props} />
     </div>
   );

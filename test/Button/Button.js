@@ -54,8 +54,20 @@ describe('Button', () => {
   });
 
   it('supports different variants', () => {
-    const tree = shallow(<Button variant="primary" />);
+    let tree = shallow(<Button variant="primary" />);
     assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--primary');
+    tree = shallow(<Button variant="action" />);
+    assert.equal(tree.prop('className'), 'spectrum-ActionButton');
+    tree = shallow(<Button variant="toggle" />);
+    assert.equal(tree.prop('className'), 'spectrum-ActionButton spectrum-ActionButton--quiet');
+    tree = shallow(<Button variant="tool" />);
+    assert.equal(tree.prop('className'), 'spectrum-Tool');
+    tree = shallow(<Button variant="quiet" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet spectrum-Button--primary');
+    tree = shallow(<Button variant="minimal" />);
+    assert.equal(tree.prop('className'), 'spectrum-Button spectrum-Button--quiet spectrum-Button--secondary');
+    tree = shallow(<Button variant="icon" />);
+    assert.equal(tree.prop('className'), 'spectrum-ActionButton spectrum-ActionButton--quiet');
   });
 
   it('supports block', () => {
@@ -166,7 +178,7 @@ describe('Button', () => {
     assert.equal(document.activeElement, tree.getDOMNode());
     tree.unmount();
   });
-  
+
   describe('receives focus', () => {
     let tree;
     const focusSpy = sinon.spy();
@@ -179,44 +191,124 @@ describe('Button', () => {
       };
     });
 
+    afterEach(() => {
+      focusSpy.reset();
+      mouseDownSpy.reset();
+      mouseUpSpy.reset();
+    });
+
+    after(() => tree.unmount());
+
     it('on mouse down', () => {
       tree.simulate('mouseDown', {type: 'mousedown'});
       assert.equal(focusSpy.callCount, 1);
-      tree.setProps({onMouseDown: (e) => {
-        e.preventDefault();
-        e.isDefaultPrevented = () => true;
-        mouseDownSpy(e);
-      }});
-      tree.simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
+      focusSpy.reset();
+      tree.setProps({onMouseDown: e => mouseDownSpy(e)});
+      tree.simulate('mouseDown', {type: 'mousedown', isDefaultPrevented: () => true});
+      tree.simulate('mouseUp', {type: 'mouseup'});
+      assert.equal(focusSpy.callCount, 0);
+      assert.equal(mouseDownSpy.callCount, 1);
+      focusSpy.reset();
+      mouseDownSpy.reset();
+      tree.setProps({onMouseDown: e => mouseDownSpy(e)});
+      tree.simulate('mouseDown', {type: 'mousedown', isDefaultPrevented: () => false});
       assert.equal(focusSpy.callCount, 1);
       assert.equal(mouseDownSpy.callCount, 1);
-      tree.setProps({onMouseDown: (e) => {
-        e.isDefaultPrevented = () => false;
-        mouseDownSpy(e);
-      }});
-      tree.simulate('mouseDown', {type: 'mousedown', preventDefault: () => {}});
-      assert.equal(focusSpy.callCount, 2);
-      assert.equal(mouseDownSpy.callCount, 2);
     });
 
     it('on mouse up', () => {
       tree.simulate('mouseUp', {type: 'mouseup'});
-      assert.equal(focusSpy.callCount, 3);
-      tree.setProps({onMouseUp: (e) => {
-        e.preventDefault();
-        e.isDefaultPrevented = () => true;
-        mouseUpSpy(e);
-      }});
-      tree.simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
-      assert.equal(focusSpy.callCount, 3);
+      assert.equal(focusSpy.callCount, 1);
+      focusSpy.reset();
+      tree.setProps({onMouseUp: e => mouseUpSpy(e)});
+      tree.simulate('mouseUp', {type: 'mouseup', isDefaultPrevented: () => true});
+      assert.equal(focusSpy.callCount, 0);
       assert.equal(mouseUpSpy.callCount, 1);
-      tree.setProps({onMouseUp: (e) => {
-        e.isDefaultPrevented = () => false;
-        mouseUpSpy(e);
-      }});
-      tree.simulate('mouseUp', {type: 'mouseup', preventDefault: () => {}});
-      assert.equal(focusSpy.callCount, 4);
-      assert.equal(mouseUpSpy.callCount, 2);
+      focusSpy.reset();
+      mouseUpSpy.reset();
+      tree.setProps({onMouseUp: e => mouseUpSpy(e)});
+      tree.simulate('mouseUp', {type: 'mouseup', isDefaultPrevented: () => false});
+      assert.equal(focusSpy.callCount, 1);
+      assert.equal(mouseUpSpy.callCount, 1);
+    });
+  });
+
+  describe('focus change following mouse event', () => {
+    let tree;
+    const mouseDownButton0Spy = sinon.spy();
+    const mouseDownButton1Spy = sinon.spy();
+    const mouseUpButton0Spy = sinon.spy();
+    const mouseUpButton1Spy = sinon.spy();
+    let shiftFocusOnMouseUp = false;
+    before(() => {
+      tree = mount(<div>
+        <Button
+          label="Focus next button"
+          onMouseDown={(e) => {
+            !shiftFocusOnMouseUp && findButtons(tree).last().getDOMNode().focus();
+            e.preventDefault();
+            mouseDownButton0Spy(e);
+          }}
+          onMouseUp={(e) => {
+            shiftFocusOnMouseUp && findButtons(tree).last().getDOMNode().focus();
+            e.preventDefault();
+            mouseUpButton0Spy(e);
+          }} />
+        <Button
+          label="Focus previous button"
+          onMouseDown={(e) => {
+            !shiftFocusOnMouseUp && findButtons(tree).first().getDOMNode().focus();
+            e.preventDefault();
+            mouseDownButton1Spy(e);
+          }}
+          onMouseUp={(e) => {
+            shiftFocusOnMouseUp && findButtons(tree).first().getDOMNode().focus();
+            e.preventDefault();
+            mouseUpButton1Spy(e);
+          }} />
+      </div>);
+    });
+
+    beforeEach(() => {
+      mouseDownButton0Spy.reset();
+      mouseUpButton0Spy.reset();
+      mouseDownButton1Spy.reset();
+      mouseUpButton1Spy.reset();
+    });
+
+    after(() => {
+      tree.unmount();
+    });
+
+    it('on mouse down', () => {
+      findButtons(tree).first().simulate('mousedown', {type: 'mousedown'});
+      assert.equal(mouseDownButton0Spy.callCount, 1);
+      findButtons(tree).first().simulate('mouseup', {type: 'mouseup'});
+      assert.equal(mouseUpButton0Spy.callCount, 1);
+      assert.equal(document.activeElement, findButtons(tree).last().getDOMNode());
+
+      findButtons(tree).last().simulate('mousedown', {type: 'mousedown'});
+      assert.equal(mouseDownButton1Spy.callCount, 1);
+      findButtons(tree).last().simulate('mouseup', {type: 'mouseup'});
+      assert.equal(mouseUpButton1Spy.callCount, 1);
+      assert.equal(document.activeElement, findButtons(tree).first().getDOMNode());
+    });
+
+    it('on mouse up', () => {
+      shiftFocusOnMouseUp = true;
+      findButtons(tree).first().simulate('mousedown', {type: 'mousedown'});
+      assert.equal(mouseDownButton0Spy.callCount, 1);
+      findButtons(tree).first().simulate('mouseup', {type: 'mouseup'});
+      assert.equal(mouseUpButton0Spy.callCount, 1);
+      assert.equal(document.activeElement, findButtons(tree).last().getDOMNode());
+
+      findButtons(tree).last().simulate('mousedown', {type: 'mousedown'});
+      assert.equal(mouseDownButton1Spy.callCount, 1);
+      findButtons(tree).last().simulate('mouseup', {type: 'mouseup'});
+      assert.equal(mouseUpButton1Spy.callCount, 1);
+      assert.equal(document.activeElement, findButtons(tree).first().getDOMNode());
     });
   });
 });
+
+const findButtons = tree => tree.find(Button);

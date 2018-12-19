@@ -157,7 +157,13 @@ export default class Autocomplete extends React.Component {
     this.setState({isFocused: true});
   }
 
-  onBlur() {
+  onBlur(event) {
+    if (this.wrapper && this.wrapper.contains(event.relatedTarget)) {
+      // If the element receiving focus is a child of the Autocomplete,
+      // for example the toggle button on a ComboBox,
+      // do nothing in order prevent hideMenu from executing twice.
+      return;
+    }
     this.hideMenu();
     this.setState({isFocused: false});
   }
