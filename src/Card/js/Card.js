@@ -29,7 +29,7 @@ export default class Card extends React.Component {
     selected: PropTypes.bool,
 
     /** What happens when the checkbox is clicked */
-    onSelect: PropTypes.func,
+    onSelectionChange: PropTypes.func,
 
     /** Whether the card is currently a drop target */
     isDropTarget: PropTypes.bool,

@@ -165,20 +165,20 @@ Cards support selection and keyboard focus styles, which are applied by [GridVie
   </Card>
 </div>
 
-### onSelect hook
+### onSelectionChange hook
 
 Cards support an explicit onSelect hook for when the Checkbox is clicked. Where present, this event will override the
 Card's onClick handler on the Checkbox. When missing, the Card's onClick handler will still apply to the Checkbox
 
 ```jsx
-<Card selected onSelect={console.log}>
+<Card selected onSelectionChange={console.log}>
   <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
   <CardBody title="Card Title" subtitle="jpg" />
 </Card>
 ```
 
 <div style={{'width': '208px'}}>
-  <Card selected onSelect={console.log}>
+  <Card selected onSelectionChange={console.log}>
     <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
     <CardBody title="Card Title" subtitle="jpg" />
   </Card>

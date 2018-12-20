@@ -51,10 +51,10 @@ storiesOf('Card', module)
     {inline: true}
   )
   .addWithInfo(
-    'Explicit onSelect',
+    'Explicit onSelectionChange',
     () => (
       <div style={{'width': '208px'}}>
-        <Card variant="standard" onSelect={action('onSelect')}>
+        <Card variant="standard" onSelectionChange={action('onSelectionChange')}>
           <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
@@ -63,10 +63,10 @@ storiesOf('Card', module)
     {inline: true}
   )
   .addWithInfo(
-    'Explicit onSelect and onClick',
+    'Explicit onSelectionChange and onClick',
     () => (
       <div style={{'width': '208px'}}>
-        <Card variant="standard" onSelect={action('onSelect')} onClick={action('onClick')}>
+        <Card variant="standard" onSelectionChange={action('onSelectionChange')} onClick={action('onClick')}>
           <CardCoverPhoto src="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06370.jpg" />
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
