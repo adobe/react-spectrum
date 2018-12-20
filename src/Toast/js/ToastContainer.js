@@ -27,12 +27,21 @@ export class ToastContainer extends React.Component {
     toasts: []
   };
 
+  timerAction(toast, action) {
+    if (TOAST_DATA.has(toast)) {
+      let timer = TOAST_DATA.get(toast).timer;
+      if (timer) {
+        timer[action]();
+      }
+    }
+  }
+
   add(toast, timeout = TOAST_TIMEOUT) {
-    if (timeout <= 0) {
+    if (timeout < 0) {
       timeout = TOAST_TIMEOUT;
     }
     TOAST_DATA.set(toast, {
-      timer: new Timer(this.remove.bind(this, toast), timeout),
+      timer: timeout === 0 ? null : new Timer(this.remove.bind(this, toast), timeout),
       id: createId()
     });
 
@@ -51,23 +60,19 @@ export class ToastContainer extends React.Component {
 
     this.setState({toasts});
 
-    TOAST_DATA.get(toast).timer.pause();
+    this.timerAction(toast, 'pause');
     TOAST_DATA.delete(toast);
   }
 
   onFocus(toast, e) {
-    if (TOAST_DATA.has(toast)) {
-      TOAST_DATA.get(toast).timer.pause();
-    }
+    this.timerAction(toast, 'pause');
     if (toast.props.onFocus) {
       toast.props.onFocus();
     }
   }
 
   onBlur(toast, e) {
-    if (TOAST_DATA.has(toast)) {
-      TOAST_DATA.get(toast).timer.resume();
-    }
+    this.timerAction(toast, 'resume');
     if (toast.props.onBlur) {
       toast.props.onBlur();
     }

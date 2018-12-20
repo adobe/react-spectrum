@@ -85,6 +85,22 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
+  it('should never remove a toast with timeout 0', async () => {
+    const tree = shallow(<ToastContainer />);
+    assert.equal(tree.children().length, 0);
+
+    const closedSpy = sinon.spy();
+    tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 0);
+    tree.update();
+    assert.equal(tree.children().length, 1);
+    await sleep(3);
+    tree.update();
+    assert.equal(tree.children().length, 1);
+    assert(closedSpy.notCalled);
+
+    cleanup();
+  });
+
   it('should remove toasts when the remove button is clicked', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);

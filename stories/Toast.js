@@ -71,4 +71,22 @@ storiesOf('Toast', module)
     'warning trigger',
     () => <Button onClick={() => warning('Could be serious!', {role: 'region', 'aria-live': 'off'})} variant="primary">Show Toast</Button>,
     {inline: true}
+  )
+  .addWithInfo(
+    'no timeout',
+    () => (
+      <Button
+        onClick={() => {
+          success("I won't go away!", {
+            actionLabel: 'undo',
+            onClose: action('onClose'),
+            onAction: action('onAction'),
+            timeout: 0
+          });
+        }}
+        variant="primary">
+        Show Toast
+      </Button>
+    ),
+    {inline: true}
   );
