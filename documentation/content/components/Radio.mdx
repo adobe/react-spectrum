@@ -55,6 +55,18 @@ Standard checkboxes are the default style for checkboxes. The blue color provide
 <Radio label="React" defaultChecked quiet />
 ```
 
+### Alignment
+
+#### Labels Below
+
+The button label can either be adjacent (default) or below the button. The latter can be achieved via the 'labelBelow' prop.
+
+<Radio label="React" labelBelow />
+
+```jsx
+<Radio label="React" labelBelow />
+```
+
 ## States
 
 Radio buttons have a number of props for controlling their visual/checked state. The `disabled` prop, which applies a disabled style to the button, and also prevents clicks from activating it. The 'checked' prop is also available to apply a checked appearance to the radio button. In addition to this 'defaultChecked' and 'invalid' prop is also provided.
