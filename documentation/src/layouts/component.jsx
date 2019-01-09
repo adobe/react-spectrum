@@ -6,17 +6,24 @@ import ComponentAPI from '../components/ComponentAPI';
 import ClassAPI from '../components/ClassAPI';
 import DocsPage from '../components/DocsPage';
 import '../fragments';
+import updateDocumentLang from '../utils/updateDocumentLang';
+import updateDocumentTitle from '../utils/updateDocumentTitle';
 import './css/index.css';
 import './css/prism-okaidia.css';
 
 export default class ComponentLayout extends React.Component {
+  componentDidMount() {
+    updateDocumentLang();
+    updateDocumentTitle(this.props.data.component.displayName);
+  }
+
   render() {
     let { children } = this.props;
     let component = this.props.data.component;
     let related = this.props.data.relatedComponents
       ? this.props.data.relatedComponents.edges.filter(edge => edge.node.docblock && !edge.node.docblock.includes('@private'))
       : [];
-    let relatedClasses = this.props.data.relatedClasses && this.props.data.relatedClasses.edges.sort((a, b) => 
+    let relatedClasses = this.props.data.relatedClasses && this.props.data.relatedClasses.edges.sort((a, b) =>
       a.node.name < b.node.name ? -1 : 1
     );
 

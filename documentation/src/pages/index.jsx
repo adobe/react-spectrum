@@ -1,12 +1,19 @@
 import Button from '@react/react-spectrum/Button';
 import Example from '../../content/example.mdx';
-import Heading from '@react/react-spectrum/Heading';
 import GatsbyLink from 'gatsby-link';
+import Heading from '@react/react-spectrum/Heading';
 import Link from '../components/Link';
 import React from 'react';
 import Rule from '@react/react-spectrum/Rule';
+import updateDocumentLang from '../utils/updateDocumentLang';
+import updateDocumentTitle from '../utils/updateDocumentTitle';
 
 export default class Index extends React.Component {
+  componentDidMount() {
+    updateDocumentLang();
+    updateDocumentTitle('React Spectrum');
+  }
+
   render() {
     return (
       <div className="homepage">

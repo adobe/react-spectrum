@@ -1,9 +1,16 @@
 import Header from '../components/Header';
 import Provider from '@react/react-spectrum/Provider';
-import React from 'react'
+import React from 'react';
+import updateDocumentLang from '../utils/updateDocumentLang';
+import updateDocumentTitle from '../utils/updateDocumentTitle';
 import './css/index.css'
 
 export default class MainLayout extends React.Component {
+  componentDidMount() {
+    updateDocumentLang();
+    updateDocumentTitle();
+  }
+
   render() {
     const { children } = this.props
     return (
