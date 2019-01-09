@@ -21,6 +21,9 @@ describe('StepList', () => {
 
     tree.setProps({size: 'S'});
     assert.equal(tree.hasClass('spectrum-Steplist--small'), true);
+
+    tree.setProps({size: 'L'});
+    assert.equal(tree.hasClass('spectrum-Steplist--small'), false);
   });
 
   it('should support interaction', () => {
@@ -32,15 +35,27 @@ describe('StepList', () => {
   });
 
   it('should pass the size property to the children', () => {
-    const tree = shallow(
+    // size="S"
+    let tree = shallow(
       <StepList size="S">
         <div className="one">a</div>
         <div className="two">b</div>
       </StepList>
     );
-    const innerTree = tree.shallow();
-    const child = innerTree.find('.two');
+    let innerTree = tree.shallow();
+    let child = innerTree.find('.two');
     assert.equal(child.prop('size'), 'S');
+
+    // size="L"
+    tree = shallow(
+      <StepList size="L">
+        <div className="one">a</div>
+        <div className="two">b</div>
+      </StepList>
+    );
+    innerTree = tree.shallow();
+    child = innerTree.find('.one');
+    assert.equal(child.prop('size'), 'L');
   });
 
   it('should handle the complete prop for the children before selected', () => {

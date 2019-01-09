@@ -57,5 +57,5 @@ Step.propTypes = {
   selected: PropTypes.bool,
   
   /** Define the size of the step */
-  size: PropTypes.oneOf(['S'])
+  size: PropTypes.oneOf(['S', 'L'])
 };
