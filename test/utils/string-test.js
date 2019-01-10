@@ -1,5 +1,7 @@
 import assert from 'assert';
-import {isUrl, normalize, removeDiacritics} from '../../src/utils/string';
+import {getTextFromReact, isUrl, normalize, removeDiacritics} from '../../src/utils/string';
+import React from 'react';
+import {shallow} from 'enzyme';
 
 describe('string', () => {
   describe('isUrl', () => {
@@ -42,5 +44,20 @@ describe('string', () => {
     assert.equal(removeDiacritics(str, 'NFC'), '\u017F');
     assert.equal(removeDiacritics(str, 'NFKC'), '\u0073');
     assert.equal(removeDiacritics(str, 'NFKD'), '\u0073');
+  });
+
+  it('getTextFromReact', () => {
+    let tree = shallow(
+      <div>This
+        <span>string
+          <span>should
+            <span>be</span>
+            <span>concatenated into</span>
+            {[1, ' ', 'sentence.']}
+          </span>
+        </span>
+      </div>
+    );
+    assert.equal(getTextFromReact(tree.get(0)), 'This string should be concatenated into 1 sentence.');
   });
 });

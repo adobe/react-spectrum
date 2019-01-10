@@ -15,6 +15,11 @@ export default class Checkbox extends Component {
     label: PropTypes.string,
 
     /**
+     * Whether to render the label for the checkbox
+     */
+    renderLabel: PropTypes.bool,
+
+    /**
      * defaultChecked is undefined by default so we can respect
      * the value that is passed in without erroneously putting
      * both checked and defaultChecked on the input

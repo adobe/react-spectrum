@@ -1,4 +1,5 @@
 import Checkbox from '@react/react-spectrum/Checkbox';
+import {Table, TBody, TD, THead, TH, TR} from '@react/react-spectrum/Table';
 
 ## Overview
 
@@ -78,4 +79,112 @@ To internationalize a checkbox, a localized string should be passed to the `labe
 
 ## Accessibility
 
-Checkboxes are accessible by default. The correct aria roles will automatically be applied. For icon only labels, an alternative label should be provided using the `aria-label` prop.
+Checkboxes are accessible by default, rendered in HTML using the `<input type="checkbox">` element. When the checkbox is set as `indeterminate` or `invalid`, the appropriate ARIA state attribute will automatically be applied.
+
+### Labelling
+
+Checkbox must have a label to be properly identified to users of assistive technology. The easiest way to satisfy this requirement is by adding a `label` prop or by including the label text as child content.
+
+<div><code>label</code> prop: </div><Checkbox label="React" />
+
+<div>as content: </div><Checkbox defaultChecked>React</Checkbox>
+
+<div>not the best practice: </div><Checkbox renderLabel={false} label="React checkbox" defaultChecked>with renderLabel: false</Checkbox>
+
+```jsx
+<div><code>label</code> prop: </div><Checkbox label="React" />
+
+<div>as content: </div><Checkbox defaultChecked>React</Checkbox>
+
+<div>not the best practice: </div><Checkbox renderLabel={false} label="React checkbox" defaultChecked>with renderLabel: false</Checkbox>
+```
+
+There are occassionally use cases that require the Checkbox not have a visible label, for example in a TableView to show row selection. In these cases, an accessible label can be added using `aria-label` or `aria-labelledby`, or the `label` prop can be hidden by setting `renderLabel` to `false`.
+
+<Table>
+  <THead>
+    <TH style={{'padding-top': '8px'}} scope="column">
+      <Checkbox
+        indeterminate
+        label="Select All"
+        renderLabel={false} />
+    </TH>
+    <TH scope="column">
+      Name
+    </TH>
+  </THead>
+  <TBody>
+    <TR>
+      <TD style={{'padding-top': '8px'}}>
+        <Checkbox
+          id="row0-checkbox"
+          aria-label="Select"
+          aria-labelledby="row0-checkbox row0-cell1" />
+      </TD>
+      <TD id="row0-cell1" role="rowheader" scope="row">
+        Filename 1
+      </TD>
+    </TR>
+    <TR>
+      <TD style={{'padding-top': '8px'}}>
+        <Checkbox
+          id="row1-checkbox"
+          aria-labelledby="row1-checkbox row1-cell1"
+          renderLabel={false}
+          defaultChecked>
+            Select
+        </Checkbox>
+      </TD>
+      <TD id="row1-cell1" role="rowheader" scope="row">
+        Filename 2
+      </TD>
+    </TR>
+  </TBody>
+</Table>
+
+```jsx
+<Table>
+  <THead>
+    <TH scope="column">
+      <Checkbox
+        indeterminate
+        label="Select All"
+        renderLabel={false} />
+    </TH>
+    <TH scope="column">
+      Name
+    </TH>
+  </THead>
+  <TBody>
+    <TR>
+      <TD>
+        {/* Using both aria-label and aria-labelledby with self-reference: */}
+        <Checkbox
+          id="row0-checkbox"
+          aria-label="Select"
+          aria-labelledby="row0-checkbox row0-cell1" />
+      </TD>
+      <TD id="row0-cell1" role="rowheader" scope="row">
+        Filename 1
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        {/* Using renderLabel={false} and aria-labelledby with self-reference: */}
+        <Checkbox
+          id="row1-checkbox"
+          aria-labelledby="row1-checkbox row1-cell1"
+          renderLabel={false}>
+            Select
+        </Checkbox>
+      </TD>
+      <TD id="row1-cell1" role="rowheader" scope="row">
+        Filename 2
+      </TD>
+    </TR>
+  </TBody>
+</Table>
+```
+
+
+

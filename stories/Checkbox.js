@@ -71,7 +71,12 @@ storiesOf('Checkbox', module)
   )
   .addWithInfo(
     'Label Not Set',
-    () => render({label: '', 'aria-label': 'React'}),
+    () => render({label: null, 'aria-label': 'React'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'renderLabel: false',
+    () => render({renderLabel: false, label: 'React checkbox'}),
     {inline: true}
   );
 
@@ -80,6 +85,10 @@ function render(props = {}) {
     <Checkbox
       label="React"
       onChange={action('change')}
-      {...props} />
+      {...props}>
+      {
+        props.renderLabel === false && 'with renderLabel: false'
+      }
+    </Checkbox>
   );
 }

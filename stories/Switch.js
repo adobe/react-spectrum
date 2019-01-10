@@ -40,18 +40,23 @@ storiesOf('Switch', module)
     {inline: true}
   )
   .addWithInfo(
+    'with renderLabel: false',
+    () => (render({label: 'React switch', renderLabel: false})),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: ab',
     () => (render({variant: 'ab', 'aria-label': 'React'})),
     {inline: true}
   )
   .addWithInfo(
     'quiet: true',
-    () => render({quiet: true}),
+    () => render({quiet: true, 'aria-label': 'React'}),
     {inline: true}
   )
   .addWithInfo(
     'quiet: true, disabled: true',
-    () => render({quiet: true, disabled: true}),
+    () => render({quiet: true, disabled: true, 'aria-label': 'React'}),
     {inline: true}
   );
 
@@ -59,6 +64,10 @@ function render(props = {}) {
   return (
     <Switch
       onChange={action('change')}
-      {...props} />
+      {...props}>
+      {
+        props.renderLabel === false && 'with renderLabel: false'
+      }
+    </Switch>
   );
 }

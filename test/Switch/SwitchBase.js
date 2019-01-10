@@ -116,12 +116,27 @@ describe('SwitchBase', () => {
     const tree = shallow(
       <SwitchBase
         labelClassName="coral-Foo-description"
-        renderLabel={false} />
+        label="React"
+        renderLabel={false}>
+          Switch Base
+      </SwitchBase>
     );
     assert(!findLabel(tree).length);
+    assert.equal(findInput(tree).prop('aria-label'), 'React Switch Base');
     tree.setProps({renderLabel: true});
-    tree.setProps({label: 'React'});
     assert(findLabel(tree).length);
+    assert(!findInput(tree).prop('aria-label'));
+    assert.equal(findLabel(tree).text(), 'React Switch Base');
+  });
+
+  it('supports aria-label', () => {
+    const tree = shallow(
+      <SwitchBase
+        labelClassName="coral-Foo-description"
+        aria-label="React" />
+    );
+    assert(!findLabel(tree).length);
+    assert.equal(findInput(tree).prop('aria-label'), 'React');
   });
 
   it('supports overriding the input className', () => {

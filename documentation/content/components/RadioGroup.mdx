@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 
@@ -122,8 +123,40 @@ To internationalize a radio button, a localized string should be passed to the `
 
 ## Accessibility
 
-Radio buttons are accessible by default. The correct aria roles will automatically be applied. For radio buttons with no labels set, an alternative label should be provided using the `aria-label` prop.
+Radios are accessible by default, rendered in HTML using the `<input type="radio">` element. When the radio is `checked`, the appropriate ARIA state attribute will automatically be applied.
+
+### Labelling
+
+A Radio must have a label to be properly identified to users of assistive technology. The easiest way to satisfy this requirement is by adding a `label` prop or by including the label text as child content.
+
+<div><code>label</code> prop: </div><Radio label="React" />
+
+<div>as content: </div><Radio defaultChecked>React</Radio>
+
+<div>not the best practice: </div><Radio renderLabel={false} label="React radio" defaultChecked>with renderLabel: false</Radio>
 
 ```jsx
-<Radio label="" aria-label="React" />
+<div><code>label</code> prop: </div><Radio label="React" />
+
+<div>as content: </div><Radio defaultChecked>React</Radio>
+
+<div>not the best practice: </div><Radio renderLabel={false} label="React radio" defaultChecked>with renderLabel: false</Radio>
+```
+
+#### RadioGroup
+
+`RadioGroup` should be used to label a group of related `Radio` as a fieldset. The RadioGroup label can be provided using `aria-label` or `aria-labelledby`.
+
+<FieldLabel label="Love me some React!" id="radiogroup-label" />
+<RadioGroup name="radiogroup" aria-labelledby="radiogroup-label" vertical>
+  <Radio label="Yes" value="Yes" />
+  <Radio label="No" value="No" />
+</RadioGroup>
+
+```jsx
+<FieldLabel label="Love me some React!" id="radiogroup-label" />
+<RadioGroup name="radiogroup" aria-labelledby="radiogroup-label" vertical>
+  <Radio label="Yes" value="Yes" />
+  <Radio label="No" value="No" />
+</RadioGroup>
 ```

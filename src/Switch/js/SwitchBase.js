@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
+import {getTextFromReact} from '../../utils/string';
 import React, {Component} from 'react';
 
 @focusRing
@@ -96,6 +97,26 @@ export default class SwitchBase extends Component {
     // Otherwise we double dispatch.
     delete otherProps.onChange;
 
+    // Add aria-label that concatenates label and children
+    // when renderLabel is false and no other aria-label is provided.
+    let ariaLabel = null;
+    if (otherProps['aria-label']) {
+      ariaLabel = otherProps['aria-label'];
+      delete otherProps['aria-label'];
+    } else if (!renderLabel && (label || children)) {
+      let labels = [];
+      if (label) {
+        labels.push(label);
+      }
+      if (children) {
+        let str = getTextFromReact(children);
+        if (str !== label) {
+          labels.push(str);
+        }
+      }
+      ariaLabel = labels.join(' ');
+    }
+
     return (
       <Element
         className={
@@ -120,11 +141,16 @@ export default class SwitchBase extends Component {
           onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
           aria-invalid={invalid || null}
           aria-checked={checked}
+          aria-label={ariaLabel}
           {...filterDOMProps(otherProps)} />
         <span className={markClassName}>{markIcon}</span>
         {shouldRenderLabel &&
           <span className={labelClassName}>
             {label}
+            {/* When both label and children are present,
+              include a space character so that the text
+              doesn't get smushed together. */
+              label && children && ' '}
             {children}
           </span>
         }

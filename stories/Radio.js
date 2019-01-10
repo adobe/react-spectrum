@@ -56,8 +56,13 @@ storiesOf('Radio', module)
   )
   .addWithInfo(
      'Label Not Set',
-     () => render({label: '', 'aria-label': 'React'}),
+     () => render({label: null, 'aria-label': 'React'}),
      {inline: true}
+  )
+  .addWithInfo(
+    'renderLabel: false',
+    () => render({renderLabel: false, label: 'React radio'}),
+    {inline: true}
   )
   .addWithInfo(
     'Label Below',
@@ -70,6 +75,10 @@ function render(props = {}) {
     <Radio
       label="React"
       onChange={action('change')}
-      {...props} />
+      {...props}>
+      {
+        props.renderLabel === false && 'with renderLabel: false'
+      }
+    </Radio>
   );
 }

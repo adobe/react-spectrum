@@ -1,4 +1,5 @@
 import Switch from '@react/react-spectrum/Switch';
+import {Table, TBody, TD, THead, TH, TR} from '@react/react-spectrum/Table';
 
 ## Overview
 
@@ -32,23 +33,24 @@ Quiet switches are a secondary style for switches. The gray color provides a les
 
 ```jsx
 <Switch label="React" defaultChecked quiet />
+```
 
 ## State
 
 ### Checked (controlled)
 
-<Switch checked="true" label="Checked true" />
+<Switch checked label="Checked true" />
 
 ```jsx
-<Switch checked="true" label="Checked true" />
+<Switch checked label="Checked true" />
 ```
 
 ### Default checked (uncontrolled)
 
-<Switch defaultChecked="true" label="Default checked switch" />
+<Switch defaultChecked label="Default checked switch" />
 
 ```jsx
-<Switch defaultChecked="true" label="Default checked switch" />
+<Switch defaultChecked label="Default checked switch" />
 ```
 
 ### Disabled
@@ -56,7 +58,7 @@ Quiet switches are a secondary style for switches. The gray color provides a les
 <Switch disabled label="Disabled switch" />
 
 ```jsx
-
+<Switch disabled label="Disabled switch" />
 ```
 
 ## Variants
@@ -67,4 +69,114 @@ Quiet switches are a secondary style for switches. The gray color provides a les
 
 ```jsx
 <Switch variant="ab" label="AB variant" />
+```
+
+## Accessibility
+
+Switch are accessible by default, rendered in HTML using the `<input type="checkbox">` element with the appropriate accessibility role, `switch`. When the Switch is `checked` or `invalid`, the appropriate ARIA state attribute will automatically be applied.
+
+### Labelling
+
+Switch must have a label to be properly identified to users of assistive technology. The easiest way to satisfy this requirement is by adding a `label` prop or by including the label text as child content.
+
+<div>`label` prop: </div>
+<Switch label="React" />
+
+<div>as content: </div>
+<Switch defaultChecked>React</Switch>
+
+<div>not the best practice: </div>
+<Switch renderLabel={false} label="React switch" defaultChecked>with renderLabel: false</Switch>
+
+```jsx
+{/* `label` prop */}
+<Switch label="React" />
+
+{/* as content */}
+<Switch defaultChecked>React</Switch>
+
+{/* not the best practice: */}
+<Switch renderLabel={false} label="React switch" defaultChecked>with renderLabel: false</Switch>
+```
+
+There are occassionally use cases that require the Switch not have a visible label, for example in a TableView to show row selection. In these cases, an accessible label can be added using `aria-label` or `aria-labelledby`, or the `label` prop can be hidden by setting `renderLabel` to `false`.
+
+<Table>
+  <THead>
+    <TH scope="column">
+      Active
+    </TH>
+    <TH scope="column">
+      Name
+    </TH>
+  </THead>
+  <TBody>
+    <TR>
+      <TD style={{'padding-top': '8px'}}>
+        {/* Using both aria-label and aria-labelledby with self-reference: */}
+        <Switch
+          id="row0-switch"
+          aria-label="Active"
+          aria-labelledby="row0-switch row0-cell1" />
+      </TD>
+      <TD id="row0-cell1" role="rowheader" scope="row">
+        Filename 1
+      </TD>
+    </TR>
+    <TR>
+      <TD style={{'padding-top': '8px'}}>
+        {/* Using renderLabel={false} and aria-labelledby with self-reference: */}
+        <Switch
+          id="row1-switch"
+          aria-labelledby="row1-switch row1-cell1"
+          renderLabel={false}>
+            Active
+        </Switch>
+      </TD>
+      <TD id="row1-cell1" role="rowheader" scope="row">
+        Filename 2
+      </TD>
+    </TR>
+  </TBody>
+</Table>
+
+```jsx
+<Table>
+  <THead>
+    <TH scope="column">
+      Active
+    </TH>
+    <TH scope="column">
+      Name
+    </TH>
+  </THead>
+  <TBody>
+    <TR>
+      <TD>
+        {/* Using both aria-label and aria-labelledby with self-reference: */}
+        <Switch
+          id="row0-switch"
+          aria-label="Active"
+          aria-labelledby="row0-switch row0-cell1" />
+      </TD>
+      <TD id="row0-cell1" role="rowheader" scope="row">
+        Filename 1
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        {/* Using renderLabel={false} and aria-labelledby with self-reference: */}
+        <Switch
+          id="row1-switch"
+          aria-labelledby="row1-switch row1-cell1"
+          renderLabel={false}>
+            Active
+        </Switch>
+      </TD>
+      <TD id="row1-cell1" role="rowheader" scope="row">
+        Filename 2
+      </TD>
+    </TR>
+  </TBody>
+</Table>
 ```
