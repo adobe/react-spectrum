@@ -21,7 +21,7 @@ export default class Tab extends Component {
     disabled: PropTypes.bool,
     
     /** Icon to add to tab */
-    icon: PropTypes.string,
+    icon: PropTypes.object,
     
     /** Whether to disable the invalid icon on the tab */
     invalid: PropTypes.bool,
