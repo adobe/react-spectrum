@@ -49,10 +49,11 @@ Switch.propTypes = {
   */
   defaultChecked: PropTypes.bool,
 
-  /**
-  * Text to add to switch
-  */
-  label: PropTypes.string,
+  /** Text to add to switch. Can be Text of HTML */
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
 
   /**
   * Function called when switch is changed

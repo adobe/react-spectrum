@@ -25,7 +25,15 @@ export default function LabelBase({
   if (childArray.length === 1) {
     // Use the existing id prop, or generate one.
     id = childArray[0].props.id || createId();
-    childArray[0] = React.cloneElement(childArray[0], {id, labelId});
+    let ariaLabelledby = childArray[0].props['aria-labelledby'] || (label ? labelId : null);
+    childArray[0] = React.cloneElement(
+      childArray[0],
+      {
+        id,
+        labelId,
+        'aria-labelledby': ariaLabelledby
+      }
+    );
   }
 
   if (id && !labelFor) {
@@ -36,17 +44,23 @@ export default function LabelBase({
     console.warn(`Missing labelFor attribute on ${componentName} with label "${label}"`);
   }
 
-  let fieldLabel = (
+  let fieldLabelClassName = classNames(
+    labelClassName,
+    childArray.length === 0 ? className : null
+  );
+
+  let fieldLabel = label ? (
     <label
-      className={classNames(
-        labelClassName,
-        childArray.length === 0 ? className : null
-      )}
+      className={fieldLabelClassName}
       id={labelId}
       htmlFor={labelFor}
       {...filterDOMProps(otherProps)}>
       {label}
     </label>
+  ) : (
+    <div
+      className={fieldLabelClassName}
+      {...filterDOMProps(otherProps)} />
   );
 
   if (childArray.length > 0) {

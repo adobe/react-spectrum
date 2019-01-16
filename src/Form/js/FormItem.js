@@ -10,7 +10,7 @@ export default class FormItem extends Component {
       PropTypes.string,
       PropTypes.object
     ]),
-    /** Label Aligntment. Defaults to left */
+    /** Label Alignment. Defaults to left */
     labelAlign: PropTypes.oneOf(['left', 'right']),
     /** Id of the labelable form element */
     labelFor: PropTypes.string

@@ -21,12 +21,24 @@ describe('FormItem', () => {
   it('label should have the correct inner text and reference', () => {
     const wrapper = render();
     const label = wrapper.find('label');
+    const field = wrapper.find(Textfield);
     assert.equal(label.text(), 'Company Title');
     assert.equal(label.prop('htmlFor'), 'company-title');
+    assert.equal(field.prop('aria-labelledby'), label.prop('id'));
   });
 
   it('label text should be right aligned', () => {
     const wrapper = shallow(<FormItem label="Test" labelAlign="right"><input type="text" /></FormItem>).dive();
-    assert.equal(wrapper.find('label').hasClass('spectrum-FieldLabel--right'), true);
+    assert(wrapper.find('label').hasClass('spectrum-FieldLabel--right'));
+  });
+
+  it('with no label prop use div rather than label', () => {
+    const wrapper = shallow(<FormItem><label><input type="checkbox" />I agree to terms and conditions.</label></FormItem>).dive();
+    assert.equal(wrapper.find('label').length, 1);
+    const divs = wrapper.find('div');
+    assert.equal(divs.length, 3);
+    assert(divs.at(0).hasClass('spectrum-Form-item'));
+    assert(divs.at(1).hasClass('spectrum-Form-itemLabel'));
+    assert(divs.at(2).hasClass('spectrum-Form-itemField'));
   });
 });

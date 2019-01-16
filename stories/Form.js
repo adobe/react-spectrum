@@ -23,8 +23,10 @@ storiesOf('Form', module)
         <FormItem label="Life Story">
           <Textarea placeholder="Life Story" />
         </FormItem>
-        <FormItem label={<Link href="#">Terms</Link>}>
-          <Checkbox label="I Agree" />
+        <FormItem>
+          <Checkbox
+            name="agreeToTerms"
+            label={<span>I agree to the <Link href="#" target="_self" style={{position: 'relative', zIndex: 1}}>terms and conditions </Link>.</span>} />
         </FormItem>
       </Form>
     ),
@@ -40,8 +42,10 @@ storiesOf('Form', module)
         <FormItem label="Life Story" labelAlign="right">
           <Textarea placeholder="Life Story" />
         </FormItem>
-        <FormItem label={<Link href="#">Terms</Link>} labelAlign="right">
-          <Checkbox label="I Agree" />
+        <FormItem>
+          <Checkbox
+            name="agreeToTerms"
+            label={<span>I agree to the <Link href="#" target="_self" style={{position: 'relative', zIndex: 1}}>terms and conditions </Link>.</span>} />
         </FormItem>
       </Form>
     ),
