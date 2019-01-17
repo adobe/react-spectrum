@@ -14,7 +14,7 @@ export default class PortalContainer {
    * @param context Parent with the context
    */
   static add(child, context) {
-    let node = document.createElement('div');
+    let node = children[child.key] || document.createElement('div');
     if (!context) {
       ReactDOM.render(child, node);
     } else {
