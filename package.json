@@ -29,8 +29,8 @@
     "stringify": "^5.1.0"
   },
   "devDependencies": {
+    "@adobe/focus-ring-polyfill": "^0.x",
     "@react/react-spectrum-icons": "^2.1.0",
-    "@spectrum/focus-ring-polyfill": "^0.x",
     "@spectrum/spectrum-css": "2.7.0",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.17",

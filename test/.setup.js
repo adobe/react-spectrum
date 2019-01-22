@@ -31,7 +31,7 @@ Module._resolveFilename = function (request, parent, isMain) {
   } else if (/\.\.\/js\/Icon/.test(request)) {
     request = path.resolve(__dirname + '/../src/Icon/js/Icon.js');
   } else if (/\.\/focus-ring-polyfill/.test(request)) {
-    request = '@spectrum/focus-ring-polyfill';
+    request = '@adobe/focus-ring-polyfill';
   }
 
   return oldResolveFilename.call(this, request, parent, isMain);
