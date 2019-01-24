@@ -42,6 +42,17 @@ storiesOf('FieldLabel', module)
         <Textfield placeholder="React" id="test" />
       </div>
     )
+  )
+  .addWithInfo(
+    'required styles',
+    () => (
+      <div>
+        {render({label: 'React', necessity: 'required', necessityIndicator: 'label'})}
+        {render({label: 'React', necessity: 'optional', necessityIndicator: 'label'})}
+        {render({label: 'React', necessity: 'required', necessityIndicator: 'icon'})}
+      </div>
+    ),
+    {inline: true}
   );
 
 function render(props = {}) {

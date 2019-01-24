@@ -1,4 +1,5 @@
 import assert from 'assert';
+import Asterisk from '../../src/Icon/Asterisk';
 import FieldLabel from '../../src/FieldLabel';
 import React from 'react';
 import {shallow} from 'enzyme';
@@ -58,6 +59,36 @@ describe('FieldLabel', () => {
     const tree = render({labelFor: 'bar'});
 
     assert.equal(tree.find('label').prop('htmlFor'), 'bar');
+  });
+
+  it('supports necessity required', () => {
+    const tree = render({necessity: 'required'});
+    assert.equal(tree.find('label').text(), 'foo <Asterisk />');
+    assert.equal(tree.find(Asterisk).length, 1);
+  });
+
+  it('supports necessity required and necessityIndicator icon', () => {
+    const tree = render({necessity: 'required', necessityIndicator: 'icon'});
+    assert.equal(tree.find('label').text(), 'foo <Asterisk />');
+    assert.equal(tree.find(Asterisk).length, 1);
+  });
+
+  it('supports necessity required necessityIndicator label', () => {
+    const tree = render({necessity: 'required', necessityIndicator: 'label'});
+    assert.equal(tree.find('label').text(), 'foo (required)');
+    assert.equal(tree.find(Asterisk).length, 0);
+  });
+
+  it('supports necessity optional', () => {
+    const tree = render({necessity: 'optional'});
+    assert.equal(tree.find('label').text(), 'foo');
+    assert.equal(tree.find(Asterisk).length, 0);
+  });
+
+  it('supports necessity optional necessityIndicator label', () => {
+    const tree = render({necessity: 'optional', necessityIndicator: 'label'});
+    assert.equal(tree.find('label').text(), 'foo (optional)');
+    assert.equal(tree.find(Asterisk).length, 0);
   });
 
   it('supports additional classNames', () => {

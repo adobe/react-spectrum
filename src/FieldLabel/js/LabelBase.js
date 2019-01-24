@@ -11,6 +11,7 @@ export default function LabelBase({
   wrapperClassName,
   labelFor,
   componentName,
+  icon,
   ...otherProps
 }) {
   // There are 3 cases:
@@ -56,6 +57,8 @@ export default function LabelBase({
       htmlFor={labelFor}
       {...filterDOMProps(otherProps)}>
       {label}
+      {icon && ' '}
+      {icon && icon}
     </label>
   ) : (
     <div
