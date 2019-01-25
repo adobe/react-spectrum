@@ -14,6 +14,7 @@ class TreeItem {
     this.isExpanded = false;
     this.isVisible = false;
     this.isLoading = false;
+    this.isDisabled = false;
     this.parent = parent;
     this.level = parent ? parent.level + 1 : -1;
     this.index = index;
@@ -64,13 +65,14 @@ class TreeItem {
  * items in the tree must be unique.
  */
 export default class TreeViewDataSource extends ArrayDataSource {
-  constructor(dataSource) {
+  constructor(dataSource, props) {
     super([[]]);
 
     this.root = new TreeItem(null, null, false);
     this.root.isExpanded = true;
     this.lookup = new Map;
     this.dataSource = dataSource;
+    this.props = props || {};
 
     if (dataSource && typeof dataSource.on === 'function') {
       // Bind methods that come from ArrayDataSource
@@ -140,7 +142,57 @@ export default class TreeViewDataSource extends ArrayDataSource {
   }
 
   getTreeItem(item, parent, index) {
-    return new TreeItem(item, parent, this.hasChildren(item), index);
+    let treeItem = new TreeItem(item, parent, this.hasChildren(item), index);
+
+    if (this.props.disabledItems) {
+      treeItem.isDisabled = !!this._findItem(this.props.disabledItems, item);
+    }
+
+    if (this.props.expandedItems) {
+      treeItem.isExpanded = !!this._findItem(this.props.expandedItems, item);
+    }
+
+    if (this.dataSource && typeof this.dataSource.getItemState === 'function') {
+      let state = this.dataSource.getItemState(item);
+      if (state && typeof state === 'object') {
+        for (let key in state) {
+          if (key in treeItem && typeof state[key] === typeof treeItem[key]) {
+            treeItem[key] = state[key];
+          }
+        }
+      }
+    }
+
+    return treeItem;
+  }
+
+  updateItemStates(props) {
+    if (props.disabledItems || props.expandedItems) {
+      let disabledItems = new Set((props.disabledItems || []).map(item => this._getItem(item)).filter(Boolean));
+      let expandedItems = new Set((props.expandedItems || []).map(item => this._getItem(item)).filter(Boolean));
+      for (let node of this.sections[0]) {
+        let isDisabled = disabledItems.has(node);
+        let isExpanded = expandedItems.has(node);
+        if (isDisabled !== node.isDisabled || isExpanded !== node.isExpanded) {
+          node.isDisabled = isDisabled;
+          node.isExpanded = isExpanded;
+          this.reloadItem(node.item);
+        }
+      }
+    }
+
+    this.props = props;
+  }
+
+  getExpandedItems() {
+    let expandedItems = [];
+    this.root.walk(node => {
+      if (node.hasChildren && node.isExpanded) {
+        expandedItems.push(node.item);
+      }
+    });
+
+    return expandedItems;
   }
 
   /**
@@ -184,17 +236,18 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     // If nothing was found in the lookup, an equivalent object may exist with different object identity.
     // Search through the map to find one that matches the isItemEqual comparator.
-    return this._findItem(this.lookup.values(), parent);
+    return this._findItem(this.lookup.values(), parent, node => node.item);
   }
 
-  _findItem(haystack, needle) {
+  _findItem(haystack, needle, getItem) {
     let isItemEqual = this.dataSource && this.dataSource.isItemEqual;
     if (typeof isItemEqual !== 'function') {
       return null;
     }
 
     for (let node of haystack) {
-      if (isItemEqual(node.item, needle)) {
+      let item = getItem ? getItem(node) : node;
+      if (isItemEqual(item, needle)) {
         return node;
       }
     }

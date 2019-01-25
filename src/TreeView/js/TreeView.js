@@ -31,12 +31,23 @@ export default class TreeView extends React.Component {
     /**
      * A function that is called when an item is toggled (expanded/collapsed).
      * Will only fire if item is toggleable and has children.
-     * Passes the item being toggled and the isExpanded state.
+     * Passes the item being toggled and the isExpanded state, along 
+     * with a list of all currently expanded items, which can be passed back 
+     * to the expandedItems prop.
      */
     onToggleItem: PropTypes.func,
 
     /** Sets the selected items. Optional. */
     selectedItems: PropTypes.arrayOf(PropTypes.object),
+
+    /** Sets the disabled items. Optional. */
+    disabledItems: PropTypes.arrayOf(PropTypes.object),
+
+    /** Sets the expanded items. Optional. */
+    expandedItems: PropTypes.arrayOf(PropTypes.object),
+
+    /** Sets the default expanded items. Optional. */
+    defaultExpandedItems: PropTypes.arrayOf(PropTypes.object),
 
     /** Whether to allow the user to select items */
     allowsSelection: PropTypes.bool,
@@ -106,14 +117,17 @@ export default class TreeView extends React.Component {
     // If the data source provided is a TreeViewDataSource (old API), use it directly,
     // otherwise wrap it.
     let dataSource = props.dataSource instanceof TreeViewDataSource
-      ? props.dataSource 
-      : new TreeViewDataSource(props.dataSource);
+      ? props.dataSource
+      : new TreeViewDataSource(props.dataSource, {
+        disabledItems: props.disabledItems,
+        expandedItems: props.expandedItems || props.defaultExpandedItems
+      });
 
     // Update selected items once loaded
     if (props.selectedItems) {
       dataSource.once('load', () => this.forceUpdate());
     }
-    
+
     return dataSource;
   }
 
@@ -141,6 +155,8 @@ export default class TreeView extends React.Component {
         dataSource,
         delegate
       });
+    } else {
+      this.state.dataSource.updateItemStates(props);
     }
   }
 
@@ -277,18 +293,34 @@ export default class TreeView extends React.Component {
     }
   }
 
+  _onToggleItem(item, isExpanded) {
+    if (!this.props.onToggleItem) {
+      return;
+    }
+
+    let treeItem = this.state.dataSource._getItem(item);
+    if (treeItem && treeItem.isToggleable && treeItem.hasChildren && treeItem.isExpanded !== isExpanded) {
+      let expandedItems = this.state.dataSource.getExpandedItems();
+      if (isExpanded) {
+        expandedItems.push(treeItem);
+      } else {
+        expandedItems = expandedItems.filter(i => i !== item);
+      }
+
+      this.props.onToggleItem(treeItem.item, isExpanded, expandedItems);
+    }
+  }
+
   /**
    * Expands or collapses the given item depending on its current state.
    * @param {object} item
    */
-  toggleItem(item) {
-    this.state.dataSource.toggleItem(item);
+  async toggleItem(item) {
+    let treeItem = this.state.dataSource._getItem(item);
+    this._onToggleItem(item, !treeItem.isExpanded);
 
-    if (this.props.onToggleItem) {
-      const treeItem = this.state.dataSource._getItem(item);
-      if (treeItem && treeItem.isToggleable && treeItem.hasChildren) {
-        this.props.onToggleItem(treeItem.item, treeItem.isExpanded);
-      }
+    if (!this.props.expandedItems) {
+      await this.state.dataSource.toggleItem(item);
     }
   }
 
@@ -297,7 +329,11 @@ export default class TreeView extends React.Component {
    * @param {object} item
    */
   expandItem(item) {
-    this.state.dataSource.expandItem(item);
+    this._onToggleItem(item, true);
+
+    if (!this.props.expandedItems) {
+      this.state.dataSource.expandItem(item);
+    }
   }
 
   /**
@@ -305,7 +341,11 @@ export default class TreeView extends React.Component {
    * @param {object} item
    */
   collapseItem(item) {
-    this.state.dataSource.collapseItem(item);
+    this._onToggleItem(item, false);
+
+    if (!this.props.expandedItems) {
+      this.state.dataSource.collapseItem(item);
+    }
   }
 
   selectItem(item) {
