@@ -52,6 +52,10 @@ export default class TreeItem extends React.Component {
 
   onToggle(e) {
     let {content, onToggle} = this.props;
+    if (content.isDisabled) {
+      return;
+    }
+
     if (onToggle) {
       onToggle(content.item, e);
     }
@@ -86,11 +90,13 @@ export default class TreeItem extends React.Component {
       isToggleable,
       isExpanded,
       parent,
-      level = 0
+      level = 0,
+      isDisabled
     } = content;
 
     let itemClassName = classNames('spectrum-TreeView-item', {
-      'is-open': isExpanded
+      'is-open': isExpanded,
+      'is-disabled': isDisabled
     });
 
     let linkClassName = classNames('spectrum-TreeView-itemLink', {
@@ -122,6 +128,7 @@ export default class TreeItem extends React.Component {
           aria-level={level + 1}
           aria-setsize={setSize}
           aria-posinset={posInSet + 1}
+          aria-disabled={isDisabled || null}
           aria-owns={ownedChildIds ? `${id}-group` : null}
           onClick={!allowsSelection ? this.onToggle : null}
           onMouseDown={!allowsSelection ? this.stopPropagationAndPreventDefault : null}>

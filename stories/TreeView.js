@@ -38,14 +38,30 @@ storiesOf('TreeView', module)
   )
   .add(
     'selectedItems using isItemEqual',
-    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]})
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'disabledItems',
+    () => render({allowsSelection: true, disabledItems: [{label: 'Test 2'}]}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'expandedItems (controlled)',
+    () => render({allowsSelection: true, expandedItems: [{label: 'Test 1'}]}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'defaultExpandedItems (uncontrolled)',
+    () => render({allowsSelection: true, defaultExpandedItems: [{label: 'Test 1'}]}),
+    {inline: true}
   );
 
 const data = [
   {label: 'Test 1', children: [
     {label: 'Child 1', children: [
       {label: 'Sub Child 1'},
-      {label: 'Sub Child 2'},
+      {label: 'Sub Child 2', disabled: true},
       {label: 'Sub Child 3'},
       {label: 'Sub Child 4'},
       {label: 'Sub Child 5'},
@@ -80,6 +96,12 @@ class ExampleDS extends TreeDataSource {
   
   isItemEqual(a, b) {
     return a.label === b.label;
+  }
+
+  getItemState(item) {
+    return {
+      isDisabled: item.disabled
+    };
   }
 }
 
