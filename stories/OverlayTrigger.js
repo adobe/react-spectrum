@@ -85,7 +85,13 @@ storiesOf('OverlayTrigger', module)
     'with: margin on target',
     () => render('popover', {trigger: 'click', placement: 'bottom'}, {style: {margin: 40}}),
     {inline: true}
-  ).addWithInfo(
+  )
+  .addWithInfo(
+    'controlled open',
+    () => render('popover', {show: true, placement: 'bottom'}, {style: {margin: 40}}),
+    {inline: true}
+  )
+  .addWithInfo(
     'with: "block" element and placement "bottom left"',
     () => render('popover', {trigger: 'click', placement: 'bottom left'}, {style: {width: '100%', minWidth: '100%'}}),
     {inline: true}

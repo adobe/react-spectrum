@@ -273,7 +273,7 @@ export default class OverlayTrigger extends Component {
   }
 
   hide(e) {
-    if (this.state.show) {
+    if (this.state.show && this.props.show === undefined) {
       this.setState({show: false});
       if (this.props.onHide) {
         this.props.onHide(e);
@@ -293,7 +293,6 @@ export default class OverlayTrigger extends Component {
     delete overlayProps.defaultShow;
     delete overlayProps.flip;
     delete overlayProps.boundariesElement;
-    delete overlayProps.shouldUpdatePosition;
     if (!overlay.props.id) {
       overlayProps.id = this.overlayId;
     }
