@@ -115,6 +115,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     this.replaceSection(0, items, false);
     this.emit('load');
+    this.emit('itemsInserted');
   }
 
   async loadChildren(parent) {
@@ -194,6 +195,11 @@ export default class TreeViewDataSource extends ArrayDataSource {
     });
 
     return expandedItems;
+  }
+
+  getItems(indexPaths) {
+    return Array.from(indexPaths)
+      .map(indexPath => this.getItem(indexPath.section, indexPath.index).item);
   }
 
   /**
@@ -363,6 +369,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     });
 
     this.endTransaction();
+    this.emit('itemsInserted');
   }
 
   /**
@@ -449,6 +456,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
       if (parentItem.isExpanded) {
         childItem.isVisible = true;
         this.insertItem(insertionIndex, childItem);
+        this.emit('itemsInserted');
       }
     }
   }
