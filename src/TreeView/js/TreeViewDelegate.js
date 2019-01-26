@@ -27,11 +27,6 @@ export default class TreeViewDelegate {
     return this.dataSource.getItem(target.indexPath.section, target.indexPath.index);
   }
 
-  _getItems(indexPaths) {
-    return Array.from(indexPaths)
-      .map(indexPath => this.dataSource.getItem(indexPath.section, indexPath.index).item);
-  }
-
   shouldSelectItem(indexPath) {
     let node = this.dataSource.getItem(indexPath.section, indexPath.index);
     if (node.isDisabled) {
@@ -51,7 +46,7 @@ export default class TreeViewDelegate {
       return false;
     }
 
-    let selectedItems = this._getItems(selectedIndexPaths);
+    let selectedItems = this.dataSource.getItems(selectedIndexPaths);
 
     if (typeof this.delegate.shouldSelectItem === 'function') {
       return this.delegate.shouldDrag(node.item, selectedItems);
@@ -62,13 +57,13 @@ export default class TreeViewDelegate {
 
   getAllowedDropOperations(dragTarget, selectedIndexPaths) {
     let target = this._getTarget(dragTarget).item;
-    let selectedItems = this._getItems(selectedIndexPaths);
+    let selectedItems = this.dataSource.getItems(selectedIndexPaths);
     return this.delegate.getAllowedDropOperations(target, selectedItems);
   }
 
   prepareDragData(dragTarget, dataTransfer, selectedIndexPaths) {
     let target = this._getTarget(dragTarget).item;
-    let selectedItems = this._getItems(selectedIndexPaths);
+    let selectedItems = this.dataSource.getItems(selectedIndexPaths);
     if (typeof this.delegate.prepareDragData === 'function') {
       return this.delegate.prepareDragData(target, dataTransfer, selectedItems);
     }
@@ -100,7 +95,7 @@ export default class TreeViewDelegate {
   }
 
   shouldDeleteItems(indexPaths) {
-    let items = this._getItems(indexPaths);
+    let items = this.dataSource.getItems(indexPaths);
     return this.delegate.shouldDeleteItems(items);
   }
 }

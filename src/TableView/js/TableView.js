@@ -60,8 +60,14 @@ export default class TableView extends Component {
     /** A function that is called when the selection changes. Passed an IndexPathSet object. */
     onSelectionChange: PropTypes.func,
 
-    /** Sets the selected rows. Should be an IndexPathSet object or an array of IndexPaths. */
+    /** Sets the selected rows (controlled). Should be an IndexPathSet object or an array of IndexPaths. */
     selectedIndexPaths: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.instanceOf(IndexPath)),
+      PropTypes.instanceOf(IndexPathSet)
+    ]),
+
+    /** Sets the default selected rows (uncontrolled). Should be an IndexPathSet object or an array of IndexPaths. */
+    defaultSelectedIndexPaths: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.instanceOf(IndexPath)),
       PropTypes.instanceOf(IndexPathSet)
     ]),

@@ -43,6 +43,36 @@ export default class Column extends React.Component {
     this.layout = new ListLayout({
       rowHeight: 44
     });
+
+    this.state = {
+      highlightedIndexPaths: this.getHighlightedIndexPaths(props)
+    }
+  }
+
+  getHighlightedIndexPaths(props) {
+    // Find IndexPaths for the items that should be highlighted.
+    // If this is the last column, nothing should be highlighted.
+    // Otherwise, highlight the navigated item in that column.
+    // Multi-select behavior is handled internally by the collection-view. See onHighlightChange.
+    let highlightedIndexPaths = [];
+    let {dataSource, level} = props;
+    let stack = dataSource.navigationStack;
+
+    if (level !== stack.length - 1) {
+      // Find the index of the navigated child (which should be next in the stack).
+      let navigatedItem = stack[level + 1];
+      if (navigatedItem) {
+        highlightedIndexPaths.push(new IndexPath(0, navigatedItem.index));
+      }
+    }
+
+    return highlightedIndexPaths;
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      highlightedIndexPaths: this.getHighlightedIndexPaths(props)
+    });
   }
 
   focus() {
@@ -84,21 +114,6 @@ export default class Column extends React.Component {
       level = 0
     } = this.props;
 
-    // Find IndexPaths for the items that should be highlighted.
-    // If this is the last column, nothing should be highlighted.
-    // Otherwise, highlight the navigated item in that column.
-    // Multi-select behavior is handled internally by the collection-view. See onHighlightChange.
-    let highlightedIndexPaths = [];
-    let stack = dataSource.navigationStack;
-
-    if (level !== stack.length - 1) {
-      // Find the index of the navigated child (which should be next in the stack).
-      let navigatedItem = stack[level + 1];
-      if (navigatedItem) {
-        highlightedIndexPaths.push(new IndexPath(0, navigatedItem.index));
-      }
-    }
-
     let ariaLabelledby = level > 0 
       ? item.getItemId()
       : this.props['aria-labelledby'];
@@ -110,7 +125,7 @@ export default class Column extends React.Component {
         layout={this.layout}
         delegate={this}
         onSelectionChanged={this.onHighlightChange}
-        selectedIndexPaths={highlightedIndexPaths}
+        selectedIndexPaths={this.state.highlightedIndexPaths}
         allowsMultipleSelection={allowsSelection}
         ref={c => this.collection = c}
         role="group"
@@ -122,7 +137,7 @@ export default class Column extends React.Component {
     );
   }
 
-  onHighlightChange() {
+  onHighlightChange(highlightedIndexPaths) {
     if (!this.collection) {
       return;
     }
@@ -130,10 +145,12 @@ export default class Column extends React.Component {
     // If there is 1 item highlighted, navigate to it.
     // If there are no items highlighted, navigate to the parent.
     // Otherwise, do nothing and let the collection-view manage the multiple highlighting behavior.
-    let highlighted = Array.from(this.collection.selectedIndexPaths);
+    let highlighted = Array.from(highlightedIndexPaths);
     if (highlighted.length <= 1) {
       let item = highlighted.length === 1 ? this.collection.getItem(highlighted[0]) : this.props.item;
       this.props.dataSource.navigateToItem(item.item);
+    } else {
+      this.setState({highlightedIndexPaths});
     }
   }
 

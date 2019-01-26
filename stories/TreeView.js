@@ -44,18 +44,23 @@ storiesOf('TreeView', module)
     {inline: true}
   )
   .addWithInfo(
-    'selectedItems',
+    'selectedItems (controlled)',
     () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [data[0]]}),
     {inline: true}
   )
   .addWithInfo(
     'selectedItems using isItemEqual',
-    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]}),
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}, {label: 'Sub Child 6'}]}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'defaultSelectedItems (controlled)',
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, defaultSelectedItems: [{label: 'Test 2'}, {label: 'Sub Child 6'}]}),
     {inline: true}
   )
   .addWithInfo(
     'disabledItems',
-    () => render({allowsSelection: true, disabledItems: [{label: 'Test 2'}]}),
+    () => render({allowsSelection: true, allowsMultipleSelection: true, disabledItems: [{label: 'Test 2'}]}),
     {inline: true}
   )
   .addWithInfo(

@@ -37,8 +37,11 @@ export default class TreeView extends React.Component {
      */
     onToggleItem: PropTypes.func,
 
-    /** Sets the selected items. Optional. */
+    /** Sets the selected items (controlled). Optional. */
     selectedItems: PropTypes.arrayOf(PropTypes.object),
+
+    /** Sets the default selected items (uncontrolled). Optional. */
+    defaultSelectedItems: PropTypes.arrayOf(PropTypes.object),
 
     /** Sets the disabled items. Optional. */
     disabledItems: PropTypes.arrayOf(PropTypes.object),
@@ -109,7 +112,8 @@ export default class TreeView extends React.Component {
     let delegate = this.getDelegate(props, dataSource);
     this.state = {
       dataSource,
-      delegate
+      delegate,
+      selectedIndexPaths: this.getSelectedIndexPaths(dataSource)
     };
   }
 
@@ -123,11 +127,8 @@ export default class TreeView extends React.Component {
         expandedItems: props.expandedItems || props.defaultExpandedItems
       });
 
-    // Update selected items once loaded
-    if (props.selectedItems) {
-      dataSource.once('load', () => this.forceUpdate());
-    }
-
+    // Update selected items when items are added
+    dataSource.on('itemsInserted', this.updateSelectedIndexPaths);
     return dataSource;
   }
 
@@ -158,27 +159,40 @@ export default class TreeView extends React.Component {
     } else {
       this.state.dataSource.updateItemStates(props);
     }
+
+    if (props.selectedItems !== this.props.selectedItems) {
+      this.updateSelectedIndexPaths();
+    }
   }
 
   componentWillUnmount() {
+    this.state.dataSource.removeListener('itemExpanded', this.updateSelectedIndexPaths);
     this.state.dataSource.teardown();
+  }
+
+  getSelectedIndexPaths(dataSource) {
+    let selectedItems = this.props.selectedItems || this.props.defaultSelectedItems;
+    if (!selectedItems) {
+      return [];
+    }
+
+    return selectedItems.map(item => dataSource.indexPathForItem(item)).filter(Boolean);
+  }
+
+  updateSelectedIndexPaths() {
+    this.setState({selectedIndexPaths: this.getSelectedIndexPaths(this.state.dataSource)});
   }
 
   render() {
     const {
-      selectedItems,
       className,
       id = this.treeId,
       allowsSelection,
       allowsEmptySelection,
       allowsMultipleSelection
     } = this.props;
-    let {dataSource} = this.state;
+    let {dataSource, selectedIndexPaths} = this.state;
 
-    let selectedIndexPaths;
-    if (selectedItems) {
-      selectedIndexPaths = selectedItems.map(item => dataSource.indexPathForItem(item)).filter(Boolean);
-    }
 
     return (
       <EditableCollectionView
@@ -240,7 +254,7 @@ export default class TreeView extends React.Component {
   }
 
   indentationForItem(section, index) {
-    let content = this.collection.getItem(section, index);
+    let content = this.state.dataSource.getItem(section, index);
     return 28 * content.level;
   }
 
@@ -328,11 +342,11 @@ export default class TreeView extends React.Component {
    * Expands the given item, displaying all of its children.
    * @param {object} item
    */
-  expandItem(item) {
+  async expandItem(item) {
     this._onToggleItem(item, true);
 
     if (!this.props.expandedItems) {
-      this.state.dataSource.expandItem(item);
+      await this.state.dataSource.expandItem(item);
     }
   }
 
@@ -372,9 +386,14 @@ export default class TreeView extends React.Component {
     return this.collection.getItem(this.collection.focusedIndexPath).item;
   }
 
-  onSelectionChange() {
+  onSelectionChange(selectedIndexPaths) {
+    if (!this.props.selectedItems) {
+      this.setState({selectedIndexPaths});
+    }
+
     if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(this.selectedItems);
+      let selectedItems = this.state.dataSource.getItems(selectedIndexPaths);
+      this.props.onSelectionChange(selectedItems);
     }
   }
 
