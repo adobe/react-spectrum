@@ -1,5 +1,6 @@
 import assert from 'assert';
 import {IndexPath} from '@react/collection-view';
+import sinon from 'sinon';
 import TreeDataSource from '../../src/TreeDataSource';
 import {TreeViewDataSource} from '../../src/TreeView';
 
@@ -10,7 +11,7 @@ export var data = [
     ]},
     {name: 'Child 2', children: []}
   ]},
-  {name: 'Root 2', children: []}
+  {name: 'Root 2', children: [], disabled: true}
 ];
 
 export class TestDataSource extends TreeViewDataSource {
@@ -35,6 +36,12 @@ export class TreeDS extends TreeDataSource {
   isItemEqual(a, b) {
     return a.name === b.name;
   }
+
+  getItemState(item) {
+    if (item.disabled) {
+      return {isDisabled: true};
+    }
+  }
 }
 
 function testEmitter(emitter) {
@@ -55,7 +62,7 @@ function checkSortedChildren(node) {
   }
 }
 
-describe('TreeViewDataSource', function () {
+describe.only('TreeViewDataSource', function () {
   var ds;
   beforeEach(async function () {
     ds = new TestDataSource;
@@ -137,7 +144,8 @@ describe('TreeViewDataSource', function () {
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', undefined],
+      ['itemsInserted']
     ]);
 
     assert.equal(ds.getSectionLength(0), 4);
@@ -161,7 +169,8 @@ describe('TreeViewDataSource', function () {
       ['reloadItem', new IndexPath(0, 1), false], // isLoading = false
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', undefined],
+      ['itemsInserted']
     ]);
 
     assert.equal(ds.getSectionLength(0), 5);
@@ -187,7 +196,8 @@ describe('TreeViewDataSource', function () {
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', undefined],
+      ['itemsInserted']
     ]);
   });
 
@@ -255,7 +265,8 @@ describe('TreeViewDataSource', function () {
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
       ['insertItem', new IndexPath(0, 3), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', undefined],
+      ['itemsInserted']
     ]);
 
     assert.equal(ds.getSectionLength(0), 5);
@@ -274,6 +285,7 @@ describe('TreeViewDataSource', function () {
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
       ['endTransaction', undefined],
+      ['itemsInserted'],
 
       ['reloadItem', new IndexPath(0, 0), false],
       ['startTransaction'],
@@ -281,6 +293,135 @@ describe('TreeViewDataSource', function () {
       ['removeItem', new IndexPath(0, 1), undefined],
       ['endTransaction', undefined]
     ]);
+  });
+
+  it('should call getItemState to get item states', async function () {
+    let treeDS = new TreeDS;
+    sinon.spy(treeDS, 'getItemState');
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    assert(treeDS.getItemState.calledTwice);
+    assert.equal(ds.root.children[0].isDisabled, false);
+    assert.equal(ds.root.children[1].isDisabled, true);
+
+    await ds.expandItem(data[0]);
+    assert.equal(treeDS.getItemState.callCount, 4);
+  });
+
+  it('should update item states using getItemState on reloadItem', async function () {
+    let treeDS = new TreeDS;
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    ds.root.children[1].isDisabled = false;
+    sinon.spy(treeDS, 'getItemState');
+
+    await ds.reloadItem(data[1]);
+    assert(treeDS.getItemState.calledOnce);
+    assert.equal(ds.root.children[1].isDisabled, true);
+  });
+
+  it('should load children of items that are pre-expanded in getItemState', async function () {
+    let treeDS = new TreeDS;
+    sinon.stub(treeDS, 'getItemState').returns({isExpanded: true});
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    assert.equal(ds.sections[0].length, 5);
+    assert.equal(treeDS.getItemState.callCount, 5);
+  });
+
+  it('should collapse items that are pre-expanded when getItemState changes in reloadItem', async function () {
+    let treeDS = new TreeDS;
+    sinon.stub(treeDS, 'getItemState').returns({isExpanded: true});
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    assert.equal(ds.sections[0].length, 5);
+
+    treeDS.getItemState.returns({isExpanded: false});
+    await ds.reloadItem(data[0]);
+
+    assert.equal(ds.sections[0].length, 2);
+  });
+
+  it('should expand items when getItemState changes in reloadItem', async function () {
+    let treeDS = new TreeDS;
+    sinon.stub(treeDS, 'getItemState').returns({isExpanded: false});
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    assert.equal(ds.sections[0].length, 2);
+
+    treeDS.getItemState.returns({isExpanded: true});
+    await ds.reloadItem(data[0]);
+
+    assert.equal(ds.sections[0].length, 5);
+  });
+
+  it('should get item states from props', async function () {
+    let treeDS = new TreeDS;
+    let ds = new TreeViewDataSource(treeDS, {
+      disabledItems: [data[1]],
+      expandedItems: [data[0]]
+    });
+
+    await ds.loadData();
+
+    assert.equal(ds.sections[0].length, 4);
+    assert.equal(ds.root.children[0].isDisabled, false);
+    assert.equal(ds.root.children[1].isDisabled, true);
+    assert.equal(ds.root.children[0].isExpanded, true);
+    assert.equal(ds.root.children[1].isExpanded, false);
+  });
+
+  it('should update item states from props', async function () {
+    let treeDS = new TreeDS;
+    sinon.stub(treeDS, 'getItemState');
+    let ds = new TreeViewDataSource(treeDS, {
+      disabledItems: [data[1]],
+      expandedItems: [data[0]]
+    });
+
+    await ds.loadData();
+
+    assert.equal(ds.sections[0].length, 4);
+    assert.equal(ds.root.children[0].isDisabled, false);
+    assert.equal(ds.root.children[1].isDisabled, true);
+    assert.equal(ds.root.children[0].isExpanded, true);
+    assert.equal(ds.root.children[1].isExpanded, false);
+
+    testEmitter(ds);
+    await ds.updateItemStates({
+      disabledItems: [data[0]],
+      expandedItems: []
+    });
+
+    assert.equal(ds.sections[0].length, 2);
+    assert.equal(ds.root.children[0].isDisabled, true);
+    assert.equal(ds.root.children[1].isDisabled, false);
+    assert.equal(ds.root.children[0].isExpanded, false);
+    assert.equal(ds.root.children[1].isExpanded, false);
+
+    assert.deepEqual(ds.emittedEvents, [
+      ['reloadItem', new IndexPath(0, 0), false], // disable item 0
+      ['reloadItem', new IndexPath(0, 0), false], // collapse item 0
+      ['startTransaction'],
+      ['removeItem', new IndexPath(0, 1), undefined],
+      ['removeItem', new IndexPath(0, 1), undefined],
+      ['endTransaction', undefined],
+      ['reloadItem', new IndexPath(0, 1), false], // enable item 1
+    ]);
+  });
+
+  it('should get a list of expanded items from getExpandedItems', async function () {
+    let treeDS = new TreeDS;
+    sinon.stub(treeDS, 'getItemState').returns({isExpanded: true});
+    let ds = new TreeViewDataSource(treeDS);
+    await ds.loadData();
+
+    assert.deepEqual(ds.getExpandedItems(), [data[0], data[0].children[0]]);
   });
 
   describe('insertChild', function () {
@@ -299,7 +440,8 @@ describe('TreeViewDataSource', function () {
       ds.insertChild(data[0], 0, {name: 'Child 0', children: []});
 
       assert.deepEqual(ds.emittedEvents, [
-        ['insertItem', new IndexPath(0, 1), undefined]
+        ['insertItem', new IndexPath(0, 1), undefined],
+        ['itemsInserted']
       ]);
 
       checkSortedChildren(ds.root);
@@ -313,7 +455,8 @@ describe('TreeViewDataSource', function () {
       ds.insertChild(data[0], 2, {name: 'Child 3', children: []});
 
       assert.deepEqual(ds.emittedEvents, [
-        ['insertItem', new IndexPath(0, 4), undefined]
+        ['insertItem', new IndexPath(0, 4), undefined],
+        ['itemsInserted']
       ]);
 
       checkSortedChildren(ds.root);
@@ -327,7 +470,8 @@ describe('TreeViewDataSource', function () {
 
       assert.deepEqual(ds.emittedEvents, [
         ['reloadItem', new IndexPath(0, 1), false],
-        ['insertItem', new IndexPath(0, 2), undefined]
+        ['insertItem', new IndexPath(0, 2), undefined],
+        ['itemsInserted']
       ]);
 
       checkSortedChildren(ds.root);
@@ -338,7 +482,8 @@ describe('TreeViewDataSource', function () {
       ds.insertChild(null, 2, {name: 'Root 3', children: []});
 
       assert.deepEqual(ds.emittedEvents, [
-        ['insertItem', new IndexPath(0, 2), undefined]
+        ['insertItem', new IndexPath(0, 2), undefined],
+        ['itemsInserted']
       ]);
 
       checkSortedChildren(ds.root);

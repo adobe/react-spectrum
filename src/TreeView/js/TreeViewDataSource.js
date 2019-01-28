@@ -144,17 +144,18 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
   getTreeItem(item, parent, index) {
     let treeItem = new TreeItem(item, parent, this.hasChildren(item), index);
-    this.updateTreeItem(treeItem);
+    Object.assign(treeItem, this.getItemState(treeItem));
     return treeItem;
   }
 
-  updateTreeItem(treeItem) {
+  getItemState(treeItem) {
+    let itemState = {};
     if (this.props.disabledItems) {
-      treeItem.isDisabled = !!this._findItem(this.props.disabledItems, treeItem.item);
+      itemState.isDisabled = !!this._findItem(this.props.disabledItems, treeItem.item);
     }
 
     if (this.props.expandedItems) {
-      treeItem.isExpanded = !!this._findItem(this.props.expandedItems, treeItem.item);
+      itemState.isExpanded = !!this._findItem(this.props.expandedItems, treeItem.item);
     }
 
     if (this.dataSource && typeof this.dataSource.getItemState === 'function') {
@@ -162,29 +163,38 @@ export default class TreeViewDataSource extends ArrayDataSource {
       if (state && typeof state === 'object') {
         for (let key in state) {
           if (key in treeItem && typeof state[key] === typeof treeItem[key]) {
-            treeItem[key] = state[key];
+            itemState[key] = state[key];
           }
         }
       }
     }
+
+    return itemState;
   }
 
-  updateItemStates(props) {
-    if (props.disabledItems || props.expandedItems) {
-      let disabledItems = new Set((props.disabledItems || []).map(item => this._getItem(item)).filter(Boolean));
-      let expandedItems = new Set((props.expandedItems || []).map(item => this._getItem(item)).filter(Boolean));
-      for (let node of this.sections[0]) {
-        let isDisabled = disabledItems.has(node);
-        let isExpanded = expandedItems.has(node);
-        if (isDisabled !== node.isDisabled || isExpanded !== node.isExpanded) {
-          node.isDisabled = isDisabled;
-          node.isExpanded = isExpanded;
-          this._reloadItem(node.item);
-        }
-      }
+  async updateTreeItem(treeItem) {
+    let state = this.getItemState(treeItem);
+    if (state.isDisabled != null && state.isDisabled !== treeItem.isDisabled) {
+      treeItem.isDisabled = state.isDisabled;
+      this._reloadItem(treeItem.item);
     }
 
+    if (state.isExpanded != null && state.isExpanded !== treeItem.isExpanded) {
+      if (state.isExpanded) {
+        await this.expandItem(treeItem.item);
+      } else {
+        this.collapseItem(treeItem.item);
+      }
+    }
+  }
+
+  async updateItemStates(props) {
     this.props = props;
+    if (props.disabledItems || props.expandedItems) {
+      for (let node of this.sections[0]) {
+        await this.updateTreeItem(node);
+      }
+    }
   }
 
   getExpandedItems() {
@@ -289,10 +299,10 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} item
    */
   @autobind
-  reloadItem(item) {
+  async reloadItem(item) {
     let node = this._getItem(item);
     if (node) {
-      this.updateTreeItem(node);
+      await this.updateTreeItem(node);
       this._reloadItem(item);
     }
   }
