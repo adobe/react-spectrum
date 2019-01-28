@@ -120,7 +120,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
   async loadChildren(parent) {
     parent.isLoading = true;
-    this.reloadItem(parent.item);
+    this._reloadItem(parent.item);
 
     let items = await this.getChildren(parent.item);
     let res = [];
@@ -140,22 +140,26 @@ export default class TreeViewDataSource extends ArrayDataSource {
     parent.children = res;
     parent.hasChildren = res.length > 0;
     parent.isLoading = false;
-    this.reloadItem(parent.item);
+    this._reloadItem(parent.item);
   }
 
   getTreeItem(item, parent, index) {
     let treeItem = new TreeItem(item, parent, this.hasChildren(item), index);
+    this.updateTreeItem(treeItem);
+    return treeItem;
+  }
 
+  updateTreeItem(treeItem) {
     if (this.props.disabledItems) {
-      treeItem.isDisabled = !!this._findItem(this.props.disabledItems, item);
+      treeItem.isDisabled = !!this._findItem(this.props.disabledItems, treeItem.item);
     }
 
     if (this.props.expandedItems) {
-      treeItem.isExpanded = !!this._findItem(this.props.expandedItems, item);
+      treeItem.isExpanded = !!this._findItem(this.props.expandedItems, treeItem.item);
     }
 
     if (this.dataSource && typeof this.dataSource.getItemState === 'function') {
-      let state = this.dataSource.getItemState(item);
+      let state = this.dataSource.getItemState(treeItem.item);
       if (state && typeof state === 'object') {
         for (let key in state) {
           if (key in treeItem && typeof state[key] === typeof treeItem[key]) {
@@ -164,8 +168,6 @@ export default class TreeViewDataSource extends ArrayDataSource {
         }
       }
     }
-
-    return treeItem;
   }
 
   updateItemStates(props) {
@@ -178,7 +180,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
         if (isDisabled !== node.isDisabled || isExpanded !== node.isExpanded) {
           node.isDisabled = isDisabled;
           node.isExpanded = isExpanded;
-          this.reloadItem(node.item);
+          this._reloadItem(node.item);
         }
       }
     }
@@ -288,6 +290,14 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} item
    */
   reloadItem(item) {
+    let node = this._getItem(item);
+    if (node) {
+      this.updateTreeItem(node);
+      this._reloadItem(item);
+    }
+  }
+
+  _reloadItem(item) {
     let indexPath = this.indexPathForItem(item);
     if (indexPath) {
       this.emit('reloadItem', indexPath, false);
@@ -349,7 +359,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     // Update parent
     node.isExpanded = true;
-    this.reloadItem(node.item);
+    this._reloadItem(node.item);
 
     // Load children if needed.
     if (!node.children) {
@@ -384,7 +394,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
     // Update parent
     node.isExpanded = false;
-    this.reloadItem(node.item);
+    this._reloadItem(node.item);
 
     // Remove all children from visible
     this.startTransaction();
@@ -441,7 +451,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Make sure the disclosure indicator is correct
     if (!parentItem.hasChildren) {
       parentItem.hasChildren = true;
-      this.reloadItem(parentItem.item);
+      this._reloadItem(parentItem.item);
     }
 
     // If the children have been loaded, insert the new child
@@ -480,7 +490,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Make sure the disclosure indicator is correct
     if (parentItem.children.length === 0) {
       parentItem.hasChildren = false;
-      this.reloadItem(parentItem.item);
+      this._reloadItem(parentItem.item);
     }
 
     // Remove from the visible items if the parent is expanded
@@ -562,12 +572,12 @@ export default class TreeViewDataSource extends ArrayDataSource {
     // Reload both parents to ensure the disclosure indicators are correct
     if (fromItem.children.length === 0) {
       fromItem.hasChildren = false;
-      this.reloadItem(fromItem.item);
+      this._reloadItem(fromItem.item);
     }
 
     if (!toItem.hasChildren) {
       toItem.hasChildren = true;
-      this.reloadItem(toItem.item);
+      this._reloadItem(toItem.item);
     }
 
     // Move, remove, or insert the item from visible depending on whether parents are expanded
