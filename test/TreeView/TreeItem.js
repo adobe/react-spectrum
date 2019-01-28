@@ -119,6 +119,22 @@ describe('TreeItem', function () {
     assert(link.hasClass('is-drop-target'));
   });
 
+  it('should render a disabled item', function () {
+    let renderItem = (item) => <span>{item}</span>;
+    let onToggle = sinon.spy();
+    let wrapper = shallow(
+      <TreeItem
+        content={{item: 'world', parent: root, isDisabled: true}}
+        renderItem={renderItem}
+        onToggle={onToggle} />
+    );
+
+    assert(wrapper.hasClass('is-disabled'));
+
+    let link = wrapper.find('.spectrum-TreeView-itemLink');
+    assert.equal(link.prop('aria-disabled'), true);
+  });
+
   it('should pass tree item as a second argument to renderItem', function () {
     let renderItem = (item, content) => <span>{content.isLoading ? 'loading' : item}</span>;
     let onToggle = sinon.spy();
