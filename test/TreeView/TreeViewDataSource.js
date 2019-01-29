@@ -62,7 +62,7 @@ function checkSortedChildren(node) {
   }
 }
 
-describe.only('TreeViewDataSource', function () {
+describe('TreeViewDataSource', function () {
   var ds;
   beforeEach(async function () {
     ds = new TestDataSource;

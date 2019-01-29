@@ -73,6 +73,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
     this.lookup = new Map;
     this.dataSource = dataSource;
     this.props = props || {};
+    this.selectedItems = this.props.selectedItems || [];
 
     if (dataSource && typeof dataSource.on === 'function') {
       // Bind methods that come from ArrayDataSource
@@ -190,6 +191,11 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
   async updateItemStates(props) {
     this.props = props;
+
+    if (props.selectedItems !== this.props.selectedItems) {
+      this.setSelectedItems(props.selectedItems);
+    }
+
     if (props.disabledItems || props.expandedItems) {
       for (let node of this.sections[0]) {
         await this.updateTreeItem(node);
@@ -211,6 +217,23 @@ export default class TreeViewDataSource extends ArrayDataSource {
   getItems(indexPaths) {
     return Array.from(indexPaths)
       .map(indexPath => this.getItem(indexPath.section, indexPath.index).item);
+  }
+
+  getSelectedIndexPaths() {
+    return this.selectedItems.map(item => this.indexPathForItem(item)).filter(Boolean);
+  }
+
+  getSelectedItems(selectedIndexPaths) {
+    let visibleSelectedItems = this.getItems(selectedIndexPaths);
+    let invisibleSelectedItems = this.selectedItems.filter(item => !this.indexPathForItem(item));
+    let fullSelectedItems = new Set([...visibleSelectedItems, ...invisibleSelectedItems]);
+    let existingSelectedItems = this.selectedItems.filter(item => fullSelectedItems.has(item));
+    let orderedSelectedItems = new Set([...existingSelectedItems, ...fullSelectedItems]);
+    return [...orderedSelectedItems];
+  }
+
+  setSelectedItems(selectedItems) {
+    this.selectedItems = selectedItems || [];
   }
 
   /**
