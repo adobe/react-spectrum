@@ -259,21 +259,21 @@ describe('TreeView', function () {
       assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 1)]);
     });
 
-    it('should should not retain defaultSelectedItems if the user changes the selection', async function () {
+    it('should retain invisible defaultSelectedItems on expand', async function () {
       let dataSource = new TreeDS;
       let onSelectionChange = sinon.spy();
-      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} defaultSelectedItems={[data[0]]} />);
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} defaultSelectedItems={[data[0], data[0].children[0]]} />);
       await sleep(100);
 
       assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
 
       wrapper.simulate('selectionChanged', [new IndexPath(0, 1)]);
       assert(onSelectionChange.calledOnce);
-      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[1]]);
+      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[0].children[0], data[1]]);
 
       await wrapper.instance().expandItem(data[0]);
 
-      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 3)]);
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 1), new IndexPath(0, 3)]);
     });
   });
 

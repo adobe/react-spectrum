@@ -1,13 +1,14 @@
 import assert from 'assert';
-import {data, TestDataSource} from './TreeViewDataSource';
+import {data, TreeDS} from './TreeViewDataSource';
 import {DragTarget, IndexPath} from '@react/collection-view';
 import sinon from 'sinon';
+import {TreeViewDataSource} from '../../src/TreeView';
 import TreeViewDelegate from '../../src/TreeView/js/TreeViewDelegate';
 
 describe('TreeViewDelegate', function () {
   let ds;
   beforeEach(async function () {
-    ds = new TestDataSource;
+    ds = new TreeViewDataSource(new TreeDS);
     await ds.loadData();
   });
 
@@ -22,6 +23,11 @@ describe('TreeViewDelegate', function () {
     assert.deepEqual(stub.getCall(0).args, [data[0]]);
   });
 
+  it('should return false from shouldSelectItem if the item is disabled', async function () {
+    let delegate = new TreeViewDelegate(ds, {});
+    assert.equal(delegate.shouldSelectItem(new IndexPath(0, 1)), false);
+  });
+
   it('should proxy shouldDrag', async function () {    
     let stub = sinon.stub().returns(true);
     let delegate = new TreeViewDelegate(ds, {
@@ -31,6 +37,11 @@ describe('TreeViewDelegate', function () {
     delegate.shouldDrag(new DragTarget('item', new IndexPath(0, 0)), [new IndexPath(0, 0)]);
     assert(stub.calledOnce);
     assert.deepEqual(stub.getCall(0).args, [data[0], [data[0]]]);
+  });
+
+  it('should return false from shouldDrag if the item is disabled', async function () {
+    let delegate = new TreeViewDelegate(ds, {});
+    assert.equal(delegate.shouldDrag(new DragTarget('item', new IndexPath(0, 1)), [new IndexPath(0, 1)]), false);
   });
 
   it('should proxy getAllowedDropOperations', async function () {    
@@ -79,6 +90,11 @@ describe('TreeViewDelegate', function () {
     delegate.getDropTarget(new DragTarget('item', new IndexPath(0, 0)));
     assert(stub.calledOnce);
     assert.deepEqual(stub.getCall(0).args, [data[0]]);
+  });
+
+  it('should return null from getDropTarget if the item is disabled', async function () {
+    let delegate = new TreeViewDelegate(ds, {});
+    assert.equal(delegate.getDropTarget(new DragTarget('item', new IndexPath(0, 1))), null);
   });
 
   it('should proxy getDropOperation', async function () {    

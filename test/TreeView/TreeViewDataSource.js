@@ -424,6 +424,18 @@ describe('TreeViewDataSource', function () {
     assert.deepEqual(ds.getExpandedItems(), [data[0], data[0].children[0]]);
   });
 
+  describe('selection', function () {
+    it('should get selected index paths', function () {
+      ds.setSelectedItems([data[0], data[0].children[0]]);
+      assert.deepEqual(ds.getSelectedIndexPaths(), [new IndexPath(0, 0)]);
+    });
+
+    it('should get updated selected items', function () {
+      ds.setSelectedItems([data[0], data[0].children[0]]);
+      assert.deepEqual(ds.getSelectedItems([new IndexPath(0, 1)]), [data[0].children[0], data[1]]);
+    });
+  });
+
   describe('insertChild', function () {
     it('should do nothing if children not yet loaded', async function () {
       testEmitter(ds);
