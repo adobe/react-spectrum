@@ -48,7 +48,7 @@ export default class TreeViewDelegate {
 
     let selectedItems = this.dataSource.getItems(selectedIndexPaths);
 
-    if (typeof this.delegate.shouldSelectItem === 'function') {
+    if (typeof this.delegate.shouldDrag === 'function') {
       return this.delegate.shouldDrag(node.item, selectedItems);
     }
 
