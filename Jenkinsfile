@@ -15,6 +15,7 @@ livefyre('''
     publishHTML:
       dist/storybook: index.html
   deploy:
+    branch: ".*"
     git: true
     commands:
       - make build
