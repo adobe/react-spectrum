@@ -46,7 +46,7 @@ export default class Column extends React.Component {
 
     this.state = {
       highlightedIndexPaths: this.getHighlightedIndexPaths(props)
-    }
+    };
   }
 
   getHighlightedIndexPaths(props) {
@@ -108,13 +108,12 @@ export default class Column extends React.Component {
 
   render() {
     let {
-      dataSource,
       item,
       allowsSelection,
       level = 0
     } = this.props;
 
-    let ariaLabelledby = level > 0 
+    let ariaLabelledby = level > 0
       ? item.getItemId()
       : this.props['aria-labelledby'];
 
