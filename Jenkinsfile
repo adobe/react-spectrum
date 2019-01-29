@@ -15,7 +15,6 @@ livefyre('''
     publishHTML:
       public/storybook: index.html
   deploy:
-    branch: "^(master)$"
     git: true
     sshAgent: rspbot
     commands:
