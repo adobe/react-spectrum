@@ -40,7 +40,7 @@ module.exports = function ({types: t}) {
     // When building for production, we copy spectrum-css into react-spectrum.
     let base = process.env.BUILD_ENV === 'production'
       ? Path.relative(dir, 'dist/spectrum-css')
-      : '@spectrum/spectrum-css/dist/components';
+      : '@adobe/spectrum-css/dist/components';
 
     let path = `${component}/`;
     if (theme) {

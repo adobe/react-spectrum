@@ -22,12 +22,12 @@ storiesOf('Tag', module)
   )
   .addWithInfo(
     'avatar',
-    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg'}),
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}),
     {inline: true}
   )
   .addWithInfo(
     'avatar, closable: true',
-    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg', closable: true}),
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', closable: true}),
     {inline: true}
   )
   .addWithInfo(
@@ -47,7 +47,7 @@ storiesOf('Tag', module)
   )
   .addWithInfo(
     'avatar, invalid: true',
-    () => render({avatar: 'https://git.corp.adobe.com/pages/lawdavis/spectrum-css-example/docs/img/example-ava.jpg', invalid: true, closable: true}),
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', invalid: true, closable: true}),
     {inline: true}
   );
 

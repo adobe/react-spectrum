@@ -12,21 +12,21 @@ storiesOf('Avatar', module)
   .addWithInfo(
     'Default',
     () => (
-      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" />
+      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" />
     ),
     {inline: true}
   )
   .addWithInfo(
     'Disabled',
     () => (
-      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" disabled />
+      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" disabled />
     ),
     {inline: true}
   )
   .addWithInfo(
     'With alt text',
     () => (
-      <Avatar src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
+      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
     ),
     {inline: true}
   );
