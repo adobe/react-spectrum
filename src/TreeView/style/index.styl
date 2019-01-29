@@ -1,5 +1,3 @@
-@import '@spectrum/spectrum-variables/stylus/spectrum-light.styl'
-
 .spectrum-TreeView {
   height: 300px; // fixed height is intentional for container rendering; override in a custom class
 }
@@ -7,12 +5,5 @@
 .spectrum-TreeView-item {
   &.is-disabled {
     pointer-events: none;
-    > .spectrum-TreeView-itemLink {
-      color: $spectrum-alias-text-color-disabled;
-
-      .spectrum-Icon {
-        color: $spectrum-alias-icon-color-disabled;
-      }
-    }
   }
 }
