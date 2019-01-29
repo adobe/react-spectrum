@@ -151,6 +151,8 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
   getItemState(treeItem) {
     let itemState = {};
+
+    // Get states from props
     if (this.props.disabledItems) {
       itemState.isDisabled = !!this._findItem(this.props.disabledItems, treeItem.item);
     }
@@ -159,6 +161,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
       itemState.isExpanded = !!this._findItem(this.props.expandedItems, treeItem.item);
     }
 
+    // If the wrapped data source has a getItemState method, call it to get the disabled/expanded states.
     if (this.dataSource && typeof this.dataSource.getItemState === 'function') {
       let state = this.dataSource.getItemState(treeItem.item);
       if (state && typeof state === 'object') {
@@ -175,11 +178,14 @@ export default class TreeViewDataSource extends ArrayDataSource {
 
   async updateTreeItem(treeItem) {
     let state = this.getItemState(treeItem);
+
+    // Update disabled state
     if (state.isDisabled != null && state.isDisabled !== treeItem.isDisabled) {
       treeItem.isDisabled = state.isDisabled;
       this._reloadItem(treeItem.item);
     }
 
+    // Expand or collapse the item based on the expanded state
     if (state.isExpanded != null && state.isExpanded !== treeItem.isExpanded) {
       if (state.isExpanded) {
         await this.expandItem(treeItem.item);
@@ -190,6 +196,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
   }
 
   async updateItemStates(props) {
+    // Update states of all items from props
     this.props = props;
 
     if (props.selectedItems) {
@@ -224,6 +231,11 @@ export default class TreeViewDataSource extends ArrayDataSource {
   }
 
   getSelectedItems(selectedIndexPaths) {
+    // The selectedIndexPaths from collection-view will only contain currently visible items.
+    // The invisble (collapsed) items come from the existing current selected items.
+    // Those sets are merged together to produce the full list of selected items. However,
+    // in order for shallow comparisons to work properly, we want them in the same order.
+    // We put items that were in the existing selected items list first, followed by new items.
     let visibleSelectedItems = this.getItems(selectedIndexPaths);
     let invisibleSelectedItems = this.selectedItems.filter(item => !this.indexPathForItem(item));
     let fullSelectedItems = new Set([...visibleSelectedItems, ...invisibleSelectedItems]);

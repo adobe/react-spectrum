@@ -309,6 +309,8 @@ export default class TreeView extends React.Component {
       return;
     }
 
+    // If the item is toggleable, update the list of expanded items to include or exclude the item
+    // based on the new value of isExpanded.
     let treeItem = this.state.dataSource._getItem(item);
     if (treeItem && treeItem.isToggleable && treeItem.hasChildren && treeItem.isExpanded !== isExpanded) {
       let expandedItems = this.state.dataSource.getExpandedItems();
@@ -383,11 +385,15 @@ export default class TreeView extends React.Component {
   }
 
   onSelectionChange(selectedIndexPaths, fromTransaction) {
+    // If this event came from a transaction, the actual selected items will not change,
+    // only their indexes. We can safely ignore this.
     if (fromTransaction) {
       this.setState({selectedIndexPaths});
       return;
     }
 
+    // Map the indexes to objects and get the full list of selected items.
+    // If uncontrolled, update state immediately.
     let selectedItems = this.state.dataSource.getSelectedItems(selectedIndexPaths);
     if (!this.props.selectedItems) {
       this.state.dataSource.setSelectedItems(selectedItems);
