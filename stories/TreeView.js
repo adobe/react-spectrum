@@ -43,7 +43,7 @@ storiesOf('TreeView', module)
     {inline: true}
   )
   .addWithInfo(
-    'defaultSelectedItems (controlled)',
+    'defaultSelectedItems (uncontrolled)',
     () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, defaultSelectedItems: [{label: 'Test 2'}, {label: 'Sub Child 6'}]}),
     {inline: true}
   )

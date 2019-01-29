@@ -1,10 +1,10 @@
 import assert from 'assert';
+import {data, TestDataSource, TreeDS} from './TreeViewDataSource';
 import {DragTarget, EditableCollectionView, IndexPath} from '@react/collection-view';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import {sleep} from '../utils';
-import {TestDataSource, TreeDS} from './TreeViewDataSource';
 import TreeItem from '../../src/TreeView/js/TreeItem';
 import {TreeView} from '../../src/TreeView';
 
@@ -134,7 +134,7 @@ describe('TreeView', function () {
     });
   });
 
-  describe('onToggle event callback', function () {
+  describe('onToggleItem event callback', function () {
     it('should fire for items with isToggleable: true && hasChildren: true', async function () {
       let dataSource = new TestDataSource;
       await dataSource.loadData();
@@ -171,6 +171,109 @@ describe('TreeView', function () {
       item.simulate('toggle');
       assert.equal(dataSource.toggleItem.calledTwice, true);
       assert.equal(onToggleItem.called, false);
+    });
+
+    it('should not call toggleItem on the data source if controlled', async function () {
+      let dataSource = new TreeDS;
+      let onToggleItem = sinon.spy();
+
+      let wrapper = shallow(<TreeView dataSource={dataSource} onToggleItem={onToggleItem} expandedItems={[data[0]]} />);
+      await sleep(100);
+      let item = wrapper.wrap(wrapper.instance().renderItemView('item', wrapper.state('dataSource').getItem(0, 0)));
+
+      sinon.stub(wrapper.state('dataSource'), 'toggleItem');
+
+      // collapse
+      item.simulate('toggle');
+      assert.equal(wrapper.state('dataSource').toggleItem.called, false);
+      assert.equal(onToggleItem.calledOnce, true);
+      assert.deepEqual(onToggleItem.getCall(0).args, [data[0], false, []]);
+
+      wrapper.setProps({expandedItems: []});
+      await sleep(100);
+
+      // expand
+      item.simulate('toggle');
+      assert.equal(wrapper.state('dataSource').toggleItem.called, false);
+      assert.equal(onToggleItem.calledTwice, true);
+      assert.deepEqual(onToggleItem.getCall(1).args, [data[0], true, [data[0]]]);
+    });
+  });
+
+  describe('selection', function () {
+    it('should trigger onSelectionChange when the selection changes (uncontrolled)', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), []);
+
+      wrapper.simulate('selectionChanged', [new IndexPath(0, 0)]);
+      assert(onSelectionChange.calledOnce);
+      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[0]]);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+    });
+
+    it('should trigger onSelectionChange when the selection changes with defaultSelectedItems (uncontrolled)', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} defaultSelectedItems={[data[0]]} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+
+      wrapper.simulate('selectionChanged', [new IndexPath(0, 0), new IndexPath(0, 1)]);
+      assert(onSelectionChange.calledOnce);
+      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[0], data[1]]);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0), new IndexPath(0, 1)]);
+    });
+
+    it('should trigger onSelectionChange when the selection changes (controlled)', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} selectedItems={[data[0]]} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+
+      wrapper.simulate('selectionChanged', [new IndexPath(0, 0), new IndexPath(0, 1)]);
+      assert(onSelectionChange.calledOnce);
+      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[0], data[1]]);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+    });
+
+    it('should update selectedIndexPaths when items are expanded', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} selectedItems={[data[0].children[0]]} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), []);
+
+      await wrapper.instance().expandItem(data[0]);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 1)]);
+    });
+
+    it('should should not retain defaultSelectedItems if the user changes the selection', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} defaultSelectedItems={[data[0]]} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+
+      wrapper.simulate('selectionChanged', [new IndexPath(0, 1)]);
+      assert(onSelectionChange.calledOnce);
+      assert.deepEqual(onSelectionChange.getCall(0).args[0], [data[1]]);
+
+      await wrapper.instance().expandItem(data[0]);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 3)]);
     });
   });
 
