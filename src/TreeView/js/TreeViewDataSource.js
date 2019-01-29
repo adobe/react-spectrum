@@ -193,7 +193,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
   async updateItemStates(props) {
     this.props = props;
 
-    if (props.selectedItems !== this.props.selectedItems) {
+    if (props.selectedItems) {
       this.setSelectedItems(props.selectedItems);
     }
 
