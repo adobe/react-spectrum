@@ -52,13 +52,14 @@ describe('Column', function () {
   });
 
   it('should trigger a navigate when highlighting an item', async function () {
+    let selectedIndexPaths = [new IndexPath(0, 1)];
     let wrapper = shallow(<Column item={ds.navigationStack[0]} dataSource={ds} />);
     wrapper.instance().collection = {
-      selectedIndexPaths: [new IndexPath(0, 1)],
+      selectedIndexPaths: selectedIndexPaths,
       getItem: (indexPath) => ds.navigationStack[0].children.getItem(indexPath.section, indexPath.index)
     };
 
-    wrapper.simulate('selectionChanged');
+    wrapper.simulate('selectionChanged', selectedIndexPaths);
     await sleep(0); // navigate is async
     assert.equal(ds.navigationStack.length, 2);
     assert.deepEqual(ds.navigationStack[1].item, data[1]);
@@ -70,19 +71,20 @@ describe('Column', function () {
       selectedIndexPaths: []
     };
 
-    wrapper.simulate('selectionChanged');
+    wrapper.simulate('selectionChanged', []);
     await sleep(0); // navigate is async
     assert.equal(ds.navigationStack.length, 1);
     assert.deepEqual(ds.navigationStack[0].item, null);
   });
 
   it('should not navigate if multiple items are selected', async function () {
+    let selectedIndexPaths = [new IndexPath(0, 0), new IndexPath(0, 1)];
     let wrapper = shallow(<Column item={ds.navigationStack[0]} dataSource={ds} />);
     wrapper.instance().collection = {
-      selectedIndexPaths: [new IndexPath(0, 0), new IndexPath(0, 1)]
+      selectedIndexPaths: selectedIndexPaths
     };
 
-    wrapper.simulate('selectionChanged');
+    wrapper.simulate('selectionChanged', selectedIndexPaths);
     await sleep(0); // navigate is async
     assert.equal(ds.navigationStack.length, 1);
     assert.deepEqual(ds.navigationStack[0].item, null);
