@@ -275,6 +275,20 @@ describe('TreeView', function () {
 
       assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 1), new IndexPath(0, 3)]);
     });
+
+    it('should update selectedIndexPaths when the selectedItems prop changes', async function () {
+      let dataSource = new TreeDS;
+      let onSelectionChange = sinon.spy();
+      let wrapper = shallow(<TreeView dataSource={dataSource} onSelectionChange={onSelectionChange} selectedItems={[data[0]]} />);
+      await sleep(100);
+
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 0)]);
+
+      wrapper.setProps({selectedItems: [data[1]]});
+      await sleep(100);
+      wrapper.update();
+      assert.deepEqual(wrapper.prop('selectedIndexPaths'), [new IndexPath(0, 1)]);
+    });
   });
 
   describe('onKeyDown event callback', function () {
