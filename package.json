@@ -1,6 +1,6 @@
 {
   "name": "@react/react-spectrum",
-  "version": "2.16.1",
+  "version": "2.18.0-beta.0",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "react-dom": "^0.14 || ^15 || ^16"
   },
   "dependencies": {
-    "@react/collection-view": "^4.1.0",
+    "@react/collection-view": "5.0.0-beta.0",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
     "dom-helpers": "^3.3.1",
