@@ -55,7 +55,7 @@ export default class Column extends React.Component {
     // Otherwise, highlight the navigated item in that column.
     // Multi-select behavior is handled internally by the collection-view. See onHighlightChange.
     let highlightedIndexPaths = [];
-    let {dataSource, level} = props;
+    let {dataSource, level = 0} = props;
     let stack = dataSource.navigationStack;
 
     if (level !== stack.length - 1) {
