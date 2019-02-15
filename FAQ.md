@@ -158,3 +158,13 @@
 10. **I get an error `Uncaught ReferenceError: regeneratorRuntime is not defined` on instantiating some components like `Dialog`. How do I resolve it?**
 
     Installing `babel-polyfill` should solve it for you. It's needed to get async/await working. Refer [this link](https://stackoverflow.com/a/33527883/4741998) for more details.
+
+    If you want to avoid all of the additional bundle size incurred by including all of `babel-polyfill`, you might want to use `babel-plugin-transform-runtime`. 
+
+    **Disclaimer**: If you don't install all of `babel-polyfill`, there will not be browser support for all browsers (including IE) especially those that don't natively support methods (e.g `Map`, `Set`, etc.), but which we depend on in `react-spectrum`. You might need to add those polyfills as well for all of your supported browsers.
+
+    The solution is to import `regenerator-runtime` directly at the top of the entry/entries point(s) of you application. https://www.npmjs.com/package/regenerator-runtime.
+
+    With `regenerator-runtime@0.13.x`, the global `regeneratorRuntime` variable is no longer automatically created (unless you evaluate the runtime code in global scope, rather than a Webpack wrapper), but you can import the runtime and define the variable globally yourself. An other solution is to downgrade to `0.12`. Refer [this link](https://github.com/facebook/regenerator/issues/363) for more details.
+
+    > Note that if you use [Babel 7](https://babeljs.io/docs/en/config-files#6x-vs-7x-babelrc-loading) you can do that in an elegant way and include polyfill only as needed: https://www.thebasement.be/working-with-babel-7-and-webpack/#a-cleaner-approach
