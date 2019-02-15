@@ -89,6 +89,8 @@ export default class CollectionView extends React.Component {
   }
 
   async reloadData(props = this.props) {
+    // reset hasMore when reloading
+    this.hasMore = true;
     await this.performLoad(() =>
       props.dataSource.performLoad(props.sortDescriptor)
     );

@@ -173,6 +173,18 @@ describe('CollectionView', function () {
     load.restore();
   });
 
+  it('should reset hasMore to true when collection data is reloaded', async function () {
+    let collectionView = shallow(
+      <CollectionView
+        layout={layout}
+        dataSource={ds}
+        renderItemView={renderItemView} />
+    );
+    collectionView.instance().hasMore = false;
+    ds.reloadData();
+    assert.equal(collectionView.instance().hasMore, true);
+  });
+
   it('should call performSort on the data source when sortDescriptor prop changes', async function () {
     const load = sinon.spy(ds, 'load');
     const performSort = sinon.spy(ds, 'performSort');
