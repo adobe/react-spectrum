@@ -23,6 +23,7 @@ export default class TableCell extends React.Component {
       style.flexShrink = 0;
     } else {
       style.flexGrow = 1;
+      style.flexBasis = 0;
     }
 
     return style;

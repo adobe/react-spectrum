@@ -102,19 +102,24 @@ storiesOf('TableView', module)
     'This example shows how TableView supports reordering rows.',
     () => render({acceptsDrops: true, quiet: true, canReorderItems: true}),
     {inline: true}
+  ).addWithInfo(
+    'can shrink colums',
+    'This example shows how the TableView supports shrink columns on window resize.',
+    () => render({allowsSelection: false, columns: SHRINKABLE_COLUMNS}),
+    {inline: true}
   );
 
 var tableData = [
-  {'id': 1, 'name': 'Python, carpet', 'enabled': true, 'createdBy': 'Alexandro Hindrich'},
-  {'id': 2, 'name': 'Cormorant, flightless', 'enabled': false, 'createdBy': 'Felicity McRinn'},
-  {'id': 3, 'name': 'Cape cobra', 'enabled': false, 'createdBy': 'Emalee Worsfield'},
-  {'id': 4, 'name': 'Red lava crab', 'enabled': true, 'createdBy': 'Cedric Henriet'},
-  {'id': 5, 'name': 'Tiger', 'enabled': true, 'createdBy': 'Roselin Burk'},
-  {'id': 6, 'name': 'Blue-tongued skink', 'enabled': false, 'createdBy': 'Dru Kretschmer'},
-  {'id': 7, 'name': 'Springbuck', 'enabled': false, 'createdBy': 'Brockie Eastham'},
-  {'id': 8, 'name': 'Woodpecker, downy', 'enabled': true, 'createdBy': 'Lexis Bravey'},
-  {'id': 9, 'name': 'Cape white-eye', 'enabled': true, 'createdBy': 'Vevay Wessel'},
-  {'id': 10, 'name': 'African wild cat', 'enabled': false, 'createdBy': 'Melamie Klais'}
+  {'id': 1, 'name': 'Python, carpet', 'enabled': true, 'createdBy': 'Alexandro Hindrich', description: 'Morelia spilota, commonly referred to as carpet python and diamond pythons'},
+  {'id': 2, 'name': 'Cormorant, flightless', 'enabled': false, 'createdBy': 'Felicity McRinn', description: 'The flightless cormorant, also known as the Galapagos cormorant'},
+  {'id': 3, 'name': 'Cape cobra', 'enabled': false, 'createdBy': 'Emalee Worsfield', description: 'The Cape cobra, also called the yellow cobra'},
+  {'id': 4, 'name': 'Red lava crab', 'enabled': true, 'createdBy': 'Cedric Henriet', description: 'No description'},
+  {'id': 5, 'name': 'Tiger', 'enabled': true, 'createdBy': 'Roselin Burk', description: 'The tiger is the largest cat species, most recognizable for its pattern of dark vertical stripes on reddish-orange fur with a lighter underside. '},
+  {'id': 6, 'name': 'Blue-tongued skink', 'enabled': false, 'createdBy': 'Dru Kretschmer', description: 'Blue-tongued skinks comprise the Australasian genus Tiliqua, which contains some of the largest members of the skink family'},
+  {'id': 7, 'name': 'Springbuck', 'enabled': false, 'createdBy': 'Brockie Eastham', description: 'No description'},
+  {'id': 8, 'name': 'Woodpecker, downy', 'enabled': true, 'createdBy': 'Lexis Bravey', description: 'The downy woodpecker is a species of woodpecker, the smallest in North America.'},
+  {'id': 9, 'name': 'Cape white-eye', 'enabled': true, 'createdBy': 'Vevay Wessel', description: 'The Cape white-eye is a small passerine bird in the white-eye family. It is native to southern Africa.'},
+  {'id': 10, 'name': 'African wild cat', 'enabled': false, 'createdBy': 'Melamie Klais', description: 'The African wildcat, also called Near Eastern wildcat is a wildcat species that lives in Northern Africa'}
 ];
 
 const COLUMNS = [
@@ -136,6 +141,36 @@ const COLUMNS = [
     key: 'createdBy',
     width: 200,
     sortable: true
+  }
+];
+
+const SHRINKABLE_COLUMNS = [
+  {
+    title: 'Description',
+    key: 'description',
+    width: 500,
+    sortable: true,
+    align: 'left'
+  },
+  {
+    title: 'Name',
+    key: 'name',
+    sortable: true,
+    maxWidth: 200,
+    align: 'left'
+  },
+  {
+    title: 'Created By',
+    key: 'createdBy',
+    maxWidth: 200,
+    sortable: true,
+    align: 'left'
+  },
+  {
+    title: 'Active',
+    key: 'enabled',
+    width: 100,
+    announce: false
   }
 ];
 
