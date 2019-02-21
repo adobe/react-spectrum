@@ -95,6 +95,7 @@ export default class Dropdown extends React.Component {
     const {alignRight, closeOnSelect, flip, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
     const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
+    const triggerId = trigger.props.id || this.dropdownId + '-trigger';
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
     const menuId = menu.props.id || this.dropdownId + '-menu';
     delete otherProps.onOpen;
@@ -117,6 +118,7 @@ export default class Dropdown extends React.Component {
                 flip={flip}
                 delayHide={0}>
                 {React.cloneElement(trigger, {
+                  id: triggerId,
                   'aria-haspopup': trigger.props['aria-haspopup'] || 'true',
                   'aria-controls': (this.state.open ? menuId : null),
                   ref: (node) => {
@@ -129,6 +131,7 @@ export default class Dropdown extends React.Component {
                 })}
                 {React.cloneElement(menu, {
                   id: menuId,
+                  'aria-labelledby': menu.props['aria-labelledby'] || triggerId,
                   onClose: this.onMenuClose,
                   onSelect: this.onSelect,
                   autoFocus: true

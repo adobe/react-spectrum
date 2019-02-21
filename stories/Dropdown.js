@@ -17,6 +17,11 @@ storiesOf('Dropdown', module)
     {inline: true}
   )
   .addWithInfo(
+    'alignRight',
+    () => render({alignRight: true, style: {display: 'inline-block'}}),
+    {inline: true}
+  )
+  .addWithInfo(
     'Stay open on select',
     () => render({closeOnSelect: false}),
     {inline: true}

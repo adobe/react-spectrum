@@ -6,6 +6,7 @@ import Instagram from '../src/Icon/Instagram';
 import {MenuItem} from '../src/Menu';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
+import SocialNetwork from '../src/Icon/SocialNetwork';
 import Twitter from '../src/Icon/Twitter';
 import {VerticalCenter} from '../.storybook/layout';
 
@@ -22,22 +23,22 @@ storiesOf('DropdownButton', module)
   )
   .addWithInfo(
     'Icon only',
-    () => render(),
+    () => render({icon: <SocialNetwork alt="Social Network" />}),
     {inline: true}
   )
   .addWithInfo(
     'alignRight',
-    () => render({alignRight: true}),
+    () => render({label: 'Action', alignRight: true}),
     {inline: true}
   )
   .addWithInfo(
     'disabled',
-    () => render({disabled: true}),
+    () => render({label: 'Action', disabled: true}),
     {inline: true}
   )
   .addWithInfo(
     'Stay open on select',
-    () => render({closeOnSelect: false}),
+    () => render({label: 'Action', closeOnSelect: false}),
     {inline: true}
   );
 

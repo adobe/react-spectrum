@@ -11,9 +11,10 @@ export default function DropdownButton({alignRight, onClose, onOpen, onSelect, c
       <Button
         variant="action"
         quiet
-        icon={<More />}
+        icon={<More alt="…" />}
         {...props} />
-      <Menu className={menuClassName}>
+      <Menu
+        className={menuClassName}>
         {children}
       </Menu>
     </Dropdown>
