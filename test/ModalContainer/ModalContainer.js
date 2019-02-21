@@ -76,6 +76,13 @@ describe('ModalContainer', () => {
     tree.unmount();
   });
 
+  it('should disable background scroll', async () => {
+    let content = <div id="modal-test">Contents</div>;
+    let key = ModalContainer.show(content);
+    assert.equal(document.body.style[';overflow'], 'hidden');
+    ModalContainer.hide(key);
+  });
+
   describe('Accessibility', () => {
     it('should have role="dialog" when child has no role', async () => {
       let content = <div id="modal-test">Contents</div>;
