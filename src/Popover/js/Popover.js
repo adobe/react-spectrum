@@ -101,6 +101,7 @@ export default class Popover extends Component {
         className={
           classNames(
             'spectrum-Popover',
+            'react-spectrum-Popover',
             `spectrum-Popover--${placement.split(' ')[0]}`,
             {
               'spectrum-Popover--withTip': isDialog,

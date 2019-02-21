@@ -103,6 +103,7 @@ export default class Dialog extends Component {
       <div
         className={classNames(
           'spectrum-Dialog',
+          'react-spectrum-Dialog',
           {
             [`spectrum-Dialog--${mode}`]: mode,
             'spectrum-Dialog--error': variant === 'error',

@@ -163,6 +163,9 @@ export default class Button extends Component {
       ...otherProps
     } = this.props;
 
+    // don't add autoFocus as a DOM prop
+    delete otherProps.autoFocus;
+
     // Map variants for backwards compatibility
     if (VARIANTS[variant]) {
       let mappedVariant = VARIANTS[variant];
