@@ -156,7 +156,7 @@ export default class Calendar extends Component {
 
   componentDidMount() {
     if (this.props.autoFocus) {
-      this.focus();
+      requestAnimationFrame(() => this.focus());
     }
   }
 

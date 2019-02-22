@@ -64,6 +64,7 @@ export default class Clock extends Component {
      * Mark a form input as required, also necessary for the form to be submitted
      */
     required: PropTypes.bool,
+    autoFocus: PropTypes.bool,
 
     /**
      * Called when a breadcrumb is clicked with an object containing the label of the clicked breadcrumb
@@ -103,6 +104,12 @@ export default class Clock extends Component {
       meridiemVal: this.getMeridiemVal(val),
       displayMeridiem: displayMeridiem
     };
+  }
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      requestAnimationFrame(() => this.focus());
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -384,6 +391,7 @@ export default class Clock extends Component {
       delete otherProps['aria-labelledby'];
     }
 
+    delete otherProps.autoFocus;
     delete otherProps.valueFormat;
     delete otherProps.value;
     delete otherProps.defaultValue;

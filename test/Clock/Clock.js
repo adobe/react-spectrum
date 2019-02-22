@@ -2,6 +2,7 @@ import assert from 'assert';
 import Clock from '../../src/Clock';
 import moment from 'moment';
 import {mount, shallow} from 'enzyme';
+import {rAF} from '../utils';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -177,6 +178,13 @@ describe('Clock', () => {
   it('supports focus method', () => {
     const tree = mount(<Clock />);
     tree.instance().focus();
+    assert.equal(document.activeElement, findHourTextfield(tree).at(0).getDOMNode());
+    tree.unmount();
+  });
+
+  it('supports autoFocus', async () => {
+    const tree = mount(<Clock autoFocus />);
+    await rAF();
     assert.equal(document.activeElement, findHourTextfield(tree).at(0).getDOMNode());
     tree.unmount();
   });

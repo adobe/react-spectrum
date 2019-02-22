@@ -745,8 +745,11 @@ describe('Calendar', () => {
       // test blur before restoring focus
       tree.instance().focusCalendarBody();
       assert.equal(document.body, document.activeElement);
-      await rAF(() => {
-        assert.equal(body.getDOMNode(), document.activeElement);
+      await rAF(async () => {
+        await rAF(() => {
+          assert.equal(body.getDOMNode(), document.activeElement);
+          tree.unmount();
+        });
       });
     });
 
@@ -757,12 +760,13 @@ describe('Calendar', () => {
     const tree = mount(<Calendar autoFocus />);
     const body = findBody(tree);
 
-    await rAF(() => {
-      // body should be focused on next animation frame
-      assert.equal(body.getDOMNode(), document.activeElement);
+    await rAF(async () => {
+      await rAF(async () => {
+        // body should be focused on next animation frame
+        assert.equal(body.getDOMNode(), document.activeElement);
+        tree.unmount();
+      });
     });
-
-    tree.unmount();
   });
 });
 
