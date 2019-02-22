@@ -52,10 +52,28 @@ describe('SideNavItem', () => {
     assert.equal(tree.find('a').prop('children'), 'Item label');
   });
 
-  it('renders correct class in case of an header item', () => {
-    let tree = render({header: 'Item label'});
-    assert.equal(tree.find('.spectrum-SideNav-heading').length, 1);
-    assert.equal(tree.find('.spectrum-SideNav-itemLink').length, 0);
+  it('renders custom link returned from renderLink prop', () => {
+    const label = 'Test Label';
+    const renderLink = () => <b>{label}</b>;
+    const tree = render({label: 'Item label', renderLink});
+    assert.equal(tree.find('b').prop('children'), label);
+  });
+
+
+  describe('renderLink', () => {
+    it('renders custom link', () => {
+      const label = 'Test Label';
+      const renderLink = () => <b>{label}</b>;
+      const tree = render({renderLink});
+      assert.equal(tree.find('b').prop('children'), label);
+    });
+
+    it('passes props to custom component', () => {
+      const props = {href: '/a'};
+      const renderLink = (props) => <b {...props} />;
+      const tree = render({renderLink, ...props});
+      assert.equal(tree.find('b').prop('href'), props.href);
+    });
   });
 
   it('onSelect is called when clicked on any item', () => {

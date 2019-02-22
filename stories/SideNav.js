@@ -82,4 +82,22 @@ storiesOf('SideNav', module)
       </SideNav>
     ),
     {inline: true}
+  )
+  .addWithInfo(
+    'renderLink',
+    () => (
+      <SideNav defaultValue="foo" onSelect={action('onSelect')}>
+        <SideNavItem value="foo" renderLink={(props) => <Link {...props} to="/">Foo</Link>} />
+        <SideNavItem value="baz" disabled>Baz</SideNavItem>
+        <SideNavItem value="test">Test</SideNavItem>
+        <SideNavItem value="hi">Hi</SideNavItem>
+      </SideNav>
+    ),
+    {inline: true}
   );
+
+class Link extends React.Component {
+  render() {
+    return <a {...this.props}>Custom link component: {this.props.children}</a>;
+  }
+}

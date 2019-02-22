@@ -51,7 +51,7 @@ export default class SideNavItem extends Component {
 
     /**
      * Whether item should represent the current page within a set of pages or current location within an environment or context when selected.
-     * See <a href="https://www.w3.org/TR/wai-aria-1.1/#aria-current" class="spectrum-Link">WAI-ARIA 1.1 definition of `aria-current (state)`</a> 
+     * See <a href="https://www.w3.org/TR/wai-aria-1.1/#aria-current" class="spectrum-Link">WAI-ARIA 1.1 definition of `aria-current (state)`</a>
      * attribute.
      */
     'aria-current': PropTypes.oneOf(['page', 'location']),
@@ -65,6 +65,17 @@ export default class SideNavItem extends Component {
      * Whether the item is expanded at initialization in case of multi-level sidenav item
      */
     defaultExpanded: PropTypes.bool,
+
+    /**
+     * A function that returns a href wrapper component.
+     * Useful in providing custom href component(eg. Link from react-router-dom).
+     *
+     * ```js
+     *  <SideNavItem renderLink={(props) => <Link {...props} to="/">Foo</Link>}>
+     *  </SideNavItem>
+     * ```
+     */
+    renderLink: PropTypes.func,
 
     /**
      * A click handler for the item
@@ -113,7 +124,7 @@ export default class SideNavItem extends Component {
   }
 
   onSelectFocused(e) {
-    const {onSelect, value, expanded, href} = this.props;
+    const {onSelect, value, expanded, href = e.target ? e.target.href : undefined} = this.props;
     let isKeyDown = e.type === 'keydown';
     if (!href || isKeyDown) {
       // When there is no href or if triggered from a keyboard event,
@@ -190,22 +201,73 @@ export default class SideNavItem extends Component {
     return postfix ? `${id}-${postfix}` : id;
   }
 
+  renderLink(label, tabIndex, isTreeItem) {
+    const {
+      ariaLevel,
+      hidden,
+      id = this.id,
+      disabled,
+      href,
+      renderLink,
+      role,
+      target,
+      _isSelected
+    } = this.props;
+
+    const ariaCurrent = this.props['aria-current'];
+
+    const {
+      expanded,
+      focused
+    } = this.state;
+
+    const props = {
+      href: disabled ? undefined : href,
+      onClick: disabled ? undefined : this.handleClick,
+      onFocus: disabled ? undefined : this.onFocus,
+      onBlur: disabled ? undefined : this.onBlur,
+      tabIndex: disabled ? undefined : tabIndex,
+      className: classNames(
+        'spectrum-SideNav-itemLink',
+        {
+          'is-selected': _isSelected,
+          'is-disabled': disabled,
+          'is-focused': focused,
+          'is-hidden': hidden
+        }
+      ),
+      id,
+      role: (disabled || !href) && !isTreeItem ? 'link' : role,
+      'aria-disabled': disabled || undefined,
+      'aria-expanded': this.hasNestedNav && isTreeItem ? expanded : undefined,
+      'aria-owns': this.hasNestedNav && isTreeItem && expanded ? this.getDescendantId('child-list') : undefined,
+      'aria-selected': isTreeItem ? focused : undefined,
+      'aria-current': _isSelected ? ariaCurrent : undefined,
+      'aria-level': ariaLevel,
+      target
+    };
+
+    if (renderLink) {
+      return renderLink(props);
+    }
+
+    return <a {...props}>{label}</a>;
+  }
+
   render() {
     let {
       header,
-      hidden,
-      href,
       className,
       children,
       disabled,
       role,
+      renderLink,
       id = this.id,
       value,
       _isSelected,
       _nestedNavValue,
       manageTabIndex,
       onSelect,
-      target = '_self',
       ariaLevel,
       ...otherProps
     } = this.props;
@@ -230,7 +292,6 @@ export default class SideNavItem extends Component {
 
     delete otherProps.label;
 
-    let ariaCurrent = otherProps['aria-current'];
     delete otherProps['aria-current'];
 
     return (
@@ -250,35 +311,7 @@ export default class SideNavItem extends Component {
         role={isTreeItem ? 'none' : undefined}
         ref={this.setSideNavItemRef}
         {...filterDOMProps(otherProps)}>
-        { label &&
-          <a
-            href={disabled ? undefined : href}
-            onClick={disabled ? undefined : this.handleClick}
-            onFocus={disabled ? undefined : this.onFocus}
-            onBlur={disabled ? undefined : this.onBlur}
-            tabIndex={disabled ? undefined : tabIndex}
-            className={
-              classNames(
-                'spectrum-SideNav-itemLink',
-                {
-                  'is-selected': _isSelected,
-                  'is-disabled': disabled,
-                  'is-focused': focused,
-                  'is-hidden': hidden
-                }
-              )
-            }
-            id={id}
-            role={(disabled || !href) && !isTreeItem ? 'link' : role}
-            aria-disabled={disabled || undefined}
-            aria-expanded={this.hasNestedNav && isTreeItem ? expanded : undefined}
-            aria-owns={this.hasNestedNav && isTreeItem && expanded ? this.getDescendantId('child-list') : undefined}
-            aria-selected={isTreeItem ? focused : undefined}
-            aria-current={_isSelected ? ariaCurrent : undefined}
-            aria-level={ariaLevel}
-            target={target}>
-            {label}
-          </a>
+        { (label || renderLink) && this.renderLink(label, tabIndex, isTreeItem)
         }
         { header &&
           <h2 className="spectrum-SideNav-heading" id={this.getDescendantId('header')}>{header}</h2>
