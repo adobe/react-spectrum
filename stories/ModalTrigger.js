@@ -31,7 +31,13 @@ storiesOf('ModalTrigger', module)
     'with nested Popover',
     () => renderNested(),
     {inline: true}
+  )
+  .addWithInfo(
+     'with dynamic updates',
+    () => renderDynamic(),
+    {inline: true}
   );
+
 
 const render = (props = {}) => (
   <ModalTrigger>
@@ -65,3 +71,43 @@ const renderNested = (props = {}) => (
     </Dialog>
   </ModalTrigger>
 );
+
+class DynamicDialog extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      counter: 1
+    };
+  }
+
+  render() {
+    return (
+      <Dialog
+        modalContent
+        title={`Title ${this.state.counter}`}
+        confirmLabel="Do It"
+        size="S"
+        cancelLabel="close"
+        {...this.props}>
+        <Button
+          label="Update Title"
+          variant="cta"
+          onClick={_ => {
+            this.setState({counter: this.state.counter + 1});
+          }} />
+      </Dialog>
+    );
+  }
+}
+
+const renderDynamic = (props = {}) => (
+  <ModalTrigger>
+    <Button
+      label="Click Me"
+      variant="primary"
+      modalTrigger />
+    <DynamicDialog backdropClickable />
+  </ModalTrigger>
+);
+
+
