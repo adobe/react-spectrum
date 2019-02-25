@@ -71,10 +71,10 @@ to extract the CSS to a single separate file.
 ```javascript
 module.exports = {
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.css/,
-        loaders: ['style', 'css']
+        loaders: ['style-loader', 'css-loader']
       }
     ]
   }
