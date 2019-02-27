@@ -13,25 +13,32 @@ export default class TagField extends React.Component {
   static propTypes = {
     /** Allow tag creation in tag field */
     allowCreate: PropTypes.bool,
-    
+
+    /** Allow duplicate tags in tag field */
+    allowDuplicates: PropTypes.bool,
+
     /** Class to add to the tag field */
     className: PropTypes.string,
-    
+
+    /** Placeholder text to display if there are no tags nor text entered */
+    placeholder: PropTypes.string,
+
     /** Whether the tag field is disabled */
     disabled: PropTypes.bool,
-    
+
     /** Function to retrieve autocomplete options */
     getCompletions: PropTypes.func,
-    
+
     /** Whether to disable the invalid icon and styling */
     invalid: PropTypes.bool,
-    
+
     /** Whether to use the quiet styling for the tag field */
     quiet: PropTypes.bool
   };
-  
+
   static defaultProps = {
-    allowCreate: true
+    allowCreate: true,
+    allowDuplicates: false
   };
 
   state = {
@@ -41,7 +48,7 @@ export default class TagField extends React.Component {
 
   componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
-      const deleting = props.value.length < this.state.tags.length; 
+      const deleting = props.value.length < this.state.tags.length;
       const hadFocus = this.taglist && ReactDOM.findDOMNode(this).contains(document.activeElement);
       this.setState({tags: props.value}, () => hadFocus && this.focus(deleting));
     }
@@ -79,12 +86,12 @@ export default class TagField extends React.Component {
           this.textfield.focus();
         }
       }
-    }    
+    }
   }
 
   onChange(tags) {
     if (this.props.value == null) {
-      const deleting = tags.length < this.state.tags.length;
+      let deleting = tags.length < this.state.tags.length;
       this.setState({tags}, () => this.focus(deleting));
     }
     if (this.props.onChange) {
@@ -93,8 +100,8 @@ export default class TagField extends React.Component {
   }
 
   render() {
-    const {getCompletions, allowCreate, disabled, invalid, quiet, className, ...props} = this.props;
-    const {value, tags} = this.state;
+    let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, ...props} = this.props;
+    let {value, tags} = this.state;
 
     delete props.onChange;
 
@@ -111,18 +118,19 @@ export default class TagField extends React.Component {
         onSelect={this.onSelect}
         value={value}
         onChange={this.onTextfieldChange}>
-        <TagList 
-          ref={tl => this.taglist = tl} 
-          disabled={disabled} 
-          onClose={this.onRemove} 
-          values={tags.map(tag => tag.label || tag)} 
-          aria-labelledby={this.props['aria-labelledby']} 
+        <TagList
+          ref={tl => this.taglist = tl}
+          disabled={disabled}
+          onClose={this.onRemove}
+          values={tags.map(tag => tag.label || tag)}
+          aria-labelledby={this.props['aria-labelledby']}
           aria-label={this.props['aria-label']} />
         <Textfield
           ref={tf => this.textfield = tf}
           className="react-spectrum-TagField-input"
           autocompleteInput
           disabled={disabled}
+          placeholder={tags.length === 0 ? placeholder : ''}
           {...props} />
       </Autocomplete>
     );

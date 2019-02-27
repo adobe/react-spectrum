@@ -49,9 +49,16 @@ storiesOf('TagField', module)
     {inline: true}
   )
   .addWithInfo(
-    'Allowcreate',
+    'Disallow new tags',
     () => (
       <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObject} />
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Allow duplicate tags',
+    () => (
+      <TagField allowDuplicates placeholder="Tags" getCompletions={getCompletionsObject} />
     ),
     {inline: true}
   )

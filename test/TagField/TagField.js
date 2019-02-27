@@ -60,7 +60,7 @@ describe('TagField', () => {
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], ['foo', 'hi']);
   });
-  it('should allow check if the option is string or  array of object tags', () => {
+  it('should allow check if the option is string or array of object tags', () => {
     const onChange = sinon.spy();
     const OBJECT_OPTIONS = [
         {label: 'Chocolate', id: '1'},
@@ -93,7 +93,7 @@ describe('TagField', () => {
     assert.equal(tree.find(TagList).prop('values').length, 0);
   });
 
-  it('should allowCreate prop to false in Autocomplete', () => {
+  it('should set allowCreate prop to false in Autocomplete', () => {
     const tree = shallow(<TagField allowCreate={false} />);
     let autoComplete = tree.find(Autocomplete);
     assert.equal(autoComplete.prop('allowCreate'), false);
@@ -179,7 +179,7 @@ describe('TagField', () => {
     assert.equal(tree.find('input.react-spectrum-TagField-input').getDOMNode(), document.activeElement);
     tree.unmount();
 
-  });  
+  });
   it('focus should not be lost when removing the last indexed value when controlled', async () => {
 
     const tree = mount(<TagField value={['one', 'two']} placeholder="Tags" />);
@@ -195,6 +195,18 @@ describe('TagField', () => {
     assert.equal(tree.find('input.react-spectrum-TagField-input').getDOMNode(), document.activeElement);
     tree.unmount();
 
-  });    
+  });
+  it('should not show placeholder text if there is one or more tags', () => {
+    const tree = shallow(<TagField placeholder="this is bat country" />);
+    assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
+
+    // Add a tag, ensure no placeholder exists.
+    tree.simulate('select', 'foo');
+    assert.equal(tree.find(Textfield).prop('placeholder'), '');
+
+    // Remove the tag, make sure placeholder is back.
+    tree.find(TagList).simulate('close', 'foo');
+    assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
+  });
 });
 
