@@ -150,7 +150,8 @@ export default class SearchWithin extends React.Component {
 
     const searchProps = {};
 
-    if (value) {
+    // comparison is on purpose, we don't want to mix undefined with null in equality
+    if (value != null) {
       searchProps.value = value;
     } else if (defaultValue) {
       searchProps.defaultValue = defaultValue;
