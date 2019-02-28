@@ -32,11 +32,22 @@ export default function Toast({
   className,
   timeout,
   actionLabel,
+  closeOnAction,
   ...otherProps
 }) {
   let Icon = ICONS[variant];
   let role = otherProps.role || DEFAULT_ROLE;
   const showToastButtons = actionLabel || closable;
+
+  const handleAction = (...args) => {
+    if (onAction) {
+      onAction(...args);
+    }
+
+    if (closeOnAction && onClose) {
+      onClose(...args);
+    }
+  };
 
   return (
     <div
@@ -51,7 +62,7 @@ export default function Toast({
       <div className="spectrum-Toast-body">
         <div className="spectrum-Toast-content">{children}</div>
         {actionLabel &&
-          <Button label={actionLabel} quiet variant="overBackground" onClick={onAction} />
+          <Button label={actionLabel} quiet variant="overBackground" onClick={handleAction} />
         }
       </div>
       {showToastButtons &&
@@ -79,6 +90,9 @@ Toast.propTypes = {
 
   /** Label for action button */
   actionLabel: PropTypes.string,
+
+  /** Should the action button close the toast? */
+  closeOnAction: PropTypes.bool,
 
   /** Function called when toast is closed */
   onClose: PropTypes.func,

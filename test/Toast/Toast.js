@@ -63,5 +63,21 @@ describe('Toast', () => {
       tree.find('button').simulate('click');
       assert(onClose.calledOnce);
     });
+
+    it('onAction and onClose is triggered on action where closeOnAction', () => {
+      const onClose = sinon.spy();
+      const onAction = sinon.spy();
+      const tree = shallow(<Toast closable closeOnAction actionLabel="test" onAction={onAction} onClose={onClose}>Test</Toast>);
+      tree.find('Button').simulate('click');
+      assert(onClose.calledOnce);
+      assert(onAction.calledOnce);
+    });
+
+    it('does not blow up if no onAction or onClose is passed for a closeOnAction', () => {
+      const tree = shallow(<Toast closable closeOnAction actionLabel="test">Test</Toast>);
+      assert.doesNotThrow(() => {
+        tree.find('Button').simulate('click');
+      });
+    });
   });
 });
