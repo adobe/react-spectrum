@@ -35,6 +35,7 @@ describe('Rating', function () {
 
   it('renders a current number of ratings', function () {
     var rating = shallow(<Rating max={10} value={5} />);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 5);
     assert.equal(rating.find('input').prop('value'), 5);
   });
@@ -45,6 +46,7 @@ describe('Rating', function () {
     rating.find('span').at(1).simulate('click', {stopPropagation: function () {}});
     assert(onChange.calledOnce);
     assert.deepEqual(onChange.getCall(0).args, [2]);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 2);
     assert.equal(rating.find('input').prop('value'), 2);
   });
@@ -72,16 +74,19 @@ describe('Rating', function () {
     rating.find('span').first().simulate('click', {stopPropagation: function () {}});
     assert(spyChange.called);
     assert.equal(spyChange.lastCall.args[0], 1);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 4);
     assert.equal(rating.find('input').prop('value'), 4);
 
     rating.setProps({value: 1});
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 1);
     assert.equal(rating.find('input').prop('value'), 1);
   });
 
   it('does not highlight if disabled', function () {
     var rating = shallow(<Rating max={10} value={4} disabled />);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 4);
     assert.equal(rating.find('.is-disabled').length, 11);
     assert.equal(rating.find('input').prop('disabled'), true);
@@ -94,6 +99,7 @@ describe('Rating', function () {
     rating.find('span').at(0).simulate('click', {stopPropagation: function () {}});
     assert(onChange.calledOnce);
     assert.deepEqual(onChange.getCall(0).args, [1]);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 1);
     assert.equal(rating.find('input').prop('value'), 1);
 
@@ -101,6 +107,7 @@ describe('Rating', function () {
     rating.find('span').at(0).simulate('click', {stopPropagation: function () {}});
     assert(onChange.calledTwice);
     assert.deepEqual(onChange.getCall(1).args, [0]);
+    assert.equal(rating.find('.is-currentValue').length, 0);
     assert.equal(rating.find('.is-selected').length, 0);
     assert.equal(rating.find('input').prop('value'), 0);
   });
@@ -112,6 +119,7 @@ describe('Rating', function () {
     rating.find('span').at(2).simulate('click', {stopPropagation: function () {}});
     assert(onChange.calledOnce);
     assert.deepEqual(onChange.getCall(0).args, [3]);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 3);
     assert.equal(rating.find('input').prop('value'), 3);
     assert.equal(rating.find('input').getDOMNode(), document.activeElement);
@@ -127,6 +135,7 @@ describe('Rating', function () {
     rating.find('input').simulate('input', {stopPropagation: function () {}});
     assert(onChange.calledOnce);
     assert.deepEqual(onChange.getCall(0).args, [4]);
+    assert.equal(rating.find('.is-currentValue').length, 1);
     assert.equal(rating.find('.is-selected').length, 4);
     assert.equal(rating.find('input').prop('value'), 4);
     assert.equal(rating.find('input').getDOMNode(), document.activeElement);
