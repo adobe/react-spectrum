@@ -12,6 +12,8 @@ export function cloneIcon(icon, opts = {}) {
 
   return React.cloneElement(icon, {
     className: classNames(opts.className, icon.props.className),
-    size: icon.props.size || opts.size
+    size: icon.props.size || opts.size,
+    'aria-label': opts['aria-label'] || null,
+    'aria-hidden': opts['aria-hidden'] || true
   });
 }
