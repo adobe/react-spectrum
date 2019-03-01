@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
-    "@adobe/spectrum-css": "2.7.2",
+    "@adobe/spectrum-css": "2.8.0",
     "@react/react-spectrum-icons": "^2.1.0",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.17",
