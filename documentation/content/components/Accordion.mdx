@@ -196,12 +196,12 @@ This is an Accordion containing a nested radio group to demonstrate that keyboar
 
 ### WAI-ARIA Design Pattern
 
-The Accordion implements the Accordion design pattern, per [WAI-ARIA 1.0](https://www.w3.org/TR/2016/WD-wai-aria-practices-1.1-20160317/#accordion), with the small exceptions that all Accordion headings remain accessible via the <kbd>TAB</kbd> key as well as navigable using the arrow keys. This allows Accordion headings to be identified to assistive technology as elements with `role` `tab` within a container with `role` `tablist`, but makes navigation a bit more intuitive for keyboard users.
+The Accordion implements the Accordion design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#accordion). Accordion headings are accessible via the <kbd>TAB</kbd> key as well as navigable using the arrow keys.
 
 
 ### Labelling
 
-The list of Accordion headings and panels can be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide context for Accessibility.
+The group of Accordion headings and panels can be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide context for Accessibility.
 
 <Heading size={5} id="accordion-heading-id">
   Checkout Steps

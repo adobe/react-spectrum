@@ -27,43 +27,43 @@ storiesOf('Accordion', module)
   .addWithInfo(
     'Default',
     'This is the basic usage of the Accordion.',
-    () => render(),
+    () => render({'aria-label': 'Default'}),
     {inline: true}
   )
   .addWithInfo(
     'Multiselectable',
     'This is an Accordion where you can open multiple accordion items.',
-    () => render({multiselectable: true}),
+    () => render({'aria-label': 'Multiselectable', multiselectable: true}),
     {inline: true}
   )
   .addWithInfo(
     'Default selected index',
     'This is an Accordion where the the second accordion item is opened by default.',
-    () => render({defaultSelectedIndex: 1}),
+    () => render({'aria-label': 'Default selected index', defaultSelectedIndex: 1}),
     {inline: true}
   )
   .addWithInfo(
     'Selected index',
     'This is a controlled Accordion where the the second accordion item is opened by default.',
-    () => render({selectedIndex: 1}),
+    () => render({'aria-label': 'Selected index', selectedIndex: 1}),
     {inline: true}
   )
   .addWithInfo(
     'ariaLevel',
     'This is an Accordion where heading level for Accordion item headings has been changed from its default value of 3 to 4. This allows a developer to place Accordion headings with in the heading hierarchy of the application.',
-    () => render({ariaLevel: 4}),
+    () => render({'aria-label': 'ariaLevel', ariaLevel: 4}),
     {inline: true}
   )
   .addWithInfo(
     'nested RadioGroup',
     'This is an Accordion containing a nested radio group to demonstrate that keyboard selection of RadioGroup items does not propagate to ancestor Accordion element.',
-    () => render({radioGroup: true}),
+    () => render({'aria-label': 'nested RadioGroup', radioGroup: true}),
     {inline: true}
   )
   .addWithInfo(
     'nested ComboBox',
     'This is an Accordion containing a nested ComboBox to demonstrate that keyboard selection of ComboBox items does not propagate to ancestor Accordion element.',
-    () => render({comboBox: true}),
+    () => render({'aria-label': 'nested ComboBox', comboBox: true}),
     {inline: true}
   );
 

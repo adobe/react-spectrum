@@ -48,71 +48,54 @@ describe('AccordionItem', () => {
       header.simulate('click');
       assert(spy.called);
     });
-
-    it('when enter key pressed', () => {
-      header.simulate('keypress', {key: 'Enter', preventDefault: () => {}});
-      assert(spy.called);
-    });
-
-    it('when space key pressed', () => {
-      header.simulate('keypress', {key: ' ', preventDefault: () => {}});
-      assert(spy.called);
-    });
   });
 
   describe('Accessibility', () => {
     describe('WAI-ARIA', () => {
       let tree;
+      let heading;
       let header;
       let content;
 
       beforeEach(() => {
         tree = shallow(<AccordionItem header="One">One content</AccordionItem>);
+        heading = findHeading(tree);
         header = findHeader(tree);
         content = findContent(tree);
       });
 
-      it('item div role equals \'presentation\'', () => {
+      it('item container div role equals \'presentation\'', () => {
         assert.equal(tree.prop('role'), 'presentation');
       });
 
-      it('header role equals \'tab\'', () => {
-        assert.equal(header.prop('role'), 'tab');
-      });
-
-      it('header has tabIndex so that it can receive keyboard focus', () => {
-        assert.equal(header.prop('tabIndex'), '0');
+      it('header is a \'button\' element', () => {
+        assert.equal(header.type(), 'button');
       });
 
       it('relationship between header and content is defined using aria-controls', () => {
         assert.equal(header.prop('aria-controls'), content.prop('id'));
       });
 
-      it('content role equals \'tabpanel\'', () => {
-        assert.equal(content.prop('role'), 'tabpanel');
+      it('content role equals \'region\'', () => {
+        assert.equal(content.prop('role'), 'region');
       });
 
       it('content region is labelled by the header using aria-labelledby', () => {
         assert.equal(content.prop('aria-labelledby'), header.prop('id'));
       });
 
-      it('header has child with role equal to \'heading\' that supports aria-level', () => {
-        let heading = header.find('span').first();
-        assert.equal(heading.prop('role'), 'heading');
-        assert.equal(heading.prop('aria-level'), 3);
+      it('header has parent with role equal to \'heading\' that supports aria-level', () => {
+        assert.equal(heading.type(), 'h3');
+        assert.equal(heading.prop('aria-level'), undefined);
       });
 
       it('supports aria-level', () => {
         tree = shallow(<AccordionItem header="One" ariaLevel={4}>One content</AccordionItem>);
-        let heading = tree.find('.spectrum-Accordion-itemHeader > span');
+        let heading = findHeading(tree);
         assert.equal(heading.prop('aria-level'), 4);
       });
 
       describe('default WAI-ARIA state properties', () => {
-        it('aria-selected is false', () => {
-          assert.equal(header.prop('aria-selected'), false);
-        });
-
         it('aria-expanded is false', () => {
           assert.equal(header.prop('aria-expanded'), false);
         });
@@ -129,10 +112,6 @@ describe('AccordionItem', () => {
           content = findContent(tree);
         });
 
-        it('aria-selected is true', () => {
-          assert.equal(header.prop('aria-selected'), true);
-        });
-
         it('aria-expanded is false', () => {
           assert.equal(header.prop('aria-expanded'), true);
         });
@@ -142,23 +121,19 @@ describe('AccordionItem', () => {
         });
       });
 
-      describe('disabled WAI-ARIA state property', () => {
+      describe('disabled state', () => {
         beforeEach(() => {
           tree = shallow(<AccordionItem disabled />);
           header = findHeader(tree);
         });
 
-        it('aria-disabled is true', () => {
-          assert.equal(header.prop('aria-disabled'), true);
-        });
-
-        it('header has tabIndex equal to undefined, so that it cannot receive keyboard focus', () => {
-          assert.equal(header.prop('tabIndex'), undefined);
+        it('disabled is true', () => {
+          assert.equal(header.prop('disabled'), true);
         });
       });
     });
   });
 });
-
+const findHeading = tree => tree.find('.spectrum-Accordion-itemHeading');
 const findHeader = tree => tree.find('.spectrum-Accordion-itemHeader');
 const findContent = tree => tree.find('.spectrum-Accordion-itemContent');

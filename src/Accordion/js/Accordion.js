@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 
 importSpectrumCSS('accordion');
 
-const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-itemHeader';
+const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disabled) > .spectrum-Accordion-itemHeading > .spectrum-Accordion-itemHeader';
 
 /**
  * An accordion is a list of expandable and collapsible sections.
@@ -147,7 +147,6 @@ export default class Accordion extends Component {
   render() {
     const {
       className,
-      multiselectable,
       ...otherProps
     } = this.props;
 
@@ -166,9 +165,7 @@ export default class Accordion extends Component {
               className
             )
           }
-          role="tablist"
-          aria-orientation="vertical"
-          aria-multiselectable={multiselectable}>
+          role="region">
           {this.getItems()}
         </div>
       </FocusManager>
