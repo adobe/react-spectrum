@@ -16,6 +16,7 @@ importSpectrumCSS('dropdown');
 require('../style/index.styl');
 
 let POPOVER_MAX_WIDTH = null;
+let QUIET_MARGIN = 24;
 
 @autobind
 export default class Select extends React.Component {
@@ -165,6 +166,13 @@ export default class Select extends React.Component {
     let domProps = Object.entries(filterDOMProps(otherProps));
     let buttonProps = domProps.filter(x => /^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
     let dropdownProps = domProps.filter(x => !/^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
+    let minWidth = this.state.width;
+    if (quiet) {
+      minWidth = this.state.width + QUIET_MARGIN;
+    }
+    if (quiet && flexible) {
+      minWidth = null;
+    }
 
     return (
       <Dropdown
@@ -217,9 +225,11 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           required={required}
+          quiet={quiet}
           style={{
-            minWidth: quiet && flexible ? null : this.state.width,
-            maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null
+            minWidth: minWidth,
+            maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null,
+            marginRight: quiet && alignRight ? -1 * (QUIET_MARGIN / 2) : null
           }}
           autoFocus />
       </Dropdown>
@@ -227,7 +237,7 @@ export default class Select extends React.Component {
   }
 }
 
-export function SelectMenu({onClose, onOpen, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
+export function SelectMenu({onClose, onOpen, onSelect, className, open, placement, style, closeOnSelect, quiet, ...props}) {
   return (
     <Popover
       isDialog={false}
@@ -236,7 +246,12 @@ export function SelectMenu({onClose, onOpen, onSelect, className, open, placemen
       onClose={onClose}
       onOpen={onOpen}
       style={style}
-      className="spectrum-Dropdown-popover"
+      className={classNames(
+        'spectrum-Dropdown-popover',
+        {
+          'spectrum-Dropdown-popover--quiet': quiet
+        }
+      )}
       closeOnSelect={closeOnSelect}>
       <SelectList {...props} className={className} onChange={onSelect} onTab={e => e.preventDefault()} />
     </Popover>

@@ -73,27 +73,37 @@ storiesOf('Select', module)
     {inline: true}
   )
   .addWithInfo(
+    'alignRight',
+    () => render({alignRight: true, selectedValue: 'butterfinger'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'quiet',
     () => render({quiet: true}),
     {inline: true}
   )
   .addWithInfo(
-    'quiet flexible',
+    'quiet, flexible',
     () => render({quiet: true, flexible: true}),
     {inline: true}
   )
   .addWithInfo(
-    'quiet, value: longVal',
+    'quiet, alignRight',
+    () => render({quiet: true, alignRight: true, selectedValue: 'butterfinger'}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'quiet, value: longVal, flexible',
     () => render({quiet: true, flexible: true, selectedValue: 'butterfinger'}),
     {inline: true}
   )
   .addWithInfo(
-    'quiet multiple',
+    'quiet, multiple, flexible',
     () => render({quiet: true, flexible: true, multiple: true, value: selectedValue}),
     {inline: true}
   )
   .addWithInfo(
-    'quiet disabled',
+    'quiet, disabled, flexible',
     () => render({quiet: true, flexible: true, disabled: true}),
     {inline: true}
   )
