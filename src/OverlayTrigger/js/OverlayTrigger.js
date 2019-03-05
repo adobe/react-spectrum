@@ -273,11 +273,19 @@ export default class OverlayTrigger extends Component {
   }
 
   hide(e) {
-    if (this.state.show && this.props.show === undefined) {
+    if (this.state.show) {
       this.setState({show: false});
       if (this.props.onHide) {
         this.props.onHide(e);
       }
+    }
+  }
+
+  onHide(e) {
+    if (this.props.show === undefined) {
+      this.hide(e);
+    } else if (this.props.onHide) {
+      this.props.onHide(e);
     }
   }
 
@@ -303,7 +311,7 @@ export default class OverlayTrigger extends Component {
       <Overlay
         {...props}
         show={this.state.show}
-        onHide={this.hide}
+        onHide={this.onHide}
         target={target}
         rootClose={rootClose}>
         {cloneElement(overlay, overlayProps)}

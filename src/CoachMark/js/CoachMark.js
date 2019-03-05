@@ -11,6 +11,7 @@ importSpectrumCSS('coachmark');
 
 @autobind
 export default class CoachMark extends React.Component {
+
   static propTypes = {
     /** Used by overlay trigger */
     parentNode: PropTypes.any,
@@ -36,7 +37,7 @@ export default class CoachMark extends React.Component {
       'left top'
     ]),
     /** If someone clicks off the coachmark, then it will hide/dismiss */
-    dismissable: PropTypes.bool,
+    dismissible: PropTypes.bool,
     ...CoachMarkPopover.propTypes,
     ...CoachMarkIndicator.propTypes
   };
@@ -54,7 +55,6 @@ export default class CoachMark extends React.Component {
     super(props);
     this.state = {
       overlayContainer: null,
-      show: true,
       indicatorPositioned: false
     };
     this.shouldUpdatePosition = true;
@@ -78,13 +78,6 @@ export default class CoachMark extends React.Component {
     if (this.props.onHide) {
       this.props.onHide();
     }
-    if (this.state.show) {
-      this.setState({show: false});
-    }
-  }
-
-  onClickIndicator() {
-    this.setState({show: !this.state.show});
   }
 
   /**
@@ -121,24 +114,21 @@ export default class CoachMark extends React.Component {
       quiet,
       selector,
       children,
-      dismissable,
+      dismissible,
       flip,
       placement,
       ...otherProps
     } = this.props;
 
-    let {
-      overlayContainer,
-      show
-    } = this.state;
+    let {overlayContainer} = this.state;
 
     return (
       <div ref={node => this.node = node} style={{display: 'none'}}> {/* need this node so 'this' exists for findDOMNode, Portal won't render a dom node in the current sub-tree */}
         {overlayContainer &&
           <Portal container={overlayContainer}>
             <OverlayTrigger
-              trigger={dismissable ? 'click' : undefined}
-              show={dismissable ? undefined : show}
+              trigger={dismissible ? 'click' : undefined}
+              show={dismissible ? undefined : true} // {undefined} will force OverlayTrigger to default to {defaultShow}
               defaultShow
               flip={flip}
               placement={placement}

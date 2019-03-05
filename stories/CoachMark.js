@@ -21,10 +21,10 @@ storiesOf('CoachMark', module)
     {inline: true}
   )
   .addWithInfo(
-    'dismissable',
+    'dismissible',
     () => (<div>
       <Button id="something">target</Button>
-      <CoachMark title="Default" selector="#something" confirmLabel="Confirm" dismissable>
+      <CoachMark title="Default" selector="#something" confirmLabel="Confirm" dismissible>
         This is a Default Coach Mark
       </CoachMark>
     </div>),

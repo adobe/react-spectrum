@@ -96,6 +96,10 @@ export default class SubMenu extends Component {
     ReactDOM.findDOMNode(this.menuItem).focus();
   }
 
+  onHide() {
+    this.hide();
+  }
+
   render() {
     const {
       children,
@@ -112,6 +116,7 @@ export default class SubMenu extends Component {
         crossOffset={-4}
         selected={false}
         show={this.state.opened}
+        onHide={this.onHide}
         onExited={this.onExited}>
         <MenuItem
           id={this.menuId}

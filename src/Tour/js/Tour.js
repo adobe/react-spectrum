@@ -113,7 +113,7 @@ export default class Tour extends React.Component {
       disableProgress,
       currentStep: current + 1,
       totalSteps: total,
-      dismissable: (clickOutsideAction === 'skip' || clickOutsideAction === 'next') ? true : undefined,
+      dismissible: (clickOutsideAction === 'skip' || clickOutsideAction === 'next') ? true : undefined,
       onConfirm: chain(this.onConfirm, currentChild.props.onConfirm),
       onCancel: chain(this.onCancel, currentChild.props.onCancel),
       onHide: (event) => this.onHide(event, currentChild),
