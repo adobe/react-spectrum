@@ -4,6 +4,7 @@ import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import {trapFocus} from '../../utils/FocusManager';
 
 importSpectrumCSS('dialog');
 
@@ -25,7 +26,8 @@ export default class Dialog extends Component {
     mode: PropTypes.oneOf(['alert', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
     autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', 'secondary', null]),
-    keyboardConfirm: PropTypes.bool
+    keyboardConfirm: PropTypes.bool,
+    trapFocus: PropTypes.bool
   };
 
   static defaultProps = {
@@ -35,7 +37,8 @@ export default class Dialog extends Component {
     open: true,
     role: 'dialog',
     autoFocusButton: null,
-    onClose: function () {}
+    onClose: function () {},
+    trapFocus: true
   };
 
   /*
@@ -60,11 +63,26 @@ export default class Dialog extends Component {
     this._onAction(this.props.onCancel);
   }
 
+  onFocus(e) {
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+    if (this.props.trapFocus) {
+      trapFocus(this, e);
+    }
+  }
+
   onKeyDown(e) {
     const {confirmDisabled, keyboardConfirm, onKeyDown} = this.props;
     if (onKeyDown) {
       onKeyDown(e);
+
+      // Do nothing if stopPropagation has been called on event after onKeyDown prop executes.
+      if (e.isPropagationStopped && e.isPropagationStopped()) {
+        return;
+      }
     }
+
     switch (e.key) {
       case 'Enter':
         if (!confirmDisabled && keyboardConfirm) {
@@ -74,6 +92,11 @@ export default class Dialog extends Component {
       case 'Esc':
       case 'Escape':
         this.onCancel();
+        break;
+      default:
+        if (this.props.trapFocus) {
+          trapFocus(this, e);
+        }
         break;
     }
   }
@@ -90,6 +113,7 @@ export default class Dialog extends Component {
       variant,
       mode,
       role,
+      tabIndex,
       ...otherProps
     } = this.props;
 
@@ -97,7 +121,6 @@ export default class Dialog extends Component {
     const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
 
     delete otherProps.modalContent;
-    delete otherProps.tabIndex;
 
     return (
       <div
@@ -112,7 +135,8 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
-        tabIndex={-1}
+        tabIndex={tabIndex === undefined ? 1 : tabIndex}
+        onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}>
         {title &&
           <DialogHeader

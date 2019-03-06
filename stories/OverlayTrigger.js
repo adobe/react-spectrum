@@ -104,7 +104,9 @@ function render(type, props = {}, targetProps = {}) {
         <Button label="Click Me" variant="primary" {...targetProps} />
         <Popover
           open
-          title="Popover title">
+          title="Popover title"
+          role="dialog"
+          trapFocus={props.trigger !== 'hover'}>
             Popover content goes here...<br />
             Popover content goes here...<br />
             Popover content goes here...<br />
@@ -124,8 +126,8 @@ function render(type, props = {}, targetProps = {}) {
             Popover content goes here...<br />
           {type === 'nestedPopover' &&
             <OverlayTrigger {...props}>
-              <Button label="Click Me" variant="primary" />
-              <Popover>
+              <Button label="Click Me" variant="primary" autoFocus />
+              <Popover role="dialog">
                 <Autocomplete getCompletions={() => ['a', 'b', 'c']}>
                   <Textfield placeholder="Autocomplete..." />
                 </Autocomplete>

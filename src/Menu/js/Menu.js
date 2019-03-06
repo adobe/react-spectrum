@@ -34,16 +34,16 @@ export default class Menu extends React.Component {
       placement,
       role = 'menu',
       style,
+      trapFocus = true,
       ...otherProps
     } = this.props;
 
     delete otherProps.target;
 
     return (
-      <Popover arrowStyle={arrowStyle} isDialog={false} placement={placement} open={open} onClose={onClose} style={style}>
+      <Popover arrowStyle={arrowStyle} isDialog={false} placement={placement} open={open} onClose={onClose} style={style} trapFocus={trapFocus}>
         <List ref={l => this.listRef = l} role={role} className={className} {...otherProps}>
           {React.Children.map(children, child => React.cloneElement(child, {
-            onTab: e => e.preventDefault(),
             onSelect
           }))}
         </List>

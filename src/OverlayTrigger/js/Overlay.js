@@ -17,11 +17,11 @@ export default class Overlay extends React.Component {
   };
 
   state = {
-    exited: !this.props.show,
-    targetNode: ReactDOM.findDOMNode(this.props.target)
+    exited: !this.props.show
   };
 
   componentDidMount() {
+    this.setState({targetNode: ReactDOM.findDOMNode(this.props.target)});
     this.mounted = true;
     this.addOverlay();
   }

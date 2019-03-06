@@ -95,7 +95,7 @@ describe('Overlay', () => {
       </OverlayTrigger>
     );
     const prevText = document.body.style.cssText;
-    
+
     overlay.setState({'show': true});
     assert.equal(document.body.style.cssText, prevText);
     overlay.setState({'show': false});
@@ -153,7 +153,7 @@ describe('Overlay', () => {
       {context});
 
     assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
-    
+
     overlayTrigger.unmount();
   });
 
@@ -164,7 +164,7 @@ describe('Overlay', () => {
       <Overlay show onHide={onHideOuter}>
         <OverlayTrigger onHide={onHideInner} trigger="click">
           <Button>Click me</Button>
-          <Popover>Popover</Popover>
+          <Popover trapFocus={false}>Popover</Popover>
         </OverlayTrigger>
       </Overlay>
     );
@@ -186,13 +186,13 @@ describe('Overlay', () => {
     });
 
     document.querySelector('button').dispatchEvent(event);
-    await sleep(1);
+    await sleep(17);
     overlay.update();
-    
+
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
 
     // Wait for animation
-    await sleep(200);
+    await sleep(125);
 
     // Hiding the outer overlay should now do nothing since it is no longer the top overlay
     overlay.instance().hide();
@@ -207,7 +207,7 @@ describe('Overlay', () => {
     onHideInner.reset();
 
     // Wait for animation
-    await sleep(200);
+    await sleep(125);
 
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
 
@@ -261,7 +261,7 @@ describe('OverlayTrigger', () => {
     const tree = mount(
       <OverlayTrigger trigger="hover" delay={delay}>
         <Button>Click me</Button>
-        <Popover>Popover</Popover>
+        <Popover trapFocus={false}>Popover</Popover>
       </OverlayTrigger>
     );
 
@@ -306,7 +306,7 @@ describe('OverlayTrigger', () => {
     const tree = mount(
       <OverlayTrigger trigger="hover" delayShow={delayShow}>
         <Button>Click me</Button>
-        <Popover>Popover</Popover>
+        <Popover trapFocus={false}>Popover</Popover>
       </OverlayTrigger>
     );
 
@@ -335,7 +335,7 @@ describe('OverlayTrigger', () => {
     const tree = mount(
       <OverlayTrigger trigger="hover" delayHide={delayHide}>
         <Button>Click me</Button>
-        <Popover>Popover</Popover>
+        <Popover trapFocus={false}>Popover</Popover>
       </OverlayTrigger>
     );
 

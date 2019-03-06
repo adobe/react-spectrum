@@ -13,6 +13,12 @@ storiesOf('Menu', module)
     'Default',
     () => render(),
     {inline: true}
+  )
+  .addWithInfo(
+    'trapFocus: false',
+    '<p>By default, the menu has <code>trapFocus: true</code>, which prevents focus to the next item outside of the menu. Setting <code>trapFocus: false</code>, allows focus to move to the next focusable element in the DOM.</p>',
+    () => render({trapFocus: false}),
+    {inline: true}
   );
 
 function render(props = {}) {

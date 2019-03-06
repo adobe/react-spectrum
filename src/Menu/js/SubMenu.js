@@ -145,7 +145,8 @@ export default class SubMenu extends Component {
           autoFocus
           aria-labelledby={this.menuId}
           onMouseEnter={this.show}
-          onMouseLeave={this.hide}>
+          onMouseLeave={this.hide}
+          trapFocus={false}>
           {React.Children.toArray(children).map(this.cloneItem)}
         </Menu>
       </OverlayTrigger>

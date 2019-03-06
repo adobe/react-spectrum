@@ -371,6 +371,9 @@ export default class OverlayTrigger extends Component {
         triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
         props.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
         props.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+
+        // overlay should not trap focus when trigger is 'hover'
+        props.trapFocus = false;
       }
 
       if (isOneOf('focus', trigger)) {
@@ -378,6 +381,9 @@ export default class OverlayTrigger extends Component {
         triggerProps.onBlur = this.handleDelayedHide;
         props.onFocus = this.handleDelayedShow;
         props.onBlur = this.handleDelayedHide;
+
+        // overlay should not trap focus when trigger is 'focus'
+        props.trapFocus = false;
       }
     }
 

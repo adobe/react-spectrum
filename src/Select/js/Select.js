@@ -191,6 +191,10 @@ export default class Select extends React.Component {
         onSelect={this.onSelect}
         onOpen={this.onOpen}
         onClose={this.onClose}
+        aria-required={required}
+        aria-multiselectable={multiple}
+        aria-disabled={disabled}
+        aria-invalid={invalid}
         alignRight={alignRight}
         flip={flip}
         {...dropdownProps}>
@@ -253,7 +257,7 @@ export function SelectMenu({onClose, onOpen, onSelect, className, open, placemen
         }
       )}
       closeOnSelect={closeOnSelect}>
-      <SelectList {...props} className={className} onChange={onSelect} onTab={e => e.preventDefault()} />
+      <SelectList {...props} className={className} onChange={onSelect} />
     </Popover>
   );
 }

@@ -120,6 +120,7 @@ export default class Dropdown extends React.Component {
                 {React.cloneElement(trigger, {
                   id: triggerId,
                   'aria-haspopup': trigger.props['aria-haspopup'] || 'true',
+                  'aria-expanded': this.state.open || null,
                   'aria-controls': (this.state.open ? menuId : null),
                   ref: (node) => {
                     this.triggerRef = node;

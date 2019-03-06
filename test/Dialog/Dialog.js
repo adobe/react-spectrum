@@ -162,6 +162,36 @@ describe('Dialog', () => {
     tree.unmount();
   });
 
+  it('focusing Dialog itself should marshall focus to first tabbable descendant', async () => {
+    let onFocusSpy = sinon.spy();
+    let tree = mount(<Dialog confirmLabel="OK" onFocus={onFocusSpy} />);
+    // onFocus, Dialog will marshall focus to first tabbable descendant.
+    tree.simulate('focus', {type: 'focus'});
+    await sleep(17);
+    assert(onFocusSpy.called);
+    let dialogButtons = tree.find('DialogButtons');
+    let buttons = dialogButtons.find('Button');
+    assert.equal(document.activeElement, buttons.at(0).getDOMNode());
+    tree.unmount();
+  });
+
+  it('trapFocus: false should prevent trapFocus from executing', async () => {
+    let tree = mount(<Dialog confirmLabel="OK" trapFocus={false} />);
+    tree.getDOMNode().focus();
+    tree.simulate('focus', {type: 'focus'});
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
+  it('focus Dialog itself if it contains no tabbable children', async () => {
+    let tree = mount(<Dialog />);
+    tree.getDOMNode().focus();
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
   it('supports disabling confirm button', () => {
     const tree = shallow(<Dialog confirmLabel="OK" confirmDisabled />);
     let dialogButtons = tree.find('DialogButtons');
@@ -197,6 +227,15 @@ describe('Dialog', () => {
 
     stub.reset();
     onClose.reset();
+    onKeyDown.reset();
+
+    // stopPropagation
+    tree.simulate('keydown', {key: 'Enter', isPropagationStopped: () => true});
+    assert(onKeyDown.calledOnce);
+    assert(!stub.calledOnce);
+    await sleep(17);
+    assert(!onClose.calledOnce);
+
     onKeyDown.reset();
 
     tree.setProps({'confirmDisabled': false});

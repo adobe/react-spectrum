@@ -397,8 +397,8 @@ export function trapFocus(componentOrElement, event) {
     if (node) {
       // find tabbable elements within container element
       tabbables = Array.from(node.querySelectorAll(TABBABLE_ELEMENT_SELECTOR)).filter(el => el !== node);
-      first = tabbables[0];
-      last = tabbables[tabbables.length - 1];
+      first = tabbables[0] || node;
+      last = tabbables[tabbables.length - 1] || node;
     }
   }
 
@@ -422,9 +422,11 @@ export function trapFocus(componentOrElement, event) {
       tabbable = first;
     }
   }
-  if (tabbable) {
+  if (tabbable || document.activeElement === node) {
     event.preventDefault();
     event.stopPropagation();
-    tabbable.focus();
+    if (tabbable) {
+      tabbable.focus();
+    }
   }
 }

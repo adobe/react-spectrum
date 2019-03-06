@@ -392,7 +392,8 @@ export default class Autocomplete extends React.Component {
             style={{width: this.state.width + 'px'}}
             role="listbox"
             ref={m => this.menu = m}
-            id={this.getListboxId()}>
+            id={this.getListboxId()}
+            trapFocus={false}>
             {results.map((result, i) => {
               let label = getLabel(result);
               return (

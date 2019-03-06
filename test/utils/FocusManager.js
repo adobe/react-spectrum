@@ -517,12 +517,12 @@ describe('FocusManager', function () {
     beforeEach(() => {
       tree = mount(
         <FocusManager itemSelector="[tabindex]" includeSelf orientation="horizontal">
-          <tr className="item" tabIndex="-1">
-            <td className="item" tabIndex="-1">Column 1</td>
-            <td className="item">Column 2</td>
-            <td className="item" tabIndex="-1">Column 3</td>
-            <td className="item">Column 4</td>
-          </tr>
+          <div className="item" tabIndex="-1">
+            <div className="item" tabIndex="-1">Column 1</div>
+            <div className="item">Column 2</div>
+            <div className="item" tabIndex="-1">Column 3</div>
+            <div className="item">Column 4</div>
+          </div>
         </FocusManager>
       );
     });

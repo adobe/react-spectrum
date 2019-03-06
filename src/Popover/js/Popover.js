@@ -58,21 +58,43 @@ export default class Popover extends Component {
     trapFocus: true
   };
 
-  onFocus(e) {
+  componentDidMount() {
     if (this.props.trapFocus) {
-      trapFocus(this, e);
+      this._trapFocusTimeout = requestAnimationFrame(() => {
+        if (this.popoverRef && !this.popoverRef.contains(document.activeElement)) {
+          this.popoverRef.focus();
+        }
+      });
     }
+  }
+
+  componentWillUnmount() {
+    if (this._trapFocusTimeout) {
+      cancelAnimationFrame(this._trapFocusTimeout);
+    }
+  }
+
+  onFocus(e) {
     if (this.props.onFocus) {
       this.props.onFocus(e);
+    }
+    if (this.props.trapFocus) {
+      trapFocus(this, e);
     }
   }
 
   onKeyDown(e) {
-    if (this.props.trapFocus) {
-      trapFocus(this, e);
-    }
     if (this.props.onKeyDown) {
       this.props.onKeyDown(e);
+
+      // Do nothing if stopPropagation has been called on event after onKeyDown prop executes.
+      if (e.isPropagationStopped && e.isPropagationStopped()) {
+        return;
+      }
+    }
+
+    if (this.props.trapFocus) {
+      trapFocus(this, e);
     }
   }
 
@@ -98,6 +120,7 @@ export default class Popover extends Component {
 
     return (
       <div
+        ref={p => this.popoverRef = p}
         className={
           classNames(
             'spectrum-Popover',

@@ -31,7 +31,7 @@ describe('DropdownButton', function () {
     const onClose = sinon.spy();
     const onOpen = sinon.spy();
     const onSelect = sinon.spy();
-    const closeOnSelect = sinon.spy();
+    const closeOnSelect = true;
     const wrapper = render({onClose, onOpen, onSelect, closeOnSelect});
 
     const dropdown = wrapper.find(Dropdown);

@@ -105,8 +105,7 @@ export default class SelectList extends Component {
         icon={option.icon}
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
-        onSelect={this.handleSelect.bind(this, option)}
-        onTab={this.props.onTab}>
+        onSelect={this.handleSelect.bind(this, option)}>
         {option.label}
       </ListItem>
     ))
