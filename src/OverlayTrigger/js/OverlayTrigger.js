@@ -127,6 +127,14 @@ export default class OverlayTrigger extends Component {
      */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
+    ]),
+    /**
+     * The last component or element to have focus before the overlay opened.
+     * If undefined, overlay will use the document.activeElement before it opened as the lastFocus.
+     * Set the lastFocus prop to override this default behavior.
+     */
+    lastFocus: PropTypes.oneOfType([
+      PropTypes.element, PropTypes.object
     ])
   };
 
@@ -146,12 +154,16 @@ export default class OverlayTrigger extends Component {
     super(props, context);
     this.overlayId = createId();
     this._mountNode = null;
+    this._lastFocus = props.lastFocus;
     this.state = {
       show: props.show === undefined ? props.defaultShow : props.show
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    if ('lastFocus' in nextProps && nextProps.lastFocus !== this.props.lastFocus) {
+      this._lastFocus = nextProps.lastFocus;
+    }
     if (nextProps.show !== this.props.show) {
       nextProps.show ? this.handleDelayedShow() : this.handleDelayedHide();
     }
@@ -265,6 +277,7 @@ export default class OverlayTrigger extends Component {
 
   show(e) {
     if (!this.state.show && !this.props.disabled) {
+      this._lastFocus = this.rememberedFocus();
       this.setState({show: true});
       if (this.props.onShow) {
         this.props.onShow(e);
@@ -286,6 +299,41 @@ export default class OverlayTrigger extends Component {
       this.hide(e);
     } else if (this.props.onHide) {
       this.props.onHide(e);
+    }
+  }
+
+  onExit(e) {
+    this.restoreFocus(e);
+    if (this.props.onExit) {
+      this.props.onExit(e);
+    }
+  }
+
+  rememberedFocus() {
+    if (!this._lastFocus && document && document.activeElement !== document.body) {
+      this._lastFocus = document.activeElement;
+    }
+
+    return this._lastFocus;
+  }
+
+  restoreFocus(overlay) {
+    if (this._lastFocus && typeof this._lastFocus.focus === 'function') {
+      if (document) {
+        let node;
+        if (overlay) {
+          node = ReactDOM.findDOMNode(overlay);
+        }
+        if ((node &&
+             (node === document.activeElement ||
+              node.contains(document.activeElement))) ||
+            document.activeElement === document.body) {
+          this._lastFocus.focus();
+        }
+      }
+      if (!this.props.lastFocus) {
+        this._lastFocus = null;
+      }
     }
   }
 
@@ -312,6 +360,7 @@ export default class OverlayTrigger extends Component {
         {...props}
         show={this.state.show}
         onHide={this.onHide}
+        onExit={this.onExit}
         target={target}
         rootClose={rootClose}>
         {cloneElement(overlay, overlayProps)}

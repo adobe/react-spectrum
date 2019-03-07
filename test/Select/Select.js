@@ -233,15 +233,18 @@ describe('Select', () => {
     assert.deepEqual(tree.find(Button).prop('style'), null);
   });
 
-  it('onClose restores focus to button and calls onClose method if defined', () => {
+  it('onClose restores focus to button and calls onClose method if defined', async () => {
     const spy = sinon.spy();
     const tree = mount(<Select options={testOptions} onClose={spy} />);
+    tree.find(Button).getDOMNode().focus();
     tree.find(Button).simulate('click');
+    await sleep(50);
     assert.equal(tree.find(Button).prop('selected'), true);
     assert.notEqual(tree.find(Button).getDOMNode(), document.activeElement);
     tree.find(Button).simulate('click');
     tree.update();
     assert(spy.calledOnce);
+    await sleep(50);
     assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
     assert.equal(tree.find(Button).prop('selected'), false);
 

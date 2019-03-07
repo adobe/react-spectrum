@@ -422,10 +422,11 @@ export function trapFocus(componentOrElement, event) {
       tabbable = first;
     }
   }
-  if (tabbable || document.activeElement === node) {
+  if (tabbable) {
     event.preventDefault();
     event.stopPropagation();
-    if (tabbable) {
+
+    if (tabbable !== document.activeElement) {
       tabbable.focus();
     }
   }

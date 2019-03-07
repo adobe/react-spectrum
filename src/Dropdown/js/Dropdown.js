@@ -62,9 +62,6 @@ export default class Dropdown extends React.Component {
 
   onClose(e) {
     this.setState({open: false});
-    if (e && e.type === 'keyup') {
-      this.restoreFocusOnClose();
-    }
     if (this.props.onClose) {
       this.props.onClose(e);
     }
@@ -72,7 +69,6 @@ export default class Dropdown extends React.Component {
 
   onMenuClose() {
     this.overlayTrigger.hide();
-    this.restoreFocusOnClose();
   }
 
   onSelect(...args) {
@@ -81,13 +77,6 @@ export default class Dropdown extends React.Component {
     }
     if (this.props.onSelect) {
       this.props.onSelect(...args);
-    }
-  }
-
-  restoreFocusOnClose() {
-    const node = ReactDOM.findDOMNode(this.triggerRef);
-    if (node && node.focus) {
-      node.focus();
     }
   }
 

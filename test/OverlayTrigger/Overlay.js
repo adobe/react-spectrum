@@ -221,6 +221,38 @@ describe('Overlay', () => {
 });
 
 describe('OverlayTrigger', () => {
+  it('should support lastFocus prop', async () => {
+    const lastFocus = {
+      focus: sinon.spy()
+    };
+    const tree = mount(
+      <OverlayTrigger trigger="click">
+        <Button>Click me</Button>
+        <Popover>Popover</Popover>
+      </OverlayTrigger>
+    );
+
+    // open overlay by clicking the trigger element
+    tree.find(Button).getDOMNode().focus();
+    tree.find(Button).simulate('click');
+    await sleep(50);
+
+    assert.equal(tree.instance().rememberedFocus(), tree.find(Button).getDOMNode());
+    assert(tree.state('show'));
+    assert.equal(document.querySelector('.spectrum-Popover'), document.activeElement);
+
+    // set lastFocus prop using stub
+    tree.setProps({lastFocus});
+    assert.equal(tree.instance().rememberedFocus(), lastFocus);
+    tree.find(Button).simulate('click');
+    await sleep(125);
+
+    assert(!tree.state('show'));
+    assert(lastFocus.focus.called);
+
+    tree.unmount();
+  });
+
   it('should add aria-describedby to trigger when Overlay is a Tooltip', () => {
     let tree = mount(
       <OverlayTrigger trigger="click">

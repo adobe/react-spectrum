@@ -92,13 +92,6 @@ export default class Select extends React.Component {
     }
   }
 
-  onClose() {
-    ReactDOM.findDOMNode(this.button).focus();
-    if (typeof this.props.onClose === 'function') {
-      this.props.onClose();
-    }
-  }
-
   onOpen(e) {
     this.updateSize();
     if (typeof this.props.onOpen === 'function') {
@@ -121,6 +114,7 @@ export default class Select extends React.Component {
     let {
       options = [],
       quiet,
+      onClose,
       closeOnSelect,
       menuClassName,
       disabled = false,
@@ -190,7 +184,7 @@ export default class Select extends React.Component {
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={this.onOpen}
-        onClose={this.onClose}
+        onClose={onClose}
         aria-required={required}
         aria-multiselectable={multiple}
         aria-disabled={disabled}
