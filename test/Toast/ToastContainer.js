@@ -2,6 +2,7 @@ import {addToast, error, help, info, removeToast, success, Toast, ToastContainer
 import assert from 'assert';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {setToastPlacement} from '../../src/Toast/js/state';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
@@ -17,7 +18,7 @@ describe('ToastContainer', () => {
 
   it('should render toasts', () => {
     const tree = shallow(<ToastContainer />);
-    assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer');
+    assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer react-spectrum-ToastContainer--top react-spectrum-ToastContainer--center');
     assert.equal(tree.children().length, 0);
 
     const toast = <Toast>Test</Toast>;
@@ -187,4 +188,53 @@ describe('ToastContainer', () => {
     assert.equal(toast.textContent, 'Help');
   });
 
+  describe('should render Toasts according to placement props', () => {
+    it('should render toast at top center', () => {
+      setToastPlacement('top center');
+      const tree = shallow(<ToastContainer />);
+      const toast = <Toast>Test</Toast>;
+      tree.instance().add(toast);
+      tree.update();
+
+      assert.equal(tree.children().length, 1);
+      assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer react-spectrum-ToastContainer--top react-spectrum-ToastContainer--center');
+      cleanup();
+    });
+
+    it('should render toast at top left', () => {
+      setToastPlacement('top left');
+      const tree = shallow(<ToastContainer />);
+      const toast = <Toast>Test</Toast>;
+      tree.instance().add(toast);
+      tree.update();
+
+      assert.equal(tree.children().length, 1);
+      assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer react-spectrum-ToastContainer--top react-spectrum-ToastContainer--left');
+      cleanup();
+    });
+
+    it('should render toast at top right', () => {
+      setToastPlacement('top right');
+      const tree = shallow(<ToastContainer />);
+      const toast = <Toast>Test</Toast>;
+      tree.instance().add(toast);
+      tree.update();
+
+      assert.equal(tree.children().length, 1);
+      assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer react-spectrum-ToastContainer--top react-spectrum-ToastContainer--right');
+      cleanup();
+    });
+
+    it('should render toast at bottom', () => {
+      setToastPlacement('bottom');
+      const tree = shallow(<ToastContainer />);
+      const toast = <Toast>Test</Toast>;
+      tree.instance().add(toast);
+      tree.update();
+
+      assert.equal(tree.children().length, 1);
+      assert.equal(tree.prop('className'), 'react-spectrum-ToastContainer react-spectrum-ToastContainer--bottom');
+      cleanup();
+    });
+  });
 });

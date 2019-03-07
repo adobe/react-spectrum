@@ -1,13 +1,14 @@
+import classNames from 'classnames';
 import createId from '../../utils/createId';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Timer from '../../utils/timer';
 import Toast from './Toast';
+import {TOAST_CONTAINERS, TOAST_PLACEMENT} from './state';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import '../style/index.styl';
 
-const TOAST_CONTAINERS = new Map;
 const TOAST_TIMEOUT = 5000;
 const TOAST_ANIMATION_TIME = 200;
 
@@ -24,6 +25,7 @@ const TOAST_DATA = new Map;
 
 export class ToastContainer extends React.Component {
   state = {
+    placement: TOAST_PLACEMENT,
     toasts: []
   };
 
@@ -79,10 +81,17 @@ export class ToastContainer extends React.Component {
   }
 
   render() {
+    let [position, containerPlacement] = this.state.placement.split(' ');
+    let className = classNames(
+      'react-spectrum-ToastContainer',
+      `react-spectrum-ToastContainer--${position}`,
+      containerPlacement && `react-spectrum-ToastContainer--${containerPlacement}`,
+    );
+
     return (
-      <TransitionGroup className="react-spectrum-ToastContainer">
+      <TransitionGroup className={className}>
         {this.state.toasts.map((toast) =>
-          (<CSSTransition key={TOAST_DATA.get(toast).id} classNames="react-spectrum-Toast-slide" timeout={TOAST_ANIMATION_TIME}>
+          (<CSSTransition key={TOAST_DATA.get(toast).id} classNames={`react-spectrum-Toast-slide-${position}`} timeout={TOAST_ANIMATION_TIME}>
             {React.cloneElement(toast, {
               onClose: this.remove.bind(this, toast),
               onFocus: this.onFocus.bind(this, toast),
