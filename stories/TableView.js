@@ -238,7 +238,8 @@ function renderCell(column, data, rowFocused) {
         defaultChecked={data[column.key] == null ? data : data[column.key]}
         onChange={action('change')}
         tabIndex={tabIndex}
-        title={column.title} />
+        title={column.title}
+        aria-label={column.title} />
     );
   }
   return <span>{'' + (data[column.key] || data)}</span>;

@@ -2,11 +2,17 @@ import assert from 'assert';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
+import TableCell from '../../src/TableView/js/TableCell';
 import TableRow from '../../src/TableView/js/TableRow';
 
+const NOOP = () => {};
 const columns = [{title: 'Hi'}, {title: 'Bye'}];
-function renderCell(column, cellIndex) {
-  return <span>{column.title + ' ' + cellIndex}</span>;
+function renderCell(column, cellIndex, rowFocused) {
+  return (
+    <TableCell column={column} rowFocused={rowFocused}>
+      {column.title + ' ' + cellIndex}
+    </TableCell>
+  );
 }
 
 describe('TableRow', function () {
@@ -14,7 +20,7 @@ describe('TableRow', function () {
     let wrapper = shallow(<TableRow isHeaderRow columns={columns} renderCell={renderCell} />);
     let row = wrapper.childAt(0);
     assert.equal(row.prop('className'), 'react-spectrum-TableView-row spectrum-Table-head');
-    assert.deepEqual(row.children().map(c => c.text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
     wrapper.setProps({allowsSelection: true, allowsMultipleSelection: true});
     row = wrapper.childAt(0);
     let checkboxCell = row.childAt(0);
@@ -35,7 +41,7 @@ describe('TableRow', function () {
     let wrapper = shallow(<TableRow columns={columns} renderCell={renderCell} />);
     let row = wrapper.childAt(0);
     assert.equal(row.prop('className'), 'react-spectrum-TableView-row spectrum-Table-row');
-    assert.deepEqual(row.children().map(c => c.text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a selectable body row', function () {
@@ -51,7 +57,7 @@ describe('TableRow', function () {
     assert(!checkbox.prop('checked'));
     assert.equal(checkbox.prop('title'), 'Select');
 
-    assert.deepEqual(row.children().slice(1).map(c => c.text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().slice(1).map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a selected body row', function () {
@@ -67,7 +73,7 @@ describe('TableRow', function () {
     assert(checkbox.prop('checked'));
     assert.equal(checkbox.prop('title'), 'Select');
 
-    assert.deepEqual(row.children().slice(1).map(c => c.text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().slice(1).map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a drop target row', function () {
@@ -91,9 +97,18 @@ describe('TableRow', function () {
     wrapper.childAt(0).childAt(1).simulate('click');
     assert(!onCellClick.calledOnce);
     wrapper.setProps({collectionView, onCellClick});
-    wrapper.childAt(0).childAt(1).simulate('click');
+    wrapper.childAt(0).childAt(1).simulate('click', {target: {tabIndex: -1}});
     assert(onCellClick.calledOnce);
     assert.deepEqual(onCellClick.getCall(0).args, [columns[1], 5]);
+  });
+
+  it('should call onCellFocus when a cell receives focus', function () {
+    let layoutInfo = {section: 0, index: 5};
+    let onCellFocus = sinon.spy();
+    let wrapper = shallow(<TableRow columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} onCellFocus={onCellFocus} />);
+    wrapper.childAt(0).childAt(1).simulate('focus');
+    assert(onCellFocus.calledOnce);
+    assert(onCellFocus.calledWith(1));
   });
 
   it('should trigger onCellDoubleClick when double clicking on a cell', function () {
@@ -118,6 +133,7 @@ describe('TableRow', function () {
 
       // stub row ref and row.focus method
       wrapper.instance().row = {
+        contains: () => false,
         focus: rowFocus
       };
 
@@ -136,19 +152,31 @@ describe('TableRow', function () {
   });
 
   describe('onFocus', () => {
-    it('should set focused state of row element to true', function () {
+    it('should set focused state of row element to true', async () => {
       const layoutInfo = {section: 0, index: 0};
       const collectionView = {
         indexPathForComponent: () => layoutInfo
       };
-      const wrapper = shallow(<TableRow allowsSelection columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} />);
+      const onFocus = sinon.spy();
+      const onCellFocus = sinon.spy();
+      const wrapper = mount(<TableRow allowsSelection columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} onFocus={onFocus} onCellFocus={onCellFocus} />);
       wrapper.childAt(0).simulate('focus');
       assert(wrapper.state('focused'));
+      wrapper.update();
+      assert(onFocus.calledOnce);
       wrapper.setState({focused: false});
       assert(!wrapper.state('focused'));
       wrapper.setProps({collectionView});
       wrapper.childAt(0).simulate('focus');
+      wrapper.update();
+      assert(onFocus.calledTwice);
       assert(wrapper.state('focused'));
+      wrapper.setState({focused: false});
+      assert(!wrapper.state('focused'));
+      wrapper.childAt(0).simulate('focus', {relatedTarget: wrapper.childAt(0).find('input').getDOMNode()});
+      wrapper.update();
+      assert(onCellFocus.calledWith(null));
+      wrapper.unmount();
     });
   });
 
@@ -195,60 +223,93 @@ describe('TableRow', function () {
   });
 
   describe('onKeyDown', () => {
-    it('should enable horizontal navigation of focusable descendants', () => {
-      const wrapper = mount(<TableRow allowsSelection columns={columns} renderCell={renderCell} tabIndex={0} />);
+    it('should enable horizontal navigation of focusable descendants', async () => {
+      const wrapper = mount(<TableRow tableId="foo" allowsSelection columns={columns} renderCell={renderCell} tabIndex={0} />);
       let row = wrapper.childAt(0);
+      let eventStub = {
+        preventDefault: NOOP,
+        stopPropagation: NOOP,
+        nativeEvent: {
+          stopImmediatePropagation: NOOP
+        }
+      };
 
       // ArrowRight with focus on the row should move focus to first focusable descendant
-      row.simulate('keyDown', {key: 'ArrowRight', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.find('input').getDOMNode(), document.activeElement);
+      row.simulate('keyDown', {key: 'ArrowRight', ...eventStub});
+      assert.equal(row.find(TableCell).first().getDOMNode(), document.activeElement, 'ArrowRight key on row moves focus to first cell');
+      row.find(TableCell).first().simulate('focus', eventStub);
+      assert.equal(row.find('input').getDOMNode(), document.activeElement, 'Focusing cell marshalls focus to focusable descendant');
 
       // "Right" event.key alternative with focus on the row should move focus to first focusable descendant
-      row.simulate('keyDown', {key: 'Right', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.find('input').getDOMNode(), document.activeElement);
+      row.simulate('keyDown', {key: 'Right', ...eventStub});
+      assert.equal(row.find(TableCell).first().getDOMNode(), document.activeElement, 'Right key on row moves focus to first cell');
+      row.find(TableCell).first().simulate('focus', eventStub);
+      assert.equal(row.find('input').getDOMNode(), document.activeElement);
+
+      row.find('input').simulate('keyDown', {key: 'ArrowRight', ...eventStub});
+      assert.equal(row.find(TableCell).at(1).getDOMNode(), document.activeElement, 'ArrowRight key on first cell moves focus to adjacent cell');
+
+      row.find(TableCell).at(1).simulate('keyDown', {key: 'ArrowRight', ...eventStub});
+      assert.equal(row.find(TableCell).at(2).getDOMNode(), document.activeElement, 'ArrowRight key on second cell moves focus to adjacent cell');
 
       // ArrowRight with focus on last focusable descendant in the row should loop focus back to the row
-      row.find('input').simulate('keyDown', {key: 'ArrowRight', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.getDOMNode(), document.activeElement);
+      row.find(TableCell).last().simulate('keyDown', {key: 'ArrowRight', ...eventStub});
+      assert.equal(row.getDOMNode(), document.activeElement, 'ArrowRight with focus on last focusable descendant in the row should loop focus back to the row');
 
       // ArrowLeft with focus on the row should move focus to last focusable descendant
-      row.simulate('keyDown', {key: 'ArrowLeft', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.find('input').getDOMNode(), document.activeElement);
+      row.simulate('keyDown', {key: 'ArrowLeft', ...eventStub});
+      assert.equal(row.find(TableCell).last().getDOMNode(), document.activeElement, 'ArrowLeft with focus on the row should move focus to last focusable descendant');
 
       // "Left" event.key alternative with focus on the row should move focus to last focusable descendant
-      row.simulate('keyDown', {key: 'Left', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.find('input').getDOMNode(), document.activeElement);
+      row.simulate('keyDown', {key: 'Left', ...eventStub});
+      assert.equal(row.find(TableCell).last().getDOMNode(), document.activeElement, '"Left" event.key alternative with focus on the row should move focus to last focusable descendant');
+
+      // Focusing on descendant of TableCell should remove tabIndex from parent.
+      row.find(TableCell).first().simulate('focus', eventStub);
+      assert.equal(row.find('input').getDOMNode(), document.activeElement);
+      wrapper.update();
+
+      // Testing in React 14, tabIndex remains -1
+      if (row.find(TableCell).first().getDOMNode().getAttribute('tabindex') === '-1') {
+        row.find(TableCell).first().getDOMNode().removeAttribute('tabindex');
+      }
 
       // ArrowLeft with focus on first focusable descendant in the row should move focus back to the row
-      row.find('input').simulate('keyDown', {key: 'ArrowLeft', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.getDOMNode(), document.activeElement);
+      row.find('input').simulate('keyDown', {key: 'ArrowLeft', ...eventStub});
+      assert.equal(row.getDOMNode(), document.activeElement);
 
       // test else path when allowsSelection is false
-      wrapper.setProps({allowsSelection: false, tabIndex: null});
+      wrapper.setProps({allowsSelection: false});
       row = wrapper.childAt(0);
-      row.simulate('keyDown', {key: 'ArrowRight', preventDefault: () => {}, stopPropagation: () => {}});
-      assert.equal(wrapper.getDOMNode(), document.activeElement);
+      row.simulate('keyDown', {key: 'ArrowRight', ...eventStub});
+      assert.equal(row.find(TableCell).first().getDOMNode(), document.activeElement);
+
       wrapper.unmount();
     });
 
-    it('should select all on Ctrl+A or Meta+A', () => {
+    it('should select all on Ctrl+A or Meta+A for header row', () => {
       const onSelectChange = sinon.spy();
-      const wrapper = shallow(<TableRow allowsSelection columns={columns} renderCell={renderCell} onSelectChange={onSelectChange} />);
+      const wrapper = shallow(<TableRow isHeaderRow allowsSelection columns={columns} renderCell={renderCell} onSelectChange={onSelectChange} />);
       let row = wrapper.childAt(0);
 
       // "A" key with no modifier should not call onSelectChange
-      row.simulate('keyDown', {key: 'a', preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'a', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 0);
 
       // "Meta+A" should call onSelectChange with true
-      row.simulate('keyDown', {key: 'a', metaKey: true, preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'a', metaKey: true, preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 1);
       assert.equal(onSelectChange.getCall(0).args[0], true);
 
       // "Ctrl+A" should call onSelectChange with true
-      row.simulate('keyDown', {key: 'a', ctrlKey: true, preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'a', ctrlKey: true, preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 2);
       assert.equal(onSelectChange.getCall(1).args[0], true);
+
+      onSelectChange.reset();
+      wrapper.setProps({isHeaderRow: false});
+      row.simulate('keyDown', {key: 'a', ctrlKey: true, preventDefault: NOOP, stopPropagation: NOOP});
+      assert.equal(onSelectChange.callCount, 0);
     });
 
     it('should clear selection on Escape key', () => {
@@ -257,19 +318,19 @@ describe('TableRow', function () {
       let row = wrapper.childAt(0);
 
       // Esc key with no onSelectChange prop should do nothing
-      row.simulate('keyDown', {key: 'Escape', preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'Escape', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 0);
 
       // add onSelectChange method
       wrapper.setProps({onSelectChange});
 
       // Escape key should call onSelectChange with false
-      row.simulate('keyDown', {key: 'Escape', preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'Escape', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 1);
       assert.equal(onSelectChange.getCall(0).args[0], false);
 
       // "Esc" event.key alternative should call onSelectChange with false
-      row.simulate('keyDown', {key: 'Esc', preventDefault: () => {}, stopPropagation: () => {}});
+      row.simulate('keyDown', {key: 'Esc', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 2);
       assert.equal(onSelectChange.getCall(1).args[0], false);
     });
@@ -277,16 +338,21 @@ describe('TableRow', function () {
     it('should permit vertical navigation between the header and first item row', () => {
       const layoutInfo = {section: 0, index: 0};
       const collectionView = {
-        indexPathForComponent: () => (layoutInfo),
+        indexPathForComponent: () => layoutInfo,
+        getSectionLength: () => 1,
+        selectedIndexPaths: []
+      };
+      const tableView = {
+        focusedColumnIndex: null
       };
       const wrapper = mount(<div role="grid">
         <div role="rowgroup">
-          <TableRow isHeaderRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} />
+          <TableRow isHeaderRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} collectionView={collectionView} tableView={tableView} />
         </div>
         <div role="rowgroup">
           <div role="presentation">
             <div role="presentation">
-              <TableRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} tabIndex={0} collectionView={collectionView} layoutInfo={layoutInfo} />
+              <TableRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} tabIndex={0} collectionView={collectionView} layoutInfo={layoutInfo} tableView={tableView} />
             </div>
           </div>
         </div>
@@ -298,30 +364,71 @@ describe('TableRow', function () {
       const headerRow = wrapper.find(TableRow).first();
       const bodyRow = wrapper.find(TableRow).last();
 
+      tableView.headerRowRef = headerRow.instance();
+
       // navigate from header row to first body row
-      headerRow.simulate('keyDown', {key: 'ArrowDown', preventDefault: () => {}, stopPropagation: () => {}});
+      headerRow.simulate('keyDown', {key: 'ArrowDown', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(bodyRow.getDOMNode(), document.activeElement);
 
       // else path should not move focus, navigation behavior should be handled by EditableCollectionView
-      bodyRow.simulate('keyDown', {key: 'ArrowDown', preventDefault: () => {}, stopPropagation: () => {}});
+      bodyRow.simulate('keyDown', {key: 'ArrowDown', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(bodyRow.getDOMNode(), document.activeElement);
 
       // navigate from body row to first focusable descendant in header row
-      bodyRow.simulate('keyDown', {key: 'ArrowUp', preventDefault: () => {}, stopPropagation: () => {}});
+      bodyRow.simulate('keyDown', {key: 'ArrowUp', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(headerRow.find('input').getDOMNode(), document.activeElement);
 
       // else path for ArrowUp on header row should not move focus
-      headerRow.simulate('keyDown', {key: 'ArrowUp', preventDefault: () => {}, stopPropagation: () => {}});
+      headerRow.simulate('keyDown', {key: 'ArrowUp', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(headerRow.find('input').getDOMNode(), document.activeElement);
 
       // test "Down" and "Up" event.key alternatives
-      headerRow.find('input').simulate('keyDown', {key: 'Down', preventDefault: () => {}, stopPropagation: () => {}});
+      headerRow.find('input').simulate('keyDown', {key: 'Down', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(bodyRow.getDOMNode(), document.activeElement);
-      bodyRow.simulate('keyDown', {key: 'Up', preventDefault: () => {}, stopPropagation: () => {}});
+      bodyRow.simulate('keyDown', {key: 'Up', preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(headerRow.find('input').getDOMNode(), document.activeElement);
 
       // clean up
       wrapper.unmount();
+    });
+
+    describe('should call onCellFocus with null to clear the focusedColumnIndex', () => {
+      it('on Tab key', () => {
+        const onCellFocus = sinon.spy();
+        const wrapper = shallow(<TableRow allowsSelection columns={columns} renderCell={renderCell} onCellFocus={onCellFocus} />);
+        let row = wrapper.childAt(0);
+        row.simulate('keyDown', {key: 'Tab', preventDefault: NOOP, stopPropagation: NOOP});
+        assert(onCellFocus.calledWith(null));
+      });
+
+      it('on ArrowDown with focus on checkbox in header row', () => {
+        const layoutInfo = {section: 0, index: 0};
+        const collectionView = {
+          indexPathForComponent: () => (layoutInfo),
+        };
+        const onCellFocus = sinon.spy();
+        const wrapper = mount(<div role="grid">
+          <div role="rowgroup">
+            <TableRow isHeaderRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} layoutInfo={layoutInfo} onCellFocus={onCellFocus} />
+          </div>
+          <div role="rowgroup">
+            <div role="presentation">
+              <div role="presentation">
+                <TableRow allowsSelection allowsMultipleSelection columns={columns} renderCell={renderCell} tabIndex={0} collectionView={collectionView} layoutInfo={layoutInfo} onCellFocus={onCellFocus} />
+              </div>
+            </div>
+          </div>
+        </div>);
+
+        // stub collectionView.getDOMNode method to return second "rowgroup".
+        collectionView.getDOMNode = () => wrapper.find('[role="rowgroup"]').last().getDOMNode();
+
+        const headerRow = wrapper.find(TableRow).first();
+
+        headerRow.find('input').simulate('keyDown', {key: 'ArrowDown', preventDefault: NOOP, stopPropagation: NOOP, target: headerRow.find('input').getDOMNode()});
+        assert(onCellFocus.calledWith(null));
+        wrapper.unmount();
+      });
     });
   });
 

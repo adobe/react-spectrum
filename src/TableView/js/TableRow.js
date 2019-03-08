@@ -1,8 +1,10 @@
 import autobind from 'autobind-decorator';
 import Checkbox from '../../Checkbox';
 import classNames from 'classnames';
+import closest from 'dom-helpers/query/closest';
 import createId from '../../utils/createId';
-import FocusManager from '../../utils/FocusManager';
+import filterDOMProps from '../../utils/filterDOMProps';
+import FocusManager, {FOCUSABLE_ELEMENT_SELECTOR} from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
@@ -10,8 +12,7 @@ import React from 'react';
 import TableCell from './TableCell';
 
 const formatMessage = messageFormatter(intlMessages);
-
-const FOCUSABLE_SELECTOR = '[tabIndex]:not([disabled]):not([aria-disabled])';
+const CELL_SELECTOR = '[role="gridcell"],[role="columnheader"],[role="rowheader"]';
 
 @focusRing
 @autobind
@@ -34,15 +35,34 @@ export default class TableRow extends React.Component {
   }
 
   /**
-   * Sets focus to the table row DOM element.
+   * Sets focus to the table row DOM element or appropriate column.
    */
   focus() {
     if (this.row) {
-      this.row.focus();
+      const {tableView, isHeaderRow} = this.props;
+
+      // tableView keeps track of the focusedColumnIndex when a cell receive focus
+      if (tableView) {
+        // if a focusedColumnIndex is defined, try to set focus to the appropriate cell.
+        if (tableView.focusedColumnIndex !== null) {
+          this.row.children[tableView.focusedColumnIndex].focus();
+        }
+
+      }
+
+      // If no child of row receives focus:
+      // - focus the first focusable descendant of the header row
+      // - or focus the row itself.
+      if (this.row.contains && !this.row.contains(document.activeElement)) {
+        let focusable = isHeaderRow ? this.row.querySelector(FOCUSABLE_ELEMENT_SELECTOR) : this.row;
+        if (focusable) {
+          focusable.focus();
+        }
+      }
     }
   }
 
-  onCellClick(column, isDoubleClick) {
+  onCellClick(column, isDoubleClick, e) {
     let rowIndex = null;
 
     if (this.props.collectionView) {
@@ -56,6 +76,10 @@ export default class TableRow extends React.Component {
 
     if (isDoubleClick && this.props.onCellDoubleClick) {
       this.props.onCellDoubleClick(column, rowIndex);
+    }
+
+    if (e && e.target.tabIndex === -1) {
+      this.focus();
     }
   }
 
@@ -75,9 +99,11 @@ export default class TableRow extends React.Component {
   }
 
   onMouseDown(event) {
-    // Stop propagation on mouse down if the target is focusable.
+    // Stop propagation on mouse down if the target is a focusable child of a cell within the row.
     // Otherwise, collection-view will try to focus the row instead.
-    if (event.target.matches(FOCUSABLE_SELECTOR) && event.target !== this.row) {
+    if (event.target.matches(FOCUSABLE_ELEMENT_SELECTOR) &&
+        event.target !== this.row &&
+        !event.target.matches(CELL_SELECTOR)) {
       event.stopPropagation();
     }
   }
@@ -89,28 +115,47 @@ export default class TableRow extends React.Component {
    * @param {KeyboardEvent} event A keydown event
    */
   onKeyDown(event) {
-    const {collectionView, isHeaderRow, onSelectChange} = this.props;
+    const {collectionView, tableView, isHeaderRow, onSelectChange, onCellFocus} = this.props;
     let {key} = event;
     let focusable = null;
 
     switch (key) {
+      case 'Tab':
+        if (onCellFocus) {
+          onCellFocus(null);
+        }
+        break;
       case 'ArrowUp':
       case 'Up':
         if (!isHeaderRow && collectionView) {
           let indexPath = collectionView.indexPathForComponent(this);
           if (indexPath && indexPath.section === 0 && indexPath.index === 0) {
-            focusable = collectionView.getDOMNode().previousSibling.querySelector(FOCUSABLE_SELECTOR);
+            if (tableView && tableView.headerRowRef) {
+              // try to focus appropriate focusedColumnIndex in the header row
+              tableView.headerRowRef.focus();
+            }
           }
         }
         break;
       case 'ArrowDown':
       case 'Down':
         if (isHeaderRow) {
-          focusable = this.row.parentNode.nextSibling.querySelector(FOCUSABLE_SELECTOR);
+          if (onCellFocus && closest(event.target, '.spectrum-Table-checkboxCell')) {
+            onCellFocus(null);
+          }
+          if (collectionView) {
+            focusable = collectionView.getDOMNode().querySelector(FOCUSABLE_ELEMENT_SELECTOR);
+          }
+        } else if (collectionView) {
+          let indexPath = collectionView.indexPathForComponent(this);
+          if (indexPath && indexPath.section === 0 && indexPath.index === collectionView.getSectionLength(0) - 1) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
         }
         break;
       case 'a':
-        if ((event.metaKey || event.ctrlKey) && onSelectChange) {
+        if (isHeaderRow && (event.metaKey || event.ctrlKey) && onSelectChange) {
           onSelectChange(true);
           event.preventDefault();
           event.stopPropagation();
@@ -124,9 +169,11 @@ export default class TableRow extends React.Component {
         break;
       case 'Enter':
       case ' ':
-        // Stop propagation on enter and space keys if the target is focusable.
+        // Stop propagation on enter and space keys if the target is a focusable child of a cell within the row.
         // Otherwise, collection-view will try to focus the row instead.
-        if (event.target.matches(FOCUSABLE_SELECTOR) && event.target !== this.row) {
+        if (event.target.matches(FOCUSABLE_ELEMENT_SELECTOR) &&
+            event.target !== this.row &&
+            !event.target.matches(CELL_SELECTOR)) {
           event.stopPropagation();
         }
         break;
@@ -141,9 +188,22 @@ export default class TableRow extends React.Component {
 
   /**
    * Handles focus event on row, setting focused state and refreshing visible items in the collection.
+   * @param {FocusEvent} event A focus event
    */
-  onFocus() {
+  onFocus(e) {
     this.setState({focused: true});
+
+    if (e && e.target === this.row) {
+      if (!this.row.contains(e.relatedTarget)) {
+        // If row itself is receiving focus, call focus method to see if focus is being marshalled to a focused column
+        this.focus();
+        if (this.props.onFocus) {
+          this.props.onFocus(e);
+        }
+      } else if (this.props.onCellFocus) {
+        this.props.onCellFocus(null);
+      }
+    }
   }
 
   /**
@@ -151,6 +211,16 @@ export default class TableRow extends React.Component {
    */
   onBlur() {
     this.setState({focused: false});
+  }
+
+  /**
+   * Handles focus event on cell
+   * @param {Number} columnIndex Index of column receiving keyboard focus
+   */
+  onCellFocus(columnIndex, e) {
+    if (this.props.onCellFocus) {
+      this.props.onCellFocus(columnIndex, e);
+    }
   }
 
   getAriaLabelledby() {
@@ -227,11 +297,7 @@ export default class TableRow extends React.Component {
       }
     }
 
-    delete otherProps.onCellClick;
-    delete otherProps.onCellDoubleClick;
-    delete otherProps.onResize;
-    delete otherProps.reusableView;
-    delete otherProps.setSelectAll;
+    delete otherProps.onFocus;
 
     const checkboxCellClassNames = classNames(
       'spectrum-Table-checkboxCell',
@@ -239,7 +305,7 @@ export default class TableRow extends React.Component {
     );
 
     return (
-      <FocusManager itemSelector={FOCUSABLE_SELECTOR} orientation="horizontal" manageTabIndex={false} includeSelf ignorePageUpPageDown>
+      <FocusManager itemSelector={FOCUSABLE_ELEMENT_SELECTOR} orientation="horizontal" manageTabIndex={false} includeSelf ignorePageUpPageDown>
         <div
           className={className}
           ref={row => this.row = row}
@@ -253,7 +319,7 @@ export default class TableRow extends React.Component {
           onBlur={this.onBlur}
           onKeyDown={this.onKeyDown}
           onMouseDown={this.onMouseDown}
-          {...otherProps}>
+          {...filterDOMProps(otherProps)}>
           {allowsSelection &&
             <TableCell
               id={[id, 0].join('-')}
@@ -261,6 +327,8 @@ export default class TableRow extends React.Component {
               className={checkboxCellClassNames}
               aria-colindex="1"
               aria-label={isHeaderRow && allowsMultipleSelection === false ? formatMessage('Select') : null}
+              tabIndex={isHeaderRow ? null : -1}
+              onFocus={this.onCellFocus.bind(this, 0)}
               focused={focused}>
               <Checkbox
                 className="spectrum-Table-checkbox"
@@ -269,7 +337,10 @@ export default class TableRow extends React.Component {
                 onChange={onSelectChange}
                 onClick={this.onCheckboxClick}
                 onMouseDown={e => e.stopPropagation()}
+                id={[id, 0, 'checkbox'].join('-')}
                 tabIndex={isHeaderRow || focused ? 0 : -1}
+                aria-label={isHeaderRow ? formatMessage('Select All') : formatMessage('Select')}
+                aria-labelledby={!isHeaderRow ? [id, 0, 'checkbox'].join('-') + ' ' + this.getAriaLabelledby() : null}
                 title={isHeaderRow ? formatMessage('Select All') : formatMessage('Select')}
                 style={(isHeaderRow && !allowsMultipleSelection) ? {visibility: 'hidden'} : null} />
             </TableCell>
@@ -282,6 +353,7 @@ export default class TableRow extends React.Component {
               'aria-colindex': (allowsSelection ? (i + 2) : (i + 1)),
               onClick: this.onCellClick.bind(this, column, false),
               onDoubleClick: this.onCellClick.bind(this, column, true),
+              onFocus: this.onCellFocus.bind(this, (allowsSelection ? (i + 1) : i)),
               rowFocused: focused
             }))}
         </div>

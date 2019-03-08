@@ -533,6 +533,7 @@ describe('FocusManager', function () {
 
     it('when ArrowRight key is pressed with orientation="horizontal", focus next not disabled item', () => {
       let item = tree.find(itemSelector).at(0);
+      item.getDOMNode().focus();
       item.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
       assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
       item = tree.find(itemSelector).at(1);
@@ -549,6 +550,7 @@ describe('FocusManager', function () {
 
     it('when ArrowRight key is pressed on last item, focus first not disabled item', () => {
       let item = tree.find(itemSelector).at(3);
+      item.getDOMNode().focus();
       item.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
       assert.equal(tree.find(itemSelector).at(0).getDOMNode(), document.activeElement);
 
@@ -559,6 +561,7 @@ describe('FocusManager', function () {
 
     it('when ArrowLeft key is pressed, focus previous not disabled item', () => {
       let item = tree.find(itemSelector).at(3);
+      item.getDOMNode().focus();
       item.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
       assert.equal(tree.find(itemSelector).at(1).getDOMNode(), document.activeElement);
       item = tree.find(itemSelector).at(1);
@@ -575,6 +578,7 @@ describe('FocusManager', function () {
 
     it('when ArrowLeft key is pressed on first item, focus last not disabled item', () => {
       let item = tree.find(itemSelector).at(0);
+      item.getDOMNode().focus();
       item.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
       assert.equal(tree.find(itemSelector).at(3).getDOMNode(), document.activeElement);
 

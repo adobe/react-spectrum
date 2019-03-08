@@ -18,7 +18,7 @@ export default class TableViewLayout extends ListLayout {
 
   getVisibleLayoutInfos(rect) {
     let layoutInfos = super.getVisibleLayoutInfos(rect);
-    
+
     if (this.insertionIndicator) {
       layoutInfos.push(this.insertionIndicator);
     }

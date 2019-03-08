@@ -10,6 +10,7 @@ import TableCell from './TableCell';
 import TableRow from './TableRow';
 import TableViewDataSource from './TableViewDataSource';
 import TableViewLayout from './TableViewLayout';
+import Wait from '../../Wait';
 import '../style/index.styl';
 
 importSpectrumCSS('table');
@@ -71,7 +72,7 @@ export default class TableView extends Component {
 
     /** The initial sort column and direction (uncontrolled). */
     defaultSortDescriptor: sortDescriptorShape,
-    
+
     /** A function that is called when the sort descriptor changes. */
     onSortChange: PropTypes.func,
 
@@ -124,16 +125,17 @@ export default class TableView extends Component {
     const rowHeight = Math.max(48, Math.min(72, props.rowHeight));
     this.layout = new TableViewLayout({rowHeight});
     this.state = {
-      columns: this.props.columns || 
-        this.props.defaultColumns || 
+      columns: this.props.columns ||
+        this.props.defaultColumns ||
         this.props.dataSource.getColumns(),
-      sortDescriptor: this.props.sortDescriptor || 
-        this.props.defaultSortDescriptor || 
+      sortDescriptor: this.props.sortDescriptor ||
+        this.props.defaultSortDescriptor ||
         (this.props.dataSource.sortColumn && { // backward compatibility
           column: this.props.dataSource.sortColumn,
           direction: this.props.dataSource.sortDirection
         })
     };
+    this.focusedColumnIndex = null;
   }
 
   componentWillReceiveProps(props) {
@@ -142,7 +144,7 @@ export default class TableView extends Component {
         columns: this.props.columns
       });
     }
-    
+
     if (props.sortDescriptor && props.sortDescriptor !== this.props.sortDescriptor) {
       this.setState({sortDescriptor: props.sortDescriptor});
     }
@@ -178,7 +180,10 @@ export default class TableView extends Component {
           selected={allItemsSelected}
           onSelectChange={this.setSelectAll}
           onCellClick={this.sortByColumn}
-          collectionView={this.collection} />
+          onCellFocus={this.onCellFocus}
+          collectionView={this.collection}
+          tableView={this}
+          ref={row => this.headerRowRef = row} />
       </div>
     );
   }
@@ -200,7 +205,9 @@ export default class TableView extends Component {
         allowsSelection={allowsSelection}
         onCellClick={onCellClick}
         onCellDoubleClick={onCellDoubleClick}
-        collectionView={this.collection} />
+        onCellFocus={this.onCellFocus}
+        collectionView={this.collection}
+        tableView={this} />
     );
   }
 
@@ -230,18 +237,31 @@ export default class TableView extends Component {
     }
 
     return (
-      <TableCell column={column} aria-colindex={columnIndex} rowFocused={rowFocused}>
+      <TableCell column={column} rowFocused={rowFocused}>
         {this.props.renderCell(column, data, rowFocused)}
       </TableCell>
     );
   }
 
   renderSupplementaryView(type) {
-    if (type === 'insertion-indicator') {
-      return <div className="react-spectrum-TableView-insertionIndicator" />;
+    const {allowsSelection, renderEmptyView} = this.props;
+    let colCount = this.state.columns.length;
+    if (allowsSelection) {
+      colCount += 1;
+    }
+    if (type === 'loading-indicator') {
+      return <div role="row"><div role="gridcell" aria-colspan={colCount}><Wait centered size="M" /></div></div>;
     }
 
-    return <div />;
+    if (type === 'empty-view' && renderEmptyView) {
+      return <div role="row"><div role="gridcell" aria-colspan={colCount}>{renderEmptyView()}</div></div>;
+    }
+
+    if (type === 'insertion-indicator') {
+      return <div role="row" className="react-spectrum-TableView-insertionIndicator"><div role="gridcell" aria-colspan={colCount} /></div>;
+    }
+
+    return <div role="presentation" />;
   }
 
   async sortByColumn(column) {
@@ -284,6 +304,10 @@ export default class TableView extends Component {
     }
 
     return count;
+  }
+
+  onCellFocus(columnIndex, e) {
+    this.focusedColumnIndex = columnIndex;
   }
 
   render() {

@@ -182,7 +182,7 @@ export default class CollectionView extends React.Component {
       style.width = view.layoutInfo.rect.width;
       style.height = view.layoutInfo.rect.height;
     }
-    
+
     // Wrap in a spectrum provider so spectrum components are themed correctly.
     return (
       <Provider {...this.context} style={style}>
@@ -192,19 +192,24 @@ export default class CollectionView extends React.Component {
   }
 
   renderSupplementaryView(type) {
-    if (type === 'loading-indicator') {
-      return <Wait centered size="M" />;
+    const {renderEmptyView, renderSupplementaryView} = this.props;
+    let supplementaryView;
+
+    if (renderSupplementaryView) {
+      supplementaryView = renderSupplementaryView(type);
     }
 
-    if (type === 'empty-view' && this.props.renderEmptyView) {
-      return this.props.renderEmptyView();
+    if (!supplementaryView) {
+      if (type === 'loading-indicator') {
+        supplementaryView = <Wait centered size="M" />;
+      }
+
+      if (type === 'empty-view' && renderEmptyView) {
+        supplementaryView = renderEmptyView();
+      }
     }
 
-    if (this.props.renderSupplementaryView) {
-      return this.props.renderSupplementaryView(type);
-    }
-
-    return <div />;
+    return supplementaryView || <div />;
   }
 
   render() {

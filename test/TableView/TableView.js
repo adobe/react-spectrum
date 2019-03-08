@@ -43,11 +43,12 @@ describe('TableView', function () {
         allowsMultipleSelection />
     );
 
+    assert.equal(table.prop('role'), 'grid');
     assert.equal(table.hasClass('react-spectrum-TableView spectrum-Table'), true);
     assert.deepEqual(table.find(TableRow).prop('columns'), columns);
-    assert.deepEqual(table.find(TableRow).prop('allowsSelection'), true);
-    assert.deepEqual(table.find(TableRow).prop('allowsSelection'), true);
-    assert.deepEqual(table.find(TableRow).prop('isHeaderRow'), true);
+    assert.equal(table.find(TableRow).prop('allowsSelection'), true);
+    assert.equal(table.find(TableRow).prop('allowsMultipleSelection'), true);
+    assert.equal(table.find(TableRow).prop('isHeaderRow'), true);
   });
 
   it('should render a quiet table view', function () {
@@ -59,8 +60,10 @@ describe('TableView', function () {
         allowsSelection={false}
         quiet />
     );
+    assert.equal(table.prop('role'), 'grid');
     assert.equal(table.hasClass('spectrum-Table--quiet'), true);
-    assert.deepEqual(table.find(TableRow).prop('allowsSelection'), false);
+    assert.equal(table.find(TableRow).prop('allowsSelection'), false);
+    assert.equal(table.find(TableRow).prop('allowsMultipleSelection'), false);
   });
 
   it('should pass correct props to collectionview', function () {
@@ -264,7 +267,7 @@ describe('TableView', function () {
         renderCell={renderCell} />
     );
     table.instance().collection = {
-      relayout: () => {}, 
+      relayout: () => {},
       selectAll,
       clearSelection,
       selectedIndexPaths: [],
@@ -297,6 +300,22 @@ describe('TableView', function () {
     );
 
     assert(table.instance().collection);
+    table.unmount();
+  });
+
+  it('focus cell should update focusedColumnIndex, and focusing row should move focus to focused column', () => {
+    const table = mount(
+      <TableView
+        columns={columns}
+        dataSource={ds}
+        renderCell={renderCell} />
+    );
+    const tableCells = table.find(TableCell);
+    tableCells.last().simulate('focus');
+    assert.equal(table.instance().focusedColumnIndex, tableCells.length - 1);
+    tableCells.last().getDOMNode().focus = sinon.spy();
+    table.find(TableRow).first().simulate('focus', {target: table.find(TableRow).first().getDOMNode()});
+    assert(tableCells.last().getDOMNode().focus.calledOnce);
     table.unmount();
   });
 
