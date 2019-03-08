@@ -7,7 +7,7 @@ import Tour from '../../src/Tour';
 
 describe('Tour', () => {
   it('default', () => {
-    const tree = shallow(<Tour>
+    let tree = shallow(<Tour>
       <CoachMark title="Default" selector="#stepOne">
         This is the Default Coach Mark
       </CoachMark>
@@ -26,62 +26,9 @@ describe('Tour', () => {
     assert.equal(tree.props().dismissible, undefined);
   });
 
-  it('should be dismissible on "skip"', () => {
-    let onTourEnd = sinon.spy();
-    const tree = shallow(<Tour clickOutsideAction="skip" onTourEnd={onTourEnd}>
-      <CoachMark title="Default" selector="#stepOne">
-        This is the Default Coach Mark
-      </CoachMark>
-      <CoachMark title="Default" selector="#stepTwo">
-        This is the Default Coach Mark
-      </CoachMark>
-      <CoachMark title="Default" selector="#stepThree">
-        This is the Default Coach Mark
-      </CoachMark>
-    </Tour>);
-
-    assert.equal(tree.props().currentStep, 1);
-    assert.equal(tree.props().totalSteps, 3);
-    assert.equal(tree.props().cancelLabel, 'Skip Tour');
-    assert.equal(tree.props().confirmLabel, 'Next');
-    assert.equal(tree.props().dismissible, true);
-
-    tree.instance().onHide('', tree);
-
-    assert(onTourEnd.calledWith('cancel'));
-    assert.equal(tree.html(), null);
-  });
-
-  it('should be dismissible on "skip" (the OverlayTrigger test)', () => {
-    let onTourEnd = sinon.spy();
-    const tree = mount(<Tour clickOutsideAction="skip" onTourEnd={onTourEnd}>
-      <CoachMark title="Default" selector="#stepOne">
-        This is the Default Coach Mark
-      </CoachMark>
-      <CoachMark title="Default" selector="#stepTwo">
-        This is the Default Coach Mark
-      </CoachMark>
-      <CoachMark title="Default" selector="#stepThree">
-        This is the Default Coach Mark
-      </CoachMark>
-    </Tour>);
-
-    assert.equal(tree.find(CoachMark).first().props().currentStep, 1);
-    assert.equal(tree.find(CoachMark).first().props().totalSteps, 3);
-    assert.equal(tree.find(CoachMark).first().props().cancelLabel, 'Skip Tour');
-    assert.equal(tree.find(CoachMark).first().props().confirmLabel, 'Next');
-    assert.equal(tree.find(CoachMark).first().props().dismissible, true);
-
-    tree.find('OverlayTrigger').first().instance().hide('');
-    assert(onTourEnd.calledWith('cancel'));
-    assert.equal(tree.html(), null);
-
-    tree.unmount();
-  });
-
   it('dismissible - next', () => {
     let onTourEnd = sinon.spy();
-    const tree = shallow(<Tour clickOutsideAction="next" onTourEnd={onTourEnd}>
+    let tree = shallow(<Tour clickOutsideAction="next" onTourEnd={onTourEnd}>
       <CoachMark title="Default" selector="#stepOne">
         This is the Default Coach Mark
       </CoachMark>
@@ -120,7 +67,7 @@ describe('Tour', () => {
 
   it('Should change steps on confirm', () => {
     let onTourEnd = sinon.spy();
-    const tree = shallow(<Tour onTourEnd={onTourEnd}>
+    let tree = shallow(<Tour onTourEnd={onTourEnd}>
       <CoachMark title="Default" selector="#stepOne">
         This is the Default Coach Mark
       </CoachMark>
@@ -153,7 +100,7 @@ describe('Tour', () => {
 
   it('Should quit tour on cancel', () => {
     let onTourEnd = sinon.spy();
-    const tree = shallow(<Tour onTourEnd={onTourEnd}>
+    let tree = shallow(<Tour onTourEnd={onTourEnd}>
       <CoachMark title="Default" selector="#stepOne">
         This is the Default Coach Mark
       </CoachMark>
@@ -171,5 +118,72 @@ describe('Tour', () => {
 
     assert(onTourEnd.calledWith('cancel'));
     assert.equal(tree.html(), null);
+  });
+  describe('mount required', () => {
+    let tree;
+    let mountNode;
+    beforeEach(() => {
+      mountNode = document.createElement('DIV');
+      document.body.appendChild(mountNode);
+    });
+    afterEach(() => {
+      if (tree) {
+        tree.detach();
+        tree = null;
+      }
+      document.body.removeChild(mountNode);
+    });
+
+    it('should be dismissible on "skip"', () => {
+      let onTourEnd = sinon.spy();
+      tree = mount(
+        <Tour clickOutsideAction="skip" onTourEnd={onTourEnd}>
+          <CoachMark title="Default" selector="#stepOne">
+            This is the Default Coach Mark
+          </CoachMark>
+          <CoachMark title="Default" selector="#stepTwo">
+            This is the Default Coach Mark
+          </CoachMark>
+          <CoachMark title="Default" selector="#stepThree">
+            This is the Default Coach Mark
+          </CoachMark>
+        </Tour>,
+        {attachTo: mountNode}
+      );
+
+      let coachMark = tree.find(CoachMark);
+      assert.equal(coachMark.props().currentStep, 1);
+      assert.equal(coachMark.props().totalSteps, 3);
+      assert.equal(coachMark.find(CoachMark).props().cancelLabel, 'Skip Tour');
+      assert.equal(coachMark.find(CoachMark).props().confirmLabel, 'Next');
+      assert.equal(coachMark.find(CoachMark).props().dismissible, true);
+
+      tree.instance().onHide('', tree.find(CoachMark).instance());
+
+      assert(onTourEnd.calledWith('cancel'));
+      assert.equal(tree.html(), null);
+    });
+
+    it('should be dismissible on "skip" (the OverlayTrigger test)', () => {
+      let onTourEnd = sinon.spy();
+      tree = mount(
+        <Tour clickOutsideAction="skip" onTourEnd={onTourEnd}>
+          <CoachMark title="Default" selector="#stepOne">
+            This is the Default Coach Mark
+          </CoachMark>
+          <CoachMark title="Default" selector="#stepTwo">
+            This is the Default Coach Mark
+          </CoachMark>
+          <CoachMark title="Default" selector="#stepThree">
+            This is the Default Coach Mark
+          </CoachMark>
+        </Tour>,
+        {attachTo: mountNode}
+      );
+
+      document.querySelectorAll('.spectrum-CoachMarkIndicator')[0].click();
+      assert(onTourEnd.calledWith('cancel'));
+      assert.equal(tree.html(), null);
+    });
   });
 });

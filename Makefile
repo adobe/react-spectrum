@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-REACT := 0.14 15.5 16
+REACT := 15.5 16
 
 all: node_modules
 

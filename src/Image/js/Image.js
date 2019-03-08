@@ -59,7 +59,7 @@ export default class Image extends React.Component {
     }
 
     this._src = src;
-    var fromCache = ImageCache.has(src);
+    let fromCache = ImageCache.has(src);
 
     if (ImageCache.has(placeholder) && !fromCache) {
       this.setState({
@@ -115,7 +115,7 @@ export default class Image extends React.Component {
   }
 
   isImageLoaded() {
-    var image = this.imgRef;
+    let image = this.imgRef;
     if (!image || !image.complete) {
       return false;
     }
@@ -128,17 +128,18 @@ export default class Image extends React.Component {
   }
 
   onLoad() {
-    if (this.props.onLoad && this.isImageLoaded()) {
+    if (this.isImageLoaded()) {
       requestAnimationFrame(() => {
         // Image could have been unmounted or changed between frames, so double check it is still there.
         if (this.isImageLoaded()) {
-          this.props.onLoad(this.imgRef);
+          if (this.props.onLoad) {
+            this.props.onLoad(this.imgRef);
+          }
+          if (!this.state.loaded) {
+            this.setState({loaded: true, isPlaceholder: false});
+          }
         }
       });
-    }
-
-    if (!this.state.loaded && this.isImageLoaded()) {
-      this.setState({loaded: true, isPlaceholder: false});
     }
   }
 

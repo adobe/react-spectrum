@@ -138,7 +138,6 @@ export default class CoachMark extends React.Component {
               <CoachMarkIndicator
                 selector={selector}
                 quiet={quiet}
-                onClick={this.onClickIndicator}
                 onPositioned={this.onIndicatorPositioned} />
               <CoachMarkPopover {...otherProps}>
                 {children}
