@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Textfield from '../../Textfield';
 
@@ -17,6 +18,50 @@ const formatMessage = messageFormatter(intlMessages);
 
 @autobind
 export default class ComboBox extends React.Component {
+  static propTypes = {
+    /**
+     * Value of the input
+     */
+    value: PropTypes.string,
+
+    /**
+     * List of options for the combobox menu
+     */
+    options: PropTypes.array,
+
+    /**
+     * Greys out the control
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * Marks it as required
+     */
+    required: PropTypes.bool,
+
+    /**
+     * Marks the input as invalid
+     */
+    invalid: PropTypes.bool,
+
+    /**
+     * Variant that changes the look, removes some borders
+     */
+    quiet: PropTypes.bool,
+
+    /**
+     * A callback for both show and hide, event is false if hiding, true if showing.
+     * Reason for this was to add a controlled state in a backwards compatible way,
+     * we couldn't use show/hide props for that, so we needed a new one.
+     */
+    onMenuToggle: PropTypes.func,
+
+    /**
+     * Controlled state for showing/hiding menu.
+     */
+    showMenu: PropTypes.bool
+  };
+
   static defaultProps = {
     options: [],
     disabled: false,
@@ -33,6 +78,12 @@ export default class ComboBox extends React.Component {
   constructor(props) {
     super(props);
     this.comboBoxId = createId();
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.showMenu != null && props.showMenu !== this.props.showMenu) {
+      this.setState({open: props.showMenu});
+    }
   }
 
   onButtonClick() {
@@ -76,12 +127,16 @@ export default class ComboBox extends React.Component {
   }
 
   onMenuShow() {
-    this.setState({open: true});
+    if (this.props.showMenu !== null) {
+      this.setState({open: true});
+    }
   }
 
   onMenuHide() {
     this.changeSinceOpen = false;
-    this.setState({open: false});
+    if (this.props.showMenu !== null) {
+      this.setState({open: false});
+    }
   }
 
   onChange(value) {
@@ -125,6 +180,8 @@ export default class ComboBox extends React.Component {
       quiet,
       onChange,
       onSelect,
+      onMenuToggle,
+      showMenu,
       ...props
     } = this.props;
 
@@ -145,7 +202,9 @@ export default class ComboBox extends React.Component {
         onChange={chain(onChange, this.onChange)}
         onSelect={onSelect}
         onMenuShow={this.onMenuShow}
-        onMenuHide={this.onMenuHide}>
+        onMenuHide={this.onMenuHide}
+        showMenu={showMenu}
+        onMenuToggle={onMenuToggle}>
         <Textfield
           className={classNames('spectrum-InputGroup-field')}
           {...props}
@@ -167,7 +226,7 @@ export default class ComboBox extends React.Component {
           required={required}
           invalid={invalid}
           quiet={quiet}
-          selected={this.state.open}
+          selected={showMenu !== undefined ? showMenu : this.state.open}
           aria-label={this.getButtonLabel()}
           aria-labelledby={`${id} ${id}-button`}
           tabIndex="-1">

@@ -24,7 +24,7 @@ export default class Autocomplete extends React.Component {
     allowCreate: PropTypes.bool,
 
     /**
-     * Value of the input
+     * Value of the input, this puts the autocomplete in a controlled mode.
      */
     value: PropTypes.string,
 
@@ -52,6 +52,18 @@ export default class Autocomplete extends React.Component {
      * Callback for when the menu closes
      */
     onMenuHide: PropTypes.func,
+
+    /**
+     * A callback for both show and hide, event is false if hiding, true if showing.
+     * Reason for this was to add a controlled state in a backwards compatible way,
+     * we couldn't use show/hide props for that, so we needed a new one.
+     */
+    onMenuToggle: PropTypes.func,
+
+    /**
+     * Controlled state for showing/hiding menu.
+     */
+    showMenu: PropTypes.bool
   };
 
   static defaultProps = {
@@ -60,7 +72,7 @@ export default class Autocomplete extends React.Component {
 
   state = {
     value: '',
-    showDropdown: false,
+    showMenu: false,
     results: [],
     selectedIndex: -1,
     isFocused: false
@@ -77,7 +89,12 @@ export default class Autocomplete extends React.Component {
 
   componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.state.value) {
-      this.setValue(props.value);
+      this.setValue(props.value, this._selectedValue !== props.value);
+      this._selectedValue = null;
+    }
+
+    if (props.showMenu != null && props.showMenu !== this.state.showMenu) {
+      this.setState({showMenu: props.showMenu});
     }
   }
 
@@ -109,10 +126,10 @@ export default class Autocomplete extends React.Component {
     }
   }
 
-  setValue(value) {
+  setValue(value, showMenu = true) {
     this.setState({
       value,
-      showDropdown: this.state.isFocused,
+      showMenu: this.props.showMenu == null ? this.state.isFocused && showMenu : this.props.showMenu,
       selectedIndex: this.props.allowCreate && this.state.selectedIndex === -1 ? -1 : 0
     });
 
@@ -145,6 +162,7 @@ export default class Autocomplete extends React.Component {
   }
 
   onSelect(value, event) {
+    this._selectedValue = value;
     this.onChange(typeof value === 'string' ? value : value.label);
     this.hideMenu();
 
@@ -215,7 +233,7 @@ export default class Autocomplete extends React.Component {
   onFocusNext(event) {
     event.preventDefault();
     // make sure menu is shown
-    if (!this.state.showDropdown) {
+    if (!this.state.showMenu) {
       this.showMenu();
     }
     const {results = [], selectedIndex} = this.state;
@@ -225,9 +243,9 @@ export default class Autocomplete extends React.Component {
 
   onPageDown(event) {
     event.preventDefault();
-    const {results = [], selectedIndex, showDropdown} = this.state;
+    const {results = [], selectedIndex, showMenu} = this.state;
     const len = results.length;
-    if (!showDropdown || !len) {
+    if (!showMenu || !len) {
       return;
     }
 
@@ -247,9 +265,9 @@ export default class Autocomplete extends React.Component {
 
   onPageUp(event) {
     event.preventDefault();
-    const {results = [], selectedIndex, showDropdown} = this.state;
+    const {results = [], selectedIndex, showMenu} = this.state;
     const len = results.length;
-    if (!showDropdown || !len) {
+    if (!showMenu || !len) {
       return;
     }
 
@@ -273,14 +291,14 @@ export default class Autocomplete extends React.Component {
 
   onAltArrowDown(event) {
     event.preventDefault();
-    if (!this.state.showDropdown) {
+    if (!this.state.showMenu) {
       this.showMenu();
     }
   }
 
   onAltArrowUp(event) {
     event.preventDefault();
-    if (this.state.showDropdown) {
+    if (this.state.showMenu) {
       this.hideMenu();
     }
   }
@@ -305,7 +323,7 @@ export default class Autocomplete extends React.Component {
   }
 
   toggleMenu() {
-    if (this.state.showDropdown) {
+    if (this.state.showMenu) {
       this.hideMenu();
     } else {
       this.showMenu();
@@ -313,7 +331,11 @@ export default class Autocomplete extends React.Component {
   }
 
   async showMenu() {
-    this.setState({showDropdown: true, selectedIndex: -1});
+    if (this.props.showMenu == null) {
+      this.setState({showMenu: true});
+    }
+
+    this.setState({selectedIndex: -1});
     let results = await this.getCompletions(this.state.value) || [];
 
     // Reset the selected index based on the value
@@ -325,23 +347,34 @@ export default class Autocomplete extends React.Component {
     if (this.props.onMenuShow) {
       this.props.onMenuShow();
     }
+    if (this.props.onMenuToggle) {
+      this.props.onMenuToggle(true);
+    }
   }
 
   hideMenu() {
-    this.setState({showDropdown: false, selectedIndex: -1});
+    if (this.props.showMenu == null) {
+      this.setState({showMenu: false});
+    }
+
+    this.setState({selectedIndex: -1});
     if (this.props.onMenuHide) {
       this.props.onMenuHide();
+    }
+
+    if (this.props.onMenuToggle) {
+      this.props.onMenuToggle(false);
     }
   }
 
   getActiveDescendantId() {
-    const {selectedIndex, showDropdown, results = []} = this.state;
-    return showDropdown && results.length > 0 && selectedIndex !== -1 ? this.optionIdPrefix + OPTION + selectedIndex : undefined;
+    const {selectedIndex, showMenu, results = []} = this.state;
+    return showMenu && results.length > 0 && selectedIndex !== -1 ? this.optionIdPrefix + OPTION + selectedIndex : undefined;
   }
 
   getListboxId() {
-    const {showDropdown, results = []} = this.state;
-    return showDropdown && results.length > 0 ? this.autocompleteId + LISTBOX : undefined;
+    const {showMenu, results = []} = this.state;
+    return showMenu && results.length > 0 ? this.autocompleteId + LISTBOX : undefined;
   }
 
   getListRef() {
@@ -349,12 +382,12 @@ export default class Autocomplete extends React.Component {
   }
 
   render() {
-    const {id, className} = this.props;
-    const {isFocused, results = [], selectedIndex, showDropdown, value} = this.state;
-    const children = React.Children.toArray(this.props.children);
-    const trigger = children.find(c => c.props.autocompleteInput) || children[0];
-    const menuShown = showDropdown && results.length > 0;
-    const inputId = id || trigger.props.id || this.autocompleteId;
+    let {id, className} = this.props;
+    let {isFocused, results = [], selectedIndex, showMenu, value} = this.state;
+    let children = React.Children.toArray(this.props.children);
+    let trigger = children.find(c => c.props.autocompleteInput) || children[0];
+    let menuShown = showMenu && results.length > 0;
+    let inputId = id || trigger.props.id || this.autocompleteId;
 
     return (
       <div

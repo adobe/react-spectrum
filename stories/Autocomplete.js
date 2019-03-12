@@ -20,6 +20,9 @@ function getCompletions(text) {
 }
 
 function getCompletionsAsync(input) {
+  if (input === '') {
+    return [];
+  }
   return fetch(`https://api.github.com/search/users?q=${input}`)
     .then((response) => response.json())
     .then((json) => json.items && json.items.map(item => ({label: item.login, id: item.id})));

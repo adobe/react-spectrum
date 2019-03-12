@@ -80,6 +80,11 @@ storiesOf('ComboBox', module)
     'with icons',
     () => render({options: OPTION_ICONS, 'aria-label': 'with icons'}),
     {inline: true}
+  )
+  .addWithInfo(
+    'controlled',
+    () => renderControlled({options: OPTIONS}),
+    {inline: true}
   );
 
 function render(props = {}) {
@@ -90,4 +95,33 @@ function render(props = {}) {
       placeholder="Combo Box"
       {...props} />
   );
+}
+
+function renderControlled(props = {}) {
+  return (
+    <ControlledCombo {...props} />
+  );
+}
+
+class ControlledCombo extends React.Component {
+  state = {
+    value: 'Vanilla',
+    showMenu: false
+  };
+  onSelect() {
+    this.setState({value: 'Chocolate'});
+  }
+  render() {
+    let props = this.props;
+    return (
+      <ComboBox
+        onChange={action('change')}
+        onSelect={this.onSelect.bind(this)}
+        showMenu={this.state.showMenu}
+        onMenuToggle={showMenu => this.setState({showMenu})}
+        placeholder="Combo Box"
+        value={this.state.value}
+        {...props} />
+    );
+  }
 }
