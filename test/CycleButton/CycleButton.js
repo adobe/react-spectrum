@@ -31,6 +31,7 @@ describe('CycleButton', () => {
       actions={[{name: 'play', icon: <PlayCircle />, label: 'Play'}, {name: 'pause', icon: <PauseCircle />, label: 'Pause'}]}
       action="pause" />);
     let instance = tree.instance();
+    let preventDefaultSpy = sinon.spy();
     instance.buttonRef = {
       click: () => instance.onClick({preventDefault: preventDefaultSpy})
     };

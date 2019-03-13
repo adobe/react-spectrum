@@ -122,10 +122,6 @@ export default class ColumnView extends React.Component {
     return dataSource;
   }
 
-  componentWillUnmount() {
-    this.teardownEvents(this.state.dataSource);
-  }
-
   teardownEvents(dataSource) {
     dataSource.teardown();
     dataSource.removeListener('navigate', this.onNavigate);
@@ -174,8 +170,7 @@ export default class ColumnView extends React.Component {
 
   componentWillUnmount() {
     this.mounted = false;
-    this.state.dataSource.removeListener('navigate', this.onNavigate);
-    this.state.dataSource.removeListener('selectionChange', this.onSelectionChange);
+    this.teardownEvents(this.state.dataSource);
   }
 
   render() {

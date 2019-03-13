@@ -27,7 +27,7 @@ docs_local:
 	npm --prefix ./documentation run develop
 
 lint:
-	lfeslint
+	eslint src test stories
 
 test:
 	NODE_ENV=test mocha

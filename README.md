@@ -204,5 +204,4 @@ Once the clock is mocked, there are two things to use to trigger updates and eve
 
 ### Linting
 
-The code is linted with [lfeslint](https://github.com/Livefyre/lfeslint). The linter runs whenever you run the tests, but
-you can also run it with `make lint`.
+The code is linted with [eslint](https://eslint.org/). The linter runs whenever you run the tests, but you can also run it with `make lint`.
