@@ -40,6 +40,11 @@ storiesOf('DropdownButton', module)
     'Stay open on select',
     () => render({label: 'Action', closeOnSelect: false}),
     {inline: true}
+  )
+  .addWithInfo(
+    'holdAffordance',
+    () => render({holdAffordance: true}),
+    {inline: true}
   );
 
 function render(props = {}) {

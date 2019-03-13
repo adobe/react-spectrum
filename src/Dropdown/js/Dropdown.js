@@ -5,7 +5,6 @@ import {Menu} from '../../Menu';
 import OverlayTrigger from '../../OverlayTrigger';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 @autobind
 export default class Dropdown extends React.Component {
@@ -14,6 +13,11 @@ export default class Dropdown extends React.Component {
      * If true, dropdown will close on selection of an item
      */
     closeOnSelect: PropTypes.bool,
+
+    /**
+     * Determines what kind of action opens the menu
+     */
+    trigger: PropTypes.oneOf(['click', 'longClick', 'hover', 'focus']),
 
     /**
      * Callback for when the dropdown is opened
@@ -42,7 +46,8 @@ export default class Dropdown extends React.Component {
   };
 
   static defaultProps = {
-    closeOnSelect: true
+    closeOnSelect: true,
+    trigger: 'click'
   };
 
   constructor(props) {
@@ -80,40 +85,49 @@ export default class Dropdown extends React.Component {
     }
   }
 
+  onClick() {
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
+
   render() {
-    const {alignRight, closeOnSelect, flip, ...otherProps} = this.props;
+    const {alignRight, closeOnSelect, flip, trigger, onLongClick, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
-    const trigger = children.find(c => c.props.dropdownTrigger) || children[0];
-    const triggerId = trigger.props.id || this.dropdownId + '-trigger';
+    const triggerChild = children.find(c => c.props.dropdownTrigger) || children[0];
+    const triggerId = triggerChild.props.id || this.dropdownId + '-trigger';
     const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
     const menuId = menu.props.id || this.dropdownId + '-menu';
     delete otherProps.onOpen;
     delete otherProps.onClose;
+    delete otherProps.onClick;
 
     return (
       <div {...filterDOMProps(otherProps)}>
         {children.map((child, index) => {
-          if (child === trigger) {
+          if (child === triggerChild) {
             return (
               <OverlayTrigger
                 target={this}
-                trigger="click"
+                trigger={trigger}
                 placement={alignRight ? 'bottom right' : 'bottom left'}
                 ref={t => this.overlayTrigger = t}
+                onLongClick={onLongClick}
+                onClick={this.onClick}
                 onShow={this.onOpen}
                 closeOnSelect={closeOnSelect}
                 key={index}
                 onHide={this.onClose}
                 flip={flip}
                 delayHide={0}>
-                {React.cloneElement(trigger, {
+                {React.cloneElement(triggerChild, {
                   id: triggerId,
-                  'aria-haspopup': trigger.props['aria-haspopup'] || 'true',
+                  'aria-haspopup': triggerChild.props['aria-haspopup'] || 'true',
                   'aria-expanded': this.state.open || null,
                   'aria-controls': (this.state.open ? menuId : null),
                   ref: (node) => {
                     this.triggerRef = node;
-                    const {ref} = trigger;
+                    const {ref} = triggerChild;
                     if (typeof ref === 'function') {
                       ref(node);
                     }

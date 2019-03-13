@@ -74,10 +74,10 @@ export default class Overlay extends React.Component {
     return this.props.container || immediateAvailableContainer;
   }
 
-  hide() {
+  hide(e) {
     // Only hide if this is the top overlay
     if (visibleOverlays[visibleOverlays.length - 1] === this && this.props.onHide) {
-      this.props.onHide();
+      this.props.onHide(e);
     }
   }
 

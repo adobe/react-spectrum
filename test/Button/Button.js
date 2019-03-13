@@ -163,6 +163,34 @@ describe('Button', () => {
       assert.equal(tree.find('.spectrum-Button-label').children().last().text(), 'My Label');
     });
   });
+  describe('tool', () => {
+    it('supports holdAffordance', () => {
+      const tree = shallow(<Button variant="tool" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
+    it('doesn\'t render a holdAffordance by default', () => {
+      const tree = shallow(<Button variant="tool" />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+    it('doesn\'t render a holdAffordance when not a tool variant', () => {
+      const tree = shallow(<Button variant="primary" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+  });
+  describe('action', () => {
+    it('supports holdAffordance', () => {
+      const tree = shallow(<Button variant="action" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
+    it('doesn\'t render a holdAffordance by default', () => {
+      const tree = shallow(<Button variant="action" />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+    it('toggle supports holdAffordance', () => {
+      const tree = shallow(<Button variant="toggle" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
+  });
 
   it('supports focus method', async () => {
     const tree = mount(<Button />);

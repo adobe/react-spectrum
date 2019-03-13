@@ -2,9 +2,9 @@ import assert from 'assert';
 import Button from '../../src/Button';
 import Dropdown from '../../src/Dropdown';
 import {Menu, MenuItem} from '../../src/Menu';
+import {mount, shallow} from 'enzyme';
 import OverlayTrigger from '../../src/OverlayTrigger';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 
 describe('Dropdown', function () {
@@ -160,5 +160,54 @@ describe('Dropdown', function () {
     tree.find(OverlayTrigger).simulate('hide');
     assert.equal(tree.find(Button).prop('aria-expanded'), null);
   });
+  describe('window behaviors', () => {
+    let tree;
+    let clock;
+    let mountNode;
 
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+      mountNode = document.createElement('DIV');
+      document.body.appendChild(mountNode);
+    });
+
+    afterEach(() => {
+      if (tree) {
+        tree.detach();
+        tree = null;
+      }
+      clock.runAll();
+      clock.restore();
+      document.body.removeChild(mountNode);
+      mountNode = null;
+    });
+
+    it('supports longClick', () => {
+      let selectSpy = sinon.spy();
+      let clickSpy = sinon.spy();
+      tree = mount(
+        <Dropdown onSelect={selectSpy} onClick={clickSpy} trigger="longClick">
+          <Button holdAffordance>Click me</Button>
+          <Menu>
+            <MenuItem>Test</MenuItem>
+          </Menu>
+        </Dropdown>,
+        {attachTo: mountNode}
+      );
+      let button = tree.find(Button);
+      assert(button.props().holdAffordance);
+      let overlayTrigger = tree.find(OverlayTrigger).instance();
+      button.simulate('mouseDown', {button: 0});
+      clock.tick(250);
+      button.simulate('mouseUp', {button: 0});
+      assert(overlayTrigger.state.show);
+
+      assert.equal(document.querySelectorAll('.spectrum-Menu-item').length, 1);
+      document.querySelectorAll('.spectrum-Menu-item')[0].click();
+
+      assert(!clickSpy.called);
+      assert(selectSpy.calledOnce);
+      assert(!overlayTrigger.state.show);
+    });
+  });
 });
