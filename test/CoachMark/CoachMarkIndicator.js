@@ -25,7 +25,7 @@ describe('CoachMarkIndicator', () => {
         }} />
       <CoachMarkIndicator selector="#something" />
     </div>);
-    
+
     let rings = tree.find('.spectrum-CoachMarkIndicator-ring');
     assert.equal(rings.length, 3);
     rings.forEach(ring => {
@@ -60,8 +60,8 @@ describe('CoachMarkIndicator', () => {
     const someElement = document.createElement('div');
     someElement.setAttribute('id', 'something');
     someElement.getBoundingClientRect = () => ({
-      x: 50,
-      y: 75,
+      left: 50,
+      top: 75,
       width: 250,
       height: 150
     });
@@ -70,8 +70,8 @@ describe('CoachMarkIndicator', () => {
     const someOtherElement = document.createElement('div');
     someOtherElement.setAttribute('id', 'somethingElse');
     someOtherElement.getBoundingClientRect = () => ({
-      x: 200,
-      y: 250,
+      left: 200,
+      top: 250,
       width: 100,
       height: 100
     });
@@ -117,8 +117,8 @@ describe('CoachMarkIndicator', () => {
     const someElement = document.createElement('div');
     someElement.setAttribute('id', 'something');
     someElement.getBoundingClientRect = () => ({
-      x: 50,
-      y: 75,
+      left: 50,
+      top: 75,
       width: 250,
       height: 150
     });
@@ -135,8 +135,8 @@ describe('CoachMarkIndicator', () => {
     assert(onPositionedSpy.calledOnce);
 
     someElement.getBoundingClientRect = () => ({
-      x: 200,
-      y: 250,
+      left: 200,
+      top: 250,
       width: 100,
       height: 100
     });

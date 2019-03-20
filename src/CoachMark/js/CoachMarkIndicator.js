@@ -40,7 +40,7 @@ export default class CoachMarkIndicator extends React.Component {
   }
 
   calculateDOMLocation(targetNode) {
-    let {x, y, width, height} = targetNode.getBoundingClientRect();
+    let {left, top, width, height} = targetNode.getBoundingClientRect();
 
     if (this.indicatorRef) {
       let {
@@ -51,8 +51,8 @@ export default class CoachMarkIndicator extends React.Component {
       this.setState({
         style: {
           position: 'absolute',
-          top: y + (height / 2) - (indicatorDiameter / 2),
-          left: x + (width / 2) - (indicatorDiameter / 2)
+          top: top + (height / 2) - (indicatorDiameter / 2),
+          left: left + (width / 2) - (indicatorDiameter / 2)
         }
       });
     }
