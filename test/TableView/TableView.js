@@ -351,4 +351,18 @@ describe('TableView', function () {
     );
     assert.equal(tree.instance().layout.rowHeight, 48);
   });
+  
+  it('should re-render on columns prop change', function () {
+    const table = shallow(
+      <TableView
+        columns={columns}
+        dataSource={ds}
+        renderCell={renderCell}
+        rowHeight={24} />
+    );
+    assert.deepEqual(table.find(TableRow).prop('columns'), columns);
+    const newCols = [{title: 'new'}];
+    table.setProps({columns: newCols});
+    assert.deepEqual(table.find(TableRow).prop('columns'), newCols);
+  });
 });

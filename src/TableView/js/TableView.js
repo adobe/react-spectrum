@@ -141,7 +141,7 @@ export default class TableView extends Component {
   componentWillReceiveProps(props) {
     if (props.columns && props.columns !== this.props.columns) {
       this.setState({
-        columns: this.props.columns
+        columns: props.columns
       });
     }
 
