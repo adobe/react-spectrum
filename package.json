@@ -28,6 +28,10 @@
     "react-transition-group": "^2.2.0",
     "stringify": "^5.1.0"
   },
+  "resolutions": {
+    "react-overlays/react-transition-group": "2.5.0",
+    "**/velocity-react/react-transition-group": "2.5.0"
+  },
   "devDependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
     "@adobe/spectrum-css": "2.8.0",
