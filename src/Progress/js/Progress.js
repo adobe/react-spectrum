@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('barloader');
@@ -76,5 +77,34 @@ export default function Progress({
     </div>
   );
 }
+
+Progress.propTypes = {
+  /**
+  * Value that sets the percentage progression of the progress bar.
+  * Value is automatically clamped to 0-100.
+  */
+  value: PropTypes.number,
+
+  /**
+  * Size of the Progress component. Limited to small (S) or medium (M).
+  */
+  size: PropTypes.oneOf(['S', 'M']),
+
+  /**
+  * Whether to show a percentage for the progress bar's current value
+  */
+  showPercent: PropTypes.bool,
+
+  /**
+  * Determines the positioning of the provided label.
+  * Limited to 'left', 'top', or 'bottom'
+  */
+  labelPosition: PropTypes.oneOf(['left', 'top', 'bottom']),
+
+  /**
+  * Determines the label for the Progress component.
+  */
+  label: PropTypes.string
+};
 
 Progress.displayName = 'Progress';
