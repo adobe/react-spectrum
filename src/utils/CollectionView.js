@@ -8,6 +8,10 @@ import proxy from './proxyObject';
 import React from 'react';
 import Wait from '../Wait';
 
+// symbol + counter for requests
+let REQUEST_ID = 1;
+let LAST_REQUEST = Symbol('lastRequest');
+
 @autobind
 export default class CollectionView extends React.Component {
   // These come from the parent Provider. Used to set the correct props
@@ -23,6 +27,7 @@ export default class CollectionView extends React.Component {
 
     this.isLoading = false;
     this.hasMore = true;
+    this[LAST_REQUEST] = 0;
     this.state = {
       delegate: Object.assign({}, proxy(this), proxy(props.dataSource)),
       isDropTarget: false
@@ -103,21 +108,22 @@ export default class CollectionView extends React.Component {
   }
 
   async performLoad(fn) {
-    if (this.isLoading) {
-      return;
-    }
-
+    let requestId = REQUEST_ID++;
     try {
       this.isLoading = true;
       if (this.collection) {
         this.collection.relayout();
       }
 
+      this[LAST_REQUEST] = requestId;
       await fn();
     } finally {
-      this.isLoading = false;
-      if (this.collection) {
-        this.collection.relayout();
+      // only relayout if the completed request is the last request made
+      if (this[LAST_REQUEST] === requestId) {
+        this.isLoading = false;
+        if (this.collection) {
+          this.collection.relayout();
+        }
       }
     }
   }
