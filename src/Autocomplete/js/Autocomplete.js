@@ -121,6 +121,9 @@ export default class Autocomplete extends React.Component {
       onChange(value);
     }
 
+    if (!this.state.showMenu) {
+      this.showMenu();
+    }
     if (this.props.value == null) {
       this.setValue(value);
     }

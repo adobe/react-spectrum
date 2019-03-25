@@ -430,6 +430,32 @@ describe('Autocomplete', () => {
     assert.equal(findInput(tree).prop('value'), 'foo');
   });
 
+  it('should trigger onMenuToggle when onChange is triggered in controlled state', async () => {
+    const onMenuToggle = sinon.spy();
+    let showMenuResolver = null;
+    let showMenuPromise = new Promise(resolve => showMenuResolver = resolve);
+
+    const tree = shallow(
+      <Autocomplete value="foo" showMenu={false} onMenuToggle={onMenuToggle} getCompletions={v => ['one', 'two', 'three']}>
+        <input />
+      </Autocomplete>
+    );
+
+    let showMenu = tree.instance().showMenu;
+    sinon.stub(tree.instance(), 'showMenu').callsFake(async () => {
+      await showMenu();
+      showMenuResolver();
+    });
+
+    tree.find('input').simulate('change', 'two');
+    await nextEventLoopIteration(); // Wait for async getCompletions
+
+    await showMenuPromise;
+    assert.equal(tree.instance().state.showMenu, false);
+    assert(onMenuToggle.calledOnce);
+    assert.equal(onMenuToggle.getCall(0).args[0], true);
+  });
+
   it('does not select first menu item by default with allowCreate', async () => {
     const onSelect = sinon.spy();
     const tree = shallow(
