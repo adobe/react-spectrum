@@ -53,6 +53,11 @@ storiesOf('Slider', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: filled with offset',
+    () => render({filled: true, fillOffset: 50, defaultValue: 20, renderLabel: true, label: 'filled offset'}),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: ramp',
     () => render({variant: 'ramp', renderLabel: true, label: 'variant: ramp'}),
     {inline: true}

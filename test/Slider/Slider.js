@@ -391,6 +391,22 @@ describe('Slider', function () {
     assert.equal(tree.find('.spectrum-Slider-track').first().prop('style').width, '75%');
   });
 
+  it('should update filled variant with offset correctly when value is to the right of offset', function () {
+    let tree = shallow(<Slider defaultValue={75} filled fillOffset={50} />);
+    let fill = tree.find('.spectrum-Slider-fill');
+    assert(fill.hasClass('spectrum-Slider-fill--right'));
+    assert.equal(fill.prop('style').left, '50%');
+    assert.equal(fill.prop('style').width, '25%');
+  });
+
+  it('should update filled variant with offset correctly when value is to the left of offset', function () {
+    const tree = shallow(<Slider defaultValue={25} filled fillOffset={50} />);
+    let fill = tree.find('.spectrum-Slider-fill');
+    assert(!fill.hasClass('spectrum-Slider-fill--right'));
+    assert.equal(fill.prop('style').left, '25%');
+    assert.equal(fill.prop('style').width, '25%');
+  });
+
   it('should support ramp variant', function () {
     const tree = shallow(<Slider variant="ramp" />);
     assert(tree.hasClass('spectrum-Slider--ramp'));
