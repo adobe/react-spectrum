@@ -7,6 +7,7 @@ import FocusManager from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Children, cloneElement, Component} from 'react';
+import '../style/index.styl';
 
 importSpectrumCSS('sidenav');
 
@@ -152,7 +153,7 @@ export default class SideNav extends Component {
         role={role}
         aria-label={role !== 'none' ? otherProps['aria-label'] : undefined}
         aria-labelledby={role !== 'none' ? otherProps['aria-labelledby'] : undefined}
-        className={className}>
+        className={classNames(className, 'react-spectrum-SideNav')}>
         <FocusManager
           itemSelector={SIDENAV_ITEM_SELECTOR}
           selectedItemSelector={SELECTED_SIDENAV_ITEM_SELECTOR}
