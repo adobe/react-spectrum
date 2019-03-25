@@ -129,6 +129,9 @@ Please read the [CONTRIBUTING](CONTRIBUTING.md) guide for an overview of how to 
 
 ### Local Development
 
+#### General
+We use Yarn, please run `yarn install` instead of `npm install` to get started. If you do not have yarn, you can follow these [instructions](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
+
 #### Storybook
 We use [Storybooks](https://storybooks.js.org) for local development. Run `npm start` and open [http://localhost:9002](http://localhost:9002) in your browser to play around with the components and test your changes.
 
@@ -136,7 +139,7 @@ We use [Storybooks](https://storybooks.js.org) for local development. Run `npm s
 Follow these steps to run documentation locally.
 
 ```
-npm install
+yarn install
 make docs_local
 ```
 

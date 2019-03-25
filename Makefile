@@ -7,7 +7,7 @@ REACT := 15.5 16
 all: node_modules
 
 node_modules: package.json
-	npm install
+	yarn install
 	touch $@
 
 run:

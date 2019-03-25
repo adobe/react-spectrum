@@ -5,7 +5,6 @@ node_modules
 npm-debug.log
 test-reports.xml
 .nyc_output
-yarn.lock
 dist
 .idea
 .package-lock.json
