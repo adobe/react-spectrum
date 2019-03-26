@@ -85,9 +85,9 @@ export default class Dropdown extends React.Component {
     }
   }
 
-  onClick() {
+  onClick(e) {
     if (this.props.onClick) {
-      this.props.onClick();
+      this.props.onClick(e);
     }
   }
 

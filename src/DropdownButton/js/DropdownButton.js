@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, holdAffordance, ...props}) {
-  let trigger = holdAffordance ? 'longClick' : null;
+  let trigger = holdAffordance ? 'longClick' : undefined;
   return (
     <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect} trigger={trigger}>
       <Button

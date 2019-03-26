@@ -467,6 +467,7 @@ export default class OverlayTrigger extends Component {
       }
 
       if (isOneOf('longClick', trigger)) {
+        delete props.onClick;
         triggerProps.onMouseDown = this.onMouseDown;
         triggerProps.onMouseUp = this.onMouseUp;
         triggerProps.onKeyDown = this.onKeyDown;

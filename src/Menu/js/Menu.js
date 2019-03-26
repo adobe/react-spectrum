@@ -1,8 +1,10 @@
+import autobind from 'autobind-decorator';
 import {List} from '../../List';
 import Popover from '../../Popover';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+@autobind
 export default class Menu extends React.Component {
   static displayName = 'Menu';
 
