@@ -67,9 +67,6 @@ export default class Dialog extends Component {
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
-    if (this.props.trapFocus) {
-      trapFocus(this, e);
-    }
   }
 
   onKeyDown(e) {
@@ -114,6 +111,7 @@ export default class Dialog extends Component {
       mode,
       role,
       tabIndex,
+      trapFocus,
       ...otherProps
     } = this.props;
 
@@ -135,7 +133,7 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
-        tabIndex={tabIndex === undefined ? 1 : tabIndex}
+        tabIndex={tabIndex === undefined || trapFocus ? 1 : tabIndex}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}>
         {title &&

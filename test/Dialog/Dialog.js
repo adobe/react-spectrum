@@ -162,16 +162,34 @@ describe('Dialog', () => {
     tree.unmount();
   });
 
-  it('focusing Dialog itself should marshall focus to first tabbable descendant', async () => {
+  it('focusing Dialog itself should simply focus the dialog', async () => {
     let onFocusSpy = sinon.spy();
-    let tree = mount(<Dialog confirmLabel="OK" onFocus={onFocusSpy} />);
+    let tree = mount(<Dialog cancelLabel="Cancel" confirmLabel="OK" onFocus={onFocusSpy} />);
     // onFocus, Dialog will marshall focus to first tabbable descendant.
+    tree.getDOMNode().focus();
     tree.simulate('focus', {type: 'focus'});
     await sleep(17);
     assert(onFocusSpy.called);
+    assert.equal(document.activeElement, tree.getDOMNode());
+
     let dialogButtons = tree.find('DialogButtons');
     let buttons = dialogButtons.find('Button');
-    assert.equal(document.activeElement, buttons.at(0).getDOMNode());
+    let preventDefault = sinon.spy();
+    let stopPropagation = sinon.spy();
+    tree.simulate('keydown', {type: 'keydown', key: 'Tab', preventDefault, stopPropagation});
+    assert(preventDefault.called);
+    assert(stopPropagation.called);
+    assert.equal(document.activeElement, buttons.first().getDOMNode());
+
+    onFocusSpy.reset();
+    preventDefault.reset();
+    stopPropagation.reset();
+
+    tree.getDOMNode().focus();
+    tree.simulate('keydown', {type: 'keydown', key: 'Tab', shiftKey: true, preventDefault, stopPropagation});
+    assert(preventDefault.called);
+    assert(stopPropagation.called);
+    assert.equal(document.activeElement, buttons.last().getDOMNode());
     tree.unmount();
   });
 
