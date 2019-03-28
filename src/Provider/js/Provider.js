@@ -28,7 +28,7 @@ export default class Provider extends Component {
      */
     toastPlacement: PropTypes.oneOf([
       'top', 'top left', 'top center', 'top right',
-      'bottom', 'bottom left', 'bottom center', 'bottom right',
+      'bottom', 'bottom left', 'bottom center', 'bottom right'
     ]),
 
     /**

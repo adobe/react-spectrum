@@ -21,6 +21,7 @@ module.exports = {
     'importSpectrumCSS': 'readonly'
   },
   rules: {
+    'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],
     'quotes': [ERROR, 'single', 'avoid-escape'],

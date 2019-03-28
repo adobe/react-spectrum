@@ -15,7 +15,7 @@ import Trap from '../../src/Icon/Trap';
 const OPTION_ICONS = [
   {label: 'one', icon: <Bell />},
   {label: 'two', icon: <Stop />},
-  {label: 'three', icon: <Trap />},
+  {label: 'three', icon: <Trap />}
 ];
 
 describe('ComboBox', () => {

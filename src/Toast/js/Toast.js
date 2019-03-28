@@ -98,5 +98,5 @@ Toast.propTypes = {
   onClose: PropTypes.func,
 
   /** Function called when action button is clicked */
-  onAction: PropTypes.func,
+  onAction: PropTypes.func
 };

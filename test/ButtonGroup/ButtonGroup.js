@@ -25,14 +25,14 @@ const defaultProps = {
 const badButtonProps = {
   children: [
     <Button variant="primary" label="React" value="react" icon={<CheckmarkCircle />} />,
-    <Button variant="primary" label="Add" value="add" icon={<Add />} />,
+    <Button variant="primary" label="Add" value="add" icon={<Add />} />
   ]
 };
 
 const toolButtonProps = {
   children: [
     <Button variant="tool" value="react" icon={<CheckmarkCircle />} />,
-    <Button variant="tool" value="add" icon={<Add />} />,
+    <Button variant="tool" value="add" icon={<Add />} />
   ]
 };
 

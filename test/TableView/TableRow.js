@@ -404,7 +404,7 @@ describe('TableRow', function () {
       it('on ArrowDown with focus on checkbox in header row', () => {
         const layoutInfo = {section: 0, index: 0};
         const collectionView = {
-          indexPathForComponent: () => (layoutInfo),
+          indexPathForComponent: () => (layoutInfo)
         };
         const onCellFocus = sinon.spy();
         const wrapper = mount(<div role="grid">

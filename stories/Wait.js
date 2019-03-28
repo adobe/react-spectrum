@@ -9,7 +9,7 @@ const sliderOptions = {
   range: true,
   min: 0,
   max: 100,
-  step: 1,
+  step: 1
 };
 
 storiesOf('Wait', module)

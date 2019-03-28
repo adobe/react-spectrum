@@ -28,7 +28,7 @@ const toolProps = {
   children: [
     <Button variant="tool" value="brush" icon={<Brush />} />,
     <Button variant="tool" value="select" icon={<Select />} />,
-    <Button variant="tool" value="regionselect" icon={<RegionSelect />} />,
+    <Button variant="tool" value="regionselect" icon={<RegionSelect />} />
   ]
 };
 

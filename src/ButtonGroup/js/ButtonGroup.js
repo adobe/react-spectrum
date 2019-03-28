@@ -53,7 +53,7 @@ export default class ButtonGroup extends Component {
     /**
      * Renders the button group as a row or a column
      */
-    orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both']),
+    orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both'])
   };
 
   static defaultProps = {

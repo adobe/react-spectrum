@@ -28,5 +28,5 @@ Well.displayName = 'Well';
 
 Well.propTypes = {
   /** Custom CSS class to add to the Well component */
-  className: PropTypes.string,
+  className: PropTypes.string
 };

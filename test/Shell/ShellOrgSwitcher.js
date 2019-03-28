@@ -9,8 +9,8 @@ const render = (props = {}) => {
     options: [
       {value: 'foo', label: 'Foo'},
       {value: 'bar', label: 'Bar'},
-      {value: 'baz', label: 'Baz'},
-    ],
+      {value: 'baz', label: 'Baz'}
+    ]
   };
 
   return <ShellOrgSwitcher {...defaultProps} {...props} />;

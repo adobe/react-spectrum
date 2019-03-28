@@ -16,13 +16,13 @@ export default class ShellOrgSwitcher extends Component {
 
   state = {
     searchTerm: '',
-    visibleOptions: this.filterVisibleOptions(this.props.options, ''),
+    visibleOptions: this.filterVisibleOptions(this.props.options, '')
   };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.options !== this.props.options) {
       this.setState({
-        visibleOptions: this.filterVisibleOptions(nextProps.options, this.state.searchTerm),
+        visibleOptions: this.filterVisibleOptions(nextProps.options, this.state.searchTerm)
       });
     }
   }
@@ -52,7 +52,7 @@ export default class ShellOrgSwitcher extends Component {
 
     this.setState({
       searchTerm,
-      visibleOptions: this.filterVisibleOptions(options, searchTerm),
+      visibleOptions: this.filterVisibleOptions(options, searchTerm)
     });
   }
 
@@ -66,7 +66,7 @@ export default class ShellOrgSwitcher extends Component {
     } = this.props;
 
     const {
-      visibleOptions,
+      visibleOptions
     } = this.state;
 
     return (

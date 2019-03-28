@@ -17,7 +17,7 @@ const OPTIONS = [
 const OBJECT_OPTIONS = [
   {label: 'Chocolate', id: '1'},
   {label: 'Vanilla', id: '2'},
-  {label: 'Strawberry', id: '3'},
+  {label: 'Strawberry', id: '3'}
 
 ];
 

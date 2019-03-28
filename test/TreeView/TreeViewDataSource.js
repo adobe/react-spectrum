@@ -392,7 +392,7 @@ describe('TreeViewDataSource', function () {
         ['reloadItem', new IndexPath(0, 0), false],
         ['startTransaction'],
         ['removeItem', new IndexPath(0, 1), undefined],
-        ['endTransaction', undefined],
+        ['endTransaction', undefined]
       ]);
 
       assert.equal(ds.getItem(0, 0).hasChildren, false);

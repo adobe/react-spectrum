@@ -65,7 +65,7 @@ export default class ColumnView extends React.Component {
 
   static defaultProps = {
     allowsSelection: false,
-    allowsBranchSelection: false,
+    allowsBranchSelection: false
     // allowsColumnResizing: false,
     // columnWidth: 272
   };

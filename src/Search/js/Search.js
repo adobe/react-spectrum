@@ -31,7 +31,7 @@ export default class Search extends Component {
     } = props;
 
     this.state = {
-      value: normalizeValue(value || defaultValue),
+      value: normalizeValue(value || defaultValue)
     };
   }
 

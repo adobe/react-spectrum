@@ -54,7 +54,7 @@ export default class Dropdown extends React.Component {
     super(props);
     this.dropdownId = createId();
     this.state = {
-      open: false,
+      open: false
     };
   }
 

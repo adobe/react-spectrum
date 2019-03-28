@@ -18,7 +18,7 @@ describe('CollectionView', function () {
         {active: true, name: 'test'},
         {active: false, name: 'foo'},
         {active: true, name: 'bar'},
-        {active: false, name: 'baz'},
+        {active: false, name: 'baz'}
       ];
     }
   }

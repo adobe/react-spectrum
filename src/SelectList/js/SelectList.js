@@ -36,7 +36,7 @@ export default class SelectList extends Component {
     multiple: false,
     disabled: false,
     invalid: false,
-    required: false,
+    required: false
   };
 
   constructor(props) {

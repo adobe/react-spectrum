@@ -127,7 +127,7 @@ export default class SplitView extends React.Component {
             'is-hovered': this.state.hovered,
             'is-active': this.state.dragging,
             'is-collapsed-start': this.state.dividerPosition === 0 && primaryPane === 0,
-            'is-collapsed-end': this.state.dividerPosition === 0 && primaryPane === 1,
+            'is-collapsed-end': this.state.dividerPosition === 0 && primaryPane === 1
           })}
           tabIndex={resizable ? 0 : null}
           role="separator"

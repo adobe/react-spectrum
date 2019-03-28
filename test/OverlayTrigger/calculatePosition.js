@@ -38,7 +38,7 @@ function createElementWithDimensions(elemName, dimensions, margins) {
     marginTop: 'top' in margins ? `${margins.top}px` : '0px',
     marginBottom: 'bottom' in margins ? `${margins.bottom}px` : '0px',
     marginRight: 'right' in margins ? `${margins.right}px` : '0px',
-    marginLeft: 'left' in margins ? `${margins.left}px` : '0px',
+    marginLeft: 'left' in margins ? `${margins.left}px` : '0px'
   });
 
   elem.scrollTop = 'scroll' in dimensions ? dimensions.scroll.top : 0;
@@ -50,7 +50,7 @@ function createElementWithDimensions(elemName, dimensions, margins) {
     top: dimensions.top || 0,
     left: dimensions.left || 0,
     right: dimensions.right || 0,
-    bottom: dimensions.bottom || 0,
+    bottom: dimensions.bottom || 0
   });
 
   return elem;

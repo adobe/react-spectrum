@@ -38,7 +38,7 @@ Avatar.propTypes = {
   /**
    * String of custom class names to add to the top level dom element of Avatar
    */
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 Avatar.defaultProps = {

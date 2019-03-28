@@ -32,7 +32,7 @@ export default class GridRow extends Component {
     /**
      * Fill me in and fix my prop type
      */
-    className: PropTypes.string,
+    className: PropTypes.string
   };
 
   static defaultProps = {

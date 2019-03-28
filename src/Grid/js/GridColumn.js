@@ -27,8 +27,8 @@ export default class GridColumn extends Component {
         sm: PropTypes.number,
         md: PropTypes.number,
         lg: PropTypes.number,
-        xl: PropTypes.number,
-      }),
+        xl: PropTypes.number
+      })
     ]),
 
     /**
@@ -52,9 +52,9 @@ export default class GridColumn extends Component {
         sm: PropTypes.number,
         md: PropTypes.number,
         lg: PropTypes.number,
-        xl: PropTypes.number,
-      }),
-    ]),
+        xl: PropTypes.number
+      })
+    ])
   };
 
   static defaultProps = {
