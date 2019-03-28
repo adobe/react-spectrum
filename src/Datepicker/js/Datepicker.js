@@ -556,7 +556,7 @@ export default class Datepicker extends Component {
       valueFormat,
       displayFormat,
       focused,
-      open,
+      open
     } = this.state;
 
     const ariaLabel = otherProps['aria-label'];
