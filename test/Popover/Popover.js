@@ -48,20 +48,16 @@ describe('Popover', () => {
       stopPropagation
     };
     assert.equal(tree.childAt(0).prop('tabIndex'), 1);
-    tree.simulate('focus', {...event, type: 'focus'});
-    assert(preventDefault.called);
-    assert(stopPropagation.called);
-    assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     event.key = 'Tab';
     event.shiftKey = true;
     tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
-    assert(preventDefault.calledTwice);
-    assert(stopPropagation.calledTwice);
+    assert(preventDefault.calledOnce);
+    assert(stopPropagation.calledOnce);
     assert.equal(document.activeElement, tree.find('button').last().getDOMNode());
     event.shiftKey = false;
     tree.find('button').last().simulate('keydown', {...event, type: 'keydown'});
-    assert(preventDefault.calledThrice);
-    assert(stopPropagation.calledThrice);
+    assert(preventDefault.calledTwice);
+    assert(stopPropagation.calledTwice);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
 
     // Should support stopPropagation from within onKeyDown event listener
@@ -70,8 +66,8 @@ describe('Popover', () => {
     });
     event.shiftKey = true;
     tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
-    assert(preventDefault.calledThrice);
-    assert(stopPropagation.calledThrice);
+    assert(preventDefault.calledTwice);
+    assert(stopPropagation.calledTwice);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     tree.unmount();
   });

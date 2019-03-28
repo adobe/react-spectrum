@@ -98,6 +98,15 @@ export default class Popover extends Component {
     }
   }
 
+  onMouseDown(e) {
+    if (this.props.onMouseDown) {
+      this.props.onMouseDown(e);
+    }
+    if (this.popoverRef.contains(document.activeElement)) {
+      e.preventDefault();
+    }
+  }
+
   render() {
     const {
       variant,
@@ -114,9 +123,6 @@ export default class Popover extends Component {
     } = this.props;
 
     let content = isDialog ? <div className="spectrum-Dialog-content">{children}</div> : children;
-
-    delete otherProps.onFocus;
-    delete otherProps.onKeyDown;
 
     return (
       <div
@@ -135,10 +141,11 @@ export default class Popover extends Component {
             className
           )
         }
+        {...filterDOMProps(otherProps)}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}
-        tabIndex={trapFocus && tabIndex === null ? 1 : tabIndex}
-        {...filterDOMProps(otherProps)}>
+        onMouseDown={this.onMouseDown}
+        tabIndex={trapFocus && tabIndex === null ? 1 : tabIndex}>
         {isDialog && title &&
           <DialogHeader
             title={title}
