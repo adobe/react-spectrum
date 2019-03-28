@@ -353,10 +353,10 @@ export default class OverlayTrigger extends Component {
     }
   }
 
-  onExit(e) {
+  onExited(e) {
     this.restoreFocus(e);
-    if (this.props.onExit) {
-      this.props.onExit(e);
+    if (this.props.onExited) {
+      this.props.onExited(e);
     }
   }
 
@@ -411,7 +411,7 @@ export default class OverlayTrigger extends Component {
         {...props}
         show={this.state.show}
         onHide={this.onHide}
-        onExit={this.onExit}
+        onExited={this.onExited}
         target={target}
         rootClose={rootClose}>
         {cloneElement(overlay, overlayProps)}

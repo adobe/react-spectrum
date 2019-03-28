@@ -14,13 +14,65 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe Systems Incorporated.
  */
+@import '@spectrum/spectrum-variables/stylus/spectrum-light.styl'
+
+$spectrum-padding = $spectrum-global-layout-size-150;
 
 .react-spectrum-Datepicker-clockContainer {
   box-sizing: border-box;
+  padding: $spectrum-padding;
+  position: relative;
+  z-index: 1;
+  + .react-spectrum-Datepicker-clockContainer {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
 
-  padding: 10px;
+.react-spectrum-Datepicker-clockContainer .spectrum-FieldLabel {
+  pointer-events: all;
 }
 
 .react-spectrum-Datepicker-clockContainer > .react-spectrum-Clock {
   width: 100%;
+}
+
+.react-spectrum-Datepicker-Calendar--datetime {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.react-spectrum-Datepicker-Calendar--datetime {
+  + .react-spectrum-Datepicker-clockContainer,
+  + div > div.react-spectrum-Datepicker-clockContainer:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}
+
+.react-spectrum-Datepicker-closeButton {
+  position: absolute;
+  top: $spectrum-padding;
+  right: $spectrum-padding;
+  padding: 0;
+  line-height: 0;
+  opacity: 0;
+  cursor: default;
+  width: 0;
+  height: 0;
+  min-width: 0;
+  border-width: 0.01px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: opacity $spectrum-global-animation-transition-time linear, background-color $spectrum-global-animation-transition-time linear, width 0s, height 0s, border-width 0s, padding 0s;
+}
+
+.react-spectrum-Datepicker-closeButton:active,
+.react-spectrum-Datepicker-closeButton:hover,
+.react-spectrum-Datepicker-closeButton:focus {
+  opacity: 1;
+  width: inherit;
+  height: inherit;
+  padding: 2px;
+  border-width: inherit;
 }

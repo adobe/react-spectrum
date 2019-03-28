@@ -1,4 +1,5 @@
 import Datepicker from '@react/react-spectrum/Datepicker';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 
 ## Overview
 
@@ -6,21 +7,20 @@ The `Datepicker` component is a textfield input with a button that opens a popov
 
 ### Example
 
-<Datepicker />
+<Datepicker aria-label="Date" />
 
 ```jsx
-<Datepicker />
+<Datepicker aria-label="Date" />
 ```
 
 ### Controlled
 
 The controlled Datepicker is loaded with value prop that takes either String, Object or Number type. In below example the `Datepicker` is loaded with today's date.
 
-<Datepicker  value="today" />
+<Datepicker value="today" aria-label="Date" />
 
 ```jsx
-
-<Datepicker  value="today" />
+<Datepicker value="today" aria-label="Date" />
 ```
 
 ## Type
@@ -30,111 +30,160 @@ There are many Datepicker `types` to choose from in Spectrum. The default type i
 ### date
 This is the default value for type prop. Opens up the calendar that allows selection of date and populates the same in input control.
 
-<Datepicker type="date" />
+<Datepicker type="date" aria-label="Date" />
 
 ```jsx
-<Datepicker type="date" />
+<Datepicker type="date" aria-label="Date" />
 ```
 
 ### datetime
 
 The `type` prop with value `datetime` shows the popover with a calendar and input control to enter hour and minutes. Once selected the input box is populated with date and time.
 
-<Datepicker type="datetime" />
+<Datepicker type="datetime" aria-label="Date and Time" />
 
 ```jsx
-<Datepicker type="datetime" />
+<Datepicker type="datetime" aria-label="Date and Time" />
 ```
 
 ### time
 
 The `type` prop with value 'time' shows only time. Validations for incorrect input values of time is shown by highlighting the input control with error class.
 
-<Datepicker placeholder="Choose a time" type="time" />
+<Datepicker placeholder="Choose a time" type="time" aria-label="Time" />
 
 ```jsx
-<Datepicker placeholder="Choose a time" type="time" />
+<Datepicker placeholder="Choose a time" type="time" aria-label="Time" />
 ```
 
 ## Type with controlled
 
 All the three `type` of datepicker can be `controlled`.
 
-<Datepicker type="time" value="today" />
+<Datepicker type="time" value="today" aria-label="Time" />
 
 ```jsx
-<Datepicker type="time" value="today" />
+<Datepicker type="time" value="today" aria-label="Time" />
 ```
 
-<Datepicker type="datetime" value="today" />
+<Datepicker type="datetime" value="today" aria-label="Date and Time"  />
 
 ```jsx
 <Datepicker value="today" />
 ```
 
-<Datepicker type="date" value="today" />
+<Datepicker type="date" value="today" aria-label="Date" />
 
 ```jsx
-<Datepicker type="date" value="today" />
+<Datepicker type="date" value="today" aria-label="Date" />
+```
+## selectionType
+
+### single (Default)
+
+#### with type: date
+<Datepicker type="date" aria-label="Date" />
+
+```jsx
+<Datepicker type="date" aria-label="Date" />
+```
+
+#### with type: time
+<Datepicker type="time" placeholder="hh:mm a" displayFormat="hh:mm a" aria-label="Time" />
+
+```jsx
+<Datepicker type="time" placeholder="hh:mm a" displayFormat="hh:mm a" aria-label="Time"  />
+```
+
+#### with type: datetime
+
+<Datepicker type="datetime" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-label="Date &amp; Time" />
+
+```jsx
+<Datepicker type="datetime" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-label="Date &amp; Time" />
+```
+
+### range
+
+#### with type: date
+<Datepicker type="date" selectionType="range" aria-label="Date" />
+
+```jsx
+<Datepicker type="date" selectionType="range" aria-label="Date" />
+```
+
+#### with type: time
+<Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" aria-label="Time" />
+
+```jsx
+<Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" aria-label="Time" />
+```
+
+#### with type: datetime
+
+<Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-label="Date &amp; Time" />
+
+```jsx
+<Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-label="Date &amp; Time" />
 ```
 
 ## startDay
 
 Start day refers to what day of the week should be left most, 0 = Sunday, 1 = Monday... 6 = Saturday. Default value is 0.
 
-<Datepicker value="today" startDay={2} />
+<Datepicker value="today" startDay={2} aria-label="Date" />
 
 ```jsx
-<Datepicker value="today" startDay={2} />
+<Datepicker value="today" startDay={2} aria-label="Date" />
 ```
 
 ## quiet
 
 The `quiet` prop is a style change to match Spectrum Quiet.
 
-<Datepicker value="today" quiet />
+<Datepicker value="today" quiet aria-label="Date" />
 
 ```jsx
-<Datepicker value="today" quiet />
+<Datepicker value="today" quiet aria-label="Date />
 ```
 
 ## invalid
 
 The Datepicker can be triggered to show some validations with different css on error. The invalid prop if set to true, it shows the red border for the input control.
 
-<Datepicker  invalid />
+<Datepicker invalid aria-label="Date" />
 
 ```jsx
-<Datepicker invalid />
+<Datepicker invalid aria-label="Date" />
 ```
 
 ## disabled
 
 This prop is used to disable the datepicker. The cursor pointer wont be available and datepicker will no longer be clickable.
 
-<Datepicker  disabled />
+<Datepicker disabled aria-label="Date" />
 
 ```jsx
-<Datepicker disabled />
+<Datepicker disabled aria-label="Date" />
 ```
 ## readonly
 
 This prop is used to make the textfield of datepicker readonly.
 
-<Datepicker readonly />
+<Datepicker readonly aria-label="Date" />
 
 ```jsx
-<Datepicker readonly />
+<Datepicker readonly aria-label="Date" />
 ```
 
 ## placeholder
 
 If not specified, the default is `choose a date`.
 
-<Datepicker type="time" placeholder="Please choose time" />
+<Datepicker type="time" placeholder="Please choose time" aria-label="Time" />
 
 ```jsx
-<Datepicker type="time" placeholder="Please choose time" />
+<Datepicker type="time" placeholder="Please choose time" aria-label="Time" />
 ```
 
 ## placement
@@ -142,20 +191,87 @@ If not specified, the default is `choose a date`.
 This prop allow the user to customise the placment of popover that shows the calendar. Default is right. Other possible values are 'top', 'bottom', 'left'.
 
 ### left
-<Datepicker  placement="left" />
+<Datepicker placement="left" aria-label="Date" />
 
 ```jsx
-<Datepicker  placement="left" />
+<Datepicker placement="left" aria-label="Date" />
 ```
 ### top
-<Datepicker  placement="top" />
+<Datepicker placement="top" aria-label="Date" />
 
 ```jsx
-<Datepicker  placement="top" />
+<Datepicker placement="top" aria-label="Date" />
 ```
 ### bottom
-<Datepicker  placement="bottom" />
+<Datepicker placement="bottom" aria-label="Date" />
 
 ```jsx
-<Datepicker  placement="bottom" />
+<Datepicker placement="bottom" aria-label="Date" />
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The Datepicker implements a combination of the [ComboBox design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#combobox), and the [Datepicker design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/2016/WD-wai-aria-practices-1.1-20160317/#datepicker). The ComboBox expands a Dialog popup that contains a Calendar control and/or Clock control(s) depending on the Datepicker `type` and `selectionType`.
+
+### Labelling
+
+A Datepicker component must be labelled for Accessibility using a FieldLabel, or either the `aria-label` or `aria-labelledby` attribute. To ensure proper labelling of the InputGroup, it is best practice to use `aria-labelledby` to explicitly associate the FieldLabel to the Datepicker.
+
+#### Implicit labelling
+
+<FieldLabel label="Date Range" id="datepicker-date-label-id">
+  <Datepicker type="date" selectionType="range" aria-labelledby="datepicker-date-label-id" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Date Range" id="datepicker-date-label-id">
+  <Datepicker type="date" selectionType="range" aria-labelledby="datepicker-date-label-id" />
+</FieldLabel>
+```
+<FieldLabel label="Time Range" id="datepicker-time-label-id">
+  <Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" aria-labelledby="datepicker-time-label-id" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Time Range" id="datepicker-time-label-id">
+  <Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" aria-labelledby="datepicker-time-label-id" />
+</FieldLabel>
+```
+
+<FieldLabel label="Date/Time Range" id="datepicker-datetime-label-id">
+  <Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-labelledby="datepicker-datetime-label-id" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Date/Time Range" id="datepicker-datetime-label-id">
+  <Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" aria-labelledby="datepicker-datetime-label-id" />
+</FieldLabel>
+```
+
+#### Explicit labelling
+
+<FieldLabel label="Date Range" labelFor="datepicker-date-id" id="datepicker-date-label-id-2" />
+<Datepicker type="date" selectionType="range" id="datepicker-date-id" aria-labelledby="datepicker-date-label-id-2" />
+
+```jsx
+<FieldLabel label="Date Range" labelFor="datepicker-date-id" id="datepicker-date-label-id-2" />
+<Datepicker type="date" selectionType="range" id="datepicker-date-id" aria-labelledby="datepicker-date-label-id-2" />
+```
+
+<FieldLabel label="Time Range" labelFor="datepicker-time-id" id="datepicker-time-label-id-2"  />
+<Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" id="datepicker-time-id" aria-labelledby="datepicker-time-label-id-2" />
+
+```jsx
+<FieldLabel label="Time Range" labelFor="datepicker-time-id" id="datepicker-time-label-id-2"  />
+<Datepicker type="time" selectionType="range" placeholder="hh:mm a" displayFormat="hh:mm a" id="datepicker-time-id" aria-labelledby="datepicker-time-label-id-2" />
+```
+
+<FieldLabel label="Date/Time Range" labelFor="datepicker-datetime-id" id="datepicker-datetime-label-id-2" />
+<Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" id="datepicker-datetime-id" aria-labelledby="datepicker-datetime-label-id-2" />
+
+```jsx
+<FieldLabel label="Date/Time Range" labelFor="datepicker-datetime-id" id="datepicker-datetime-label-id-2" />
+<Datepicker type="datetime" selectionType="range" placeholder="YYYY-MM-DD hh:mm a" displayFormat="YYYY-MM-DD hh:mm a" id="datepicker-datetime-id" aria-labelledby="datepicker-datetime-label-id-2" />
 ```

@@ -244,7 +244,7 @@ describe('Select', () => {
     tree.find(Button).simulate('click');
     tree.update();
     assert(spy.calledOnce);
-    await sleep(50);
+    await sleep(150);
     assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
     assert.equal(tree.find(Button).prop('selected'), false);
 

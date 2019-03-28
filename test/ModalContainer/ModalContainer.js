@@ -145,7 +145,7 @@ describe('ModalContainer', () => {
     node.ownerDocument.dispatchEvent(event);
 
     // wait for fade out and ensure that focus is restored to trigger element
-    clock.tick(125);
+    clock.tick(150);
 
     assert.equal(document.activeElement, triggerNode);
     node = document.querySelector('#modal-test');
