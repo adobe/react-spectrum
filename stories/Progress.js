@@ -35,6 +35,21 @@ storiesOf('Progress', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: positive',
+    () => render({variant: 'positive', value: 50}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: warning',
+    () => render({variant: 'warning', value: 50}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: critical',
+    () => render({variant: 'critical', value: 50}),
+    {inline: true}
+  )
+  .addWithInfo(
     'label: React',
     () => render({label: 'React', value: 50}),
     {inline: true}

@@ -104,6 +104,15 @@ describe('Progress', () => {
     });
   });
 
+  it('supports different variants', () => {
+    let tree = shallow(<Progress variant="positive" value={50} />);
+    assert.equal(tree.hasClass('is-positive'), true);
+    tree = shallow(<Progress variant="warning" value={50} />);
+    assert.equal(tree.hasClass('is-warning'), true);
+    tree = shallow(<Progress variant="critical" value={50} />);
+    assert.equal(tree.hasClass('is-critical'), true);
+  });
+
   it('supports additional classNames', () => {
     const tree = shallow(<Progress className="myClass" />);
     assert.equal(tree.hasClass('myClass'), true);
