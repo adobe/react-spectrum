@@ -8,3 +8,7 @@ test-reports.xml
 dist
 .idea
 .package-lock.json
+
+documentation/public
+dist
+public

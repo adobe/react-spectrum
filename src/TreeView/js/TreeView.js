@@ -224,6 +224,9 @@ export default class TreeView extends React.Component {
   }
 
   indentationForItem(section, index) {
+    if (!this.collection) {
+      return 0;
+    }
     let content = this.collection.getItem(section, index);
     return 28 * content.level;
   }

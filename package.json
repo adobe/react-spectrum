@@ -1,5 +1,6 @@
 {
-  "name": "@react/react-spectrum",
+  "name": "react-spectrum-monorepo",
+  "private": true,
   "version": "2.19.1",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -12,29 +13,11 @@
     "lint": "make lint",
     "test:watch": "mocha --watch --reporter dot"
   },
-  "peerDependencies": {
-    "react": "^0.14 || ^15 || ^16",
-    "react-dom": "^0.14 || ^15 || ^16"
-  },
-  "dependencies": {
-    "@react/collection-view": "^4.1.0",
-    "autobind-decorator": "^1.4.0",
-    "classnames": "^2.2.5",
-    "dom-helpers": "^3.3.1",
-    "intl-messageformat": "^2.2.0",
-    "moment": "^2.15.1",
-    "moment-range": "^3.0.3",
-    "react-overlays": "0.8.3",
-    "react-transition-group": "^2.2.0",
-    "stringify": "^5.1.0"
-  },
+  "workspaces": [
+    "src",
+    "packages/*/*"
+  ],
   "devDependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
-    "@adobe/spectrum-css": "2.9.0",
-    "@react/react-spectrum-icons": "^2.1.0",
-    "@spectrum/spectrum-flexbox-grid": "1.1.1",
-    "@spectrum/spectrum-icons": "1.0.0-beta.17",
-    "@spectrum/spectrum-variables": "1.0.1",
     "@storybook/addon-actions": "3.2.13",
     "@storybook/addon-info": "^3.2.13",
     "@storybook/addon-knobs": "3.2.13",
@@ -95,18 +78,5 @@
     "webpack": "^3.11.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.0"
-  },
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "stringify",
-        [
-          ".css"
-        ]
-      ]
-    ]
   }
 }

@@ -11,7 +11,7 @@ export default function Header({className}) {
         <Link href="/components/Accordion">Docs</Link>
         <Link href="/guides/getting_started">Guides</Link>
         <Link href="/community">Community</Link>
-        <Link href="http://react-spectrum.corp.adobe.com/storybook" target="_blank">Storybook</Link>
+        <Link href="/storybook" target="_blank">Storybook</Link>
         <Link href="http://git.corp.adobe.com/React/react-spectrum/releases" target="_blank">Releases</Link>
         <Link href="https://git.corp.adobe.com/React/react-spectrum" target="_blank">Github</Link>
       </nav>

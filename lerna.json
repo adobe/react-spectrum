@@ -1,0 +1,17 @@
+{
+  "packages": [
+    "src",
+    "packages/*/*"
+  ],
+  "ignoreChanges": [
+    "**/test/**"
+  ],
+  "command": {
+    "publish": {
+      "allowBranch": [
+        "master"
+      ]
+    }
+  },
+  "version": "independent"
+}

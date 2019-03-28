@@ -154,6 +154,8 @@ Each component lives in a directory under `src/`. The JavaScript lives in `src/{
 for publishing to npm, the JavaScript is pre-compiled with [Babel](http://babeljs.io), and the stylus is
 compiled to a single CSS file for each component. The directory structure is also flattened so e.g.
 `import '@react/react-spectrum/Button'` works.
+**Note**: For local development linking you'll need to run build. Then `cd` into the dist folder
+and run `npm link` from there. That way, the import statements stay the same.
 
 ### Testing
 

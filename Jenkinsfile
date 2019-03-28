@@ -1,7 +1,7 @@
 livefyre('''
   test:
     image:
-      label: corpjenkins/node
+      label: corpjenkins/node8
     git: true
     commands:
       - make clean
@@ -13,36 +13,15 @@ livefyre('''
     coberturaResults:
       - cobertura-coverage.xml
     publishHTML:
-      dist/storybook: index.html
+      public/storybook: index.html
   deploy:
     branch: "^(master)$"
     git: true
+    sshAgent: rspbot
     commands:
-      - make build
-    npm:
-      versionBump: true
-      registry: https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+      - git checkout master
+      - git reset --hard origin/master
+      - make ci-publish
 ''')
-
-// Release to livefyre npm if publishing
-if (params.versionBump && params.versionBump != "noop") {
-  livefyre('''
-    deploy:
-      branch: "^(master)$"
-      git: true
-      image:
-        label: corpjenkins/node
-      commands:
-        - git checkout master
-        - git reset --hard origin/master
-        - make storybook
-        - make unprefix
-      npm:
-        versionBump: false
-        registry: https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-livefyre-release/
-      lfcdn:
-        env: prod
-  ''')
-}
 
 properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'versionBump')])])

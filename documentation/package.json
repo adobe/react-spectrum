@@ -1,10 +1,11 @@
 {
   "name": "react-spectrum-docs",
+  "private": true,
   "version": "1.0.0",
   "repository": "https://git.corp.adobe.com/React/react-spectrum",
   "dependencies": {
     "@mapbox/rehype-prism": "^0.2.0",
-    "@react/react-spectrum": "file:../",
+    "@react/react-spectrum": "file:../dist/",
     "babel-plugin-lodash": "^3.2.11",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
