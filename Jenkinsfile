@@ -19,6 +19,7 @@ livefyre('''
     git: true
     sshAgent: rspbot
     commands:
+      - git reset --hard
       - git checkout master
       - git reset --hard origin/master
       - make ci-publish
