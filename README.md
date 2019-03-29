@@ -186,6 +186,8 @@ make cover
 ```
 #### Clocks
 We are attempting to make more use of the mocked out clock to improve run time of tests and remove our dependency on the clock.
+This also decouples our tests from our implementation. Things like requestAnimationFrame no longer need to be explicitly waited for in the tests.
+Mocking the clock in this fashion can turn an async test into a synchronous test increasing readability and maintainability.
 Since components are being opted into this, this needs to be added to any test suite that wants to migrate over:
 mocking of the clock object
 ```js
@@ -196,16 +198,18 @@ before(() => {
 });
 
 after(() => {
+  clock.runAll();
   clock.restore();
 });
 ```
-Once the clock is mocked, there are two things to use to trigger updates and events:
+Once the clock is mocked, there are three things to use to trigger updates and events:
  - clock.tick(x)
     This function is to be used where the code in the project actually relies on real time, for instance, the `OpenTransition` component relies on the actual clock. It's also useful in tests when you want an async helper function but you want to control when it will resolve.  
     A handy way to tell when this should be used: if `await sleep(x)` where x > 1, then clock.tick(x) should be used instead.
- - `import {nextEventLoopIteration} from '../utils';`
-    This function can be used while the clock is mocked in order to update the enzyme wrapper for lifecycle types of events.  
-    A handy way to tell when this should be used: If setState is called during any part of the test, this should be used immediately after the line that caused it to be called.
+ - clock.runAll()
+    This function is useful when waiting for requestAnimationFrame, even if there are nested ones, it only takes this one call, as anything added to the clock during the course of runAll will also be run.
+ - tree.update()
+    This function is useful when state has changed in a component and the lifecycle methods need to be activated. This is not dependent on the clock and must be called sometimes in addition to clock.runAll().
 
 ### Linting
 

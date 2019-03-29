@@ -5,6 +5,19 @@ import React from 'react';
 import sinon from 'sinon';
 
 describe('AssetImage', () => {
+  let clock;
+  let tree;
+  beforeEach(() => {
+    clock = sinon.useFakeTimers();
+  });
+  afterEach(() => {
+    clock.runAll();
+    if (tree) {
+      tree.unmount();
+      tree = null;
+    }
+    clock.restore();
+  });
   // Square Image returns the Minimum Percentage, 75%
   it('should render the correct size when image is a square', async () => {
     // Jsdom doesn't implement size properties, so set the height and width of the image
@@ -14,15 +27,16 @@ describe('AssetImage', () => {
 
     const onLoad = sinon.spy();
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        decorative
         onLoad={onLoad} />
     );
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     assert(onLoad.called);
 
@@ -31,8 +45,6 @@ describe('AssetImage', () => {
 
     assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
     assert.deepEqual(img.prop('style'), {maxWidth: '75%', maxHeight: '75%'});
-
-    tree.unmount();
   });
 
   it('should include alt text for accessibility', async () => {
@@ -41,7 +53,7 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 240});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 240});
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
         alt="image" />
@@ -49,13 +61,12 @@ describe('AssetImage', () => {
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     tree.update();
     img = tree.find('img');
 
     assert.equal(img.prop('alt'), 'image');
-    tree.unmount();
   });
 
   it('should support decorative to hide element from screen readers', async () => {
@@ -64,7 +75,7 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 240});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 240});
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
         src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
         alt="image"
@@ -73,13 +84,12 @@ describe('AssetImage', () => {
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     tree.update();
     img = tree.find('img');
 
     assert.equal(img.prop('alt'), '');
-    tree.unmount();
   });
 
   // Images that have a width:height or height:width > 1:4 have maximum percentage, 100%
@@ -89,21 +99,21 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 100});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 400});
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
-        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        decorative />
     );
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     tree.update();
     img = tree.find('img');
 
     assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
     assert.deepEqual(img.prop('style'), {maxWidth: '100%', maxHeight: '100%'});
-    tree.unmount();
   });
 
   it('should render the correct size when image is a horizontal rectangle', async () => {
@@ -111,21 +121,21 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 70});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 100});
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
-        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        decorative />
     );
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     tree.update();
     img = tree.find('img');
 
     assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
     assert.deepEqual(img.prop('style'), {maxWidth: '85%', maxHeight: '85%'});
-    tree.unmount();
   });
 
   it('should render the correct size when input is a vertical rectangle', async () => {
@@ -133,20 +143,20 @@ describe('AssetImage', () => {
     Object.defineProperty(HTMLImageElement.prototype, 'naturalHeight', {get: () => 100});
     Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', {get: () => 70});
 
-    const tree = mount(
+    tree = mount(
       <AssetImage
-        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg" />
+        src="https://t4.ftcdn.net/jpg/02/07/87/45/240_F_207874517_3oVZH5OJ399mo6FfLIyLGmu7ZJjsaqfU.jpg"
+        decorative />
     );
 
     let img = tree.find('img');
     img.simulate('load', {target: img.getDOMNode()});
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    clock.runAll();
 
     tree.update();
     img = tree.find('img');
 
     assert(img.getDOMNode().classList.contains('spectrum-Asset-image'));
     assert.deepEqual(img.prop('style'), {maxWidth: '85%', maxHeight: '85%'});
-    tree.unmount();
   });
 });

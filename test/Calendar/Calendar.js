@@ -733,39 +733,43 @@ describe('Calendar', () => {
     });
   });
 
-  it('focusCalendarBody moves focus to calendarBody', async () => {
-    const tree = mount(<Calendar />);
-    const body = findBody(tree);
-    tree.instance().focusCalendarBody();
+  describe('focus', () => {
+    let clock;
+    let tree;
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+    });
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+        tree = null;
+      }
+      clock.runAll();
+      clock.restore();
+    });
+    it('focusCalendarBody moves focus to calendarBody', () => {
+      tree = mount(<Calendar />);
+      let calBody = findBody(tree);
+      tree.instance().focusCalendarBody();
 
-    await rAF(async () => {
+      clock.runAll();
       // body should be focused on next animation frame
-      assert.equal(body.getDOMNode(), document.activeElement);
+      assert.equal(calBody.getDOMNode(), document.activeElement);
 
       // test blur before restoring focus
       tree.instance().focusCalendarBody();
       assert.equal(document.body, document.activeElement);
-      await rAF(async () => {
-        await rAF(() => {
-          assert.equal(body.getDOMNode(), document.activeElement);
-          tree.unmount();
-        });
-      });
+      clock.runAll();
+      assert.equal(calBody.getDOMNode(), document.activeElement);
     });
 
-    tree.unmount();
-  });
+    it('supports autoFocus', () => {
+      tree = mount(<Calendar autoFocus />);
+      let calBody = findBody(tree);
 
-  it('supports autoFocus', async () => {
-    const tree = mount(<Calendar autoFocus />);
-    const body = findBody(tree);
-
-    await rAF(async () => {
-      await rAF(async () => {
-        // body should be focused on next animation frame
-        assert.equal(body.getDOMNode(), document.activeElement);
-        tree.unmount();
-      });
+      clock.runAll();
+      // body should be focused on next animation frame
+      assert.equal(calBody.getDOMNode(), document.activeElement);
     });
   });
 });

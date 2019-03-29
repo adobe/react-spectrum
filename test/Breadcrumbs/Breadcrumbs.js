@@ -6,20 +6,27 @@ import React from 'react';
 import sinon from 'sinon';
 
 describe('Breadcrumbs', function () {
+  let tree;
+  afterEach(() => {
+    if (tree) {
+      tree.unmount();
+      tree = null;
+    }
+  });
   it('should render breadcrumbs', function () {
-    const tree = shallow(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = shallow(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     assert.equal(tree.find('ul').prop('className'), 'spectrum-Breadcrumbs');
     assert.equal(tree.find('.spectrum-Breadcrumbs-item').length, 3);
   });
 
   it('should support putting an icon at the start', function () {
-    const tree = shallow(<Breadcrumbs icon={<FolderIcon />} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = shallow(<Breadcrumbs icon={<FolderIcon />} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     assert.equal(tree.childAt(0).type(), FolderIcon);
   });
 
   it('should support clicking on a breadcrumb', function () {
     const onBreadcrumbClick = sinon.spy();
-    const tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     tree.find('.spectrum-Breadcrumbs-item').at(1).find('.spectrum-Breadcrumbs-itemLink').simulate('click');
     assert(onBreadcrumbClick.calledOnce);
     assert.deepEqual(onBreadcrumbClick.lastCall.args[0], {label: 'Bar'});
@@ -28,27 +35,25 @@ describe('Breadcrumbs', function () {
 
   it('clicking on the last breadcrumb should do nothing', function () {
     const onBreadcrumbClick = sinon.spy();
-    const tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = shallow(<Breadcrumbs onBreadcrumbClick={onBreadcrumbClick} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     tree.find('.spectrum-Breadcrumbs-item').at(2).find('.spectrum-Breadcrumbs-itemLink').simulate('click');
     assert(onBreadcrumbClick.notCalled);
   });
 
   it('focusing a breadcrumb should display focus-ring style', function () {
-    const tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     let link = tree.find('.spectrum-Breadcrumbs-itemLink').at(0);
     link.simulate('focus', {target: link.getDOMNode()});
     assert(link.getDOMNode().classList.contains('focus-ring'));
-    tree.unmount();
   });
 
   it('on losing focus, a breadcrumb should not display focus-ring style', function () {
-    const tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+    tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     let link = tree.find('.spectrum-Breadcrumbs-itemLink').at(0);
     link.simulate('focus', {target: link.getDOMNode()});
     assert(link.getDOMNode().classList.contains('focus-ring'));
     link.simulate('blur', {target: link.getDOMNode()});
     assert(!link.getDOMNode().classList.contains('focus-ring'));
-    tree.unmount();
   });
 
   describe('variant="title"', () => {
@@ -60,7 +65,7 @@ describe('Breadcrumbs', function () {
     });
 
     it('h1 element should include an aria-level attribute when ariaLevel is set', () => {
-      const tree = shallow(<Breadcrumbs variant="title" ariaLevel="3" items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+      tree = shallow(<Breadcrumbs variant="title" ariaLevel="3" items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
       assert.equal(tree.find('.spectrum-Breadcrumbs-item').at(2).find('h1').prop('aria-level'), 3);
     });
   });

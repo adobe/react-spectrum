@@ -79,7 +79,7 @@ describe('Autocomplete', () => {
 
   it('should call getCompletions and render a menu with results asynchronously', async () => {
     const getCompletions = async v => {
-      await sleep(10);
+      await sleep(10); // this will be run by a clock.tick further down in the test
       return ['one', 'two'];
     };
 

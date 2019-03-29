@@ -4,7 +4,6 @@ import Button from '../../src/Button';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 describe('Button', () => {
   it('supports different elements', () => {
@@ -192,19 +191,31 @@ describe('Button', () => {
     });
   });
 
-  it('supports focus method', async () => {
-    const tree = mount(<Button />);
-    tree.instance().focus();
-    assert.equal(document.activeElement, tree.getDOMNode());
-    tree.unmount();
-  });
+  describe('', () => {
+    let clock;
+    let tree;
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+    });
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+        tree = null;
+      }
+      clock.restore();
+    });
+    it('supports focus method', async () => {
+      tree = mount(<Button />);
+      tree.instance().focus();
+      assert.equal(document.activeElement, tree.getDOMNode());
+    });
 
-  it('supports autoFocus', async () => {
-    const tree = mount(<Button autoFocus />);
-    assert(!tree.getDOMNode().getAttribute('autoFocus'));
-    await sleep(17);
-    assert.equal(document.activeElement, tree.getDOMNode());
-    tree.unmount();
+    it('supports autoFocus', () => {
+      tree = mount(<Button autoFocus />);
+      assert(!tree.getDOMNode().getAttribute('autoFocus'));
+      clock.runAll(); // there's a raf, so run the clock to fire it
+      assert.equal(document.activeElement, tree.getDOMNode());
+    });
   });
 
   describe('receives focus', () => {
