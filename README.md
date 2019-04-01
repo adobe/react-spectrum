@@ -11,8 +11,8 @@ this way only the components you use will be included in the output JavaScript a
 
 ### Installation
 #### Node
-We recommend that you use [NVM](https://github.com/creationix/nvm#installation) to manage your node version.  
-NVM has a section in their documentation to handle using the right version automatically when cd'ing into a project with a `.nvmrc` file [documentation](https://github.com/creationix/nvm#nvmrc)  
+We recommend that you use [NVM](https://github.com/creationix/nvm#installation) to manage your node version.
+NVM has a section in their documentation to handle using the right version automatically when cd'ing into a project with a `.nvmrc` file [documentation](https://github.com/creationix/nvm#nvmrc)
 If you are manually managing your version of Node, then refer to `.nvmrc` for the version you should run with.
 
 #### NPM
@@ -143,8 +143,8 @@ yarn install
 make docs_local
 ```
 
-`make docs_local` will run a pre-install (documentation project) that will build the react-spectrum project.  
-It will the create a file link to the build output so that gatsby can use it for imports.  
+`make docs_local` will run a pre-install (documentation project) that will build the react-spectrum project.
+It will the create a file link to the build output so that gatsby can use it for imports.
 To update the documentation while working on both the component and documentation, you can use a new terminal to run `make build` after updates which will update in gatsby (you can quickly restart the documentation with `npm run develop` from the documentation project root if an error occurs)
 
 ### File Layout
@@ -204,7 +204,7 @@ after(() => {
 ```
 Once the clock is mocked, there are three things to use to trigger updates and events:
  - clock.tick(x)
-    This function is to be used where the code in the project actually relies on real time, for instance, the `OpenTransition` component relies on the actual clock. It's also useful in tests when you want an async helper function but you want to control when it will resolve.  
+    This function is to be used where the code in the project actually relies on real time, for instance, the `OpenTransition` component relies on the actual clock. It's also useful in tests when you want an async helper function but you want to control when it will resolve.
     A handy way to tell when this should be used: if `await sleep(x)` where x > 1, then clock.tick(x) should be used instead.
  - clock.runAll()
     This function is useful when waiting for requestAnimationFrame, even if there are nested ones, it only takes this one call, as anything added to the clock during the course of runAll will also be run.
