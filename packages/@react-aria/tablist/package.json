@@ -1,6 +1,7 @@
 {
-  "name": "@react-stately/utils",
+  "name": "@react-aria/tablist",
   "version": "3.0.0",
+  "main": "src/useTabList.js",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -8,6 +9,5 @@
   },
   "dependencies": {
     "react": "^16.8.0"
-  },
-  "devDependencies": {}
+  }
 }

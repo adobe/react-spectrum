@@ -1,7 +1,8 @@
 {
-  "name": "@react-stately/utils",
+  "name": "@react-stately/tablist",
   "version": "3.0.0",
   "description": "Spectrum UI components in React",
+  "main": "src/useTabListState.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
