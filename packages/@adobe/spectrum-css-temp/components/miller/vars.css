@@ -1,0 +1,26 @@
+/* topdoc
+{{ miller/miller-column.yml }}
+*/
+.spectrum-MillerColumns {
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  padding: 8px 0;
+}
+.spectrum-MillerColumns-item {
+  display: inline-block;
+  width: var(--spectrum-miller-column-width, 272px);
+  vertical-align: top;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  margin-right: 8px;
+  overflow: auto;
+  height: 100%;
+}
+.spectrum-MillerColumns-item:first-child {
+    margin-left: 8px;
+  }

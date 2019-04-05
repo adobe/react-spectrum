@@ -1,0 +1,148 @@
+/* topdoc
+{{ dropdown/dropdown.yml }}
+*/
+.spectrum-Dropdown {
+  position: relative;
+  display: inline-block;
+
+  /* Truncate if menu options make us too wide */
+  max-width: 100%;
+  width: var(--spectrum-global-dimension-size-2400);
+  min-width: var(--spectrum-dropdown-min-width, var(--spectrum-global-dimension-size-600));
+}
+/* Hack to enable select-powered Dropdowns */
+.spectrum-Dropdown select {
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    -ms-appearance: none;
+  }
+/* Edge */
+.spectrum-Dropdown select::-ms-expand {
+      display: none;
+    }
+.spectrum-Dropdown select::-ms-value {
+      background-color: transparent;
+    }
+.spectrum-Dropdown select + .spectrum-Dropdown-icon {
+      position: absolute;
+      right: var(--spectrum-dropdown-padding-x, var(--spectrum-global-dimension-size-150));
+      top: 50%;
+      margin-top: calc(var(--spectrum-icon-chevron-down-medium-height, var(--spectrum-global-dimension-size-75)) / -2);
+    }
+.spectrum-Dropdown-trigger {
+  position: relative;
+  width: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.spectrum-Dropdown-label {
+  /* Be the biggest! */
+  -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  height: calc(var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2);
+  line-height: calc(var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2);
+
+  font-size: var(--spectrum-dropdown-text-size, var(--spectrum-global-dimension-font-size-100));
+
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.spectrum-Dropdown-label.is-placeholder {
+    font-weight: var(--spectrum-dropdown-placeholder-text-font-weight, 400);
+    font-style: var(--spectrum-dropdown-placeholder-text-font-style, italic);
+    transition: color var(--spectrum-global-animation-duration-100, 130ms) ease-in-out;
+  }
+/* Only apply margin to the icon if there's a label */
+.spectrum-Dropdown-label + .spectrum-Dropdown-icon {
+  margin-left: var(--spectrum-dropdown-icon-margin-left, var(--spectrum-global-dimension-size-150));
+}
+.spectrum-Icon + .spectrum-Dropdown-label {
+  margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x, var(--spectrum-global-dimension-size-100));
+}
+/* Only apply margin if there's a label */
+.spectrum-Dropdown-label ~ .spectrum-Dropdown-icon {
+  margin-left: var(--spectrum-dropdown-icon-margin-left, var(--spectrum-global-dimension-size-150));
+}
+.spectrum-Dropdown-icon {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  transition: color var(--spectrum-global-animation-duration-100, 130ms) ease-out;
+
+  /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+  margin-top: calc((var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2 - var(--spectrum-icon-chevron-down-medium-height, var(--spectrum-global-dimension-size-75))) / 2);
+  margin-bottom: calc((var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2 - var(--spectrum-icon-chevron-down-medium-height, var(--spectrum-global-dimension-size-75))) / 2);
+
+  opacity: 1;
+}
+/* Error icons */
+.spectrum-Dropdown-trigger .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+  margin-top: calc((var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2 - var(--spectrum-dropdown-icon-size, var(--spectrum-global-dimension-size-225))) / 2);
+    margin-bottom: calc((var(--spectrum-dropdown-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-dropdown-border-size, 1px) * 2 - var(--spectrum-dropdown-icon-size, var(--spectrum-global-dimension-size-225))) / 2);
+  }
+.spectrum-Dropdown-trigger .spectrum-Dropdown-label + .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    margin-left: var(--spectrum-dropdown-icon-margin-left, var(--spectrum-global-dimension-size-150));
+  }
+.spectrum-Icon + .spectrum-Dropdown-icon {
+  margin-left: var(--spectrum-dropdown-icon-gap, var(--spectrum-global-dimension-size-100));
+}
+/* topdoc
+{{ dropdown/dropdown-quiet.yml }}
+*/
+.spectrum-Dropdown--quiet {
+  width: auto;
+  min-width: var(--spectrum-dropdown-quiet-min-width, var(--spectrum-global-dimension-size-600));
+}
+.spectrum-Dropdown-popover {
+  max-width: var(--spectrum-global-dimension-size-3000);
+}
+.spectrum-Dropdown-popover--quiet {
+  margin-left: calc(-1 * (var(--spectrum-dropdown-quiet-popover-offset-x, var(--spectrum-global-dimension-size-150)) + var(--spectrum-popover-border-size, 1px)));
+}
+.spectrum-Dropdown .spectrum-Dropdown-trigger:hover .spectrum-Dropdown-icon {
+      color: var(--spectrum-dropdown-icon-color-hover, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Dropdown .spectrum-Dropdown-trigger.is-selected .is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-down, var(--spectrum-global-color-gray-900));
+      }
+.spectrum-Dropdown.is-invalid .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+      color: var(--spectrum-dropdown-validation-icon-color-error, var(--spectrum-global-color-red-600));
+    }
+.spectrum-Dropdown.is-invalid.is-disabled .spectrum-Icon,
+      .spectrum-Dropdown.is-invalid.is-disabled .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+        color: var(--spectrum-dropdown-icon-color-disabled, var(--spectrum-global-color-gray-400));
+      }
+.spectrum-Dropdown.is-disabled .spectrum-Dropdown-icon, .spectrum-Dropdown.is-disabled .spectrum-Dropdown-trigger:hover .spectrum-Dropdown-icon {
+        color: var(--spectrum-dropdown-icon-color-disabled, var(--spectrum-global-color-gray-400));
+      }
+.spectrum-Dropdown.is-disabled .spectrum-Dropdown-label.is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-disabled, var(--spectrum-global-color-gray-500));
+      }
+.spectrum-Dropdown-icon {
+  color: var(--spectrum-dropdown-icon-color, var(--spectrum-global-color-gray-700));
+}
+.spectrum-Dropdown-label.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color, var(--spectrum-global-color-gray-600));
+  }
+.spectrum-Dropdown-label.is-placeholder:hover {
+      color: var(--spectrum-dropdown-placeholder-text-color-hover, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Dropdown-label.is-placeholder:active {
+      color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Dropdown-trigger.focus-ring .spectrum-Dropdown-label.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color-key-focus, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Dropdown-trigger.focus-ring .spectrum-Dropdown-icon {
+    color: var(--spectrum-dropdown-icon-color-key-focus, var(--spectrum-global-color-gray-900))
+  }

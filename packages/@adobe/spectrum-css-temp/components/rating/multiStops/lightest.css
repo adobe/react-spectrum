@@ -1,0 +1,71 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+/* topdoc
+{{ rating/rating.yml }}
+*/
+.spectrum--lightest .spectrum-Rating.is-focused {
+    box-shadow: 0 0 0 2px rgb(55, 142, 240);
+  }
+.spectrum--lightest .spectrum-Rating:hover .spectrum-Rating-icon {
+      /* Make all stars colored when the component is hovered */
+      color: rgb(38, 128, 235);
+    }
+.spectrum--lightest .spectrum-Rating:hover .spectrum-Rating-icon:hover {
+        /* The icon that's actually hovered is darker */
+        color: rgb(20, 115, 230);
+      }
+.spectrum--lightest .spectrum-Rating:hover .spectrum-Rating-icon:active {
+        /* The icon that's actually hovered is darker */
+        color: rgb(13, 102, 208);
+      }
+/* Show which star is currently selected */
+.spectrum--lightest .spectrum-Rating:hover .spectrum-Rating-icon.is-currentValue:after {
+          /* Match the color of the star */
+          background: currentColor;
+        }
+.spectrum--lightest .spectrum-Rating-icon {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Rating-icon.is-selected {
+    color: rgb(38, 128, 235);
+  }
+/* All stars following the hovered star */
+.spectrum--lightest .spectrum-Rating-icon:hover ~ .spectrum-Rating-icon {
+      color: rgb(116, 116, 116);
+    }
+.spectrum--lightest .spectrum-Rating--quiet .spectrum-Rating-icon {
+    color: rgb(116, 116, 116);
+  }
+.spectrum--lightest .spectrum-Rating--quiet .spectrum-Rating-icon.is-selected {
+      color: rgb(116, 116, 116);
+    }
+.spectrum--lightest .spectrum-Rating--quiet:hover .spectrum-Rating-icon {
+      /* Make all stars selected when the component is hovered */
+      color: rgb(116, 116, 116);
+    }
+.spectrum--lightest .spectrum-Rating--quiet:hover .spectrum-Rating-icon:hover {
+        /* The icon that's actually hovered is darker */
+        color: rgb(80, 80, 80);
+      }
+.spectrum--lightest .spectrum-Rating--quiet:hover .spectrum-Rating-icon:active {
+        color: rgb(50, 50, 50);
+      }
+/* Disabled */
+.spectrum--lightest .spectrum-Rating.is-disabled .spectrum-Rating-icon {
+      color: rgb(211, 211, 211);
+    }
+.spectrum--lightest .spectrum-Rating.is-disabled .spectrum-Rating-icon.is-selected {
+        color: rgb(211, 211, 211);
+      }

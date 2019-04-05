@@ -1,0 +1,113 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* topdoc
+{{ dropdown/dropdown.yml }}
+*/
+.spectrum-Dropdown {
+  position: relative;
+  display: inline-block;
+
+  /* Truncate if menu options make us too wide */
+  max-width: 100%;
+  width: 240px;
+  min-width: 60px;
+}
+/* Hack to enable select-powered Dropdowns */
+.spectrum-Dropdown select {
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    -ms-appearance: none;
+  }
+/* Edge */
+.spectrum-Dropdown select::-ms-expand {
+      display: none;
+    }
+.spectrum-Dropdown select::-ms-value {
+      background-color: transparent;
+    }
+.spectrum-Dropdown select + .spectrum-Dropdown-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      margin-top: -4px;
+    }
+.spectrum-Dropdown-trigger {
+  position: relative;
+  width: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.spectrum-Dropdown-label {
+  /* Be the biggest! */
+  -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  height: 38px;
+  line-height: 38px;
+
+  font-size: 17px;
+
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.spectrum-Dropdown-label.is-placeholder {
+    font-weight: 400;
+    font-style: italic;
+    transition: color 130ms ease-in-out;
+  }
+/* Only apply margin to the icon if there's a label */
+.spectrum-Dropdown-label + .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum-Icon + .spectrum-Dropdown-label {
+  margin-left: 10px;
+}
+/* Only apply margin if there's a label */
+.spectrum-Dropdown-label ~ .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum-Dropdown-icon {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  transition: color 130ms ease-out;
+
+  /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  opacity: 1;
+}
+/* Error icons */
+.spectrum-Dropdown-trigger .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+  margin-top: 8px;
+    margin-bottom: 8px;
+  }
+.spectrum-Dropdown-trigger .spectrum-Dropdown-label + .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    margin-left: 15px;
+  }
+.spectrum-Icon + .spectrum-Dropdown-icon {
+  margin-left: 10px;
+}
+/* topdoc
+{{ dropdown/dropdown-quiet.yml }}
+*/
+.spectrum-Dropdown--quiet {
+  width: auto;
+  min-width: 60px;
+}
+.spectrum-Dropdown-popover {
+  max-width: 300px;
+}
+.spectrum-Dropdown-popover--quiet {
+  margin-left: -16px;
+}

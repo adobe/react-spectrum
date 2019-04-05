@@ -1,0 +1,56 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+/* topdoc
+{{ sidenav/sidenav-multilevel.yml }}
+*/
+.spectrum--darkest .spectrum-SideNav-item.is-selected > .spectrum-SideNav-itemLink {
+      color: rgb(239, 239, 239);
+      background-color: rgba(239,239,239,0.08);
+    }
+.spectrum--darkest .spectrum-SideNav-item .is-active > .spectrum-SideNav-itemLink {
+      background-color: rgba(239,239,239,0.08);
+    }
+/* Disable all children */
+.spectrum--darkest .spectrum-SideNav-item.is-disabled .spectrum-SideNav-itemLink {
+      background-color: rgba(0, 0, 0, 0);
+      color: rgb(92, 92, 92);
+
+      cursor: default;
+      pointer-events: none;
+    }
+/* topdoc
+{{ sidenav/sidenav.yml }}
+*/
+.spectrum--darkest .spectrum-SideNav-itemLink {
+  background-color: rgba(0, 0, 0, 0);
+  color: rgb(200, 200, 200);
+}
+.spectrum--darkest .spectrum-SideNav-itemLink:hover {
+    background-color: rgba(239,239,239,0.08);
+    color: rgb(239, 239, 239);
+  }
+.spectrum--darkest .spectrum-SideNav-itemLink:active {
+    background-color: rgba(239,239,239,0.08);
+  }
+.spectrum--darkest .spectrum-SideNav-itemLink.focus-ring {
+    background-color: rgba(239,239,239,0.08);
+    color: rgb(239, 239, 239);
+  }
+.spectrum--darkest .spectrum-SideNav-itemLink.focus-ring::before {
+      border-color: rgb(20, 115, 230);
+    }
+.spectrum--darkest .spectrum-SideNav-heading {
+  color: rgb(162, 162, 162);
+}

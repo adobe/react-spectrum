@@ -1,0 +1,241 @@
+.spectrum-Tabs {
+  display: -ms-flexbox;
+  display: flex;
+
+  /* Contain the selection indicator */
+  position: relative;
+  z-index: 0;
+
+  margin: 0;
+  padding: 0 var(--spectrum-tabs-focus-ring-padding-x, var(--spectrum-global-dimension-size-100));
+
+  /* Friends should align to the top of the tabs */
+  vertical-align: top;
+}
+.spectrum-Tabs-item {
+  /* Contain the focus ring */
+  position: relative;
+
+  box-sizing: border-box;
+
+  height: calc(var(--spectrum-tabs-height, var(--spectrum-global-dimension-size-600)) - var(--spectrum-tabs-rule-height, 2px));
+  line-height: calc(var(--spectrum-tabs-height, var(--spectrum-global-dimension-size-600)) - var(--spectrum-tabs-rule-height, 2px));
+
+  /* Float above the tab line */
+  z-index: 1;
+
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition: color var(--spectrum-global-animation-duration-100, 130ms) ease-out;
+  cursor: pointer;
+  outline: none;
+}
+.spectrum-Tabs-item.is-disabled {
+    cursor: default;
+  }
+.spectrum-Tabs-item.is-disabled .spectrum-Tabs-itemLabel {
+      cursor: default;
+    }
+.spectrum-Tabs-item .spectrum-Icon {
+    /* Vertical centering */
+    height: calc(var(--spectrum-tabs-height, var(--spectrum-global-dimension-size-600)) - var(--spectrum-tabs-rule-height, 2px));
+  }
+.spectrum-Tabs-item .spectrum-Icon + .spectrum-Tabs-itemLabel {
+      /* icons are inexplicably offset by 3px. Subtract this value from the icon-gap
+         to correct the gap in CSS */
+      margin-left: calc(var(--spectrum-tabs-icon-gap, var(--spectrum-global-dimension-size-100)) - var(--spectrum-global-dimension-size-40));
+    }
+.spectrum-Tabs-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+
+    box-sizing: border-box;
+
+    height: var(--spectrum-tabs-focus-ring-height, var(--spectrum-global-dimension-size-400));
+    margin-top: calc(var(--spectrum-tabs-focus-ring-height, var(--spectrum-global-dimension-size-400)) / -2 + var(--spectrum-tabs-rule-height, 2px) / 2);
+    left: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x, var(--spectrum-global-dimension-size-100)));
+    right: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x, var(--spectrum-global-dimension-size-100)));
+    border: var(--spectrum-tabs-focus-ring-size, 2px) solid transparent;
+    border-radius: var(--spectrum-tabs-focus-ring-border-radius, var(--spectrum-global-dimension-size-65));
+
+    pointer-events: none;
+  }
+.spectrum-Tabs-itemLabel {
+  cursor: pointer;
+  vertical-align: top;
+  display: inline-block;
+
+  font-size: var(--spectrum-tabs-text-size, var(--spectrum-global-dimension-font-size-100));
+  font-weight: var(--spectrum-tabs-text-font-weight, 400);
+}
+.spectrum-Tabs-itemLabel:empty {
+    /* Hide the tab label if it's not being used */
+    display: none;
+  }
+.spectrum-Tabs-selectionIndicator {
+  position: absolute;
+  left: 0;
+
+  /* Be below the tab */
+  z-index: 0;
+
+  transition: transform var(--spectrum-tabs-selection-indicator-animation-duration, 130ms) ease-in-out;
+  transform-origin: top left;
+
+  border-radius: var(--spectrum-tabs-rule-border-radius, 1px);
+}
+.spectrum-Tabs--compact .spectrum-Tabs-item {
+    height: calc(var(--spectrum-tabs-quiet-compact-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-tabs-rule-height, 2px));
+    line-height: calc(var(--spectrum-tabs-quiet-compact-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-tabs-rule-height, 2px));
+  }
+.spectrum-Tabs--compact .spectrum-Tabs-item .spectrum-Icon {
+      /* Vertical centering */
+      height: calc(var(--spectrum-tabs-quiet-compact-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-tabs-rule-height, 2px));
+    }
+.spectrum-Tabs--horizontal {
+  -ms-flex-align: center;
+      align-items: center;
+
+  border-bottom: var(--spectrum-tabs-rule-height, 2px) solid;
+}
+.spectrum-Tabs--horizontal .spectrum-Tabs-item {
+    vertical-align: top;
+  }
+/* Target anything since React likes to add lots of happy <div>s around all things */
+.spectrum-Tabs--horizontal .spectrum-Tabs-item + *:not(.spectrum-Tabs-selectionIndicator) {
+      margin-left: var(--spectrum-tabs-item-gap, var(--spectrum-global-dimension-size-300));
+    }
+.spectrum-Tabs--horizontal .spectrum-Tabs-selectionIndicator {
+    position: absolute;
+    bottom: 0;
+    height: var(--spectrum-tabs-rule-height, 2px);
+
+    bottom: calc(-1 * var(--spectrum-tabs-rule-height, 2px));
+  }
+.spectrum-Tabs--horizontal.spectrum-Tabs--compact {
+    /* The ActionButton is taller than the tabs, so don't push tabs around */
+    box-sizing: content-box;
+    height: calc(var(--spectrum-tabs-quiet-compact-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-tabs-rule-height, 2px));
+    -ms-flex-align: end;
+        align-items: end;
+  }
+/* Quiet tabs should not extend all the way across the screen as their line doesn't */
+.spectrum-Tabs--quiet {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+.spectrum-Tabs--vertical {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  padding: 0;
+  border-left: var(--spectrum-tabs-vertical-rule-width, 2px) solid;
+}
+.spectrum-Tabs--vertical .spectrum-Tabs-item {
+    height: var(--spectrum-tabs-vertical-item-height, var(--spectrum-global-dimension-size-550));
+    padding: 0 var(--spectrum-tabs-focus-ring-padding-x, var(--spectrum-global-dimension-size-100));
+    /* Subtract focus ring padding from margin-left since the padding value already offsets tabs-items */
+    margin-left: calc(var(--spectrum-tabs-vertical-item-margin-left, var(--spectrum-global-dimension-size-150)) - var(--spectrum-tabs-focus-ring-padding-x, var(--spectrum-global-dimension-size-100)));
+    margin-bottom: var(--spectrum-tabs-vertical-item-gap, var(--spectrum-global-dimension-size-50));
+  }
+.spectrum-Tabs--vertical .spectrum-Tabs-item::before {
+      /* padding is included in click area of tab items, so only need to offset by the size of the focus ring's border */
+      left: calc(-1 * var(--spectrum-tabs-focus-ring-size, 2px));
+      right: calc(-1 * var(--spectrum-tabs-focus-ring-size, 2px));
+      margin-top: calc(var(--spectrum-tabs-focus-ring-height, var(--spectrum-global-dimension-size-400)) / -2);
+    }
+.spectrum-Tabs--vertical.spectrum-Tabs--compact .spectrum-Tabs-item {
+      height: var(--spectrum-tabs-compact-vertical-item-height, var(--spectrum-global-dimension-size-400));
+      line-height: var(--spectrum-tabs-compact-vertical-item-height, var(--spectrum-global-dimension-size-400));
+      margin-bottom: var(--spectrum-tabs-compact-vertical-item-gap, var(--spectrum-global-dimension-size-50));
+    }
+.spectrum-Tabs--vertical.spectrum-Tabs--compact .spectrum-Tabs-item .spectrum-Icon {
+        /* Vertical centering */
+        height: var(--spectrum-tabs-compact-vertical-item-height, var(--spectrum-global-dimension-size-400));
+      }
+.spectrum-Tabs--vertical .spectrum-Tabs-selectionIndicator {
+    position: absolute;
+    left: 0px;
+    width: var(--spectrum-tabs-vertical-rule-width, 2px);
+
+    left: calc(-1 * var(--spectrum-tabs-vertical-rule-width, 2px));
+  }
+/* topdoc
+{{ tabs/tabs-toomany.yml }}
+*/
+/* topdoc
+{{ tabs/tabs.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-quiet.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-compact.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-quiet-compact.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-vertical.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-compact-vertical.yml }}
+*/
+.spectrum-Tabs {
+  border-bottom-color: var(--spectrum-tabs-rule-color, var(--spectrum-global-color-gray-200));
+}
+.spectrum-Tabs--vertical {
+  border-left-color: var(--spectrum-tabs-vertical-rule-color, var(--spectrum-global-color-gray-200));
+}
+.spectrum-Tabs-selectionIndicator {
+  background-color: var(--spectrum-tabs-selection-indicator-color, var(--spectrum-global-color-gray-900));
+}
+.spectrum-Tabs-item {
+  color: var(--spectrum-tabs-text-color, var(--spectrum-global-color-gray-700));
+}
+.spectrum-Tabs-item .spectrum-Icon {
+    color: var(--spectrum-tabs-icon-color, var(--spectrum-global-color-gray-700))
+  }
+.spectrum-Tabs-item:hover {
+    color: var(--spectrum-tabs-text-color-hover, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Tabs-item:hover .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-hover, var(--spectrum-global-color-gray-900))
+    }
+.spectrum-Tabs-item.is-selected {
+    color: var(--spectrum-tabs-text-color-selected, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Tabs-item.is-selected .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-selected, var(--spectrum-global-color-gray-900))
+    }
+.spectrum-Tabs-item.focus-ring {
+    color: var(--spectrum-tabs-text-color-key-focus, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Tabs-item.focus-ring::before {
+      border-color: var(--spectrum-tabs-focus-ring-color, var(--spectrum-global-color-blue-400));
+    }
+.spectrum-Tabs-item.focus-ring .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-key-focus, var(--spectrum-global-color-gray-900))
+    }
+.spectrum-Tabs-item.is-disabled {
+    color: var(--spectrum-tabs-text-color-disabled, var(--spectrum-global-color-gray-500));
+  }
+.spectrum-Tabs-item.is-disabled .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-disabled, var(--spectrum-global-color-gray-400))
+    }
+.spectrum-Tabs--quiet {
+  border-bottom-color: var(--spectrum-tabs-quiet-rule-color, rgba(0, 0, 0, 0));
+}
+.spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator {
+    background-color: var(--spectrum-tabs-quiet-selection-indicator-color, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Tabs--vertical.spectrum-Tabs--quiet,
+  .spectrum-Tabs--vertical.spectrum-Tabs--compact {
+    border-left-color: var(--spectrum-tabs-quiet-vertical-rule-color, rgba(0, 0, 0, 0));
+  }
+.spectrum-Tabs--vertical.spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator, .spectrum-Tabs--vertical.spectrum-Tabs--compact .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-quiet-selection-indicator-color, var(--spectrum-global-color-gray-900));
+    }

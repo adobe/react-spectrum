@@ -1,0 +1,252 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum--lightest .spectrum-Body1 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Body2 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Body3 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Body4 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Body5 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Heading1 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading3 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading4 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading5 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading6 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Subheading {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Detail {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading1--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading1--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading1--display.spectrum-Heading1--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2--display.spectrum-Heading2--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Body1 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Body2 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Body3 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Body4 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Body5 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading1 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading2 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading3 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading4 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading5 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading6 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Subheading {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Detail {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading1--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading2--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Article .spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Body1, .spectrum--lightest .spectrum:lang(ko) .spectrum-Body1, .spectrum--lightest .spectrum:lang(zh) .spectrum-Body1 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Body2, .spectrum--lightest .spectrum:lang(ko) .spectrum-Body2, .spectrum--lightest .spectrum:lang(zh) .spectrum-Body2 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Body3, .spectrum--lightest .spectrum:lang(ko) .spectrum-Body3, .spectrum--lightest .spectrum:lang(zh) .spectrum-Body3 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Body4, .spectrum--lightest .spectrum:lang(ko) .spectrum-Body4, .spectrum--lightest .spectrum:lang(zh) .spectrum-Body4 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Body5, .spectrum--lightest .spectrum:lang(ko) .spectrum-Body5, .spectrum--lightest .spectrum:lang(zh) .spectrum-Body5 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading3, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading3, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading3 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading4, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading4, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading4 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading5, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading5, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading5 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading6, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading6, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading6 {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Subheading, .spectrum--lightest .spectrum:lang(ko) .spectrum-Subheading, .spectrum--lightest .spectrum:lang(zh) .spectrum-Subheading {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Detail, .spectrum--lightest .spectrum:lang(ko) .spectrum-Detail, .spectrum--lightest .spectrum:lang(zh) .spectrum-Detail {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1--quiet, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1--quiet, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2--quiet, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2--quiet, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1--strong, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1--strong, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2--strong, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2--strong, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1--display, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1--display, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2--display, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2--display, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2--display {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1--display.spectrum-Heading1--strong, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1--display.spectrum-Heading1--strong, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1--display.spectrum-Heading1--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2--display.spectrum-Heading2--strong, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2--display.spectrum-Heading2--strong, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2--display.spectrum-Heading2--strong {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading1--display.spectrum-Heading1--quiet, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading1--display.spectrum-Heading1--quiet, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum:lang(ja) .spectrum-Heading2--display.spectrum-Heading2--quiet, .spectrum--lightest .spectrum:lang(ko) .spectrum-Heading2--display.spectrum-Heading2--quiet, .spectrum--lightest .spectrum:lang(zh) .spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(50, 50, 50);
+          }
+.spectrum--lightest .spectrum-Code1 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Code2 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Code3 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Code4 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest .spectrum-Code5 {
+            color: rgb(80, 80, 80);
+          }
+.spectrum--lightest,
+.spectrum--lightest .spectrum-Body {
+  color: rgb(80, 80, 80);
+}
+.spectrum--lightest .spectrum-Body--large {
+  color: rgb(80, 80, 80);
+}
+.spectrum--lightest .spectrum-Body--small {
+  color: rgb(80, 80, 80);
+}
+.spectrum--lightest .spectrum-Body--secondary {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Heading--display {
+  color: rgb(50, 50, 50);
+}
+.spectrum--lightest .spectrum-Heading--pageTitle {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Heading--subtitle1 {
+  color: rgb(50, 50, 50);
+}
+.spectrum--lightest .spectrum-Heading--subtitle2 {
+  color: rgb(50, 50, 50);
+}
+.spectrum--lightest .spectrum-Heading--subtitle3 {
+  color: rgb(116, 116, 116);
+}

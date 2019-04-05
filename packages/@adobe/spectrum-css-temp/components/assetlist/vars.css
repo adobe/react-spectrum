@@ -1,0 +1,110 @@
+/* topdoc
+{{ assetlist/assetlist.yml }}
+*/
+.spectrum-AssetList {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+}
+.spectrum-AssetList-item {
+  position: relative;
+
+  display: -ms-flexbox;
+
+  display: flex;
+  box-sizing: border-box;
+  -ms-flex-align: center;
+      align-items: center;
+
+  width: var(--spectrum-miller-column-width, 272px);
+  height: var(--spectrum-miller-column-item-height, 40px);
+
+  padding: 0 var(--spectrum-miller-column-item-padding-right, 16px) 0 var(--spectrum-miller-column-item-padding-left, 16px);
+  margin: 0 0 var(--spectrum-miller-column-item-margin-bottom, 4px) 0;
+
+  border-radius: var(--spectrum-miller-column-item-border-radius, 4px);
+
+  transition: background-color var(--spectrum-global-animation-duration-100, 130ms) ease-in-out;
+
+  font-size: var(--spectrum-selectlist-option-text-size, var(--spectrum-global-dimension-font-size-100));
+  font-weight: var(--spectrum-selectlist-option-text-font-weight, 400);
+  font-style: normal;
+
+  cursor: pointer;
+
+  outline: none;
+}
+.spectrum-AssetList-item::before {
+    content: '';
+
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    height: var(--spectrum-miller-column-item-height, 40px);
+
+    background-color: transparent;
+
+    border-radius: var(--spectrum-miller-column-item-border-radius, 4px);
+  }
+/* checkbox on the left, shows up always */
+.spectrum-AssetList-item.is-selectable .spectrum-Checkbox, .spectrum-AssetList-item.is-selected .spectrum-Checkbox, .spectrum-AssetList-item:hover .spectrum-Checkbox, .spectrum-AssetList-item:focus .spectrum-Checkbox {
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+    }
+/* show chevron */
+.spectrum-AssetList-item.is-branch .spectrum-AssetList-itemChildIndicator {
+      display: block;
+    }
+.spectrum-AssetList-item .spectrum-AssetList-itemThumbnail {
+    /* Remove the border on images inside links in IE 10-. */
+    border-style: none;
+
+    width: var(--spectrum-miller-column-thumbnail-width, 24px);
+    height: var(--spectrum-miller-column-thumbnail-height, 24px);
+    margin-left: var(--spectrum-miller-column-thumbnail-margin-left, 8px);
+    vertical-align: middle;
+  }
+.spectrum-AssetList-itemSelector {
+  display: none;
+  margin: 0;
+}
+.spectrum-AssetList-itemChildIndicator {
+  display: none;
+  transition: transform ease var(--spectrum-global-animation-duration-100, 130ms);
+}
+.spectrum-AssetList-itemLabel {
+  -ms-flex: 1;
+      flex: 1;
+  padding-left: var(--spectrum-miller-column-item-label-padding-left, 8px);
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.spectrum-AssetList-item:hover {
+    background-color: var(--spectrum-miller-column-item-background-color-hover, var(--spectrum-global-color-gray-200));
+  }
+.spectrum-AssetList-item:focus.focus-ring,
+    .spectrum-AssetList-item:focus.is-focused {
+      background-color: var(--spectrum-miller-column-item-background-color-hover, var(--spectrum-global-color-gray-200));
+    }
+.spectrum-AssetList-item:focus.focus-ring::before, .spectrum-AssetList-item:focus.is-focused::before {
+        /* we cannot achieve rounded corners with outline so we use box-shadow instead */
+        box-shadow: 0px 0px 0px 2px var(--spectrum-alias-border-color-focus, var(--spectrum-global-color-blue-400)) inset;
+      }
+.spectrum-AssetList-item.is-navigated {
+    /* gray background */
+    background-color: var(--spectrum-miller-column-item-background-color-down, var(--spectrum-global-color-gray-300));
+  }
+.spectrum-AssetList-item.is-navigated:hover,
+    .spectrum-AssetList-item.is-navigated:focus {
+      background-color: var(--spectrum-miller-column-item-background-color-down, var(--spectrum-global-color-gray-300));
+    }
+.spectrum-AssetList-item.is-selected {
+    background-color: var(--spectrum-miller-column-item-background-color-selected);
+  }
+.spectrum-AssetList-item.is-selected:hover,
+    .spectrum-AssetList-item.is-selected:focus {
+      background-color: var(--spectrum-miller-column-item-background-color-selected-hover);
+    }

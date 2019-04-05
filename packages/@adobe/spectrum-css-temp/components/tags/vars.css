@@ -1,0 +1,166 @@
+/* topdoc
+{{ tags/tags.yml }}
+*/
+/* topdoc
+{{ tags/tags-deletable.yml }}
+*/
+.spectrum-Tags {
+  display: inline-block;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.spectrum-Tags:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+.spectrum-Tags-item {
+  float: left;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-align: center;
+      align-items: center;
+  box-sizing: border-box;
+
+  margin: calc(var(--spectrum-taggroup-tag-gap-y, var(--spectrum-global-dimension-size-100)) / 2) calc(var(--spectrum-taggroup-tag-gap-x, var(--spectrum-global-dimension-size-100)) / 2);
+  padding: 0 calc(var(--spectrum-tag-padding-x, var(--spectrum-global-dimension-size-125)) - var(--spectrum-tag-border-size, 1px));
+  height: var(--spectrum-tag-height, var(--spectrum-global-dimension-size-300));
+  max-width: 100%;
+
+  border-width: var(--spectrum-tag-border-size, 1px);
+  border-style: solid;
+  border-radius: var(--spectrum-global-dimension-size-50);
+  outline: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
+  transition: border-color var(--spectrum-global-animation-duration-100, 130ms) ease-in-out,
+    color var(--spectrum-global-animation-duration-100, 130ms) ease-in-out,
+    box-shadow var(--spectrum-global-animation-duration-100, 130ms) ease-in-out,
+    background-color var(--spectrum-global-animation-duration-100, 130ms) ease-in-out;
+}
+.spectrum-Tags-item.is-disabled {
+    pointer-events: none;
+  }
+.spectrum-Tags-item > .spectrum-Icon,
+  .spectrum-Tags-item > .spectrum-Avatar {
+    margin-right: var(--spectrum-tag-icon-padding-x, var(--spectrum-global-dimension-size-100));
+
+    /* Add padding for "avatar" variant */
+    margin-left: calc(var(--spectrum-tag-avatar-padding-x, var(--spectrum-global-dimension-size-100)) - var(--spectrum-tag-padding-x, var(--spectrum-global-dimension-size-125)));
+  }
+.spectrum-Tags-item > .spectrum-Icon ~ .spectrum-Tags-itemLabel, .spectrum-Tags-item > .spectrum-Avatar ~ .spectrum-Tags-itemLabel {
+      margin-right: calc(var(--spectrum-tag-avatar-padding-x, var(--spectrum-global-dimension-size-100)) - var(--spectrum-tag-padding-x, var(--spectrum-global-dimension-size-125)));
+    }
+.spectrum-Tags-item .spectrum-ClearButton {
+    margin-right: calc(-1 * var(--spectrum-tag-padding-x, var(--spectrum-global-dimension-size-125)));
+  }
+.spectrum-Tags-itemLabel {
+  height: 100%;
+  line-height: calc(var(--spectrum-tag-height, var(--spectrum-global-dimension-size-300)) - var(--spectrum-tag-border-size, 1px) * 2);
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  font-size: var(--spectrum-tag-text-size, var(--spectrum-global-dimension-size-150));
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.spectrum-Tags-item {
+  color: var(--spectrum-tag-text-color, var(--spectrum-global-color-gray-700));
+  background-color: var(--spectrum-tag-background-color, var(--spectrum-global-color-gray-75));
+  border-color: var(--spectrum-tag-border-color, var(--spectrum-global-color-gray-600));
+}
+.spectrum-Tags-item .spectrum-ClearButton {
+    color: var(--spectrum-tag-deletable-icon-color, var(--spectrum-global-color-gray-600));
+  }
+.spectrum-Tags-item:hover {
+    background-color: var(--spectrum-tag-background-color-hover, var(--spectrum-global-color-gray-75));
+    color: var(--spectrum-tag-text-color-hover, var(--spectrum-global-color-gray-900));
+    border-color: var(--spectrum-tag-border-color-hover, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-Tags-item:hover .spectrum-ClearButton {
+      color: var(--spectrum-tag-deletable-icon-color-hover, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Tags-item.focus-ring {
+    background-color: var(--spectrum-tag-background-color-key-focus, var(--spectrum-global-color-gray-75));
+    color: var(--spectrum-tag-text-color-key-focus, var(--spectrum-global-color-gray-900));
+    border-color: var(--spectrum-tag-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus, var(--spectrum-global-color-blue-400));
+  }
+.spectrum-Tags-item.focus-ring .spectrum-ClearButton {
+      color: var(--spectrum-tag-deletable-icon-color-key-focus, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Tags-item.is-invalid {
+    color: var(--spectrum-tag-text-color-error, var(--spectrum-global-color-gray-700));
+    border-color: var(--spectrum-tag-border-color-error, var(--spectrum-global-color-red-500));
+  }
+.spectrum-Tags-item.is-invalid .spectrum-ClearButton {
+      color: var(--spectrum-tag-icon-color-error, var(--spectrum-global-color-red-500));
+    }
+.spectrum-Tags-item.is-invalid:hover {
+      color: var(--spectrum-tag-text-color-error-hover, var(--spectrum-global-color-gray-900));
+      border-color: var(--spectrum-tag-border-color-error-hover, var(--spectrum-global-color-red-600));
+    }
+.spectrum-Tags-item.is-invalid:hover .spectrum-ClearButton {
+        color: var(--spectrum-tag-icon-color-error-hover, var(--spectrum-global-color-red-600));
+      }
+.spectrum-Tags-item.is-invalid.focus-ring {
+      color: var(--spectrum-tag-text-color-error-key-focus, var(--spectrum-global-color-gray-900));
+      border-color: var(--spectrum-tag-border-color-key-focus, var(--spectrum-global-color-blue-400));
+      box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    }
+.spectrum-Tags-item.is-invalid.focus-ring .spectrum-ClearButton {
+        color: var(--spectrum-tag-icon-color-error-key-focus, var(--spectrum-global-color-red-600));
+      }
+.spectrum-Tags-item.is-disabled {
+    color: var(--spectrum-tag-text-color-disabled, var(--spectrum-global-color-gray-500));
+    background-color: var(--spectrum-tag-background-color-disabled, var(--spectrum-global-color-gray-200));
+    border-color: var(--spectrum-tag-border-color-disabled, var(--spectrum-global-color-gray-200));
+  }
+.spectrum-Tags-item.is-disabled .spectrum-Avatar {
+      /* Duplicated so state is on the tag */
+      opacity: NaN;
+    }
+.spectrum-Tags-item--deletable:hover {
+    color: var(--spectrum-tag-deletable-text-color-hover, var(--spectrum-global-color-gray-700));
+  }
+.spectrum-Tags-item--deletable:hover .spectrum-ClearButton {
+      color: var(--spectrum-tag-deletable-icon-color-hover, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Tags-item--deletable:active {
+    color: var(--spectrum-tag-deletable-text-color-down, var(--spectrum-global-color-gray-700));
+  }
+.spectrum-Tags-item--deletable:active .spectrum-ClearButton {
+      color: var(--spectrum-tag-deletable-icon-color-down, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Tags-item--deletable.is-invalid:hover {
+      border-color: var(--spectrum-tag-deletable-border-color-error-hover, var(--spectrum-global-color-red-600));
+      color: var(--spectrum-tag-deletable-text-color-error-hover, var(--spectrum-global-color-gray-700));
+    }
+.spectrum-Tags-item--deletable.is-invalid:hover .spectrum-ClearButton {
+        color: var(--spectrum-tag-deletable-icon-color-error-hover, var(--spectrum-global-color-red-600));
+      }
+.spectrum-Tags-item--deletable.is-invalid:active {
+      border-color: var(--spectrum-tag-deletable-border-color-error-down, var(--spectrum-global-color-red-700));
+      color: var(--spectrum-tag-deletable-text-color-error-down, var(--spectrum-global-color-gray-700));
+    }
+.spectrum-Tags-item--deletable.is-invalid:active .spectrum-ClearButton {
+        color: var(--spectrum-tag-deletable-icon-color-error-down, var(--spectrum-global-color-red-700));
+      }
+.spectrum-Tags-item--deletable.focus-ring {
+    color: var(--spectrum-tag-deletable-text-color-key-focus, var(--spectrum-global-color-gray-700));
+  }
+.spectrum-Tags-item--deletable.focus-ring .spectrum-ClearButton {
+      color: var(--spectrum-tag-deletable-icon-color-key-focus, var(--spectrum-global-color-gray-900));
+    }
+.spectrum-Tags-item--deletable.focus-ring.is-invalid {
+      color: var(--spectrum-tag-deletable-text-color-error-key-focus, var(--spectrum-global-color-gray-700));
+    }
+.spectrum-Tags-item.is-disabled .spectrum-ClearButton .spectrum-Icon {
+    color: var(--spectrum-tag-icon-color-disabled, var(--spectrum-global-color-gray-500));
+  }

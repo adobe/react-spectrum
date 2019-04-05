@@ -1,0 +1,68 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-InputGroup {
+  min-width: 240px;
+  border-radius: 5px;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-InputGroup .spectrum-FieldButton {
+    padding: 0 15px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+.spectrum--large .spectrum-InputGroup-field {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+}
+.spectrum--large .spectrum-InputGroup--quiet {
+  border-radius: 0;
+}
+.spectrum--large .spectrum-InputGroup--quiet .spectrum-FieldButton {
+    border-radius: 0;
+    padding-right: 0;
+    border-bottom: 1px solid
+  }
+.spectrum--large .spectrum-Datepicker--range {
+  border-radius: 5px;
+}
+.spectrum--large .spectrum-Datepicker--range.spectrum-InputGroup--quiet {
+    border-radius: 0;
+  }
+.spectrum--large .spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-FieldButton {
+      border-radius: 0;
+    }
+.spectrum--large .spectrum-Datepicker--range.spectrum-Datepicker--datetimeRange .spectrum-InputGroup-field {
+      width: 193px;
+      min-width: 193px;
+    }
+.spectrum--large .spectrum-Datepicker--range .spectrum-InputGroup-field {
+    width: 130px;
+    min-width: 130px;
+  }
+.spectrum--large .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField {
+      padding-right: 15px;
+    }
+.spectrum--large .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField.is-invalid,
+      .spectrum--large .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField:invalid {
+        padding-right: 15px;
+      }
+.spectrum--large .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-endField {
+      padding-left: 15px;
+    }
+.spectrum--large .spectrum-Datepicker--range .spectrum-Datepicker--rangeDash {
+    line-height: 30px;
+    padding-top: 0;
+  }
+.spectrum--large .spectrum-Datepicker--range .spectrum-Datepicker--rangeDash:before {
+      margin: 0 -7px;
+      width: 14px;
+    }
+.spectrum--large .spectrum-Datepicker--range.is-focused .spectrum-Datepicker-focusRing {
+      border-radius: 5px;
+    }
+.spectrum--large .spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused .spectrum-Datepicker-focusRing {
+        border-radius: 0;
+      }
+.spectrum--large .spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-Datepicker--rangeDash:before {
+        margin-left: -7px;
+      }

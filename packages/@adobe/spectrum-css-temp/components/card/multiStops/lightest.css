@@ -1,0 +1,99 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum--lightest .spectrum-Card {
+  border-color: rgb(244, 244, 244);
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Card:hover {
+    border-color: rgb(211, 211, 211);
+  }
+.spectrum--lightest .spectrum-Card.is-selected,
+  .spectrum--lightest .spectrum-Card.focus-ring {
+    border-color: rgb(55, 142, 240);
+    box-shadow: 0 0 0 1px rgb(55, 142, 240);
+  }
+.spectrum--lightest .spectrum-Card.is-drop-target {
+    border-color: rgb(55, 142, 240);
+    box-shadow: 0 0 0 1px rgb(55, 142, 240);
+    background-color: rgba(38,128,235,0.1);
+  }
+.spectrum--lightest .spectrum-Card-description {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Card-coverPhoto {
+  background-color: rgb(244, 244, 244);
+  border-bottom-color: rgb(244, 244, 244);
+}
+.spectrum--lightest .spectrum-Card-footer {
+  border-color: rgb(244, 244, 244);
+}
+.spectrum--lightest .spectrum-Card--quiet,
+.spectrum--lightest .spectrum-Card--gallery {
+  border-color: transparent;
+  background-color: transparent;
+}
+.spectrum--lightest .spectrum-Card--quiet .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--gallery .spectrum-Card-preview {
+    background-color: rgb(244, 244, 244);
+  }
+.spectrum--lightest .spectrum-Card--quiet:hover, .spectrum--lightest .spectrum-Card--gallery:hover {
+    border-color: transparent;
+  }
+.spectrum--lightest .spectrum-Card--quiet:hover .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--gallery:hover .spectrum-Card-preview {
+      background-color: rgb(234, 234, 234);
+    }
+.spectrum--lightest .spectrum-Card--quiet.is-selected,
+  .spectrum--lightest .spectrum-Card--quiet.focus-ring,
+  .spectrum--lightest .spectrum-Card--gallery.is-selected,
+  .spectrum--lightest .spectrum-Card--gallery.focus-ring {
+    border-color: transparent;
+    box-shadow: none;
+  }
+.spectrum--lightest .spectrum-Card--quiet.is-selected .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--quiet.focus-ring .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--gallery.is-selected .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--gallery.focus-ring .spectrum-Card-preview {
+      background-color: rgb(244, 244, 244);
+    }
+.spectrum--lightest .spectrum-Card--quiet.is-selected .spectrum-Card-preview:before, .spectrum--lightest .spectrum-Card--quiet.focus-ring .spectrum-Card-preview:before, .spectrum--lightest .spectrum-Card--gallery.is-selected .spectrum-Card-preview:before, .spectrum--lightest .spectrum-Card--gallery.focus-ring .spectrum-Card-preview:before {
+        border-color: rgb(38, 128, 235);
+        box-shadow: 0 0 0 1px rgb(38, 128, 235);
+      }
+.spectrum--lightest .spectrum-Card--quiet.is-drop-target, .spectrum--lightest .spectrum-Card--gallery.is-drop-target {
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
+.spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Card-preview, .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Card-preview {
+      background-color: rgba(38,128,235,0.1);
+    }
+.spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Card-preview:before, .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Card-preview:before {
+        border-color: rgb(38, 128, 235);
+        box-shadow: 0 0 0 1px rgb(38, 128, 235);
+      }
+.spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Asset-folderBackground,
+    .spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Asset-fileBackground,
+    .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Asset-folderBackground,
+    .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Asset-fileBackground {
+      fill: rgba(38,128,235,0.1);
+    }
+.spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Asset-folderOutline,
+    .spectrum--lightest .spectrum-Card--quiet.is-drop-target .spectrum-Asset-fileOutline,
+    .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Asset-folderOutline,
+    .spectrum--lightest .spectrum-Card--gallery.is-drop-target .spectrum-Asset-fileOutline {
+      fill: rgb(38, 128, 235);
+    }
+.spectrum--lightest .spectrum-Card--quiet .spectrum-Card-title, .spectrum--lightest .spectrum-Card--gallery .spectrum-Card-title {
+    color: rgb(80, 80, 80);
+  }
+.spectrum--lightest .spectrum-Card--quiet .spectrum-Card-subtitle, .spectrum--lightest .spectrum-Card--gallery .spectrum-Card-subtitle {
+    color: rgb(116, 116, 116);
+  }

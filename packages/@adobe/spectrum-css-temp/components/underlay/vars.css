@@ -1,0 +1,36 @@
+.spectrum-Underlay {
+  visibility: hidden;
+
+  opacity: 0;
+
+  transition: transform var(--spectrum-global-animation-duration-100, 130ms) ease-in-out,
+              opacity var(--spectrum-global-animation-duration-100, 130ms) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100, 130ms);
+
+  pointer-events: none;
+}
+.spectrum-Underlay.is-open {
+  visibility: visible;
+
+  opacity: 1;
+
+  transition-delay: 0ms;
+
+  pointer-events: auto;
+}
+.spectrum-Underlay {
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  /* Float above things by default */
+  z-index: 1;
+
+  overflow: hidden;
+}
+.spectrum-Underlay {
+  background: var(--spectrum-dialog-underlay-background-color, var(--spectrum-alias-background-color-modal-overlay));
+}

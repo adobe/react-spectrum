@@ -1,0 +1,43 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink {
+      color: rgb(110, 110, 110);
+    }
+.spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink .spectrum-Icon {
+        color: rgb(90, 90, 90);
+      }
+.spectrum-TreeView-itemLink {
+  color: rgb(227, 227, 227);
+}
+.spectrum-TreeView-itemLink:hover,
+  .spectrum-TreeView-itemLink.is-selected {
+    color: rgb(255, 255, 255);
+  }
+.spectrum-TreeView-itemLink:hover::before, .spectrum-TreeView-itemLink.is-selected::before {
+      background-color: rgba(255,255,255,0.06);
+    }
+.spectrum-TreeView-itemLink.focus-ring {
+    color: rgb(255, 255, 255);
+  }
+.spectrum-TreeView-itemLink.focus-ring::before {
+      background-color: rgba(255,255,255,0.06);
+
+      /* we cannot achieve rounded corners with outline so we use box-shadow instead */
+      box-shadow: 0px 0px 0px 2px rgb(38, 128, 235) inset;
+    }
+.spectrum-TreeView-itemLink.is-drop-target::before {
+      background-color: rgba(55,142,240,0.15);
+      box-shadow: 0px 0px 0px 2px rgb(38, 128, 235) inset;
+    }

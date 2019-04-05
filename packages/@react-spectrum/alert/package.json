@@ -1,0 +1,19 @@
+{
+  "name": "@react-spectrum/alert",
+  "version": "3.0.0",
+  "main": "src/Alert.js",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-spectrum/utils": "^3.0.0"
+  },
+  "devDependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^16.8.0",
+    "enzyme": "^3.1.0",
+    "sinon": "^2.2.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "error": "오류",
+  "warning": "경고",
+  "info": "정보",
+  "help": "도움말",
+  "success": "성공"
+}

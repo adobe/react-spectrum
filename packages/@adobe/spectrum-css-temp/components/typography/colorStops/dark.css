@@ -1,0 +1,252 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum-Body1 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Body2 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Body3 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Body4 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Body5 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Heading1 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading3 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading4 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading5 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading6 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Subheading {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Detail {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading1--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading1--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading1--display.spectrum-Heading1--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2--display.spectrum-Heading2--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Body1 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Body2 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Body3 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Body4 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Body5 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Heading1 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading2 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading3 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading4 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading5 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading6 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Subheading {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Detail {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Article .spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading1--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading2--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Article .spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Body1, .spectrum:lang(ko) .spectrum-Body1, .spectrum:lang(zh) .spectrum-Body1 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Body2, .spectrum:lang(ko) .spectrum-Body2, .spectrum:lang(zh) .spectrum-Body2 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Body3, .spectrum:lang(ko) .spectrum-Body3, .spectrum:lang(zh) .spectrum-Body3 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Body4, .spectrum:lang(ko) .spectrum-Body4, .spectrum:lang(zh) .spectrum-Body4 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Body5, .spectrum:lang(ko) .spectrum-Body5, .spectrum:lang(zh) .spectrum-Body5 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Heading1, .spectrum:lang(ko) .spectrum-Heading1, .spectrum:lang(zh) .spectrum-Heading1 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2, .spectrum:lang(ko) .spectrum-Heading2, .spectrum:lang(zh) .spectrum-Heading2 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading3, .spectrum:lang(ko) .spectrum-Heading3, .spectrum:lang(zh) .spectrum-Heading3 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading4, .spectrum:lang(ko) .spectrum-Heading4, .spectrum:lang(zh) .spectrum-Heading4 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading5, .spectrum:lang(ko) .spectrum-Heading5, .spectrum:lang(zh) .spectrum-Heading5 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading6, .spectrum:lang(ko) .spectrum-Heading6, .spectrum:lang(zh) .spectrum-Heading6 {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Subheading, .spectrum:lang(ko) .spectrum-Subheading, .spectrum:lang(zh) .spectrum-Subheading {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Detail, .spectrum:lang(ko) .spectrum-Detail, .spectrum:lang(zh) .spectrum-Detail {
+            color: rgb(227, 227, 227);
+          }
+.spectrum:lang(ja) .spectrum-Heading1--quiet, .spectrum:lang(ko) .spectrum-Heading1--quiet, .spectrum:lang(zh) .spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2--quiet, .spectrum:lang(ko) .spectrum-Heading2--quiet, .spectrum:lang(zh) .spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading1--strong, .spectrum:lang(ko) .spectrum-Heading1--strong, .spectrum:lang(zh) .spectrum-Heading1--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2--strong, .spectrum:lang(ko) .spectrum-Heading2--strong, .spectrum:lang(zh) .spectrum-Heading2--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading1--display, .spectrum:lang(ko) .spectrum-Heading1--display, .spectrum:lang(zh) .spectrum-Heading1--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2--display, .spectrum:lang(ko) .spectrum-Heading2--display, .spectrum:lang(zh) .spectrum-Heading2--display {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading1--display.spectrum-Heading1--strong, .spectrum:lang(ko) .spectrum-Heading1--display.spectrum-Heading1--strong, .spectrum:lang(zh) .spectrum-Heading1--display.spectrum-Heading1--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2--display.spectrum-Heading2--strong, .spectrum:lang(ko) .spectrum-Heading2--display.spectrum-Heading2--strong, .spectrum:lang(zh) .spectrum-Heading2--display.spectrum-Heading2--strong {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading1--display.spectrum-Heading1--quiet, .spectrum:lang(ko) .spectrum-Heading1--display.spectrum-Heading1--quiet, .spectrum:lang(zh) .spectrum-Heading1--display.spectrum-Heading1--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum:lang(ja) .spectrum-Heading2--display.spectrum-Heading2--quiet, .spectrum:lang(ko) .spectrum-Heading2--display.spectrum-Heading2--quiet, .spectrum:lang(zh) .spectrum-Heading2--display.spectrum-Heading2--quiet {
+            color: rgb(255, 255, 255);
+          }
+.spectrum-Code1 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Code2 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Code3 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Code4 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum-Code5 {
+            color: rgb(227, 227, 227);
+          }
+.spectrum,
+.spectrum-Body {
+  color: rgb(227, 227, 227);
+}
+.spectrum-Body--large {
+  color: rgb(227, 227, 227);
+}
+.spectrum-Body--small {
+  color: rgb(227, 227, 227);
+}
+.spectrum-Body--secondary {
+  color: rgb(185, 185, 185);
+}
+.spectrum-Heading--display {
+  color: rgb(255, 255, 255);
+}
+.spectrum-Heading--pageTitle {
+  color: rgb(185, 185, 185);
+}
+.spectrum-Heading--subtitle1 {
+  color: rgb(255, 255, 255);
+}
+.spectrum-Heading--subtitle2 {
+  color: rgb(255, 255, 255);
+}
+.spectrum-Heading--subtitle3 {
+  color: rgb(185, 185, 185);
+}

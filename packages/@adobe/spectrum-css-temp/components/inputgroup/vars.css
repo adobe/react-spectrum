@@ -1,0 +1,241 @@
+/* topdoc
+{{ inputgroup/combobox.yml }}
+*/
+/* topdoc
+{{ inputgroup/combobox-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range-quiet.yml }}
+*/
+:root {
+  /* Todo: move to DNA */
+}
+.spectrum-InputGroup {
+  position: relative;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  min-width: var(--spectrum-alias-single-line-width, var(--spectrum-global-dimension-size-2400));
+  border-radius: var(--spectrum-global-dimension-size-50);
+}
+.spectrum-InputGroup .spectrum-FieldButton {
+    padding: 0 var(--spectrum-dropdown-padding-x, var(--spectrum-global-dimension-size-150));
+    border-top-left-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius, 0);
+    border-bottom-left-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius, 0);
+  }
+.spectrum-InputGroup-field {
+  border-top-right-radius: var(--spectrum-combobox-textfield-border-top-right-radius, 0);
+  border-bottom-right-radius: var(--spectrum-combobox-textfield-border-bottom-right-radius, 0);
+  border-right-width: 0;
+  -ms-flex: 1;
+      flex: 1;
+}
+.spectrum-InputGroup--quiet {
+  border-radius: 0;
+}
+.spectrum-InputGroup--quiet .spectrum-FieldButton {
+    border-radius: 0;
+
+    position: relative;
+    padding-right: 0;
+    border-bottom: var(--spectrum-textfield-quiet-affixed-border-size, 1px) solid;
+  }
+/* More hitarea */
+.spectrum-InputGroup--quiet .spectrum-FieldButton:after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 10px;
+      right: -10px;
+    }
+.spectrum-InputGroup--quiet .spectrum-InputGroup-icon {
+    right: 0;
+  }
+.spectrum-Datepicker--range {
+  border-radius: var(--spectrum-global-dimension-size-50);
+}
+/* Input Group */
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet {
+    border-radius: 0;
+  }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-FieldButton {
+      border-radius: 0;
+    }
+/** Datetime Range **/
+/* Inputs */
+.spectrum-Datepicker--range.spectrum-Datepicker--datetimeRange .spectrum-InputGroup-field {
+      width: calc(var(--spectrum-global-dimension-size-1600) - 2 * var(--spectrum-global-dimension-size-150) + var(--spectrum-global-dimension-size-700) - var(--spectrum-global-dimension-static-font-size-100, 14px) / 2);
+      min-width: calc(var(--spectrum-global-dimension-size-1600) - 2 * var(--spectrum-global-dimension-size-150) + var(--spectrum-global-dimension-size-700) - var(--spectrum-global-dimension-static-font-size-100, 14px) / 2);
+    }
+/* Inputs */
+.spectrum-Datepicker--range .spectrum-InputGroup-field {
+    width: calc(var(--spectrum-global-dimension-size-1600) - 2 * var(--spectrum-global-dimension-size-150));
+    min-width: calc(var(--spectrum-global-dimension-size-1600) - 2 * var(--spectrum-global-dimension-size-150));
+    -ms-flex: initial;
+        flex: initial;
+  }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField {
+      border-right: 0;
+      padding-right: var(--spectrum-global-dimension-size-150);
+    }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField.is-invalid,
+      .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField:invalid {
+        background-image: none;
+        padding-right: var(--spectrum-global-dimension-size-150);
+      }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-endField {
+      border-left: 0;
+      border-radius: 0;
+      padding-left: var(--spectrum-global-dimension-size-150);
+    }
+/* Em dash */
+.spectrum-Datepicker--range .spectrum-Datepicker--rangeDash {
+    line-height: calc(var(--spectrum-textfield-height, var(--spectrum-global-dimension-size-400)) - var(--spectrum-global-dimension-size-100));
+    padding-top: 0;
+    -ms-flex: initial;
+        flex: initial;
+    width: 0;
+    z-index: 1;
+  }
+.spectrum-Datepicker--range .spectrum-Datepicker--rangeDash:before {
+      content: '—';
+      display: inline-block;
+      margin: 0 calc(-0.5 * var(--spectrum-global-dimension-static-font-size-100, 14px));
+      overflow: hidden;
+      text-align: center;
+      vertical-align: middle;
+      width: var(--spectrum-global-dimension-static-font-size-100, 14px);
+    }
+/* Focus ring */
+.spectrum-Datepicker--range.is-focused .spectrum-Datepicker-focusRing {
+      position: absolute;
+      border-radius: var(--spectrum-global-dimension-size-50);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+    }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused .spectrum-Datepicker-focusRing {
+        border-radius: 0;
+        top: auto;
+      }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-Datepicker--rangeDash:before {
+        margin-left: calc(-0.5 * var(--spectrum-global-dimension-static-font-size-100, 14px));
+      }
+.spectrum-InputGroup.is-focused:not(.is-invalid) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid) {
+        border-color: var(--spectrum-textfield-border-color-key-focus, var(--spectrum-global-color-blue-400));
+      }
+.spectrum-InputGroup.is-focused:not(.is-invalid) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid) ~ .spectrum-FieldButton {
+          border-color: var(--spectrum-textfield-border-color-key-focus, var(--spectrum-global-color-blue-400));
+        }
+.spectrum-InputGroup:hover:not(.is-invalid):not(.is-focused) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid) {
+        border-color: var(--spectrum-textfield-border-color-hover, var(--spectrum-global-color-gray-400));
+      }
+.spectrum-InputGroup:hover:not(.is-invalid):not(.is-focused) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid) ~ .spectrum-FieldButton {
+          border-color: var(--spectrum-textfield-border-color-hover, var(--spectrum-global-color-gray-400));
+        }
+.spectrum-InputGroup:hover:not(.is-invalid):not(.is-focused) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid):focus {
+          border-color: var(--spectrum-textfield-border-color-key-focus, var(--spectrum-global-color-blue-400));
+        }
+.spectrum-InputGroup:hover:not(.is-invalid):not(.is-focused) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid):focus ~ .spectrum-FieldButton {
+            border-color: var(--spectrum-textfield-border-color-key-focus, var(--spectrum-global-color-blue-400));
+          }
+.spectrum-InputGroup-field:focus ~ .spectrum-FieldButton {
+    border-color: var(--spectrum-dropdown-border-color-key-focus, var(--spectrum-global-color-blue-400));
+  }
+.spectrum-InputGroup-field:focus.is-invalid ~ .spectrum-FieldButton, .spectrum-InputGroup-field:focus:invalid ~ .spectrum-FieldButton {
+      border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+    }
+/* Only add the 2px ring for keyboard focus */
+.spectrum-InputGroup-field.focus-ring ~ .spectrum-FieldButton {
+    box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus, var(--spectrum-global-color-blue-400));
+  }
+.spectrum-InputGroup-field.focus-ring.is-invalid ~ .spectrum-FieldButton, .spectrum-InputGroup-field.focus-ring:invalid ~ .spectrum-FieldButton {
+      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+    }
+.spectrum-InputGroup--quiet .spectrum-FieldButton,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:hover,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:focus,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:active,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton.is-selected,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:invalid,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton.is-invalid,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:disabled,
+    .spectrum-InputGroup--quiet .spectrum-FieldButton:disabled:hover {
+      border-color: var(--spectrum-textfield-quiet-border-color, var(--spectrum-global-color-gray-300));
+    }
+.spectrum-InputGroup--quiet:hover:not(.is-invalid) .spectrum-InputGroup-field:not(:disabled):not(.is-invalid):not(:focus) ~ .spectrum-FieldButton {
+        border-color: var(--spectrum-textfield-quiet-border-color-hover, var(--spectrum-global-color-gray-400));
+      }
+.spectrum-InputGroup--quiet .spectrum-InputGroup-field.is-invalid ~ .spectrum-FieldButton, .spectrum-InputGroup--quiet .spectrum-InputGroup-field:invalid ~ .spectrum-FieldButton {
+        border-color: var(--spectrum-textfield-border-color-error, var(--spectrum-global-color-red-500));
+      }
+/* Always add the 2px ring for keyboard focus for quiet inputgroups */
+.spectrum-InputGroup--quiet .spectrum-InputGroup-field:focus ~ .spectrum-FieldButton {
+        box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus, var(--spectrum-global-color-blue-400));
+        border-color: var(--spectrum-textfield-quiet-border-color-key-focus, var(--spectrum-global-color-blue-400));
+      }
+.spectrum-InputGroup--quiet .spectrum-InputGroup-field:focus.is-invalid ~ .spectrum-FieldButton, .spectrum-InputGroup--quiet .spectrum-InputGroup-field:focus:invalid ~ .spectrum-FieldButton {
+          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error, var(--spectrum-global-color-red-500));
+          border-color: var(--spectrum-textfield-border-color-error, var(--spectrum-global-color-red-500));
+        }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.focus-ring {
+      box-shadow: none !important;
+    }
+.spectrum-Datepicker--range .spectrum-InputGroup-field[disabled] ~ .spectrum-Datepicker--rangeDash {
+        color: var(--spectrum-textfield-text-color-disabled, var(--spectrum-global-color-gray-500));
+      }
+/* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
+.spectrum-Datepicker--range .focus-ring ~ .spectrum-Datepicker-focusRing {
+      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    }
+.spectrum-Datepicker--range .focus-ring:invalid ~ .spectrum-FieldButton, .spectrum-Datepicker--range .focus-ring.is-invalid ~ .spectrum-FieldButton {
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+      }
+.spectrum-Datepicker--range .focus-ring:invalid ~ .spectrum-Datepicker-focusRing, .spectrum-Datepicker--range .focus-ring.is-invalid ~ .spectrum-Datepicker-focusRing {
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+      }
+.spectrum-Datepicker--range.is-invalid .spectrum-InputGroup-field {
+      border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500)) !important;
+    }
+/* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
+.spectrum-Datepicker--range.is-invalid .focus-ring ~ .spectrum-Datepicker-focusRing {
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+      }
+.spectrum-Datepicker--range.is-invalid .focus-ring ~ .spectrum-FieldButton {
+        border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+      }
+.spectrum-Datepicker--range.is-invalid .spectrum-FieldButton {
+      border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+    }
+.spectrum-Datepicker--range.is-invalid .spectrum-FieldButton.is-invalid.focus-ring {
+          border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+        }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused .spectrum-Datepicker-focusRing {
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus, var(--spectrum-global-color-blue-400));
+      }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused.is-invalid .spectrum-FieldButton {
+          box-shadow: none;
+          border-color: var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+        }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused.is-invalid .spectrum-FieldButton.is-invalid.focus-ring {
+              box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+            }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused.is-invalid .spectrum-Datepicker-focusRing {
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error, var(--spectrum-global-color-red-500));
+        }

@@ -1,0 +1,14 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-StatusLight {
+  height: 40px;
+
+  line-height: 40px;
+  font-size: 17px;
+  font-weight: 400;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-StatusLight::before {
+    width: 10px;
+    height: 10px;
+    margin: 0 15px;
+  }

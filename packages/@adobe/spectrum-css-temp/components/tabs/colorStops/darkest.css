@@ -1,0 +1,87 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+/* topdoc
+{{ tabs/tabs.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-quiet.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-compact.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-quiet-compact.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-vertical.yml }}
+*/
+/* topdoc
+{{ tabs/tabs-compact-vertical.yml }}
+*/
+.spectrum-Tabs {
+  border-bottom-color: rgb(44, 44, 44);
+}
+.spectrum-Tabs--vertical {
+  border-left-color: rgb(44, 44, 44);
+}
+.spectrum-Tabs-selectionIndicator {
+  background-color: rgb(239, 239, 239);
+}
+.spectrum-Tabs-item {
+  color: rgb(162, 162, 162);
+}
+.spectrum-Tabs-item .spectrum-Icon {
+    color: rgb(162, 162, 162)
+  }
+.spectrum-Tabs-item:hover {
+    color: rgb(239, 239, 239);
+  }
+.spectrum-Tabs-item:hover .spectrum-Icon {
+      color: rgb(239, 239, 239)
+    }
+.spectrum-Tabs-item.is-selected {
+    color: rgb(239, 239, 239);
+  }
+.spectrum-Tabs-item.is-selected .spectrum-Icon {
+      color: rgb(239, 239, 239)
+    }
+.spectrum-Tabs-item.focus-ring {
+    color: rgb(239, 239, 239);
+  }
+.spectrum-Tabs-item.focus-ring::before {
+      border-color: rgb(20, 115, 230);
+    }
+.spectrum-Tabs-item.focus-ring .spectrum-Icon {
+      color: rgb(239, 239, 239)
+    }
+.spectrum-Tabs-item.is-disabled {
+    color: rgb(92, 92, 92);
+  }
+.spectrum-Tabs-item.is-disabled .spectrum-Icon {
+      color: rgb(73, 73, 73)
+    }
+.spectrum-Tabs--quiet {
+  border-bottom-color: rgba(0, 0, 0, 0);
+}
+.spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator {
+    background-color: rgb(239, 239, 239);
+  }
+.spectrum-Tabs--vertical.spectrum-Tabs--quiet,
+  .spectrum-Tabs--vertical.spectrum-Tabs--compact {
+    border-left-color: rgba(0, 0, 0, 0);
+  }
+.spectrum-Tabs--vertical.spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator, .spectrum-Tabs--vertical.spectrum-Tabs--compact .spectrum-Tabs-selectionIndicator {
+      background-color: rgb(239, 239, 239);
+    }

@@ -1,0 +1,19 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Label {
+
+  padding: 5px 13px;
+
+  border-radius: 5px;
+
+  font-size: 15px;
+  line-height: 1.5;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Label--large {
+  font-size: 18px;
+  padding: 10px 15px;
+}
+.spectrum--large .spectrum-Label--small {
+  font-size: 13px;
+  padding: 4px 9px;
+}

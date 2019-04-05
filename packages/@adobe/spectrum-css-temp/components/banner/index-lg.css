@@ -1,0 +1,29 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+.spectrum-Banner {
+  display: inline-block;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 15px;
+  line-height: 1.3;
+}
+.spectrum-Banner-header {
+  font-weight: bold;
+}
+/* topdoc
+{{ banner/banner-info.yml }}
+*/
+/* topdoc
+{{ banner/banner-warning.yml }}
+*/
+/* topdoc
+{{ banner/banner-error.yml }}
+*/
+/* topdoc
+{{ banner/banner-corner.yml }}
+*/
+.spectrum-Banner--corner {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}

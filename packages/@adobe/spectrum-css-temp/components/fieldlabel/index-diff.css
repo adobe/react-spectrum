@@ -1,0 +1,27 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-FieldLabel,
+.spectrum--large .spectrum-Form-itemLabel {
+
+  padding: 5px 0 6px;
+
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-FieldLabel-requiredIcon {
+  margin: 5px 0 0 2px;
+}
+.spectrum--large .spectrum-FieldLabel--left {
+  padding: 10px 10px 0 0;
+}
+.spectrum--large .spectrum-FieldLabel--left .spectrum-FieldLabel-requiredIcon {
+    margin: 0px 0 0 2px;
+  }
+.spectrum--large .spectrum-FieldLabel--right {
+  padding: 10px 10px 0 0;
+}
+.spectrum--large .spectrum-Form {
+  border-spacing: 0 30px;
+  margin: -25px 0;
+}

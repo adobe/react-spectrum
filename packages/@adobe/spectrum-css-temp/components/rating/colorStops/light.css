@@ -1,0 +1,71 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+/* topdoc
+{{ rating/rating.yml }}
+*/
+.spectrum-Rating.is-focused {
+    box-shadow: 0 0 0 2px rgb(38, 128, 235);
+  }
+.spectrum-Rating:hover .spectrum-Rating-icon {
+      /* Make all stars colored when the component is hovered */
+      color: rgb(20, 115, 230);
+    }
+.spectrum-Rating:hover .spectrum-Rating-icon:hover {
+        /* The icon that's actually hovered is darker */
+        color: rgb(13, 102, 208);
+      }
+.spectrum-Rating:hover .spectrum-Rating-icon:active {
+        /* The icon that's actually hovered is darker */
+        color: rgb(9, 90, 186);
+      }
+/* Show which star is currently selected */
+.spectrum-Rating:hover .spectrum-Rating-icon.is-currentValue:after {
+          /* Match the color of the star */
+          background: currentColor;
+        }
+.spectrum-Rating-icon {
+  color: rgb(110, 110, 110);
+}
+.spectrum-Rating-icon.is-selected {
+    color: rgb(20, 115, 230);
+  }
+/* All stars following the hovered star */
+.spectrum-Rating-icon:hover ~ .spectrum-Rating-icon {
+      color: rgb(110, 110, 110);
+    }
+.spectrum-Rating--quiet .spectrum-Rating-icon {
+    color: rgb(110, 110, 110);
+  }
+.spectrum-Rating--quiet .spectrum-Rating-icon.is-selected {
+      color: rgb(110, 110, 110);
+    }
+.spectrum-Rating--quiet:hover .spectrum-Rating-icon {
+      /* Make all stars selected when the component is hovered */
+      color: rgb(110, 110, 110);
+    }
+.spectrum-Rating--quiet:hover .spectrum-Rating-icon:hover {
+        /* The icon that's actually hovered is darker */
+        color: rgb(75, 75, 75);
+      }
+.spectrum-Rating--quiet:hover .spectrum-Rating-icon:active {
+        color: rgb(44, 44, 44);
+      }
+/* Disabled */
+.spectrum-Rating.is-disabled .spectrum-Rating-icon {
+      color: rgb(202, 202, 202);
+    }
+.spectrum-Rating.is-disabled .spectrum-Rating-icon.is-selected {
+        color: rgb(202, 202, 202);
+      }

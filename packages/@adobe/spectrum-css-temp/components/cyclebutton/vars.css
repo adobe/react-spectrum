@@ -1,0 +1,11 @@
+/* topdoc
+{{ cyclebutton/cyclebutton-default.yml }}
+*/
+.spectrum-CycleButton {
+  /* Be square */
+  padding: 0 var(--spectrum-actionbutton-icon-padding-x, var(--spectrum-global-dimension-size-85));
+}
+.spectrum-CycleButton .spectrum-CycleButton-item:not(.is-selected) {
+    display: none
+  }
+

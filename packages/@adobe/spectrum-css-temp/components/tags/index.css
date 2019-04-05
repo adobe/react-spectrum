@@ -1,0 +1,74 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* topdoc
+{{ tags/tags.yml }}
+*/
+/* topdoc
+{{ tags/tags-deletable.yml }}
+*/
+.spectrum-Tags {
+  display: inline-block;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.spectrum-Tags:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+.spectrum-Tags-item {
+  float: left;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-align: center;
+      align-items: center;
+  box-sizing: border-box;
+
+  margin: 4px 4px;
+  padding: 0 9px;
+  height: 24px;
+  max-width: 100%;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  outline: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
+  transition: border-color 130ms ease-in-out,
+    color 130ms ease-in-out,
+    box-shadow 130ms ease-in-out,
+    background-color 130ms ease-in-out;
+}
+.spectrum-Tags-item.is-disabled {
+    pointer-events: none;
+  }
+.spectrum-Tags-item > .spectrum-Icon,
+  .spectrum-Tags-item > .spectrum-Avatar {
+    margin-right: 8px;
+
+    /* Add padding for "avatar" variant */
+    margin-left: -2px;
+  }
+.spectrum-Tags-item > .spectrum-Icon ~ .spectrum-Tags-itemLabel, .spectrum-Tags-item > .spectrum-Avatar ~ .spectrum-Tags-itemLabel {
+      margin-right: -2px;
+    }
+.spectrum-Tags-item .spectrum-ClearButton {
+    margin-right: -10px;
+  }
+.spectrum-Tags-itemLabel {
+  height: 100%;
+  line-height: 22px;
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  font-size: 12px;
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

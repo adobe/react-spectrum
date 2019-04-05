@@ -1,0 +1,139 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* topdoc
+{{ inputgroup/combobox.yml }}
+*/
+/* topdoc
+{{ inputgroup/combobox-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range-quiet.yml }}
+*/
+:root {
+  /* Todo: move to DNA */
+}
+.spectrum-InputGroup {
+  position: relative;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  min-width: 240px;
+  border-radius: 5px;
+}
+.spectrum-InputGroup .spectrum-FieldButton {
+    padding: 0 15px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+.spectrum-InputGroup-field {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+  -ms-flex: 1;
+      flex: 1;
+}
+.spectrum-InputGroup--quiet {
+  border-radius: 0;
+}
+.spectrum-InputGroup--quiet .spectrum-FieldButton {
+    border-radius: 0;
+
+    position: relative;
+    padding-right: 0;
+    border-bottom: 1px solid;
+  }
+/* More hitarea */
+.spectrum-InputGroup--quiet .spectrum-FieldButton:after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 10px;
+      right: -10px;
+    }
+.spectrum-InputGroup--quiet .spectrum-InputGroup-icon {
+    right: 0;
+  }
+.spectrum-Datepicker--range {
+  border-radius: 5px;
+}
+/* Input Group */
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet {
+    border-radius: 0;
+  }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-FieldButton {
+      border-radius: 0;
+    }
+/** Datetime Range **/
+/* Inputs */
+.spectrum-Datepicker--range.spectrum-Datepicker--datetimeRange .spectrum-InputGroup-field {
+      width: 193px;
+      min-width: 193px;
+    }
+/* Inputs */
+.spectrum-Datepicker--range .spectrum-InputGroup-field {
+    width: 130px;
+    min-width: 130px;
+    -ms-flex: initial;
+        flex: initial;
+  }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField {
+      border-right: 0;
+      padding-right: 15px;
+    }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField.is-invalid,
+      .spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-startField:invalid {
+        background-image: none;
+        padding-right: 15px;
+      }
+.spectrum-Datepicker--range .spectrum-InputGroup-field.spectrum-Datepicker-endField {
+      border-left: 0;
+      border-radius: 0;
+      padding-left: 15px;
+    }
+/* Em dash */
+.spectrum-Datepicker--range .spectrum-Datepicker--rangeDash {
+    line-height: 30px;
+    padding-top: 0;
+    -ms-flex: initial;
+        flex: initial;
+    width: 0;
+    z-index: 1;
+  }
+.spectrum-Datepicker--range .spectrum-Datepicker--rangeDash:before {
+      content: '—';
+      display: inline-block;
+      margin: 0 -7px;
+      overflow: hidden;
+      text-align: center;
+      vertical-align: middle;
+      width: 14px;
+    }
+/* Focus ring */
+.spectrum-Datepicker--range.is-focused .spectrum-Datepicker-focusRing {
+      position: absolute;
+      border-radius: 5px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+    }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet.is-focused .spectrum-Datepicker-focusRing {
+        border-radius: 0;
+        top: auto;
+      }
+.spectrum-Datepicker--range.spectrum-InputGroup--quiet .spectrum-Datepicker--rangeDash:before {
+        margin-left: -7px;
+      }

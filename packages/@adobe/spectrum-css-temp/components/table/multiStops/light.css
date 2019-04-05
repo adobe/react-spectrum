@@ -1,0 +1,151 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum--light .spectrum-Table-headCell {
+  color: rgb(110, 110, 110);
+  background-color: rgba(0, 0, 0, 0);
+}
+.spectrum--light .spectrum-Table-headCell.is-sortable .spectrum-Table-sortedIcon {
+      color: rgb(142, 142, 142);
+    }
+.spectrum--light .spectrum-Table-headCell.is-sortable:hover {
+      color: rgb(44, 44, 44);
+    }
+.spectrum--light .spectrum-Table-headCell.is-sortable:hover .spectrum-Table-sortedIcon {
+        color: rgb(44, 44, 44);
+      }
+.spectrum--light .spectrum-Table-headCell.is-sortable.focus-ring,
+    .spectrum--light .spectrum-Table-headCell.is-sortable.is-focused {
+      color: rgb(44, 44, 44);
+    }
+.spectrum--light .spectrum-Table-headCell.is-sortable.focus-ring .spectrum-Table-sortedIcon, .spectrum--light .spectrum-Table-headCell.is-sortable.is-focused .spectrum-Table-sortedIcon {
+        color: rgb(44, 44, 44);
+      }
+.spectrum--light .spectrum-Table-headCell.is-sortable:active {
+      color: rgb(44, 44, 44);
+    }
+.spectrum--light .spectrum-Table-headCell.is-sortable:active .spectrum-Table-sortedIcon {
+        color: rgb(44, 44, 44);
+      }
+/* Helper for shared drop target overlay */
+.spectrum--light .spectrum-Table-cell.focus-ring::before, .spectrum--light .spectrum-Table-cell .is-focused::before, .spectrum--light .spectrum-Table-headCell.focus-ring::before, .spectrum--light .spectrum-Table-headCell .is-focused::before {
+      box-shadow: inset 0 0 0 2px rgb(38, 128, 235);
+    }
+.spectrum--light .spectrum-Table-body {
+  border-style: solid;
+  border-color: rgb(225, 225, 225);
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--light .spectrum-Table-body.is-drop-target {
+    border-color: rgb(38, 128, 235);
+    box-shadow: 0 0 0 1px rgb(38, 128, 235);
+  }
+.spectrum--light .spectrum-Table-body.is-drop-target::before {
+      background-color: rgba(20,115,230,0.1);
+    }
+/* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
+   by putting the border on the individual cells instead. */
+.spectrum--light tbody.spectrum-Table-body {
+  border: none;
+}
+.spectrum--light tbody.spectrum-Table-body .spectrum-Table-row {
+    border-top: none;
+  }
+.spectrum--light tbody.spectrum-Table-body .spectrum-Table-cell {
+    border-top: 1px solid rgb(225, 225, 225);
+  }
+.spectrum--light tbody.spectrum-Table-body .spectrum-Table-row .spectrum-Table-cell:first-child {
+    border-left: 1px solid rgb(225, 225, 225);
+  }
+.spectrum--light tbody.spectrum-Table-body .spectrum-Table-row .spectrum-Table-cell:last-child {
+    border-right: 1px solid rgb(225, 225, 225);
+  }
+.spectrum--light tbody.spectrum-Table-body .spectrum-Table-row:last-child .spectrum-Table-cell {
+    border-bottom: 1px solid rgb(225, 225, 225);
+  }
+.spectrum--light .spectrum-Table-row {
+  border-bottom: 1px solid rgb(225, 225, 225);
+  background-color: rgba(0, 0, 0, 0);
+}
+.spectrum--light .spectrum-Table-row:hover {
+    background-color: rgba(44,44,44,0.06);
+  }
+.spectrum--light .spectrum-Table-row.focus-ring,
+  .spectrum--light .spectrum-Table-row.is-focused {
+    background-color: rgba(44,44,44,0.06);
+  }
+.spectrum--light .spectrum-Table-row:active {
+    background-color: rgba(44,44,44,0.1);
+  }
+.spectrum--light .spectrum-Table-row.is-selected {
+    background-color: rgba(20,115,230,0.1);
+  }
+.spectrum--light .spectrum-Table-row.is-selected:hover {
+      background-color: rgba(20,115,230,0.2);
+    }
+.spectrum--light .spectrum-Table-row.is-selected.focus-ring,
+    .spectrum--light .spectrum-Table-row.is-selected.is-focused {
+      background-color: rgba(20,115,230,0.2);
+    }
+.spectrum--light .spectrum-Table-row.is-drop-target::before {
+      box-shadow: inset 0 0 0 2px rgb(38, 128, 235);
+      background-color: rgba(20,115,230,0.1);
+    }
+.spectrum--light .spectrum-Table-cell {
+  color: rgb(75, 75, 75);
+  background-color: rgba(0, 0, 0, 0);
+}
+.spectrum--light .spectrum-Table-cell--divider {
+  border-right-style: solid;
+  border-right-color: rgb(225, 225, 225);
+}
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-body {
+    border-width: 1px 0;
+    background-color: rgba(0, 0, 0, 0);
+  }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-body.is-drop-target {
+      box-shadow: none;
+      border-color: transparent;
+    }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-body.is-drop-target::before {
+        box-shadow: inset 0 0 0 2px rgb(38, 128, 235);
+      }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row {
+    background-color: rgba(0, 0, 0, 0);
+  }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row:hover {
+      background-color: rgba(44,44,44,0.06);
+    }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row.focus-ring,
+    .spectrum--light .spectrum-Table--quiet .spectrum-Table-row.is-focused {
+      background-color: rgba(44,44,44,0.06);
+    }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row:active {
+      background-color: rgba(44,44,44,0.1);
+    }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row.is-selected {
+      background-color: rgba(20,115,230,0.1);
+    }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row.is-selected:hover {
+        background-color: rgba(20,115,230,0.2);
+      }
+.spectrum--light .spectrum-Table--quiet .spectrum-Table-row.is-selected.focus-ring,
+      .spectrum--light .spectrum-Table--quiet .spectrum-Table-row.is-selected.is-focused {
+        background-color: rgba(20,115,230,0.2);
+      }
+.spectrum--light .spectrum-Table--quiet tbody.spectrum-Table-body .spectrum-Table-row .spectrum-Table-cell:first-child,
+    .spectrum--light .spectrum-Table--quiet tbody.spectrum-Table-body .spectrum-Table-row .spectrum-Table-cell:last-child {
+      border-left: none;
+      border-right: none;
+    }

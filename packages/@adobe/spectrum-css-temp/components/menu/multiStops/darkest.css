@@ -1,0 +1,61 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+/* topdoc
+{{ menu/menu-nested.yml }}
+*/
+.spectrum--darkest .spectrum-Menu {
+  background-color: rgba(0, 0, 0, 0);
+}
+/* topdoc
+{{ menu/menu-default.yml }}
+*/
+.spectrum--darkest .spectrum-Menu-item {
+  background-color: rgba(0, 0, 0, 0);
+  color: rgb(200, 200, 200);
+}
+.spectrum--darkest .spectrum-Menu-item.focus-ring,
+  .spectrum--darkest .spectrum-Menu-item.is-focused {
+    background-color: rgba(239,239,239,0.08);
+    color: rgb(200, 200, 200);
+    border-left-color: rgb(20, 115, 230);
+  }
+.spectrum--darkest .spectrum-Menu-item:hover,
+  .spectrum--darkest .spectrum-Menu-item:focus,
+  .spectrum--darkest .spectrum-Menu-item.is-open {
+    background-color: rgba(239,239,239,0.08);
+    color: rgb(200, 200, 200);
+  }
+.spectrum--darkest .spectrum-Menu-item.is-selected {
+    color: rgb(55, 142, 240);
+  }
+.spectrum--darkest .spectrum-Menu-item.is-selected .spectrum-Menu-checkmark {
+      color: rgb(38, 128, 235);
+    }
+.spectrum--darkest .spectrum-Menu-item .is-active,
+  .spectrum--darkest .spectrum-Menu-item:active {
+    background-color: rgba(239,239,239,0.08);
+  }
+.spectrum--darkest .spectrum-Menu-item.is-disabled {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    color: rgb(92, 92, 92);
+    cursor: default;
+  }
+.spectrum--darkest .spectrum-Menu-sectionHeading {
+  color: rgb(162, 162, 162);
+}
+.spectrum--darkest .spectrum-Menu-divider {
+  background-color: rgb(30, 30, 30);
+}

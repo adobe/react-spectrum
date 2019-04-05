@@ -1,0 +1,55 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Dropdown {
+  width: 240px;
+  min-width: 60px;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Dropdown select + .spectrum-Dropdown-icon {
+      right: 15px;
+      margin-top: -4px;
+    }
+.spectrum--large .spectrum-Dropdown-label {
+
+  height: 38px;
+  line-height: 38px;
+
+  font-size: 17px;
+}
+.spectrum--large .spectrum-Dropdown-label.is-placeholder {
+    font-weight: 400;
+    font-style: italic;
+    transition: color 130ms ease-in-out;
+  }
+.spectrum--large .spectrum-Dropdown-label + .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum--large .spectrum-Icon + .spectrum-Dropdown-label {
+  margin-left: 10px;
+}
+.spectrum--large .spectrum-Dropdown-label ~ .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum--large .spectrum-Dropdown-icon {
+  transition: color 130ms ease-out;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.spectrum--large .spectrum-Dropdown-trigger .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+  margin-top: 8px;
+    margin-bottom: 8px;
+  }
+.spectrum--large .spectrum-Dropdown-trigger .spectrum-Dropdown-label + .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    margin-left: 15px;
+  }
+.spectrum--large .spectrum-Icon + .spectrum-Dropdown-icon {
+  margin-left: 10px;
+}
+.spectrum--large .spectrum-Dropdown--quiet {
+  min-width: 60px;
+}
+.spectrum--large .spectrum-Dropdown-popover {
+  max-width: 300px;
+}
+.spectrum--large .spectrum-Dropdown-popover--quiet {
+  margin-left: -16px;
+}

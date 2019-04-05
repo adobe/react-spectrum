@@ -1,0 +1,319 @@
+/* topdoc
+{{ card/card.yml }}
+*/
+/*! topdoc
+{{ card/card-asset.yml }}
+*/
+/*! topdoc
+{{ card/card-small.yml }}
+*/
+.spectrum-Card {
+  position: relative;
+
+  display: -ms-inline-flexbox;
+
+  display: inline-flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+
+  box-sizing: border-box;
+  min-width: var(--spectrum-card-min-width, var(--spectrum-global-dimension-size-3000));
+
+  border: var(--spectrum-card-border-size, 1px) solid transparent;
+  border-radius: var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50));
+}
+.spectrum-Card:focus {
+    outline: none;
+  }
+.spectrum-Card.is-focused .spectrum-Card-quickActions,
+    .spectrum-Card.is-focused .spectrum-Card-actions,
+    .spectrum-Card.is-selected .spectrum-Card-quickActions,
+    .spectrum-Card.is-selected .spectrum-Card-actions,
+    .spectrum-Card:focus .spectrum-Card-quickActions,
+    .spectrum-Card:focus .spectrum-Card-actions,
+    .spectrum-Card:hover .spectrum-Card-quickActions,
+    .spectrum-Card:hover .spectrum-Card-actions {
+      /* Ideally, this would simply apply is-open to the QuickActions component */
+      visibility: visible;
+      opacity: 1;
+      pointer-events: all;
+    }
+.spectrum-Card-actions {
+  position: absolute;
+  right: var(--spectrum-card-actions-margin, var(--spectrum-global-dimension-size-125));
+  top: var(--spectrum-card-actions-margin, var(--spectrum-global-dimension-size-125));
+  height: var(--spectrum-quickactions-height, var(--spectrum-global-dimension-size-500));
+  visibility: hidden;
+}
+.spectrum-Card-quickActions {
+  position: absolute;
+  left: var(--spectrum-card-checkbox-margin, var(--spectrum-global-dimension-size-200));
+  top: var(--spectrum-card-checkbox-margin, var(--spectrum-global-dimension-size-200));
+
+  width: var(--spectrum-quickactions-height, var(--spectrum-global-dimension-size-500));
+  height: var(--spectrum-quickactions-height, var(--spectrum-global-dimension-size-500));
+
+  visibility: hidden;
+}
+.spectrum-Card-quickActions .spectrum-Checkbox {
+    margin: 0;
+  }
+.spectrum-Card-coverPhoto {
+  height: var(--spectrum-card-coverphoto-height, var(--spectrum-global-dimension-size-1700));
+  box-sizing: border-box;
+
+  display: -ms-flexbox;
+
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+
+  border-bottom: var(--spectrum-card-coverphoto-border-bottom-size, 1px) solid transparent;
+  border-radius: calc(var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50)) - 1px) calc(var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50)) - 1px) 0 0;
+
+  background-size: cover;
+  background-position: center center;
+}
+.spectrum-Card-body {
+  padding-top: var(--spectrum-card-body-padding-top, var(--spectrum-global-dimension-size-250));
+  padding-right: var(--spectrum-card-body-padding-right, var(--spectrum-global-dimension-size-300));
+  padding-bottom: var(--spectrum-card-body-padding-bottom, var(--spectrum-global-dimension-size-250));
+  padding-left: var(--spectrum-card-body-padding-left, var(--spectrum-global-dimension-size-300));
+}
+.spectrum-Card-body:last-child {
+    border-radius: 0 0 var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50)) var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50));
+  }
+.spectrum-Card-preview {
+  overflow: hidden;
+  border-radius: calc(var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50)) - 1px) calc(var(--spectrum-card-border-radius, var(--spectrum-global-dimension-size-50)) - 1px) 0 0;
+}
+.spectrum-Card-header {
+  height: var(--spectrum-card-body-header-height, var(--spectrum-global-dimension-size-225));
+}
+.spectrum-Card-content {
+  display: -ms-flexbox;
+  display: flex;
+  height: var(--spectrum-card-body-content-height, var(--spectrum-global-dimension-size-175));
+  margin-top: var(--spectrum-card-body-content-margin-top, var(--spectrum-global-dimension-size-75));
+}
+.spectrum-Card-title {
+  font-size: var(--spectrum-card-title-text-size, var(--spectrum-global-dimension-font-size-100));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: var(--spectrum-card-title-padding-right, var(--spectrum-global-dimension-size-100));
+}
+.spectrum-Card-subtitle {
+  font-size: var(--spectrum-card-subtitle-text-size, var(--spectrum-global-dimension-font-size-50));
+  letter-spacing: var(--spectrum-card-subtitle-letter-spacing, 0.06em);
+  text-transform: uppercase;
+  padding-right: var(--spectrum-card-subtitle-padding-right, var(--spectrum-global-dimension-size-100));
+}
+.spectrum-Card-description {
+  font-size: var(--spectrum-card-subtitle-text-size, var(--spectrum-global-dimension-font-size-50));
+}
+.spectrum-Card-subtitle + .spectrum-Card-description:before {
+  content: "•";
+  padding-right: var(--spectrum-card-subtitle-padding-right, var(--spectrum-global-dimension-size-100));
+}
+.spectrum-Card-footer {
+  padding-top: var(--spectrum-card-footer-padding-top, var(--spectrum-global-dimension-size-175));
+  margin-right: var(--spectrum-card-body-padding-right, var(--spectrum-global-dimension-size-300));
+  padding-bottom: var(--spectrum-card-body-padding-bottom, var(--spectrum-global-dimension-size-250));
+  margin-left: var(--spectrum-card-body-padding-left, var(--spectrum-global-dimension-size-300));
+
+  border-top: var(--spectrum-card-footer-border-top-size, 1px) solid;
+}
+.spectrum-Card-header {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: baseline;
+      align-items: baseline;
+}
+.spectrum-Card-actionButton {
+  -ms-flex: 1;
+      flex: 1;
+  -ms-flex-item-align: center;
+      align-self: center;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: end;
+      justify-content: flex-end;
+}
+/* topdoc
+{{ card/card-quiet-large.yml }}
+*/
+/* topdoc
+{{ card/card-quiet-small.yml }}
+*/
+/* topdoc
+{{ card/card-quiet-folder.yml }}
+*/
+/* topdoc
+{{ card/card-quiet-file.yml }}
+*/
+/* topdoc
+{{ card/card-gallery.yml }}
+*/
+.spectrum-Card--quiet,
+.spectrum-Card--gallery {
+  width: 100%;
+  height: 100%;
+  min-width: var(--spectrum-card-quiet-min-size, var(--spectrum-global-dimension-size-1700));
+  border-width: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.spectrum-Card--quiet .spectrum-Card-preview, .spectrum-Card--gallery .spectrum-Card-preview {
+    width: 100%;
+    -ms-flex: 1;
+        flex: 1;
+    min-height: var(--spectrum-card-quiet-min-size, var(--spectrum-global-dimension-size-1700));
+    padding: var(--spectrum-card-quiet-preview-padding, var(--spectrum-global-dimension-size-250));
+    margin: 0 auto;
+    box-sizing: border-box;
+    border-radius: var(--spectrum-card-quiet-border-radius, var(--spectrum-global-dimension-size-50));
+    position: relative;
+    transition: background-color var(--spectrum-global-animation-duration-100, 130ms);
+    overflow: visible;
+  }
+/* Use a :before to show the selection outline so that the border doesn't
+     * affect the layout of the content within the preview. */
+.spectrum-Card--quiet .spectrum-Card-preview:before, .spectrum-Card--gallery .spectrum-Card-preview:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: inherit;
+      border: var(--spectrum-card-quiet-border-size, 1px) solid transparent;
+    }
+.spectrum-Card--quiet.is-drop-target .spectrum-Card-preview, .spectrum-Card--gallery.is-drop-target .spectrum-Card-preview {
+      transition: none;
+    }
+.spectrum-Card--quiet .spectrum-Card-header, .spectrum-Card--gallery .spectrum-Card-header {
+    height: var(--spectrum-card-quiet-body-header-height, var(--spectrum-global-dimension-size-225));
+    margin-top: var(--spectrum-card-quiet-body-header-margin-top, var(--spectrum-global-dimension-size-175));
+  }
+.spectrum-Card--quiet .spectrum-Card-body, .spectrum-Card--gallery .spectrum-Card-body {
+    padding: 0;
+  }
+.spectrum-Card--small {
+  min-width: var(--spectrum-card-quiet-small-min-size, var(--spectrum-global-dimension-size-900));
+}
+.spectrum-Card--small .spectrum-Card-quickActions {
+    left: var(--spectrum-card-quiet-small-checkbox-margin, var(--spectrum-global-dimension-size-125));
+    top: var(--spectrum-card-quiet-small-checkbox-margin, var(--spectrum-global-dimension-size-125));
+  }
+.spectrum-Card--small .spectrum-Card-preview {
+    padding: var(--spectrum-card-quiet-small-preview-padding, var(--spectrum-global-dimension-size-150));
+    min-height: var(--spectrum-card-quiet-small-min-size, var(--spectrum-global-dimension-size-900));
+  }
+.spectrum-Card--small .spectrum-Card-header {
+    margin-top: var(--spectrum-card-quiet-small-body-margin-top, var(--spectrum-global-dimension-size-100));
+    height: var(--spectrum-card-quiet-small-body-header-height, var(--spectrum-global-dimension-size-150));
+  }
+.spectrum-Card--small .spectrum-Card-title {
+    font-size: var(--spectrum-card-quiet-small-title-text-size, var(--spectrum-global-dimension-size-150));
+  }
+.spectrum-Card--small .spectrum-Card-content,
+  .spectrum-Card--small .spectrum-Card-subtitle,
+  .spectrum-Card--small .spectrum-Card-description {
+    display: none;
+  }
+.spectrum-Card--gallery {
+  min-width: 0;
+}
+.spectrum-Card--gallery .spectrum-Card-preview {
+    padding: 0;
+    border-radius: 0;
+  }
+.spectrum-Card {
+  border-color: var(--spectrum-card-border-color, var(--spectrum-global-color-gray-200));
+  background-color: var(--spectrum-card-background-color, var(--spectrum-global-color-gray-50));
+}
+.spectrum-Card:hover {
+    border-color: var(--spectrum-card-border-color-hover, var(--spectrum-global-color-gray-400));
+  }
+.spectrum-Card.is-selected,
+  .spectrum-Card.focus-ring {
+    border-color: var(--spectrum-card-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus, var(--spectrum-global-color-blue-400));
+  }
+.spectrum-Card.is-drop-target {
+    border-color: var(--spectrum-card-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus, var(--spectrum-global-color-blue-400));
+    background-color: var(--spectrum-alias-highlight-selected);
+  }
+.spectrum-Card-description {
+  color: var(--spectrum-card-description-text-color, var(--spectrum-global-color-gray-700));
+}
+.spectrum-Card-coverPhoto {
+  background-color: var(--spectrum-card-coverphoto-background-color, var(--spectrum-global-color-gray-200));
+  border-bottom-color: var(--spectrum-card-coverphoto-border-color, var(--spectrum-global-color-gray-200));
+}
+.spectrum-Card-footer {
+  border-color: var(--spectrum-card-border-color, var(--spectrum-global-color-gray-200));
+}
+.spectrum-Card--quiet,
+.spectrum-Card--gallery {
+  border-color: transparent;
+  background-color: transparent;
+}
+.spectrum-Card--quiet .spectrum-Card-preview, .spectrum-Card--gallery .spectrum-Card-preview {
+    background-color: var(--spectrum-card-quiet-preview-background-color, var(--spectrum-global-color-gray-200));
+  }
+.spectrum-Card--quiet:hover, .spectrum-Card--gallery:hover {
+    border-color: transparent;
+  }
+.spectrum-Card--quiet:hover .spectrum-Card-preview, .spectrum-Card--gallery:hover .spectrum-Card-preview {
+      background-color: var(--spectrum-card-quiet-preview-background-color-hover, var(--spectrum-global-color-gray-300));
+    }
+.spectrum-Card--quiet.is-selected,
+  .spectrum-Card--quiet.focus-ring,
+  .spectrum-Card--gallery.is-selected,
+  .spectrum-Card--gallery.focus-ring {
+    border-color: transparent;
+    box-shadow: none;
+  }
+.spectrum-Card--quiet.is-selected .spectrum-Card-preview, .spectrum-Card--quiet.focus-ring .spectrum-Card-preview, .spectrum-Card--gallery.is-selected .spectrum-Card-preview, .spectrum-Card--gallery.focus-ring .spectrum-Card-preview {
+      background-color: var(--spectrum-card-quiet-preview-background-color, var(--spectrum-global-color-gray-200));
+    }
+.spectrum-Card--quiet.is-selected .spectrum-Card-preview:before, .spectrum-Card--quiet.focus-ring .spectrum-Card-preview:before, .spectrum-Card--gallery.is-selected .spectrum-Card-preview:before, .spectrum-Card--gallery.focus-ring .spectrum-Card-preview:before {
+        border-color: var(--spectrum-card-quiet-border-color-selected, var(--spectrum-global-color-blue-500));
+        box-shadow: 0 0 0 1px var(--spectrum-card-quiet-border-color-selected, var(--spectrum-global-color-blue-500));
+      }
+.spectrum-Card--quiet.is-drop-target, .spectrum-Card--gallery.is-drop-target {
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
+.spectrum-Card--quiet.is-drop-target .spectrum-Card-preview, .spectrum-Card--gallery.is-drop-target .spectrum-Card-preview {
+      background-color: var(--spectrum-alias-highlight-selected);
+    }
+.spectrum-Card--quiet.is-drop-target .spectrum-Card-preview:before, .spectrum-Card--gallery.is-drop-target .spectrum-Card-preview:before {
+        border-color: var(--spectrum-card-quiet-border-color-selected, var(--spectrum-global-color-blue-500));
+        box-shadow: 0 0 0 1px var(--spectrum-card-quiet-border-color-selected, var(--spectrum-global-color-blue-500));
+      }
+.spectrum-Card--quiet.is-drop-target .spectrum-Asset-folderBackground,
+    .spectrum-Card--quiet.is-drop-target .spectrum-Asset-fileBackground,
+    .spectrum-Card--gallery.is-drop-target .spectrum-Asset-folderBackground,
+    .spectrum-Card--gallery.is-drop-target .spectrum-Asset-fileBackground {
+      fill: var(--spectrum-alias-highlight-selected);
+    }
+.spectrum-Card--quiet.is-drop-target .spectrum-Asset-folderOutline,
+    .spectrum-Card--quiet.is-drop-target .spectrum-Asset-fileOutline,
+    .spectrum-Card--gallery.is-drop-target .spectrum-Asset-folderOutline,
+    .spectrum-Card--gallery.is-drop-target .spectrum-Asset-fileOutline {
+      fill: var(--spectrum-card-quiet-border-color-selected, var(--spectrum-global-color-blue-500));
+    }
+.spectrum-Card--quiet .spectrum-Card-title, .spectrum-Card--gallery .spectrum-Card-title {
+    color: var(--spectrum-card-quiet-title-text-color, var(--spectrum-global-color-gray-800));
+  }
+.spectrum-Card--quiet .spectrum-Card-subtitle, .spectrum-Card--gallery .spectrum-Card-subtitle {
+    color: var(--spectrum-card-quiet-subtitle-text-color, var(--spectrum-global-color-gray-700));
+  }

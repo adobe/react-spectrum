@@ -1,0 +1,40 @@
+/* generated from dna-version: 5.9.0 */
+/* generated from dna-version: 5.9.0 */
+/* Temporary skin variables that need to be moved into origins */
+:root {
+  /* Icon Button*/
+
+  /* Button */
+
+  /* Shell */
+
+  /* haha remove this */
+
+  /* Custom selection color for placeholders using global blue-500 at 30% opacity. Should be updated in Spectrum-DNA */
+}
+.spectrum--light .spectrum-AssetList-item:hover {
+    background-color: rgb(234, 234, 234);
+  }
+.spectrum--light .spectrum-AssetList-item:focus.focus-ring,
+    .spectrum--light .spectrum-AssetList-item:focus.is-focused {
+      background-color: rgb(234, 234, 234);
+    }
+.spectrum--light .spectrum-AssetList-item:focus.focus-ring::before, .spectrum--light .spectrum-AssetList-item:focus.is-focused::before {
+        /* we cannot achieve rounded corners with outline so we use box-shadow instead */
+        box-shadow: 0px 0px 0px 2px rgb(38, 128, 235) inset;
+      }
+.spectrum--light .spectrum-AssetList-item.is-navigated {
+    /* gray background */
+    background-color: rgb(225, 225, 225);
+  }
+.spectrum--light .spectrum-AssetList-item.is-navigated:hover,
+    .spectrum--light .spectrum-AssetList-item.is-navigated:focus {
+      background-color: rgb(225, 225, 225);
+    }
+.spectrum--light .spectrum-AssetList-item.is-selected {
+    background-color: rgba(20,115,230,0.1);
+  }
+.spectrum--light .spectrum-AssetList-item.is-selected:hover,
+    .spectrum--light .spectrum-AssetList-item.is-selected:focus {
+      background-color: rgba(20,115,230,0.2);
+    }

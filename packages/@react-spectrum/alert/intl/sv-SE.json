@@ -1,0 +1,7 @@
+{
+  "error": "Fel",
+  "warning": "Varning",
+  "info": "Information",
+  "help": "Hjälp",
+  "success": "Slutfört"
+}

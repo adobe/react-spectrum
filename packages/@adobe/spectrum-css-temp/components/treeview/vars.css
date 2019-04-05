@@ -1,0 +1,162 @@
+/* topdoc
+{{ treeview/treeview.yml }}
+*/
+.spectrum-TreeView {
+  display: block;
+  list-style: none;
+  position: relative;
+  padding: 0;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  outline: none;
+}
+.spectrum-TreeView-item {
+  /* Don't let child treeviews that are open spill out */
+  overflow: hidden;
+}
+.spectrum-TreeView-item.is-open > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
+      /* Rotate the chevron */
+      transform: rotate(90deg);
+    }
+.spectrum-TreeView-item.is-open > .spectrum-TreeView {
+      /* Open the treeview */
+      height: auto;
+      visibility: visible;
+    }
+.spectrum-TreeView-itemLink {
+  display: block;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  padding: calc(var(--spectrum-treeview-item-margin-y, 8px) / 2 + var(--spectrum-treeview-item-padding-y, 8px)) var(--spectrum-treeview-item-padding-x, 30px);
+
+  text-decoration: none;
+
+  /* Prevent weirdness that can cause the vertical bar to fall down */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spectrum-TreeView-itemLink:focus {
+    /* we cannot achieve rounded corners with outline so we use box-shadow (on skin.css) instead */
+    outline: none;
+  }
+.spectrum-TreeView-itemLink .spectrum-Icon {
+    vertical-align: top;
+    margin-right: var(--spectrum-treeview-item-icon-gap, var(--spectrum-global-dimension-size-100));
+  }
+.spectrum-TreeView-itemLink::before {
+    content: '';
+
+    position: absolute;
+    left: calc(0 + var(--spectrum-treeview-item-border-size, 2px));
+    right: 0;
+    z-index: -1; /* make sure we don't block clicks on chevron */
+
+    /* Position correctly since top is not defined */
+    margin-top: calc(-1 * var(--spectrum-treeview-item-padding-y, 8px));
+
+    height: var(--spectrum-treeview-item-height, var(--spectrum-global-dimension-size-450));
+
+    background-color: transparent;
+
+    border-radius: var(--spectrum-treeview-item-border-radius, var(--spectrum-global-dimension-size-50));
+  }
+.spectrum-TreeView-indicator {
+  display: block;
+
+  float: left;
+  position: relative;
+
+  left: var(--spectrum-global-dimension-size-125);
+  top: calc(-1 * var(--spectrum-global-dimension-size-65));
+  margin-left: calc(-1 * (var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25, 2px)));
+  margin-bottom: calc(-1 * var(--spectrum-global-dimension-size-125));
+
+  padding: var(--spectrum-global-dimension-size-125);
+
+  transition: transform ease var(--spectrum-global-animation-duration-100, 130ms);
+
+  pointer-events: all !important;
+}
+/* Close nested treeviews by default */
+.spectrum-TreeView .spectrum-TreeView {
+  /* Don't be a highlight container stealer */
+  position: static;
+
+  padding-left: var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350));
+
+  /* Be hidden */
+  height: 0;
+  visibility: hidden;
+}
+/* topdoc
+{{ treeview/treeview-flat.yml }}
+*/
+.spectrum-TreeView-item--indent1 {
+  padding-left: var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350));
+}
+.spectrum-TreeView-item--indent2 {
+  padding-left: calc(2 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent3 {
+  padding-left: calc(3 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent4 {
+  padding-left: calc(4 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent5 {
+  padding-left: calc(5 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent6 {
+  padding-left: calc(6 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent7 {
+  padding-left: calc(7 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent8 {
+  padding-left: calc(8 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent9 {
+  padding-left: calc(9 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+.spectrum-TreeView-item--indent10 {
+  padding-left: calc(10 * var(--spectrum-treeview-item-indent, var(--spectrum-global-dimension-size-350)));
+}
+/* topdoc
+{{ treeview/treeview-icons.yml }}
+*/
+/* topdoc
+{{ treeview/treeview-disabled.yml }}
+*/
+.spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink {
+      color: var(--spectrum-alias-text-color-disabled, var(--spectrum-global-color-gray-500));
+    }
+.spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink .spectrum-Icon {
+        color: var(--spectrum-alias-icon-color-disabled, var(--spectrum-global-color-gray-400));
+      }
+.spectrum-TreeView-itemLink {
+  color: var(--spectrum-treeview-item-text-color, var(--spectrum-global-color-gray-800));
+}
+.spectrum-TreeView-itemLink:hover,
+  .spectrum-TreeView-itemLink.is-selected {
+    color: var(--spectrum-treeview-item-text-color-hover, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-TreeView-itemLink:hover::before, .spectrum-TreeView-itemLink.is-selected::before {
+      background-color: var(--spectrum-treeview-item-background-color-hover, var(--spectrum-alias-background-color-hover-overlay));
+    }
+.spectrum-TreeView-itemLink.focus-ring {
+    color: var(--spectrum-treeview-item-text-color-hover, var(--spectrum-global-color-gray-900));
+  }
+.spectrum-TreeView-itemLink.focus-ring::before {
+      background-color: var(--spectrum-treeview-item-background-color-key-focus, var(--spectrum-alias-background-color-hover-overlay));
+
+      /* we cannot achieve rounded corners with outline so we use box-shadow instead */
+      box-shadow: 0px 0px 0px 2px var(--spectrum-treeview-item-border-color-key-focus, var(--spectrum-global-color-blue-400)) inset;
+    }
+.spectrum-TreeView-itemLink.is-drop-target::before {
+      background-color: var(--spectrum-alias-highlight-selected);
+      box-shadow: 0px 0px 0px 2px var(--spectrum-treeview-item-border-color-key-focus, var(--spectrum-global-color-blue-400)) inset;
+    }

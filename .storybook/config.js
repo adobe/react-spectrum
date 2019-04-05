@@ -36,6 +36,9 @@ addDecorator(story => (
 function loadStories() {
   let storiesContext = require.context('../stories', true, /^(.*\.(js|jsx))$/);
   storiesContext.keys().forEach(storiesContext);
+
+  storiesContext = require.context('../packages', true, /^(.*\/stories\/.*?\.(js|jsx))$/);
+  storiesContext.keys().forEach(storiesContext);
 }
 
 configure(loadStories, module);

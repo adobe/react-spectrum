@@ -1,0 +1,36 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-DropIndicator:before,
+  .spectrum--large .spectrum-DropIndicator:after {
+    width: 12px;
+    height: 12px;
+    border: 2px solid;
+  }
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-DropIndicator--horizontal {
+  height: 2px;
+  margin: 0 12px;
+}
+.spectrum--large .spectrum-DropIndicator--horizontal:before,
+  .spectrum--large .spectrum-DropIndicator--horizontal:after {
+    top: -5px;
+  }
+.spectrum--large .spectrum-DropIndicator--horizontal:before {
+    left: -12px;
+  }
+.spectrum--large .spectrum-DropIndicator--horizontal:after {
+    right: -12px;
+  }
+.spectrum--large .spectrum-DropIndicator--vertical {
+  width: 2px;
+  margin: 12px 0;
+}
+.spectrum--large .spectrum-DropIndicator--vertical:before,
+  .spectrum--large .spectrum-DropIndicator--vertical:after {
+    left: -5px;
+  }
+.spectrum--large .spectrum-DropIndicator--vertical:before {
+    top: -12px;
+  }
+.spectrum--large .spectrum-DropIndicator--vertical:after {
+    bottom: -12px;
+  }

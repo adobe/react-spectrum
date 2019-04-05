@@ -1,0 +1,30 @@
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Toast {
+
+  border-radius: 4px;
+
+  padding: 10px 10px 10px 20px;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+/* generated from dna-version: 5.9.0 */
+.spectrum--large .spectrum-Toast-typeIcon {
+
+  margin: 9px 15px 9px 0;
+}
+.spectrum--large .spectrum-Toast-content {
+  padding: 6px 20px 6px 0;
+}
+.spectrum--large .spectrum-Toast-buttons .spectrum-Button + .spectrum-Button,
+    .spectrum--large .spectrum-Toast-buttons .spectrum-Button + .spectrum-ClearButton,
+    .spectrum--large .spectrum-Toast-buttons .spectrum-ClearButton + .spectrum-Button,
+    .spectrum--large .spectrum-Toast-buttons .spectrum-ClearButton + .spectrum-ClearButton {
+      margin-left: 10px;
+    }
+.spectrum--large .spectrum-Toast-body .spectrum-Button {
+    margin-right: 14px;
+  }
+.spectrum--large .spectrum-Toast-body + .spectrum-Toast-buttons {
+    padding-left: 10px;
+  }
