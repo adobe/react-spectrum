@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -91,6 +91,10 @@ module.exports = {
     'react/jsx-boolean-value': ERROR,
     'react/jsx-first-prop-new-line': [ERROR, 'multiline'],
     'react/self-closing-comp': ERROR,
+
+    // hooks
+    'react-hooks/rules-of-hooks': ERROR,
+    'react-hooks/exhaustive-deps': WARN,
 
     // custom rules
     'rulesdir/sort-imports': [ERROR],

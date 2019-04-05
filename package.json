@@ -59,6 +59,7 @@
     "eslint": "^5.0.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0",
     "eslint-plugin-rulesdir": "^0.1.0",
     "file-loader": "^0.9.0",
     "ignore-styles": "^5.0.1",
