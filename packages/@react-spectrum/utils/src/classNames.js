@@ -5,7 +5,7 @@ export let shouldKeepSpectrumClassNames = false;
 export function keepSpectrumClassNames() {
   shouldKeepSpectrumClassNames = true;
   console.warn(
-    'Legacy spectrum-prefixed class names enabled for backward compatibility. ' + 
+    'Legacy spectrum-prefixed class names enabled for backward compatibility. ' +
     'We recommend replacing instances of CSS overrides targeting spectrum selectors ' +
     'in your app with custom class names of your own, and disabling this flag.'
   );
@@ -23,7 +23,7 @@ export function classNames(cssModule, ...values) {
           mapped[cssModule[key]] = value[key];
         }
 
-        if (shouldKeepSpectrumClassNames || !spectrumRegex.test(key)) {
+        if (shouldKeepSpectrumClassNames || !cssModule[key]) {
           mapped[key] = value[key];
         }
       }
@@ -33,8 +33,8 @@ export function classNames(cssModule, ...values) {
       if (cssModule[value]) {
         classes.push(cssModule[value]);
       }
-  
-      if (shouldKeepSpectrumClassNames || !spectrumRegex.test(value)) {
+
+      if (shouldKeepSpectrumClassNames || !cssModule[value]) {
         classes.push(value);
       }
     } else {

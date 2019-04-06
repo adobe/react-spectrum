@@ -8,7 +8,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "@react-stately/utils": "^3.0.0"
   },
   "devDependencies": {}
 }

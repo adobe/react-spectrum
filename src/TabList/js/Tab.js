@@ -33,29 +33,29 @@ export default class Tab extends Component {
   static propTypes = {
     /** Class to add to tab */
     className: PropTypes.string,
-    
+
     /** Whether the tab should be disabled or not */
     disabled: PropTypes.bool,
-    
+
     /** Icon to add to tab */
     icon: PropTypes.object,
-    
+
     /** Whether to disable the invalid icon on the tab */
     invalid: PropTypes.bool,
-    
+
     /** Tab label */
     label: PropTypes.string,
-    
+
     /** Whether to render children in the tab */
     renderChildren: PropTypes.bool,
-    
+
     /** Whether the tab is selected */
     selected: PropTypes.bool,
-    
+
     /** Index of the tab in the grouping */
     tabIndex: PropTypes.number
   };
-  
+
   static defaultProps = {
     disabled: false,
     invalid: false,
@@ -92,7 +92,7 @@ export default class Tab extends Component {
       disabled,
       invalid,
       icon,
-      renderChildren, // Temporary, will be removed in next major version bump
+      renderChildren, // v3 Temporary, will be removed in next major version bump
       tabIndex = 0,
       ...otherProps
     } = this.props;

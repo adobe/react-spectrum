@@ -10,6 +10,8 @@
   "dependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
     "@react-spectrum/utils": "^3.0.0",
+    "@react-stately/tablist": "^3.0.0",
+    "@react-aria/tablist": "^3.0.0",
     "classnames": "^2.2.5"
   },
   "devDependencies": {
