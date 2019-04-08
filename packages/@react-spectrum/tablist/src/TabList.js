@@ -1,16 +1,14 @@
+import {classNames} from '@react-spectrum/utils/src/classNames';
 import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
 import React, {useEffect, useRef, useState} from 'react';
-import {useTabListState} from '@react-stately/tablist';
-import {useTabList} from '@react-aria/tablist';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
-import {classNames} from '@react-spectrum/utils/src/classNames';
-
+import {useTabList} from '@react-aria/tablist';
+import {useTabListState} from '@react-stately/tablist';
 
 export function TabList(props) {
-
   let state = useTabListState(props);
   let [tabsArray, setTabsArray] = useState([]);
-  let {tabListProps, getTabProps} = useTabList(props, state);
+  let {tabListProps} = useTabList(props, state);
   let ref = useRef();
   useEffect(() => {
     let tabs = ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']); // v3 what do we with these?
@@ -28,7 +26,10 @@ export function TabList(props) {
 
   let renderTabs = () => {
     return React.Children.toArray(props.children).map((child, index) =>
-      child ? React.cloneElement(child, getTabProps(index)) : null
+      child ? React.cloneElement(child, {
+        selected: state.selectedIndex === index,
+        onSelect: () => state.setSelectedIndex(index)
+      }) : null
     );
   };
 

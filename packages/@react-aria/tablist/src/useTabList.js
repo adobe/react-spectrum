@@ -1,6 +1,4 @@
-
 export function useTabList(props, tabListState) {
-
   let {
     orientation = 'horizontal'
   } = props;
@@ -9,23 +7,24 @@ export function useTabList(props, tabListState) {
     tabListProps: {
       role: 'tablist',
       'aria-orientation': orientation
-    },
-    getTabProps: index => getTabProps(index, tabListState) //v3 todo Should we get the Tab props here too for disbled prop?
-  }
+    }
+  };
 }
 
-function getTabProps(index, state) {
+export function useTab(props) {
   return {
-    'aria-selected': state.selectedIndex === index,
-    tabIndex: state.selectedIndex === index ? 0 : -1,
-    role: 'tab',
-    onClick: () => state.setSelectedIndex(index),
-    onKeyPress: (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        state.setSelectedIndex(index);
+    tabProps: {
+      'aria-selected': props.selected,
+      tabIndex: props.selected ? 0 : -1,
+      role: 'tab',
+      onClick: () => props.onSelect(),
+      onKeyPress: (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          props.onSelect();
+        }
       }
     }
-    //keyboardActivation?
-  }
+    // keyboardActivation?
+  };
 }
