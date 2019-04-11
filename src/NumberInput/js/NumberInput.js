@@ -110,14 +110,27 @@ export default class NumberInput extends Component {
       focused: false,
       valueInvalid: false,
       inputId: id || createId(),
-      value: value || defaultValue || ''
+      value: this.getValue(value, defaultValue)
     };
+  }
+
+  /**
+   * @private
+   * Takes to value and returns the first defined value or equal to zero
+   */
+  getValue(value, defaultValue) {
+    if (value || value === 0) {
+      return value;
+    } else if (defaultValue || defaultValue === 0) {
+      return defaultValue;
+    }
+    return '';
   }
 
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       this.setState({
-        value: nextProps.value || '',
+        value: this.getValue(nextProps.value),
         valueInvalid: this.isInputValueInvalid(nextProps.value)
       });
     }
