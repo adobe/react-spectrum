@@ -10,13 +10,21 @@ describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
     assert(tree.hasClass('spectrum-Dialog'));
+    assert.equal(tree.prop('id'), tree.instance().dialogId);
+    tree.setProps({id: 'foo'});
+    assert.equal(tree.prop('id'), 'foo');
+    assert.equal(tree.prop('tabIndex'), 1);
   });
 
   it('supports optional title', () => {
     const tree = shallow(<Dialog />);
     assert.equal(tree.find(DialogHeader).length, 0);
+    assert.equal(tree.prop('aria-labelledby'), null, 'with no title, aria-labelledby === null');
     tree.setProps({title: 'Foo'});
     assert.equal(tree.find(DialogHeader).length, 1);
+    assert.equal(tree.find(DialogHeader).prop('id'), `${tree.prop('id')}-heading`, 'with title, DialogHeader has an id');
+    assert.equal(tree.find(DialogHeader).dive().find('Heading').prop('id'), `${tree.prop('id')}-heading`, 'DialogHeader id propagates to Heading');
+    assert.equal(tree.prop('aria-labelledby'), `${tree.prop('id')}-heading`, 'with title, aria-labelledby is set to id on DialogHeader > Heading');
   });
 
   it('supports optional footer', () => {
@@ -291,5 +299,42 @@ describe('Dialog', () => {
     assert(stub.calledTwice);
     await sleep(1);
     assert(onClose.calledTwice);
+  });
+
+  describe('Accessibility', () => {
+    it('supports aria-label property', () => {
+      const tree = shallow(<Dialog aria-label="foo" />);
+      assert.equal(tree.prop('aria-label'), 'foo');
+    });
+
+    it('supports aria-labelledby property', () => {
+      const tree = shallow(<Dialog aria-labelledby="foo" />);
+      assert.equal(tree.prop('aria-labelledby'), 'foo');
+      tree.setProps({'aria-labelledby': null, title: 'test'});
+      const dialogId = tree.instance().dialogId;
+      assert.equal(tree.prop('id'), dialogId);
+      assert.equal(tree.prop('aria-labelledby'), `${dialogId}-heading`);
+    });
+
+    it('supports aria-describedby property', () => {
+      const tree = shallow(<Dialog aria-describedby="foo" />);
+      assert.equal(tree.prop('aria-describedby'), 'foo');
+      tree.setProps({'aria-describedby': null, title: 'test'});
+      const dialogId = tree.instance().dialogId;
+      assert.equal(tree.prop('aria-describedby'), null);
+      tree.setProps({children: <span>bar</span>});
+      assert.equal(tree.prop('aria-describedby'), `${dialogId}-content`);
+      tree.setProps({title: null});
+      assert.equal(tree.prop('aria-describedby'), null);
+    });
+
+    it('supports aria-modal property', () => {
+      const tree = shallow(<Dialog />);
+      assert.equal(tree.prop('aria-modal'), Dialog.defaultProps.trapFocus);
+      tree.setProps({trapFocus: false});
+      assert.equal(tree.prop('aria-modal'), false);
+      tree.setProps({'aria-modal': true});
+      assert.equal(tree.prop('aria-modal'), true);
+    });
   });
 });

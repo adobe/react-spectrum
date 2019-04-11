@@ -20,6 +20,7 @@ export default function DialogHeader({
   onCancel,
   className,
   autoFocusButton,
+  id,
   ...otherProps
 }) {
   let Icon = VARIANT_ICONS[variant];
@@ -32,7 +33,7 @@ export default function DialogHeader({
         `spectrum-Dialog-header--${variant}`,
         className
       )}>
-      <Heading size={3} className="spectrum-Dialog-title">{title}</Heading>
+      <Heading size={3} className="spectrum-Dialog-title" id={id}>{title}</Heading>
       {Icon && <Icon size={null} className="spectrum-Dialog-typeIcon" />}
       {fullscreen && confirmLabel &&
         <DialogButtons

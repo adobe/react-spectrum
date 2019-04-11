@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
@@ -40,6 +41,11 @@ export default class Dialog extends Component {
     onClose: function () {},
     trapFocus: true
   };
+
+  constructor(props) {
+    super(props);
+    this.dialogId = createId();
+  }
 
   /*
    * Calls the props.onConfirm() or props.onCancel() asynchronously if present,
@@ -112,6 +118,11 @@ export default class Dialog extends Component {
       role,
       tabIndex,
       trapFocus,
+      id = this.dialogId,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
+      'aria-modal': ariaModal,
       ...otherProps
     } = this.props;
 
@@ -135,7 +146,12 @@ export default class Dialog extends Component {
         role={role}
         tabIndex={tabIndex === undefined || trapFocus ? 1 : tabIndex}
         onFocus={this.onFocus}
-        onKeyDown={this.onKeyDown}>
+        onKeyDown={this.onKeyDown}
+        id={id}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby || (title && !ariaLabel ? `${id}-heading` : null)}
+        aria-describedby={ariaDescribedby || (title && children ? `${id}-content` : null)}
+        aria-modal={ariaModal || trapFocus}>
         {title &&
           <DialogHeader
             variant={derivedVariant}
@@ -144,12 +160,13 @@ export default class Dialog extends Component {
             confirmLabel={confirmLabel}
             secondaryLabel={secondaryLabel}
             cancelLabel={cancelLabel}
+            id={`${id}-heading`}
             {...otherProps}
             onConfirm={this.onConfirm}
             onCancel={this.onCancel} />
         }
 
-        {title ? <div className="spectrum-Dialog-content">{children}</div> : children}
+        {title ? <div className="spectrum-Dialog-content" id={`${id}-content`}>{children}</div> : children}
 
         {!fullscreen && confirmLabel &&
         <DialogButtons
