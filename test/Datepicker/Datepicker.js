@@ -606,6 +606,8 @@ describe('Datepicker', () => {
       clock.tick(125);
       assert(tree.state('open'));
       assert.equal(document.activeElement, instance.calendarRef.calendarBody);
+      // trapFocus should manage focus among descendants, so blur before testing trapFocus on Popover itself
+      document.activeElement.blur();
       document.querySelector(POPOVER_SELECTOR).focus();
       assert.equal(document.activeElement, document.querySelector(PREV_MONTH_BUTTON_SELECTOR));
       findToggleButton(tree).simulate('focus');
@@ -621,6 +623,8 @@ describe('Datepicker', () => {
       clock.tick(125);
       assert(tree.state('open'));
       assert.equal(document.activeElement, document.querySelector(HOUR_TEXTFIELD_SELECTOR));
+      // trapFocus should manage focus among descendants, so blur before testing trapFocus on Popover itself
+      document.activeElement.blur();
       document.querySelector(POPOVER_SELECTOR).focus();
       assert.equal(document.activeElement, document.querySelector(HOUR_TEXTFIELD_SELECTOR));
       findToggleButton(tree).simulate('focus');
