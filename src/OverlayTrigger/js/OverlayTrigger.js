@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator';
+import {chain} from '../../utils/events';
 import createId from '../../utils/createId';
 import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
@@ -51,7 +52,7 @@ function getScrollParents(node) {
 export default class OverlayTrigger extends Component {
   static propTypes = {
     ...Overlay.propTypes,
-     /**
+    /**
      * Specify which action or actions trigger Overlay visibility
      */
     trigger: PropTypes.oneOfType([
@@ -376,9 +377,9 @@ export default class OverlayTrigger extends Component {
           node = ReactDOM.findDOMNode(overlay);
         }
         if ((node &&
-             (node === document.activeElement ||
-              node.contains(document.activeElement))) ||
-            document.activeElement === document.body) {
+          (node === document.activeElement ||
+            node.contains(document.activeElement))) ||
+          document.activeElement === document.body) {
           this._lastFocus.focus();
         }
       }
@@ -463,7 +464,7 @@ export default class OverlayTrigger extends Component {
     // Attach trigger events in case on un-controlled overlay
     if (show === undefined) {
       if (isOneOf('click', trigger) && !isOneOf('longClick', trigger)) {
-        triggerProps.onClick = this.handleToggle;
+        triggerProps.onClick = chain(this.props.onClick, this.handleToggle);
       }
 
       if (isOneOf('longClick', trigger)) {

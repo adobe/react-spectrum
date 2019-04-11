@@ -23,12 +23,13 @@ describe('OverlayTrigger', () => {
       clock.runAll();
       clock.restore();
     });
-    it('should support lastFocus prop', async () => {
-      const lastFocus = {
+    it('should support lastFocus prop', () => {
+      let lastFocus = {
         focus: sinon.spy()
       };
+      let onClickSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger trigger="click">
+        <OverlayTrigger onClick={onClickSpy} trigger="click">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -40,6 +41,7 @@ describe('OverlayTrigger', () => {
       clock.tick(50);
 
       assert.equal(tree.instance().rememberedFocus(), tree.find(Button).getDOMNode());
+      assert(onClickSpy.calledOnce);
       assert(tree.state('show'));
       assert.equal(document.querySelector('.spectrum-Popover'), document.activeElement);
 
@@ -49,6 +51,7 @@ describe('OverlayTrigger', () => {
       tree.find(Button).simulate('click');
       clock.tick(125);
 
+      assert(onClickSpy.calledTwice);
       assert(!tree.state('show'));
       assert(lastFocus.focus.called);
     });

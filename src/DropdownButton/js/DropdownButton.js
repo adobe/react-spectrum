@@ -5,10 +5,10 @@ import More from '../../Icon/More';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, holdAffordance, ...props}) {
+export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, holdAffordance, onClick, ...props}) {
   let trigger = holdAffordance ? 'longClick' : undefined;
   return (
-    <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect} trigger={trigger}>
+    <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onClick={onClick} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect} trigger={trigger}>
       <Button
         variant="action"
         quiet
