@@ -15,7 +15,7 @@ A **progress bar** represents the progress of a task. Progress bars in Spectrum 
 ## Variants
 ### Sizing
 
-There are a couple of variants to choose from in Spectrum in trems of size. The `size` prop controls the width of the bar, with `M` being the default.
+There are a couple of variants to choose from in Spectrum in terms of size. The `size` prop controls the width of the bar, with `M` being the default.
 
 <Progress size="S" value={50} />
 
@@ -27,6 +27,22 @@ There are a couple of variants to choose from in Spectrum in trems of size. The 
 
 ```jsx
 <Progress size="M" value={50} />
+```
+
+Additionally you may specify `variant="overBackground"` if your progress bar is over some background color.
+
+<div style={{
+  'width': '250px',
+  'height': '60px',
+  'background-color': 'rgba(0,0,0,0.4)',
+  'display': 'flex',
+  'align-items': 'center',
+  'justify-content': 'center'}}>
+  <Progress variant="overBackground" value={50} />
+</div>
+
+```jsx
+<Progress variant="overBackground" value={50} />
 ```
 
 ### Progress Status

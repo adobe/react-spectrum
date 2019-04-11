@@ -19,8 +19,7 @@ export default function DialogButtons({
   onConfirm,
   onCancel,
   className,
-  variant,
-  ...otherProps
+  variant
 }) {
   const confirmVariant = BUTTON_VARIANTS[variant] || 'primary';
 

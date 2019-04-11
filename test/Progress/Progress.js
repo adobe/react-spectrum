@@ -66,6 +66,13 @@ describe('Progress', () => {
       assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), false);
     });
 
+    it('supports variant = overBackground', () => {
+      const tree = shallow(<Progress showPercent variant="overBackground" />);
+      assert.equal(tree.hasClass('spectrum-BarLoader--overBackground'), true);
+      tree.setProps({variant: undefined});
+      assert.equal(tree.hasClass('spectrum-BarLoader--overBackground'), false);
+    });
+
     it('supports custom labels', () => {
       const tree = shallow(<Progress label="foo" />);
       assert.equal(findLabel(tree).text(), 'foo');

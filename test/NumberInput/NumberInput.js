@@ -69,6 +69,16 @@ describe('NumberInput', () => {
     assert.equal(tree.state('value'), 5);
   });
 
+  it('supports defaultValue of 0 not being \'\'', () => {
+    const tree = shallow(<NumberInput defaultValue={0} />);
+    assert.equal(tree.state('value'), 0);
+  });
+
+  it('supports value of 0 not being \'\'', () => {
+    const tree = shallow(<NumberInput value={0} />);
+    assert.equal(tree.state('value'), 0);
+  });
+
   it('supports placeholder', () => {
     const tree = shallow(<NumberInput placeholder="foo" />);
     const input = findInput(tree);

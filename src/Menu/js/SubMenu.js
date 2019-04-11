@@ -109,13 +109,15 @@ export default class SubMenu extends Component {
       ...otherProps
     } = this.props;
 
+    const {opened} = this.state;
+
     return (
       <OverlayTrigger
         placement="right top"
         offset={-10}
         crossOffset={-4}
         selected={false}
-        show={this.state.opened}
+        show={opened}
         onHide={this.onHide}
         onExited={this.onExited}>
         <MenuItem
@@ -123,17 +125,18 @@ export default class SubMenu extends Component {
           className={
             classNames(
               {
-                'is-open': this.state.opened
+                'is-open': opened
               },
               className
             )
           }
           ref={r => this.menuItem = r}
           aria-haspopup="menu"
-          aria-expanded={this.state.opened}
+          aria-expanded={opened}
           aria-owns={this.subMenuId}
           {...otherProps}
           onKeyDown={otherProps.disabled ? undefined : this.handleKeyDown}
+          onClick={this.show}
           onMouseEnter={this.show}
           onMouseLeave={this.hide}
           hasNestedMenu>
