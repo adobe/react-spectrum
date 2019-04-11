@@ -15,7 +15,7 @@ export default function Progress({
   value = 0, // number between 0 - 100
   size = 'M', // 'S', 'M'
   showPercent = false, // Whether the label should be shown or not
-  variant, // What type of progress bar to show: 'positive', 'warning', 'critical'
+  variant, // Either undef or 'overBackground', 'positive', 'warning', 'critical'
   labelPosition = 'left', // 'left', 'top', 'bottom'
   label,
   className,
@@ -53,6 +53,7 @@ export default function Progress({
           `spectrum-BarLoader--${sizeClassPart}`,
           {
             'spectrum-BarLoader--sideLabel': labelPosition === 'left',
+            'spectrum-BarLoader--overBackground': variant === 'overBackground',
             'is-positive': variant === 'positive',
             'is-warning': variant === 'warning',
             'is-critical': variant === 'critical'

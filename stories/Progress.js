@@ -30,6 +30,26 @@ storiesOf('Progress', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: overBackground',
+    () => {
+      const style = {
+        'width': '250px',
+        'height': '60px',
+        'background-color': 'rgba(0,0,0,0.4)',
+        'display': 'flex',
+        'align-items': 'center',
+        'justify-content': 'center'
+      };
+
+      return (
+        <div style={style}>
+          {render({variant: 'overBackground', value: 50})}
+        </div>
+      );
+    },
+    {inline: true}
+  )
+  .addWithInfo(
     'showPercent: true',
     () => render({showPercent: true, value: 50}),
     {inline: true}
