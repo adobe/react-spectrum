@@ -63,7 +63,13 @@ export default class Autocomplete extends React.Component {
     /**
      * Controlled state for showing/hiding menu.
      */
-    showMenu: PropTypes.bool
+    showMenu: PropTypes.bool,
+
+    /**
+     * A function that returns a wrapper component to render a list item label.
+     * Useful in providing custom html to the rendered label.
+     */
+    renderItem: PropTypes.func
   };
 
   static defaultProps = {
@@ -166,7 +172,7 @@ export default class Autocomplete extends React.Component {
 
   onSelect(value, event) {
     this._selectedValue = value;
-    this.onChange(typeof value === 'string' ? value : value.label);
+    this.onChange(getLabel(value));
     this.hideMenu();
 
     if (this.props.onSelect) {
@@ -385,7 +391,7 @@ export default class Autocomplete extends React.Component {
   }
 
   render() {
-    let {id, className} = this.props;
+    let {id, className, renderItem} = this.props;
     let {isFocused, results = [], selectedIndex, showMenu, value} = this.state;
     let children = React.Children.toArray(this.props.children);
     let trigger = children.find(c => c.props.autocompleteInput) || children[0];
@@ -444,7 +450,7 @@ export default class Autocomplete extends React.Component {
                   selected={label === value}
                   onMouseEnter={this.onMouseEnter.bind(this, i)}
                   onMouseDown={e => e.preventDefault()}>
-                  {label}
+                  {renderItem ? renderItem(label) : label}
                 </MenuItem>
               );
             })}

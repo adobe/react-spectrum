@@ -108,6 +108,21 @@ describe('Autocomplete', () => {
     assert.equal(tree.find(MenuItem).length, 2);
   });
 
+  it('should optionally call the renderItem callback to render menu items', async () => {
+    let tree = shallow(
+      <Autocomplete getCompletions={v => ['one', 'two']} renderItem={label => <em>{label}</em>}>
+        <input />
+      </Autocomplete>
+    );
+
+    findInput(tree).simulate('focus');
+    findInput(tree).simulate('change', 'test');
+
+    await nextEventLoopIteration();
+
+    assert.equal(tree.find(MenuItem).first().childAt(0).type(), 'em');
+  });
+
   it('should handle keyboard navigation of menu items', async () => {
     const tree = shallow(
       <Autocomplete getCompletions={v => ['one', 'two', 'three']}>

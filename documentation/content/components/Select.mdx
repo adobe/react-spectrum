@@ -164,6 +164,18 @@ The various items are provided as an array to the `options` prop as shown below.
 />
 ```
 
+### renderItem
+
+You can use the `renderItem` prop to customize the rendering of the items displayed in the dropdown.
+This is useful in case custom props are needed for styling or accessibility, or using a semantic
+element for the type of data being displayed (e.g. `<time>`).
+
+```jsx
+<Select
+  {/* ... */}
+  renderItem={item => <time {/* ... */}>{item}</time>} />
+```
+
 ## States
 
 `Select` has a number of props for controlling its visual state. It supports the `disabled` prop, which applies a disabled style to the component, and also prevents clicks from activating it. It also support the `invalid` prop to apply an invalid appearance to the select component.

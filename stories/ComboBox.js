@@ -85,6 +85,16 @@ storiesOf('ComboBox', module)
     'controlled',
     () => renderControlled({options: OPTIONS}),
     {inline: true}
+  )
+  .addWithInfo(
+    'renderItem',
+    'This example uses renderItem method to italicize text',
+    () => render({
+      options: OPTIONS,
+      'aria-label': 'renderItem',
+      renderItem: (label) => <em>{label}</em>
+    }),
+    {inline: true}
   );
 
 function render(props = {}) {

@@ -59,7 +59,13 @@ export default class ComboBox extends React.Component {
     /**
      * Controlled state for showing/hiding menu.
      */
-    showMenu: PropTypes.bool
+    showMenu: PropTypes.bool,
+
+    /**
+     * A function that returns a wrapper component to render a list item label.
+     * Useful in providing custom html to the rendered label.
+     */
+    renderItem: PropTypes.func
   };
 
   static defaultProps = {
@@ -180,6 +186,7 @@ export default class ComboBox extends React.Component {
       quiet,
       onChange,
       onSelect,
+      renderItem,
       onMenuToggle,
       showMenu,
       ...props
@@ -204,7 +211,8 @@ export default class ComboBox extends React.Component {
         onMenuShow={this.onMenuShow}
         onMenuHide={this.onMenuHide}
         showMenu={showMenu}
-        onMenuToggle={onMenuToggle}>
+        onMenuToggle={onMenuToggle}
+        renderItem={renderItem}>
         <Textfield
           className={classNames('spectrum-InputGroup-field')}
           {...props}

@@ -50,6 +50,11 @@ describe('ComboBox', () => {
     assert.deepEqual(tree.prop('getCompletions')('eapp'), ['pineapple']);
   });
 
+  it('passes through the renderItem prop', () => {
+    tree = shallow(<ComboBox options={['pineapple', 'Crabapple', 'banana', 'apple']} renderItem={label => <em>{label}</em>} />);
+    assert.equal(typeof tree.prop('renderItem'), 'function');
+  });
+
   it('should toggle menu on button click', async () => {
     tree = mount(<ComboBox options={['one', 'two', 'three']} />);
     const autoComplete = tree.find(Autocomplete).instance();

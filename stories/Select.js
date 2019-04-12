@@ -141,7 +141,8 @@ storiesOf('Select', module)
     'Stay open on select',
     () => render({closeOnSelect: false}),
     {inline: true}
-  ).addWithInfo(
+  )
+  .addWithInfo(
     'with icons',
     () =>
       render({
@@ -153,13 +154,22 @@ storiesOf('Select', module)
         ]
       }),
     {inline: true}
-  ).addWithInfo(
+  )
+  .addWithInfo(
     'with menuClassName',
     () => render({menuClassName: 'custom-class-name'}),
     {inline: true}
-  ).addWithInfo(
+  )
+  .addWithInfo(
     'no flip',
-    () => render({flip: false}),
+    () => render({flip: false})
+  )
+  .addWithInfo(
+    'renderItem',
+    'This example uses renderItem method to italicize text',
+    () => render({
+      renderItem: label => <em>{label}</em>
+    }),
     {inline: true}
   );
 

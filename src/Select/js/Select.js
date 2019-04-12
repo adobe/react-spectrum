@@ -21,8 +21,21 @@ let QUIET_MARGIN = 24;
 @autobind
 export default class Select extends React.Component {
   static propTypes = {
+    /**
+     * If true, the select list will close on selection of an item
+     */
     closeOnSelect: PropTypes.bool,
-    menuClassName: PropTypes.string
+
+    /**
+     * String for extra class names to add to the select list
+     */
+    menuClassName: PropTypes.string,
+
+    /**
+     * A function that returns a wrapper component to render a list item label.
+     * Useful in providing custom html to the rendered label.
+     */
+    renderItem: PropTypes.func
   };
 
   constructor(props) {
@@ -129,6 +142,7 @@ export default class Select extends React.Component {
       labelId,
       id = this.selectId,
       icon,
+      renderItem,
       ...otherProps
     } = this.props;
 
@@ -229,7 +243,8 @@ export default class Select extends React.Component {
             maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null,
             marginRight: quiet && alignRight ? -1 * (QUIET_MARGIN / 2) : null
           }}
-          autoFocus />
+          autoFocus
+          renderItem={renderItem} />
       </Dropdown>
     );
   }

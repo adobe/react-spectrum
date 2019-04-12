@@ -67,6 +67,11 @@ describe('Select', () => {
     assert.deepEqual(tree.find(SelectMenu).prop('value'), []);
   });
 
+  it('passes through the renderItem prop', () => {
+    const tree = shallow(<Select options={testOptions} renderItem={label => <em>{label}</em>} />);
+    assert.equal(typeof tree.find(SelectMenu).prop('renderItem'), 'function');
+  });
+
   it('should set an initial value', () => {
     const tree = shallow(<Select options={testOptions} value="vanilla" />);
     assert.equal(tree.find('.spectrum-Dropdown-label').text(), 'Vanilla');

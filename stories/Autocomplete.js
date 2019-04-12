@@ -60,4 +60,17 @@ storiesOf('Autocomplete', module)
       </Autocomplete>
     ),
     {inline: true}
+  )
+  .addWithInfo(
+    'renderItem',
+    'This example uses renderItem method to italicize text',
+    () => (
+      <Autocomplete
+        getCompletions={getCompletions}
+        onSelect={action('select')}
+        renderItem={label => <em>{label}</em>}>
+        <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
+    ),
+    {inline: true}
   );

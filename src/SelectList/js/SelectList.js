@@ -28,7 +28,13 @@ export default class SelectList extends Component {
     value: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string),
       PropTypes.string
-    ])
+    ]),
+
+    /**
+     * A function that returns a wrapper component to render a list item label.
+     * Useful in providing custom html to the rendered label.
+     */
+    renderItem: PropTypes.func
   };
 
   static defaultProps = {
@@ -106,7 +112,7 @@ export default class SelectList extends Component {
         selected={this.isSelected(option)}
         disabled={this.props.disabled || option.disabled}
         onSelect={this.handleSelect.bind(this, option)}>
-        {option.label}
+        {this.props.renderItem ? this.props.renderItem(option.label) : option.label}
       </ListItem>
     ))
   )
@@ -123,6 +129,7 @@ export default class SelectList extends Component {
     } = this.props;
 
     delete otherProps.onTab;
+    delete otherProps.renderItem;
 
     return (
       <List

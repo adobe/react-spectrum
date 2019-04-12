@@ -13,10 +13,25 @@ const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR +
 
 export default class List extends Component {
   static propTypes = {
-    className: PropTypes.string,
-    role: PropTypes.string,
+    /**
+     * Whether or not the list supports selection.
+     */
     selectable: PropTypes.bool,
-    autoFocus: PropTypes.bool
+
+    /**
+     * If focus should immediately be given to the list upon render.
+     */
+    autoFocus: PropTypes.bool,
+
+    /**
+     * String for extra class names to add to the top level div
+     */
+    className: PropTypes.string,
+
+    /**
+     * The WAI-ARIA role for the list. Defaults to "listbox", but could be "menu" depending on context.
+     */
+    role: PropTypes.oneOf(['listbox', 'menu'])
   };
 
   static defaultProps = {
