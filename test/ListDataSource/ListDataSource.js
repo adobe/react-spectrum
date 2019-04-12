@@ -92,6 +92,19 @@ describe('ListDataSource', function () {
     assert.deepEqual(insertItems.getCall(0).args, [new IndexPath(0, 4), [5, 6, 7, 8], false]);
   });
 
+  it('should only display results of last performLoadMore', async function () {
+    let ds = new TestDS;
+    await ds.performLoad();
+
+    let insertItems = sinon.spy(ds, 'insertItems');
+
+    ds.performLoadMore();
+    ds.performLoadMore();
+    await sleep(4);
+    assert.equal(insertItems.callCount, 1);
+    assert.deepEqual(ds.sections[0].length , 8);
+  });
+
   it('should trigger a load when performing a sort', async function () {
     let ds = new TestDS;
     await ds.performLoad();

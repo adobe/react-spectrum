@@ -71,9 +71,14 @@ export default class ListDataSource extends ArrayDataSource {
    * @return {boolean} - Whether more data was inserted.
    */
   async performLoadMore() {
+    let requestId = REQUEST_ID++;
+    this[LAST_REQUEST] = requestId;
+
     let items = await this.loadMore();
     if (items && items.length > 0) {
-      this.insertItems(new IndexPath(0, this.sections[this.sections.length - 1].length), items.slice(), false);
+      if (this[LAST_REQUEST] === requestId) {
+        this.insertItems(new IndexPath(0, this.sections[this.sections.length - 1].length), items.slice(), false);
+      }
       return true;
     }
 

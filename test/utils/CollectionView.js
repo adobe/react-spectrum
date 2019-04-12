@@ -322,6 +322,25 @@ describe('CollectionView', function () {
     assert.equal(loadMoreStub.callCount, 1);
   });
 
+  it('should not scroll when isLoading is true', async function () {
+    const loadMoreStub = stub(ds, 'loadMore').callsFake(() => {});
+    ds.isLoading = true;
+    const tree = shallow(
+      <CollectionView
+        layout={layout}
+        dataSource={ds}
+        renderItemView={renderItemView} />
+    );
+    const tableInstance = tree.instance();
+    tableInstance.collection = {relayout: () => {}, contentOffset: new Point(0, 900), contentSize: new Size(100, 1000), size: new Size(100, 100), dataSource: ds};
+    assert.equal(loadMoreStub.callCount, 0);
+
+    tree.find(EditableCollectionView).simulate('scroll');
+    await sleep(100);
+
+    assert.equal(loadMoreStub.callCount, 0);
+  });
+
   it('should support dragging rows', async function () {
     const tree = shallow(
       <CollectionView

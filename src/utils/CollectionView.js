@@ -133,7 +133,7 @@ export default class CollectionView extends React.Component {
       this.props.onScroll(offset);
     }
 
-    if (!this.collection) {
+    if (!this.collection || this.isLoading) {
       return;
     }
 
