@@ -92,4 +92,34 @@ storiesOf('SplitView', module)
       </SplitView>
     ),
     {inline: true}
+  )
+  .addWithInfo(
+    'primarySize: 0',
+    () => (
+      <SplitView collapsible primarySize={0}>
+        <div>Primary</div>
+        <div>Secondary</div>
+      </SplitView>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'primarySize: 400',
+    () => (
+      <SplitView primarySize={400}>
+        <div>Primary</div>
+        <div>Secondary</div>
+      </SplitView>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'onMouseDown',
+    () => (
+      <SplitView onMouseDown={action('onMouseDown')}>
+        <div>Primary</div>
+        <div>Secondary</div>
+      </SplitView>
+    ),
+    {inline: true}
   );

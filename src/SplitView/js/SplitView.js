@@ -43,6 +43,9 @@ export default class SplitView extends React.Component {
     /** Whether the primary pane of the split view is collapsible */
     collapsible: PropTypes.bool,
 
+    /** A function that should be applied when the splitter is moused down */
+    onMouseDown: PropTypes.func,
+
     /** A function that should be applied when the split view is dragged */
     onResize: PropTypes.func,
 
@@ -58,6 +61,9 @@ export default class SplitView extends React.Component {
     /** The maximum size of the primary pane */
     primaryMax: PropTypes.number,
 
+    /** The size of the primary pane */
+    primarySize: PropTypes.number,
+
     /** The default size of the primary pane */
     primaryDefault: PropTypes.number,
 
@@ -72,17 +78,17 @@ export default class SplitView extends React.Component {
     orientation: 'horizontal',
     resizable: true,
     collapsible: false,
+    primaryDefault: 304,
     primaryPane: 0,
     primaryMin: 304,
     primaryMax: Infinity,
-    primaryDefault: 304,
     secondaryMin: 304,
     secondaryMax: Infinity
   };
 
   primaryId = createId();
   state = {
-    dividerPosition: this.props.primaryDefault,
+    dividerPosition: this.props.primarySize === undefined ? this.props.primaryDefault : this.props.primarySize,
     hovered: false,
     dragging: false
   };
@@ -154,6 +160,14 @@ export default class SplitView extends React.Component {
     window.removeEventListener('resize', this.resize, false);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const {primarySize} = this.props;
+
+    if (nextProps.primarySize !== primarySize) {
+      this.updatePosition(nextProps.primarySize === undefined ? nextProps.primaryDefault : nextProps.primarySize);
+    }
+  }
+
   onMouseMove(e) {
     this._over = true;
     if (this.state.dragging) {
@@ -165,6 +179,14 @@ export default class SplitView extends React.Component {
 
   onMouseDown(e) {
     if (this.state.hovered) {
+      if (this.props.onMouseDown) {
+        this.props.onMouseDown();
+      }
+
+      if (this.props.primarySize !== undefined) {
+        return;
+      }
+
       window.addEventListener('mousemove', this.onMouseDragged, false);
       window.addEventListener('mouseup', this.onMouseUp, false);
       this.setState({dragging: true});
@@ -308,7 +330,7 @@ export default class SplitView extends React.Component {
   }
 
   onKeyDown(e) {
-    if (!this.props.resizable) {
+    if (!this.props.resizable || (this.props.primarySize !== undefined)) {
       return;
     }
 
