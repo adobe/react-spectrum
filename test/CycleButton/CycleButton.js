@@ -12,7 +12,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('aria-label'), 'Play');
+    assert.equal(tree.children().prop('alt'), 'Play');
     assert.equal(tree.children().prop('size'), 'S');
   });
 
@@ -23,7 +23,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('aria-label'), 'Pause');
+    assert.equal(tree.children().prop('alt'), 'Pause');
   });
 
   it('renders with controlled component', () => {
@@ -38,7 +38,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('aria-label'), 'Pause');
+    assert.equal(tree.children().prop('alt'), 'Pause');
   });
 
   it('calls onAction with next action when clicked', () => {
@@ -77,7 +77,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('aria-label'), 'Play');
+    assert.equal(tree.children().prop('alt'), 'Play');
   });
 
   it('throws error with invalid defaultAction', () => {

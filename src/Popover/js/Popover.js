@@ -78,7 +78,9 @@ export default class Popover extends Component {
     if (this.props.onFocus) {
       this.props.onFocus(e);
     }
-    if (this.props.trapFocus) {
+    if (this.props.trapFocus &&
+      e.target === this.popoverRef &&
+      !this.popoverRef.contains(e.relatedTarget)) {
       trapFocus(this, e);
     }
   }
@@ -95,15 +97,6 @@ export default class Popover extends Component {
 
     if (this.props.trapFocus) {
       trapFocus(this, e);
-    }
-  }
-
-  onMouseDown(e) {
-    if (this.props.onMouseDown) {
-      this.props.onMouseDown(e);
-    }
-    if (this.popoverRef.contains(document.activeElement)) {
-      e.preventDefault();
     }
   }
 
@@ -144,7 +137,6 @@ export default class Popover extends Component {
         {...filterDOMProps(otherProps)}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}
-        onMouseDown={this.onMouseDown}
         tabIndex={trapFocus && tabIndex === null ? 1 : tabIndex}>
         {isDialog && title &&
           <DialogHeader

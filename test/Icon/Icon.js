@@ -25,12 +25,30 @@ describe('Icon', () => {
 
   it('no alt specificed. Icon is hidden from AT', () => {
     const tree = shallow(<Icon icon={Bell18} className="myClass" />);
-    assert.equal(tree.prop('aria-hidden'), 'true');
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   it('alt text gets rendered appropriately', () => {
-    const tree = shallow(<Icon icon={Bell18} className="myClass" alt="Test" />);
+    let tree = shallow(<Icon icon={Bell18} className="myClass" alt="Test" />);
     assert.equal(tree.prop('aria-label'), 'Test');
+    assert.ifError(tree.prop('aria-hidden'));
+    tree = shallow(<Icon icon={Bell18} className="myClass" alt="Test" aria-hidden />);
+    assert.equal(tree.prop('aria-label'), 'Test');
+    assert.equal(tree.prop('aria-hidden'), true);
+  });
+
+  it('is backward compatible with aria-label property', () => {
+    let tree = shallow(<Icon icon={Bell18} className="myClass" aria-label="Test" />);
+    assert.equal(tree.prop('aria-label'), 'Test');
+    assert.ifError(tree.prop('aria-hidden'));
+    tree = shallow(<Icon icon={Bell18} className="myClass" aria-label="Test" aria-hidden />);
+    assert.equal(tree.prop('aria-label'), 'Test');
+    assert.equal(tree.prop('aria-hidden'), true);
+  });
+
+  it('aria-label should take precedence over alt', () => {
+    let tree = shallow(<Icon icon={Bell18} className="myClass" aria-label="foo" alt="bar" />);
+    assert.equal(tree.prop('aria-label'), 'foo', 'aria-label takes precedence over alt');
     assert.ifError(tree.prop('aria-hidden'));
   });
 
