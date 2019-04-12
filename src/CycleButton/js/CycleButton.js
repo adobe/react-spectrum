@@ -153,7 +153,7 @@ export default class CycleButton extends Component {
         quiet
         className={classNames('spectrum-CycleButton', className)}
         onClick={this.handleChange}>
-        {cloneIcon(icon, {size: 'S', 'aria-hidden': true, 'aria-label': label})}
+        {cloneIcon(icon, {size: 'S', 'alt': label})}
       </Button>
     );
   }
