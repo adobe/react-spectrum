@@ -25,4 +25,4 @@ livefyre('''
       - make ci-publish
 ''')
 
-properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'versionBump')])])
+properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'VERSION')])])
