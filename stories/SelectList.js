@@ -63,7 +63,7 @@ storiesOf('SelectList', module)
     'This example uses renderItem method to italicize text when item is selected',
     () => render({
       multiple: true,
-      renderItem: label => <em>{label}</em>
+      renderItem: item => <em>{item.label}</em>
     }),
     {inline: true}
   );

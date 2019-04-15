@@ -51,7 +51,7 @@ describe('ComboBox', () => {
   });
 
   it('passes through the renderItem prop', () => {
-    tree = shallow(<ComboBox options={['pineapple', 'Crabapple', 'banana', 'apple']} renderItem={label => <em>{label}</em>} />);
+    tree = shallow(<ComboBox options={['pineapple', 'Crabapple', 'banana', 'apple']} renderItem={item => <em>{item.label}</em>} />);
     assert.equal(typeof tree.prop('renderItem'), 'function');
   });
 

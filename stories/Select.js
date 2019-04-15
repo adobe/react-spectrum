@@ -168,7 +168,7 @@ storiesOf('Select', module)
     'renderItem',
     'This example uses renderItem method to italicize text',
     () => render({
-      renderItem: label => <em>{label}</em>
+      renderItem: item => <em>{item.label}</em>
     }),
     {inline: true}
   );

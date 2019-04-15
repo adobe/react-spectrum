@@ -68,7 +68,7 @@ describe('SelectList', () => {
   });
 
   it('should optionally call the renderItem callback to render list items', async () => {
-    const tree = shallow(<SelectList options={testOptions} renderItem={label => <em>{label}</em>} />);
+    const tree = shallow(<SelectList options={testOptions} renderItem={item => <em>{item.label}</em>} />);
     assert.equal(tree.find(ListItem).first().childAt(0).type(), 'em');
   });
 

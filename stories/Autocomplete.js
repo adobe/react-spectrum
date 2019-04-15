@@ -68,7 +68,7 @@ storiesOf('Autocomplete', module)
       <Autocomplete
         getCompletions={getCompletions}
         onSelect={action('select')}
-        renderItem={label => <em>{label}</em>}>
+        renderItem={item => <em>{item}</em>}>
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
     ),

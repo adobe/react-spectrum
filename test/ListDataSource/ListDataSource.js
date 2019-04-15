@@ -102,7 +102,7 @@ describe('ListDataSource', function () {
     ds.performLoadMore();
     await sleep(4);
     assert.equal(insertItems.callCount, 1);
-    assert.deepEqual(ds.sections[0].length , 8);
+    assert.deepEqual(ds.sections[0].length, 8);
   });
 
   it('should trigger a load when performing a sort', async function () {

@@ -68,7 +68,7 @@ describe('Select', () => {
   });
 
   it('passes through the renderItem prop', () => {
-    const tree = shallow(<Select options={testOptions} renderItem={label => <em>{label}</em>} />);
+    const tree = shallow(<Select options={testOptions} renderItem={item => <em>{item.label}</em>} />);
     assert.equal(typeof tree.find(SelectMenu).prop('renderItem'), 'function');
   });
 

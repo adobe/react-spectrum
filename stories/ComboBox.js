@@ -92,7 +92,7 @@ storiesOf('ComboBox', module)
     () => render({
       options: OPTIONS,
       'aria-label': 'renderItem',
-      renderItem: (label) => <em>{label}</em>
+      renderItem: (item) => <em>{item}</em>
     }),
     {inline: true}
   );
