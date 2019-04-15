@@ -569,8 +569,6 @@ export default class Datepicker extends Component {
     delete otherProps.value;
     delete otherProps.defaultValue;
 
-    let Fragment = React.Fragment || 'div';
-
     const comboboxId = this.generateId('combobox');
     const popoverId = this.generateId('popover');
     const buttonId = this.generateId('button');
@@ -645,11 +643,11 @@ export default class Datepicker extends Component {
         )}>
         {!this.isRange && this.renderTextfield(textfieldProps)}
         {this.isRange &&
-          <Fragment>
-            {this.renderTextfield(textfieldProps, 'start')}
-            <div className="spectrum-Datepicker--rangeDash" />
-            {this.renderTextfield(textfieldProps, 'end')}
-          </Fragment>
+          [
+            this.renderTextfield(textfieldProps, 'start'),
+            <div className="spectrum-Datepicker--rangeDash" />,
+            this.renderTextfield(textfieldProps, 'end')
+          ].map((el, i) => React.cloneElement(el, {key: i}))
         }
         <OverlayTrigger
           trigger="click"
@@ -686,12 +684,14 @@ export default class Datepicker extends Component {
             <div>
               {type !== 'time' && this.renderCalendar(calendarProps)}
               {type !== 'date' &&
-                (this.isRange ?
-                  <Fragment>
-                    {this.renderClock(clockProps, 'startTime')}
-                    {this.renderClock(clockProps, 'endTime')}
-                  </Fragment> :
-                  this.renderClock(clockProps))
+                (
+                  this.isRange 
+                  ? [
+                    this.renderClock(clockProps, 'startTime'),
+                    this.renderClock(clockProps, 'endTime')
+                  ].map((el, i) => React.cloneElement(el, {key: i}))
+                  : this.renderClock(clockProps)
+                )
               }
               <Button
                 className="react-spectrum-Datepicker-closeButton"
