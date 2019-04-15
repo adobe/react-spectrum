@@ -1,7 +1,6 @@
 {
   "packages": [
-    "src",
-    "packages/*/*"
+    "src"
   ],
   "ignoreChanges": [
     "**/test/**"
