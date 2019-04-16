@@ -96,6 +96,7 @@ ci-deploy:
 # Run this as make version VERSION={patch|minor|major}
 version:
 	lerna version ${VERSION} --yes --no-commit-hooks -m "chore(release): publish"
+	cp src/package.json dist/package.json
 
 ci-version:
 	if [ "$$VERSION" != "publish only" ]; then \
