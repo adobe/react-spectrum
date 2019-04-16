@@ -15,7 +15,7 @@ run:
 	start-storybook -p 9002
 
 clean:
-	rm -rf dist storybook-static public
+	rm -rf dist storybook-static public src/dist
 	$(MAKE) clean_docs
 
 clean_all:
