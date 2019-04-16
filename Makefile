@@ -28,11 +28,11 @@ clean_node_modules:
 
 # --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
 docs:
-	cd documentation && yarn
+	cd documentation && yarn --no-lockfile
 	cd documentation && yarn build
 
 docs_local:
-	cd documentation && yarn
+	cd documentation && yarn --no-lockfile
 	cd documentation && yarn develop
 
 clean_docs:
@@ -89,7 +89,7 @@ deploy: storybook docs
 	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r public/* "$(SERVER):~/rsp/."
 
 ci-deploy:
-	@if [ "$$VERSION" == "major" ] || [ "$$VERSION" == "minor" ] || [ "$$VERSION" == "patch" ]; then \
+	@if [ "$$VERSION" == "major" ] || [ "$$VERSION" == "minor" ] || [ "$$VERSION" == "patch" ] || [ "$$VERSION" == "website only" ]; then \
 		$(MAKE) deploy; \
 	fi
 
@@ -102,12 +102,18 @@ ci-version:
 		$(MAKE) version; \
 	fi
 
-publish: build ci-deploy ci-version
+publish: build ci-version
 	lerna publish from-git --yes --registry $(NPM_REGISTRY) --contents dist
+
+ci-publish:
+	@if [ "$$VERSION" != "website only" ]; then \
+		$(MAKE) publish; \
+	fi
 
 # Run this on Jenkins with VERSION={patch|minor|major} as an argument, this will bump all the changed packages
 # So major bumps everything as major, minor bumps everything as minor, ...
-ci-publish:
+ci:
 	@if [ ! -z "$$VERSION" ] && [ "$$VERSION" != "noop" ]; then \
-		$(MAKE) publish; \
+		$(MAKE) ci-deploy; \
+		$(MAKE) ci-publish; \
 	fi

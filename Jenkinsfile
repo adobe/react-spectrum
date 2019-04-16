@@ -4,7 +4,7 @@ livefyre('''
       label: corpjenkins/node8
     git: true
     commands:
-      - make clean
+      - make clean_all
       - make
       - make jenkins_test
       - make storybook
@@ -22,7 +22,7 @@ livefyre('''
       - git reset --hard
       - git checkout master
       - git reset --hard origin/master
-      - make ci-publish
+      - make ci
 ''')
 
-properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'VERSION')])])
+properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only\nwebsite only', description: 'Bump npm version', name: 'VERSION')])])
