@@ -1,34 +1,26 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Brush from '../src/Icon/Brush';
 import Button from '../src/Button';
 import ColorPalette from '../src/Icon/ColorPalette';
 import Dropdown from '../src/Dropdown';
 import {Menu, MenuItem, SubMenu} from '../src/Menu';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Dropdown', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'alignRight',
-    () => render({alignRight: true, style: {display: 'inline-block'}}),
-    {inline: true}
+    () => render({alignRight: true, style: {display: 'inline-block'}})
   )
-  .addWithInfo(
+  .add(
     'Stay open on select',
-    () => render({closeOnSelect: false}),
-    {inline: true}
+    () => render({closeOnSelect: false})
   )
-  .addWithInfo(
+  .add(
     'Tool with holdAffordance',
     () => (
       <Dropdown trigger="longClick" onClick={action('click')} onLongClick={action('longClick')} onSelect={action('select')}>
@@ -38,13 +30,11 @@ storiesOf('Dropdown', module)
           <MenuItem icon={<ColorPalette />} value="colorPalette">Color Palette</MenuItem>
         </Menu>
       </Dropdown>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'No flip',
-    () => render({flip: false}),
-    {inline: true}
+    () => render({flip: false})
   );
 
 function render(props = {}) {

@@ -1,8 +1,8 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Autocomplete from '../src/Autocomplete';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Textfield from '../src/Textfield';
-import {VerticalCenter} from '../.storybook/layout';
 
 const OPTIONS = [
   'Chocolate',
@@ -29,41 +29,40 @@ function getCompletionsAsync(input) {
 }
 
 storiesOf('Autocomplete', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <Autocomplete getCompletions={getCompletions} onSelect={action('select')}>
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'allowCreate',
     () => (
       <Autocomplete allowCreate getCompletions={getCompletions} onSelect={action('select')}>
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Async',
     () => (
       <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
         <Textfield placeholder="Github usernames..." />
       </Autocomplete>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
+    'Controlled',
+    () => (
+      <Autocomplete getCompletions={getCompletionsAsync} value="foo" showMenu={false} onMenuToggle={action('toggle')}>
+        <Textfield placeholder="Github usernames..." />
+      </Autocomplete>
+    )
+  )
+  .add(
     'renderItem',
-    'This example uses renderItem method to italicize text',
     () => (
       <Autocomplete
         getCompletions={getCompletions}
@@ -72,5 +71,5 @@ storiesOf('Autocomplete', module)
         <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
     ),
-    {inline: true}
+    {info: 'This example uses renderItem method to italicize text'}
   );

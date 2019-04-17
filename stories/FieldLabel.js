@@ -2,39 +2,29 @@ import FieldLabel from '../src/FieldLabel';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Textfield from '../src/Textfield';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('FieldLabel', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({label: 'React'}),
-    {inline: true}
+    () => render({label: 'React'})
   )
-  .addWithInfo(
+  .add(
     'labelFor: foo',
     () => (
       <FieldLabel label="React" labelFor="foo">
         <Textfield placeholder="React" id="foo" />
       </FieldLabel>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'position: left',
-    () => render({label: 'React', position: 'left', style: {width: '100px'}}),
-    {inline: true}
+    () => render({label: 'React', position: 'left', style: {width: '100px'}})
   )
-  .addWithInfo(
+  .add(
     'position: right',
-    () => render({label: 'React', position: 'right', style: {width: '100px'}}),
-    {inline: true}
+    () => render({label: 'React', position: 'right', style: {width: '100px'}})
   )
-  .addWithInfo(
+  .add(
     'label only',
     () => (
       <div>
@@ -43,7 +33,7 @@ storiesOf('FieldLabel', module)
       </div>
     )
   )
-  .addWithInfo(
+  .add(
     'required styles',
     () => (
       <div>
@@ -51,8 +41,7 @@ storiesOf('FieldLabel', module)
         {render({label: 'React', necessity: 'optional', necessityIndicator: 'label'})}
         {render({label: 'React', necessity: 'required', necessityIndicator: 'icon'})}
       </div>
-    ),
-    {inline: true}
+    )
   );
 
 function render(props = {}) {

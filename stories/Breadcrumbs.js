@@ -1,35 +1,28 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Breadcrumbs from '../src/Breadcrumbs';
 import FolderIcon from '../src/Icon/Folder';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Breadcrumbs', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <Breadcrumbs
         items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'icon: folder',
     () => (
       <Breadcrumbs
         icon={<FolderIcon />}
         items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'variant: "title"',
     () => (
       <Breadcrumbs
@@ -37,6 +30,5 @@ storiesOf('Breadcrumbs', module)
         ariaLevel={3}
         items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
-    ),
-    {inline: true}
+    )
   );

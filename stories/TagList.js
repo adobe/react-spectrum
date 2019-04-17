@@ -1,35 +1,26 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import {Tag, TagList} from '../src/TagList';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('TagList', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'Read Only',
-    () => render({readOnly: true}),
-    {inline: true}
+    () => render({readOnly: true})
   )
-  .addWithInfo(
+  .add(
     'Disabled',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'Using Values',
     () => render({values: [
       'Mango', 'Turtle', 'Noodles', 'Pluto'
-    ]}),
-    {inline: true}
+    ]})
   );
 
 function render(props = {}) {

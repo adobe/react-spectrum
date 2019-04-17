@@ -81,28 +81,29 @@ describe('CoachMark', () => {
       <CoachMark title="Hello world" selector="#something" confirmLabel="confirm" />,
       {attachTo: mountNode}
     );
-    assert(tree.instance().shouldUpdatePosition);
+    let component = tree.instance();
+    assert(component.shouldUpdatePosition);
     assert(!tree.state().indicatorPositioned);
 
-    let originalRender = tree.instance().render;
-    let renderSpy = sinon.stub(tree.instance(), 'render').callsFake(() => {
-      assert(tree.instance().shouldUpdatePosition);
+    let originalRender = component.render.bind(component);
+    let renderSpy = sinon.stub(component, 'render').callsFake(() => {
+      assert(component.shouldUpdatePosition);
       assert(tree.state().indicatorPositioned);
       return originalRender();
     });
-    tree.instance().onIndicatorPositioned();
+    component.onIndicatorPositioned();
     assert(renderSpy.called);
     renderSpy.restore();
 
-    assert(!tree.instance().shouldUpdatePosition);
+    assert(!component.shouldUpdatePosition);
     assert(tree.state().indicatorPositioned);
 
-    renderSpy = sinon.stub(tree.instance(), 'render').callsFake(() => {
-      assert(!tree.instance().shouldUpdatePosition);
+    renderSpy = sinon.stub(component, 'render').callsFake(() => {
+      assert(!component.shouldUpdatePosition);
       assert(tree.state().indicatorPositioned);
       return originalRender();
     });
-    tree.instance().onIndicatorPositioned();
+    component.onIndicatorPositioned();
     renderSpy.restore();
   });
 });

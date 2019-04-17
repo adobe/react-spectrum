@@ -1,11 +1,11 @@
 import {Accordion, AccordionItem} from '../src/Accordion';
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import ComboBox from '../src/ComboBox';
 import FieldLabel from '../src/FieldLabel';
 import Radio from '../src/Radio';
 import RadioGroup from '../src/RadioGroup';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 const OPTIONS = [
   'Chocolate',
@@ -19,52 +19,40 @@ const OPTIONS = [
 ];
 
 storiesOf('Accordion', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    'This is the basic usage of the Accordion.',
     () => render({'aria-label': 'Default'}),
-    {inline: true}
+    {info: 'This is the basic usage of the Accordion.'}
   )
-  .addWithInfo(
+  .add(
     'Multiselectable',
-    'This is an Accordion where you can open multiple accordion items.',
     () => render({'aria-label': 'Multiselectable', multiselectable: true}),
-    {inline: true}
+    {info: 'This is an Accordion where you can open multiple accordion items.'}
   )
-  .addWithInfo(
+  .add(
     'Default selected index',
-    'This is an Accordion where the the second accordion item is opened by default.',
     () => render({'aria-label': 'Default selected index', defaultSelectedIndex: 1}),
-    {inline: true}
+    {info: 'This is an Accordion where the the second accordion item is opened by default.'}
   )
-  .addWithInfo(
+  .add(
     'Selected index',
-    'This is a controlled Accordion where the the second accordion item is opened by default.',
     () => render({'aria-label': 'Selected index', selectedIndex: 1}),
-    {inline: true}
+    {info: 'This is a controlled Accordion where the the second accordion item is opened by default.'}
   )
-  .addWithInfo(
+  .add(
     'ariaLevel',
-    'This is an Accordion where heading level for Accordion item headings has been changed from its default value of 3 to 4. This allows a developer to place Accordion headings with in the heading hierarchy of the application.',
     () => render({'aria-label': 'ariaLevel', ariaLevel: 4}),
-    {inline: true}
+    {info: 'This is an Accordion where heading level for Accordion item headings has been changed from its default value of 3 to 4. This allows a developer to place Accordion headings with in the heading hierarchy of the application.'}
   )
-  .addWithInfo(
+  .add(
     'nested RadioGroup',
-    'This is an Accordion containing a nested radio group to demonstrate that keyboard selection of RadioGroup items does not propagate to ancestor Accordion element.',
     () => render({'aria-label': 'nested RadioGroup', radioGroup: true}),
-    {inline: true}
+    {info: 'This is an Accordion containing a nested radio group to demonstrate that keyboard selection of RadioGroup items does not propagate to ancestor Accordion element.'}
   )
-  .addWithInfo(
+  .add(
     'nested ComboBox',
-    'This is an Accordion containing a nested ComboBox to demonstrate that keyboard selection of ComboBox items does not propagate to ancestor Accordion element.',
     () => render({'aria-label': 'nested ComboBox', comboBox: true}),
-    {inline: true}
+    {info: 'This is an Accordion containing a nested ComboBox to demonstrate that keyboard selection of ComboBox items does not propagate to ancestor Accordion element.'}
   );
 
 function render(props = {}) {

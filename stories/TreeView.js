@@ -1,57 +1,44 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Folder from '../src/Icon/Folder';
 import Layers from '../src/Icon/Layers';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import TreeDataSource from '../src/TreeDataSource';
 import {TreeView} from '../src/TreeView';
-import {VerticalCenter} from '../.storybook/layout';
 import './TreeView.styl';
 
 storiesOf('TreeView', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'with icons',
-    () => render({icons: true}),
-    {inline: true}
+    () => render({icons: true})
   )
-  .addWithInfo(
+  .add(
     'allowsSelection: true',
-    () => render({icons: true, allowsSelection: true}),
-    {inline: true}
+    () => render({icons: true, allowsSelection: true})
   )
-  .addWithInfo(
+  .add(
     'allowsMultipleSelection: true',
-    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true}),
-    {inline: true}
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true})
   )
-  .addWithInfo(
+  .add(
     'acceptsDrops: true',
-    () => render({icons: true, acceptsDrops: true}),
-    {inline: true}
+    () => render({icons: true, acceptsDrops: true})
   )
-  .addWithInfo(
+  .add(
     'canDragItems: true',
-    () => render({icons: true, canDragItems: true, allowsSelection: true, allowsMultipleSelection: true, acceptsDrops: true}),
-    {inline: true}
+    () => render({icons: true, canDragItems: true, allowsSelection: true, allowsMultipleSelection: true, acceptsDrops: true})
   )
-  .addWithInfo(
+  .add(
     'selectedItems',
-    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [data[0]]}),
-    {inline: true}
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [data[0]]})
   )
-  .addWithInfo(
+  .add(
     'selectedItems using isItemEqual',
-    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]}),
-    {inline: true}
+    () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}]})
   );
 
 const data = [

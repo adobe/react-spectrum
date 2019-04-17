@@ -1,7 +1,6 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 import Wait from '../src/Wait';
 
@@ -13,28 +12,20 @@ const sliderOptions = {
 };
 
 storiesOf('Wait', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
   .addDecorator(withKnobs)
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'size: S',
-    () => render({size: 'S'}),
-    {inline: true}
+    () => render({size: 'S'})
   )
-  .addWithInfo(
+  .add(
     'size: L',
-    () => render({size: 'L'}),
-    {inline: true}
+    () => render({size: 'L'})
   )
-  .addWithInfo(
+  .add(
     'variant: overBackground',
     () => {
       const style = {
@@ -51,44 +42,38 @@ storiesOf('Wait', module)
           {render({variant: 'overBackground'})}
         </div>
       );
-    },
-    {inline: true}
+    }
   )
-  .addWithInfo(
+  .add(
     'centered: true',
-    () => render({centered: true}),
-    {inline: true}
+    () => render({centered: true})
   )
-  .addWithInfo(
+  .add(
     'indeterminate: false',
-    'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       return render({indeterminate: false, value});
     },
-    {inline: true},
+    {info: 'Adjust the slider in the knobs tab below to change the value'}
   )
-  .addWithInfo(
+  .add(
     'indeterminate: false, size: S',
-    'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       return render({indeterminate: false, size: 'S', value});
     },
-    {inline: true}
+    {info: 'Adjust the slider in the knobs tab below to change the value'}
   )
-  .addWithInfo(
+  .add(
     'indeterminate: false, size: L',
-    'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       return render({indeterminate: false, size: 'L', value});
     },
-    {inline: true}
+    {info: 'Adjust the slider in the knobs tab below to change the value'}
   )
-  .addWithInfo(
+  .add(
     'indeterminate: false, variant: overBackground',
-    'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       const style = {
@@ -106,16 +91,15 @@ storiesOf('Wait', module)
         </div>
       );
     },
-    {inline: true}
+    {info: 'Adjust the slider in the knobs tab below to change the value'}
   )
-  .addWithInfo(
+  .add(
     'indeterminate: false, centered: true',
-    'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
       return render({indeterminate: false, centered: true, value});
     },
-    {inline: true}
+    {info: 'Adjust the slider in the knobs tab below to change the value'}
   );
 
 function render(props = {}) {

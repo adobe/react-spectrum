@@ -527,35 +527,35 @@ describe('Datepicker', () => {
     assert(!spy.called);
     assert(showSpy.calledWith(event));
 
-    showSpy.reset();
+    showSpy.resetHistory();
     tree.setProps({onKeyDown: spy});
     findTextfield(tree).simulate('keydown', event);
     assert(spy.calledWith(event));
     assert(showSpy.calledWith(event));
 
-    spy.reset();
-    showSpy.reset();
+    spy.resetHistory();
+    showSpy.resetHistory();
     event.key = 'Down';
     findTextfield(tree).simulate('keydown', event);
     assert(spy.calledWith(event));
     assert(showSpy.calledWith(event));
 
-    spy.reset();
-    showSpy.reset();
+    spy.resetHistory();
+    showSpy.resetHistory();
     event.key = 'ArrowUp';
     findTextfield(tree).simulate('keydown', event);
     assert(spy.calledWith(event));
     assert(!showSpy.called);
 
-    spy.reset();
-    showSpy.reset();
+    spy.resetHistory();
+    showSpy.resetHistory();
     event.key = 'ArrowDown';
     findToggleButton(tree).simulate('keydown', event);
     assert(spy.calledWith(event));
     assert(showSpy.calledWith(event));
 
-    spy.reset();
-    showSpy.reset();
+    spy.resetHistory();
+    showSpy.resetHistory();
     event.defaultPrevented = true;
     findTextfield(tree).simulate('keydown', event);
     assert(spy.calledWith(event));

@@ -1,15 +1,10 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {SideNav, SideNavHeading, SideNavItem} from '../src/SideNav';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('SideNav', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <SideNav defaultValue="foo" onSelect={action('onSelect')}>
@@ -18,10 +13,9 @@ storiesOf('SideNav', module)
         <SideNavItem value="test">Test</SideNavItem>
         <SideNavItem value="hi">Hi</SideNavItem>
       </SideNav>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'manageTabIndex: true',
     () => (
       <SideNav defaultValue="test" manageTabIndex onSelect={action('onSelect')}>
@@ -30,10 +24,9 @@ storiesOf('SideNav', module)
         <SideNavItem value="test">Test</SideNavItem>
         <SideNavItem value="hi">Hi</SideNavItem>
       </SideNav>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Controlled',
     () => (
       <SideNav value="foo" onSelect={action('onSelect')}>
@@ -42,10 +35,9 @@ storiesOf('SideNav', module)
         <SideNavItem value="test">Test</SideNavItem>
         <SideNavItem value="hi">Hi</SideNavItem>
       </SideNav>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'MultiLevel',
     () => (
       <SideNav variant="multiLevel" defaultValue="2.3.1" onSelect={action('onSelect')}>
@@ -61,10 +53,9 @@ storiesOf('SideNav', module)
         <SideNavItem value="test" label="test" />
         <SideNavItem value="hi" label="hi" />
       </SideNav>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Header',
     () => (
       <SideNav defaultValue="apps" onSelect={action('onSelect')}>
@@ -80,10 +71,9 @@ storiesOf('SideNav', module)
           <SideNavItem value="signatures">Signatures</SideNavItem>
         </SideNavHeading>
       </SideNav>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'renderLink',
     () => (
       <SideNav defaultValue="foo" onSelect={action('onSelect')}>
@@ -92,8 +82,7 @@ storiesOf('SideNav', module)
         <SideNavItem value="test">Test</SideNavItem>
         <SideNavItem value="hi">Hi</SideNavItem>
       </SideNav>
-    ),
-    {inline: true}
+    )
   );
 
 class Link extends React.Component {

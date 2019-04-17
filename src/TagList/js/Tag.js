@@ -16,6 +16,7 @@ const formatMessage = messageFormatter(intlMessages);
 /**
  * A tag is used to categorize content and display filters.
  */
+@autobind
 export default class Tag extends React.Component {
   static propTypes = {
     /** Avatar to use in the tag */
@@ -46,11 +47,11 @@ export default class Tag extends React.Component {
       tagFocused: false
     };
   }
-  @autobind
+
   handleButtonFocus(e) {
     this.setState({tagFocused: true});
-  }  
-  @autobind
+  }
+
   handleButtonBlur(e) {
     this.setState({tagFocused: false});
   }

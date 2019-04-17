@@ -184,7 +184,7 @@ describe('FocusManager', function () {
 
     stubs.forEach(stub => {
       stub.restore();
-      stub.reset();
+      stub.resetHistory();
     });
   });
 
@@ -218,7 +218,7 @@ describe('FocusManager', function () {
 
       stubs.forEach(stub => {
         stub.restore();
-        stub.reset();
+        stub.resetHistory();
       });
       tree.unmount();
     });
@@ -254,7 +254,7 @@ describe('FocusManager', function () {
 
       stubs.forEach(stub => {
         stub.restore();
-        stub.reset();
+        stub.resetHistory();
       });
       tree.unmount();
     });

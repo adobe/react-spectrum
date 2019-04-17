@@ -1,38 +1,27 @@
 import Heading from '../src/Heading';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Heading', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'display variant (default)',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'pageTitle variant',
-    () => render({variant: 'pageTitle'}),
-    {inline: true}
+    () => render({variant: 'pageTitle'})
   )
-  .addWithInfo(
+  .add(
     'subtitle1 variant',
-    () => render({variant: 'subtitle1'}),
-    {inline: true}
+    () => render({variant: 'subtitle1'})
   )
-  .addWithInfo(
+  .add(
     'subtitle2 variant',
-    () => render({variant: 'subtitle2'}),
-    {inline: true}
+    () => render({variant: 'subtitle2'})
   )
-  .addWithInfo(
+  .add(
     'subtitle3 variant',
-    () => render({variant: 'subtitle3'}),
-    {inline: true}
+    () => render({variant: 'subtitle3'})
   );
 
 function render(props = {}) {

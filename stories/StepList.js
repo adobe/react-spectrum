@@ -1,53 +1,40 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {Step, StepList} from '../src/StepList';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('StepList', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'interaction: off',
-    () => render({interaction: 'off'}),
-    {inline: true}
+    () => render({interaction: 'off'})
   )
-  .addWithInfo(
+  .add(
     'size: small',
-    () => render({size: 'S'}),
-    {inline: true}
+    () => render({size: 'S'})
   )
-  .addWithInfo(
+  .add(
     'size: large',
-    () => render({size: 'L'}),
-    {inline: true}
+    () => render({size: 'L'})
   )
-  .addWithInfo(
+  .add(
     'defaultSelectedIndex: 1',
-    () => render({defaultSelectedIndex: 1}),
-    {inline: true}
+    () => render({defaultSelectedIndex: 1})
   )
-  .addWithInfo(
+  .add(
     'selectedIndex: 1',
-    () => render({selectedIndex: 1}),
-    {inline: true}
+    () => render({selectedIndex: 1})
   )
-  .addWithInfo(
+  .add(
     'no labels',
-    () => render({}, [null, null, null]),
-    {inline: true}
+    () => render({}, [null, null, null])
   )
- .addWithInfo(
+ .add(
     'long labels',
-    () => render({}, ['My text is the longest', 'And my text is quite long', 'If this was in German', 'It would likely look wrong']),
-    {inline: true}
+    () => render({}, ['My text is the longest', 'And my text is quite long', 'If this was in German', 'It would likely look wrong'])
   );
 
 function render(props = {}, steps) {

@@ -1,34 +1,26 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Facebook from '../src/Icon/Facebook';
 import Instagram from '../src/Icon/Instagram';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import {Tab, TabList} from '../src/TabList';
 import Twitter from '../src/Icon/Twitter';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('TabList', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.',
     () => render(),
-    {inline: true}
+    {info: 'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.'}
   )
-  .addWithInfo(
+  .add(
     'defaultSelectedIndex: 1',
-    () => render({defaultSelectedIndex: 1}),
-    {inline: true}
+    () => render({defaultSelectedIndex: 1})
   )
-  .addWithInfo(
+  .add(
     'selectedIndex: 1',
-    () => render({selectedIndex: 1}),
-    {inline: true}
+    () => render({selectedIndex: 1})
   )
-  .addWithInfo(
+  .add(
     'selected set on Tab',
     () => (
       <TabList onChange={action('onChange')}>
@@ -36,45 +28,37 @@ storiesOf('TabList', module)
         <Tab selected>Tab 2</Tab>
         <Tab>Tab 3</Tab>
       </TabList>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'orientation: vertical',
-    () => render({orientation: 'vertical'}),
-    {inline: true}
+    () => render({orientation: 'vertical'})
   )
-  .addWithInfo(
+  .add(
     'variant: compact',
-    () => render({variant: 'compact'}),
-    {inline: true}
+    () => render({variant: 'compact'})
   )
-  .addWithInfo(
+  .add(
     'quiet',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'quiet, variant: compact',
-    () => render({quiet: true, variant: 'compact'}),
-    {inline: true}
+    () => render({quiet: true, variant: 'compact'})
   )
-  .addWithInfo(
+  .add(
     'icons',
-    () => render({icons: true}),
-    {inline: true}
+    () => render({icons: true})
   )
-  .addWithInfo(
+  .add(
     'icons, orientation: vertical',
-    () => render({icons: true, orientation: 'vertical'}),
-    {inline: true}
+    () => render({icons: true, orientation: 'vertical'})
   )
-  .addWithInfo(
+  .add(
     'variant: compact, orientation: vertical',
-    () => render({variant: 'compact', orientation: 'vertical'}),
-    {inline: true}
+    () => render({variant: 'compact', orientation: 'vertical'})
   )
-  .addWithInfo(
+  .add(
     'icons only',
     () => (
       <TabList onChange={action('onChange')}>
@@ -82,10 +66,9 @@ storiesOf('TabList', module)
         <Tab icon={<Instagram />} title="Instagram" aria-label="Tab 2" />
         <Tab icon={<Facebook />} title="Facebook" aria-label="Tab 3" />
       </TabList>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'disabled tabs',
     () => (
       <TabList onChange={action('onChange')}>
@@ -93,13 +76,11 @@ storiesOf('TabList', module)
         <Tab icon={<Instagram />} title="Instagram" disabled>Tab 2</Tab>
         <Tab icon={<Facebook />} title="Facebook">Tab 3</Tab>
       </TabList>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'keyboardActivation: manual',
-    () => render({icons: true, keyboardActivation: 'manual'}),
-    {inline: true}
+    () => render({icons: true, keyboardActivation: 'manual'})
   );
 
 function render(props = {}) {

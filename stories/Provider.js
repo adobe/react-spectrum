@@ -5,7 +5,6 @@ import Calendar from '../src/Calendar';
 import Provider from '../src/Provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 /*
 const styles = {
@@ -19,25 +18,17 @@ const styles = {
 */
 
 storiesOf('Provider', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'theme:dark',
-    () => render({theme: 'dark'}),
-    {inline: true}
+    () => render({theme: 'dark'})
   )
-  .addWithInfo(
+  .add(
     'locale:cs-CZ',
-    () => render({theme: 'dark', locale: 'cs-CZ'}),
-    {inline: true}
+    () => render({theme: 'dark', locale: 'cs-CZ'})
   );/*
-  .addWithInfo(
+  .add(
     'nested providers',
-    () => renderNested(),
-    {inline: true}
+    () => renderNested()
   );*/
 
 function render(props = {}) {

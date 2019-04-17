@@ -1,41 +1,31 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Button from '../src/Button';
 import Datepicker from '../src/Datepicker';
 import Dialog from '../src/Dialog';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('ModalTrigger', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'with onConfirm',
-    () => render({onConfirm: action('confirm')}),
-    {inline: true}
+    () => render({onConfirm: action('confirm')})
   )
-  .addWithInfo(
+  .add(
     'with onConfirm () => false',
-    () => render({onConfirm: () => false}),
-    {inline: true}
+    () => render({onConfirm: () => false})
   )
-  .addWithInfo(
+  .add(
     'with nested Popover',
-    () => renderNested(),
-    {inline: true}
+    () => renderNested()
   )
-  .addWithInfo(
+  .add(
      'with dynamic updates',
-    () => renderDynamic(),
-    {inline: true}
+    () => renderDynamic()
   );
 
 

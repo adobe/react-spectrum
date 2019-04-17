@@ -1,59 +1,47 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import {DragTarget, IndexPath} from '@react/collection-view';
 import IllustratedMessage from '../src/IllustratedMessage';
 import ListDataSource from '../src/ListDataSource';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Switch from '../src/Switch';
 import {TableView, TableViewDataSource} from '../src/TableView';
-import {VerticalCenter} from '../.storybook/layout';
 import './TableView.styl';
 
 storiesOf('TableView', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'variant: quiet',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'allowsSelection: false',
-    () => render({allowsSelection: false}),
-    {inline: true}
+    () => render({allowsSelection: false})
   )
-  .addWithInfo(
+  .add(
     'allowsMultipleSelection: false',
-    () => render({allowsMultipleSelection: false}),
-    {inline: true}
+    () => render({allowsMultipleSelection: false})
   )
-  .addWithInfo(
+  .add(
     'rowHeight: 72',
-    () => render({rowHeight: 72}),
-    {inline: true}
+    () => render({rowHeight: 72})
   )
-  .addWithInfo(
+  .add(
     'canDragItems: true',
-    () => render({canDragItems: true, quiet: true}),
-    {inline: true}
+    () => render({canDragItems: true, quiet: true})
   )
-  .addWithInfo(
+  .add(
     'custom drag view',
     () => render({
       canDragItems: true,
       quiet: true,
       renderDragView: () => <div style={{background: 'red', color: 'white'}}>Drag view</div>
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'with empty view',
     () => render({
       dataSource: new TableDS([]),
@@ -68,10 +56,9 @@ storiesOf('TableView', module)
             </svg>
           } />
       )
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'with old API',
     () => (
       <TableView
@@ -79,34 +66,29 @@ storiesOf('TableView', module)
         renderCell={renderCell} />
     )
   )
-  .addWithInfo(
+  .add(
     'acceptsDrops: true',
-    'This example shows how TableView supports drag and drop between rows.',
     () => render({acceptsDrops: true}),
-    {inline: true}
+    {info: 'This example shows how TableView supports drag and drop between rows.'}
   )
-  .addWithInfo(
+  .add(
     'acceptsDrops: true, quiet: true',
-    'This example shows how TableView supports drag and drop between rows.',
     () => render({acceptsDrops: true, quiet: true}),
-    {inline: true}
+    {info: 'This example shows how TableView supports drag and drop between rows.'}
   )
-  .addWithInfo(
+  .add(
     'dropPosition: "on"',
-    'This example shows how TableView supports drag and drop over both rows and the whole table using dropPosition="on". In this example, "Active" rows can be dropped over, otherwise the drop goes to the entire table.',
     () => render({acceptsDrops: true, quiet: true, dropPosition: 'on'}),
-    {inline: true}
+    {info: 'This example shows how TableView supports drag and drop over both rows and the whole table using dropPosition="on". In this example, "Active" rows can be dropped over, otherwise the drop goes to the entire table.'}
   )
-  .addWithInfo(
+  .add(
     'canReorderItems',
-    'This example shows how TableView supports reordering rows.',
     () => render({acceptsDrops: true, quiet: true, canReorderItems: true}),
-    {inline: true}
-  ).addWithInfo(
+    {info: 'This example shows how TableView supports reordering rows.'}
+  ).add(
     'can shrink colums',
-    'This example shows how the TableView supports shrink columns on window resize.',
     () => render({allowsSelection: false, columns: SHRINKABLE_COLUMNS}),
-    {inline: true}
+    {info: 'This example shows how the TableView supports shrink columns on window resize.'}
   );
 
 var tableData = [

@@ -219,7 +219,7 @@ describe('Autocomplete', () => {
 
     stubs.forEach(stub => {
       stub.restore();
-      stub.reset();
+      stub.resetHistory();
     });
     tree.unmount();
   });
@@ -447,8 +447,6 @@ describe('Autocomplete', () => {
 
   it('should trigger onMenuToggle when onChange is triggered in controlled state', async () => {
     const onMenuToggle = sinon.spy();
-    let showMenuResolver = null;
-    let showMenuPromise = new Promise(resolve => showMenuResolver = resolve);
 
     const tree = shallow(
       <Autocomplete value="foo" showMenu={false} onMenuToggle={onMenuToggle} getCompletions={v => ['one', 'two', 'three']}>
@@ -456,16 +454,11 @@ describe('Autocomplete', () => {
       </Autocomplete>
     );
 
-    let showMenu = tree.instance().showMenu;
-    sinon.stub(tree.instance(), 'showMenu').callsFake(async () => {
-      await showMenu();
-      showMenuResolver();
-    });
 
-    tree.find('input').simulate('change', 'two');
+    tree.find('input').simulate('change', 'fooo');
     await nextEventLoopIteration(); // Wait for async getCompletions
+    await nextEventLoopIteration(); // And something else??
 
-    await showMenuPromise;
     assert.equal(tree.instance().state.showMenu, false);
     assert(onMenuToggle.calledOnce);
     assert.equal(onMenuToggle.getCall(0).args[0], true);
@@ -506,21 +499,24 @@ describe('Autocomplete', () => {
     );
     let showMenuResolver = null;
     let showMenuPromise = new Promise(resolve => showMenuResolver = resolve);
-    let showMenu = tree.instance().showMenu;
-    sinon.stub(tree.instance(), 'showMenu').callsFake(async () => {
-      await showMenu();
+    let component = tree.instance();
+    let showMenu = component.showMenu;
+    sinon.stub(component, 'showMenu').callsFake(async (...args) => {
+      await showMenu.apply(component, ...args);
       showMenuResolver();
     });
     let hideMenuResolver = null;
     let hideMenuPromise = new Promise(resolve => hideMenuResolver = resolve);
     let hideMenu = tree.instance().hideMenu;
-    sinon.stub(tree.instance(), 'hideMenu').callsFake(async () => {
-      await hideMenu();
+    sinon.stub(tree.instance(), 'hideMenu').callsFake(async (...args) => {
+      await hideMenu.apply(component, ...args);
       hideMenuResolver();
     });
 
     assert(!onMenuToggle.called);
     tree.instance().toggleMenu();
+    await nextEventLoopIteration();
+    await nextEventLoopIteration();
 
     await showMenuPromise;
     assert(onMenuToggle.calledOnce);

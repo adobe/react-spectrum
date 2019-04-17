@@ -60,7 +60,7 @@ describe('Position', () => {
     });
 
     stub.restore();
-    stub.reset();
+    stub.resetHistory();
     tree.unmount();
   });
 
@@ -103,7 +103,7 @@ describe('Position', () => {
     });
 
     stub.restore();
-    stub.reset();
+    stub.resetHistory();
     tree.unmount();
   });
 
@@ -148,7 +148,7 @@ describe('Position', () => {
     });
 
     stub.restore();
-    stub.reset();
+    stub.resetHistory();
     tree.unmount();
   });
 });

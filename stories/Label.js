@@ -1,59 +1,42 @@
 import Label from '../src/Label';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Label', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'size: L',
-    () => render({size: 'L'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({size: 'L'})
+  ).add(
     'variant: grey',
-    () => render({variant: 'grey'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'grey'})
+  ).add(
     'variant: green',
-    () => render({variant: 'green'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'green'})
+  ).add(
     'variant: blue',
-    () => render({variant: 'blue'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'blue'})
+  ).add(
     'variant: red',
-    () => render({variant: 'red'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'red'})
+  ).add(
     'variant: orange',
-    () => render({variant: 'or'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'or'})
+  ).add(
     'variant: and',
-    () => render({variant: 'and'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'and'})
+  ).add(
     'variant: or',
-    () => render({variant: 'or'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'or'})
+  ).add(
     'variant: active',
-    () => render({variant: 'active'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'active'})
+  ).add(
     'variant: inactive',
-    () => render({variant: 'inactive'}),
-    {inline: true}
+    () => render({variant: 'inactive'})
   );
 
 function render(props = {}) {

@@ -1,58 +1,44 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Textfield from '../src/Textfield';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Textfield', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'quiet: true',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'invalid: true (deprecated)',
-    () => render({invalid: true}),
-    {inline: true}
+    () => render({invalid: true})
   )
-  .addWithInfo(
+  .add(
     'validationState: invalid',
-    () => render({validationState: 'invalid'}),
-    {inline: true}
+    () => render({validationState: 'invalid'})
   )
-  .addWithInfo(
+  .add(
     'validationState: valid',
-    () => render({validationState: 'valid'}),
-    {inline: true}
+    () => render({validationState: 'valid'})
   )
-  .addWithInfo(
+  .add(
     'readOnly: true',
-    () => render({readOnly: true}),
-    {inline: true}
+    () => render({readOnly: true})
   )
-  .addWithInfo(
+  .add(
     'required: true',
-    () => render({required: true}),
-    {inline: true}
+    () => render({required: true})
   )
-  .addWithInfo(
+  .add(
     'autoFocus: true',
-    () => render({autoFocus: true}),
-    {inline: true}
+    () => render({autoFocus: true})
   );
 
 function render(props = {}) {

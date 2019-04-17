@@ -16,9 +16,12 @@ export default class Overlay extends React.Component {
     placement: 'left'
   };
 
-  state = {
-    exited: !this.props.show
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      exited: !this.props.show
+    };
+  }
 
   componentDidMount() {
     this.setState({targetNode: ReactDOM.findDOMNode(this.props.target)});

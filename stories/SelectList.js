@@ -1,7 +1,7 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
 import SelectList from '../src/SelectList';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 const defaultProps = {
   placeholder: 'Enter Text...',
@@ -23,49 +23,37 @@ const selectedValue = [
 ];
 
 storiesOf('SelectList', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => (render({...defaultProps})),
-    {inline: true}
+    () => (render({...defaultProps}))
   )
-  .addWithInfo(
+  .add(
     'multiple noValue: true',
-    () => (render({multiple: true})),
-    {inline: true}
+    () => (render({multiple: true}))
   )
-  .addWithInfo(
+  .add(
     'multiple: true',
-    () => (render({multiple: true, value: selectedValue})),
-    {inline: true}
+    () => (render({multiple: true, value: selectedValue}))
   )
-  .addWithInfo(
+  .add(
     'multiple disabled: true',
-    () => (render({disabled: true, multiple: true, value: selectedValue})),
-    {inline: true}
+    () => (render({disabled: true, multiple: true, value: selectedValue}))
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => (render({disabled: true})),
-    {inline: true}
+    () => (render({disabled: true}))
   )
-  .addWithInfo(
+  .add(
     'value: longVal',
-    () => (render({value: 'longVal'})),
-    {inline: true}
+    () => (render({value: 'longVal'}))
   )
-  .addWithInfo(
+  .add(
     'renderItem',
-    'This example uses renderItem method to italicize text when item is selected',
     () => render({
       multiple: true,
       renderItem: item => <em>{item.label}</em>
     }),
-    {inline: true}
+    {info: 'This example uses renderItem method to italicize text when item is selected'}
   );
 
 function render(props = {}) {

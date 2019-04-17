@@ -1,38 +1,29 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Radio from '../src/Radio';
 import RadioGroup from '../src/RadioGroup';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('RadioGroup', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    'Remember to import Radio before RadioGroup',
     () => render(),
-    {inline: true}
-     )
-  .addWithInfo(
+    {info: 'Remember to import Radio before RadioGroup'}
+  )
+  .add(
     'labelsBelow: true',
-    'Remember to import Radio before RadioGroup',
     () => render({labelsBelow: true}),
-    {inline: true}
+    {info: 'Remember to import Radio before RadioGroup'}
   )
-  .addWithInfo(
+  .add(
     'vertical: true',
-    'Remember to import Radio before RadioGroup',
     () => render({vertical: true}),
-    {inline: true}
+    {info: 'Remember to import Radio before RadioGroup'}
   )
-  .addWithInfo(
+  .add(
     'defaultSelectedValue',
-    'Remember to import Radio before RadioGroup',
     () => render({defaultSelectedValue: '2'}),
-    {inline: true}
+    {info: 'Remember to import Radio before RadioGroup'}
   );
 
 function render(props = {}) {

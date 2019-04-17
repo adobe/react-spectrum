@@ -126,6 +126,7 @@ export default class OverlayTrigger extends Component {
     /**
      * By default, the body of the owning document. The overlay will do a hit test to see if it
      * extends outside the boundaries and move it to a new position if it collides.
+     * Unused it would seem...
      */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
@@ -148,7 +149,6 @@ export default class OverlayTrigger extends Component {
     crossOffset: 0,
     flip: true,
     disabled: false,
-    boundariesElement: () => ownerDocument(this).body,
     delayHide: 100
   };
 
@@ -158,6 +158,7 @@ export default class OverlayTrigger extends Component {
     this._mountNode = null;
     this.longPressTimeout = null;
     this._lastFocus = props.lastFocus;
+    this.boundariesElement = props.boundariesElement ? props.boundariesElement : () => ownerDocument(this).body;
     this.state = {
       show: props.show === undefined ? props.defaultShow : props.show
     };
@@ -390,10 +391,10 @@ export default class OverlayTrigger extends Component {
   }
 
   makeOverlay(overlay, props) {
-    const {
+    let {
       target = this
     } = this.props;
-    const {
+    let {
       rootClose = true,
       ...overlayProps
     } = props;
@@ -401,15 +402,16 @@ export default class OverlayTrigger extends Component {
     delete overlayProps.defaultShow;
     delete overlayProps.flip;
     delete overlayProps.boundariesElement;
+    let topOverlayProps = {
+      id: overlay.props.id || overlayProps.id,
+      ...props
+    };
     if (!overlay.props.id) {
       overlayProps.id = this.overlayId;
     }
-    if (!props.id) {
-      props.id = overlay.props.id || overlayProps.id;
-    }
     return (
       <Overlay
-        {...props}
+        {...topOverlayProps}
         show={this.state.show}
         onHide={this.onHide}
         onExited={this.onExited}

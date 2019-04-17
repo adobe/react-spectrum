@@ -189,9 +189,9 @@ describe('Dialog', () => {
     assert(stopPropagation.called);
     assert.equal(document.activeElement, buttons.first().getDOMNode());
 
-    onFocusSpy.reset();
-    preventDefault.reset();
-    stopPropagation.reset();
+    onFocusSpy.resetHistory();
+    preventDefault.resetHistory();
+    stopPropagation.resetHistory();
 
     tree.getDOMNode().focus();
     tree.simulate('keydown', {type: 'keydown', key: 'Tab', shiftKey: true, preventDefault, stopPropagation});
@@ -242,7 +242,7 @@ describe('Dialog', () => {
     await sleep(1);
     assert(!onClose.calledOnce);
 
-    onKeyDown.reset();
+    onKeyDown.resetHistory();
 
     tree.setProps({'confirmDisabled': false});
     tree.simulate('keydown', {key: 'Enter'});
@@ -251,9 +251,9 @@ describe('Dialog', () => {
     await sleep(1);
     assert(onClose.calledOnce);
 
-    stub.reset();
-    onClose.reset();
-    onKeyDown.reset();
+    stub.resetHistory();
+    onClose.resetHistory();
+    onKeyDown.resetHistory();
 
     // stopPropagation
     tree.simulate('keydown', {key: 'Enter', isPropagationStopped: () => true});
@@ -262,7 +262,7 @@ describe('Dialog', () => {
     await sleep(17);
     assert(!onClose.calledOnce);
 
-    onKeyDown.reset();
+    onKeyDown.resetHistory();
 
     tree.setProps({'confirmDisabled': false});
     tree.simulate('keydown', {key: 'ArrowDown'});
@@ -271,7 +271,7 @@ describe('Dialog', () => {
     await sleep(1);
     assert(!onClose.calledOnce);
 
-    onKeyDown.reset();
+    onKeyDown.resetHistory();
 
     tree.setProps({'confirmDisabled': false, 'keyboardConfirm': false});
     tree.simulate('keydown', {key: 'Enter'});

@@ -1,73 +1,57 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Radio from '../src/Radio';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Radio', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'defaultChecked: true',
-    () => render({defaultChecked: true}),
-    {inline: true}
+    () => render({defaultChecked: true})
   )
-  .addWithInfo(
+  .add(
     'checked: true',
-    () => render({checked: true}),
-    {inline: true}
+    () => render({checked: true})
   )
-  .addWithInfo(
+  .add(
     'checked: false',
-    () => render({checked: false}),
-    {inline: true}
+    () => render({checked: false})
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'invalid: true',
-    () => render({invalid: true}),
-    {inline: true}
+    () => render({invalid: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true',
-    () => render({quiet: true, checked: true}),
-    {inline: true}
+    () => render({quiet: true, checked: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, disabled: true',
-    () => render({quiet: true, checked: true, disabled: true}),
-    {inline: true}
+    () => render({quiet: true, checked: true, disabled: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, invalid: true',
-    () => render({quiet: true, checked: true, invalid: true}),
-    {inline: true}
+    () => render({quiet: true, checked: true, invalid: true})
   )
-  .addWithInfo(
+  .add(
      'Label Not Set',
      () => render({label: null, 'aria-label': 'React'}),
      {inline: true}
   )
-  .addWithInfo(
+  .add(
     'renderLabel: false',
-    () => render({renderLabel: false, label: 'React radio'}),
-    {inline: true}
+    () => render({renderLabel: false, label: 'React radio'})
   )
-  .addWithInfo(
+  .add(
     'Label Below',
-    () => render({labelBelow: true}),
-    {inline: true}
+    () => render({labelBelow: true})
   );
 
 function render(props = {}) {

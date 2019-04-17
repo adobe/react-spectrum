@@ -1,74 +1,53 @@
 import React from 'react';
 import StatusLight from '../src/StatusLight';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('StatusLight', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
-  ).addWithInfo(
+    () => render()
+  ).add(
     'variant: celery',
-    () => render({variant: 'celery'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'celery'})
+  ).add(
     'variant: yellow',
-    () => render({variant: 'yellow'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'yellow'})
+  ).add(
     'variant: fuchsia',
-    () => render({variant: 'fuchsia'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'fuchsia'})
+  ).add(
     'variant: indigo',
-    () => render({variant: 'indigo'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'indigo'})
+  ).add(
     'variant: seafoam',
-    () => render({variant: 'seafoam'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'seafoam'})
+  ).add(
     'variant: chartreuse',
-    () => render({variant: 'chartreuse'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'chartreuse'})
+  ).add(
     'variant: magenta',
-    () => render({variant: 'magenta'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'magenta'})
+  ).add(
     'variant: purple',
-    () => render({variant: 'purple'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'purple'})
+  ).add(
     'variant: neutral',
-    () => render({variant: 'neutral'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'neutral'})
+  ).add(
     'variant: active',
-    () => render({variant: 'active'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'active'})
+  ).add(
     'variant: positive',
-    () => render({variant: 'positive'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'positive'})
+  ).add(
     'variant: notice',
-    () => render({variant: 'notice'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'notice'})
+  ).add(
     'variant: negative',
-    () => render({variant: 'negative'}),
-    {inline: true}
-  ).addWithInfo(
+    () => render({variant: 'negative'})
+  ).add(
     'disabled: true',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   );
 
 function render(props = {}) {

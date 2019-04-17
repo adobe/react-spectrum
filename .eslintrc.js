@@ -9,6 +9,9 @@ module.exports = {
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
+    ecmaFeatures: {
+      "legacyDecorators": true
+    },
     sourceType: 'module'
   },
   env: {

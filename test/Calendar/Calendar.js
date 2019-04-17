@@ -256,7 +256,7 @@ describe('Calendar', () => {
     let tree;
     let body;
 
-    const assertDateAfterKeyDown = async ({keyCode, date, meta = false}) => {
+    const assertDateAfterKeyDown = ({keyCode, date, meta = false}) => {
       body.simulate('focus');
       body.simulate('keydown', {preventDefault: preventDefaultSpy, keyCode, metaKey: meta});
       assert.equal(+tree.state('focusedDate'), +date.clone());
@@ -265,10 +265,9 @@ describe('Calendar', () => {
       assert(preventDefaultSpy.called);
 
       // wait for render to test aria-activedescendant attribute
-      await rAF(() => {
-        tree.update();
-        assert.equal(body.prop('aria-activedescendant'), findFocusedCell(tree).prop('id'));
-      });
+      tree.update();
+      body = findBody(tree);
+      assert.equal(body.prop('aria-activedescendant'), findFocusedCell(tree).prop('id'));
     };
 
     beforeEach(() => {
@@ -310,33 +309,27 @@ describe('Calendar', () => {
       assertDateAfterKeyDown({keyCode: 34, date: now, meta: true});
     });
 
-    it('is set to value if it exists', async () => {
+    it('is set to value if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar value={date} />);
       tree.instance().componentWillMount();
-      await rAF(() => {
-        tree.update();
-        assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
-      });
+      tree.update();
+      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
-    it('is set to defaultValue if it exists', async () => {
+    it('is set to defaultValue if it exists', () => {
       const date = '2015-01-01';
       tree = shallow(<Calendar defaultValue={date} />);
       tree.instance().componentWillMount();
-      await rAF(() => {
-        tree.update();
-        assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
-      });
+      tree.update();
+      assert.equal(+tree.state('focusedDate'), +moment(date, DEFAULT_VALUE_FORMAT));
     });
 
-    it('is set to now if no value or defaultValue exist', async () => {
+    it('is set to now if no value or defaultValue exist', () => {
       tree = shallow(<Calendar />);
       tree.instance().componentWillMount();
-      await rAF(() => {
-        tree.update();
-        assert(tree.state('focusedDate').isSame(now, 'day'));
-      });
+      tree.update();
+      assert(tree.state('focusedDate').isSame(now, 'day'));
     });
   });
 

@@ -1,20 +1,15 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import {Asset} from '../src/Asset';
 import {Card, CardBody, CardCoverPhoto, CardFooter, CardPreview} from '../src/Card';
 import DropdownButton from '../src/DropdownButton/js/DropdownButton';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 importSpectrumCSS('card');
 
 storiesOf('Card', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <div style={{'width': '208px'}}>
@@ -23,10 +18,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Selected',
     () => (
       <div style={{'width': '208px'}}>
@@ -35,10 +29,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Selection Disabled',
     () => (
       <div style={{'width': '208px'}}>
@@ -47,10 +40,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Explicit onSelectionChange',
     () => (
       <div style={{'width': '208px'}}>
@@ -59,10 +51,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Explicit onSelectionChange and onClick',
     () => (
       <div style={{'width': '208px'}}>
@@ -71,10 +62,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Footer',
     () => (
       <div style={{'width': '208px'}}>
@@ -86,10 +76,9 @@ storiesOf('Card', module)
           </CardFooter>
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Asset Preview',
     () => (
       <div style={{'width': '208px'}}>
@@ -100,10 +89,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Asset Preview with image cache',
     () => (
       <div style={{'width': '208px'}}>
@@ -114,10 +102,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Action button',
     () => (
       <div style={{'width': '208px'}}>
@@ -134,10 +121,9 @@ storiesOf('Card', module)
           <CardBody title="Card Title" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Default',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -148,10 +134,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Description',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -162,10 +147,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="jpg" description="10/15/18" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Selected',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -176,10 +160,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Small',
     () => (
       <div style={{'width': '112px', 'height': '136px'}}>
@@ -190,10 +173,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="folder" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Folder',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -204,10 +186,9 @@ storiesOf('Card', module)
           <CardBody title="Folder Name" subtitle="folder" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - File',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -218,10 +199,9 @@ storiesOf('Card', module)
           <CardBody title="File Name" subtitle="pdf" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Action Button',
     () => (
       <div style={{'width': '208px', 'height': '264px'}}>
@@ -240,10 +220,9 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Quiet - Small, Action Button',
     () => (
       <div style={{'width': '112px', 'height': '136px'}}>
@@ -263,10 +242,9 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Default',
     () => (
       <div style={{'width': '532px', 'height': '224px'}}>
@@ -277,10 +255,9 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Description',
     () => (
       <div style={{'width': '532px', 'height': '224px'}}>
@@ -291,10 +268,9 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" description="10/15/18" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Selected',
     () => (
       <div style={{'width': '532px', 'height': '224px'}}>
@@ -305,10 +281,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Small',
     () => (
       <div style={{'width': '252px', 'height': '108px'}}>
@@ -319,10 +294,9 @@ storiesOf('Card', module)
           <CardBody title="Waterfall" subtitle="folder" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Action Button',
     () => (
       <div style={{'width': '532px', 'height': '224px'}}>
@@ -341,10 +315,9 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Gallery - Small, Action Button',
     () => (
       <div style={{'width': '252px', 'height': '112px'}}>
@@ -364,6 +337,5 @@ storiesOf('Card', module)
           <CardBody title="Name" subtitle="jpg" />
         </Card>
       </div>
-    ),
-    {inline: true}
+    )
   );

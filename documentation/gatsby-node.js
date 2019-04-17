@@ -166,7 +166,7 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
 exports.modifyWebpackConfig = ({ config, stage }) => {
   config.loader(`mdx`, {
     test: /\.mdx?$/,
-    loaders: ['babel-loader?babelrc=false,presets[]=env,presets[]=react,plugins[]=transform-object-rest-spread', require.resolve('./mdx-loader')],
+    loaders: ['babel-loader?babelrc=false,presets[]=' + require.resolve('babel-preset-es2015') + ',presets[]=' + require.resolve('babel-preset-react') + ',plugins[]=' + require.resolve('babel-plugin-transform-object-rest-spread'), require.resolve('./mdx-loader')],
   });
 
   config.merge({

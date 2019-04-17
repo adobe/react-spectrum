@@ -1,24 +1,21 @@
 import {Menu, MenuDivider, MenuHeading, MenuItem} from '../src/Menu';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Menu', module)
   .addDecorator(story => (
-    <VerticalCenter className="popover-story" style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+    <div className="popover-story">
       {story()}
-    </VerticalCenter>
+    </div>
   ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'trapFocus: false',
-    '<p>By default, the menu has <code>trapFocus: true</code>, which prevents focus to the next item outside of the menu. Setting <code>trapFocus: false</code>, allows focus to move to the next focusable element in the DOM.</p>',
     () => render({trapFocus: false}),
-    {inline: true}
+    {info: '<p>By default, the menu has <code>trapFocus: true</code>, which prevents focus to the next item outside of the menu. Setting <code>trapFocus: false</code>, allows focus to move to the next focusable element in the DOM.</p>'}
   );
 
 function render(props = {}) {

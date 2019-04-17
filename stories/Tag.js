@@ -1,54 +1,41 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Camera from '../src/Icon/Camera';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import {Tag} from '../src/TagList';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Tag', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'closable: true',
-    () => render({closable: true}),
-    {inline: true}
+    () => render({closable: true})
   )
-  .addWithInfo(
+  .add(
     'avatar',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}),
-    {inline: true}
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'})
   )
-  .addWithInfo(
+  .add(
     'avatar, closable: true',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', closable: true}),
-    {inline: true}
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', closable: true})
   )
-  .addWithInfo(
+  .add(
     'icon',
-    () => render({icon: <Camera />}),
-    {inline: true}
+    () => render({icon: <Camera />})
   )
-  .addWithInfo(
+  .add(
     'icon, closable: true',
-    () => render({icon: <Camera />, closable: true}),
-    {inline: true}
+    () => render({icon: <Camera />, closable: true})
   )
-  .addWithInfo(
+  .add(
     'invalid: true',
-    () => render({invalid: true, closable: true}),
-    {inline: true}
+    () => render({invalid: true, closable: true})
   )
-  .addWithInfo(
+  .add(
     'avatar, invalid: true',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', invalid: true, closable: true}),
-    {inline: true}
+    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', invalid: true, closable: true})
   );
 
 function render(props = {}, children = 'Cool Tag') {

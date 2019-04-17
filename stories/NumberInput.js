@@ -1,48 +1,33 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import NumberInput from '../src/NumberInput';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('NumberInput', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'default',
-    `
-    NumberInput only accepts numeric values.  Values can be changed by using the step buttons
-    or mouse scroll wheel while focused on the input.  The up/down arrow, page up/down, and
-    home/end keys will also change values.  If min or max are defined and the value extends
-    outside of the range the component marks itself as invalid.
-    `,
     () => render(),
-    {inline: true}
+    {info: 'NumberInput only accepts numeric values.  Values can be changed by using the step buttons or mouse scroll wheel while focused on the input.  The up/down arrow, page up/down, and home/end keys will also change values.  If min or max are defined and the value extends outside of the range the component marks itself as invalid.'}
   )
-  .addWithInfo(
+  .add(
     'min: -5, max: 10, step: 0.5',
-    'Demonstrating a -5 - 10 range input with 0.5 step',
     () => render({min: -5, max: 10, step: 0.5, placeholder: 'Type something please'}),
-    {inline: true}
+    {info: 'Demonstrating a -5 - 10 range input with 0.5 step'}
   )
-  .addWithInfo(
+  .add(
     'invalid',
-    'Demonstrating invalid',
     () => render({invalid: true}),
-    {inline: true}
+    {info: 'Demonstrating invalid'}
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    'Demonstrating disabled',
     () => render({disabled: true}),
-    {inline: true}
+    {info: 'Demonstrating disabled'}
   )
-  .addWithInfo(
+  .add(
     'quiet',
-    'Demonstrating quiet',
     () => render({quiet: true}),
-    {inline: true}
+    {info: 'Demonstrating quiet'}
   );
 
 const render = (props = {}) => (

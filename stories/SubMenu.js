@@ -1,23 +1,21 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import {Menu, MenuHeading, MenuItem, SubMenu} from '../src/Menu';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('SubMenu', module)
   .addDecorator(story => (
-    <VerticalCenter className="popover-story" style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+    <div className="popover-story">
       {story()}
-    </VerticalCenter>
+    </div>
   ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'Multi-level',
-    () => render(true),
-    {inline: true}
+    () => render(true)
   );
 
 function render(multiLevel) {

@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator';
  * Represents a node in the tree
  * @private
  */
+@autobind
 class TreeItem {
   constructor(item, parent, hasChildren, index) {
     this.item = item;
@@ -227,7 +228,6 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * Reloads the given item
    * @param {object} item
    */
-  @autobind
   reloadItem(item) {
     let indexPath = this.indexPathForItem(item);
     if (indexPath) {
@@ -372,7 +372,6 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {number} index - The child insertion index
    * @param {object} child - The child to insert
    */
-  @autobind
   insertChild(parent, index, child) {
     let parentItem = this._getItem(parent);
     if (!parentItem) {
@@ -454,7 +453,6 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * Removes an item from the tree view.
    * @param {object} item - The item to remove
    */
-  @autobind
   removeItem(item) {
     let node = this._getItem(item);
     if (!node) {
@@ -533,7 +531,6 @@ export default class TreeViewDataSource extends ArrayDataSource {
    * @param {object} [toParent] - The parent item to move to. If not provided, the item is moved within the same parent.
    * @param {number} toIndex - The index to move the item to
    */
-  @autobind
   moveItem(item, toParent, toIndex) {
     let node = this._getItem(item);
     if (!node) {

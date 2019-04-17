@@ -1,120 +1,100 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Button from '../src/Button';
 import Dialog from '../src/Dialog';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Textfield from '../src/Textfield';
-import {VerticalCenter} from '../.storybook/layout';
 
 const dialogChildren = <span>Content of the dialog</span>;
 
 storiesOf('Dialog', module)
   .addDecorator(story => (
-    <VerticalCenter className="test-dialog" style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
+    <div className="test-dialog">
       {story()}
-    </VerticalCenter>
+    </div>
   ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(dialogChildren, {title: 'Dialog title'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog title'})
   )
-  .addWithInfo(
+  .add(
     'with confirm button',
-    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK'})
   )
-  .addWithInfo(
+  .add(
     'with confirm and cancel',
-    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'with confirm and cancel function',
-    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog title', confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-  .addWithInfo(
+  .add(
     'with secondary confirmation button',
-    () => render(dialogChildren, {title: 'Conflict', confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Conflict', confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-  .addWithInfo(
+  .add(
     'with confirm disabled',
-    () => render(dialogChildren, {title: 'Dialog title', confirmDisabled: true, confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog title', confirmDisabled: true, confirmLabel: 'OK', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-  .addWithInfo(
+  .add(
     'with secondary confirmation disabled',
-    () => render(dialogChildren, {title: 'Conflict', confirmDisabled: true, confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Conflict', confirmDisabled: true, confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
 
-  .addWithInfo(
+  .add(
     'Long content',
-    () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'}),
-    {inline: true}
+    () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'})
   )
-  .addWithInfo(
+  .add(
     'variant: confirmation',
-    () => render(dialogChildren, {title: 'Are you sure?', variant: 'confirmation', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Are you sure?', variant: 'confirmation', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'variant: information',
-    () => render(dialogChildren, {title: 'Connect to WiFi', variant: 'information', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Connect to WiFi', variant: 'information', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'variant: destructive',
-    () => render(dialogChildren, {title: 'Delete 3 Documents', variant: 'destructive', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Delete 3 Documents', variant: 'destructive', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'variant: error',
-    () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'})
   )
-  .addWithInfo(
+  .add(
     'mode: alert',
-    () => render(dialogChildren, {title: 'Dialog Title', mode: 'alert', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'alert', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'mode: fullscreen',
-    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreen', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreen', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'mode: fullscreenTakeover',
-    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'backdropClickable: true',
-    () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'autoFocusButton: \'cancel\'',
-    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-  .addWithInfo(
+  .add(
     'autoFocusButton: \'confirm\'',
-    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')}),
-    {inline: true}
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-  .addWithInfo(
+  .add(
     'autoFocus descendant TextField',
-    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'}),
-    {inline: true}
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
-  .addWithInfo(
+  .add(
     'keyboardConfirm: true',
-    'Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the "Confirm" button.',
     () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', keyboardConfirm: true, onConfirm: action('confirm'), onCancel: action('cancel'), onKeyDown: action('onKeyDown')}),
-    {inline: true}
+    {info: 'Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the "Confirm" button.'}
   );
 
 function render(children, props = {}) {

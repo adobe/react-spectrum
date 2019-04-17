@@ -1,42 +1,32 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Clock from '../src/Clock';
 import createId from '../src/utils/createId';
 import FieldLabel from '../src/FieldLabel';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 const clockId = createId();
 
 storiesOf('Clock', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({value: 'today', 'aria-label': 'Start time'}),
-    {inline: true}
+    () => render({value: 'today', 'aria-label': 'Start time'})
   )
-  .addWithInfo(
+  .add(
     'uncontrolled',
-    () => render({defaultValue: 'today', 'aria-label': 'Start time'}),
-    {inline: true}
+    () => render({defaultValue: 'today', 'aria-label': 'Start time'})
   )
-  .addWithInfo(
+  .add(
     'quiet=true',
-    () => render({quiet: true, 'aria-label': 'Start time'}),
-    {inline: true}
+    () => render({quiet: true, 'aria-label': 'Start time'})
   )
-  .addWithInfo(
+  .add(
     'using aria-labelledby',
-    'Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.',
     () => render({value: 'today', id: clockId, 'aria-labelledby': clockId + '-label', labelText: 'Start time'}),
-    {inline: true}
-  ).addWithInfo(
+    {info: 'Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.'}
+  ).add(
     'AM/PM',
-    () => render({defaultValue: 'today', displayFormat: 'hh:mm a'}),
-    {inline: true}
+    () => render({defaultValue: 'today', displayFormat: 'hh:mm a'})
   );
 
 function renderClock(props = {}) {

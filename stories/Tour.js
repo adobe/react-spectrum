@@ -1,17 +1,12 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Button from '../src/Button';
 import CoachMark from '../src/CoachMark';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Tour from '../src/Tour';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Tour', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'default',
     () => (<div style={{position: 'relative'}}><div>
       <div
@@ -40,10 +35,9 @@ storiesOf('Tour', module)
           You did it!
         </CoachMark>
       </Tour>
-    </div></div>),
-    {inline: true}
+    </div></div>)
   )
-  .addWithInfo(
+  .add(
     'Disable progress',
     () => (<div>
       <div
@@ -72,10 +66,9 @@ storiesOf('Tour', module)
           </CoachMark>
         </Tour>
       </div>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'clickOutsideAction: skip',
     () => (<div>
       <div
@@ -104,10 +97,9 @@ storiesOf('Tour', module)
           </CoachMark>
         </Tour>
       </div>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'clickOutsideAction: next',
     () => (<div>
       <div
@@ -136,6 +128,5 @@ storiesOf('Tour', module)
           </CoachMark>
         </Tour>
       </div>
-    </div>),
-    {inline: true}
+    </div>)
   );

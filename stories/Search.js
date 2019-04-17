@@ -1,54 +1,41 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
 import Refresh from '../src/Icon/Refresh';
 import Search from '../src/Search';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Search', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'defaultValue (uncontrolled)',
-    () => render({defaultValue: 'React'}),
-    {inline: true}
+    () => render({defaultValue: 'React'})
   )
-  .addWithInfo(
+  .add(
     'value (controlled)',
-    () => render({value: 'React'}),
-    {inline: true}
+    () => render({value: 'React'})
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => render({value: 'React', disabled: true}),
-    {inline: true}
+    () => render({value: 'React', disabled: true})
   )
-  .addWithInfo(
+  .add(
     'icon: refresh',
-    () => render({value: 'React', icon: <Refresh />}),
-    {inline: true}
+    () => render({value: 'React', icon: <Refresh />})
   )
-  .addWithInfo(
+  .add(
     'quiet',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'quiet disabled',
-    () => render({quiet: true, disabled: true}),
-    {inline: true}
+    () => render({quiet: true, disabled: true})
   )
-  .addWithInfo(
+  .add(
     'quiet icon: refresh',
-    () => render({quiet: true, icon: <Refresh />}),
-    {inline: true}
+    () => render({quiet: true, icon: <Refresh />})
   );
 
 function render(props = {}) {

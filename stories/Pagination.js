@@ -1,38 +1,28 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Pagination from '../src/Pagination';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Pagination', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'button:cta',
-    () => render({variant: 'button', mode: 'cta'}),
-    {inline: true}
+    () => render({variant: 'button', mode: 'cta'})
   )
-  .addWithInfo(
+  .add(
     'button:secondary',
-    () => render({variant: 'button', mode: 'secondary'}),
-    {inline: true}
+    () => render({variant: 'button', mode: 'secondary'})
   )
-  .addWithInfo(
+  .add(
     'explicit',
-    () => render({variant: 'explicit', totalPages: 50, onChange: action('onChange')}),
-    {inline: true}
+    () => render({variant: 'explicit', totalPages: 50, onChange: action('onChange')})
   )
-  .addWithInfo(
+  .add(
     'controlled',
-    () => render({variant: 'explicit', totalPages: 50, currentPage: 2, onChange: action('onChange')}),
-    {inline: true}
+    () => render({variant: 'explicit', totalPages: 50, currentPage: 2, onChange: action('onChange')})
   );
 
 function render(props = {}) {

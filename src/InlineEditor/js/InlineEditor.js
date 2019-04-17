@@ -68,7 +68,7 @@ export default class InlineEditor extends React.Component {
     return (
       <span
         className={classNames('react-spectrum-InlineEditor', 'react-spectrum-InlineEditor-label', className)}
-        onDoubleClick={!disabled && this.startEditing}>
+        onDoubleClick={!disabled ? this.startEditing : undefined}>
         {this.state.value}
       </span>
     );

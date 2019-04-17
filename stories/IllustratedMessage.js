@@ -1,7 +1,6 @@
 import IllustratedMessage from '../src/IllustratedMessage';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 function noResultsImg() {
   return (
@@ -12,15 +11,9 @@ function noResultsImg() {
 }
 
 storiesOf('IllustratedMessage', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Custom',
     () => (
       <IllustratedMessage heading="No Results" description="Try another search" illustration={noResultsImg()} />
-    ),
-    {inline: true}
+    )
   );

@@ -3,6 +3,7 @@ import autobind from 'autobind-decorator';
 import createId from '../../utils/createId';
 import {EventEmitter} from 'events';
 
+@autobind
 class ItemNode {
   constructor(item, parent, hasChildren, index) {
     this.id = createId();
@@ -262,7 +263,6 @@ export default class ColumnViewDataSource extends EventEmitter {
     return null;
   }
 
-  @autobind
   reloadItem(item) {
     let node = this._lookupItem(item);
     this._reloadItem(node);
@@ -409,7 +409,6 @@ export default class ColumnViewDataSource extends EventEmitter {
    * @param {number} index - The child insertion index
    * @param {object} child - The child to insert
    */
-  @autobind
   insertChild(parent, index, child) {
     let parentNode = this._lookupItem(parent);
     if (!parentNode) {
@@ -439,7 +438,6 @@ export default class ColumnViewDataSource extends EventEmitter {
    * Removes an item from the tree view.
    * @param {object} item - The item to remove
    */
-  @autobind
   removeItem(item) {
     let node = this._lookupItem(item);
     if (!node) {
@@ -483,7 +481,6 @@ export default class ColumnViewDataSource extends EventEmitter {
    * @param {object} [toParent] - The parent item to move to. If not provided, the item is moved within the same parent.
    * @param {number} toIndex - The index to move the item to
    */
-  @autobind
   moveItem(item, toParent, toIndex) {
     let node = this._lookupItem(item);
     if (!node) {

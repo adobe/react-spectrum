@@ -28,7 +28,7 @@ describe('interpretKeyboardEvent', () => {
 
     for (let func in obj) {
       if (obj.hasOwnProperty(func)) {
-        obj[func].reset();
+        obj[func].resetHistory();
       }
     }
   });

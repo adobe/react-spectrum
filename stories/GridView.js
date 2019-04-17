@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import {Asset} from '../src/Asset';
 import Button from '../src/Button';
 import ButtonGroup from '../src/ButtonGroup';
@@ -7,68 +7,54 @@ import {GalleryLayout, GridLayout, GridView, WaterfallLayout} from '../src/GridV
 import IllustratedMessage from '../src/IllustratedMessage';
 import ListDataSource from '../src/ListDataSource';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 import './GridView.styl';
 
 storiesOf('GridView', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default (layout: GridLayout)',
-    () => render({layout: GridLayout}),
-    {inline: true}
+    () => render({layout: GridLayout})
   )
-  .addWithInfo(
+  .add(
     'layout: WaterfallLayout',
-    () => render({layout: WaterfallLayout}),
-    {inline: true}
+    () => render({layout: WaterfallLayout})
   )
-  .addWithInfo(
+  .add(
     'layout: GalleryLayout',
-    () => render({layout: GalleryLayout, renderItem: (item) => renderItem(item, {variant: 'gallery'})}),
-    {inline: true}
+    () => render({layout: GalleryLayout, renderItem: (item) => renderItem(item, {variant: 'gallery'})})
   )
-  .addWithInfo(
+  .add(
     'animated layout switching',
-    () => <LayoutSwitcher />,
-    {inline: true}
+    () => <LayoutSwitcher />
   )
-  .addWithInfo(
+  .add(
     'custom layout settings size small',
     () => render({
       layout: GridLayout,
       cardSize: 'S'
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'allowsSelection: false',
-    () => render({allowsSelection: false}),
-    {inline: true}
+    () => render({allowsSelection: false})
   )
-  .addWithInfo(
+  .add(
     'allowsMultipleSelection: false',
-    () => render({allowsMultipleSelection: false}),
-    {inline: true}
+    () => render({allowsMultipleSelection: false})
   )
-  .addWithInfo(
+  .add(
     'canDragItems: true',
-    () => render({canDragItems: true, quiet: true}),
-    {inline: true}
+    () => render({canDragItems: true, quiet: true})
   )
-  .addWithInfo(
+  .add(
     'custom drag view',
     () => render({
       canDragItems: true,
       quiet: true,
       renderDragView: () => <div style={{background: 'red', color: 'white'}}>Drag view</div>
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'with empty view',
     () => render({
       acceptsDrops: true,
@@ -84,26 +70,22 @@ storiesOf('GridView', module)
             </svg>
           } />
       )
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'acceptsDrops: true',
-    'This example shows how GridView supports drag and drop between items.',
     () => render({acceptsDrops: true, layout: GalleryLayout, renderItem: (item) => renderItem(item, {variant: 'gallery'})}),
-    {inline: true}
+    {info: 'This example shows how GridView supports drag and drop between items.'}
   )
-  .addWithInfo(
+  .add(
     'dropPosition: "on"',
-    'This example shows how GridView supports drag and drop over both items and the whole grid using dropPosition="on". In this example, "Active" rows can be dropped over, otherwise the drop goes to the entire table.',
     () => render({acceptsDrops: true, dropPosition: 'on'}),
-    {inline: true}
+    {info: 'This example shows how GridView supports drag and drop over both items and the whole grid using dropPosition="on". In this example, "Active" rows can be dropped over, otherwise the drop goes to the entire table.'}
   )
-  .addWithInfo(
+  .add(
     'canReorderItems',
-    'This example shows how GridView supports reordering items.',
     () => render({canReorderItems: true, layout: GalleryLayout, renderItem: (item) => renderItem(item, {variant: 'gallery'})}),
-    {inline: true}
+    {info: 'This example shows how GridView supports reordering items.'}
   );
 
 const TEST_DATA = [

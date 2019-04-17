@@ -2,25 +2,18 @@ import Heading from '../src/Heading';
 import React from 'react';
 import Rule from '../src/Rule';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Rule', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo('Large (Default)',
+  .add('Large (Default)',
     () => (
       <section>
         <Heading variant="subtitle1">Large</Heading>
         <Rule />
         <p>Page or Section Titles.</p>
       </section>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo('Medium',
+  .add('Medium',
   () => (
     <section>
       <Heading variant="subtitle2">Medium</Heading>
@@ -30,7 +23,7 @@ storiesOf('Rule', module)
   ),
   {inline: true}
   )
-  .addWithInfo('Small',
+  .add('Small',
   () => (
     <section>
       <Heading variant="subtitle3">Small</Heading>

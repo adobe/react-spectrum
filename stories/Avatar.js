@@ -1,32 +1,23 @@
 import Avatar from '../src/Avatar';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Avatar', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Disabled',
     () => (
       <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" disabled />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'With alt text',
     () => (
       <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
-    ),
-    {inline: true}
+    )
   );

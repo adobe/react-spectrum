@@ -1,76 +1,65 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
 import SplitView from '../src/SplitView';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 import './SplitView.styl';
 
 storiesOf('SplitView', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <SplitView>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Collapsible',
     () => (
       <SplitView collapsible>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Non-resizable',
     () => (
       <SplitView resizable={false}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Primary right',
     () => (
       <SplitView primaryPane={1} collapsible>
         <div>Secondary</div>
         <div>Primary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Custom sizes',
     () => (
       <SplitView primaryMin={50} primaryMax={500} primaryDefault={400} secondaryMin={50}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Vertical orientation',
     () => (
       <SplitView orientation="vertical" primaryMin={50} primaryDefault={100} secondaryMin={50} collapsible>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Nested',
     () => (
       <SplitView>
@@ -80,46 +69,41 @@ storiesOf('SplitView', module)
           <div>Bottom</div>
         </SplitView>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'onResize and onResizeEnd',
     () => (
       <SplitView onResize={action('onResize')} onResizeEnd={action('onResizeEnd')}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'primarySize: 0',
     () => (
       <SplitView collapsible primarySize={0}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'primarySize: 400',
     () => (
       <SplitView primarySize={400}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'onMouseDown',
     () => (
       <SplitView onMouseDown={action('onMouseDown')}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
-    ),
-    {inline: true}
+    )
   );

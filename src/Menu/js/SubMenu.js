@@ -30,7 +30,7 @@ export default class SubMenu extends Component {
 
   state = {
     opened: false
-  }
+  };
 
   menuId = createId();
   subMenuId = createId();

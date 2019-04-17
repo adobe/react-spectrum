@@ -1,12 +1,12 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Bell from '../src/Icon/Bell';
 import ComboBox from '../src/ComboBox';
 import React from 'react';
 import Seat from '../src/Icon/Seat';
 import Send from '../src/Icon/Send';
 import Stop from '../src/Icon/Stop';
+import {storiesOf} from '@storybook/react';
 import Trap from '../src/Icon/Trap';
-import {VerticalCenter} from '../.storybook/layout';
 
 const OPTIONS = [
   'Chocolate',
@@ -36,65 +36,50 @@ const OPTIONS_KEY_PAIRS = [
 ];
 
 storiesOf('ComboBox', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({options: OPTIONS, 'aria-label': 'Default'}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'Default'})
   )
-  .addWithInfo(
+  .add(
     'invalid',
-    () => render({options: OPTIONS, 'aria-label': 'invalid', invalid: true}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'invalid', invalid: true})
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    () => render({options: OPTIONS, 'aria-label': 'disabled', disabled: true}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'disabled', disabled: true})
   )
-  .addWithInfo(
+  .add(
     'quiet',
-    () => render({options: OPTIONS, 'aria-label': 'quiet', quiet: true}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'quiet', quiet: true})
   )
-  .addWithInfo(
+  .add(
     'quiet invalid',
-    () => render({options: OPTIONS, 'aria-label': 'quiet invalid', quiet: true, invalid: true}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'quiet invalid', quiet: true, invalid: true})
   )
-  .addWithInfo(
+  .add(
     'quiet disabled',
-    () => render({options: OPTIONS, 'aria-label': 'quiet disabled', quiet: true, disabled: true}),
-    {inline: true}
+    () => render({options: OPTIONS, 'aria-label': 'quiet disabled', quiet: true, disabled: true})
   )
-  .addWithInfo(
+  .add(
     'Key Value Pairs',
-    () => render({options: OPTIONS_KEY_PAIRS, 'aria-label': 'key value pairs'}),
-    {inline: true}
+    () => render({options: OPTIONS_KEY_PAIRS, 'aria-label': 'key value pairs'})
   )
-  .addWithInfo(
+  .add(
     'with icons',
-    () => render({options: OPTION_ICONS, 'aria-label': 'with icons'}),
-    {inline: true}
+    () => render({options: OPTION_ICONS, 'aria-label': 'with icons'})
   )
-  .addWithInfo(
+  .add(
     'controlled',
-    () => renderControlled({options: OPTIONS}),
-    {inline: true}
+    () => renderControlled({options: OPTIONS})
   )
-  .addWithInfo(
+  .add(
     'renderItem',
-    'This example uses renderItem method to italicize text',
     () => render({
       options: OPTIONS,
       'aria-label': 'renderItem',
       renderItem: (item) => <em>{item}</em>
     }),
-    {inline: true}
+    {info: 'This example uses renderItem method to italicize text'}
   );
 
 function render(props = {}) {

@@ -1,49 +1,38 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Dial from '../src/Dial';
 import FieldLabel from '../src/FieldLabel';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Dial', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'renderLabel: true',
-    () => render({renderLabel: true, label: 'Label'}),
-    {inline: true}
+    () => render({renderLabel: true, label: 'Label'})
   )
-  .addWithInfo(
+  .add(
     'size: L',
-    () => render({variant: 'round', label: 'size: L'}),
-    {inline: true}
+    () => render({variant: 'round', label: 'size: L'})
   )
-  .addWithInfo(
+  .add(
     'size: S',
-    () => render({variant: 'round', size: 'S', label: 'size: S'}),
-    {inline: true}
+    () => render({variant: 'round', size: 'S', label: 'size: S'})
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'variant: with aria-label',
-    () => render({renderLabel: true, 'aria-label': 'variant: with aria-label'}),
-    {inline: true}
+    () => render({renderLabel: true, 'aria-label': 'variant: with aria-label'})
   )
-  .addWithInfo(
+  .add(
     'variant: with aria-labelledby',
     () => (
       <div>
         <FieldLabel label="Label" labelFor="foo" id="bar" />
         {render({id: 'foo', 'aria-labelledby': 'bar'})}
       </div>
-    ),
-    {inline: true}
+    )
   );
 
 function render(props = {}) {
