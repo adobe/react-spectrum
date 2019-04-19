@@ -231,9 +231,9 @@ describe('Button', () => {
     });
 
     afterEach(() => {
-      focusSpy.reset();
-      mouseDownSpy.reset();
-      mouseUpSpy.reset();
+      focusSpy.resetHistory();
+      mouseDownSpy.resetHistory();
+      mouseUpSpy.resetHistory();
     });
 
     after(() => tree.unmount());
@@ -241,14 +241,14 @@ describe('Button', () => {
     it('on mouse down', () => {
       tree.simulate('mouseDown', {type: 'mousedown'});
       assert.equal(focusSpy.callCount, 1);
-      focusSpy.reset();
+      focusSpy.resetHistory();
       tree.setProps({onMouseDown: e => mouseDownSpy(e)});
       tree.simulate('mouseDown', {type: 'mousedown', isDefaultPrevented: () => true});
       tree.simulate('mouseUp', {type: 'mouseup'});
       assert.equal(focusSpy.callCount, 0);
       assert.equal(mouseDownSpy.callCount, 1);
-      focusSpy.reset();
-      mouseDownSpy.reset();
+      focusSpy.resetHistory();
+      mouseDownSpy.resetHistory();
       tree.setProps({onMouseDown: e => mouseDownSpy(e)});
       tree.simulate('mouseDown', {type: 'mousedown', isDefaultPrevented: () => false});
       assert.equal(focusSpy.callCount, 1);
@@ -258,13 +258,13 @@ describe('Button', () => {
     it('on mouse up', () => {
       tree.simulate('mouseUp', {type: 'mouseup'});
       assert.equal(focusSpy.callCount, 1);
-      focusSpy.reset();
+      focusSpy.resetHistory();
       tree.setProps({onMouseUp: e => mouseUpSpy(e)});
       tree.simulate('mouseUp', {type: 'mouseup', isDefaultPrevented: () => true});
       assert.equal(focusSpy.callCount, 0);
       assert.equal(mouseUpSpy.callCount, 1);
-      focusSpy.reset();
-      mouseUpSpy.reset();
+      focusSpy.resetHistory();
+      mouseUpSpy.resetHistory();
       tree.setProps({onMouseUp: e => mouseUpSpy(e)});
       tree.simulate('mouseUp', {type: 'mouseup', isDefaultPrevented: () => false});
       assert.equal(focusSpy.callCount, 1);
@@ -309,10 +309,10 @@ describe('Button', () => {
     });
 
     beforeEach(() => {
-      mouseDownButton0Spy.reset();
-      mouseUpButton0Spy.reset();
-      mouseDownButton1Spy.reset();
-      mouseUpButton1Spy.reset();
+      mouseDownButton0Spy.resetHistory();
+      mouseUpButton0Spy.resetHistory();
+      mouseDownButton1Spy.resetHistory();
+      mouseUpButton1Spy.resetHistory();
     });
 
     after(() => {

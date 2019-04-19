@@ -1,134 +1,107 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Bell from '../src/Icon/Bell';
 import Brush from '../src/Icon/Brush';
 import Button from '../src/Button';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Button', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'variant: cta',
-    () => render({variant: 'cta'}),
-    {inline: true}
+    () => render({variant: 'cta'})
   )
-  .addWithInfo(
+  .add(
     'variant: primary',
-    () => render({variant: 'primary'}),
-    {inline: true}
+    () => render({variant: 'primary'})
   )
-  .addWithInfo(
+  .add(
     'variant: secondary',
-    () => render({variant: 'secondary'}),
-    {inline: true}
+    () => render({variant: 'secondary'})
   )
-  .addWithInfo(
+  .add(
     'variant: warning',
-    () => render({variant: 'warning'}),
-    {inline: true}
+    () => render({variant: 'warning'})
   )
-  .addWithInfo(
+  .add(
     'variant: overBackground',
     () => (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
         {render({variant: 'overBackground'})}
       </div>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'variant: action',
-    () => renderSelected({variant: 'action'}),
-    {inline: true}
+    () => renderSelected({variant: 'action'})
   )
-  .addWithInfo(
+  .add(
     'variant: action with holdAffordance',
-    () => renderSelected({variant: 'action', holdAffordance: true, onLongClick: action('longClick')}),
-    {inline: true}
+    () => renderSelected({variant: 'action', holdAffordance: true, onLongClick: action('longClick')})
   )
-  .addWithInfo(
+  .add(
     'variant: tool',
-    () => renderSelected({variant: 'tool', label: null, icon: <Brush />}),
-    {inline: true}
+    () => renderSelected({variant: 'tool', label: null, icon: <Brush />})
   )
-  .addWithInfo(
+  .add(
     'variant: tool with holdAffordance',
-    () => renderSelected({variant: 'tool', label: null, icon: <Brush />, holdAffordance: true, onLongClick: action('longClick')}),
-    {inline: true}
+    () => renderSelected({variant: 'tool', label: null, icon: <Brush />, holdAffordance: true, onLongClick: action('longClick')})
   )
-  .addWithInfo(
+  .add(
     'variant: action icon only',
-    () => renderSelected({variant: 'action', label: null, icon: <Bell />}),
-    {inline: true}
+    () => renderSelected({variant: 'action', label: null, icon: <Bell />})
   )
-  .addWithInfo(
+  .add(
     'logic variant: and',
-    () => render({logic: true, variant: 'and', label: 'and'}),
-    {inline: true}
+    () => render({logic: true, variant: 'and', label: 'and'})
   )
-  .addWithInfo(
+  .add(
     'logic variant: or',
-    () => render({logic: true, variant: 'or', label: 'or'}),
-    {inline: true}
+    () => render({logic: true, variant: 'or', label: 'or'})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, variant: primary',
-    () => render({quiet: true, variant: 'primary'}),
-    {inline: true}
+    () => render({quiet: true, variant: 'primary'})
   )
- .addWithInfo(
+ .add(
     'quiet: true, variant: secondary',
-    () => render({quiet: true, variant: 'secondary'}),
-    {inline: true}
+    () => render({quiet: true, variant: 'secondary'})
   )
- .addWithInfo(
+ .add(
     'quiet: true, variant: warning',
-    () => render({quiet: true, variant: 'warning'}),
-    {inline: true}
+    () => render({quiet: true, variant: 'warning'})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, variant: overBackground',
     () => (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
         {render({quiet: true, variant: 'overBackground'})}
       </div>
-    ),
-    {inline: true}
+    )
   )
- .addWithInfo(
+ .add(
     'quiet: true, variant: action',
-    () => renderSelected({quiet: true, variant: 'action'}),
-    {inline: true}
+    () => renderSelected({quiet: true, variant: 'action'})
   )
- .addWithInfo(
+ .add(
     'quiet: true, variant: action icon only',
-    () => renderSelected({quiet: true, variant: 'action', label: null, icon: <Bell />}),
-    {inline: true}
+    () => renderSelected({quiet: true, variant: 'action', label: null, icon: <Bell />})
   )
-  .addWithInfo(
+  .add(
     'icon: bell',
-    () => render({icon: <Bell />, variant: 'primary'}),
-    {inline: true}
+    () => render({icon: <Bell />, variant: 'primary'})
   )
-  .addWithInfo(
+  .add(
     'selected: true',
-    () => render({selected: true, variant: 'primary'}),
-    {inline: true}
+    () => render({selected: true, variant: 'primary'})
   )
-  .addWithInfo(
+  .add(
     'element: a',
-    () => render({element: 'a', href: 'http://example.com'}),
-    {inline: true}
+    () => render({element: 'a', href: 'http://example.com'})
   )
-  .addWithInfo(
+  .add(
     'shift focus on mouseDown',
-    'In Safari, buttons don\'t receive focus following mousedown/mouseup events. React-spectrum provides a workaround for this issue so that components like the ButtonGroup will be navigable using the keyboard after receiving focus with the mouse. This story tests whether it is still possible to shift focus on mousedown without using preventDefault to prevent focus from being reclaimed by the button being clicked.',
     () => renderShiftFocusOnMouseDown({variant: 'secondary'}),
-    {inline: true}
+    {info: 'In Safari, buttons don\'t receive focus following mousedown/mouseup events. React-spectrum provides a workaround for this issue so that components like the ButtonGroup will be navigable using the keyboard after receiving focus with the mouse. This story tests whether it is still possible to shift focus on mousedown without using preventDefault to prevent focus from being reclaimed by the button being clicked.'}
   );
 
 function renderSelected(props = {}) {
@@ -157,7 +130,7 @@ function render(props = {}) {
     <div>
       <Button
         label="React"
-        onClick={action('click')}
+        onClick={action('click', {depth: 0})}
         {...props} />
       <Button
         label="React"

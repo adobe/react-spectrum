@@ -1,7 +1,7 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import TagField from '../src/TagField';
-import {VerticalCenter} from '../.storybook/layout';
 
 const OPTIONS = [
   'Chocolate',
@@ -29,78 +29,63 @@ function getCompletionsObject(text) {
 }
 
 storiesOf('TagField', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <TagField placeholder="Tags" />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Autocomplete',
     () => (
       <TagField placeholder="Tags" getCompletions={getCompletions} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Disallow new tags',
     () => (
       <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObject} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Allow duplicate tags',
     () => (
       <TagField allowDuplicates placeholder="Tags" getCompletions={getCompletionsObject} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'disabled',
     () => (
       <TagField placeholder="Tags" disabled />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'invalid',
     () => (
       <TagField placeholder="Tags" invalid />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'quiet',
     () => (
       <TagField placeholder="Tags" quiet />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'quiet disabled',
     () => (
       <TagField placeholder="Tags" quiet disabled />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'quiet invalid',
     () => (
       <TagField placeholder="Tags" quiet invalid />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'controlled',
     () => (
       <TagField placeholder="Tags" value={['one', 'two']} onChange={action('change')} />
-    ),
-    {inline: true}
+    )
   );

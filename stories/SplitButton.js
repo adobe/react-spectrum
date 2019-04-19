@@ -1,32 +1,24 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Facebook from '../src/Icon/Facebook';
 import Instagram from '../src/Icon/Instagram';
 import {MenuItem} from '../src/Menu';
 import React from 'react';
 import SplitButton from '../src/SplitButton';
+import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('SplitButton', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'variant: primary',
-    () => render({label: 'Action', variant: 'primary'}),
-    {inline: true}
+    () => render({label: 'Action', variant: 'primary'})
   )
-  .addWithInfo(
+  .add(
     'variant: secondary',
-    () => render({label: 'Action', variant: 'secondary'}),
-    {inline: true}
+    () => render({label: 'Action', variant: 'secondary'})
   )
-  .addWithInfo(
+  .add(
     'variant: cta',
-    () => render({label: 'Action', variant: 'cta'}),
-    {inline: true}
+    () => render({label: 'Action', variant: 'cta'})
   );
 
 function render(props = {}) {

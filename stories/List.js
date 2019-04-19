@@ -2,15 +2,9 @@ import {List, ListItem} from '../src/List';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('List', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <List>
@@ -20,10 +14,9 @@ storiesOf('List', module)
         <ListItem>Test</ListItem>
         <ListItem>Hi</ListItem>
       </List>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Scrolling',
     () => (
       <List style={{height: '326px'}}>
@@ -277,6 +270,5 @@ storiesOf('List', module)
         <ListItem value="ZM">Zambia</ListItem>
         <ListItem value="ZW">Zimbabwe</ListItem>
       </List>
-    ),
-    {inline: true}
+    )
   );

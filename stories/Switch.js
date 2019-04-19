@@ -1,63 +1,48 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import React from 'react';
+import {storiesOf} from '@storybook/react';
 import Switch from '../src/Switch';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Switch', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => (render({'aria-label': 'React'})),
-    {inline: true}
+    () => (render({'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'defaultChecked: true',
-    () => (render({defaultChecked: true, 'aria-label': 'React'})),
-    {inline: true}
+    () => (render({defaultChecked: true, 'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'checked: true',
-    () => (render({checked: true, 'aria-label': 'React'})),
-    {inline: true}
+    () => (render({checked: true, 'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'checked: false',
-    () => (render({checked: false, 'aria-label': 'React'})),
-    {inline: true}
+    () => (render({checked: false, 'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => (render({disabled: true, 'aria-label': 'React'})),
-    {inline: true}
+    () => (render({disabled: true, 'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'with label',
-    () => (render({label: 'Test'})),
-    {inline: true}
+    () => (render({label: 'Test'}))
   )
-  .addWithInfo(
+  .add(
     'with renderLabel: false',
-    () => (render({label: 'React switch', renderLabel: false})),
-    {inline: true}
+    () => (render({label: 'React switch', renderLabel: false}))
   )
-  .addWithInfo(
+  .add(
     'variant: ab',
-    () => (render({variant: 'ab', 'aria-label': 'React'})),
-    {inline: true}
+    () => (render({variant: 'ab', 'aria-label': 'React'}))
   )
-  .addWithInfo(
+  .add(
     'quiet: true',
-    () => render({quiet: true, 'aria-label': 'React'}),
-    {inline: true}
+    () => render({quiet: true, 'aria-label': 'React'})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, disabled: true',
-    () => render({quiet: true, disabled: true, 'aria-label': 'React'}),
-    {inline: true}
+    () => render({quiet: true, disabled: true, 'aria-label': 'React'})
   );
 
 function render(props = {}) {

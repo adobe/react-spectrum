@@ -210,7 +210,7 @@ describe('TableRow', function () {
     assert(!selectItem.calledOnce);
     checkbox.simulate('click', {shiftKey: false});
     assert(!selectItem.calledOnce);
-    stopPropagation.reset();
+    stopPropagation.resetHistory();
     wrapper.setProps({collectionView});
     checkbox.simulate('mousedown', {stopPropagation});
     checkbox.simulate('click', {shiftKey: false});
@@ -306,7 +306,7 @@ describe('TableRow', function () {
       assert.equal(onSelectChange.callCount, 2);
       assert.equal(onSelectChange.getCall(1).args[0], true);
 
-      onSelectChange.reset();
+      onSelectChange.resetHistory();
       wrapper.setProps({isHeaderRow: false});
       row.simulate('keyDown', {key: 'a', ctrlKey: true, preventDefault: NOOP, stopPropagation: NOOP});
       assert.equal(onSelectChange.callCount, 0);

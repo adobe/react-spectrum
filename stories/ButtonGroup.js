@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Add from '../src/Icon/Add';
 import Bell from '../src/Icon/Bell';
 import Brush from '../src/Icon/Brush';
@@ -10,8 +10,8 @@ import Delete from '../src/Icon/Delete';
 import React from 'react';
 import RegionSelect from '../src/Icon/RegionSelect';
 import Select from '../src/Icon/Select';
+import {storiesOf} from '@storybook/react';
 import Undo from '../src/Icon/Undo';
-import {VerticalCenter} from '../.storybook/layout';
 
 const defaultProps = {
   children: [
@@ -37,50 +37,37 @@ const selectedValue = [
 ];
 
 storiesOf('ButtonGroup', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => (render({...defaultProps})),
-    {inline: true}
+    () => (render({...defaultProps}))
   )
-  .addWithInfo(
+  .add(
     'Vertical',
-    () => (render({orientation: 'vertical'})),
-    {inline: true}
+    () => (render({orientation: 'vertical'}))
   )
-  .addWithInfo(
+  .add(
     'multiple selection',
-    () => (render({multiple: true})),
-    {inline: true}
+    () => (render({multiple: true}))
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => (render({value: selectedValue, multiple: true, disabled: true})),
-    {inline: true}
+    () => (render({value: selectedValue, multiple: true, disabled: true}))
   )
-  .addWithInfo(
+  .add(
     'readOnly: true',
-    () => (render({readOnly: true, onClick: action('click')})),
-    {inline: true}
+    () => (render({readOnly: true, onClick: action('click')}))
   )
-  .addWithInfo(
+  .add(
     'readOnly: true (vertical)',
-    () => (render({readOnly: true, orientation: 'vertical', onClick: action('click')})),
-    {inline: true}
+    () => (render({readOnly: true, orientation: 'vertical', onClick: action('click')}))
   )
-  .addWithInfo(
+  .add(
     'Tool',
-    () => (render({...toolProps})),
-    {inline: true}
+    () => (render({...toolProps}))
   )
-  .addWithInfo(
+  .add(
     'Tool (vertical)',
-    () => (render({orientation: 'vertical', ...toolProps})),
-    {inline: true}
+    () => (render({orientation: 'vertical', ...toolProps}))
   );
 
 function render(props = {}) {

@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {focusAfterMouseEvent} from '../../utils/events';
@@ -6,6 +7,7 @@ import {getTextFromReact} from '../../utils/string';
 import React, {Component} from 'react';
 
 @focusRing
+@autobind
 export default class SwitchBase extends Component {
   static defaultProps = {
     renderLabel: true,
@@ -59,7 +61,7 @@ export default class SwitchBase extends Component {
     return this.inputRef;
   }
 
-  handleChange = e => {
+  handleChange(e) {
     const {onChange} = this.props;
     const {checked} = e.target;
 

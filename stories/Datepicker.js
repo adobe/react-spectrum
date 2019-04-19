@@ -1,141 +1,111 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Datepicker from '../src/Datepicker';
 import FieldLabel from '../src/FieldLabel';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Datepicker', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({'aria-label': 'Default'}),
-    {inline: true}
+    () => render({'aria-label': 'Default'})
   )
-  .addWithInfo(
+  .add(
     'Default controlled',
-    () => render({value: 'today', 'aria-label': 'Default controlled'}),
-    {inline: true}
+    () => render({value: 'today', 'aria-label': 'Default controlled'})
   )
-  .addWithInfo(
+  .add(
     'type=datetime',
-    () => render({type: 'datetime', 'aria-label': 'type=datetime'}),
-    {inline: true}
+    () => render({type: 'datetime', 'aria-label': 'type=datetime'})
   )
-  .addWithInfo(
+  .add(
     'type=datetime controlled',
-    () => render({type: 'datetime', value: 'today', 'aria-label': 'type=datetime controlled'}),
-    {inline: true}
+    () => render({type: 'datetime', value: 'today', 'aria-label': 'type=datetime controlled'})
   )
-  .addWithInfo(
+  .add(
     'type=datetime with AM/PM',
-    () => render({type: 'datetime', defaultValue: 'today', 'aria-label': 'type=datetime', displayFormat: 'YYYY-MM-DD hh:mm a'}),
-    {inline: true}
+    () => render({type: 'datetime', defaultValue: 'today', 'aria-label': 'type=datetime', displayFormat: 'YYYY-MM-DD hh:mm a'})
   )
-  .addWithInfo(
+  .add(
     'type=time',
-    () => render({type: 'time', placeholder: 'Choose a time', 'aria-label': 'type=time'}),
-    {inline: true}
+    () => render({type: 'time', placeholder: 'Choose a time', 'aria-label': 'type=time'})
   )
-  .addWithInfo(
+  .add(
     'type=time controlled',
-    () => render({type: 'time', value: 'today', 'aria-label': 'type=time controlled'}),
-    {inline: true}
+    () => render({type: 'time', value: 'today', 'aria-label': 'type=time controlled'})
   )
-  .addWithInfo(
+  .add(
     'type=time with AM/PM',
-    () => render({type: 'time', placeholder: 'hh:mm am/pm', 'aria-label': 'type=time', displayFormat: 'hh:mm a'}),
-    {inline: true}
+    () => render({type: 'time', placeholder: 'hh:mm am/pm', 'aria-label': 'type=time', displayFormat: 'hh:mm a'})
   )
-  .addWithInfo(
+  .add(
     'startDay=1',
-    () => render({startDay: 1, 'aria-label': 'startDay=1'}),
-    {inline: true}
+    () => render({startDay: 1, 'aria-label': 'startDay=1'})
   )
-  .addWithInfo(
+  .add(
     'quiet=true',
-    () => render({quiet: true, 'aria-label': 'quiet=true'}),
-    {inline: true}
+    () => render({quiet: true, 'aria-label': 'quiet=true'})
   )
-  .addWithInfo(
+  .add(
     'value=2015-01-15 02:15',
-    () => render({type: 'datetime', value: '2015-01-15 02:15', 'aria-label': 'value=2015-01-15 02:15'}),
-    {inline: true}
+    () => render({type: 'datetime', value: '2015-01-15 02:15', 'aria-label': 'value=2015-01-15 02:15'})
   )
-  .addWithInfo(
+  .add(
     'invalid=true',
-    () => render({invalid: true, 'aria-label': 'invalid=true'}),
-    {inline: true}
+    () => render({invalid: true, 'aria-label': 'invalid=true'})
   )
-  .addWithInfo(
+  .add(
     'disabled=true',
-    () => render({disabled: true, 'aria-label': 'disabled=true'}),
-    {inline: true}
+    () => render({disabled: true, 'aria-label': 'disabled=true'})
   )
-  .addWithInfo(
+  .add(
     'readOnly=true',
-    () => render({readOnly: true, value: '2015-01-15', 'aria-label': 'readOnly=true'}),
-    {inline: true}
+    () => render({readOnly: true, value: '2015-01-15', 'aria-label': 'readOnly=true'})
   )
-  .addWithInfo(
+  .add(
     'placeholder=foo',
-    () => render({placeholder: 'foo', 'aria-label': 'placeholder=foo'}),
-    {inline: true}
+    () => render({placeholder: 'foo', 'aria-label': 'placeholder=foo'})
   )
-  .addWithInfo(
+  .add(
     'with placement',
-    () => render({type: 'datetime', placement: 'bottom', 'aria-label': 'with placement'}),
-    {inline: true}
+    () => render({type: 'datetime', placement: 'bottom', 'aria-label': 'with placement'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range"',
-    () => render({selectionType: 'range', 'aria-label': 'selectionType="range"'}),
-    {inline: true}
+    () => render({selectionType: 'range', 'aria-label': 'selectionType="range"'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" with value',
-    () => render({selectionType: 'range', value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" with value'}),
-    {inline: true}
+    () => render({selectionType: 'range', value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" with value'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" disabled',
-    () => render({selectionType: 'range', disabled: true, 'aria-label': 'selectionType="range" disabled'}),
-    {inline: true}
+    () => render({selectionType: 'range', disabled: true, 'aria-label': 'selectionType="range" disabled'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" invalid',
-    () => render({selectionType: 'range', invalid: true, value: ['2018-10-25', '2018-10-05'], 'aria-label': 'selectionType="range" invalid'}),
-    {inline: true}
+    () => render({selectionType: 'range', invalid: true, value: ['2018-10-25', '2018-10-05'], 'aria-label': 'selectionType="range" invalid'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and quiet',
-    () => render({selectionType: 'range', quiet: true, 'aria-label': 'selectionType="range" and quiet'}),
-    {inline: true}
+    () => render({selectionType: 'range', quiet: true, 'aria-label': 'selectionType="range" and quiet'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and quiet with value',
-    () => render({selectionType: 'range', quiet: true, value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" and quiet with value'}),
-    {inline: true}
+    () => render({selectionType: 'range', quiet: true, value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" and quiet with value'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and quiet disabled',
-    () => render({selectionType: 'range', quiet: true, disabled: true, 'aria-label': 'selectionType="range" and quiet disabled'}),
-    {inline: true}
+    () => render({selectionType: 'range', quiet: true, disabled: true, 'aria-label': 'selectionType="range" and quiet disabled'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and quiet readOnly',
-    () => render({selectionType: 'range', quiet: true, readOnly: true, value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" with value'}),
-    {inline: true}
+    () => render({selectionType: 'range', quiet: true, readOnly: true, value: ['2018-10-01', '2018-10-30'], 'aria-label': 'selectionType="range" with value'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and quiet invalid',
-    () => render({selectionType: 'range', quiet: true, invalid: true, value: ['2018-10-25', '2018-10-05'], 'aria-label': 'selectionType="range" and quiet invalid'}),
-    {inline: true}
+    () => render({selectionType: 'range', quiet: true, invalid: true, value: ['2018-10-25', '2018-10-05'], 'aria-label': 'selectionType="range" and quiet invalid'})
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and type="datetime"',
     () => render({
       selectionType: 'range',
@@ -143,10 +113,9 @@ storiesOf('Datepicker', module)
       'aria-label': 'selectionType="range" and type="datetime"',
       displayFormat: 'YYYY-MM-DD hh:mm a',
       placeholder: 'yyyy-mm-dd hh:mm a'
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and type="datetime" with value',
     () => render({
       selectionType: 'range',
@@ -155,10 +124,9 @@ storiesOf('Datepicker', module)
       'aria-label': 'selectionType="range" and type="datetime" with value',
       displayFormat: 'YYYY-MM-DD hh:mm a',
       placeholder: 'yyyy-mm-dd hh:mm a'
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and type="time"',
     () => render({
       selectionType: 'range',
@@ -166,10 +134,9 @@ storiesOf('Datepicker', module)
       'aria-label': 'selectionType="range" and type="time"',
       displayFormat: 'hh:mm a',
       placeholder: 'hh:mm a'
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'selectionType="range" and type="time" with value',
     () => render({
       selectionType: 'range',
@@ -178,13 +145,11 @@ storiesOf('Datepicker', module)
       'aria-label': 'selectionType="range" and type="time" with value',
       displayFormat: 'hh:mm a',
       placeholder: 'hh:mm a'
-    }),
-    {inline: true}
+    })
   )
-  .addWithInfo(
+  .add(
     'Labeled with FieldLabel',
-    () => renderWithFieldLabel({selectionType: 'range'}),
-    {inline: true}
+    () => renderWithFieldLabel({selectionType: 'range'})
   );
 
 function render(props = {}) {

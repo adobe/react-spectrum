@@ -1,35 +1,26 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import CycleButton from '../src/CycleButton';
 import PauseCircle from '../src/Icon/PauseCircle';
 import PlayCircle from '../src/Icon/PlayCircle';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('CycleButton', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({}),
-    {inline: true}
+    () => render({})
   )
-  .addWithInfo(
+  .add(
     'defaultAction',
-    () => render({defaultAction: 'pause'}),
-    {inline: true}
+    () => render({defaultAction: 'pause'})
   )
-  .addWithInfo(
+  .add(
     'Controlled Component',
-    () => render({action: 'play'}),
-    {inline: true}
+    () => render({action: 'play'})
   )
-  .addWithInfo(
+  .add(
     'Disabled',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   );
 
 function render(props = {}) {

@@ -31,8 +31,8 @@ describe('SplitButton', () => {
     </SplitButton>
   );
   beforeEach(() => {
-    clickHandler.reset();
-    selectHandler.reset();
+    clickHandler.resetHistory();
+    selectHandler.resetHistory();
   });
   afterEach(() => {
     wrapper.unmount();

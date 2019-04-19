@@ -118,7 +118,7 @@ describe('Overlay', () => {
     tree.setState({'show': true});
     assert(addstub.called);
     stub.restore();
-    stub.reset();
+    stub.resetHistory();
     tree.unmount();
     assert(removestub.called);
   });
@@ -176,7 +176,7 @@ describe('Overlay', () => {
     assert(onHideOuter.calledOnce);
     assert(onHideInner.notCalled);
 
-    onHideOuter.reset();
+    onHideOuter.resetHistory();
 
     // Trigger click
     let event = new window.MouseEvent('click', {
@@ -203,7 +203,7 @@ describe('Overlay', () => {
     assert(onHideOuter.notCalled);
     assert(onHideInner.calledOnce);
 
-    onHideInner.reset();
+    onHideInner.resetHistory();
 
     // Wait for animation
     await sleep(125);

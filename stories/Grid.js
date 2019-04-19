@@ -1,7 +1,6 @@
 import {Grid, GridColumn, GridRow} from '../src/Grid';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 var boxRow = {
   position: 'relative',
@@ -72,12 +71,7 @@ var boxLarge = {
   padding: '1rem'
 };
 storiesOf('Grid', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Fixed',
     () => (
       <Grid variant="fixed">
@@ -109,10 +103,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Fluid',
     () => (
       <Grid>
@@ -170,10 +163,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Offset',
     () => (
       <Grid>
@@ -233,10 +225,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Auto Width',
     () => (
       <Grid>
@@ -260,10 +251,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Nested Grids',
     () => (
       <Grid>
@@ -310,10 +300,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-start',
     () => (
       <Grid>
@@ -329,10 +318,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-center',
     () => (
       <Grid>
@@ -348,10 +336,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-end',
     () => (
       <Grid>
@@ -367,10 +354,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-top',
     () => (
       <Grid>
@@ -383,10 +369,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-middle',
     () => (
       <Grid>
@@ -399,10 +384,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Alignment-spectrum-grid-bottom',
     () => (
       <Grid>
@@ -415,10 +399,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Distribution-spectrum-grid-around',
     () => (
       <Grid>
@@ -440,10 +423,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Distribution-spectrum-grid-between',
     () => (
       <Grid>
@@ -465,10 +447,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Reordering-spectrum-grid-first',
     () => (
       <Grid>
@@ -499,10 +480,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Reordering-spectrum-grid-last',
     () => (
       <Grid>
@@ -533,10 +513,9 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Reversing-spectrum-grid-reverse',
     () => (
       <Grid>
@@ -567,7 +546,6 @@ storiesOf('Grid', module)
           </GridColumn>
         </GridRow>
       </Grid>
-    ),
-    {inline: true}
+    )
   );
 

@@ -1,83 +1,64 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Checkbox from '../src/Checkbox';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Checkbox', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'defaultChecked: true',
-    () => render({defaultChecked: true}),
-    {inline: true}
+    () => render({defaultChecked: true})
   )
-  .addWithInfo(
+  .add(
     'checked: true',
-    () => render({checked: true}),
-    {inline: true}
+    () => render({checked: true})
   )
-  .addWithInfo(
+  .add(
     'checked: false',
-    () => render({checked: false}),
-    {inline: true}
+    () => render({checked: false})
   )
-  .addWithInfo(
+  .add(
     'indeterminate: true',
-    () => render({indeterminate: true}),
-    {inline: true}
+    () => render({indeterminate: true})
   )
-  .addWithInfo(
+  .add(
     'invalid: true',
-    () => render({invalid: true}),
-    {inline: true}
+    () => render({invalid: true})
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, indeterminate: true',
-    () => render({quiet: true, indeterminate: true}),
-    {inline: true}
+    () => render({quiet: true, indeterminate: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, invalid: true',
-    () => render({quiet: true, invalid: true}),
-    {inline: true}
+    () => render({quiet: true, invalid: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, invalid: true, indeterminate: true',
-    () => render({quiet: true, invalid: true, indeterminate: true}),
-    {inline: true}
+    () => render({quiet: true, invalid: true, indeterminate: true})
   )
-  .addWithInfo(
+  .add(
     'quiet: true, disabled: true',
-    () => render({quiet: true, disabled: true}),
-    {inline: true}
+    () => render({quiet: true, disabled: true})
   )
-  .addWithInfo(
+  .add(
     'Label Not Set',
-    () => render({label: null, 'aria-label': 'React'}),
-    {inline: true}
+    () => render({label: null, 'aria-label': 'React'})
   )
-  .addWithInfo(
+  .add(
     'renderLabel: false',
-    () => render({renderLabel: false, label: 'React checkbox'}),
-    {inline: true}
+    () => render({renderLabel: false, label: 'React checkbox'})
   );
 
 function render(props = {}) {

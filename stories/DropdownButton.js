@@ -1,4 +1,4 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Dialog from '../src/Dialog';
 import DropdownButton from '../src/DropdownButton';
 import Facebook from '../src/Icon/Facebook';
@@ -7,44 +7,33 @@ import {MenuItem} from '../src/Menu';
 import ModalTrigger from '../src/ModalTrigger';
 import React from 'react';
 import SocialNetwork from '../src/Icon/SocialNetwork';
+import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('DropdownButton', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 200px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({label: 'Action'}),
-    {inline: true}
+    () => render({label: 'Action'})
   )
-  .addWithInfo(
+  .add(
     'Icon only',
-    () => render({icon: <SocialNetwork alt="Social Network" />}),
-    {inline: true}
+    () => render({icon: <SocialNetwork alt="Social Network" />})
   )
-  .addWithInfo(
+  .add(
     'alignRight',
-    () => render({label: 'Action', alignRight: true}),
-    {inline: true}
+    () => render({label: 'Action', alignRight: true})
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    () => render({label: 'Action', disabled: true}),
-    {inline: true}
+    () => render({label: 'Action', disabled: true})
   )
-  .addWithInfo(
+  .add(
     'Stay open on select',
-    () => render({label: 'Action', closeOnSelect: false}),
-    {inline: true}
+    () => render({label: 'Action', closeOnSelect: false})
   )
-  .addWithInfo(
+  .add(
     'holdAffordance',
-    () => render({holdAffordance: true}),
-    {inline: true}
+    () => render({holdAffordance: true})
   );
 
 function render(props = {}) {

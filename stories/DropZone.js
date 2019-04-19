@@ -2,26 +2,19 @@ import DropZone from '../src/DropZone';
 import IllustratedMessage from '../src/IllustratedMessage';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 function onDrop() {
   alert('Something got dropped.');
 }
 
 storiesOf('DropZone', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'With children content',
-    'DropZone accepts children components as content. This example uses IllustratedMessage',
     () => render({
       onDrop,
       className: 'custom-class'
     }),
-    {inline: true}
+    {info: 'DropZone accepts children components as content. This example uses IllustratedMessage'}
   );
 
 function render(props = {}) {

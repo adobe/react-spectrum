@@ -2,45 +2,36 @@ import Button from '../src/Button';
 import CoachMark from '../src/CoachMark';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('CoachMark', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'default',
     () => (<div>
       <Button id="something">target</Button>
       <CoachMark title="Default" selector="#something" confirmLabel="Confirm">
         This is a Default Coach Mark
       </CoachMark>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'dismissible',
     () => (<div>
       <Button id="something">target</Button>
       <CoachMark title="Default" selector="#something" confirmLabel="Confirm" dismissible>
         This is a Default Coach Mark
       </CoachMark>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'quiet',
     () => (<div>
       <Button id="something">target</Button>
       <CoachMark title="Default" selector="#something" confirmLabel="Confirm" quiet>
         This is a Default Coach Mark
       </CoachMark>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'steps',
     () => (<div>
       <Button id="something">target</Button>
@@ -54,10 +45,9 @@ storiesOf('CoachMark', module)
         cancelLabel="Skip Tour">
         This is a Default Coach Mark
       </CoachMark>
-    </div>),
-    {inline: true}
+    </div>)
   )
-  .addWithInfo(
+  .add(
     'image',
     () => (<div>
       <Button id="something">target</Button>
@@ -68,6 +58,5 @@ storiesOf('CoachMark', module)
         image="https://git.corp.adobe.com/pages/govett/photos/photos/DSC06640.jpg">
         This is a Default Coach Mark
       </CoachMark>
-    </div>),
-    {inline: true}
+    </div>)
   );

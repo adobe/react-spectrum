@@ -478,8 +478,8 @@ describe('SplitView', function () {
         opts.setup(tree);
       }
 
-      onResize.reset();
-      onResizeEnd.reset();
+      onResize.resetHistory();
+      onResizeEnd.resetHistory();
 
       tree.find('.spectrum-SplitView-splitter').simulate('keyDown', {key: opts.key});
 

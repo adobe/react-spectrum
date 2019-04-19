@@ -11,8 +11,9 @@ node_modules: package.json
 	yarn install
 	touch $@
 
+# --ci keeps it from opening the browser tab automatically
 run:
-	start-storybook -p 9002
+	start-storybook -p 9002 --ci
 
 clean:
 	rm -rf dist storybook-static public src/dist

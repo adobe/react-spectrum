@@ -112,8 +112,8 @@ describe('LiveRegionMessage', () => {
   });
 
   afterEach(() => {
-    LiveRegionAnnouncer.announcePolite.reset();
-    LiveRegionAnnouncer.announceAssertive.reset();
+    LiveRegionAnnouncer.announcePolite.resetHistory();
+    LiveRegionAnnouncer.announceAssertive.resetHistory();
     if (wrapper.exists()) {
       wrapper.unmount();
     }

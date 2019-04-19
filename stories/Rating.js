@@ -1,32 +1,24 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Rating from '../src/Rating';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Rating', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <Rating aria-label="Default rating" onChange={action('change')} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Disabled',
     () => (
       <Rating aria-label="Disabled rating" disabled value={3} onChange={action('change')} />
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Controlled',
     () => (
       <Rating aria-label="Controlled rating" value={3} onChange={action('change')} />
-    ),
-    {inline: true}
+    )
   );

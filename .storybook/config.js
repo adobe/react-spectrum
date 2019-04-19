@@ -1,35 +1,40 @@
-import 'babel-polyfill';
-import {configure, setAddon, addDecorator} from '@storybook/react';
-import configureTypekit from '../src/utils/configureTypekit';
-import infoAddon, {setDefaults} from '@storybook/addon-info';
+import {configure, addDecorator} from '@storybook/react';
+import { withInfo } from '@storybook/addon-info';
 import React from 'react';
-import {StoryWrapper} from './layout';
+import {StoryWrapper, VerticalCenter} from './layout';
+import { withA11y } from '@storybook/addon-a11y';
 
-import './storybook.styl';
+addDecorator(withA11y);
 
-setAddon(infoAddon);
+addDecorator(
+  withInfo({
+    inline: true,
+    styles: {
+      infoBody: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        boxShadow: 'none',
+        padding: "0",
+        margin: "0",
+        clear: 'both'
+      }
+    }
+  })
+);
+
+addDecorator(story => (
+  <VerticalCenter style={{textAlign: 'left', padding: '0 100px 50px 100px'}}>
+    {story()}
+  </VerticalCenter>
+));
 
 addDecorator(story => (
   <StoryWrapper> {story()} </StoryWrapper>
 ));
 
-// addon-info
-setDefaults({
-  inline: true,
-  styles: {
-    infoBody: {
-      backgroundColor: 'transparent',
-      border: 'none',
-      boxShadow: 'none',
-      padding: '10px 0',
-      marginTop: '0',
-      clear: 'both'
-    }
-  }
-});
 
 function loadStories() {
-  var storiesContext = require.context('../stories', true, /^(.*\.(js|jsx))$/);
+  let storiesContext = require.context('../stories', true, /^(.*\.(js|jsx))$/);
   storiesContext.keys().forEach(storiesContext);
 }
 

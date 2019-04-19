@@ -1,56 +1,43 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Button from '../src/Button';
 import {error, success, Toast, warning} from '../src/Toast';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Toast', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => <Toast>Toast is done.</Toast>,
-    {inline: true}
+    () => <Toast>Toast is done.</Toast>
   )
-  .addWithInfo(
+  .add(
     'closable',
-    () => <Toast closable onClose={action('onClose')}>Toast is done.</Toast>,
-    {inline: true}
+    () => <Toast closable onClose={action('onClose')}>Toast is done.</Toast>
   )
-  .addWithInfo(
+  .add(
     'actionable',
-    () => <Toast closable actionLabel="Undo" onAction={action('onAction')} onClose={action('onClose')}>The thing that you are trying to do the thing to has been archived.</Toast>,
-    {inline: true}
+    () => <Toast closable actionLabel="Undo" onAction={action('onAction')} onClose={action('onClose')}>The thing that you are trying to do the thing to has been archived.</Toast>
   )
-  .addWithInfo(
+  .add(
     'action triggers close',
-    () => <Toast closable actionLabel="undo" closeOnAction onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
-    {inline: true}
+    () => <Toast closable actionLabel="undo" closeOnAction onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>
   )
-  .addWithInfo(
+  .add(
     'variant = error',
-    () => <Toast closable variant="error">Toast is burnt.</Toast>,
-    {inline: true}
+    () => <Toast closable variant="error">Toast is burnt.</Toast>
   )
-  .addWithInfo(
+  .add(
     'variant = warning',
-    () => <Toast closable variant="warning">Toast is burning.</Toast>,
-    {inline: true}
+    () => <Toast closable variant="warning">Toast is burning.</Toast>
   )
-  .addWithInfo(
+  .add(
     'variant = info',
-    () => <Toast closable actionLabel="Update" onAction={action('onAction')} variant="info">A new version of Lightroom Classic is now available.</Toast>,
-    {inline: true}
+    () => <Toast closable actionLabel="Update" onAction={action('onAction')} variant="info">A new version of Lightroom Classic is now available.</Toast>
   )
-  .addWithInfo(
+  .add(
     'variant = success',
-    () => <Toast closable variant="success">Toast is golden brown.</Toast>,
-    {inline: true}
+    () => <Toast closable variant="success">Toast is golden brown.</Toast>
   )
-  .addWithInfo(
+  .add(
     'success trigger',
     () => (
       <Button
@@ -64,20 +51,17 @@ storiesOf('Toast', module)
         variant="primary">
           Show Toast
       </Button>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'error trigger',
-    () => <Button onClick={() => error('Dismal Failure!')} variant="primary">Show Toast</Button>,
-    {inline: true}
+    () => <Button onClick={() => error('Dismal Failure!')} variant="primary">Show Toast</Button>
   )
-  .addWithInfo(
+  .add(
     'warning trigger',
-    () => <Button onClick={() => warning('Could be serious!', {role: 'region', 'aria-live': 'off'})} variant="primary">Show Toast</Button>,
-    {inline: true}
+    () => <Button onClick={() => warning('Could be serious!', {role: 'region', 'aria-live': 'off'})} variant="primary">Show Toast</Button>
   )
-  .addWithInfo(
+  .add(
     'warning trigger with action close',
     () => (<Button
       onClick={() => warning('Could be serious!', {
@@ -88,10 +72,9 @@ storiesOf('Toast', module)
         onAction: action('onAction'),
         onClose: action('onClose')
       })}
-      variant="primary">Show Toast</Button>),
-    {inline: true}
+      variant="primary">Show Toast</Button>)
   )
-  .addWithInfo(
+  .add(
     'no timeout',
     () => (
       <Button
@@ -106,6 +89,5 @@ storiesOf('Toast', module)
         variant="primary">
         Show Toast
       </Button>
-    ),
-    {inline: true}
+    )
   );

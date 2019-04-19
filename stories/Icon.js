@@ -5,57 +5,43 @@ import Icon from '../src/Icon';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Icon', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'icon: bell',
-    () => <Bell />,
-    {inline: true}
+    () => <Bell />
   )
-  .addWithInfo(
+  .add(
     'icon: Twitter',
-    () => <Twitter alt="Twitter" />,
-    {inline: true}
+    () => <Twitter alt="Twitter" />
   )
-  .addWithInfo(
+  .add(
     'size: XS',
-    () => render({size: 'XS'}),
-    {inline: true}
+    () => render({size: 'XS'})
   )
-  .addWithInfo(
+  .add(
     'size: S',
-    () => render({size: 'S'}),
-    {inline: true}
+    () => render({size: 'S'})
   )
-  .addWithInfo(
+  .add(
     'size: L',
-    () => render({size: 'L'}),
-    {inline: true}
+    () => render({size: 'L'})
   )
-  .addWithInfo(
+  .add(
     'size: XL',
-    () => render({size: 'XL'}),
-    {inline: true}
+    () => render({size: 'XL'})
   )
-  .addWithInfo(
+  .add(
     'Color icon',
     () => <AdobeExperienceManagerColorLight size="XL" alt="Adobe Experience Manager" />
   )
-  .addWithInfo(
+  .add(
     'custom SVG',
-    () => <Icon><svg viewBox="0 0 25 25"><rect x="0" y="0" width="25" height="25" /></svg></Icon>,
-    {inline: true}
+    () => <Icon><svg viewBox="0 0 25 25"><rect x="0" y="0" width="25" height="25" /></svg></Icon>
   );
 
 function render(props = {}) {

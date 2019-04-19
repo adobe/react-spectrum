@@ -7,94 +7,72 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Textfield from '../src/Textfield';
 import Tooltip from '../src/Tooltip';
-import {VerticalCenter} from '../.storybook/layout';
 
 
 storiesOf('OverlayTrigger', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'with trigger: hover',
-    () => render('popover', {trigger: 'hover', placement: 'right'}),
-    {inline: true}
+    () => render('popover', {trigger: 'hover', placement: 'right'})
   )
-  .addWithInfo(
+  .add(
     'with trigger: click',
-    () => render('popover', {trigger: 'click', placement: 'right'}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'right'})
   )
-  .addWithInfo(
+  .add(
     'with tooltip',
-    () => render('tooltip', {placement: 'right'}),
-    {inline: true}
+    () => render('tooltip', {placement: 'right'})
   )
-  .addWithInfo(
+  .add(
     'with tooltip:bottom',
-    () => render('tooltip', {trigger: 'click', placement: 'bottom'}),
-    {inline: true}
+    () => render('tooltip', {trigger: 'click', placement: 'bottom'})
   )
-  .addWithInfo(
+  .add(
     'placement: top',
-    () => render('popover', {trigger: 'click', placement: 'top', variant: 'error'}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'top', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'placement: bottom',
-    () => render('popover', {trigger: 'click', placement: 'bottom', variant: 'error'}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'bottom', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'placement: left (flip: false)',
-    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error', flip: false}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error', flip: false})
   )
-  .addWithInfo(
+  .add(
     'placement: left (flip: true)',
-    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error'}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'left', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'placement: right',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error'}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'with: offset',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', offset: 100}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', offset: 100})
   )
-  .addWithInfo(
+  .add(
     'with: crossOffset',
-    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', crossOffset: 100}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'right', variant: 'error', crossOffset: 100})
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    () => render('popover', {disabled: true, trigger: 'hover', placement: 'right'}),
-    {inline: true}
+    () => render('popover', {disabled: true, trigger: 'hover', placement: 'right'})
   )
-  .addWithInfo(
+  .add(
     'with: nested overlay (autocomplete)',
-    () => render('nestedPopover', {trigger: 'click', placement: 'right', variant: 'error'}),
-    {inline: true}
+    () => render('nestedPopover', {trigger: 'click', placement: 'right', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'with: margin on target',
-    () => render('popover', {trigger: 'click', placement: 'bottom'}, {style: {margin: 40}}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'bottom'}, {style: {margin: 40}})
   )
-  .addWithInfo(
+  .add(
     'controlled open',
-    () => render('popover', {show: true, placement: 'bottom'}, {style: {margin: 40}}),
-    {inline: true}
+    () => render('popover', {show: true, placement: 'bottom'}, {style: {margin: 40}})
   )
-  .addWithInfo(
+  .add(
     'with: "block" element and placement "bottom left"',
-    () => render('popover', {trigger: 'click', placement: 'bottom left'}, {style: {width: '100%', minWidth: '100%'}}),
-    {inline: true}
+    () => render('popover', {trigger: 'click', placement: 'bottom left'}, {style: {width: '100%', minWidth: '100%'}})
   );
 
 function render(type, props = {}, targetProps = {}) {

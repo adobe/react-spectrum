@@ -1,30 +1,22 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import InlineEditor from '../src/InlineEditor';
 import React from 'react';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('InlineEditor', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', width: '350px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => <InlineEditor defaultValue="test" onChange={action('onChange')} />,
-    {inline: true}
+    () => <InlineEditor defaultValue="test" onChange={action('onChange')} />
   )
-  .addWithInfo(
+  .add(
     'disabled',
-    () => <InlineEditor defaultValue="test" disabled onChange={action('onChange')} />,
-    {inline: true}
+    () => <InlineEditor defaultValue="test" disabled onChange={action('onChange')} />
   )
-  .addWithInfo(
+  .add(
     'controlled',
-    () => <InlineEditor value="test" onChange={action('onChange')} />,
-    {inline: true}
+    () => <InlineEditor value="test" onChange={action('onChange')} />
   )
-  .addWithInfo(
+  .add(
     'validate',
     () => (<InlineEditor
       defaultValue="0000000000"
@@ -32,6 +24,5 @@ storiesOf('InlineEditor', module)
       onChange={(value) => {
         action('onChange')(value);
         return RegExp(/^\d{10}$/).test(value);
-      }} />),
-    {inline: true}
+      }} />)
   );

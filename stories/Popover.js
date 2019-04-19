@@ -2,66 +2,49 @@ import Heading from '../src/Heading';
 import Popover from '../src/Popover';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {VerticalCenter} from '../.storybook/layout';
 import './Popover.styl';
 
 storiesOf('Popover', module)
   .addDecorator(story => (
-    <VerticalCenter
-      className="popover-story"
-      style={{
-        textAlign: 'left',
-        margin: '0 100px 50px',
-        position: 'static',
-        transform: 'none'
-      }}>
+    <div className="popover-story">
       {story()}
-    </VerticalCenter>
+    </div>
   ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render('Content'),
-    {inline: true}
+    () => render('Content')
   )
-  .addWithInfo(
+  .add(
     'Long content, placement: right top',
-    () => render(longMarkup, {placement: 'right top'}),
-    {inline: true}
+    () => render(longMarkup, {placement: 'right top'})
   )
-  .addWithInfo(
+  .add(
     'open: false',
-    () => render('Content', {open: false}),
-    {inline: true}
+    () => render('Content', {open: false})
   )
-  .addWithInfo(
+  .add(
     'variant: error',
-    () => render('Content', {variant: 'error'}),
-    {inline: true}
+    () => render('Content', {variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'placement: top',
-    () => render('Content', {placement: 'top'}),
-    {inline: true}
+    () => render('Content', {placement: 'top'})
   )
-  .addWithInfo(
+  .add(
     'placement: bottom',
-    () => render('Content', {placement: 'bottom'}),
-    {inline: true}
+    () => render('Content', {placement: 'bottom'})
   )
-  .addWithInfo(
+  .add(
     'placement: left',
-    () => render('Content', {placement: 'left'}),
-    {inline: true}
+    () => render('Content', {placement: 'left'})
   )
-  .addWithInfo(
+  .add(
     'placement: right',
-    () => render('Content', {placement: 'right'}),
-    {inline: true}
+    () => render('Content', {placement: 'right'})
   )
-  .addWithInfo(
+  .add(
     'no title',
-    () => render('Content', {title: null}),
-    {inline: true}
+    () => render('Content', {title: null})
   );
 
 function render(content, props = {}) {

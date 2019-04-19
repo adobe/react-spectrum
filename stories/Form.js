@@ -5,15 +5,9 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Textarea from '../src/Textarea';
 import Textfield from '../src/Textfield';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Form', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
     () => (
       <Form>
@@ -29,10 +23,9 @@ storiesOf('Form', module)
             label={<span>I agree to the <Link href="#" target="_self" style={{position: 'relative', zIndex: 1}}>terms and conditions </Link>.</span>} />
         </FormItem>
       </Form>
-    ),
-    {inline: true}
+    )
   )
-  .addWithInfo(
+  .add(
     'Label Right',
     () => (
       <Form>
@@ -48,6 +41,5 @@ storiesOf('Form', module)
             label={<span>I agree to the <Link href="#" target="_self" style={{position: 'relative', zIndex: 1}}>terms and conditions </Link>.</span>} />
         </FormItem>
       </Form>
-    ),
-    {inline: true}
+    )
   );

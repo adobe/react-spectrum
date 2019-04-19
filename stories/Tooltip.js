@@ -3,63 +3,47 @@ import OverlayTrigger from '../src/OverlayTrigger';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Tooltip from '../src/Tooltip';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Tooltip', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render('This is a tooltip.'),
-    {inline: true}
+    () => render('This is a tooltip.')
   )
-  .addWithInfo(
+  .add(
     'placement: left',
-    () => render('This is a tooltip.', {placement: 'left'}),
-    {inline: true}
+    () => render('This is a tooltip.', {placement: 'left'})
   )
-  .addWithInfo(
+  .add(
     'placement: top',
-    () => render('This is a tooltip.', {placement: 'top'}),
-    {inline: true}
+    () => render('This is a tooltip.', {placement: 'top'})
   )
-  .addWithInfo(
+  .add(
     'placement: bottom',
-    () => render('This is a tooltip.', {placement: 'bottom'}),
-    {inline: true}
+    () => render('This is a tooltip.', {placement: 'bottom'})
   )
-  .addWithInfo(
+  .add(
     'variant: error',
-    () => render('This is a tooltip.', {variant: 'error'}),
-    {inline: true}
+    () => render('This is a tooltip.', {variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'variant: success',
-    () => render('This is a tooltip.', {variant: 'success'}),
-    {inline: true}
+    () => render('This is a tooltip.', {variant: 'success'})
   )
-  .addWithInfo(
+  .add(
     'variant: info',
-    () => render('This is a tooltip.', {variant: 'info'}),
-    {inline: true}
+    () => render('This is a tooltip.', {variant: 'info'})
   )
-  .addWithInfo(
+  .add(
     'Long content',
-    () => render(longMarkup),
-    {inline: true}
+    () => render(longMarkup)
   )
-  .addWithInfo(
+  .add(
     'with OverlayTrigger: using click',
-    () => render('This is a tooltip.', {trigger: 'click'}),
-    {inline: true}
+    () => render('This is a tooltip.', {trigger: 'click'})
   )
-  .addWithInfo(
+  .add(
     'with OverlayTrigger: using hover and focus',
-    () => render('This is a tooltip.', {trigger: ['hover', 'focus']}),
-    {inline: true}
+    () => render('This is a tooltip.', {trigger: ['hover', 'focus']})
   );
 
 function render(content, props = {}) {

@@ -1,10 +1,10 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import Illustrator from '../src/Icon/Illustrator';
 import Lightroom from '../src/Icon/Lightroom';
 import Photoshop from '../src/Icon/Photoshop';
 import React from 'react';
 import Select from '../src/Select';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 import {withKnobs} from '@storybook/addon-knobs';
 
 const defaultList = {
@@ -46,103 +46,79 @@ const selectedValue = [
 ];
 
 storiesOf('Select', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
   .addDecorator(withKnobs)
-  .addWithInfo(
+  .add(
     'Default',
-    () => render({...defaultProps}),
-    {inline: true}
+    () => render({...defaultProps})
   )
-  .addWithInfo(
+  .add(
     'Various widths',
-    () => renderMany(),
-    {inline: true}
+    () => renderMany()
   )
-  .addWithInfo(
+  .add(
     'placeholder: other placeholder',
-    () => render({placeholder: 'other placeholder'}),
-    {inline: true}
+    () => render({placeholder: 'other placeholder'})
   )
-  .addWithInfo(
+  .add(
     'flexible',
-    () => render({flexible: true}),
-    {inline: true}
+    () => render({flexible: true})
   )
-  .addWithInfo(
+  .add(
     'alignRight',
-    () => render({alignRight: true, selectedValue: 'butterfinger'}),
-    {inline: true}
+    () => render({alignRight: true, selectedValue: 'butterfinger'})
   )
-  .addWithInfo(
+  .add(
     'quiet',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'quiet, flexible',
-    () => render({quiet: true, flexible: true}),
-    {inline: true}
+    () => render({quiet: true, flexible: true})
   )
-  .addWithInfo(
+  .add(
     'quiet, alignRight',
-    () => render({quiet: true, alignRight: true, selectedValue: 'butterfinger'}),
-    {inline: true}
+    () => render({quiet: true, alignRight: true, selectedValue: 'butterfinger'})
   )
-  .addWithInfo(
+  .add(
     'quiet, value: longVal, flexible',
-    () => render({quiet: true, flexible: true, selectedValue: 'butterfinger'}),
-    {inline: true}
+    () => render({quiet: true, flexible: true, selectedValue: 'butterfinger'})
   )
-  .addWithInfo(
+  .add(
     'quiet, multiple, flexible',
-    () => render({quiet: true, flexible: true, multiple: true, value: selectedValue}),
-    {inline: true}
+    () => render({quiet: true, flexible: true, multiple: true, value: selectedValue})
   )
-  .addWithInfo(
+  .add(
     'quiet, disabled, flexible',
-    () => render({quiet: true, flexible: true, disabled: true}),
-    {inline: true}
+    () => render({quiet: true, flexible: true, disabled: true})
   )
-  .addWithInfo(
+  .add(
     'multiple: true',
-    () => render({multiple: true, flexible: true, defaultValue: selectedValue}),
-    {inline: true}
+    () => render({multiple: true, flexible: true, defaultValue: selectedValue})
   )
-  .addWithInfo(
+  .add(
     'required: true',
-    () => render({required: true}),
-    {inline: true}
+    () => render({required: true})
   )
-  .addWithInfo(
+  .add(
     'disabled: true',
-    () => render({disabled: true}),
-    {inline: true}
+    () => render({disabled: true})
   )
-  .addWithInfo(
+  .add(
     'invalid: true',
-    () => render({invalid: true}),
-    {inline: true}
+    () => render({invalid: true})
   )
-  .addWithInfo(
+  .add(
     'multiple disabled: true',
-    () => render({disabled: true, multiple: true, value: selectedValue}),
-    {inline: true}
+    () => render({disabled: true, multiple: true, value: selectedValue})
   )
-  .addWithInfo(
+  .add(
     'value: longVal',
-    () => render({value: 'logVal'}),
-    {inline: true}
+    () => render({value: 'logVal'})
   )
-  .addWithInfo(
+  .add(
     'Stay open on select',
-    () => render({closeOnSelect: false}),
-    {inline: true}
-  )
-  .addWithInfo(
+    () => render({closeOnSelect: false})
+  ).add(
     'with icons',
     () =>
       render({
@@ -152,25 +128,20 @@ storiesOf('Select', module)
           {label: 'Illustrator', value: 'ILST', icon: <Illustrator />},
           {label: 'Other', value: 'OTHER'}
         ]
-      }),
-    {inline: true}
-  )
-  .addWithInfo(
+      })
+  ).add(
     'with menuClassName',
-    () => render({menuClassName: 'custom-class-name'}),
-    {inline: true}
-  )
-  .addWithInfo(
+    () => render({menuClassName: 'custom-class-name'})
+  ).add(
     'no flip',
     () => render({flip: false})
   )
-  .addWithInfo(
+  .add(
     'renderItem',
-    'This example uses renderItem method to italicize text',
     () => render({
       renderItem: item => <em>{item.label}</em>
     }),
-    {inline: true}
+    {info: 'This example uses renderItem method to italicize text'}
   );
 
 function render(props = {}) {

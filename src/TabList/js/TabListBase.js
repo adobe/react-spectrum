@@ -22,6 +22,7 @@ const TAB_ITEM_SELECTED_SELECTOR = TAB_ITEM_SELECTOR + '[aria-selected=true]';
  * @private
  */
 @focusRing
+@autobind
 export default class TabListBase extends Component {
   state = {
     selectedIndex: TabListBase.getDefaultSelectedIndex(this.props)
@@ -70,7 +71,6 @@ export default class TabListBase extends Component {
     e.currentTarget.focus();
   }
 
-  @autobind
   onMouseUp(e) {
     this.isMouseDown = false;
     window.removeEventListener('mouseup', this.onMouseUp);

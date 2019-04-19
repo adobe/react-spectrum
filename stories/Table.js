@@ -1,28 +1,19 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Table, TBody, TD, TH, THead, TR} from '../src/Table';
-import {VerticalCenter} from '../.storybook/layout';
 
 storiesOf('Table', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'quiet: true',
-    () => render({quiet: true}),
-    {inline: true}
+    () => render({quiet: true})
   )
-  .addWithInfo(
+  .add(
     'with dividers',
-    () => render({divider: true}),
-    {inline: true}
+    () => render({divider: true})
   );
 
 function render(props = {}) {

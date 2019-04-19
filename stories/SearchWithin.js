@@ -1,8 +1,8 @@
-import {action, storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import FieldLabel from '../src/FieldLabel';
 import React from 'react';
 import SearchWithin from '../src/SearchWithin';
-import {VerticalCenter} from '../.storybook/layout';
+import {storiesOf} from '@storybook/react';
 
 const defaultProps = {
   placeholder: 'Enter text',
@@ -22,22 +22,17 @@ const otherProps = {
 };
 
 storiesOf('SearchWithin', module)
-  .addDecorator(story => (
-    <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-      {story()}
-    </VerticalCenter>
-  ))
-  .addWithInfo('Default', () => render({...otherProps}), {inline: true})
-  .addWithInfo('defaultValue (uncontrolled)', () => render({defaultValue: 'React'}), {
+  .add('Default', () => render({...otherProps}), {inline: true})
+  .add('defaultValue (uncontrolled)', () => render({defaultValue: 'React'}), {
     inline: true
   })
-  .addWithInfo('defaultScope (uncontrolled)', () => render({defaultScope: 'chocolate'}), {
+  .add('defaultScope (uncontrolled)', () => render({defaultScope: 'chocolate'}), {
     inline: true
   })
-  .addWithInfo('value (controlled)', () => render({value: 'React', scope: 'vanilla'}), {inline: true})
-  .addWithInfo('disabled: true', () => render({value: 'React', disabled: true}), {inline: true})
-  .addWithInfo('labelled with aria-label', () => render({'aria-label': 'Search', ...otherProps}), {inline: true})
-  .addWithInfo('labelled with FieldLabel and aria-labelledby', () => render({'aria-labelledby': 'search-within-label-id', ...otherProps}), {inline: true});
+  .add('value (controlled)', () => render({value: 'React', scope: 'vanilla'}), {inline: true})
+  .add('disabled: true', () => render({value: 'React', disabled: true}), {inline: true})
+  .add('labelled with aria-label', () => render({'aria-label': 'Search', ...otherProps}), {inline: true})
+  .add('labelled with FieldLabel and aria-labelledby', () => render({'aria-labelledby': 'search-within-label-id', ...otherProps}), {inline: true});
 
 function render(props = {}) {
   if (props['aria-labelledby']) {
