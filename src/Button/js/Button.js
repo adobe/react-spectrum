@@ -167,12 +167,10 @@ export default class Button extends Component {
       invalid,
       onMouseDown,
       onMouseUp,
+      autoFocus,
       holdAffordance,
       ...otherProps
     } = this.props;
-
-    // don't add autoFocus as a DOM prop
-    delete otherProps.autoFocus;
 
     // Map variants for backwards compatibility
     if (VARIANTS[variant]) {
@@ -241,7 +239,8 @@ export default class Button extends Component {
               'is-selected': selected,
               'is-disabled': disabled,
               'is-invalid': invalid,
-              'spectrum-Button--block': block
+              'spectrum-Button--block': block,
+              'focus-ring': autoFocus
             },
             className
           )

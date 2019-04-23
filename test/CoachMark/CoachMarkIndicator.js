@@ -6,16 +6,22 @@ import sinon from 'sinon';
 
 describe('CoachMarkIndicator', () => {
   let clock;
+  let tree;
 
-  before(() => {
+  beforeEach(() => {
     clock = sinon.useFakeTimers();
   });
 
-  after(() => {
+  afterEach(() => {
+    if (tree) {
+      tree.unmount();
+      tree = null;
+    }
     clock.restore();
   });
+
   it('default', () => {
-    const tree = mount(<div>
+    tree = mount(<div>
       <div
         id="something"
         style={{
@@ -31,12 +37,10 @@ describe('CoachMarkIndicator', () => {
     rings.forEach(ring => {
       assert(ring.hasClass('spectrum-CoachMarkIndicator-ring'));
     });
-
-    tree.unmount();
   });
 
   it('quiet', () => {
-    const tree = mount(<div>
+    tree = mount(<div>
       <div
         id="something"
         style={{
@@ -51,8 +55,6 @@ describe('CoachMarkIndicator', () => {
     assert(coachmarkIndicatorDiv.hasClass('spectrum-CoachMarkIndicator--quiet'));
     assert(coachmarkIndicatorDiv.hasClass('spectrum-CoachMarkIndicator'));
     assert.equal(coachmarkIndicatorDiv.children().length, 3);
-
-    tree.unmount();
   });
 
   it('Should attach to a dom element', async () => {
@@ -79,7 +81,7 @@ describe('CoachMarkIndicator', () => {
 
     document.documentElement.appendChild(container);
 
-    const tree = mount(<CoachMarkIndicator selector="#something" />);
+    tree = mount(<CoachMarkIndicator selector="#something" />);
 
     let coachMarkState = tree.state();
     assert.equal(coachMarkState.style.top, 147);
@@ -94,11 +96,10 @@ describe('CoachMarkIndicator', () => {
     assert.equal(coachMarkState.style.left, 247);
 
     document.documentElement.removeChild(container);
-    tree.unmount();
   });
 
   it('Should not render if it can not find the selector', async () => {
-    const tree = mount(<CoachMarkIndicator selector="#something" />);
+    tree = mount(<CoachMarkIndicator selector="#something" />);
     let updateTargetNodeSpy = sinon.stub(tree.instance(), 'updateTargetNode').callThrough();
 
     let coachMarkState = tree.state();
@@ -109,7 +110,6 @@ describe('CoachMarkIndicator', () => {
     assert.equal(updateTargetNodeSpy.getCalls().length, 12);
     assert(!('top' in coachMarkState.style));
     assert(!('left' in coachMarkState.style));
-    tree.unmount();
   });
 
   it('Should move if its target moved because of a resize', async () => {
@@ -127,7 +127,7 @@ describe('CoachMarkIndicator', () => {
     document.documentElement.appendChild(container);
 
     let onPositionedSpy = sinon.spy();
-    const tree = mount(<CoachMarkIndicator onPositioned={onPositionedSpy} selector="#something" />);
+    tree = mount(<CoachMarkIndicator onPositioned={onPositionedSpy} selector="#something" />);
 
     let coachMarkState = tree.state();
     assert.equal(coachMarkState.style.top, 147);
@@ -156,6 +156,5 @@ describe('CoachMarkIndicator', () => {
     assert(onPositionedSpy.calledTwice);
 
     document.documentElement.removeChild(container);
-    tree.unmount();
   });
 });

@@ -22,16 +22,26 @@ storiesOf('Tour', module)
         <Button id="stepThree">Step Three</Button>
       </div>
 
-      <Tour>
-        <CoachMark title="Step 1" selector="#stepOne" confirmLabel="Next" cancelLabel="Skip">
+      <Tour
+        onTourEnd={(status) => {
+          switch (status) {
+            case 'cancel':
+              document.body.focus();
+              break;
+            default:
+              document.querySelector('#stepOne').focus();
+              break;
+          }
+        }}>
+        <CoachMark title="Step 1" selector="#stepOne" confirmLabel="Next" cancelLabel="Skip" autoFocus>
           This is step 1
         </CoachMark>
 
-        <CoachMark title="Step 2" selector="#stepTwo" placement="bottom" confirmLabel="Next" cancelLabel="Skip">
+        <CoachMark title="Step 2" selector="#stepTwo" placement="bottom" confirmLabel="Next" cancelLabel="Skip" autoFocus>
           This is step 2
         </CoachMark>
 
-        <CoachMark title="Step 3" selector="#stepThree" placement="right top" confirmLabel="Done">
+        <CoachMark title="Step 3" selector="#stepThree" placement="right top" confirmLabel="Done" autoFocus>
           You did it!
         </CoachMark>
       </Tour>
@@ -52,7 +62,18 @@ storiesOf('Tour', module)
 
         <Button id="stepThree" onClick={action('button clicked')}>Step Three</Button>
 
-        <Tour disableProgress>
+        <Tour
+          disableProgress
+          onTourEnd={(status) => {
+            switch (status) {
+              case 'cancel':
+                document.body.focus();
+                break;
+              default:
+                document.querySelector('#stepOne').focus();
+                break;
+            }
+          }}>
           <CoachMark title="Step 1" selector="#stepOne" confirmLabel="Next" cancelLabel="Skip">
             This is step 1
           </CoachMark>
@@ -83,7 +104,18 @@ storiesOf('Tour', module)
 
         <Button id="stepThree">Step Three</Button>
 
-        <Tour clickOutsideAction="skip">
+        <Tour
+          clickOutsideAction="skip"
+          onTourEnd={(status) => {
+            switch (status) {
+              case 'cancel':
+                document.body.focus();
+                break;
+              default:
+                document.querySelector('#stepOne').focus();
+                break;
+            }
+          }}>
           <CoachMark title="Step 1" selector="#stepOne" confirmLabel="Next" cancelLabel="Skip">
             This is step 1
           </CoachMark>
@@ -114,7 +146,18 @@ storiesOf('Tour', module)
 
         <Button id="stepThree">Step Three</Button>
 
-        <Tour clickOutsideAction="next">
+        <Tour
+          clickOutsideAction="next"
+          onTourEnd={(status) => {
+            switch (status) {
+              case 'cancel':
+                document.body.focus();
+                break;
+              default:
+                document.querySelector('#stepOne').focus();
+                break;
+            }
+          }}>
           <CoachMark title="Step 1" selector="#stepOne" confirmLabel="Next" cancelLabel="Skip">
             This is step 1
           </CoachMark>
