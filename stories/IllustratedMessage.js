@@ -16,4 +16,10 @@ storiesOf('IllustratedMessage', module)
     () => (
       <IllustratedMessage heading="No Results" description="Try another search" illustration={noResultsImg()} />
     )
+  )
+  .add(
+    'Use ariaLevel to adjust heading level',
+    () => (
+      <IllustratedMessage heading="No Results" description="Try another search" illustration={noResultsImg()} ariaLevel={3} />
+    )
   );

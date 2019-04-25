@@ -18,36 +18,77 @@ export default class IllustratedMessage extends React.Component {
     description: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 
     /** The illustration to be rendered above heading. Should be an SVG element. */
-    illustration: PropTypes.element
+    illustration: PropTypes.element,
+
+    /** The heading level for the heading element to preserve hierarchy of headings in web page for accessibility. */
+    ariaLevel: PropTypes.number
   };
 
   static defaultProps = {
-    heading: '',
-    description: ''
+    heading: null,
+    description: null
   };
+
+  isIllustrationDecorative() {
+    const {
+      illustration,
+      heading,
+      description
+    } = this.props;
+
+    if (illustration) {
+      const {
+        props
+      } = illustration;
+
+      const {
+        'aria-label': ariaLabel,
+        'aria-labelledby': ariaLabelledby,
+        'aria-hidden': ariaHidden
+      } = props;
+
+      // If illustration is explicitly hidden for accessibility return the ariaHidden value.
+      if (ariaHidden != null) {
+        return ariaHidden;
+      }
+
+      // If illustration is explicitly labelled using aria-label or aria-labelledby return null.
+      if (ariaLabel || ariaLabelledby) {
+        return false;
+      }
+    }
+
+    // Otherwise, assume the image is decorative.
+    return !!(heading || description);
+  }
 
   render() {
     let {
       illustration = null,
+      className,
+      heading,
+      description,
+      ariaLevel,
       ...otherProps
     } = this.props;
 
     if (illustration && (!illustration.props.className || !illustration.props.className.includes('spectrum-IllustratedMessage-illustration'))) {
       illustration = React.cloneElement(illustration, {
-        className: classNames(illustration.props.className, 'spectrum-IllustratedMessage-illustration')
+        className: classNames(illustration.props.className, 'spectrum-IllustratedMessage-illustration'),
+        'aria-hidden': this.isIllustrationDecorative() || null
       });
     }
 
     return (
       <div
         {...filterDOMProps(otherProps)}
-        className={classNames('spectrum-IllustratedMessage', this.props.className)}>
+        className={classNames('spectrum-IllustratedMessage', className)}>
         {illustration}
-        {this.props.heading &&
-          <Heading size={2} className="spectrum-IllustratedMessage-heading">{this.props.heading}</Heading>
+        {heading &&
+          <Heading variant="pageTitle" className="spectrum-IllustratedMessage-heading" aria-level={ariaLevel}>{heading}</Heading>
         }
-        {this.props.description &&
-          <p className="spectrum-Body--secondary spectrum-IllustratedMessage-description">{this.props.description}</p>
+        {description &&
+          <p className="spectrum-Body--secondary spectrum-IllustratedMessage-description">{description}</p>
         }
       </div>
     );
