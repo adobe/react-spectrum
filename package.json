@@ -18,12 +18,12 @@
     "packages/*/*"
   ],
   "devDependencies": {
-    "@storybook/addon-actions": "^5.1.0-alpha.29",
-    "@storybook/addon-a11y": "^5.1.0-alpha.29",
-    "@storybook/addon-info": "^5.1.0-alpha.29",
-    "@storybook/addon-knobs": "^5.1.0-alpha.29",
-    "@storybook/addon-links": "^5.1.0-alpha.29",
-    "@storybook/react": "^5.1.0-alpha.29",
+    "@storybook/addon-actions": "^5.1.0-alpha.35",
+    "@storybook/addon-a11y": "^5.1.0-alpha.35",
+    "@storybook/addon-info": "^5.1.0-alpha.35",
+    "@storybook/addon-knobs": "^5.1.0-alpha.35",
+    "@storybook/addon-links": "^5.1.0-alpha.35",
+    "@storybook/react": "^5.1.0-alpha.35",
     "axe-core": "^3.0.3",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
