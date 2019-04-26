@@ -69,12 +69,18 @@ export default class SplitButton extends React.Component {
 }
 
 SplitButton.propTypes = {
-  /** Class to add to the SplitButton */
-  className: PropTypes.string,
+  /** Items to render as dropdown menu items. MenuItem components are commonly used here. */
+  children: PropTypes.node,
 
-  /** Function to trigger once button is selected */
+  /** Function to trigger once button is selected. */
   onSelect: PropTypes.func,
 
-  /** SplitButton variant */
+  /** Function to trigger when the button dropdown menu opens. */
+  onOpen: PropTypes.func,
+
+  /** Function to trigger when the button dropdown menu closes. */
+  onClose: PropTypes.func,
+
+  /** SplitButton variant to render. */
   variant: PropTypes.oneOf(['primary', 'secondary', 'cta'])
 };

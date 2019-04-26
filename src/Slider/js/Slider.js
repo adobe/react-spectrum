@@ -31,11 +31,6 @@ export default class Slider extends React.Component {
   static propTypes = {
 
     /**
-     * ID of the slider.
-     */
-    id: PropTypes.string,
-
-    /**
      * The minimal number of the range.
      */
     min: PropTypes.number,

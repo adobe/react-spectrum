@@ -10,8 +10,6 @@ export default class SelectList extends Component {
     /** Whether to show the invalid icon and styling */
     invalid: PropTypes.bool,
 
-    label: PropTypes.string,
-
     /** Whether multiple options are able to be selected */
     multiple: PropTypes.bool,
 

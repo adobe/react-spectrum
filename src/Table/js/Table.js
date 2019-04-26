@@ -33,6 +33,9 @@ export default function Table({
 
 Table.displayName = 'Table';
 Table.propTypes = {
-  quiet: PropTypes.bool,
-  className: PropTypes.string
+  /** Items to display in the Table. Use Tbody, TD, TH, THead, TR, or other elements permitted in a table. */
+  children: PropTypes.node,
+
+  /** Whether or not the table should be rendered using a quiet variant. */
+  quiet: PropTypes.bool
 };

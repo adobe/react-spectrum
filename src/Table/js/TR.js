@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -26,6 +25,3 @@ export default function TR({
 }
 
 TR.displayName = 'TR';
-TR.propTypes = {
-  className: PropTypes.string
-};

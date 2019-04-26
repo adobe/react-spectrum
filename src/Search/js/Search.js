@@ -6,6 +6,7 @@ import CrossSmall from '../../Icon/core/CrossSmall';
 import intlMessages from '../intl/*.json';
 import Magnifier from '../../Icon/core/Magnifier';
 import {messageFormatter} from '../../utils/intl';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
 
@@ -16,6 +17,17 @@ const normalizeValue = value => value || '';
 
 @autobind
 export default class Search extends Component {
+  static propTypes = {
+    /** Sets the search field value (controlled). */
+    value: PropTypes.string,
+
+    /** Sets the default search field value (uncontrolled). */
+    defaultValue: PropTypes.string,
+
+    /** Sets the icon displayed in the search field. Magnifier icon by default. */
+    icon: PropTypes.node
+  };
+
   static defaultProps = {
     icon: <Magnifier />,
     onChange: function () {},

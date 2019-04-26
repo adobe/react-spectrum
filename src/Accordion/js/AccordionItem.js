@@ -14,10 +14,24 @@ export default class AccordionItem extends Component {
   static propTypes = {
     /** A string or node which will be placed at the top of the accordion item. */
     header: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+
+    /** Whether or not the accordion item is selected. Causes the item to expand. */
     selected: PropTypes.bool,
+
+    /** Disables the accordion item, making it grey and uninteractable. */
     disabled: PropTypes.bool,
+
+    /**
+     * The aria heading level of the AccordionItem. Set by ariaLevel prop in the parent Accordion
+     * rather than directly on the component itself.
+    */
     ariaLevel: PropTypes.number,
-    onItemClick: PropTypes.func
+
+    /** The behavior executed upon click on the AccordionItem. Set by the parent Accordion component. */
+    onItemClick: PropTypes.func,
+
+    /** The children that are displayed upon expanding the AccordionItem */
+    children: PropTypes.node
   };
 
   static defaultProps = {
