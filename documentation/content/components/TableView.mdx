@@ -315,3 +315,15 @@ TableView implements the aria grid design pattern. It handles multiselection, ro
 ## Internationalization
 
 To internationalize a TableView, you should provide localized content as needed, for example column titles and cell data formatting.
+
+### Why doesn't my table render
+
+TableView uses a virtual scroller to enable fast scrolling on large datasets. Because of this, the TableView cannot know how big it should grow (it's contents are potentially infinite in height), so we must tell the TableView how big it should be, and we must do this upfront so it can calculate how many items it can display.
+Allocating height to an element far down in the DOM structure can be a bit tricky as most people try to let content determine how much space something takes up. Instead, think about how much height each item on a page should get ahead of time. You can do this easily with [flexbox layouts](https://css-tricks.com/snippets/css/a-guide-to-flexbox/). If you must do it with height: 100%, then make sure all parents also set this. For information on why a 100% div collapses, you can read [this](https://stackoverflow.com/questions/7049875/why-doesnt-height-100-work-to-expand-divs-to-the-screen-height).
+
+If you're curious if you've successfully allocated the space, you can always style your container with a border to make sure it's the right dimensions before you place your TableView. For example, you can do things like [this](https://jsfiddle.net/snowystinger/43mot8xk/22/).
+
+TableView comes with its height already set to 100%, so as long as it has space up front, you should now be good to go.
+See [here](https://github.com/adobe/react-spectrum/blob/master/src/TableView/style/index.styl#L21).
+
+[Example source code](https://github.com/adobe/react-spectrum/blob/master/stories/TableView.js)

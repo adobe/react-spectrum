@@ -6,9 +6,11 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Switch from '../src/Switch';
 import {TableView, TableViewDataSource} from '../src/TableView';
-import './TableView.styl';
 
 storiesOf('TableView', module)
+  .addDecorator(
+    story => <div style={{height: '300px'}}>{story()}</div>
+  )
   .add(
     'Default',
     () => render()
