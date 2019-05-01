@@ -32,7 +32,7 @@ storiesOf('TreeView', module)
     'canDragItems: true',
     () => render({icons: true, canDragItems: true, allowsSelection: true, allowsMultipleSelection: true, acceptsDrops: true})
   )
-  .addWithInfo(
+  .add(
     'selectedItems (controlled)',
     () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [data[0]]}),
     {inline: true}
@@ -42,22 +42,22 @@ storiesOf('TreeView', module)
     () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, selectedItems: [{label: 'Test 2'}, {label: 'Sub Child 6'}]}),
     {inline: true}
   )
-  .addWithInfo(
+  .add(
     'defaultSelectedItems (uncontrolled)',
     () => render({icons: true, allowsSelection: true, allowsMultipleSelection: true, defaultSelectedItems: [{label: 'Test 2'}, {label: 'Sub Child 6'}]}),
     {inline: true}
   )
-  .addWithInfo(
+  .add(
     'disabledItems',
     () => render({allowsSelection: true, allowsMultipleSelection: true, disabledItems: [{label: 'Test 2'}]}),
     {inline: true}
   )
-  .addWithInfo(
+  .add(
     'expandedItems (controlled)',
     () => render({allowsSelection: true, expandedItems: [{label: 'Test 1'}]}),
     {inline: true}
   )
-  .addWithInfo(
+  .add(
     'defaultExpandedItems (uncontrolled)',
     () => render({allowsSelection: true, defaultExpandedItems: [{label: 'Test 1'}]}),
     {inline: true}
@@ -99,7 +99,7 @@ class ExampleDS extends TreeDataSource {
       return files.map(file => ({label: file.name}));
     }
   }
-  
+
   isItemEqual(a, b) {
     return a.label === b.label;
   }
