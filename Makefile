@@ -105,7 +105,7 @@ ci-version:
 	fi
 
 publish: build ci-version
-	lerna publish from-git --yes --registry $(NPM_REGISTRY) --contents dist
+	lerna publish from-git --yes --registry $(NPM_REGISTRY) --preid beta --contents dist
 
 ci-publish:
 	@if [ "$$VERSION" != "website only" ]; then \
