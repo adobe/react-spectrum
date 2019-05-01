@@ -292,7 +292,7 @@ describe('TreeView', function () {
   });
 
   describe('onKeyDown event callback', function () {
-    it('should fire for items', async function () {
+    it.skip('should fire for items', async function () {
       let dataSource = new TestDataSource;
       await dataSource.loadData();
 
@@ -310,6 +310,7 @@ describe('TreeView', function () {
         scrollToItem,
         focusItem
       };
+
 
       let focusedItem = dataSource.getItem(0, 0);
       wrapper.wrap(wrapper.instance().renderItemView('item', focusedItem));
