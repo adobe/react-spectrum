@@ -63,6 +63,7 @@ storiesOf('TreeView', module)
     {inline: true}
   );
 
+
 const data = [
   {label: 'Test 1', children: [
     {label: 'Child 1', children: [
@@ -112,7 +113,7 @@ class ExampleDS extends TreeDataSource {
 }
 
 function renderItem(showIcons, item) {
-  // return item.label;
+  // return item.label
   let icon = item.children ? <Folder size="S" /> : <Layers size="S" />;
   return <span>{showIcons ? icon : null}{item.label}</span>;
 }
