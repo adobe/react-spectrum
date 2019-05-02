@@ -20,8 +20,8 @@ livefyre('''
     sshAgent: rspbot
     commands:
       - git reset --hard
-      - git checkout master
-      - git reset --hard origin/master
+      - git checkout treeview-controlled-backup2
+      - git reset --hard origin/treeview-controlled-backup2
       - make ci
 ''')
 

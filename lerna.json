@@ -8,7 +8,8 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "master"
+        "master",
+        "treeview-controlled-backup2"
       ]
     }
   },
