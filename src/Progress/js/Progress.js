@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 importSpectrumCSS('barloader');
@@ -14,6 +15,7 @@ export default function Progress({
   value = 0, // number between 0 - 100
   size = 'M', // 'S', 'M'
   showPercent = false, // Whether the label should be shown or not
+  variant, // Either undef or 'overBackground', 'positive', 'warning', 'critical'
   labelPosition = 'left', // 'left', 'top', 'bottom'
   label,
   className,
@@ -50,7 +52,11 @@ export default function Progress({
           'spectrum-BarLoader',
           `spectrum-BarLoader--${sizeClassPart}`,
           {
-            'spectrum-BarLoader--sideLabel': labelPosition === 'left'
+            'spectrum-BarLoader--sideLabel': labelPosition === 'left',
+            'spectrum-BarLoader--overBackground': variant === 'overBackground',
+            'is-positive': variant === 'positive',
+            'is-warning': variant === 'warning',
+            'is-critical': variant === 'critical'
           },
           className
         )
@@ -76,5 +82,39 @@ export default function Progress({
     </div>
   );
 }
+
+Progress.propTypes = {
+  /**
+  * Value that sets the percentage progression of the progress bar.
+  * Value is automatically clamped to 0-100.
+  */
+  value: PropTypes.number,
+
+  /**
+  * Size of the Progress component. Limited to small (S) or medium (M).
+  */
+  size: PropTypes.oneOf(['S', 'M']),
+
+  /**
+  * Whether to show a percentage for the progress bar's current value
+  */
+  showPercent: PropTypes.bool,
+
+  /**
+  * What type of progress bar to show: 'positive' (green), 'warning' (orange), 'critical' (red)
+  */
+  variant: PropTypes.oneOf(['positive', 'warning', 'critical']),
+
+  /**
+  * Determines the positioning of the provided label.
+  * Limited to 'left', 'top', or 'bottom'
+  */
+  labelPosition: PropTypes.oneOf(['left', 'top', 'bottom']),
+
+  /**
+  * Determines the label for the Progress component.
+  */
+  label: PropTypes.string
+};
 
 Progress.displayName = 'Progress';

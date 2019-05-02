@@ -1,10 +1,11 @@
 {
-  "name": "@react/react-spectrum",
-  "version": "2.18.0-beta.1",
+  "name": "react-spectrum-monorepo",
+  "private": true,
+  "version": "2.19.1",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.adobe.com.com/React/react-spectrum"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
     "start": "make run",
@@ -12,38 +13,21 @@
     "lint": "make lint",
     "test:watch": "mocha --watch --reporter dot"
   },
-  "peerDependencies": {
-    "react": "^0.14 || ^15 || ^16",
-    "react-dom": "^0.14 || ^15 || ^16"
-  },
-  "dependencies": {
-    "@react/collection-view": "5.0.0-beta.1",
-    "autobind-decorator": "^1.4.0",
-    "classnames": "^2.2.5",
-    "dom-helpers": "^3.3.1",
-    "intl-messageformat": "^2.2.0",
-    "moment": "^2.15.1",
-    "moment-range": "^3.0.3",
-    "react-overlays": "0.8.3",
-    "react-transition-group": "^2.2.0",
-    "stringify": "^5.1.0"
-  },
+  "workspaces": [
+    "src",
+    "packages/*/*"
+  ],
   "devDependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
-    "@react/react-spectrum-icons": "^2.1.0",
-    "@spectrum/spectrum-css": "2.7.0",
-    "@spectrum/spectrum-flexbox-grid": "1.1.1",
-    "@spectrum/spectrum-icons": "1.0.0-beta.17",
-    "@spectrum/spectrum-variables": "1.0.1",
     "@storybook/addon-actions": "3.2.13",
     "@storybook/addon-info": "^3.2.13",
     "@storybook/addon-knobs": "3.2.13",
     "@storybook/addon-links": "3.2.13",
     "@storybook/react": "3.2.13",
-    "axe-core": "3.0.3",
+    "axe-core": "^3.0.3",
     "babel": "^6.5.2",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-syntax-class-properties": "^6.13.0",
@@ -65,14 +49,17 @@
     "babel-runtime": "^6.11.6",
     "babelify": "^7.3.0",
     "css-loader": "^0.28.7",
-    "enzyme": "^3.1.0",
-    "enzyme-adapter-react-16": "^1.5.0",
-    "enzyme-adapter-react-helper": "^1.2.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
+    "enzyme-adapter-react-helper": "^1.3.3",
+    "eslint": "^5.0.0",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-rulesdir": "^0.1.0",
     "file-loader": "^0.9.0",
     "ignore-styles": "^5.0.1",
     "jsdom": "^9.8.0",
+    "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
-    "lfeslint": "^1.0.0",
     "mocha": "^3.1.2",
     "mocha-junit-reporter": "^1.14.0",
     "nib": "^1.1.2",
@@ -81,7 +68,7 @@
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
     "react": "^0.14 || ^15 || ^16",
-    "react-axe": "^3.0.1",
+    "react-axe": "^3.0.2",
     "react-dom": "^0.14 || ^15 || ^16",
     "sinon": "^2.2.0",
     "style-loader": "^0.19.0",
@@ -92,23 +79,5 @@
     "webpack": "^3.11.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.0"
-  },
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "stringify",
-        [
-          ".css"
-        ]
-      ]
-    ]
-  },
-  "lfeslint": {
-    "ignore": [
-      "documentation/**"
-    ]
   }
 }

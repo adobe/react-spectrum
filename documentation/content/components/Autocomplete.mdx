@@ -36,6 +36,18 @@ Try typing 'puppy' and hitting enter on the above example and this one.
   </Autocomplete>
 ```
 
+### renderItem
+
+You can use the `renderItem` prop to customize the rendering of the items displayed in the dropdown.
+This is useful in case custom props are needed for styling or accessibility, or using a semantic
+element for the type of data being displayed (e.g. `<time>`).
+
+```jsx
+<Autocomplete
+  {/* ... */}
+  renderItem={item => <time {/* ... */}>{item.label}</time>} />
+```
+
 ## Accessibility
 
 ### WAI-ARIA Design Pattern

@@ -81,6 +81,20 @@ describe('ListItem', () => {
     });
   });
 
+  describe('handleKeydown', () => {
+    let keyDownSpy;
+
+    beforeEach(() => {
+      keyDownSpy = sinon.spy();
+    });
+
+    it('should trigger onKeyDown if onKeyDown is supplied', () => {
+      const tree = render({onKeyDown: keyDownSpy});
+      tree.simulate('keydown', {key: 'ArrowDown', preventDefault: () => {}});
+      assert(keyDownSpy.called);
+    });
+  });
+
   describe('handleBlur', () => {
     let blurSpy;
 

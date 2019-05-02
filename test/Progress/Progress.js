@@ -24,19 +24,19 @@ describe('Progress', () => {
 
   describe('value', () => {
     it('updates all the fields', () => {
-      const tree = shallow(<Progress value="30" showPercent />);
+      const tree = shallow(<Progress value={30} showPercent />);
       assert.equal(tree.prop('aria-valuenow'), 30);
       assert.deepEqual(findStatus(tree).prop('style'), {width: '30%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '30%');
     });
 
     it('clamps values to 0-100', () => {
-      const tree = shallow(<Progress value="10000" showPercent />);
+      const tree = shallow(<Progress value={10000} showPercent />);
       assert.equal(tree.prop('aria-valuenow'), 100);
       assert.deepEqual(findStatus(tree).prop('style'), {width: '100%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '100%');
 
-      tree.setProps({value: '-1'});
+      tree.setProps({value: -1});
       assert.equal(tree.prop('aria-valuenow'), 0);
       assert.deepEqual(findStatus(tree).prop('style'), {width: '0%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '0%');
@@ -64,6 +64,13 @@ describe('Progress', () => {
       assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), true);
       tree.setProps({labelPosition: 'top'});
       assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), false);
+    });
+
+    it('supports variant = overBackground', () => {
+      const tree = shallow(<Progress showPercent variant="overBackground" />);
+      assert.equal(tree.hasClass('spectrum-BarLoader--overBackground'), true);
+      tree.setProps({variant: undefined});
+      assert.equal(tree.hasClass('spectrum-BarLoader--overBackground'), false);
     });
 
     it('supports custom labels', () => {
@@ -102,6 +109,15 @@ describe('Progress', () => {
         tree.prop('aria-label'),
         labelTxt);
     });
+  });
+
+  it('supports different variants', () => {
+    let tree = shallow(<Progress variant="positive" value={50} />);
+    assert.equal(tree.hasClass('is-positive'), true);
+    tree = shallow(<Progress variant="warning" value={50} />);
+    assert.equal(tree.hasClass('is-warning'), true);
+    tree = shallow(<Progress variant="critical" value={50} />);
+    assert.equal(tree.hasClass('is-critical'), true);
   });
 
   it('supports additional classNames', () => {

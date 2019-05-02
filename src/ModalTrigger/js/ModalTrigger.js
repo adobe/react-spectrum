@@ -27,7 +27,7 @@ export default class ModalTrigger extends Component {
     delete otherProps.container;
     let trigger = cloneElement(triggerChild, {
       ...otherProps,
-      onClick: chain(triggerChild.props.onClick, otherProps.onClick, this.show),
+      onClick: chain(triggerChild.props.onClick, otherProps.onClick, this.show)
     });
 
     if (children.length === 2) {

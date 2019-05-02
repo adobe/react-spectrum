@@ -1,7 +1,7 @@
 import ArrowDownSmall from '../../src/Icon/core/ArrowDownSmall';
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import TableCell from '../../src/TableView/js/TableCell';
 
@@ -59,25 +59,32 @@ describe('TableCell', function () {
 
   it('should render a body cell', function () {
     let wrapper = shallow(<TableCell>test</TableCell>);
-    assert.equal(wrapper.prop('className'), 'spectrum-Table-cell');
+    assert(wrapper.hasClass('spectrum-Table-cell'));
+    assert(wrapper.hasClass('react-spectrum-Table-cell'));
     assert.equal(wrapper.childAt(0).text(), 'test');
   });
 
   it('should render a body cell with a divider', function () {
     let wrapper = shallow(<TableCell column={{divider: true}}>test</TableCell>);
-    assert.equal(wrapper.prop('className'), 'spectrum-Table-cell spectrum-Table-cell--divider');
+    assert(wrapper.hasClass('spectrum-Table-cell'));
+    assert(wrapper.hasClass('react-spectrum-Table-cell'));
+    assert(wrapper.hasClass('spectrum-Table-cell--divider'));
     assert.equal(wrapper.childAt(0).text(), 'test');
   });
 
   it('should render a body cell aligned center', function () {
     let wrapper = shallow(<TableCell column={{align: 'center'}}>test</TableCell>);
-    assert.equal(wrapper.prop('className'), 'spectrum-Table-cell spectrum-Table-cell--alignCenter');
+    assert(wrapper.hasClass('spectrum-Table-cell'));
+    assert(wrapper.hasClass('react-spectrum-Table-cell'));
+    assert(wrapper.hasClass('spectrum-Table-cell--alignCenter'));
     assert.equal(wrapper.childAt(0).text(), 'test');
   });
 
   it('should render a body cell aligned right', function () {
     let wrapper = shallow(<TableCell column={{align: 'right'}}>test</TableCell>);
-    assert.equal(wrapper.prop('className'), 'spectrum-Table-cell spectrum-Table-cell--alignRight');
+    assert(wrapper.hasClass('spectrum-Table-cell'));
+    assert(wrapper.hasClass('react-spectrum-Table-cell'));
+    assert(wrapper.hasClass('spectrum-Table-cell--alignRight'));
     assert.equal(wrapper.childAt(0).text(), 'test');
   });
 
@@ -104,6 +111,30 @@ describe('TableCell', function () {
 
   it('should pass through a custom class name', function () {
     let wrapper = shallow(<TableCell className="test">test</TableCell>);
-    assert.equal(wrapper.prop('className'), 'test spectrum-Table-cell');
+    assert(wrapper.hasClass('spectrum-Table-cell'));
+    assert(wrapper.hasClass('react-spectrum-Table-cell'));
+    assert(wrapper.hasClass('test'));
+  });
+
+  it('onFocus/onBlur keeps track of whether a child has focus.', () => {
+    let wrapper = mount(<TableCell tabIndex={-1}><input type="checkbox" /></TableCell>);
+    wrapper.simulate('focus', {
+      target: wrapper.getDOMNode(),
+      nativeEvent: {
+        stopImmediatePropagation: () => {}
+      }
+    });
+    assert.equal(wrapper.find('input').getDOMNode(), document.activeElement);
+    wrapper.simulate('focus', {
+      target: wrapper.find('input').getDOMNode(),
+      nativeEvent: {
+        stopImmediatePropagation: () => {}
+      }
+    });
+    assert(wrapper.state('childFocused'));
+    document.activeElement.blur();
+    wrapper.simulate('blur', {target: wrapper.find('input').getDOMNode()});
+    assert(!wrapper.state('childFocused'));
+    wrapper.unmount();
   });
 });

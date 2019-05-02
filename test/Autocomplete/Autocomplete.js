@@ -3,6 +3,7 @@ import Autocomplete from '../../src/Autocomplete';
 import {Menu, MenuItem} from '../../src/Menu';
 import {mount, shallow} from 'enzyme';
 import {nextEventLoopIteration, sleep} from '../utils';
+import Overlay from '../../src/OverlayTrigger/js/Overlay';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -78,7 +79,7 @@ describe('Autocomplete', () => {
 
   it('should call getCompletions and render a menu with results asynchronously', async () => {
     const getCompletions = async v => {
-      await sleep(10);
+      await sleep(10); // this will be run by a clock.tick further down in the test
       return ['one', 'two'];
     };
 
@@ -105,6 +106,21 @@ describe('Autocomplete', () => {
     findInput(tree).simulate('mouseEnter');
     await nextEventLoopIteration();
     assert.equal(tree.find(MenuItem).length, 2);
+  });
+
+  it('should optionally call the renderItem callback to render menu items', async () => {
+    let tree = shallow(
+      <Autocomplete getCompletions={v => ['one', 'two']} renderItem={label => <em>{label}</em>}>
+        <input />
+      </Autocomplete>
+    );
+
+    findInput(tree).simulate('focus');
+    findInput(tree).simulate('change', 'test');
+
+    await nextEventLoopIteration();
+
+    assert.equal(tree.find(MenuItem).first().childAt(0).type(), 'em');
   });
 
   it('should handle keyboard navigation of menu items', async () => {
@@ -346,7 +362,7 @@ describe('Autocomplete', () => {
     assert.equal(tree.childAt(1).prop('show'), false);
   });
 
-  it('supports a controlled mode', async () => {
+  it('supports a controlled value mode', async () => {
     const onChange = sinon.spy();
     const onSelect = sinon.spy();
 
@@ -370,15 +386,89 @@ describe('Autocomplete', () => {
     assert.equal(findInput(tree).prop('value'), 'foo');
 
     findInput(tree).simulate('keyDown', {key: 'ArrowDown', altKey: true, preventDefault: function () {}});
+    // wait for the menu to open and verify it's open
+    await nextEventLoopIteration();
+    assert.equal(tree.find(Overlay).props().show, true);
     findInput(tree).simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
     findInput(tree).simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
+    // once a selection has been made, verify that the overlay closed
+    assert.equal(tree.find(Overlay).props().show, false);
 
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], 'one');
 
     assert.equal(onSelect.callCount, 1);
     assert.equal(onSelect.getCall(0).args[0], 'one');
+    // verify that the value is still 'foo' after the menu close
     assert.equal(findInput(tree).prop('value'), 'foo');
+  });
+
+  it('supports a controlled show menu:false mode', async () => {
+    const tree = shallow(
+      <Autocomplete value="foo" showMenu={false} getCompletions={v => ['one', 'two', 'three']}>
+        <input />
+      </Autocomplete>
+    );
+
+    assert.equal(findInput(tree).prop('value'), 'foo');
+    await nextEventLoopIteration();
+    assert.equal(tree.find(Overlay).props().show, false);
+    tree.simulate('change', 'tw');
+    await nextEventLoopIteration();
+    assert.equal(tree.find(Overlay).props().show, false);
+  });
+
+  it('supports a controlled show menu:true mode', async () => {
+    const onChange = sinon.spy();
+    const onSelect = sinon.spy();
+
+    const tree = shallow(
+      <Autocomplete value="foo" onChange={onChange} onSelect={onSelect} showMenu getCompletions={v => ['one', 'two', 'three']}>
+        <input />
+      </Autocomplete>
+    );
+
+    assert.equal(findInput(tree).prop('value'), 'foo');
+    await nextEventLoopIteration();
+    assert.equal(tree.find(Overlay).props().show, true);
+    findInput(tree).simulate('keyDown', {key: 'ArrowDown', preventDefault: function () {}});
+    findInput(tree).simulate('keyDown', {key: 'Enter', preventDefault: function () {}});
+    // once a selection has been made, verify that the overlay closed
+    assert.equal(tree.find(Overlay).props().show, true);
+
+    assert.equal(onChange.callCount, 1);
+    assert.deepEqual(onChange.getCall(0).args[0], 'two');
+
+    assert.equal(onSelect.callCount, 1);
+    assert.equal(onSelect.getCall(0).args[0], 'two');
+    // verify that the value is still 'foo' after the menu close
+    assert.equal(findInput(tree).prop('value'), 'foo');
+  });
+
+  it('should trigger onMenuToggle when onChange is triggered in controlled state', async () => {
+    const onMenuToggle = sinon.spy();
+    let showMenuResolver = null;
+    let showMenuPromise = new Promise(resolve => showMenuResolver = resolve);
+
+    const tree = shallow(
+      <Autocomplete value="foo" showMenu={false} onMenuToggle={onMenuToggle} getCompletions={v => ['one', 'two', 'three']}>
+        <input />
+      </Autocomplete>
+    );
+
+    let showMenu = tree.instance().showMenu;
+    sinon.stub(tree.instance(), 'showMenu').callsFake(async () => {
+      await showMenu();
+      showMenuResolver();
+    });
+
+    tree.find('input').simulate('change', 'two');
+    await nextEventLoopIteration(); // Wait for async getCompletions
+
+    await showMenuPromise;
+    assert.equal(tree.instance().state.showMenu, false);
+    assert(onMenuToggle.calledOnce);
+    assert.equal(onMenuToggle.getCall(0).args[0], true);
   });
 
   it('does not select first menu item by default with allowCreate', async () => {
@@ -408,19 +498,41 @@ describe('Autocomplete', () => {
   });
 
   it('can toggle the menu programmatically', async () => {
+    let onMenuToggle = sinon.spy();
     const tree = shallow(
-      <Autocomplete getCompletions={v => ['one', 'two', 'three']}>
+      <Autocomplete onMenuToggle={onMenuToggle} getCompletions={v => ['one', 'two', 'three']}>
         <input />
       </Autocomplete>
     );
+    let showMenuResolver = null;
+    let showMenuPromise = new Promise(resolve => showMenuResolver = resolve);
+    let showMenu = tree.instance().showMenu;
+    sinon.stub(tree.instance(), 'showMenu').callsFake(async () => {
+      await showMenu();
+      showMenuResolver();
+    });
+    let hideMenuResolver = null;
+    let hideMenuPromise = new Promise(resolve => hideMenuResolver = resolve);
+    let hideMenu = tree.instance().hideMenu;
+    sinon.stub(tree.instance(), 'hideMenu').callsFake(async () => {
+      await hideMenu();
+      hideMenuResolver();
+    });
 
+    assert(!onMenuToggle.called);
     tree.instance().toggleMenu();
 
-    await nextEventLoopIteration();
+    await showMenuPromise;
+    assert(onMenuToggle.calledOnce);
+    assert.equal(onMenuToggle.getCall(0).args[0], true);
     tree.update();
     assert.equal(tree.childAt(1).prop('show'), true);
 
     tree.instance().toggleMenu();
+
+    await hideMenuPromise;
+    assert(onMenuToggle.calledTwice);
+    assert.equal(onMenuToggle.getCall(1).args[0], false);
     tree.update();
 
     assert.equal(tree.childAt(1).prop('show'), false);

@@ -67,6 +67,11 @@ describe('SelectList', () => {
     assert.equal(tree.find({disabled: true}).length, 1);
   });
 
+  it('should optionally call the renderItem callback to render list items', async () => {
+    const tree = shallow(<SelectList options={testOptions} renderItem={item => <em>{item.label}</em>} />);
+    assert.equal(tree.find(ListItem).first().childAt(0).type(), 'em');
+  });
+
   it('supports selection being returned on selection change for single select', () => {
     const tree = shallow(
       <SelectList

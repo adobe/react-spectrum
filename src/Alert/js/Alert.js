@@ -63,7 +63,7 @@ Alert.propTypes = {
   /**
    * Affects the color and icon used by the Alert
    */
-  variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success']),
+  variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success'])
 };
 
 Alert.displayName = 'Alert';

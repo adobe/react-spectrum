@@ -46,12 +46,32 @@ There may also be an issue if used inside a dialog or any other parents in the h
 
 ## Variants
 
-### Determinate
+### Over Background
 
-Set the wait progress to a determined value.
+For the case where the Wait is on top of some background color, you can set a "overBackground" variant.
 
-<Wait variant="determinate" value={42} />
+<div style={{
+  'width': '100px',
+  'height': '100px',
+  'background-color': 'rgba(0,0,0,0.4)',
+  'display': 'flex',
+  'align-items': 'center',
+  'justify-content': 'center'}}>
+  <Wait variant="overBackground" />
+</div>
 
 ```jsx
-<Wait variant="determinate" value={42} />
+<Wait variant="overBackground" />
+```
+
+## Indeterminate or Determinate
+
+You can also set **Wait** component to be indeterminate (true by default) or determinate. A indeterminate **Wait** component would spin endlessly, as can be seen in previous examples, wheras a determinate **Wait** component would allow you to set the wait progress to a determined value.
+
+### Determinate
+
+<Wait indeterminate={false} value={42} />
+
+```jsx
+<Wait indeterminate={false} value={42} />
 ```

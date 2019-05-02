@@ -359,6 +359,18 @@ The onSelect callback executes whenever an item is selected within the drop down
   ]} />
 ```
 
+### renderItem
+
+You can use the `renderItem` prop to customize the rendering of the items displayed in the dropdown.
+This is useful in case custom props are needed for styling or accessibility, or using a semantic
+element for the type of data being displayed (e.g. `<time>`).
+
+```jsx
+<ComboBox
+  {/* ... */}
+  renderItem={item => <time {/* ... */}>{item.label}</time>} />
+```
+
 ## Accessibility
 
 ### WAI-ARIA Design Pattern

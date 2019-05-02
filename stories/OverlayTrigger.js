@@ -85,7 +85,13 @@ storiesOf('OverlayTrigger', module)
     'with: margin on target',
     () => render('popover', {trigger: 'click', placement: 'bottom'}, {style: {margin: 40}}),
     {inline: true}
-  ).addWithInfo(
+  )
+  .addWithInfo(
+    'controlled open',
+    () => render('popover', {show: true, placement: 'bottom'}, {style: {margin: 40}}),
+    {inline: true}
+  )
+  .addWithInfo(
     'with: "block" element and placement "bottom left"',
     () => render('popover', {trigger: 'click', placement: 'bottom left'}, {style: {width: '100%', minWidth: '100%'}}),
     {inline: true}
@@ -98,7 +104,9 @@ function render(type, props = {}, targetProps = {}) {
         <Button label="Click Me" variant="primary" {...targetProps} />
         <Popover
           open
-          title="Popover title">
+          title="Popover title"
+          role="dialog"
+          trapFocus={props.trigger !== 'hover'}>
             Popover content goes here...<br />
             Popover content goes here...<br />
             Popover content goes here...<br />
@@ -118,8 +126,8 @@ function render(type, props = {}, targetProps = {}) {
             Popover content goes here...<br />
           {type === 'nestedPopover' &&
             <OverlayTrigger {...props}>
-              <Button label="Click Me" variant="primary" />
-              <Popover>
+              <Button label="Click Me" variant="primary" autoFocus />
+              <Popover role="dialog">
                 <Autocomplete getCompletions={() => ['a', 'b', 'c']}>
                   <Textfield placeholder="Autocomplete..." />
                 </Autocomplete>

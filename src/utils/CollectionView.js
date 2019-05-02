@@ -8,6 +8,10 @@ import proxy from './proxyObject';
 import React from 'react';
 import Wait from '../Wait';
 
+// symbol + counter for requests
+let REQUEST_ID = 1;
+let LAST_REQUEST = Symbol('lastRequest');
+
 @autobind
 export default class CollectionView extends React.Component {
   // These come from the parent Provider. Used to set the correct props
@@ -23,6 +27,7 @@ export default class CollectionView extends React.Component {
 
     this.isLoading = false;
     this.hasMore = true;
+    this[LAST_REQUEST] = 0;
     this.state = {
       delegate: Object.assign({}, proxy(this), proxy(props.dataSource)),
       isDropTarget: false
@@ -89,6 +94,8 @@ export default class CollectionView extends React.Component {
   }
 
   async reloadData(props = this.props) {
+    // reset hasMore when reloading
+    this.hasMore = true;
     await this.performLoad(() =>
       props.dataSource.performLoad(props.sortDescriptor)
     );
@@ -101,21 +108,22 @@ export default class CollectionView extends React.Component {
   }
 
   async performLoad(fn) {
-    if (this.isLoading) {
-      return;
-    }
-
+    let requestId = REQUEST_ID++;
     try {
       this.isLoading = true;
       if (this.collection) {
         this.collection.relayout();
       }
 
+      this[LAST_REQUEST] = requestId;
       await fn();
     } finally {
-      this.isLoading = false;
-      if (this.collection) {
-        this.collection.relayout();
+      // only relayout if the completed request is the last request made
+      if (this[LAST_REQUEST] === requestId) {
+        this.isLoading = false;
+        if (this.collection) {
+          this.collection.relayout();
+        }
       }
     }
   }
@@ -125,7 +133,7 @@ export default class CollectionView extends React.Component {
       this.props.onScroll(offset);
     }
 
-    if (!this.collection) {
+    if (!this.collection || this.isLoading) {
       return;
     }
 
@@ -180,7 +188,7 @@ export default class CollectionView extends React.Component {
       style.width = view.layoutInfo.rect.width;
       style.height = view.layoutInfo.rect.height;
     }
-    
+
     // Wrap in a spectrum provider so spectrum components are themed correctly.
     return (
       <Provider {...this.context} style={style}>
@@ -190,19 +198,24 @@ export default class CollectionView extends React.Component {
   }
 
   renderSupplementaryView(type) {
-    if (type === 'loading-indicator') {
-      return <Wait centered size="M" />;
+    const {renderEmptyView, renderSupplementaryView} = this.props;
+    let supplementaryView;
+
+    if (renderSupplementaryView) {
+      supplementaryView = renderSupplementaryView(type);
     }
 
-    if (type === 'empty-view' && this.props.renderEmptyView) {
-      return this.props.renderEmptyView();
+    if (!supplementaryView) {
+      if (type === 'loading-indicator') {
+        supplementaryView = <Wait centered size="M" />;
+      }
+
+      if (type === 'empty-view' && renderEmptyView) {
+        supplementaryView = renderEmptyView();
+      }
     }
 
-    if (this.props.renderSupplementaryView) {
-      return this.props.renderSupplementaryView(type);
-    }
-
-    return <div />;
+    return supplementaryView || <div />;
   }
 
   render() {

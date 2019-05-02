@@ -20,6 +20,9 @@ function getCompletions(text) {
 }
 
 function getCompletionsAsync(input) {
+  if (input === '') {
+    return [];
+  }
   return fetch(`https://api.github.com/search/users?q=${input}`)
     .then((response) => response.json())
     .then((json) => json.items && json.items.map(item => ({label: item.login, id: item.id})));
@@ -54,6 +57,19 @@ storiesOf('Autocomplete', module)
     () => (
       <Autocomplete getCompletions={getCompletionsAsync} onSelect={action('select')}>
         <Textfield placeholder="Github usernames..." />
+      </Autocomplete>
+    ),
+    {inline: true}
+  )
+  .addWithInfo(
+    'renderItem',
+    'This example uses renderItem method to italicize text',
+    () => (
+      <Autocomplete
+        getCompletions={getCompletions}
+        onSelect={action('select')}
+        renderItem={item => <em>{item}</em>}>
+        <Textfield placeholder="Autocomplete..." />
       </Autocomplete>
     ),
     {inline: true}

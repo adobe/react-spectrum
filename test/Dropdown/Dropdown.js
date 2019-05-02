@@ -143,7 +143,7 @@ describe('Dropdown', function () {
 
   it('aria-expanded is set correctly after open/close', function () {
 
-    const tree = mount(
+    const tree = shallow(
       <Dropdown>
         <Button>Test</Button>
         <Menu>
@@ -153,14 +153,61 @@ describe('Dropdown', function () {
     );
 
     // After a click we expand the list -  aria-expanded should be true.
-    tree.find(OverlayTrigger).simulate('click');
-    assert.equal(tree.find('button').prop('aria-expanded'), true);
+    tree.find(OverlayTrigger).simulate('show');
+    assert.equal(tree.find(Button).prop('aria-expanded'), true);
 
     // Ensure that aria-expanded gets removed when we click to collapse the list. Prop should return null.
-    tree.find(OverlayTrigger).simulate('click');
-    assert.ifError(tree.find('button').prop('aria-expanded'));
-    tree.unmount();
-
+    tree.find(OverlayTrigger).simulate('hide');
+    assert.equal(tree.find(Button).prop('aria-expanded'), null);
   });
+  describe('window behaviors', () => {
+    let tree;
+    let clock;
+    let mountNode;
 
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+      mountNode = document.createElement('DIV');
+      document.body.appendChild(mountNode);
+    });
+
+    afterEach(() => {
+      if (tree) {
+        tree.detach();
+        tree = null;
+      }
+      clock.runAll();
+      clock.restore();
+      document.body.removeChild(mountNode);
+      mountNode = null;
+    });
+
+    it('supports longClick', () => {
+      let selectSpy = sinon.spy();
+      let clickSpy = sinon.spy();
+      tree = mount(
+        <Dropdown onSelect={selectSpy} onClick={clickSpy} trigger="longClick">
+          <Button holdAffordance>Click me</Button>
+          <Menu>
+            <MenuItem>Test</MenuItem>
+          </Menu>
+        </Dropdown>,
+        {attachTo: mountNode}
+      );
+      let button = tree.find(Button);
+      assert(button.props().holdAffordance);
+      let overlayTrigger = tree.find(OverlayTrigger).instance();
+      button.simulate('mouseDown', {button: 0});
+      clock.tick(250);
+      button.simulate('mouseUp', {button: 0});
+      assert(overlayTrigger.state.show);
+
+      assert.equal(document.querySelectorAll('.spectrum-Menu-item').length, 1);
+      document.querySelectorAll('.spectrum-Menu-item')[0].click();
+
+      assert(!clickSpy.called);
+      assert(selectSpy.calledOnce);
+      assert(!overlayTrigger.state.show);
+    });
+  });
 });

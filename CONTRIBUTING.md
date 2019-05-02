@@ -7,12 +7,13 @@ So, you want to contribute? 🎉🎉🎉
 Anyone! In fact, we welcome contributions. And while only some have merge rights, the more you contribute more fun you will have.
 
 ## What should I know before I get started?
+Check you have access to [react-spectrum in github] (https://github.com/adobe/react-spectrum) in the Adobe org. If not, you can follow the instructions on the [Adobe Open Source Advisory Board website](https://git.corp.adobe.com/OpenSourceAdvisoryBoard/handbook/blob/master/GitHub-Adobe-Org-Management.md#request-access-to-our-adobe-github-org).
 
-All work should happen within [Github](https://git.corp.adobe.com/react/react-spectrum), in the [wiki](https://wiki.corp.adobe.com/display/RSP), or in the [issue tracker](https://jira.corp.adobe.com/projects/RSP).
+All work should happen within [Github](https://github.com/adobe/react-spectrum), or in the [issue tracker](https://github.com/adobe/react-spectrum/issues).
 
-That is to say: all pull requests should have a issue associated in JIRA. The wiki is a great place for design documents.
+That is to say: all pull requests should have a issue associated in github issues. Our [rfc folder](https://github.com/adobe/react-spectrum/tree/master/rfcs) is also a great place for discussing and proposing larger changes and features.
 
-Bugs, feature requests, tasks, etc should be reported within the [issue tracker](https://jira.corp.adobe.com/projects/RSP).
+Bugs, feature requests, tasks, etc should be reported within the [issue tracker](https://github.com/adobe/react-spectrum/issues).
 
 HOWEVER: if you have a question, use the resources below to talk to real humans.
 
@@ -27,9 +28,9 @@ Other useful links:
 
 ## Branching
 
-The [master](https://git.corp.adobe.com/react/react-spectrum/tree/master) branch is the mainline branch. All pull requests should be issued against it.
+The [master](https://github.com/adobe/react-spectrum/tree/master) branch is the mainline branch. All pull requests should be issued against it.
 
-When using the code in production however, do note that the master branch may have features that are not certified by QA yet. Be sure to check out the [releases](https://git.corp.adobe.com/React/react-spectrum/releases) page for the current stable builds.
+When using the code in production however, do note that the master branch may have features that are not certified by QA yet. Be sure to check out the [releases](https://github.com/adobe/react-spectrum/releases) page for the current stable builds.
 
 ## Semantic Versioning
 
@@ -39,22 +40,21 @@ Releases (generally) happen every two weeks and will include whatever is merged 
 
 ## Making a Pull Request
 
-We welcome pull requests! Ensure that you have either created an issue in [JIRA](https://jira.corp.adobe.com/projects/RSP) or have grabbed one from the backlog.
+We welcome pull requests! Ensure that you have either created an issue in [github issues](https://github.com/adobe/react-spectrum/issues) or have grabbed one from the backlog.
 
 ### Step-by-step (day by day)
 
 0. Ensure Git, Node, and NPM are installed.
 1. Fork the repository.
 2. Clone your fork.
-3. `cd` into your fork and run `npm install`.
-4. Ensure your work has an associated story, bug, or task in [JIRA](https://jira.corp.adobe.com/projects/RSP).
+3. `cd` into your fork and run `yarn install`.
+4. Ensure your work has an associated issue in [github issues](https://github.com/adobe/react-spectrum/issues).
 5. Choose a descriptive branch name.
 6. Write your code.
 7. Write unit tests and run them with `npm test`. They should pass.
-8. Ensure the linter loves your code with `npm run lint`.
-9. Commit your code.
-10. Push your branch.
-11. Open a pull request against react-spectrum's master branch.
+8. Commit your code.
+9. Push your branch.
+10. Open a pull request against react-spectrum's master branch.
 
 ### Accessibility
 
@@ -71,7 +71,7 @@ Adobe products must support accessibility requirements and comply with regulator
  * For more complicated custom or composite controls, like for example a TreeView or Data Grid, [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/) can be used to communicate a component's label, role, state and property information, as well as the role, state and property information of descendent elements, to assistive technology via the accessibility API. To get started with WAI-ARIA:
     1. First, check [WAI-ARIA Authoring Practices 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/) to see if an appropriate design pattern exists for the type of component you are developing. Each design patterns provides guidance on the appropriate keyboard interaction behavior for the component and instructions on the appropriate attributes to add to communicate the component and its descendants' label, role, state and property information to assistive technology.
     2. Next, if the design pattern you're looking for isn't in the [Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.1/) guide, check the [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-1.1/) specification for the appropriate role under [5.3.2 Widget Roles](https://www.w3.org/TR/wai-aria-1.1/#widget_roles). Each role description, and particularly those for composite controls, provides some implementation guidance. For example: [combobox](https://www.w3.org/TR/wai-aria-1.1/#combobox).
-    3. If you are unsure of what design pattern the component should use, don't hesitate to ask via [#react_spectrum_eng](https://adobespectrum.slack.com/messages/C91HN6UCD) or ping the accessibility team, [mijordan@adobe.com](mailto:mijordan@adobe.com) and [nurthen@adobe.com](mailto:nurthen@adobe.com), directly.
+    3. If you are unsure of what design pattern the component should use, don't hesitate to ping the accessibility team, [mijordan@adobe.com](mailto:mijordan@adobe.com) and [nurthen@adobe.com](mailto:nurthen@adobe.com), directly.
 3. A few questions to ask as you develop your component to support accessibility:
   * How does a developer add a label to this control?
   * If the component can be labeled using FieldLabel, does clicking the FieldLabel set focus to the component?

@@ -10,13 +10,21 @@ describe('Dialog', () => {
   it('default', () => {
     const tree = shallow(<Dialog />);
     assert(tree.hasClass('spectrum-Dialog'));
+    assert.equal(tree.prop('id'), tree.instance().dialogId);
+    tree.setProps({id: 'foo'});
+    assert.equal(tree.prop('id'), 'foo');
+    assert.equal(tree.prop('tabIndex'), 1);
   });
 
   it('supports optional title', () => {
     const tree = shallow(<Dialog />);
     assert.equal(tree.find(DialogHeader).length, 0);
+    assert.equal(tree.prop('aria-labelledby'), null, 'with no title, aria-labelledby === null');
     tree.setProps({title: 'Foo'});
     assert.equal(tree.find(DialogHeader).length, 1);
+    assert.equal(tree.find(DialogHeader).prop('id'), `${tree.prop('id')}-heading`, 'with title, DialogHeader has an id');
+    assert.equal(tree.find(DialogHeader).dive().find('Heading').prop('id'), `${tree.prop('id')}-heading`, 'DialogHeader id propagates to Heading');
+    assert.equal(tree.prop('aria-labelledby'), `${tree.prop('id')}-heading`, 'with title, aria-labelledby is set to id on DialogHeader > Heading');
   });
 
   it('supports optional footer', () => {
@@ -162,6 +170,54 @@ describe('Dialog', () => {
     tree.unmount();
   });
 
+  it('focusing Dialog itself should simply focus the dialog', async () => {
+    let onFocusSpy = sinon.spy();
+    let tree = mount(<Dialog cancelLabel="Cancel" confirmLabel="OK" onFocus={onFocusSpy} />);
+    // onFocus, Dialog will marshall focus to first tabbable descendant.
+    tree.getDOMNode().focus();
+    tree.simulate('focus', {type: 'focus'});
+    await sleep(17);
+    assert(onFocusSpy.called);
+    assert.equal(document.activeElement, tree.getDOMNode());
+
+    let dialogButtons = tree.find('DialogButtons');
+    let buttons = dialogButtons.find('Button');
+    let preventDefault = sinon.spy();
+    let stopPropagation = sinon.spy();
+    tree.simulate('keydown', {type: 'keydown', key: 'Tab', preventDefault, stopPropagation});
+    assert(preventDefault.called);
+    assert(stopPropagation.called);
+    assert.equal(document.activeElement, buttons.first().getDOMNode());
+
+    onFocusSpy.reset();
+    preventDefault.reset();
+    stopPropagation.reset();
+
+    tree.getDOMNode().focus();
+    tree.simulate('keydown', {type: 'keydown', key: 'Tab', shiftKey: true, preventDefault, stopPropagation});
+    assert(preventDefault.called);
+    assert(stopPropagation.called);
+    assert.equal(document.activeElement, buttons.last().getDOMNode());
+    tree.unmount();
+  });
+
+  it('trapFocus: false should prevent trapFocus from executing', async () => {
+    let tree = mount(<Dialog confirmLabel="OK" trapFocus={false} />);
+    tree.getDOMNode().focus();
+    tree.simulate('focus', {type: 'focus'});
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
+  it('focus Dialog itself if it contains no tabbable children', async () => {
+    let tree = mount(<Dialog />);
+    tree.getDOMNode().focus();
+    await sleep(17);
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
   it('supports disabling confirm button', () => {
     const tree = shallow(<Dialog confirmLabel="OK" confirmDisabled />);
     let dialogButtons = tree.find('DialogButtons');
@@ -199,6 +255,15 @@ describe('Dialog', () => {
     onClose.reset();
     onKeyDown.reset();
 
+    // stopPropagation
+    tree.simulate('keydown', {key: 'Enter', isPropagationStopped: () => true});
+    assert(onKeyDown.calledOnce);
+    assert(!stub.calledOnce);
+    await sleep(17);
+    assert(!onClose.calledOnce);
+
+    onKeyDown.reset();
+
     tree.setProps({'confirmDisabled': false});
     tree.simulate('keydown', {key: 'ArrowDown'});
     assert(onKeyDown.calledOnce);
@@ -234,5 +299,42 @@ describe('Dialog', () => {
     assert(stub.calledTwice);
     await sleep(1);
     assert(onClose.calledTwice);
+  });
+
+  describe('Accessibility', () => {
+    it('supports aria-label property', () => {
+      const tree = shallow(<Dialog aria-label="foo" />);
+      assert.equal(tree.prop('aria-label'), 'foo');
+    });
+
+    it('supports aria-labelledby property', () => {
+      const tree = shallow(<Dialog aria-labelledby="foo" />);
+      assert.equal(tree.prop('aria-labelledby'), 'foo');
+      tree.setProps({'aria-labelledby': null, title: 'test'});
+      const dialogId = tree.instance().dialogId;
+      assert.equal(tree.prop('id'), dialogId);
+      assert.equal(tree.prop('aria-labelledby'), `${dialogId}-heading`);
+    });
+
+    it('supports aria-describedby property', () => {
+      const tree = shallow(<Dialog aria-describedby="foo" />);
+      assert.equal(tree.prop('aria-describedby'), 'foo');
+      tree.setProps({'aria-describedby': null, title: 'test'});
+      const dialogId = tree.instance().dialogId;
+      assert.equal(tree.prop('aria-describedby'), null);
+      tree.setProps({children: <span>bar</span>});
+      assert.equal(tree.prop('aria-describedby'), `${dialogId}-content`);
+      tree.setProps({title: null});
+      assert.equal(tree.prop('aria-describedby'), null);
+    });
+
+    it('supports aria-modal property', () => {
+      const tree = shallow(<Dialog />);
+      assert.equal(tree.prop('aria-modal'), Dialog.defaultProps.trapFocus);
+      tree.setProps({trapFocus: false});
+      assert.equal(tree.prop('aria-modal'), false);
+      tree.setProps({'aria-modal': true});
+      assert.equal(tree.prop('aria-modal'), true);
+    });
   });
 });

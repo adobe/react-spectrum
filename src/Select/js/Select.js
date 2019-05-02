@@ -16,12 +16,26 @@ importSpectrumCSS('dropdown');
 require('../style/index.styl');
 
 let POPOVER_MAX_WIDTH = null;
+let QUIET_MARGIN = 24;
 
 @autobind
 export default class Select extends React.Component {
   static propTypes = {
+    /**
+     * If true, the select list will close on selection of an item
+     */
     closeOnSelect: PropTypes.bool,
-    menuClassName: PropTypes.string
+
+    /**
+     * String for extra class names to add to the select list
+     */
+    menuClassName: PropTypes.string,
+
+    /**
+     * A function that returns a wrapper component to render a list item label.
+     * Useful in providing custom html to the rendered label.
+     */
+    renderItem: PropTypes.func
   };
 
   constructor(props) {
@@ -91,13 +105,6 @@ export default class Select extends React.Component {
     }
   }
 
-  onClose() {
-    ReactDOM.findDOMNode(this.button).focus();
-    if (typeof this.props.onClose === 'function') {
-      this.props.onClose();
-    }
-  }
-
   onOpen(e) {
     this.updateSize();
     if (typeof this.props.onOpen === 'function') {
@@ -120,6 +127,7 @@ export default class Select extends React.Component {
     let {
       options = [],
       quiet,
+      onClose,
       closeOnSelect,
       menuClassName,
       disabled = false,
@@ -134,6 +142,7 @@ export default class Select extends React.Component {
       labelId,
       id = this.selectId,
       icon,
+      renderItem,
       ...otherProps
     } = this.props;
 
@@ -165,6 +174,13 @@ export default class Select extends React.Component {
     let domProps = Object.entries(filterDOMProps(otherProps));
     let buttonProps = domProps.filter(x => /^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
     let dropdownProps = domProps.filter(x => !/^aria-.*$/.test(x[0])).reduce((o, i) => (o[i[0]] = i[1], o), {});
+    let minWidth = this.state.width;
+    if (quiet) {
+      minWidth = this.state.width + QUIET_MARGIN;
+    }
+    if (quiet && flexible) {
+      minWidth = null;
+    }
 
     return (
       <Dropdown
@@ -182,7 +198,11 @@ export default class Select extends React.Component {
         closeOnSelect={closeOnSelect}
         onSelect={this.onSelect}
         onOpen={this.onOpen}
-        onClose={this.onClose}
+        onClose={onClose}
+        aria-required={required}
+        aria-multiselectable={multiple}
+        aria-disabled={disabled}
+        aria-invalid={invalid}
         alignRight={alignRight}
         flip={flip}
         {...dropdownProps}>
@@ -217,17 +237,20 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           required={required}
+          quiet={quiet}
           style={{
-            minWidth: quiet && flexible ? null : this.state.width,
-            maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null
+            minWidth: minWidth,
+            maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null,
+            marginRight: quiet && alignRight ? -1 * (QUIET_MARGIN / 2) : null
           }}
-          autoFocus />
+          autoFocus
+          renderItem={renderItem} />
       </Dropdown>
     );
   }
 }
 
-export function SelectMenu({onClose, onOpen, onSelect, className, open, placement, style, closeOnSelect, ...props}) {
+export function SelectMenu({onClose, onOpen, onSelect, className, open, placement, style, closeOnSelect, quiet, ...props}) {
   return (
     <Popover
       isDialog={false}
@@ -236,9 +259,14 @@ export function SelectMenu({onClose, onOpen, onSelect, className, open, placemen
       onClose={onClose}
       onOpen={onOpen}
       style={style}
-      className="spectrum-Dropdown-popover"
+      className={classNames(
+        'spectrum-Dropdown-popover',
+        {
+          'spectrum-Dropdown-popover--quiet': quiet
+        }
+      )}
       closeOnSelect={closeOnSelect}>
-      <SelectList {...props} className={className} onChange={onSelect} onTab={e => e.preventDefault()} />
+      <SelectList {...props} className={className} onChange={onSelect} />
     </Popover>
   );
 }

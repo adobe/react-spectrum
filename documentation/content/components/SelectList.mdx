@@ -72,6 +72,18 @@ import SelectList from '@react/react-spectrum/SelectList';
 />
 ```
 
+## renderItem
+
+You can use the `renderItem` prop to customize the rendering of the items displayed in the dropdown.
+This is useful in case custom props are needed for styling or accessibility, or using a semantic
+element for the type of data being displayed (e.g. `<time>`).
+
+```jsx
+<SelectList
+  {/* ... */}
+  renderItem={item => <time {/* ... */}>{item.label}</time>} />
+```
+
 ## Events
 
 ### onChange

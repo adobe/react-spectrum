@@ -67,6 +67,11 @@ describe('Select', () => {
     assert.deepEqual(tree.find(SelectMenu).prop('value'), []);
   });
 
+  it('passes through the renderItem prop', () => {
+    const tree = shallow(<Select options={testOptions} renderItem={item => <em>{item.label}</em>} />);
+    assert.equal(typeof tree.find(SelectMenu).prop('renderItem'), 'function');
+  });
+
   it('should set an initial value', () => {
     const tree = shallow(<Select options={testOptions} value="vanilla" />);
     assert.equal(tree.find('.spectrum-Dropdown-label').text(), 'Vanilla');
@@ -233,15 +238,18 @@ describe('Select', () => {
     assert.deepEqual(tree.find(Button).prop('style'), null);
   });
 
-  it('onClose restores focus to button and calls onClose method if defined', () => {
+  it('onClose restores focus to button and calls onClose method if defined', async () => {
     const spy = sinon.spy();
     const tree = mount(<Select options={testOptions} onClose={spy} />);
+    tree.find(Button).getDOMNode().focus();
     tree.find(Button).simulate('click');
+    await sleep(50);
     assert.equal(tree.find(Button).prop('selected'), true);
     assert.notEqual(tree.find(Button).getDOMNode(), document.activeElement);
     tree.find(Button).simulate('click');
     tree.update();
     assert(spy.calledOnce);
+    await sleep(150);
     assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
     assert.equal(tree.find(Button).prop('selected'), false);
 

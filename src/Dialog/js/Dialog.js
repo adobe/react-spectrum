@@ -1,9 +1,11 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import DialogButtons from './DialogButtons';
 import DialogHeader from './DialogHeader';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import {trapFocus} from '../../utils/FocusManager';
 
 importSpectrumCSS('dialog');
 
@@ -25,7 +27,8 @@ export default class Dialog extends Component {
     mode: PropTypes.oneOf(['alert', 'fullscreen', 'fullscreenTakeover']),
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
     autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', 'secondary', null]),
-    keyboardConfirm: PropTypes.bool
+    keyboardConfirm: PropTypes.bool,
+    trapFocus: PropTypes.bool
   };
 
   static defaultProps = {
@@ -35,8 +38,14 @@ export default class Dialog extends Component {
     open: true,
     role: 'dialog',
     autoFocusButton: null,
-    onClose: function () {}
+    onClose: function () {},
+    trapFocus: true
   };
+
+  constructor(props) {
+    super(props);
+    this.dialogId = createId();
+  }
 
   /*
    * Calls the props.onConfirm() or props.onCancel() asynchronously if present,
@@ -60,11 +69,23 @@ export default class Dialog extends Component {
     this._onAction(this.props.onCancel);
   }
 
+  onFocus(e) {
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  }
+
   onKeyDown(e) {
     const {confirmDisabled, keyboardConfirm, onKeyDown} = this.props;
     if (onKeyDown) {
       onKeyDown(e);
+
+      // Do nothing if stopPropagation has been called on event after onKeyDown prop executes.
+      if (e.isPropagationStopped && e.isPropagationStopped()) {
+        return;
+      }
     }
+
     switch (e.key) {
       case 'Enter':
         if (!confirmDisabled && keyboardConfirm) {
@@ -74,6 +95,11 @@ export default class Dialog extends Component {
       case 'Esc':
       case 'Escape':
         this.onCancel();
+        break;
+      default:
+        if (this.props.trapFocus) {
+          trapFocus(this, e);
+        }
         break;
     }
   }
@@ -90,6 +116,13 @@ export default class Dialog extends Component {
       variant,
       mode,
       role,
+      tabIndex,
+      trapFocus,
+      id = this.dialogId,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
+      'aria-modal': ariaModal,
       ...otherProps
     } = this.props;
 
@@ -97,12 +130,12 @@ export default class Dialog extends Component {
     const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
 
     delete otherProps.modalContent;
-    delete otherProps.tabIndex;
 
     return (
       <div
         className={classNames(
           'spectrum-Dialog',
+          'react-spectrum-Dialog',
           {
             [`spectrum-Dialog--${mode}`]: mode,
             'spectrum-Dialog--error': variant === 'error',
@@ -111,8 +144,14 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
-        tabIndex={-1}
-        onKeyDown={this.onKeyDown}>
+        tabIndex={tabIndex === undefined || trapFocus ? 1 : tabIndex}
+        onFocus={this.onFocus}
+        onKeyDown={this.onKeyDown}
+        id={id}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby || (title && !ariaLabel ? `${id}-heading` : null)}
+        aria-describedby={ariaDescribedby || (title && children ? `${id}-content` : null)}
+        aria-modal={ariaModal || trapFocus}>
         {title &&
           <DialogHeader
             variant={derivedVariant}
@@ -121,12 +160,13 @@ export default class Dialog extends Component {
             confirmLabel={confirmLabel}
             secondaryLabel={secondaryLabel}
             cancelLabel={cancelLabel}
+            id={`${id}-heading`}
             {...otherProps}
             onConfirm={this.onConfirm}
             onCancel={this.onCancel} />
         }
 
-        {title ? <div className="spectrum-Dialog-content">{children}</div> : children}
+        {title ? <div className="spectrum-Dialog-content" id={`${id}-content`}>{children}</div> : children}
 
         {!fullscreen && confirmLabel &&
         <DialogButtons

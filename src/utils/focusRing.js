@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+export const FOCUS_RING_CLASSNAME = 'focus-ring';
+
 /**
  * This is a decorator that ensures a focus-ring className set by the focus-ring-polyfill
  * is retained when a focused component is rendered following a state change.
@@ -10,7 +12,6 @@ export default function focusRing(WrappedComponent) {
   const componentWillUpdate = proto.componentWillUpdate;
   const componentDidUpdate = proto.componentDidUpdate;
 
-  const FOCUS_RING_CLASSNAME = 'focus-ring';
   let elementWithFocusRing = null;
 
   proto.componentWillUpdate = function (props, state) {

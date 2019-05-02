@@ -1,11 +1,19 @@
 import {ArrayDataSource, IndexPath} from '@react/collection-view';
 
+// symbol + counter for requests
+let REQUEST_ID = 1;
+let LAST_REQUEST = Symbol('lastRequest');
+
 /**
  * ListDataSource is a common data source used by views that load a list of data.
  * It supports async loading, infinite scrolling, and sorting data.
  * Used by TableView and GridView.
  */
 export default class ListDataSource extends ArrayDataSource {
+  constructor(props) {
+    super(props);
+    this[LAST_REQUEST] = 0;
+  }
   /**
    * Called on initial load to get the initial items to display,
    * which are inserted into a single section. Should be overridden to return an array of items.
@@ -27,23 +35,26 @@ export default class ListDataSource extends ArrayDataSource {
   async loadMore() {}
 
   /**
-   * Triggers loading of data. You should call `insertSection` or `insertItems` 
+   * Triggers loading of data. You should call `insertSection` or `insertItems`
    * as needed to add the loaded data into view. By default, calls `load` to get
    * data for a single section.
    * @param {?object} sortDescriptor - When called by a TableView, contains the sort column and direction
    */
   async performLoad(sortDescriptor) {
+    let requestId = REQUEST_ID++;
+    this[LAST_REQUEST] = requestId;
     this.clear(false);
 
     let items = await this.load(sortDescriptor);
-    if (items) {
+    // insert items only if it's the last request that's been made
+    if (this[LAST_REQUEST] === requestId && items) {
       this.insertSection(0, items.slice(), false);
     }
   }
 
   /**
    * Triggers a reload of the data in the attached view. Will cause the contents of the view
-   * to be cleared and `performLoad` to be called again. You should not call `performLoad` 
+   * to be cleared and `performLoad` to be called again. You should not call `performLoad`
    * directly since that will not allow the view an opportunity to display its loading spinner.
    */
   reloadData() {
@@ -60,9 +71,14 @@ export default class ListDataSource extends ArrayDataSource {
    * @return {boolean} - Whether more data was inserted.
    */
   async performLoadMore() {
+    let requestId = REQUEST_ID++;
+    this[LAST_REQUEST] = requestId;
+
     let items = await this.loadMore();
     if (items && items.length > 0) {
-      this.insertItems(new IndexPath(0, this.sections[this.sections.length - 1].length), items.slice(), false);
+      if (this[LAST_REQUEST] === requestId) {
+        this.insertItems(new IndexPath(0, this.sections[this.sections.length - 1].length), items.slice(), false);
+      }
       return true;
     }
 

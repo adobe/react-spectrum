@@ -1,5 +1,6 @@
 import assert from 'assert';
 import React from 'react';
+import Search from '../../src/Search';
 import SearchWithin from '../../src/SearchWithin';
 import {shallow} from 'enzyme';
 
@@ -23,6 +24,11 @@ describe('Search Within', () => {
 
     assert.equal(findSelect(tree).prop('aria-labelledby'), tree.prop('id'));
     assert.equal(findSearch(tree).prop('aria-labelledby'), findSelect(tree).prop('id'));
+  });
+
+  it('supports value with empty string', () => {
+    const tree = shallow(<SearchWithin value="" defaultValue="default" scopeOptions={testOptions} />);
+    assert.equal(tree.find(Search).props().value, '');
   });
 
   it('supports labelling using aria-label', () => {

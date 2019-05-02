@@ -29,14 +29,14 @@ describe('LiveRegionAnnouncer', () => {
 
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
-      politeMessage: 'Demo message',
+      politeMessage: 'Demo message'
     });
 
     wrapper.setProps({message: 'Demo message changed'});
 
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
-      politeMessage: 'Demo message changed',
+      politeMessage: 'Demo message changed'
     });
 
     // should clear after delay
@@ -44,7 +44,7 @@ describe('LiveRegionAnnouncer', () => {
     // don't need to wait for real time, state is updated immediately
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
-      politeMessage: '',
+      politeMessage: ''
     });
   });
 
@@ -55,21 +55,21 @@ describe('LiveRegionAnnouncer', () => {
 
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: 'Demo message',
-      politeMessage: '',
+      politeMessage: ''
     });
 
     wrapper.setProps({message: 'Demo message changed'});
 
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: 'Demo message changed',
-      politeMessage: '',
+      politeMessage: ''
     });
 
     // should clear after delay
     clock.tick(1001);
     assert.deepEqual(LiveRegionAnnouncer.getInstance().state, {
       assertiveMessage: '',
-      politeMessage: '',
+      politeMessage: ''
     });
   });
 });

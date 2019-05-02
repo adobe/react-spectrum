@@ -10,6 +10,7 @@ global.document = jsdom('<html><body></body></html>', {features: {QuerySelector:
 global.window = document.defaultView;
 global.HTMLElement = window.HTMLElement;
 global.HTMLImageElement = window.HTMLImageElement;
+global.MouseEvent = window.MouseEvent;
 
 Object.keys(document.defaultView).forEach(property => {
   if (typeof global[property] === 'undefined') {

@@ -22,7 +22,6 @@ const selectedValue = [
   'longVal'
 ];
 
-
 storiesOf('SelectList', module)
   .addDecorator(story => (
     <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
@@ -57,6 +56,15 @@ storiesOf('SelectList', module)
   .addWithInfo(
     'value: longVal',
     () => (render({value: 'longVal'})),
+    {inline: true}
+  )
+  .addWithInfo(
+    'renderItem',
+    'This example uses renderItem method to italicize text when item is selected',
+    () => render({
+      multiple: true,
+      renderItem: item => <em>{item.label}</em>
+    }),
     {inline: true}
   );
 

@@ -96,6 +96,10 @@ export default class SubMenu extends Component {
     ReactDOM.findDOMNode(this.menuItem).focus();
   }
 
+  onHide() {
+    this.hide();
+  }
+
   render() {
     const {
       children,
@@ -105,30 +109,34 @@ export default class SubMenu extends Component {
       ...otherProps
     } = this.props;
 
+    const {opened} = this.state;
+
     return (
       <OverlayTrigger
         placement="right top"
         offset={-10}
         crossOffset={-4}
         selected={false}
-        show={this.state.opened}
+        show={opened}
+        onHide={this.onHide}
         onExited={this.onExited}>
         <MenuItem
           id={this.menuId}
           className={
             classNames(
               {
-                'is-open': this.state.opened
+                'is-open': opened
               },
               className
             )
           }
           ref={r => this.menuItem = r}
           aria-haspopup="menu"
-          aria-expanded={this.state.opened}
+          aria-expanded={opened}
           aria-owns={this.subMenuId}
           {...otherProps}
           onKeyDown={otherProps.disabled ? undefined : this.handleKeyDown}
+          onClick={this.show}
           onMouseEnter={this.show}
           onMouseLeave={this.hide}
           hasNestedMenu>
@@ -140,7 +148,8 @@ export default class SubMenu extends Component {
           autoFocus
           aria-labelledby={this.menuId}
           onMouseEnter={this.show}
-          onMouseLeave={this.hide}>
+          onMouseLeave={this.hide}
+          trapFocus={false}>
           {React.Children.toArray(children).map(this.cloneItem)}
         </Menu>
       </OverlayTrigger>

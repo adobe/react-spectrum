@@ -1,10 +1,10 @@
 livefyre('''
   test:
     image:
-      label: corpjenkins/node
+      label: corpjenkins/node8
     git: true
     commands:
-      - make clean
+      - make clean_all
       - make
       - make jenkins_test
       - make storybook
@@ -13,15 +13,16 @@ livefyre('''
     coberturaResults:
       - cobertura-coverage.xml
     publishHTML:
-      dist/storybook: index.html
+      public/storybook: index.html
   deploy:
     branch: ".*"
     git: true
+    sshAgent: rspbot
     commands:
-      - make build
-    npm:
-      versionBump: true
-      registry: https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+      - git reset --hard
+      - git checkout master
+      - git reset --hard origin/master
+      - make ci
 ''')
 
-properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only', description: 'Bump npm version', name: 'versionBump')])])
+properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only\nwebsite only', description: 'Bump npm version', name: 'VERSION')])])

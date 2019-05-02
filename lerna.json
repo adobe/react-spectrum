@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "src"
+  ],
+  "ignoreChanges": [
+    "**/test/**"
+  ],
+  "command": {
+    "publish": {
+      "allowBranch": [
+        "master"
+      ]
+    }
+  },
+  "version": "2.20.0"
+}

@@ -198,7 +198,7 @@ describe('TableView old API', function () {
         renderCell={renderCell} />
     );
     table.instance().collection = {
-      relayout: () => {}, 
+      relayout: () => {},
       selectAll,
       clearSelection,
       selectedIndexPaths: [],

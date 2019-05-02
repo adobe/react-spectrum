@@ -5,15 +5,18 @@ import More from '../../Icon/More';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, ...props}) {
+export default function DropdownButton({alignRight, onClose, onOpen, onSelect, children, closeOnSelect, menuClassName, holdAffordance, onClick, ...props}) {
+  let trigger = holdAffordance ? 'longClick' : undefined;
   return (
-    <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect}>
+    <Dropdown style={{display: 'inline-block'}} onClose={onClose} onOpen={onOpen} onClick={onClick} onSelect={onSelect} alignRight={alignRight} closeOnSelect={closeOnSelect} trigger={trigger}>
       <Button
         variant="action"
         quiet
-        icon={<More />}
+        holdAffordance={holdAffordance}
+        icon={<More alt="…" />}
         {...props} />
-      <Menu className={menuClassName}>
+      <Menu
+        className={menuClassName}>
         {children}
       </Menu>
     </Dropdown>
@@ -49,5 +52,10 @@ DropdownButton.propTypes = {
   /**
    * Custom classname to apply to the Menu
    */
-  menuClassName: PropTypes.bool
+  menuClassName: PropTypes.bool,
+
+  /**
+   * Whether to activate using a long click
+   */
+  holdAffordance: PropTypes.bool
 };

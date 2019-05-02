@@ -1,7 +1,8 @@
+import {chain, focusAfterMouseEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import CornerTriangle from '../../Icon/core/CornerTriangle';
 import filterDOMProps from '../../utils/filterDOMProps';
-import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
@@ -91,7 +92,12 @@ export default class Button extends Component {
     /**
      * A click handler for the button
      */
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+
+    /**
+     * A visual variation that puts a small triangle in the lower right
+     */
+    holdAffordance: PropTypes.bool
   };
 
   static defaultProps = {
@@ -104,7 +110,8 @@ export default class Button extends Component {
     logic: false,
     quiet: false,
     selected: false,
-    variant: 'secondary'
+    variant: 'secondary',
+    holdAffordance: false
   };
 
   componentDidMount() {
@@ -140,7 +147,7 @@ export default class Button extends Component {
       event.preventDefault();
       this.buttonRef.click();
     }
-  }
+  };
 
   setButtonRef = b => this.buttonRef = b;
 
@@ -160,8 +167,12 @@ export default class Button extends Component {
       invalid,
       onMouseDown,
       onMouseUp,
+      holdAffordance,
       ...otherProps
     } = this.props;
+
+    // don't add autoFocus as a DOM prop
+    delete otherProps.autoFocus;
 
     // Map variants for backwards compatibility
     if (VARIANTS[variant]) {
@@ -171,10 +182,13 @@ export default class Button extends Component {
       ({variant, quiet} = mappedVariant);
     }
 
+    let shouldRenderHoldAffordance = false;
+
     // Some button variants were broken out into their own components, map them appropriately
     let baseButtonClass = 'spectrum-Button';
     if (variant === 'action' || variant === 'toggle') {
       baseButtonClass = 'spectrum-ActionButton';
+      shouldRenderHoldAffordance = holdAffordance;
       if (variant === 'toggle') {
         quiet = true;
       }
@@ -189,6 +203,8 @@ export default class Button extends Component {
       variant = '';
     } else if (variant === 'tool') {
       baseButtonClass = 'spectrum-Tool';
+      // hold affordance is really only a part of tool.
+      shouldRenderHoldAffordance = holdAffordance;
       variant = '';
     }
 
@@ -234,12 +250,15 @@ export default class Button extends Component {
         aria-invalid={invalid || null}
         aria-expanded={ariaExpanded}
         onClick={this.onClick}
-        onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
-        onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
+        onMouseDown={chain(this.onMouseDown, focusAfterMouseEvent.bind(this, onMouseDown))}
+        onMouseUp={chain(this.onMouseUp, focusAfterMouseEvent.bind(this, onMouseUp))}
         ref={this.setButtonRef}>
         {cloneIcon(icon, {size: 'S'})}
         {labelContents &&
           <span className={baseButtonClass + '-label'}>{labelContents}</span>
+        }
+        {shouldRenderHoldAffordance &&
+          <CornerTriangle role="presentation" size={null} className="spectrum-Tool-hold" />
         }
         {typeof children !== 'string' && children}
       </Element>

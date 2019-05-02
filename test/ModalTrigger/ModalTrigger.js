@@ -14,7 +14,7 @@ describe('ModalTrigger', () => {
     RootComponent.contextTypes = {
       name: PropTypes.string,
       country: PropTypes.string,
-      color: PropTypes.string,
+      color: PropTypes.string
     };
 
     const DivComponent = (props, context) => (
@@ -23,7 +23,7 @@ describe('ModalTrigger', () => {
 
     DivComponent.contextTypes = {
       name: PropTypes.string,
-      country: PropTypes.string,
+      country: PropTypes.string
     };
 
     const ChildComponent = () => <ModalTrigger><DivComponent /></ModalTrigger>;
@@ -42,7 +42,7 @@ describe('ModalTrigger', () => {
       return <div id="modal-test">{context.name}</div>;
     }
     SimpleComponent.contextTypes = {
-      name: PropTypes.string,
+      name: PropTypes.string
     };
 
     const context = {
@@ -50,7 +50,7 @@ describe('ModalTrigger', () => {
     };
 
     ModalTrigger.contextTypes = {
-      name: PropTypes.string,
+      name: PropTypes.string
     };
     const modalTrigger = mount(
       <ModalTrigger>

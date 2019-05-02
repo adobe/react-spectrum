@@ -3,6 +3,7 @@ import {mount, shallow} from 'enzyme';
 import Popover from '../../src/Popover';
 import React from 'react';
 import sinon from 'sinon';
+import {sleep} from '../utils';
 
 describe('Popover', () => {
   it('supports different variants', () => {
@@ -24,10 +25,21 @@ describe('Popover', () => {
     assert(onFocus.called);
   });
 
+  it('support stopPropagation within onFocus method to prevent trapFocus from executing', async () => {
+    let onFocusStopPropagation = (e) => {
+      e.isPropagationStopped = () => true;
+    };
+    let tree = mount(<Popover onFocus={onFocusStopPropagation} />);
+    await sleep(17);
+    tree.simulate('focus', {type: 'focus'});
+    assert.equal(document.activeElement, tree.getDOMNode());
+    tree.unmount();
+  });
+
   it('supports trapFocus', () => {
     const preventDefault = sinon.spy();
     const stopPropagation = sinon.spy();
-    const tree = mount(<Popover trapFocus>
+    const tree = mount(<Popover>
       <button>First</button>
       <button>Last</button>
     </Popover>);
@@ -36,20 +48,26 @@ describe('Popover', () => {
       stopPropagation
     };
     assert.equal(tree.childAt(0).prop('tabIndex'), 1);
-    tree.simulate('focus', {...event, type: 'focus'});
-    assert(preventDefault.called);
-    assert(stopPropagation.called);
-    assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     event.key = 'Tab';
+    event.shiftKey = true;
+    tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
+    assert(preventDefault.calledOnce);
+    assert(stopPropagation.calledOnce);
+    assert.equal(document.activeElement, tree.find('button').last().getDOMNode());
+    event.shiftKey = false;
+    tree.find('button').last().simulate('keydown', {...event, type: 'keydown'});
+    assert(preventDefault.calledTwice);
+    assert(stopPropagation.calledTwice);
+    assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
+
+    // Should support stopPropagation from within onKeyDown event listener
+    tree.setProps({
+      'onKeyDown': e => e.isPropagationStopped = () => true
+    });
     event.shiftKey = true;
     tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
     assert(preventDefault.calledTwice);
     assert(stopPropagation.calledTwice);
-    assert.equal(document.activeElement, tree.find('button').last().getDOMNode());
-    event.shiftKey = false;
-    tree.find('button').last().simulate('keydown', {...event, type: 'keydown'});
-    assert(preventDefault.calledThrice);
-    assert(stopPropagation.calledThrice);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     tree.unmount();
   });

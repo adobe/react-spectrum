@@ -46,8 +46,18 @@ storiesOf('Button', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: action with holdAffordance',
+    () => renderSelected({variant: 'action', holdAffordance: true, onLongClick: action('longClick')}),
+    {inline: true}
+  )
+  .addWithInfo(
     'variant: tool',
     () => renderSelected({variant: 'tool', label: null, icon: <Brush />}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'variant: tool with holdAffordance',
+    () => renderSelected({variant: 'tool', label: null, icon: <Brush />, holdAffordance: true, onLongClick: action('longClick')}),
     {inline: true}
   )
   .addWithInfo(

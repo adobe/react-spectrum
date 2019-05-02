@@ -2,6 +2,7 @@ import assert from 'assert';
 import {Menu, MenuItem, SubMenu} from '../../src/Menu';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
+import sinon from 'sinon';
 
 const rAF = requestAnimationFrame;
 
@@ -47,6 +48,52 @@ describe('SubMenu', () => {
       tree.unmount();
       done();
     });
+  });
+
+  it('Submenu is opened on click', function (done) {
+    let tree = mount(
+      <SubMenu>
+        <MenuItem>Menu Item 1</MenuItem>
+        <MenuItem>Menu Item 2</MenuItem>
+      </SubMenu>
+      );
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+    tree.find('li').simulate('click');
+    rAF(() => {
+      assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+      assert(document.querySelector('.spectrum-Popover .spectrum-Menu'));
+      tree.unmount();
+      done();
+    });
+  });
+
+  it('should hide on mouseleave', () => {
+    let clock = sinon.useFakeTimers();
+
+    let tree = mount(
+      <SubMenu>
+        <MenuItem>Menu Item 1</MenuItem>
+        <MenuItem>Menu Item 2</MenuItem>
+      </SubMenu>
+    );
+
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+    const menuItem = tree.find('li');
+
+    menuItem.simulate('mouseenter');
+    clock.tick(250); // wait for animation
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+    assert(document.querySelector('.spectrum-Popover .spectrum-Menu'));
+
+    menuItem.simulate('mouseleave');
+    clock.tick(250); // wait for animation
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+    assert(!document.querySelector('.spectrum-Popover .spectrum-Menu'));
+
+    clock.restore();
+
+    tree.unmount();
   });
 
   describe('Accessibility', () => {

@@ -399,7 +399,7 @@ describe('ColumnViewDataSource', function () {
       assert.deepEqual(children.emittedEvents, [
         ['startTransaction'],
         ['removeItem', new IndexPath(0, 0), undefined],
-        ['endTransaction', undefined],
+        ['endTransaction', undefined]
       ]);
 
       assert.equal(ds.navigationStack[1].hasChildren, false);
@@ -550,7 +550,7 @@ describe('ColumnViewDataSource', function () {
       ]);
 
       assert.deepEqual(ds.root.children.emittedEvents, [
-        ['reloadItem', new IndexPath(0, 1), false],
+        ['reloadItem', new IndexPath(0, 1), false]
       ]);
 
       checkSortedChildren(ds.root);

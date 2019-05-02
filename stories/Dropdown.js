@@ -1,5 +1,7 @@
 import {action, storiesOf} from '@storybook/react';
+import Brush from '../src/Icon/Brush';
 import Button from '../src/Button';
+import ColorPalette from '../src/Icon/ColorPalette';
 import Dropdown from '../src/Dropdown';
 import {Menu, MenuItem, SubMenu} from '../src/Menu';
 import React from 'react';
@@ -17,8 +19,26 @@ storiesOf('Dropdown', module)
     {inline: true}
   )
   .addWithInfo(
+    'alignRight',
+    () => render({alignRight: true, style: {display: 'inline-block'}}),
+    {inline: true}
+  )
+  .addWithInfo(
     'Stay open on select',
     () => render({closeOnSelect: false}),
+    {inline: true}
+  )
+  .addWithInfo(
+    'Tool with holdAffordance',
+    () => (
+      <Dropdown trigger="longClick" onClick={action('click')} onLongClick={action('longClick')} onSelect={action('select')}>
+        <Button holdAffordance variant="tool" icon={<Brush />} />
+        <Menu>
+          <MenuItem icon={<Brush />} value="brush" selected>Brush</MenuItem>
+          <MenuItem icon={<ColorPalette />} value="colorPalette">Color Palette</MenuItem>
+        </Menu>
+      </Dropdown>
+    ),
     {inline: true}
   )
   .addWithInfo(

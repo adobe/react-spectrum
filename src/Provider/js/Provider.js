@@ -4,6 +4,7 @@ import {defaultLocale, setLocale} from '../../utils/intl';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import {setToastPlacement} from '../../Toast/js/state';
 import '../../focus-ring-polyfill';
 import '../style/index.styl';
 
@@ -21,6 +22,14 @@ export default class Provider extends Component {
      * Scale.
      */
     scale: PropTypes.oneOf(['medium', 'large']),
+
+    /**
+     * The placement of the toasts. By default position is top- shorthand for "top center".
+     */
+    toastPlacement: PropTypes.oneOf([
+      'top', 'top left', 'top center', 'top right',
+      'bottom', 'bottom left', 'bottom center', 'bottom right'
+    ]),
 
     /**
      * Type kit ID. This is required and products must get their own id's.
@@ -60,11 +69,19 @@ export default class Provider extends Component {
     if (process.browser) {
       configureTypekit(props.typekitId);
     }
+
+    if (props.toastPlacement) {
+      setToastPlacement(props.toastPlacement);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if ('locale' in nextProps) {
       setLocale(nextProps.locale);
+    }
+
+    if (nextProps.toastPlacement) {
+      setToastPlacement(nextProps.toastPlacement);
     }
   }
 

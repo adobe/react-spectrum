@@ -24,7 +24,6 @@ export default class AccordionItem extends Component {
     header: '',
     selected: false,
     disabled: false,
-    ariaLevel: 3,
     onItemClick() {}
   };
 
@@ -32,13 +31,6 @@ export default class AccordionItem extends Component {
     super(props);
     this.headerId = createId();
     this.contentId = createId();
-  }
-
-  onHeaderKeyPress(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      this.props.onItemClick();
-    }
   }
 
   render() {
@@ -59,30 +51,30 @@ export default class AccordionItem extends Component {
         className={
           classNames(
             'spectrum-Accordion-item',
+            'react-spectrum-Accordion-item',
             {'is-open': selected, 'is-disabled': disabled},
             className
           )
         }
         role="presentation">
-        <div
-          id={this.headerId}
-          className="spectrum-Accordion-itemHeader"
-          aria-controls={this.contentId}
-          aria-selected={selected}
-          aria-expanded={selected}
-          aria-disabled={disabled}
-          role="tab"
-          tabIndex={!disabled ? 0 : null}
-          onClick={!disabled ? onItemClick : null}
-          onKeyPress={!disabled ? this.onHeaderKeyPress.bind(this) : null}>
-          <span role="heading" aria-level={ariaLevel}>
+        <h3
+          className="spectrum-Accordion-itemHeading"
+          aria-level={ariaLevel}>
+          <button
+            id={this.headerId}
+            className="spectrum-Accordion-itemHeader"
+            aria-controls={this.contentId}
+            aria-expanded={selected}
+            disabled={disabled}
+            type="button"
+            onClick={!disabled ? onItemClick : null}>
             {header}
-          </span>
-        </div>
-        <ChevronRightMedium role="presentation" size={null} className="spectrum-Accordion-itemIndicator" />
+          </button>
+          <ChevronRightMedium role="presentation" size={null} className="spectrum-Accordion-itemIndicator" />
+        </h3>
         <div
           id={this.contentId}
-          role="tabpanel"
+          role="region"
           aria-labelledby={this.headerId}
           aria-hidden={!selected}
           aria-expanded={selected}

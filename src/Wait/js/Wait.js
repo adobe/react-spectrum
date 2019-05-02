@@ -13,30 +13,36 @@ export default class Wait extends React.Component {
   static propTypes = {
     /** Whether to center the Wait compnent in the parent container. */
     centered: PropTypes.bool,
-    
+
     /** Custom CSS class to add to the Wait component */
     className: PropTypes.string,
-    
-    /** Size of the Wait component */
-    size: PropTypes.string,
-    
-    /** Adjust the filled portion of the Wait component to a determined value */
-    value: PropTypes.number,
-    
+
     /**
-     * Determines if the Wait component should endlessly spin (indeterminate) or
+     * Boolean to determine if the Wait component should endlessly spin (indeterminate) or
      * if it should be controlled manually.
      */
-    variant: PropTypes.string
+    indeterminate: PropTypes.bool,
+
+    /** Size of the Wait component */
+    size: PropTypes.string,
+
+    /** Adjust the filled portion of the Wait component to a determined value */
+    value: PropTypes.number,
+
+    /**
+    * The variant of Wait to display.
+    */
+    variant: PropTypes.oneOf(['overBackground'])
   };
-  
+
   render() {
     let {
       value = 0,
       size = 'M',
+      indeterminate = true,
       centered = false,
       className,
-      variant = INDETERMINATE,
+      variant,
       ...otherProps
     } = this.props;
 
@@ -51,7 +57,11 @@ export default class Wait extends React.Component {
     let fillSubmask2Style = {};
     let ariaValue = undefined;
 
-    if (variant === DETERMINATE) {
+    if (variant === DETERMINATE || variant === INDETERMINATE) {
+      console.warn(`The "${variant}" variant of Wait is deprecated. Please use the "indeterminate" prop instead.`);
+    }
+
+    if (variant === DETERMINATE || !indeterminate) {
       value = Math.min(Math.max(+value, 0), 100);
       ariaValue = value;
       if (value > 0 && value <= 50) {
@@ -71,9 +81,10 @@ export default class Wait extends React.Component {
           classNames(
             'spectrum-CircleLoader',
             {
-              'spectrum-CircleLoader--indeterminate': variant === INDETERMINATE,
+              'spectrum-CircleLoader--indeterminate': variant === INDETERMINATE || (indeterminate && variant !== DETERMINATE),
               'spectrum-CircleLoader--small': size === 'S',
               'spectrum-CircleLoader--large': size === 'L',
+              'spectrum-CircleLoader--overBackground': variant === 'overBackground',
               'react-spectrum-Wait--centered': centered
             },
             className

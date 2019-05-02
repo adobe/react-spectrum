@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {interpretKeyboardEvent} from '../../utils/events';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 /**
@@ -12,10 +13,38 @@ import React, {Component} from 'react';
  */
 @autobind
 export default class ListItem extends Component {
+  static propTypes = {
+    /**
+     * Whether or not the list item is selected
+     */
+    selected: PropTypes.bool,
+
+    /**
+     * Whether or not  the list item is disabled
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * Callback for when the list item is clicked
+     */
+    onClick: PropTypes.func,
+
+    /**
+     * Callback for when the list item is selected
+     */
+    onSelect: PropTypes.func,
+
+    /**
+     * The WAI-ARIA role for the list item. Defaults to "option", but could be "menuitem", "menuitemcheckbox", or "menuitemradio" depending on context.
+     */
+    role: PropTypes.oneOf(['option', 'menuitem', 'menuitemcheckbox', 'menuitemradio'])
+  }
+
   static defaultProps = {
     selected: false,
     disabled: false,
-    onSelect: function () {}
+    onSelect: function () {},
+    role: 'option'
   }
 
   handleMouseEnter(e) {
@@ -59,6 +88,7 @@ export default class ListItem extends Component {
       interpretKeyboardEvent.call(this, e);
     }
   }
+
   render() {
     const {
       icon,

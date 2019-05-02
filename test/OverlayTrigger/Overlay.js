@@ -14,7 +14,6 @@ import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
-import Tooltip from '../../src/Tooltip/js/Tooltip';
 
 describe('Overlay', () => {
   const noop = function () {};
@@ -79,7 +78,7 @@ describe('Overlay', () => {
     assert(tree.find(Position).prop('boundariesElement'));
   });
 
-  it('calls props onExcited with args', () => {
+  it('calls props onExited with args', () => {
     let onExited = sinon.spy();
     const tree = shallow(<Overlay show onExited={onExited}><span /></Overlay>);
     tree.instance().onExited({foo: 'bar'});
@@ -95,7 +94,7 @@ describe('Overlay', () => {
       </OverlayTrigger>
     );
     const prevText = document.body.style.cssText;
-    
+
     overlay.setState({'show': true});
     assert.equal(document.body.style.cssText, prevText);
     overlay.setState({'show': false});
@@ -153,7 +152,7 @@ describe('Overlay', () => {
       {context});
 
     assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
-    
+
     overlayTrigger.unmount();
   });
 
@@ -164,7 +163,7 @@ describe('Overlay', () => {
       <Overlay show onHide={onHideOuter}>
         <OverlayTrigger onHide={onHideInner} trigger="click">
           <Button>Click me</Button>
-          <Popover>Popover</Popover>
+          <Popover trapFocus={false}>Popover</Popover>
         </OverlayTrigger>
       </Overlay>
     );
@@ -186,13 +185,13 @@ describe('Overlay', () => {
     });
 
     document.querySelector('button').dispatchEvent(event);
-    await sleep(1);
+    await sleep(17);
     overlay.update();
-    
+
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
 
     // Wait for animation
-    await sleep(200);
+    await sleep(125);
 
     // Hiding the outer overlay should now do nothing since it is no longer the top overlay
     overlay.instance().hide();
@@ -207,7 +206,7 @@ describe('Overlay', () => {
     onHideInner.reset();
 
     // Wait for animation
-    await sleep(200);
+    await sleep(125);
 
     assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
 
@@ -217,157 +216,5 @@ describe('Overlay', () => {
     assert(onHideInner.notCalled);
 
     overlay.unmount();
-  });
-});
-
-describe('OverlayTrigger', () => {
-  it('should add aria-describedby to trigger when Overlay is a Tooltip', () => {
-    let tree = mount(
-      <OverlayTrigger trigger="click">
-        <Button>Hover me</Button>
-        <Tooltip id="foo">Tooltip</Tooltip>
-      </OverlayTrigger>
-    );
-    tree.find(Button).simulate('click');
-    assert(tree.state('show'));
-    assert.equal(tree.find(Button).getDOMNode().getAttribute('aria-describedby'), 'foo');
-    assert.equal(document.querySelector('.spectrum-Tooltip').id, 'foo');
-    tree.find(Button).simulate('click');
-    assert(!tree.state('show'));
-    assert(!tree.find(Button).getDOMNode().hasAttribute('aria-describedby'));
-
-    tree.unmount();
-
-    tree = mount(
-      <OverlayTrigger trigger="click">
-        <Button>Hover me</Button>
-        <Tooltip>Tooltip</Tooltip>
-      </OverlayTrigger>
-    );
-
-    tree.find(Button).simulate('click');
-    assert(tree.state('show'));
-    assert.equal(tree.find(Button).getDOMNode().getAttribute('aria-describedby'),
-                 document.querySelector('.spectrum-Tooltip').id);
-    tree.find(Button).simulate('click');
-    assert(!tree.state('show'));
-    assert(!tree.find(Button).getDOMNode().hasAttribute('aria-describedby'));
-
-    tree.unmount();
-  });
-
-  it('should support delay', async () => {
-    const delay = 10;
-    const tree = mount(
-      <OverlayTrigger trigger="hover" delay={delay}>
-        <Button>Click me</Button>
-        <Popover>Popover</Popover>
-      </OverlayTrigger>
-    );
-
-    tree.find(Button).simulate('mouseOver');
-    assert(!tree.state('show'));
-    await sleep(delay);
-    assert(tree.state('show'));
-    tree.find(Button).simulate('mouseOut');
-    assert(tree.state('show'));
-
-    // test clearTimeout for mouseOut
-    await sleep(delay - 5);
-    tree.find(Button).simulate('mouseOver');
-    await sleep(delay);
-    assert(tree.state('show'));
-    tree.find(Button).simulate('mouseOut');
-    await sleep(delay);
-    assert(!tree.state('show'));
-
-    // test clearTimeout for mouseOver
-    tree.find(Button).simulate('mouseOver');
-    assert(!tree.state('show'));
-    await sleep(delay - 5);
-    tree.find(Button).simulate('mouseOut');
-    assert(!tree.state('show'));
-    await sleep(delay);
-    assert(!tree.state('show'));
-
-    // with no delay show/hide immediately
-    tree.setProps({delay: null});
-    tree.find(Button).simulate('mouseOver');
-    assert(tree.state('show'));
-    tree.find(Button).simulate('mouseOut');
-    await sleep(tree.prop('delayHide'));
-    assert(!tree.state('show'));
-
-    tree.unmount();
-  });
-
-  it('should support delayShow', async () => {
-    const delayShow = 10;
-    const tree = mount(
-      <OverlayTrigger trigger="hover" delayShow={delayShow}>
-        <Button>Click me</Button>
-        <Popover>Popover</Popover>
-      </OverlayTrigger>
-    );
-
-    tree.find(Button).simulate('mouseOver');
-    assert(!tree.state('show'));
-    await sleep(delayShow);
-    assert(tree.state('show'));
-    tree.find(Button).simulate('mouseOut');
-    await sleep(tree.prop('delayHide'));
-    assert(!tree.state('show'));
-
-    tree.setProps({delayShow: null});
-    tree.find(Button).simulate('mouseOver');
-    assert(tree.state('show'));
-    const showStub = sinon.spy();
-    tree.instance().show = showStub;
-    tree.instance().handleDelayedShow();
-    assert(tree.state('show'));
-    assert(!showStub.called);
-
-    tree.unmount();
-  });
-
-  it('should support delayHide', async () => {
-    const delayHide = 10;
-    const tree = mount(
-      <OverlayTrigger trigger="hover" delayHide={delayHide}>
-        <Button>Click me</Button>
-        <Popover>Popover</Popover>
-      </OverlayTrigger>
-    );
-
-    tree.find(Button).simulate('mouseOver');
-    assert(tree.state('show'));
-    tree.find(Button).simulate('mouseOut');
-    await sleep(delayHide);
-    assert(!tree.state('show'));
-
-
-    const hideStub = sinon.spy();
-    tree.instance().hide = hideStub;
-    tree.instance().handleDelayedHide();
-    assert(!tree.state('show'));
-    assert(!hideStub.called);
-
-    tree.unmount();
-  });
-
-  it('disabled prop should hide overlay', () => {
-    const tree = mount(
-      <OverlayTrigger trigger="click">
-        <Button>Click me</Button>
-        <Popover>Popover</Popover>
-      </OverlayTrigger>
-    );
-
-    tree.find(Button).simulate('click');
-    assert(tree.state('show'));
-    tree.setProps({disabled: true});
-    assert(!tree.state('show'));
-
-    tree.unmount();
   });
 });

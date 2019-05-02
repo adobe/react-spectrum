@@ -156,7 +156,7 @@ export default class Calendar extends Component {
 
   componentDidMount() {
     if (this.props.autoFocus) {
-      this.focus();
+      requestAnimationFrame(() => this.focus());
     }
   }
 
@@ -183,7 +183,14 @@ export default class Calendar extends Component {
       // Only change the current month window if the next value is a different day than
       // what we currently have.  We don't want to trigger the month switch if we are just
       // changing the hours or minutes of the day.
-      if (!newValue.isSame(this.state.value, 'day')) {
+      // Value can be "Moment object" in case of selectionType="single"
+      // Value can be "DateRange object" in case of selectionType="range"
+      if (
+        newValue === null
+        || (newValue.start && !newValue.start.isSame(this.state.value && this.state.value.start, 'day'))
+        || (newValue.end && !newValue.end.isSame(this.state.value && this.state.value.end, 'day'))
+        || !newValue.isSame(this.state.value, 'day')
+      ) {
         this.setSelected(newValue);
         this.setCurrentMonth(newValue);
       }

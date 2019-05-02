@@ -9,7 +9,7 @@ const sliderOptions = {
   range: true,
   min: 0,
   max: 100,
-  step: 1,
+  step: 1
 };
 
 storiesOf('Wait', module)
@@ -35,43 +35,85 @@ storiesOf('Wait', module)
     {inline: true}
   )
   .addWithInfo(
+    'variant: overBackground',
+    () => {
+      const style = {
+        'width': '100px',
+        'height': '100px',
+        'background-color': 'rgba(0,0,0,0.4)',
+        'display': 'flex',
+        'align-items': 'center',
+        'justify-content': 'center'
+      };
+
+      return (
+        <div style={style}>
+          {render({variant: 'overBackground'})}
+        </div>
+      );
+    },
+    {inline: true}
+  )
+  .addWithInfo(
     'centered: true',
     () => render({centered: true}),
     {inline: true}
   )
   .addWithInfo(
-    'variant: determinate',
+    'indeterminate: false',
     'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({variant: 'determinate', value});
+      return render({indeterminate: false, value});
     },
     {inline: true},
   )
   .addWithInfo(
-    'variant: determinate, size: S',
+    'indeterminate: false, size: S',
     'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({variant: 'determinate', size: 'S', value});
+      return render({indeterminate: false, size: 'S', value});
     },
     {inline: true}
   )
   .addWithInfo(
-    'variant: determinate, size: L',
+    'indeterminate: false, size: L',
     'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({variant: 'determinate', size: 'L', value});
+      return render({indeterminate: false, size: 'L', value});
     },
     {inline: true}
   )
   .addWithInfo(
-    'variant: determinate, centered: true',
+    'indeterminate: false, variant: overBackground',
     'Adjust the slider in the knobs tab below to change the value',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({variant: 'determinate', centered: true, value});
+      const style = {
+        'width': '100px',
+        'height': '100px',
+        'background-color': 'rgba(0,0,0,0.4)',
+        'display': 'flex',
+        'align-items': 'center',
+        'justify-content': 'center'
+      };
+
+      return (
+        <div style={style}>
+          {render({indeterminate: false, variant: 'overBackground', value})}
+        </div>
+      );
+    },
+    {inline: true}
+  )
+  .addWithInfo(
+    'indeterminate: false, centered: true',
+    'Adjust the slider in the knobs tab below to change the value',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({indeterminate: false, centered: true, value});
     },
     {inline: true}
   );

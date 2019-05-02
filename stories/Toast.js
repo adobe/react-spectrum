@@ -26,6 +26,11 @@ storiesOf('Toast', module)
     {inline: true}
   )
   .addWithInfo(
+    'action triggers close',
+    () => <Toast closable actionLabel="undo" closeOnAction onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>,
+    {inline: true}
+  )
+  .addWithInfo(
     'variant = error',
     () => <Toast closable variant="error">Toast is burnt.</Toast>,
     {inline: true}
@@ -70,6 +75,20 @@ storiesOf('Toast', module)
   .addWithInfo(
     'warning trigger',
     () => <Button onClick={() => warning('Could be serious!', {role: 'region', 'aria-live': 'off'})} variant="primary">Show Toast</Button>,
+    {inline: true}
+  )
+  .addWithInfo(
+    'warning trigger with action close',
+    () => (<Button
+      onClick={() => warning('Could be serious!', {
+        role: 'region',
+        'aria-live': 'off',
+        actionLabel: 'undo',
+        closeOnAction: true,
+        onAction: action('onAction'),
+        onClose: action('onClose')
+      })}
+      variant="primary">Show Toast</Button>),
     {inline: true}
   )
   .addWithInfo(

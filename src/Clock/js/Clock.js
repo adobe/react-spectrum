@@ -64,6 +64,7 @@ export default class Clock extends Component {
      * Mark a form input as required, also necessary for the form to be submitted
      */
     required: PropTypes.bool,
+    autoFocus: PropTypes.bool,
 
     /**
      * Called when a breadcrumb is clicked with an object containing the label of the clicked breadcrumb
@@ -105,37 +106,53 @@ export default class Clock extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      requestAnimationFrame(() => this.focus());
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
-      const val = toMoment(nextProps.value, nextProps.valueFormat);
-      const isValid = val && val.isValid();
+      this.setValue(nextProps.value, nextProps.valueFormat || this.props.valueFormat);
+    }
+  }
 
-      if (!isValid) {
-        this.setState({
-          hourText: this.state.hourText || '',
-          minuteText: this.state.minuteText || '',
-          meridiemVal: this.state.meridiemVal || ''
-        });
-      } else {
-        const hourTextVal = this.getDisplayHour(val.hour(), this.state.displayMeridiem);
-        const meridiemVal = this.getMeridiemVal(val);
-        if (!this.state.hourText || +this.state.hourText !== hourTextVal) {
-          this.setState({hourText: hourTextVal});
-        }
+  setValue(value, valueFormat, callback = () => {}) {
+    const val = toMoment(value, valueFormat || this.props.valueFormat);
+    const isValid = val && val.isValid();
+    const {
+      hourText,
+      minuteText,
+      displayMeridiem,
+      meridiemVal
+    } = this.state;
 
-        if (!this.state.minuteText || +this.state.minuteText !== val.minute()) {
-          this.setState({minuteText: val.minute()});
-        }
+    const newState = {
+      value: val
+    };
 
-        if (!this.state.meridiemVal || this.state.meridiemVal !== meridiemVal) {
-          this.setState({meridiemVal: meridiemVal});
-        }
+    if (!isValid) {
+      newState.hourText = hourText || '';
+      newState.minuteText = minuteText || '';
+      newState.meridiemVal = meridiemVal || '';
+    } else {
+      let hourTextVal = this.getDisplayHour(val.hour(), displayMeridiem);
+      const newMeridiemVal = this.getMeridiemVal(val);
+      if (!hourText || +hourText !== hourTextVal) {
+        newState.hourText = hourTextVal.padStart(2, '0');
       }
 
-      this.setState({
-        value: val
-      });
+      if (!minuteText || +minuteText !== val.minute()) {
+        newState.minuteText = val.format('mm').padStart(2, '0');
+      }
+
+      if (!meridiemVal || meridiemVal !== newMeridiemVal) {
+        newState.meridiemVal = newMeridiemVal;
+      }
     }
+
+    this.setState(newState, callback);
   }
 
   /**
@@ -170,10 +187,10 @@ export default class Clock extends Component {
 
   /**
    * Handles AM/PM Change
-   * @param {Event} e Change event
+   * @param {string} value either 'am' or 'pm'
    * @private
    */
-  handleMeridiemChange(value, e) {
+  handleMeridiemChange(value) {
     const {hourText, minuteText} = this.state;
     this.changeTime(hourText, minuteText, value);
   }
@@ -196,13 +213,9 @@ export default class Clock extends Component {
    */
   handleHourBlur(e) {
     let value = e.target.value;
-    // normalize the hourText displayed in the input
-    if (value.length <= 1) {
-      value = `0${value}`;
-    }
 
     this.setState({
-      hourText: value,
+      hourText: value.padStart(2, '0'),
       focused: false
     });
   }
@@ -214,15 +227,54 @@ export default class Clock extends Component {
    */
   handleMinuteBlur(e) {
     let value = e.target.value;
-    // normalize the minuteText displayed in the input
-    if (value.length <= 1) {
-      value = `0${value}`;
-    }
 
     this.setState({
-      minuteText: value,
+      minuteText: value.padStart(2, '0'),
       focused: false
     });
+  }
+
+  /**
+   * Handles up or down arrow key event on text input, and depending
+   * on value and direction loops time value and adjusts meridiem.
+   * @param {Boolean} isHours Whether event target is the hours input
+   * @param {KeyboardEvent} e Keyboard event
+   * @private
+   */
+  handleTextfieldKeyDown(isHours = false, e) {
+    let value = this.state.value;
+    let newTime = value || toMoment('00:00', this.props.valueFormat);
+    let {
+      onChange,
+      valueFormat
+    } = this.props;
+
+    switch (e.key) {
+      case 'ArrowUp':
+      case 'Up':
+        newTime = moment(newTime).add(1, isHours ? 'hour' : 'minute');
+        break;
+      case 'ArrowDown':
+      case 'Down':
+        newTime = moment(newTime).add(-1, isHours ? 'hour' : 'minute');
+        break;
+      default:
+        return;
+    }
+
+    if (newTime !== value && moment.isMoment(newTime)) {
+      // don't keep the YYYY-MM-DD the same after adding/subtracting hours or minutes
+      if (moment.isMoment(value)) {
+        newTime = newTime.year(value.year()).month(value.month()).date(value.date());
+      }
+      e.preventDefault();
+      this.setValue(newTime, valueFormat, () => {
+        onChange(
+          formatMoment(newTime, valueFormat),
+          newTime.toDate()
+        );
+      });
+    }
   }
 
   /**
@@ -239,6 +291,8 @@ export default class Clock extends Component {
     let hours = parseInt(hourText, 10);
     if (hours < 12) {
       hours += meridiemOffset;
+    } else if (meridiemOffset === 0 && hours === 12) {
+      hours = 0;
     }
     const minutes = parseInt(minuteText, 10);
 
@@ -384,6 +438,7 @@ export default class Clock extends Component {
       delete otherProps['aria-labelledby'];
     }
 
+    delete otherProps.autoFocus;
     delete otherProps.valueFormat;
     delete otherProps.value;
     delete otherProps.defaultValue;
@@ -416,7 +471,7 @@ export default class Clock extends Component {
           className="react-spectrum-Clock-hour"
           type="number"
           value={hourText}
-          placeholder="HH"
+          placeholder={displayMeridiem ? 'hh' : 'HH'}
           min={hourMin}
           max={hourMax}
           invalid={invalid}
@@ -427,6 +482,7 @@ export default class Clock extends Component {
           id={id}
           aria-label={formatMessage('Hours')}
           aria-labelledby={this.getAriaLabelledbyForTextfield(id, groupId)}
+          onKeyDown={this.handleTextfieldKeyDown.bind(this, true)}
           onFocus={this.handleFocus}
           onChange={this.handleHourChange}
           onBlur={this.handleHourBlur} />
@@ -448,6 +504,7 @@ export default class Clock extends Component {
           id={id + '-minutes'}
           aria-label={formatMessage('Minutes')}
           aria-labelledby={this.getAriaLabelledbyForTextfield(id + '-minutes', groupId)}
+          onKeyDown={this.handleTextfieldKeyDown.bind(this, false)}
           onFocus={this.handleFocus}
           onChange={this.handleMinuteChange}
           onBlur={this.handleMinuteBlur} />
@@ -455,6 +512,7 @@ export default class Clock extends Component {
           <Select
             className="react-spectrum-Clock-meridiem"
             id={id + '-meridiem'}
+            placeholder={formatMessage('AM/PM')}
             aria-label={formatMessage('AM/PM')}
             aria-labelledby={this.getAriaLabelledbyForTextfield(id + '-meridiem', groupId)}
             onChange={this.handleMeridiemChange}

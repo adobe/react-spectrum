@@ -8,9 +8,9 @@
 
 1. **Where do I file bugs?**
 
-    You can file issues or improvement tickets in our [JIRA project](https://jira.corp.adobe.com/browse/RSP).
+    You can file issues or improvement tickets in our [GitHub](https://github.com/adobe/react-spectrum/issues).
     There is also a [JIRA board](https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=21015)
-    where you can see the current Sprint and prioritized backlog.
+    where you can see the current Sprint and prioritized backlog for the core team.
 
 1. **How do I ensure feedback on issues**
 
@@ -21,7 +21,7 @@
       - Is there some application CSS overriding the component's CSS?
       - Is there some application javascript hooked up to the component's CSS classes?
       - Do I have multiple copies of React Spectrum in my project/page?
-        `npm ls @react/react-spectrum` is there more than one?  
+        `npm ls @react/react-spectrum` is there more than one?
         Does the component work correctly if you take a different path through the application to get to it? (or a different url route)
     - Can I fix it in React Spectrum so that it works in my project? Once done, am I now capable of reproducing with a new story in Storybook?
     - If the above truly cannot be done, are there very detailed instructions to reproduce in your product with user credentials? + video steps? + expectations? + promise of cookies/ice cream?
@@ -36,12 +36,12 @@
     Many teams across adobe are contributing, and we encourage anyone to make pull requests.
     We also have a core team which maintains the project, reviews code, etc. The current core team includes:
 
-    * Danielle Robinson, engineering/project lead, part-time
-    * Devon Govett, engineering/project lead, part-time
-    * Vijay Jain, engineer, full-time
-    * Rob Snow, engineer, part-time
-    * Sujai S, QE manager
-    * Apoorva Shetty, QE, full time
+    * Danielle Robinson, engineering/project lead
+    * Devon Govett, engineering/project lead
+    * Vijay Jain, engineer, part-time
+    * Rob Snow, engineer
+    * Kyle Taborski, engineer
+    * Daniel Lu, engineer
 
 1. **Who is using react-spectrum?**
 
@@ -49,30 +49,30 @@
 
 1. **Where can I find documentation about react-spectrum?**
 
-    Full documentation is a work in progress, but the best place to look for now is the
-    [Storybook](http://react-spectrum.corp.adobe.com/) examples. The storybook lists
-    each state of every component, and shows the JSX code used to create the example
-    alongside the output. You can also check the [source](https://git.corp.adobe.com/React/react-spectrum/tree/master/stories)
-    for the storybook examples to see more detailed code samples.
+    Full documentation is a work in progress, but the best place to look is the
+    [docs](http://react-spectrum.corp.adobe.com/) and the [storybook](https://react-spectrum.corp.adobe.com/storybook/).
+    The storybook lists each state of every component, and shows the JSX code used to create the example alongside the output.
+    You can also check the [source](https://github.com/adobe/react-spectrum/tree/master/stories) for the storybook examples
+    to see more detailed code samples.
 
 1. **Is X feature planned/in development? What is the ETA for X?**
 
-    Please check the [JIRA board](https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=21015) to see if
-    there is a story for your feature. If there is a story, and it is not already being worked on, you can assign yourself
+    Please check the [GitHub issues](https://github.com/adobe/react-spectrum/issues) to see if
+    there is an open issue for your feature. If there is, and it is not already being worked on, you can assign yourself
     or a team member to work on it. Please reach out to the #react-spectrum slack room to discuss an implementation plan
     prior to implementing, and to notify others that you will be working on it. If you are unable, or unwilling to work on
     the feature yourself, or someone else is already assigned, you can also reach out to the #react-spectrum slack room
     to notify us of your priority and we will try to include it in an upcoming sprint. The fastest way to get things done
     is always to do it yourself, but we can try to help out where we can as well.
 
-    If there is no story in JIRA, you can create one. Please reach out to the #react-spectrum slack room about your story
-    as well, so we can discuss it and provide feedback. This is probably best done prior to writing the story.
+    If there is no ticket in GitHub issues, you can create one. Please reach out to the #react-spectrum slack room about your ticket
+    as well, so we can discuss it and provide feedback. This is probably best done prior to writing up the issue.
 
 1. **What is the release process for react-spectrum?**
 
     We release a new version every 2 weeks at the end of our sprints. As new features and fixes are merged into master,
     they are released immediately as beta versions. After QE signs off on the features, they are put into a release.
-    Releases can be found in the Github project, for example: https://git.corp.adobe.com/React/react-spectrum/releases/tag/v2.4.0.
+    Releases can be found in the Github project, for example: https://github.com/adobe/react-spectrum/releases/tag/v2.4.0.
 
 1. **When is the next react-spectrum release?**
 
@@ -144,7 +144,7 @@
 
 7. **What browsers does react-spectrum support?**
 
-    IE 11+, evergreen Chrome, Firefox, and Safari.
+    Edge, evergreen Chrome, Firefox, and Safari.
 
 8. **Where do I find a list of icons that are available in react-spectrum?**
 
@@ -153,8 +153,18 @@
 9. **Is react-spectrum accessible?**
 
     It is our goal to have react-spectrum be completely accessible, but that is currently a work in progress. If you find an accessibility bug,
-    please check JIRA to be sure we aren't already aware of it, and if not please file a ticket.
-    
+    please check GitHub issues to be sure we aren't already aware of it, and if not please file a ticket.
+
 10. **I get an error `Uncaught ReferenceError: regeneratorRuntime is not defined` on instantiating some components like `Dialog`. How do I resolve it?**
 
     Installing `babel-polyfill` should solve it for you. It's needed to get async/await working. Refer [this link](https://stackoverflow.com/a/33527883/4741998) for more details.
+
+    If you want to avoid all of the additional bundle size incurred by including all of `babel-polyfill`, you might want to use `babel-plugin-transform-runtime`.
+
+    **Disclaimer**: If you don't install all of `babel-polyfill`, there will not be browser support for all browsers (including IE) especially those that don't natively support methods (e.g `Map`, `Set`, etc.), but which we depend on in `react-spectrum`. You might need to add those polyfills as well for all of your supported browsers.
+
+    The solution is to import `regenerator-runtime` directly at the top of the entry/entries point(s) of you application. https://www.npmjs.com/package/regenerator-runtime.
+
+    With `regenerator-runtime@0.13.x`, the global `regeneratorRuntime` variable is no longer automatically created (unless you evaluate the runtime code in global scope, rather than a Webpack wrapper), but you can import the runtime and define the variable globally yourself. An other solution is to downgrade to `0.12`. Refer [this link](https://github.com/facebook/regenerator/issues/363) for more details.
+
+    > Note that if you use [Babel 7](https://babeljs.io/docs/en/config-files#6x-vs-7x-babelrc-loading) you can do that in an elegant way and include polyfill only as needed: https://www.thebasement.be/working-with-babel-7-and-webpack/#a-cleaner-approach

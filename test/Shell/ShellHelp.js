@@ -9,7 +9,7 @@ import sinon from 'sinon';
 const defaultResults = [
   {href: 'http://foo.com', label: 'Foo'},
   {href: 'http://bar.com', label: 'Bar'},
-  {href: 'http://baz.com', label: 'Baz'},
+  {href: 'http://baz.com', label: 'Baz'}
 ];
 
 const render = (props = {}) => {

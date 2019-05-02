@@ -76,6 +76,11 @@ export default class Slider extends React.Component {
     filled: PropTypes.bool,
 
     /**
+     * Start point of the filled slider.
+     */
+    fillOffset: PropTypes.number,
+
+    /**
      * The variant
      */
     variant: PropTypes.oneOf([null, 'ramp', 'range']),
@@ -102,6 +107,7 @@ export default class Slider extends React.Component {
     renderLabel: false,
     label: null,
     filled: false,
+    fillOffset: 0,
     variant: null,
     size: null,
     onChange() {}
@@ -482,6 +488,7 @@ export default class Slider extends React.Component {
       children,
       disabled,
       filled,
+      fillOffset,
       id = this.sliderId,
       label,
       max,
@@ -499,7 +506,7 @@ export default class Slider extends React.Component {
       'spectrum-Slider--vertical': isVertical,
       'spectrum-Slider--ramp': isRamp,
       'spectrum-Slider--range': isRange,
-      'spectrum-Slider--filled': filled,
+      'spectrum-Slider--filled': filled && !fillOffset,
       'is-disabled': disabled
     });
     const shouldRenderLabel = renderLabel && label;
@@ -515,7 +522,9 @@ export default class Slider extends React.Component {
 
     const startPercent = (startValue - min) / (max - min);
     const endPercent = (endValue - min) / (max - min);
-
+    const fillOffsetPercent = (fillOffset - min) / (max - min);
+    const minFillPercent = Math.min(startPercent, fillOffsetPercent);
+    const maxFillPercent = Math.max(startPercent, fillOffsetPercent);
     if (isRamp) {
       children = null;
     }
@@ -587,6 +596,17 @@ export default class Slider extends React.Component {
                 [styleKeyFill]: (1 - (isRange ? endPercent : percent)) * 100 + '%'
               }} />
           }
+          {filled && fillOffset ?
+            <div
+              className={classNames('spectrum-Slider-fill', {
+                'spectrum-Slider-fill--right': startPercent > fillOffsetPercent
+              })}
+              role="presentation"
+              style={{
+                [styleKeyOffset]: minFillPercent * 100 + '%',
+                [styleKeyFill]: (maxFillPercent - minFillPercent) * 100 + '%'
+              }} />
+          : null}
         </div>
       </div>
     );

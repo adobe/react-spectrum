@@ -4,7 +4,6 @@ import Button from '../../src/Button';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 describe('Button', () => {
   it('supports different elements', () => {
@@ -163,20 +162,60 @@ describe('Button', () => {
       assert.equal(tree.find('.spectrum-Button-label').children().last().text(), 'My Label');
     });
   });
-
-  it('supports focus method', async () => {
-    const tree = mount(<Button />);
-    tree.instance().focus();
-    assert.equal(document.activeElement, tree.getDOMNode());
-    tree.unmount();
+  describe('tool', () => {
+    it('supports holdAffordance', () => {
+      const tree = shallow(<Button variant="tool" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
+    it('doesn\'t render a holdAffordance by default', () => {
+      const tree = shallow(<Button variant="tool" />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+    it('doesn\'t render a holdAffordance when not a tool variant', () => {
+      const tree = shallow(<Button variant="primary" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+  });
+  describe('action', () => {
+    it('supports holdAffordance', () => {
+      const tree = shallow(<Button variant="action" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
+    it('doesn\'t render a holdAffordance by default', () => {
+      const tree = shallow(<Button variant="action" />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 0);
+    });
+    it('toggle supports holdAffordance', () => {
+      const tree = shallow(<Button variant="toggle" holdAffordance />);
+      assert.equal(tree.find('.spectrum-Tool-hold').length, 1);
+    });
   });
 
-  it('supports autoFocus', async () => {
-    const tree = mount(<Button autoFocus />);
-    assert(!tree.getDOMNode().getAttribute('autoFocus'));
-    await sleep(17);
-    assert.equal(document.activeElement, tree.getDOMNode());
-    tree.unmount();
+  describe('', () => {
+    let clock;
+    let tree;
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+    });
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+        tree = null;
+      }
+      clock.restore();
+    });
+    it('supports focus method', async () => {
+      tree = mount(<Button />);
+      tree.instance().focus();
+      assert.equal(document.activeElement, tree.getDOMNode());
+    });
+
+    it('supports autoFocus', () => {
+      tree = mount(<Button autoFocus />);
+      assert(!tree.getDOMNode().getAttribute('autoFocus'));
+      clock.runAll(); // there's a raf, so run the clock to fire it
+      assert.equal(document.activeElement, tree.getDOMNode());
+    });
   });
 
   describe('receives focus', () => {

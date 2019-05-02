@@ -38,29 +38,40 @@ The variant `ramp` gives you a slightly different look and feel on the slider.
 
 ### Slider with step
 
-<Slider step={ 10 }></Slider>
+<Slider step={10}></Slider>
 
 ```jsx
-<Slider step={ 10 }></Slider>
+<Slider step={10}></Slider>
 ```
 
 `Step` allows you set the incremental or decremental step value.
 
 ### Filled slider
 
-<Slider filled={ true }></Slider>
+<Slider filled></Slider>
 
 ```jsx
-<Slider filled={ true }></Slider>
+<Slider filled></Slider>
 ```
 
 Setting `filled` to true highlights the line from the `min` value
 to the selected value.
 
-### Render label
+### Filled slider with Offset
 
-<Slider min={ 1 } max={ 100 } renderLabel label="label"></Slider>
+<Slider filled fillOffset={20}></Slider>
 
 ```jsx
-<Slider min={ 1 } max={ 100 } renderLabel label="label"></Slider>
+<Slider filled fillOffset={20}></Slider>
+```
+
+Setting `filled` to true along with some value in `fillOffset` highlights the line from the `fillOffset` value
+to the selected value.
+
+### Render label
+
+<Slider min={1} max={100} renderLabel label="label"></Slider>
+
+```jsx
+<Slider min={1} max={100} renderLabel label="label"></Slider>
 ```

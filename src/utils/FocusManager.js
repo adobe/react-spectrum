@@ -397,8 +397,8 @@ export function trapFocus(componentOrElement, event) {
     if (node) {
       // find tabbable elements within container element
       tabbables = Array.from(node.querySelectorAll(TABBABLE_ELEMENT_SELECTOR)).filter(el => el !== node);
-      first = tabbables[0];
-      last = tabbables[tabbables.length - 1];
+      first = tabbables[0] || node;
+      last = tabbables[tabbables.length - 1] || node;
     }
   }
 
@@ -407,24 +407,26 @@ export function trapFocus(componentOrElement, event) {
     if (node) {
       if (shiftKey) {
         // with focus on first tabbable element, navigating backwards,
-        if (target === first) {
+        if (target === first || target === node) {
           // focus the last tabbable element
           tabbable = last;
         }
       // otherwise, with focus on last tabbable element, navigating forwards,
-      } else if (target === last) {
+      } else if (target === last || target === node) {
         // focus the first tabbable element.
         tabbable = first;
       }
     }
-  } else if (type === 'focus') {
-    if (target === node) {
-      tabbable = first;
-    }
+  } else if (type === 'focus' && target === node) {
+    tabbable = first;
   }
+
   if (tabbable) {
     event.preventDefault();
     event.stopPropagation();
-    tabbable.focus();
+
+    if (tabbable !== document.activeElement) {
+      tabbable.focus();
+    }
   }
 }

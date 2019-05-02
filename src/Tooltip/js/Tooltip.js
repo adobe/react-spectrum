@@ -41,7 +41,7 @@ export default class Tooltip extends Component {
     /**
      * Control if the tooltip should be opened or not.
      */
-    open: PropTypes.bool,
+    open: PropTypes.bool
   };
 
   static defaultProps = {

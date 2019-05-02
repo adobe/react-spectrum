@@ -61,5 +61,5 @@ Heading.propTypes = {
   /**
    * Custom classname to apply to the heading.
    */
-  className: PropTypes.string,
+  className: PropTypes.string
 };

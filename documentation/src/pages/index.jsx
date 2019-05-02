@@ -21,7 +21,7 @@ export default class Index extends React.Component {
           <Heading size={1}>React Spectrum</Heading>
           <Heading size={3}>Spectrum UI components in React</Heading>
           <Button variant="cta" element={GatsbyLink} to="/guides/getting_started">Get Started</Button>
-          <Button variant="secondary" element="a" href="https://git.corp.adobe.com/React/react-spectrum" target="_blank">Github</Button>
+          <Button variant="secondary" element="a" href="https://github.com/adobe/react-spectrum" target="_blank">Github</Button>
         </section>
         <Rule />
         <section className="features">

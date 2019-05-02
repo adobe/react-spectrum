@@ -13,7 +13,7 @@ storiesOf('Asset', module)
     'Image',
     () => (
       <div style={{'width': '208px', 'height': '208px'}}>
-        <Asset type="image" src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
+        <Asset type="image" src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
       </div>
     ),
     {inline: true}
@@ -42,7 +42,7 @@ storiesOf('Asset', module)
     () => (
       <div>
         <div style={{width: '128px', height: '128px'}}>
-          <Asset type="image" src="http://spectrum-css.corp.adobe.com/2.0.0-beta.91/docs/img/example-ava.jpg" alt="Shantanu Narayen" decorative />
+          <Asset type="image" src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" alt="Shantanu Narayen" decorative />
         </div>
         <div style={{width: '128px', height: '128px'}}>
           <Asset type="file" decorative />

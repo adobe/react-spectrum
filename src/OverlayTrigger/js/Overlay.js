@@ -17,11 +17,11 @@ export default class Overlay extends React.Component {
   };
 
   state = {
-    exited: !this.props.show,
-    targetNode: ReactDOM.findDOMNode(this.props.target)
+    exited: !this.props.show
   };
 
   componentDidMount() {
+    this.setState({targetNode: ReactDOM.findDOMNode(this.props.target)});
     this.mounted = true;
     this.addOverlay();
   }
@@ -74,10 +74,10 @@ export default class Overlay extends React.Component {
     return this.props.container || immediateAvailableContainer;
   }
 
-  hide() {
+  hide(e) {
     // Only hide if this is the top overlay
     if (visibleOverlays[visibleOverlays.length - 1] === this && this.props.onHide) {
-      this.props.onHide();
+      this.props.onHide(e);
     }
   }
 

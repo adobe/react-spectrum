@@ -76,6 +76,13 @@ describe('ModalContainer', () => {
     tree.unmount();
   });
 
+  it('should disable background scroll', async () => {
+    let content = <div id="modal-test">Contents</div>;
+    let key = ModalContainer.show(content);
+    assert.equal(document.body.style[';overflow'], 'hidden');
+    ModalContainer.hide(key);
+  });
+
   describe('Accessibility', () => {
     it('should have role="dialog" when child has no role', async () => {
       let content = <div id="modal-test">Contents</div>;
@@ -138,7 +145,7 @@ describe('ModalContainer', () => {
     node.ownerDocument.dispatchEvent(event);
 
     // wait for fade out and ensure that focus is restored to trigger element
-    clock.tick(125);
+    clock.tick(150);
 
     assert.equal(document.activeElement, triggerNode);
     node = document.querySelector('#modal-test');

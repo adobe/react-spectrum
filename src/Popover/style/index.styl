@@ -1,4 +1,10 @@
 .spectrum-Popover {
+  // This makes the contents of popovers focusable immediately, without waiting
+  // a frame for animations to start.
+  &.react-spectrum-Popover {
+    visibility: visible;
+  }
+
   .spectrum-Dialog-content {
     max-height: initial;
   }

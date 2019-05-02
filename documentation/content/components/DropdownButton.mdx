@@ -1,0 +1,256 @@
+import DropdownButton from '@react/react-spectrum/DropdownButton';
+import Facebook from '@react/react-spectrum/Icon/Facebook';
+import Instagram from '@react/react-spectrum/Icon/Instagram';
+import {Menu, MenuItem, SubMenu} from '@react/react-spectrum/Menu';
+import SocialNetwork from '@react/react-spectrum/Icon/SocialNetwork';
+import Twitter from '@react/react-spectrum/Icon/Twitter';
+
+## Overview
+
+A **DropdownButton** is a functional component that simplifies usage of the [**Dropdown**](/components/Dropdown) component. It provides the base behavior for the Select component.
+
+The Button element will have `variant="action"`, `quiet`, and `icon={<More alt="…" />}` props by default.
+
+### Default
+
+<DropdownButton label="Test">
+  <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
+  <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
+  <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
+  <SubMenu label="zaa">
+    <MenuItem value="1">zaa 1</MenuItem>
+    <MenuItem value="2">zaa 2</MenuItem>
+    <MenuItem value="3">zaa 3</MenuItem>
+  </SubMenu>
+</DropdownButton>
+
+```jsx
+<DropdownButton label="Test">
+  <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
+  <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
+  <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
+  <SubMenu label="zaa">
+    <MenuItem value="1">zaa 1</MenuItem>
+    <MenuItem value="2">zaa 2</MenuItem>
+    <MenuItem value="3">zaa 3</MenuItem>
+  </SubMenu>
+</DropdownButton>
+```
+
+### closeOnSelect: false
+
+By default, Dropdown menu will close when a menu item is selected. This behavior can be overwritten by explicitly setting the `closeOnSelect` prop to `false`.
+
+<DropdownButton
+  closeOnSelect={false}
+  label="Test">
+  <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
+  <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
+  <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
+  <SubMenu label="zaa">
+    <MenuItem value="1">zaa 1</MenuItem>
+    <MenuItem value="2">zaa 2</MenuItem>
+    <MenuItem value="3">zaa 3</MenuItem>
+  </SubMenu>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  closeOnSelect={false}
+  label="Test">
+  <MenuItem role="menuitemradio" value="foo">Foo</MenuItem>
+  <MenuItem role="menuitemradio" value="bar" selected>Bar</MenuItem>
+  <MenuItem role="menuitemradio" value="baz">Baz</MenuItem>
+  <SubMenu label="zaa">
+    <MenuItem value="1">zaa 1</MenuItem>
+    <MenuItem value="2">zaa 2</MenuItem>
+    <MenuItem value="3">zaa 3</MenuItem>
+  </SubMenu>
+</DropdownButton>
+```
+
+### alignRight
+
+Aligns the dropdown to the right or left of the button opening the dropdown.
+
+<DropdownButton
+  alignRight
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  alignRight
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+```
+
+## Events
+
+### onSelect
+
+The `onSelect` callback is triggered when an item is selected from the dropdown.
+
+<DropdownButton
+  onSelect={value => alert(`Value selected: ${value}`)}
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  onSelect={value => alert(`Value selected: ${value}`)}
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+```
+
+### onOpen
+
+The `onOpen` callback is triggered when the dropdown opens.
+
+<DropdownButton
+  onOpen={() => alert('Dropdown opened')}
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  onOpen={() => alert('Dropdown opened')}
+  label="Social Network"
+  icon={<SocialNetwork alt="Social Network" />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+```
+
+### onClose
+
+The `onClose` callback is triggered when the dropdown closes.
+
+<DropdownButton
+  onClose={() => alert('Dropdown closed')}
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  onClose={() => alert('Dropdown closed')}
+  label="Social Network"
+  icon={<SocialNetwork />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The DropdownButton component implements the Menu Button design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#menubutton).
+
+### Labelling
+
+The DropdownButton element must have a `label` prop to set the label on its Button element. By default, the More icon uses an ellipsis, "…", for its `alt` prop.
+
+For icon-only button, be sure to include `aria-label` attribute or use `alt` prop on the Icon component to add localized alternative text.
+
+<DropdownButton
+  icon={<SocialNetwork alt="Social Network" />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+
+```jsx
+<DropdownButton
+  icon={<SocialNetwork alt="Social Network" />}>
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</DropdownButton>
+```

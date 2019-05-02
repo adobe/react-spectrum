@@ -97,6 +97,77 @@ describe('SplitView', function () {
     assert.equal(wrapper.find('.spectrum-SplitView-pane').first().prop('style').width, 50);
   });
 
+  describe('primarySize', () => {
+    let onResize;
+    let wrapper;
+    beforeEach(() => {
+      onResize = sinon.spy();
+    });
+    afterEach(() => {
+      wrapper.unmount();
+    });
+
+    it('should do nothing if zero and collapsible is false', function () {
+      wrapper = mount(
+        <SplitView onResize={onResize}>
+          <div>Left</div>
+          <div>Right</div>
+        </SplitView>
+      , {disableLifecycleMethods: true});
+
+      wrapper.setProps({primarySize: 0});
+
+      assert(onResize.notCalled);
+    });
+
+    it('should place the divider at position 0 when mounted', function () {
+      wrapper = mount(
+        <SplitView collapsible onResize={onResize} primarySize={0}>
+          <div>Left</div>
+          <div>Right</div>
+        </SplitView>);
+
+      assert.equal(wrapper.state('dividerPosition'), 0);
+    });
+
+    it('should not resize if primarySize does not update', function () {
+      wrapper = mount(
+        <SplitView collapsible onResize={onResize} primarySize={350}>
+          <div>Left</div>
+          <div>Right</div>
+        </SplitView>);
+
+      wrapper.setProps({primaryMax: 999, primarySize: 350});
+      assert(onResize.notCalled);
+    });
+
+    it('should resize when primarySize updates', function () {
+      wrapper = mount(
+        <SplitView collapsible onResize={onResize} primarySize={350}>
+          <div>Left</div>
+          <div>Right</div>
+        </SplitView>);
+
+      wrapper.setProps({primarySize: 0});
+      assert(onResize.calledOnce);
+    });
+
+    it('should not drag if primarySize is controlled', function () {
+      let onMouseDown = sinon.spy();
+      wrapper = mount(
+        <SplitView collapsible onMouseDown={onMouseDown} onResize={onResize} primarySize={0}>
+          <div>Left</div>
+          <div>Right</div>
+        </SplitView>
+      , {disableLifecycleMethods: true});
+
+      wrapper.simulate('mouseMove', {clientX: 0, clientY: 0});
+      wrapper.simulate('mouseDown', {clientX: 0, clientY: 0});
+      assert(onMouseDown.called);
+      assert.equal(wrapper.state('dragging'), false);
+    });
+  });
+
   function testCursor(props, clientX, clientY, cursor) {
     let tree = mount(
       <SplitView {...props}>
@@ -181,10 +252,11 @@ describe('SplitView', function () {
   }
 
   function testDragging(opts) {
+    let onMouseDown = sinon.spy();
     let onResize = sinon.spy();
     let onResizeEnd = sinon.spy();
     let tree = mount(
-      <SplitView {...(opts.props || {})} onResize={onResize} onResizeEnd={onResizeEnd}>
+      <SplitView {...(opts.props || {})} onMouseDown={onMouseDown} onResize={onResize} onResizeEnd={onResizeEnd}>
         <div>Left</div>
         <div>Right</div>
       </SplitView>
@@ -200,6 +272,9 @@ describe('SplitView', function () {
 
     // fire mouse move
     fireMouseEvent('mousemove', {clientX: opts.endClientX || 304, clientY: opts.endClientY || 304});
+
+    // check that mouseDown was called
+    assert(onMouseDown.called);
 
     // check that onResize was called
     assert(onResize.calledOnce);

@@ -113,4 +113,21 @@ describe('TableViewLayout', function () {
     assert.deepEqual(indexPathAtPoint.getCall(0).args[0], new Point(0, 100 + 24));
     assert.deepEqual(target, new DragTarget('item', new IndexPath(0, 100), DragTarget.DROP_BETWEEN));
   });
+
+  describe('indexPathAbove and indexPathBelow', () => {
+    let layout = new TableViewLayout;
+    layout.collectionView = {size: new Size(100, 100), getSectionLength: () => 100};
+
+    it('should call collectionView incrementIndexPath', () => {
+      const incrementIndexPath = sinon.spy();
+      const indexPath = {section: 0, index: 1};
+      layout.collectionView.incrementIndexPath = incrementIndexPath;
+      layout.indexPathAbove(indexPath);
+      assert.equal(incrementIndexPath.callCount, 1);
+      assert.deepEqual(incrementIndexPath.getCall(0).args, [indexPath, -1]);
+      layout.indexPathBelow(indexPath);
+      assert.equal(incrementIndexPath.callCount, 2);
+      assert.deepEqual(incrementIndexPath.getCall(1).args, [indexPath, 1]);
+    });
+  });
 });

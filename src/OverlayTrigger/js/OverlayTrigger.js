@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator';
+import {chain} from '../../utils/events';
 import createId from '../../utils/createId';
 import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
@@ -7,7 +8,8 @@ import PropTypes from 'prop-types';
 import React, {cloneElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
-const triggerType = PropTypes.oneOf(['click', 'hover', 'focus']);
+const triggerType = PropTypes.oneOf(['click', 'longClick', 'hover', 'focus']);
+const MOUSE_BUTTONS = {left: 0};
 
 /**
  * Check if value one is inside or equal to the of value
@@ -50,7 +52,7 @@ function getScrollParents(node) {
 export default class OverlayTrigger extends Component {
   static propTypes = {
     ...Overlay.propTypes,
-     /**
+    /**
      * Specify which action or actions trigger Overlay visibility
      */
     trigger: PropTypes.oneOfType([
@@ -127,6 +129,14 @@ export default class OverlayTrigger extends Component {
      */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
+    ]),
+    /**
+     * The last component or element to have focus before the overlay opened.
+     * If undefined, overlay will use the document.activeElement before it opened as the lastFocus.
+     * Set the lastFocus prop to override this default behavior.
+     */
+    lastFocus: PropTypes.oneOfType([
+      PropTypes.element, PropTypes.object
     ])
   };
 
@@ -146,12 +156,17 @@ export default class OverlayTrigger extends Component {
     super(props, context);
     this.overlayId = createId();
     this._mountNode = null;
+    this.longPressTimeout = null;
+    this._lastFocus = props.lastFocus;
     this.state = {
       show: props.show === undefined ? props.defaultShow : props.show
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    if ('lastFocus' in nextProps && nextProps.lastFocus !== this.props.lastFocus) {
+      this._lastFocus = nextProps.lastFocus;
+    }
     if (nextProps.show !== this.props.show) {
       nextProps.show ? this.handleDelayedShow() : this.handleDelayedHide();
     }
@@ -165,6 +180,8 @@ export default class OverlayTrigger extends Component {
     for (let node of this._scrollParents) {
       node.addEventListener('scroll', this.hide, false);
     }
+
+    document.body.addEventListener('mouseUp', this.windowMouseUp);
   }
 
   componentDidUpdate(prevProps) {
@@ -191,6 +208,7 @@ export default class OverlayTrigger extends Component {
 
       this._scrollParents = null;
     }
+    document.body.removeEventListener('mouseUp', this.windowMouseUp);
   }
 
   handleToggle(e) {
@@ -265,6 +283,7 @@ export default class OverlayTrigger extends Component {
 
   show(e) {
     if (!this.state.show && !this.props.disabled) {
+      this._lastFocus = this.rememberedFocus();
       this.setState({show: true});
       if (this.props.onShow) {
         this.props.onShow(e);
@@ -281,6 +300,95 @@ export default class OverlayTrigger extends Component {
     }
   }
 
+  onMouseDown = (e) => {
+    if (!this.props.disabled && e.button === MOUSE_BUTTONS.left) {
+      this.longPressTimeout = setTimeout(() => {
+        this.longPressTimeout = null;
+        if (this.props.onLongClick) {
+          this.props.onLongClick();
+        }
+        this.show(e);
+      }, 250);
+    }
+  };
+
+  onMouseUp = (e) => {
+    if (!this.props.disabled && this.longPressTimeout && e.button === MOUSE_BUTTONS.left) {
+      if (this.props.onClick) {
+        this.props.onClick(e);
+      }
+      clearTimeout(this.longPressTimeout);
+      this.longPressTimeout = null;
+    }
+  };
+
+  windowMouseUp = (e) => {
+    if (e.button === MOUSE_BUTTONS.left && !ReactDOM.findDOMNode(this).contains(e.target) && this.longPressTimeout) {
+      clearTimeout(this.longPressTimeout);
+      this.longPressTimeout = null;
+    }
+  };
+
+  onKeyDown(e) {
+    if (e.key === 'ArrowDown' || e.key === 'Down') {
+      if (e.altKey || e.target === ReactDOM.findDOMNode(this.dropdownRef.triggerRef)) {
+        e.preventDefault();
+        this.show(e);
+      }
+    }
+  }
+
+  onHide(e) {
+    // if we are in longClick mode and the onHide comes from the mouse up on the trigger, then ignore it
+    // it's actually an onHide coming from rootClose
+    if (
+      isOneOf('longClick', this.props.trigger)
+      && ReactDOM.findDOMNode(this).contains(e.target)
+    ) {
+      return;
+    }
+    if (this.props.show === undefined) {
+      this.hide(e);
+    } else if (this.props.onHide) {
+      this.props.onHide(e);
+    }
+  }
+
+  onExited(e) {
+    this.restoreFocus(e);
+    if (this.props.onExited) {
+      this.props.onExited(e);
+    }
+  }
+
+  rememberedFocus() {
+    if (!this._lastFocus && document && document.activeElement !== document.body) {
+      this._lastFocus = document.activeElement;
+    }
+
+    return this._lastFocus;
+  }
+
+  restoreFocus(overlay) {
+    if (this._lastFocus && typeof this._lastFocus.focus === 'function') {
+      if (document) {
+        let node;
+        if (overlay) {
+          node = ReactDOM.findDOMNode(overlay);
+        }
+        if ((node &&
+          (node === document.activeElement ||
+            node.contains(document.activeElement))) ||
+          document.activeElement === document.body) {
+          this._lastFocus.focus();
+        }
+      }
+      if (!this.props.lastFocus) {
+        this._lastFocus = null;
+      }
+    }
+  }
+
   makeOverlay(overlay, props) {
     const {
       target = this
@@ -293,7 +401,6 @@ export default class OverlayTrigger extends Component {
     delete overlayProps.defaultShow;
     delete overlayProps.flip;
     delete overlayProps.boundariesElement;
-    delete overlayProps.shouldUpdatePosition;
     if (!overlay.props.id) {
       overlayProps.id = this.overlayId;
     }
@@ -304,7 +411,8 @@ export default class OverlayTrigger extends Component {
       <Overlay
         {...props}
         show={this.state.show}
-        onHide={this.hide}
+        onHide={this.onHide}
+        onExited={this.onExited}
         target={target}
         rootClose={rootClose}>
         {cloneElement(overlay, overlayProps)}
@@ -355,8 +463,15 @@ export default class OverlayTrigger extends Component {
 
     // Attach trigger events in case on un-controlled overlay
     if (show === undefined) {
-      if (isOneOf('click', trigger)) {
-        triggerProps.onClick = this.handleToggle;
+      if (isOneOf('click', trigger) && !isOneOf('longClick', trigger)) {
+        triggerProps.onClick = chain(this.props.onClick, this.handleToggle);
+      }
+
+      if (isOneOf('longClick', trigger)) {
+        delete props.onClick;
+        triggerProps.onMouseDown = this.onMouseDown;
+        triggerProps.onMouseUp = this.onMouseUp;
+        triggerProps.onKeyDown = this.onKeyDown;
       }
 
       if (isOneOf('hover', trigger)) {
@@ -364,6 +479,8 @@ export default class OverlayTrigger extends Component {
         triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
         props.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
         props.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+        // overlay should not trap focus when trigger is 'hover'
+        props.trapFocus = false;
       }
 
       if (isOneOf('focus', trigger)) {
@@ -371,6 +488,9 @@ export default class OverlayTrigger extends Component {
         triggerProps.onBlur = this.handleDelayedHide;
         props.onFocus = this.handleDelayedShow;
         props.onBlur = this.handleDelayedHide;
+
+        // overlay should not trap focus when trigger is 'focus'
+        props.trapFocus = false;
       }
     }
 

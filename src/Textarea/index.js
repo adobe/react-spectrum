@@ -48,7 +48,7 @@ export default class Textarea extends Component {
   handleHeightChange(value, e) {
     const {
       quiet,
-      onChange,
+      onChange
     } = this.props;
 
     if (typeof onChange === 'function') {
