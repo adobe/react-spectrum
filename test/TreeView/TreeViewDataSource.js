@@ -411,7 +411,7 @@ describe('TreeViewDataSource', function () {
       ['removeItem', new IndexPath(0, 1), undefined],
       ['removeItem', new IndexPath(0, 1), undefined],
       ['endTransaction', undefined],
-      ['reloadItem', new IndexPath(0, 1), false], // enable item 1
+      ['reloadItem', new IndexPath(0, 1), false] // enable item 1
     ]);
   });
 
