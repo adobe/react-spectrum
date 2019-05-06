@@ -1,13 +1,15 @@
 {
   "name": "@react-spectrum/alert",
   "version": "3.0.0",
-  "main": "src/Alert.js",
+  "main": "src/Alert.tsx",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@spectrum/spectrum-iconstore": "^3.0.0",
+    "@react-aria/i18n": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0"
   },
   "devDependencies": {

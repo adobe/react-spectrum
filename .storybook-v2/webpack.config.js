@@ -27,7 +27,7 @@ module.exports = ({config}, env) => {
       rules: [
         {
           test: /\.jsx?$/,
-          include: [__dirname, path.resolve(__dirname + '/../src'), path.resolve(__dirname + '/../stories'), path.resolve(__dirname + '/../packages'), /collection-view/],
+          include: [__dirname, path.resolve(__dirname + '/../src'), path.resolve(__dirname + '/../stories'), /collection-view/],
           loader: require.resolve('babel-loader')
         },
         {

@@ -1,7 +1,8 @@
 /* topdoc
 {{ page/page.yml }}
 */
-& {
+/* todo: fix the spectrum-css build for this */
+.spectrum {
   background-color: var(--spectrum-alias-background-color-default, var(--spectrum-global-color-gray-100));
 
   /* Prevent tap highlights */

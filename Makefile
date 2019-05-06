@@ -13,7 +13,10 @@ node_modules: package.json
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	NODE_ENV=storybook start-storybook -p 9002 --ci
+	NODE_ENV=storybook start-storybook -p 9002 --ci -c ".storybook-v2"
+
+run_3:
+	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
 	rm -rf dist storybook-static public src/dist
@@ -44,6 +47,7 @@ clean_docs_node_modules:
 	rm -rf documentation/node_modules
 
 lint:
+	npm run check-types
 	eslint src test stories
 
 test:

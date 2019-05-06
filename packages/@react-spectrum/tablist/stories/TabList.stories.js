@@ -1,12 +1,8 @@
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {action, storiesOf} from '@storybook/react';
 import {Tab, TabList} from '../';
 
-import theme from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import scale from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-
-storiesOf('TabListv3', module)
+storiesOf('TabList', module)
   // .addDecorator(story => (
   //   <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
   //     {story()}
@@ -105,12 +101,10 @@ storiesOf('TabListv3', module)
 function render(props = {}) {
   const {icons, ...otherProps} = props;
   return (
-     <Provider theme={theme} scale={scale} locale="cs-CZ">
-      <TabList {...otherProps} onChange={action('onChange')}>
-        <Tab  label='Tab 1' />
-        <Tab  label='Tab 2' />
-        <Tab  label='Tab 3' />
-      </TabList>
-    </Provider>
+    <TabList {...otherProps} onChange={action('onChange')}>
+      <Tab  label="Tab 1" />
+      <Tab  label="Tab 2" />
+      <Tab  label="Tab 3" />
+    </TabList>
   );
 }

@@ -1,18 +1,9 @@
 import {Alert} from '../src/Alert';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-// import {VerticalCenter} from '../.storybook/layout';
 
-import theme from '@adobe/spectrum-css-temp/vars/spectrum-dark-unique.css';
-import scale from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 
-storiesOf('Alert v3', module)
-  // .addDecorator(story => (
-  //   <VerticalCenter style={{textAlign: 'left', margin: '0 100px 50px', position: 'static', transform: 'none'}}>
-  //     {story()}
-  //   </VerticalCenter>
-  // ))
+storiesOf('Alert', module)
   .addWithInfo(
     'Default',
     () => render(),
@@ -61,11 +52,9 @@ storiesOf('Alert v3', module)
 
 function render(props = {}, children = 'This is a React Spectrum alert') {
   return (
-    <Provider theme={theme} scale={scale} locale="cs-CZ">
-      <Alert
-        {...props}>
-        {children}
-      </Alert>
-    </Provider>
+    <Alert
+      {...props}>
+      {children}
+    </Alert>
   );
 }

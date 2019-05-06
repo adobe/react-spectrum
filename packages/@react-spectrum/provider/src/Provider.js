@@ -6,10 +6,12 @@ import React, {useContext, useEffect} from 'react';
 import {shouldKeepSpectrumClassNames} from '@react-spectrum/utils/src/classNames';
 import {version} from '../package.json';
 import '@adobe/focus-ring-polyfill';
+import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const ProviderContext = React.createContext();
 
-export function Provider({theme, scale, toastPlacement, typekitId, locale, className, children, ...otherProps}) {
+export function Provider({theme, scale, toastPlacement, typekitId, locale = 'en-US', className, children, ...otherProps}) {
   let context = {
     version,
     theme,
@@ -26,6 +28,8 @@ export function Provider({theme, scale, toastPlacement, typekitId, locale, class
 
   className = classNames(
     className,
+    styles['spectrum'],
+    typographyStyles['spectrum'],
     theme[themeKey],
     scale[scaleKey],
     {
