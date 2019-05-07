@@ -23,6 +23,11 @@ export default class SubMenu extends Component {
     className: PropTypes.string,
 
     /**
+     * The displayed label of the submenu within its parent
+     */
+    label: PropTypes.string,
+
+    /**
      * A select handler for the submenu, triggered whenever an item is selected.
      */
     onSelect: PropTypes.func

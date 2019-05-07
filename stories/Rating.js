@@ -17,8 +17,19 @@ storiesOf('Rating', module)
     )
   )
   .add(
+    'readOnly',
+    () => (
+      <Rating aria-label="Disabled rating" readOnly value={3} onChange={action('change')} />
+    )
+  )
+  .add(
     'Controlled',
     () => (
       <Rating aria-label="Controlled rating" value={3} onChange={action('change')} />
+    )
+  ).add(
+    'Max',
+    () => (
+      <Rating aria-label="Number of stars" max={10} onChange={action('change')} />
     )
   );

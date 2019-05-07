@@ -1,17 +1,39 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import React from 'react';
+import PropTypes from 'prop-types';
+import React, {Component}  from 'react';
 import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
 @autobind
-export default class InlineEditor extends React.Component {
-  state = {
-    editing: !!this.props.autoFocus,
-    value: this.props.value || this.props.defaultValue || '',
-    invalid: false
+export default class InlineEditor extends Component {
+  static propTypes = {
+    /**
+     * Value component is initally set to
+     */
+    defaultValue: PropTypes.string,
+
+    /**
+     * puts it into a controlled state
+     */
+    value: PropTypes.string,
+
+    /**
+     * Prevents the value from being editiable, only renders value as label
+     */
+    disabled: PropTypes.bool
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editing: !!this.props.autoFocus,
+      value: this.props.value || this.props.defaultValue || '',
+      invalid: false
+    };
+  }
 
   componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.props.value) {

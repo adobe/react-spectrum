@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 importSpectrumCSS('icon');
 
@@ -38,3 +39,10 @@ export default function Icon({
 }
 
 Icon.displayName = 'Icon';
+
+Icon.propTypes = {
+  /**
+   * Size of icon, XXS to XXL
+   */
+  size: PropTypes.string
+};

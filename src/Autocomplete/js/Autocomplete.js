@@ -69,7 +69,13 @@ export default class Autocomplete extends React.Component {
      * A function that returns a wrapper component to render a list item label.
      * Useful in providing custom html to the rendered label.
      */
-    renderItem: PropTypes.func
+    renderItem: PropTypes.func,
+
+    /**
+     * A function that returns the items to be displayed in the menu.
+     * Called when the user types in the textfield.
+     */
+    getCompletions: PropTypes.func.isRequired
   };
 
   static defaultProps = {

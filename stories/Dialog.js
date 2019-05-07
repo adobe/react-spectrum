@@ -42,7 +42,6 @@ storiesOf('Dialog', module)
     'with secondary confirmation disabled',
     () => render(dialogChildren, {title: 'Conflict', confirmDisabled: true, confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-
   .add(
     'Long content',
     () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'})

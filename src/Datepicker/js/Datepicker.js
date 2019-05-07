@@ -37,36 +37,112 @@ const formatMessage = messageFormatter(intlMessages);
 @autobind
 export default class Datepicker extends Component {
   static propTypes = {
-    id: PropTypes.string,
+    /**
+     * Type of datepicker being used
+     */
     type: PropTypes.oneOf(['date', 'datetime', 'time']),
+
+    /**
+     * Date format for calendar heading
+     */
     headerFormat: PropTypes.string,
+
+    /**
+     * Maximum date selectable
+     */
     max: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
     ]),
+
+    /**
+     * Minimum date selectable
+     */
     min: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
     ]),
+
+    /**
+     * Value component is initally set to
+     */
+    defaultValue: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number,
+      PropTypes.array
+    ]),
+
+    /**
+     * Puts component into a controlled state
+     */
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number,
       PropTypes.array
     ]),
+
+    /**
+     * Date format value is stored as within the component
+     */
     valueFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+
+    /**
+     * Date format value is displayed with
+     */
     displayFormat: PropTypes.string,
+
+    /**
+     * Start day refers to what day of the week should be left most, 0 = Sunday, 1 = Monday...
+     */
     startDay: PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
+
+    /**
+     * Display placeholder value, usually a format hint
+     */
     placeholder: PropTypes.string,
+
+    /**
+     * Variant quiet for the button and textgroup subcomponents
+     */
     quiet: PropTypes.bool,
+
+    /**
+     * Disables the component from being selectable
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Can't change the date, but user can select to copy the date from the input
+     */
     readOnly: PropTypes.bool,
+
+    /**
+     * Value is required, for a form
+     */
     required: PropTypes.bool,
+
+    /**
+     * Value isn't valid, display style
+     */
     invalid: PropTypes.bool,
+
+    /**
+     * Called when a date is selected or a range is selected
+     */
     onChange: PropTypes.func,
+
+    /**
+     * Position of the date selection popover, values supported: left, right, top, and bottom
+     */
     placement: PropTypes.string,
+
+    /**
+     * Select a single date and time or a date range
+     */
     selectionType: PropTypes.oneOf([SELECTION_TYPES.single, SELECTION_TYPES.range])
   };
 
@@ -685,7 +761,7 @@ export default class Datepicker extends Component {
               {type !== 'time' && this.renderCalendar(calendarProps)}
               {type !== 'date' &&
                 (
-                  this.isRange 
+                  this.isRange
                   ? [
                     this.renderClock(clockProps, 'startTime'),
                     this.renderClock(clockProps, 'endTime')

@@ -9,7 +9,7 @@ export default class Grid extends Component {
     /**
      * Based on http://flexboxgrid.com/
      * Fluid is percentage based
-     * Fixed is a
+     * Fixed is values for each incrementally sized viewport (xs, sm, md, lg, etc.)
      */
     variant: PropTypes.oneOf(['fixed', 'fluid'])
   };

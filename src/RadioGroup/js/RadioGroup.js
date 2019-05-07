@@ -1,10 +1,28 @@
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 importSpectrumCSS('fieldgroup');
 
 export default class RadioGroup extends Component {
+  static propTypes = {
+    /**
+     * Index of the selected radio within the group
+     */
+    defaultSelectedValue: PropTypes.number,
+
+    /**
+     * Whether the label is rendered below the radio
+     */
+    labelBelow: PropTypes.bool,
+
+    /**
+     * Render the radio group vertically instead of default horizontal
+     */
+    vertical: PropTypes.bool
+  };
+
   static defaultProps = {
     vertical: false,
     labelsBelow: false,

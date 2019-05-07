@@ -13,7 +13,6 @@ importSpectrumCSS('dialog');
 @autobind
 export default class Popover extends Component {
   static propTypes = {
-
     /**
      * The variant will affect color and add an icon.
      */

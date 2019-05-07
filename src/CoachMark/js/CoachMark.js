@@ -13,15 +13,20 @@ importSpectrumCSS('coachmark');
 export default class CoachMark extends React.Component {
 
   static propTypes = {
-    /** Used by overlay trigger */
+    /**
+     * Used by overlay trigger
+     */
     parentNode: PropTypes.any,
 
-    /** If there isn't enough space for the coachmark,
+    /**
+     * If there isn't enough space for the coachmark,
      * should it flip across the axis to try and get more space
      **/
     flip: PropTypes.bool,
 
-    /** Relative to the target element, where should the coachmark render */
+    /**
+     * Relative to the target element, where should the coachmark render
+     */
     placement: PropTypes.oneOf([
       'bottom',
       'bottom left',
@@ -36,8 +41,12 @@ export default class CoachMark extends React.Component {
       'left bottom',
       'left top'
     ]),
-    /** If someone clicks off the coachmark, then it will hide/dismiss */
+
+    /**
+     * If someone clicks off the coachmark, then it will hide/dismiss
+     */
     dismissible: PropTypes.bool,
+
     ...CoachMarkPopover.propTypes,
     ...CoachMarkIndicator.propTypes
   };

@@ -117,7 +117,7 @@ export default class ColumnView extends React.Component {
 
     dataSource.on('navigate', this.onNavigate);
     dataSource.on('selectionChange', this.onSelectionChange);
-    
+
     this.setState({dataSource});
     return dataSource;
   }

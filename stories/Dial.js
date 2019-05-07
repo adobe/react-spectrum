@@ -18,6 +18,10 @@ storiesOf('Dial', module)
     () => render({variant: 'round', size: 'S', label: 'size: S'})
   )
   .add(
+    'step',
+    () => render({step: 25})
+  )
+  .add(
     'disabled',
     () => render({disabled: true})
   )

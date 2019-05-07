@@ -54,6 +54,10 @@ storiesOf('Datepicker', module)
     () => render({invalid: true, 'aria-label': 'invalid=true'})
   )
   .add(
+    'required=true',
+    () => render({required: true, 'aria-label': 'required=true'})
+  )
+  .add(
     'disabled=true',
     () => render({disabled: true, 'aria-label': 'disabled=true'})
   )
@@ -150,6 +154,18 @@ storiesOf('Datepicker', module)
   .add(
     'Labeled with FieldLabel',
     () => renderWithFieldLabel({selectionType: 'range'})
+  )
+  .add(
+    'Max',
+    () => renderWithFieldLabel({max: 'today'})
+  )
+  .add(
+    'Min',
+    () => renderWithFieldLabel({min: 'today'})
+  )
+  .add(
+    'displayFormat and valueFormat',
+    () => render({type: 'datetime', defaultValue: 'today', displayFormat: 'YYYY-MM-DD hh:mm a', valueFormat: 'MMMM YYYY HH:mm'})
   );
 
 function render(props = {}) {

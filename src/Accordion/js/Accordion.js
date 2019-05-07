@@ -35,15 +35,20 @@ export default class Accordion extends Component {
       PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
     ]),
 
-    /** Whether multiple AccordionItems can be selected (open) at the same time. */
+    /**
+     * Whether multiple AccordionItems can be selected (open) at the same time.
+     */
     multiselectable: PropTypes.bool,
 
-    /** A function that will be called when an AccordionItem is selected (opened) or
+    /**
+     * A function that will be called when an AccordionItem is selected (opened) or
      * deselected (closed). It will be passed the updated selected index.
      */
     onChange: PropTypes.func,
 
-    /** The aria heading level of the accordion items */
+    /**
+     * The aria heading level of the accordion items
+     */
     ariaLevel: PropTypes.number
   };
 

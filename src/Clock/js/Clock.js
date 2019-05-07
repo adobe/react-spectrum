@@ -22,9 +22,18 @@ export default class Clock extends Component {
 
   static propTypes = {
     /**
-     * Clock can accept a number of different value represenationas
+     * Puts component into a controlled state. Clock can accept a number of different value representations
      */
     value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number
+    ]),
+
+    /**
+     * Value component is initally set to. Clock can accept a number of different value representations
+     */
+    defaultValue: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number
@@ -64,12 +73,14 @@ export default class Clock extends Component {
      * Mark a form input as required, also necessary for the form to be submitted
      */
     required: PropTypes.bool,
+
+    /**
+     * Boolean indicating this component gets focus when mounted to DOM
+     */
     autoFocus: PropTypes.bool,
 
     /**
-     * Called when a breadcrumb is clicked with an object containing the label of the clicked breadcrumb
-     * @callback Clock~onChange
-     * @param {Object} event - Moment object
+     * Called when the value changes, returns a Moment object
      */
     onChange: PropTypes.func
   };

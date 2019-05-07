@@ -48,6 +48,20 @@ element for the type of data being displayed (e.g. `<time>`).
   renderItem={item => <time {/* ... */}>{item.label}</time>} />
 ```
 
+## Autocomplete with showMenu
+Try typing 'Chocolate' and hitting enter on the above and there is no list of completions.
+
+  <Autocomplete getCompletions={() => ['Chocolate', 'Vanilla']} invalid={false}>
+   <Textfield placeholder="Autocomplete..." />
+  </Autocomplete>
+
+
+```jsx
+  <Autocomplete getCompletions={() => ['Chocolate', 'Vanilla']} invalid={false}>
+    <Textfield placeholder="Autocomplete..." />
+  </Autocomplete>
+```
+
 ## Accessibility
 
 ### WAI-ARIA Design Pattern

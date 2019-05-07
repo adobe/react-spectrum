@@ -17,6 +17,18 @@ storiesOf('List', module)
     )
   )
   .add(
+    'autoFocus=true',
+    () => (
+      <List autoFocus>
+        <ListItem>Foo</ListItem>
+        <ListItem icon={<Twitter />}>Bar</ListItem>
+        <ListItem disabled>Baz</ListItem>
+        <ListItem selected>Test</ListItem>
+        <ListItem>Hi</ListItem>
+      </List>
+    )
+  )
+  .add(
     'Scrolling',
     () => (
       <List style={{height: '326px'}}>

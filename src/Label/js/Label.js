@@ -31,6 +31,13 @@ export default function Label({size, children, className, variant = variants[0],
 Label.displayName = 'Label';
 
 Label.propTypes = {
+  /**
+   * Size of the label
+   */
   size: PropTypes.string,
+
+  /**
+   * Variant of the label to display
+   */
   variant: PropTypes.oneOf(variants)
 };

@@ -12,22 +12,91 @@ importSpectrumCSS('dialog');
 @autobind
 export default class Dialog extends Component {
   static propTypes = {
+    /**
+     * Can dismiss by clicking on the backdrop
+     */
     backdropClickable: PropTypes.bool,
+
+    /**
+     * Label of the cancel button
+     */
     cancelLabel: PropTypes.string,
+
+    /**
+     * String of custom class names to add to the top level dom element of Dialog
+     */
     className: PropTypes.string,
+
+    /**
+     * Confirm button is disabled
+     */
     confirmDisabled: PropTypes.bool,
+
+    /**
+     * Label of the confirm button
+     */
     confirmLabel: PropTypes.string,
+
+    /**
+     * Label for an additional button
+     */
     secondaryLabel: PropTypes.string,
+
+    /**
+     * Callback when dialog closes
+     */
     onClose: PropTypes.func,
+
+    /**
+     * Callback when cancel button clicked
+     */
     onCancel: PropTypes.func,
+
+    /**
+     * Callback when confim button clicked. Has a paramater specifying which
+     * confirm button is clicked, "primary" or "secondary".
+     */
     onConfirm: PropTypes.func,
+
+    /**
+     * Have dialog opened when mounted to DOM
+     */
     open: PropTypes.bool,
+
+    /**
+     * Title of the dialog
+     */
     title: PropTypes.node,
+
+    /**
+     * Affects the style used by the dialog, establishing its type
+     */
     variant: PropTypes.oneOf(['confirmation', 'information', 'destructive', 'error']),
+
+    /**
+     *  Affects the display size of the dialog
+     */
     mode: PropTypes.oneOf(['alert', 'fullscreen', 'fullscreenTakeover']),
+
+    /**
+     * For ARIA telling what type of dialog this is
+     */
     role: PropTypes.oneOf(['dialog', 'alertdialog']),
+
+    /**
+     * Which button should be autoFocused after mounted to DOM
+     */
     autoFocusButton: PropTypes.oneOf(['cancel', 'confirm', 'secondary', null]),
+
+    /**
+     * When true, allows user to press enter key and trigger confirm event and close dialog.
+     * When false, the user can still use keyboard navigation to close via the comfirm button.
+     */
     keyboardConfirm: PropTypes.bool,
+
+    /**
+     * Keeps focus from escaping dialog
+     */
     trapFocus: PropTypes.bool
   };
 

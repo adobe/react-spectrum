@@ -13,14 +13,44 @@ const DRAGGED_BODY_CLASS_NAME = 'u-isGrabbing';
 @autobind
 export default class Dial extends React.Component {
   static propTypes = {
-    id: PropTypes.string,
+    /**
+     * Minimum selectable value
+     */
     min: PropTypes.number,
+
+    /**
+     * Maximum selectable value
+     */
     max: PropTypes.number,
+
+    /**
+     * Increment interval
+     */
     step: PropTypes.number,
+
+    /**
+     * Prevent interaction with component
+     */
     disabled: PropTypes.bool,
+
+    /**
+     * Display label for component
+     */
     renderLabel: PropTypes.bool,
+
+    /**
+     * Label to be shown with component
+     */
     label: PropTypes.node,
+
+    /**
+     * Size of the componet
+     */
     size: PropTypes.oneOf([null, 'S', 'L']),
+
+    /**
+     * Called when dial is adjusted to a new value
+     */
     onChange: PropTypes.func
   };
 

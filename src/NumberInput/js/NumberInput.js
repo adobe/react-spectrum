@@ -30,7 +30,7 @@ export default class NumberInput extends Component {
     defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     /**
-     * The input value.
+     * Puts component into a controlled state.
      */
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
@@ -83,7 +83,12 @@ export default class NumberInput extends Component {
     /**
      * The callback function when the input number is changed.
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+
+    /**
+     * Whether the input should render using a quiet variant
+     */
+    quiet: PropTypes.bool
   };
 
   static defaultProps = {

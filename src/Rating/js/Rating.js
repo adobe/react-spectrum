@@ -12,10 +12,24 @@ importSpectrumCSS('rating');
 @autobind
 export default class Rating extends React.Component {
   static propTypes = {
-    /** The max number of stars to render. */
+    /**
+     * Prevent interaction with component
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * Number of stars in rating.
+     */
     max: PropTypes.number,
 
-    /** Sets the rating (controlled). */
+    /**
+     * Prevents change from happening.
+     */
+    readOnly: PropTypes.bool,
+
+    /**
+     * Sets the rating (controlled).
+     */
     value: PropTypes.number
   };
 
