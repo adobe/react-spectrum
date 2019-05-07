@@ -1,3 +1,4 @@
+import Bell from '@react/react-spectrum/Icon/Bell';
 import {Tag} from '@react/react-spectrum/TagList';
 import {TagList} from '@react/react-spectrum/TagList';
 
@@ -105,4 +106,117 @@ Function fired when a tag is focused (clicked).
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
 </TagList>
+```
+
+## Overview for Tags
+
+**Tags** provide small, succinct labels useful for listing the attributes of a element or object. Commonly used in conjunction with **TagList**, see the **TagList** docs for sample implementation.
+
+## Base Example
+
+<Tag>Example Tag</Tag>
+<br />
+
+```jsx
+import {Tag} from '@react/react-spectrum/TagList';
+
+<Tag>Example Tag</Tag>
+```
+
+## Variants
+
+### Closable
+
+Specifies if the tag should be closable. The tag can be closed by either clicking on the 'x' indicator or by focusing the tag and using the `delete`, `backspace`, or `space` keys. `onClose` will fire upon recieving any of the above events.
+
+<Tag
+  closable
+  onClose={() => console.log('closing')}>
+Close this tag
+</Tag>
+<br />
+
+```jsx
+<Tag
+  closable
+  onClose={() => console.log('closing')}>
+Close this tag
+</Tag>
+```
+
+### Disabled
+
+Disables the tag so that user interaction cannot occur.
+
+<Tag
+  closable
+  onClose={() => console.log('closing')}
+  disabled>
+Can't close this tag
+</Tag>
+<br />
+
+```jsx
+<Tag
+  closable
+  onClose={() => console.log('closing')}
+  disabled>
+Can't close this tag
+</Tag>
+```
+
+### Invalid
+
+Highlights the tag in a red color to indicate invalid status.
+
+<Tag invalid>Invalid Tag</Tag>
+<br />
+
+```jsx
+<Tag invalid>Invalid Tag</Tag>
+```
+
+### Selected
+
+Indicates that the tag is selected, applying `aria-selected="true"`.
+
+<Tag selected>Check aria-selected</Tag>
+<br />
+
+```jsx
+<Tag selected>Check aria-selected</Tag>
+```
+
+### Avatar
+
+Appends an avatar to the left of the tag body.
+
+<Tag
+  avatar="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg">
+Avatar
+</Tag>
+<br />
+
+```jsx
+<Tag
+  avatar="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg">
+Avatar
+</Tag>
+```
+
+### Icon
+
+Similiar to avatar, appends the provided icon element to the left of the tag body.
+
+<Tag icon={<Bell />}>
+Bell icon
+</Tag>
+<br />
+
+```jsx
+import Bell from '@react/react-spectrum/Icon/Bell';
+
+<Tag icon={<Bell />}>
+Bell icon
+</Tag>
 ```

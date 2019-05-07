@@ -97,6 +97,9 @@ Toast.propTypes = {
   /** Function called when toast is closed. */
   onClose: PropTypes.func,
 
+  /** Content to display within the Toast */
+  children: PropTypes.node
+
   /** Function called when action button is clicked. */
   onAction: PropTypes.func,
 

@@ -39,6 +39,10 @@ storiesOf('Textfield', module)
   .add(
     'autoFocus: true',
     () => render({autoFocus: true})
+  )
+  .add(
+    'multiLine: true',
+    () => render({multiLine: true})
   );
 
 function render(props = {}) {

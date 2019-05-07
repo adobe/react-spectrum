@@ -21,26 +21,32 @@ export default class Tag extends React.Component {
   static propTypes = {
     /** Avatar to use in the tag */
     avatar: PropTypes.string,
-    
+
     /** Whether the tag is removable from the tag list */
     closeable: PropTypes.bool,
-    
+
+    /** Function to be executed upon tag closure */
+    onClose: PropTypes.func,
+
     /** Whether the tag is disabled from user interaction */
     disabled: PropTypes.bool,
-    
+
     /** Icon to use in the tag */
     icon: PropTypes.string,
-    
+
     /** Whether the tag is selected */
-    selected: PropTypes.bool
+    selected: PropTypes.bool,
+
+    /** Whether the tag ought to be colored red to reflect invalid status */
+    invalid: PropTypes.bool
   };
-  
+
   static defaultProps = {
     closeable: false,
     disabled: false,
     selected: false
   }
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -77,7 +83,7 @@ export default class Tag extends React.Component {
     const removeString = formatMessage('Remove');
     const childContent = children || value;
     const ariaLabel = childContent ? `${removeString}: ${childContent}` : {removeString};
-   
+
     function handleKeyDown(e) {
       switch (e.keyCode) {
         case 46: // delete
@@ -87,9 +93,9 @@ export default class Tag extends React.Component {
           e.preventDefault();
           break;
       }
-    }  
-    function handleButtonClick(e) {  
-      onClose(value || children, e); 
+    }
+    function handleButtonClick(e) {
+      onClose(value || children, e);
       // If the button is clicked and this is a gridcell it must be a mouse event
       // Set focus to the tag rather than the button as that is where focus manager
       // expects it to be
@@ -97,14 +103,14 @@ export default class Tag extends React.Component {
         if (tag) {
           tag.focus();
         }
-      }  
+      }
 
-    }  
+    }
 
 
     return (
-      <div 
-        ref={(t) => {this.tag = t;}} 
+      <div
+        ref={(t) => {this.tag = t;}}
         className={
           classNames(
             'spectrum-Tags-item',
@@ -117,7 +123,7 @@ export default class Tag extends React.Component {
             {'focus-ring': tagFocused},
             className
           )
-        }      
+        }
         tabIndex={tabIndex}
         aria-selected={!disabled && selected}
         onKeyDown={!disabled && closable ? (e => {handleKeyDown(e);}) : null}
@@ -129,8 +135,8 @@ export default class Tag extends React.Component {
         {cloneIcon(icon, {
           size: 'S',
           className: 'spectrum-Tags-itemIcon'
-        })}  
-        <span 
+        })}
+        <span
           role={role}
           className="spectrum-Tags-itemLabel">
           {childContent}

@@ -36,6 +36,10 @@ storiesOf('Tag', module)
   .add(
     'avatar, invalid: true',
     () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', invalid: true, closable: true})
+  )
+  .add(
+    'selected',
+    () => <Tag selected>Check aria-selected</Tag>
   );
 
 function render(props = {}, children = 'Cool Tag') {
