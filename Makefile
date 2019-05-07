@@ -19,7 +19,7 @@ run_3:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
-	rm -rf dist storybook-static public src/dist
+	rm -rf dist storybook-static storybook-static-v3 public src/dist
 	$(MAKE) clean_docs
 
 clean_all:
@@ -84,9 +84,11 @@ build:
 	cp README.md dist/README.md
 
 storybook:
-	build-storybook
+	npm run build-storybook
+	npm run build-storybook-v3
 	mkdir -p public
 	mv storybook-static public/storybook
+	mv storybook-static-v3 public/storybook3
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"

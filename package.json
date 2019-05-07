@@ -10,6 +10,8 @@
   "scripts": {
     "check-types": "tsc",
     "start": "make run",
+    "build-storybook": "build-storybook -c .storybook-v2 -o storybook-static",
+    "build-storybook-v3": "build-storybook -c .storybook-v3 -o storybook-static-v3",
     "start-v3": "make run_3",
     "test": "make test",
     "lint": "make lint",
