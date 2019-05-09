@@ -8842,7 +8842,7 @@ md5.js@^1.3.4:
     inherits "^2.0.1"
     safe-buffer "^5.1.2"
 
-md5@^2.1.0:
+md5@^2.1.0, md5@^2.2.1:
   version "2.2.1"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/md5/-/md5-2.2.1.tgz#53ab38d5fe3c8891ba465329ea23fac0540126f9"
   integrity sha1-U6s41f48iJG6RlMp6iP6wFQBJvk=

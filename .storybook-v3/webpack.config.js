@@ -1,10 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
+const md5 = require('md5');
 
 const generateScopedName = (localName, resourcePath) => {
-  const componentName = resourcePath.split('/').slice(-2, -1);
+  let componentName = resourcePath.split('/').slice(-2, -1);
 
-  return componentName + '_' + localName;
+  let hash = md5(resourcePath);
+  return `${componentName}_${localName}_${hash.substr(hash.length - 5)}`;
 };
 
 module.exports = ({config}, env) => {

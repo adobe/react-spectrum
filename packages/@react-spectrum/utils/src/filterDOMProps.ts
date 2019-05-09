@@ -1,3 +1,5 @@
+import React from 'react';
+
 const DOMProps = {
   'abbr': 1,
   'accept': 1,
@@ -175,7 +177,7 @@ const DOMProps = {
  */
 const propRe = /^((data|aria)-.*)$/;
 
-export default function filterReactDomProps(props) {
+export default function filterReactDomProps(props): React.HTMLAttributes<HTMLElement> {
   const filterProps = {};
 
   for (const prop in props) {
