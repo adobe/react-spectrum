@@ -12,25 +12,25 @@ export default class TabView extends React.Component {
   static propTypes = {
     /** Class to add to the tab view */
     className: PropTypes.string,
-    
+
     /** Id for tab view */
     id: PropTypes.string,
-    
+
     /** Function called when a tab is selected */
     onSelect: PropTypes.func,
-    
+
     /** Tab orientation */
     orientation: PropTypes.oneOf(['vertical', 'horizontal']),
-    
+
     /** Selected tab */
     selectedIndex: PropTypes.number
   };
-  
+
   static defaultProps = {
     id: createId(),
     orientation: 'horizontal'
   };
-  
+
   constructor(props) {
     super(props);
     this.tabViewId = createId();
@@ -65,7 +65,7 @@ export default class TabView extends React.Component {
     let {
       className,
       id = this.tabViewId,
-      orientation = 'horizontal',
+      orientation,
       ...props
     } = this.props;
 

@@ -31,6 +31,16 @@ storiesOf('TabList', module)
     )
   )
   .add(
+    'selected set on Tab with autoFocus',
+    () => (
+      <TabList autoFocus onChange={action('onChange')}>
+        <Tab>Tab 1</Tab>
+        <Tab selected>Tab 2</Tab>
+        <Tab>Tab 3</Tab>
+      </TabList>
+    )
+  )
+  .add(
     'orientation: vertical',
     () => render({orientation: 'vertical'})
   )
