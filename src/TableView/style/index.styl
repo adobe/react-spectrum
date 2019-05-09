@@ -75,30 +75,3 @@
 .react-spectrum-TableView-checkboxCell {
   flex-shrink: 0;
 }
-
-// This will be replaced with spectrum-DropIndicator once that is added to spectrum-css.
-// https://git.corp.adobe.com/Spectrum/spectrum-css/pull/589
-.react-spectrum-TableView-insertionIndicator {
-  height: 2px;
-  background: $spectrum-global-color-blue400;
-  margin: 0 12px;
-  position: relative;
-
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    left: -12px;
-    top: -5px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid $spectrum-global-color-blue400;
-    box-sizing: border-box;
-  }
-
-  &:after {
-    left: auto;
-    right: -12px;
-  }
-}

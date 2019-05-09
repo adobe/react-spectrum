@@ -1,6 +1,6 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
-import CollectionView from '../../utils/CollectionView';
+import CollectionView, {RowWrapper} from '../../utils/CollectionView';
 import createId from '../../utils/createId';
 import {IndexPath, IndexPathSet} from '@react/collection-view';
 import ListDataSource from '../../ListDataSource';
@@ -10,10 +10,10 @@ import TableCell from './TableCell';
 import TableRow from './TableRow';
 import TableViewDataSource from './TableViewDataSource';
 import TableViewLayout from './TableViewLayout';
-import Wait from '../../Wait';
 import '../style/index.styl';
 
 importSpectrumCSS('table');
+importSpectrumCSS('dropindicator');
 
 const columnShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
@@ -244,24 +244,17 @@ export default class TableView extends Component {
   }
 
   renderSupplementaryView(type) {
-    const {allowsSelection, renderEmptyView} = this.props;
+    const {allowsSelection} = this.props;
     let colCount = this.state.columns.length;
     if (allowsSelection) {
       colCount += 1;
     }
-    if (type === 'loading-indicator') {
-      return <div role="row"><div role="gridcell" aria-colspan={colCount}><Wait centered size="M" /></div></div>;
-    }
-
-    if (type === 'empty-view' && renderEmptyView) {
-      return <div role="row"><div role="gridcell" aria-colspan={colCount}>{renderEmptyView()}</div></div>;
-    }
 
     if (type === 'insertion-indicator') {
-      return <div role="row" className="react-spectrum-TableView-insertionIndicator"><div role="gridcell" aria-colspan={colCount} /></div>;
+      return <RowWrapper className="spectrum-DropIndicator spectrum-DropIndicator--horizontal" colCount={colCount} />;
     }
 
-    return <div role="presentation" />;
+    return null;
   }
 
   async sortByColumn(column) {
@@ -318,7 +311,9 @@ export default class TableView extends Component {
       dataSource,
       id = this.tableViewId,
       quiet,
-      ...otherProps
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby
     } = this.props;
     const tableClasses = classNames(
       className,
@@ -339,9 +334,9 @@ export default class TableView extends Component {
         role="grid"
         aria-rowcount={rowCount}
         aria-colcount={colCount}
-        aria-label={otherProps['aria-label']}
-        aria-labelledby={otherProps['aria-labelledby']}
-        aria-describedby={otherProps['aria-describedby']}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
         aria-multiselectable={(allowsSelection && allowsMultipleSelection) || null}>
         {this.renderHeader()}
         <CollectionView
@@ -358,7 +353,9 @@ export default class TableView extends Component {
           sortDescriptor={this.state.sortDescriptor}
           selectionMode="toggle"
           keyboardMode="focus"
-          onSelectionChanged={this.onSelectionChange} />
+          onSelectionChanged={this.onSelectionChange}
+          onRowCountChanged={this.onRowCountChanged}
+          colCount={colCount} />
       </div>
     );
   }
