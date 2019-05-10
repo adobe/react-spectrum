@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
+import '../../utils/style/index.styl';
 
 importSpectrumCSS('cyclebutton');
 
@@ -77,13 +78,35 @@ export default class CycleButton extends Component {
     }
 
     this.state = {
-      action: newAction
+      action: newAction,
+      ariaBusy: false,
+      ariaLive: 'off'
     };
   }
 
+  componentDidMount() {
+    this.setState({ariaLive: 'assertive'});
+  }
+
   componentWillReceiveProps(props) {
-    if (props.action && props.action !== this.state.action) {
-      this.setState({action: props.action});
+    this.setActionState(props.action);
+  }
+
+  componentWillUnmount() {
+    this.setState({ariaLive: 'off'});
+  }
+
+  setActionState(newAction) {
+    if (newAction && newAction !== this.state.action) {
+      this.setState({
+        ariaBusy: true
+      },
+      () => this.setState({
+        action: newAction
+      },
+      () => this.setState({
+        ariaBusy: false
+      })));
     }
   }
 
@@ -114,9 +137,7 @@ export default class CycleButton extends Component {
 
     if (!action) {
       // Only update state with next action if uncontrolled
-      this.setState({
-        action: newAction
-      });
+      this.setActionState(newAction);
     }
 
     if (onChange) {
@@ -132,7 +153,13 @@ export default class CycleButton extends Component {
       ...otherProps
     } = this.props;
 
-    let currentActionObj = actions.find(e => e.name === this.state.action);
+    const {
+      action,
+      ariaBusy,
+      ariaLive
+    } = this.state;
+
+    let currentActionObj = actions.find(e => e.name === action);
 
     let icon, label;
     try {
@@ -145,6 +172,7 @@ export default class CycleButton extends Component {
     // Don't let native browser change events bubble up to the root div.
     // Otherwise we double dispatch.
     delete otherProps.onChange;
+    delete otherProps.action;
 
     return (
       <Button
@@ -152,8 +180,13 @@ export default class CycleButton extends Component {
         variant="action"
         quiet
         className={classNames('spectrum-CycleButton', className)}
-        onClick={this.handleChange}>
-        {cloneIcon(icon, {size: 'S', 'alt': label})}
+        onClick={this.handleChange}
+        aria-live={ariaLive}
+        aria-relevant="text"
+        aria-atomic="true"
+        aria-busy={ariaBusy}>
+        <span className="u-react-spectrum-screenReaderOnly">{label}</span>
+        {cloneIcon(icon, {size: 'S'})}
       </Button>
     );
   }

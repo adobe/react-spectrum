@@ -97,7 +97,7 @@ import PauseCircle from '@react/react-spectrum/Icon/PauseCircle';
 
 <CycleButton
 	onAction={(action, e) => console.log(action, e)}
-	actions={[{name: 'volumeOne', icon: <VolumeOne />, label: 'VolumeOne'}, {name: 'volumeTwo', icon: <VolumeTwo />, label: 'VolumeTwo'}, {name: 'volumeThree', icon: <VolumeThree />, label: 'VolumeThree'}, {name: 'mute', icon: <VolumeMute />, label: 'Mute'}]}
+	actions={[{name: 'volumeOne', icon: <VolumeOne />, label: 'Volume: 33%'}, {name: 'volumeTwo', icon: <VolumeTwo />, label: 'Volume: 66%'}, {name: 'volumeThree', icon: <VolumeThree />, label: 'Volume: 100%'}, {name: 'mute', icon: <VolumeMute />, label: 'Volume: Muted'}]}
 	defaultAction='volumeOne' />
 
 ```jsx
@@ -110,9 +110,12 @@ import VolumeThree from '@react/react-spectrum/Icon/VolumeThree';
 <CycleButton
 	onAction={(action, e) => console.log(action, e)}
 	actions={[
-		{name: 'volumeOne', icon: <VolumeOne />, label: 'VolumeOne'},
-		{name: 'volumeTwo', icon: <VolumeTwo />, label: 'VolumeTwo'},
-		{name: 'volumeThree', icon: <VolumeThree />, label: 'VolumeThree'},
-		{name: 'mute', icon: <VolumeMute />, label: 'Mute'}]}
+		{name: 'volumeOne', icon: <VolumeOne />, label: 'Volume: 33%'},
+		{name: 'volumeTwo', icon: <VolumeTwo />, label: 'Volume: 66%'},
+		{name: 'volumeThree', icon: <VolumeThree />, label: 'Volume: 100%'},
+		{name: 'mute', icon: <VolumeMute />, label: 'Volume: Muted'}]}
 	defaultAction='volumeOne' />
 ```
+## Accessibility
+
+A **CycleButton** is presented to assistive technology as a button. Its label is provided by the `aria-label` property on the icon for the current action.

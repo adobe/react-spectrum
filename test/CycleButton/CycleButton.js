@@ -12,8 +12,9 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('alt'), 'Play');
-    assert.equal(tree.children().prop('size'), 'S');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Play');
+    assert.equal(tree.children().last().dive().prop('aria-hidden'), true);
+    assert.equal(tree.children().last().prop('size'), 'S');
   });
 
   it('renders with defaultAction', () => {
@@ -23,7 +24,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('alt'), 'Pause');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Pause');
   });
 
   it('renders with controlled component', () => {
@@ -38,7 +39,7 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('alt'), 'Pause');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Pause');
   });
 
   it('calls onAction with next action when clicked', () => {
@@ -53,6 +54,19 @@ describe('CycleButton', () => {
     sinon.assert.calledOnce(onAction);
     sinon.assert.calledWith(onAction, 'play');
     sinon.assert.calledWith(onChange, 'pause');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Pause');
+    tree.find('Button').simulate('click');
+    sinon.assert.calledTwice(onAction);
+    sinon.assert.calledWith(onAction, 'pause');
+    sinon.assert.calledWith(onChange, 'play');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Play');
+  });
+
+  it('supports controlled action prop', () => {
+    let tree = shallow(<CycleButton actions={[{name: 'play', icon: <PlayCircle />, label: 'Play'}, {name: 'pause', icon: <PauseCircle />, label: 'Pause'}]} />);
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Play');
+    tree.setProps({action: 'pause'});
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Pause');
   });
 
   it('calls onChange with current action when controlled', () => {
@@ -77,7 +91,8 @@ describe('CycleButton', () => {
     assert.equal(tree.prop('className'), 'spectrum-CycleButton');
     assert.equal(tree.prop('quiet'), true);
     assert.equal(tree.prop('variant'), 'action');
-    assert.equal(tree.children().prop('alt'), 'Play');
+    assert.equal(tree.find('.u-react-spectrum-screenReaderOnly').text(), 'Play');
+    assert.equal(tree.children().last().dive().prop('aria-hidden'), true);
   });
 
   it('throws error with invalid defaultAction', () => {
