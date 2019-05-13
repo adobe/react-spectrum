@@ -7,7 +7,7 @@ import Provider from '../Provider';
 import proxy from './proxyObject';
 import React from 'react';
 import Wait from '../Wait';
-import './style/collectionView.styl';
+import './style/CollectionView/index.styl';
 
 // symbol + counter for requests
 let REQUEST_ID = 1;
