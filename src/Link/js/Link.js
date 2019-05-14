@@ -1,3 +1,4 @@
+import {chain} from '../../utils/events';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
@@ -5,11 +6,19 @@ import React from 'react';
 
 importSpectrumCSS('link');
 
+function preventDefault(e) {
+  if (!e.defaultPrevented) {
+    e.preventDefault();
+  }
+}
+
 export default function Link({
   subtle, // deprecated, use variant instead
   variant,
   children,
   className,
+  href,
+  onClick,
   ...otherProps
 }) {
   if (subtle) {
@@ -22,6 +31,11 @@ export default function Link({
     variant = 'quiet';
   }
 
+  if (!href && typeof onClick === 'function') {
+    href = '#';
+    onClick = chain(onClick, preventDefault);
+  }
+
   return (
     <a
       className={
@@ -31,6 +45,8 @@ export default function Link({
           className
         )
       }
+      href={href}
+      onClick={onClick}
       {...filterDOMProps(otherProps)}>
       {children}
     </a>
