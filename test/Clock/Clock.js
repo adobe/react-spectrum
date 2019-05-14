@@ -155,8 +155,8 @@ describe('Clock', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Clock aria-foo />);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Clock aria-hidden />);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   it('supports setting value as a prop', () => {

@@ -134,6 +134,7 @@ export default class Popover extends Component {
             className
           )
         }
+        role="presentation"
         {...filterDOMProps(otherProps)}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}

@@ -69,8 +69,8 @@ describe('Tag', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Tag aria-foo />);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Tag aria-hidden />);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   it('supports an icon', () => {
@@ -87,15 +87,15 @@ describe('Tag', () => {
   it('adds focus styles correctly when focused', () => {
     const tree = shallow(<Tag closable>foo</Tag>);
     tree.instance().handleButtonFocus();
-    assert.equal(tree.state('tagFocused'), true); 
+    assert.equal(tree.state('tagFocused'), true);
   });
 
   it('removes focus styles correctly when blurred', () => {
     const tree = shallow(<Tag closable>foo</Tag>);
     tree.instance().handleButtonFocus();
-    assert.equal(tree.state('tagFocused'), true); 
+    assert.equal(tree.state('tagFocused'), true);
     tree.instance().handleButtonBlur();
-    assert.equal(tree.state('tagFocused'), false); 
+    assert.equal(tree.state('tagFocused'), false);
   });
 
 

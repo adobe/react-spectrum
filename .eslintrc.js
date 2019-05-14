@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -61,7 +61,7 @@ module.exports = {
     'no-self-compare': ERROR,
     'no-nested-ternary': ERROR,
     'no-multiple-empty-lines': ERROR,
-    'no-unneeded-ternary': ERROR, 
+    'no-unneeded-ternary': ERROR,
 
     // Below are rules that are needed for linter functionality when using React
     'react/display-name': OFF,
@@ -93,6 +93,119 @@ module.exports = {
     'react/self-closing-comp': ERROR,
 
     // custom rules
-    'rulesdir/sort-imports': [ERROR]
+    'rulesdir/sort-imports': [ERROR],
+
+    // jsx-a11y rules
+    'jsx-a11y/accessible-emoji': ERROR,
+    'jsx-a11y/alt-text': ERROR,
+    'jsx-a11y/anchor-has-content': ERROR,
+    'jsx-a11y/anchor-is-valid': ERROR,
+    'jsx-a11y/aria-activedescendant-has-tabindex': ERROR,
+    'jsx-a11y/aria-props': ERROR,
+    'jsx-a11y/aria-proptypes': ERROR,
+    'jsx-a11y/aria-role': ERROR,
+    'jsx-a11y/aria-unsupported-elements': ERROR,
+    'jsx-a11y/click-events-have-key-events': ERROR,
+    'jsx-a11y/heading-has-content': ERROR,
+    'jsx-a11y/html-has-lang': ERROR,
+    'jsx-a11y/iframe-has-title': ERROR,
+    'jsx-a11y/img-redundant-alt': ERROR,
+    'jsx-a11y/interactive-supports-focus': [
+      ERROR,
+      {
+        tabbable: [
+          'button',
+          'checkbox',
+          'link',
+          'searchbox',
+          'spinbutton',
+          'switch',
+          'textbox'
+        ]
+      }
+    ],
+    'jsx-a11y/label-has-for': [
+      ERROR,
+      {
+        required: { some: ['nesting', 'id'] }
+      }
+    ],
+    'jsx-a11y/media-has-caption': ERROR,
+    'jsx-a11y/mouse-events-have-key-events': ERROR,
+    'jsx-a11y/no-access-key': ERROR,
+    'jsx-a11y/no-autofocus': [
+      ERROR,
+      {
+        ignoreNonDOM: true
+      }
+    ],
+    'jsx-a11y/no-distracting-elements': ERROR,
+    'jsx-a11y/no-interactive-element-to-noninteractive-role': ERROR,
+    'jsx-a11y/no-noninteractive-element-interactions': [
+      WARN,
+      {
+        handlers: [
+          'onClick',
+          'onMouseDown',
+          'onMouseUp',
+          'onKeyPress',
+          'onKeyDown',
+          'onKeyUp'
+        ]
+      }
+    ],
+    'jsx-a11y/no-noninteractive-element-to-interactive-role': [
+      ERROR,
+      {
+        ul: [
+          'listbox',
+          'menu',
+          'menubar',
+          'radiogroup',
+          'tablist',
+          'tree',
+          'treegrid'
+        ],
+        ol: [
+          'listbox',
+          'menu',
+          'menubar',
+          'radiogroup',
+          'tablist',
+          'tree',
+          'treegrid'
+        ],
+        li: ['menuitem', 'option', 'row', 'tab', 'treeitem'],
+        table: ['grid'],
+        td: ['gridcell','columnheader','rowheader'],
+        th: ['columnheader','rowheader']
+      }
+    ],
+    'jsx-a11y/no-noninteractive-tabindex': [
+      ERROR,
+      {
+        tags: [],
+        roles: ['alertdialog', 'dialog', 'tabpanel']
+      }
+    ],
+    'jsx-a11y/no-onchange': ERROR,
+    'jsx-a11y/no-redundant-roles': ERROR,
+    'jsx-a11y/no-static-element-interactions': [
+      ERROR,
+      {
+        handlers: [
+          'onClick',
+          'onMouseDown',
+          'onMouseUp',
+          'onKeyPress',
+          'onKeyDown',
+          'onKeyUp'
+        ]
+      }
+    ],
+    'jsx-a11y/role-has-required-aria-props': ERROR,
+    'jsx-a11y/role-supports-aria-props': ERROR,
+    'jsx-a11y/scope': ERROR,
+    'jsx-a11y/tabindex-no-positive': ERROR
   }
 };

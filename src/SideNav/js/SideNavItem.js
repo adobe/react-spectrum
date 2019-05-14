@@ -211,10 +211,9 @@ export default class SideNavItem extends Component {
       renderLink,
       role,
       target,
-      _isSelected
+      _isSelected,
+      'aria-current': ariaCurrent
     } = this.props;
-
-    const ariaCurrent = this.props['aria-current'];
 
     const {
       expanded,
@@ -308,7 +307,7 @@ export default class SideNavItem extends Component {
           )
         }
         onKeyDown={disabled ? undefined : chain(this.onKeyDown, interpretKeyboardEvent.bind(this))}
-        role={isTreeItem ? 'none' : undefined}
+        role={isTreeItem ? 'presentation' : undefined}
         ref={this.setSideNavItemRef}
         {...filterDOMProps(otherProps)}>
         { (label || renderLink) && this.renderLink(label, tabIndex, isTreeItem)
@@ -318,7 +317,7 @@ export default class SideNavItem extends Component {
         }
         { this.hasNestedNav &&
           <SideNav
-            role="none"
+            isNested
             variant={isTreeItem ? 'multiLevel' : undefined}
             id={this.getDescendantId('child')}
             aria-labelledby={header ? this.getDescendantId('header') : id}

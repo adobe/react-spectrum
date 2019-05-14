@@ -126,7 +126,7 @@ export default class CoachMarkPopover extends React.Component {
       children,
       id = this.coachmarkId,
       tabIndex,
-      imageAlt,
+      imageAlt = '',
       autoFocus,
       trapFocus,
       ...otherProps
@@ -134,6 +134,7 @@ export default class CoachMarkPopover extends React.Component {
 
     disableProgress = disableProgress || typeof currentStep !== 'number' || typeof totalSteps !== 'number';
 
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     return (<div
       {...filterDOMProps(otherProps)}
       className="spectrum-CoachMarkPopover"

@@ -84,6 +84,7 @@ describe('CoachMarkPopover', () => {
     assert.equal(coachmarkPopover.getDOMNode(), document.activeElement);
 
     assert.equal(coachmarkPopover.find('img').length, 1);
+    assert.equal(coachmarkPopover.find('img').prop('alt'), '');
   });
 
   it('Should only display valid progress', () => {

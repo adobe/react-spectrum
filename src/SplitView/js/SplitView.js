@@ -99,13 +99,27 @@ export default class SplitView extends React.Component {
       throw new Error(`SplitView must have 2 children, ${children.length} found.`);
     }
 
-    let {primaryPane, orientation, resizable} = this.props;
+    let {
+      primaryPane,
+      orientation,
+      resizable,
+      className,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby
+    } = this.props;
+    let {
+      dividerPosition,
+      hovered,
+      dragging,
+      minPos,
+      maxPos
+    } = this.state;
     let dimension = ORIENTATIONS[orientation];
     let secondaryPane = Number(!primaryPane);
     let primary = (
       <div
         className="spectrum-SplitView-pane"
-        style={{[dimension]: this.state.dividerPosition}}
+        style={{[dimension]: dividerPosition}}
         id={this.primaryId}>
         {children[primaryPane]}
       </div>
@@ -119,10 +133,30 @@ export default class SplitView extends React.Component {
       </div>
     );
 
+    /**
+     * Fix for:
+     * ESLint warning:  Non-interactive elements should not be assigned mouse or keyboard event listeners jsx-a11y/no-noninteractive-element-interactions
+     * ESLint error: The attribute aria-valuenow is not supported by the role separator jsx-a11y/role-supports-aria-props
+     * ESLint error: The attribute aria-valuemin is not supported by the role separator jsx-a11y/role-supports-aria-props
+     * ESLint error: The attribute aria-valuemax is not supported by the role separator jsx-a11y/role-supports-aria-props
+     * ESLint error: `tabIndex` should only be declared on interactive elements jsx-a11y/no-noninteractive-tabindex
+     */
+    let splitterProps = {
+      tabIndex: (resizable ? 0 : null),
+      'aria-valuenow': ((dividerPosition - minPos) / (maxPos - minPos) * 100 | 0),
+      'aria-valuemin': 0,
+      'aria-valuemax': 100,
+      'aria-controls': this.primaryId,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'onKeyDown': this.onKeyDown
+    };
+
     return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         ref={r => this.container = r}
-        className={classNames('spectrum-SplitView', `spectrum-SplitView--${orientation}`, this.props.className)}
+        className={classNames('spectrum-SplitView', `spectrum-SplitView--${orientation}`, className)}
         onMouseMove={resizable ? this.onMouseMove : null}
         onMouseDown={resizable ? this.onMouseDown : null}
         onMouseLeave={resizable ? this.onMouseLeave : null}>
@@ -130,20 +164,13 @@ export default class SplitView extends React.Component {
         <div
           className={classNames('spectrum-SplitView-splitter', {
             'is-draggable': resizable,
-            'is-hovered': this.state.hovered,
-            'is-active': this.state.dragging,
-            'is-collapsed-start': this.state.dividerPosition === 0 && primaryPane === 0,
-            'is-collapsed-end': this.state.dividerPosition === 0 && primaryPane === 1
+            'is-hovered': hovered,
+            'is-active': dragging,
+            'is-collapsed-start': dividerPosition === 0 && primaryPane === 0,
+            'is-collapsed-end': dividerPosition === 0 && primaryPane === 1
           })}
-          tabIndex={resizable ? 0 : null}
           role="separator"
-          aria-valuenow={(this.state.dividerPosition - this.state.minPos) / (this.state.maxPos - this.state.minPos) * 100 | 0}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-controls={this.primaryId}
-          aria-label={this.props['aria-label']}
-          aria-labelledby={this.props['aria-labelledby']}
-          onKeyDown={this.onKeyDown}>
+          {...splitterProps}>
           {resizable ? <div className="spectrum-SplitView-gripper" /> : null}
         </div>
         {primaryPane === 1 ? primary : secondary}

@@ -119,6 +119,11 @@ export default class SwitchBase extends Component {
       ariaLabel = labels.join(' ');
     }
 
+    // Fix for ESLint error: The attribute aria-checked is not supported by the role textbox. This role is implicit on the element input  jsx-a11y/role-supports-aria-props
+    if (inputType && !otherProps['aria-checked']) {
+      otherProps['aria-checked'] = checked;
+    }
+
     return (
       <Element
         className={
@@ -142,7 +147,6 @@ export default class SwitchBase extends Component {
           onMouseDown={focusAfterMouseEvent.bind(this, onMouseDown)}
           onMouseUp={focusAfterMouseEvent.bind(this, onMouseUp)}
           aria-invalid={invalid || null}
-          aria-checked={checked}
           aria-label={ariaLabel}
           {...filterDOMProps(otherProps)} />
         <span className={markClassName}>{markIcon}</span>

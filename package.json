@@ -55,6 +55,7 @@
     "enzyme-adapter-react-16": "^1.12.1",
     "enzyme-adapter-react-helper": "^1.3.3",
     "eslint": "^5.0.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-rulesdir": "^0.1.0",
     "file-loader": "^0.9.0",

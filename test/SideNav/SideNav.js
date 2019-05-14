@@ -26,13 +26,14 @@ describe('SideNav', () => {
     let tree = render({variant: 'multiLevel'});
     assert.equal(tree.find('.spectrum-SideNav--multiLevel').length, 1);
 
-    // Root multiLevel SideNav will have role='tree'
-    assert.equal(tree.find('.spectrum-SideNav--multiLevel').prop('role'), 'tree');
+    // Root multiLevel SideNav will be a nav element with role='tree'
+    assert.equal(tree.type(), 'nav', 'Root multiLevel SideNav will be a nav element');
+    assert.equal(tree.find('.spectrum-SideNav--multiLevel').prop('role'), 'tree', 'Root multiLevel SideNav will hav role="tree"');
 
-    // Nested multiLevel SideNav will have role='none'
-    tree.setProps({role: 'none'});
-    assert.equal(tree.type(), 'div');
-    assert.equal(tree.find('.spectrum-SideNav--multiLevel').prop('role'), 'group');
+    // Nested multiLevel SideNav will be a div element with role='group'
+    tree.setProps({isNested: true});
+    assert.equal(tree.type(), 'div', 'Nested multiLevel SideNav will be a div element');
+    assert.equal(tree.find('.spectrum-SideNav--multiLevel').prop('role'), 'group', 'Nested multiLevel SideNav will have role="group"');
   });
 
   it('correct focusmanager selectors are set', () => {

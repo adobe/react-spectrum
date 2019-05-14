@@ -290,7 +290,8 @@ export default class Dial extends React.Component {
               {label}
             </label>
             {shouldRenderLabel &&
-              <div className="spectrum-Dial-value" role="textbox" aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? this.onClickValue : null}>
+              /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
+              <div className="spectrum-Dial-value" role="textbox" tabIndex={-1} aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? this.onClickValue : null}>
                 {labelValue}
               </div>
             }

@@ -109,9 +109,10 @@ export class Modal extends React.Component {
         transition={OpenTransition}
         backdropTransition={OpenTransition}
         role={hasDialogRole ? 'presentation' : 'dialog'}
-        aria-modal={null}>
+        aria-modal={hasDialogRole ? null : true}>
         {cloneElement(this.props.children, {
-          onClose: this.onClose
+          onClose: this.onClose,
+          'aria-modal': hasDialogRole
         })}
       </BaseModal>
     );

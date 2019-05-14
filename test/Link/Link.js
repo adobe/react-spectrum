@@ -7,7 +7,7 @@ describe('Link', () => {
   it('supports the quiet variation', () => {
     const tree = shallow(<Link variant="quiet" className="myClass">Testing</Link>);
     assert(tree.prop('className').indexOf('spectrum-Link--quiet') >= 0);
-    
+
     // deprecated subtle prop should still work
     tree.setProps({subtle: true, variant: null});
 
@@ -25,8 +25,8 @@ describe('Link', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Link aria-foo>My Link</Link>);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Link aria-hidden>My Link</Link>);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   it('supports children', () => {
