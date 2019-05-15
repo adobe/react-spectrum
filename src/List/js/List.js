@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
+import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
@@ -11,6 +12,7 @@ const LIST_ITEM_SELECTOR = '.spectrum-Menu-item';
 const NOT_DISABLED_SELECTOR = ':not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR + '.is-selected';
 
+@focusRing
 export default class List extends Component {
   static propTypes = {
     /**
