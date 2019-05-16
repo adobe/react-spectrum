@@ -1,13 +1,14 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import {List, ListItem} from '@react/react-spectrum/List';
 import Twitter from '@react/react-spectrum/Icon/Twitter';
 
 ## Overview
 
-Lists are used to group together related pieces of information so they are clearly associated with each other and easy to read. The various items in the list are provided using the `<ListItem/>` component, which can have a icon, label or both.
+Lists are used to group together related pieces of information so they are clearly associated with each other, easy to read, and navigable using the keyboard. The various items in the list are provided using the `<ListItem/>` component, which can have a icon, label or both. List is the base component for the [SelectList](/components/SelectList) and [Menu](/components/Menu) components.
 
 ## Example
 
-<List>
+<List aria-label="List">
   <ListItem selected>
     Foo
   </ListItem>
@@ -26,7 +27,7 @@ Lists are used to group together related pieces of information so they are clear
 </List>
 
 ```jsx
-<List>
+<List aria-label="List">
   <ListItem selected>
     Foo
   </ListItem>
@@ -47,7 +48,7 @@ Lists are used to group together related pieces of information so they are clear
 
 ## Scrolling
 
-<List style={{height: '56px'}}>
+<List aria-label="Country" style={{height: '90px'}}>
   <ListItem value="AF">
     Afghanistan
   </ListItem>
@@ -66,7 +67,7 @@ Lists are used to group together related pieces of information so they are clear
   <ListItem value="AD">
     Andorra
   </ListItem>
-  <ListItem value="AO"> 
+  <ListItem value="AO">
     Angola
   </ListItem>
   <ListItem value="AI">
@@ -81,7 +82,7 @@ Lists are used to group together related pieces of information so they are clear
 </List>
 
 ```jsx
-<List style={{height: '56px'}}>
+<List aria-label="Country" style={{height: '90px'}}>
   <ListItem value="AF">
     Afghanistan
   </ListItem>
@@ -100,7 +101,7 @@ Lists are used to group together related pieces of information so they are clear
   <ListItem value="AD">
     Andorra
   </ListItem>
-  <ListItem value="AO"> 
+  <ListItem value="AO">
     Angola
   </ListItem>
   <ListItem value="AI">
@@ -121,7 +122,7 @@ ListItems have a couple of props for controlling their visual state. The `disabl
 
 ### Selected
 
-<List>
+<List aria-label="List">
   <ListItem selected>
     Hello
   </ListItem>
@@ -131,7 +132,7 @@ ListItems have a couple of props for controlling their visual state. The `disabl
 </List>
 
 ```jsx
-<List>
+<List aria-label="List">
   <ListItem selected>
     Hello
   </ListItem>
@@ -143,7 +144,7 @@ ListItems have a couple of props for controlling their visual state. The `disabl
 
 ### Disabled
 
-<List>
+<List aria-label="List">
   <ListItem disabled>
     Hello
   </ListItem>
@@ -153,7 +154,7 @@ ListItems have a couple of props for controlling their visual state. The `disabl
 </List>
 
 ```jsx
-<List>
+<List aria-label="List">
   <ListItem disabled>
     Hello
   </ListItem>
@@ -167,21 +168,21 @@ ListItems have a couple of props for controlling their visual state. The `disabl
 
 Events handlers for select can be registered on a `ListItem` as shown below.
 
-<List>
-  <ListItem onSelect={e => console.log(e)}>
+<List aria-label="List">
+  <ListItem value="Hello" onSelect={(value, event) => console.log('onSelect', event.type, value)}>
     Hello
   </ListItem>
-  <ListItem>
+  <ListItem value="World">
     World
   </ListItem>
 </List>
 
 ```jsx
-<List>
-  <ListItem onSelect={e => console.log(e)}>
+<List aria-label="List">
+  <ListItem value="Hello" onSelect={(value, event) => console.log('onSelect', event.type, value)}>
     Hello
   </ListItem>
-  <ListItem>
+  <ListItem value="World">
     World
   </ListItem>
 </List>
@@ -189,8 +190,86 @@ Events handlers for select can be registered on a `ListItem` as shown below.
 
 ## Internationalization
 
-To internationalize a MenuItem, a localized string should be passed as a child.
+To internationalize a ListItem, a localized string should be passed as a child.
 
 ## Accessibility
 
-Lists are accessible by default. The `listbox` role is used for this purpose. When this role is added to an element, the browser will send out an accessible listbox event to assistive technology products which can then notify the user about it.
+### WAI-ARIA Design Pattern
+
+The List component implements the [Listbox design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox), for static role and state properties, and keyboard navigation.
+The List does not provide for dynamic item selection when `onSelect` is called on a listItem. The `selected` state is a controlled prop on ListItem.
+The [SelectList](/components/SelectList), [Select](/components/Select), and [Menu](/components/Menu) components implement dynamic item selection, and are more likely to be used as standalone components.
+
+### Labelling
+
+A List should be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide context for Accessibility.
+
+<FieldLabel label="Country" id="country-label-id" />
+<List aria-labelledby="country-label-id" style={{height: '90px'}}>
+  <ListItem value="AF">
+    Afghanistan
+  </ListItem>
+  <ListItem value="AX">
+    Åland Islands
+  </ListItem>
+  <ListItem value="AL">
+    Albania
+  </ListItem>
+  <ListItem value="DZ">
+    Algeria
+  </ListItem>
+  <ListItem value="AS">
+    American Samoa
+  </ListItem>
+  <ListItem value="AD">
+    Andorra
+  </ListItem>
+  <ListItem value="AO">
+    Angola
+  </ListItem>
+  <ListItem value="AI">
+    Anguilla
+  </ListItem>
+  <ListItem value="AQ">
+    Antarctica
+  </ListItem>
+  <ListItem value="AG">
+    Antigua and Barbuda
+  </ListItem>
+</List>
+
+```jsx
+<FieldLabel label="Country" id="country-label-id" />
+<List aria-labelledby="country-label-id" style={{height: '90px'}}>
+  <ListItem value="AF">
+    Afghanistan
+  </ListItem>
+  <ListItem value="AX">
+    Åland Islands
+  </ListItem>
+  <ListItem value="AL">
+    Albania
+  </ListItem>
+  <ListItem value="DZ">
+    Algeria
+  </ListItem>
+  <ListItem value="AS">
+    American Samoa
+  </ListItem>
+  <ListItem value="AD">
+    Andorra
+  </ListItem>
+  <ListItem value="AO">
+    Angola
+  </ListItem>
+  <ListItem value="AI">
+    Anguilla
+  </ListItem>
+  <ListItem value="AQ">
+    Antarctica
+  </ListItem>
+  <ListItem value="AG">
+    Antigua and Barbuda
+  </ListItem>
+</List>
+```
