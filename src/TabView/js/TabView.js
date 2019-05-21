@@ -5,6 +5,7 @@ import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {TabList} from '../../TabList';
+import TabListBase from '../../TabList/js/TabListBase';
 import '../style/index.styl';
 
 @autobind
@@ -22,8 +23,17 @@ export default class TabView extends React.Component {
     /** Tab orientation */
     orientation: PropTypes.oneOf(['vertical', 'horizontal']),
 
-    /** Selected tab */
-    selectedIndex: PropTypes.number
+    /**
+     * The index of the Tab that should be selected (open). When selectedIndex is
+     * specified, the component is in a controlled state and a Tab can only be selected by changing the
+     * selectedIndex prop value. By default, the first Tab will be selected.
+     */
+    selectedIndex: PropTypes.number,
+
+    /**
+     * The same as selectedIndex except that the component is in an uncontrolled state.
+     */
+    defaultSelectedIndex: PropTypes.number
   };
 
   static defaultProps = {
@@ -35,7 +45,7 @@ export default class TabView extends React.Component {
     super(props);
     this.tabViewId = createId();
     this.state = {
-      selectedIndex: props.selectedIndex || 0
+      selectedIndex: TabListBase.getDefaultSelectedIndex(props)
     };
   }
 
