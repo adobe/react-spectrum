@@ -78,7 +78,7 @@ export default class Menu extends React.Component {
       placement,
       role = 'menu',
       style,
-      trapFocus = true,
+      trapFocus,
       ...otherProps
     } = this.props;
 

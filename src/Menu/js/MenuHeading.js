@@ -9,11 +9,9 @@ export default class MenuHeading extends Component {
       label,
       children,
       role = 'presentation',
+      'aria-level': ariaLevel,
       ...otherProps
     } = this.props;
-
-    let ariaLevel = otherProps['aria-level'];
-    delete otherProps['aria-level'];
 
     return (
       <li role={role} className="spectrum-Menu-sectionHeading" {...filterDOMProps(otherProps)} >
