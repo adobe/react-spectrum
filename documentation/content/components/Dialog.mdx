@@ -244,14 +244,16 @@ The `mode` prop determines whether the dialog appears as an alert, full screen, 
   </ModalTrigger>
 ```
 
-## Accessibility
-
-Dialogs automatically hide content behind them from screen readers while open, block scrolling of the page, and focus the modal.
-Dialogs automatically close on pressing the <kbd>Escape</kbd> key, and when the `keyboardConfirm` prop is enabled, the default action is
-automatically triggered when pressing the <kbd>Enter</kbd> key. You can also automatically focus either the `cancel` or
-`confirm` button when a dialog opens using the `autoFocusButton` prop.
-When the a dialog closes, keyboard focus will be restored to the element that had focus when the dialog opened.
-
 ## Internationalization
 
 To internationalize a dialog, provide localized strings for the title, buttons, and body of the dialog.
+
+## Accessibility
+
+The Dialog component, typically used with the [ModalTrigger](/components/ModalTrigger) component, implements the [Dialog (Modal) design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#dialog_modal).
+
+Dialogs automatically hide content behind them from screen readers while open, block scrolling of the page, and focus the modal.
+Dialogs automatically close on pressing the <kbd>Escape</kbd> key. When the `keyboardConfirm` prop is enabled, the default action is
+automatically triggered when pressing the <kbd>Enter</kbd> key. You can also automatically focus either the `cancel` or
+`confirm` button when a dialog opens using the `autoFocusButton` prop.
+When the dialog closes, keyboard focus will be restored to the element that had focus when the dialog opened.
