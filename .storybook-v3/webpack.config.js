@@ -1,12 +1,25 @@
 const path = require('path');
 const webpack = require('webpack');
 const md5 = require('md5');
+const fs = require('fs');
+
+const fileHashMemo = {};
+
+const getFileHash = (filepath) => {
+  if (fileHashMemo[filepath]) {
+    return fileHashMemo[filepath];
+  }
+  let contentHash = md5(fs.readFileSync(filepath, 'utf8'));
+  fileHashMemo[filepath] = contentHash.substr(contentHash.length - 5);
+  return fileHashMemo[filepath];
+}
 
 const generateScopedName = (localName, resourcePath) => {
   let componentName = resourcePath.split('/').slice(-2, -1);
+  let contentHash = getFileHash(resourcePath);
 
-  let hash = md5(resourcePath);
-  return `${componentName}_${localName}_${hash.substr(hash.length - 5)}`;
+  //let hash = md5(resourcePath);
+  return `${componentName}_${localName}_${contentHash}`;
 };
 
 module.exports = ({config}, env) => {
