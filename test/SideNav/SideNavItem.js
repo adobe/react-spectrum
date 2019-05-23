@@ -1,6 +1,7 @@
 import assert from 'assert';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
+import Refresh from '../../src/Icon/Refresh';
 import {SideNav, SideNavItem} from '../../src/SideNav';
 import sinon from 'sinon';
 
@@ -44,21 +45,26 @@ describe('SideNavItem', () => {
 
   it('label is shown correctly via label prop', () => {
     let tree = render({label: 'Item label'});
-    assert.equal(tree.find('a').prop('children'), 'Item label');
+    assert.equal(tree.find('a').text(), 'Item label');
   });
 
   it('label is shown correctly when passed as children', () => {
     let tree = render({children: 'Item label'});
-    assert.equal(tree.find('a').prop('children'), 'Item label');
+    assert.equal(tree.find('a').text(), 'Item label');
   });
 
   it('renders custom link returned from renderLink prop', () => {
     const label = 'Test Label';
     const renderLink = () => <b>{label}</b>;
-    const tree = render({label: 'Item label', renderLink});
-    assert.equal(tree.find('b').prop('children'), label);
+    const tree = render({label, renderLink});
+    assert.equal(tree.find('b').text(), label);
   });
 
+  it('should support custom icons', () => {
+    const tree = render({children: 'Item label', icon: <Refresh />});
+    const icon = tree.find('.spectrum-SideNav-itemIcon');
+    assert.equal(icon.type(), Refresh);
+  });
 
   describe('renderLink', () => {
     it('renders custom link', () => {
