@@ -7,10 +7,10 @@
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/focus-ring-polyfill/-/focus-ring-polyfill-0.1.5.tgz#b20b5bd1ffb0ceaf42aae1f0837f39ce29f9eb9b"
   integrity sha1-sgtb0f+wzq9CquHwg385zin565s=
 
-"@adobe/spectrum-css@2.9.0":
-  version "2.9.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/spectrum-css/-/spectrum-css-2.9.0.tgz#1770f129af068817cdcfde2f1f6394603f476aeb"
-  integrity sha1-F3DxKa8GiBfNz94vH2OUYD9Haus=
+"@adobe/spectrum-css@2.11.0":
+  version "2.11.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/spectrum-css/-/spectrum-css-2.11.0.tgz#3b7b3ef909906bfea7a0014f08957708721f6cb2"
+  integrity sha1-O3s++QmQa/6noAFPCJV3CHIfbLI=
 
 "@babel/cli@^7.0.0":
   version "7.4.3"
