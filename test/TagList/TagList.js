@@ -148,10 +148,22 @@ describe('TagList', () => {
       assert.equal(findTagList(tree).childAt(1).prop('children'), 'test2');
     });
 
+    it("triggers tag's onClick handler", () => {
+      const onClick = sinon.spy();
+      tree = shallow(
+        <TagList>
+          <Tag className="one" onClick={onClick} closable>Tag 1</Tag>
+          <Tag className="two" closable>Tag 2</Tag>
+        </TagList>
+      );
+      tree.find(Tag).at(0).simulate('click');
+      assert(onClick.calledOnce);
+    });
+
     describe('Keyboard navigation', () => {
       let tree;
       let tag;
-  
+
       before(() => {
         tree = mount(
           <TagList>
@@ -159,11 +171,11 @@ describe('TagList', () => {
             <Tag id="tag2" className="two" closable>Tag 2</Tag>
           </TagList>
         );
-      });   
+      });
 
       after(() => {
         tree.unmount();
-      });    
+      });
 
       it('when ArrowRight key is pressed, focus next tag, ArrowLeft Focuses previous', () => {
         tag = findTagItemAt(tree, 0);
@@ -179,7 +191,7 @@ describe('TagList', () => {
         assert.equal(findTagItemAt(tree, 0).prop('id'), document.activeElement.id);
         assert.equal(tree.state('selectedIndex'), 0);
 
-      });  
+      });
     });
   });
 });

@@ -1,3 +1,4 @@
+import {chain} from '../../utils/events';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
@@ -101,7 +102,7 @@ export default class TagList extends React.Component {
   }
 
 
-  baseChildProps(index) {
+  baseChildProps(index, child = {props: {}}) {
     const {readOnly, onClose, disabled} = this.props;
     const {selectedIndex, focused} = this.state;
     return {
@@ -110,8 +111,8 @@ export default class TagList extends React.Component {
       tabIndex: !disabled && (selectedIndex === index || (!focused && selectedIndex === null)) ? 0 : -1,
       closable: !readOnly,
       disabled,
-      onClick: this.getChildOnClick(index),
-      onFocus: this.getChildOnFocus(index),
+      onClick: chain(this.getChildOnClick(index), child.props.onClick),
+      onFocus: chain(this.getChildOnFocus(index), child.props.onFocus),
       onClose,
       role: 'gridcell'
     };
@@ -140,7 +141,7 @@ export default class TagList extends React.Component {
       return this.renderValues();
     }
     return React.Children.map(this.props.children, (child, index) =>
-      React.cloneElement(child, this.baseChildProps(index))   
+      React.cloneElement(child, this.baseChildProps(index, child))
     );
   }
 
