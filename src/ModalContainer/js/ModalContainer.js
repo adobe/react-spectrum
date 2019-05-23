@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator';
 import BaseModal from 'react-overlays/lib/Modal';
+import {chain} from '../../utils/events';
 import classNames from 'classnames';
 import closest from 'dom-helpers/query/closest';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -11,6 +12,18 @@ import ReactDOM from 'react-dom';
 
 importSpectrumCSS('underlay');
 
+const MODAL_LIFECYCLE_METHODS = [
+  'onBackdropClick',
+  'onEnter',
+  'onEntering',
+  'onEntered',
+  'onEscapeKeyDown',
+  'onExit',
+  'onExiting',
+  'onExited',
+  'onHide',
+  'onShow'
+];
 const MANAGER_SINGLETON = new ModalManager({handleContainerOverflow: false});
 let MODAL_KEY = 1;
 
@@ -25,12 +38,30 @@ export default class ModalContainer {
       container = () => document.querySelector('.react-spectrum-provider') || document.body;
     }
 
+    let {
+      disableEscKey,
+      role,
+      onClose,
+      onHide,
+      onExited,
+      ...modalProps
+    } = content.props;
+
+    role = role && role.indexOf('dialog') !== -1 ? 'presentation' : 'dialog';
+
+    // filter out content.props that are not modal lifecycle methods
+    modalProps = MODAL_LIFECYCLE_METHODS.reduce((obj, key) => ({...obj, [key]: modalProps[key]}), {});
+
     let modal = (
       <Modal
+        {...modalProps}
         container={container}
         key={key}
-        onHide={this.hide.bind(this, key)}
-        onClose={content.props.onClose}>
+        keyboard={!disableEscKey}
+        role={role}
+        onClose={onClose}
+        onHide={chain(this.hide.bind(this, key), onHide, onExited)}
+        aria-modal={role === 'dialog' || null}>
         {content}
       </Modal>
     );
@@ -58,7 +89,10 @@ export class Modal extends React.Component {
     }
   }
 
-  onEntering() {
+  onEntering(e) {
+    if (this.props.onEntering) {
+      this.props.onEntering(e);
+    }
     // Make sure that autoFocus actually moves focus to the Modal.
     if (this.baseModal.lastFocus === document.activeElement) {
       this.baseModal.autoFocus();
@@ -66,9 +100,6 @@ export class Modal extends React.Component {
   }
 
   backdropMode() {
-    // I am sorry for this atrocity. I needed a way to detect when not to have a backdrop.
-    const fullscreenTakeover = this.props.children.props.mode === 'fullscreenTakeover';
-
     /*
      * backdropClickable (bc)
      *     bc | !bc
@@ -76,12 +107,12 @@ export class Modal extends React.Component {
      *      t |static
      * if fullscreenTakeover, then always false
      */
-    let {backdropClickable} = this.props.children.props;
+    const {backdropClickable, mode} = this.props.children.props;
     let backdrop = 'static';
     if (backdropClickable) {
       backdrop = true;
     }
-    if (fullscreenTakeover) {
+    if (mode === 'fullscreenTakeover') {
       backdrop = false;
     }
     return backdrop;
@@ -89,28 +120,24 @@ export class Modal extends React.Component {
 
   render() {
     const backdrop = this.backdropMode();
-    const {role} = this.props.children.props;
-
-    let hasDialogRole = role && role.indexOf('dialog') !== -1;
+    const {children, onHide, ...modalProps} = this.props;
 
     // The z-index here should match the one in Overlay
     return (
       <BaseModal
-        container={this.props.container}
+        {...modalProps}
         style={{zIndex: 100000, position: 'relative'}}
         show={this.state.show}
         ref={baseModal => this.baseModal = baseModal}
         onEntering={this.onEntering}
-        onExited={this.props.onHide}
+        onExited={onHide}
         onHide={this.onClose}
         backdrop={backdrop}
         manager={MANAGER_SINGLETON}
         renderBackdrop={(props) => <Underlay {...props} />}
         transition={OpenTransition}
-        backdropTransition={OpenTransition}
-        role={hasDialogRole ? 'presentation' : 'dialog'}
-        aria-modal={null}>
-        {cloneElement(this.props.children, {
+        backdropTransition={OpenTransition}>
+        {cloneElement(children, {
           onClose: this.onClose
         })}
       </BaseModal>

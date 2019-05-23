@@ -97,7 +97,13 @@ export default class Dialog extends Component {
     /**
      * Keeps focus from escaping dialog
      */
-    trapFocus: PropTypes.bool
+    trapFocus: PropTypes.bool,
+
+    /**
+     * When true, the Esc key will not close the Dialog or trigger an onCancel event.
+     * Use for rare cases when a Dialog requires confirmation before being dismissed.
+     */
+    disableEscKey: PropTypes.bool
   };
 
   static defaultProps = {
@@ -108,7 +114,8 @@ export default class Dialog extends Component {
     role: 'dialog',
     autoFocusButton: null,
     onClose: function () {},
-    trapFocus: true
+    trapFocus: true,
+    disableEscKey: false
   };
 
   constructor(props) {
@@ -145,7 +152,7 @@ export default class Dialog extends Component {
   }
 
   onKeyDown(e) {
-    const {confirmDisabled, keyboardConfirm, onKeyDown} = this.props;
+    const {confirmDisabled, keyboardConfirm, onKeyDown, disableEscKey} = this.props;
     if (onKeyDown) {
       onKeyDown(e);
 
@@ -163,7 +170,9 @@ export default class Dialog extends Component {
         break;
       case 'Esc':
       case 'Escape':
-        this.onCancel();
+        if (!disableEscKey) {
+          this.onCancel();
+        }
         break;
       default:
         if (this.props.trapFocus) {
@@ -199,6 +208,7 @@ export default class Dialog extends Component {
     const derivedVariant = variant || (cancelLabel && confirmLabel ? 'confirmation' : 'information');
 
     delete otherProps.modalContent;
+    delete otherProps.disableEscKey;
 
     return (
       <div

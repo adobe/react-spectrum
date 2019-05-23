@@ -13,11 +13,11 @@ storiesOf('ModalTrigger', module)
   )
   .add(
     'with onConfirm',
-    () => render({onConfirm: action('confirm')})
+    () => render({onConfirm: action('confirm'), onCancel: action('cancel')})
   )
   .add(
     'with onConfirm () => false',
-    () => render({onConfirm: () => false})
+    () => render({onConfirm: () => false, onCancel: action('cancel')})
   )
   .add(
     'with nested Popover',
@@ -26,6 +26,33 @@ storiesOf('ModalTrigger', module)
   .add(
      'with dynamic updates',
     () => renderDynamic()
+  )
+  .add(
+     'disableEscKey:true',
+    () => render({disableEscKey: true, autoFocusButton: 'confirm', title: 'Requires Confirmation'})
+  )
+  .add(
+    'backdropClickable: true',
+   () => render({backdropClickable: true})
+  )
+  .add(
+    'lifecycle methods',
+    () => render({
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      onShow: action('show'),
+      onEnter: action('enter'),
+      onEntering: action('entering'),
+      onEntered: action('entered'),
+      onExit: action('exit'),
+      onExiting: action('exiting'),
+      onExited: action('exited'),
+      onHide: action('hide'),
+      onClose: action('close'),
+      onEscapeKeyDown: action('escapeKeyDown'),
+      onBackdropClick: action('backdropClick')
+    }),
+    {info: 'Modal supports [react-overlay](https://react-bootstrap.github.io/react-overlays/#modals) lifecycle methods for Modals as props on the Dialog.'}
   );
 
 
@@ -37,7 +64,7 @@ const render = (props = {}) => (
       title="The title"
       confirmLabel="Do it"
       size="S"
-      cancelLabel="close"
+      cancelLabel={props.disableEscKey ? null : 'close'}
       {...props}>
       <span>the modal dialog content goes here</span>
     </Dialog>
@@ -99,5 +126,3 @@ const renderDynamic = (props = {}) => (
     <DynamicDialog backdropClickable />
   </ModalTrigger>
 );
-
-

@@ -79,6 +79,10 @@ storiesOf('Dialog', module)
     () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
   .add(
+    'disableEscKey: true',
+    () => render(dialogChildren, {title: 'Requires Confirmation', disableEscKey: true, confirmLabel: 'OK', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')})
+  )
+  .add(
     'autoFocusButton: \'cancel\'',
     () => render(<Textfield aria-label="Textfield" placeholder="Textfield" />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', autoFocusButton: 'cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
