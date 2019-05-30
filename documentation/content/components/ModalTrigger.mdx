@@ -32,9 +32,7 @@ import ModalTrigger from '@react/react-spectrum/ModalTrigger';
     confirmLabel="Do it"
     size="S"
     cancelLabel="close">
-    <span>
     the modal dialog content goes here
-    </span>
   </Dialog>
 </ModalTrigger>
 ```
@@ -71,12 +69,16 @@ ModalTriggers can have `nested popovers` as well as shown in the example below.
 
 ## Handling Events
 
-Events handlers for close, cancel and confirm can be provided to the `Dialog` component. For more information please visit the `Dialog` component documentation.
+Events handlers for close, cancel and confirm can be provided to the `Dialog` component. For more information please visit the [Dialog](/components/Dialog) component documentation.
 
 ## Internationalization
 
-To internationalize a modaltrigger, a localized string should be passed to the `label` prop of its child buttons, or to the `title` prop of its child Dialogs.
+To internationalize a ModalTrigger, a localized string should be passed to the `label` prop of its child buttons, or to the `title` prop of its child Dialogs.
 
 ## Accessibility
 
-ModalTriggers are accessible by default. The correct aria roles will automatically be applied.
+The ModalTrigger component, typically used with the [Dialog](/components/Dialog) component, implements the [Dialog (Modal) design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#dialog_modal).
+
+The ModalTrigger automatically hides content behind the dialog from screen readers while open, blocks scrolling of the page, and moves focus to the modal.
+ModalTrigger will automatically close the dialog when the user presses the <kbd>Escape</kbd> key.
+When the dialog closes, keyboard focus will be restored to the element that had focus when the dialog opened.

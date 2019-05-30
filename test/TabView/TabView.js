@@ -1,6 +1,6 @@
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {Tab, TabView} from '../../src/TabView';
 import {TabList} from '../../src/TabList';
@@ -90,5 +90,18 @@ describe('TabView', function () {
     );
 
     assert.equal(tree.find(Tab).at(0).prop('renderChildren'), false);
+  });
+
+  it('supports defaultSelectedIndex', () => {
+    const tree = mount(
+      <TabView defaultSelectedIndex={1}>
+        <Tab label="Foo">Tab 1</Tab>
+        <Tab label="Bar">Tab 2</Tab>
+      </TabView>
+    );
+    const child = tree.find('[selected=true]');
+    assert.equal(child.length, 1);
+    assert.equal(child.prop('label'), 'Bar');
+    tree.unmount();
   });
 });

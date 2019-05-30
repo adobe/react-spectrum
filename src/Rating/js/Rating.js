@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Star from '../../Icon/core/Star';
 import StarOutline from '../../Icon/core/StarOutline';
@@ -10,11 +11,32 @@ importSpectrumCSS('rating');
 
 @autobind
 export default class Rating extends React.Component {
+  static propTypes = {
+    /**
+     * Prevent interaction with component
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * Number of stars in rating.
+     */
+    max: PropTypes.number,
+
+    /**
+     * Prevents change from happening.
+     */
+    readOnly: PropTypes.bool,
+
+    /**
+     * Sets the rating (controlled).
+     */
+    value: PropTypes.number
+  };
+
   static defaultProps = {
     disabled: false,
     className: '',
-    max: 5,
-    readOnly: false
+    max: 5
   };
 
   state = {

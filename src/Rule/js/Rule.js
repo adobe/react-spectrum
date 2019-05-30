@@ -25,6 +25,6 @@ export default function Rule({
 }
 
 Rule.propTypes = {
-  variant: PropTypes.oneOf(['large', 'medium', 'small']),
-  className: PropTypes.string
+  /** Which Rule variant to render. */
+  variant: PropTypes.oneOf(['large', 'medium', 'small'])
 };

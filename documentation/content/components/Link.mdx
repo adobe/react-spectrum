@@ -64,4 +64,21 @@ To internationalize a link, a localized string should be passed as a child.
 
 ## Accessibility
 
-Links are accessible by default. The correct aria roles will automatically be applied.
+A Link inherits accessibility from the HTML `<a>` tag. With an `href` property,
+it's accessibility role will be exposed to assistive technology as a "link".
+While it is recommended that a Link be used appropriately for navigation to a new page or document location,
+to simplify accessibility implementation, when a Link has an `onClick` event handler but lacks an `href`
+the Link will render using a generic `href="#"` and `preventDefault` will be called on the event if the
+default is not already prevented.
+
+### onClick with no href
+
+<Link onClick={e => console.log(`clicked "${e.target.textContent}" Link`)}>
+I forgot my password
+</Link>
+
+```jsx
+<Link onClick={e => console.log(`clicked "${e.target.textContent}" Link`)}>
+I forgot my password
+</Link>
+```

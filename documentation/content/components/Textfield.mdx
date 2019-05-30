@@ -64,6 +64,16 @@ Shows warning if text field is empty
 <Textfield required="true" placeholder="Required variant" />
 ```
 
+### MultiLine
+
+Allows user to input multiple lines of text
+
+<Textfield multiLine />
+
+```jsx
+<Textfield multiLine />
+```
+
 ## Events
 
 ### onChange
@@ -94,4 +104,16 @@ Function fired when the focus on the textfield is lost.
 
 ```jsx
 <Textfield onBlur={e => console.log(e)} />
+```
+
+## Additional Behavior
+
+### autoFocus
+
+Controls whether or not the text field is automatically focused.
+
+<Textfield autoFocus/>
+
+```jsx
+<Textfield autoFocus/>
 ```

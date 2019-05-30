@@ -104,7 +104,7 @@ The `alt` prop should be used to specify alternate content for screen readers.
 
 ### Images
 
-All images that are neither decorative nor having alternative text that would be redundant with displayed text, 
+All images that are neither decorative nor having alternative text that would be redundant with displayed text,
 must use the `alt` prop to provide alternate content for screen readers.
 
 ```jsx
@@ -117,7 +117,7 @@ must use the `alt` prop to provide alternate content for screen readers.
 
 ## Folders and files
 
-By default, an Asset that displays a folder or file uses a default localized string as the accessibility label. 
+By default, an Asset that displays a folder or file uses a default localized string as the accessibility label.
 Use the `alt` prop to override it with a custom label.
 
 ```jsx
@@ -130,4 +130,16 @@ Use the `decorative` prop to indicate that an asset is decorative, or redundant 
 
 ```jsx
 <Asset type="file" decorative />
+```
+
+## Events
+
+### onLoad
+
+Function fired when an asset image is loaded.
+
+<Asset onLoad={e => console.log(e)} />
+
+```jsx
+<Asset onLoad={e => console.log(e)} />
 ```

@@ -31,6 +31,6 @@ export default function TD({
 
 TD.displayName = 'TD';
 TD.propTypes = {
-  className: PropTypes.string,
+  /** Whether or not to display a vertical dividing line to the right of the cell. */
   isDivider: PropTypes.bool
 };

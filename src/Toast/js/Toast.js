@@ -79,24 +79,30 @@ export default function Toast({
 }
 
 Toast.propTypes = {
-  /** Variant of toast to use */
+  /** Contents to be displayed in the Toast. */
+  children: PropTypes.node,
+
+  /** Variant of toast to use. */
   variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
 
-  /** Whether to show close button on toast*/
+  /** Whether to show close button on toast. */
   closable: PropTypes.bool,
 
-  /** Custom CSS class to add to the text field */
-  className: PropTypes.string,
-
-  /** Label for action button */
+  /** Label for action button. */
   actionLabel: PropTypes.string,
 
   /** Should the action button close the toast? */
   closeOnAction: PropTypes.bool,
 
-  /** Function called when toast is closed */
+  /** Function called when toast is closed. */
   onClose: PropTypes.func,
 
-  /** Function called when action button is clicked */
-  onAction: PropTypes.func
+  /** Function called when action button is clicked. */
+  onAction: PropTypes.func,
+
+  /**
+   * Set the amount of time in milliseconds that the toast should persist.
+   * If set to 0, the toast will remain until closed manually.
+  */
+  timeout: PropTypes.number
 };

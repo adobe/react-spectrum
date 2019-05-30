@@ -35,7 +35,52 @@ export default class Select extends React.Component {
      * A function that returns a wrapper component to render a list item label.
      * Useful in providing custom html to the rendered label.
      */
-    renderItem: PropTypes.func
+    renderItem: PropTypes.func,
+
+    /** Sets the selected item (controlled) for the component. */
+    value: PropTypes.string,
+
+    /** Sets the initial selected item (uncontrolled) for the component. */
+    defaultValue: PropTypes.string,
+
+    /** Whether to allow multiple item selection. */
+    multiple: PropTypes.bool,
+
+    /** Array of strings of options in list */
+    options: PropTypes.arrayOf(PropTypes.object),
+
+    /** Function to call when the selected value changes. */
+    onChange: PropTypes.func,
+
+    /** Function to call when the dropdown menu is opened. */
+    onOpen: PropTypes.func,
+
+    /** Function to call when the dropdown menu is closed. */
+    onClose: PropTypes.func,
+
+    /** Whether to render the quiet variant of the component. */
+    quiet: PropTypes.bool,
+
+    /** Whether to render the invalid appearance of the component. */
+    invalid: PropTypes.bool,
+
+    /** Whether to enforce that at least one option from the list is selected by the user. */
+    required: PropTypes.bool,
+
+    /** Whether the component width should adjust to match the width of the selected value's text. */
+    flexible: PropTypes.bool,
+
+    /** Placeholder text to display if no items have been selected. */
+    placeholder: PropTypes.string,
+
+    /** Sets whether the overlay is flippable. Shift the overlay to the opposite position if out of view. */
+    flip: PropTypes.bool,
+
+    /** Sets the positioning of the dropdown to align to the right. */
+    alignRight: PropTypes.bool,
+
+    /** Sets the icon displayed in the select bar if multiple items are selectable. */
+    icon: PropTypes.node
   };
 
   constructor(props) {

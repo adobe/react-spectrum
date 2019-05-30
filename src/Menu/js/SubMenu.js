@@ -23,13 +23,25 @@ export default class SubMenu extends Component {
     className: PropTypes.string,
 
     /**
+     * The displayed label of the submenu within its parent
+     */
+    label: PropTypes.string,
+
+    /**
      * A select handler for the submenu, triggered whenever an item is selected.
      */
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+
+    /**
+     * True by default, this keeps focus within the expanded submenu of this component.
+     * When disabled, focus may leave the expanded submenu component.
+     */
+    trapFocus: PropTypes.bool
   };
 
   state = {
-    opened: false
+    opened: false,
+    trapFocus: true
   };
 
   menuId = createId();
@@ -106,6 +118,7 @@ export default class SubMenu extends Component {
       onSelect,
       label,
       className,
+      trapFocus,
       ...otherProps
     } = this.props;
 
@@ -133,7 +146,7 @@ export default class SubMenu extends Component {
           ref={r => this.menuItem = r}
           aria-haspopup="menu"
           aria-expanded={opened}
-          aria-owns={this.subMenuId}
+          aria-owns={opened ? this.subMenuId : null}
           {...otherProps}
           onKeyDown={otherProps.disabled ? undefined : this.handleKeyDown}
           onClick={this.show}
@@ -149,7 +162,7 @@ export default class SubMenu extends Component {
           aria-labelledby={this.menuId}
           onMouseEnter={this.show}
           onMouseLeave={this.hide}
-          trapFocus={false}>
+          trapFocus={trapFocus}>
           {React.Children.toArray(children).map(this.cloneItem)}
         </Menu>
       </OverlayTrigger>

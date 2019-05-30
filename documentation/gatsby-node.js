@@ -173,3 +173,8 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     postcss() {}
   });
 };
+
+exports.modifyBabelrc = ({babelrc}) => ({
+  ...babelrc,
+  plugins: babelrc.plugins.concat(['transform-regenerator']),
+})

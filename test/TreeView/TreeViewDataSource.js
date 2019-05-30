@@ -137,7 +137,7 @@ describe('TreeViewDataSource', function () {
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
 
     assert.equal(ds.getSectionLength(0), 4);
@@ -161,7 +161,7 @@ describe('TreeViewDataSource', function () {
       ['reloadItem', new IndexPath(0, 1), false], // isLoading = false
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
 
     assert.equal(ds.getSectionLength(0), 5);
@@ -187,7 +187,7 @@ describe('TreeViewDataSource', function () {
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
   });
 
@@ -202,7 +202,7 @@ describe('TreeViewDataSource', function () {
       ['reloadItem', new IndexPath(0, 1), false],
       ['startTransaction'],
       ['removeItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
 
     assert.equal(ds.getSectionLength(0), 4);
@@ -223,7 +223,7 @@ describe('TreeViewDataSource', function () {
       ['reloadItem', new IndexPath(0, 1), false],
       ['startTransaction'],
       ['removeItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
   });
 
@@ -240,7 +240,7 @@ describe('TreeViewDataSource', function () {
       ['removeItem', new IndexPath(0, 1), undefined],
       ['removeItem', new IndexPath(0, 1), undefined],
       ['removeItem', new IndexPath(0, 1), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
 
     assert.equal(ds.getSectionLength(0), 2);
@@ -255,7 +255,7 @@ describe('TreeViewDataSource', function () {
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
       ['insertItem', new IndexPath(0, 3), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
 
     assert.equal(ds.getSectionLength(0), 5);
@@ -273,13 +273,13 @@ describe('TreeViewDataSource', function () {
       ['startTransaction'],
       ['insertItem', new IndexPath(0, 1), undefined],
       ['insertItem', new IndexPath(0, 2), undefined],
-      ['endTransaction', undefined],
+      ['endTransaction', true],
 
       ['reloadItem', new IndexPath(0, 0), false],
       ['startTransaction'],
       ['removeItem', new IndexPath(0, 1), undefined],
       ['removeItem', new IndexPath(0, 1), undefined],
-      ['endTransaction', undefined]
+      ['endTransaction', true]
     ]);
   });
 

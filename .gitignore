@@ -10,5 +10,6 @@ dist
 .package-lock.json
 
 documentation/public
+documentation/yarn.lock
 dist
 public

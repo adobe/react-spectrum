@@ -31,6 +31,16 @@ export default class Calendar extends Component {
     autoFocus: PropTypes.bool,
 
     /**
+     * Starting value. Can accept anything Moment understands.
+     */
+    defaultValue: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.number,
+      PropTypes.array
+    ]),
+
+    /**
      * A unique identifying string for forms.
      */
     id: PropTypes.string,
@@ -59,7 +69,7 @@ export default class Calendar extends Component {
     ]),
 
     /**
-     * Starting value. Can accept anything Moment understands. Causes component to be Controlled.
+     * Puts component into a controlled state. Can accept anything Moment understands.
      */
     value: PropTypes.oneOfType([
       PropTypes.string,
@@ -89,7 +99,7 @@ export default class Calendar extends Component {
     disabled: PropTypes.bool,
 
     /**
-     * Fill in.
+     * Puts component in a state where value can't be changed by user.
      */
     readOnly: PropTypes.bool,
 
@@ -99,7 +109,7 @@ export default class Calendar extends Component {
     required: PropTypes.bool,
 
     /**
-     * Fill in.
+     * Sets the calendar to invalid.
      */
     invalid: PropTypes.bool,
 

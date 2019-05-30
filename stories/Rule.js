@@ -14,22 +14,20 @@ storiesOf('Rule', module)
     )
   )
   .add('Medium',
-  () => (
-    <section>
-      <Heading variant="subtitle2">Medium</Heading>
-      <Rule variant="medium" />
-      <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
-    </section>
-  ),
-  {inline: true}
+    () => (
+      <section>
+        <Heading variant="subtitle2">Medium</Heading>
+        <Rule variant="medium" />
+        <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
+      </section>
+    )
   )
   .add('Small',
-  () => (
-    <section>
-      <Heading variant="subtitle3">Small</Heading>
-      <Rule variant="small" />
-      <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
-    </section>
-  ),
-  {inline: true}
+    () => (
+      <section>
+        <Heading variant="subtitle3">Small</Heading>
+        <Rule variant="small" />
+        <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
+      </section>
+    )
   );

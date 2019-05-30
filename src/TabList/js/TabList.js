@@ -30,6 +30,12 @@ export default class TabList extends React.Component {
     orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 
     /**
+     * Whether selection should be 'automatic' when a Tab receives keyboard focus
+     * or 'manual' using Enter or Space key to select.
+     */
+    keyboardActivation: PropTypes.oneOf(['automatic', 'manual']),
+
+    /**
      * The index of the Tab that should be selected (open). When selectedIndex is
      * specified, the component is in a controlled state and a Tab can only be selected by changing the
      * selectedIndex prop value. By default, the first Tab will be selected.
@@ -46,13 +52,19 @@ export default class TabList extends React.Component {
      * A function that will be called when an Tab is selected or deselected. It will be passed
      * the updated selected index.
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+
+    /**
+     * Whether to autoFocus first selected Tab or first Tab.
+     */
+    autoFocus: PropTypes.bool
   };
 
   static defaultProps = {
     variant: '',
     quiet: false,
-    orientation: 'horizontal'
+    orientation: 'horizontal',
+    autoFocus: false
   };
 
   state = {

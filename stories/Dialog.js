@@ -42,7 +42,6 @@ storiesOf('Dialog', module)
     'with secondary confirmation disabled',
     () => render(dialogChildren, {title: 'Conflict', confirmDisabled: true, confirmLabel: 'Keep Both', secondaryLabel: 'Replace', cancelLabel: 'Cancel', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
-
   .add(
     'Long content',
     () => render(longMarkup, {title: 'Dialog title', confirmLabel: 'OK'})
@@ -78,6 +77,10 @@ storiesOf('Dialog', module)
   .add(
     'backdropClickable: true',
     () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'})
+  )
+  .add(
+    'disableEscKey: true',
+    () => render(dialogChildren, {title: 'Requires Confirmation', disableEscKey: true, confirmLabel: 'OK', autoFocusButton: 'confirm', onConfirm: action('confirm'), onCancel: action('cancel')})
   )
   .add(
     'autoFocusButton: \'cancel\'',

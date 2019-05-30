@@ -66,4 +66,8 @@ Alert.propTypes = {
   variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success'])
 };
 
+Alert.defaultProps = {
+  variant: 'info'
+};
+
 Alert.displayName = 'Alert';

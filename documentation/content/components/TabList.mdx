@@ -1,10 +1,12 @@
-import {Tab} from '@react/react-spectrum/TabList';
-import {TabList} from '@react/react-spectrum/TabList';
+import Heading from '@react/react-spectrum/Heading';
+import {Tab, TabList} from '@react/react-spectrum/TabList';
 import Twitter from '@react/react-spectrum/Icon/Twitter';
 import Facebook from '@react/react-spectrum/Icon/Facebook';
 import Instagram from '@react/react-spectrum/Icon/Instagram';
 
 ## Overview
+
+A **TabList** creates a set of **Tab** elements. This is typically used with the **TabView** component to control a set of set of layered sections of content, known as tab panels, that display one panel of content at a time.
 
 ## Example
 
@@ -123,16 +125,16 @@ import Instagram from '@react/react-spectrum/Icon/Instagram';
 ### Icons
 
 <TabList>
-  <Tab icon={<Twitter />} title="Twitter" />
-  <Tab icon={<Facebook />} title="Facebook" />
-  <Tab icon={<Instagram />} title="Instagram" />
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter" />
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook" />
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram" />
 </TabList>
 
 ```jsx
 <TabList>
-  <Tab icon={<Twitter />} title="Twitter" />
-  <Tab icon={<Facebook />} title="Facebook" />
-  <Tab icon={<Instagram />} title="Instagram" />
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter" />
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook" />
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram" />
 </TabList>
 ```
 
@@ -152,9 +154,37 @@ import Instagram from '@react/react-spectrum/Icon/Instagram';
 </TabList>
 ```
 
+Adding `disabled` to the TabList itself will disable all Tabs.
+
+<TabList disabled>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+  <Tab>Tab 3</Tab>
+</TabList>
+
+```jsx
+<TabList disabled>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+  <Tab>Tab 3</Tab>
+</TabList>
+```
+
+### autoFocus
+
+Use `autoFocus` to automatically set focus to the selected Tab when the TabList appears in a Dialog or Popover.
+
+```jsx
+<TabList autoFocus>
+  <Tab>Tab 1</Tab>
+  <Tab selected>Tab 2</Tab>
+  <Tab>Tab 3</Tab>
+</TabList>
+```
+
 ## Orientation
 
-### Default selected index
+### Vertical orientation
 
 <TabList orientation="vertical">
   <Tab>
@@ -195,5 +225,99 @@ import Instagram from '@react/react-spectrum/Icon/Instagram';
 <TabList variant="compact">
   <Tab>Tab 1</Tab>
   <Tab>Tab 2</Tab>
+</TabList>
+```
+
+### Quiet
+
+<TabList quiet>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+
+```jsx
+<TabList quiet>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+```
+
+## Events
+
+### onChange
+
+`onChange` is called when an Tab is selected or deselected. It returns the updated selected index.
+
+<TabList onChange={(e) => console.log(e)}>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+
+
+```jsx
+<TabList onChange={(e) => console.log(e)}>
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The TabList implements the Tab List portion of the Tabs design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#tabpanel).
+See the [TabView](/components/TabView) component, for a complete implementation of the design pattern that includes tab panel content.
+
+### Keyboard activation
+
+By default, a Tab automatically becomes selected when it receives focus. By setting the `keyboardActivation` prop to `"manual"`, a user will need to press the <kbd>Enter</kbd> or <kbd>Space</kbd> key after a Tab has received focus to select.
+
+#### Automatic (default)
+<TabList keyboardActivation="automatic">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+
+```jsx
+<TabList keyboardActivation="automatic">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+```
+
+#### Manual
+<TabList keyboardActivation="manual">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+
+```jsx
+<TabList keyboardActivation="manual">
+  <Tab>Tab 1</Tab>
+  <Tab>Tab 2</Tab>
+</TabList>
+```
+
+### Labelling with `aria-label` or `aria-labelledby`
+
+A TabList can be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide additional context for Accessibility.
+
+<Heading size={5} id="tablist-heading-id">
+  Social Media
+</Heading>
+<TabList aria-labelledby="tablist-heading-id">
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter" />
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook" />
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram" />
+</TabList>
+
+```jsx
+<Heading size={5} id="tablist-heading-id">
+  Social Media
+</Heading>
+<TabList aria-labelledby="tablist-heading-id">
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter" />
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook" />
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram" />
 </TabList>
 ```

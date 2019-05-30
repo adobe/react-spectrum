@@ -16,19 +16,34 @@ export default class DropZone extends React.Component {
   };
 
   static propTypes = {
-    /** Controls the cursor displayed when dragging over the drop zone */
+    /**
+     * Controls the cursor displayed when dragging over the drop zone
+     */
     dropEffect: PropTypes.oneOf(['copy', 'move', 'link', 'none']),
 
-    /** A function that should return a boolean indicating whether a drop is accepted */
+    /**
+     * A function that should return a boolean indicating whether a drop is accepted
+     */
     shouldAccept: PropTypes.func,
 
-    /** A callback that is called when dragging over the drop zone */
+    /**
+     * A callback that is called when dragging leaves the drop zone
+     */
+    onDragLeave: PropTypes.func,
+
+    /**
+     * A callback that is called when dragging over the drop zone
+     */
     onDragOver: PropTypes.func,
 
-    /** A callback that is called when a drop occurs */
+    /**
+     * A callback that is called when a drop occurs
+     */
     onDrop: PropTypes.func,
 
-    /** Custom className to apply to this component */
+    /**
+     * Custom className to apply to this component
+     */
     className: PropTypes.string
   };
 

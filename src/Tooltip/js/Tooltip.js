@@ -11,12 +11,7 @@ export default class Tooltip extends Component {
     /**
      * The placement of the tooltip.
      */
-    placement: PropTypes.oneOf([
-      'bottom', 'bottom left', 'bottom right',
-      'top', 'top left', 'top right',
-      'left', 'left top', 'left bottom',
-      'right', 'right top', 'right bottom'
-    ]),
+    placement: PropTypes.oneOf(['bottom', 'top', 'left', 'right']),
 
     /**
      * The variant will affect color.
@@ -32,7 +27,7 @@ export default class Tooltip extends Component {
      * The ID of the tooltip.
      */
     id: PropTypes.string,
-    
+
     /**
      * The WAI-ARIA role for the tooltip
      */

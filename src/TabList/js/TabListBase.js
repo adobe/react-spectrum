@@ -95,10 +95,12 @@ export default class TabListBase extends Component {
   getChildProps(child, index) {
     const selectedIndex = this.state.selectedIndex;
     const selected = +selectedIndex === index;
+    const disabled = this.props.disabled ? true : child.props.disabled;
 
     return {
       ...this.getMappedChildProps(child, index),
       selected,
+      disabled,
       tabIndex: (selected ? 0 : -1),
       onClick: this.getChildOnClick(child, index),
       onFocus: this.getChildOnFocus(child, index),
@@ -154,6 +156,7 @@ export default class TabListBase extends Component {
 
   cleanProps() {
     const {...otherProps} = this.props;
+    delete otherProps.autoFocus;
     delete otherProps.defaultSelectedIndex;
     delete otherProps.selectedIndex;
 
@@ -174,7 +177,7 @@ export default class TabListBase extends Component {
 
   render() {
     return (
-      <FocusManager itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation === 'vertical' ? 'both' : 'horizontal'}>
+      <FocusManager autoFocus={this.props.autoFocus} disabled={this.props.disabled}  itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation === 'vertical' ? 'both' : 'horizontal'}>
         <div
           {...this.cleanProps()}
           role="tablist">
@@ -186,6 +189,7 @@ export default class TabListBase extends Component {
 }
 
 TabListBase.propTypes = {
+  autoFocus: PropTypes.bool,
   defaultSelectedIndex: PropTypes.number,
   disabled: PropTypes.bool,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
@@ -194,6 +198,7 @@ TabListBase.propTypes = {
 };
 
 TabListBase.defaultProps = {
+  autoFocus: false,
   defaultSelectedIndex: 0,
   disabled: false,
   orientation: 'horizontal',

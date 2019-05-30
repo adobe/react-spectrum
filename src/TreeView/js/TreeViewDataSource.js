@@ -281,8 +281,9 @@ export default class TreeViewDataSource extends ArrayDataSource {
   /**
    * Expands the given item, displaying all of its children.
    * @param {object} item
+   * @param {boolean} showAnimation
    */
-  async expandItem(item) {
+  async expandItem(item, showAnimation = true) {
     let node = this._getItem(item);
     if (!node || node.isExpanded) {
       return;
@@ -309,14 +310,15 @@ export default class TreeViewDataSource extends ArrayDataSource {
       }
     });
 
-    this.endTransaction();
+    this.endTransaction(showAnimation);
   }
 
   /**
    * Collapses the given item, hiding all of its children.
    * @param {object} item
+   * @param {boolean} showAnimation
    */
-  collapseItem(item) {
+  collapseItem(item, showAnimation = true) {
     let node = this._getItem(item);
     if (!node || !node.isExpanded) {
       return;
@@ -337,7 +339,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
       }
     });
 
-    this.endTransaction();
+    this.endTransaction(showAnimation);
   }
 
   _findInsertionIndex(parent, index) {
@@ -565,7 +567,7 @@ export default class TreeViewDataSource extends ArrayDataSource {
       if (items.length === 0) {
         return;
       }
-      
+
       if (dropTarget.dropPosition === 'DROP_ON') {
         this.dataSource.performMove(target.item, 0, dropOperation, items);
       } else {

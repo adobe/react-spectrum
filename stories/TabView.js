@@ -41,4 +41,13 @@ storiesOf('TabView', module)
         <Tab label="Tab 2">Tab Body 2</Tab>
       </TabView>
     )
+  )
+  .add(
+    'defaultSelectedIndex: 1',
+    () => (
+      <TabView defaultSelectedIndex={1} onSelect={action('onSelect')}>
+        <Tab label="Tab 1">Tab Body 1</Tab>
+        <Tab label="Tab 2">Tab Body 2</Tab>
+      </TabView>
+    )
   );

@@ -1,7 +1,11 @@
 import {action} from '@storybook/addon-actions';
+import Email from '../src/Icon/Email';
+import Folder from '../src/Icon/Folder';
+import Home from '../src/Icon/Home';
 import React from 'react';
 import {SideNav, SideNavHeading, SideNavItem} from '../src/SideNav';
 import {storiesOf} from '@storybook/react';
+import ViewGrid from '../src/Icon/ViewGrid';
 
 storiesOf('SideNav', module)
   .add(
@@ -70,6 +74,17 @@ storiesOf('SideNav', module)
           <SideNavItem value="reviews">Reviews</SideNavItem>
           <SideNavItem value="signatures">Signatures</SideNavItem>
         </SideNavHeading>
+      </SideNav>
+    )
+  )
+  .add(
+    'Icon',
+    () => (
+      <SideNav defaultValue="home" onSelect={action('onSelect')}>
+        <SideNavItem icon={<Home />} value="home" label="Home" />
+        <SideNavItem icon={<ViewGrid />} value="apps" label="Apps" />
+        <SideNavItem icon={<Folder />} value="assets" label="Assets" />
+        <SideNavItem icon={<Email />} value="mails" label="Mails" />
       </SideNav>
     )
   )

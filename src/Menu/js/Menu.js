@@ -10,8 +10,9 @@ export default class Menu extends React.Component {
 
   static propTypes = {
     /**
-     * The position of the menu popover. If used with overlay trigger and there isn't enough room
-     * for the menu in that position, it will make a limited attempt to find a new position.
+     * Location of the menu in relation to the element triggering it. If used
+     * with overlay trigger and there isn't enough room for the menu in that
+     * position, it will make a limited attempt to find a new position.
      */
     placement: PropTypes.oneOf([
       'bottom', 'bottom left', 'bottom right',
@@ -26,12 +27,12 @@ export default class Menu extends React.Component {
     open: PropTypes.bool,
 
     /**
-     * Callback for when the from the menu is closed
+     * Callback when menu closes.
      */
     onClose: PropTypes.func,
 
     /**
-     * Callback for when an item is selected from the menu
+     * Callback when menu item is selected.
      */
     onSelect: PropTypes.func,
 
@@ -41,9 +42,19 @@ export default class Menu extends React.Component {
     className: PropTypes.string,
 
     /**
+     * True by default, this keeps focus within children of this component.
+     * When disabled, focus may leave this component.
+     */
+    trapFocus: PropTypes.bool,
+
+    /**
      * The WAI-ARIA role for the menu. Defaults to "menu", but could be "listbox" depending on context.
      */
     role: PropTypes.oneOf(['menu', 'listbox'])
+  };
+
+  static defaultProps = {
+    trapFocus: true
   };
 
   getListRef() {
@@ -59,7 +70,6 @@ export default class Menu extends React.Component {
 
   render() {
     const {
-      arrowStyle,
       children,
       className,
       open,
@@ -68,7 +78,7 @@ export default class Menu extends React.Component {
       placement,
       role = 'menu',
       style,
-      trapFocus = true,
+      trapFocus,
       ...otherProps
     } = this.props;
 
@@ -76,7 +86,7 @@ export default class Menu extends React.Component {
     delete otherProps.onClick;
 
     return (
-      <Popover arrowStyle={arrowStyle} isDialog={false} placement={placement} open={open} onClose={onClose} style={style} trapFocus={trapFocus}>
+      <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style} trapFocus={trapFocus}>
         <List ref={l => this.listRef = l} role={role} className={className} onClick={this.onClick} {...otherProps}>
           {React.Children.map(children, child => React.cloneElement(child, {
             onSelect

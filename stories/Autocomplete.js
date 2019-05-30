@@ -72,4 +72,12 @@ storiesOf('Autocomplete', module)
       </Autocomplete>
     ),
     {info: 'This example uses renderItem method to italicize text'}
+  )
+  .add(
+    'showMenu: false',
+    () => (
+      <Autocomplete allowCreate getCompletions={getCompletions} onSelect={action('select')} showMenu={false}>
+        <Textfield placeholder="Autocomplete..." />
+      </Autocomplete>
+    )
   );

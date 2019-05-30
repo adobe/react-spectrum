@@ -7,6 +7,7 @@ import Provider from '../Provider';
 import proxy from './proxyObject';
 import React from 'react';
 import Wait from '../Wait';
+import './style/CollectionView/index.styl';
 
 // symbol + counter for requests
 let REQUEST_ID = 1;
@@ -198,7 +199,7 @@ export default class CollectionView extends React.Component {
   }
 
   renderSupplementaryView(type) {
-    const {renderEmptyView, renderSupplementaryView} = this.props;
+    const {renderEmptyView, renderSupplementaryView, role, colCount} = this.props;
     let supplementaryView;
 
     if (renderSupplementaryView) {
@@ -206,6 +207,8 @@ export default class CollectionView extends React.Component {
     }
 
     if (!supplementaryView) {
+      const wrapInRow = role === 'grid' || role === 'rowgroup';
+
       if (type === 'loading-indicator') {
         supplementaryView = <Wait centered size="M" />;
       }
@@ -213,9 +216,17 @@ export default class CollectionView extends React.Component {
       if (type === 'empty-view' && renderEmptyView) {
         supplementaryView = renderEmptyView();
       }
+
+      if (supplementaryView && wrapInRow) {
+        supplementaryView = (
+          <RowWrapper colCount={colCount}>
+            {supplementaryView}
+          </RowWrapper>
+        );
+      }
     }
 
-    return supplementaryView || <div />;
+    return supplementaryView || <div role="presentation" />;
   }
 
   render() {
@@ -235,6 +246,23 @@ export default class CollectionView extends React.Component {
         })}
         delegate={this.state.delegate}
         onScroll={this.onScroll} />
+    );
+  }
+}
+
+export class RowWrapper extends React.Component {
+  render() {
+    const {
+      children,
+      colCount,
+      className
+    } = this.props;
+    return (
+      <div role="row" className={classNames('react-spectrum-CollectionView-rowWrapper', className)}>
+        <div role="rowheader" aria-colspan={colCount}>
+          {children}
+        </div>
+      </div>
     );
   }
 }

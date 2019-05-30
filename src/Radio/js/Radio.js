@@ -34,17 +34,42 @@ export default function Radio({
 Radio.displayName = 'Radio';
 Radio.propTypes = {
   /**
-  * Class given to radio
-  */
+   * Whether the radio should start off checked (controlled state)
+   */
+  checked: PropTypes.bool,
+
+  /**
+   * Class given to radio
+   */
   className: PropTypes.string,
 
   /**
-  * Whether label is below radio
-  */
+   * Whether the radio should be checked on mount
+   */
+  defaultChecked: PropTypes.bool,
+
+  /**
+   * Displays the invalid state of this component
+   */
+  invalid: PropTypes.bool,
+
+  /**
+   * Label for radio
+   */
+  label: PropTypes.string,
+
+  /**
+   * Whether label is below radio
+   */
   labelBelow: PropTypes.bool,
 
   /**
-  * Whether switch is a quiet variation
-  */
-  quiet: PropTypes.bool
+   * Whether radio is a quiet variation
+   */
+  quiet: PropTypes.bool,
+
+  /**
+   * Whether label is rendered
+   */
+  renderLabel: PropTypes.bool
 };

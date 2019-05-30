@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
+import {cloneIcon} from '../../utils/icon';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
@@ -48,6 +49,11 @@ export default class SideNavItem extends Component {
      * The target type for item link
      */
     target: PropTypes.string,
+
+    /**
+     * Icon for item
+     */
+    icon: PropTypes.node,
 
     /**
      * Whether item should represent the current page within a set of pages or current location within an environment or context when selected.
@@ -206,6 +212,7 @@ export default class SideNavItem extends Component {
       ariaLevel,
       hidden,
       id = this.id,
+      icon,
       disabled,
       href,
       renderLink,
@@ -250,7 +257,11 @@ export default class SideNavItem extends Component {
       return renderLink(props);
     }
 
-    return <a {...props}>{label}</a>;
+    return (
+      <a {...props}>
+        {cloneIcon(icon, {className: 'spectrum-SideNav-itemIcon', size: 'S'})}
+        {label}
+      </a>);
   }
 
   render() {

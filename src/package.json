@@ -1,6 +1,6 @@
 {
   "name": "@react/react-spectrum",
-  "version": "2.20.0",
+  "version": "2.21.0",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "react-dom": "^0.14 || ^15 || ^16"
   },
   "dependencies": {
-    "@react/collection-view": "^4.1.0",
+    "@react/collection-view": "^4.1.5",
     "autobind-decorator": "^1.4.0",
     "classnames": "^2.2.5",
     "dom-helpers": "^3.3.1",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
-    "@adobe/spectrum-css": "2.9.0",
+    "@adobe/spectrum-css": "2.11.0",
     "@react/react-spectrum-icons": "^2.1.0",
     "@spectrum/spectrum-flexbox-grid": "1.1.1",
     "@spectrum/spectrum-icons": "1.0.0-beta.17",

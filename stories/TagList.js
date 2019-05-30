@@ -29,7 +29,7 @@ function render(props = {}) {
       <TagList
         onClose={action('close')}
         {...props}>
-        <Tag>Tag 1</Tag>
+        <Tag onClick={action('click tag1')}>Tag 1</Tag>
         <Tag>Tag 2</Tag>
         <Tag>Tag 3</Tag>
         <Tag>Tag 4</Tag>

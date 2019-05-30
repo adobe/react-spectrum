@@ -1,0 +1,152 @@
+import Button from '@react/react-spectrum/Button';
+import {error, success, Toast} from '@react/react-spectrum/Toast';
+
+## Overview
+
+Toasts are small UI text boxes that appear in response to an event or operation. The contents of a toast message are typically concise and relevant to said event or operation.
+
+## Base Example
+
+<Toast>Example Toast</Toast>
+
+## Variants
+
+<Toast variant="error">error</Toast>
+<Toast variant="warning">warning</Toast>
+<Toast variant="info">info</Toast>
+<Toast variant="success">success</Toast>
+
+```jsx
+import Toast from '@react/react-spectrum/Toast';
+
+<Toast variant="error">error</Toast>
+<Toast variant="warning">warning</Toast>
+<Toast variant="info">info</Toast>
+<Toast variant="success">success</Toast>
+```
+
+## Toast Behaviors
+
+### Closable Toasts
+
+The user can specify if a toast is closable and the accompanying action that should occur upon close. The toast reflects it's closablity status by rendering a 'x' button on the right of the toast.
+
+<Toast
+  closable
+  onClose={() => console.log('Toast closed')}>
+Close this Toast.
+</Toast>
+
+```jsx
+<Toast
+  closable
+  onClose={() => console.log('Toast closed')}>
+Close this Toast.
+</Toast>
+```
+
+### Actionable Toasts
+
+The user can also specify if a toast is actionable. Similar to how a closable toast accepts an accompanying `onClose` function, an actionable toast has an `onAction` function that triggers when the user clicks the toast's action button.
+
+<Toast
+  actionLabel="Click Me!"
+  onAction={() => console.log('Toast action button clicked')}>
+Action Toast
+</Toast>
+
+```jsx
+<Toast
+  actionLabel="Click Me!"
+  onAction={() => console.log('Toast action button clicked')}>
+Action Toast
+</Toast>
+```
+
+Additionally, the user may also specify that a toast should close on action via the `closeOnAction` prop. Note that this cause the `onClose` function to fire after the `onAction` function.
+
+<Toast
+  closable
+  closeOnAction
+  actionLabel="Click Me!"
+  onAction={() => console.log('Toast action button clicked')}
+  onClose={() => console.log('Toast closed')}>
+Close on action Toast.
+</Toast>
+
+```jsx
+<Toast
+  closable
+  closeOnAction
+  actionLabel="Click Me!"
+  onAction={() => console.log('Toast action button clicked')}
+  onClose={() => console.log('Toast closed')}>
+Close on action Toast.
+</Toast>
+```
+
+## Sample implementation
+
+Below is a sample implementation that makes a toast appear when a button is clicked. The premade error variant of Toast that is imported is closable by default and accepts additional options as the function's second input parameter. `success`, `warning`, `info`, and `error` are all valid variants for import.
+
+<Button
+  onClick={() => {
+    error("Hi!", {
+      actionLabel: 'undo',
+      onClose: () => console.log('close'),
+      onAction: console.log('action'),
+      timeout: 5000
+    });
+  }}
+  variant="primary">
+  Show Toast
+</Button>
+
+```jsx
+import Button from '@react/react-spectrum/Button';
+import {error} from '@react/react-spectrum/Toast';
+
+<Button
+  onClick={() => {
+    error("Hi!", {
+      actionLabel: 'undo',
+      onClose: () => console.log('close'),
+      onAction: console.log('action'),
+      timeout: 5000
+    });
+  }}
+  variant="primary">
+  Show Toast
+</Button>
+```
+
+### Toast Timeout
+
+As shown briefly in the last example, a final option that a toast accepts is `timeout`. This option sets how long in milliseconds a toast will persist before disappearing. If set to 0, the toast will persist until manually closed.
+
+<Button
+  onClick={() => {
+    success("Persists until manually closed!", {
+      onClose: () => console.log('close'),
+      timeout: 0
+    });
+  }}
+  variant="primary">
+  Show Toast
+</Button>
+
+```jsx
+import Button from '@react/react-spectrum/Button';
+import {success} from '@react/react-spectrum/Toast';
+
+<Button
+  onClick={() => {
+    success("Persists until manually closed!", {
+      onClose: () => console.log('close'),
+      timeout: 0
+    });
+  }}
+  variant="primary">
+  Show Toast
+</Button>
+```

@@ -1,10 +1,12 @@
-import {Tab} from '@react/react-spectrum/TabView';
-import {TabView} from '@react/react-spectrum/TabView';
+import Heading from '@react/react-spectrum/Heading';
+import {Tab, TabView} from '@react/react-spectrum/TabView';
 import Twitter from '@react/react-spectrum/Icon/Twitter';
 import Facebook from '@react/react-spectrum/Icon/Facebook';
+import Instagram from '@react/react-spectrum/Icon/Instagram';
 
 ## Overview
 
+A **TabView** creates a set of **Tab** elements which control a set of set of layered sections of content, known as tab panels, that display one panel of content at a time.
 
 ## Example
 
@@ -29,7 +31,197 @@ import Facebook from '@react/react-spectrum/Icon/Facebook';
 </TabView>
 ```
 
+## Tabs
+
+### Default selected index
+
+<TabView defaultSelectedIndex={1}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+
+```jsx
+<TabView defaultSelectedIndex={1}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
+### Selected index
+
+<TabView selectedIndex={1}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+
+```jsx
+<TabView selectedIndex={1}>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
+### Tab select
+
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2" selected>
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+
+```jsx
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2" selected>
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
+## Icons
+
+<TabView>
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter">
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook">
+    Facebook!
+  </Tab>
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram">
+    Instagram!
+  </Tab>
+</TabView>
+
+```jsx
+<TabView>
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter">
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook">
+    Facebook!
+  </Tab>
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram">
+    Instagram!
+  </Tab>
+</TabView>
+```
+
+### Disabled
+
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2" disabled>
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+
+```jsx
+<TabView>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2" disabled>
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
+Adding `disabled` to the TabList itself will disable all Tabs.
+
+<TabView disabled>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+
+```jsx
+<TabView disabled>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
+### autoFocus
+
+Use `autoFocus` to automatically set focus to the selected Tab when the TabView appears in a Dialog or Popover.
+
+```jsx
+<TabView autoFocus>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2" selected>
+    Tab Body 2
+  </Tab>
+  <Tab label="Tab 3">
+    Tab Body 3
+  </Tab>
+</TabView>
+```
+
 ## Orientation
+
+### Vertical orientation
 
 <TabView orientation="vertical">
   <Tab label="Tab 1">
@@ -51,24 +243,48 @@ import Facebook from '@react/react-spectrum/Icon/Facebook';
 </TabView>
 ```
 
-## Icons
+## Variants
 
-<TabView>
-  <Tab icon={<Twitter />}>
-    Twitter!
+### Compact
+
+<TabView variant="compact">
+  <Tab label="Tab 1">
+    Tab Body 1
   </Tab>
-  <Tab icon={<Facebook />}>
-    Facebook!
+  <Tab label="Tab 2">
+    Tab Body 2
   </Tab>
 </TabView>
 
 ```jsx
-<TabView>
-  <Tab icon={<Twitter />}>
-    Twitter!
+<TabView variant="compact">
+  <Tab label="Tab 1">
+    Tab Body 1
   </Tab>
-  <Tab icon={<Facebook />}>
-    Facebook!
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```
+
+### Quiet
+
+<TabView quiet>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+```jsx
+<TabView quiet>
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
   </Tab>
 </TabView>
 ```
@@ -94,6 +310,94 @@ import Facebook from '@react/react-spectrum/Icon/Facebook';
   </Tab>
   <Tab label="Tab 2">
     Tab Body 2
+  </Tab>
+</TabView>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The TabView implements the Tabs design pattern, per [WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#tabpanel).
+
+### Keyboard activation
+
+By default, a Tab automatically becomes selected when it receives focus. By setting the `keyboardActivation` prop to `"manual"`, a user will need to press the <kbd>Enter</kbd> or <kbd>Space</kbd> key after a Tab has received focus to select.
+
+#### Automatic (default)
+<TabView keyboardActivation="automatic">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+```jsx
+<TabView keyboardActivation="automatic">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```
+
+#### Manual
+<TabView keyboardActivation="manual">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+
+```jsx
+<TabView keyboardActivation="manual">
+  <Tab label="Tab 1">
+    Tab Body 1
+  </Tab>
+  <Tab label="Tab 2">
+    Tab Body 2
+  </Tab>
+</TabView>
+```
+
+### Labelling with `aria-label` or `aria-labelledby`
+
+TabView can be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide additional context for Accessibility.
+
+<Heading size={5} id="tabview-heading-id">
+  Social Media
+</Heading>
+<TabView aria-labelledby="tabview-heading-id">
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter">
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook">
+    Facebook!
+  </Tab>
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram">
+    Instagram!
+  </Tab>
+</TabView>
+
+```jsx
+<Heading size={5} id="tabview-heading-id">
+  Social Media
+</Heading>
+<TabView aria-labelledby="tabview-heading-id">
+  <Tab icon={<Twitter alt="Twitter" />} title="Twitter">
+    Twitter!
+  </Tab>
+  <Tab icon={<Facebook alt="Facebook" />} title="Facebook">
+    Facebook!
+  </Tab>
+  <Tab icon={<Instagram alt="Instagram" />} title="Instagram">
+    Instagram!
   </Tab>
 </TabView>
 ```
