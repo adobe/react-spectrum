@@ -115,7 +115,13 @@ export default class TableRow extends React.Component {
    * @param {KeyboardEvent} event A keydown event
    */
   onKeyDown(event) {
-    const {collectionView, tableView, isHeaderRow, onSelectChange, onCellFocus} = this.props;
+    const {
+      tableView,
+      collectionView = (tableView ? tableView.collection : null),
+      isHeaderRow,
+      onSelectChange,
+      onCellFocus
+    } = this.props;
     let {key} = event;
     let focusable = null;
 
