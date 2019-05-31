@@ -20,8 +20,8 @@ export default function ShellHeader({
         )
       }
       {...otherProps}>
-      <div className="coral3-Shell-header-home" aria-level="2">
-        <a className="coral3-Shell-homeAnchor" href={homeURL} role="heading" aria-level="2">
+      <div className="coral3-Shell-header-home" role="heading" aria-level="2">
+        <a className="coral3-Shell-homeAnchor" href={homeURL}>
           {homeIcon}
           <div className="coral3-Shell-homeAnchor-label">{homeTitle}</div>
         </a>

@@ -143,7 +143,7 @@ export default class CoachMark extends React.Component {
               placement={placement}
               offset={CoachMark.INDICATOR_OFFSET}
               onHide={this.onHide}
-              shouldUpdatePosition={this.state.indicatorPositioned && this.shouldUpdatePosition} >
+              shouldUpdatePosition={this.state.indicatorPositioned && this.shouldUpdatePosition}>
               <CoachMarkIndicator
                 selector={selector}
                 quiet={quiet}

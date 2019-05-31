@@ -475,17 +475,17 @@ describe('FocusManager', function () {
     beforeEach(() => {
       tree = mount(
         <FocusManager itemSelector=".item:not(.disabled)" manageTabIndex typeToSelect>
-          <ul onKeyDown={onKeyDownProp} onKeyPress={onKeyPressProp} onFocus={onFocusProp} onBlur={onBlurProp}>
-            <li className="item" tabIndex="-1">Afghanistan</li>
-            <li className="item" tabIndex="-1">Åland Islands</li>
-            <li className="item" tabIndex="-1">Albania</li>
-            <li className="item" tabIndex="-1">Côte d'Ivoire</li>
-            <li className="item" tabIndex="-1">Curaçao</li>
-            <li className="item" tabIndex="-1">Korea, Democratic People's Republic of</li>
-            <li className="item" tabIndex="-1">Korea, Republic of</li>
-            <li className="item" tabIndex="-1">United Arab Emirates</li>
-            <li className="item" tabIndex="-1">United Kingdom</li>
-            <li className="item" tabIndex="-1">United States</li>
+          <ul role="listbox" onKeyDown={onKeyDownProp} onKeyPress={onKeyPressProp} onFocus={onFocusProp} onBlur={onBlurProp}>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Afghanistan</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Åland Islands</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Albania</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Côte d'Ivoire</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Curaçao</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Korea, Democratic People's Republic of</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>Korea, Republic of</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>United Arab Emirates</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>United Kingdom</li>
+            <li role="option" aria-selected={false} className="item" tabIndex={-1}>United States</li>
           </ul>
         </FocusManager>
       );

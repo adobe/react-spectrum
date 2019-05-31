@@ -83,7 +83,7 @@ describe('TreeView', function () {
       await sleep(1);
       await dataSource.expandItem(dataSource.getItem(0, 0).item);
       let collection = wrapper.find(EditableCollectionView);
-      let node = collection.render().find('a').first();
+      let node = collection.render().find('.spectrum-TreeView-item > *').first();
       assert(node.hasClass('spectrum-TreeView-itemLink'));
       assert.equal(node.attr('aria-expanded'), 'true');
       assert.equal(node.attr('aria-setsize'), '2');

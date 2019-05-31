@@ -546,7 +546,8 @@ export default class Slider extends React.Component {
               {label}
             </label>
             {shouldRenderLabel &&
-              <div className="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? e => this.onClickSliderValue(e) : null}>
+              /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
+              <div className="spectrum-Slider-value" role="textbox" tabIndex={-1} aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? e => this.onClickSliderValue(e) : null}>
                 {labelValue}
               </div>
             }

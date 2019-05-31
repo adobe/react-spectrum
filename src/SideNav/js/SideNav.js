@@ -62,6 +62,11 @@ export default class SideNav extends Component {
     autoFocus: PropTypes.bool,
 
     /**
+     * Whether the sidenav is a child of a sidenav item
+     */
+    isNested: PropTypes.bool,
+
+    /**
      * A select handler for the sidenav
      */
     onSelect: PropTypes.func
@@ -72,6 +77,7 @@ export default class SideNav extends Component {
     manageTabIndex: false,
     typeToSelect: false,
     autoFocus: false,
+    isNested: false,
     onSelect: () => {}
   }
 
@@ -117,10 +123,10 @@ export default class SideNav extends Component {
   getListRole() {
     const {
       variant,
-      role
+      isNested
     } = this.props;
     if (variant === 'multiLevel') {
-      return role === 'none' ? 'group' : 'tree';
+      return isNested ? 'group' : 'tree';
     }
     return undefined;
   }
@@ -137,11 +143,14 @@ export default class SideNav extends Component {
       typeToSelect,
       ariaLevel = 1,
       autoFocus,
+      isNested,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
       ...otherProps
     } = this.props;
 
     const isMultiLevel = variant === 'multiLevel';
-    const Element = role !== 'none' ? 'nav' : 'div';
+    const Element = isNested ? 'div' : 'nav';
 
     delete otherProps.value;
 
@@ -150,9 +159,9 @@ export default class SideNav extends Component {
         id={id}
         hidden={hidden}
         aria-hidden={hidden}
-        role={role}
-        aria-label={role !== 'none' ? otherProps['aria-label'] : undefined}
-        aria-labelledby={role !== 'none' ? otherProps['aria-labelledby'] : undefined}
+        role={isNested ? 'presentation' : role}
+        aria-label={!isNested ? ariaLabel : undefined}
+        aria-labelledby={!isNested ? ariaLabelledby : undefined}
         className={classNames(className, 'react-spectrum-SideNav')}>
         <FocusManager
           itemSelector={SIDENAV_ITEM_SELECTOR}

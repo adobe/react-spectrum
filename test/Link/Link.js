@@ -31,8 +31,8 @@ describe('Link', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Link aria-foo>My Link</Link>);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Link aria-hidden>My Link</Link>);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   it('supports children', () => {

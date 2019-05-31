@@ -189,8 +189,8 @@ describe('TabList', () => {
     const mouseDownSpy = sinon.spy();
     const tree = shallow(
       <TabList>
-        <div className="one">a</div>
-        <div className="two" onMouseDown={mouseDownSpy}>b</div>
+        <div role="tab" tabIndex={0} className="one">a</div>
+        <div role="tab" tabIndex={0} className="two" onMouseDown={mouseDownSpy}>b</div>
       </TabList>, {disableLifecycleMethods: true}
     );
     const innerTree = tree.shallow();
@@ -206,12 +206,13 @@ describe('TabList', () => {
   });
 
   it('supports onClick on child', () => {
+    const keyDownSpy = sinon.spy();
     const focusSpy = sinon.spy();
     const spy = sinon.spy();
     const tree = shallow(
       <TabList>
-        <div className="one">a</div>
-        <div className="two" onClick={spy}>b</div>
+        <div role="tab" tabIndex={0} className="one">a</div>
+        <div role="tab" tabIndex={0} className="two" onClick={spy} onKeyDown={keyDownSpy}>b</div>
       </TabList>, {disableLifecycleMethods: true}
     );
     const innerTree = tree.shallow();
@@ -225,8 +226,8 @@ describe('TabList', () => {
     const focusSpy = sinon.spy();
     const tree = mount(
       <TabList>
-        <div tabIndex={0} className="one">a</div>
-        <div tabIndex={0} className="two" onFocus={focusSpy}>b</div>
+        <div role="tab" tabIndex={0} className="one">a</div>
+        <div role="tab" tabIndex={0} className="two" onFocus={focusSpy}>b</div>
       </TabList>
     );
 

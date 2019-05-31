@@ -17,6 +17,8 @@ describe('CoachMark', () => {
     clock = sinon.useFakeTimers();
   });
   afterEach(() => {
+    document.activeElement.blur();
+    clock.runAll();
     tree.detach();
     tree = null;
     clock.restore();
@@ -30,6 +32,7 @@ describe('CoachMark', () => {
       <CoachMark onHide={onHide} title="Hello world" selector="#something" confirmLabel="confirm" />,
       {attachTo: mountNode}
     );
+    clock.runAll();
     assert.equal(tree.find(CoachMark).find(Portal).length, 1);
         /**
          * when 15 support is dropped, change back to:
@@ -43,7 +46,7 @@ describe('CoachMark', () => {
 
     tree.find(CoachMark).instance().onHide();
     assert(onHide.called); // onHide didn't do anything other than call the prop we passed in
-    clock.tick(125);
+    clock.runAll();
 
     // this should by default stay open regardless of activity
     document.querySelectorAll('.spectrum-CoachMarkIndicator')[0].click();
@@ -62,17 +65,17 @@ describe('CoachMark', () => {
       <Provider><CoachMark onHide={onHide} title="Hello world" selector="#something" confirmLabel="confirm" dismissible /></Provider>,
       {attachTo: mountNode}
     );
-
+    clock.runAll();
     document.querySelectorAll('.spectrum-CoachMarkIndicator')[0].click();
     assert(onHide.calledOnce);
     tree.update();
-    clock.tick(125);
+    clock.runAll();
     assert.equal(document.querySelectorAll('.spectrum-CoachMarkPopover').length, 0);
 
     document.querySelectorAll('.spectrum-CoachMarkIndicator')[0].click();
     assert(!onHide.calledTwice);
     tree.update();
-    clock.tick(125);
+    clock.runAll();
     assert.equal(document.querySelectorAll('.spectrum-CoachMarkPopover').length, 1);
   });
 
@@ -81,6 +84,7 @@ describe('CoachMark', () => {
       <CoachMark title="Hello world" selector="#something" confirmLabel="confirm" />,
       {attachTo: mountNode}
     );
+    clock.runAll();
     let component = tree.instance();
     assert(component.shouldUpdatePosition);
     assert(!tree.state().indicatorPositioned);

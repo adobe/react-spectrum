@@ -211,6 +211,7 @@ export default class Dialog extends Component {
     delete otherProps.disableEscKey;
 
     return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={classNames(
           'spectrum-Dialog',
@@ -223,6 +224,7 @@ export default class Dialog extends Component {
           className
         )}
         role={role}
+        /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */
         tabIndex={tabIndex === undefined || trapFocus ? 1 : tabIndex}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}

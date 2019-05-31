@@ -77,7 +77,8 @@ export default class TreeItem extends React.Component {
       focused,
       collectionView,
       treeId = this.itemId,
-      'drop-target': isDropTarget
+      'drop-target': isDropTarget,
+      onKeyDown
     } = this.props;
 
     let {
@@ -111,7 +112,7 @@ export default class TreeItem extends React.Component {
 
     return (
       <div className={itemClassName} role="presentation">
-        <a
+        <div
           className={linkClassName}
           ref={this.setTreeItemRef}
           id={id}
@@ -124,7 +125,8 @@ export default class TreeItem extends React.Component {
           aria-posinset={posInSet + 1}
           aria-owns={ownedChildIds ? `${id}-group` : null}
           onClick={!allowsSelection ? this.onToggle : null}
-          onMouseDown={!allowsSelection ? this.stopPropagationAndPreventDefault : null}>
+          onMouseDown={!allowsSelection ? this.stopPropagationAndPreventDefault : null}
+          onKeyDown={onKeyDown}>
           {isToggleable && hasChildren &&
             <ChevronRightMedium
               className="spectrum-TreeView-indicator"
@@ -136,7 +138,7 @@ export default class TreeItem extends React.Component {
           {ownedChildIds &&
             <span className="u-react-spectrum-screenReaderOnly" role="group" id={`${id}-group`} aria-labelledby={id} aria-owns={ownedChildIds} />
           }
-        </a>
+        </div>
       </div>
     );
   }

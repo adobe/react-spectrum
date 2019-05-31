@@ -107,6 +107,7 @@ export default class ListItem extends Component {
     delete otherProps.value;
 
     return (
+      /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */
       <li
         {...filterDOMProps(otherProps)}
         className={
@@ -125,6 +126,7 @@ export default class ListItem extends Component {
         onFocus={disabled ? null : this.handleFocus}
         onClick={disabled ? null : this.onSelectFocused}
         onBlur={this.handleBlur}
+        /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */
         tabIndex={!disabled ? tabIndex : null}
         role={role}
         aria-checked={role === 'menuitemcheckbox' || role === 'menuitemradio' ? !!selected : null}

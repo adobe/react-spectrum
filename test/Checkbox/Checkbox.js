@@ -60,10 +60,10 @@ describe('Checkbox', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Checkbox aria-foo />);
+    const tree = shallow(<Checkbox aria-hidden />);
     let innerTree = tree.shallow();
-    assert.equal(tree.prop('aria-foo'), true);
-    assert.equal(findInput(innerTree).prop('aria-foo'), true);
+    assert.equal(tree.prop('aria-hidden'), true);
+    assert.equal(findInput(innerTree).prop('aria-hidden'), true);
   });
 });
 

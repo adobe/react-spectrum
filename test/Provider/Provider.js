@@ -16,9 +16,9 @@ describe('Provider', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Provider aria-foo />);
-    assert.equal(tree.prop('aria-foo'), true);
-    assert.equal(tree.shallow().find('div').prop('aria-foo'), true);
+    const tree = shallow(<Provider aria-hidden />);
+    assert.equal(tree.prop('aria-hidden'), true);
+    assert.equal(tree.shallow().find('div').prop('aria-hidden'), true);
   });
 
   it('supports other themes', () => {

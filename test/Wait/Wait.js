@@ -94,7 +94,7 @@ describe('Wait', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Wait aria-foo />);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Wait aria-hidden />);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 });

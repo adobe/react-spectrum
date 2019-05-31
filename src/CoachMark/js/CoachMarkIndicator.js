@@ -139,7 +139,8 @@ export default class CoachMarkIndicator extends React.Component {
   render() {
     let {
       quiet,
-      onClick
+      onClick,
+      ...otherProps
     } = this.props;
 
     let {
@@ -153,6 +154,8 @@ export default class CoachMarkIndicator extends React.Component {
           'spectrum-CoachMarkIndicator--quiet': quiet
         },
       )}
+      role="presentation"
+      {...otherProps}
       onClick={onClick}
       ref={this.setReference}
       style={style}>

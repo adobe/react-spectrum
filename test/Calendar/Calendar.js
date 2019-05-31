@@ -678,8 +678,8 @@ describe('Calendar', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Calendar aria-foo />);
-    assert.equal(tree.prop('aria-foo'), true);
+    const tree = shallow(<Calendar aria-hidden />);
+    assert.equal(tree.prop('aria-hidden'), true);
   });
 
   describe('With aria-label prop', () => {
