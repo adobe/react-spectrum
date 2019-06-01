@@ -80,20 +80,38 @@ FieldLabel can explicitly label a form control using the `labelFor` prop.
 
 ### Using `aria-labelledby`
 
-For composite controls that group related components into a group or fieldset, like a [ComboBox](/components/ComboBox), [Datepicker](/components/Datepicker), [NumberInput](/components/NumberInput), or [SearchWithin](/components/SearchWithin), use `aria-labelledby` prop to associate the group of controls to the FieldLabel.
+For composite controls that group related components into a group or fieldset, like a [ComboBox](/components/ComboBox), [Datepicker](/components/Datepicker), [NumberInput](/components/NumberInput), or [SearchWithin](/components/SearchWithin), use implicit labelling or add the `aria-labelledby` prop to explicitly associate the group of controls to the FieldLabel.
 
-<FieldLabel label="Search" id="searchwithin-0-label">
+#### Implicit labelling will add `aria-labelledby` automatically
+
+<FieldLabel label="Search">
   <SearchWithin
-    aria-labelledby="searchwithin-0-label"
     scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
     />
 </FieldLabel>
 
 ```jsx
-<FieldLabel label="Search" id="searchwithin-0-label">
+<FieldLabel label="Search">
   <SearchWithin
-    aria-labelledby="searchwithin-0-label"
     scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
     />
 </FieldLabel>
+```
+
+#### Explicit labelling requires `aria-labelledby` be added manually
+
+<FieldLabel label="Search" id="searchwithin-label-id" labelFor="searchwithin-id" />
+<SearchWithin
+  id="searchwithin-id"
+  aria-labelledby="searchwithin-label-id"
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  />
+
+```jsx
+<FieldLabel label="Search" id="searchwithin-label-id" labelFor="searchwithin-id" />
+<SearchWithin
+  id="searchwithin-id"
+  aria-labelledby="searchwithin-label-id"
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  />
 ```
