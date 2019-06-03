@@ -14,7 +14,7 @@ const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disable
 export default class Accordion extends Component {
   static propTypes = {
     /**
-     * The index of the AccordionItem that should be selected (open). If multiselectable
+     * The index of the AccordionItem that should be selected (open). If 'multiselectable'
      * is true, selectedIndex can be an array of indices. When selectedIndex is specified, the component
      * is in a controlled state and an AccordionItem can only be selected by changing the selectedIndex
      * prop value. By default, no AccordionItems will be selected.
