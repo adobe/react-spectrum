@@ -1,7 +1,7 @@
 {
-  "name": "@react-spectrum/tablist",
+  "name": "@react-spectrum/tabs",
   "version": "3.0.0",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
@@ -10,8 +10,8 @@
   "dependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
     "@react-spectrum/utils": "^3.0.0",
-    "@react-stately/tablist": "^3.0.0",
-    "@react-aria/tablist": "^3.0.0",
+    "@react-stately/tabs": "^3.0.0",
+    "@react-aria/tabs": "^3.0.0",
     "classnames": "^2.2.5"
   },
   "devDependencies": {

@@ -42,5 +42,5 @@ export function classNames(cssModule: {[key: string]: string}, ...values: Array<
     }
   }
 
-  return _classNames(...classes)
+  return _classNames(...classes);
 }

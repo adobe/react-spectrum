@@ -1,15 +1,13 @@
 {
-  "name": "@react-stately/tablist",
+  "name": "@react-aria/tabs",
   "version": "3.0.0",
+  "main": "src/useTabList.ts",
   "description": "Spectrum UI components in React",
-  "main": "src/useTabListState.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "react": "^16.8.0",
-    "@react-stately/utils": "^3.0.0"
-  },
-  "devDependencies": {}
+    "react": "^16.8.0"
+  }
 }

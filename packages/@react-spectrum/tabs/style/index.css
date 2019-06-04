@@ -1,0 +1,16 @@
+.react-spectrum-TabPanel {
+  display: flex;
+  flex-direction: column;
+}
+.react-spectrum-TabPanel .react-spectrum-TabPanel-body {
+  position: relative;
+  padding: 15px 8px;
+  flex: 1;
+}
+
+.react-spectrum-TabPanel.react-spectrum-TabPanel--vertical {
+  flex-direction: row;
+}
+.react-spectrum-TabPanel.react-spectrum-TabPanel--vertical .react-spectrum-TabPanel-body {
+  padding: 4px 15px;
+}
