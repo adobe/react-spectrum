@@ -82,7 +82,7 @@ describe('Tour', () => {
     for (let i = 1; i <= 3; i++) {
       assert.equal(tree.props().currentStep, i);
       assert.equal(tree.props().totalSteps, 3);
-      
+
       if (i === 3) {
         assert.equal(tree.props().cancelLabel, null);
         assert.equal(tree.props().confirmLabel, 'Done');
@@ -161,6 +161,7 @@ describe('Tour', () => {
       tree.instance().onHide('', tree.find(CoachMark).instance());
 
       assert(onTourEnd.calledWith('cancel'));
+      tree.update();
       assert.equal(tree.html(), null);
     });
 
@@ -183,6 +184,7 @@ describe('Tour', () => {
 
       document.querySelectorAll('.spectrum-CoachMarkIndicator')[0].click();
       assert(onTourEnd.calledWith('cancel'));
+      tree.update();
       assert.equal(tree.html(), null);
     });
   });
