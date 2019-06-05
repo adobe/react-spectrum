@@ -65,7 +65,9 @@ storiesOf('Progress', module)
         </div>
       );
     }
-  );
+  )
+  .add('indeterminate', () => render({isIndeterminate: true}))
+  .add('indeterminate, size: S', () => render({isIndeterminate: true, size: 'S'}));
 
 function render(props = {}) {
   return (
