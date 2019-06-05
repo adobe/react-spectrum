@@ -4,6 +4,18 @@ module.exports = {
     '@babel/preset-env'
   ],
   env: {
+    storybook: {
+      presets: [
+        '@babel/preset-react',
+        [
+          '@babel/preset-env',
+          {
+            useBuiltIns: 'usage',
+            corejs: 2
+          }
+        ]
+      ]
+    },
     test: {
       presets: [
         '@babel/preset-react',

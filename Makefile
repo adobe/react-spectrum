@@ -13,7 +13,7 @@ node_modules: package.json
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	start-storybook -p 9002 --ci
+	NODE_ENV=storybook start-storybook -p 9002 --ci
 
 clean:
 	rm -rf dist storybook-static public src/dist

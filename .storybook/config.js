@@ -1,4 +1,3 @@
-import '@babel/polyfill';
 import {configure, addDecorator} from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import React from 'react';
