@@ -188,16 +188,15 @@ export default class Select extends React.Component {
       id = this.selectId,
       icon,
       renderItem,
+      'aria-labelledby': ariaLabelledby,
       ...otherProps
     } = this.props;
 
     let {value} = this.state;
 
-    let ariaLabelledby = '';
     const valueId = this.selectId + '-value';
-    if (otherProps['aria-labelledby']) {
-      ariaLabelledby = otherProps['aria-labelledby'] + ' ' + valueId;
-      delete otherProps['aria-labelledby'];
+    if (ariaLabelledby) {
+      ariaLabelledby = ariaLabelledby + ' ' + valueId;
     } else if (otherProps['aria-label']) {
       ariaLabelledby = id + ' ' + valueId;
     } else if (labelId) {

@@ -1,9 +1,13 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import {getBoundingClientRect} from './getBoundingClientRect';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import TabLine from './TabLine';
 import TabListBase from './TabListBase';
+import TabListDropdown from './TabListDropdown';
+import '../style/index.styl';
 
 importSpectrumCSS('tabs');
 
@@ -55,6 +59,12 @@ export default class TabList extends React.Component {
     onChange: PropTypes.func,
 
     /**
+     * If the parent is display flex or an explicit width is given to this component, then it can be
+     * collapsible and you may set this to true.
+     */
+    collapsible: PropTypes.bool,
+    
+    /**
      * Whether to autoFocus first selected Tab or first Tab.
      */
     autoFocus: PropTypes.bool
@@ -64,12 +74,20 @@ export default class TabList extends React.Component {
     variant: '',
     quiet: false,
     orientation: 'horizontal',
+    collapsible: false,
     autoFocus: false
   };
 
+  constructor(props) {
+    super(props);
+
+    this.debouncedResizeUpdate = null;
+  }
+
   state = {
     selectedIndex: TabListBase.getDefaultSelectedIndex(this.props),
-    tabArray: []
+    tabArray: [],
+    tooNarrow: false
   };
 
   componentWillReceiveProps(nextProps) {
@@ -78,15 +96,62 @@ export default class TabList extends React.Component {
         selectedIndex: nextProps.selectedIndex
       });
     }
+    if (this.state.selectedIndex >= React.Children.toArray(nextProps.children).length) {
+      this.onChange(TabListBase.getDefaultSelectedIndex(nextProps));
+    }
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.resizeListener);
     this.updateTabs();
+    this.widthCheck();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeListener);
+    this.clearDebouncedResizeUpdateInterval();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.children !== this.props.children) {
       this.updateTabs();
+      this.widthCheck();
+    }
+  }
+
+  resizeListener() {
+    if (!this.debouncedResizeUpdate) {
+      this.debouncedResizeUpdate = setTimeout(() => {
+        this.widthCheck();
+        this.debouncedResizeUpdate = null;
+      }, 50);
+    }
+  }
+
+  clearDebouncedResizeUpdateInterval() {
+    if (this.debouncedResizeUpdate) {
+      clearTimeout(this.debouncedResizeUpdate);
+      this.debouncedResizeUpdate = null;
+    }
+  }
+
+  // will need to change to left probably if dealing with rtl
+  getFurthestPoint(elem) {
+    return getBoundingClientRect(elem).right;
+  }
+
+  widthCheck() {
+    const tabList = ReactDOM.findDOMNode(this);
+    // since tab array is in state, we don't necessarily have the most recent if we just use
+    // state.tabArray, so get the tabs for the width check
+    const tabs = ReactDOM.findDOMNode(this).querySelectorAll('.spectrum-Tabs-item');
+
+    let farEdgeTabList = this.getFurthestPoint(tabList);
+    let farEdgeLastTab = this.getFurthestPoint(tabs[tabs.length - 1]);
+    if (farEdgeTabList < farEdgeLastTab) {
+      this.setState({tooNarrow: true});
+    } else {
+      this.setState({tooNarrow: false});
     }
   }
 
@@ -97,7 +162,7 @@ export default class TabList extends React.Component {
   }
 
   onChange(selectedIndex) {
-    var lastSelectedIndex = this.state.selectedIndex;
+    let lastSelectedIndex = this.state.selectedIndex;
 
     // If selectedIndex is defined on props then this is a controlled component and we shouldn't
     // change our own state.
@@ -111,7 +176,7 @@ export default class TabList extends React.Component {
     }
   }
 
-  render() {
+  getTabList() {
     let {
       className,
       orientation = 'horizontal',
@@ -119,12 +184,14 @@ export default class TabList extends React.Component {
       quiet,
       children,
       defaultSelectedIndex,
+      collapsible,
       ...otherProps
     } = this.props;
 
     let {
       selectedIndex,
-      tabArray
+      tabArray,
+      tooNarrow
     } = this.state;
 
     let selectedTab = tabArray[selectedIndex];
@@ -143,8 +210,16 @@ export default class TabList extends React.Component {
       variant = VARIANTS[variant];
     }
 
+    let tooNarrowProps = {};
+    let shouldHide = false;
+    if (collapsible && tooNarrow && orientation !== 'vertical') {
+      tooNarrowProps['aria-hidden'] = tooNarrow;
+      shouldHide = true;
+    }
+
     return (
       <TabListBase
+        {...tooNarrowProps}
         orientation={orientation}
         defaultSelectedIndex={defaultSelectedIndex || null}
         selectedIndex={selectedIndex}
@@ -152,8 +227,12 @@ export default class TabList extends React.Component {
         className={classNames(
           'spectrum-Tabs',
           `spectrum-Tabs--${orientation}`,
-          {'spectrum-Tabs--quiet': quiet},
-          variant ? `spectrum-Tabs--${variant}` : '',
+          {
+            'spectrum-Tabs--quiet': quiet,
+            [`spectrum-Tabs--${variant}`]: variant,
+            'react-spectrum-Tabs--container': collapsible,
+            'react-spectrum-Tabs--hidden': shouldHide
+          },
           className
         )}
         onChange={this.onChange}>
@@ -164,23 +243,55 @@ export default class TabList extends React.Component {
       </TabListBase>
     );
   }
-}
 
-function TabLine({orientation, selectedTab}) {
-  // Ideally this would be a DNA variable, but vertical tabs aren't even in DNA, soo...
-  let verticalSelectionIndicatorOffset = 12;
+  getDropdown() {
+    let {
+      quiet,
+      children,
+      'aria-labelledby': ariaLabelledby,
+      'aria-label': ariaLabel
+    } = this.props;
 
-  const style = {
-    transform: orientation === 'vertical'
-      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-      : `translateX(${selectedTab.offsetLeft}px) `
-  };
+    let {
+      selectedIndex
+    } = this.state;
 
-  if (orientation === 'horizontal') {
-    style.width = `${selectedTab.offsetWidth}px`;
-  } else {
-    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+    return (
+      <TabListDropdown
+        className={classNames(
+          {'spectrum-Tabs--quiet': quiet}
+        )}
+        selectedIndex={selectedIndex}
+        onChange={this.onChange}
+        quiet={quiet}
+        aria-labelledby={ariaLabelledby}
+        aria-label={ariaLabel}>
+        {children}
+      </TabListDropdown>
+    );
   }
 
-  return <div className="spectrum-Tabs-selectionIndicator" role="presentation" style={style} />;
+  render() {
+    let {
+      collapsible,
+      orientation
+    } = this.props;
+
+    let {
+      tooNarrow
+    } = this.state;
+
+    if (collapsible && orientation !== 'vertical') {
+      return (
+        <div className={classNames('react-spectrum-Tabs--collapsible')}>
+          {this.getTabList()}
+          {tooNarrow &&
+            this.getDropdown()
+          }
+        </div>
+      );
+    } else {
+      return this.getTabList();
+    }
+  }
 }
