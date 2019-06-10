@@ -23,7 +23,8 @@
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
     "lib": [
-      "es6"
+      "es6",
+      "dom"
     ]
   },
   "include": [

@@ -1,11 +1,5 @@
-import {HTMLAnchorElement, HTMLButtonElement, HTMLElement} from 'react-dom';
-import {
-  KeyboardEventHandler,
-  JSXElementConstructor,
-  MouseEventHandler,
-  MutableRefObject,
-  useRef
-} from 'react';
+import {HTMLButtonElement, HTMLElement} from 'react-dom';
+import {JSXElementConstructor, MouseEvent, useRef} from 'react';
 import React from "react";
 
 interface AriaButtonProps {
@@ -15,7 +9,7 @@ interface AriaButtonProps {
   /**
    * for backwards compatibility
    */
-  onClick?: (event: Event) => void,
+  onClick?: (event: MouseEvent<HTMLElement>)=> void,
   href?: string,
   tabIndex?: number,
   isSelected?: boolean | 'false' | 'true',

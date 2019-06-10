@@ -53,6 +53,9 @@ lint:
 test:
 	NODE_ENV=test mocha
 
+jest_test:
+	NODE_ENV=test jest
+
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 

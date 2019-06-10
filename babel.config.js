@@ -18,6 +18,7 @@ module.exports = {
       ]
     },
     test: {
+      plugins: ["@babel/plugin-transform-runtime"],
       presets: [
         '@babel/preset-typescript',
         '@babel/preset-react',

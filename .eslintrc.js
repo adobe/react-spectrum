@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -21,7 +21,9 @@ module.exports = {
     'es6': true
   },
   globals: {
-    'importSpectrumCSS': 'readonly'
+    'importSpectrumCSS': 'readonly',
+    'jest': true,
+    'expect': true
   },
   rules: {
     'comma-dangle': ERROR,
