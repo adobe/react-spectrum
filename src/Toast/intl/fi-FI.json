@@ -1,7 +1,7 @@
 {
   "close": "Sulje",
   "error": "Virhe",
-  "warning": "Varoitus",
-  "info": "Tieto",
-  "success": "Onnistui"
+  "info": "Tiedot",
+  "success": "Onnistui",
+  "warning": "Varoitus"
 }

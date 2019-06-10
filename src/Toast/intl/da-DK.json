@@ -1,7 +1,7 @@
 {
   "close": "Luk",
   "error": "Fejl",
-  "warning": "Advarsel",
-  "success": "Fertig",
-  "info": "Oplysninger"
+  "info": "Oplysninger",
+  "success": "Fuldført",
+  "warning": "Advarsel"
 }

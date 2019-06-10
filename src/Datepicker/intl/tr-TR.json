@@ -1,9 +1,9 @@
 {
-  "Time": "Zaman",
   "Calendar": "Takvim",
   "Close": "Kapat",
-  "Start Date": "Başlangıç Tarihi",
   "End Date": "Bitiş Tarihi",
+  "End Time": "Bitiş Saati",
+  "Start Date": "Başlangıç Tarihi",
   "Start Time": "Başlangıç Saati",
-  "End Time": "Bitiş Saati"
+  "Time": "Saat"
 }

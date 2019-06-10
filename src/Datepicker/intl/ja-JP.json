@@ -1,9 +1,9 @@
 {
-  "Time": "時間",
   "Calendar": "カレンダー",
   "Close": "閉じる",
-  "Start Date": "開始日",
   "End Date": "終了日",
-  "Start Time": "開始時間",
-  "End Time": "終了時刻"
+  "End Time": "終了時刻",
+  "Start Date": "開始日",
+  "Start Time": "開始時刻",
+  "Time": "時刻"
 }

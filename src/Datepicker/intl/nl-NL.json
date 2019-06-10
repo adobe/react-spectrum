@@ -1,9 +1,9 @@
 {
-  "Time": "Tijd",
   "Calendar": "Kalender",
   "Close": "Sluiten",
-  "Start Date": "Begindatum",
   "End Date": "Einddatum",
-  "Start Time": "Begintijd",
-  "End Time": "Eindtijd"
+  "End Time": "Eindtijd",
+  "Start Date": "Startdatum ",
+  "Start Time": "Starttijd",
+  "Time": "Tijd"
 }

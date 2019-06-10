@@ -1,7 +1,7 @@
 {
-  "am": "matin",
-  "pm": "après-midi",
+  "AM/PM": "Matin/après-midi",
   "Hours": "Heures",
   "Minutes": "Minutes",
-  "AM/PM": "AM/PM"
+  "am": "matin",
+  "pm": "après-midi"
 }

@@ -1,9 +1,9 @@
 {
-  "Time": "Tid",
   "Calendar": "Kalender",
   "Close": "Luk",
-  "Start Date": "Startdato",
   "End Date": "Slutdato",
+  "End Time": "Sluttidspunkt",
+  "Start Date": "Startdato",
   "Start Time": "Starttidspunkt",
-  "End Time": "Sluttidspunkt"
+  "Time": "Klokkeslæt"
 }

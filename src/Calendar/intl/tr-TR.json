@@ -1,11 +1,11 @@
 {
-  "previous": "Önceki",
-  "next": "İleri",
-  "selectedDateDescription": "Seçilen Tarih: {date, date, full}",
-  "selectedRangeDescription": "Seçilen Aralık: {start, date, long} to {end, date, long}",
-  "todayDate": "Bugün, {date, date, full}",
-  "todayDateSelected": "Bugün, {date, date, full} seçildi",
   "dateSelected": "{date, date, full} seçildi",
-  "startRangeSelectionPrompt": "Tarih aralığını seçmeye başlamak için tıklayın.",
-  "finishRangeSelectionPrompt": "Tarih aralığının seçimini bitirmek için tıklayın."
+  "finishRangeSelectionPrompt": "Tarih aralığı seçimini tamamlamak için tıklayın",
+  "next": "Sonraki",
+  "previous": "Önceki",
+  "selectedDateDescription": "Seçili Tarih: {date, date, full}",
+  "selectedRangeDescription": "Seçili Aralık: {start, date, long} - {end, date, long}",
+  "startRangeSelectionPrompt": "Tarih aralığı seçimini başlatmak için tıklayın",
+  "todayDate": "Bugün, {date, date, full}",
+  "todayDateSelected": "Bugün, {date, date, full} seçildi"
 }

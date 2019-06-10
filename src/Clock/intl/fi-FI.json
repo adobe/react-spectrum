@@ -1,7 +1,7 @@
 {
-  "am": "ap.",
-  "pm": "ip.",
+  "AM/PM": "ap./ip.",
   "Hours": "Tunnit",
   "Minutes": "Minuutit",
-  "AM/PM": "ap./ip."
+  "am": "ap.",
+  "pm": "ip."
 }

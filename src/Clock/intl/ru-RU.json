@@ -1,7 +1,7 @@
 {
-  "am": "дп",
-  "pm": "пп",
-  "Hours": "ч.",
-  "Minutes": "мин.",
-  "AM/PM": "ДП/ПП"
+  "AM/PM": "AM/PM",
+  "Hours": "Часы",
+  "Minutes": "Минуты",
+  "am": "am",
+  "pm": "pm"
 }

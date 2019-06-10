@@ -1,7 +1,7 @@
 {
   "close": "Kapat",
   "error": "Hata",
-  "warning": "Uyarı",
+  "info": "Bilgiler",
   "success": "Başarılı",
-  "info": "Bilgi"
+  "warning": "Uyarı"
 }

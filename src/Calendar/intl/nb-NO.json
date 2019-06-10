@@ -1,11 +1,11 @@
 {
-  "previous": "Forrige",
-  "next": "Neste",
-  "selectedDateDescription": "Valgt dato: {date, date, full}",
-  "selectedRangeDescription": "Valgte datointervall: {start, date, long} til {end, date, long}",
-  "todayDate": "I dag, {date, date, full}",
-  "todayDateSelected": "I dag, {date, date, full} valgt",
   "dateSelected": "{date, date, full} valgt",
-  "startRangeSelectionPrompt": "Klikk for å starte valg av datoperiode",
-  "finishRangeSelectionPrompt": "Klikk for å fullføre datoperioden"
+  "finishRangeSelectionPrompt": "Klikk for å fullføre valg av datoområde",
+  "next": "Neste",
+  "previous": "Forrige",
+  "selectedDateDescription": "Valgt dato: {date, date, full}",
+  "selectedRangeDescription": "Valgt område: {start, date, long} til {end, date, long}",
+  "startRangeSelectionPrompt": "Klikk for å starte valg av datoområde",
+  "todayDate": "I dag, {date, date, full}",
+  "todayDateSelected": "I dag, {date, date, full} valgt"
 }

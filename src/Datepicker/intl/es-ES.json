@@ -1,9 +1,9 @@
 {
-  "Time": "Hora",
   "Calendar": "Calendario",
   "Close": "Cerrar",
+  "End Date": "Fecha final",
+  "End Time": "Hora final",
   "Start Date": "Fecha de inicio",
-  "End Date": "Fecha de finalización",
   "Start Time": "Hora de inicio",
-  "End Time": "Hora de finalización"
+  "Time": "Hora"
 }

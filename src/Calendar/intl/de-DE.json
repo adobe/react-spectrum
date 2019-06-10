@@ -1,11 +1,11 @@
 {
-  "previous": "Zurück",
-  "next": "Weiter",
-  "selectedDateDescription": "Ausgewähltes Datum: {date, date, full}",
-  "selectedRangeDescription": "Ausgewählte Zeitraum: {start, date, long} bis {end, date, long}",
-  "todayDate": "Heute, {date, date, full}",
-  "todayDateSelected": "Heute, {date, date, full} ausgewählt",
   "dateSelected": "{date, date, full} ausgewählt",
-  "startRangeSelectionPrompt": "Klicken Sie, um den Datumsbereich auszuwählen",
-  "finishRangeSelectionPrompt": "Klicken Sie, um den Datumsbereich zu beenden"
+  "finishRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beenden",
+  "next": "Weiter",
+  "previous": "Zurück",
+  "selectedDateDescription": "Ausgewähltes Datum: {date, date, full}",
+  "selectedRangeDescription": "Bereich auswählen: {start, date, long} bis {end, date, long}",
+  "startRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beginnen",
+  "todayDate": "Heute, {date, date, full}",
+  "todayDateSelected": "Heute, {date, date, full} ausgewählt"
 }

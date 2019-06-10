@@ -1,0 +1,3 @@
+{
+  "steps": "第 {currentStep} 步（共 {totalSteps} 步）"
+}

@@ -1,7 +1,7 @@
 {
-  "am": "vormittags",
-  "pm": "nachmittags",
+  "AM/PM": "Vormittag/Nachmittag",
   "Hours": "Stunden",
   "Minutes": "Minuten",
-  "AM/PM": "AM/PM"
+  "am": "Vormittag",
+  "pm": "Nachmittag"
 }
