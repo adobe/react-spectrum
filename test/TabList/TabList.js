@@ -231,6 +231,7 @@ describe('TabList', () => {
       assert.notEqual(child.prop('className').indexOf('two'), -1);
     });
 
+
     it('supports selectedIndex by setting selected on child', () => {
       tree = mount(
         <TabList>

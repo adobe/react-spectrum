@@ -7,10 +7,10 @@
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/focus-ring-polyfill/-/focus-ring-polyfill-0.1.5.tgz#b20b5bd1ffb0ceaf42aae1f0837f39ce29f9eb9b"
   integrity sha1-sgtb0f+wzq9CquHwg385zin565s=
 
-"@adobe/spectrum-css@2.9.0":
-  version "2.9.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/spectrum-css/-/spectrum-css-2.9.0.tgz#1770f129af068817cdcfde2f1f6394603f476aeb"
-  integrity sha1-F3DxKa8GiBfNz94vH2OUYD9Haus=
+"@adobe/spectrum-css@2.11.0":
+  version "2.11.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/spectrum-css/-/spectrum-css-2.11.0.tgz#3b7b3ef909906bfea7a0014f08957708721f6cb2"
+  integrity sha1-O3s++QmQa/6noAFPCJV3CHIfbLI=
 
 "@babel/cli@^7.0.0":
   version "7.4.3"
@@ -2112,10 +2112,10 @@
     react-lifecycles-compat "^3.0.4"
     warning "^3.0.0"
 
-"@react/collection-view@^4.1.0":
-  version "4.1.3"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/@react/collection-view/-/@react/collection-view-4.1.3.tgz#a12583f17a084dd34d49fe8355074565c342568a"
-  integrity sha1-oSWD8XoITdNNSf6DVQdFZcNCVoo=
+"@react/collection-view@^4.1.5":
+  version "4.1.5"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/@react/collection-view/-/@react/collection-view-4.1.5.tgz#17034aab37f9cdb91a479b5096d900914ae08ca2"
+  integrity sha1-FwNKqzf5zbkaR5tQltkAkUrgjKI=
   dependencies:
     raf "^3.4.0"
 
@@ -3253,6 +3253,14 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
+aria-query@^3.0.0:
+  version "3.0.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/aria-query/-/aria-query-3.0.0.tgz#65b3fcc1ca1155a8c9ae64d6eee297f15d5133cc"
+  integrity sha1-ZbP8wcoRVajJrmTW7uKX8V1RM8w=
+  dependencies:
+    ast-types-flow "0.0.7"
+    commander "^2.11.0"
+
 arr-diff@^2.0.0:
   version "2.0.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/arr-diff/-/arr-diff-2.0.0.tgz#8f3b827f955a8bd669697e4a4256ac3ceae356cf"
@@ -3434,6 +3442,11 @@ assign-symbols@^1.0.0:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/assign-symbols/-/assign-symbols-1.0.0.tgz#59667f41fadd4f20ccbc2bb96b8d4f7f78ec0367"
   integrity sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=
 
+ast-types-flow@0.0.7, ast-types-flow@^0.0.7:
+  version "0.0.7"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/ast-types-flow/-/ast-types-flow-0.0.7.tgz#f70b735c6bca1a5c9c22d982c3e39e7feba3bdad"
+  integrity sha1-9wtzXGvKGlycItmCw+Oef+ujva0=
+
 ast-types@0.11.3:
   version "0.11.3"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/ast-types/-/ast-types-0.11.3.tgz#c20757fe72ee71278ea0ff3d87e5c2ca30d9edf8"
@@ -3517,6 +3530,13 @@ axe-core@^3.0.0, axe-core@^3.0.3, axe-core@^3.2.2:
   version "3.2.2"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/axe-core/-/axe-core-3.2.2.tgz#b06d6e9ae4636d706068843272bfaeed3fe97362"
   integrity sha1-sG1umuRjbXBgaIQycr+u7T/pc2I=
+
+axobject-query@^2.0.2:
+  version "2.0.2"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/axobject-query/-/axobject-query-2.0.2.tgz#ea187abe5b9002b377f925d8bf7d1c561adf38f9"
+  integrity sha1-6hh6vluQArN3+SXYv30cVhrfOPk=
+  dependencies:
+    ast-types-flow "0.0.7"
 
 babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
@@ -5310,6 +5330,11 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
+damerau-levenshtein@^1.0.4:
+  version "1.0.5"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/damerau-levenshtein/-/damerau-levenshtein-1.0.5.tgz#780cf7144eb2e8dbd1c3bb83ae31100ccc31a414"
+  integrity sha1-eAz3FE6y6NvRw7uDrjEQDMwxpBQ=
+
 dargs@^4.0.1:
   version "4.1.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/dargs/-/dargs-4.1.0.tgz#03a9dbb4b5c2f139bf14ae53f0b8a2a6a86f4e17"
@@ -5817,7 +5842,7 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
-emoji-regex@^7.0.1:
+emoji-regex@^7.0.1, emoji-regex@^7.0.2:
   version "7.0.3"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
   integrity sha1-kzoEBShgyF6DwSJHnEdIqOTHIVY=
@@ -6073,6 +6098,20 @@ eslint-plugin-jest@^22.5.1:
   version "22.6.4"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-22.6.4.tgz#2895b047dd82f90f43a58a25cf136220a21c9104"
   integrity sha512-36OqnZR/uMCDxXGmTsqU4RwllR0IiB/XF8GW3ODmhsjiITKuI0GpgultWFt193ipN3HARkaIcKowpE6HBvRHNg==
+
+eslint-plugin-jsx-a11y@^6.2.1:
+  version "6.2.1"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.1.tgz#4ebba9f339b600ff415ae4166e3e2e008831cf0c"
+  integrity sha1-Trup8zm2AP9BWuQWbj4uAIgxzww=
+  dependencies:
+    aria-query "^3.0.0"
+    array-includes "^3.0.3"
+    ast-types-flow "^0.0.7"
+    axobject-query "^2.0.2"
+    damerau-levenshtein "^1.0.4"
+    emoji-regex "^7.0.2"
+    has "^1.0.3"
+    jsx-ast-utils "^2.0.1"
 
 eslint-plugin-react-hooks@^1.6.0:
   version "1.6.0"
