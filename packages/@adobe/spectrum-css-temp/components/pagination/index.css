@@ -1,39 +1,55 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* topdoc
 {{ pagination/pagination-listing.yml }}
 */
 .spectrum-Pagination--explicit,
 .spectrum-Pagination--listing {
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: row;
-      flex-direction: row;
-  -ms-flex-align: center;
-      align-items: center;
+  flex-direction: row;
+  align-items: center;
 }
+
 /* topdoc
 {{ pagination/pagination-explicit.yml }}
 */
 .spectrum-Pagination-input {
-  width: 48px;
-  min-width: 48px;
+  width: var(--spectrum-pagination-textfield-width);
+  min-width: var(--spectrum-pagination-textfield-width);
 }
+
 .spectrum-Pagination-counter {
-  margin-left: 5px;
+  margin-left: var(--spectrum-pagination-counter-margin-left);
 }
+
 .spectrum-Pagination-prevButton {
-  margin-right: 5px;
+  margin-right: var(--spectrum-pagination-page-button-margin-horizontal);
 }
+
 .spectrum-Pagination-nextButton {
-  margin-left: 5px;
+  margin-left: var(--spectrum-pagination-page-button-margin-horizontal);
 }
+
 /* topdoc
 {{ pagination/pagination-button-style-cta.yml }}
 */
+
 /* topdoc
 {{ pagination/pagination-button-style-primary.yml }}
 */
+
 /* topdoc
 {{ pagination/pagination-button-style-secondary.yml }}
 */

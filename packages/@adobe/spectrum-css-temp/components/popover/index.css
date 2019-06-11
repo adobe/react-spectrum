@@ -1,120 +1,151 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
-.spectrum-Popover {
-  visibility: hidden;
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-  opacity: 0;
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
-  transition: transform 130ms ease-in-out,
-              opacity 130ms ease-in-out,
-              visibility 0ms linear 130ms;
+@import '../commons/index.css';
+@import '../commons/overlay.css';
 
-  pointer-events: none;
-}
-.spectrum-Popover.is-open {
-  visibility: visible;
+:root {
+  --spectrum-popover-target-offset: 13px;
+  --spectrum-popover-dialog-padding: 30px 29px;
+  --spectrum-popover-dialog-min-width: 270px;
 
-  opacity: 1;
+  --spectrum-popover-min-width: var(--spectrum-global-dimension-size-400);
+  --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
+}
 
-  transition-delay: 0ms;
-
-  pointer-events: auto;
-}
-.spectrum-Popover--bottom.is-open {
-  transform: translateY(6px);
-}
-.spectrum-Popover--top.is-open {
-  transform: translateY(-6px);
-}
-.spectrum-Popover--right.is-open {
-  transform: translateX(6px);
-}
-.spectrum-Popover--left.is-open {
-  transform: translateX(-6px);
-}
 /* topdoc
 {{ popover/popover.yml }}
 */
 .spectrum-Popover {
+  @inherit: %spectrum-overlay;
 
   /* Be a flexbox to allow a full sized content area that scrolls */
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -ms-flex-direction: column;
-      flex-direction: column;
+  flex-direction: column;
   box-sizing: border-box;
 
-  min-width: 32px;
-  min-height: 32px;
+  min-width: var(--spectrum-popover-min-width);
+  min-height: var(--spectrum-popover-min-height);
 
   position: absolute;
 
   border-style: solid;
-  border-width: 1px;
-  border-radius: 4px;
+  border-width: var(--spectrum-popover-border-size);
+  border-radius: var(--spectrum-popover-border-radius);
 
-  outline: none;
+  outline: none; /* Hide focus outline */
+
+  &.is-open {
+    @inherit: %spectrum-overlay--open;
+  }
 }
-/* Hide focus outline */
+
 .spectrum-Popover-tip {
   position: absolute;
   /* This hides half of the tooltip, but it also crops the shadow slightly, which is undesireable */
   overflow: hidden;
-  width: 21px;
-  height: 11px;
-}
-.spectrum-Popover-tip::after {
+  width: calc(var(--spectrum-popover-tip-width) + 1px);
+  height: calc((var(--spectrum-popover-tip-width)/2)+(var(--spectrum-popover-border-size)));
+
+  &::after {
     content: '';
-    width: 20px;
-    height: 20px;
-    border-width: 1px;
+    width: var(--spectrum-popover-tip-width);
+    height: var(--spectrum-popover-tip-width);
+    border-width: var(--spectrum-popover-border-size);
     border-style: solid;
     position: absolute;
     transform: rotate(45deg);
     top: -18px;
     left: -1px;
   }
-.spectrum-Popover--dialog {
-  min-width: 270px;
-  padding: 30px 29px;
 }
+
+.spectrum-Popover--dialog {
+  min-width: var(--spectrum-popover-dialog-min-width);
+  padding: var(--spectrum-popover-dialog-padding);
+}
+
 /* topdoc
 {{ popover/popover-dialog.yml }}
 */
-.spectrum-Popover--left.spectrum-Popover--withTip {
-    margin-right: 13px;
+.spectrum-Popover--left {
+  &.spectrum-Popover--withTip {
+    margin-right: var(--spectrum-popover-target-offset);
   }
-.spectrum-Popover--left .spectrum-Popover-tip {
+
+  &.is-open {
+    @inherit: %spectrum-overlay--left--open;
+  }
+  .spectrum-Popover-tip {
     right: -16px;
     transform: rotate(-90deg);
   }
-.spectrum-Popover--right.spectrum-Popover--withTip {
-    margin-left: 13px;
+}
+
+.spectrum-Popover--right {
+  &.spectrum-Popover--withTip {
+    margin-left: var(--spectrum-popover-target-offset);
   }
-.spectrum-Popover--right .spectrum-Popover-tip {
+
+  &.is-open {
+    @inherit: %spectrum-overlay--right--open;
+  }
+  .spectrum-Popover-tip {
     left: -16px;
     transform: rotate(90deg);
   }
+}
+
 /* Center the tip by default */
-.spectrum-Popover--left .spectrum-Popover-tip, .spectrum-Popover--right .spectrum-Popover-tip {
+.spectrum-Popover--left,
+.spectrum-Popover--right {
+  .spectrum-Popover-tip {
     top: 50%;
     margin-top: -6px;
   }
-.spectrum-Popover--bottom.spectrum-Popover--withTip {
-    margin-top: 13px;
+}
+
+.spectrum-Popover--bottom {
+  &.spectrum-Popover--withTip {
+    margin-top: var(--spectrum-popover-target-offset);
   }
-.spectrum-Popover--bottom .spectrum-Popover-tip {
+
+  &.is-open {
+    @inherit: %spectrum-overlay--bottom--open;
+  }
+  .spectrum-Popover-tip {
     top: -11px;
     transform: rotate(180deg);
   }
-.spectrum-Popover--top.spectrum-Popover--withTip {
-    margin-bottom: 13px;
+}
+
+.spectrum-Popover--top {
+  &.spectrum-Popover--withTip {
+    margin-bottom: var(--spectrum-popover-target-offset);
   }
-.spectrum-Popover--top .spectrum-Popover-tip {
+
+  &.is-open {
+    @inherit: %spectrum-overlay--top--open;
+  }
+  .spectrum-Popover-tip {
     bottom: -11px;
   }
+}
+
 /* Center the tip by default */
-.spectrum-Popover--bottom .spectrum-Popover-tip, .spectrum-Popover--top .spectrum-Popover-tip {
+.spectrum-Popover--bottom,
+.spectrum-Popover--top {
+  .spectrum-Popover-tip {
     left: 50%;
     margin-left: -12px;
   }
+}

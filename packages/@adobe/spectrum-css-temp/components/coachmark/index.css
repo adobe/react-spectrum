@@ -1,137 +1,140 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
-@keyframes pulse {
-  0% {
-    -webkit-transform: scale(1);
-    opacity: 0;
-  }
-  50% {
-    -webkit-transform: scale(1.5);
-    opacity: 0.6;
-  }
-  100% {
-    -webkit-transform: scale(2);
-    opacity: 0;
-  }
-}
-@keyframes pulse--quiet {
-  0% {
-    -webkit-transform: scale(0.8);
-    opacity: 0;
-  }
-  50% {
-    -webkit-transform: scale(1.5);
-    opacity: 0.6;
-  }
-  100% {
-    -webkit-transform: scale(2);
-    opacity: 0;
-  }
-}
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+@import 'animation.css';
+
 /* topdoc
 {{ coachmark/coachmark.yml }}
 */
 .spectrum-CoachMarkPopover {
   position: relative;
 
-  min-width: 272px;
-  max-width: 400px;
+  min-width: var(--spectrum-coachmark-min-width);
+  max-width: var(--spectrum-coachmark-max-width);
 
-  border-radius: 4px;
-  border-width: 1px;
+  border-radius: var(--spectrum-coachmark-border-radius);
+  border-width: var(--spectrum-coachmark-border-size);
   border-style: solid;
 
 }
 .spectrum-CoachMarkPopover-image {
-  border-radius: 4px 4px 0 0;
+  border-radius: var(--spectrum-coachmark-border-radius) var(--spectrum-coachmark-border-radius) 0 0;
 
   width: 100%;
 }
+
 .spectrum-CoachMarkPopover-header,
 .spectrum-CoachMarkPopover-content,
 .spectrum-CoachMarkPopover-footer {
-  padding: 0 24px;
+  padding: 0 var(--spectrum-coachmark-padding-x);
 }
+
 .spectrum-CoachMarkPopover-header {
-  padding-top: 24px;
+  padding-top: var(--spectrum-coachmark-padding-y);
 }
+
 .spectrum-CoachMarkPopover-footer {
-  padding-bottom: 24px;
+  padding-bottom: var(--spectrum-coachmark-padding-y);
 }
+
 .spectrum-CoachMarkPopover-header {
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-pack: justify;
-      justify-content: space-between;
-  -ms-flex-align: end;
-      align-items: flex-end;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--spectrum-coachmark-title-margin-bottom);
 }
+
 .spectrum-CoachMarkPopover-title {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: var(--spectrum-coachmark-title-text-size);
+  font-weight: var(--spectrum-coachmark-title-text-font-weight);
+  line-height: var(--spectrum-coachmark-title-text-line-height);
   margin-bottom: 0;
 }
+
 .spectrum-CoachMarkPopover-step {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
+  align-self: start;
+
+  font-size: var(--spectrum-coachmark-step-text-size);
+  font-weight: var(--spectrum-coachmark-step-text-font-weight);
+  line-height: var(--spectrum-coachmark-step-text-line-height);
+  white-space: nowrap;
 }
+
 .spectrum-CoachMarkPopover-content {
-  margin-bottom: 16px;
+  margin-bottom: var(--spectrum-coachmark-content-margin-bottom);
 }
+
 .spectrum-CoachMarkPopover-footer {
   margin-top: 0;
   text-align: right;
 }
+
 .spectrum-CoachMarkIndicator {
   position: relative;
 
-  margin: 6px;
+  margin: var(--spectrum-coachmark-indicator-gap);
 }
+
 .spectrum-CoachMarkIndicator-ring {
   display: block;
   position: absolute;
 
   border-style: solid;
-  border-width: 2px;
+  border-width: var(--spectrum-coachmark-indicator-ring-border-size);
   border-radius: 50%;
+
+  &:nth-child(2) {
+    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-center-delay-multiple));
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-outer-delay-multiple))
+  }
 }
-.spectrum-CoachMarkIndicator-ring:nth-child(2) {
-    animation-delay: -1980ms;
-  }
-.spectrum-CoachMarkIndicator-ring:nth-child(3) {
-    animation-delay: -3000ms
-  }
+
 .spectrum-CoachMarkIndicator {
-  min-width: 48px;
-  min-height: 48px;
+  min-width: calc(var(--spectrum-coachmark-indicator-ring-diameter) * 3);
+  min-height: calc(var(--spectrum-coachmark-indicator-ring-diameter) * 3);
 }
+
 .spectrum-CoachMarkIndicator-ring {
-  top: 12px;
-  left: 12px;
+  top: calc(var(--spectrum-coachmark-indicator-ring-diameter) * 0.75);
+  left: calc(var(--spectrum-coachmark-indicator-ring-diameter) * 0.75);
 
-  width: 16px;
-  height: 16px;
-  animation: pulse 3000ms linear infinite;
-}
-.spectrum-CoachMarkIndicator-ring:nth-child(1) {
-    animation-delay: -1500ms;
+  width: var(--spectrum-coachmark-indicator-ring-diameter);
+  height: var(--spectrum-coachmark-indicator-ring-diameter);
+  animation: pulse var(--spectrum-coachmark-animation-indicator-ring-duration) linear infinite;
+
+  &:nth-child(1) {
+    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-inner-delay-multiple));
   }
+}
+
 .spectrum-CoachMarkIndicator--quiet {
-  min-width: 22px;
-  min-height: 22px;
-}
-.spectrum-CoachMarkIndicator--quiet .spectrum-CoachMarkIndicator-ring {
-    top: 6px;
-    left: 6px;
+  min-width: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 2.75);
+  min-height: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 2.75);
 
-    width: 8px;
-    height: 8px;
-    animation: pulse--quiet 3000ms linear infinite;
-  }
-.spectrum-CoachMarkIndicator--quiet .spectrum-CoachMarkIndicator-ring:nth-child(1) {
-      animation-delay: -990ms;
+  .spectrum-CoachMarkIndicator-ring {
+    top: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 0.75);
+    left: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 0.75);
+
+    width: var(--spectrum-coachmark-quiet-indicator-ring-diameter);
+    height: var(--spectrum-coachmark-quiet-indicator-ring-diameter);
+    animation: pulse--quiet var(--spectrum-coachmark-animation-indicator-ring-duration) linear infinite;
+
+    &:nth-child(1) {
+      animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-quiet-animation-inticator-ring-inner-delay-multiple));
     }
+  }
+}
 

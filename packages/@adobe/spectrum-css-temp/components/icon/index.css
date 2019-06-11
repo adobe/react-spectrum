@@ -1,5 +1,25 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  --spectrum-icon-size-s: var(--spectrum-alias-workflow-icon-size);
+  --spectrum-icon-size-m: var(--spectrum-global-dimension-size-300);
+  --spectrum-icon-size-xxs: calc(var(--spectrum-icon-size-s) / 2);
+  --spectrum-icon-size-xs: calc(var(--spectrum-icon-size-m) / 2);
+  --spectrum-icon-size-l: calc(var(--spectrum-icon-size-s) * 2);
+  --spectrum-icon-size-xl: calc(var(--spectrum-icon-size-m) * 2);
+  --spectrum-icon-size-xxl: calc(var(--spectrum-icon-size-m) * 3);
+}
+
 .spectrum-Icon {
   display: inline-block;
 
@@ -9,213 +29,248 @@
   /* Fill should match the current text color */
   fill: currentColor;
 
+  /* Hide the svg overflow in IE. */
+  &:not(:root) {
+    overflow: hidden;
+  }
+
   /* Don't catch clicks or hover, otherwise they may not escape the SVG */
   pointer-events: none;
 }
-/* Hide the svg overflow in IE. */
-.spectrum-Icon:not(:root) {
-    overflow: hidden;
+
+.spectrum-Icon--sizeXXS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xxs);
+    width: var(--spectrum-icon-size-xxs);
   }
-.spectrum-Icon--sizeXXS,
-  .spectrum-Icon--sizeXXS img,
-  .spectrum-Icon--sizeXXS svg {
-    height: 9px;
-    width: 9px;
+}
+
+.spectrum-Icon--sizeXS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xs);
+    width: var(--spectrum-icon-size-xs);
   }
-.spectrum-Icon--sizeXS,
-  .spectrum-Icon--sizeXS img,
-  .spectrum-Icon--sizeXS svg {
-    height: 12px;
-    width: 12px;
+}
+
+.spectrum-Icon--sizeS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-s);
+    width: var(--spectrum-icon-size-s);
   }
-.spectrum-Icon--sizeS,
-  .spectrum-Icon--sizeS img,
-  .spectrum-Icon--sizeS svg {
-    height: 18px;
-    width: 18px;
+}
+
+.spectrum-Icon--sizeM {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-m);
+    width: var(--spectrum-icon-size-m);
   }
-.spectrum-Icon--sizeM,
-  .spectrum-Icon--sizeM img,
-  .spectrum-Icon--sizeM svg {
-    height: 24px;
-    width: 24px;
+}
+
+.spectrum-Icon--sizeL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-l);
+    width: var(--spectrum-icon-size-l);
   }
-.spectrum-Icon--sizeL,
-  .spectrum-Icon--sizeL img,
-  .spectrum-Icon--sizeL svg {
-    height: 36px;
-    width: 36px;
+}
+
+.spectrum-Icon--sizeXL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xl);
+    width: var(--spectrum-icon-size-xl);
   }
-.spectrum-Icon--sizeXL,
-  .spectrum-Icon--sizeXL img,
-  .spectrum-Icon--sizeXL svg {
-    height: 48px;
-    width: 48px;
+}
+
+.spectrum-Icon--sizeXXL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xxl);
+    width: var(--spectrum-icon-size-xxl);
   }
-.spectrum-Icon--sizeXXL,
-  .spectrum-Icon--sizeXXL img,
-  .spectrum-Icon--sizeXXL svg {
-    height: 72px;
-    width: 72px;
-  }
+}
+
 /* Hide UI icons on older browsers with SVG 1.1 implementations */
-.spectrum--medium .spectrum-UIIcon--large {
+.spectrum--medium {
+  .spectrum-UIIcon--large {
     display: none;
   }
-.spectrum--medium .spectrum-UIIcon--medium {
+  .spectrum-UIIcon--medium {
     display: inline;
   }
-.spectrum--large .spectrum-UIIcon--medium {
+}
+
+.spectrum--large {
+  .spectrum-UIIcon--medium {
     display: none;
   }
-.spectrum--large .spectrum-UIIcon--large {
+  .spectrum-UIIcon--large {
     display: inline;
   }
+}
+
 /* Hide UI icons on browsers that implement SVG 2 correctly (Firefox 56+) */
 .spectrum--large {
-  --ui-icon-large-display: block;
-  --ui-icon-medium-display: none;
+  x--ui-icon-large-display: block;
+  x--ui-icon-medium-display: none;
 }
 .spectrum--medium {
-  --ui-icon-medium-display: block;
-  --ui-icon-large-display: none;
+  x--ui-icon-medium-display: block;
+  x--ui-icon-large-display: none;
 }
+
 .spectrum-UIIcon--large {
-  display: var(--ui-icon-large-display);
+  display: xvar(--ui-icon-large-display);
 }
 .spectrum-UIIcon--medium {
-  display: var(--ui-icon-medium-display);
+  display: xvar(--ui-icon-medium-display);
 }
+
 /* UI Icons */
 .spectrum-UIIcon-AlertMedium {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-alert-medium-width);
+  height: var(--spectrum-icon-alert-medium-height);
 }
 .spectrum-UIIcon-AlertSmall {
-  width: 14px;
-  height: 14px;
+  width: var(--spectrum-icon-alert-small-width);
+  height: var(--spectrum-icon-alert-small-height);
 }
 .spectrum-UIIcon-ArrowDownSmall {
-  width: 8px;
-  height: 10px;
+  width: var(--spectrum-icon-arrow-down-small-width);
+  height: var(--spectrum-icon-arrow-down-small-height);
 }
 .spectrum-UIIcon-ArrowLeftMedium {
-  width: 14px;
-  height: 10px;
+  width: var(--spectrum-icon-arrow-left-medium-width);
+  height: var(--spectrum-icon-arrow-left-medium-height);
 }
 .spectrum-UIIcon-Asterisk {
-  width: 8px;
-  height: 8px;
+  width: var(--spectrum-fieldlabel-asterisk-size);
+  height: var(--spectrum-fieldlabel-asterisk-size);
 }
 .spectrum-UIIcon-CheckmarkMedium {
-  width: 12px;
-  height: 12px;
+  width: var(--spectrum-icon-checkmark-medium-width);
+  height: var(--spectrum-icon-checkmark-medium-height);
 }
 .spectrum-UIIcon-CheckmarkSmall {
-  width: 10px;
-  height: 10px;
+  width: var(--spectrum-icon-checkmark-small-width);
+  height: var(--spectrum-icon-checkmark-small-height);
 }
 .spectrum-UIIcon-ChevronDownMedium {
-  width: 10px;
-  height: 6px;
+  width: var(--spectrum-icon-chevron-down-medium-width);
+  height: var(--spectrum-icon-chevron-down-medium-height);
 }
 .spectrum-UIIcon-ChevronDownSmall {
-  width: 8px;
-  height: 6px;
+  width: var(--spectrum-icon-chevron-down-small-width);
+  height: var(--spectrum-icon-chevron-down-small-height);
 }
 .spectrum-UIIcon-ChevronLeftLarge {
-  width: 12px;
-  height: 16px;
+  width: var(--spectrum-icon-chevron-left-large-width);
+  height: var(--spectrum-icon-chevron-left-large-height);
 }
 .spectrum-UIIcon-ChevronLeftMedium {
-  width: 6px;
-  height: 10px;
+  width: var(--spectrum-icon-chevron-left-medium-width);
+  height: var(--spectrum-icon-chevron-left-medium-height);
 }
 .spectrum-UIIcon-ChevronRightLarge {
-  width: 12px;
-  height: 16px;
+  width: var(--spectrum-icon-chevron-right-large-width);
+  height: var(--spectrum-icon-chevron-right-large-height);
 }
 .spectrum-UIIcon-ChevronRightMedium {
-  width: 6px;
-  height: 10px;
+  width: var(--spectrum-icon-chevron-right-medium-width);
+  height: var(--spectrum-icon-chevron-right-medium-height);
 }
 .spectrum-UIIcon-ChevronRightSmall {
-  width: 6px;
-  height: 8px;
+  width: var(--spectrum-icon-chevron-right-small-width);
+  height: var(--spectrum-icon-chevron-right-small-height);
 }
 .spectrum-UIIcon-ChevronUpSmall {
-  width: 8px;
-  height: 6px;
+  width: var(--spectrum-icon-chevron-up-small-width);
+  height: var(--spectrum-icon-chevron-up-small-height);
 }
 .spectrum-UIIcon-CornerTriangle {
-  width: 5px;
-  height: 5px;
+  width: var(--spectrum-icon-cornertriangle-width);
+  height: var(--spectrum-icon-cornertriangle-height);
 }
 .spectrum-UIIcon-CrossLarge {
-  width: 12px;
-  height: 12px;
+  width: var(--spectrum-icon-cross-large-width);
+  height: var(--spectrum-icon-cross-large-height);
 }
 .spectrum-UIIcon-CrossMedium {
-  width: 8px;
-  height: 8px;
+  width: var(--spectrum-icon-cross-medium-width);
+  height: var(--spectrum-icon-cross-medium-height);
 }
 .spectrum-UIIcon-CrossSmall {
-  width: 8px;
-  height: 8px;
+  width: var(--spectrum-icon-cross-small-width);
+  height: var(--spectrum-icon-cross-small-height);
 }
 .spectrum-UIIcon-DashSmall {
-  width: 10px;
-  height: 10px;
+  width: var(--spectrum-icon-dash-small-width);
+  height: var(--spectrum-icon-dash-small-height);
 }
 .spectrum-UIIcon-DoubleGripper {
-  width: 16px;
-  height: 4px;
+  width: var(--spectrum-icon-doublegripper-width);
+  height: var(--spectrum-icon-doublegripper-height);
+}
+.spectrum-UIIcon-FolderBreadcrumb {
+  width: var(--spectrum-icon-folderbreadcrumb-width);
+  height: var(--spectrum-icon-folderbreadcrumb-height);
 }
 .spectrum-UIIcon-HelpMedium {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-info-medium-width);
+  height: var(--spectrum-icon-info-medium-height);
 }
 .spectrum-UIIcon-HelpSmall {
-  width: 14px;
-  height: 14px;
+  width: var(--spectrum-icon-info-small-width);
+  height: var(--spectrum-icon-info-small-height);
 }
 .spectrum-UIIcon-InfoMedium {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-info-medium-width);
+  height: var(--spectrum-icon-info-medium-height);
 }
 .spectrum-UIIcon-InfoSmall {
-  width: 14px;
-  height: 14px;
+  width: var(--spectrum-icon-info-small-width);
+  height: var(--spectrum-icon-info-small-height);
 }
 .spectrum-UIIcon-Magnifier {
-  width: 16px;
-  height: 16px;
+  width: var(--spectrum-icon-magnifier-width);
+  height: var(--spectrum-icon-magnifier-height);
 }
 .spectrum-UIIcon-SkipLeft {
-  width: 9px;
-  height: 10px;
+  width: var(--spectrum-icon-skip-left-width);
+  height: var(--spectrum-icon-skip-left-height);
 }
 .spectrum-UIIcon-SkipRight {
-  width: 9px;
-  height: 10px;
+  width: var(--spectrum-icon-skip-right-width);
+  height: var(--spectrum-icon-skip-right-height);
 }
 .spectrum-UIIcon-Star {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-star-width);
+  height: var(--spectrum-icon-star-height);
 }
 .spectrum-UIIcon-StarOutline {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-star-outline-width);
+  height: var(--spectrum-icon-star-outline-height);
 }
 .spectrum-UIIcon-SuccessMedium {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-success-medium-width);
+  height: var(--spectrum-icon-success-medium-height);
 }
 .spectrum-UIIcon-SuccessSmall {
-  width: 14px;
-  height: 14px;
+  width: var(--spectrum-icon-success-small-width);
+  height: var(--spectrum-icon-success-small-height);
 }
 .spectrum-UIIcon-TripleGripper {
-  width: 10px;
-  height: 7px;
+  width: var(--spectrum-icon-triplegripper-width);
+  height: var(--spectrum-icon-triplegripper-height);
 }

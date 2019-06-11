@@ -1,25 +1,2 @@
-/* topdoc
-{{ avatar/avatar-small.yml }}
-*/
-
-.spectrum-Avatar {
-  width: var(--spectrum-avatar-small-width, var(--spectrum-global-dimension-size-200));
-  height: var(--spectrum-avatar-small-height, var(--spectrum-global-dimension-size-200));
-
-  border-radius: var(--spectrum-avatar-small-border-radius, 50%);
-  border-style: none;
-
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
-.spectrum-Avatar {
-  opacity: NaN;
-}
-
-.spectrum-Avatar.is-disabled {
-    opacity: NaN;
-  }
+@import './index.css';
+@import './skin.css';

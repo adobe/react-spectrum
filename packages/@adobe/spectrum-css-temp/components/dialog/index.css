@@ -1,50 +1,64 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
-.spectrum-Dialog {
-  visibility: hidden;
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-  opacity: 0;
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
-  transition: transform 130ms ease-in-out,
-              opacity 130ms ease-in-out,
-              visibility 0ms linear 130ms;
+@import '../commons/index.css';
+@import '../commons/overlay.css';
 
-  pointer-events: none;
-}
-.spectrum-Dialog.is-open {
-  visibility: visible;
-
-  opacity: 1;
-
-  transition-delay: 0ms;
-
-  pointer-events: auto;
-}
 :root {
   /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
+  --spectrum-dialog-fullscreen-margin: 32px;
 
   /* Distance between the edge of the fullscreen dialog and header */
+  --spectrum-dialog-fullscreen-padding-top: calc(var(--spectrum-dialog-padding) - 10px);
 
   /* The font-size of the fullscreen dialog header */
+  --spectrum-dialog-fullscreen-header-text-size: 28px;
 
   /* The font-weight of the fullscreen dialog header */
+  --spectrum-dialog-fullscreen-header-text-font-weight: 100;
+
+  --spectrum-dialog-small-width: 400px;
+  --spectrum-dialog-medium-width: 480px;
+  --spectrum-dialog-large-width: 640px;
+  --spectrum-dialog-max-width: 90vw;
+  --spectrum-dialog-max-height: 90vh;
+  --spectrum-dialog-hero-height: var(--spectrum-global-dimension-size-1600);
+  --spectrum-dialog-alert-width: var(--spectrum-dialog-medium-width);
+
+  --spectrum-dialog-vertical-offset: -2vh;
+  --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
+  --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
+
+  /* Bug: this must be 0ms, not 0 */
+  --spectrum-dialog-exit-animation-delay: 0ms;
 }
+
 /* topdoc
 {{ dialog/dialog.yml }}
 */
 .spectrum-Dialog {
+  @inherit: %spectrum-overlay;
 
   /* Be a flexbox to allow a full sized content area that scrolls */
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: column;
-      flex-direction: column;
+  flex-direction: column;
 
   /* Centered by default */
   position: fixed;
   left: 50%;
   top: 50%;
-  transform: translateX(-50%) translateY(-50%) translateY(8px);
+
+  /* Start offset by the animation distance */
+  transform: translateX(-50%) translateY(-50%) translateY(var(--spectrum-dialog-entry-animation-distance));
 
   /* Appear above underlay */
   z-index: 2;
@@ -53,59 +67,183 @@
   box-sizing: border-box;
 
   /* Don't be bigger than the screen */
-  max-height: 90%;
+  max-width: var(--spectrum-dialog-max-width);
+  max-height: var(--spectrum-dialog-max-height);
 
   /* Be no bigger than max-width, but also be 90% if the viewport is smaller than max-width */
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
   width: fit-content;
-  max-width: 90%;
-  min-width: 288px;
+  min-width: var(--spectrum-dialog-min-width);
 
-  padding: 40px;
+  padding: var(--spectrum-dialog-padding);
 
-  border-radius: 4px;
-  outline: none;
-}
-/* Firefox shows outline */
-.spectrum-Dialog.is-open {
+  border-radius: var(--spectrum-dialog-border-radius);
+  outline: none; /* Firefox shows outline */
 
-    transform: translate(-50%, -50%);
+  /* Exit animations */
+  transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
+              visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
+              transform 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration));
+
+  &.is-open {
+    @inherit: %spectrum-overlay--open;
+
+    /* Entry animations */
+    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
+                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+
+    transform: translate(-50%, calc(-50% + var(--spectrum-dialog-vertical-offset)));
   }
-.spectrum-Dialog--alert {
-  /* Smaller dialog for alerts */
-  width: 90%;
-  max-width: 480px;
+
+  .spectrum-Dialog-closeButton {
+    display: none;
+  }
 }
+
+.spectrum-Dialog--small {
+  width: var(--spectrum-dialog-small-width);
+}
+
+.spectrum-Dialog--medium {
+  width: var(--spectrum-dialog-medium-width);
+}
+
+.spectrum-Dialog--large {
+  width: var(--spectrum-dialog-large-width);
+}
+
+.spectrum-Dialog-hero {
+  height: var(--spectrum-dialog-hero-height);
+
+  margin-left: calc(-1 * var(--spectrum-dialog-padding));
+  margin-right: calc(-1 * var(--spectrum-dialog-padding));
+  margin-top: calc(-1 * var(--spectrum-dialog-padding));
+  margin-bottom: var(--spectrum-dialog-padding);
+
+  border-top-left-radius: var(--spectrum-dialog-border-radius);
+  border-top-right-radius: var(--spectrum-dialog-border-radius);
+
+  background-size: cover;
+  background-position: center center;
+}
+
 .spectrum-Dialog-header {
-  display: -ms-flexbox;
   display: flex;
+  /* Without this, buttons will be stretched */
+  align-items: center;
+
   position: relative;
   box-sizing: border-box;
   width: 100%;
 
   /* Don't get small when the dialog does */
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
 
-  border-radius: 4px 4px 0 0;
+  border-radius: var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius) 0 0;
   outline: none; /* Hide focus outline around header */
 
-  padding-bottom: 30px;
-}
-/* The rule element */
-.spectrum-Dialog-header::after {
+  padding-bottom: calc(var(--spectrum-dialog-rule-margin-top) + var(--spectrum-dialog-rule-margin-bottom) + var(--spectrum-dialog-rule-height));
+
+  /* The rule element */
+  &::after {
     position: absolute;
-    bottom: 16px;
+    bottom: var(--spectrum-dialog-rule-margin-bottom);
     left: 0;
     right: 0;
     content: '';
 
-    height: 2px;
+    height: var(--spectrum-dialog-rule-height);
   }
+}
+
+/* Used to position the dialog */
+.spectrum-Dialog-wrapper {
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+
+  visibility: hidden;
+
+  /* Don't catch clicks */
+  pointer-events: none;
+
+  /* Appear above underlay */
+  z-index: 2;
+
+  /* Be invisible by default */
+  transition: visibility 0ms linear var(--spectrum-global-animation-duration-100);
+
+  &.is-open {
+    visibility: visible;
+  }
+
+  .spectrum-Dialog:not(.spectrum-Dialog--fullscreen):not(.spectrum-Dialog--fullscreenTakeover) {
+    pointer-events: auto;
+
+    position: static;
+    transform: translateY(var(--spectrum-dialog-entry-animation-distance));
+    margin-top: var(--spectrum-dialog-vertical-offset);
+
+    &.is-open {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Responsive Dialogs will fill the screen on small viewports */
+@media
+only screen and (max-device-width: 400px),
+only screen and (max-device-height: 350px) {
+  .spectrum-Dialog--responsive {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+  .spectrum-Dialog-wrapper {
+    .spectrum-Dialog--responsive {
+      margin-top: 0; /* Prevent the vertical offset bit */
+    }
+  }
+}
+
+.spectrum-Dialog--noDivider {
+  .spectrum-Dialog-header {
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.spectrum-Dialog--dismissible {
+  .spectrum-Dialog-footer {
+    /* You cannot have buttons in a dismissible dialog */
+    display: none;
+  }
+
+  .spectrum-Dialog-closeButton {
+    display: initial;
+  }
+}
+
+.spectrum-Dialog-closeButton {
+  position: absolute;
+  top: calc(-1 * var(--spectrum-global-dimension-size-350));
+  right: calc(-1 * var(--spectrum-global-dimension-size-350));
+}
+
 .spectrum-Dialog-typeIcon {
   display: block;
 }
+
 .spectrum-Dialog-content {
   display: block;
   box-sizing: border-box;
@@ -113,82 +251,97 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
-  -ms-flex: 1 1 auto;
-
-      flex: 1 1 auto;
-
-  /* Temporary IE 11 fix */
-  max-height: 70vh;
+  flex: 1 1 auto;
 
   outline: none; /* Hide focus outline */
 
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
+  font-size: var(--spectrum-dialog-content-text-size);
+  font-weight: var(--spectrum-dialog-content-text-font-weight);
+  line-height: var(--spectrum-dialog-content-text-line-height);
 }
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .spectrum-Dialog-content {
+    /* Temporary IE 11 fix */
+    max-height: 70vh;
+  }
+}
+
 .spectrum-Dialog-footer {
-  border-radius: 0 0 4px 4px;
-  margin-top: 48px;
+  border-radius: 0 0 var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius);
+  padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
 
-  -ms-flex: 0 1 auto;
-
-      flex: 0 1 auto;
-
-  display: -ms-flexbox;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
 
   display: flex;
-  -ms-flex-pack: end;
-      justify-content: flex-end;
+  justify-content: flex-end;
 
   outline: none; /* Hide focus outline */
+
+  margin: calc(-1 * var(--spectrum-dialog-button-margin) / 2);
+  margin-top: 0;
+
+  /* Both selectors are required to override the button + button rule */
+  > *,
+  > .spectrum-Button + .spectrum-Button {
+    margin: calc(var(--spectrum-dialog-button-margin) / 2);
+  }
 }
+
 .spectrum-Dialog-title {
-  -ms-flex: 1 1 auto;
-      flex: 1 1 auto;
+  flex: 1 1 auto;
 
   margin: 0;
 
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.3;
-
-  /* Truncate text when it's too long to fit */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: var(--spectrum-dialog-title-text-size);
+  font-weight: var(--spectrum-dialog-title-text-font-weight);
+  line-height: var(--spectrum-dialog-title-text-line-height);
 
   outline: none; /* Hide focus outline */
 }
-.spectrum-Dialog--fullscreen {
-  left: 32px;
-  top: 32px;
-  right: 32px;
-  bottom: 32px;
 
-  transform: translate(0, 8px);
+/* Alert Dialog is a specific type of Dialog */
+.spectrum-Dialog--alert {
+  width: var(--spectrum-dialog-alert-width);
 }
-.spectrum-Dialog--fullscreen.is-open {
+
+/** @unofficial */
+.spectrum-Dialog--fullscreen {
+  left: var(--spectrum-dialog-fullscreen-margin);
+  top: var(--spectrum-dialog-fullscreen-margin);
+  right: var(--spectrum-dialog-fullscreen-margin);
+  bottom: var(--spectrum-dialog-fullscreen-margin);
+
+  transform: translate(0, var(--spectrum-dialog-entry-animation-distance));
+
+  &.is-open {
     transform: translate(0, 0);
   }
+}
+
 .spectrum-Dialog--fullscreen,
 .spectrum-Dialog--fullscreenTakeover {
   width: auto;
   max-height: none;
   max-width: none;
 
-  padding-top: 30px;
-}
-.spectrum-Dialog--fullscreen .spectrum-Dialog-header, .spectrum-Dialog--fullscreenTakeover .spectrum-Dialog-header {
-    -ms-flex-negative: 0;
-        flex-shrink: 0;
+  padding-top: var(--spectrum-dialog-fullscreen-padding-top);
+
+  .spectrum-Dialog-header {
+    flex-shrink: 0;
   }
-.spectrum-Dialog--fullscreen .spectrum-Dialog-title, .spectrum-Dialog--fullscreenTakeover .spectrum-Dialog-title {
-    font-size: 28px;
-    font-weight: 100;
+
+  .spectrum-Dialog-title {
+    font-size: var(--spectrum-dialog-fullscreen-header-text-size);
+    font-weight: var(--spectrum-dialog-fullscreen-header-text-font-weight);
   }
-.spectrum-Dialog--fullscreen .spectrum-Dialog-content, .spectrum-Dialog--fullscreenTakeover .spectrum-Dialog-content {
+
+  .spectrum-Dialog-content {
     max-height: none;
   }
+}
+
 .spectrum-Dialog--fullscreenTakeover {
   position: fixed;
   left: 0;
@@ -201,8 +354,9 @@
   /* Remove the border since we've taken over */
   border: none;
   border-radius: 0;
-}
-.spectrum-Dialog--fullscreenTakeover,
-  .spectrum-Dialog--fullscreenTakeover.is-open {
+
+  &,
+  &.is-open {
     transform: none;
   }
+}

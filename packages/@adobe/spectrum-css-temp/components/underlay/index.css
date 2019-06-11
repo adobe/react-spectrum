@@ -1,26 +1,25 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
-.spectrum-Underlay {
-  visibility: hidden;
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-  opacity: 0;
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
-  transition: transform 130ms ease-in-out,
-              opacity 130ms ease-in-out,
-              visibility 0ms linear 130ms;
+@import '../commons/index.css';
+@import '../commons/overlay.css';
 
-  pointer-events: none;
+:root {
+  /* Bug: this must be 0ms, not 0 */
+  --spectrum-dialog-background-entry-animation-delay: 0ms;
 }
-.spectrum-Underlay.is-open {
-  visibility: visible;
 
-  opacity: 1;
-
-  transition-delay: 0ms;
-
-  pointer-events: auto;
-}
 .spectrum-Underlay {
+  @inherit: %spectrum-overlay;
 
   position: fixed;
   top: 0;
@@ -32,4 +31,15 @@
   z-index: 1;
 
   overflow: hidden;
+
+  /* Exit animations */
+  transition: opacity var(--spectrum-dialog-background-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-background-exit-animation-delay),
+              visibility 0ms linear calc(var(--spectrum-dialog-background-exit-animation-delay) + var(--spectrum-dialog-background-exit-animation-duration));
+}
+
+.spectrum-Underlay.is-open {
+  @inherit: %spectrum-overlay--open;
+
+  /* Entry animations */
+  transition: opacity var(--spectrum-dialog-background-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-background-entry-animation-delay);
 }

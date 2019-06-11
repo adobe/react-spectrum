@@ -1,18 +1,1 @@
-/* topdoc
-{{ decoratedtextfield/decoratedtextfield.yml }}
-*/
-.spectrum-DecoratedTextfield {
-  display: inline-block;
-  position: relative;
-}
-.spectrum-DecoratedTextfield-icon {
-  width: var(--spectrum-textfield-icon-size, var(--spectrum-global-dimension-size-225));
-  height: var(--spectrum-textfield-icon-size, var(--spectrum-global-dimension-size-225));
-
-  position: absolute;
-  bottom: calc(var(--spectrum-textfield-icon-frame, var(--spectrum-global-dimension-size-400)) / 2 - var(--spectrum-textfield-icon-size, var(--spectrum-global-dimension-size-225)) / 2);
-  right: calc(var(--spectrum-textfield-icon-frame, var(--spectrum-global-dimension-size-400)) / 2 - var(--spectrum-textfield-icon-size, var(--spectrum-global-dimension-size-225)) / 2);
-}
-.spectrum-DecoratedTextfield-field {
-  padding-right: var(--spectrum-textfield-icon-frame, var(--spectrum-global-dimension-size-400));
-}
+@import './index.css';

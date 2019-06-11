@@ -1,5 +1,23 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-miller-column-chevron-height: 10px;
+  --spectrum-miller-column-chevron-width: 6px;
+  --spectrum-miller-column-checkbox-margin: 0;
+}
+
 /* topdoc
 {{ assetlist/assetlist.yml }}
 */
@@ -8,77 +26,87 @@
   margin-bottom: 0;
   padding: 0;
 }
+
 .spectrum-AssetList-item {
   position: relative;
 
-  display: -ms-flexbox;
-
   display: flex;
   box-sizing: border-box;
-  -ms-flex-align: center;
-      align-items: center;
+  align-items: center;
 
-  width: 272px;
-  height: 40px;
+  width: var(--spectrum-miller-column-width);
+  height: var(--spectrum-miller-column-item-height);
 
-  padding: 0 16px 0 16px;
-  margin: 0 0 4px 0;
+  padding: 0 var(--spectrum-miller-column-item-padding-right) 0 var(--spectrum-miller-column-item-padding-left);
+  margin: 0 0 var(--spectrum-miller-column-item-margin-bottom) 0;
 
-  border-radius: 4px;
+  border-radius: var(--spectrum-miller-column-item-border-radius);
 
-  transition: background-color 130ms ease-in-out;
+  transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
-  font-size: 14px;
-  font-weight: 400;
+  font-size: var(--spectrum-selectlist-option-text-size);
+  font-weight: var(--spectrum-selectlist-option-text-font-weight);
   font-style: normal;
 
   cursor: pointer;
 
   outline: none;
-}
-.spectrum-AssetList-item::before {
+
+  &::before {
     content: '';
 
     position: absolute;
     left: 0;
     right: 0;
 
-    height: 40px;
+    height: var(--spectrum-miller-column-item-height);
 
     background-color: transparent;
 
-    border-radius: 4px;
+    border-radius: var(--spectrum-miller-column-item-border-radius);
   }
-/* checkbox on the left, shows up always */
-.spectrum-AssetList-item.is-selectable .spectrum-Checkbox, .spectrum-AssetList-item.is-selected .spectrum-Checkbox, .spectrum-AssetList-item:hover .spectrum-Checkbox, .spectrum-AssetList-item:focus .spectrum-Checkbox {
-      display: -ms-inline-flexbox;
+
+  &.is-selectable,
+  &.is-selected,
+  &:hover,
+  &:focus {
+    /* checkbox on the left, shows up always */
+    .spectrum-Checkbox {
       display: inline-flex;
     }
-/* show chevron */
-.spectrum-AssetList-item.is-branch .spectrum-AssetList-itemChildIndicator {
+  }
+
+  &.is-branch {
+    /* show chevron */
+    .spectrum-AssetList-itemChildIndicator {
       display: block;
     }
-.spectrum-AssetList-item .spectrum-AssetList-itemThumbnail {
+  }
+
+  .spectrum-AssetList-itemThumbnail {
     /* Remove the border on images inside links in IE 10-. */
     border-style: none;
 
-    width: 24px;
-    height: 24px;
-    margin-left: 8px;
+    width: var(--spectrum-miller-column-thumbnail-width);
+    height: var(--spectrum-miller-column-thumbnail-height);
+    margin-left: var(--spectrum-miller-column-thumbnail-margin-left);
     vertical-align: middle;
   }
+}
+
 .spectrum-AssetList-itemSelector {
   display: none;
-  margin: 0;
+  margin: var(--spectrum-miller-column-checkbox-margin);
 }
+
 .spectrum-AssetList-itemChildIndicator {
   display: none;
-  transition: transform ease 130ms;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
 }
+
 .spectrum-AssetList-itemLabel {
-  -ms-flex: 1;
-      flex: 1;
-  padding-left: 8px;
+  flex: 1;
+  padding-left: var(--spectrum-miller-column-item-label-padding-left);
 
   text-overflow: ellipsis;
   overflow: hidden;

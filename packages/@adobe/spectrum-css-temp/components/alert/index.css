@@ -1,9 +1,25 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 :root {
+  --spectrum-alert-header-height: 38px;
+  --spectrum-alert-corner-radius: 4px;
 
   /* DNA */
+  --spectrum-alert-border-width: 2px;
 }
+
 /* topdoc
 {{ alert/alert-closeable.yml }}
 */
@@ -12,21 +28,23 @@
 
   display: inline-block;
   box-sizing: border-box;
-  min-width: 368px;
-  min-height: 38px;
+  min-width: var(--spectrum-alert-min-width);
+  min-height: var(--spectrum-alert-header-height);
   margin: 8px 0;
-  padding: 20px 20px;
+  padding: var(--spectrum-alert-padding-y) var(--spectrum-alert-padding-x);
 
-  border-width: 2px;
+  border-width: var(--spectrum-alert-border-width);
   border-style: solid;
-  border-radius: 4px;
+  border-radius: var(--spectrum-alert-corner-radius);
 }
+
 .spectrum-Alert-icon {
   position: absolute;
   display: block;
   top: 20px;
   right: 20px;
 }
+
 .spectrum-Alert-header {
   display: inline-block;
   height: auto;
@@ -43,27 +61,31 @@
   line-height: 14px;
   text-transform: none;
 }
+
 .spectrum-Alert-content {
   display: block;
-  margin: 8px 0 0 0;
+  margin: var(--spectrum-alert-content-margin-top) 0 0 0;
   padding: 0;
 
   font-size: 14px;
   word-wrap: break-word;
 }
+
 .spectrum-Alert-footer {
   display: block;
 
   text-align: right;
 
   padding-top: 0.5rem;
-}
-.spectrum-Alert-footer:empty {
+
+  &:empty {
     display: none;
   }
-.spectrum-Alert-footer .spectrum-Button {
+
+  .spectrum-Button {
     margin-right: 0;
 
     /* Spacing between buttons */
     margin-left: 0.75rem;
   }
+}

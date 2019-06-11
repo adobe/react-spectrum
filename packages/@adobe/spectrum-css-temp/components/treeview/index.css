@@ -1,5 +1,17 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* topdoc
 {{ treeview/treeview.yml }}
 */
@@ -8,31 +20,34 @@
   list-style: none;
   position: relative;
   padding: 0;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  user-select: none;
   outline: none;
 }
+
 .spectrum-TreeView-item {
   /* Don't let child treeviews that are open spill out */
   overflow: hidden;
-}
-.spectrum-TreeView-item.is-open > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
+
+  &.is-open {
+    > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
       /* Rotate the chevron */
       transform: rotate(90deg);
     }
-.spectrum-TreeView-item.is-open > .spectrum-TreeView {
+
+    > .spectrum-TreeView {
       /* Open the treeview */
       height: auto;
       visibility: visible;
     }
+  }
+}
+
 .spectrum-TreeView-itemLink {
   display: block;
   box-sizing: border-box;
   cursor: pointer;
 
-  padding: 12px 30px;
+  padding: calc(calc(var(--spectrum-treeview-item-margin-y) / 2) + var(--spectrum-treeview-item-padding-y)) var(--spectrum-treeview-item-padding-x);
 
   text-decoration: none;
 
@@ -40,96 +55,113 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.spectrum-TreeView-itemLink:focus {
+
+  &:focus {
     /* we cannot achieve rounded corners with outline so we use box-shadow (on skin.css) instead */
     outline: none;
   }
-.spectrum-TreeView-itemLink .spectrum-Icon {
+
+  .spectrum-Icon {
     vertical-align: top;
-    margin-right: 8px;
+    margin-right: var(--spectrum-treeview-item-icon-gap);
   }
-.spectrum-TreeView-itemLink::before {
+
+  &::before {
     content: '';
 
     position: absolute;
-    left: 2px;
+    left: calc(0 + var(--spectrum-treeview-item-border-size));
     right: 0;
     z-index: -1; /* make sure we don't block clicks on chevron */
 
     /* Position correctly since top is not defined */
-    margin-top: -8px;
+    margin-top: calc(-1 * var(--spectrum-treeview-item-padding-y));
 
-    height: 36px;
+    height: var(--spectrum-treeview-item-height);
 
     background-color: transparent;
 
-    border-radius: 4px;
+    border-radius: var(--spectrum-treeview-item-border-radius);
   }
+}
+
 .spectrum-TreeView-indicator {
   display: block;
 
   float: left;
   position: relative;
 
-  left: 10px;
-  top: -5px;
-  margin-left: -34px;
-  margin-bottom: -10px;
+  left: var(--spectrum-global-dimension-size-125);
+  top: calc(-1 * var(--spectrum-global-dimension-size-65));
+  margin-left: calc(-1 * calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25)));
+  margin-bottom: calc(-1 * var(--spectrum-global-dimension-size-125));
 
-  padding: 10px;
+  padding: var(--spectrum-global-dimension-size-125);
 
-  transition: transform ease 130ms;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
 
   pointer-events: all !important;
 }
+
 /* Close nested treeviews by default */
 .spectrum-TreeView .spectrum-TreeView {
   /* Don't be a highlight container stealer */
   position: static;
 
-  padding-left: 28px;
+  padding-left: var(--spectrum-treeview-item-indent);
 
   /* Be hidden */
   height: 0;
   visibility: hidden;
 }
+
 /* topdoc
 {{ treeview/treeview-flat.yml }}
 */
 .spectrum-TreeView-item--indent1 {
-  padding-left: 28px;
+  padding-left: var(--spectrum-treeview-item-indent);
 }
+
 .spectrum-TreeView-item--indent2 {
-  padding-left: 56px;
+  padding-left: calc(2 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent3 {
-  padding-left: 84px;
+  padding-left: calc(3 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent4 {
-  padding-left: 112px;
+  padding-left: calc(4 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent5 {
-  padding-left: 140px;
+  padding-left: calc(5 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent6 {
-  padding-left: 168px;
+  padding-left: calc(6 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent7 {
-  padding-left: 196px;
+  padding-left: calc(7 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent8 {
-  padding-left: 224px;
+  padding-left: calc(8 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent9 {
-  padding-left: 252px;
+  padding-left: calc(9 * var(--spectrum-treeview-item-indent));
 }
+
 .spectrum-TreeView-item--indent10 {
-  padding-left: 280px;
+  padding-left: calc(10 * var(--spectrum-treeview-item-indent));
 }
+
 /* topdoc
 {{ treeview/treeview-icons.yml }}
 */
+
 /* topdoc
 {{ treeview/treeview-disabled.yml }}
 */

@@ -1,5 +1,17 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* topdoc
 {{ rule/rule.yml }}
 */
@@ -8,21 +20,24 @@
   overflow: visible;
 
   border: none;
-  border-width: 2px;
-  border-radius: 2px;
+  border-width: var(--spectrum-rule-medium-height);
+  border-radius: var(--spectrum-rule-medium-height);
 }
+
 .spectrum-Rule--large {
-  height: 4px;
+  height: var(--spectrum-rule-large-height);
 
-  border-radius: 2px;
+  border-radius: var(--spectrum-rule-large-border-radius);
 }
+
 .spectrum-Rule--medium {
-  height: 2px;
+  height: var(--spectrum-rule-medium-height);
 
-  border-radius: 1px;
+  border-radius: var(--spectrum-rule-medium-border-radius);
 }
-.spectrum-Rule--small {
-  height: 1px;
 
-  border-radius: 1px;
+.spectrum-Rule--small {
+  height: var(--spectrum-rule-small-height);
+
+  border-radius: var(--spectrum-rule-small-border-radius);
 }

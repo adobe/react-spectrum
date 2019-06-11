@@ -1,42 +1,62 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* A solid star */
-.spectrum-Rating:hover .spectrum-Rating-icon .spectrum-Rating-starActive,
-.spectrum-Rating-icon.is-selected .spectrum-Rating-starActive {
+%spectrum-Rating-filledStar {
+  .spectrum-Rating-starActive {
     display: block;
   }
-.spectrum-Rating:hover .spectrum-Rating-icon .spectrum-Rating-starInactive,
-.spectrum-Rating-icon.is-selected .spectrum-Rating-starInactive {
+  .spectrum-Rating-starInactive {
     display: none;
   }
+}
+
 /* A star with an outline only */
-.spectrum-Rating-icon .spectrum-Rating-starActive,
-.spectrum-Rating-icon:hover ~ .spectrum-Rating-icon .spectrum-Rating-starActive {
+%spectrum-Rating-strokedStar {
+  .spectrum-Rating-starActive {
     display: none;
   }
-.spectrum-Rating-icon .spectrum-Rating-starInactive,
-.spectrum-Rating-icon:hover ~ .spectrum-Rating-icon .spectrum-Rating-starInactive {
+  .spectrum-Rating-starInactive {
     display: block;
   }
+}
+
 .spectrum-Rating {
   position: relative;
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
+  flex: 0 0 auto;
 
-  width: 120px;
+  width: calc(var(--spectrum-rating-icon-width) * var(--spectrum-rating-icon-count));
 
-  border-radius: 4px;
+  border-radius: var(--spectrum-rating-border-radius);
 
   cursor: pointer;
-}
-.spectrum-Rating.is-disabled,
-  .spectrum-Rating.is-readOnly {
+
+  &.is-disabled,
+  &.is-readOnly {
     cursor: default;
     pointer-events: none;
   }
-/* When the entire component is hovered, show all solid icons */
+
+  /* When the entire component is hovered, show all solid icons */
+  &:hover {
+    .spectrum-Rating-icon {
+      @extend %spectrum-Rating-filledStar;
+    }
+  }
+}
+
 .spectrum-Rating-input {
   position: absolute;
   z-index: 0;
@@ -46,27 +66,42 @@
   opacity: 0.0001;
   pointer-events: none;
 }
+
 .spectrum-Rating-icon {
   position: relative;
   background-size: contain;
   background-repeat: no-repeat;
-  width: 24px;
-  height: 18px;
-  padding: 6px 0;
-}
-.spectrum-Rating-icon.is-currentValue:after {
-      border-radius: 2px;
+  width: var(--spectrum-rating-icon-width);
+  height: var(--spectrum-icon-star-height);
+  padding: var(--spectrum-rating-icon-padding-y) 0;
+
+  @extend %spectrum-Rating-strokedStar;
+
+  &.is-selected {
+    @extend %spectrum-Rating-filledStar;
+  }
+
+  &.is-currentValue {
+    &:after {
+      border-radius: var(--spectrum-rating-indicator-border-radius);
       content: '';
-      height: 2px;
+      height: var(--spectrum-rating-indicator-height);
       position: absolute;
-      bottom: 1px;
-      left: 4px;
-      right: 4px;
+      bottom: var(--spectrum-rating-indicator-offset);
+      left: calc((var(--spectrum-rating-icon-width) - var(--spectrum-rating-indicator-width)) / 2);
+      right: calc((var(--spectrum-rating-icon-width) - var(--spectrum-rating-indicator-width)) / 2);
     }
-/* All stars following the hovered star */
+  }
+
+  /* All stars following the hovered star */
+  &:hover ~ .spectrum-Rating-icon {
+    @extend %spectrum-Rating-strokedStar;
+  }
+}
+
 .spectrum-Rating-starActive,
 .spectrum-Rating-starInactive {
-  width: 18px;
-  height: 18px;
+  width: var(--spectrum-icon-star-width);
+  height: var(--spectrum-icon-star-width);
   margin: 0 auto;
 }

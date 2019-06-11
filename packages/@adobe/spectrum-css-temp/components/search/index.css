@@ -1,20 +1,35 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* topdoc
 {{ search/search.yml }}
 */
 /* topdoc
 {{ search/search-quiet.yml }}
 */
+
 .spectrum-Search {
   display: inline-block;
   position: relative;
-}
-.spectrum-Search .spectrum-ClearButton {
+
+  .spectrum-ClearButton {
     position: absolute;
     right: 0;
     top: 0;
   }
+}
+
 .spectrum-Search-input {
   display: block;
 
@@ -26,37 +41,43 @@
   outline-offset: -2px;
 
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-left: 36px;
+  padding-left: var(--spectrum-search-padding-left);
   text-indent: 0;
 
   /* Don't let long strings overlap the close icon */
-  padding-right: 28px;
-}
-/* Remove the inner padding and cancel buttons for input[type="search"] in Chrome and Safari on macOS. */
-.spectrum-Search-input::-webkit-search-cancel-button,
-  .spectrum-Search-input::-webkit-search-decoration {
+  padding-right: var(--spectrum-search-padding-right);
+
+  /* Remove the inner padding and cancel buttons for input[type="search"] in Chrome and Safari on macOS. */
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
     -webkit-appearance: none;
   }
-.spectrum-Search-input.spectrum-Textfield--quiet {
-    padding-left: 24px;
-    padding-right: 20px;
-  }
-/* Since quiet button has no left padding, push the icon all the way to the left */
-.spectrum-Search-input.spectrum-Textfield--quiet ~ .spectrum-Search-icon {
+
+  &.spectrum-Textfield--quiet {
+    padding-left: var(--spectrum-search-quiet-padding-left);
+    padding-right: var(--spectrum-search-quiet-padding-right);
+
+    /* Since quiet button has no left padding, push the icon all the way to the left */
+    & ~ .spectrum-Search-icon {
       left: 0;
     }
-.spectrum-Search-input.spectrum-Textfield--quiet ~ .spectrum-Search-clear {
+
+    & ~ .spectrum-Search-clear {
       right: -8px;
     }
-/* Since quiet button has no right padding, push the icon all the way to the right */
-.spectrum-Search-input.spectrum-Textfield--quiet ~ .spectrum-Search-rightIcon {
+
+    /* Since quiet button has no right padding, push the icon all the way to the right */
+    & ~ .spectrum-Search-rightIcon {
       right: 0;
     }
+  }
+}
+
 .spectrum-Search-icon {
   display: block;
   position: absolute;
   left: 12px;
-  top: 8px;
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2));
 
   pointer-events: none;
 }

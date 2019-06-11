@@ -1,65 +1,167 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 .spectrum-Breadcrumbs {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: start;
   list-style-type: none;
+  flex-wrap: wrap;
+
   margin: 0;
   padding: 0;
 }
-.spectrum-Breadcrumbs:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-.spectrum-Breadcrumbs-itemSeparator {
-  position: absolute;
-  top: calc(50% - 3px);
-  right: -19px;
 
-  width: 6px;
-  height: 8px;
+.spectrum-Breadcrumbs-itemSeparator {
+  position: relative;
+
+  /* Fix alignment, it's not quite centered */
+  top: var(--spectrum-global-dimension-size-10);
+
+  width: var(--spectrum-breadcrumb-ui-icon-width);
+  height: var(--spectrum-breadcrumb-ui-icon-height);
 
   transform: scale(1);
 
   opacity: 1;
 }
+
 .spectrum-Breadcrumbs-item {
-  display: block;
-  float: left;
+  display: inline-flex;
+  align-items: center;
+  justify-content: start;
+
+  box-sizing: border-box;
+  height: var(--spectrum-breadcrumb-list-height);
 
   position: relative;
 
-  margin-right: 32px;
+  font-size: var(--spectrum-breadcrumb-item-text-size);
+  font-weight: var(--spectrum-breadcrumb-item-text-font-weight);
+  line-height: var(--spectrum-breadcrumb-item-text-line-height);
 
-  font-size: 16px;
-  font-weight: 300;
-}
-.spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink {
-    cursor: default;
-    display: inline;
-  }
-.spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink[href],
-    .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink[tabindex="0"] {
-      cursor: pointer;
-    }
-.spectrum-Breadcrumbs-item:last-of-type .spectrum-Breadcrumbs-itemSeparator {
+  &:last-of-type {
+    font-weight: var(--spectrum-breadcrumb-title-text-font-weight);
+
+    .spectrum-Breadcrumbs-itemSeparator {
       display: none;
     }
-.spectrum-Breadcrumbs--title .spectrum-Breadcrumbs-item:last-of-type {
-    /* Clear the floats so we drop to a new line */
-    clear: left;
-
-    display: block;
-
-    margin: 0.3em 0;
-
-    font-size: 28px;
-    font-weight: 300;
-    line-height: 32px;
   }
-.spectrum-Breadcrumbs--title .spectrum-Breadcrumbs-item .spectrum-Heading--pageTitle {
+
+  > .spectrum-ActionButton {
+    margin-right: var(--spectrum-breadcrumb-button-gap);
+  }
+}
+
+.spectrum-Breadcrumbs-itemLink {
+  cursor: default;
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: start;
+
+  padding: 0 var(--spectrum-breadcrumb-item-padding-x);
+  height: var(--spectrum-breadcrumb-list-height);
+
+  margin-right: var(--spectrum-breadcrumb-item-margin-right);
+
+  border-radius: var(--spectrum-breadcrumb-item-border-radius);
+
+  outline: none;
+
+  text-decoration: none;
+
+  &:hover,
+  &:focus-ring {
+    text-decoration: underline;
+  }
+
+  &[href],
+  &[tabindex="0"] {
+    cursor: pointer;
+  }
+}
+
+
+.spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
+.spectrum-Breadcrumbs-itemLink:focus-ring:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  border-width: var(--spectrum-breadcrumb-item-border-size-key-focus);
+  border-style: solid;
+  border-radius: var(--spectrum-breadcrumb-item-border-radius);
+
+  content: '';
+  pointer-events: none;
+}
+
+.spectrum-Breadcrumbs--compact {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-compact-item-text-size);
+  }
+}
+
+.spectrum-Breadcrumbs--multiline {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
+    font-weight: var(--spectrum-breadcrumb-multiline-item-text-font-weight);
+    line-height: var(--spectrum-breadcrumb-multiline-item-text-line-height);
+
+    &:last-of-type {
+      height: auto;
+
+      width: 100%;
+
+      margin-top: var(--spectrum-breadcrumb-multiline-title-margin-top);
+
+      font-size: var(--spectrum-breadcrumb-multiline-title-text-size);
+      font-weight: var(--spectrum-breadcrumb-multiline-title-text-font-weight);
+      line-height: var(--spectrum-breadcrumb-multiline-title-text-line-height);
+
+      .spectrum-Breadcrumbs-itemLink {
+        height: auto;
+
+        text-decoration: none;
+      }
+    }
+
+  }
+}
+
+/* @deprecated */
+.spectrum-Breadcrumbs--title .spectrum-Breadcrumbs-item {
+  &:last-of-type {
+    width: 100%;
+
+    margin: var(--spectrum-breadcrumb-title-margin);
+
+    font-size: var(--spectrum-breadcrumb-title-active-text-size);
+    font-weight: var(--spectrum-breadcrumb-title-active-text-font-weight);
+    line-height: var(--spectrum-breadcrumb-title-active-text-line-height);
+  }
+
+  .spectrum-Heading--pageTitle {
     margin: 0;
 
     font-size: inherit;
     font-weight: inherit;
   }
+}

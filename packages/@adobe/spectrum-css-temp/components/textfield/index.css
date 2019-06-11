@@ -1,25 +1,49 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 :root {
+  --spectrum-textfield-padding-top: 3px;
+  --spectrum-textfield-padding-bottom: 5px;
 
   /* Todo fix in DNA */
+  --spectrum-textfield-quiet-border-radius: 0;
 
-  /* Todo: DNA uses incorrect font family "Adobe Clean" */
+  --spectrum-textfield-quiet-invalid-background-position: 100% 50%;
+
+  --spectrum-textfield-multiline-height: auto;
+
+  --spectrum-textfield-multiline-padding-y: 4px;
+  --spectrum-textfield-multiline-padding-x: 8px;
+
+  /* Todo: DNA uses incorrect font family "Adobe Clean" */;
+  --spectrum-textfield-text-font-family-fixed: adobe-clean, Helvetica, Arial, sans-serif;
 }
+
 .spectrum-Textfield {
   /* box */
   box-sizing: border-box;
-  border: 1px solid;
-  border-radius: 4px;
+  border: var(--spectrum-textfield-border-size) solid;
+  border-radius: var(--spectrum-border-radius);
 
   /* Apply padding by default to center text, giving consistency between input and textfield */
-  padding: 3px 12px 5px 12px;
+  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) var(--spectrum-textfield-padding-x);
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  min-width: 48px;
-  height: 32px;
-  width: 192px;
+  min-width: var(--spectrum-textfield-min-width);
+  height: var(--spectrum-textfield-height);
+  width: var(--spectrum-component-single-line-width);
 
   vertical-align: top; /* used to align them correctly in forms. */
 
@@ -30,110 +54,127 @@
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  font-family: adobe-clean, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
+  font-family: var(--spectrum-textfield-text-font-family-fixed);
+  font-size: var(--spectrum-textfield-text-size);
+  line-height: var(--spectrum-text-body-line-height);
   text-overflow: ellipsis;
 
-  transition: border-color 130ms ease-in-out, box-shadow 130ms ease-in-out;
+  transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
   outline: none;
 
   /* removes the native spin buttons in firefox. -mox-appearance: none has no effect */
   /* http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29 */
   -moz-appearance: textfield;
+  -webkit-appearance: none;
 
-  /* Normalize is adding a specific selector that resets this, so be important */
-  -webkit-appearance: none !important;
-}
-.spectrum-Textfield::placeholder {
-    font-weight: 400;
-    font-style: italic;
-    transition: color 130ms ease-in-out;
+  &::placeholder {
+    font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
+    font-style: var(--spectrum-textfield-placeholder-text-font-style);
+    transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
   }
-/* added to work with Edge, note, it needs double ::
+
+  /* added to work with Edge, note, it needs double ::
    * not single : which is what autoprefixer will add
    */
-.spectrum-Textfield::-ms-input-placeholder {
-    font-weight: 400;
-    font-style: italic;
-    transition: color 130ms ease-in-out;
+  &::-ms-input-placeholder {
+    font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
+    font-style: var(--spectrum-textfield-placeholder-text-font-style);
+    transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
   }
-.spectrum-Textfield:lang(ja)::placeholder, .spectrum-Textfield:lang(zh)::placeholder, .spectrum-Textfield:lang(ko)::placeholder {
+
+  &:lang(ja), &:lang(zh), &:lang(ko) {
+    &::placeholder {
        font-style: normal;
     }
-.spectrum-Textfield:lang(ja)::-ms-input-placeholder, .spectrum-Textfield:lang(zh)::-ms-input-placeholder, .spectrum-Textfield:lang(ko)::-ms-input-placeholder { /* added to work with Edge, same as above */
+    &::-ms-input-placeholder { /* added to work with Edge, same as above */
        font-style: normal;
     }
-.spectrum-Textfield:hover::placeholder {
-      font-weight: 400;
+  }
+
+  &:hover {
+    &::placeholder {
+      font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     }
-.spectrum-Textfield:disabled {
+  }
+
+  &:disabled {
     /* The opacity must be set to 1 */
     opacity: 1;
-  }
-.spectrum-Textfield:disabled::placeholder {
-      font-weight: 400;
+    &::placeholder {
+      font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     }
-/* http://stackoverflow.com/questions/14007655/remove-ie10s-clear-field-x-button-on-certain-inputs */
-.spectrum-Textfield::-ms-clear {
+  }
+
+  /* Remove the native clear button in IE */
+  /* http://stackoverflow.com/questions/14007655/remove-ie10s-clear-field-x-button-on-certain-inputs */
+  &::-ms-clear {
     width: 0;
     height: 0;
   }
-/* http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29 */
-.spectrum-Textfield::-webkit-inner-spin-button,
-  .spectrum-Textfield::-webkit-outer-spin-button {
+
+  /* removes the native spin buttons */
+  /* http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29 */
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-/* removes the red border that appears in Firefox */
-.spectrum-Textfield:-moz-ui-invalid {
+
+  /* removes the red border that appears in Firefox */
+  &:-moz-ui-invalid {
     box-shadow: none;
   }
-/* removes the native spin buttons */
-.spectrum-Textfield.is-invalid,
-  .spectrum-Textfield:invalid,
-  .spectrum-Textfield.is-valid {
+
+  &.is-invalid,
+  &:invalid,
+  &.is-valid {
     background-repeat: no-repeat;
   }
-/* Remove the native clear button in IE */
-.spectrum-Textfield.is-invalid,
-  .spectrum-Textfield:invalid {
-    background-size: 18px 18px;
-    background-position: calc(100% - 12px) 50%;
-    padding-right: 42px;
+
+  &.is-invalid,
+  &:invalid {
+    background-size: var(--spectrum-icon-alert-medium-width) var(--spectrum-icon-alert-medium-width);
+    background-position: calc(100% - var(--spectrum-textfield-padding-x)) 50%;
+    padding-right: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
-.spectrum-Textfield.is-valid {
-    background-size: 12px 12px;
-    background-position: calc(100% - 12px) 50%;
-    padding-right: 36px;
+
+  &.is-valid {
+    background-size: var(--spectrum-icon-checkmark-medium-width) var(--spectrum-icon-checkmark-medium-width);
+    background-position: calc(100% - var(--spectrum-textfield-padding-x)) 50%;
+    padding-right: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
+}
+
 .spectrum-Textfield--multiline {
-  height: auto;
-  padding: 4px 8px;
+  height: var(--spectrum-textfield-multiline-height);
+  padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
 
   /* Remove the default vertical scrollbar for textarea in IE. */
   overflow: auto;
-}
-.spectrum-Textfield--multiline.is-invalid,
-  .spectrum-Textfield--multiline:invalid,
-  .spectrum-Textfield--multiline.is-valid {
-    background-position: calc(100% - 9px) calc(100% - 9px);
+
+  &.is-invalid,
+  &:invalid,
+  &.is-valid {
+    background-position: calc(100% - calc(var(--spectrum-textfield-icon-size) / 2)) calc(100% - calc(var(--spectrum-textfield-icon-size) / 2));
   }
+}
+
 .spectrum-Textfield--quiet {
-  border-radius: 0;
-  border-width: 0 0 1px 0;
+  border-radius: var(--spectrum-textfield-quiet-border-radius);
+  border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
 
   /* removes the side padding to align the text properly */
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: var(--spectrum-textfield-quiet-padding-x);
+  padding-right: var(--spectrum-textfield-quiet-padding-x);
 
   /* Treat all quiet inputs and textareas the same */
   resize: none;
   overflow-y: hidden;
-}
-.spectrum-Textfield--quiet.is-invalid,
-  .spectrum-Textfield--quiet:invalid,
-  .spectrum-Textfield--quiet.is-valid {
-    background-position: 100% 50%;
+
+  &.is-invalid,
+  &:invalid,
+  &.is-valid {
+    background-position: var(--spectrum-textfield-quiet-invalid-background-position);
   }
+}

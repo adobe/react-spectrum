@@ -1,20 +1,42 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-radio-radius: calc(var(--spectrum-radio-circle-diameter) / 2);
+  --spectrum-radio-border-width-checked: calc(calc(var(--spectrum-radio-circle-diameter) / 2) - calc(var(--spectrum-radio-circle-dot-size) / 2));
+
+  --spectrum-radio-labelbelow-label-margin: var(--spectrum-global-dimension-size-40) 0 0 0;
+  --spectrum-radio-labelbelow-height: auto;
+
+  /* Hardcoded for wrapping study */
+  --spectrum-radio-label-margin-top: var(--spectrum-global-dimension-size-75);
+}
+
 .spectrum-Radio {
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -ms-flex-align: center;
-      align-items: center;
+  align-items: flex-start;
 
   position: relative;
 
-  height: 32px;
+  min-height: var(--spectrum-radio-height);
   max-width: 100%;
 
-  margin-right: 16px;
+  margin-right: calc(var(--spectrum-radio-cursor-hit-x) * 2);
 
   vertical-align: top;
 }
+
 .spectrum-Radio-input {
   /* Change the font styles in all browsers for input. */
   font-family: inherit;
@@ -36,63 +58,64 @@
   /* Hit area */
   position: absolute;
   top: 0;
-  left: -8px;
-  width: calc(100% + 16px);
+  left: calc(var(--spectrum-radio-cursor-hit-x) * -1);
+  width: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
   height: 100%;
 
   opacity: .0001;
   z-index: 1;
 
   cursor: pointer;
-}
-.spectrum-Radio-input:disabled {
+
+  &:disabled {
     cursor: default;
   }
-.spectrum-Radio-input:checked + .spectrum-Radio-button {
-    border-width: 5px;
+
+  &:checked + .spectrum-Radio-button {
+    border-width: var(--spectrum-radio-border-width-checked);
   }
-.spectrum-Radio-label {
-  margin-left: 10px;
-  font-size: 14px;
-
-  transition: color 130ms ease-in-out;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
+
+.spectrum-Radio-label {
+  margin-left: var(--spectrum-radio-text-gap);
+  font-size: var(--spectrum-radio-text-size);
+
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  /* Hardcoded as no good way to calculate this */
+  margin-top: var(--spectrum-radio-label-margin-top);
+}
+
 .spectrum-Radio-button {
   position: relative;
   box-sizing: border-box;
-  width: 14px;
-  height: 14px;
+  width: var(--spectrum-radio-circle-diameter);
+  height: var(--spectrum-radio-circle-diameter);
 
-  -ms-flex-positive: 0;
+  /* Fix vertical alignment when not wrapping since we're flex-start */
+  margin: calc((var(--spectrum-radio-height) - var(--spectrum-radio-circle-diameter)) / 2) 0;
 
-      flex-grow: 0;
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
 
-  border-radius: 7px;
-  border-width: 2px;
+  border-radius: var(--spectrum-radio-radius);
+  border-width: var(--spectrum-radio-circle-border-size);
   border-style: solid;
 
-  transition: border 130ms ease-in-out, box-shadow 130ms ease-in-out;
+  transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 }
+
 .spectrum-Radio--labelBelow {
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -ms-flex-direction: column;
-      flex-direction: column;
-  -ms-flex-align: center;
-      align-items: center;
-  height: auto;
+  flex-direction: column;
+  align-items: center;
+  height: var(--spectrum-radio-labelbelow-height);
+
+  .spectrum-Radio-button {
+    flex-shrink: 0;
+  }
+
+  .spectrum-Radio-label {
+    margin: var(--spectrum-radio-labelbelow-label-margin);
+  }
 }
-.spectrum-Radio--labelBelow .spectrum-Radio-button {
-    -ms-flex-negative: 0;
-        flex-shrink: 0;
-  }
-.spectrum-Radio--labelBelow .spectrum-Radio-label {
-    margin: 3px 0 0 0;
-  }

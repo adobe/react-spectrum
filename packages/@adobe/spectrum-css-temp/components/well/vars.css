@@ -1,16 +1,2 @@
-.spectrum-Well {
-  display: block;
-  min-width: 248px;
-  padding: 16px;
-  margin-top: 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: var(--spectrum-global-dimension-size-50);
-}
-/* topdoc
-{{ well/well.yml }}
-*/
-.spectrum-Well {
-  background-color: var(--spectrum-well-background-color);
-  border-color: var(--spectrum-well-border-color);
-}
+@import './index.css';
+@import './skin.css';

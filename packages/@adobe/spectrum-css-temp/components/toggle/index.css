@@ -1,26 +1,42 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  /* Hardcoded for wrapping study */
+  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-75);
+}
+
 /* topdoc
 {{ toggle/toggle-onoffdefault.yml }}
 */
 .spectrum-ToggleSwitch {
-  display: inline-block;
-  position: relative;
-  font-size: 0;
-  height: 32px;
-  line-height: 32px;
-}
-.spectrum-ToggleSwitch-input {
-  /* Change the font styles in all browsers for input. */
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
+  display: inline-flex;
+  align-items: flex-start;
 
+  position: relative;
+
+  min-height: var(--spectrum-switch-height);
+  max-width: 100%;
+
+  margin-right: calc(var(--spectrum-switch-cursor-hit-x) * 2);
+
+  vertical-align: top;
+}
+
+.spectrum-ToggleSwitch-input {
   /* Remove the margin for input in Firefox and Safari. */
   margin: 0;
-
-  /* Show the overflow for input in Edge. */
-  overflow: visible;
 
   /* Add the correct box sizing for [type="checkbox"] in IE 10-. */
   box-sizing: border-box;
@@ -37,62 +53,79 @@
   z-index: 1;
 
   cursor: pointer;
-}
-.spectrum-ToggleSwitch-input:checked + .spectrum-ToggleSwitch-switch::after {
-      transform: translateX(12px);
+
+  &:checked + .spectrum-ToggleSwitch-switch {
+    &::after {
+      transform: translateX(calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size)));
     }
-.spectrum-ToggleSwitch-input:disabled,
-  .spectrum-ToggleSwitch-input[disabled] {
+  }
+
+  &:disabled,
+  &[disabled] {
     cursor: default;
   }
-.spectrum-ToggleSwitch-label {
-  margin: 0 10px;
-  font-size: 14px;
-  vertical-align: middle;
-  transition: color 160ms ease-in-out;
 }
+
+.spectrum-ToggleSwitch-label {
+  margin: 0 var(--spectrum-switch-text-gap);
+  font-size: var(--spectrum-switch-text-size);
+  transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
+
+  margin-top: var(--spectrum-switch-label-margin-top);
+}
+
 .spectrum-ToggleSwitch-switch {
   display: inline-block;
   /* positions the pseudo elements relative to this one */
   position: relative;
 
-  height: 14px;
-  width: 26px;
+  height: var(--spectrum-switch-track-height);
+  width: var(--spectrum-switch-track-width);
+
+  /* Fix vertical alignment when not wrapping since we're flex-start */
+  margin: calc((var(--spectrum-switch-height) - var(--spectrum-switch-track-height)) / 2) 0;
+
+  flex-grow: 0;
+  flex-shrink: 0;
 
   vertical-align: middle;
-}
-.spectrum-ToggleSwitch-switch::before,
-  .spectrum-ToggleSwitch-switch::after {
+
+  &::before,
+  &::after {
     display: block;
     position: absolute;
     content: "";
     box-sizing: border-box;
   }
-/* ::before is used for the track of the switch */
-.spectrum-ToggleSwitch-switch::before {
-    transition: background 130ms ease-in-out, border 130ms ease-in-out;
 
-    height: 14px;
+  /* ::before is used for the track of the switch */
+  &::before {
+    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out;
+
+    height: var(--spectrum-switch-track-height);
 
     left: 0;
     right: 0;
 
-    border-radius: 7px;
+    border-radius: calc(var(--spectrum-switch-track-height) / 2);
   }
-/* ::after is used for the handle of the switch */
-.spectrum-ToggleSwitch-switch::after {
-    transition: background 130ms ease-in-out, border 130ms ease-in-out, transform 130ms ease-in-out, box-shadow 130ms ease-in-out;
 
-    width: 14px;
-    height: 14px;
+  /* ::after is used for the handle of the switch */
+  &::after {
+    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+
+    width: var(--spectrum-switch-handle-size);
+    height: var(--spectrum-switch-handle-size);
 
     top: 0;
     left: 0;
 
-    border-width: 2px;
-    border-radius: 7px;
+    border-width: var(--spectrum-switch-handle-border-size);
+    border-radius: var(--spectrum-switch-handle-border-radius);
     border-style: solid;
   }
+}
+
 /* topdoc
 {{ toggle/toggle-abdefault.yml }}
 */

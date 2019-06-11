@@ -1,5 +1,17 @@
-/* generated from dna-version: 5.9.0 */
-/* generated from dna-version: 5.9.0 */
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
 /* topdoc
 {{ link/link.yml }}
 */
@@ -9,32 +21,38 @@
   /* Remove gaps in links underline in iOS 8+ and Safari 8+. */
   -webkit-text-decoration-skip: objects;
   text-decoration: none;
-  transition: color 130ms ease-in-out;
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
   outline: none;
-}
-.spectrum-Link:hover {
+
+  &:hover {
     text-decoration: underline;
   }
-.spectrum-Link.focus-ring {
+
+  &:focus-ring {
     text-decoration: underline;
   }
-.spectrum-Link.focus-ring {
+
+  &:focus-ring {
     text-decoration: underline;
-    -webkit-text-decoration-style: double;
-            text-decoration-style: double;
+    text-decoration-style: double;
   }
-.spectrum-Link.is-disabled {
+
+  &.is-disabled {
     cursor: default;
     pointer-events: none;
-  }
-.spectrum-Link.is-disabled:hover,
-    .spectrum-Link.is-disabled:focus {
+
+    &:hover,
+    &:focus {
       text-decoration: none;
     }
+  }
+}
+
 .spectrum-Link--subtle,
 /** @deprecated */.spectrum-Link--quiet {
   text-decoration: underline;
 }
+
 .spectrum-Link--overBackground {
   text-decoration: underline;
 }
