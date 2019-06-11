@@ -1,0 +1,69 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Steplist {
+  /* Default Label Style is 'incomplete' */
+  .spectrum-Steplist-label {
+    color: var(--spectrum-steplist-incomplete-label-text-color)
+  }
+
+  /* Default Marker Style is 'incomplete' */
+  .spectrum-Steplist-marker {
+    border-color: var(--spectrum-steplist-incomplete-marker-color)
+  }
+
+  /* Default Line Style is 'incomplete' */
+  .spectrum-Steplist-segment {
+    border-bottom-color: var(--spectrum-steplist-incomplete-segment-color)
+  }
+
+  .spectrum-Steplist-item {
+    /* Step Completed */
+    &.is-complete {
+      .spectrum-Steplist-label {
+        color: var(--spectrum-steplist-complete-label-text-color)
+      }
+      .spectrum-Steplist-marker {
+        background-color: var(--spectrum-steplist-complete-marker-color)
+      }
+    }
+
+    /* Step Selected aka Current */
+    &.is-selected {
+      .spectrum-Steplist-label {
+        color: var(--spectrum-steplist-current-label-text-color)
+      }
+      .spectrum-Steplist-marker {
+        background-color: var(--spectrum-steplist-current-marker-color)
+      }
+    }
+
+    &.is-complete,
+    &.is-selected {
+      .spectrum-Steplist-segment {
+        border-bottom-color: var(--spectrum-steplist-complete-segment-color)
+      }
+    }
+  }
+
+  /* Interactivity Styles */
+  &.spectrum-Steplist--interactive {
+    .spectrum-Steplist-item {
+      /* Step Focused */
+      &:focus {
+        .spectrum-Steplist-marker {
+          background-color: var(--spectrum-steplist-current-marker-color-key-focus)
+        }
+      }
+    }
+  }
+}

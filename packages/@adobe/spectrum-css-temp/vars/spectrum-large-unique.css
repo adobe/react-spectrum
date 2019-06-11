@@ -7,8 +7,10 @@
   --spectrum-global-dimension-size-50: 5px;
   --spectrum-global-dimension-size-65: 6px;
   --spectrum-global-dimension-size-75: 8px;
+  --spectrum-colorhandle-loupe-margin: 8px;
   --spectrum-radio-margin-bottom: 8px;
   --spectrum-global-dimension-size-85: 9px;
+  --spectrum-colorslider-touch-hit-y: 9px;
   --spectrum-global-dimension-size-100: 10px;
   --spectrum-icon-skip-left-width: 10px;
   --spectrum-global-dimension-size-115: 11px;
@@ -76,6 +78,7 @@
   --spectrum-pagination-page-button-line-height: 32px;
   --spectrum-button-cta-min-width: 90px;
   --spectrum-selectlist-option-height: 48px;
+  --spectrum-colorwheel-min-size: 208px;
   --spectrum-dialog-max-width: 400px;
   --spectrum-switch-track-width: 36px;
   --spectrum-tabs-compact-margin-left: -11px;

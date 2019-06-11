@@ -1,0 +1,34 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Popover {
+  background-color: var(--spectrum-popover-background-color);
+  border-color: var(--spectrum-popover-border-color);
+  /*
+    box-shadow offset/blur is hardcoded here as it cannot be adjusted when scale changes,
+    and we'd rather it be able to change when color stops change
+  */
+  box-shadow: 0 1px 4px var(--spectrum-popover-shadow-color);
+
+  .spectrum-Dialog-header,
+  .spectrum-Dialog-footer,
+  .spectrum-Dialog-wrapper {
+    background-color: transparent;
+  }
+
+  .spectrum-Popover-tip::after {
+    background-color: var(--spectrum-popover-background-color);
+    border-color: var(--spectrum-popover-border-color);
+    /* The math is weird here since the tip is rotated 45°... Technically it should be different for each tip position */
+    box-shadow: -1px -1px 4px var(--spectrum-popover-shadow-color);
+  }
+}

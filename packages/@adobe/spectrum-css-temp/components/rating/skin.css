@@ -1,0 +1,100 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+/* topdoc
+{{ rating/rating.yml }}
+*/
+
+.spectrum-Rating {
+  &.is-focused {
+    box-shadow: 0 0 0 var(--spectrum-global-dimension-static-size-25) var(--spectrum-rating-focus-ring-color);
+  }
+
+  &:hover {
+    .spectrum-Rating-icon {
+      /* Make all stars colored when the component is hovered */
+      color: var(--spectrum-rating-icon-color-selected);
+
+      &:hover {
+        /* The icon that's actually hovered is darker */
+        color: var(--spectrum-rating-icon-color-hover);
+      }
+
+      &:active {
+        /* The icon that's actually hovered is darker */
+        color: var(--spectrum-rating-icon-color-down);
+      }
+
+      /* Show which star is currently selected */
+      &.is-currentValue {
+        &:after {
+          /* Match the color of the star */
+          background: currentColor;
+        }
+      }
+    }
+  }
+}
+
+.spectrum-Rating-icon {
+  color: var(--spectrum-rating-icon-color);
+
+  &.is-selected {
+    color: var(--spectrum-alias-icon-color-selected);
+  }
+
+  &:hover {
+    /* All stars following the hovered star */
+    & ~ .spectrum-Rating-icon {
+      color: var(--spectrum-rating-icon-color);
+    }
+  }
+}
+
+.spectrum-Rating--quiet {
+  .spectrum-Rating-icon {
+    color: var(--spectrum-rating-quiet-icon-color);
+
+    &.is-selected {
+      color: var(--spectrum-rating-quiet-icon-color-selected);
+    }
+  }
+
+  &:hover {
+    .spectrum-Rating-icon {
+      /* Make all stars selected when the component is hovered */
+      color: var(--spectrum-rating-quiet-icon-color-selected);
+
+      &:hover {
+        /* The icon that's actually hovered is darker */
+        color: var(--spectrum-rating-quiet-icon-color-hover);
+      }
+
+      &:active {
+        color: var(--spectrum-rating-quiet-icon-color-down);
+      }
+    }
+  }
+}
+
+/* Disabled */
+.spectrum-Rating {
+  &.is-disabled {
+    .spectrum-Rating-icon {
+      color: var(--spectrum-rating-icon-color-disabled);
+
+      &.is-selected {
+        color: var(--spectrum-rating-icon-color-disabled);
+      }
+    }
+  }
+}

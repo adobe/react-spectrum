@@ -82,9 +82,17 @@ module.exports = ({config}, env) => {
               loader: 'css-loader',
               options: {
                 modules: true,
+                importLoaders: 1,
                 getLocalIdent: (context, localIdentName, localName) => {
                   return generateScopedName(localName, context.resourcePath);
                 },
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                ident: 'postcss',
+                plugins: require('./postcss')(true)
               }
             }
           ],

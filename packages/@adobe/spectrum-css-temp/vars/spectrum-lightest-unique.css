@@ -48,6 +48,7 @@
   --spectrum-global-color-blue-600: rgb(20, 115, 230);
   --spectrum-global-color-blue-700: rgb(13, 102, 208);
   --spectrum-global-color-gray-50: rgb(255, 255, 255);
+  --spectrum-alias-pasteboard-background-color: rgb(234, 234, 234);
   --spectrum-global-color-gray-75: rgb(255, 255, 255);
   --spectrum-global-color-gray-100: rgb(255, 255, 255);
   --spectrum-global-color-gray-200: rgb(244, 244, 244);
@@ -63,6 +64,7 @@
   --spectrum-alias-background-color-hover-overlay: rgba(50,50,50,0.04);
   --spectrum-alias-highlight-hover: rgba(50,50,50,0.06);
   --spectrum-alias-highlight-active: rgba(50,50,50,0.1);
+  --spectrum-colorarea-border-color: rgba(50,50,50,0.1);
   --spectrum-alias-highlight-selected: rgba(38,128,235,0.1);
   --spectrum-alias-highlight-selected-hover: rgba(38,128,235,0.2);
   --spectrum-alias-background-color-quickactions: rgba(255,255,255,0.9);
