@@ -3,6 +3,7 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import {Tab, TabList} from '../../src/TabList';
+import * as utils from '../../src/TabList/js/getBoundingClientRect';
 
 describe('TabList', () => {
   it('has correct defaults', () => {
@@ -154,36 +155,6 @@ describe('TabList', () => {
     assert(!onChange.called);
   });
 
-  it('supports dynamic setting of props', () => {
-    const tree = mount(
-      <TabList>
-        <Tab className="one">a</Tab>
-        <Tab className="two">b</Tab>
-      </TabList>
-    );
-    tree.setProps({selectedIndex: 1});
-    const child = tree.find('[selected=true]');
-
-    assert.equal(child.length, 1);
-    assert.notEqual(child.prop('className').indexOf('two'), -1);
-
-    tree.unmount();
-  });
-
-  it('supports selectedIndex by setting selected on child', () => {
-    const tree = mount(
-      <TabList>
-        <Tab className="one">a</Tab>
-        <Tab className="two" selected>b</Tab>
-      </TabList>
-    );
-    const child = tree.find('[selected=true]');
-    assert.equal(child.length, 1);
-    assert.notEqual(child.prop('className').indexOf('two'), -1);
-
-    tree.unmount();
-  });
-
   it('supports mousedown/mouseup on child', () => {
     const focusSpy = sinon.spy();
     const mouseDownSpy = sinon.spy();
@@ -221,48 +192,220 @@ describe('TabList', () => {
     child.simulate('click', {currentTarget: {focus: focusSpy}});
     assert(spy.called);
   });
+  describe('mounted tests', () => {
+    let tree;
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+        tree = null;
+      }
+    });
+    it('supports dynamic setting of props', () => {
+      tree = mount(
+        <TabList>
+          <Tab className="one">a</Tab>
+          <Tab className="two">b</Tab>
+        </TabList>
+      );
+      tree.setProps({selectedIndex: 1});
+      const child = tree.find('[selected=true]');
 
-  it('supports selection on focus when keyboardActivation="automatic"', () => {
-    const focusSpy = sinon.spy();
-    const tree = mount(
-      <TabList>
-        <div role="tab" tabIndex={0} className="one">a</div>
-        <div role="tab" tabIndex={0} className="two" onFocus={focusSpy}>b</div>
-      </TabList>
-    );
-
-    let child = tree.find('.two');
-    child.simulate('focus');
-    assert(focusSpy.calledWith(1));
-
-    tree.update();
-
-    assert(tree.state('selectedIndex'), 1);
-
-    child = tree.find('[selected=true]');
-    assert.notEqual(child.prop('className').indexOf('two'), -1);
-
-    tree.setProps({
-      keyboardActivation: 'manual'
+      assert.equal(child.length, 1);
+      assert.notEqual(child.prop('className').indexOf('two'), -1);
     });
 
-    tree.setState({
-      selectedIndex: 0
+    it('supports selectedIndex by setting selected on child', () => {
+      tree = mount(
+        <TabList>
+          <Tab className="one">a</Tab>
+          <Tab className="two" selected>b</Tab>
+        </TabList>
+      );
+      const child = tree.find('[selected=true]');
+      assert.equal(child.length, 1);
+      assert.notEqual(child.prop('className').indexOf('two'), -1);
     });
 
-    tree.update();
+    it('supports selection on focus when keyboardActivation="automatic"', () => {
+      const focusSpy = sinon.spy();
+      tree = mount(
+        <TabList>
+          <Tab tabIndex={0} className="one">a</Tab>
+          <Tab tabIndex={0} className="two" onFocus={focusSpy}>b</Tab>
+        </TabList>
+      );
 
-    assert.equal(tree.prop('keyboardActivation'), 'manual');
+      let child = tree.find('.spectrum-Tabs-item.two');
+      child.simulate('focus');
+      assert(focusSpy.calledWith(1));
 
-    child = tree.find('.two');
-    child.simulate('focus');
-    assert(focusSpy.calledWith(1));
+      tree.update();
 
-    assert.equal(tree.state('selectedIndex'), 0);
+      assert(tree.state('selectedIndex'), 1);
 
-    child = tree.find('[selected=true]');
-    assert.notEqual(child.prop('className').indexOf('one'), -1);
+      child = tree.find('[selected=true]');
+      assert.notEqual(child.prop('className').indexOf('two'), -1);
 
-    tree.unmount();
+      tree.setProps({
+        keyboardActivation: 'manual'
+      });
+
+      tree.setState({
+        selectedIndex: 0
+      });
+
+      tree.update();
+
+      assert.equal(tree.prop('keyboardActivation'), 'manual');
+
+      child = tree.find('.spectrum-Tabs-item.two');
+      child.simulate('focus');
+      assert(focusSpy.calledWith(1));
+
+      assert.equal(tree.state('selectedIndex'), 0);
+
+      child = tree.find('[selected=true]');
+      assert.notEqual(child.prop('className').indexOf('one'), -1);
+    });
+
+    it('finds a new tab if the currently selected one is removed', () => {
+      let onChangeSpy = sinon.spy();
+      tree = mount(
+        <TabList onChange={onChangeSpy}>
+          <Tab className="one">a</Tab>
+          <Tab className="two">b</Tab>
+        </TabList>
+      );
+      let tabs = tree.find(Tab);
+      tabs.at(1).simulate('click');
+      let selectedTab = tree.find('[selected=true]');
+      assert(selectedTab.prop('className').includes('two'));
+      tree.setProps({children: <Tab className="one">a</Tab>});
+      tree.update();
+      selectedTab = tree.find('[selected=true]');
+      assert(selectedTab.prop('className').includes('one'));
+      assert.equal(onChangeSpy.getCall(0).args[0], 1);
+      assert.equal(onChangeSpy.getCall(1).args[0], 0);
+    });
+
+
+    describe('is collapsible', () => {
+      let boundRectStub;
+      let clock;
+      beforeEach(() => {
+        clock = sinon.useFakeTimers();
+        boundRectStub = sinon.stub(utils, 'getBoundingClientRect');
+      });
+      afterEach(() => {
+        clock.runAll();
+        clock.restore();
+        boundRectStub = null;
+        utils.getBoundingClientRect.restore();
+      });
+
+      it('can start off collapsed', () => {
+        // set it up so that initially the tabs extend beyond the tablist container
+        boundRectStub.onCall(0).returns({right: 25});
+        boundRectStub.onCall(1).returns({right: 50});
+        // when next called, swap them so that the tabs do fit
+        boundRectStub.onCall(2).returns({right: 50});
+        boundRectStub.onCall(3).returns({right: 25});
+        tree = mount(
+          <TabList collapsible>
+            <Tab className="one">a</Tab>
+            <Tab className="two">b</Tab>
+          </TabList>
+        );
+        let tabsContainer = tree.find('div.react-spectrum-Tabs--container');
+        assert(tabsContainer.prop('aria-hidden'));
+        assert(tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
+        let select = tree.find('TabListDropdown');
+        assert.equal(select.props().selectedIndex, 0);
+        let selectedTab = tree.find('[selected=true]');
+        assert(selectedTab.prop('className').includes('one'));
+
+        // verify that selecting something from the dropdown causes the selectedIndex to change
+        let button = tree.find('Button');
+
+        button.simulate('click', {button: 0});
+
+        let dropdownItems = document.querySelectorAll('.spectrum-Menu-item');
+        assert.equal(dropdownItems.length, 2);
+        dropdownItems[1].dispatchEvent(new window.MouseEvent('click', {
+          bubbles: true,
+          cancelable: true
+        }));
+
+        dropdownItems = document.querySelectorAll('.spectrum-Menu-item');
+        assert.equal(dropdownItems.length, 0);
+
+        tree.update();
+        select = tree.find('TabListDropdown');
+        assert.equal(select.props().selectedIndex, 1);
+        selectedTab = tree.find('[selected=true]');
+        assert(selectedTab.prop('className').includes('two'));
+
+        // verify that increasing the container width causes the tablist to show
+        window.dispatchEvent(new window.Event('resize'));
+        // resize listener is debounced, run the clock
+        clock.runAll();
+        tree.update();
+        tabsContainer = tree.find('div.react-spectrum-Tabs--container');
+        assert(!tabsContainer.prop('aria-hidden'));
+        assert(!tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
+        select = tree.find('TabListDropdown');
+        assert.equal(select.length, 0);
+      });
+
+      it('can start off expanded', () => {
+        // set it up so that initially the tabs are within the tablist container
+        boundRectStub.onCall(0).returns({right: 50}); // tab list right side
+        boundRectStub.onCall(1).returns({right: 25}); // last tab right side
+        // when called again, collapse
+        boundRectStub.onCall(2).returns({right: 25});
+        boundRectStub.onCall(3).returns({right: 50});
+        tree = mount(
+          <TabList collapsible>
+            <Tab>a</Tab>
+            <Tab>b</Tab>
+          </TabList>
+        );
+        let tabsContainer = tree.find('div.react-spectrum-Tabs--container');
+        assert(!tabsContainer.prop('aria-hidden'));
+        assert(!tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
+        let select = tree.find('TabListDropdown');
+        assert.equal(select.length, 0);
+
+        // verify that decreasing the container width causes the tablist to hide
+        window.dispatchEvent(new window.Event('resize'));
+        // resize listener is debounced, run the clock
+        clock.runAll();
+        tree.update();
+        tabsContainer = tree.find('div.react-spectrum-Tabs--container');
+        assert(tabsContainer.prop('aria-hidden'));
+        assert(tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
+        select = tree.find('TabListDropdown');
+        assert.equal(select.length, 1);
+      });
+
+
+      it('will not collapse in vertical', () => {
+        // set it up so that initially the tabs extend beyond the tablist container
+        boundRectStub.onCall(0).returns({right: 25});
+        boundRectStub.onCall(1).returns({right: 50});
+
+        tree = mount(
+          <TabList orientation="vertical" collapsible>
+            <Tab className="one">a</Tab>
+            <Tab className="two">b</Tab>
+          </TabList>
+        );
+        let tabsContainer = tree.find('div.react-spectrum-Tabs--container');
+        assert.equal(tabsContainer.prop('aria-hidden'), undefined);
+        assert.equal(tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'), false);
+        let select = tree.find('TabListDropdown');
+        assert.equal(select.length, 0);
+      });
+    });
   });
 });

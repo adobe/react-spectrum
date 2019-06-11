@@ -50,4 +50,21 @@ storiesOf('TabView', module)
         <Tab label="Tab 2">Tab Body 2</Tab>
       </TabView>
     )
+  )
+  .add(
+    'collapsible',
+    () => (
+      <TabView defaultSelectedIndex={4} onSelect={action('onSelect')} collapsible>
+        <Tab label="Tab 1">Tab Body 1</Tab>
+        <Tab label="Tab 2">Tab Body 2</Tab>
+        <Tab label="Tab 3">Tab Body 3</Tab>
+        <Tab label="Tab 4">Tab Body 4</Tab>
+        <Tab label="Tab 5">Tab Body 5</Tab>
+        <Tab label="Tab 6">Tab Body 6</Tab>
+        <Tab label="Tab 7">Tab Body 7</Tab>
+        <Tab label="Tab 8">Tab Body 8</Tab>
+        <Tab label="Tab 9">Tab Body 9</Tab>
+        <Tab label="Tab 10">Tab Body 10</Tab>
+      </TabView>
+    )
   );
