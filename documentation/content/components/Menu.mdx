@@ -1,4 +1,14 @@
+import Button from '@react/react-spectrum/Button';
 import {Menu, MenuDivider, MenuHeading, MenuItem, SubMenu} from '@react/react-spectrum/Menu';
+import MenuPlacementExample from '../helpers/MenuPlacementExample';
+import TextAlignCenter from '@react/react-spectrum/Icon/TextAlignCenter';
+import TextAlignJustify from '@react/react-spectrum/Icon/TextAlignJustify';
+import TextAlignLeft from '@react/react-spectrum/Icon/TextAlignLeft';
+import TextAlignRight from '@react/react-spectrum/Icon/TextAlignRight';
+import TextBold from '@react/react-spectrum/Icon/TextBold';
+import TextItalic from '@react/react-spectrum/Icon/TextItalic';
+import TextStrikethrough from '@react/react-spectrum/Icon/TextStrikethrough';
+import TextUnderline from '@react/react-spectrum/Icon/TextUnderline';
 
 ## Overview
 
@@ -6,7 +16,7 @@ The **Menu** component is used for creating a menu list. The various elements in
 
 ## Example
 
-<Menu>
+<Menu aria-label="Example menu" trapFocus={false}>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
@@ -48,22 +58,7 @@ The **Menu** component is used for creating a menu list. The various elements in
 
 Menus can be placed in one of the bottom, top, left, right, top-right etc using the `placement` prop.
 
-<Menu placement="bottom">
-  <MenuHeading>
-    Menu Heading 1
-  </MenuHeading>
-  <MenuItem>
-    Menu Item 1
-  </MenuItem>
-  <MenuItem>
-    Menu Item 2
-  </MenuItem>
-  <MenuItem>
-    Menu Item 3
-  </MenuItem>
-</Menu>
-
-<div style={{height: 180}} />
+<MenuPlacementExample label="Menu Placement" />
 
 ```jsx
 <Menu placement="bottom">
@@ -86,18 +81,17 @@ Menus can be placed in one of the bottom, top, left, right, top-right etc using 
 
 Events handlers for select can be registered on a `Menu` as shown below. In addition to this close event is also available.
 
-
-<Menu onSelect={e => console.log(e)}>
+<Menu onSelect={(value, event) => console.log(`{value: '${value}', label: '${event.target.textContent.trim()}'}`)} aria-label="Menu with onSelect event handler" trapFocus={false}>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
-  <MenuItem>
+  <MenuItem value="1">
     Menu Item 1
   </MenuItem>
-  <MenuItem>
+  <MenuItem value="2">
     Menu Item 2
   </MenuItem>
-  <MenuItem>
+  <MenuItem value="3">
     Menu Item 3
   </MenuItem>
 </Menu>
@@ -105,17 +99,17 @@ Events handlers for select can be registered on a `Menu` as shown below. In addi
 <div style={{height: 180}} />
 
 ```jsx
-<Menu onSelect={e => console.log(e)}>
+<Menu onSelect={(value, event) => console.log(`{value: '${value}', label: '${event.target.textContent.trim()}'}`))}>
   <MenuHeading>
     Menu Heading 1
   </MenuHeading>
-  <MenuItem>
+  <MenuItem value="1">
     Menu Item 1
   </MenuItem>
-  <MenuItem>
+  <MenuItem value="2">
     Menu Item 2
   </MenuItem>
-  <MenuItem>
+  <MenuItem value="3">
     Menu Item 3
   </MenuItem>
 </Menu>
@@ -125,7 +119,7 @@ Events handlers for select can be registered on a `Menu` as shown below. In addi
 
 Nested menus can be created using the `SubMenu` component. They will appear on hover, or equivalent keyboard navigation.
 
-<Menu>
+<Menu aria-label="Menu with sub menus" trapFocus={false}>
   <MenuHeading>Menu Heading 1</MenuHeading>
   <MenuItem value="1">Menu Item 1</MenuItem>
   <MenuItem value="2">Menu Item 2</MenuItem>
@@ -167,4 +161,159 @@ To internationalize a MenuItem, a localized string should be passed to the `labe
 
 ## Accessibility
 
-MenuItems are accessible by default. The correct aria roles will automatically be applied. `role` is assigned a value `menu` for this purpose.
+### WAI-ARIA Design Pattern
+
+The Menu component implements the [Menu design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#menu).
+
+By default, menu items have the role `menuitem`.
+
+#### menuitemradio
+
+The role `menuitemradio` is more appropriate when selection from a group of items is mutually exclusive.
+
+<Menu aria-label="Text Alignment" trapFocus={false}>
+  <MenuHeading>
+    Text Alignment
+  </MenuHeading>
+  <MenuItem role="menuitemradio" value="left" icon={<TextAlignLeft />}>
+    Left
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="center" icon={<TextAlignCenter />} selected>
+    Center
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="right" icon={<TextAlignRight />}>
+    Right
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="justify" icon={<TextAlignJustify />}>
+    Justify
+  </MenuItem>
+</Menu>
+
+<div style={{height: 180}} />
+
+```jsx
+<Menu>
+  <MenuHeading>
+    Text Alignment
+  </MenuHeading>
+  <MenuItem role="menuitemradio" value="left" icon={<TextAlignLeft />}>
+    Left
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="center" icon={<TextAlignCenter />} selected>
+    Center
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="right" icon={<TextAlignRight />}>
+    Right
+  </MenuItem>
+  <MenuItem role="menuitemradio" value="justify" icon={<TextAlignJustify />}>
+    Justify
+  </MenuItem>
+</Menu>
+```
+
+#### menuitemcheckbox
+
+The role `menuitemcheckbox` should be used when multiple items can be selected.
+
+<Menu aria-label="Text Styling" trapFocus={false}>
+  <MenuHeading>
+    Text Styling
+  </MenuHeading>
+  <MenuItem role="menuitemcheckbox" value="bold" icon={<TextBold />} selected>
+    Bold
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="italic" icon={<TextItalic />} selected>
+    Italic
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="underline" icon={<TextUnderline />}>
+    Underline
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="strikethrough" icon={<TextStrikethrough />}>
+    Strikethrough
+  </MenuItem>
+</Menu>
+
+<div style={{height: 180}} />
+
+```jsx
+<Menu>
+  <MenuHeading>
+    Font Styling
+  </MenuHeading>
+  <MenuItem role="menuitemcheckbox" value="bold" icon={<TextBold />} selected>
+    Bold
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="italic" icon={<TextItalic />} selected>
+    Italic
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="underline" icon={<TextUnderline />}>
+    Underline
+  </MenuItem>
+  <MenuItem role="menuitemcheckbox" value="strikethrough" icon={<TextStrikethrough />}>
+    Strikethrough
+  </MenuItem>
+</Menu>
+```
+
+### Labelling
+
+A Menu should be labelled, using either the `aria-label` or `aria-labelledby` attribute, to provide context for Accessibility. For example, in a [Dropdown](/components/Dropdown) or as part of a [DropdownButton](/components/DropdownButton), the Menu will be labelled by the related Button component by default.
+
+<Button
+  aria-controls="menu-id"
+  aria-expanded="true"
+  aria-haspopup="true"
+  id="menu-trigger-id"
+  selected
+  variant="action">
+  Menu with sub menus
+</Button>
+<br/>
+<Menu
+  aria-labelledby="menu-trigger-id"
+  id="menu-id"
+  trapFocus={false}>
+  <MenuHeading>Menu Heading 1</MenuHeading>
+  <MenuItem value="1">Menu Item 1</MenuItem>
+  <MenuItem value="2">Menu Item 2</MenuItem>
+  <MenuItem value="3">Menu Item 3</MenuItem>
+  <SubMenu label="Sub Menu 1">
+    <MenuItem value="0.1">Sub Menu Item 1</MenuItem>
+    <MenuItem value="0.2">Sub Menu Item 2</MenuItem>
+    <SubMenu label="Sub Menu Item 3">
+      <MenuItem value="0.3.1">Sub Menu Item 1</MenuItem>
+      <MenuItem value="0.3.2">Sub Menu Item 2</MenuItem>
+    </SubMenu>
+  </SubMenu>
+  <MenuItem value="4">Menu Item 4</MenuItem>
+</Menu>
+
+<div style={{height: 240}} />
+
+```jsx
+  <Button
+    aria-controls="menu-id"
+    aria-expanded="true"
+    aria-haspopup="true"
+    id="menu-trigger-id"
+    variant="action">
+    Menu with sub menus
+  </Button>
+  <Menu
+    aria-labelledby="menu-trigger-id"
+    id="menu-id">
+    <MenuHeading>Menu Heading 1</MenuHeading>
+    <MenuItem value="1">Menu Item 1</MenuItem>
+    <MenuItem value="2">Menu Item 2</MenuItem>
+    <MenuItem value="3">Menu Item 3</MenuItem>
+    <SubMenu label="Sub Menu 1">
+      <MenuItem value="0.1">Sub Menu Item 1</MenuItem>
+      <MenuItem value="0.2">Sub Menu Item 2</MenuItem>
+      <SubMenu label="Sub Menu Item 3">
+        <MenuItem value="0.3.1">Sub Menu Item 1</MenuItem>
+        <MenuItem value="0.3.2">Sub Menu Item 2</MenuItem>
+      </SubMenu>
+    </SubMenu>
+    <MenuItem value="4">Menu Item 4</MenuItem>
+  </Menu>
+```

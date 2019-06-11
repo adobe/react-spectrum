@@ -7,7 +7,7 @@ import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {trapFocus} from '../../utils/FocusManager';
-import '../style/styles.styl';
+import '../style/index.styl';
 
 const formatMessage = messageFormatter(intlMessages);
 

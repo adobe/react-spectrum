@@ -1,11 +1,11 @@
 {
-  "previous": "前へ",
+  "dateSelected": "{date, date, full} を選択",
+  "finishRangeSelectionPrompt": "クリックして日付範囲の選択を終了",
   "next": "次へ",
-  "selectedDateDescription": "選択した日付：{date, date, full}",
-  "selectedRangeDescription": "選択した日付範囲: {start, date, long} ~ {end, date, long}",
-  "todayDate": "今日、{date, date, full}",
-  "todayDateSelected": "今日、{date, date, full} が選択されました",
-  "dateSelected": "{date, date, full} が選択されました",
-  "startRangeSelectionPrompt": "クリックすると日付範囲が選択されます",
-  "finishRangeSelectionPrompt": "クリックすると日付範囲の選択が完了します"
+  "previous": "前へ",
+  "selectedDateDescription": "日付を選択：{date, date, full}",
+  "selectedRangeDescription": "範囲を選択：{start, date, long} から {end, date, long}",
+  "startRangeSelectionPrompt": "クリックして日付範囲の選択を開始",
+  "todayDate": "本日、{date, date, full}",
+  "todayDateSelected": "本日、{date, date, full} を選択"
 }

@@ -1,7 +1,7 @@
 {
   "error": "Fout",
-  "warning": "Waarschuwing",
-  "info": "Informatie",
   "help": "Help",
-  "success": "Gelukt"
+  "info": "Informatie",
+  "success": "Geslaagd",
+  "warning": "Waarschuwing"
 }

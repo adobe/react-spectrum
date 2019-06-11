@@ -46,7 +46,21 @@ storiesOf('Wait', module)
   )
   .add(
     'centered: true',
-    () => render({centered: true})
+    () => {
+      const style = {
+        'width': '100px',
+        'height': '100px',
+        'position': 'relative',
+        'border-color': 'black',
+        'border-style': 'solid'
+      };
+
+      return (
+        <div style={style}>
+          {render({centered: true})}
+        </div>
+      );
+    }
   )
   .add(
     'indeterminate: false',
@@ -97,7 +111,19 @@ storiesOf('Wait', module)
     'indeterminate: false, centered: true',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({indeterminate: false, centered: true, value});
+      const style = {
+        'width': '100px',
+        'height': '100px',
+        'position': 'relative',
+        'border-color': 'black',
+        'border-style': 'solid'
+      };
+
+      return (
+        <div style={style}>
+          {render({indeterminate: false, centered: true, value})}
+        </div>
+      );
     },
     {info: 'Adjust the slider in the knobs tab below to change the value'}
   );

@@ -1,0 +1,5 @@
+{
+  "next": "Næste",
+  "page_count": "af {n, plural, =one{# side} other{# sider}}",
+  "previous": "Forrige"
+}

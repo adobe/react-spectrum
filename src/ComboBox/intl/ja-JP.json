@@ -1,6 +1,6 @@
 {
-  "No matching results": "一致する結果がありません。",
-  "Show suggestion": "入力候補を表示",
-  "Show {0} suggestions": "{0}入力候補を表示",
-  "Show suggestions": "入力候補を表示"
+  "No matching results": "一致する結果がありません",
+  "Show suggestion": "候補を表示",
+  "Show suggestions": "候補を表示",
+  "Show {0} suggestions": "{0} 件の候補を表示"
 }

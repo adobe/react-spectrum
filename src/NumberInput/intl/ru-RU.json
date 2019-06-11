@@ -1,5 +1,5 @@
 {
-  "Enter a number": "Введите число",
-  "Decrement": "Снижение",
-  "Increment": "Прирост"
+  "Decrement": "Уменьшить",
+  "Enter a number": "Введите номер",
+  "Increment": "Увеличить"
 }

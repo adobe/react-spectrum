@@ -129,6 +129,12 @@ describe('Progress', () => {
     const tree = shallow(<Progress aria-hidden />);
     assert.equal(tree.prop('aria-hidden'), true);
   });
+
+  it('supports indeterminate', () => {
+    const tree = shallow(<Progress isIndeterminate />);
+    assert.equal(tree.hasClass('spectrum-BarLoader--indeterminate'), true);
+    assert.equal(tree.find('.spectrum-BarLoader-fill').prop('style'), null);
+  });
 });
 
 const findStatus = tree => tree.find('.spectrum-BarLoader-fill');

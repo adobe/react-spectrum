@@ -1,7 +1,7 @@
 {
-  "close": "Close",
+  "close": "Zavřít",
   "error": "Chyba",
-  "warning": "Upozornění",
+  "info": "Informace",
   "success": "Úspěch",
-  "info": "Informace"
+  "warning": "Upozornění"
 }

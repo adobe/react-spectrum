@@ -148,7 +148,7 @@ export default class Pagination extends Component {
     const {pageInput} = this.state;
     const isButtonMode = variant === 'button';
     const isExplicitMode = variant === 'explicit';
-    const buttonVariant = isButtonMode ? mode : 'icon';
+    const buttonVariant = isButtonMode ? mode : 'action';
 
     return (
       <nav
@@ -163,6 +163,7 @@ export default class Pagination extends Component {
         <Button
           onClick={this.onPrevious}
           variant={buttonVariant}
+          quiet={!isButtonMode}
           aria-label={formatMessage('previous')}
           className={
             classNames({
@@ -189,6 +190,7 @@ export default class Pagination extends Component {
         <Button
           onClick={this.onNext}
           variant={buttonVariant}
+          quiet={!isButtonMode}
           aria-label={formatMessage('next')}
           className={
             classNames({

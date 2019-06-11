@@ -1,7 +1,7 @@
 {
-  "am": "przed południem",
-  "pm": "po południu",
-  "Hours": "Godz.",
-  "Minutes": "Min",
-  "AM/PM": "Przed południem / Po południu"
+  "AM/PM": "AM/PM",
+  "Hours": "Godzina",
+  "Minutes": "Minuta",
+  "am": "am",
+  "pm": "pm"
 }

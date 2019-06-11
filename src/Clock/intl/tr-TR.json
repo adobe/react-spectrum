@@ -1,7 +1,7 @@
 {
-  "am": "öö",
-  "pm": "ös",
+  "AM/PM": "ÖÖ/ÖS",
   "Hours": "Saat",
   "Minutes": "Dakika",
-  "AM/PM": "ÖÖ/ÖS"
+  "am": "öö",
+  "pm": "ös"
 }

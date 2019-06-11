@@ -385,6 +385,8 @@ export default class NumberInput extends Component {
       quiet,
       className,
       readOnly,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
       ...otherProps
     } = this.props;
 
@@ -403,8 +405,8 @@ export default class NumberInput extends Component {
         disabled={disabled}
         className={classNames('spectrum-Stepper', 'react-spectrum-Stepper', {'spectrum-Stepper--quiet': quiet}, className)}
         role="group"
-        aria-label={otherProps['aria-label'] || null}
-        aria-labelledby={otherProps['aria-labelledby'] || null}>
+        aria-label={ariaLabel || null}
+        aria-labelledby={ariaLabelledby || null}>
         <Textfield
           {...filterDOMProps(otherProps)}
           ref={t => this.textfield = t}
@@ -415,8 +417,8 @@ export default class NumberInput extends Component {
           role="spinbutton"
           type="number"
           autoComplete="off"
-          aria-label={otherProps['aria-label'] || null}
-          aria-labelledby={otherProps['aria-labelledby'] || null}
+          aria-label={ariaLabel || null}
+          aria-labelledby={ariaLabelledby || null}
           aria-valuenow={value || null}
           aria-valuetext={value || null}
           aria-valuemin={min}

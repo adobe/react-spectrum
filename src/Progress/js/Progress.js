@@ -17,11 +17,13 @@ export default function Progress({
   showPercent = false, // Whether the label should be shown or not
   variant, // Either undef or 'overBackground', 'positive', 'warning', 'critical'
   labelPosition = 'left', // 'left', 'top', 'bottom'
+  isIndeterminate = false,
   label,
   className,
   id = createId(),
   ...otherProps
 }) {
+  let fillProps = {};
   const sizeClassPart = SIZES[size];
   value = Math.min(Math.max(+value, 0), 100);
 
@@ -43,6 +45,15 @@ export default function Progress({
     ariaLabelledby.length > 0 && ariaLabelledby.push(id);
   }
 
+  // only add width to bar fill if determinate
+  if (!isIndeterminate) {
+    fillProps = {
+      style: {
+        width: `${value}%`
+      }
+    };
+  }
+
   ariaLabelledby = ariaLabelledby.length ? ariaLabelledby.join(' ') : null;
 
   return (
@@ -52,6 +63,7 @@ export default function Progress({
           'spectrum-BarLoader',
           `spectrum-BarLoader--${sizeClassPart}`,
           {
+            'spectrum-BarLoader--indeterminate': isIndeterminate,
             'spectrum-BarLoader--sideLabel': labelPosition === 'left',
             'spectrum-BarLoader--overBackground': variant === 'overBackground',
             'is-positive': variant === 'positive',
@@ -77,7 +89,7 @@ export default function Progress({
       <div className="spectrum-BarLoader-track">
         <div
           className="spectrum-BarLoader-fill"
-          style={{width: `${value}%`}} />
+          {...fillProps} />
       </div>
     </div>
   );
@@ -99,6 +111,11 @@ Progress.propTypes = {
   * Whether to show a percentage for the progress bar's current value
   */
   showPercent: PropTypes.bool,
+
+  /**
+   * Boolean to determine if the Progress component should endlessly scroll (indeterminate)
+   */
+  isIndeterminate: PropTypes.bool,
 
   /**
   * What type of progress bar to show: 'positive' (green), 'warning' (orange), 'critical' (red)

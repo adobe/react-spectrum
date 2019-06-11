@@ -1,7 +1,7 @@
 {
-  "am": "am",
-  "pm": "pm",
+  "AM/PM": "FM/EM",
   "Hours": "Timmar",
   "Minutes": "Minuter",
-  "AM/PM": "AM/PM"
+  "am": "fm",
+  "pm": "em"
 }

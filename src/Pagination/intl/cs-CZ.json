@@ -1,0 +1,5 @@
+{
+  "next": "Další",
+  "page_count": "z {n, plural, =one{# stránky} other{# stránek}}",
+  "previous": "Předchozí"
+}

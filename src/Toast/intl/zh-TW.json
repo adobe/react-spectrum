@@ -1,7 +1,7 @@
 {
   "close": "關閉",
   "error": "錯誤",
-  "warning": "警告",
+  "info": "資訊",
   "success": "成功",
-  "info": "資訊"
+  "warning": "警告"
 }

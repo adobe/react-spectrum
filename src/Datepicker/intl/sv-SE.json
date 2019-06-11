@@ -1,9 +1,9 @@
 {
-  "Time": "Tid",
   "Calendar": "Kalender",
   "Close": "Stäng",
-  "Start Date": "Startdatum",
   "End Date": "Slutdatum",
+  "End Time": "Sluttid",
+  "Start Date": "Startdatum",
   "Start Time": "Starttid",
-  "End Time": "Sluttid"
+  "Time": "Tid"
 }

@@ -1,0 +1,5 @@
+{
+  "next": "Siguiente",
+  "page_count": "de {n, plural, =one{# página} other{# páginas}}",
+  "previous": "Anterior"
+}

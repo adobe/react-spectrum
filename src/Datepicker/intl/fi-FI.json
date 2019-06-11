@@ -1,9 +1,9 @@
 {
-  "Time": "Aika",
   "Calendar": "Kalenteri",
   "Close": "Sulje",
-  "Start Date": "Alkamispäivä",
   "End Date": "Päättymispäivä",
+  "End Time": "Päättymisaika",
+  "Start Date": "Alkamispäivä",
   "Start Time": "Alkamisaika",
-  "End Time": "Päättymisaika"
+  "Time": "Aika"
 }

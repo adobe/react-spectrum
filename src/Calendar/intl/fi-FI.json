@@ -1,11 +1,11 @@
 {
-  "previous": "Edellinen",
-  "next": "Seuraava",
-  "selectedDateDescription": "Valittu päivämäärä: {date, date, full}",
-  "selectedRangeDescription": "Valittu päivämääräalue: {start, date, long}-{end, date, long}",
-  "todayDate": "Tänään, {date, date, full}",
-  "todayDateSelected": "Tänään, {date, date, full} valittu",
   "dateSelected": "{date, date, full} valittu",
-  "startRangeSelectionPrompt": "Napsauta aloittaaksesi ajan asettamisen",
-  "finishRangeSelectionPrompt": "Napsauta lopettaaksesi päivämäärän valitsemisen"
+  "finishRangeSelectionPrompt": "Lopeta päivämääräalueen valinta napsauttamalla tätä.",
+  "next": "Seuraava",
+  "previous": "Edellinen",
+  "selectedDateDescription": "Valittu päivämäärä: {date, date, full}",
+  "selectedRangeDescription": "Valittu alue: {start, date, long} - {end, date, long}",
+  "startRangeSelectionPrompt": "Aloita päivämääräalueen valinta napsauttamalla tätä.",
+  "todayDate": "Tänään, {date, date, full}",
+  "todayDateSelected": "Tänään, {date, date, full} valittu"
 }

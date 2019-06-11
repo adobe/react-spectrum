@@ -1,11 +1,11 @@
 {
-  "previous": "Wstecz",
+  "dateSelected": "Wybrano {date, date, full}",
+  "finishRangeSelectionPrompt": "Kliknij, aby zakończyć wybór zakresu dat",
   "next": "Dalej",
+  "previous": "Wstecz",
   "selectedDateDescription": "Wybrana data: {date, date, full}",
-  "selectedRangeDescription": "Wybrany zakres dat: {start, date, long} do {end, date, long}",
-  "todayDate": "Dziś, {date, date, full}",
-  "todayDateSelected": "Dziś, wybrano {date, date, full}",
-  "dateSelected": "wybrano {date, date, full}",
+  "selectedRangeDescription": "Wybrany zakres: {start, date, long} do {end, date, long}",
   "startRangeSelectionPrompt": "Kliknij, aby rozpocząć wybór zakresu dat",
-  "finishRangeSelectionPrompt": "Kliknij, aby zakończyć wybieranie zakresu dat"
+  "todayDate": "Dzisiaj {date, date, full}",
+  "todayDateSelected": "Dzisiaj wybrano {date, date, full}"
 }
