@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {cleanup, fireEvent, render, waitForElement, within} from 'react-testing-library';
+import {cleanup, fireEvent, render, waitForElement, within} from '@testing-library/react';
 import React from 'react';
 import {shallow} from 'enzyme';
 import {Tab, TabView} from '../../src/TabView';
