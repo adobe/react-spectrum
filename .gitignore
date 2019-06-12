@@ -14,3 +14,7 @@ documentation/public
 documentation/yarn.lock
 dist
 public
+
+
+#allow
+!.storybook-v3/lib
