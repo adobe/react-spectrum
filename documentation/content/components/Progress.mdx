@@ -145,8 +145,40 @@ To internationalize a progress bar, a localized string should be passed to the `
 
 ## Accessibility
 
-Progress bars are made accessible by using any of the label, aria-label or aria-labelledby prop.
+Progress bars are made accessible as described in the explaination of the ["progressbar" role in WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-1.1/#progressbar).
+
+### Labelling
+
+Progress bars should use the `label`, `aria-label` or `aria-labelledby` prop to provide an accessible name for the task that is taking time to complete.
 
 ```jsx
-<Progress aria-labelledby="hello" />
+<Progress aria-label="Loading…" />
+```
+
+### Using min and max
+
+While not the default behavior, Progress supports `min`, `max` and `value` props that have not been converted to percentage values. Specify the `aria-valuetext` prop to provide a human readable alternative to the value as a percent.
+
+<Progress
+  label="Loading pages…"
+  showPercent
+  labelPosition="top"
+  min={0}
+  max={17}
+  value={5}
+  aria-valuetext="Page 5 of 17"
+  title="Page 5 of 17"
+/>
+
+```jsx
+<Progress
+  label="Loading pages…"
+  showPercent
+  labelPosition="top"
+  min={0}
+  max={17}
+  value={5}
+  aria-valuetext="Page 5 of 17"
+  title="Page 5 of 17"
+/>
 ```

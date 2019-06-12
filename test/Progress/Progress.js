@@ -9,9 +9,11 @@ describe('Progress', () => {
     assert.equal(tree.hasClass('spectrum-BarLoader'), true);
     assert.equal(tree.hasClass('spectrum-BarLoader--medium'), true);
     assert.equal(tree.hasClass('spectrum-BarLoader--sideLabel'), true);
+    assert.equal(tree.prop('role'), 'progressbar');
     assert.equal(tree.prop('aria-valuemin'), 0);
     assert.equal(tree.prop('aria-valuemax'), 100);
     assert.equal(tree.prop('aria-valuenow'), 0);
+    assert.equal(tree.prop('aria-valuetext'), '0%');
 
     const bar = tree.find('.spectrum-BarLoader-track');
     assert.equal(bar.prop('className'), 'spectrum-BarLoader-track');
@@ -26,6 +28,7 @@ describe('Progress', () => {
     it('updates all the fields', () => {
       const tree = shallow(<Progress value={30} showPercent />);
       assert.equal(tree.prop('aria-valuenow'), 30);
+      assert.equal(tree.prop('aria-valuetext'), '30%');
       assert.deepEqual(findStatus(tree).prop('style'), {width: '30%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '30%');
     });
@@ -33,11 +36,13 @@ describe('Progress', () => {
     it('clamps values to 0-100', () => {
       const tree = shallow(<Progress value={10000} showPercent />);
       assert.equal(tree.prop('aria-valuenow'), 100);
+      assert.equal(tree.prop('aria-valuetext'), '100%');
       assert.deepEqual(findStatus(tree).prop('style'), {width: '100%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '100%');
 
       tree.setProps({value: -1});
       assert.equal(tree.prop('aria-valuenow'), 0);
+      assert.equal(tree.prop('aria-valuetext'), '0%');
       assert.deepEqual(findStatus(tree).prop('style'), {width: '0%'});
       assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), '0%');
     });
@@ -126,14 +131,42 @@ describe('Progress', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Progress aria-hidden />);
-    assert.equal(tree.prop('aria-hidden'), true);
+    const tree = shallow(<Progress aria-valuetext="halfway there!" />);
+    assert.equal(tree.prop('aria-valuetext'), 'halfway there!');
   });
 
   it('supports indeterminate', () => {
     const tree = shallow(<Progress isIndeterminate />);
     assert.equal(tree.hasClass('spectrum-BarLoader--indeterminate'), true);
     assert.equal(tree.find('.spectrum-BarLoader-fill').prop('style'), null);
+    assert.equal(tree.prop('role'), 'progressbar');
+    assert.equal(tree.prop('aria-valuemin'), null);
+    assert.equal(tree.prop('aria-valuemax'), null);
+    assert.equal(tree.prop('aria-valuenow'), null);
+    assert.equal(tree.prop('aria-valuetext'), null);
+  });
+
+  it('supports raw values for min, max, and value', () => {
+    const props = {
+      min: 50,
+      max: 200,
+      value: 100
+    };
+    const {
+      min,
+      max,
+      value,
+      percentage = 100 * value / (max - min)
+    } = props;
+
+    const tree = shallow(<Progress {...props} showPercent />);
+    assert.deepEqual(tree.find('.spectrum-BarLoader-fill').prop('style'), {width: `${percentage}%`});
+    assert.equal(tree.prop('role'), 'progressbar');
+    assert.equal(tree.prop('aria-valuemin'), min);
+    assert.equal(tree.prop('aria-valuemax'), max);
+    assert.equal(tree.prop('aria-valuenow'), value);
+    assert.equal(tree.prop('aria-valuetext'), `${Math.round(percentage * 10) / 10}%`);
+    assert.equal(tree.find('.spectrum-BarLoader-percentage').text(), `${Math.round(percentage)}%`);
   });
 });
 

@@ -21,11 +21,15 @@ export default function Progress({
   label,
   className,
   id = createId(),
+  min = 0,
+  max = 100,
   ...otherProps
 }) {
   let fillProps = {};
+  let ariaValueProps = {};
   const sizeClassPart = SIZES[size];
-  value = Math.min(Math.max(+value, 0), 100);
+  value = Math.min(Math.max(+value, min), max);
+  let percentage = 100 * value / (max - min);
 
   let labelId;
 
@@ -45,16 +49,22 @@ export default function Progress({
     ariaLabelledby.length > 0 && ariaLabelledby.push(id);
   }
 
+  ariaLabelledby = ariaLabelledby.length ? ariaLabelledby.join(' ') : null;
+
   // only add width to bar fill if determinate
   if (!isIndeterminate) {
     fillProps = {
       style: {
-        width: `${value}%`
+        width: `${percentage}%`
       }
     };
+    ariaValueProps = {
+      'aria-valuemin': min,
+      'aria-valuemax': max,
+      'aria-valuenow': value,
+      'aria-valuetext': `${Math.round(percentage * 10) / 10}%`
+    };
   }
-
-  ariaLabelledby = ariaLabelledby.length ? ariaLabelledby.join(' ') : null;
 
   return (
     <div
@@ -74,9 +84,7 @@ export default function Progress({
         )
       }
       role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={value}
+      {...ariaValueProps}
       aria-labelledby={ariaLabelledby}
       id={id}
       {...filterDOMProps(otherProps)}>
@@ -84,7 +92,7 @@ export default function Progress({
         <div className="spectrum-BarLoader-label" id={labelId}>{label}</div>
       }
       {showPercent &&
-        <div className="spectrum-BarLoader-percentage">{value + '%'}</div>
+        <div className="spectrum-BarLoader-percentage">{`${Math.round(percentage)}%`}</div>
       }
       <div className="spectrum-BarLoader-track">
         <div
@@ -97,10 +105,20 @@ export default function Progress({
 
 Progress.propTypes = {
   /**
-  * Value that sets the percentage progression of the progress bar.
-  * Value is automatically clamped to 0-100.
+  * Value between the min and max that specifies the progression of the progress bar.
+  * Calculated percentage is automatically clamped to 0-100.
   */
   value: PropTypes.number,
+
+  /**
+  * Minimum value for the progress bar. Defaults to 0.
+  */
+  min: PropTypes.number,
+
+  /**
+  * Maximum value for the progress bar. Defaults to 100.
+  */
+  max: PropTypes.number,
 
   /**
   * Size of the Progress component. Limited to small (S) or medium (M).
@@ -120,7 +138,7 @@ Progress.propTypes = {
   /**
   * What type of progress bar to show: 'positive' (green), 'warning' (orange), 'critical' (red)
   */
-  variant: PropTypes.oneOf(['positive', 'warning', 'critical']),
+  variant: PropTypes.oneOf(['positive', 'warning', 'critical', 'overBackground']),
 
   /**
   * Determines the positioning of the provided label.
