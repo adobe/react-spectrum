@@ -1,5 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
-import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTab} from '@react-aria/tabs';
@@ -11,7 +10,7 @@ interface TabProps extends React.HTMLAttributes<HTMLElement> {
   children?: ReactNode,
   isDisabled?: boolean,
   isSelected?: boolean, // Had to add this, TS complains in TabList in renderTabs
-  onSelect?: () => void  // Override React.HTMLAttributes onSelect 
+  onSelect?: () => void  // Override React.HTMLAttributes onSelect
 }
 
 export function Tab(props: TabProps) {

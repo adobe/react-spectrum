@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode} from 'react';
 import {TabList} from './TabList';
 import {useTabListState} from '@react-stately/tabs';
@@ -48,7 +48,7 @@ export function Tabs(props: TabsProps) {
   let body = selected.props.children;
 
   return (
-    <div 
+    <div
       className={classNames(
         styles,
         'react-spectrum-TabPanel',

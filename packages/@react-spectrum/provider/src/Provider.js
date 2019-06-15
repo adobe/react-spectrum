@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
-import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
+import {filterDOMProps, shouldKeepSpectrumClassNames} from '@react-spectrum/utils';
 import {Provider as I18nProvider} from '@react-aria/i18n';
 import React, {useContext, useEffect} from 'react';
-import {shouldKeepSpectrumClassNames} from '@react-spectrum/utils/src/classNames';
 import {version} from '../package.json';
 import '@adobe/focus-ring-polyfill';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';

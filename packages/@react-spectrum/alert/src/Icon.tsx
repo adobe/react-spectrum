@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import * as React from 'react';
 import iconStyles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';

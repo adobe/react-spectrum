@@ -1,5 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
-import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTabList} from '@react-aria/tabs';
@@ -58,7 +57,7 @@ export function TabList(props: TabListProps) {
       child ? React.cloneElement(child, {
         isSelected: state.selectedItem === child.props.value,
         onSelect: () => state.setSelectedItem(child.props.value),
-        isDisabled 
+        isDisabled
       }) : null
     );
   };

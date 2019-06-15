@@ -1,5 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
-import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
 
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';

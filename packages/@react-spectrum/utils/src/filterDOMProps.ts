@@ -177,7 +177,7 @@ const DOMProps = {
  */
 const propRe = /^((data|aria)-.*)$/;
 
-export default function filterReactDomProps(props): React.HTMLAttributes<HTMLElement> {
+export function filterDOMProps(props): React.HTMLAttributes<HTMLElement> {
   const filterProps = {};
 
   for (const prop in props) {

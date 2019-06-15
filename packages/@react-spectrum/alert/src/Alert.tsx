@@ -1,6 +1,5 @@
 import AlertMedium from '@spectrum/spectrum-iconstore/icons/react/core/AlertMedium';
-import {classNames} from '@react-spectrum/utils/src/classNames';
-import filterDOMProps from '@react-spectrum/utils/src/filterDOMProps';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum/spectrum-iconstore/icons/react/core/HelpMedium';
 import InfoMedium from '@spectrum/spectrum-iconstore/icons/react/core/InfoMedium';
 import SuccessMedium from '@spectrum/spectrum-iconstore/icons/react/core/SuccessMedium';
