@@ -11,7 +11,8 @@
     "start": "make run",
     "test": "make test",
     "lint": "make lint",
-    "test:watch": "mocha --watch --reporter dot"
+    "test:watch": "mocha --watch --reporter dot",
+    "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js"
   },
   "workspaces": [
     "src",
@@ -27,6 +28,7 @@
     "axe-core": "^3.0.3",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
+    "@babel/node": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.0.0",
     "@babel/plugin-proposal-export-default-from": "^7.0.0",
@@ -74,6 +76,7 @@
     "react-axe": "^3.0.2",
     "react-docgen": "^4.1.0",
     "react-dom": "^0.14 || ^15 || ^16",
+    "recursive-readdir": "^2.2.2",
     "sinon": "^7.3.1",
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
