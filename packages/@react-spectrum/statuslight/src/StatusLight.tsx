@@ -1,7 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
-
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
+import {useProviderProps} from '@react-spectrum/provider';
 
 interface StatusLightProps extends React.HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -9,7 +9,15 @@ interface StatusLightProps extends React.HTMLAttributes<HTMLElement> {
   isDisabled?: boolean
 }
 
-export function StatusLight({variant = 'positive', children, isDisabled, className, ...otherProps}: StatusLightProps) {
+export function StatusLight(props: StatusLightProps) {
+  let {
+    variant = 'positive',
+    children,
+    isDisabled,
+    className,
+    ...otherProps
+  } = useProviderProps(props);
+
   return (
     <div
       className={classNames(

@@ -3,6 +3,7 @@ import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTabList} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';
+import {useProviderProps} from '@react-spectrum/provider';
 
 interface TabProps extends React.HTMLAttributes<HTMLElement> {
   icon?: ReactNode,
@@ -29,6 +30,7 @@ interface TabListProps extends React.HTMLAttributes<HTMLElement> {
 
 // TODO: Implement functionality related to overflowMode
 export function TabList(props: TabListProps) {
+  props = useProviderProps(props);
   let state = useTabListState(props);
   let [tabsArray, setTabsArray] = useState([]);
   let {tabListProps} = useTabList(props);

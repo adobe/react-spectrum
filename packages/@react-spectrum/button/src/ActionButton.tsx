@@ -5,8 +5,8 @@ import CornerTriangle from '../../../../src/Icon/core/CornerTriangle';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-
 import {ButtonBase} from './Button';
+import {useProviderProps} from '@react-spectrum/provider';
 
 export interface ActionButtonProps extends ButtonBase {
   isQuiet?: boolean,
@@ -15,6 +15,7 @@ export interface ActionButtonProps extends ButtonBase {
 }
 
 export function ActionButton(props: ActionButtonProps) {
+  props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,

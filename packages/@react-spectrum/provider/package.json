@@ -1,14 +1,13 @@
 {
   "name": "@react-spectrum/provider",
   "version": "3.0.0",
-  "main": "src/Provider.js",
+  "main": "src/Provider.tsx",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
     "@react-spectrum/utils": "^3.0.0",
     "classnames": "^2.2.5"
   },

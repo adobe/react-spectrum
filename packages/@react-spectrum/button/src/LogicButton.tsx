@@ -4,6 +4,7 @@ import {cloneIcon} from '@react/react-spectrum/utils/icon';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useProviderProps} from '@react-spectrum/provider';
 
 
 export interface LogicButtonProps extends ButtonBase {
@@ -11,6 +12,7 @@ export interface LogicButtonProps extends ButtonBase {
 }
 
 export function LogicButton(props: LogicButtonProps) {
+  props = useProviderProps(props);
   let {
     elementType:ElementType = 'button',
     variant,

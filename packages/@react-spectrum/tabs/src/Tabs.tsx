@@ -4,6 +4,7 @@ import {TabList} from './TabList';
 import {useTabListState} from '@react-stately/tabs';
 import {useTabs} from '@react-aria/tabs';
 import styles from '../style/index.css';
+import {useProviderProps} from '@react-spectrum/provider';
 
 type Orientation = 'horizontal' | 'vertical';
 
@@ -31,6 +32,7 @@ interface TabsProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function Tabs(props: TabsProps) {
+  props = useProviderProps(props);
   let state = useTabListState(props);
   let {
     className,

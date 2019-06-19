@@ -4,6 +4,7 @@ import {HTMLElement} from 'react-dom';
 import React, {JSXElementConstructor, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useProviderProps} from '@react-spectrum/provider';
 
 export interface ButtonBase extends React.AllHTMLAttributes<HTMLElement> {
   isDisabled?: boolean,
@@ -26,6 +27,7 @@ let VARIANT_MAPPING = {
 
 // todo: add back in focus ring later
 export function Button(props: ButtonProps) {
+  props = useProviderProps(props);
   let {
     elementType:ElementType = 'button',
     children,

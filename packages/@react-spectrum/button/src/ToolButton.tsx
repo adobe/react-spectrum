@@ -6,6 +6,7 @@ import CornerTriangle from '../../../../src/Icon/core/CornerTriangle';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useProviderProps} from '@react-spectrum/provider';
 
 
 export interface ToolButtonProps extends ButtonBase {
@@ -15,6 +16,7 @@ export interface ToolButtonProps extends ButtonBase {
 }
 
 export function ToolButton(props: ToolButtonProps) {
+  props = useProviderProps(props);
   let {
     elementType:ElementType = 'button',
     children,

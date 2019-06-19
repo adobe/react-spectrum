@@ -75,7 +75,7 @@ module.exports = ({config}, env) => {
           include: path.resolve(__dirname, '../')
         },
         {
-          test: /@adobe\/spectrum-css-temp\/.*\.css$/,
+          test: /packages\/.*\.css$/,
           use: [
             'style-loader',
             {
@@ -102,7 +102,7 @@ module.exports = ({config}, env) => {
           test: /\.css$/,
           loaders: ['style-loader', 'css-loader'],
           include: path.resolve(__dirname, '../'),
-          exclude: /@adobe\/spectrum-css-temp\/.*\.css$/
+          exclude: /packages\/.*\.css$/
         },
         {
           test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
