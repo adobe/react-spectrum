@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/utils",
+  "name": "@react-aria/focus",
   "version": "3.0.0",
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -8,6 +8,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "react": "^16.8.0"
+    "@react-aria/utils": "^3.0.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   }
 }
