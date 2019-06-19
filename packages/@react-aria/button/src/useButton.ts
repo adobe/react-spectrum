@@ -70,7 +70,7 @@ export function useButton({
     buttonProps: {
       onClick,
       ref: buttonRef,
-      ariaExpanded: ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       disabled: isDisabled,
       ...(additionalProps || {})
     }

@@ -62,6 +62,7 @@ cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 jenkins_test: lint
+	NODE_ENV=test jest
 	# Test in React 15
 	yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
 	NODE_ENV=test mocha

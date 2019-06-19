@@ -109,6 +109,9 @@ export function useProvider(): ProviderContext {
 
 export function useProviderProps(props) {
   let context = useProvider();
+  if (!context) {
+    return props;
+  }
   return Object.assign({}, {
     isQuiet: context.isQuiet,
     isEmphasized: context.isEmphasized,
