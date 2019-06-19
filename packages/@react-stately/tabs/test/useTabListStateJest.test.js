@@ -14,7 +14,7 @@ test.skip('test with react-hooks-testing, controled index', function () {
 
   act(() => result.current.setSelectedIndex(3));
   assert.equal(1, result.current.selectedIndex);
-  assert.equal(props.onChange.getCall(0).args[0],3);
+  assert.equal(props.onChange.getCall(0).args[0], 3);
 });
 
 test.skip('test with react-hooks-testing, uncontrolled index', function () {
@@ -27,5 +27,5 @@ test.skip('test with react-hooks-testing, uncontrolled index', function () {
 
   act(() => result.current.setSelectedIndex(3));
   assert.equal(3, result.current.selectedIndex);
-  assert.equal(props.onChange.getCall(0).args[0],3);
+  assert.equal(props.onChange.getCall(0).args[0], 3);
 });

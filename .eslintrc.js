@@ -14,6 +14,24 @@ module.exports = {
     },
     sourceType: 'module'
   },
+  overrides: {
+    files: ['packages/**/*.ts', 'packages/**/*.tsx'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint'],
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+      ecmaFeatures: {
+        "jsx": true,
+        "legacyDecorators": true
+      },
+      "useJSXTextNode": true,
+      "project": "./tsconfig.json",
+      sourceType: 'module'
+    },
+    rules: {
+      "no-unused-vars": OFF,
+      "@typescript-eslint/no-unused-vars": ERROR
+    }
+  },
   env: {
     'browser': true,
     'node': true,

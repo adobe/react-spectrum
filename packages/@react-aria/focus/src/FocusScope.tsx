@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useContext} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -57,7 +57,7 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
     focusNext(opts: FocusManagerOptions = {}) {
       let node = opts.from || document.activeElement;
       let focusable = getFocusableElementsInScope(scopeRef.current, opts);
-      let nextNode = focusable.find(n => 
+      let nextNode = focusable.find(n =>
         !!(node.compareDocumentPosition(n) & (Node.DOCUMENT_POSITION_FOLLOWING | Node.DOCUMENT_POSITION_CONTAINED_BY))
       );
       if (nextNode) {
@@ -68,7 +68,7 @@ function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusMana
     focusPrevious(opts: FocusManagerOptions = {}) {
       let node = opts.from || document.activeElement;
       let focusable = getFocusableElementsInScope(scopeRef.current, opts).reverse();
-      let previousNode = focusable.find(n => 
+      let previousNode = focusable.find(n =>
         !!(node.compareDocumentPosition(n) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINED_BY))
       );
       if (previousNode) {

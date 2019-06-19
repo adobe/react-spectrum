@@ -1,4 +1,4 @@
-import React, {useContext, ReactNode} from 'react';
+import React, {ReactNode, useContext} from 'react';
 
 interface ProviderProps {
   locale?: string,

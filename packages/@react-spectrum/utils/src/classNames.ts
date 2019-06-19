@@ -11,8 +11,6 @@ export function keepSpectrumClassNames() {
   );
 }
 
-const spectrumRegex = /^(spectrum|react-spectrum)/;
-
 export function classNames(cssModule: {[key: string]: string}, ...values: Array<string | Object>): string {
   let classes = [];
   for (let value of values) {

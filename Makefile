@@ -29,6 +29,7 @@ clean_all:
 
 clean_node_modules:
 	rm -rf node_modules
+	rm -rf packages/*/*/node_modules
 
 # --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
 docs:
@@ -49,6 +50,7 @@ clean_docs_node_modules:
 lint:
 	npm run check-types
 	eslint src test stories
+	eslint packages --ext .js,.ts,.tsx
 
 test:
 	NODE_ENV=test mocha

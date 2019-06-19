@@ -1,5 +1,5 @@
-import {useLocale} from './context';
 import IntlMessageFormat from 'intl-messageformat';
+import {useLocale} from './context';
 
 const formatterCache = new Map();
 

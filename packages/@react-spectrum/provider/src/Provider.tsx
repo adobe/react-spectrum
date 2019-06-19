@@ -2,13 +2,13 @@ import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
 import {filterDOMProps, shouldKeepSpectrumClassNames} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
+import {ProviderContext, ProviderProps} from './types';
 import React, {useContext, useEffect} from 'react';
-// @ts-ignore
-import {version} from '../package.json';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {ProviderContext, ProviderProps} from './types';
 import {useColorScheme, useScale} from './mediaQueries';
+// @ts-ignore
+import {version} from '../package.json';
 
 const Context = React.createContext<ProviderContext | null>(null);
 

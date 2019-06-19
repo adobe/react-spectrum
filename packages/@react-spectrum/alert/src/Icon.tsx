@@ -1,7 +1,6 @@
-import {classNames} from '@react-spectrum/utils';
-import * as React from 'react';
+import {classNames} from '@react-spectrum/utils/src/classNames';
 import iconStyles from '@adobe/spectrum-css-temp/components/icon/vars.css';
-import {useMessageFormatter} from '@react-aria/i18n';
+import React from 'react';
 import {useProvider} from '@react-spectrum/provider';
 
 interface IconProps {
@@ -37,4 +36,4 @@ export function Icon({alt, elementType: IconElement, className, elementName}: Ic
       pathLargeClassName={classNames(iconStyles, 'spectrum-UIIcon--large')}
       alt={alt} />
   );
-};
+}

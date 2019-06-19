@@ -1,6 +1,5 @@
 import {HTMLButtonElement, HTMLElement} from 'react-dom';
-import {JSXElementConstructor, MouseEvent, useRef} from 'react';
-import React from "react";
+import React, {JSXElementConstructor, MouseEvent, useRef} from 'react';
 
 interface AriaButtonProps {
   elementType?: string | JSXElementConstructor<any>,
@@ -58,7 +57,7 @@ export function useButton({
 
   let additionalProps;
   if (elementType !== 'button') {
-    additionalProps= {
+    additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : (tabIndex || 0),
       'aria-disabled': isDisabled || undefined,

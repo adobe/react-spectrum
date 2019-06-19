@@ -1,8 +1,8 @@
 // import Focus from 'react-events/focus';
 // export {Focus};
 
-import React, {useEffect, useRef, ReactElement} from 'react';
 import {chain} from '@react-aria/utils';
+import React, {ReactElement, useEffect, useRef} from 'react';
 
 let isGlobalFocusVisible = false;
 let hasSetupGlobalListeners = false;
@@ -19,7 +19,7 @@ function setupGlobalFocusEvents() {
 
   let onKeyboardEvent = (e) => {
     if (
-      e.key === 'Tab' && 
+      e.key === 'Tab' &&
       !(
         e.metaKey ||
         (!isMac && e.altKey) ||
@@ -30,10 +30,10 @@ function setupGlobalFocusEvents() {
     }
   };
 
-  let onPointerEvent = (e) => {
+  let onPointerEvent = () => {
     isGlobalFocusVisible = false;
   };
-  
+
   document.addEventListener('keydown', onKeyboardEvent, true);
   document.addEventListener('keyup', onKeyboardEvent, true);
 
@@ -85,7 +85,7 @@ export function Focus({children, onFocusChange, onFocusVisibleChange, onFocusWit
     state.isFocusVisible = isGlobalFocusVisible;
   };
 
-  let onBlur = (e) => {
+  let onBlur = () => {
     if (state.isFocused) {
       state.isFocused = false;
       if (onFocusChange) {
@@ -111,13 +111,13 @@ export function Focus({children, onFocusChange, onFocusVisibleChange, onFocusWit
     state.isFocusVisible = false;
   };
 
-  let onMouseDown = (e) => {
+  let onMouseDown = () => {
     if (state.isFocusVisible && !isGlobalFocusVisible) {
       state.isFocusVisible = false;
       if (state.isFocused && onFocusVisibleChange) {
         onFocusVisibleChange(false);
       }
-      
+
       if (state.isFocusWithin && onFocusVisibleWithinChange) {
         onFocusVisibleWithinChange(false);
       }

@@ -1,6 +1,6 @@
-import React, {useState, ReactElement} from 'react';
 import classNames from 'classnames';
 import {Focus} from './Focus';
+import React, {ReactElement, useState} from 'react';
 
 interface FocusRingProps {
   children?: ReactElement,
@@ -12,7 +12,7 @@ interface FocusRingProps {
 export function FocusRing({children, focusClass, focusRingClass, within}: FocusRingProps) {
   let [isFocused, setFocused] = useState(false);
   let [isFocusVisible, setFocusVisible] = useState(false);
-  let props = within 
+  let props = within
     ? {onFocusWithinChange: setFocused, onFocusVisibleWithinChange: setFocusVisible}
     : {onFocusChange: setFocused, onFocusVisibleChange: setFocusVisible};
 

@@ -1,6 +1,6 @@
-import {renderHook} from 'react-hooks-testing-library';
 import assert from 'assert';
 import React from 'react';
+import {renderHook} from 'react-hooks-testing-library';
 import {useButton} from '../';
 
 describe('useButton tests', function () {

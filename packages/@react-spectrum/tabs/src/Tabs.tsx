@@ -1,10 +1,10 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode} from 'react';
+import styles from '../style/index.css';
 import {TabList} from './TabList';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useTabListState} from '@react-stately/tabs';
 import {useTabs} from '@react-aria/tabs';
-import styles from '../style/index.css';
-import {useProviderProps} from '@react-spectrum/provider';
 
 type Orientation = 'horizontal' | 'vertical';
 
@@ -37,7 +37,6 @@ export function Tabs(props: TabsProps) {
   let {
     className,
     orientation = 'horizontal' as Orientation,
-    onSelectionChange = () => {},
     ...otherProps
   } = props;
 

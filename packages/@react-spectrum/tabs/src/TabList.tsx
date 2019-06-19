@@ -1,9 +1,9 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useTabList} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';
-import {useProviderProps} from '@react-spectrum/provider';
 
 interface TabProps extends React.HTMLAttributes<HTMLElement> {
   icon?: ReactNode,
@@ -50,19 +50,17 @@ export function TabList(props: TabListProps) {
     density = '',
     className,
     isDisabled,
-    overflowMode,
     ...otherProps
   } = props;
 
-  let renderTabs = () => {
-    return childArray.map((child) =>
+  let renderTabs = () =>
+    childArray.map((child) =>
       child ? React.cloneElement(child, {
         isSelected: state.selectedItem === child.props.value,
         onSelect: () => state.setSelectedItem(child.props.value),
         isDisabled
       }) : null
-    );
-  };
+  );
 
   let selectedTab = tabsArray[selectedIndex];
 
@@ -110,7 +108,7 @@ function TabLine({orientation, selectedTab}) {
 }
 
 function findSelectedIndex(childArray, state) {
-  return childArray.findIndex((child) => {
-    return child.props.value === state.selectedItem;
-  });
+  return childArray.findIndex((child) =>
+    child.props.value === state.selectedItem
+  );
 }

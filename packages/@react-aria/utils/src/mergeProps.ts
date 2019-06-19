@@ -1,6 +1,6 @@
 import {chain} from './chain';
-import {HTMLAttributes} from 'react';
 import classNames from 'classnames';
+import {HTMLAttributes} from 'react';
 
 export function mergeProps(a: HTMLAttributes<Element>, b: HTMLAttributes<Element>): HTMLAttributes<Element> {
   let res = {};

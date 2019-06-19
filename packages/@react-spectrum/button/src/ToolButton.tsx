@@ -18,7 +18,7 @@ export interface ToolButtonProps extends ButtonBase {
 export function ToolButton(props: ToolButtonProps) {
   props = useProviderProps(props);
   let {
-    elementType:ElementType = 'button',
+    elementType: ElementType = 'button',
     children,
     isSelected,
     isDisabled,

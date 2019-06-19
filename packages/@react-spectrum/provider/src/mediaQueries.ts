@@ -1,7 +1,7 @@
-import {Theme, Scale, ColorScheme} from './types';
-import {useState, useEffect} from 'react';
+import {ColorScheme, Scale, Theme} from './types';
+import {useEffect, useState} from 'react';
 
-export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {  
+export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {
   let matchesDark = useMediaQuery('(prefers-color-scheme: dark)');
   let matchesLight = useMediaQuery('(prefers-color-scheme: light)');
 
@@ -29,7 +29,7 @@ export function useScale(theme: Theme): Scale {
 
 const supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
 function useMediaQuery(query: string) {
-  let [matches, setMatches] = useState(() => 
+  let [matches, setMatches] = useState(() =>
     supportsMatchMedia
       ? window.matchMedia(query).matches
       : false

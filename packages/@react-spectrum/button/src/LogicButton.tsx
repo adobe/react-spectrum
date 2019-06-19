@@ -14,7 +14,7 @@ export interface LogicButtonProps extends ButtonBase {
 export function LogicButton(props: LogicButtonProps) {
   props = useProviderProps(props);
   let {
-    elementType:ElementType = 'button',
+    elementType: ElementType = 'button',
     variant,
     children,
     isDisabled,

@@ -1,3 +1,4 @@
+import {ButtonBase} from './Button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {cloneIcon} from '@react/react-spectrum/utils/icon';
 // @ts-ignore
@@ -5,7 +6,6 @@ import CornerTriangle from '../../../../src/Icon/core/CornerTriangle';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {ButtonBase} from './Button';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export interface ActionButtonProps extends ButtonBase {

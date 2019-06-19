@@ -21,7 +21,7 @@ export function useTabListState(props: SingleSelectionBaseProps): {selectedItem:
   if (props.defaultSelectedItem != null) {
     defaultSelectedValue = getSelectedValue(childrenArray, props.defaultSelectedItem);
   }
-  
+
   let [selectedItem, setSelectedItem] = useControlledState(selectedValue, defaultSelectedValue || childrenArray[0].props.value, props.onSelectionChange);
 
   // In the case that a uncontrolled tablist's child is removed/added, update the selected tab
@@ -30,7 +30,7 @@ export function useTabListState(props: SingleSelectionBaseProps): {selectedItem:
     if (props.selectedItem == null && expectedValue !== selectedItem) {
       setSelectedItem(expectedValue);
     }
-  }, [props.children]);
+  }, [props.children, childrenArray, selectedItem, setSelectedItem, props.selectedItem]);
 
   return {
     selectedItem,

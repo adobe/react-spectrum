@@ -17,7 +17,7 @@ export function Tab(props: TabProps) {
   // v3 come up with rule for how to handle props and dom props issue
   // v3 Always use classNames even when only one class because of modules and "turnonclassname" option
   // TODO: Add in icon in the render when cloneIcon/icon v3 becomes available. Make it so icon or label must be defined.
-  let {label, isDisabled, icon, value, ...otherProps} = props;
+  let {label, isDisabled, ...otherProps} = props;
   let {tabProps} = useTab(props);
   return (
     <div

@@ -1,12 +1,11 @@
-import {action} from '@storybook/addon-actions';
-import {Provider} from '../';
 import {Button} from '@react-spectrum/button';
+import customTheme from './custom-theme.css';
+import {Provider} from '../';
 import React from 'react';
+import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {storiesOf} from '@storybook/react';
 
-import customTheme from './custom-theme.css';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
 const THEME = {
   light: customTheme,
   medium: scaleMedium,

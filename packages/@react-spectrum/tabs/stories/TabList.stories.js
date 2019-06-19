@@ -77,7 +77,7 @@ storiesOf('TabList', module)
   );
 
 function render(props = {}) {
-  const {icons, ...otherProps} = props;
+  const {...otherProps} = props;
   return (
     <TabList {...otherProps} onSelectionChange={action('onSelectionChange')}>
       <Tab label="Tab 1" value="val1" />

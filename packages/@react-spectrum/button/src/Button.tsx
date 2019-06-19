@@ -29,7 +29,7 @@ let VARIANT_MAPPING = {
 export function Button(props: ButtonProps) {
   props = useProviderProps(props);
   let {
-    elementType:ElementType = 'button',
+    elementType: ElementType = 'button',
     children,
     variant = 'secondary',
     isQuiet,

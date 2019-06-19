@@ -1,14 +1,13 @@
 import AlertMedium from '@spectrum/spectrum-iconstore/icons/react/core/AlertMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum/spectrum-iconstore/icons/react/core/HelpMedium';
-import InfoMedium from '@spectrum/spectrum-iconstore/icons/react/core/InfoMedium';
-import SuccessMedium from '@spectrum/spectrum-iconstore/icons/react/core/SuccessMedium';
-import intlMessages from '../intl';
 import {Icon} from './Icon';
+import InfoMedium from '@spectrum/spectrum-iconstore/icons/react/core/InfoMedium';
+import intlMessages from '../intl';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
+import SuccessMedium from '@spectrum/spectrum-iconstore/icons/react/core/SuccessMedium';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
 
 
 interface AlertProps {
@@ -37,7 +36,7 @@ let ICON_NAMES = {
   success: 'SuccessMedium'
 };
 
-export function Alert ({
+export function Alert({
   header,
   children,
   variant = 'info', // info, help, success, error, warning
@@ -69,4 +68,4 @@ export function Alert ({
       <div className={classNames(styles, 'spectrum-Alert-content')}>{children}</div>
     </div>
   );
-};
+}
