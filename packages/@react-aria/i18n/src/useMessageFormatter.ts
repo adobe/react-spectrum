@@ -1,26 +1,10 @@
-
+import {useLocale} from './context';
 import IntlMessageFormat from 'intl-messageformat';
-import React, {useContext, useMemo} from 'react';
-
-const defaultLocale = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
-const I18nContext = React.createContext(defaultLocale);
-
-export function Provider({locale = defaultLocale, children}) {
-  return (
-    <I18nContext.Provider value={locale}>
-      {children}
-    </I18nContext.Provider>
-  );
-}
-
-export function useLocale() {
-  return useContext(I18nContext);
-}
 
 const formatterCache = new Map();
 
 export function useMessageFormatter(strings) {
-  let currentLocale = useLocale();
+  let {locale: currentLocale} = useLocale();
 
   // Check the cache
   let localeCache = formatterCache.get(strings);

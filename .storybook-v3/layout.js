@@ -3,6 +3,7 @@ import {getLocale} from '../src/utils/intl';
 import {Provider, useProvider} from '../packages/@react-spectrum/provider';
 import ProviderV2 from '../src/Provider';
 import React from 'react';
+import {useLocale} from '@react-aria/i18n';
 
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import themeLightest from '@adobe/spectrum-css-temp/vars/spectrum-lightest-unique.css';
@@ -24,6 +25,30 @@ const SCALE = {
   medium: scaleMedium,
   large: scaleLarge
 };
+
+const LOCALES = [
+  'ar-EG',
+
+  'cs-CZ',
+  'da-DK',
+  'de-DE',
+  'en-US',
+  'es-ES',
+  'fi-FI',
+  'fr-FR',
+  'it-IT',
+  'ja-JP',
+  'ko-KR',
+  'nb-NO',
+  'nl-NL',
+  'pl-PL',
+  'pt-BR',
+  'ru-RU',
+  'sv-SE',
+  'tr-TR',
+  'zh-CN',
+  'zh-TW'
+];
 
 export function VerticalCenter({children, className, style}) {
   return (
@@ -61,14 +86,9 @@ export class StoryWrapper extends React.Component {
   state = {
     theme: undefined,
     scale: undefined,
-    toastPlacement: 'top'
+    toastPlacement: 'top',
+    locale: 'en-US'
   };
-
-  componentWillMount() {
-    // add lang attribute to html element
-    document.documentElement.lang = getLocale();
-
-  }
 
   render() {
     // Typically themes are provided with both light + dark, and both scales.
@@ -82,7 +102,8 @@ export class StoryWrapper extends React.Component {
           theme={this.state.theme}
           onThemeChange={theme => this.setState({theme})}
           onScaleChange={scale => this.setState({scale})}
-          onToastPlacementChange={toastPlacement => this.setState({toastPlacement})} />
+          onToastPlacementChange={toastPlacement => this.setState({toastPlacement})}
+          onLocaleChange={locale => this.setState({locale})} />
         <main>
           {this.props.children}
         </main>
@@ -91,8 +112,9 @@ export class StoryWrapper extends React.Component {
   }
 }
 
-function StoryControls({theme, onThemeChange, onScaleChange, onToastPlacementChange}) {
+function StoryControls({theme, onThemeChange, onScaleChange, onToastPlacementChange, onLocaleChange}) {
   let {colorScheme, scale, toastPlacement} = useProvider();
+  let {locale} = useLocale();
   return (
     <aside style={{position: 'absolute', top: 10, right: 20, zIndex: 1}}>
       <ProviderV2 theme={theme || colorScheme} scale={scale} toastPlacement={toastPlacement}>
@@ -124,6 +146,9 @@ function StoryControls({theme, onThemeChange, onScaleChange, onToastPlacementCha
               {label: 'bottom center', value: 'bottom center'},
               {label: 'bottom right', value: 'bottom right'}
             ]} />
+          </FormItem>
+          <FormItem label="Locale">
+            <Select onChange={onLocaleChange} value={locale} options={LOCALES.map(l => ({label: l, value: l}))} />
           </FormItem>
         </Form>
       </ProviderV2>

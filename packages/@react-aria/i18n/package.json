@@ -1,7 +1,7 @@
 {
   "name": "@react-aria/i18n",
   "version": "3.0.0",
-  "main": "src/i18n.js",
+  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
