@@ -4,50 +4,41 @@ import {storiesOf} from '@storybook/react';
 
 
 storiesOf('Alert', module)
-  .addWithInfo(
+  .add(
     'Default',
-    () => render(),
-    {inline: true}
+    () => render()
   )
-  .addWithInfo(
+  .add(
     'header',
-    () => render({header: 'info'}),
-    {inline: true}
+    () => render({header: 'info'})
   )
-  .addWithInfo(
+  .add(
     'variant: info',
-    () => render({header: 'info', variant: 'info'}),
-    {inline: true}
+    () => render({header: 'info', variant: 'info'})
   )
-  .addWithInfo(
+  .add(
     'variant: help',
-    () => render({header: 'help', variant: 'help'}),
-    {inline: true}
+    () => render({header: 'help', variant: 'help'})
   )
-  .addWithInfo(
+  .add(
     'variant: success',
-    () => render({header: 'success', variant: 'success'}),
-    {inline: true}
+    () => render({header: 'success', variant: 'success'})
   )
-  .addWithInfo(
+  .add(
     'variant: error',
-    () => render({header: 'error', variant: 'error'}),
-    {inline: true}
+    () => render({header: 'error', variant: 'error'})
   )
-  .addWithInfo(
+  .add(
     'variant: warning',
-    () => render({header: 'warning', variant: 'warning'}),
-    {inline: true}
+    () => render({header: 'warning', variant: 'warning'})
   )
-  .addWithInfo(
+  .add(
     'aria-live: polite',
-    () => render({header: 'error', variant: 'error', 'aria-live': 'polite'}),
-    {inline: true}
+    () => render({header: 'error', variant: 'error', 'aria-live': 'polite'})
   )
-  .addWithInfo(
+  .add(
     'aria-live: off',
-    () => render({header: 'error', variant: 'error', 'aria-live': 'off'}),
-    {inline: true}
+    () => render({header: 'error', variant: 'error', 'aria-live': 'off'})
   );
 
 function render(props = {}, children = 'This is a React Spectrum alert') {
