@@ -1,0 +1,151 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+@import '../commons/overlay.css';
+
+:root {
+  --spectrum-popover-target-offset: 13px;
+  --spectrum-popover-dialog-padding: 30px 29px;
+  --spectrum-popover-dialog-min-width: 270px;
+
+  --spectrum-popover-min-width: var(--spectrum-global-dimension-size-400);
+  --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
+}
+
+/* topdoc
+{{ popover/popover.yml }}
+*/
+.spectrum-Popover {
+  @inherit: %spectrum-overlay;
+
+  /* Be a flexbox to allow a full sized content area that scrolls */
+  display: inline-flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  min-width: var(--spectrum-popover-min-width);
+  min-height: var(--spectrum-popover-min-height);
+
+  position: absolute;
+
+  border-style: solid;
+  border-width: var(--spectrum-popover-border-size);
+  border-radius: var(--spectrum-popover-border-radius);
+
+  outline: none; /* Hide focus outline */
+
+  &.is-open {
+    @inherit: %spectrum-overlay--open;
+  }
+}
+
+.spectrum-Popover-tip {
+  position: absolute;
+  /* This hides half of the tooltip, but it also crops the shadow slightly, which is undesireable */
+  overflow: hidden;
+  width: calc(var(--spectrum-popover-tip-width) + 1px);
+  height: calc((var(--spectrum-popover-tip-width)/2)+(var(--spectrum-popover-border-size)));
+
+  &::after {
+    content: '';
+    width: var(--spectrum-popover-tip-width);
+    height: var(--spectrum-popover-tip-width);
+    border-width: var(--spectrum-popover-border-size);
+    border-style: solid;
+    position: absolute;
+    transform: rotate(45deg);
+    top: -18px;
+    left: -1px;
+  }
+}
+
+.spectrum-Popover--dialog {
+  min-width: var(--spectrum-popover-dialog-min-width);
+  padding: var(--spectrum-popover-dialog-padding);
+}
+
+/* topdoc
+{{ popover/popover-dialog.yml }}
+*/
+.spectrum-Popover--left {
+  &.spectrum-Popover--withTip {
+    margin-right: var(--spectrum-popover-target-offset);
+  }
+
+  &.is-open {
+    @inherit: %spectrum-overlay--left--open;
+  }
+  .spectrum-Popover-tip {
+    right: -16px;
+    transform: rotate(-90deg);
+  }
+}
+
+.spectrum-Popover--right {
+  &.spectrum-Popover--withTip {
+    margin-left: var(--spectrum-popover-target-offset);
+  }
+
+  &.is-open {
+    @inherit: %spectrum-overlay--right--open;
+  }
+  .spectrum-Popover-tip {
+    left: -16px;
+    transform: rotate(90deg);
+  }
+}
+
+/* Center the tip by default */
+.spectrum-Popover--left,
+.spectrum-Popover--right {
+  .spectrum-Popover-tip {
+    top: 50%;
+    margin-top: -6px;
+  }
+}
+
+.spectrum-Popover--bottom {
+  &.spectrum-Popover--withTip {
+    margin-top: var(--spectrum-popover-target-offset);
+  }
+
+  &.is-open {
+    @inherit: %spectrum-overlay--bottom--open;
+  }
+  .spectrum-Popover-tip {
+    top: -11px;
+    transform: rotate(180deg);
+  }
+}
+
+.spectrum-Popover--top {
+  &.spectrum-Popover--withTip {
+    margin-bottom: var(--spectrum-popover-target-offset);
+  }
+
+  &.is-open {
+    @inherit: %spectrum-overlay--top--open;
+  }
+  .spectrum-Popover-tip {
+    bottom: -11px;
+  }
+}
+
+/* Center the tip by default */
+.spectrum-Popover--bottom,
+.spectrum-Popover--top {
+  .spectrum-Popover-tip {
+    left: 50%;
+    margin-left: -12px;
+  }
+}

@@ -1,0 +1,131 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  /* Hardcoded for wrapping study */
+  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-75);
+}
+
+/* topdoc
+{{ toggle/toggle-onoffdefault.yml }}
+*/
+.spectrum-ToggleSwitch {
+  display: inline-flex;
+  align-items: flex-start;
+
+  position: relative;
+
+  min-height: var(--spectrum-switch-height);
+  max-width: 100%;
+
+  margin-right: calc(var(--spectrum-switch-cursor-hit-x) * 2);
+
+  vertical-align: top;
+}
+
+.spectrum-ToggleSwitch-input {
+  /* Remove the margin for input in Firefox and Safari. */
+  margin: 0;
+
+  /* Add the correct box sizing for [type="checkbox"] in IE 10-. */
+  box-sizing: border-box;
+
+  /* Remove the padding for [type="checkbox"] in IE 10-. */
+  padding: 0;
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: .0001;
+  z-index: 1;
+
+  cursor: pointer;
+
+  &:checked + .spectrum-ToggleSwitch-switch {
+    &::after {
+      transform: translateX(calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size)));
+    }
+  }
+
+  &:disabled,
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+.spectrum-ToggleSwitch-label {
+  margin: 0 var(--spectrum-switch-text-gap);
+  font-size: var(--spectrum-switch-text-size);
+  transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
+
+  margin-top: var(--spectrum-switch-label-margin-top);
+}
+
+.spectrum-ToggleSwitch-switch {
+  display: inline-block;
+  /* positions the pseudo elements relative to this one */
+  position: relative;
+
+  height: var(--spectrum-switch-track-height);
+  width: var(--spectrum-switch-track-width);
+
+  /* Fix vertical alignment when not wrapping since we're flex-start */
+  margin: calc((var(--spectrum-switch-height) - var(--spectrum-switch-track-height)) / 2) 0;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  vertical-align: middle;
+
+  &::before,
+  &::after {
+    display: block;
+    position: absolute;
+    content: "";
+    box-sizing: border-box;
+  }
+
+  /* ::before is used for the track of the switch */
+  &::before {
+    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out;
+
+    height: var(--spectrum-switch-track-height);
+
+    left: 0;
+    right: 0;
+
+    border-radius: calc(var(--spectrum-switch-track-height) / 2);
+  }
+
+  /* ::after is used for the handle of the switch */
+  &::after {
+    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+
+    width: var(--spectrum-switch-handle-size);
+    height: var(--spectrum-switch-handle-size);
+
+    top: 0;
+    left: 0;
+
+    border-width: var(--spectrum-switch-handle-border-size);
+    border-radius: var(--spectrum-switch-handle-border-radius);
+    border-style: solid;
+  }
+}
+
+/* topdoc
+{{ toggle/toggle-abdefault.yml }}
+*/

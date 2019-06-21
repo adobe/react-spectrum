@@ -1,11 +1,13 @@
 module.exports = {
   presets: [
+    '@babel/preset-typescript',
     '@babel/preset-react',
     '@babel/preset-env'
   ],
   env: {
     storybook: {
       presets: [
+        '@babel/preset-typescript',
         '@babel/preset-react',
         [
           '@babel/preset-env',
@@ -17,7 +19,9 @@ module.exports = {
       ]
     },
     test: {
+      plugins: ["@babel/plugin-transform-runtime"],
       presets: [
+        '@babel/preset-typescript',
         '@babel/preset-react',
         [
           '@babel/preset-env',

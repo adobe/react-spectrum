@@ -24,12 +24,13 @@ importSpectrumCSS('statuslight');
 
 const VARIANTS = [
   'celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple',
-  'neutral', 'active', 'positive', 'notice', 'negative', 'archived'
+  'neutral', 'positive', 'notice', 'negative', 'info'
 ];
 
 // For backward compatibility
 const DEPRECATED_VARIANTS = {
-  archived: 'neutral'
+  archived: 'neutral',
+  active: 'info'
 };
 
 export default function StatusLight({variant = VARIANTS[0], children, disabled, className, ...otherProps}) {

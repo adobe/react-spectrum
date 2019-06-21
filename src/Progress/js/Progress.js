@@ -75,6 +75,7 @@ export default function Progress({
         width: `${percentage}%`
       }
     };
+
     ariaValueProps = {
       'aria-valuemin': min,
       'aria-valuemax': max,

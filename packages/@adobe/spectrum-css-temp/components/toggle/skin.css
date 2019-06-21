@@ -1,0 +1,252 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+/* Default */
+.spectrum-ToggleSwitch-switch {
+  /* :before is used for the track of the switch */
+  &::before {
+    background-color: var(--spectrum-switch-track-color);
+  }
+  /* :after is used for the handle of the switch */
+  &::after {
+    background-color: var(--spectrum-switch-handle-background-color);
+    border-color: var(--spectrum-switch-handle-border-color);
+  }
+}
+.spectrum-ToggleSwitch-input ~ .spectrum-ToggleSwitch-label {
+  color: var(--spectrum-switch-text-color);
+}
+/* Selected */
+.spectrum-ToggleSwitch-input {
+  &:checked + .spectrum-ToggleSwitch-switch {
+    &::before {
+      background-color: var(--spectrum-switch-track-color-selected);
+    }
+    &::after {
+      border-color: var(--spectrum-switch-handle-border-color-selected);
+    }
+  }
+}
+/* Hover */
+.spectrum-ToggleSwitch:hover {
+  .spectrum-ToggleSwitch-input {
+    & + .spectrum-ToggleSwitch-switch {
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-hover);
+        box-shadow: none;
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-text-color-hover);
+    }
+    /* Selected Hover */
+    &:checked:enabled + .spectrum-ToggleSwitch-switch {
+      &::before {
+        background-color: var(--spectrum-switch-track-color-selected-hover);
+      }
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-selected-hover);
+      }
+    }
+  }
+}
+/* Down */
+.spectrum-ToggleSwitch:active {
+  .spectrum-ToggleSwitch-input {
+    & + .spectrum-ToggleSwitch-switch {
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-down);
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-text-color-down);
+    }
+    /* Selected Down */
+    &:checked:enabled + .spectrum-ToggleSwitch-switch {
+      &::before {
+        background-color: var(--spectrum-switch-track-color-selected-down);
+      }
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-selected-down);
+      }
+    }
+  }
+}
+/* Disabled */
+.spectrum-ToggleSwitch .spectrum-ToggleSwitch-input:disabled {
+  & + .spectrum-ToggleSwitch-switch {
+    &::before {
+      background-color: var(--spectrum-switch-track-color-disabled);
+    }
+
+    &::after {
+      border-color: var(--spectrum-switch-handle-border-color-disabled);
+    }
+  }
+  & ~ .spectrum-ToggleSwitch-label {
+    color: var(--spectrum-switch-text-color-disabled);
+  }
+  /* Selected Disabled */
+  &:checked {
+    & + .spectrum-ToggleSwitch-switch {
+      &::before {
+        background-color: var(--spectrum-switch-track-color-selected-disabled);
+      }
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-selected-disabled);
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-text-color-selected-disabled);
+    }
+  }
+}
+/* topdoc
+{{ toggle/toggle-onoffquiet.yml }}
+*/
+/* Quiet */
+/* Quiet Selected */
+.spectrum-ToggleSwitch--quiet {
+  .spectrum-ToggleSwitch-input:checked + .spectrum-ToggleSwitch-switch {
+    &::before {
+      background-color: var(--spectrum-switch-quiet-track-color-selected);
+    }
+    &::after {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected);
+    }
+  }
+}
+/* Quiet Selected Hover */
+.spectrum-ToggleSwitch--quiet:hover {
+  .spectrum-ToggleSwitch-input:checked:enabled + .spectrum-ToggleSwitch-switch {
+    &::before {
+      background-color: var(--spectrum-switch-quiet-track-color-selected-hover);
+    }
+    &::after {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected-hover);
+    }
+  }
+}
+/* Quiet Selected Down */
+.spectrum-ToggleSwitch.spectrum-ToggleSwitch--quiet:active {
+  .spectrum-ToggleSwitch-input:checked:enabled + .spectrum-ToggleSwitch-switch {
+    &::before {
+      background-color: var(--spectrum-switch-quiet-track-color-selected-down);
+    }
+    &::after {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected-down);
+    }
+  }
+}
+/* Key Focus */
+.spectrum-ToggleSwitch, .spectrum-ToggleSwitch:hover, .spectrum-ToggleSwitch--quiet, .spectrum-ToggleSwitch--quiet:hover {
+  .spectrum-ToggleSwitch-input:focus-ring {
+    & + .spectrum-ToggleSwitch-switch {
+      &::after {
+        border-color: var(--spectrum-switch-handle-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-switch-handle-border-color-key-focus);
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-text-color-key-focus);
+    }
+    /* Selected Key Focus */
+    &:checked {
+      & + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color-selected-key-focus);
+        }
+        &::after {
+          border-color: var(--spectrum-switch-handle-border-color-selected-key-focus);
+          box-shadow: 0 0 0 1px var(--spectrum-switch-handle-border-color-selected-key-focus);
+        }
+      }
+      & ~ .spectrum-ToggleSwitch-label {
+        color: var(--spectrum-switch-text-color-selected-key-focus);
+      }
+    }
+  }
+}
+
+.spectrum-ToggleSwitch--ab {
+  .spectrum-ToggleSwitch-input {
+    & {
+      &:checked + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color);
+        }
+      }
+    }
+
+    &:checked + .spectrum-ToggleSwitch-switch {
+      &::after {
+        /* Don't be blue */
+        border-color: var(--spectrum-switch-handle-border-color);
+      }
+    }
+
+    &:focus-ring {
+      &:checked + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color);
+        }
+        &::after {
+          border-color: var(--spectrum-switch-handle-border-color-key-focus);
+        }
+      }
+    }
+
+    &:disabled {
+      &:checked + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color-disabled);
+        }
+      }
+
+      & + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color-disabled);
+        }
+
+        &::after {
+          border-color: var(--spectrum-switch-handle-border-color-disabled);
+        }
+      }
+    }
+  }
+
+  &:hover {
+    .spectrum-ToggleSwitch-input {
+      &:checked:enabled + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color);
+        }
+        &::after {
+          border-color: var(--spectrum-switch-handle-border-color-hover);
+        }
+      }
+    }
+  }
+
+  &:active {
+    .spectrum-ToggleSwitch-input {
+      &:checked:enabled + .spectrum-ToggleSwitch-switch {
+        &::before {
+          background-color: var(--spectrum-switch-track-color);
+        }
+        &::after {
+          border-color: var(--spectrum-switch-handle-border-color-down);
+        }
+      }
+    }
+  }
+}

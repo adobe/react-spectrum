@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -14,6 +14,24 @@ module.exports = {
     },
     sourceType: 'module'
   },
+  overrides: {
+    files: ['packages/**/*.ts', 'packages/**/*.tsx'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint'],
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+      ecmaFeatures: {
+        "jsx": true,
+        "legacyDecorators": true
+      },
+      "useJSXTextNode": true,
+      "project": "./tsconfig.json",
+      sourceType: 'module'
+    },
+    rules: {
+      "no-unused-vars": OFF,
+      "@typescript-eslint/no-unused-vars": ERROR
+    }
+  },
   env: {
     'browser': true,
     'node': true,
@@ -21,7 +39,9 @@ module.exports = {
     'es6': true
   },
   globals: {
-    'importSpectrumCSS': 'readonly'
+    'importSpectrumCSS': 'readonly',
+    'jest': true,
+    'expect': true
   },
   rules: {
     'comma-dangle': ERROR,
@@ -91,6 +111,10 @@ module.exports = {
     'react/jsx-boolean-value': ERROR,
     'react/jsx-first-prop-new-line': [ERROR, 'multiline'],
     'react/self-closing-comp': ERROR,
+
+    // hooks
+    'react-hooks/rules-of-hooks': ERROR,
+    'react-hooks/exhaustive-deps': WARN,
 
     // custom rules
     'rulesdir/sort-imports': [ERROR],

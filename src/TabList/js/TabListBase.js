@@ -171,7 +171,7 @@ export default class TabListBase extends Component {
     );
   }
 
-  cleanProps() {
+  cleanProps() { // todo filterdomprops?
     const {...otherProps} = this.props;
     delete otherProps.autoFocus;
     delete otherProps.defaultSelectedIndex;

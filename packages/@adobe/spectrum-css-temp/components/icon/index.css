@@ -1,0 +1,276 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  --spectrum-icon-size-s: var(--spectrum-alias-workflow-icon-size);
+  --spectrum-icon-size-m: var(--spectrum-global-dimension-size-300);
+  --spectrum-icon-size-xxs: calc(var(--spectrum-icon-size-s) / 2);
+  --spectrum-icon-size-xs: calc(var(--spectrum-icon-size-m) / 2);
+  --spectrum-icon-size-l: calc(var(--spectrum-icon-size-s) * 2);
+  --spectrum-icon-size-xl: calc(var(--spectrum-icon-size-m) * 2);
+  --spectrum-icon-size-xxl: calc(var(--spectrum-icon-size-m) * 3);
+}
+
+.spectrum-Icon {
+  display: inline-block;
+
+  /* Inherit the text color */
+  color: inherit;
+
+  /* Fill should match the current text color */
+  fill: currentColor;
+
+  /* Hide the svg overflow in IE. */
+  &:not(:root) {
+    overflow: hidden;
+  }
+
+  /* Don't catch clicks or hover, otherwise they may not escape the SVG */
+  pointer-events: none;
+}
+
+.spectrum-Icon--sizeXXS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xxs);
+    width: var(--spectrum-icon-size-xxs);
+  }
+}
+
+.spectrum-Icon--sizeXS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xs);
+    width: var(--spectrum-icon-size-xs);
+  }
+}
+
+.spectrum-Icon--sizeS {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-s);
+    width: var(--spectrum-icon-size-s);
+  }
+}
+
+.spectrum-Icon--sizeM {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-m);
+    width: var(--spectrum-icon-size-m);
+  }
+}
+
+.spectrum-Icon--sizeL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-l);
+    width: var(--spectrum-icon-size-l);
+  }
+}
+
+.spectrum-Icon--sizeXL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xl);
+    width: var(--spectrum-icon-size-xl);
+  }
+}
+
+.spectrum-Icon--sizeXXL {
+  &,
+  img,
+  svg {
+    height: var(--spectrum-icon-size-xxl);
+    width: var(--spectrum-icon-size-xxl);
+  }
+}
+
+/* Hide UI icons on older browsers with SVG 1.1 implementations */
+.spectrum--medium {
+  .spectrum-UIIcon--large {
+    display: none;
+  }
+  .spectrum-UIIcon--medium {
+    display: inline;
+  }
+}
+
+.spectrum--large {
+  .spectrum-UIIcon--medium {
+    display: none;
+  }
+  .spectrum-UIIcon--large {
+    display: inline;
+  }
+}
+
+/* Hide UI icons on browsers that implement SVG 2 correctly (Firefox 56+) */
+.spectrum--large {
+  x--ui-icon-large-display: block;
+  x--ui-icon-medium-display: none;
+}
+.spectrum--medium {
+  x--ui-icon-medium-display: block;
+  x--ui-icon-large-display: none;
+}
+
+.spectrum-UIIcon--large {
+  display: xvar(--ui-icon-large-display);
+}
+.spectrum-UIIcon--medium {
+  display: xvar(--ui-icon-medium-display);
+}
+
+/* UI Icons */
+.spectrum-UIIcon-AlertMedium {
+  width: var(--spectrum-icon-alert-medium-width);
+  height: var(--spectrum-icon-alert-medium-height);
+}
+.spectrum-UIIcon-AlertSmall {
+  width: var(--spectrum-icon-alert-small-width);
+  height: var(--spectrum-icon-alert-small-height);
+}
+.spectrum-UIIcon-ArrowDownSmall {
+  width: var(--spectrum-icon-arrow-down-small-width);
+  height: var(--spectrum-icon-arrow-down-small-height);
+}
+.spectrum-UIIcon-ArrowLeftMedium {
+  width: var(--spectrum-icon-arrow-left-medium-width);
+  height: var(--spectrum-icon-arrow-left-medium-height);
+}
+.spectrum-UIIcon-Asterisk {
+  width: var(--spectrum-fieldlabel-asterisk-size);
+  height: var(--spectrum-fieldlabel-asterisk-size);
+}
+.spectrum-UIIcon-CheckmarkMedium {
+  width: var(--spectrum-icon-checkmark-medium-width);
+  height: var(--spectrum-icon-checkmark-medium-height);
+}
+.spectrum-UIIcon-CheckmarkSmall {
+  width: var(--spectrum-icon-checkmark-small-width);
+  height: var(--spectrum-icon-checkmark-small-height);
+}
+.spectrum-UIIcon-ChevronDownMedium {
+  width: var(--spectrum-icon-chevron-down-medium-width);
+  height: var(--spectrum-icon-chevron-down-medium-height);
+}
+.spectrum-UIIcon-ChevronDownSmall {
+  width: var(--spectrum-icon-chevron-down-small-width);
+  height: var(--spectrum-icon-chevron-down-small-height);
+}
+.spectrum-UIIcon-ChevronLeftLarge {
+  width: var(--spectrum-icon-chevron-left-large-width);
+  height: var(--spectrum-icon-chevron-left-large-height);
+}
+.spectrum-UIIcon-ChevronLeftMedium {
+  width: var(--spectrum-icon-chevron-left-medium-width);
+  height: var(--spectrum-icon-chevron-left-medium-height);
+}
+.spectrum-UIIcon-ChevronRightLarge {
+  width: var(--spectrum-icon-chevron-right-large-width);
+  height: var(--spectrum-icon-chevron-right-large-height);
+}
+.spectrum-UIIcon-ChevronRightMedium {
+  width: var(--spectrum-icon-chevron-right-medium-width);
+  height: var(--spectrum-icon-chevron-right-medium-height);
+}
+.spectrum-UIIcon-ChevronRightSmall {
+  width: var(--spectrum-icon-chevron-right-small-width);
+  height: var(--spectrum-icon-chevron-right-small-height);
+}
+.spectrum-UIIcon-ChevronUpSmall {
+  width: var(--spectrum-icon-chevron-up-small-width);
+  height: var(--spectrum-icon-chevron-up-small-height);
+}
+.spectrum-UIIcon-CornerTriangle {
+  width: var(--spectrum-icon-cornertriangle-width);
+  height: var(--spectrum-icon-cornertriangle-height);
+}
+.spectrum-UIIcon-CrossLarge {
+  width: var(--spectrum-icon-cross-large-width);
+  height: var(--spectrum-icon-cross-large-height);
+}
+.spectrum-UIIcon-CrossMedium {
+  width: var(--spectrum-icon-cross-medium-width);
+  height: var(--spectrum-icon-cross-medium-height);
+}
+.spectrum-UIIcon-CrossSmall {
+  width: var(--spectrum-icon-cross-small-width);
+  height: var(--spectrum-icon-cross-small-height);
+}
+.spectrum-UIIcon-DashSmall {
+  width: var(--spectrum-icon-dash-small-width);
+  height: var(--spectrum-icon-dash-small-height);
+}
+.spectrum-UIIcon-DoubleGripper {
+  width: var(--spectrum-icon-doublegripper-width);
+  height: var(--spectrum-icon-doublegripper-height);
+}
+.spectrum-UIIcon-FolderBreadcrumb {
+  width: var(--spectrum-icon-folderbreadcrumb-width);
+  height: var(--spectrum-icon-folderbreadcrumb-height);
+}
+.spectrum-UIIcon-HelpMedium {
+  width: var(--spectrum-icon-info-medium-width);
+  height: var(--spectrum-icon-info-medium-height);
+}
+.spectrum-UIIcon-HelpSmall {
+  width: var(--spectrum-icon-info-small-width);
+  height: var(--spectrum-icon-info-small-height);
+}
+.spectrum-UIIcon-InfoMedium {
+  width: var(--spectrum-icon-info-medium-width);
+  height: var(--spectrum-icon-info-medium-height);
+}
+.spectrum-UIIcon-InfoSmall {
+  width: var(--spectrum-icon-info-small-width);
+  height: var(--spectrum-icon-info-small-height);
+}
+.spectrum-UIIcon-Magnifier {
+  width: var(--spectrum-icon-magnifier-width);
+  height: var(--spectrum-icon-magnifier-height);
+}
+.spectrum-UIIcon-SkipLeft {
+  width: var(--spectrum-icon-skip-left-width);
+  height: var(--spectrum-icon-skip-left-height);
+}
+.spectrum-UIIcon-SkipRight {
+  width: var(--spectrum-icon-skip-right-width);
+  height: var(--spectrum-icon-skip-right-height);
+}
+.spectrum-UIIcon-Star {
+  width: var(--spectrum-icon-star-width);
+  height: var(--spectrum-icon-star-height);
+}
+.spectrum-UIIcon-StarOutline {
+  width: var(--spectrum-icon-star-outline-width);
+  height: var(--spectrum-icon-star-outline-height);
+}
+.spectrum-UIIcon-SuccessMedium {
+  width: var(--spectrum-icon-success-medium-width);
+  height: var(--spectrum-icon-success-medium-height);
+}
+.spectrum-UIIcon-SuccessSmall {
+  width: var(--spectrum-icon-success-small-width);
+  height: var(--spectrum-icon-success-small-height);
+}
+.spectrum-UIIcon-TripleGripper {
+  width: var(--spectrum-icon-triplegripper-width);
+  height: var(--spectrum-icon-triplegripper-height);
+}

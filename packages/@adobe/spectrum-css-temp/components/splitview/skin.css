@@ -1,0 +1,70 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-SplitView-pane {
+  background-color: var(--spectrum-rail-content-background-color);
+}
+
+.spectrum-SplitView-splitter {
+  background-color: var(--spectrum-rail-handle-background-color);
+}
+
+.spectrum-SplitView-gripper {
+  border-color: var(--spectrum-rail-handle-background-color);
+  &:before {
+    background-color: var(--spectrum-rail-handle-background-color);
+  }
+}
+
+.spectrum-SplitView-splitter {
+  &.is-draggable {
+    &:hover,
+    &.is-hovered {
+      background-color: var(--spectrum-rail-handle-background-color-hover);
+
+      .spectrum-SplitView-gripper {
+        border-color: var(--spectrum-rail-handle-background-color-hover);
+        &:before {
+          background-color: var(--spectrum-rail-handle-background-color-hover);
+        }
+      }
+    }
+
+    &:active,
+    &.is-active {
+      background-color: var(--spectrum-rail-handle-background-color-down);
+
+      .spectrum-SplitView-gripper {
+        border-color: var(--spectrum-rail-handle-background-color-down);
+        &:before {
+          background-color: var(--spectrum-rail-handle-background-color-down);
+        }
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-alias-focus-color);
+
+      .spectrum-SplitView-gripper {
+        border-color: var(--spectrum-alias-focus-color);
+        box-shadow: 0 0 0 1px var(--spectrum-alias-focus-color);
+        &:before {
+          background-color: var(--spectrum-alias-focus-color);
+        }
+      }
+    }
+  }
+}

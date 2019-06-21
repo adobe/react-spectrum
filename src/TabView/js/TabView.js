@@ -114,7 +114,8 @@ export default class TabView extends React.Component {
     );
 
     return (
-      <div className={classNames('react-spectrum-TabView', 'react-spectrum-TabView--' + orientation, className)}>
+      <div
+        className={classNames('react-spectrum-TabView', 'react-spectrum-TabView--' + orientation, className)}>
         <TabList
           {...props}
           orientation={orientation}

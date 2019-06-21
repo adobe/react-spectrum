@@ -1,0 +1,274 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+/* topdoc
+{{ calendar/calendar.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-disabled.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-focused.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-range.yml }}
+*/
+
+:root {
+  --spectrum-calendar-border-radius-reset: 0;
+  --spectrum-calendar-border-width-reset: 0;
+  --spectrum-calendar-margin-y: 24px;
+  --spectrum-calendar-margin-x: 32px;
+}
+
+.spectrum-Calendar {
+  display: inline-block;
+}
+
+.spectrum-Calendar--padded {
+  margin: var(--spectrum-calendar-margin-x) var(--spectrum-calendar-margin-y);
+}
+
+.spectrum-Calendar-header {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--spectrum-calendar-title-height);
+}
+
+.spectrum-Calendar-title {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  font-size: var(--spectrum-calendar-title-text-size);
+  font-weight: bold;
+
+  box-sizing: border-box;
+  width: 100%;
+  line-height: var(--spectrum-calendar-title-height);
+  margin: 0;
+  padding: 0 var(--spectrum-calendar-title-height);
+
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spectrum-Calendar-prevMonth,
+.spectrum-Calendar-nextMonth {
+  position: absolute;
+
+}
+
+.spectrum-Calendar-prevMonth {
+  left: 3px;
+}
+
+.spectrum-Calendar-nextMonth {
+  right: 3px;
+}
+
+.spectrum-Calendar-dayOfWeek {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+
+  width: var(--spectrum-calendar-day-width);
+
+  border-bottom: none !important; /* override abbr styling from normalize.css */
+
+  font-size: var(--spectrum-calendar-day-title-text-size);
+  font-weight: var(--spectrum-calendar-day-title-text-font-weight);
+  text-transform: uppercase;
+  text-decoration: none !important; /* override abbr styling from normalize.css */
+
+  cursor: default;
+
+  &[title] {
+    /* Normalize abbr[title] */
+    /* Remove the bottom border in Chrome 57- and Firefox 39-. */
+    border-bottom: none;
+
+    /* Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari. */
+    text-decoration: underline;
+    text-decoration: underline dotted;
+  }
+}
+
+.spectrum-Calendar-body {
+  outline: none;
+}
+
+.spectrum-Calendar-table {
+  table-layout: fixed;
+  /*width: 100%;*/
+
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.spectrum-Calendar-tableCell {
+  text-align: center;
+  padding: 0;
+  position: relative;
+  box-sizing: content-box;
+  height: var(--spectrum-calendar-day-height);
+  width: var(--spectrum-calendar-day-width);
+  padding: var(--spectrum-calendar-day-padding);
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.spectrum-Calendar-date {
+  /* This is fun, but we need to trick the table so it doesn't size itself in a weird way */
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+
+  box-sizing: border-box;
+
+  height: var(--spectrum-calendar-day-height);
+  width: var(--spectrum-calendar-day-width);
+  margin: var(--spectrum-calendar-day-padding);
+
+  border-radius: var(--spectrum-calendar-day-width);
+  border: var(--spectrum-calendar-day-border-size-key-focus) solid transparent;
+
+  font-size: var(--spectrum-calendar-day-text-size);
+  line-height: calc(var(--spectrum-calendar-day-width) - var(--spectrum-calendar-day-border-size-key-focus) * 2);
+
+  cursor: pointer;
+
+  transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
+        color var(--spectrum-global-animation-duration-100) ease-in-out,
+        border-color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  &.is-disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &.is-outsideMonth {
+    visibility: hidden;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
+    left: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
+    box-sizing: border-box;
+    width: var(--spectrum-calendar-day-width);
+    height: var(--spectrum-calendar-day-height);
+    border-radius: var(--spectrum-calendar-day-width);
+    border: var(--spectrum-calendar-day-border-size-key-focus) solid transparent;
+  }
+
+  &.is-selected:not(.is-range-selection) {
+    font-weight: var(--spectrum-calendar-day-text-font-weight-selected);
+
+    &:before {
+      /* No highlight for lone selections */
+      display: none;
+    }
+  }
+
+  &.is-today {
+    font-weight: var(--spectrum-calendar-day-today-text-font-weight);
+  }
+
+  &.is-range-selection {
+    /* overrides to make the cells appear connected */
+    margin: var(--spectrum-calendar-day-padding) 0;
+    border-width: var(--spectrum-calendar-border-width-reset);
+    line-height: var(--spectrum-calendar-day-height);
+    border-radius: var(--spectrum-calendar-border-radius-reset);
+
+    /* Todo: Calculate this */
+    width: calc(var(--spectrum-calendar-day-width) + calc(var(--spectrum-calendar-day-padding) * 2));
+
+    &.is-range-start,
+    &.is-range-end,
+    &.is-selection-start,
+    &.is-selection-end {
+      width: calc(var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding));
+    }
+
+    &.is-selection-start,
+    &.is-selection-end {
+      font-weight: var(--spectrum-calendar-day-text-font-weight-cap-selected);
+
+      &:after {
+        position: absolute;
+        top: 0;
+
+        display: block;
+
+        height: var(--spectrum-calendar-day-height);
+        width: var(--spectrum-calendar-day-width);
+
+        border-radius: var(--spectrum-calendar-day-width);
+
+        content: '';
+      }
+    }
+
+    &.is-range-start,
+    &.is-selection-start {
+      padding-right: var(--spectrum-calendar-day-padding);
+      margin-left: var(--spectrum-calendar-day-padding);
+      border-radius: var(--spectrum-calendar-day-width) 0 0 var(--spectrum-calendar-day-width);
+
+      &:before,
+      &:after {
+        left: 0;
+      }
+    }
+
+    &.is-range-end,
+    &.is-selection-end {
+      padding-left: var(--spectrum-calendar-day-padding);
+      margin-right: var(--spectrum-calendar-day-padding);
+      border-radius: 0 var(--spectrum-calendar-day-width) var(--spectrum-calendar-day-width) 0;
+
+      &:before,
+      &:after {
+        left: auto;
+        right: 0;
+      }
+    }
+
+    &.is-selection-start.is-selection-end,
+    &.is-selection-start.is-range-end,
+    &.is-selection-end.is-range-start,
+    &.is-range-start.is-range-end {
+      width: var(--spectrum-calendar-day-width);
+      border-radius: var(--spectrum-calendar-day-width);
+    }
+  }
+}

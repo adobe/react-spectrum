@@ -1,0 +1,69 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+/* topdoc
+{{ buttongroup/buttongroup.yml }}
+*/
+
+:root {
+  --spectrum-buttongroup-button-gap-reset: 0;
+}
+
+.spectrum-ButtonGroup {
+  display: flex;
+
+  .spectrum-Button,
+  .spectrum-ActionButton,
+  .spectrum-Tool {
+    flex-shrink: 0;
+  }
+
+  .spectrum-Button + .spectrum-Button {
+    margin-left: var(--spectrum-buttongroup-button-gap-x);
+  }
+
+  .spectrum-ActionButton + .spectrum-ActionButton {
+    margin-left: var(--spectrum-actionbuttongroup-text-button-gap-x);
+  }
+
+  .spectrum-Tool + .spectrum-Tool {
+    margin-left: var(--spectrum-toolgroup-text-button-gap-x);
+  }
+}
+
+/* topdoc
+{{ buttongroup/buttongroup-vertical.yml }}
+*/
+.spectrum-ButtonGroup--vertical {
+  display: inline-flex;
+  flex-direction: column;
+
+  .spectrum-ActionButton-label {
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  .spectrum-Button + .spectrum-Button {
+    margin-top: var(--spectrum-buttongroup-button-gap-y);
+    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  }
+
+  .spectrum-ActionButton + .spectrum-ActionButton {
+    margin-top: var(--spectrum-actionbuttongroup-text-button-gap-y);
+    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  }
+
+  .spectrum-Tool + .spectrum-Tool {
+    margin-top: var(--spectrum-toolgroup-text-button-gap-y);
+    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  }
+}

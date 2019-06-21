@@ -1,0 +1,130 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-splitbutton-trigger-border-left: 0;
+  --spectrum-splitbutton-trigger-min-width: 0;
+  --spectrum-spltibutton-margin-left: 0;
+  --spectrum-splitbutton-icon-gap: var(--spectrum-global-dimension-size-150);
+}
+
+/* topdoc
+{{ splitbutton/splitbutton-cta.yml }}
+*/
+
+/* topdoc
+{{ splitbutton/splitbutton-primary.yml }}
+*/
+
+/* topdoc
+{{ splitbutton/splitbutton-secondary.yml }}
+*/
+
+.spectrum-SplitButton {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  vertical-align: top;
+
+  /* Spacing for buttons placed inline */
+  & + .spectrum-SplitButton,
+  & + .spectrum-Button {
+    margin-left: var(--spectrum-margin);
+  }
+}
+
+/* Spacing for buttons placed inline */
+.spectrum-Button + .spectrum-SplitButton {
+  margin-left: var(--spectrum-margin);
+}
+
+.spectrum-SplitButton-action {
+  margin-left: 0;
+
+  border-radius: var(--spectrum-button-primary-border-radius) 0 0 var(--spectrum-button-primary-border-radius);
+
+  /* CTA is special and doesn't have a border between the buttons */
+  &.spectrum-Button--cta {
+    border-right: 0;
+    margin-right: var(--spectrum-button-primary-border-size);
+  }
+
+  & + .spectrum-SplitButton-trigger {
+    /* Override button + button style */
+    margin-left: var(--spectrum-spltibutton-margin-left);
+  }
+}
+
+.spectrum-SplitButton-trigger {
+  margin-left: 0;
+
+  border-radius: 0 var(--spectrum-button-primary-border-radius) var(--spectrum-button-primary-border-radius) 0;
+  border-left-width: var(--spectrum-splitbutton-trigger-border-left);
+
+  padding-left: calc(var(--spectrum-padding) * calc(2 / 3));
+  padding-right: calc(var(--spectrum-padding) - var(--spectrum-button-primary-border-size));
+
+  min-width: var(--spectrum-splitbutton-trigger-min-width);
+
+  &:focus-ring {
+    box-shadow: none;
+  }
+}
+
+.spectrum-SplitButton-icon {
+  display: block;
+  margin-top: 1px;
+}
+
+.spectrum-SplitButton-action,
+.spectrum-SplitButton-trigger {
+  position: relative;
+
+  &:focus {
+    /* Be on top when focused or border leaks */
+    z-index: 1;
+  }
+}
+
+.spectrum-SplitButton-action {
+  .spectrum-Button-label + .spectrum-Icon {
+    margin-left: var(--spectrum-splitbutton-icon-gap);
+  }
+}
+
+.spectrum-SplitButton--left {
+  .spectrum-SplitButton-action {
+    border-radius: 0 var(--spectrum-button-primary-border-radius) var(--spectrum-button-primary-border-radius) 0;
+    margin-right: 0;
+    margin-left: var(--spectrum-spltibutton-margin-left);
+
+    /* CTA is special and doesn't have a border between the buttons */
+    &.spectrum-Button--cta {
+      border-left: 0;
+      margin-left: var(--spectrum-button-primary-border-size);
+    }
+  }
+
+  .spectrum-SplitButton-trigger {
+    margin-right: 0;
+
+    border-radius: var(--spectrum-button-primary-border-radius) 0 0 var(--spectrum-button-primary-border-radius);
+
+    border-left-width: var(--spectrum-button-primary-border-size);
+    border-right-width: var(--spectrum-splitbutton-trigger-border-left);
+
+    padding-right: calc(var(--spectrum-padding) * calc(2 / 3));
+    padding-left: calc(var(--spectrum-padding) - var(--spectrum-button-primary-border-size));
+  }
+}

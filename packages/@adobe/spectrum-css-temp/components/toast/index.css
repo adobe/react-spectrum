@@ -1,0 +1,85 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-toast-icon-padding-y: var(--spectrum-global-dimension-size-85);
+  --spectrum-toast-content-padding-top: var(--spectrum-global-dimension-size-65);
+  --spectrum-toast-content-padding-bottom: var(--spectrum-global-dimension-size-65);
+
+  --spectrum-toast-button-margin-right: var(--spectrum-global-dimension-size-130);
+}
+
+/* topdoc
+{{ toast/toast.yml }}
+*/
+.spectrum-Toast {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  border-radius: var(--spectrum-toast-border-radius);
+
+  padding: var(--spectrum-toast-padding-y) var(--spectrum-toast-padding-right) var(--spectrum-toast-padding-y) var(--spectrum-toast-padding-left);
+
+  font-size: var(--spectrum-toast-text-size);
+  font-weight: var(--spectrum-toast-text-font-weight);
+  -webkit-font-smoothing: antialiased;
+}
+
+.spectrum-Toast-typeIcon {
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  margin: var(--spectrum-toast-icon-padding-y) var(--spectrum-toast-icon-padding-right) var(--spectrum-toast-icon-padding-y) 0;
+}
+
+.spectrum-Toast-content {
+  flex: 1 1 auto;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: var(--spectrum-toast-content-padding-top) var(--spectrum-toast-content-padding-right) var(--spectrum-toast-content-padding-bottom) 0;
+  text-align: left;
+}
+
+.spectrum-Toast-buttons {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+
+  .spectrum-Button,
+  .spectrum-ClearButton {
+    & + .spectrum-Button,
+    & + .spectrum-ClearButton {
+      margin-left: var(--spectrum-toast-button-gap);
+    }
+  }
+}
+
+.spectrum-Toast-body {
+  flex: 1 1 auto;
+  align-self: center;
+
+  .spectrum-Button {
+    float: right;
+    margin-right: var(--spectrum-toast-button-margin-right);
+  }
+
+  & + .spectrum-Toast-buttons {
+    padding-left: var(--spectrum-toast-padding-right);
+
+    border-left-width: 1px;
+    border-left-style: solid;
+  }
+}

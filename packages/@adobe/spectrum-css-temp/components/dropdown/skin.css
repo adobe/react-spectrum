@@ -1,0 +1,80 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Dropdown {
+  .spectrum-Dropdown-trigger:hover {
+    .spectrum-Dropdown-icon {
+      color: var(--spectrum-dropdown-icon-color-hover);
+    }
+  }
+
+  .spectrum-Dropdown-trigger {
+    &.is-selected {
+      .is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-down);
+      }
+    }
+  }
+
+  &.is-invalid {
+    .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+      color: var(--spectrum-dropdown-validation-icon-color-error);
+    }
+
+    &.is-disabled {
+      .spectrum-Icon,
+      .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+        color: var(--spectrum-dropdown-icon-color-disabled);
+      }
+    }
+  }
+
+  &.is-disabled {
+    &,
+    .spectrum-Dropdown-trigger:hover {
+      .spectrum-Dropdown-icon {
+        color: var(--spectrum-dropdown-icon-color-disabled);
+      }
+    }
+    .spectrum-Dropdown-label {
+      &.is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-disabled);
+      }
+    }
+  }
+}
+
+.spectrum-Dropdown-icon {
+  color: var(--spectrum-dropdown-icon-color);
+}
+
+.spectrum-Dropdown-label {
+  &.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color);
+
+    &:hover {
+      color: var(--spectrum-dropdown-placeholder-text-color-hover);
+    }
+
+    &:active {
+      color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
+    }
+  }
+}
+.spectrum-Dropdown-trigger.focus-ring {
+  .spectrum-Dropdown-label.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
+  }
+  .spectrum-Dropdown-icon {
+    color: var(--spectrum-dropdown-icon-color-key-focus)
+  }
+}

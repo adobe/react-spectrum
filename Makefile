@@ -13,10 +13,13 @@ node_modules: package.json
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	NODE_ENV=storybook start-storybook -p 9002 --ci
+	NODE_ENV=storybook start-storybook -p 9002 --ci -c ".storybook-v2"
+
+run_3:
+	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
-	rm -rf dist storybook-static public src/dist
+	rm -rf dist storybook-static storybook-static-v3 public src/dist
 	$(MAKE) clean_docs
 
 clean_all:
@@ -26,6 +29,7 @@ clean_all:
 
 clean_node_modules:
 	rm -rf node_modules
+	rm -rf packages/*/*/node_modules
 
 # --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
 docs:
@@ -44,15 +48,21 @@ clean_docs_node_modules:
 	rm -rf documentation/node_modules
 
 lint:
+	npm run check-types
 	eslint src test stories
+	eslint packages --ext .js,.ts,.tsx
 
 test:
 	NODE_ENV=test mocha
+
+jest_test:
+	NODE_ENV=test jest
 
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 jenkins_test: lint
+	NODE_ENV=test jest
 	# Test in React 15
 	yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
 	NODE_ENV=test mocha
@@ -80,9 +90,11 @@ build:
 	cp README.md dist/README.md
 
 storybook:
-	build-storybook
+	npm run build-storybook
+	npm run build-storybook-v3
 	mkdir -p public
 	mv storybook-static public/storybook
+	mv storybook-static-v3 public/storybook3
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"

@@ -1,0 +1,52 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-statuslight-padding-y: var(--spectrum-global-dimension-size-75);
+}
+
+/* topdoc
+{{ statuslight/statuslight-semantic.yml }}
+*/
+.spectrum-StatusLight {
+  min-height: var(--spectrum-statuslight-height);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: var(--spectrum-statuslight-padding-y) 0px;
+  box-sizing: border-box;
+
+  font-size: var(--spectrum-statuslight-text-size);
+  font-weight: var(--spectrum-statuslight-text-font-weight);
+
+  &::before {
+    content: '';
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: inline-block;
+    width: var(--spectrum-statuslight-dot-size);
+    height: var(--spectrum-statuslight-dot-size);
+    border-radius: 50%;
+    margin: var(--spectrum-statuslight-padding-y) var(--spectrum-statuslight-text-gap);
+  }
+}
+
+.spectrum-StatusLight--neutral {
+  font-style: italic;
+}
+
+/* topdoc
+{{ statuslight/statuslight-label.yml }}
+*/

@@ -4,3 +4,4 @@
 --require @babel/polyfill
 --require ./test/.setup.js
 --recursive
+"./test/**/!(*.test).js"

@@ -14,6 +14,7 @@ livefyre('''
       - cobertura-coverage.xml
     publishHTML:
       public/storybook: index.html
+      public/storybook3: index.html
   deploy:
     branch: "^(master)$"
     git: true

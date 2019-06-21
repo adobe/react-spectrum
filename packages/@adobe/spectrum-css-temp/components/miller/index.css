@@ -1,0 +1,43 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-miller-column-margin: 8px;
+}
+
+/* topdoc
+{{ miller/miller-column.yml }}
+*/
+.spectrum-MillerColumns {
+  overflow-x: auto;
+  white-space: nowrap;
+  user-select: none;
+  padding: var(--spectrum-miller-column-margin) 0;
+}
+
+.spectrum-MillerColumns-item {
+  display: inline-block;
+  width: var(--spectrum-miller-column-width);
+  vertical-align: top;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  margin-right: var(--spectrum-miller-column-margin);
+  overflow: auto;
+  height: 100%;
+
+  &:first-child {
+    margin-left: var(--spectrum-miller-column-margin);
+  }
+}

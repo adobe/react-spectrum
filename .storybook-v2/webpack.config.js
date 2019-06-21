@@ -14,7 +14,7 @@ module.exports = ({config}, env) => {
     config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'UglifyJsPlugin')
   }
 
-  config.resolve.symlinks = false;
+  // config.resolve.symlinks = false;
 
   // enable both scales for the storybook
   config.plugins.push(new webpack.DefinePlugin({
@@ -53,9 +53,23 @@ module.exports = ({config}, env) => {
           include: path.resolve(__dirname, '../')
         },
         {
+          test: /@adobe\/spectrum-css-temp\/.*\.css$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true
+              }
+            }
+          ],
+          include: path.resolve(__dirname, '../')
+        },
+        {
           test: /\.css$/,
           loaders: ['style-loader', 'css-loader'],
-          include: path.resolve(__dirname, '../')
+          include: path.resolve(__dirname, '../'),
+          exclude: /@adobe\/spectrum-css-temp\/.*\.css$/
         },
         {
           test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
