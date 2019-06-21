@@ -50,7 +50,16 @@ export default class TagField extends React.Component {
     invalid: PropTypes.bool,
 
     /** Whether to use the quiet styling for the tag field */
-    quiet: PropTypes.bool
+    quiet: PropTypes.bool,
+
+    /** List of tags to display */
+    value: PropTypes.arrayOf(PropTypes.string),
+
+    /**
+     * A function called when a tag is added or removed.
+     * It is passed an array of strings containing the new tag list.
+     */
+    onChange: PropTypes.func
   };
 
   static defaultProps = {

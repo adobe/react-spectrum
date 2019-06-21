@@ -16,6 +16,31 @@ import TagField from '@react/react-spectrum/TagField';
 
 <TagField placeholder="Tags" />
 ```
+## Displaying existing values
+
+You can show existing tags by specifying a list of strings in the TagField's `value` property.
+
+<TagField placeholder="Tags" value={['Batman', 'Robin']}/>
+
+```jsx
+import TagField from '@react/react-spectrum/TagField';
+
+<TagField placeholder="Tags" value={['Batman', 'Robin']}/>
+```
+
+## Handling additions and removals
+
+The `onChange` function that is called whenever a tag is added or removed from the TagField. It is passed
+an array of strings containing the updated list of tags.
+
+<TagField placeholder="Tags" onChange={tags => console.log(tags)}/>
+
+```jsx
+import TagField from '@react/react-spectrum/TagField';
+
+<TagField placeholder="Tags" onChange={tags => console.log(tags)}/>
+```
+
 
 ## Autocomplete
 

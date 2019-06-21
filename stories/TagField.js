@@ -38,6 +38,12 @@ const OBJECT_OPTIONS = [
 
 ];
 
+const EXISTING_VALUES = [
+  'Chocolate',
+  'Vanilla',
+  'Peppermint'
+];
+
 function getCompletions(text) {
   return OPTIONS.filter(o => ({label: o.name, id: o.id}));
 }
@@ -59,6 +65,12 @@ storiesOf('TagField', module)
     )
   )
   .add(
+    'Display existing values',
+    () => (
+      <TagField placeholder="Tags" value={EXISTING_VALUES} />
+    )
+  )
+  .add(
     'Disallow new tags',
     () => (
       <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObject} />
@@ -68,6 +80,12 @@ storiesOf('TagField', module)
     'Allow duplicate tags',
     () => (
       <TagField allowDuplicates placeholder="Tags" getCompletions={getCompletionsObject} />
+    )
+  )
+  .add(
+    'Handle additions and removals',
+    () => (
+      <TagField placeholder="Tags" onChange={action('change')} />
     )
   )
   .add(
