@@ -81,7 +81,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|styl)$': 'identity-obj-proxy',
-    '\\.\./Icon/core.*$': '<rootDir>/__mocks__/iconMock.js'
+    '\\.\./Icon/.*$': '<rootDir>/__mocks__/iconMock.js'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
