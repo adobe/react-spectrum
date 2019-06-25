@@ -6,8 +6,10 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "dependencies": {
+  "peerDependencies": {
     "react": "^16.8.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "react": "^16.8.0"
+  }
 }

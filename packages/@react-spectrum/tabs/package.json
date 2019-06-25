@@ -14,8 +14,10 @@
     "@react-aria/tabs": "^3.0.0",
     "classnames": "^2.2.5"
   },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
   "devDependencies": {
-    "prop-types": "^15.7.2",
     "react": "^16.8.0"
   }
 }

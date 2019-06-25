@@ -10,6 +10,9 @@
   "dependencies": {
     "@react-spectrum/utils": "^3.0.0"
   },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
   "devDependencies": {
     "react": "^16.8.0"
   }

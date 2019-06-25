@@ -1,5 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {cloneIcon} from '@react/react-spectrum/utils/icon';
+import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {JSXElementConstructor, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';

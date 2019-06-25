@@ -21,7 +21,6 @@
     "intl-messageformat": "^2.2.0",
     "moment": "^2.15.1",
     "moment-range": "^3.0.3",
-    "react": "^0.14 || ^15 || ^16",
     "react-overlays": "0.8.3",
     "react-transition-group": "^2.2.0"
   },

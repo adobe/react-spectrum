@@ -12521,7 +12521,7 @@ react-transition-group@^2.2.0, react-transition-group@^2.2.1:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-react@^16.4.1, react@^16.7.0, react@^16.8.0, react@^16.8.4:
+"react@^0.14 || ^15 || ^16", react@^16.4.1, react@^16.7.0, react@^16.8.0, react@^16.8.4:
   version "16.8.6"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
   integrity sha1-rWw6lhT9Ok6e9REX9U2IjaAfK74=
