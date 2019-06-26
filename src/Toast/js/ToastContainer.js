@@ -167,6 +167,3 @@ export function info(message, options = {}) {
   addToast(<Toast closable variant="info" {...options}>{message}</Toast>, options.timeout, options.container);
 }
 
-export function help(message, options = {}) {
-  addToast(<Toast closable variant="help" {...options}>{message}</Toast>, options.timeout, options.container);
-}

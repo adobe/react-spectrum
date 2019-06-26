@@ -15,7 +15,7 @@
 * from Adobe.
 **************************************************************************/
 
-import {addToast, error, help, info, removeToast, success, Toast, ToastContainer, warning} from '../../src/Toast';
+import {addToast, error, info, removeToast, success, Toast, ToastContainer, warning} from '../../src/Toast';
 import assert from 'assert';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -194,15 +194,6 @@ describe('ToastContainer', () => {
     const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--info');
     assert(toast);
     assert.equal(toast.textContent, 'Info');
-  });
-
-  it('should render a help toast', () => {
-    help('Help');
-
-    const container = document.querySelector('.react-spectrum-ToastContainer');
-    const toast = container.querySelector('.spectrum-Toast.spectrum-Toast--help');
-    assert(toast);
-    assert.equal(toast.textContent, 'Help');
   });
 
   describe('should render Toasts according to placement props', () => {
