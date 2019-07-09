@@ -1,0 +1,18 @@
+{
+  "name": "@react-stately/treeview",
+  "version": "3.0.0",
+  "description": "Spectrum UI components in React",
+  "main": "src/useTreeViewState.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0"
+  }
+}
