@@ -1,9 +1,9 @@
-import React from 'react';
+import Header from './Header';
 import Heading from '@react/react-spectrum/Heading';
 import Provider from '@react/react-spectrum/Provider';
+import React from 'react';
 import {SideNav, SideNavItem} from '@react/react-spectrum/SideNav';
-import {TabView, Tab} from '@react/react-spectrum/TabView';
-import Header from './Header';
+import {Tab, TabView} from '@react/react-spectrum/TabView';
 
 export default class DocsPage extends React.Component {
   render() {
@@ -18,9 +18,9 @@ export default class DocsPage extends React.Component {
           <SideNav variant="multiLevel" value={this.props.selectedItem} autoFocus className="sidebar">
             <SideNavItem label="Components">
               {components.map(edge => (
-                <SideNavItem 
-                  key={edge.node.displayName} 
-                  href={`/components/${edge.node.displayName}`} 
+                <SideNavItem
+                  key={edge.node.displayName}
+                  href={`/components/${edge.node.displayName}`}
                   value={edge.node.displayName}>
                   {edge.node.displayName}
                 </SideNavItem>
@@ -28,18 +28,18 @@ export default class DocsPage extends React.Component {
             </SideNavItem>
             <SideNavItem label="Data Sources">
               {classes.map(edge => (
-                <SideNavItem 
-                  key={edge.node.name} 
-                  href={`/classes/${edge.node.name}`} 
+                <SideNavItem
+                  key={edge.node.name}
+                  href={`/classes/${edge.node.name}`}
                   value={edge.node.name}>
                   {edge.node.name}
                 </SideNavItem>
               ))}
             </SideNavItem>
           </SideNav>
-          <main className="page-content">
+          <main id="main" className="page-content">
             <div className="documentation">
-              <Heading size={1}>{this.props.selectedItem}</Heading>
+              <Heading variant="display">{this.props.selectedItem}</Heading>
               <TabView>
                 <Tab label="Overview">
                   {this.props.overview}

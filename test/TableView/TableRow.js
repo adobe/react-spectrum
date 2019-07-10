@@ -37,7 +37,7 @@ describe('TableRow', function () {
     let wrapper = shallow(<TableRow isHeaderRow columns={columns} renderCell={renderCell} />);
     let row = wrapper.childAt(0);
     assert.equal(row.prop('className'), 'react-spectrum-TableView-row spectrum-Table-head');
-    assert.deepEqual(row.children().map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().map(c => c.dive().text()), ['Hi 0', 'Bye 1']);
     wrapper.setProps({allowsSelection: true, allowsMultipleSelection: true});
     row = wrapper.childAt(0);
     let checkboxCell = row.childAt(0);
@@ -58,7 +58,7 @@ describe('TableRow', function () {
     let wrapper = shallow(<TableRow columns={columns} renderCell={renderCell} />);
     let row = wrapper.childAt(0);
     assert.equal(row.prop('className'), 'react-spectrum-TableView-row spectrum-Table-row');
-    assert.deepEqual(row.children().map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().map(c => c.dive().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a selectable body row', function () {
@@ -74,7 +74,7 @@ describe('TableRow', function () {
     assert(!checkbox.prop('checked'));
     assert.equal(checkbox.prop('title'), 'Select');
 
-    assert.deepEqual(row.children().slice(1).map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().slice(1).map(c => c.dive().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a selected body row', function () {
@@ -90,7 +90,7 @@ describe('TableRow', function () {
     assert(checkbox.prop('checked'));
     assert.equal(checkbox.prop('title'), 'Select');
 
-    assert.deepEqual(row.children().slice(1).map(c => c.shallow().text()), ['Hi 0', 'Bye 1']);
+    assert.deepEqual(row.children().slice(1).map(c => c.dive().text()), ['Hi 0', 'Bye 1']);
   });
 
   it('should render a drop target row', function () {

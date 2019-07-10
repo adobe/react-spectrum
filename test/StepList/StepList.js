@@ -24,7 +24,7 @@ import {Step, StepList} from '../../src/StepList';
 describe('StepList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<StepList />);
-    const innerTree = tree.shallow().shallow();
+    const innerTree = tree.dive().dive();
     assert.equal(tree.hasClass('spectrum-Steplist'), true);
     assert.equal(tree.hasClass('spectrum-Steplist--interactive'), true);
     assert.equal(innerTree.type(), 'div');

@@ -95,7 +95,7 @@ export class StoryWrapper extends React.Component {
     // To build our selector to see all themes, we need to hack it a bit.
     let theme = themes[this.state.theme] || defaultTheme;
     let colorScheme = this.state.theme && this.state.theme.replace(/est$/, '');
-    
+
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={this.state.scale} toastPlacement={this.state.toastPlacement} locale={this.state.locale}>
         <StoryControls
@@ -104,7 +104,7 @@ export class StoryWrapper extends React.Component {
           onScaleChange={scale => this.setState({scale})}
           onToastPlacementChange={toastPlacement => this.setState({toastPlacement})}
           onLocaleChange={locale => this.setState({locale})} />
-        <main>
+        <main id="main">
           {this.props.children}
         </main>
       </Provider>

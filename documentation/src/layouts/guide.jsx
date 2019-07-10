@@ -1,5 +1,5 @@
+import graphql from 'graphql';
 import Header from '../components/Header';
-import Link from '../components/Link';
 import mdxComponents from '../mdx_components';
 import path from 'path';
 import Provider from '@react/react-spectrum/Provider';
@@ -51,7 +51,7 @@ export default class Guide extends React.Component {
               );
             })}
           </SideNav>
-          <main className="page-content">
+          <main id="main" className="page-content">
             <div className="documentation">
               {this.props.children({
                 ...this.props,

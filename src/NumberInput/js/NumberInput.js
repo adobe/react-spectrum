@@ -30,9 +30,7 @@ import LiveRegionAnnouncer from '../../utils/LiveRegionAnnouncer';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
-import '../../utils/style/index.styl';
 
 importSpectrumCSS('stepper');
 

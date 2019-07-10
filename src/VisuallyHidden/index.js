@@ -15,30 +15,4 @@
 * from Adobe.
 **************************************************************************/
 
-// Hidden from visual browsers, but still accessible to screenreaders
-.u-react-spectrum-screenReaderOnly {
-  border: 0;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  height: 1px;
-  margin: 0 -1px -1px 0;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-  white-space: nowrap;
-
-  &.is-focusable {
-    &:active,
-    &:focus {
-      clip: auto;
-      clip-path: none;
-      height: auto;
-      margin: inherit;
-      overflow: visible;
-      position: static;
-      width: auto;
-      white-space: inherit;
-    }
-  }
-}
+module.exports = require('./js/VisuallyHidden');

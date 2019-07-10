@@ -25,7 +25,7 @@ import * as utils from '../../src/TabList/js/getBoundingClientRect';
 describe('TabList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<TabList />, {disableLifecycleMethods: true});
-    const innerTree = tree.shallow().shallow();
+    const innerTree = tree.dive().shallow();
     assert.equal(tree.prop('className'), 'spectrum-Tabs spectrum-Tabs--horizontal');
     assert.equal(innerTree.type(), 'div');
     assert.equal(innerTree.prop('role'), 'tablist');
