@@ -36,12 +36,16 @@ storiesOf('OverlayTrigger', module)
     () => render('popover', {trigger: 'click', placement: 'right'})
   )
   .add(
+    'with trigger: [\'hover\', \'focus\']',
+    () => render('popover')
+  )
+  .add(
     'with tooltip',
     () => render('tooltip', {placement: 'right'})
   )
   .add(
     'with tooltip:bottom',
-    () => render('tooltip', {trigger: 'click', placement: 'bottom'})
+    () => render('tooltip', {placement: 'bottom'})
   )
   .add(
     'placement: top',
