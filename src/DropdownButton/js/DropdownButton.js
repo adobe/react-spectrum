@@ -69,7 +69,7 @@ DropdownButton.propTypes = {
   /**
    * Custom classname to apply to the Menu
    */
-  menuClassName: PropTypes.bool,
+  menuClassName: PropTypes.string,
 
   /**
    * Whether to activate using a long click
