@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import SelectList from '@react/react-spectrum/SelectList';
 
 ## Overview
@@ -5,8 +6,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 ## Example
 
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -15,8 +16,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 
 ```jsx
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -27,8 +28,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 ## Multiple
 
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -38,8 +39,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 
 ```jsx
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -51,8 +52,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 ## Disabled
 
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -62,8 +63,8 @@ import SelectList from '@react/react-spectrum/SelectList';
 
 ```jsx
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -89,8 +90,8 @@ element for the type of data being displayed (e.g. `<time>`).
 ### onChange
 
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
@@ -100,12 +101,89 @@ element for the type of data being displayed (e.g. `<time>`).
 
 ```jsx
 <SelectList
-  label="React"
-  placeholder="Enter Text..."
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
   options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
            {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
            {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
            {label: "Some crazy long value that should be cut off", value: "longval"}]}
   onChange={e => alert(e)}
+/>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The SelectList control implements the [Listbox design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox).
+
+### Labelling
+
+A SelectList should be labelled using a [FieldLabel](/components/FieldLabel), `aria-label` or `aria-labelledby`, to provide context for Accessibility.
+
+#### Using `aria-label`
+
+```jsx
+<SelectList
+  aria-label="Ice cream flavor"
+  placeholder="Select a flavor..."
+  options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
+           {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
+           {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
+           {label: "Some crazy long value that should be cut off", value: "longval"}]}
+/>
+```
+
+#### Using FieldLabel
+
+When labelling using a FieldLabel, use implicit labelling or add the `aria-labelledby` prop to explicitly associate the SelectList control to the FieldLabel.
+
+##### Implicit labelling will add `aria-labelledby` automatically
+
+<FieldLabel label="Ice cream flavor">
+<SelectList
+  placeholder="Select a flavor..."
+  options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
+           {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
+           {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
+           {label: "Some crazy long value that should be cut off", value: "longval"}]}
+/>
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Ice cream flavor">
+<SelectList
+  placeholder="Select a flavor..."
+  options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
+           {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
+           {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
+           {label: "Some crazy long value that should be cut off", value: "longval"}]}
+/>
+</FieldLabel>
+```
+
+##### Explicit labelling requires `aria-labelledby` be added manually
+
+<FieldLabel label="Ice cream flavor" id="selectlist-label-id" labelFor="selectlist-id" />
+<SelectList
+  id="selectlist-id"
+  aria-labelledby="selectlist-label-id"
+  placeholder="Select a flavor..."
+  options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
+           {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
+           {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
+           {label: "Some crazy long value that should be cut off", value: "longval"}]}
+/>
+
+```jsx
+<FieldLabel label="Ice cream flavor" id="selectlist-label-id" labelFor="selectlist-id" />
+<SelectList
+  id="selectlist-id"
+  aria-labelledby="selectlist-label-id"
+  placeholder="Select a flavor..."
+  options={[{label: "Chocolate", value: "chocolate"}, {label: "Vanilla", value: "vanilla"},
+           {label: "Strawberry", value: "strawberry"}, {label: "Caramel", value: "caramel"},
+           {label: "Cookies and Cream", value: "cookiesandcream"}, {label: "Peppermint", value: "peppermint"},
+           {label: "Some crazy long value that should be cut off", value: "longval"}]}
 />
 ```

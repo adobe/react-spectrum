@@ -21,7 +21,10 @@ import SelectList from '../src/SelectList';
 import {storiesOf} from '@storybook/react';
 
 const defaultProps = {
-  placeholder: 'Enter Text...',
+  'aria-label': 'Ice cream flavor',
+  placeholder: 'Select flavor...',
+  style: {textAlign: 'left', maxWidth: '192px'},
+  onChange: action('change'),
   options: [
     {label: 'Chocolate', value: 'chocolate'},
     {label: 'Vanilla', value: 'vanilla'},
@@ -38,6 +41,8 @@ const selectedValue = [
   'vanilla',
   'longVal'
 ];
+
+let ref;
 
 storiesOf('SelectList', module)
   .add(
@@ -68,7 +73,8 @@ storiesOf('SelectList', module)
     'renderItem',
     () => render({
       multiple: true,
-      renderItem: item => <em>{item.label}</em>
+      ref: r => ref = r,
+      renderItem: item => (ref && ref.isSelected(item) ? <em>{item.label}</em> : item.label)
     }),
     {info: 'This example uses renderItem method to italicize text when item is selected'}
   );
@@ -76,9 +82,6 @@ storiesOf('SelectList', module)
 function render(props = {}) {
   return (
     <SelectList
-      style={{textAlign: 'left', maxWidth: '192px'}}
-      label="React"
-      onChange={action('change')}
       {...defaultProps}
       {...props} />
   );
