@@ -45,5 +45,7 @@ Well.displayName = 'Well';
 
 Well.propTypes = {
   /** Custom CSS class to add to the Well component */
-  className: PropTypes.string
+  className: PropTypes.string,
+  /** Limited WAI-ARIA landmark roles for Well component */
+  role: PropTypes.oneOf(['form', 'group', 'navigation', 'region', 'search'])
 };
