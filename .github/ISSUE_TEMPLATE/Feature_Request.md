@@ -34,3 +34,11 @@ Search open/closed issues before submitting since someone might have asked the s
 ## 💻 Examples
 
 <!-- Examples help us understand the requested feature better. Include design mocks here if possible. -->
+
+## 🧢 Your Team
+
+<!--- Which product is this feature for? (i.e. Photoshop) -->
+
+## 🎁 Tracking Ticket
+
+<!--- Link to the feature request ticket in your system, if applicable (JIRA, Github, etc.) -->
