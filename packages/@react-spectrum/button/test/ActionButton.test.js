@@ -36,10 +36,10 @@ describe('ActionButton', function () {
   });
 
   it.each`
-    Component        | props
-    ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
-    ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
-  `('v2/3 parity hold affordance', function ({Component, props}) {
+    Name          | Component        | props
+    ${'Button'}   | ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
+    ${'V2Button'} | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
+  `('$Name v2/3 parity hold affordance', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');

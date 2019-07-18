@@ -16,7 +16,9 @@
     "test": "make test",
     "lint": "make lint",
     "test:watch": "mocha --watch --reporter dot",
-    "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js"
+    "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
+    "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
+    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( yarn wsrun --exclude-missing make-icons && yarn wsrun --exclude-missing build )"
   },
   "workspaces": [
     "src",
@@ -99,10 +101,10 @@
     "postcss-svg": "^3.0.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
+    "rimraf": "^2.6.3",
     "react": "^0.14 || ^15 || ^16",
     "react-axe": "^3.0.2",
     "react-docgen": "^4.1.0",
-    "react-docgen-typescript-loader": "^3.1.0",
     "react-dom": "^0.14 || ^15 || ^16",
     "react-hooks-testing-library": "^0.5.0",
     "recursive-readdir": "^2.2.2",
@@ -115,6 +117,7 @@
     "url-loader": "^1.1.2",
     "webpack": "^4.29.6",
     "webpack-dev-middleware": "^3.6.1",
-    "webpack-hot-middleware": "^2.24.3"
+    "webpack-hot-middleware": "^2.24.3",
+    "wsrun": "^5.0.0"
   }
 }

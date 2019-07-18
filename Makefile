@@ -11,6 +11,10 @@ node_modules: package.json
 	yarn install
 	touch $@
 
+# using this won't generate icons and definitions, but will allow us to run things like cleaning beforehand
+install_no_postinstall:
+	NOYARNPOSTINSTALL=1 yarn install
+
 # --ci keeps it from opening the browser tab automatically
 run:
 	NODE_ENV=storybook start-storybook -p 9002 --ci -c ".storybook-v2"
@@ -19,15 +23,19 @@ run_3:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
+	yarn clean:icons
 	rm -rf dist storybook-static storybook-static-v3 public src/dist
 	$(MAKE) clean_docs
 
 clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
-	$(MAKE) clean_docs_node_modules
 
 clean_node_modules:
+	$(MAKE) clean_project_node_modules
+	$(MAKE) clean_docs_node_modules
+
+clean_project_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 
@@ -64,7 +72,7 @@ cover:
 jenkins_test: lint
 	NODE_ENV=test jest
 	# Test in React 15
-	yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
+	NOYARNPOSTINSTALL=1 yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
 	NODE_ENV=test mocha
 
 	# Test latest and generate coverage report

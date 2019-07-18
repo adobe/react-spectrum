@@ -1,4 +1,5 @@
 import {action} from '@storybook/addon-actions';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Button, ButtonProps} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -7,6 +8,10 @@ storiesOf('Button', module)
   .add(
     'variant: cta',
     () => render({variant: 'cta'})
+  )
+  .add(
+    'with icon',
+    () => render({icon: <Bell />})
   )
   .add(
     'variant: overBackground',

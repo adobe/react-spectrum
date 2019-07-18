@@ -2,6 +2,31 @@
 # yarn lockfile v1
 
 
+"@a4u/react-spectrum-ui@0.0.2":
+  version "0.0.2"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release/@a4u/react-spectrum-ui/-/@a4u/react-spectrum-ui-0.0.2.tgz#378580b3cf042607b2ead0beb18fc89377c0797f"
+  integrity sha1-N4WAs88EJgey6tC+sY/Ik3fAeX8=
+
+"@a4u/react-spectrum-workflow-color@0.0.2":
+  version "0.0.2"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release/@a4u/react-spectrum-workflow-color/-/@a4u/react-spectrum-workflow-color-0.0.2.tgz#a1c2ae643c7696a0812a6d308ca9639092744c8c"
+  integrity sha1-ocKuZDx2lqCBKm0wjKljkJJ0TIw=
+
+"@a4u/react-spectrum-workflow-color@0.0.6":
+  version "0.0.6"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release/@a4u/react-spectrum-workflow-color/-/@a4u/react-spectrum-workflow-color-0.0.6.tgz#bc6c23a5f8bc7fd85a3f26f8e1b3b1b48c2a01d9"
+  integrity sha1-vGwjpfi8f9haPyb44bOxtIwqAdk=
+
+"@a4u/react-spectrum-workflow@0.0.3":
+  version "0.0.3"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release/@a4u/react-spectrum-workflow/-/@a4u/react-spectrum-workflow-0.0.3.tgz#f2c0607003635671cd00a2199429bdd932f71806"
+  integrity sha1-8sBgcANjVnHNAKIZlCm92TL3GAY=
+
+"@a4u/react-spectrum-workflow@0.0.6":
+  version "0.0.6"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release/@a4u/react-spectrum-workflow/-/@a4u/react-spectrum-workflow-0.0.6.tgz#d942b1694546000183b01fc0003314162890ae52"
+  integrity sha1-2UKxaUVGAAGDsB/AADMUFiiQrlI=
+
 "@adobe/focus-ring-polyfill@^0.x":
   version "0.1.5"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@adobe/focus-ring-polyfill/-/focus-ring-polyfill-0.1.5.tgz#b20b5bd1ffb0ceaf42aae1f0837f39ce29f9eb9b"
@@ -2189,13 +2214,6 @@
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/@spectrum/spectrum-icons/-/@spectrum/spectrum-icons-1.0.0-beta.17.tgz#673d09a22f12d06a4ed3f5b7d957c3bf97e1ada6"
   integrity sha1-Zz0Joi8S0GpO0/W32VfDv5fhraY=
 
-"@spectrum/spectrum-iconstore@^3.0.0":
-  version "3.11.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/@spectrum/spectrum-iconstore/-/@spectrum/spectrum-iconstore-3.11.0.tgz#b3455e88312903c524997dbf41dca0a7f53b6082"
-  integrity sha1-s0VeiDEpA8UkmX2/Qdygp/U7YII=
-  dependencies:
-    react "^16.4.1"
-
 "@spectrum/spectrum-variables@1.0.1":
   version "1.0.1"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/@spectrum/spectrum-variables/-/@spectrum/spectrum-variables-1.0.1.tgz#61bfc8a1393b6707516b7303150db5e14c2d57b2"
@@ -3020,18 +3038,6 @@
     "@webassemblyjs/ast" "1.8.5"
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
-
-"@webpack-contrib/schema-utils@^1.0.0-beta.0":
-  version "1.0.0-beta.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@webpack-contrib/schema-utils/-/schema-utils-1.0.0-beta.0.tgz#bf9638c9464d177b48209e84209e23bee2eb4f65"
-  integrity sha1-v5Y4yUZNF3tIIJ6EIJ4jvuLrT2U=
-  dependencies:
-    ajv "^6.1.0"
-    ajv-keywords "^3.1.0"
-    chalk "^2.3.2"
-    strip-ansi "^4.0.0"
-    text-table "^0.2.0"
-    webpack-log "^1.1.2"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -4584,7 +4590,7 @@ ccount@^1.0.3:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/ccount/-/ccount-1.0.3.tgz#f1cec43f332e2ea5a569fd46f9f5bde4e6102aff"
   integrity sha1-8c7EPzMuLqWlaf1G+fW95OYQKv8=
 
-chalk@2.4.2, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.1, chalk@^2.3.2, chalk@^2.4.1, chalk@^2.4.2:
+chalk@2.4.2, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.0, chalk@^2.3.1, chalk@^2.4.1, chalk@^2.4.2:
   version "2.4.2"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
   integrity sha1-zUJUFnelQzPPVBpJEIwUMrRMlCQ=
@@ -6980,6 +6986,15 @@ fs-extra@^7.0.0, fs-extra@^7.0.1:
   version "7.0.1"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
   integrity sha1-TxicRKoSO4lfcigE9V6iPq3DSOk=
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^4.0.0"
+    universalify "^0.1.0"
+
+fs-extra@^8.0.1:
+  version "8.0.1"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/fs-extra/-/fs-extra-8.0.1.tgz#90294081f978b1f182f347a440a209154344285b"
+  integrity sha1-kClAgfl4sfGC80ekQKIJFUNEKFs=
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -9745,20 +9760,12 @@ lodash@~1.0.1:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
   integrity sha1-j1dWDIO1n8JwvT1WG2kAQ0MOJVE=
 
-log-symbols@2.2.0, log-symbols@^2.1.0:
+log-symbols@2.2.0:
   version "2.2.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/log-symbols/-/log-symbols-2.2.0.tgz#5740e1c5d6f0dfda4ad9323b5332107ef6b4c40a"
   integrity sha1-V0Dhxdbw39pK2TI7UzIQfva0xAo=
   dependencies:
     chalk "^2.0.1"
-
-loglevelnext@^1.0.1:
-  version "1.0.5"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/loglevelnext/-/loglevelnext-1.0.5.tgz#36fc4f5996d6640f539ff203ba819641680d75a2"
-  integrity sha1-NvxPWZbWZA9Tn/IDuoGWQWgNdaI=
-  dependencies:
-    es6-symbol "^3.1.1"
-    object.assign "^4.1.0"
 
 lolex@^2.3.2:
   version "2.7.5"
@@ -9991,6 +9998,13 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=
+
+mem@^1.1.0:
+  version "1.1.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/mem/-/mem-1.1.0.tgz#5edd52b485ca1d900fe64895505399a0dfa45f76"
+  integrity sha1-Xt1StIXKHZAP5kiVUFOZoN+kX3Y=
+  dependencies:
+    mimic-fn "^1.0.0"
 
 mem@^4.0.0:
   version "4.3.0"
@@ -11116,6 +11130,15 @@ os-locale@^1.4.0:
   integrity sha1-IPnxeuKe00XoveWDsT0gCYA8FNk=
   dependencies:
     lcid "^1.0.0"
+
+os-locale@^2.0.0:
+  version "2.1.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/os-locale/-/os-locale-2.1.0.tgz#42bc2900a6b5b8bd17376c8e882b65afccf24bf2"
+  integrity sha1-QrwpAKa1uL0XN2yOiCtlr8zyS/I=
+  dependencies:
+    execa "^0.7.0"
+    lcid "^1.0.0"
+    mem "^1.1.0"
 
 os-locale@^3.0.0, os-locale@^3.1.0:
   version "3.1.0"
@@ -12288,20 +12311,6 @@ react-dev-utils@^8.0.0:
     strip-ansi "5.0.0"
     text-table "0.2.0"
 
-react-docgen-typescript-loader@^3.1.0:
-  version "3.1.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/react-docgen-typescript-loader/-/react-docgen-typescript-loader-3.1.0.tgz#09cacf872617c97f946ee920d2239f51d543be41"
-  integrity sha1-CcrPhyYXyX+Ubukg0iOfUdVDvkE=
-  dependencies:
-    "@webpack-contrib/schema-utils" "^1.0.0-beta.0"
-    loader-utils "^1.2.3"
-    react-docgen-typescript "^1.12.3"
-
-react-docgen-typescript@^1.12.3:
-  version "1.12.5"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/react-docgen-typescript/-/react-docgen-typescript-1.12.5.tgz#922cdbd9b6f3804695c94bff377c1b40a2e04f0c"
-  integrity sha1-kizb2bbzgEaVyUv/N3wbQKLgTww=
-
 react-docgen@^4.1.0:
   version "4.1.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/react-docgen/-/react-docgen-4.1.0.tgz#218887feba5b2c36af337879a27e74bda90ed7cb"
@@ -12521,7 +12530,7 @@ react-transition-group@^2.2.0, react-transition-group@^2.2.1:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-"react@^0.14 || ^15 || ^16", react@^16.4.1, react@^16.7.0, react@^16.8.0, react@^16.8.4:
+"react@^0.14 || ^15 || ^16", react@^16.7.0, react@^16.8.0, react@^16.8.4:
   version "16.8.6"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
   integrity sha1-rWw6lhT9Ok6e9REX9U2IjaAfK74=
@@ -14246,7 +14255,7 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-throat@^4.0.0:
+throat@^4.0.0, throat@^4.1.0:
   version "4.1.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
@@ -14768,7 +14777,7 @@ utils-merge@1.0.1:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.0.1, uuid@^3.1.0, uuid@^3.3.2:
+uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha1-G0r0lV6zB3xQHCOHL8ZROBFYcTE=
@@ -14980,16 +14989,6 @@ webpack-hot-middleware@^2.24.3:
     html-entities "^1.2.0"
     querystring "^0.2.0"
     strip-ansi "^3.0.0"
-
-webpack-log@^1.1.2:
-  version "1.2.0"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/webpack-log/-/webpack-log-1.2.0.tgz#a4b34cda6b22b518dbb0ab32e567962d5c72a43d"
-  integrity sha1-pLNM2msitRjbsKsy5WeWLVxypD0=
-  dependencies:
-    chalk "^2.1.0"
-    log-symbols "^2.1.0"
-    loglevelnext "^1.0.1"
-    uuid "^3.1.0"
 
 webpack-log@^2.0.0:
   version "2.0.0"
@@ -15227,6 +15226,20 @@ ws@^5.2.0:
   dependencies:
     async-limiter "~1.0.0"
 
+wsrun@^5.0.0:
+  version "5.0.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/wsrun/-/wsrun-5.0.0.tgz#9b086bfdf04de98be84c73057fd8f42dc36d5c59"
+  integrity sha1-mwhr/fBN6YvoTHMFf9j0LcNtXFk=
+  dependencies:
+    bluebird "^3.5.1"
+    chalk "^2.3.0"
+    glob "^7.1.2"
+    lodash "^4.17.4"
+    minimatch "^3.0.4"
+    split "^1.0.1"
+    throat "^4.1.0"
+    yargs "^10.0.3"
+
 x-is-string@^0.1.0:
   version "0.1.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/x-is-string/-/x-is-string-0.1.0.tgz#474b50865af3a49a9c4657f05acd145458f77d82"
@@ -15326,6 +15339,13 @@ yargs-parser@^5.0.0:
   dependencies:
     camelcase "^3.0.0"
 
+yargs-parser@^8.1.0:
+  version "8.1.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/yargs-parser/-/yargs-parser-8.1.0.tgz#f1376a33b6629a5d063782944da732631e966950"
+  integrity sha1-8TdqM7Ziml0GN4KUTacyYx6WaVA=
+  dependencies:
+    camelcase "^4.1.0"
+
 yargs-unparser@1.5.0:
   version "1.5.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/yargs-unparser/-/yargs-unparser-1.5.0.tgz#f2bb2a7e83cbc87bb95c8e572828a06c9add6e0d"
@@ -15351,6 +15371,24 @@ yargs@13.2.2:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^13.0.0"
+
+yargs@^10.0.3:
+  version "10.1.2"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/yargs/-/yargs-10.1.2.tgz#454d074c2b16a51a43e2fb7807e4f9de69ccb5c5"
+  integrity sha1-RU0HTCsWpRpD4vt4B+T53mnMtcU=
+  dependencies:
+    cliui "^4.0.0"
+    decamelize "^1.1.1"
+    find-up "^2.1.0"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^8.1.0"
 
 yargs@^12.0.1, yargs@^12.0.2, yargs@^12.0.5:
   version "12.0.5"

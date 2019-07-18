@@ -1,6 +1,5 @@
 import {action} from '@storybook/addon-actions';
-// @ts-ignore
-import Brush from '../../../../src/Icon/Brush';
+import Brush from '@spectrum-icons/workflow/Brush';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {ToolButton} from '../src';

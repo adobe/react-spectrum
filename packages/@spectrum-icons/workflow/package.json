@@ -1,0 +1,22 @@
+{
+  "name": "@spectrum-icons/workflow",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "scripts": {
+    "build": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && pwd && tsc --project './tsconfig.types.json'"
+  },
+  "dependencies": {
+    "@a4u/react-spectrum-workflow": "0.0.6",
+    "@react-spectrum/icon": "^3.0.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0",
+    "@spectrum-icons/build-tools": "^3.0.0"
+  }
+}

@@ -1,6 +1,7 @@
 {
   "name": "@react-aria/tabs",
   "version": "3.0.0",
+  "private": true,
   "main": "src/useTabList.ts",
   "description": "Spectrum UI components in React",
   "repository": {

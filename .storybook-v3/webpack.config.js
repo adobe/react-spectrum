@@ -12,7 +12,7 @@ const getFileHash = (filepath) => {
   let contentHash = md5(fs.readFileSync(filepath, 'utf8'));
   fileHashMemo[filepath] = contentHash.substr(contentHash.length - 5);
   return fileHashMemo[filepath];
-}
+};
 
 const generateScopedName = (localName, resourcePath) => {
   let componentName = resourcePath.split('/').slice(-2, -1);
@@ -23,7 +23,8 @@ const generateScopedName = (localName, resourcePath) => {
 };
 
 module.exports = ({config}, env) => {
-  // Hack to get icons loading in the storybook without copying them over
+  // Hack to get icons loading in the storybook without copying them over, these need to stay in for as long as we are using V2 components
+  // in the v3 storybook. only use right now is the Provider selection menus in the top right for scale, theme, etc
   config.plugins.push(new webpack.NormalModuleReplacementPlugin(/Icon\/(core\/)?([^\/\.]+)$/, function (resource) {
     resource.request = '@react/react-spectrum-icons/dist/' + (/core/.test(resource.request) ? 'core/' : '') + path.basename(resource.request);
   }));
@@ -38,6 +39,7 @@ module.exports = ({config}, env) => {
   config.resolve.extensions.push('.ts', '.tsx');
 
   return Object.assign(config, {
+    parallelism: 1,
     module: {
       rules: [
         {
@@ -49,7 +51,6 @@ module.exports = ({config}, env) => {
           test: /\.(ts|tsx)$/,
           use: [
             { loader: require.resolve('babel-loader') },
-            { loader: require.resolve("react-docgen-typescript-loader") }
           ]
         },
         {

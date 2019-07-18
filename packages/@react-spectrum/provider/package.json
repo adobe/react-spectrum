@@ -1,6 +1,7 @@
 {
   "name": "@react-spectrum/provider",
   "version": "3.0.0",
+  "private": true,
   "main": "src/Provider.tsx",
   "description": "Spectrum UI components in React",
   "repository": {
