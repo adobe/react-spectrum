@@ -17,7 +17,7 @@ interface AriaButtonProps {
 }
 
 interface ButtonAria {
-  buttonProps: React.AllHTMLAttributes<HTMLElement>
+  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export function useButton({

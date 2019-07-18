@@ -177,11 +177,13 @@ const DOMProps = {
  */
 const propRe = /^((data|aria)-.*)$/;
 
-export function filterDOMProps(props): React.HTMLAttributes<HTMLElement> {
+// Filters out all props that aren't valid DOM props or are user defined via exclude prop obj.
+export function filterDOMProps(props, exclude = {}): React.HTMLAttributes<HTMLElement> {
   const filterProps = {};
+  const propFilter = Object.assign({}, DOMProps, exclude);
 
   for (const prop in props) {
-    if (props.hasOwnProperty(prop) && (DOMProps[prop] || propRe.test(prop))) {
+    if (props.hasOwnProperty(prop) && (propFilter[prop] || propRe.test(prop))) {
       filterProps[prop] = props[prop];
     }
   }

@@ -11,7 +11,7 @@
   "dependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/button": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
+    "@react-aria/focus": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0"
   },
   "peerDependencies": {
