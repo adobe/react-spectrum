@@ -34,6 +34,11 @@ module.exports = {
     },
     cover: {
       plugins: ['istanbul']
+    },
+    production: {
+      plugins: [
+        ['react-remove-properties', {'properties': ['data-testid']}]
+      ]
     }
   },
   plugins: [

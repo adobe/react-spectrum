@@ -36,7 +36,8 @@ module.exports = {
     'browser': true,
     'node': true,
     'mocha': true,
-    'es6': true
+    'es6': true,
+    'jest': true
   },
   globals: {
     'importSpectrumCSS': 'readonly',
