@@ -8,7 +8,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "classnames": "^2.2.5"
+    "@react-stately/treeview": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

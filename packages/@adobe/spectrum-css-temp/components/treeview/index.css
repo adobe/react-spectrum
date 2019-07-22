@@ -22,6 +22,9 @@ governing permissions and limitations under the License.
   padding: 0;
   user-select: none;
   outline: none;
+
+  height: 300px;
+  width: 300px;
 }
 
 .spectrum-TreeView-item {
@@ -70,7 +73,7 @@ governing permissions and limitations under the License.
     content: '';
 
     position: absolute;
-    left: calc(0 + var(--spectrum-treeview-item-border-size));
+    left: var(--spectrum-treeview-item-border-size);
     right: 0;
     z-index: -1; /* make sure we don't block clicks on chevron */
 

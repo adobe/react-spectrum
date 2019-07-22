@@ -1,0 +1,55 @@
+/**
+ * Returns a Set containing the keys in Map a that are not in b.
+ * @private
+ */
+export function keyDiff<T>(a: Map<T, any>, b: Map<T, any>): Set<T> {
+  let res = new Set;
+
+  for (let key of a.keys()) {
+    if (!b.has(key)) {
+      res.add(key);
+    }
+  }
+
+  return res;
+}
+
+/**
+ * Returns the key difference between two maps. Returns a set of
+ * keys to add to and remove from a to make it equal to b.
+ * @private
+ */
+export function difference<T>(a: Map<T, any>, b: Map<T, any>) {
+  let toRemove = keyDiff(a, b);
+  let toAdd = keyDiff(b, a);
+  let toUpdate = new Set;
+  for (let key of a.keys()) {
+    if (b.has(key)) {
+      toUpdate.add(key);
+    }
+  }
+  return {toRemove, toAdd, toUpdate};
+}
+
+/**
+ * Returns an iterator that yields the items in all of the given iterators.
+ * @private
+ */
+export function* concatIterators<T>(...iterators: Iterable<T>[]) {
+  for (let iterator of iterators) {
+    yield* iterator;
+  }
+}
+
+/**
+ * Inverts the keys and values of an object.
+ * @private
+ */
+export function invert(object) {
+  let res = {};
+  for (let key in object) {
+    res[object[key]] = key;
+  }
+
+  return res;
+}

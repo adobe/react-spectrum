@@ -1,4 +1,4 @@
-interface ItemOptions {
+export interface ItemOptions {
   key?: any;
   value?: any;
   isSelected?: boolean;
@@ -27,5 +27,9 @@ export class Item {
     this.isLoading = false;
     this.children = opts.children || children;
     this.hasChildren = this.children.length > 0 || opts.hasChildren || false;
+  }
+
+  copy(opts: ItemOptions) {
+    return new Item(Object.assign({}, this, opts));
   }
 }

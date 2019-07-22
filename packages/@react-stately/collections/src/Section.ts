@@ -30,4 +30,8 @@ export class Section {
       this.loadMore = opts.loadMore;
     }
   }
+
+  copy(opts: SectionOptions) {
+    return new Section(Object.assign({}, this, opts));
+  }
 }
