@@ -18,7 +18,7 @@
     "test:watch": "mocha --watch --reporter dot",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
-    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( yarn wsrun --exclude-missing make-icons && yarn wsrun --exclude-missing build )"
+    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )"
   },
   "workspaces": [
     "src",
