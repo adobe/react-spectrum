@@ -20,8 +20,8 @@ import Autocomplete from '../../src/Autocomplete';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
+import {Tag, TagList} from '../../src/TagList';
 import TagField from '../../src/TagField';
-import {TagList} from '../../src/TagList';
 import Textfield from '../../src/Textfield';
 
 describe('TagField', () => {
@@ -224,6 +224,12 @@ describe('TagField', () => {
     // Remove the tag, make sure placeholder is back.
     tree.find(TagList).simulate('close', 'foo');
     assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
+  });
+  it('should allow custom tag rendering', () => {
+    let renderTag = (tag) => <Tag>{tag.label + tag.meta}</Tag>;
+    const tree = mount(<TagField value={[{label: 'one', meta: '1'}]} renderTag={renderTag} />);
+
+    assert.equal(tree.find('.spectrum-Tags-itemLabel').text(), 'one1');
   });
 });
 

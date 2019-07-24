@@ -18,6 +18,7 @@
 import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Tag} from '../src/TagList';
 import TagField from '../src/TagField';
 
 const OPTIONS = [
@@ -38,6 +39,12 @@ const OBJECT_OPTIONS = [
 
 ];
 
+const OBJECT_OPTIONS_WITH_AVATAR = [
+  {label: 'Chocolate', id: '1', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'},
+  {label: 'Vanilla', id: '2', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'},
+  {label: 'Strawberry', id: '3', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}
+];
+
 const EXISTING_VALUES = [
   'Chocolate',
   'Vanilla',
@@ -49,6 +56,9 @@ function getCompletions(text) {
 }
 function getCompletionsObject(text) {
   return OBJECT_OPTIONS.filter(o => o.label.toLowerCase().startsWith(text.toLowerCase()));
+}
+function getCompletionsObjectWithAvatar(text) {
+  return OBJECT_OPTIONS_WITH_AVATAR.filter(o => o.label.toLowerCase().startsWith(text.toLowerCase()));
 }
 
 storiesOf('TagField', module)
@@ -122,5 +132,10 @@ storiesOf('TagField', module)
     'controlled',
     () => (
       <TagField placeholder="Tags" value={['one', 'two']} onChange={action('change')} />
+    )
+  ).add(
+    'With custom tag rendering',
+    () => (
+      <TagField placeholder="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
     )
   );
