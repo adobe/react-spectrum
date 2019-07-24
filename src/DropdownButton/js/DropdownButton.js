@@ -33,7 +33,8 @@ export default function DropdownButton({alignRight, onClose, onOpen, onSelect, c
         icon={<More alt="…" />}
         {...props} />
       <Menu
-        className={menuClassName}>
+        className={menuClassName}
+        dropdownMenu>
         {children}
       </Menu>
     </Dropdown>
