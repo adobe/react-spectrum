@@ -54,7 +54,8 @@ describe('NumberInput', () => {
     const inputId = input.prop('id');
     assert(inputId);
     assert.equal(input.prop('defaultValue'), undefined);
-    assert.equal(input.prop('role'), 'spinbutton');
+    assert.equal(input.prop('type'), 'number');
+    assert.equal(input.prop('role'), undefined);
     assert.equal(input.prop('aria-valuenow'), null);
     assert.equal(input.prop('aria-valuetext'), null);
     assert.equal(input.prop('step'), 1);

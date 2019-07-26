@@ -429,7 +429,6 @@ export default class NumberInput extends Component {
           id={inputId}
           value={value}
           defaultValue={defaultValue}
-          role="spinbutton"
           type="number"
           autoComplete="off"
           aria-label={ariaLabel || null}
