@@ -28,4 +28,13 @@ describe('Icon', function () {
     expect(icon).not.toHaveAttribute('aria-label');
     expect(icon).toHaveAttribute('aria-hidden');
   });
+
+  it.each`
+    Name      | Component
+    ${'Icon'} | ${Icon}
+  `('$Name handles user provided size', function ({Component}) {
+    let tree = render(<Component size="XL"><FakeIcon /></Component>);
+    let icon = tree.getByRole('img');
+    expect(icon).toHaveAttribute('class', expect.stringContaining('XL'));
+  });
 });
