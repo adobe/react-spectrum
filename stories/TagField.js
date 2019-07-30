@@ -133,7 +133,15 @@ storiesOf('TagField', module)
     () => (
       <TagField placeholder="Tags" value={['one', 'two']} onChange={action('change')} />
     )
-  ).add(
+  )
+  .add(
+    'renderItem',
+    () => (
+      <TagField placeholder="Tags" getCompletions={getCompletions} renderItem={item => <em>{item}</em>} />
+    ),
+    {info: 'This example uses the renderItem prop to italicize text in the Autocomplete'}
+  )
+  .add(
     'With custom tag rendering',
     () => (
       <TagField placeholder="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />

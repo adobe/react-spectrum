@@ -225,6 +225,12 @@ describe('TagField', () => {
     tree.find(TagList).simulate('close', 'foo');
     assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
   });
+  it('should pass renderItem prop to Autocomplete', async () => {
+    const renderItem = item => <em>{item}</em>;
+    const tree = mount(<TagField getCompletions={() => []} renderItem={renderItem} />);
+
+    assert.equal(tree.find(Autocomplete).prop('renderItem'), renderItem);
+  });
   it('should allow custom tag rendering', () => {
     let renderTag = (tag) => <Tag>{tag.label + tag.meta}</Tag>;
     const tree = mount(<TagField value={[{label: 'one', meta: '1'}]} renderTag={renderTag} />);

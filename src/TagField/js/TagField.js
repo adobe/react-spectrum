@@ -60,6 +60,13 @@ export default class TagField extends React.Component {
      * It is passed an array of strings containing the new tag list.
      */
     onChange: PropTypes.func,
+
+    /**
+     * A function that returns a wrapper component to render a list item label. 
+     * Useful in providing custom html to the rendered label.
+     * Passed to the underlying Autocomplete component.
+     */
+    renderItem: PropTypes.func,
     
     /**
      * A function that takes a tag object and returns a custom Tag component
@@ -132,7 +139,7 @@ export default class TagField extends React.Component {
   }
 
   render() {
-    let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, renderTag, ...props} = this.props;
+    let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, renderTag, renderItem, ...props} = this.props;
     let {value, tags} = this.state;
 
     delete props.onChange;
@@ -149,7 +156,8 @@ export default class TagField extends React.Component {
         allowCreate={allowCreate}
         onSelect={this.onSelect}
         value={value}
-        onChange={this.onTextfieldChange}>
+        onChange={this.onTextfieldChange}
+        renderItem={renderItem}>
         <TagList
           ref={tl => this.taglist = tl}
           disabled={disabled}

@@ -82,6 +82,17 @@ import TagField from '@react/react-spectrum/TagField';
 <TagField placeholder="I like duplicates" allowDuplicates />
 ```
 
+## Render Item
+You can customize the way items are rendered in the autocomplete suggestions by using the `renderItem` property.
+More details on this functionality is described under the [Autocomplete component docs](autocomplete)
+
+<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} />
+
+```jsx
+import TagField from '@react/react-spectrum/TagField';
+
+<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} />
+```
 ## Custom tag rendering
 
 If the function passed to `getCompletions` returns a list of objects, by default 
