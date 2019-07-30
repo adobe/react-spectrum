@@ -13,13 +13,13 @@ module.exports = {
           '@babel/preset-env',
           {
             useBuiltIns: 'usage',
-            corejs: 2
+            corejs: 3
           }
         ]
       ]
     },
     test: {
-      plugins: ["@babel/plugin-transform-runtime"],
+      plugins: ['@babel/plugin-transform-runtime'],
       presets: [
         '@babel/preset-typescript',
         '@babel/preset-react',
@@ -27,7 +27,7 @@ module.exports = {
           '@babel/preset-env',
           {
             useBuiltIns: 'entry',
-            corejs: 2
+            corejs: 3
           }
         ]
       ]
@@ -50,7 +50,6 @@ module.exports = {
     '@babel/plugin-syntax-class-properties',
     '@babel/plugin-syntax-object-rest-spread',
     '@babel/plugin-transform-async-to-generator',
-    'react-docgen',
     'transform-glob-import',
     'babel-plugin-macros',
     './bin/import-css.js'
