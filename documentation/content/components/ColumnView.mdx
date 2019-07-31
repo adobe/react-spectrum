@@ -1,9 +1,9 @@
 import {ColumnView} from '@react/react-spectrum/ColumnView';
 import {ExampleDS, ds, ds2, renderItem, renderDetail} from '../helpers/TreeView';
 
-A **ColumnView** displays heirarchical data as a set of columns that can be progressively disclosed to 
-navigate to a desired item, or select a set of items. It supports many advanced features like asynchronous data loading, 
-multiple selection, keyboard navigation, detail columns, and more. It is designed to scale to collections of any size using a virtual 
+A **ColumnView** displays heirarchical data as a set of columns that can be progressively disclosed to
+navigate to a desired item, or select a set of items. It supports many advanced features like asynchronous data loading,
+multiple selection, keyboard navigation, detail columns, and more. It is designed to scale to collections of any size using a virtual
 scroller that only renders the currently visible items in each column into the DOM.
 
 ## Example
@@ -30,7 +30,7 @@ See below for details about these props.
 
 ## Overview
 
-To set up a ColumnView, a couple pieces are required: a data source to provide the items to display, and a `renderItem` 
+To set up a ColumnView, a couple pieces are required: a data source to provide the items to display, and a `renderItem`
 function to render the UI for an individual item.
 
 ### Data Sources
@@ -65,9 +65,9 @@ class MyDataSource extends TreeDataSource {
 }
 ```
 
-When data in the data source changes, perhaps in response to some external event such as a server update, the data source 
-should emit events. The column view listens for these events and updates its views as necessary. There are helper methods as part 
-of the base data source class that you can call to insert, update, remove, or move items in the column view. You can also use 
+When data in the data source changes, perhaps in response to some external event such as a server update, the data source
+should emit events. The column view listens for these events and updates its views as necessary. There are helper methods as part
+of the base data source class that you can call to insert, update, remove, or move items in the column view. You can also use
 transactions to group multiple updates together into a single animation. See the [API docs](/classes/TreeDataSource) for details.
 
 ### Item Renderers
@@ -135,7 +135,7 @@ with object identity equal to the ones provided by the data source.
 
 Since ColumnView uses objects as keys to many of its methods, the items you return from `getChildren` might not be the same objects
 you pass to the `navigatePath` prop, or the `selectedItems` prop. Perhaps you only have the ids until the full item objects are actually
-loaded. In order for the column view to know which objects you are referring to, you can implement the `isItemEqual` comparator method 
+loaded. In order for the column view to know which objects you are referring to, you can implement the `isItemEqual` comparator method
 on your data source and return a boolean to determine if two items are equal. Then you could pass objects with only an id to the `navigatedPath`
 or `selectedItems` props on initial render, for example.
 
@@ -151,7 +151,38 @@ class MyDataSource extends TreeDataSource {
 
 ## Accessibility
 
-ColumnView implements the aria tree design pattern. It handles multiselection, item focusing, and is fully keyboard accessibile out of the box.
+ColumnView implements accessibility using the [WAI-ARIA 1.1 Tree View](https://www.w3.org/TR/wai-aria-practices-1.1/#TreeView) design pattern. It handles multiselection, item focusing, and is fully keyboard accessible out of the box.
+
+### Labelling
+
+A ColumnView can be labelled to provide context for Accessibility using either the `aria-label` or `aria-labelledby` prop.
+
+#### Using `aria-label`
+
+```jsx
+<ColumnView
+  aria-label="Column View"
+  dataSource={ds}
+  renderItem={renderItem}
+  renderDetail={renderDetail}
+  allowsSelection
+  allowsBranchSelection />
+```
+
+#### Using `aria-labelledby`
+
+```jsx
+<Heading size={5} id="columnview-heading-id">
+  Column View
+</Heading>
+<ColumnView
+  aria-labelledby="columnview-heading-id"
+  dataSource={ds}
+  renderItem={renderItem}
+  renderDetail={renderDetail}
+  allowsSelection
+  allowsBranchSelection />
+```
 
 ## Internationalization
 
