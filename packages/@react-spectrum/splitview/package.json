@@ -8,15 +8,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
+    "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@react-aria/splitview": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
-    "@react-stately/splitview": "^3.0.0"
+    "@react-stately/splitview": "^3.0.0",
+    "@react-types/shared": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
   },
   "devDependencies": {
-    "@react-types/shared": "^3.0.0",
-    "@react/react-spectrum": "^2.0.0",
-    "react": "^16.8.0"
+    "@react/react-spectrum": "^2.0.0"
   }
 }
