@@ -8,6 +8,9 @@ import {
   SetStateAction
 } from 'react';
 import {DOMProps} from './dom';
+import {Coordinate} from "./moveable";
+
+export type orientation = 'horizontal' | 'vertical'
 
 export interface SplitViewStatelyProps {
   allowsCollapsing?: boolean,
@@ -15,17 +18,18 @@ export interface SplitViewStatelyProps {
   onResizeEnd?: (primarySize: number) => void,
   primarySize?: number,
   defaultPrimarySize?: number,
+  orientation?: orientation
 }
 
 export interface SplitViewHandleState {
   offset: number,
   dragging: boolean,
   hovered: boolean
-  setOffset: (value: number) => void,
+  setOffset: (value: Coordinate) => void,
   setDragging: (value: boolean) => void,
   setHover: (value: boolean) => void,
-  increment: () => void,
-  decrement: () => void,
+  increment: (axis: orientation) => void,
+  decrement: (axis: orientation) => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
   collapseToggle: () => void
@@ -47,7 +51,8 @@ export interface SplitViewAriaProps {
   id?: string,
   onMouseDown?: MouseEventHandler,
   allowsResizing?: boolean,
-  orientation?: 'horizontal' | 'vertical',
+  allowsCollapsing?: boolean,
+  orientation?: orientation,
   primaryPane?: 0 | 1,
   primaryMinSize?: number,
   primaryMaxSize?: number,
@@ -78,7 +83,7 @@ export interface AriaSplitViewProps {
 
 export interface SplitViewProps extends DOMProps {
   children: [ReactElement, ReactElement],
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: orientation,
   allowsResizing?: boolean,
   allowsCollapsing?: boolean,
   onResize?: (primarySize: number) => void,

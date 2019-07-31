@@ -8,10 +8,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.0.0",
+    "@react-aria/interactions": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
     "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "@react-types/shared": "^3.0.0"
   }
 }

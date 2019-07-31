@@ -1,7 +1,7 @@
-export function getOffset(element, reverse, orientation = 'horizontal') {
+export function getOffset(element, reverse) {
   let rect = element.getBoundingClientRect();
   if (reverse) {
-    return orientation === 'horizontal' ? rect.right : rect.bottom;
+    return {x: rect.right, y: rect.bottom};
   }
-  return orientation === 'horizontal' ? rect.left : rect.top;
+  return {x: rect.left, y: rect.top};
 }

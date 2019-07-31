@@ -26,16 +26,25 @@ const CURSORS = {
 };
 
 export function SplitView(props: SplitViewProps) {
+  let completeProps = Object.assign(
+    {},
+    {
+      orientation:'horizontal',
+      allowsResizing: true,
+      primaryPane: 0,
+      defaultPrimarySize: 304,
+      primaryMinSize: 304,
+      primaryMaxSize: Infinity,
+      secondaryMinSize: 304,
+      secondaryMaxSize: Infinity
+    },
+    props
+  );
   let {
-    orientation = 'horizontal' as 'horizontal',
-    allowsResizing = true,
-    primaryPane = 0 as 0,
-    primaryMinSize = 304,
-    primaryMaxSize = Infinity,
-    secondaryMinSize = 304,
-    secondaryMaxSize = Infinity,
-    ...remainingProps
-  } = props;
+    orientation,
+    allowsResizing,
+    primaryPane
+  } = completeProps;
   let containerRef = useRef(null);
 
   let children = React.Children.toArray(props.children);
@@ -43,7 +52,7 @@ export function SplitView(props: SplitViewProps) {
     throw new Error(`SplitView must have 2 children, ${children.length} found.`);
   }
 
-  let {containerState, handleState} = useSplitViewState(props);
+  let {containerState, handleState} = useSplitViewState(completeProps);
 
   let {
     containerProps,
@@ -51,14 +60,7 @@ export function SplitView(props: SplitViewProps) {
     primaryPaneProps
   } = useSplitView({
     containerRef,
-    orientation,
-    allowsResizing,
-    primaryPane,
-    primaryMinSize,
-    primaryMaxSize,
-    secondaryMinSize,
-    secondaryMaxSize,
-    ...remainingProps
+    ...completeProps
   }, {
     containerState,
     handleState

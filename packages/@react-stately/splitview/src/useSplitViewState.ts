@@ -1,3 +1,4 @@
+import {Coordinate} from '@react-types/shared';
 import {SplitViewState, SplitViewStatelyProps} from '@react-types/shared/src';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
@@ -6,9 +7,10 @@ const COLLAPSE_THRESHOLD = 50;
 
 export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState {
   let {
-    defaultPrimarySize = 304,
+    defaultPrimarySize,
     primarySize,
-    allowsCollapsing = false,
+    allowsCollapsing,
+    orientation = 'horizontal',
     onResize,
     onResizeEnd
   } = props;
@@ -44,8 +46,9 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     return dividerPosition;
   };
 
-  let setOffsetValue = (value) => {
-    let nextOffset = boundOffset(value);
+  let setOffsetValue = (value:Coordinate) => {
+    let coord = orientation === 'horizontal' ? value.x : value.y;
+    let nextOffset = boundOffset(coord);
     callOnResize(nextOffset);
     if (!realTimeDragging.current) {
       callOnResizeEnd(nextOffset);
@@ -62,19 +65,29 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     setHovered(value);
   };
 
-  let increment = () => setOffset(prevHandleOffset => {
-    let nextOffset = boundOffset(prevHandleOffset + 10);
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
-    return nextOffset;
-  });
+  let increment = (axis) => {
+    if (orientation !== axis) {
+      return;
+    }
+    setOffset(prevHandleOffset => {
+      let nextOffset = boundOffset(prevHandleOffset + 10);
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+      return nextOffset;
+    });
+  };
 
-  let decrement = () => setOffset(prevHandleOffset => {
-    let nextOffset = boundOffset(prevHandleOffset - 10);
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
-    return nextOffset;
-  });
+  let decrement = (axis) => {
+    if (orientation !== axis) {
+      return;
+    }
+    setOffset(prevHandleOffset => {
+      let nextOffset = boundOffset(prevHandleOffset - 10);
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+      return nextOffset;
+    });
+  };
 
   let decrementToMin = () => {
     let nextOffset = allowsCollapsing ? 0 : minPos;
@@ -91,14 +104,16 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
   };
 
   let collapseToggle = () => setOffset(prevHandleOffset => {
-    if (!allowsCollapsing) {
-      return prevHandleOffset;
-    }
     let oldOffset = prevOffset.current;
     if (prevHandleOffset !== prevOffset.current) {
       prevOffset.current = prevHandleOffset;
     }
-    let nextOffset = prevHandleOffset === 0 ? oldOffset || minPos : 0;
+    let nextOffset;
+    if (allowsCollapsing) {
+      nextOffset = prevHandleOffset === 0 ? oldOffset : 0;
+    } else {
+      nextOffset = prevHandleOffset <= minPos ? oldOffset : minPos;
+    }
     callOnResize(nextOffset);
     callOnResizeEnd(nextOffset);
     return nextOffset;
