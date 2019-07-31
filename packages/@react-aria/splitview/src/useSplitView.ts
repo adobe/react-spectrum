@@ -45,6 +45,7 @@ export function useSplitView(props: SplitViewAriaProps, {containerState, handleS
     };
   }, [containerRef, containerState, primaryMinSize, primaryMaxSize, secondaryMinSize, secondaryMaxSize, orientation, size]);
 
+  // LTR vs RTL flip across the y axis, they never flip across the x axis
   let flipAxis;
   if (direction === 'rtl') {
     if (orientation === 'horizontal' && !reverse) {
