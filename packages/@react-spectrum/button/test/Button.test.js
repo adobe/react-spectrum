@@ -1,6 +1,7 @@
 import {ActionButton, Button, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
+import {triggerPress} from './utils';
 import V2Button from '@react/react-spectrum/Button';
 
 let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
@@ -28,7 +29,7 @@ describe('Button', function () {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
     let text = getByText('Click Me');
@@ -74,7 +75,7 @@ describe('Button', function () {
     let {getByRole} = render(<Component onClick={onPressSpy}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     if (Component === Button) {
       expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
@@ -92,13 +93,15 @@ describe('Button', function () {
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(button, {key: 'Enter', code: 13});
+    fireEvent.keyUp(button, {key: 'Enter', code: 13});
     expect(onPressSpy).toHaveBeenCalledTimes(2);
 
     fireEvent.keyDown(button, {key: ' ', code: 32});
+    fireEvent.keyUp(button, {key: ' ', code: 32});
     expect(onPressSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -114,7 +117,7 @@ describe('Button', function () {
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
     expect(button).toHaveAttribute('href', 'https://adobe.com');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -128,7 +131,7 @@ describe('Button', function () {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).not.toHaveBeenCalled();
   });
 

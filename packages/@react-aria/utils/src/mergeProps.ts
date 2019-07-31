@@ -1,9 +1,12 @@
 import {chain} from './chain';
 import classNames from 'classnames';
-import {HTMLAttributes} from 'react';
 
-export function mergeProps(a: HTMLAttributes<Element>, b: HTMLAttributes<Element>): HTMLAttributes<Element> {
-  let res = {};
+interface Props {
+  [key: string]: any
+}
+
+export function mergeProps<T extends Props, U extends Props>(a: T, b: U): Props {
+  let res: Props = {};
   for (let key in a) {
     // Chain events
     if (/^on[A-Z]/.test(key) && typeof a[key] === 'function' && typeof b[key] === 'function') {

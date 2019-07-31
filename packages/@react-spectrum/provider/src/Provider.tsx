@@ -2,8 +2,9 @@ import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
 import {filterDOMProps, shouldKeepSpectrumClassNames} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
+import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from './types';
-import React, {useContext, useEffect} from 'react';
+import React, {RefObject, useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useColorScheme, useScale} from './mediaQueries';
@@ -12,7 +13,7 @@ import {version} from '../package.json';
 
 const Context = React.createContext<ProviderContext | null>(null);
 
-export function Provider(props: ProviderProps) {
+export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<HTMLDivElement>) => {
   let prevContext = useProvider();
   let {
     theme = prevContext && prevContext.theme,
@@ -60,7 +61,7 @@ export function Provider(props: ProviderProps) {
   let domProps = filterDOMProps(otherProps);
   if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0) {
     contents = (
-      <ProviderWrapper {...props}>
+      <ProviderWrapper {...props} ref={ref}>
         {contents}
       </ProviderWrapper>
     );
@@ -69,15 +70,18 @@ export function Provider(props: ProviderProps) {
   return (
     <Context.Provider value={context}>
       <I18nProvider locale={locale}>
-        {contents}
+        <ModalProvider>
+          {contents}
+        </ModalProvider>
       </I18nProvider>
     </Context.Provider>
   );
-}
+});
 
-function ProviderWrapper({children, className, ...otherProps}: ProviderProps) {
+const ProviderWrapper = React.forwardRef(({children, className, ...otherProps}: ProviderProps, ref: RefObject<HTMLDivElement>) => {
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
+  let {modalProviderProps} = useModalProvider();
 
   let themeKey = Object.keys(theme[colorScheme])[0];
   let scaleKey = Object.keys(theme[scale])[0];
@@ -97,11 +101,11 @@ function ProviderWrapper({children, className, ...otherProps}: ProviderProps) {
   );
 
   return (
-    <div className={className} lang={locale} dir={direction} {...filterDOMProps(otherProps)}>
+    <div className={className} lang={locale} dir={direction} {...modalProviderProps} {...filterDOMProps(otherProps)} ref={ref}>
       {children}
     </div>
   );
-}
+});
 
 export function useProvider(): ProviderContext {
   return useContext(Context);

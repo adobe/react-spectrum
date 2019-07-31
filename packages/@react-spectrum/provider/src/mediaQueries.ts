@@ -1,5 +1,5 @@
 import {ColorScheme, Scale, Theme} from './types';
-import {useEffect, useState} from 'react';
+import {useMediaQuery} from '@react-spectrum/utils';
 
 export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {
   let matchesDark = useMediaQuery('(prefers-color-scheme: dark)');
@@ -25,31 +25,4 @@ export function useScale(theme: Theme): Scale {
   }
 
   return 'medium';
-}
-
-const supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
-function useMediaQuery(query: string) {
-  let [matches, setMatches] = useState(() =>
-    supportsMatchMedia
-      ? window.matchMedia(query).matches
-      : false
-  );
-
-  useEffect(() => {
-    if (!supportsMatchMedia) {
-      return;
-    }
-
-    let mq = window.matchMedia(query);
-    let onChange = () => {
-      setMatches(mq.matches);
-    };
-
-    mq.addListener(onChange);
-    return () => {
-      mq.removeListener(onChange);
-    };
-  }, [query]);
-
-  return matches;
 }

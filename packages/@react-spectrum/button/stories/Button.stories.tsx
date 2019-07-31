@@ -43,6 +43,8 @@ function render(props:ButtonProps = {}) {
     <div>
       <Button
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         {...props}>
         Default
       </Button>

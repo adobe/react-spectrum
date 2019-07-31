@@ -62,6 +62,8 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-button-line-height);
 
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 
   &:focus {
     outline: none;
