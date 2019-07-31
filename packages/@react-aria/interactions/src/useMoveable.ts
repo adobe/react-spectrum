@@ -1,5 +1,4 @@
 import {AllHTMLAttributes, MutableRefObject, useRef} from 'react';
-import {getOffset} from '@react-aria/utils';
 import {orientation, Coordinate} from '@react-types/shared';
 
 interface UseMoveableProps {

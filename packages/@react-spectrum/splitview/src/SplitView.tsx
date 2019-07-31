@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils/src/classNames';
 import React, {useRef} from 'react';
 import {SplitViewProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
+import {useLocale} from '@react-aria/i18n';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
 import './SplitView.styl';
@@ -26,6 +27,7 @@ const CURSORS = {
 };
 
 export function SplitView(props: SplitViewProps) {
+  let {direction} = useLocale();
   let completeProps = Object.assign(
     {},
     {
@@ -58,13 +60,16 @@ export function SplitView(props: SplitViewProps) {
     containerProps,
     handleProps,
     primaryPaneProps
-  } = useSplitView({
-    containerRef,
-    ...completeProps
-  }, {
-    containerState,
-    handleState
-  });
+  } = useSplitView(
+    {
+      containerRef,
+      ...completeProps
+    }, {
+      containerState,
+      handleState
+    },
+      direction
+  );
 
   let dimension = ORIENTATIONS[orientation];
   let secondaryPane = Number(!primaryPane);

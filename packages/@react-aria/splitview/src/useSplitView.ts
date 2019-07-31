@@ -5,7 +5,7 @@ import {useMoveable} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
 
-export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState): AriaSplitViewProps {
+export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState, direction): AriaSplitViewProps {
   let {
     containerRef,
     id: providedId,
@@ -46,10 +46,18 @@ export function useSplitView(props: SplitViewAriaProps, {containerState, handleS
   }, [containerRef, containerState, primaryMinSize, primaryMaxSize, secondaryMinSize, secondaryMaxSize, orientation, size]);
 
   let flipAxis;
-  if (orientation === 'horizontal' && reverse) {
-    flipAxis = 'y';
-  } else if (orientation === 'vertical' && reverse) {
-    flipAxis = 'x';
+  if (direction === 'rtl') {
+    if (orientation === 'horizontal' && !reverse) {
+      flipAxis = 'y';
+    } else if (orientation === 'vertical' && reverse) {
+      flipAxis = 'x';
+    }
+  } else {
+    if (orientation === 'horizontal' && reverse) {
+      flipAxis = 'y';
+    } else if (orientation === 'vertical' && reverse) {
+      flipAxis = 'x';
+    }
   }
   let draggableProps = useMoveable({
     containerRef,
