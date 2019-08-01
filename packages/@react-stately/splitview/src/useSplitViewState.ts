@@ -54,14 +54,9 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
   let [dragging, setDragging] = useState(false);
   let realTimeDragging = useRef(false);
   let [hovered, setHovered] = useState(false);
-  let [offset, setOffset] = useControlledState(primarySize, defaultPrimarySize, () => {});
+  let [offset, setOffset] = useControlledState(primarySize, defaultPrimarySize, onResize);
   let prevOffset = useRef(offset);
 
-  let callOnResize = (value) => {
-    if (onResize && value !== offset) {
-      onResize(value);
-    }
-  };
   let callOnResizeEnd = (value) => {
     if (onResizeEnd && value !== offset) {
       onResizeEnd(value);
@@ -83,7 +78,6 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
   let setOffsetValue = (value:point) => {
     let coord = orientation === 'horizontal' ? value.x : value.y;
     let nextOffset = boundOffset(coord);
-    callOnResize(nextOffset);
     if (!realTimeDragging.current) {
       callOnResizeEnd(nextOffset);
     }
@@ -105,7 +99,6 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     }
     setOffset(prevHandleOffset => {
       let nextOffset = boundOffset(prevHandleOffset + 10);
-      callOnResize(nextOffset);
       callOnResizeEnd(nextOffset);
       return nextOffset;
     });
@@ -117,7 +110,6 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     }
     setOffset(prevHandleOffset => {
       let nextOffset = boundOffset(prevHandleOffset - 10);
-      callOnResize(nextOffset);
       callOnResizeEnd(nextOffset);
       return nextOffset;
     });
@@ -125,14 +117,12 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
 
   let decrementToMin = () => {
     let nextOffset = allowsCollapsing ? 0 : minPos;
-    callOnResize(nextOffset);
     callOnResizeEnd(nextOffset);
     setOffset(nextOffset);
   };
 
   let incrementToMax = () => {
     let nextOffset = maxPos;
-    callOnResize(nextOffset);
     callOnResizeEnd(nextOffset);
     setOffset(nextOffset);
   };
@@ -148,7 +138,6 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     } else {
       nextOffset = prevHandleOffset <= minPos ? oldOffset : minPos;
     }
-    callOnResize(nextOffset);
     callOnResizeEnd(nextOffset);
     return nextOffset;
   });

@@ -101,7 +101,7 @@ storiesOf('SplitView', module)
   .add(
     'primarySize: 0',
     () => (
-      <SplitView className="storybook-SplitView" allowsCollapsing primarySize={0}>
+      <SplitView className="storybook-SplitView" allowsCollapsing primarySize={0} onResize={action('onResize')} onResizeEnd={action('onResizeEnd')}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>
@@ -110,7 +110,7 @@ storiesOf('SplitView', module)
   .add(
     'primarySize: 400',
     () => (
-      <SplitView className="storybook-SplitView" primarySize={400}>
+      <SplitView className="storybook-SplitView" primarySize={400} onResize={action('onResize')} onResizeEnd={action('onResizeEnd')}>
         <div>Primary</div>
         <div>Secondary</div>
       </SplitView>

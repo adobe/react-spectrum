@@ -1,8 +1,8 @@
 import {useCallback, useRef, useState} from 'react';
 
 export function useControlledState(
-  value: any, 
-  defaultValue: any, 
+  value: any,
+  defaultValue: any,
   onChange: (value: any, ...args: any) => void
 ): [any, (value: any, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
@@ -17,19 +17,34 @@ export function useControlledState(
 
   ref.current = isControlled;
 
-  let setValue = useCallback((value, ...args) => {
+  let onChangeCaller = useCallback((value, ...args) => {
     if (onChange) {
-      if (stateRef.current !== value) { 
+      if (stateRef.current !== value) {
         onChange(value, ...args);
       }
     }
-    
-    if (!isControlled) {
-      setStateValue(value);
-      stateRef.current = value;
-    }
-    
+
+    stateRef.current = value;
   }, [isControlled, onChange]);
+
+  let setValue = (value, ...args) => {
+    if (typeof value === 'function') {
+      let wrapFunc = (oldValue, ...rest) => {
+        let interceptedValue = value(oldValue, ...rest);
+        onChangeCaller(interceptedValue, ...args);
+        if (!isControlled) {
+          return interceptedValue;
+        }
+        return oldValue;
+      };
+      setStateValue(wrapFunc);
+    } else {
+      if (!isControlled) {
+        setStateValue(value);
+      }
+      onChangeCaller(value, ...args);
+    }
+  };
 
   // If a controlled component's value prop changes, we need to update stateRef
   if (isControlled) {
@@ -37,6 +52,6 @@ export function useControlledState(
   } else {
     value = stateValue;
   }
-  
+
   return [value, setValue];
 }
