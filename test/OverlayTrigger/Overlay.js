@@ -31,6 +31,7 @@ import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import {sleep} from '../utils';
+import Tooltip from '../../src/Tooltip/js/Tooltip';
 
 describe('Overlay', () => {
   const noop = function () {};
@@ -233,5 +234,41 @@ describe('Overlay', () => {
     assert(onHideInner.notCalled);
 
     overlay.unmount();
+  });
+
+  it('should hide all top-most overlays of different role', async () => {
+    const clock = sinon.useFakeTimers();
+    const onHideFirst = sinon.spy();
+    const onHideSecond = sinon.spy();
+    const tree = mount(
+      <Overlay show>
+        <OverlayTrigger onHide={onHideFirst} trigger="click">
+          <OverlayTrigger onHide={onHideSecond} trigger="click">
+            <Button />
+            <Popover />
+          </OverlayTrigger>
+          <Tooltip />
+        </OverlayTrigger>
+      </Overlay>
+    );
+
+    const event = new window.MouseEvent('click', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    document.querySelector('button').dispatchEvent(event);
+    clock.tick(100);
+    assert(onHideFirst.notCalled);
+    assert(onHideSecond.notCalled);
+    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+    assert.equal(document.querySelectorAll('.spectrum-Tooltip').length, 1);
+
+    document.dispatchEvent(event);
+    clock.tick(100);
+    assert(onHideFirst.calledOnce);
+    assert(onHideSecond.calledOnce);
+    clock.restore();
+    tree.unmount();
   });
 });
