@@ -2,8 +2,8 @@ import {chain} from '@react-aria/utils';
 import {DOMProps, orientation} from '@react-types/shared';
 import {KeyboardEvent, MouseEvent, MouseEventHandler, MutableRefObject, useEffect, useRef} from 'react';
 import {SplitViewState} from '@react-stately/splitview';
-import {useMoveable} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useMoveable} from '@react-aria/interactions';
 
 export interface SplitViewAriaProps {
   id?: string,

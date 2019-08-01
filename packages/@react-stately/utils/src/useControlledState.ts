@@ -17,17 +17,17 @@ export function useControlledState(
 
   ref.current = isControlled;
 
-  let onChangeCaller = useCallback((value, ...args) => {
-    if (onChange) {
-      if (stateRef.current !== value) {
-        onChange(value, ...args);
+  let setValue = useCallback((value, ...args) => {
+    let onChangeCaller = (value, ...args) => {
+      if (onChange) {
+        if (stateRef.current !== value) {
+          onChange(value, ...args);
+        }
       }
-    }
 
-    stateRef.current = value;
-  }, [isControlled, onChange]);
+      stateRef.current = value;
+    };
 
-  let setValue = (value, ...args) => {
     if (typeof value === 'function') {
       let wrapFunc = (oldValue, ...rest) => {
         let interceptedValue = value(oldValue, ...rest);
@@ -44,7 +44,7 @@ export function useControlledState(
       }
       onChangeCaller(value, ...args);
     }
-  };
+  }, [isControlled, onChange]);
 
   // If a controlled component's value prop changes, we need to update stateRef
   if (isControlled) {
