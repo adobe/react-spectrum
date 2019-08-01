@@ -1,7 +1,41 @@
-import {Coordinate} from '@react-types/shared';
-import {SplitViewState, SplitViewStatelyProps} from '@react-types/shared/src';
+import {Dispatch, SetStateAction, useRef, useState} from 'react';
+import {orientation, point} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+
+export interface SplitViewStatelyProps {
+  allowsCollapsing?: boolean,
+  onResize?: (primarySize: number) => void,
+  onResizeEnd?: (primarySize: number) => void,
+  primarySize?: number,
+  defaultPrimarySize?: number,
+  orientation?: orientation
+}
+
+export interface SplitViewHandleState {
+  offset: number,
+  dragging: boolean,
+  hovered: boolean
+  setOffset: (value: point) => void,
+  setDragging: (value: boolean) => void,
+  setHover: (value: boolean) => void,
+  increment: (axis: orientation) => void,
+  decrement: (axis: orientation) => void,
+  incrementToMax: () => void,
+  decrementToMin: () => void,
+  collapseToggle: () => void
+}
+
+export interface SplitViewContainerState {
+  minPos: number,
+  maxPos: number,
+  setMinPos: Dispatch<SetStateAction<number>>,
+  setMaxPos: Dispatch<SetStateAction<number>>
+}
+
+export interface SplitViewState {
+  handleState: SplitViewHandleState,
+  containerState: SplitViewContainerState
+}
 
 const COLLAPSE_THRESHOLD = 50;
 
@@ -46,7 +80,7 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     return dividerPosition;
   };
 
-  let setOffsetValue = (value:Coordinate) => {
+  let setOffsetValue = (value:point) => {
     let coord = orientation === 'horizontal' ? value.x : value.y;
     let nextOffset = boundOffset(coord);
     callOnResize(nextOffset);

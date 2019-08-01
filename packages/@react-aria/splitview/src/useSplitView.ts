@@ -1,9 +1,43 @@
-import {AriaSplitViewProps, SplitViewAriaProps, SplitViewState} from '@react-types/shared';
 import {chain} from '@react-aria/utils';
-import {Coordinate} from '@react-types/shared';
+import {DOMProps, orientation} from '@react-types/shared';
+import {SplitViewState} from '@react-stately/splitview';
 import {useMoveable} from '@react-aria/interactions';
-import {useEffect, useRef} from 'react';
+import {KeyboardEvent, MouseEvent, MouseEventHandler, MutableRefObject, useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
+
+export interface SplitViewAriaProps {
+  id?: string,
+  onMouseDown?: MouseEventHandler,
+  allowsResizing?: boolean,
+  allowsCollapsing?: boolean,
+  orientation?: orientation,
+  primaryPane?: 0 | 1,
+  primaryMinSize?: number,
+  primaryMaxSize?: number,
+  secondaryMinSize?: number,
+  secondaryMaxSize?: number,
+  'aria-label'?: string,
+  'aria-labelledby'?: string,
+  containerRef?: MutableRefObject<HTMLDivElement>
+}
+
+export interface SplitViewContainerProps extends DOMProps {
+  ref?: MutableRefObject<HTMLDivElement>
+}
+
+export interface SplitViewHandleProps extends DOMProps {
+  onMouseDown?: (event: MouseEvent<HTMLElement>) => void,
+  onMouseEnter?: (event: MouseEvent<HTMLElement>) => void,
+  onMouseOut?: (event: MouseEvent<HTMLElement>) => void,
+  onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void,
+  ref?: MutableRefObject<HTMLDivElement>
+}
+
+export interface AriaSplitViewProps {
+  containerProps: SplitViewContainerProps,
+  handleProps: SplitViewHandleProps,
+  primaryPaneProps: DOMProps
+}
 
 export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState, direction): AriaSplitViewProps {
   let {

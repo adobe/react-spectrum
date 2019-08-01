@@ -1,12 +1,12 @@
 import {AllHTMLAttributes, MutableRefObject, useRef} from 'react';
-import {orientation, Coordinate} from '@react-types/shared';
+import {flipAxis, orientation, point} from '@react-types/shared';
 
 interface UseMoveableProps {
   containerRef: MutableRefObject<HTMLElement>,
-  flipAxis?: 'x' | 'y' | 'xy',
+  flipAxis?: flipAxis,
   onHover?: (hovered: boolean) => void,
   onDrag?: (dragging: boolean) => void,
-  onPositionChange?: (relativePosition: Coordinate) => void,
+  onPositionChange?: (relativePosition: point) => void,
   onIncrement?: (axis: orientation) => void,
   onDecrement?: (axis: orientation) => void,
   onIncrementToMax?: () => void,
@@ -19,8 +19,8 @@ interface UseMoveableProps {
 // or as keyboard events
 
 export function useMoveable({containerRef, flipAxis, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle}: UseMoveableProps): AllHTMLAttributes<HTMLElement> {
-  let getPosition = (e):Coordinate => ({x: e.clientX, y: e.clientY});
-  let calculateCoordinateDistances = (element, position:Coordinate):Coordinate => {
+  let getPosition = (e):point => ({x: e.clientX, y: e.clientY});
+  let calculateCoordinateDistances = (element, position:point):point => {
     let rect = element.getBoundingClientRect();
     switch (flipAxis) {
       case 'x':
@@ -33,13 +33,13 @@ export function useMoveable({containerRef, flipAxis, onHover, onDrag, onPosition
         return {x: position.x - rect.left, y: position.y - rect.top};
     }
   };
-  let getNextDistance = (e):Coordinate => {
+  let getNextDistance = (e):point => {
     let mousePosition = getPosition(e);
     let nextOffset = calculateCoordinateDistances(containerRef.current, mousePosition);
     return nextOffset;
   };
   let dragging = useRef<boolean>(false);
-  let prevPosition = useRef<Coordinate>({x: 0, y: 0});
+  let prevPosition = useRef<point>({x: 0, y: 0});
 
   let onMouseDragged = (e) => {
     e.preventDefault();

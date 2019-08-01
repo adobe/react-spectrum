@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils/src/classNames';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
-import {SplitViewProps} from '@react-types/shared';
+import {SplitViewProps} from '@react-types/splitview';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useSplitView} from '@react-aria/splitview';
@@ -32,7 +32,7 @@ export function SplitView(props: SplitViewProps) {
   let completeProps = Object.assign(
     {},
     {
-      orientation:'horizontal',
+      orientation: 'horizontal',
       allowsResizing: true,
       primaryPane: 0,
       defaultPrimarySize: 304,

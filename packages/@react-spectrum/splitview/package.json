@@ -13,7 +13,7 @@
     "@react-aria/splitview": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/splitview": "^3.0.0",
-    "@react-types/shared": "^3.0.0"
+    "@react-types/splitview": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

@@ -1,6 +1,5 @@
 export * from './dom';
 export * from './inputs';
 export * from './selection';
-export * from './splitview';
+export * from './positions';
 export * from './dnd';
-export * from './moveable';
