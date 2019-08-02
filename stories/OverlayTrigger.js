@@ -94,6 +94,10 @@ storiesOf('OverlayTrigger', module)
   .add(
     'with: "block" element and placement "bottom left"',
     () => render('popover', {trigger: 'click', placement: 'bottom left'}, {style: {width: '100%', minWidth: '100%'}})
+  )
+  .add(
+    'tooltip and popover on same element',
+    () => renderMultiple()
   );
 
 function render(type, props = {}, targetProps = {}) {
@@ -147,5 +151,39 @@ function render(type, props = {}, targetProps = {}) {
       <Button label="Click Me" variant="primary" />
       <Tooltip open>Notes from a tooltip</Tooltip>
     </OverlayTrigger>
+  );
+}
+
+function renderMultiple() {
+  return (
+    <div style={{display: 'flex', justifyContent: 'space-around'}}>
+      <OverlayTrigger trigger="hover" placement="bottom">
+        <div style={{width: 'fit-content'}}>
+          <OverlayTrigger trigger="click" placement="bottom">
+            <Button label="Click me" variant="primary" />
+            <Popover>Popover 1</Popover>
+          </OverlayTrigger>
+        </div>
+        <Tooltip>tooltip 1</Tooltip>
+      </OverlayTrigger>
+      <OverlayTrigger trigger="hover" placement="bottom">
+        <div style={{width: 'fit-content'}}>
+          <OverlayTrigger trigger="click" placement="bottom">
+            <Button label="Click Me" variant="primary" />
+            <Popover>Popover 2</Popover>
+          </OverlayTrigger>
+        </div>
+        <Tooltip>tooltip 2</Tooltip>
+      </OverlayTrigger>
+
+      <OverlayTrigger trigger="click" placement="bottom">
+        <OverlayTrigger trigger="click" placement="top">
+          <Button label="Tooltip + Popover" variant="primary" />
+          <Popover>Popover 3</Popover>
+        </OverlayTrigger>
+        <Tooltip>tooltip 3</Tooltip>
+      </OverlayTrigger>
+
+    </div>
   );
 }
