@@ -16,8 +16,6 @@ interface EditableCollectionViewOptions extends CollectionViewOptions {
   selectionMode?: 'replace' | 'toggle',
   keyboardMode?: 'selection' | 'focus',
   selectOnMouseUp?: boolean,
-  canReorderItems?: boolean,
-  canDeleteItems?: boolean,
   dragDelegate?: DragDelegate,
   dropDelegate?: DropDelegate
 }
@@ -60,15 +58,6 @@ export class EditableCollectionView extends CollectionView {
    */
   selectOnMouseUp: boolean;
 
-  /**
-   * Whether the user can reorder items via drag and drop. Default is `false`.
-   */
-  canReorderItems: boolean;
-
-  /**
-   * Whether the user can delete items using the keyboard. Default is `false`.
-   */
-  canDeleteItems: boolean;
   dragDelegate?: DragDelegate;
   dropDelegate?: DropDelegate;
   protected _data: EditableCollection;
@@ -92,8 +81,6 @@ export class EditableCollectionView extends CollectionView {
     this.selectionMode = options.selectionMode || 'replace';
     this.keyboardMode = options.keyboardMode || (this.allowsSelection ? 'selection' : 'focus');
     this.selectOnMouseUp = options.selectOnMouseUp || false;
-    this.canReorderItems = options.canReorderItems || false;
-    this.canDeleteItems = options.canDeleteItems || false;
     this.dragDelegate = options.dragDelegate;
     this.dropDelegate = options.dropDelegate;
 
@@ -386,7 +373,7 @@ export class EditableCollectionView extends CollectionView {
       return DropOperation.NONE;
     }
 
-    if (!this.canReorderItems || !this.dragDelegate) {
+    if (!this.dragDelegate) {
       return DropOperation.NONE;
     }
 
@@ -438,10 +425,6 @@ export class EditableCollectionView extends CollectionView {
   }
 
   private _shouldAcceptDrop(event: DragEvent) {
-    if (this.canReorderItems && this._dragTarget) {
-      return true;
-    }
-
     if (this.dropDelegate) {
       // Ask the delegate if it has a shouldAcceptDrop method.
       if (this.dropDelegate.shouldAcceptDrop && !this.dropDelegate.shouldAcceptDrop(event)) {
@@ -607,29 +590,9 @@ export class EditableCollectionView extends CollectionView {
 
     this._setDropTarget(null);
 
-    // TODO: only if canReorderItems??
-    let dragTarget = this._dragTarget;
-    if (dragTarget && dropTarget.dropPosition === DropPosition.BETWEEN && this.canReorderItems) {
-      requestAnimationFrame(() => {
-        if (this.dropDelegate && typeof this.dropDelegate.onReorder === 'function') {
-          this.dropDelegate.onReorder(dragTarget, dropTarget, dropOperation)
-        } else {
-          // TODO: perform reorder and emit onChange?
-          // this.dataSource.performReorder(dragTarget, dropTarget, dropOperation, this._selection.selectedKeys);
-          let data = this._data;
-          let index = dropTarget.index;
-          for (let key in this._selection.selectedKeys) {
-            data = data.move(key, index++);
-          }
-
-          this.emit('change', data);
-        }
-      });
-    } else {
-      requestAnimationFrame(() => {
-        this.dropDelegate.onDrop(dropTarget, event.dataTransfer, dropOperation);
-      });
-    }
+    requestAnimationFrame(() => {
+      this.dropDelegate.onDrop(dropTarget, event.dataTransfer, dropOperation);
+    });
   }
 
   // MARK: copy and paste support
@@ -710,9 +673,10 @@ export class EditableCollectionView extends CollectionView {
 
       case 46: // delete
       case 8: // backspace
-        if (this.canDeleteItems) {
+        // if (this.canDeleteItems) {
+          // TODO
           event.preventDefault();
-        }
+        // }
         return this.delete();
     }
   }
@@ -875,16 +839,10 @@ export class EditableCollectionView extends CollectionView {
    */
   delete() {
     let selectedKeys = this._selection.selectedKeys;
-    let shouldDelete = this.canDeleteItems
-      && (!this.delegate.shouldDeleteItems || this.delegate.shouldDeleteItems(selectedKeys));
 
-    if (shouldDelete) {
-      let data = this._data;
-      for (let key of selectedKeys) {
-        data = data.remove(key);
-      }
-
-      this.emit('change', data);
-    }
+    // This does not emit onChange because you typically want to update a server or some
+    // other external data source, rather than just call setState. It is a data change, not
+    // only a state change.
+    this.emit('delete', selectedKeys);
   }
 }

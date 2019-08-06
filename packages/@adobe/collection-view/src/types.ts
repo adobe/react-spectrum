@@ -81,11 +81,14 @@ interface CollectionViewProps {
 //   getContentSize(): Size
 // }
 
-// interface ChangeEvent {
-//   type: 'selection' | 'reorder' | 'delete',
-//   keys: Set<string>,
+// interface SelectionChangeEvent {
+//   type: 'selection',
+//   addedKeys: Set<string>,
+//   removedKeys: Set<string>,
 //   collection: EditableCollection
 // }
+
+// type ChangeEvent = SelectionChangeEvent;
 
 interface ScrollViewDelegate {
   getVisibleRect(): Rect;
