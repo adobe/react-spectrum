@@ -1,7 +1,7 @@
 import {ButtonBase} from './Button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -10,7 +10,7 @@ export interface LogicButtonProps extends ButtonBase {
   variant?: 'and' | 'or'
 }
 
-export function LogicButton(props: LogicButtonProps) {
+export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefObject<HTMLElement>) => {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -21,20 +21,23 @@ export function LogicButton(props: LogicButtonProps) {
     className,
     ...otherProps
   } = props;
-  let {buttonProps} = useButton(props);
+  ref = ref || useRef();
+  let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
         {...filterDOMProps(otherProps)}
         {...buttonProps}
+        ref={ref}
         className={
           classNames(
             styles,
             'spectrum-LogicButton',
             {
               [`spectrum-LogicButton--${variant}`]: variant,
-              'is-disabled': isDisabled
+              'is-disabled': isDisabled,
+              'is-active': isPressed
             },
             className
           )
@@ -44,4 +47,4 @@ export function LogicButton(props: LogicButtonProps) {
       </ElementType>
     </FocusRing>
   );
-}
+});

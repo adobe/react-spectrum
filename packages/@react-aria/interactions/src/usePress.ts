@@ -1,4 +1,6 @@
-import {HTMLAttributes, useMemo, useRef} from 'react';
+import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {PressResponderContext} from './context';
 
 export interface PressEvent {
   type: 'pressstart' | 'pressend' | 'press',
@@ -6,11 +8,16 @@ export interface PressEvent {
 }
 
 export interface PressProps {
+  isPressed?: boolean,
   isDisabled?: boolean,
   onPress?: (e: PressEvent) => void,
   onPressStart?: (e: PressEvent) => void,
   onPressEnd?: (e: PressEvent) => void,
   onPressChange?: (isPressed: boolean) => void
+}
+
+export interface PressHookProps extends PressProps {
+  ref: RefObject<HTMLElement>
 }
 
 interface PressState {
@@ -21,8 +28,38 @@ interface PressState {
   isOverTarget: boolean
 }
 
-export function usePress(props: PressProps) {
-  let {onPress, onPressChange, onPressStart, onPressEnd, isDisabled} = props;
+function usePressResponderContext(props: PressHookProps): PressHookProps {
+  // Consume context from <PressResponder> and merge with props.
+  let context = useContext(PressResponderContext);
+  if (context) {
+    props = mergeProps(context, props) as PressHookProps;
+    context.register();
+  }
+
+  // Sync ref from <PressResponder> with ref passed to usePress.
+  useEffect(() => {
+    if (context && context.ref) {
+      context.ref.current = props.ref.current;
+      return () => {
+        context.ref.current = null;
+      };
+    }
+  }, [context, props.ref]);
+
+  return props;
+}
+
+export function usePress(props: PressHookProps) {
+  let {
+    onPress,
+    onPressChange,
+    onPressStart,
+    onPressEnd,
+    isDisabled,
+    isPressed: isPressedProp
+  } = usePressResponderContext(props);
+
+  let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
@@ -48,6 +85,8 @@ export function usePress(props: PressProps) {
       if (onPressChange) {
         onPressChange(true);
       }
+
+      setPressed(true);
     };
 
     let triggerPressEnd = (e, wasPressed = true) => {
@@ -65,6 +104,8 @@ export function usePress(props: PressProps) {
       if (onPressChange) {
         onPressChange(false);
       }
+
+      setPressed(false);
 
       if (onPress && wasPressed) {
         onPress({
@@ -240,6 +281,7 @@ export function usePress(props: PressProps) {
   }, [onPress, onPressStart, onPressEnd, onPressChange, isDisabled]);
 
   return {
+    isPressed: isPressedProp || isPressed,
     pressProps
   };
 }
