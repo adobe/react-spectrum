@@ -2,12 +2,14 @@
   "name": "@react-spectrum/splitview",
   "version": "3.0.0",
   "main": "src/index.ts",
+  "private": true,
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@react-aria/splitview": "^3.0.0",

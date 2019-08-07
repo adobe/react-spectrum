@@ -93,7 +93,6 @@ export function useMoveable({containerRef, flipAxis, onHover, onDrag, onPosition
   };
 
   let onKeyDown = (e) => {
-    e.preventDefault();
     switch (e.key) {
       case 'Left':
       case 'ArrowLeft':
@@ -131,16 +130,19 @@ export function useMoveable({containerRef, flipAxis, onHover, onDrag, onPosition
         if (onDecrementToMin) {
           onDecrementToMin();
         }
+        e.preventDefault();
         break;
       case 'End':
         if (onIncrementToMax) {
           onIncrementToMax();
         }
+        e.preventDefault();
         break;
       case 'Enter':
         if (onCollapseToggle) {
           onCollapseToggle();
         }
+        e.preventDefault();
         break;
     }
   };

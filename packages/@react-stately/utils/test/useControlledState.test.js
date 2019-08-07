@@ -11,7 +11,7 @@ describe('useControlledState tests', function () {
     act(() => setValue('newValue'));
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
-    expect(onChangeSpy).toHaveBeenCalledWith('newValue');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
 
     act(() => setValue('newValue2'));
     [value, setValue] = result.current;
@@ -30,7 +30,7 @@ describe('useControlledState tests', function () {
     act(() => setValue('newValue'));
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
-    expect(onChangeSpy).toHaveBeenCalledWith('newValue');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
   });
 
   it('can handle callback setValue behavior', () => {
@@ -45,7 +45,7 @@ describe('useControlledState tests', function () {
     }));
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
-    expect(onChangeSpy).toHaveBeenCalledWith('newValue');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
   });
 
   it('can handle controlled setValue behavior', () => {
@@ -54,10 +54,18 @@ describe('useControlledState tests', function () {
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+
     act(() => setValue('newValue'));
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
-    expect(onChangeSpy).toHaveBeenCalledWith('newValue');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+
+    onChangeSpy.mockClear();
+
+    act(() => setValue('controlledValue'));
+    [value, setValue] = result.current;
+    expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it('can handle controlled callback setValue behavior', () => {
@@ -66,13 +74,24 @@ describe('useControlledState tests', function () {
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('controlledValue');
       return 'newValue';
     }));
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
-    expect(onChangeSpy).toHaveBeenCalledWith('newValue');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+
+    onChangeSpy.mockClear();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('controlledValue');
+      return 'controlledValue';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it('will console warn if the programmer tries to switch from controlled to uncontrolled', () => {
@@ -92,7 +111,7 @@ describe('useControlledState tests', function () {
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
     rerender({value: undefined, defaultValue: 'defaultValue', onChange: onChangeSpy});
-    expect(consoleWarnSpy).toHaveBeenCalledWith('WARN: A component changed from controlled to uncontrolled.');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from controlled to uncontrolled.');
   });
 
   it('will console warn if the programmer tries to switch from uncontrolled to controlled', () => {
@@ -112,6 +131,6 @@ describe('useControlledState tests', function () {
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
     rerender({value: 'controlledValue', defaultValue: 'defaultValue', onChange: onChangeSpy});
-    expect(consoleWarnSpy).toHaveBeenCalledWith('WARN: A component changed from uncontrolled to controlled.');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
   });
 });

@@ -1,3 +1,4 @@
+import {direction} from '@react-types/shared';
 import React, {ReactNode, useContext} from 'react';
 
 interface ProviderProps {
@@ -7,7 +8,7 @@ interface ProviderProps {
 
 interface LocaleContext {
   locale: string,
-  direction: 'ltr' | 'rtl'
+  direction: direction
 }
 
 // @ts-ignore

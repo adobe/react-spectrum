@@ -1,12 +1,12 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
+import rspStyles from './SplitView.css';
 import {SplitViewProps} from '@react-types/splitview';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
-import './SplitView.styl';
 
 
 const ORIENTATIONS = {
@@ -58,7 +58,6 @@ export function SplitView(props: SplitViewProps) {
   let {containerState, handleState} = useSplitViewState(completeProps);
 
   let {
-    containerProps,
     handleProps,
     primaryPaneProps
   } = useSplitView(
@@ -111,7 +110,6 @@ export function SplitView(props: SplitViewProps) {
 
   return (
     <div
-      {...containerProps}
       ref={containerRef}
       className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}
       data-testid="splitview">
@@ -121,14 +119,14 @@ export function SplitView(props: SplitViewProps) {
           {...handleProps}
           className={classNames(styles,
             'spectrum-SplitView-splitter',
-            `react-spectrum-SplitView--${orientation}`,
             {
               'is-draggable': allowsResizing,
               'is-hovered': handle.hovered,
               'is-active': handle.dragging,
               'is-collapsed-start': handle.offset === 0 && primaryPane === 0,
               'is-collapsed-end': handle.offset === 0 && primaryPane === 1
-            }
+            },
+            classNames(rspStyles, `react-spectrum-SplitView--${orientation}`)
           )}>
           {allowsResizing ? <div className={classNames(styles, 'spectrum-SplitView-gripper')} /> : null}
         </div>

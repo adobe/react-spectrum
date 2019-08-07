@@ -1,8 +1,7 @@
-import {chain} from '@react-aria/utils';
-import {DOMProps, orientation} from '@react-types/shared';
-import {KeyboardEvent, MouseEvent, MouseEventHandler, MutableRefObject, useEffect, useRef} from 'react';
+import {AllHTMLAttributes, MouseEventHandler, MutableRefObject, useEffect, useRef} from 'react';
+import {chain, useId} from '@react-aria/utils';
+import {direction, orientation} from '@react-types/shared';
 import {SplitViewState} from '@react-stately/splitview';
-import {useId} from '@react-aria/utils';
 import {useMoveable} from '@react-aria/interactions';
 
 export interface SplitViewAriaProps {
@@ -21,25 +20,12 @@ export interface SplitViewAriaProps {
   containerRef?: MutableRefObject<HTMLDivElement>
 }
 
-export interface SplitViewContainerProps extends DOMProps {
-  ref?: MutableRefObject<HTMLDivElement>
-}
-
-export interface SplitViewHandleProps extends DOMProps {
-  onMouseDown?: (event: MouseEvent<HTMLElement>) => void,
-  onMouseEnter?: (event: MouseEvent<HTMLElement>) => void,
-  onMouseOut?: (event: MouseEvent<HTMLElement>) => void,
-  onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void,
-  ref?: MutableRefObject<HTMLDivElement>
-}
-
 export interface AriaSplitViewProps {
-  containerProps: SplitViewContainerProps,
-  handleProps: SplitViewHandleProps,
-  primaryPaneProps: DOMProps
+  handleProps: AllHTMLAttributes<HTMLElement>,
+  primaryPaneProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState, direction): AriaSplitViewProps {
+export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState, textDirection: direction): AriaSplitViewProps {
   let {
     containerRef,
     id: providedId,
@@ -81,7 +67,7 @@ export function useSplitView(props: SplitViewAriaProps, {containerState, handleS
 
   // LTR vs RTL flip across the y axis, they never flip across the x axis
   let flipAxis;
-  if (direction === 'rtl') {
+  if (textDirection === 'rtl') {
     if (orientation === 'horizontal' && !reverse) {
       flipAxis = 'y';
     } else if (orientation === 'vertical' && reverse) {
@@ -120,9 +106,6 @@ export function useSplitView(props: SplitViewAriaProps, {containerState, handleS
   let tabIndex = allowsResizing ? 0 : undefined;
 
   return {
-    containerProps: {
-      id
-    },
     handleProps: {
       tabIndex,
       'aria-valuenow': ariaValueNow,

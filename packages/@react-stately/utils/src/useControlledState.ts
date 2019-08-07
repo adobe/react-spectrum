@@ -24,8 +24,9 @@ export function useControlledState(
           onChange(value, ...args);
         }
       }
-
-      stateRef.current = value;
+      if (!isControlled) {
+        stateRef.current = value;
+      }
     };
 
     if (typeof value === 'function') {
