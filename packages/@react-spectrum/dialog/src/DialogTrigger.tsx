@@ -1,7 +1,7 @@
 import {DialogContext} from './context';
-import {mergeProps} from '@react-aria/utils';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef, useState} from 'react';
 import {useMediaQuery} from '@react-spectrum/utils';
 
@@ -53,12 +53,6 @@ export function DialogTrigger(props: DialogTriggerProps) {
   useOverlayTrigger({ref: triggerRef, onClose, isOpen});
 
   let [trigger, content] = React.Children.toArray(children);
-  trigger = React.cloneElement(trigger, mergeProps(trigger.props, {
-    ref: triggerRef,
-    onPress,
-    isSelected: isOpen && type !== 'modal' // todo: unsafe...
-  }));
-
   let renderOverlay = () => {
     switch (type) {
       case 'popover':
@@ -91,7 +85,12 @@ export function DialogTrigger(props: DialogTriggerProps) {
 
   return (
     <Fragment>
-      {trigger}
+      <PressResponder
+        ref={triggerRef}
+        onPress={onPress}
+        isPressed={isOpen && type !== 'modal'}>
+        {trigger}
+      </PressResponder>
       <DialogContext.Provider value={context}>
         {renderOverlay()}
       </DialogContext.Provider>

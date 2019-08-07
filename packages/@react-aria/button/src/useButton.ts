@@ -1,8 +1,8 @@
 import {chain, mergeProps} from '@react-aria/utils';
 import {JSXElementConstructor, SyntheticEvent} from 'react';
-import {PressProps, usePress} from '@react-aria/interactions';
+import {PressHookProps, usePress} from '@react-aria/interactions';
 
-interface AriaButtonProps extends PressProps {
+interface AriaButtonProps extends PressHookProps {
   elementType?: string | JSXElementConstructor<any>,
   /**
    * for backwards compatibility
@@ -12,11 +12,13 @@ interface AriaButtonProps extends PressProps {
   tabIndex?: number,
   isSelected?: boolean | 'false' | 'true',
   'aria-expanded'?: boolean | 'false' | 'true',
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  [others: string]: any
 }
 
 interface ButtonAria {
-  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>
+  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  isPressed: boolean
 }
 
 export function useButton({
@@ -31,7 +33,8 @@ export function useButton({
   tabIndex,
   isSelected,
   'aria-expanded': ariaExpanded,
-  'aria-haspopup': ariaHasPopup
+  'aria-haspopup': ariaHasPopup,
+  ref
 }: AriaButtonProps): ButtonAria {
   let additionalProps;
   if (elementType !== 'button') {
@@ -43,16 +46,18 @@ export function useButton({
     };
   }
 
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     // Safari does not focus buttons automatically when interacting with them, so do it manually
     onPressStart: chain(onPressStart, (e) => e.target.focus()),
     onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
     onPressChange,
     onPress,
-    isDisabled
+    isDisabled,
+    ref
   });
 
   return {
+    isPressed,
     buttonProps: mergeProps(pressProps, {
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       disabled: isDisabled,

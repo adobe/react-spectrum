@@ -2,7 +2,7 @@ import {ButtonBase} from './Button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -13,7 +13,8 @@ export interface ActionButtonProps extends ButtonBase {
   holdAffordance?: boolean
 }
 
-export const ActionButton = React.forwardRef((props: ActionButtonProps, ref) => {
+export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: RefObject<HTMLElement>) => {
+  ref = ref || useRef();
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -26,7 +27,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref) => 
     holdAffordance,
     ...otherProps
   } = props;
-  let {buttonProps} = useButton(props);
+  let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -40,6 +41,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref) => 
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
+              'is-active': isPressed,
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
