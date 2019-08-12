@@ -208,4 +208,82 @@ describe('DialogTrigger', function () {
 
     expect(rootProviderRef.current).not.toHaveAttribute('aria-hidden');
   });
+
+  it('can be controlled', async function () {
+    function Test({isOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+
+    rerender(<Test isOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    rerender(<Test isOpen={false} onOpenChange={onOpenChange} />);
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
+
+  it('can be uncontrolled with defaultOpen', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
 });

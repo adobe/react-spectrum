@@ -2,13 +2,17 @@ import {DialogContext} from './context';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useRef, useState} from 'react';
+import React, {Fragment, ReactElement, useRef} from 'react';
+import {useControlledState} from '@react-stately/utils';
 import {useMediaQuery} from '@react-spectrum/utils';
 
 interface DialogTriggerProps extends PositionProps {
   children: ReactElement[],
   type?: 'modal' | 'popover' | 'tray',
   mobileType?: 'modal' | 'tray',
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 export function DialogTrigger(props: DialogTriggerProps) {
@@ -25,7 +29,7 @@ export function DialogTrigger(props: DialogTriggerProps) {
     type = mobileType;
   }
 
-  let [isOpen, setOpen] = useState(false); // todo controlled state
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
   let containerRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
