@@ -77,6 +77,7 @@ describe('TagField', () => {
     assert.equal(onChange.callCount, 2);
     assert.deepEqual(onChange.getCall(1).args[0], ['foo', 'hi']);
   });
+
   it('should allow check if the option is string or array of object tags', () => {
     const onChange = sinon.spy();
     const OBJECT_OPTIONS = [
@@ -92,17 +93,29 @@ describe('TagField', () => {
     assert.equal(tree.prop('value'), 'test');
 
     // Add one
-    tree.simulate('select', 'Chocolate');
+    tree.simulate('select', OBJECT_OPTIONS[0]);
     assert.equal(tree.prop('value'), '');
 
     let values = tree.find(TagList).prop('values');
     assert.equal(values.length, 1);
     assert.equal(values[0], 'Chocolate');
+    assert.equal(tree.find(TagList).dive().find(Tag).length, 1);
 
     assert.equal(onChange.callCount, 1);
     assert.deepEqual(onChange.getCall(0).args[0], ['Chocolate']);
 
+    // Try adding a second copy, it shouldn't get added, duplicates is false by default
+    tree.simulate('select', OBJECT_OPTIONS[0]);
+    assert.equal(tree.prop('value'), '');
+
+    values = tree.find(TagList).prop('values');
+    assert.equal(values.length, 1);
+    assert.equal(values[0], 'Chocolate');
+    assert.equal(tree.find(TagList).dive().find(Tag).length, 1);
+
+    assert.equal(onChange.callCount, 1);
   });
+
   it('should not allow empty tags', () => {
     const tree = shallow(<TagField />);
 
@@ -132,13 +145,32 @@ describe('TagField', () => {
     assert.equal(tree.find(TagList).prop('values').length, 1);
   });
 
+  it('should not allow duplicates by default with renderTag', () => {
+    let tree = shallow(<TagField renderTag={() => null} />);
+
+    let option = {label: 'foo', id: 1};
+    tree.simulate('select', option);
+    tree.simulate('select', option);
+
+    assert.equal(tree.find(TagList).prop('children').length, 1);
+  });
+
   it('should allow duplicates with allowDuplicates prop', () => {
-    const tree = shallow(<TagField allowDuplicates />);
+    let tree = shallow(<TagField allowDuplicates />);
 
     tree.simulate('select', 'foo');
     tree.simulate('select', 'foo');
 
     assert.equal(tree.find(TagList).prop('values').length, 2);
+  });
+
+  it('should allow object duplicates with allowDuplicates and renderTag', () => {
+    let tree = shallow(<TagField allowDuplicates renderTag={() => null} />);
+
+    tree.simulate('select', {label: 'foo', id: 1});
+    tree.simulate('select', {label: 'foo', id: 1});
+
+    assert.equal(tree.find(TagList).prop('children').length, 2);
   });
 
   it('should allow removing tags', () => {
@@ -177,6 +209,7 @@ describe('TagField', () => {
     tree.setProps({value: ['one', 'two']});
     assert.equal(tree.find(TagList).prop('values').length, 2);
   });
+
   it('focus should not be lost when deleting the last indexed value', async () => {
     const onChange = sinon.spy();
     const tree = mount(<TagField onChange={onChange} />);
@@ -197,8 +230,8 @@ describe('TagField', () => {
     tree.unmount();
 
   });
-  it('focus should not be lost when removing the last indexed value when controlled', async () => {
 
+  it('focus should not be lost when removing the last indexed value when controlled', async () => {
     const tree = mount(<TagField value={['one', 'two']} placeholder="Tags" />);
     // Place focus on the last tag
     tree.find('.spectrum-Tags-item').last().getDOMNode().focus();
@@ -211,8 +244,8 @@ describe('TagField', () => {
     // There should be 0 tags left. The textfield should have focus
     assert.equal(tree.find('input.react-spectrum-TagField-input').getDOMNode(), document.activeElement);
     tree.unmount();
-
   });
+
   it('should not show placeholder text if there is one or more tags', () => {
     const tree = shallow(<TagField placeholder="this is bat country" />);
     assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
@@ -236,6 +269,7 @@ describe('TagField', () => {
     const tree = mount(<TagField value={[{label: 'one', meta: '1'}]} renderTag={renderTag} />);
 
     assert.equal(tree.find('.spectrum-Tags-itemLabel').text(), 'one1');
+    tree.unmount();
   });
 });
 
