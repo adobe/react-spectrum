@@ -1,4 +1,5 @@
 import StatusLight from '@react/react-spectrum/StatusLight';
+import StatusLightExample from '../helpers/StatusLightExample';
 
 ## Overview
 
@@ -10,42 +11,151 @@ A status light gives you a visual cue of the current status. Spectrum dictates t
 
 ## Variant
 
-<StatusLight variant="celery">celery</StatusLight>
-<StatusLight variant="yellow">yellow</StatusLight>
-<StatusLight variant="fuchsia">fuchsia</StatusLight>
-<StatusLight variant="indigo">indigo</StatusLight>
-<StatusLight variant="seafoam">seafoam</StatusLight>
-<StatusLight variant="chartreuse">chartreuse</StatusLight>
-<StatusLight variant="magenta">magenta</StatusLight>
-<StatusLight variant="purple">purple</StatusLight>
-<StatusLight variant="neutral">neutral</StatusLight>
-<StatusLight variant="active">active</StatusLight>
-<StatusLight variant="positive">positive</StatusLight>
-<StatusLight variant="notice">notice</StatusLight>
-<StatusLight variant="negative">negative</StatusLight>
-<StatusLight variant="archived">archived</StatusLight>
+### Semantic colors
+
+When status lights have a semantic meaning, they should use _semantic colors_.
+
+Use the appropriate color to indicate status as follows.
+
+#### neutral
+
+**Gray:** Archived, Deleted, Paused, Draft, Not Started, Ended.
+
+<StatusLight variant="neutral">Paused</StatusLight>
 
 ```jsx
-<StatusLight variant="celery">celery</StatusLight>
-<StatusLight variant="yellow">yellow</StatusLight>
-<StatusLight variant="fuchsia">fuchsia</StatusLight>
-<StatusLight variant="indigo">indigo</StatusLight>
-<StatusLight variant="seafoam">seafoam</StatusLight>
-<StatusLight variant="chartreuse">chartreuse</StatusLight>
-<StatusLight variant="magenta">magenta</StatusLight>
-<StatusLight variant="purple">purple</StatusLight>
-<StatusLight variant="neutral">neutral</StatusLight>
-<StatusLight variant="active">active</StatusLight>
-<StatusLight variant="positive">positive</StatusLight>
-<StatusLight variant="notice">notice</StatusLight>
-<StatusLight variant="negative">negative</StatusLight>
-<StatusLight variant="archived">archived</StatusLight>
+<StatusLight variant="neutral">Paused</StatusLight>
+```
+
+#### positive
+
+**Green:** Approved, Complete, Success, New, Purchased, Licensed
+
+<StatusLight variant="positive">Approved</StatusLight>
+
+```jsx
+<StatusLight variant="positive">Approved</StatusLight>
+```
+
+#### notice
+
+**Orange:** Needs Approval, Pending, Scheduled, Syncing, Indexing, Processing
+
+<StatusLight variant="notice">Needs Approval</StatusLight>
+
+```jsx
+<StatusLight variant="notice">Needs Approval</StatusLight>
+```
+
+#### negative
+
+**Red:** Error, Alert, Rejected, Failed.
+
+<StatusLight variant="negative">Rejected</StatusLight>
+
+```jsx
+<StatusLight variant="negative">Rejected</StatusLight>
+```
+
+#### info
+
+**Blue:** Active, In Use, Live, Published.
+
+<StatusLight variant="info">Active</StatusLight>
+
+```jsx
+<StatusLight variant="info">Active</StatusLight>
+```
+
+#### active (deprecated)
+
+**Note:** the **active** variant is deprecated; use **info** instead.
+
+<StatusLight variant="active">Active</StatusLight>
+
+```jsx
+<StatusLight variant="active">Active</StatusLight>
+```
+
+#### archived (deprecated)
+
+**Note:** the **archived** variant is deprecated; use **neutral** instead.
+
+<StatusLight variant="archived">Archived</StatusLight>
+
+```jsx
+<StatusLight variant="archived">Archived</StatusLight>
+```
+
+### Label colors
+
+When status lights are used to color code categories and labels commonly found in data visualization, they use _label colors_.
+The ideal usage for these is when there are 8 or fewer categories or labels being color coded.
+Use them in the following order to ensure the greatest possible color differences for multiple forms of color blindness:
+
+<StatusLight variant="indigo">Indigo</StatusLight>
+<StatusLight variant="celery">Celery</StatusLight>
+<StatusLight variant="magenta">Magenta</StatusLight>
+<StatusLight variant="yellow">Yellow</StatusLight>
+<StatusLight variant="fuchsia">Fuchsia</StatusLight>
+<StatusLight variant="seafoam">Seafoam</StatusLight>
+<StatusLight variant="chartreuse">Chartreuse</StatusLight>
+<StatusLight variant="purple">Purple</StatusLight>
+
+```jsx
+<StatusLight variant="indigo">Indigo</StatusLight>
+<StatusLight variant="celery">Celery</StatusLight>
+<StatusLight variant="magenta">Magenta</StatusLight>
+<StatusLight variant="yellow">Yellow</StatusLight>
+<StatusLight variant="fuchsia">Fuchsia</StatusLight>
+<StatusLight variant="seafoam">Seafoam</StatusLight>
+<StatusLight variant="chartreuse">Chartreuse</StatusLight>
+<StatusLight variant="purple">Purple</StatusLight>
 ```
 
 ## Disabled
 
+Use `disabled` prop to match the state of a containing element. Note that the `disabled` prop alters the visual style of the StatusLight, but does not convey any state information to assistive technology.
+
 <StatusLight variant="yellow" disabled>yellow</StatusLight>
 
 ```jsx
 <StatusLight variant="yellow" disabled>yellow</StatusLight>
+```
+
+## Accessibility
+
+The visual cue provided by the status light is insufficient to comply with [WCAG 2.1 Success Criterion 1.4.1 on the Use of Color](https://www.w3.org/TR/WCAG21/#use-of-color), which requires that "color is not used as the only visual means of conveying information, indicating an action, prompting a response, or distinguishing a visual element." If StatusLight communicates a state, like "Approved" or "Failed", that state must be included as part of the label.
+
+### Using role="status"
+
+In cases where the status changes at runtime, it may be appropriate to add `role="status"` so that the status change will be announced politely by assistive technology.
+When using `role="status"`, be sure to provide appropriate context for the status change in the label for the StatusLight. A status change that announces "Approved" without meaningful context would not be helpful.
+Also, use caution when adding `role="status"` in cases where multiple status lights can update at once. For example, with a large list of files that change status when deployed, a single announcement when all files have deployed would be preferable to the verbosity of each file status announcing individually.
+
+<StatusLightExample />
+
+```jsx
+import React from 'react';
+import StatusLight from '@react/react-spectrum/StatusLight';
+import Switch from '@react/react-spectrum/Switch';
+import '@react/react-spectrum/utils/style/index.css';
+
+export default class StatusLightExample extends React.Component {
+  state = {
+    on: false
+  };
+  render() {
+    const {
+      on
+    } = this.state;
+    return (<div>
+      <StatusLight role="status" variant={on ? 'positive' : 'notice'}>
+        <VisuallyHidden>Pull Request </VisuallyHidden>
+        {on ? 'Approved' : 'Needs Approval'}
+      </StatusLight>
+      <Switch label="Toggle Status" onChange={(checked => this.setState({on: checked})).bind(this)} />
+    </div>);
+  }
+}
 ```

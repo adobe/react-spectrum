@@ -75,3 +75,15 @@ You can also set **Wait** component to be indeterminate (true by default) or det
 ```jsx
 <Wait indeterminate={false} value={42} />
 ```
+
+## Accessibility
+
+The **Wait** component uses the aria **progressbar** role. It will not be read automatically by screen readers, and will only be voiced when navigating to it. 
+If changes in the value should be communicated to screen readers, the aria-live attribute may be added. 
+Be aware that when using aria-live each time the value changes it will be communicated to a screen reader user, which can be quite verbose, so this should be used with caution.
+
+<Wait indeterminate={false} value={42} aria-live="polite"/>
+
+```jsx
+<Wait indeterminate={false} value={42} aria-live="polite" />
+```

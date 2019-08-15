@@ -183,8 +183,9 @@ export default class ButtonGroup extends Component {
     const role = this.getChildRole();
     const onClick = (!disabled ? this.handleSelect.bind(this, button.props) : null);
     const allowedVariant = ALLOWED_BUTTON_VARIANTS[button.props.variant];
+    const classes = classNames('spectrum-ButtonGroup-item', button.props.className);
     return {
-      className: classNames('spectrum-ButtonGroup-item'),
+      className: classes,
       selected: selected,
       disabled: disabled,
       variant: allowedVariant ? button.props.variant : 'action',

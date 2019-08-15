@@ -33,7 +33,8 @@ export default function DropdownButton({alignRight, onClose, onOpen, onSelect, c
         icon={<More alt="…" />}
         {...props} />
       <Menu
-        className={menuClassName}>
+        className={menuClassName}
+        dropdownMenu>
         {children}
       </Menu>
     </Dropdown>
@@ -69,7 +70,7 @@ DropdownButton.propTypes = {
   /**
    * Custom classname to apply to the Menu
    */
-  menuClassName: PropTypes.bool,
+  menuClassName: PropTypes.string,
 
   /**
    * Whether to activate using a long click

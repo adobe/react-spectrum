@@ -1,0 +1,10 @@
+{
+  "name": "@spectrum-icons/build-tools",
+  "version": "3.0.0",
+  "description": "Unpublished build tools to help our monorepo",
+  "main": "generateIcons.js",
+  "private": true,
+  "dependencies": {
+    "fs-extra": "^8.0.1"
+  }
+}

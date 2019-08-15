@@ -36,7 +36,8 @@ module.exports = {
     'browser': true,
     'node': true,
     'mocha': true,
-    'es6': true
+    'es6': true,
+    'jest': true
   },
   globals: {
     'importSpectrumCSS': 'readonly',
@@ -157,12 +158,12 @@ module.exports = {
     'jsx-a11y/media-has-caption': ERROR,
     'jsx-a11y/mouse-events-have-key-events': ERROR,
     'jsx-a11y/no-access-key': ERROR,
-    'jsx-a11y/no-autofocus': [
-      ERROR,
-      {
-        ignoreNonDOM: true
-      }
-    ],
+    // 'jsx-a11y/no-autofocus': [
+    //   ERROR,
+    //   {
+    //     ignoreNonDOM: true
+    //   }
+    // ],
     'jsx-a11y/no-distracting-elements': ERROR,
     'jsx-a11y/no-interactive-element-to-noninteractive-role': ERROR,
     'jsx-a11y/no-noninteractive-element-interactions': [

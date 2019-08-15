@@ -1,5 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../src';
+import Add from '@spectrum-icons/workflow/Add';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -7,6 +8,14 @@ storiesOf('Button/ActionButton', module)
   .add(
     'default',
     () => render()
+  )
+  .add(
+    'icon',
+    () => render({icon: <Add />})
+  )
+  .add(
+    'icon only',
+    () => renderNoText({icon: <Add />})
   )
   .add(
     'holdAffordance',
@@ -35,6 +44,20 @@ function render(props = {}) {
         {...props}>
         Disabled
       </ActionButton>
+    </div>
+  );
+}
+
+function renderNoText(props = {}) {
+  return (
+    <div>
+      <ActionButton
+        onPress={action('press')}
+        {...props} />
+      <ActionButton
+        onPress={action('press')}
+        isDisabled
+        {...props} />
     </div>
   );
 }

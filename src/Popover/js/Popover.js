@@ -151,6 +151,7 @@ export default class Popover extends Component {
           )
         }
         role="presentation"
+        data-testid="popover"
         {...filterDOMProps(otherProps)}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}
@@ -161,7 +162,7 @@ export default class Popover extends Component {
             variant={variant} />
         }
         {content}
-        {isDialog && <div className="spectrum-Popover-tip" style={arrowStyle} />}
+        {isDialog && <div className="spectrum-Popover-tip" style={arrowStyle} data-testid="tip" />}
       </div>
     );
   }

@@ -74,7 +74,7 @@ let columns = [
 
 A data source provides the data for a TableView to display, and responds to user initiated actions such as drag and drop.
 Data sources can be shared across multiple types of views that display collections of data, e.g. TableView and a grid or list view.
-Data provided by a data source is two dimensional: items are grouped into sections. This can be useful, for example, if you 
+Data provided by a data source is two dimensional: items are grouped into sections. This can be useful, for example, if you
 want to display headers above a group of items.
 
 There is a base class for data sources that can be used by TableView called [ListDataSource](/classes/ListDataSource), which supports asynchronous
@@ -102,8 +102,8 @@ These methods support loading data in a single section. If you want to support m
 `performLoad` and `performLoadMore` methods instead to perform your own insertion logic to ensure items are grouped into the
 correct sections.
 
-When data in the data source changes, perhaps in response to some external event such as a server update, the data source 
-should emit events. The table view listens for these events and updates its views as necessary, optionally with an animation. 
+When data in the data source changes, perhaps in response to some external event such as a server update, the data source
+should emit events. The table view listens for these events and updates its views as necessary, optionally with an animation.
 There are helper methods as part of the base data source class that you can call to emit these events and update the data.
 You can also use transactions to group multiple updates together into a single animation. See the [API docs](/classes/ListDataSource) for details.
 
@@ -125,9 +125,9 @@ you should enable the `sortable` property on your column definition. This allows
 the sort direction arrow icon in the column header when sorting by that column.
 
 Once this is enabled, you need to respond to sort changes and update the data in the TableView. By default, TableView reloads
-the data using the data source's `load` method, to which it passes a sort descriptor. A sort descriptor is an object with 
+the data using the data source's `load` method, to which it passes a sort descriptor. A sort descriptor is an object with
 `column` and `direction` properties. The `column` is a column object as provided to TableView's `columns` prop, and `direction`
-is either `TableView.SORT_ASCENDING` or `TableView.SORT_DESCENDING`. You can use this information to make an API call to 
+is either `TableView.SORT_ASCENDING` or `TableView.SORT_DESCENDING`. You can use this information to make an API call to
 retrieve sorted data, or re-sort the data locally.
 
 If you need to sync the current sorting information with other UIs, you can listen for the `onSortChange` event, which is passed
@@ -153,12 +153,12 @@ let columns = [
 
 ## Selection
 
-TableView supports multiple selection out of the box, displayed using checkboxes on each row. Selection is enabled by default, 
+TableView supports multiple selection out of the box, displayed using checkboxes on each row. Selection is enabled by default,
 but you can disable it by setting the `allowsSelection` prop to `false`. If you want to only allow selecting one item at a time,
 set `allowsMultipleSelection` to `false`.
 
 To handle selection changes, you can use the `onSelectionChange` prop. This will be passed a list of `IndexPath` objects, which store
-the indexes of the items that are currently selected. An `IndexPath` has `section` and `index` properties, which represent the indices 
+the indexes of the items that are currently selected. An `IndexPath` has `section` and `index` properties, which represent the indices
 in the two dimensional array of items provided by the data source.
 
 To set the selection programmatically, provide the `selectedIndexPaths` prop to the TableView. This should be an array of `IndexPath` objects,
@@ -176,7 +176,7 @@ like the one passed to `onSelectionChange`.
 TableView supports both dragging rows from a table (a drag source), as well as dropping files or other objects into a table (a drop target).
 It uses the native HTML5 drag and drop API, so it is easy to integrate with other drag and drop solutions that other components might use.
 You can provide custom data to be passed with the drag, which will be received by the drop target, and provide a custom view to be
-displayed under the cursor while dragging. Drops into a TableView can be between rows (inserting into a list), onto a row (for example adding 
+displayed under the cursor while dragging. Drops into a TableView can be between rows (inserting into a list), onto a row (for example adding
 items into rows representing folders), or onto the entire table body (adding items into the current view). Items can also be optionally
 reordered by dragging by enabling the `canReorderItems` prop.
 
@@ -227,7 +227,7 @@ data source.
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   prepareDragData(dragTarget, dataTransfer, selectedIndexPaths) {
     // Add plain text representation
     dataTransfer.setData('text/plain', 'some text');
@@ -258,7 +258,7 @@ e.g. uploading dropped files, or performing other custom logic, you can override
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   itemsForDrop(dropTarget, dataTransfer) {
     // parse your custom format
     return JSON.parse(dataTransfer.getData('my-custom-format'));
@@ -280,10 +280,10 @@ With `dropPosition="between"`, the dragged items are inserted as rows above the 
 If you drag past the last row in the table into the empty space, the items are inserted at the end.
 
 With `dropPosition="on"`, the dragged items are dropped into the target. This is indicated by highlighting the target row with a blue outline.
-If you drag past the last row, the items are dropped into the table as a whole. This is indicated by highlighting the entire table with a 
+If you drag past the last row, the items are dropped into the table as a whole. This is indicated by highlighting the entire table with a
 blue outline.
 
-In order to get more fine grained control over this behavior, e.g. allowing drops on some items but not others, you can override 
+In order to get more fine grained control over this behavior, e.g. allowing drops on some items but not others, you can override
 the `getDropTarget` method of the data source to override the default target.
 
 The following example shows how you might allow dropping onto folders but not files, e.g. in a file manager. Assuming `dropPosition="on"`
@@ -292,7 +292,7 @@ has already been set, the `getDropTarget` method is used to override the target 
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   getDropTarget(target) {
     // Get the row object
     let row = this.sections[target.indexPath.section][target.indexPath.index];
@@ -310,7 +310,35 @@ class MyDataSource extends ListDataSource {
 
 ## Accessibility
 
-TableView implements the aria grid design pattern. It handles multiselection, row focusing, and is fully keyboard accessibile out of the box.
+TableView implements the [WAI-ARIA 1.1 Data Grid](https://www.w3.org/TR/wai-aria-practices/#grid) design pattern. It handles multiselection, item focusing, and is keyboard accessible out of the box.
+The TableView does not have a keyboard or screen reader accessible equivalent for drag and drop operations, and drag and drop should never be the only way to interact with a feature, such as manipulating the order or hierarchy of items in the TableView or moving items between TableViews.
+
+### Labelling
+
+A TableView can be labelled to provide context for Accessibility using either the `aria-label` or `aria-labelledby` prop.
+
+#### Using `aria-label`
+
+```jsx
+<TableView
+  aria-label="An important collection of data"
+  columns={columns}
+  dataSource={new MyDataSource}
+  renderCell={renderCell} />
+```
+
+#### Using `aria-labelledby`
+
+```jsx
+<Heading size={5} id="tableview-heading-id">
+  An important collection of data
+</Heading>
+<TableView
+  aria-labelledby="tableview-heading-id"
+  columns={columns}
+  dataSource={new MyDataSource}
+  renderCell={renderCell} />
+```
 
 ## Internationalization
 

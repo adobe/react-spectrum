@@ -177,11 +177,13 @@ const DOMProps = {
  */
 const propRe = /^((data|aria)-.*)$/;
 
-export function filterDOMProps(props): React.HTMLAttributes<HTMLElement> {
+// Filters out all props that aren't valid DOM props or are user defined via override prop obj.
+export function filterDOMProps(props, override = {}): React.HTMLAttributes<HTMLElement> {
   const filterProps = {};
+  const propFilter = Object.assign({}, DOMProps, override);
 
   for (const prop in props) {
-    if (props.hasOwnProperty(prop) && (DOMProps[prop] || propRe.test(prop))) {
+    if (props.hasOwnProperty(prop) && (propFilter[prop] || propRe.test(prop))) {
       filterProps[prop] = props[prop];
     }
   }

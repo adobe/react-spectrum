@@ -5,8 +5,8 @@ import ListDataSource from '@react/react-spectrum/ListDataSource';
 
 A **GridView** displays a list of content arranged in a grid layout, including fixed grid, waterfall (masonry), and
 gallery (horizontal masonry) layouts. GridView works hand in hand with the [Card](/components/Card) component to display customizable items.
-It supports many advanced features like infinite scrolling, drag and drop both into and out of the grid view, multiple 
-selection, keyboard navigation, and more. It is designed to scale to collections of any size using a virtual scroller 
+It supports many advanced features like infinite scrolling, drag and drop both into and out of the grid view, multiple
+selection, keyboard navigation, and more. It is designed to scale to collections of any size using a virtual scroller
 that only renders the currently visible items into the DOM.
 
 ## Example
@@ -35,10 +35,10 @@ There are three layouts supported by GridView:
 
 * A **fixed grid layout**, where every item is the same size.
 * A **waterfall layout**, sometimes called a masonry, where the items are arranged into equal width columns but can have variable heights.
-* A **gallery layout**, which is similar to a waterfall layout, but arranged horizontally into rows. In a gallery layout, both the 
+* A **gallery layout**, which is similar to a waterfall layout, but arranged horizontally into rows. In a gallery layout, both the
   widths and heights are variable, and are adjusted automatically to ensure the items always fill all available space.
 
-You can see all of these layouts in the example above. GridView supports switching the layout on demand and can perform an animated 
+You can see all of these layouts in the example above. GridView supports switching the layout on demand and can perform an animated
 transition between the layouts as well.
 
 Each of these layouts have several settings to control various aspects of the layout, such as minimum and maximum sizes, spacing information,
@@ -46,7 +46,7 @@ and more. However, there are some defaults defined by spectrum that most applica
 
 To control the layout, just pass the `layout` prop to the GridView. There are two ways:
 
-1. If you just want the default settings, pass the constructor of the layout you want to use to the `layout` prop, 
+1. If you just want the default settings, pass the constructor of the layout you want to use to the `layout` prop,
    e.g. `layout={GalleryLayout}`.
 
    ```jsx
@@ -57,8 +57,8 @@ To control the layout, just pass the `layout` prop to the GridView. There are tw
       layout={GalleryLayout} />
    ```
 
-2. If you want to override some layout settings, pass an instance of the layout to the `layout` prop, e.g. 
-   `layout={this.layout}`. You should initialize `this.layout` in the constructor of your 
+2. If you want to override some layout settings, pass an instance of the layout to the `layout` prop, e.g.
+   `layout={this.layout}`. You should initialize `this.layout` in the constructor of your
    component to avoid constructing a new instance on every render.
 
    ```jsx
@@ -87,7 +87,7 @@ To control the layout, just pass the `layout` prop to the GridView. There are tw
 
 A data source provides the data for a GridView to display, and responds to user initiated actions such as drag and drop.
 Data sources can be shared across multiple types of views that display collections of data, e.g. TableView and GridView.
-Data provided by a data source is two dimensional: items are grouped into sections. This can be useful, for example, if you 
+Data provided by a data source is two dimensional: items are grouped into sections. This can be useful, for example, if you
 want to display headers above a group of items.
 
 There is a base class for data sources that can be used by GridView called [ListDataSource](/classes/ListDataSource), which supports asynchronous
@@ -114,8 +114,8 @@ These methods support loading data in a single section. If you want to support m
 `performLoad` and `performLoadMore` methods instead to perform your own insertion logic to ensure items are grouped into the
 correct sections.
 
-When data in the data source changes, perhaps in response to some external event such as a server update, the data source 
-should emit events. The grid view listens for these events and updates its views as necessary, optionally with an animation. 
+When data in the data source changes, perhaps in response to some external event such as a server update, the data source
+should emit events. The grid view listens for these events and updates its views as necessary, optionally with an animation.
 There are helper methods as part of the base data source class that you can call to emit these events and update the data.
 You can also use transactions to group multiple updates together into a single animation. See the [API docs](/classes/ListDataSource) for details.
 
@@ -133,12 +133,12 @@ function renderItem(data) {
 
 ## Selection
 
-GridView supports multiple selection out of the box, typically displayed using checkboxes on each item. Selection is enabled by default, 
+GridView supports multiple selection out of the box, typically displayed using checkboxes on each item. Selection is enabled by default,
 but you can disable it by setting the `allowsSelection` prop to `false`. If you want to only allow selecting one item at a time,
 set `allowsMultipleSelection` to `false`.
 
 To handle selection changes, you can use the `onSelectionChange` prop. This will be passed a list of `IndexPath` objects, which store
-the indexes of the items that are currently selected. An `IndexPath` has `section` and `index` properties, which represent the indices 
+the indexes of the items that are currently selected. An `IndexPath` has `section` and `index` properties, which represent the indices
 in the two dimensional array of items provided by the data source.
 
 To set the selection programmatically, provide the `selectedIndexPaths` prop to the GridView. This should be an array of `IndexPath` objects,
@@ -156,7 +156,7 @@ like the one passed to `onSelectionChange`.
 GridView supports both dragging items from a grid view (a drag source), as well as dropping files or other objects into a grid view (a drop target).
 It uses the native HTML5 drag and drop API, so it is easy to integrate with other drag and drop solutions that other components might use.
 You can provide custom data to be passed with the drag, which will be received by the drop target, and provide a custom view to be
-displayed under the cursor while dragging. Drops into a GridView can be between items (inserting into a list), onto an item (for example adding 
+displayed under the cursor while dragging. Drops into a GridView can be between items (inserting into a list), onto an item (for example adding
 items into items representing folders), or onto the entire grid view (adding items into the current view). Items can also be optionally
 reordered by enabling the `canReorderItems` prop.
 
@@ -164,6 +164,7 @@ The following example shows how items can be dragged from one GridView to anothe
 
 <div style={{display: 'flex', justifyContent: 'space-between'}}>
   <GridView
+    aria-label="Select images to send"
     layout={GridLayout}
     cardSize="S"
     dataSource={new TestDS}
@@ -171,6 +172,7 @@ The following example shows how items can be dragged from one GridView to anothe
     className="example-tableview"
     canDragItems />
   <GridView
+    aria-label="Images selected to send"
     layout={GridLayout}
     cardSize="S"
     dataSource={new TestDS([])}
@@ -184,12 +186,14 @@ The following example shows how items can be dragged from one GridView to anothe
 
 ```jsx
 <GridView
+  aria-label="Select images to send"
   layout={GridLayout}
   cardSize="S"
   dataSource={dataSource1}
   renderItem={renderItem}
   canDragItems />
 <GridView
+  aria-label="Images selected to send"
   layout={GridLayout}
   cardSize="S"
   dataSource={dataSource2}
@@ -227,7 +231,7 @@ data source.
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   prepareDragData(dragTarget, dataTransfer, selectedIndexPaths) {
     // Add plain text representation
     dataTransfer.setData('text/plain', 'some text');
@@ -258,7 +262,7 @@ e.g. uploading dropped files, or performing other custom logic, you can override
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   itemsForDrop(dropTarget, dataTransfer) {
     // parse your custom format
     return JSON.parse(dataTransfer.getData('my-custom-format'));
@@ -280,10 +284,10 @@ With `dropPosition="between"`, the dragged items are inserted as items before th
 If you drag past the last item in the grid view into the empty space, the items are inserted at the end.
 
 With `dropPosition="on"`, the dragged items are dropped into the target. This is indicated by highlighting the target item with a blue outline.
-If you drag past the last item, the items are dropped into the grid view as a whole. This is indicated by highlighting the entire grid view with a 
+If you drag past the last item, the items are dropped into the grid view as a whole. This is indicated by highlighting the entire grid view with a
 blue outline.
 
-In order to get more fine grained control over this behavior, e.g. allowing drops on some items but not others, you can override 
+In order to get more fine grained control over this behavior, e.g. allowing drops on some items but not others, you can override
 the `getDropTarget` method of the data source to override the default target.
 
 The following example shows how you might allow dropping onto folders but not files, e.g. in a file manager. Assuming `dropPosition="on"`
@@ -292,7 +296,7 @@ has already been set, the `getDropTarget` method is used to override the target 
 ```javascript
 class MyDataSource extends ListDataSource {
   // ...
-  
+
   getDropTarget(target) {
     // Get the item object
     let item = this.sections[target.indexPath.section][target.indexPath.index];
@@ -310,9 +314,36 @@ class MyDataSource extends ListDataSource {
 
 ## Accessibility
 
-GridView implements the aria grid design pattern. It handles multiselection, item focusing, and is fully keyboard accessibile out of the box.
+GridView implements the [WAI-ARIA 1.1 Layout Grid](https://www.w3.org/TR/wai-aria-practices/#grid) design pattern. It handles multiselection, item focusing, and is keyboard accessibile out of the box.
+The GridView does not have a keyboard or screen reader accessible equivalent for drag and drop operations, and drag and drop should never be the only way to interact with a feature, such as manipulating the order of items in the GridView or moving items between GridViews.
+
+### Labelling
+
+A GridView can be labelled to provide context for Accessibility using either the `aria-label` or `aria-labelledby` prop.
+
+#### Using `aria-label`
+
+```jsx
+<GridView
+    aria-label="Image gallery"
+    layout={GridLayout}
+    dataSource={new TestDS}
+    renderItem={renderItem} />
+```
+
+#### Using `aria-labelledby`
+
+```jsx
+<Heading size={5} id="gridview-heading-id">
+  Image Gallery
+</Heading>
+<GridView
+    aria-labelledby="gridview-heading-id"
+    layout={GridLayout}
+    dataSource={new TestDS}
+    renderItem={renderItem} />
+```
 
 ## Internationalization
 
-To internationalize a GridView, you should provide localized content to the items displayed in the grid. GridView itself has no content of its
-own to localize.
+To internationalize a GridView, you should provide localized content to the items displayed in the grid.

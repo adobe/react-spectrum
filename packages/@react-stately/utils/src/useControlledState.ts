@@ -31,9 +31,12 @@ export function useControlledState(
     
   }, [isControlled, onChange]);
 
-  if (!isControlled) {
+  // If a controlled component's value prop changes, we need to update stateRef
+  if (isControlled) {
+    stateRef.current = value;
+  } else {
     value = stateValue;
   }
-
+  
   return [value, setValue];
 }

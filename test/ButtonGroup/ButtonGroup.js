@@ -53,6 +53,14 @@ const toolButtonProps = {
   ]
 };
 
+const classButtonProps = {
+  children: [
+    <Button className="myClass" label="React" value="react" icon={<CheckmarkCircle />} />,
+    <Button label="Add" value="add" icon={<Add />} />
+  ]
+};
+
+
 const selectedValue = [
   'react',
   'add',
@@ -90,6 +98,11 @@ describe('ButtonGroup', () => {
   it('supports an item being selected', () => {
     const tree = shallow(<ButtonGroup {...defaultProps} value={selectedValue[0]} />);
     assert.equal(tree.find({selected: true}).length, 1);
+  });
+
+  it('supports passing class to child node', () => {
+    const tree = shallow(<ButtonGroup {...classButtonProps} />);
+    assert.equal(tree.find('.myClass').length, 1);
   });
 
   it('supports an item being selected', () => {

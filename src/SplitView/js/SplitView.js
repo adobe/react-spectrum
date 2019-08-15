@@ -137,7 +137,8 @@ export default class SplitView extends React.Component {
       <div
         className="spectrum-SplitView-pane"
         style={{[dimension]: dividerPosition}}
-        id={this.primaryId}>
+        id={this.primaryId}
+        data-testid="primarypane">
         {children[primaryPane]}
       </div>
     );
@@ -145,7 +146,8 @@ export default class SplitView extends React.Component {
     let secondary = (
       <div
         className="spectrum-SplitView-pane"
-        style={{flex: 1}}>
+        style={{flex: 1}}
+        data-testid="secondarypane">
         {children[secondaryPane]}
       </div>
     );
@@ -176,7 +178,8 @@ export default class SplitView extends React.Component {
         className={classNames('spectrum-SplitView', `spectrum-SplitView--${orientation}`, className)}
         onMouseMove={resizable ? this.onMouseMove : null}
         onMouseDown={resizable ? this.onMouseDown : null}
-        onMouseLeave={resizable ? this.onMouseLeave : null}>
+        onMouseLeave={resizable ? this.onMouseLeave : null}
+        data-testid="splitview">
         {primaryPane === 0 ? primary : secondary}
         <div
           className={classNames('spectrum-SplitView-splitter', {
@@ -407,7 +410,7 @@ export default class SplitView extends React.Component {
         break;
       case 'Home':
         e.preventDefault();
-        this.updatePosition(this.state.minPos, true);
+        this.updatePosition(collapsible ? 0 : this.state.minPos, true);
         break;
       case 'End':
         e.preventDefault();

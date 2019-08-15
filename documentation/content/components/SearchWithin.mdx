@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import SearchWithin from '@react/react-spectrum/SearchWithin';
 
 A SearchWithin component is a specialized search field, with a dropdown used to determine the scope of the user's search. For example, the list of options in the dropdown control might allow the user to constrain the scope of their search to just one category of the marketplace as opposed to searching the entire marketplace.
@@ -23,4 +24,53 @@ To internationalize a SearchWithin, localized strings should be passed to the `s
 
 ## Accessibility
 
-A SearchWithin component should typically be put inside a [FieldLabel](/components/FieldLabel) or [Form](/components/Form) component to provide proper labels for accessibility. The dropdown and input inside the SearchWithin itself are accessible by default.
+### WAI-ARIA Design Pattern
+
+SearchWithin uses WAI-ARIA to ensure that the [Select](/components/Select) and [Search](/components/Search) controls are contained within a [search landmark region](https://www.w3.org/TR/wai-aria-practices-1.1/#aria_lh_search). The Select control implements the [Listbox design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox) as a [collapsible dropdown listbox](https://www.w3.org/TR/wai-aria-practices-1.1/examples/listbox/listbox-collapsible.html). The Search text field uses the [`searchbox` WAI-ARIA `role`](https://www.w3.org/TR/wai-aria-1.1/#searchbox) to identify it to assistive technology as a search input.
+
+### Labelling
+
+A SearchWithin component can be labelled using a [FieldLabel](/components/FieldLabel), [Form](/components/Form), `aria-label` or `aria-labelledby`. By default, the Select and Search controls are labelled as "Search within" followed by the selected value of the Select control.
+
+#### Using FieldLabel
+
+Since a SearchWithin is a search input group, when labelling using a FieldLabel, use implicit labelling or add the `aria-labelledby` prop to explicitly associate the group of controls to the FieldLabel.
+
+##### Implicit labelling will add `aria-labelledby` automatically
+
+<FieldLabel label="Filter">
+  <SearchWithin
+    defaultScope="Audiences"
+    scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+    placeholder="Enter a search query" />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Filter">
+  <SearchWithin
+    defaultScope="Audiences"
+    scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+    placeholder="Enter a search query" />
+</FieldLabel>
+```
+
+##### Explicit labelling requires `aria-labelledby` be added manually
+
+<FieldLabel label="Filter" id="searchwithin-label-id" labelFor="searchwithin-id" />
+<SearchWithin
+  id="searchwithin-id"
+  aria-labelledby="searchwithin-label-id"
+  defaultScope="Audiences"
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  placeholder="Enter a search query" />
+
+```jsx
+<FieldLabel label="Filter" id="search-label-id" labelFor="search-id" />
+<SearchWithin
+  id="searchwithin-id"
+  aria-labelledby="searchwithin-label-id"
+  defaultScope="Audiences"
+  scopeOptions={['All', 'Campaigns', 'Audiences', 'Tags']}
+  placeholder="Enter a search query" />
+```
+

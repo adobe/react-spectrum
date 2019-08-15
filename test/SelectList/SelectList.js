@@ -51,12 +51,10 @@ describe('SelectList', () => {
   it('supports an item being selected', () => {
     const tree = shallow(<SelectList options={testOptions} value={testOptions[0].value} />);
     assert.equal(tree.find({selected: true}).length, 1);
-  });
-
-  it('supports an item being selected', () => {
-    const tree = shallow(<SelectList options={testOptions} value={testOptions[0].value} />);
-    const selectedItem = tree.find({selected: true});
-    assert.equal(selectedItem.length, 1);
+    assert.equal(tree.state('value'), testOptions[0].value);
+    tree.setProps({value: testOptions[5].value});
+    assert.equal(tree.find({selected: true}).length, 1);
+    assert.equal(tree.state('value'), testOptions[5].value);
   });
 
   it('supports multiple items being selected', () => {

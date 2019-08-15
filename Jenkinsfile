@@ -4,8 +4,10 @@ livefyre('''
       label: corpjenkins/node8
     git: true
     commands:
-      - make clean_all
-      - make
+      - make clean_node_modules
+      - make install_no_postinstall
+      - make clean
+      - make -B
       - make jenkins_test
       - make storybook
     xunitResults:

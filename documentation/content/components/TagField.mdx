@@ -81,3 +81,37 @@ import TagField from '@react/react-spectrum/TagField';
 
 <TagField placeholder="I like duplicates" allowDuplicates />
 ```
+
+## Render Item
+You can customize the way items are rendered in the autocomplete suggestions by using the `renderItem` property.
+More details on this functionality is described under the [Autocomplete component docs](autocomplete)
+
+<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} />
+
+```jsx
+import TagField from '@react/react-spectrum/TagField';
+
+<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} />
+```
+## Custom tag rendering
+
+If the function passed to `getCompletions` returns a list of objects, by default 
+the TagField will render the individual tags with the `label` property. To customize the 
+way tags are rendered (eg. to show an avatar), use the `renderTag` property which is a function
+that takes a `tag` object and returns a [`<Tag>`](taglist) component.
+
+<TagField 
+    placeholder="Custom tags" 
+    getCompletions={() => [{label: 'With avatar', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}]} 
+    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+
+```jsx
+import {Tag} from '@react/react-spectrum/TagList'
+import TagField from '@react/react-spectrum/TagField';
+
+<TagField 
+    placeholder="Custom tags" 
+    getCompletions={() => [{label: 'With avatar', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}]} 
+    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+```
+

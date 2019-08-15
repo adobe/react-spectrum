@@ -38,6 +38,11 @@ export default class ModalTrigger extends Component {
   render() {
     let {children, ...otherProps} = this.props;
     children = React.Children.toArray(children);
+    if (children.length < 2) {
+      console.warn(`ModalTrigger requires a trigger and a modal. \
+        Number of children: ${children.length}.`
+      );
+    }
     let triggerChild = children.find(c => c.props.modalTrigger) || children[0];
     let modalChild = children.find(c => c.props.modalContent) || children[children.length - 1];
 

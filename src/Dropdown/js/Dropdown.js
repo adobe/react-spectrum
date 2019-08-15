@@ -113,7 +113,7 @@ export default class Dropdown extends React.Component {
     const children = React.Children.toArray(this.props.children);
     const triggerChild = children.find(c => c.props.dropdownTrigger) || children[0];
     const triggerId = triggerChild.props.id || this.dropdownId + '-trigger';
-    const menu = children.find(c => c.props.dropdownMenu || c.type === Menu);
+    const menu = children.find(c => c.props.dropdownMenu || c.type === Menu) || children[1];
     const menuId = menu.props.id || this.dropdownId + '-menu';
     delete otherProps.onOpen;
     delete otherProps.onClose;

@@ -16,11 +16,11 @@
 **************************************************************************/
 
 import createId from '../../utils/createId';
+import filterReactDomProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Search from '../../Search';
 import Select from '../../Select';
 
@@ -112,7 +112,7 @@ export default class SearchWithin extends React.Component {
   }
 
   render() {
-    const {
+    let {
       scope,
       defaultScope,
       value,
@@ -124,25 +124,18 @@ export default class SearchWithin extends React.Component {
       placeholder = '',
       id = this.getChildId('search'),
       selectId = this.getChildId('select'),
+      'aria-labelledby': ariaLabelledby,
+      'aria-label': ariaLabel = (!ariaLabelledby ? formatMessage('Search within') : null),
+      autoFocus,
       ...otherProps
     } = this.props;
 
-    let ariaLabel = !otherProps['aria-labelledby'] ? formatMessage('Search within') : null;
-
-    if (otherProps['aria-label']) {
-      ariaLabel = otherProps['aria-label'];
-      delete otherProps['aria-label'];
-    }
-
-    let ariaLabelledby = this.outerId;
-
-    if (otherProps['aria-labelledby']) {
+    if (ariaLabelledby) {
       if (ariaLabel) {
-        ariaLabelledby = otherProps['aria-labelledby'] + ' ' + this.outerId;
-      } else {
-        ariaLabelledby = otherProps['aria-labelledby'];
+        ariaLabelledby += ` ${this.outerId}`;
       }
-      delete otherProps['aria-labelledby'];
+    } else {
+      ariaLabelledby = this.outerId;
     }
 
     const selectProps = {};
@@ -177,17 +170,24 @@ export default class SearchWithin extends React.Component {
     let search = (
       <Search
         id={id}
-        aria-labelledby={selectId}
+        aria-labelledby={ariaLabelledby + ` ${selectId}-value`}
         placeholder={placeholder}
         onChange={onValueChange}
         onSubmit={onSubmit}
         disabled={disabled}
         role="presentation"
+        autoFocus={autoFocus}
         {...searchProps} />
     );
 
     return (
-      <div className="spectrum-SearchWithin react-spectrum-SearchWithin" aria-label={ariaLabel} aria-labelledby={ariaLabelledby} id={this.outerId} role="search">
+      <div
+        className="spectrum-SearchWithin react-spectrum-SearchWithin"
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        id={this.outerId}
+        role="search"
+        {...filterReactDomProps(otherProps)}>
         {select}
         {search}
       </div>

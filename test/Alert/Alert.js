@@ -21,6 +21,7 @@ import intlMessages from '../../src/Alert/intl/*.json';
 import {messageFormatter} from '../../src/utils/intl';
 import React from 'react';
 import {shallow} from 'enzyme';
+import sinon from 'sinon';
 
 const formatMessage = messageFormatter(intlMessages);
 
@@ -32,7 +33,7 @@ describe('Alert', () => {
     assertAlertClassAndIcon(tree, 'info');
     assert.equal(tree.find('.spectrum-Alert-header').length, 1);
     assert.equal(tree.find('.spectrum-Alert-content').length, 1);
-    assert.equal(tree.find('.spectrum-Alert-closeButton').length, 0);
+    assert.equal(tree.find('.spectrum-Alert-footer').length, 0);
   });
 
   it('supports large size', () => {
@@ -76,6 +77,17 @@ describe('Alert', () => {
     const child = tree.find('.spectrum-Alert-content > div');
     assert.equal(child.length, 1);
     assert.equal(child.children().text(), 'My Custom Content');
+  });
+
+  it('supports closeable', () => {
+    const onClose = sinon.spy();
+    const tree = shallow(<Alert closeLabel="Close" onClose={onClose} />);
+    const child = tree.find('.spectrum-Alert-footer');
+    assert.equal(child.length, 1);
+    const buttons = child.find('Button');
+    assert.equal(buttons.length, 1);
+    buttons.first().simulate('click');
+    assert(onClose.calledOnce);
   });
 });
 

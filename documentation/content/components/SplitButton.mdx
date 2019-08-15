@@ -173,3 +173,30 @@ import Instagram from '@react/react-spectrum/Icon/Instagram';
   </MenuItem>
 </SplitButton>
 ```
+
+## Accessibility
+
+SplitButton is exposed to assistive technology as a group containing a [Button](/components/Button) and a [Dropdown](/components/Dropdown) Button.
+When focus is on the Button, <kbd>Alt</kbd>+<kbd>ArrowDown</kbd> will expand the Dropdown [Menu](/components/Menu), while <kbd>Space</kbd> or <kbd>Enter</kbd> will trigger a click event on the Button.
+When focus is on the Dropdown Button, <kbd>ArrowDown</kbd>, <kbd>Space</kbd> or <kbd>Enter</kbd> will expand the Dropdown Menu.
+The <kbd>Escape</kbd> key will close the Dropdown Menu.
+
+### Labelling
+
+The `label` prop provides the accessible name for the Button, Dropdown Button and containing group.
+
+```jsx
+<SplitButton
+  label="Action"
+  variant="primary">
+  <MenuItem icon={<Twitter />} value="twitter">
+    Twitter
+  </MenuItem>
+  <MenuItem icon={<Facebook />} value="facebook">
+    Facebook
+  </MenuItem>
+  <MenuItem icon={<Instagram />} value="instagram">
+    Instagram
+  </MenuItem>
+</SplitButton>
+```

@@ -51,11 +51,6 @@ describe('Toast', () => {
     assert.equal(tree.prop('className'), 'spectrum-Toast spectrum-Toast--info');
   });
 
-  it('should render a help variant', () => {
-    const tree = shallow(<Toast variant="help">Info</Toast>);
-    assert.equal(tree.prop('className'), 'spectrum-Toast spectrum-Toast--help');
-  });
-
   it('should render a warning variant', () => {
     const tree = shallow(<Toast variant="warning">Info</Toast>);
     assert.equal(tree.prop('className'), 'spectrum-Toast spectrum-Toast--warning');

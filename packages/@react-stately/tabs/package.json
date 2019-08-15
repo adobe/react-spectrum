@@ -1,6 +1,7 @@
 {
   "name": "@react-stately/tabs",
   "version": "3.0.0",
+  "private": true,
   "description": "Spectrum UI components in React",
   "main": "src/useTabListState.ts",
   "repository": {
@@ -8,8 +9,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "react": "^16.8.0",
     "@react-stately/utils": "^3.0.0"
   },
-  "devDependencies": {}
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0"
+  }
 }

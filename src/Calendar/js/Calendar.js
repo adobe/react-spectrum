@@ -31,7 +31,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
-import '../../utils/style/index.styl';
+import VisuallyHidden from '../../VisuallyHidden';
 
 importSpectrumCSS('calendar');
 
@@ -581,7 +581,7 @@ export default class Calendar extends Component {
       <table
         key={date.format('MM/Y')}
         className="spectrum-Calendar-table">
-        <caption className="u-react-spectrum-screenReaderOnly" id={descriptionId} >{selectedRangeDescription}</caption>
+        <VisuallyHidden element="caption" id={descriptionId}>{selectedRangeDescription}</VisuallyHidden>
         {this.renderTableHeader()}
         {this.renderTableBody(date)}
       </table>

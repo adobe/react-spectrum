@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import './style/index.styl';
+import VisuallyHidden from '../VisuallyHidden';
 
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 let liveRegionAnnouncer = null;
@@ -182,24 +183,24 @@ export class LiveRegion extends Component {
       politeMessage2
     } = this.state;
     return (
-      <div className="u-react-spectrum-screenReaderOnly">
+      <VisuallyHidden element="div">
         <MessageBlock aria-live="assertive" message={assertiveMessage1} />
         <MessageBlock aria-live="assertive" message={assertiveMessage2} />
         <MessageBlock aria-live="polite" message={politeMessage1} />
         <MessageBlock aria-live="polite" message={politeMessage2} />
-      </div>
+      </VisuallyHidden>
     );
   }
 }
 
 export const MessageBlock = ({message, 'aria-live': ariaLive}) => (
-  <div
-    className="u-react-spectrum-screenReaderOnly"
+  <VisuallyHidden
+    element="div"
     aria-live={ariaLive}
     aria-relevant="additions"
     aria-atomic="true">
     {message || ''}
-  </div>
+  </VisuallyHidden>
 );
 
 MessageBlock.propTypes = {

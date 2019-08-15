@@ -213,7 +213,7 @@ describe('LiveRegionMessage', () => {
 describe('LiveRegion', () => {
   it('should render LiveRegion containing 4 MessageBlocks', () => {
     const wrapper = shallow(<LiveRegion />);
-    assert(wrapper.hasClass('u-react-spectrum-screenReaderOnly'));
+    assert(wrapper.dive().hasClass('u-react-spectrum-screenReaderOnly'));
     assert.equal(findMessageBlock(wrapper).length, 4);
   });
 

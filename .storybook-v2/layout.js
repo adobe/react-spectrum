@@ -54,7 +54,7 @@ export class StoryWrapper extends React.Component {
             </FormItem>
           </Form>
         </aside>
-        <main>
+        <main id="main">
           {this.props.children}
         </main>
       </Provider>

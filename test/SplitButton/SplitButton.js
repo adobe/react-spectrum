@@ -107,25 +107,40 @@ describe('SplitButton', () => {
     const onOpen = sinon.spy();
     const onClose = sinon.spy();
     const onKeyDown = sinon.spy();
-    wrapper = render({onOpen, onClose, onKeyDown});
+    wrapper = render({onOpen, onClose});
     const buttons = wrapper.find(Button);
     buttons.first().getDOMNode().focus();
     wrapper.childAt(0).simulate('keydown', {target: buttons.first().getDOMNode(), key: 'ArrowDown', altKey: true});
-    assert(onKeyDown.called);
     assert(onOpen.called);
     assert.equal(buttons.last().getDOMNode().getAttribute('aria-expanded'), 'true');
     // close by clicking on last button element
     buttons.last().simulate('click');
     assert(onClose.called);
     assert(!buttons.last().getDOMNode().getAttribute('aria-expanded'));
+
+    onOpen.resetHistory();
+    onClose.resetHistory();
+
+    wrapper.setProps({onKeyDown});
+
+    buttons.first().getDOMNode().focus();
+    wrapper.childAt(0).simulate('keydown', {target: buttons.first().getDOMNode(), key: 'ArrowDown'});
+    assert(onKeyDown.called);
+    assert(!onOpen.called);
+    assert(!buttons.last().getDOMNode().getAttribute('aria-expanded'));
+
+    onKeyDown.resetHistory();
+    onOpen.resetHistory();
+    onClose.resetHistory();
+
     buttons.last().getDOMNode().focus();
     wrapper.childAt(0).simulate('keydown', {target: buttons.last().getDOMNode(), key: 'Down'});
-    assert(onKeyDown.calledTwice);
-    assert(onOpen.calledTwice);
+    assert(onKeyDown.called);
+    assert(onOpen.called);
     assert.equal(buttons.last().getDOMNode().getAttribute('aria-expanded'), 'true');
     // close by calling hide on overlayTrigger
     wrapper.instance().dropdownRef.overlayTrigger.hide();
-    assert(onClose.calledTwice);
+    assert(onClose.called);
     assert(!buttons.last().getDOMNode().getAttribute('aria-expanded'));
   });
 });

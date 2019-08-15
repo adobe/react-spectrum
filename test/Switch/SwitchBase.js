@@ -69,7 +69,7 @@ describe('SwitchBase', () => {
     let tree = shallow(<SwitchBase />);
     tree.setProps({checked: true});
     tree.update();
-    assert.equal(tree.state.checked);
+    assert.equal(tree.state('checked'), true);
   });
 
 

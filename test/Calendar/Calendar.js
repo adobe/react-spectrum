@@ -797,4 +797,4 @@ const findFirstNonSelectedCell = tree => findAllSelectableCells(tree).first();
 const findFocusedCell = tree => findBody(tree).find('tbody tr CalendarCell[focused=true]');
 const findCellByDate = (tree, date) =>
   findAllCells(tree).filterWhere(c => +c.prop('date') === +date);
-const findTableCaption = tree => tree.find('caption');
+const findTableCaption = tree => tree.find('VisuallyHidden[element="caption"]').shallow();

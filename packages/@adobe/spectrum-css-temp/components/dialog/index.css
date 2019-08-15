@@ -11,12 +11,8 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-@import '../commons/overlay.css';
 
 :root {
-  /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
-  --spectrum-dialog-fullscreen-margin: 32px;
-
   /* Distance between the edge of the fullscreen dialog and header */
   --spectrum-dialog-fullscreen-padding-top: calc(var(--spectrum-dialog-padding) - 10px);
 
@@ -34,69 +30,28 @@ governing permissions and limitations under the License.
   --spectrum-dialog-hero-height: var(--spectrum-global-dimension-size-1600);
   --spectrum-dialog-alert-width: var(--spectrum-dialog-medium-width);
 
-  --spectrum-dialog-vertical-offset: -2vh;
   --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
-
-  /* Bug: this must be 0ms, not 0 */
-  --spectrum-dialog-exit-animation-delay: 0ms;
 }
 
 /* topdoc
 {{ dialog/dialog.yml }}
 */
-.spectrum-Dialog {
-  @inherit: %spectrum-overlay;
 
+.spectrum-Dialog {
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: flex;
   flex-direction: column;
 
-  /* Centered by default */
-  position: fixed;
-  left: 50%;
-  top: 50%;
-
-  /* Start offset by the animation distance */
-  transform: translateX(-50%) translateY(-50%) translateY(var(--spectrum-dialog-entry-animation-distance));
-
-  /* Appear above underlay */
-  z-index: 2;
-
   /* Allow 100% width, taking into account padding */
   box-sizing: border-box;
-
-  /* Don't be bigger than the screen */
-  max-width: var(--spectrum-dialog-max-width);
-  max-height: var(--spectrum-dialog-max-height);
-
+  
   /* Be no bigger than max-width, but also be 90% if the viewport is smaller than max-width */
   width: fit-content;
   min-width: var(--spectrum-dialog-min-width);
 
   padding: var(--spectrum-dialog-padding);
-
-  border-radius: var(--spectrum-dialog-border-radius);
-  outline: none; /* Firefox shows outline */
-
-  /* Exit animations */
-  transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
-              visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
-              transform 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration));
-
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
-
-    /* Entry animations */
-    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
-
-    transform: translate(-50%, calc(-50% + var(--spectrum-dialog-vertical-offset)));
-  }
-
-  .spectrum-Dialog-closeButton {
-    display: none;
-  }
+  outline: none;
 }
 
 .spectrum-Dialog--small {
@@ -155,72 +110,16 @@ governing permissions and limitations under the License.
   }
 }
 
-/* Used to position the dialog */
-.spectrum-Dialog-wrapper {
-  position: fixed;
-  left: 0;
-  top: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-
-  visibility: hidden;
-
-  /* Don't catch clicks */
-  pointer-events: none;
-
-  /* Appear above underlay */
-  z-index: 2;
-
-  /* Be invisible by default */
-  transition: visibility 0ms linear var(--spectrum-global-animation-duration-100);
-
-  &.is-open {
-    visibility: visible;
-  }
-
-  .spectrum-Dialog:not(.spectrum-Dialog--fullscreen):not(.spectrum-Dialog--fullscreenTakeover) {
-    pointer-events: auto;
-
-    position: static;
-    transform: translateY(var(--spectrum-dialog-entry-animation-distance));
-    margin-top: var(--spectrum-dialog-vertical-offset);
-
-    &.is-open {
-      transform: translateY(0);
-    }
-  }
-}
-
-/* Responsive Dialogs will fill the screen on small viewports */
-@media
-only screen and (max-device-width: 400px),
-only screen and (max-device-height: 350px) {
-  .spectrum-Dialog--responsive {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 0;
-  }
-  .spectrum-Dialog-wrapper {
-    .spectrum-Dialog--responsive {
-      margin-top: 0; /* Prevent the vertical offset bit */
-    }
-  }
-}
-
 .spectrum-Dialog--noDivider {
   .spectrum-Dialog-header {
     &::after {
       display: none;
     }
   }
+}
+
+.spectrum-Dialog-closeButton {
+  display: none;
 }
 
 .spectrum-Dialog--dismissible {
@@ -307,19 +206,6 @@ only screen and (max-device-height: 350px) {
 }
 
 /** @unofficial */
-.spectrum-Dialog--fullscreen {
-  left: var(--spectrum-dialog-fullscreen-margin);
-  top: var(--spectrum-dialog-fullscreen-margin);
-  right: var(--spectrum-dialog-fullscreen-margin);
-  bottom: var(--spectrum-dialog-fullscreen-margin);
-
-  transform: translate(0, var(--spectrum-dialog-entry-animation-distance));
-
-  &.is-open {
-    transform: translate(0, 0);
-  }
-}
-
 .spectrum-Dialog--fullscreen,
 .spectrum-Dialog--fullscreenTakeover {
   width: auto;
@@ -339,24 +225,5 @@ only screen and (max-device-height: 350px) {
 
   .spectrum-Dialog-content {
     max-height: none;
-  }
-}
-
-.spectrum-Dialog--fullscreenTakeover {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-
-  box-sizing: border-box;
-
-  /* Remove the border since we've taken over */
-  border: none;
-  border-radius: 0;
-
-  &,
-  &.is-open {
-    transform: none;
   }
 }

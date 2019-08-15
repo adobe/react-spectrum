@@ -205,16 +205,17 @@ export default class Select extends React.Component {
       id = this.selectId,
       icon,
       renderItem,
+      'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
       ...otherProps
     } = this.props;
 
     let {value} = this.state;
 
-    const valueId = this.selectId + '-value';
+    const valueId = `${id}-value`;
     if (ariaLabelledby) {
-      ariaLabelledby = ariaLabelledby + ' ' + valueId;
-    } else if (otherProps['aria-label']) {
+      ariaLabelledby += ` ${valueId}`;
+    } else if (ariaLabel) {
       ariaLabelledby = id + ' ' + valueId;
     } else if (labelId) {
       ariaLabelledby = labelId + ' ' + valueId;
@@ -277,6 +278,7 @@ export default class Select extends React.Component {
           invalid={invalid}
           ref={b => (this.button = b)}
           onKeyDown={this.onKeyDown}
+          aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           id={id}
           icon={icon}

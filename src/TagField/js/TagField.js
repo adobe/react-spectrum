@@ -59,7 +59,20 @@ export default class TagField extends React.Component {
      * A function called when a tag is added or removed.
      * It is passed an array of strings containing the new tag list.
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+
+    /**
+     * A function that returns a wrapper component to render a list item label. 
+     * Useful in providing custom html to the rendered label.
+     * Passed to the underlying Autocomplete component.
+     */
+    renderItem: PropTypes.func,
+    
+    /**
+     * A function that takes a tag object and returns a custom Tag component
+     * If this prop is not specified, tags will render with default behavior
+     */
+    renderTag: PropTypes.func
   };
 
   static defaultProps = {
@@ -85,8 +98,9 @@ export default class TagField extends React.Component {
   }
 
   onSelect(value) {
-    value = value.label || value;
-    if (!value || (!this.props.allowDuplicates && this.state.tags.includes(value))) {
+    let coercedValue = value.label || value;
+    let areDuplicates = (a, b) => a === b || (a.label && b.label && a.label === b.label);
+    if (!coercedValue || (!this.props.allowDuplicates && this.state.tags.some(t => areDuplicates(t, value)))) {
       return;
     }
 
@@ -97,7 +111,7 @@ export default class TagField extends React.Component {
   }
 
   onRemove(value) {
-    let tags = this.state.tags.filter(t => t !== value);
+    let tags = this.state.tags.filter(t => t.label !== value && t !== value);
     this.onChange(tags);
   }
 
@@ -121,12 +135,12 @@ export default class TagField extends React.Component {
       this.setState({tags}, () => this.focus(deleting));
     }
     if (this.props.onChange) {
-      this.props.onChange(tags);
+      this.props.onChange(tags.map(tag => tag.label || tag));
     }
   }
 
   render() {
-    let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, ...props} = this.props;
+    let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, renderTag, renderItem, ...props} = this.props;
     let {value, tags} = this.state;
 
     delete props.onChange;
@@ -143,14 +157,17 @@ export default class TagField extends React.Component {
         allowCreate={allowCreate}
         onSelect={this.onSelect}
         value={value}
-        onChange={this.onTextfieldChange}>
+        onChange={this.onTextfieldChange}
+        renderItem={renderItem}>
         <TagList
           ref={tl => this.taglist = tl}
           disabled={disabled}
           onClose={this.onRemove}
-          values={tags.map(tag => tag.label || tag)}
+          values={(!renderTag && tags.map(tag => tag.label || tag)) || undefined}
           aria-labelledby={this.props['aria-labelledby']}
-          aria-label={this.props['aria-label']} />
+          aria-label={this.props['aria-label']}>
+          { renderTag && tags.map(tag => renderTag(tag)) }
+        </TagList>
         <Textfield
           ref={tf => this.textfield = tf}
           className="react-spectrum-TagField-input"

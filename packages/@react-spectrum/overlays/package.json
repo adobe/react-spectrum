@@ -1,0 +1,18 @@
+{
+  "name": "@react-spectrum/overlays",
+  "private": true,
+  "version": "3.0.0",
+  "main": "src/index.ts",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/overlays": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}

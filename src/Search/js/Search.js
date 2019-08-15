@@ -142,6 +142,7 @@ export default class Search extends Component {
           )
         }>
         <Textfield
+          type="search"
           role="searchbox"
           ref={s => this.searchbox = s}
           className="spectrum-Search-input"
