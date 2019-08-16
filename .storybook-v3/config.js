@@ -1,7 +1,10 @@
 import {configure, addDecorator} from '@storybook/react';
 import React from 'react';
-import {StoryWrapper, VerticalCenter} from './layout';
+import {VerticalCenter} from './layout';
 import { withA11y } from '@storybook/addon-a11y';
+import {withProviderSwitcher} from './custom-addons/provider';
+
+// decorator order matters, the last one will be the outer most
 
 addDecorator(withA11y);
 
@@ -11,10 +14,7 @@ addDecorator(story => (
   </VerticalCenter>
 ));
 
-addDecorator(story => (
-  <StoryWrapper> {story()} </StoryWrapper>
-));
-
+addDecorator(withProviderSwitcher);
 
 function loadStories() {
   let storiesContext = require.context('../packages', true, /^(.*\/stories\/.*?\.(js|jsx|ts|tsx))$/);
