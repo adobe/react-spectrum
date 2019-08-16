@@ -112,7 +112,7 @@ export default class Select extends React.Component {
       value = [];
     } else {
       const opt = props.options && props.options[0];
-      value = opt ? opt.value : null;
+      value = opt && !props.placeholder ? opt.value : null;
     }
 
     this.state = {value};

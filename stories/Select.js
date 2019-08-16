@@ -43,7 +43,7 @@ const longList = {
 };
 
 const defaultProps = {
-  selectedValue: ['Peppermint']
+  defaultValue: 'peppermint'
 };
 
 const tinyList = {
@@ -54,10 +54,10 @@ const tinyList = {
 };
 
 const tinyProps = {
-  selectedValue: ['am']
+  defaultValue: 'am'
 };
 
-const selectedValue = [
+const selectedValues = [
   'chocolate',
   'vanilla'
 ];
@@ -74,7 +74,7 @@ storiesOf('Select', module)
   )
   .add(
     'placeholder: other placeholder',
-    () => render({placeholder: 'other placeholder'})
+    () => renderNoDefaultProps({placeholder: 'other placeholder'})
   )
   .add(
     'flexible',
@@ -82,7 +82,7 @@ storiesOf('Select', module)
   )
   .add(
     'alignRight',
-    () => render({alignRight: true, selectedValue: 'butterfinger'})
+    () => render({alignRight: true, defaultValue: 'vanilla'})
   )
   .add(
     'quiet',
@@ -94,15 +94,15 @@ storiesOf('Select', module)
   )
   .add(
     'quiet, alignRight',
-    () => render({quiet: true, alignRight: true, selectedValue: 'butterfinger'})
+    () => render({quiet: true, alignRight: true, defaultValue: 'vanilla'})
   )
   .add(
     'quiet, value: longVal, flexible',
-    () => render({quiet: true, flexible: true, selectedValue: 'butterfinger'})
+    () => render({quiet: true, flexible: true, ...longList, defaultValue: 'butterfinger'})
   )
   .add(
     'quiet, multiple, flexible',
-    () => render({quiet: true, flexible: true, multiple: true, value: selectedValue})
+    () => renderNoDefaultProps({quiet: true, flexible: true, multiple: true, value: selectedValues})
   )
   .add(
     'quiet, disabled, flexible',
@@ -110,7 +110,7 @@ storiesOf('Select', module)
   )
   .add(
     'multiple: true',
-    () => render({multiple: true, flexible: true, defaultValue: selectedValue})
+    () => render({multiple: true, flexible: true, defaultValue: selectedValues})
   )
   .add(
     'required: true',
@@ -126,11 +126,11 @@ storiesOf('Select', module)
   )
   .add(
     'multiple disabled: true',
-    () => render({disabled: true, multiple: true, value: selectedValue})
+    () => renderNoDefaultProps({disabled: true, multiple: true, value: selectedValues})
   )
   .add(
     'value: longVal',
-    () => render({value: 'logVal'})
+    () => renderNoDefaultProps({...longList, value: 'butterfinger'})
   )
   .add(
     'Stay open on select',
@@ -200,5 +200,16 @@ function renderMany(props = {}) {
         {...longList}
         {...defaultProps} />
     </div>
+  );
+}
+
+function renderNoDefaultProps(props = {}) {
+  return (
+    <Select
+      onChange={action('change')}
+      onOpen={action('open')}
+      onClose={action('close')}
+      {...defaultList}
+      {...props} />
   );
 }
