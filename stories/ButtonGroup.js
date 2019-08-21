@@ -63,8 +63,14 @@ storiesOf('ButtonGroup', module)
     () => (render({orientation: 'vertical'}))
   )
   .add(
-    'multiple selection',
+    'allows multiple selection',
     () => (render({multiple: true}))
+  )
+  .add('single button preselected, controlled',
+    () => (render({value: 'bell'}))
+  )
+  .add('multiple buttons preselected, controlled',
+    () => (render({value: ['delete', 'bell'], multiple: true}))
   )
   .add(
     'disabled: true',

@@ -73,9 +73,13 @@ export default class ButtonGroup extends Component {
     orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both']),
 
     /**
-     * Value to select one or more buttons in the group
+     * Value to select one or more buttons in the group. Accepts an array of strings if multiple=true,
+     * otherwise accepts a string
      */
-    value: PropTypes.arrayOf(PropTypes.string)
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string)
+    ])
   };
 
   static defaultProps = {
