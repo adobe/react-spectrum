@@ -12,10 +12,10 @@
     "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-aria/splitview": "^3.0.0",
-    "@react-stately/splitview": "^3.0.0"
+    "@react-stately/splitview": "^3.0.0",
+    "@react-types/shared": "^3.0.0"
   },
   "devDependencies": {
-    "@react-types/shared": "^3.0.0",
     "@react/react-spectrum": "^2.0.0",
     "react": "^16.8.0"
   }

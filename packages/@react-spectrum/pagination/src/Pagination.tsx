@@ -5,7 +5,7 @@ import {classNames} from '@react-spectrum/utils';
 import intlMessages from '../intl';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/pagination/vars.css';
-import Textfield from '@react/react-spectrum/Textfield';
+import {TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';
@@ -35,7 +35,7 @@ export function PaginationInput(props: PaginationBase) {
         isQuiet>
         <ChevronLeftMedium />
       </ActionButton>
-      <Textfield
+      <TextField
         {...textProps}
         value={state.value}
         onChange={state.onChange}

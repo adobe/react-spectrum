@@ -7,6 +7,9 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "dependencies": {
+    "@react-aria/i18n": "^3.0.0"
+  },
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
