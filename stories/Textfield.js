@@ -26,6 +26,14 @@ storiesOf('Textfield', module)
     () => render()
   )
   .add(
+    'value: Test (controlled)',
+    () => render({value: 'Test'})
+  )
+  .add(
+    'defaultValue: Test (uncontrolled)',
+    () => render({defaultValue: 'Test'})
+  )
+  .add(
     'quiet: true',
     () => render({quiet: true})
   )
