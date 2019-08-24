@@ -50,6 +50,8 @@ function render(props:ButtonProps = {}) {
       </Button>
       <Button
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         Disabled
@@ -57,6 +59,8 @@ function render(props:ButtonProps = {}) {
       {props.variant !== 'cta' && (
       <Button
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         isQuiet
         {...props}>
         Quiet

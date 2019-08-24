@@ -35,11 +35,15 @@ function render(props = {}) {
     <div>
       <ActionButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         {...props}>
         Default
       </ActionButton>
       <ActionButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         Disabled
@@ -53,9 +57,13 @@ function renderNoText(props = {}) {
     <div>
       <ActionButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         {...props} />
       <ActionButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         isDisabled
         {...props} />
     </div>
