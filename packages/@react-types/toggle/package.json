@@ -1,0 +1,15 @@
+{
+  "name": "@react-types/toggle",
+  "version": "3.0.0",
+  "description": "Spectrum UI components in React",
+  "private": true,
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {}
+}

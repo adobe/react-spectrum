@@ -50,6 +50,7 @@
     "@storybook/addon-links": "^5.1.9",
     "@storybook/react": "^5.1.9",
     "@testing-library/react": "^8.0.1",
+    "@testing-library/user-event": "^4.1.0",
     "@types/react": "^16.8.0",
     "@types/storybook__react": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^1.10.2",

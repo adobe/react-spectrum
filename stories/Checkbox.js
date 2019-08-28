@@ -76,6 +76,10 @@ storiesOf('Checkbox', module)
   .add(
     'renderLabel: false',
     () => render({renderLabel: false, label: 'React checkbox'})
+  )
+  .add(
+    'custom label',
+    () => renderCustomLabel()
   );
 
 function render(props = {}) {
@@ -87,6 +91,16 @@ function render(props = {}) {
       {
         props.renderLabel === false && 'with renderLabel: false'
       }
+    </Checkbox>
+  );
+}
+
+function renderCustomLabel(props = {}) {
+  return (
+    <Checkbox
+      onChange={action('change')}
+      {...props}>
+      <span><i>Italicized</i> Checkbox Label</span>
     </Checkbox>
   );
 }
