@@ -1,0 +1,17 @@
+import {action} from '@storybook/addon-actions';
+import { {{~componentName~}} , {{componentName~}} Props} from '../src';
+import React from 'react';
+import {storiesOf} from '@storybook/react';
+
+storiesOf('{{componentName}}', module)
+  .add(
+    'name me',
+    () => render({})
+  );
+
+function render(props:{{componentName}}Props = {}) {
+  return (
+    <{{componentName}} {...props}>
+    </{{componentName}}>
+  );
+}
