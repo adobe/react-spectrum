@@ -54,7 +54,6 @@ export default function Toast({
 }) {
   let Icon = ICONS[variant];
   let role = otherProps.role || DEFAULT_ROLE;
-  const showToastButtons = actionLabel || closable;
 
   const handleAction = (...args) => {
     if (onAction) {
@@ -82,9 +81,9 @@ export default function Toast({
           <Button label={actionLabel} quiet variant="overBackground" onClick={handleAction} />
         }
       </div>
-      {showToastButtons &&
+      {closable &&
         <div className="spectrum-Toast-buttons">
-          {closable &&
+          {
             <button aria-label={formatMessage('close')} className="spectrum-ClearButton spectrum-ClearButton--medium spectrum-ClearButton--overBackground" onClick={onClose}>
               <CrossMedium size={null} />
             </button>
