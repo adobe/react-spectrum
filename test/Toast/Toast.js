@@ -41,6 +41,11 @@ describe('Toast', () => {
     assert.equal(tree.find('Button').prop('variant'), 'overBackground');
   });
 
+  it('should not show divider when toast has action but is not closable', () => {
+    const tree = shallow(<Toast actionLabel="test">Test</Toast>);
+    assert.equal(tree.find('.spectrum-Toast-buttons').length, 0);
+  });
+
   it('should render a success variant', () => {
     const tree = shallow(<Toast variant="success">Success</Toast>);
     assert.equal(tree.prop('className'), 'spectrum-Toast spectrum-Toast--success');

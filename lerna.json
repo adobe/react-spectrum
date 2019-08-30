@@ -8,7 +8,7 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "master"
+        "next"
       ]
     }
   },
