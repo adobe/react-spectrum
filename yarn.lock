@@ -328,6 +328,22 @@
   dependencies:
     "@babel/helper-create-class-features-plugin" "^7.4.4"
     "@babel/helper-plugin-utils" "^7.0.0"
+
+"@babel/plugin-proposal-dynamic-import@^7.5.0":
+  version "7.5.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@babel/plugin-proposal-dynamic-import/-/plugin-proposal-dynamic-import-7.5.0.tgz#e532202db4838723691b10a67b8ce509e397c506"
+  integrity sha1-5TIgLbSDhyNpGxCme4zlCeOXxQY=
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+    "@babel/plugin-syntax-dynamic-import" "^7.2.0"
+
+"@babel/plugin-proposal-decorators@^7.0.0":
+  version "7.4.4"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@babel/plugin-proposal-decorators/-/plugin-proposal-decorators-7.4.4.tgz#de9b2a1a8ab0196f378e2a82f10b6e2a36f21cc0"
+  integrity sha1-3psqGoqwGW83jiqC8QtuKjbyHMA=
+  dependencies:
+    "@babel/helper-create-class-features-plugin" "^7.4.4"
+    "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-decorators" "^7.2.0"
 
 "@babel/plugin-proposal-dynamic-import@^7.5.0":
@@ -663,6 +679,14 @@
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@babel/plugin-transform-property-literals/-/plugin-transform-property-literals-7.2.0.tgz#03e33f653f5b25c4eb572c98b9485055b389e905"
   integrity sha1-A+M/ZT9bJcTrVyyYuUhQVbOJ6QU=
   dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+
+"@babel/plugin-transform-react-constant-elements@^7.0.0", "@babel/plugin-transform-react-constant-elements@^7.2.0":
+  version "7.5.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/@babel/plugin-transform-react-constant-elements/-/plugin-transform-react-constant-elements-7.5.0.tgz#4d6ae4033bc38f8a65dfca2b6235c44522a422fc"
+  integrity sha1-TWrkAzvDj4pl38orYjXERSKkIvw=
+  dependencies:
+    "@babel/helper-annotate-as-pure" "^7.0.0"
     "@babel/helper-plugin-utils" "^7.0.0"
 
 "@babel/plugin-transform-react-constant-elements@^7.0.0", "@babel/plugin-transform-react-constant-elements@^7.2.0":
@@ -3748,6 +3772,15 @@ babel-plugin-jest-hoist@^24.9.0:
     "@types/babel__traverse" "^7.0.6"
 
 babel-plugin-macros@2.6.1, babel-plugin-macros@^2.0.0, babel-plugin-macros@^2.4.5, babel-plugin-macros@^2.5.0:
+  version "2.6.1"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/babel-plugin-macros/-/babel-plugin-macros-2.6.1.tgz#41f7ead616fc36f6a93180e89697f69f51671181"
+  integrity sha1-Qffq1hb8NvapMYDolpf2n1FnEYE=
+  dependencies:
+    "@babel/runtime" "^7.4.2"
+    cosmiconfig "^5.2.0"
+    resolve "^1.10.0"
+
+babel-plugin-macros@^2.0.0, babel-plugin-macros@^2.4.5, babel-plugin-macros@^2.5.0:
   version "2.6.1"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/babel-plugin-macros/-/babel-plugin-macros-2.6.1.tgz#41f7ead616fc36f6a93180e89697f69f51671181"
   integrity sha1-Qffq1hb8NvapMYDolpf2n1FnEYE=
@@ -6995,7 +7028,7 @@ fs-extra@^7.0.0:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
   integrity sha1-TxicRKoSO4lfcigE9V6iPq3DSOk=
   dependencies:
-    graceful-fs "^4.1.2"
+    graceful-fs "^4.2.0"
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
