@@ -1,8 +1,13 @@
 import {configure, addDecorator} from '@storybook/react';
+import {configureActions} from '@storybook/addon-actions';
 import { withInfo } from '@storybook/addon-info';
 import React from 'react';
 import {StoryWrapper, VerticalCenter} from './layout';
 import { withA11y } from '@storybook/addon-a11y';
+
+configureActions({
+  depth: 1
+});
 
 addDecorator(withA11y);
 
