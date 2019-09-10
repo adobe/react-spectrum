@@ -504,10 +504,11 @@
   --spectrum-button-warning-border-size-increase-key-focus: 1px;
   --spectrum-buttongroup-button-gap-y: 16px;
   --spectrum-buttongroup-button-gap-x: 16px;
-  --spectrum-calendar-day-width: 32px;
-  --spectrum-calendar-day-height: 32px;
+  --spectrum-calendar-day-width: 40px;
+  --spectrum-calendar-day-height: 40px;
   --spectrum-calendar-day-padding: 4px;
   --spectrum-calendar-day-text-size: 17px;
+  --spectrum-calendar-day-text-size-han: 13px;
   --spectrum-calendar-day-title-text-size: 13px;
   --spectrum-calendar-day-title-text-font-weight: 500;
   --spectrum-calendar-day-today-text-font-weight: 700;

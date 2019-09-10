@@ -5410,6 +5410,11 @@ data-urls@^1.0.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
+date-fns@^1.30.1:
+  version "1.30.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
+  integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -5671,7 +5676,7 @@ diff-sequences@^24.9.0:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/diff-sequences/-/diff-sequences-24.9.0.tgz#5715d6244e2aa65f48bba0bc972db0b0b11e95b5"
   integrity sha1-VxXWJE4qpl9Iu6C8ly2wsLEelbU=
 
-diff@3.5.0, diff@^3.5.0:
+diff@3.5.0, diff@^3.1.0, diff@^3.5.0:
   version "3.5.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha1-gAwN0eCov7yVg1wgKtIg/jF+WhI=
@@ -6035,7 +6040,7 @@ enzyme-adapter-utils@^1.12.0:
     prop-types "^15.7.2"
     semver "^5.6.0"
 
-enzyme@^3.9.0:
+enzyme@^3.1.0, enzyme@^3.9.0:
   version "3.10.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/enzyme/-/enzyme-3.10.0.tgz#7218e347c4a7746e133f8e964aada4a3523452f6"
   integrity sha1-chjjR8SndG4TP46WSq2ko1I0UvY=
@@ -6949,6 +6954,13 @@ format@^0.2.2:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/format/-/format-0.2.2.tgz#d6170107e9efdc4ed30c9dc39016df942b5cb58b"
   integrity sha1-1hcBB+nv3E7TDJ3DkBbflCtctYs=
 
+formatio@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/formatio/-/formatio-1.2.0.tgz#f3b2167d9068c4698a8d51f4f760a39a54d818eb"
+  integrity sha1-87IWfZBoxGmKjVH092CjmlTYGOs=
+  dependencies:
+    samsam "1.x"
+
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
@@ -7042,6 +7054,11 @@ fsevents@^1.2.7:
   dependencies:
     nan "^2.12.1"
     node-pre-gyp "^0.12.0"
+
+full-icu@^1.3.0:
+  version "1.3.0"
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/full-icu/-/full-icu-1.3.0.tgz#1fb4d60050103ad9dcf53735c000e4a03d80c574"
+  integrity sha1-H7TWAFAQOtnc9Tc1wADkoD2AxXQ=
 
 function-bind@^1.0.2, function-bind@^1.1.1:
   version "1.1.1"
@@ -9849,6 +9866,11 @@ log-symbols@2.2.0, log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
+lolex@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/lolex/-/lolex-1.6.0.tgz#3a9a0283452a47d7439e72731b9e07d7386e49f6"
+  integrity sha1-OpoCg0UqR9dDnnJzG54H1zhuSfY=
+
 lolex@^4.1.0, lolex@^4.2.0:
   version "4.2.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/lolex/-/lolex-4.2.0.tgz#ddbd7f6213ca1ea5826901ab1222b65d714b3cd7"
@@ -10579,6 +10601,11 @@ nanomatch@^1.2.9:
     regex-not "^1.0.0"
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
+
+native-promise-only@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/native-promise-only/-/native-promise-only-0.8.1.tgz#20a318c30cb45f71fe7adfbf7b21c99c1472ef11"
+  integrity sha1-IKMYwwy0X3H+et+/eyHJnBRy7xE=
 
 natives@^1.1.3:
   version "1.1.6"
@@ -13344,6 +13371,11 @@ safe-regex@^1.1.0:
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha1-RPoWGwGHuVSd2Eu5GAL5vYOFzWo=
 
+samsam@1.x, samsam@^1.1.3:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/samsam/-/samsam-1.3.0.tgz#8d1d9350e25622da30de3e44ba692b5221ab7c50"
+  integrity sha512-1HwIYD/8UlOtFS3QO3w7ey+SdSDFE4HRNLZoZRYVQefrOY3l17epswImeB1ijgJFQJodIaHcwkp3r/myBjFVbg==
+
 sane@^4.0.3:
   version "4.1.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/sane/-/sane-4.1.0.tgz#ed881fd922733a6c461bc189dc2b6c006f3ffded"
@@ -13619,6 +13651,20 @@ simplebar@^4.2.1:
     lodash.memoize "^4.1.2"
     lodash.throttle "^4.1.1"
     resize-observer-polyfill "^1.5.1"
+
+sinon@^2.2.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.4.1.tgz#021fd64b54cb77d9d2fb0d43cdedfae7629c3a36"
+  integrity sha512-vFTrO9Wt0ECffDYIPSP/E5bBugt0UjcBQOfQUMh66xzkyPEnhl/vM2LRZi2ajuTdkH07sA6DzrM6KvdvGIH8xw==
+  dependencies:
+    diff "^3.1.0"
+    formatio "1.2.0"
+    lolex "^1.6.0"
+    native-promise-only "^0.8.1"
+    path-to-regexp "^1.7.0"
+    samsam "^1.1.3"
+    text-encoding "0.6.4"
+    type-detect "^4.0.0"
 
 sinon@^7.3.1:
   version "7.4.2"
@@ -14447,6 +14493,11 @@ test-exclude@^5.2.3:
     read-pkg-up "^4.0.0"
     require-main-filename "^2.0.0"
 
+text-encoding@0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
+  integrity sha1-45mpgiV6J22uQou5KEXLcb3CbRk=
+
 text-extensions@^2.0.0:
   version "2.0.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/text-extensions/-/text-extensions-2.0.0.tgz#43eabd1b495482fae4a2bf65e5f56c29f69220f6"
@@ -14727,7 +14778,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-detect@4.0.8:
+type-detect@4.0.8, type-detect@^4.0.0:
   version "4.0.8"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha1-dkb7XxiHHPu3dJ5pvTmmOI63RQw=

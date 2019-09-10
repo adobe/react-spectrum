@@ -39,7 +39,8 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus {
+  &:focus,
+  &.is-focused {
     border-color: var(--spectrum-textfield-border-color-down);
   }
 
@@ -50,7 +51,8 @@ governing permissions and limitations under the License.
     }
   }
 
-  &[disabled] {
+  &[disabled],
+  &.is-disabled {
     background-color: var(--spectrum-textfield-background-color-disabled);
     border-color: var(--spectrum-textfield-border-color-disabled);
     color: var(--spectrum-textfield-text-color-disabled);
@@ -63,7 +65,8 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:invalid {
+  &:invalid,
+  &.is-invalid {
     border-color: var(--spectrum-textfield-border-color-error);
 
     &:focus-ring { /* might break things due to pre-defined focus-ring */
@@ -89,7 +92,8 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-quiet-border-color-down);
     }
 
-    &:focus {
+    &:focus,
+    &.is-focused {
       border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
     }
@@ -101,7 +105,8 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:disabled {
+    &:disabled,
+    &.is-disabled {
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
       border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
     }
@@ -109,7 +114,8 @@ governing permissions and limitations under the License.
     &:invalid {
       border-color: var(--spectrum-textfield-border-color-error);
 
-      &:focus {
+      &:focus,
+      &.is-focused {
         box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
       }
 
@@ -134,7 +140,8 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--quiet.is-invalid & {
-    &:focus {
+    &:focus,
+    &.is-focused {
       box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
     }
   

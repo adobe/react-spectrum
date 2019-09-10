@@ -1,0 +1,45 @@
+.react-spectrum-Datepicker-endField {
+  flex: 1;
+}
+
+.react-spectrum-Datepicker-input {
+  display: flex;
+  align-items: center;
+  /* Override default InputGroup styling in spectrum-css which assumes the input is an actual <input> element */
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+.react-spectrum-Datepicker-literal {
+  white-space: pre;
+  user-select: none;
+}
+
+.react-spectrum-Datepicker-literal.is-placeholder {
+  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+}
+
+.react-spectrum-DatePicker-cell {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  border-radius: 2px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.react-spectrum-DatePicker-cell:focus {
+  background: rgba(38, 128, 235, 0.25);
+  outline: none;
+}
+
+.react-spectrum-DatePicker-cell.is-placeholder {
+  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+}
+
+/* When displayed in a tray (aria-modal), center the dialog rather than using fixed padding. */
+.react-spectrum-Datepicker-dialog[aria-modal] {
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}

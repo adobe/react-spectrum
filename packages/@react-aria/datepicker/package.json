@@ -1,0 +1,18 @@
+{
+  "name": "@react-aria/datepicker",
+  "version": "3.0.0",
+  "main": "src/index.ts",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/focus": "^3.0.0",
+    "@react-aria/spinbutton": "^3.0.0",
+    "@react-aria/utils": "^3.0.0",
+    "@react-stately/datepicker": "^3.0.0",
+    "@react-types/datepicker": "^3.0.0",
+    "react": "^16.8.0"
+  }
+}

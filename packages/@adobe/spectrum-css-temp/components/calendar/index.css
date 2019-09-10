@@ -73,15 +73,14 @@ governing permissions and limitations under the License.
 .spectrum-Calendar-prevMonth,
 .spectrum-Calendar-nextMonth {
   position: absolute;
-
 }
 
 .spectrum-Calendar-prevMonth {
-  left: 3px;
+  inset-inline-start: 3px;
 }
 
 .spectrum-Calendar-nextMonth {
-  right: 3px;
+  inset-inline-end: 3px;
 }
 
 .spectrum-Calendar-dayOfWeek {
@@ -161,12 +160,17 @@ governing permissions and limitations under the License.
 
   font-size: var(--spectrum-calendar-day-text-size);
   line-height: calc(var(--spectrum-calendar-day-width) - var(--spectrum-calendar-day-border-size-key-focus) * 2);
+  white-space: nowrap;
 
   cursor: pointer;
 
   transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
         color var(--spectrum-global-animation-duration-100) ease-in-out,
         border-color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  &:lang(ja), &:lang(zh), &:lang(ko) {
+    font-size: var(--spectrum-calendar-day-text-size-han);
+  }
 
   &.is-disabled {
     cursor: default;
@@ -240,26 +244,28 @@ governing permissions and limitations under the License.
 
     &.is-range-start,
     &.is-selection-start {
-      padding-right: var(--spectrum-calendar-day-padding);
-      margin-left: var(--spectrum-calendar-day-padding);
-      border-radius: var(--spectrum-calendar-day-width) 0 0 var(--spectrum-calendar-day-width);
+      padding-inline-end: var(--spectrum-calendar-day-padding);
+      margin-inline-start: var(--spectrum-calendar-day-padding);
+      border-start-start-radius: var(--spectrum-calendar-day-width);
+      border-end-start-radius: var(--spectrum-calendar-day-width);
 
       &:before,
       &:after {
-        left: 0;
+        inset-inline-start: 0;
       }
     }
 
     &.is-range-end,
     &.is-selection-end {
-      padding-left: var(--spectrum-calendar-day-padding);
-      margin-right: var(--spectrum-calendar-day-padding);
-      border-radius: 0 var(--spectrum-calendar-day-width) var(--spectrum-calendar-day-width) 0;
+      padding-inline-start: var(--spectrum-calendar-day-padding);
+      margin-inline-end: var(--spectrum-calendar-day-padding);
+      border-start-end-radius: var(--spectrum-calendar-day-width);
+      border-end-end-radius: var(--spectrum-calendar-day-width);
 
       &:before,
       &:after {
-        left: auto;
-        right: 0;
+        inset-inline-start: auto;
+        inset-inline-end: 0;
       }
     }
 

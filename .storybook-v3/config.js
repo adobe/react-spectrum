@@ -14,8 +14,8 @@ configureActions({
 addDecorator(withA11y);
 
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', padding: '50px 100px 50px 100px', minHeight: '100vh', boxSizing: 'border-box'}}>
-    {story()}
+  <VerticalCenter style={{textAlign: 'left', padding: '180px 150px 50px 150px', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+    <div>{story()}</div>
   </VerticalCenter>
 ));
 

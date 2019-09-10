@@ -1,7 +1,7 @@
 // @ts-ignore
-import Alert from '@react/react-spectrum/Icon/Alert';
+import Alert from '@spectrum-icons/ui/AlertMedium';
 // @ts-ignore
-import Checkmark from '@react/react-spectrum/Icon/Checkmark';
+import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {cloneIcon} from '@react/react-spectrum/utils/icon';
 import {FocusRing} from '@react-aria/focus';

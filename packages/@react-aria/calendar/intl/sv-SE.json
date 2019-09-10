@@ -1,0 +1,11 @@
+{
+  "previous": "Föregående",
+  "next": "Nästa",
+  "selectedDateDescription": "Valda datum: {date, date, full}",
+  "selectedRangeDescription": "Valt datumintervall: {start, date, long} till {end, date, long}",
+  "todayDate": "Idag, {date, date, full}",
+  "todayDateSelected": "Idag, {date, date, full} vald",
+  "dateSelected": "{date, date, full} vald",
+  "startRangeSelectionPrompt": "Klicka för att börja välja datumintervall",
+  "finishRangeSelectionPrompt": "Klicka för att slutföra välja datumintervall"
+}

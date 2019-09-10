@@ -1,0 +1,11 @@
+{
+  "previous": "Vorige",
+  "next": "Volgende",
+  "selectedDateDescription": "Geselecteerde datum: {date, date, full}",
+  "selectedRangeDescription": "Geselecteerde datumbereik: {start, date, long} tot {end, date, long}",
+  "todayDate": "Vandaag {date, date, full}",
+  "todayDateSelected": "Vandaag {date, date, full} geselecteerd",
+  "dateSelected": "{date, date, full} geselecteerd",
+  "startRangeSelectionPrompt": "Klik om te beginnen met het selecteren van het datumbereik",
+  "finishRangeSelectionPrompt": "Klik om het selecteren van het datumbereik te voltooien"
+}
