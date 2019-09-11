@@ -215,3 +215,22 @@ The ButtonGroup should be labelled using either `aria-label` or `aria-labelledby
   <Button label="AddCircle" value="Add" icon={<AddCircle />} />
 </ButtonGroup>
 ```
+
+### manageTabIndex
+
+By default, ButtonGroup uses a roving tab index so that only one button in the group is included in the tab navigation order at a time.
+This behavior can be overridden, so that all buttons will be included in the tab navigation order, by setting the `manageTabIndex` prop to `false`.
+
+<ButtonGroup aria-label="Tools" readOnly manageTabIndex={false}>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="AddCircle" icon={<AddCircle />} />
+</ButtonGroup>
+
+```jsx
+<ButtonGroup aria-label="Tools" readOnly manageTabIndex={false}>
+  <Button label="Brush" value="Brush" icon={<Brush />} />
+  <Button label="Bell" value="Bell" icon={<Bell />} />
+  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+</ButtonGroup>
+```

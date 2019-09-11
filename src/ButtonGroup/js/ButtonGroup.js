@@ -43,6 +43,11 @@ export default class ButtonGroup extends Component {
     invalid: PropTypes.bool,
 
     /**
+     * Whether to use roving tabIndex so that only one element within the group can receive focus with tab key at a time.
+     */
+    manageTabIndex: PropTypes.bool,
+
+    /**
      * Allows multi select
      */
     multiple: PropTypes.bool,
@@ -85,6 +90,7 @@ export default class ButtonGroup extends Component {
   static defaultProps = {
     disabled: false,
     invalid: false,
+    manageTabIndex: true,
     multiple: false,
     readOnly: false,
     required: false,
@@ -220,6 +226,7 @@ export default class ButtonGroup extends Component {
       invalid,
       required,
       orientation,
+      manageTabIndex,
       ...otherProps
     } = this.props;
 
@@ -237,7 +244,11 @@ export default class ButtonGroup extends Component {
     }
 
     return (
-      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation={otherProps.role === 'toolbar' ? orientation : 'both'}>
+      <FocusManager
+        itemSelector={BUTTONGROUP_ITEM_SELECTOR}
+        selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR}
+        orientation={otherProps.role === 'toolbar' ? orientation : 'both'}
+        manageTabIndex={manageTabIndex}>
         <div
           aria-invalid={invalid || null}
           aria-required={required || null}
