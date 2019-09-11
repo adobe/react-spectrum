@@ -107,7 +107,21 @@ export default class Slider extends React.Component {
      * and ending value are passed to the callback function.  Otherwise, only the starting value
      * is passed into the callback function.
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+
+    /**
+     * Utility function to return a string to use as the `aria-valuetext` for a slider `input` from its `value`. For example, to retrieve a time string from a minute in the day you could use:
+     *
+     * ```js
+     * minutes => {
+     *   const date = new Date();
+     *   date.setHours(Math.floor(minutes / 60));
+     *   date.setMinutes(minutes % 60);
+     *   return date.toLocaleTimeString('en-us', {hour: '2-digit', minute: '2-digit'});
+     * }
+     * ```
+     */
+    getAriaValueText: PropTypes.func
   };
 
   static defaultProps = {
@@ -122,7 +136,8 @@ export default class Slider extends React.Component {
     fillOffset: 0,
     variant: null,
     size: null,
-    onChange() {}
+    onChange() {},
+    getAriaValueText: value => value
   };
 
   state = {
@@ -405,9 +420,12 @@ export default class Slider extends React.Component {
   }
 
   getAriaLabelledby = (sliderHandle = null) => {
-    const label = this.props.label;
-    const ariaLabelledby = this.props['aria-labelledby'];
-    const ariaLabel = this.props['aria-label'];
+    const {
+      label,
+      'aria-labelledby': ariaLabelledby,
+      'aria-label': ariaLabel
+    } = this.props;
+
     const ids = [];
 
     if (ariaLabelledby) {
@@ -426,14 +444,16 @@ export default class Slider extends React.Component {
   };
 
   renderSliderHandle = (sliderHandle) => {
-    const {
+    let {
       disabled,
       max,
       min,
       orientation,
       step,
       variant,
-      ...otherProps
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedby,
+      getAriaValueText
     } = this.props;
     const {draggingHandle, focusedHandle, topHandle, startValue, endValue} = this.state;
     const isStartHandle = sliderHandle === 'startHandle';
@@ -446,7 +466,6 @@ export default class Slider extends React.Component {
     const isTopHandle = topHandle === sliderHandle;
     let styleKey = STYLE_KEY.OFFSET[orientation];
     const labelString = isStartHandle ? formatMessage('minimum') : formatMessage('maximum');
-    let ariaLabel = otherProps['aria-label'];
     let ariaValueMin = null;
     let ariaValueMax = null;
 
@@ -480,10 +499,10 @@ export default class Slider extends React.Component {
           aria-orientation={isVertical ? orientation : null}
           aria-label={ariaLabel || null}
           aria-labelledby={this.getAriaLabelledby(isRange ? sliderHandle : null)}
-          aria-describedby={otherProps['aria-describedby'] || null}
+          aria-describedby={ariaDescribedby}
           aria-valuemin={ariaValueMin}
           aria-valuemax={ariaValueMax}
-          aria-valuetext={value}
+          aria-valuetext={getAriaValueText(value)}
           defaultValue={undefined}
           value={value}
           onChange={!disabled ? e => this.onChange(e, sliderHandle) : null}
@@ -508,6 +527,8 @@ export default class Slider extends React.Component {
       orientation,
       renderLabel,
       variant,
+      'aria-label': ariaLabel,
+      getAriaValueText,
       ...otherProps
     } = this.props;
     const {startValue, endValue} = this.state;
@@ -522,9 +543,8 @@ export default class Slider extends React.Component {
       'is-disabled': disabled
     });
     const shouldRenderLabel = renderLabel && label;
-    const ariaLabel = otherProps['aria-label'];
     const ariaLabelledby = this.getAriaLabelledby();
-    const labelValue = isRange ? [startValue, endValue].join('–') : startValue;
+    const labelValue = isRange ? `${getAriaValueText(startValue)}–${getAriaValueText(endValue)}` : getAriaValueText(startValue);
     const delta = isRange ? (endValue - startValue) : (startValue - min);
     const valueRange = max - min;
     const percent = delta / valueRange;
@@ -564,7 +584,7 @@ export default class Slider extends React.Component {
             </label>
             {shouldRenderLabel &&
               /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
-              <div className="spectrum-Slider-value" role="textbox" tabIndex={-1} aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? e => this.onClickSliderValue(e) : null}>
+              <div className="spectrum-Slider-value" style={{outline: 0}} role="textbox" tabIndex={-1} aria-readonly="true" aria-labelledby={ariaLabelledby} onClick={!disabled ? e => this.onClickSliderValue(e) : null}>
                 {labelValue}
               </div>
             }

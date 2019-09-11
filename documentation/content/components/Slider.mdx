@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Slider from '@react/react-spectrum/Slider';
 
 ## Overview
@@ -10,48 +11,48 @@ and lower bounds to the selection.
 
 ### Basic slider
 
-<Slider></Slider>
+<Slider label="Basic" />
 
 ```jsx
-<Slider></Slider>
+<Slider />
 ```
 
 ### Variant
 
 #### Ramp
 
-<Slider variant="ramp"></Slider>
+<Slider label="Ramp" variant="ramp" />
 
 ```jsx
-<Slider variant="ramp"></Slider>
+<Slider variant="ramp" />
 ```
 
 The variant `ramp` gives you a slightly different look and feel on the slider.
 
 #### Range
 
-<Slider variant="range"></Slider>
+<Slider label="range" variant="range" />
 
 ```jsx
-<Slider variant="range"></Slider>
+<Slider variant="range" />
 ```
 
 ### Slider with step
 
-<Slider step={10}></Slider>
+<Slider label="With step" step={10} />
 
 ```jsx
-<Slider step={10}></Slider>
+<Slider step={10} />
 ```
 
 `Step` allows you set the incremental or decremental step value.
 
 ### Filled slider
 
-<Slider filled></Slider>
+<Slider label="Filled" filled />
 
 ```jsx
-<Slider filled></Slider>
+<Slider filled />
 ```
 
 Setting `filled` to true highlights the line from the `min` value
@@ -59,10 +60,10 @@ to the selected value.
 
 ### Filled slider with Offset
 
-<Slider filled fillOffset={20}></Slider>
+<Slider label="Filled with Offset" filled fillOffset={20} />
 
 ```jsx
-<Slider filled fillOffset={20}></Slider>
+<Slider filled fillOffset={20} />
 ```
 
 Setting `filled` to true along with some value in `fillOffset` highlights the line from the `fillOffset` value
@@ -70,8 +71,74 @@ to the selected value.
 
 ### Render label
 
-<Slider min={1} max={100} renderLabel label="label"></Slider>
+<Slider min={1} max={100} defaultValue={50} renderLabel label="label" />
 
 ```jsx
-<Slider min={1} max={100} renderLabel label="label"></Slider>
+<Slider min={1} max={100} defaultValue={50} renderLabel label="label" />
 ```
+
+## Accessibility
+
+Slider has been implemented using the [HTML5 `input` control with `type=range`](https://www.w3.org/TR/html52/sec-forms.html#range-state-typerange). This allows gestures for incrementing or decrementing the Slider value to work with touch screen readers, like VoiceOver on iOS, TalkBack on Android or Narrator on Windows.
+
+The `range` variant behaves as a fieldset containing two `input` controls with `type=range`.
+
+### Labelling
+
+A Slider can be labelled using the `label` prop which will be rendered if `renderLabel` is `true`, or will behave as an `aria-label` when `renderLabel` is `false`.
+
+<Slider renderLabel label="label"  variant="range" defaultStartValue={33} defaultEndValue={66} />
+
+```jsx
+<Slider renderLabel label="label"  variant="range" defaultStartValue={33} defaultEndValue={66} />
+```
+
+A Slider can also be labelled using a FieldLabel and `aria-labelledby`.
+
+<FieldLabel label="label" labelFor="slider-id" id="slider-label-id" />
+<Slider id="slider-id" aria-labelledby="slider-label-id" variant="range" defaultStartValue={33} defaultEndValue={66} />
+
+```jsx
+<FieldLabel label="label" labelFor="slider-id" id="slider-label-id" />
+<Slider id="slider-id" aria-labelledby="slider-label-id" variant="range" defaultStartValue={33} defaultEndValue={66} />
+```
+
+### getAriaValueText
+
+Use the `getAriaValueText` prop to specify a function to return a string to use as the `aria-valuetext` for a Slider `input` from its `value`.
+
+<Slider
+  min={0}
+  max={1440}
+  defaultStartValue={600}
+  defaultEndValue={840}
+  variant="range"
+  renderLabel
+  label="Duration"
+  getAriaValueText={
+    minutes => {
+      const date = new Date();
+      date.setHours(Math.floor(minutes / 60));
+      date.setMinutes(minutes % 60);
+      return date.toLocaleTimeString('en-us', {hour: '2-digit', minute: '2-digit'});
+    }
+  } />
+
+  ```jsx
+  <Slider
+    min={0}
+    max={1440}
+    defaultStartValue={600}
+    defaultEndValue={840}
+    variant="range"
+    renderLabel
+    label="Duration"
+    getAriaValueText={
+      minutes => {
+        const date = new Date();
+        date.setHours(Math.floor(minutes / 60));
+        date.setMinutes(minutes % 60);
+        return date.toLocaleTimeString('en-us', {hour: '2-digit', minute: '2-digit'});
+      }
+    } />
+  ```
