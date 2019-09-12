@@ -46,7 +46,7 @@ storiesOf('StatusLight', module)
     'variant: negative',
     () => render({variant: 'negative'})
   ).add(
-    'disabled: true',
+    'isDisabled: true',
     () => render({isDisabled: true})
   );
 
