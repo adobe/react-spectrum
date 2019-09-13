@@ -6291,8 +6291,8 @@ eslint-plugin-jest@^22.5.1:
 
 eslint-plugin-jsx-a11y@^6.2.1:
   version "6.2.3"
-  resolved "http://localhost:4873/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.3.tgz#b872a09d5de51af70a97db1eea7dc933043708aa"
-  integrity sha512-CawzfGt9w83tyuVekn0GDPU9ytYtxyxyFZ3aSWROmnRRFQFT2BiPJd7jvRdzNDi6oLWaS2asMeYSNMjWTV4eNg==
+  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.3.tgz#b872a09d5de51af70a97db1eea7dc933043708aa"
+  integrity sha1-uHKgnV3lGvcKl9se6n3JMwQ3CKo=
   dependencies:
     "@babel/runtime" "^7.4.5"
     aria-query "^3.0.0"
