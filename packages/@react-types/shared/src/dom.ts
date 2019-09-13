@@ -17,6 +17,7 @@ export interface DOMProps extends AriaAttributes {
   style?: CSSProperties,
   tabIndex?: number,
   title?: string,
+  type?: string,
 
   // WAI-ARIA
   role?: string

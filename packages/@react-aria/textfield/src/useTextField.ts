@@ -14,16 +14,17 @@ export function useTextField(
     isRequired = false,
     isReadOnly = false,
     autoFocus = false,
-    validationState
+    validationState,
+    type = 'text'
   } = props;
 
   return {
     textFieldProps: {
-      type: 'text',
+      type,
       disabled: isDisabled,
       required: isRequired,
       readOnly: isReadOnly,
-      'aria-invalid': validationState === 'invalid' || null,
+      'aria-invalid': validationState === 'invalid' || undefined,
       onChange: (e: ChangeEvent<HTMLInputElement>) => state.setValue(e.target.value, e),
       value: state.value,
       autoFocus

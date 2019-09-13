@@ -1,5 +1,5 @@
-import Alert from '@spectrum-icons/ui/AlertMedium';
-import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
