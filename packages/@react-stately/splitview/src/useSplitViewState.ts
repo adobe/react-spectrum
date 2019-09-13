@@ -1,5 +1,5 @@
 import {Dispatch, SetStateAction, useRef, useState} from 'react';
-import {orientation, point, SplitViewState, SplitViewStatelyProps} from '@react-types/shared';
+import {orientation, point} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 
 export interface SplitViewStatelyProps {
