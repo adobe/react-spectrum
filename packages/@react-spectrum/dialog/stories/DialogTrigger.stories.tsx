@@ -1,13 +1,17 @@
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '../';
+import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
+  // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
+  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'default',
-    () => render({})
+    () => render({}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}} // modals overlap if multiple are open at the same time
   )
   .add(
     'type: popover',
@@ -15,19 +19,23 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: modal',
-    () => render({type: 'modal'})
+    () => render({type: 'modal'}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}}
   )
   .add(
     'type: tray',
-    () => render({type: 'tray'})
+    () => render({type: 'tray'}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}}
   )
   .add(
     'popover with mobileType: modal',
-    () => render({type: 'popover', mobileType: 'modal'})
+    () => render({type: 'popover', mobileType: 'modal'}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
   )
   .add(
     'popover with mobileType: tray',
-    () => render({type: 'popover', mobileType: 'tray'})
+    () => render({type: 'popover', mobileType: 'tray'}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
   )
   .add(
     'nested modals',
@@ -51,7 +59,8 @@ storiesOf('DialogTrigger', module)
           </DialogTrigger>
         </Provider>
       </div>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'nested popovers',
@@ -69,7 +78,8 @@ storiesOf('DialogTrigger', module)
           </Dialog>
         </DialogTrigger>
       </div>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'popover inside scroll view',
@@ -92,7 +102,8 @@ storiesOf('DialogTrigger', module)
           </div>
         </div>
       </div>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'placement="left"',
@@ -165,8 +176,8 @@ storiesOf('DialogTrigger', module)
 
 function render({width = 'auto', ...props}) {
   return (
-    <div style={{display: 'flex', width}}>
-      <DialogTrigger {...props}>
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           Contents

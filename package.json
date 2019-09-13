@@ -20,7 +20,8 @@
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
-    "plop": "plop"
+    "plop": "plop",
+    "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test  --build-script-name build-storybook-v3"
   },
   "workspaces": [
     "src",
@@ -123,6 +124,7 @@
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",
     "sinon": "^7.3.1",
+    "storybook-chromatic": "^2.2.2",
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",

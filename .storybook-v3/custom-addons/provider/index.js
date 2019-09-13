@@ -1,52 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import addons, { makeDecorator } from '@storybook/addons';
+import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import themeLightest from '@adobe/spectrum-css-temp/vars/spectrum-lightest-unique.css';
-import themeDark from '@adobe/spectrum-css-temp/vars/spectrum-dark-unique.css';
-import themeDarkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest-unique.css';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
+import {themes, defaultTheme} from '../../constants';
 
-const THEME = {
-  light: themeLight,
-  lightest: themeLightest,
-  dark: themeDark,
-  darkest: themeDarkest
-};
-
-const SCALE = {
-  medium: scaleMedium,
-  large: scaleLarge
-};
-
-let defaultTheme = {
-  light: THEME.light,
-  dark: THEME.dark,
-  medium: SCALE.medium,
-  large: SCALE.large
-};
-
-let altTheme = {
-  light: THEME.lightest,
-  dark: THEME.darkest,
-  medium: SCALE.medium,
-  large: SCALE.large
-};
-
-let themes = {
-  light: defaultTheme,
-  dark: defaultTheme,
-  lightest: altTheme,
-  darkest: altTheme
-};
+const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
+  if (k.includes('providerSwitcher-')) {
+    return { ...acc, [k.replace('providerSwitcher-', '')]: v };
+  }
+  return acc;
+}, {});
 
 function ProviderUpdater(props) {
-  let [localeValue, setLocale] = useState('en-US');
-  let [themeValue, setTheme] = useState(undefined);
-  let [scaleValue, setScale] = useState(undefined);
-  let [toastPositionValue, setToastPosition] = useState('top');
-  let [storyReady, setStoryReady] = useState(false); // reduce content flash because it takes a moment to get the provider details
+  let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
+  let [themeValue, setTheme] = useState(providerValuesFromUrl.theme || undefined);
+  let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
+  let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'top');
+  let [storyReady, setStoryReady] = useState(window.parent === window); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
   let theme = themes[themeValue] || defaultTheme;
@@ -69,7 +39,7 @@ function ProviderUpdater(props) {
   }, []);
 
   return (
-    <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
+    <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue} typekitId="pbi5ojv">
       {storyReady && props.children}
     </Provider>
   );
@@ -78,7 +48,7 @@ function ProviderUpdater(props) {
 export const withProviderSwitcher = makeDecorator({
   name: 'withProviderSwitcher',
   parameterName: 'providerSwitcher',
-  wrapper: (getStory, context) => {
+  wrapper: (getStory, context, {options, parameters}) => {
     return (
       <ProviderUpdater>
         {getStory(context)}
