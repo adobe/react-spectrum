@@ -26,7 +26,7 @@ import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 
 const VISIBLE_OVERLAYS = new Map;
-const DEFAULT_BUCKET_KEY = 'none';
+const DEFAULT_BUCKET_KEY = 'all';
 
 @autobind
 export default class Overlay extends React.Component {
@@ -44,7 +44,7 @@ export default class Overlay extends React.Component {
   get overlayBucketKey() {
     const {children} = this.props;
     if (children && children.props) {
-      return children.props.role || DEFAULT_BUCKET_KEY;
+      return children.props.role === 'tooltip' ? 'tooltip' : DEFAULT_BUCKET_KEY;
     }
     return DEFAULT_BUCKET_KEY;
   }

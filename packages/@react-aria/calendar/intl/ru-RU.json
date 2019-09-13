@@ -1,0 +1,11 @@
+{
+  "previous": "Предыдущий",
+  "next": "Следующий",
+  "selectedDateDescription": "Выбранная дата: {date, date, full}",
+  "selectedRangeDescription": "Выбранный диапазон дат: {start, date, long} до {end, date, long}",
+  "todayDate": "Сегодня, {date, date, full}",
+  "todayDateSelected": "Сегодня, {date, date, full}, выбрано",
+  "dateSelected": "{date, date, full} выбрано",
+  "startRangeSelectionPrompt": "Нажмите, чтобы начать выбирать диапазон дат.",
+  "finishRangeSelectionPrompt": "Нажмите, чтобы закончить выбор диапазона дат."
+}

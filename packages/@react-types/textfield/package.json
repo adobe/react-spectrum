@@ -1,6 +1,7 @@
 {
   "name": "@react-types/textfield",
   "version": "3.0.0",
+  "private": true,
   "description": "Spectrum UI components in React",
   "main": "src/index.ts",
   "repository": {
@@ -8,8 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "3.0.0",
-    "react": "^16.8.0"
+    "@react-types/shared": "3.0.0"
   },
-  "devDependencies": {}
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
 }

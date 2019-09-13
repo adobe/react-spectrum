@@ -1,0 +1,11 @@
+{
+  "previous": "上一頁",
+  "next": "下一頁",
+  "selectedDateDescription": "選取的日期 {date, date, full}",
+  "selectedRangeDescription": "選定日期範圍：{start, date, long}至{end, date, long}",
+  "todayDate": "今天 {date, date, full}",
+  "todayDateSelected": "今天，已選取 {date, date, full}",
+  "dateSelected": "已選取 {date, date, full}",
+  "startRangeSelectionPrompt": "點擊開始選擇日期範圍",
+  "finishRangeSelectionPrompt": "點擊完成選擇日期範圍"
+}

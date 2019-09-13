@@ -1,8 +1,6 @@
 import {ButtonBase} from './Button';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {cloneIcon} from '@react/react-spectrum/utils/icon';
-// @ts-ignore
-import CrossSmall from '../../../../Icon/core/CrossSmall'; // Alternative is Close from '@react/react-spectrum/Icon/Close';
+import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {FocusRing} from '@react-aria/focus';
 import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';

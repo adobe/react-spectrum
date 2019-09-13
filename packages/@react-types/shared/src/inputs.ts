@@ -1,7 +1,8 @@
+export type ValidationState = 'valid' | 'invalid';
 export interface InputBase {
   isDisabled?: boolean,
   isRequired?: boolean,
-  validationState?: 'valid' | 'invalid',
+  validationState?: ValidationState,
   isReadOnly?: boolean,
   autoFocus?: boolean
 }

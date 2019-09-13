@@ -1,0 +1,11 @@
+{
+  "previous": "Předchozí",
+  "next": "Další",
+  "selectedDateDescription": "Vybrané datum: {date, date, full}",
+  "selectedRangeDescription": "Vybraný rozsah: {start, date, long} až {end, date, long}",
+  "todayDate": "Dnes, {date, date, full}",
+  "todayDateSelected": "Dnes je vybráno: {date, date, full}",
+  "dateSelected": "Vybráno: {date, date, full}",
+  "startRangeSelectionPrompt": "Kliknutím zahájíte výběr rozsahu dat",
+  "finishRangeSelectionPrompt": "Klepnutím dokončíte výběr rozsahu dat"
+}

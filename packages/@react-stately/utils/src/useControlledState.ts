@@ -3,7 +3,7 @@ import {useCallback, useRef, useState} from 'react';
 export function useControlledState(
   value: any,
   defaultValue: any,
-  onChange: (value: any, ...args: any) => void
+  onChange: (value: any, ...args: any[]) => void
 ): [any, (value: any, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);

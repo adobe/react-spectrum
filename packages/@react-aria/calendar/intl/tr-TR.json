@@ -1,0 +1,11 @@
+{
+  "previous": "Önceki",
+  "next": "İleri",
+  "selectedDateDescription": "Seçilen Tarih: {date, date, full}",
+  "selectedRangeDescription": "Seçilen Aralık: {start, date, long} to {end, date, long}",
+  "todayDate": "Bugün, {date, date, full}",
+  "todayDateSelected": "Bugün, {date, date, full} seçildi",
+  "dateSelected": "{date, date, full} seçildi",
+  "startRangeSelectionPrompt": "Tarih aralığını seçmeye başlamak için tıklayın.",
+  "finishRangeSelectionPrompt": "Tarih aralığının seçimini bitirmek için tıklayın."
+}

@@ -9,16 +9,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
+    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@react-spectrum/provider": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/tabs": "^3.0.0",
     "@react-aria/tabs": "^3.0.0",
     "classnames": "^2.2.5"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   }
 }

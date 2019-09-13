@@ -1,0 +1,11 @@
+{
+  "previous": "Précédent",
+  "next": "Suivant",
+  "selectedDateDescription": "Date sélectionnée: {date, date, full}",
+  "selectedRangeDescription": "Plage de dates sélectionnée: {start, date, long} to {end, date, long}",
+  "todayDate": "Aujourd’hui, {date, date, full}",
+  "todayDateSelected": "Aujourd’hui, sélection de {date, date, full}",
+  "dateSelected": "Sélection de {date, date, full}",
+  "startRangeSelectionPrompt": "Cliquez pour commencer à sélectionner la période",
+  "finishRangeSelectionPrompt": "Cliquez pour terminer la sélection de la période"
+}

@@ -1,5 +1,5 @@
 import {TextFieldState} from '@react-types/textfield';
-import {useControlledState} from '@react-stately/utils/src/useControlledState';
+import {useControlledState} from '@react-stately/utils';
 import {ValueBase} from '@react-types/shared';
 
 export function useTextFieldState(props: ValueBase<string | number | string[]>): TextFieldState {

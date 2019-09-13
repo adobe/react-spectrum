@@ -20,6 +20,7 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 import {Tab, TabList} from '../../src/TabList';
+import Twitter from '../../src/Icon/Twitter';
 import * as utils from '../../src/TabList/js/getBoundingClientRect';
 
 describe('TabList', () => {
@@ -141,7 +142,8 @@ describe('TabList', () => {
     const child = innerTree.find('.two');
     child.simulate('click');
 
-    assert.equal(tree.props().selectedIndex, 0);
+    assert.equal(tree.prop('selectedIndex'), 0);
+    assert.equal(tree.state('selectedIndex'), 0);
   });
 
   it('supports defaultSelectedIndex', () => {
@@ -246,23 +248,54 @@ describe('TabList', () => {
 
     it('supports selection on focus when keyboardActivation="automatic"', () => {
       const focusSpy = sinon.spy();
+      const keyDownSpy = sinon.spy();
+      const keyUpSpy = sinon.spy();
       tree = mount(
         <TabList>
-          <Tab tabIndex={0} className="one">a</Tab>
-          <Tab tabIndex={0} className="two" onFocus={focusSpy}>b</Tab>
+          <Tab tabIndex={0} className="one" onFocus={focusSpy} onKeyDown={keyDownSpy} onKeyUp={keyUpSpy}>a</Tab>
+          <Tab tabIndex={0} className="two" onFocus={focusSpy} onKeyDown={keyDownSpy} onKeyUp={keyUpSpy}>b</Tab>
         </TabList>
       );
 
-      let child = tree.find('.spectrum-Tabs-item.two');
-      child.simulate('focus');
+      let child1 = tree.find('.spectrum-Tabs-item.one');
+      child1.simulate('keydown', {key: 'ArrowRight', preventDefault: () => {}});
+      assert.equal(keyDownSpy.args[0][0].key, 'ArrowRight');
+
+      let child2 = tree.find('.spectrum-Tabs-item.two');
+      child2.simulate('focus');
       assert(focusSpy.calledWith(1));
+
+      child1.simulate('keyup', {key: 'ArrowRight', preventDefault: () => {}});
+      assert.equal(keyUpSpy.args[0][0].key, 'ArrowRight');
 
       tree.update();
 
-      assert(tree.state('selectedIndex'), 1);
+      assert.equal(tree.state('selectedIndex'), 1);
 
-      child = tree.find('[selected=true]');
-      assert.notEqual(child.prop('className').indexOf('two'), -1);
+      child2 = tree.find('[selected=true]');
+      assert.notEqual(child2.prop('className').indexOf('two'), -1);
+
+      focusSpy.resetHistory();
+      keyDownSpy.resetHistory();
+      keyUpSpy.resetHistory();
+
+      child2 = tree.find('.spectrum-Tabs-item.two');
+      child2.simulate('keydown', {key: 'ArrowLeft', preventDefault: () => {}});
+      assert.equal(keyDownSpy.args[0][0].key, 'ArrowLeft');
+
+      child1 = tree.find('.spectrum-Tabs-item.one');
+      child1.simulate('focus');
+      assert(focusSpy.calledWith(0));
+
+      child2.simulate('keyup', {key: 'ArrowLeft', preventDefault: () => {}});
+      assert.equal(keyUpSpy.args[0][0].key, 'ArrowLeft');
+
+      tree.update();
+
+      assert.equal(tree.state('selectedIndex'), 0);
+
+      child1 = tree.find('[selected=true]');
+      assert.notEqual(child1.prop('className').indexOf('one'), -1);
 
       tree.setProps({
         keyboardActivation: 'manual'
@@ -276,14 +309,14 @@ describe('TabList', () => {
 
       assert.equal(tree.prop('keyboardActivation'), 'manual');
 
-      child = tree.find('.spectrum-Tabs-item.two');
-      child.simulate('focus');
+      child2 = tree.find('.spectrum-Tabs-item.two');
+      child2.simulate('focus');
       assert(focusSpy.calledWith(1));
 
       assert.equal(tree.state('selectedIndex'), 0);
 
-      child = tree.find('[selected=true]');
-      assert.notEqual(child.prop('className').indexOf('one'), -1);
+      child2 = tree.find('[selected=true]');
+      assert.notEqual(child2.prop('className').indexOf('one'), -1);
     });
 
     it('finds a new tab if the currently selected one is removed', () => {
@@ -331,7 +364,8 @@ describe('TabList', () => {
         tree = mount(
           <TabList collapsible>
             <Tab className="one">a</Tab>
-            <Tab className="two">b</Tab>
+            <Tab className="two" icon={<Twitter />}>b</Tab>
+            <Tab className="three" disabled>c</Tab>
           </TabList>
         );
         let tabsContainer = tree.find('div.react-spectrum-Tabs--container');
@@ -348,7 +382,9 @@ describe('TabList', () => {
         button.simulate('click', {button: 0});
 
         let dropdownItems = document.querySelectorAll('.spectrum-Menu-item');
-        assert.equal(dropdownItems.length, 2);
+        assert.equal(dropdownItems.length, 3);
+        assert.equal(dropdownItems[2].getAttribute('aria-disabled'), 'true');
+
         dropdownItems[1].dispatchEvent(new window.MouseEvent('click', {
           bubbles: true,
           cancelable: true
@@ -373,6 +409,9 @@ describe('TabList', () => {
         assert(!tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
         select = tree.find('TabListDropdown');
         assert.equal(select.length, 0);
+        window.dispatchEvent(new window.Event('resize'));
+        tree.unmount();
+        tree = null;
       });
 
       it('can start off expanded', () => {
@@ -404,6 +443,9 @@ describe('TabList', () => {
         assert(tabsContainer.prop('className').includes('react-spectrum-Tabs--hidden'));
         select = tree.find('TabListDropdown');
         assert.equal(select.length, 1);
+        window.dispatchEvent(new window.Event('resize'));
+        tree.unmount();
+        tree = null;
       });
 
 

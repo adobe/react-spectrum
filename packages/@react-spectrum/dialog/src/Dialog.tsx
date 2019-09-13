@@ -2,6 +2,7 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DialogContext} from './context';
 import {DOMProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
@@ -11,17 +12,20 @@ interface DialogProps extends DOMProps {
 }
 
 export const Dialog = React.forwardRef((props: DialogProps, ref: RefObject<HTMLDivElement>) => {
-  let context = useContext(DialogContext);
-  if (!context || context.type === 'popover') {
-    return <BaseDialog {...props} ref={ref} />;
+  let {
+    type = 'popover',
+    ...contextProps
+  } = useContext(DialogContext) || {};
+  if (type === 'popover') {
+    return <BaseDialog {...mergeProps(contextProps, props)} ref={ref} />;
   } else {
-    return <ModalDialog {...props} ref={ref} />;
+    return <ModalDialog {...mergeProps(contextProps, props)} ref={ref} />;
   }
 });
 
 const ModalDialog = React.forwardRef((props: DialogProps, ref: RefObject<HTMLDivElement>) => {
   let {modalProps} = useModalDialog();
-  return <BaseDialog {...props} {...modalProps} ref={ref} />;
+  return <BaseDialog {...mergeProps(props, modalProps)} ref={ref} />;
 });
 
 const BaseDialog = React.forwardRef(({children, className, ...otherProps}: DialogProps, ref: RefObject<HTMLDivElement>) => {
@@ -37,8 +41,7 @@ const BaseDialog = React.forwardRef(({children, className, ...otherProps}: Dialo
           className
         )}
         ref={ref}
-        {...filterDOMProps(otherProps)}
-        {...dialogProps}>
+        {...mergeProps(filterDOMProps(otherProps), dialogProps)}>
         {children}
       </div>
     </FocusScope>

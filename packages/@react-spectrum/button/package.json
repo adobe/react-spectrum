@@ -12,16 +12,14 @@
     "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/button": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
+    "@react-aria/interactions": "^3.0.0",
+    "@react-spectrum/provider": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
-  },
-  "devDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
-    "@react/react-spectrum": "^2.0.0",
-    "@spectrum-icons/workflow": "^3.0.0"
   }
 }

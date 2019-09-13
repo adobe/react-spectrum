@@ -8,10 +8,10 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "peerDependencies": {
-    "react": "^16.8.0"
+  "dependencies": {
+    "@react-aria/utils": "^3.0.0"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "react": "^16.8.0"
   }
 }

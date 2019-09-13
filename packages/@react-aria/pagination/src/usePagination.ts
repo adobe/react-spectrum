@@ -1,0 +1,54 @@
+import intlMessages from '../intl';
+import {useMessageFormatter} from '@react-aria/i18n';
+
+export function usePagination(props, state) {
+  let formatMessage = useMessageFormatter(intlMessages);
+
+  let onPrevious = () => {
+    state.onDecrement();
+    if (props.onPrevious) {
+      props.onPrevious(state.ref.current);
+    }
+  };
+
+  let onNext = () => {
+    state.onIncrement();
+    if (props.onNext) {
+      props.onNext(state.ref.current);
+    }
+  };
+
+  let onKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+      case 'Up':
+        state.onIncrement();
+        break;
+      case 'ArrowDown':
+      case 'Down':
+        state.onDecrement();
+        break;
+      case 'Enter':
+      case ' ':
+        break;
+      default:
+    }
+  };
+
+  return {
+    prevButtonProps: {
+      ...props,
+      'aria-label': formatMessage('previous'),
+      onPress: onPrevious
+    },
+    nextButtonProps: {
+      ...props,
+      'aria-label': formatMessage('next'),
+      onPress: onNext
+    },
+    textProps: {
+      ...props,
+      onKeyDown: onKeyDown
+    }
+  };
+}

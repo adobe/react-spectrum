@@ -1,11 +1,12 @@
 import {chain} from './chain';
 import classNames from 'classnames';
+import {mergeIds} from './useId';
 
 interface Props {
   [key: string]: any
 }
 
-export function mergeProps<T extends Props, U extends Props>(a: T, b: U): Props {
+export function mergeProps<T extends Props, U extends Props>(a: T, b: U): T & U {
   let res: Props = {};
   for (let key in a) {
     // Chain events
@@ -15,6 +16,9 @@ export function mergeProps<T extends Props, U extends Props>(a: T, b: U): Props 
     // Merge classnames
     } else if (key === 'className' && a.className && b.className) {
       res[key] = classNames(a.className, b.className);
+
+    } else if (key === 'id' && a.id && b.id) {
+      res.id = mergeIds(a.id, b.id);
 
     // Override others
     } else {
@@ -29,5 +33,5 @@ export function mergeProps<T extends Props, U extends Props>(a: T, b: U): Props 
     }
   }
 
-  return res;
+  return res as T & U;
 }

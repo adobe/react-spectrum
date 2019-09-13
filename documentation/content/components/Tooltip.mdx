@@ -1,3 +1,5 @@
+import Button from '@react/react-spectrum/Button';
+import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import Tooltip from '@react/react-spectrum/Tooltip';
 
 ## Overview
@@ -57,4 +59,28 @@ The tooltip can be placed with different placement.
 
 ```jsx
 <Tooltip placement="right">right</Tooltip>
+```
+
+## Accessibility
+
+### WAI-ARIA design pattern
+
+Tooltip, when used together with the [OverlayTrigger](OverlayTrigger) component, implements the [WAI-ARIA 1.1 Tooltip Widget](https://www.w3.org/TR/wai-aria-practices-1.1/#tooltip) design pattern.  
+
+When an OverlayTrigger opens an element with `role` equal to `tooltip`, an appropriate `aria-describedby` attribute will be added to the trigger element.
+
+<OverlayTrigger placement="right">
+  <Button label="Tooltip" variant="cta" />
+  <Tooltip variant="info">
+    Displays a tooltip
+  </Tooltip>
+</OverlayTrigger>
+
+```jsx
+<OverlayTrigger placement="right">
+  <Button label="Tooltip" variant="cta" />
+  <Tooltip variant="info">
+    Displays a tooltip
+  </Tooltip>
+</OverlayTrigger>
 ```

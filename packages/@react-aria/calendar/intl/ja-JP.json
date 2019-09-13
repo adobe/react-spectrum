@@ -1,0 +1,11 @@
+{
+  "previous": "前へ",
+  "next": "次へ",
+  "selectedDateDescription": "選択した日付：{date, date, full}",
+  "selectedRangeDescription": "選択した日付範囲: {start, date, long} ~ {end, date, long}",
+  "todayDate": "今日、{date, date, full}",
+  "todayDateSelected": "今日、{date, date, full} が選択されました",
+  "dateSelected": "{date, date, full} が選択されました",
+  "startRangeSelectionPrompt": "クリックすると日付範囲が選択されます",
+  "finishRangeSelectionPrompt": "クリックすると日付範囲の選択が完了します"
+}

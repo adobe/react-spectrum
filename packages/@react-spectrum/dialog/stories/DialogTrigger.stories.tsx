@@ -152,20 +152,20 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'shouldFlip: true',
-    () => render({type: 'popover', placement: 'left', shouldFlip: true, justifyContent: 'flex-start'})
+    () => render({type: 'popover', placement: 'left', shouldFlip: true, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: false',
-    () => render({type: 'popover', placement: 'left', shouldFlip: false, justifyContent: 'flex-start'})
+    () => render({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
     'containerPadding',
-    () => render({type: 'popover', placement: 'bottom', justifyContent: 'flex-start', containerPadding: 20})
+    () => render({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   );
 
-function render({justifyContent = 'center', ...props}) {
+function render({width = 'auto', ...props}) {
   return (
-    <div style={{display: 'flex', justifyContent, alignItems: 'center', height: 'calc(100vh - 100px)'}}>
+    <div style={{display: 'flex', width}}>
       <DialogTrigger {...props}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>

@@ -99,7 +99,8 @@ export default class TagField extends React.Component {
 
   onSelect(value) {
     let coercedValue = value.label || value;
-    if (!coercedValue || (!this.props.allowDuplicates && this.state.tags.includes(coercedValue))) {
+    let areDuplicates = (a, b) => a === b || (a.label && b.label && a.label === b.label);
+    if (!coercedValue || (!this.props.allowDuplicates && this.state.tags.some(t => areDuplicates(t, value)))) {
       return;
     }
 
@@ -166,7 +167,7 @@ export default class TagField extends React.Component {
           aria-labelledby={this.props['aria-labelledby']}
           aria-label={this.props['aria-label']}>
           { renderTag && tags.map(tag => renderTag(tag)) }
-        </TagList> 
+        </TagList>
         <Textfield
           ref={tf => this.textfield = tf}
           className="react-spectrum-TagField-input"

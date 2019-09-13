@@ -18,7 +18,7 @@ export interface PositionProps {
 
 interface AriaPositionProps extends PositionProps {
   containerRef: RefObject<Element>,
-  triggerRef: RefObject<Element>,
+  targetRef: RefObject<Element>,
   overlayRef: RefObject<Element>,
   shouldUpdatePosition?: boolean
 }
@@ -41,7 +41,7 @@ interface PositionState {
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {
     containerRef,
-    triggerRef,
+    targetRef,
     overlayRef,
     placement = 'bottom' as Placement,
     containerPadding = 0,
@@ -65,7 +65,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     shouldUpdatePosition,
     placement,
     overlayRef.current,
-    triggerRef.current,
+    targetRef.current,
     containerRef.current,
     containerPadding,
     shouldFlip,
@@ -76,7 +76,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   ];
 
   let updatePosition = () => {
-    if (shouldUpdatePosition === false || !overlayRef.current || !triggerRef.current || !containerRef.current) {
+    if (shouldUpdatePosition === false || !overlayRef.current || !targetRef.current || !containerRef.current) {
       return;
     }
 
@@ -84,7 +84,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       calculatePosition(
         placement,
         overlayRef.current,
-        triggerRef.current,
+        targetRef.current,
         containerRef.current,
         containerPadding,
         shouldFlip,

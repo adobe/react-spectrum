@@ -306,29 +306,6 @@ a.spectrum-ActionButton {
   block-size: var(--spectrum-clearbutton-small-height);
 }
 
-/* topdoc
-{{ button/tool.yml }}
-*/
-.spectrum-Tool {
-  @inherit: .spectrum-ActionButton;
-  @inherit: .spectrum-ActionButton--quiet;
-
-  position: relative;
-
-  justify-content: center;
-
-  inline-size: var(--spectrum-tool-min-width);
-  block-size: var(--spectrum-tool-height);
-
-  padding: 0;
-}
-
-.spectrum-Tool-hold {
-  position: absolute;
-  right: var(--spectrum-tool-hold-icon-padding-right);
-  bottom: var(--spectrum-tool-hold-icon-padding-bottom);
-}
-
 /* Potentially temporary: Add back default margin between all buttons when adjacent */
 .spectrum-Button + .spectrum-Button {
   margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
@@ -336,8 +313,4 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton + .spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
-}
-
-.spectrum-Tool + .spectrum-Tool {
-  margin-inline-start: var(--spectrum-toolgroup-text-button-gap-x);
 }

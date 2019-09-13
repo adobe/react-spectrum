@@ -144,6 +144,6 @@ storiesOf('TagField', module)
   .add(
     'With custom tag rendering',
     () => (
-      <TagField placeholder="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+      <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
     )
   );

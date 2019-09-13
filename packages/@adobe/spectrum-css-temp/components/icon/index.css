@@ -42,8 +42,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-xxs);
-    width: var(--spectrum-icon-size-xxs);
+    block-size: var(--spectrum-icon-size-xxs);
+    inline-size: var(--spectrum-icon-size-xxs);
   }
 }
 
@@ -51,8 +51,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-xs);
-    width: var(--spectrum-icon-size-xs);
+    block-size: var(--spectrum-icon-size-xs);
+    inline-size: var(--spectrum-icon-size-xs);
   }
 }
 
@@ -60,8 +60,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-s);
-    width: var(--spectrum-icon-size-s);
+    block-size: var(--spectrum-icon-size-s);
+    inline-size: var(--spectrum-icon-size-s);
   }
 }
 
@@ -69,8 +69,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-m);
-    width: var(--spectrum-icon-size-m);
+    block-size: var(--spectrum-icon-size-m);
+    inline-size: var(--spectrum-icon-size-m);
   }
 }
 
@@ -78,8 +78,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-l);
-    width: var(--spectrum-icon-size-l);
+    block-size: var(--spectrum-icon-size-l);
+    inline-size: var(--spectrum-icon-size-l);
   }
 }
 
@@ -87,8 +87,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-xl);
-    width: var(--spectrum-icon-size-xl);
+    block-size: var(--spectrum-icon-size-xl);
+    inline-size: var(--spectrum-icon-size-xl);
   }
 }
 
@@ -96,8 +96,8 @@ governing permissions and limitations under the License.
   &,
   img,
   svg {
-    height: var(--spectrum-icon-size-xxl);
-    width: var(--spectrum-icon-size-xxl);
+    block-size: var(--spectrum-icon-size-xxl);
+    inline-size: var(--spectrum-icon-size-xxl);
   }
 }
 
@@ -139,138 +139,138 @@ governing permissions and limitations under the License.
 
 /* UI Icons */
 .spectrum-UIIcon-AlertMedium {
-  width: var(--spectrum-icon-alert-medium-width);
-  height: var(--spectrum-icon-alert-medium-height);
+  inline-size: var(--spectrum-icon-alert-medium-width);
+  block-size: var(--spectrum-icon-alert-medium-height);
 }
 .spectrum-UIIcon-AlertSmall {
-  width: var(--spectrum-icon-alert-small-width);
-  height: var(--spectrum-icon-alert-small-height);
+  inline-size: var(--spectrum-icon-alert-small-width);
+  block-size: var(--spectrum-icon-alert-small-height);
 }
 .spectrum-UIIcon-ArrowDownSmall {
-  width: var(--spectrum-icon-arrow-down-small-width);
-  height: var(--spectrum-icon-arrow-down-small-height);
+  inline-size: var(--spectrum-icon-arrow-down-small-width);
+  block-size: var(--spectrum-icon-arrow-down-small-height);
 }
 .spectrum-UIIcon-ArrowLeftMedium {
-  width: var(--spectrum-icon-arrow-left-medium-width);
-  height: var(--spectrum-icon-arrow-left-medium-height);
+  inline-size: var(--spectrum-icon-arrow-left-medium-width);
+  block-size: var(--spectrum-icon-arrow-left-medium-height);
 }
 .spectrum-UIIcon-Asterisk {
-  width: var(--spectrum-fieldlabel-asterisk-size);
-  height: var(--spectrum-fieldlabel-asterisk-size);
+  inline-size: var(--spectrum-fieldlabel-asterisk-size);
+  block-size: var(--spectrum-fieldlabel-asterisk-size);
 }
 .spectrum-UIIcon-CheckmarkMedium {
-  width: var(--spectrum-icon-checkmark-medium-width);
-  height: var(--spectrum-icon-checkmark-medium-height);
+  inline-size: var(--spectrum-icon-checkmark-medium-width);
+  block-size: var(--spectrum-icon-checkmark-medium-height);
 }
 .spectrum-UIIcon-CheckmarkSmall {
-  width: var(--spectrum-icon-checkmark-small-width);
-  height: var(--spectrum-icon-checkmark-small-height);
+  inline-size: var(--spectrum-icon-checkmark-small-width);
+  block-size: var(--spectrum-icon-checkmark-small-height);
 }
 .spectrum-UIIcon-ChevronDownMedium {
-  width: var(--spectrum-icon-chevron-down-medium-width);
-  height: var(--spectrum-icon-chevron-down-medium-height);
+  inline-size: var(--spectrum-icon-chevron-down-medium-width);
+  block-size: var(--spectrum-icon-chevron-down-medium-height);
 }
 .spectrum-UIIcon-ChevronDownSmall {
-  width: var(--spectrum-icon-chevron-down-small-width);
-  height: var(--spectrum-icon-chevron-down-small-height);
+  inline-size: var(--spectrum-icon-chevron-down-small-width);
+  block-size: var(--spectrum-icon-chevron-down-small-height);
 }
 .spectrum-UIIcon-ChevronLeftLarge {
-  width: var(--spectrum-icon-chevron-left-large-width);
-  height: var(--spectrum-icon-chevron-left-large-height);
+  inline-size: var(--spectrum-icon-chevron-left-large-width);
+  block-size: var(--spectrum-icon-chevron-left-large-height);
 }
 .spectrum-UIIcon-ChevronLeftMedium {
-  width: var(--spectrum-icon-chevron-left-medium-width);
-  height: var(--spectrum-icon-chevron-left-medium-height);
+  inline-size: var(--spectrum-icon-chevron-left-medium-width);
+  block-size: var(--spectrum-icon-chevron-left-medium-height);
 }
 .spectrum-UIIcon-ChevronRightLarge {
-  width: var(--spectrum-icon-chevron-right-large-width);
-  height: var(--spectrum-icon-chevron-right-large-height);
+  inline-size: var(--spectrum-icon-chevron-right-large-width);
+  block-size: var(--spectrum-icon-chevron-right-large-height);
 }
 .spectrum-UIIcon-ChevronRightMedium {
-  width: var(--spectrum-icon-chevron-right-medium-width);
-  height: var(--spectrum-icon-chevron-right-medium-height);
+  inline-size: var(--spectrum-icon-chevron-right-medium-width);
+  block-size: var(--spectrum-icon-chevron-right-medium-height);
 }
 .spectrum-UIIcon-ChevronRightSmall {
-  width: var(--spectrum-icon-chevron-right-small-width);
-  height: var(--spectrum-icon-chevron-right-small-height);
+  inline-size: var(--spectrum-icon-chevron-right-small-width);
+  block-size: var(--spectrum-icon-chevron-right-small-height);
 }
 .spectrum-UIIcon-ChevronUpSmall {
-  width: var(--spectrum-icon-chevron-up-small-width);
-  height: var(--spectrum-icon-chevron-up-small-height);
+  inline-size: var(--spectrum-icon-chevron-up-small-width);
+  block-size: var(--spectrum-icon-chevron-up-small-height);
 }
 .spectrum-UIIcon-CornerTriangle {
-  width: var(--spectrum-icon-cornertriangle-width);
-  height: var(--spectrum-icon-cornertriangle-height);
+  inline-size: var(--spectrum-icon-cornertriangle-width);
+  block-size: var(--spectrum-icon-cornertriangle-height);
 }
 .spectrum-UIIcon-CrossLarge {
-  width: var(--spectrum-icon-cross-large-width);
-  height: var(--spectrum-icon-cross-large-height);
+  inline-size: var(--spectrum-icon-cross-large-width);
+  block-size: var(--spectrum-icon-cross-large-height);
 }
 .spectrum-UIIcon-CrossMedium {
-  width: var(--spectrum-icon-cross-medium-width);
-  height: var(--spectrum-icon-cross-medium-height);
+  inline-size: var(--spectrum-icon-cross-medium-width);
+  block-size: var(--spectrum-icon-cross-medium-height);
 }
 .spectrum-UIIcon-CrossSmall {
-  width: var(--spectrum-icon-cross-small-width);
-  height: var(--spectrum-icon-cross-small-height);
+  inline-size: var(--spectrum-icon-cross-small-width);
+  block-size: var(--spectrum-icon-cross-small-height);
 }
 .spectrum-UIIcon-DashSmall {
-  width: var(--spectrum-icon-dash-small-width);
-  height: var(--spectrum-icon-dash-small-height);
+  inline-size: var(--spectrum-icon-dash-small-width);
+  block-size: var(--spectrum-icon-dash-small-height);
 }
 .spectrum-UIIcon-DoubleGripper {
-  width: var(--spectrum-icon-doublegripper-width);
-  height: var(--spectrum-icon-doublegripper-height);
+  inline-size: var(--spectrum-icon-doublegripper-width);
+  block-size: var(--spectrum-icon-doublegripper-height);
 }
 .spectrum-UIIcon-FolderBreadcrumb {
-  width: var(--spectrum-icon-folderbreadcrumb-width);
-  height: var(--spectrum-icon-folderbreadcrumb-height);
+  inline-size: var(--spectrum-icon-folderbreadcrumb-width);
+  block-size: var(--spectrum-icon-folderbreadcrumb-height);
 }
 .spectrum-UIIcon-HelpMedium {
-  width: var(--spectrum-icon-info-medium-width);
-  height: var(--spectrum-icon-info-medium-height);
+  inline-size: var(--spectrum-icon-info-medium-width);
+  block-size: var(--spectrum-icon-info-medium-height);
 }
 .spectrum-UIIcon-HelpSmall {
-  width: var(--spectrum-icon-info-small-width);
-  height: var(--spectrum-icon-info-small-height);
+  inline-size: var(--spectrum-icon-info-small-width);
+  block-size: var(--spectrum-icon-info-small-height);
 }
 .spectrum-UIIcon-InfoMedium {
-  width: var(--spectrum-icon-info-medium-width);
-  height: var(--spectrum-icon-info-medium-height);
+  inline-size: var(--spectrum-icon-info-medium-width);
+  block-size: var(--spectrum-icon-info-medium-height);
 }
 .spectrum-UIIcon-InfoSmall {
-  width: var(--spectrum-icon-info-small-width);
-  height: var(--spectrum-icon-info-small-height);
+  inline-size: var(--spectrum-icon-info-small-width);
+  block-size: var(--spectrum-icon-info-small-height);
 }
 .spectrum-UIIcon-Magnifier {
-  width: var(--spectrum-icon-magnifier-width);
-  height: var(--spectrum-icon-magnifier-height);
+  inline-size: var(--spectrum-icon-magnifier-width);
+  block-size: var(--spectrum-icon-magnifier-height);
 }
 .spectrum-UIIcon-SkipLeft {
-  width: var(--spectrum-icon-skip-left-width);
-  height: var(--spectrum-icon-skip-left-height);
+  inline-size: var(--spectrum-icon-skip-left-width);
+  block-size: var(--spectrum-icon-skip-left-height);
 }
 .spectrum-UIIcon-SkipRight {
-  width: var(--spectrum-icon-skip-right-width);
-  height: var(--spectrum-icon-skip-right-height);
+  inline-size: var(--spectrum-icon-skip-right-width);
+  block-size: var(--spectrum-icon-skip-right-height);
 }
 .spectrum-UIIcon-Star {
-  width: var(--spectrum-icon-star-width);
-  height: var(--spectrum-icon-star-height);
+  inline-size: var(--spectrum-icon-star-width);
+  block-size: var(--spectrum-icon-star-height);
 }
 .spectrum-UIIcon-StarOutline {
-  width: var(--spectrum-icon-star-outline-width);
-  height: var(--spectrum-icon-star-outline-height);
+  inline-size: var(--spectrum-icon-star-outline-width);
+  block-size: var(--spectrum-icon-star-outline-height);
 }
 .spectrum-UIIcon-SuccessMedium {
-  width: var(--spectrum-icon-success-medium-width);
-  height: var(--spectrum-icon-success-medium-height);
+  inline-size: var(--spectrum-icon-success-medium-width);
+  block-size: var(--spectrum-icon-success-medium-height);
 }
 .spectrum-UIIcon-SuccessSmall {
-  width: var(--spectrum-icon-success-small-width);
-  height: var(--spectrum-icon-success-small-height);
+  inline-size: var(--spectrum-icon-success-small-width);
+  block-size: var(--spectrum-icon-success-small-height);
 }
 .spectrum-UIIcon-TripleGripper {
-  width: var(--spectrum-icon-triplegripper-width);
-  height: var(--spectrum-icon-triplegripper-height);
+  inline-size: var(--spectrum-icon-triplegripper-width);
+  block-size: var(--spectrum-icon-triplegripper-height);
 }

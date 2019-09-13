@@ -19,8 +19,21 @@ If you are manually managing your version of Node, then refer to `.nvmrc` for th
 Add the following to your `~/.npmrc`:
 
 ```
+registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/
+
+_auth = [AUTH KEY]
+always-auth = true
+email = [ADOBE EMAIL]
+
+@spectrum:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/
+//artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/:always-auth=true
 @react:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
 //artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/:always-auth=false
+```
+
+The auth key can be obtained by following the steps listed [here](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#npmRegistry-UsingBasicAuthentication). Sample cURL:
+```
+ curl -u danilu:<API KEY> https://artifactory.corp.adobe.com/artifactory/api/npm/auth
 ```
 
 Then you should be able to install with npm:

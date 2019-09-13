@@ -1,0 +1,17 @@
+{
+  "name": "@react-types/checkbox",
+  "version": "3.0.0",
+  "description": "Spectrum UI components in React",
+  "private": true,
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-types/shared": "3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
+}

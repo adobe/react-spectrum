@@ -31,7 +31,7 @@
     "gatsby-transformer-json": "^1.0.16",
     "gatsby-transformer-react-docgen": "^1.0.17",
     "gatsby-transformer-remark": "^1.7.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
   },

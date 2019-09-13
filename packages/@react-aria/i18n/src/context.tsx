@@ -1,5 +1,6 @@
 import {direction} from '@react-types/shared';
 import React, {ReactNode, useContext} from 'react';
+import {useDefaultLocale} from './useDefaultLocale';
 
 interface ProviderProps {
   locale?: string,
@@ -11,14 +12,17 @@ interface LocaleContext {
   direction: direction
 }
 
-// @ts-ignore
-const defaultLocale: string = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
 const I18nContext = React.createContext<LocaleContext>({
-  locale: defaultLocale,
+  locale: 'en-US',
   direction: 'ltr'
 });
 
-export function Provider({locale = defaultLocale, children}: ProviderProps) {
+export function Provider({locale, children}: ProviderProps) {
+  let defaultLocale = useDefaultLocale();
+  if (!locale) {
+    locale = defaultLocale;
+  }
+
   let value: LocaleContext = {
     locale,
     direction: isRTL(locale) ? 'rtl' : 'ltr'

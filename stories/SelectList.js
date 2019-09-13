@@ -42,8 +42,6 @@ const selectedValue = [
   'longVal'
 ];
 
-let ref;
-
 storiesOf('SelectList', module)
   .add(
     'Default',
@@ -73,10 +71,9 @@ storiesOf('SelectList', module)
     'renderItem',
     () => render({
       multiple: true,
-      ref: r => ref = r,
-      renderItem: item => (ref && ref.isSelected(item) ? <em>{item.label}</em> : item.label)
+      renderItem: item => <em>{item.label}</em>
     }),
-    {info: 'This example uses renderItem method to italicize text when item is selected'}
+    {info: 'This example uses renderItem method to italicize each option\'s label text'}
   );
 
 function render(props = {}) {

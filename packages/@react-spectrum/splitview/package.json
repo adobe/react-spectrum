@@ -1,6 +1,7 @@
 {
   "name": "@react-spectrum/splitview",
   "version": "3.0.0",
+  "private": true,
   "main": "src/index.ts",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -19,8 +20,5 @@
   },
   "peerDependencies": {
     "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "@react/react-spectrum": "^2.0.0"
   }
 }

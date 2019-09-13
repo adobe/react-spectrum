@@ -1,8 +1,8 @@
 {
   "name": "@react-aria/splitview",
   "version": "3.0.0",
-  "main": "src/index.ts",
   "private": true,
+  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",

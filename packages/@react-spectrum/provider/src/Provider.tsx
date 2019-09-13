@@ -22,12 +22,13 @@ export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<H
   // Hooks must always be called.
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
+  let {locale: prevLocale} = useLocale();
 
   let {
     colorScheme = autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     typekitId,
-    locale,
+    locale = prevContext ? prevLocale : null,
     children,
     toastPlacement,
     isQuiet,

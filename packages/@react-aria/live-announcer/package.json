@@ -1,0 +1,17 @@
+{
+  "name": "@react-aria/live-announcer",
+  "version": "3.0.0",
+  "private": true,
+  "main": "src/LiveAnnouncer.tsx",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/utils": "^3.0.0",
+    "@react-aria/visually-hidden": "^3.0.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}

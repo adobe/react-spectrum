@@ -1,0 +1,11 @@
+{
+  "previous": "Foregående",
+  "next": "Næste",
+  "selectedDateDescription": "Valgte dato: {date, date, full}",
+  "selectedRangeDescription": "Valgte datointerval: {start, date, long} til {end, date, long}",
+  "todayDate": "I dag, {date, date, full}",
+  "todayDateSelected": "I dag, {date, date, full} valgt",
+  "dateSelected": "{date, date, full} valgt",
+  "startRangeSelectionPrompt": "Klik for at starte valg af datointerval",
+  "finishRangeSelectionPrompt": "Klik for at afslutte valg af datointerval"
+}

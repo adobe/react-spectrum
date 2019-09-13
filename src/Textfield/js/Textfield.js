@@ -138,6 +138,7 @@ export default class Textfield extends Component {
         required={required}
         readOnly={readOnly}
         aria-invalid={isInvalid || null}
+        defaultValue={otherProps.defaultValue}
         {...filterDOMProps(otherProps)}
         onChange={this.onChange} />
     );

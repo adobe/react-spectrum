@@ -15,6 +15,7 @@
 * from Adobe.
 **************************************************************************/
 
+import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterReactDomProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
@@ -91,7 +92,12 @@ export default class SearchWithin extends React.Component {
     /**
      * A callback for when the scope changes
      */
-    onScopeChange: PropTypes.func
+    onScopeChange: PropTypes.func,
+
+    /**
+    * Class given to SearchWithin
+    */
+    className: PropTypes.string
   };
 
   constructor(props) {
@@ -127,6 +133,7 @@ export default class SearchWithin extends React.Component {
       'aria-labelledby': ariaLabelledby,
       'aria-label': ariaLabel = (!ariaLabelledby ? formatMessage('Search within') : null),
       autoFocus,
+      className,
       ...otherProps
     } = this.props;
 
@@ -182,7 +189,13 @@ export default class SearchWithin extends React.Component {
 
     return (
       <div
-        className="spectrum-SearchWithin react-spectrum-SearchWithin"
+        className={
+          classNames(
+            'spectrum-SearchWithin',
+            'react-spectrum-SearchWithin',
+            className
+          )
+        }
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledby}
         id={this.outerId}

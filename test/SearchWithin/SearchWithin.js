@@ -99,6 +99,12 @@ describe('SearchWithin', () => {
     assert.equal(findSelect(tree).prop('aria-labelledby'), 'foo ' + tree.prop('id'));
     assert.equal(findSearch(tree).prop('aria-labelledby'), `foo ${tree.prop('id')} ${findSelect(tree).prop('id')}-value`);
   });
+
+  it('supports additions of custom css classes', () => {
+    const cls = 'sw-abc';
+    const tree = shallow(<SearchWithin scopeOptions={testOptions} className={cls} />);
+    assert(tree.prop('className').includes(cls));
+  });
 });
 
 const findSelect = tree => tree.find('Select');
