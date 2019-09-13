@@ -105,6 +105,25 @@ describe('SearchWithin', () => {
     const tree = shallow(<SearchWithin scopeOptions={testOptions} className={cls} />);
     assert(tree.prop('className').includes(cls));
   });
+
+  it('updates when new scopeOptions are passed in', () => {
+    let tree = shallow(<SearchWithin scopeOptions={testOptions} />);
+    let options = findSelect(tree).prop('options');
+    assert.equal(options.length, 8);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'chocolate'
+    });
+
+    tree.setProps({scopeOptions: [{label: 'Chocolate', value: 'choco'}]});
+    tree.update();
+    options = findSelect(tree).prop('options');
+    assert.equal(options.length, 1);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'choco'
+    });
+  });
 });
 
 const findSelect = tree => tree.find('Select');
