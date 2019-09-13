@@ -1,9 +1,6 @@
-// @ts-ignore
 import Alert from '@spectrum-icons/ui/AlertMedium';
-// @ts-ignore
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {cloneIcon} from '@react/react-spectrum/utils/icon';
+import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import React, {forwardRef, RefObject} from 'react';
@@ -63,6 +60,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
   if (validationTooltip) {
     let placement = direction === 'ltr' ? 'right' : 'left';
 
+    // @ts-ignore
     validation = (
       <OverlayTrigger placement={placement} trigger={['hover', 'focus']}>
         {validation}  

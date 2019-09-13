@@ -17,11 +17,5 @@
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
-  },
-  "devDependencies": {
-    "@spectrum-icons/color": "^3.0.0",
-    "@spectrum-icons/workflow": "^3.0.0",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
   }
 }

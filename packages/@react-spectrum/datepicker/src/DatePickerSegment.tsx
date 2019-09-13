@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import React from 'react';
 import {SpectrumDatePickerProps} from './types';

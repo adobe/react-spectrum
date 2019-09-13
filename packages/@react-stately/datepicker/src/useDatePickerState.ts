@@ -1,6 +1,6 @@
 import {DatePickerProps} from '@react-types/datepicker';
 import {isInvalid, setTime} from './utils';
-import {useControlledState} from '@react-stately/utils/src/useControlledState';
+import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 

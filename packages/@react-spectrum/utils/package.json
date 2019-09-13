@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "classnames": "^2.2.5"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
   }
 }

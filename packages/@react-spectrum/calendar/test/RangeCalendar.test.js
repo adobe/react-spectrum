@@ -4,7 +4,7 @@ import {cleanup, fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {startOfDay} from 'date-fns';
-import {triggerPress} from '../../button/test/utils';
+import {triggerPress} from '@react-spectrum/button/test/utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});

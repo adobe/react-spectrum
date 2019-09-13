@@ -1,4 +1,4 @@
-import {SplitViewState, SplitViewStatelyProps} from '@react-types/shared/src';
+import {SplitViewState, SplitViewStatelyProps} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
 

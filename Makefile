@@ -59,6 +59,14 @@ lint:
 	npm run check-types
 	eslint src test stories
 	eslint packages --ext .js,.ts,.tsx
+	$(MAKE) lint_packages
+
+lint_packages:
+	@if [ "$$(lerna list)" != "@react/react-spectrum" ]; then \
+		echo "Some packages should be marked as private."; \
+		lerna list | grep -v "@react/react-spectrum"; \
+		false; \
+	fi
 
 test:
 	NODE_ENV=test mocha

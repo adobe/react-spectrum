@@ -1,7 +1,7 @@
 import {DateRange, DateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {isInvalid, setTime} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
-import {useControlledState} from '@react-stately/utils/src/useControlledState';
+import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 export interface DateRangePickerState {

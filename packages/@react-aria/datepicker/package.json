@@ -1,6 +1,7 @@
 {
   "name": "@react-aria/datepicker",
   "version": "3.0.0",
+  "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -9,10 +10,13 @@
   },
   "dependencies": {
     "@react-aria/focus": "^3.0.0",
+    "@react-aria/i18n": "^3.0.0",
+    "@react-aria/interactions": "^3.0.0",
     "@react-aria/spinbutton": "^3.0.0",
     "@react-aria/utils": "^3.0.0",
     "@react-stately/datepicker": "^3.0.0",
     "@react-types/datepicker": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
     "react": "^16.8.0"
   }
 }

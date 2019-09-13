@@ -1,6 +1,6 @@
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {filterDOMProps} from '@react-spectrum/utils';

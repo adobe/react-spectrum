@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';

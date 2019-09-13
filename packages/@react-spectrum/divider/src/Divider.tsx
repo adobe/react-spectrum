@@ -1,5 +1,5 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared/src';
+import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
