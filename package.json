@@ -47,6 +47,7 @@
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.0.0",
     "@react/collection-view": "^4.1.5",
+    "@react/react-spectrum": "^2.24.0",
     "@react/react-spectrum-icons": "^2.1.0",
     "@storybook/addon-a11y": "^5.1.9",
     "@storybook/addon-actions": "^5.1.9",
