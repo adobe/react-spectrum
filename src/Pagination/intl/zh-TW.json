@@ -1,5 +1,0 @@
-{
-  "next": "下一頁",
-  "page_count": "共 {n, plural, =one{# 頁} other{# 頁}}",
-  "previous": "上一頁"
-}

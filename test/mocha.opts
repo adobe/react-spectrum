@@ -1,8 +1,0 @@
---require @babel/register
---require @babel/core
---require ignore-styles
---require core-js/stable
---require regenerator-runtime/runtime
---require ./test/.setup.js
---recursive
-"./test/**/!(*.test).js"
