@@ -25,19 +25,6 @@ describe('Popover', function () {
 
   describe('v2/3 parity', function () {
     it.each`
-      Name      | Component            | props
-      ${'v3'}   | ${Popover}           | ${{}}
-      ${'v2'}   | ${V2Popover}         | ${{}}
-    `('$Name should have a popover and tip', function ({Component, props}) {
-      let {getByTestId} = render(<Component {...props} />);
-
-      let popover = getByTestId('popover');
-      let tip = getByTestId('tip');
-      expect(popover).toBeVisible();
-      expect(tip).toBeVisible();
-    });
-
-    it.each`
       Name      | Component            | props                | expectedTabIndex
       ${'v3'}   | ${PopoverWithDialog} | ${{}}                | ${'-1'}
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}  | ${'1'}

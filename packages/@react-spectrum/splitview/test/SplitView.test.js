@@ -28,21 +28,18 @@ describe('SplitView tests', function () {
   `('$Name handles defaults', async function ({Component}) {
     let onResizeSpy = jest.fn();
     let onResizeEndSpy = jest.fn();
-    let {getByRole, getByTestId} = render(
-      <Component onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} style={{width: '100%'}}>
+    let {getByRole} = render(
+      <Component className="splitview" onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({left: 0, right: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[0]).toEqual(primaryPane);
+    let primaryPane = splitview.childNodes[0];
     expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[2]).toEqual(secondaryPane);
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
@@ -170,21 +167,17 @@ describe('SplitView tests', function () {
     ${SplitView}
     ${V2SplitView}
   `('handles primaryPane being second', function ({Component}) {
-    let {getByRole, getByTestId} = render(
-      <Component primaryPane={1} style={{width: '100%'}}>
+    let {getByRole} = render(
+      <Component className="splitview" primaryPane={1} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({left: 0, right: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[2]).toEqual(primaryPane);
-    expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[0]).toEqual(secondaryPane);
+    let primaryPane = splitview.childNodes[2];
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
@@ -259,21 +252,17 @@ describe('SplitView tests', function () {
     ${SplitView}  | ${{allowsCollapsing: true}}
     ${V2SplitView}| ${{collapsible: true}}
   `('handles allowsCollapsing', function ({Component, props}) {
-    let {getByRole, getByTestId} = render(
-      <Component {...props} style={{width: '100%'}}>
+    let {getByRole} = render(
+      <Component {...props} className="splitview" style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({left: 0, right: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[0]).toEqual(primaryPane);
-    expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[2]).toEqual(secondaryPane);
+    let primaryPane = splitview.childNodes[0];
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
@@ -395,21 +384,17 @@ describe('SplitView tests', function () {
     ${'SplitView'}   | ${SplitView}
     ${'V2SplitView'} | ${V2SplitView}
   `('$Name should render a vertical split view', function ({Component}) {
-    let {getByRole, getByTestId} = render(
-      <Component orientation="vertical">
+    let {getByRole} = render(
+      <Component className="splitview" orientation="vertical">
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({top: 0, bottom: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[0]).toEqual(primaryPane);
-    expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[2]).toEqual(secondaryPane);
+    let primaryPane = splitview.childNodes[0];
     expect(primaryPane).toHaveAttribute('style', 'height: 304px;');
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
@@ -457,21 +442,17 @@ describe('SplitView tests', function () {
     ${'SplitView'}   | ${SplitView}   | ${{allowsResizing: false}}
     ${'V2SplitView'} | ${V2SplitView} | ${{resizable: false}}
   `('$Name can be non-resizable', async function ({Component, props}) {
-    let {getByRole, getByTestId} = render(
-      <Component {...props} style={{width: '100%'}}>
+    let {getByRole} = render(
+      <Component {...props} className="splitview" style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({left: 0, right: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[0]).toEqual(primaryPane);
-    expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[2]).toEqual(secondaryPane);
+    let primaryPane = splitview.childNodes[0];
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
@@ -498,21 +479,17 @@ describe('SplitView tests', function () {
     ${'SplitView'}   | ${SplitView}   | ${{primarySize: 500}}
   `('$Name can have its size controlled', async function ({Component, props}) {
     let onResizeSpy = jest.fn();
-    let {getByRole, getByTestId} = render(
-      <Component {...props} onResize={onResizeSpy} style={{width: '100%'}}>
+    let {getByRole} = render(
+      <Component {...props} className="splitview" onResize={onResizeSpy} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
     );
 
-    let splitview = getByTestId('splitview');
+    let splitview = document.querySelector('.splitview');
     splitview.getBoundingClientRect = jest.fn(() => ({left: 0, right: 1000}));
     let splitSeparator = getByRole('separator');
-    let primaryPane = getByTestId('primarypane');
-    let secondaryPane = getByTestId('secondarypane');
-    expect(splitview.childNodes[0]).toEqual(primaryPane);
-    expect(splitview.childNodes[1]).toEqual(splitSeparator);
-    expect(splitview.childNodes[2]).toEqual(secondaryPane);
+    let primaryPane = splitview.childNodes[0];
     expect(primaryPane).toHaveAttribute('style', `width: ${props.primarySize}px;`);
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);

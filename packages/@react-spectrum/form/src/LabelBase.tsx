@@ -91,7 +91,7 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
   if (childArray.length > 0) {
     if (wrapperClassName) {
       wrapper = (
-        <div data-testid="wrapperId" className={wrapperClassName}>
+        <div className={wrapperClassName}>
           {childArray}
         </div>
       );

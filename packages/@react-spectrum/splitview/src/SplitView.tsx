@@ -86,8 +86,7 @@ export function SplitView(props: SplitViewProps) {
     <div
       {...primaryPaneProps}
       className={classNames(styles, 'spectrum-SplitView-pane')}
-      style={primaryStyle}
-      data-testid="primarypane">
+      style={primaryStyle}>
       {children[primaryPane]}
     </div>
   );
@@ -95,8 +94,7 @@ export function SplitView(props: SplitViewProps) {
   let secondary = (
     <div
       className={classNames(styles, 'spectrum-SplitView-pane')}
-      style={{flex: 1}}
-      data-testid="secondarypane">
+      style={{flex: 1}}>
       {children[secondaryPane]}
     </div>
   );
@@ -105,8 +103,7 @@ export function SplitView(props: SplitViewProps) {
     <div
       {...containerProps}
       ref={containerRef}
-      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}
-      data-testid="splitview">
+      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}>
       {primaryPane === 0 ? primary : secondary}
       <div
         {...handleProps}
