@@ -17,9 +17,6 @@ install_no_postinstall:
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	NODE_ENV=storybook start-storybook -p 9002 --ci -c ".storybook-v2"
-
-run_3:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
@@ -56,44 +53,16 @@ clean_docs_node_modules:
 	rm -rf documentation/node_modules
 
 lint:
-	npm run check-types
-	eslint src test stories
+	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
-	$(MAKE) lint_packages
-
-lint_packages:
-	@if [ "$$(lerna list)" != "@react/react-spectrum" ]; then \
-		echo "Some packages should be marked as private."; \
-		lerna list | grep -v "@react/react-spectrum"; \
-		false; \
-	fi
 
 test:
-	NODE_ENV=test mocha
+	yarn jest
 
-jest_test:
-	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
-
-cover:
-	NODE_ENV=test BABEL_ENV=cover nyc mocha
-
-jenkins_test: lint
-	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
-	# Test in React 15
-	NOYARNPOSTINSTALL=1 yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
-	NODE_ENV=test mocha
-
-	# Test latest and generate coverage report
-	yarn install-peerdeps --yarn enzyme-adapter-react-16 --extra-args "--ignore-workspace-root-check"
-	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter; \
-	find ./node_modules/ -name coverage.json -exec rm {} \; ;\
+ci-test: lint test
 
 storybook:
-	npm run build-storybook
-	npm run build-storybook-v3
-	mkdir -p public
-	mv storybook-static public/storybook
-	mv storybook-static-v3 public/storybook3
+	yarn build-storybook
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"

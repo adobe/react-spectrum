@@ -326,12 +326,17 @@ describe('CalendarBase', () => {
       testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
     });
 
+    // v2 tests disabled until next release
+    // it.each`
+    //   Name                    | Calendar          | props
+    //   ${'v3 Calendar'}        | ${Calendar}       | ${{}}
+    //   ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
+    //   ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
+    //   ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
     it.each`
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-      ${'v2 Calendar'}        | ${V2Calendar}     | ${{}}
-      ${'v2 range Calendar'}  | ${V2Calendar}     | ${{selectionType: 'range'}}
     `('$Name should move the focused date by one year with the shift + page up/shift + page down keys', ({Calendar, props}) => {
       testKeyboard(Calendar, new Date(2019, 5, 5), 'PageUp', 'Tuesday, June 5, 2018', 'June 2018', props, {shiftKey: true});
       testKeyboard(Calendar, new Date(2019, 5, 5), 'PageDown', 'Friday, June 5, 2020', 'June 2020', props, {shiftKey: true});

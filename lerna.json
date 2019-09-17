@@ -1,22 +1,13 @@
 {
+  "lerna": "3.0.0",
+  "version": "independent",
   "useWorkspaces": true,
-  "packages": [
-    "packages/@react-spectrum/*",
-    "packages/@react-aria/*",
-    "packages/@react-stately/*",
-    "packages/@react-types/*",
-    "packages/@spectrum-icons/*",
-    "packages/@adobe/spectrum-css-temp"
-  ],
-  "ignoreChanges": [
-    "**/test/**"
-  ],
   "command": {
     "publish": {
       "allowBranch": [
+        "master",
         "test_and_publish_workflow"
       ]
     }
-  },
-  "version": "independent"
+  }
 }
