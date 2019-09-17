@@ -117,5 +117,6 @@ build:
 	lerna exec --parallel --ignore "@adobe/*" --no-private 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx --no-comments'
 
 # TODO add --yes to this once everything is finalized and remove --no-push
+# Also replace minor with major? Will eventually replace with conventional commits?
 version:
-	lerna version minor --no-commit-hooks -m "chore(release): publish" --no-push
+	lerna version major --no-commit-hooks -m "chore(release): publish" --no-push

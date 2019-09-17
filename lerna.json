@@ -5,7 +5,8 @@
     "packages/@react-aria/*",
     "packages/@react-stately/*",
     "packages/@react-types/*",
-    "packages/@spectrum-icons/*"
+    "packages/@spectrum-icons/*",
+    "packages/@adobe/spectrum-css-temp"
   ],
   "ignoreChanges": [
     "**/test/**"
