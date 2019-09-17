@@ -5,17 +5,17 @@
 "@a4u/react-spectrum-ui@0.0.2":
   version "0.0.2"
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@a4u/react-spectrum-ui/-/@a4u/react-spectrum-ui-0.0.2.tgz#378580b3cf042607b2ead0beb18fc89377c0797f"
-  integrity sha1-N4WAs88EJgey6tC+sY/Ik3fAeX8=
+  integrity sha1-NKgF2IdEYZZjzdW8RC/g0n1mvTY=
 
 "@a4u/react-spectrum-workflow-color@0.0.6":
   version "0.0.6"
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@a4u/react-spectrum-workflow-color/-/@a4u/react-spectrum-workflow-color-0.0.6.tgz#bc6c23a5f8bc7fd85a3f26f8e1b3b1b48c2a01d9"
-  integrity sha1-vGwjpfi8f9haPyb44bOxtIwqAdk=
+  integrity sha1-lGYZA1bhGrTFjeRb/dWJXVsvt4s=
 
 "@a4u/react-spectrum-workflow@0.0.6":
   version "0.0.6"
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@a4u/react-spectrum-workflow/-/@a4u/react-spectrum-workflow-0.0.6.tgz#d942b1694546000183b01fc0003314162890ae52"
-  integrity sha1-2UKxaUVGAAGDsB/AADMUFiiQrlI=
+  integrity sha1-3qApoJOdXrcRqm4enKVoPGgplWQ=
 
 "@adobe/focus-ring-polyfill@^0.x":
   version "0.1.5"
