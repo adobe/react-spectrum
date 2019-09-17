@@ -69,7 +69,7 @@ module.exports = ({config}, env) => {
                 set: {
                   'include css': true
                 },
-                use: [require('svg-stylus')(), require('nib')()]
+                use: [require('svg-stylus')()]
               }
             }
           ],
