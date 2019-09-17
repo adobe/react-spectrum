@@ -6,10 +6,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - name: Use Node.js 8.x
+    - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
-        version: 12.x
+        node_version: 12.x
     - name: npm install
       env:
         NPM_AUTH: ${{ secrets.NPM_AUTH }}

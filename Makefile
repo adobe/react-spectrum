@@ -54,7 +54,6 @@ clean_docs_node_modules:
 
 lint:
 	yarn check-types
-	eslint src test stories
 	eslint packages --ext .js,.ts,.tsx
 	$(MAKE) lint_packages
 
