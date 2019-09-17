@@ -26,3 +26,8 @@ jobs:
       run: make ci-test
     - name: build storybook
       run: make storybook
+    - name: deploy storybook
+      env:
+        AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
+      run: |
+        az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum

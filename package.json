@@ -10,7 +10,7 @@
   "scripts": {
     "check-types": "tsc",
     "start": "make run",
-    "build-storybook": "build-storybook -c .storybook-v3 -o storybook-static-v3",
+    "build-storybook": "build-storybook -c .storybook-v3 -o storybook-static/$(git rev-parse HEAD)",
     "test": "make test",
     "lint": "make lint",
     "jest": "NODE_ICU_DATA=node_modules/full-icu jest",
@@ -18,7 +18,7 @@
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
     "plop": "plop",
-    "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test  --build-script-name build-storybook-v3"
+    "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test --build-script-name build-storybook"
   },
   "workspaces": [
     "packages/*/*"
