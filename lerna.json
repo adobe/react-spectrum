@@ -4,7 +4,8 @@
     "packages/@react-spectrum/*",
     "packages/@react-aria/*",
     "packages/@react-stately/*",
-    "packages/@react-types/*"
+    "packages/@react-types/*",
+    "packages/@spectrum-icons/*"
   ],
   "ignoreChanges": [
     "**/test/**"
