@@ -31,3 +31,7 @@ jobs:
         AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
       run: |
         az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum
+    - name: comment on PR
+      uses: actions/github@v1.0.0
+      with:
+        args: 'comment "Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/$(git rev-parse HEAD)/index.html)."'
