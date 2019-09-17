@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+NPM_REGISTRY=http://localhost:4873/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
@@ -88,23 +88,6 @@ jenkins_test: lint
 	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter; \
 	find ./node_modules/ -name coverage.json -exec rm {} \; ;\
 
-build:
-	rm -rf dist src/dist
-	cp -R src dist
-	cp -R node_modules/@adobe/spectrum-css/dist/components dist/spectrum-css
-	cp -R spectrum-css-overrides dist/spectrum-css-overrides
-	find dist/spectrum-css -name colorStops -exec rm -rf {} +;
-	BUILD_ENV=production NODE_ENV=production babel dist -d dist
-	find dist \( -name index.styl -o -name "Shell*.styl" \) -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
-	find dist -name "*.styl" -delete
-	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;
-	find dist -name "*.js" -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
-	find dist -name "*.bak" -delete
-	cp -R node_modules/@adobe/focus-ring-polyfill dist/focus-ring-polyfill
-	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
-	cp src/package.json dist/package.json
-	cp README.md dist/README.md
-
 storybook:
 	npm run build-storybook
 	npm run build-storybook-v3
@@ -122,28 +105,17 @@ ci-deploy:
 		$(MAKE) deploy; \
 	fi
 
-# Run this as make version VERSION={patch|minor|major}
-version:
-	lerna version ${VERSION} --yes --no-commit-hooks -m "chore(release): publish"
-	cp src/package.json dist/package.json
-
-ci-version:
-	if [ "$$VERSION" != "publish only" ]; then \
-		$(MAKE) version; \
-	fi
-
-publish: build ci-version
-	lerna publish from-git --yes --registry $(NPM_REGISTRY) --contents dist
-
-ci-publish:
-	@if [ "$$VERSION" != "website only" ]; then \
-		$(MAKE) publish; \
-	fi
-
-# Run this on Jenkins with VERSION={patch|minor|major} as an argument, this will bump all the changed packages
-# So major bumps everything as major, minor bumps everything as minor, ...
+# for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
-	@if [ ! -z "$$VERSION" ] && [ "$$VERSION" != "noop" ]; then \
-		$(MAKE) ci-deploy; \
-		$(MAKE) ci-publish; \
-	fi
+	$(MAKE) publish
+
+# add back --contents dist or w/e once we finalize what we want this step to do
+publish: build version
+	lerna publish from-git --yes --registry $(NPM_REGISTRY)
+
+build:
+	lerna exec --parallel 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx --no-comments'
+
+# TODO add --yes to this once everything is finalized and remove --no-push
+version:
+	lerna version minor --no-commit-hooks -m "chore(release): publish" --no-push

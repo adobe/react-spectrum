@@ -1,7 +1,10 @@
 {
   "useWorkspaces": true,
   "packages": [
-    "src"
+    "packages/@react-spectrum/*",
+    "packages/@react-aria/*",
+    "packages/@react-stately/*",
+    "packages/@react-types/*"
   ],
   "ignoreChanges": [
     "**/test/**"
@@ -9,9 +12,9 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "next"
+        "test_and_publish_workflow"
       ]
     }
   },
-  "version": "2.24.0"
+  "version": "independent"
 }
