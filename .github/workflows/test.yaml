@@ -12,8 +12,8 @@ jobs:
         node_version: 12.x
     - name: Write npmrc
       env:
-        NPM_AUTH: ${{ secrets.NPM_AUTH }}
-      run: echo "$NPM_AUTH" > .npmrc
+        NPMRC: ${{ secrets.NPMRC }}
+      run: echo "$NPMRC" > .npmrc
     - name: yarn install
       run: |
         make clean_node_modules
