@@ -1,0 +1,24 @@
+name: Test
+  on: [push]
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+  
+      steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js 8.x
+        uses: actions/setup-node@v1
+        with:
+          version: 12.x
+      - name: npm install
+        run: |
+          make clean_node_modules
+          make install_no_postinstall
+      - name: build
+        run: |
+          make clean
+          make -B
+      - name: test
+        run: make ci-test
+      - name: build storybook
+        run: make storybook
