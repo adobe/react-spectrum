@@ -17,10 +17,16 @@ jobs:
         make clean_node_modules
         make install_no_postinstall
     - name: build
+      env:
+        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: |
         make clean
         make -B
     - name: test
+      env:
+        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: make ci-test
     - name: build storybook
+      env:
+        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: make storybook
