@@ -6,27 +6,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - name: Use Node.js 12.x
+    - name: Use Node 12
       uses: actions/setup-node@v1
       with:
         node_version: 12.x
-    - name: npm install
+    - name: Write npmrc
       env:
         NPM_AUTH: ${{ secrets.NPM_AUTH }}
+      run: echo "$NPM_AUTH" > .npmrc
+    - name: yarn install
       run: |
         make clean_node_modules
         make install_no_postinstall
     - name: build
-      env:
-        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: |
         make clean
         make -B
     - name: test
-      env:
-        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: make ci-test
     - name: build storybook
-      env:
-        NPM_AUTH: ${{ secrets.NPM_AUTH }}
       run: make storybook
