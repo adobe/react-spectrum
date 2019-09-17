@@ -114,7 +114,7 @@ publish: build version
 	lerna publish from-git --yes --registry $(NPM_REGISTRY)
 
 build:
-	lerna exec --parallel 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx --no-comments'
+	lerna exec --parallel --ignore "@adobe/*" --no-private 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx --no-comments'
 
 # TODO add --yes to this once everything is finalized and remove --no-push
 version:
