@@ -21,7 +21,6 @@
     "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test  --build-script-name build-storybook-v3"
   },
   "workspaces": [
-    "src",
     "packages/*/*"
   ],
   "devDependencies": {
