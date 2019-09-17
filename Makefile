@@ -117,6 +117,6 @@ build:
 	lerna exec --parallel --ignore "@adobe/*" --no-private 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx --no-comments'
 
 # TODO add --yes to this once everything is finalized and remove --no-push
-# Also replace minor with major? Will eventually replace with conventional commits?
+# For first publish go with hard coded 3.0.0? Will eventually replace with conventional commits version bump determination?
 version:
-	lerna version major --no-commit-hooks -m "chore(release): publish" --no-push
+	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --no-push
