@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
-  "type": "git",
+    "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
