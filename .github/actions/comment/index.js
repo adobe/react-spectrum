@@ -4,7 +4,7 @@ const github = require('@actions/github');
 const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
 run();
 
-function run() {
+async function run() {
   try {
     let {data: prs} = await octokit.repos.listPullRequestsAssociatedWithCommit({
       ...github.context.repo,
