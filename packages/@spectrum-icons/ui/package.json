@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
     "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && pwd && tsc --project './tsconfig.types.json'"
