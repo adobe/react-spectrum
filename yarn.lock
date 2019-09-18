@@ -17,6 +17,19 @@
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@a4u/react-spectrum-workflow/-/@a4u/react-spectrum-workflow-0.0.6.tgz#d942b1694546000183b01fc0003314162890ae52"
   integrity sha1-3qApoJOdXrcRqm4enKVoPGgplWQ=
 
+"@actions/core@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.1.0.tgz#25c3aff43a20f9c5a04e2a3439898a49ba8d3625"
+  integrity sha512-KKpo3xzo0Zsikni9tbOsEQkxZBGDsYSJZNkTvmo0gPSXrc98TBOcdTvKwwjitjkjHkreTggWdB1ACiAFVgsuzA==
+
+"@actions/github@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@actions/github/-/github-1.1.0.tgz#06f34e6b0cf07eb2b3641de3e680dbfae6bcd400"
+  integrity sha512-cHf6PyoNMdei13jEdGPhKprIMFmjVVW/dnM5/9QmQDJ1ZTaGVyezUSCUIC/ySNLRvDUpeFwPYMdThSEJldSbUw==
+  dependencies:
+    "@octokit/graphql" "^2.0.1"
+    "@octokit/rest" "^16.15.0"
+
 "@adobe/focus-ring-polyfill@^0.x":
   version "0.1.5"
   resolved "https://registry.npmjs.com/@adobe/focus-ring-polyfill/-/focus-ring-polyfill-0.1.5.tgz#b20b5bd1ffb0ceaf42aae1f0837f39ce29f9eb9b"
@@ -2017,6 +2030,14 @@
     is-plain-object "^3.0.0"
     universal-user-agent "^4.0.0"
 
+"@octokit/graphql@^2.0.1":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql/-/graphql-2.1.3.tgz#60c058a0ed5fa242eca6f938908d95fd1a2f4b92"
+  integrity sha512-XoXJqL2ondwdnMIW3wtqJWEwcBfKk37jO/rYkoxNPEVeLBDGsGO1TCWggrAlq3keGt/O+C/7VepXnukUxwt5vA==
+  dependencies:
+    "@octokit/request" "^5.0.0"
+    universal-user-agent "^2.0.3"
+
 "@octokit/plugin-enterprise-rest@^3.6.1":
   version "3.6.2"
   resolved "https://registry.npmjs.com/@octokit/plugin-enterprise-rest/-/plugin-enterprise-rest-3.6.2.tgz#74de25bef21e0182b4fa03a8678cd00a4e67e561"
@@ -2043,7 +2064,7 @@
     once "^1.4.0"
     universal-user-agent "^4.0.0"
 
-"@octokit/rest@^16.28.4":
+"@octokit/rest@^16.15.0", "@octokit/rest@^16.28.4":
   version "16.28.9"
   resolved "https://registry.npmjs.com/@octokit/rest/-/rest-16.28.9.tgz#ac8c5f3ff305e9e0a0989a5245e4286f057a95d7"
   integrity sha1-rIxfP/MF6eCgmJpSReQobwV6ldc=
@@ -10998,7 +11019,7 @@ os-locale@^3.0.0:
     lcid "^2.0.0"
     mem "^4.0.0"
 
-os-name@^3.1.0:
+os-name@^3.0.0, os-name@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.com/os-name/-/os-name-3.1.0.tgz#dec19d966296e1cd62d701a5a66ee1ddeae70801"
   integrity sha1-3sGdlmKW4c1i1wGlpm7h3ernCAE=
@@ -14561,6 +14582,13 @@ unique-stream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.com/unique-stream/-/unique-stream-1.0.0.tgz#d59a4a75427447d9aa6c91e70263f8d26a4b104b"
   integrity sha1-1ZpKdUJ0R9mqbJHnAmP40mpLEEs=
+
+universal-user-agent@^2.0.3:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-2.1.0.tgz#5abfbcc036a1ba490cb941f8fd68c46d3669e8e4"
+  integrity sha512-8itiX7G05Tu3mGDTdNY2fB4KJ8MgZLS54RdG6PkkfwMAavrXu1mV/lls/GABx9O3Rw4PnTtasxrvbMQoBYY92Q==
+  dependencies:
+    os-name "^3.0.0"
 
 universal-user-agent@^4.0.0:
   version "4.0.0"
