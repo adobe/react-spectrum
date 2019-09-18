@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "dom-helpers": "^3.3.1",
     "@react-aria/interactions": "^3.0.0",
-    "@react-aria/utils": "^3.0.0"
+    "@react-aria/utils": "^3.0.0",
+    "dom-helpers": "^3.3.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

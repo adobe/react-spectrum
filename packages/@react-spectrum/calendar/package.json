@@ -17,8 +17,8 @@
     "@react-spectrum/button": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/calendar": "^3.0.0",
-    "@react-types/shared": "^3.0.0",
     "@react-types/calendar": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0",
     "date-fns": "^1.30.1"
   },
