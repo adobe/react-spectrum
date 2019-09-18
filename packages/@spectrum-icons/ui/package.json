@@ -15,7 +15,7 @@
     "@react-spectrum/icon": "^3.0.0"
   },
   "devDependencies": {
-    "@spectrum-icons/build-tools": "^3.0.0",
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "@spectrum-icons/build-tools": "^3.0.0"
   }
 }
