@@ -1,10 +1,26 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-try {
-  console.log(github.context);
-} catch (error) {
-  core.setFailed(error.message);
-}
+const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
+run();
 
-// Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/$(git rev-parse HEAD)/index.html).
+function run() {
+  try {
+    let {data: prs} = await octokit.repos.listPullRequestsAssociatedWithCommit({
+      ...github.context.repo,
+      commit_sha
+    });
+
+    if (!prs) {
+      return;
+    }
+
+    await octokit.issues.createComment({
+      ...github.context.repo,
+      issue_number: prs[0].number,
+      body: `Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${github.context.sha}/index.html)`
+    });
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+}
