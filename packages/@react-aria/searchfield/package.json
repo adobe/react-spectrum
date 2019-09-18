@@ -1,8 +1,11 @@
 {
   "name": "@react-aria/searchfield",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/useSearchField.ts",
+  "main": "dist/useSearchField.js",
+  "source": "src/useSearchField.ts",
+  "files": [
+    "dist"
+  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",

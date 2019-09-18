@@ -1,9 +1,12 @@
 {
   "name": "@react-stately/textfield",
   "version": "3.0.0",
-  "private": true,
   "description": "Spectrum UI components in React",
-  "main": "src/useTextFieldState.ts",
+  "main": "dist/useTextFieldState.js",
+  "source": "src/useTextFieldState.ts",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

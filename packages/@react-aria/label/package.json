@@ -1,8 +1,11 @@
 {
   "name": "@react-aria/label",
   "version": "3.0.0",
-  "main": "src/useLabel.ts",
-  "private": true,
+  "main": "dist/useLabel.js",
+  "source": "src/useLabel.ts",
+  "files": [
+    "dist"
+  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
