@@ -1,9 +1,12 @@
 {
   "name": "@react-spectrum/switch",
   "version": "3.0.0",
-  "private": true,
   "description": "Spectrum UI components in React",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
