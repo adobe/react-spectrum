@@ -18,19 +18,19 @@ jobs:
       run: |
         make clean_node_modules
         make install_no_postinstall
-    # - name: build
-    #   run: |
-    #     make clean
-    #     make -B
-    # - name: test
-    #   run: make ci-test
-    # - name: build storybook
-    #   run: make storybook
-    # - name: deploy storybook
-    #   env:
-    #     AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
-    #   run: |
-    #     az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum
+    - name: build
+      run: |
+        make clean
+        make -B
+    - name: test
+      run: make ci-test
+    - name: build storybook
+      run: make storybook
+    - name: deploy storybook
+      env:
+        AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
+      run: |
+        az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum
     - name: comment on PR
       uses: ./.github/actions/comment
       env:
