@@ -88,4 +88,4 @@ build:
 # TODO add --yes to this once everything is finalized and remove --no-push
 # For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
 version:
-	lerna version minor --no-commit-hooks -m "chore(release): publish" --no-push
+	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --no-push
