@@ -1,8 +1,11 @@
 {
   "name": "@react-spectrum/utils",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
