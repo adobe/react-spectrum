@@ -13,8 +13,8 @@
 * Dissemination of this information or reproduction of this material
 * is strictly forbidden unless prior written permission is obtained
 * from Adobe.
-**************************************************************************/
-
+*/
+import {action} from '@storybook/addon-actions';
 import Alert from '../src/Alert';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -23,6 +23,10 @@ storiesOf('Alert', module)
   .add(
     'Default',
     () => render()
+  )
+  .add(
+    'Closeable',
+    () => render({closeLabel: 'Close', onClose: action('close')})
   )
   .add(
     'header',

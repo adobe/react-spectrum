@@ -1,0 +1,17 @@
+{
+  "name": "@react-aria/spinbutton",
+  "version": "3.0.0",
+  "private": true,
+  "main": "src/useSpinButton.ts",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/live-announcer": "^3.0.0",
+    "@react-aria/utils": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
+    "react": "^16.8.0"
+  }
+}

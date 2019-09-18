@@ -1,0 +1,23 @@
+{
+  "name": "@react-aria/searchfield",
+  "version": "3.0.0",
+  "private": true,
+  "main": "src/useSearchField.ts",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/i18n": "^3.0.0",
+    "@react-aria/utils": "^3.0.0",
+    "@react-types/searchfield": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@react-spectrum/provider": "^3.0.0"
+  }
+}

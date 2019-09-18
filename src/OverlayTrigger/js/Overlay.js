@@ -25,7 +25,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 
-const visibleOverlays = [];
+const VISIBLE_OVERLAYS = new Map;
+const DEFAULT_BUCKET_KEY = 'all';
 
 @autobind
 export default class Overlay extends React.Component {
@@ -40,6 +41,14 @@ export default class Overlay extends React.Component {
     };
   }
 
+  get overlayBucketKey() {
+    const {children} = this.props;
+    if (children && children.props) {
+      return children.props.role === 'tooltip' ? 'tooltip' : DEFAULT_BUCKET_KEY;
+    }
+    return DEFAULT_BUCKET_KEY;
+  }
+
   componentDidMount() {
     this.setState({targetNode: ReactDOM.findDOMNode(this.props.target)});
     this.mounted = true;
@@ -52,6 +61,12 @@ export default class Overlay extends React.Component {
   }
 
   addOverlay(props = this.props) {
+    const {overlayBucketKey} = this;
+    let visibleOverlays = VISIBLE_OVERLAYS.get(overlayBucketKey);
+    if (!visibleOverlays) {
+      VISIBLE_OVERLAYS.set(overlayBucketKey, []);
+      visibleOverlays = VISIBLE_OVERLAYS.get(overlayBucketKey);
+    }
     if (props.show && this.mounted && !visibleOverlays.includes(this)) {
       visibleOverlays.push(this);
     }
@@ -59,6 +74,7 @@ export default class Overlay extends React.Component {
 
   removeOverlay() {
     // Remove overlay from the stack of visible overlays
+    const visibleOverlays = VISIBLE_OVERLAYS.get(this.overlayBucketKey);
     let index = visibleOverlays.indexOf(this);
     if (index >= 0) {
       visibleOverlays.splice(index, 1);
@@ -95,6 +111,7 @@ export default class Overlay extends React.Component {
   }
 
   hide(e) {
+    const visibleOverlays = VISIBLE_OVERLAYS.get(this.overlayBucketKey);
     // Only hide if this is the top overlay
     if (visibleOverlays[visibleOverlays.length - 1] === this && this.props.onHide) {
       this.props.onHide(e);

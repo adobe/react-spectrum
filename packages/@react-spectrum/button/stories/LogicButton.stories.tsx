@@ -18,11 +18,15 @@ function render(props = {}) {
     <div>
       <LogicButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         {...props}>
         Default
       </LogicButton>
       <LogicButton
         onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         Disabled

@@ -1,17 +1,19 @@
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
+import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
-import React, {JSXElementConstructor, ReactNode} from 'react';
+import {PressProps} from '@react-aria/interactions';
+import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface ButtonBase extends React.AllHTMLAttributes<HTMLElement> {
+export interface ButtonBase extends DOMProps, PressProps {
   isDisabled?: boolean,
-  isSelected?: boolean,
   elementType?: string | JSXElementConstructor<any>,
-  onPress?: (event: Event) => void,
   icon?: ReactNode,
-  children?: ReactNode
+  children?: ReactNode,
+  href?: string
 }
 
 export interface ButtonProps extends ButtonBase {
@@ -24,8 +26,8 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-// todo: add back in focus ring later
-export function Button(props: ButtonProps) {
+export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLElement>) => {
+  ref = ref || useRef();
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -37,30 +39,34 @@ export function Button(props: ButtonProps) {
     className,
     ...otherProps
   } = props;
-  let {buttonProps} = useButton(props);
+  let {buttonProps, isPressed} = useButton({...props, ref});
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
   return (
-    <ElementType
-      {...filterDOMProps(otherProps)}
-      {...buttonProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-Button',
-          `spectrum-Button--${buttonVariant}`,
-          {
-            'spectrum-Button--quiet': isQuiet,
-            'is-disabled': isDisabled
-          },
-          className
-        )
-      }>
-      {cloneIcon(icon, {size: 'S'})}
-      <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
-    </ElementType>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <ElementType
+        {...filterDOMProps(otherProps)}
+        {...buttonProps}
+        ref={ref}
+        className={
+          classNames(
+            styles,
+            'spectrum-Button',
+            `spectrum-Button--${buttonVariant}`,
+            {
+              'spectrum-Button--quiet': isQuiet,
+              'is-disabled': isDisabled,
+              'is-active': isPressed
+            },
+            className
+          )
+        }>
+        {cloneIcon(icon, {size: 'S'})}
+        <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
+      </ElementType>
+    </FocusRing>
   );
-}
+});

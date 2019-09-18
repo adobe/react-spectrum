@@ -1,7 +1,8 @@
+import _123 from '@spectrum-icons/workflow/123';
+import AdobeAnalyticsColor from '@spectrum-icons/color/AdobeAnalyticsColor';
 import {Alert} from '../src/Alert';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-
 
 storiesOf('Alert', module)
   .add(
@@ -46,6 +47,8 @@ function render(props = {}, children = 'This is a React Spectrum alert') {
     <Alert
       {...props}>
       {children}
+      <_123 />
+      <AdobeAnalyticsColor />
     </Alert>
   );
 }

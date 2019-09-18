@@ -87,18 +87,20 @@ describe('TreeItem', function () {
     let link = wrapper.find('.spectrum-TreeView-itemLink');
     let icon = wrapper.find(ChevronRightMedium);
     let span = wrapper.find('span');
+    let visuallyHidden = wrapper.find('VisuallyHidden');
 
     assert.equal(wrapper.prop('className'), 'spectrum-TreeView-item is-open');
     assert.equal(link.length, 1);
     assert.equal(icon.length, 1);
     assert.equal(icon.prop('className'), 'spectrum-TreeView-indicator');
-    assert.equal(span.length, 2);
+    assert.equal(span.length, 1);
     assert.equal(span.at(0).text(), 'world');
-    assert.equal(span.at(1).prop('role'), 'group');
-    assert.equal(span.at(1).prop('className'), 'u-react-spectrum-screenReaderOnly');
-    assert.equal(span.at(1).prop('id'), link.prop('aria-owns'));
-    assert.equal(span.at(1).prop('aria-labelledby'), link.prop('id'));
-    assert.equal(span.at(1).prop('aria-owns'), wrapper.instance().getOwnedChildIds());
+    assert.equal(visuallyHidden.prop('role'), 'group');
+    assert.equal(visuallyHidden.dive().type(), 'span');
+    assert.equal(visuallyHidden.dive().prop('className'), 'u-react-spectrum-screenReaderOnly');
+    assert.equal(visuallyHidden.prop('id'), link.prop('aria-owns'));
+    assert.equal(visuallyHidden.prop('aria-labelledby'), link.prop('id'));
+    assert.equal(visuallyHidden.prop('aria-owns'), wrapper.instance().getOwnedChildIds());
   });
 
   it('should render a selected item', function () {

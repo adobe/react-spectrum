@@ -1,3 +1,4 @@
+import Heading from '@react/react-spectrum/Heading';
 import Well from '@react/react-spectrum/Well';
 
 ## Overview
@@ -10,4 +11,26 @@ A **Well** visually separates its inner content from the upper level.
 
 ```jsx
 <Well>Jack is here waiting for help.</Well>
+```
+
+## Accessibility
+
+By default, the visual separation of a **Well** is not conveyed to assistive technologies. 
+As such it should be used where this separation makes no difference in understanding the content.
+
+However, if the Well does convey semantic meaning then a `role` must be specified and, if appropriate, labeled using either `aria-label` or `aria-labelledby` 
+
+
+### Using role
+
+<Well role="region" aria-labelledby="wellLabel">
+    <Heading id="wellLabel" variant="subtitle1">Shipping Address</Heading>
+    <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
+</Well>
+
+```jsx
+<Well role="region" aria-labelledby="wellLabel">
+    <Heading id="wellLabel" variant="subtitle1">Shipping Address</Heading>
+    <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
+</Well>
 ```

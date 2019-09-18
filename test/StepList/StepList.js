@@ -24,7 +24,7 @@ import {Step, StepList} from '../../src/StepList';
 describe('StepList', () => {
   it('has correct defaults', () => {
     const tree = shallow(<StepList />);
-    const innerTree = tree.shallow().shallow();
+    const innerTree = tree.dive().dive();
     assert.equal(tree.hasClass('spectrum-Steplist'), true);
     assert.equal(tree.hasClass('spectrum-Steplist--interactive'), true);
     assert.equal(innerTree.type(), 'div');
@@ -93,7 +93,7 @@ describe('StepList', () => {
   it('should disable the steps when not interactive', () => {
     const spy = sinon.spy();
     const tree = shallow(
-      <StepList interaction="off">
+      <StepList interaction="off" onChange={spy}>
         <div className="one">a</div>
         <div className="two">b</div>
       </StepList>
@@ -103,6 +103,22 @@ describe('StepList', () => {
     child.simulate('click');
 
     assert(!spy.called);
+  });
+
+  it('should support keyboardMode="manual', () => {
+    const spy = sinon.spy();
+    const keyDownSpy = sinon.spy();
+    const tree = shallow(
+      <StepList keyboardMode="manual" onChange={spy}>
+        <Step className="one" onKeyDown={keyDownSpy}>a</Step>
+        <Step className="two" onKeyDown={keyDownSpy}>b</Step>
+      </StepList>
+    );
+    const innerTree = tree.shallow();
+    innerTree.find('.two').simulate('keydown', {key: 'Enter', preventDefault: () => {}});
+    assert(spy.calledWith(1));
+    innerTree.find('.one').simulate('keydown', {key: ' ', preventDefault: () => {}});
+    assert(spy.calledWith(0));
   });
 
   describe('Step', () => {

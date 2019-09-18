@@ -1,78 +1,77 @@
-import {HTMLButtonElement, HTMLElement} from 'react-dom';
-import React, {JSXElementConstructor, MouseEvent, useRef} from 'react';
+import {chain, mergeProps} from '@react-aria/utils';
+import {JSXElementConstructor, SyntheticEvent} from 'react';
+import {PressHookProps, usePress} from '@react-aria/interactions';
 
-interface AriaButtonProps {
+interface AriaButtonProps extends PressHookProps {
   elementType?: string | JSXElementConstructor<any>,
-  isDisabled?: boolean | 'false' | 'true',
-  onPress?: (event: Event) => void,
   /**
    * for backwards compatibility
    */
-  onClick?: (event: MouseEvent<HTMLElement>)=> void,
+  onClick?: (event: SyntheticEvent) => void,
   href?: string,
   tabIndex?: number,
   isSelected?: boolean | 'false' | 'true',
+  validationState?: 'valid' | 'invalid',
   'aria-expanded'?: boolean | 'false' | 'true',
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  [others: string]: any
 }
 
 interface ButtonAria {
-  buttonProps: React.AllHTMLAttributes<HTMLElement>
+  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  isPressed: boolean
 }
 
 export function useButton({
   elementType = 'button',
   isDisabled,
   onPress,
+  onPressStart,
+  onPressEnd,
+  onPressChange,
   onClick: deprecatedOnClick,
   href,
   tabIndex,
   isSelected,
+  validationState,
   'aria-expanded': ariaExpanded,
-  'aria-haspopup': ariaHasPopup
+  'aria-haspopup': ariaHasPopup,
+  ref
 }: AriaButtonProps): ButtonAria {
-  let buttonRef = useRef<HTMLButtonElement | null>(null);
-
-  let onKeyDownSpace = (event) => {
-    if (event.key === ' ' || event.key === 'Enter') {
-      event.preventDefault();
-      buttonRef.current.click();
-    }
-  };
-
-  let onClick = (event) => {
-    // This is needed when `element` is an anchor or something similar.
-    // When `element` is a button, we won't even get here if it's disabled and clicked.
-    if (isDisabled) {
-      // If the element is an anchor with an href, we need to preventDefault() or the browser
-      // will follow the link.
-      event.preventDefault();
-    } else if (onPress) {
-      onPress(event);
-    } else if (deprecatedOnClick) {
-      deprecatedOnClick(event);
-      console.warn('onClick is deprecated, please use onPress');
-    }
-  };
-
   let additionalProps;
   if (elementType !== 'button') {
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : (tabIndex || 0),
       'aria-disabled': isDisabled || undefined,
-      href: elementType === 'a' && isDisabled ? undefined : href,
-      onKeyDown: isDisabled ? undefined : onKeyDownSpace
+      href: elementType === 'a' && isDisabled ? undefined : href
     };
   }
 
+  let {pressProps, isPressed} = usePress({
+    // Safari does not focus buttons automatically when interacting with them, so do it manually
+    onPressStart: chain(onPressStart, (e) => e.target.focus()),
+    onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
+    onPressChange,
+    onPress,
+    isDisabled,
+    ref
+  });
+
   return {
-    buttonProps: {
-      onClick,
-      ref: buttonRef,
+    isPressed,
+    buttonProps: mergeProps(pressProps, {
+      'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
-      ...(additionalProps || {})
-    }
+      ...(additionalProps || {}),
+      onClick: (e) => {
+        if (deprecatedOnClick) {
+          deprecatedOnClick(e);
+          console.warn('onClick is deprecated, please use onPress');
+        }
+      }
+    })
   };
 }

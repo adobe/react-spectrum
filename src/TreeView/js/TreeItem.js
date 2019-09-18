@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import createId from '../../utils/createId';
 import focusRing from '../../utils/focusRing';
 import React from 'react';
+import VisuallyHidden from '../../VisuallyHidden';
 
 @autobind
 @focusRing
@@ -153,7 +154,7 @@ export default class TreeItem extends React.Component {
           }
           {renderItem(item, content)}
           {ownedChildIds &&
-            <span className="u-react-spectrum-screenReaderOnly" role="group" id={`${id}-group`} aria-labelledby={id} aria-owns={ownedChildIds} />
+            <VisuallyHidden role="group" id={`${id}-group`} aria-labelledby={id} aria-owns={ownedChildIds} />
           }
         </div>
       </div>

@@ -29,7 +29,6 @@ import FieldLabel from '../../FieldLabel';
 import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import InputGroup from '../../InputGroup';
 import intlMessages from '../intl/*.json';
-import isEmpty from 'lodash/isEmpty';
 import {messageFormatter} from '../../utils/intl';
 import moment from 'moment';
 import OverlayTrigger from '../../OverlayTrigger';
@@ -40,6 +39,7 @@ import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
 import {toMoment} from '../../utils/moment';
 import '../style/index.styl';
+import isEmpty from '../../utils/isEmpty';
 
 const DEFAULT_DATE_VAL_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TIME_VAL_FORMAT = 'HH:mm';

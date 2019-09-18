@@ -41,3 +41,19 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-rule-small-border-radius);
 }
+
+.spectrum-Rule--vertical {
+  height: 100%;
+
+  &.spectrum-Rule--large {
+    width: var(--spectrum-rule-large-height);
+  }
+
+  &.spectrum-Rule--medium {
+    width: var(--spectrum-rule-medium-height);
+  }
+
+  &.spectrum-Rule--small {
+    width: var(--spectrum-rule-small-height);
+  }
+}

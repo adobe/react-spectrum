@@ -32,7 +32,6 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
-import '../../utils/style/index.styl';
 
 importSpectrumCSS('stepper');
 
@@ -134,6 +133,18 @@ export default class NumberInput extends Component {
       inputId: id || createId(),
       value: this.getValue(value, defaultValue)
     };
+  }
+
+  componentDidMount() {
+    if (this.textfield) {
+      ReactDOM.findDOMNode(this.textfield).addEventListener('wheel', this.handleInputScrollWheel, {passive: false, bubbles: false, cancelable: true});
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.textfield) {
+      ReactDOM.findDOMNode(this.textfield).removeEventListener('wheel', this.handleInputScrollWheel);
+    }
   }
 
   /**
@@ -431,7 +442,6 @@ export default class NumberInput extends Component {
           id={inputId}
           value={value}
           defaultValue={defaultValue}
-          role="spinbutton"
           type="number"
           autoComplete="off"
           aria-label={ariaLabel || null}
@@ -440,14 +450,13 @@ export default class NumberInput extends Component {
           aria-valuetext={value || null}
           aria-valuemin={min}
           aria-valuemax={max}
-          invalid={invalid || valueInvalid}
+          validationState={invalid || valueInvalid ? 'invalid' : null}
           step={step}
           placeholder={placeholder}
           disabled={disabled}
           readOnly={readOnly}
           quiet={quiet}
           onKeyDown={chain(otherProps.onKeyDown, this.handleInputKeyDown)}
-          onWheel={chain(otherProps.onWheel, this.handleInputScrollWheel)}
           onFocus={chain(otherProps.onFocus, this.handleFocus)}
           onBlur={chain(otherProps.onBlur, this.handleBlur)}
           onChange={this.handleInputChange} />

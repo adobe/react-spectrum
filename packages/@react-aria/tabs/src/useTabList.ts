@@ -1,5 +1,5 @@
 import React, {AllHTMLAttributes, HTMLAttributes, ReactElement} from 'react';
-import {useId} from '@react-aria/utils/src/useId';
+import {useId} from '@react-aria/utils';
 
 type Orientation = 'horizontal' | 'vertical';
 

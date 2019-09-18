@@ -1,3 +1,4 @@
+import Heading from '@react/react-spectrum/Heading';
 import {TreeView} from '@react/react-spectrum/TreeView';
 import {ExampleDS, ds, ds2, renderItem} from '../helpers/TreeView';
 
@@ -240,7 +241,37 @@ class MyDataSource extends TreeDataSource {
 
 ## Accessibility
 
-TreeView implements the aria tree design pattern. It handles multiselection, item focusing, and is fully keyboard accessibile out of the box.
+TreeView implements accessibility using the [WAI-ARIA 1.1 Tree View](https://www.w3.org/TR/wai-aria-practices-1.1/#TreeView) design pattern. It handles multiselection, item focusing, and is fully keyboard accessible out of the box.
+The TreeView does not have a keyboard or screen reader accessible equivalent for drag and drop operations, and drag and drop should never be the only way to interact with a feature, such as manipulating the order or hierarchy of items in the TreeView or moving items between TreeViews.
+
+### Labelling
+
+A TreeView can be labelled to provide context for Accessibility using either the `aria-label` or `aria-labelledby` prop.
+
+#### Using `aria-label`
+
+```jsx
+<TreeView
+  aria-label="Tree View"
+  dataSource={ds}
+  renderItem={renderItem}
+  allowsSelection
+  allowsMultipleSelection />
+```
+
+#### Using `aria-labelledby`
+
+```jsx
+<Heading size={5} id="treeview-heading-id">
+  Tree View
+</Heading>
+<TreeView
+  aria-labelledby="treeview-heading-id"
+  dataSource={ds}
+  renderItem={renderItem}
+  allowsSelection
+  allowsMultipleSelection />
+```
 
 ## Internationalization
 

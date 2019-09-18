@@ -3,7 +3,7 @@ import {useCallback, useRef, useState} from 'react';
 export function useControlledState(
   value: any, 
   defaultValue: any, 
-  onChange: (value: any, ...args: any) => void
+  onChange: (value: any, ...args: any[]) => void
 ): [any, (value: any, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);
@@ -31,9 +31,12 @@ export function useControlledState(
     
   }, [isControlled, onChange]);
 
-  if (!isControlled) {
+  // If a controlled component's value prop changes, we need to update stateRef
+  if (isControlled) {
+    stateRef.current = value;
+  } else {
     value = stateValue;
   }
-
+  
   return [value, setValue];
 }

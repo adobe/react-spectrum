@@ -1,6 +1,7 @@
-import {ActionButton, Button, LogicButton, ToolButton} from '../';
+import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
+import {triggerPress} from './utils';
 import V2Button from '@react/react-spectrum/Button';
 
 let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
@@ -28,7 +29,7 @@ describe('Button', function () {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
     let text = getByText('Click Me');
@@ -39,6 +40,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows custom props to be passed through to the button', function ({Component}) {
@@ -54,6 +56,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows a custom classname on the button', function ({Component}) {
@@ -67,6 +70,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity handles deprecated onClick', function ({Component}) {
@@ -74,7 +78,7 @@ describe('Button', function () {
     let {getByRole} = render(<Component onClick={onPressSpy}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     if (Component === Button) {
       expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
@@ -92,13 +96,15 @@ describe('Button', function () {
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(button, {key: 'Enter', code: 13});
+    fireEvent.keyUp(button, {key: 'Enter', code: 13});
     expect(onPressSpy).toHaveBeenCalledTimes(2);
 
     fireEvent.keyDown(button, {key: ' ', code: 32});
+    fireEvent.keyUp(button, {key: ' ', code: 32});
     expect(onPressSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -114,7 +120,7 @@ describe('Button', function () {
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
     expect(button).toHaveAttribute('href', 'https://adobe.com');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -122,13 +128,14 @@ describe('Button', function () {
     Component      | props
     ${ActionButton}| ${{onPress: onPressSpy, isDisabled: true}}
     ${Button}      | ${{onPress: onPressSpy, isDisabled: true}}
+    ${ClearButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${LogicButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${V2Button}    | ${{onClick: onPressSpy, disabled: true}}
   `('v2/3 parity does not respond when disabled', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).not.toHaveBeenCalled();
   });
 
@@ -144,7 +151,6 @@ describe('Button', function () {
     ${ActionButton}| ${{icon: <FakeIcon role="status" />}}
     ${Button}      | ${{icon: <FakeIcon role="status" />}}
     ${LogicButton} | ${{icon: <FakeIcon role="status" />}}
-    ${ToolButton}  | ${{icon: <FakeIcon role="status" />}}
     ${V2Button}    | ${{icon: <FakeIcon role="status" />}}
   `('v2/3 parity accepts an icon as a prop', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);

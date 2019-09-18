@@ -20,7 +20,7 @@ import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import '../../utils/style/index.styl';
+import VisuallyHidden from '../../VisuallyHidden';
 
 importSpectrumCSS('cyclebutton');
 
@@ -202,7 +202,7 @@ export default class CycleButton extends Component {
         aria-relevant="text"
         aria-atomic="true"
         aria-busy={ariaBusy}>
-        <span className="u-react-spectrum-screenReaderOnly">{label}</span>
+        <VisuallyHidden>{label}</VisuallyHidden>
         {cloneIcon(icon, {size: 'S'})}
       </Button>
     );

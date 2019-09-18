@@ -1,5 +1,5 @@
 import React, {ReactElement, useEffect} from 'react';
-import {useControlledState} from '@react-stately/utils/src/useControlledState';
+import {useControlledState} from '@react-stately/utils';
 
 interface SingleSelectionBaseProps extends React.HTMLAttributes<HTMLElement> {
   selectedItem?: any,

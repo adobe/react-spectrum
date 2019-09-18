@@ -1,6 +1,7 @@
 {
   "name": "@react-stately/tabs",
   "version": "3.0.0",
+  "private": true,
   "description": "Spectrum UI components in React",
   "main": "src/useTabListState.ts",
   "repository": {

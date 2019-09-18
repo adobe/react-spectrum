@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Search from '@react/react-spectrum/Search';
 import Refresh from '@react/react-spectrum/Icon/Refresh';
 
@@ -7,10 +8,10 @@ import Refresh from '@react/react-spectrum/Icon/Refresh';
 
 ## Example
 
-<Search placeholder="Enter text" />
+<Search aria-label="Search" placeholder="Enter text" />
 
 ```jsx
-<Search placeholder="Enter text" />
+<Search aria-label="Search" placeholder="Enter text" />
 ```
 
 ## Variants
@@ -20,6 +21,7 @@ import Refresh from '@react/react-spectrum/Icon/Refresh';
 The `quiet` prop applies a quiet appearance to the search. `icon` allows the programmer to specify a custom icon for the search box.
 
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   quiet
   icon={<Refresh />}
@@ -27,6 +29,7 @@ The `quiet` prop applies a quiet appearance to the search. `icon` allows the pro
 
 ```jsx
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   quiet
   icon={<Refresh />}
@@ -38,30 +41,35 @@ The `quiet` prop applies a quiet appearance to the search. `icon` allows the pro
 Search can have a default value(uncontrolled) or value(controlled), and icon, or both.
 
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   defaultValue="React"
 />
 
 ```jsx
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   defaultValue="React"
 />
 ```
 
 <Search
-  placeholder="Enter text"
+  aria-label="Search"
+  placeholder="Enter text"
   value="React"
 />
 
 ```jsx
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   value="React"
 />
 ```
 
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   value="React"
   icon={<Refresh />}
@@ -69,7 +77,8 @@ Search can have a default value(uncontrolled) or value(controlled), and icon, or
 
 ```jsx
 <Search
-  placeholder="Enter text"
+  aria-label="Search"
+  placeholder="Enter text"
   value="React"
   icon={<Refresh />}
 />
@@ -82,6 +91,7 @@ Search has a number of props for controlling its visual state. It supports the `
 ### Disabled
 
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   value="React"
   disabled
@@ -89,6 +99,7 @@ Search has a number of props for controlling its visual state. It supports the `
 
 ```jsx
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   value="React"
   disabled
@@ -98,6 +109,7 @@ Search has a number of props for controlling its visual state. It supports the `
 ### Disabled and Quiet
 
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   quiet
   disabled
@@ -105,6 +117,7 @@ Search has a number of props for controlling its visual state. It supports the `
 
 ```jsx
 <Search
+  aria-label="Search"
   placeholder="Enter text"
   quiet
   disabled
@@ -116,15 +129,47 @@ Search has a number of props for controlling its visual state. It supports the `
 Events handlers for change and submit can be registered on a `Search` as shown below.
 
 ```jsx
-<Search placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
+<Search aria-label="Search" placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
 ```
 
-<Search placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
+<Search aria-label="Search" placeholder="Enter text" onChange={e => alert('Text Changed')} onSubmit={e => alert('Text submitted')} />
 
 ## Internationalization
 
-To internationalize a search, a localized string should be passed to the `value`, `defaultValue`, `placeholder` prop of the search.
+To internationalize a search, a localized string should be passed to the `value`, or `defaultValue`, and `placeholder` prop of the search.
 
 ## Accessibility
 
-Search is accessible by default. The correct aria roles will automatically be applied.
+### WAI-ARIA Design Pattern
+
+Search uses WAI-ARIA to ensure that the Textfield and associated Button for clearing the field are contained within a [search landmark region](https://www.w3.org/TR/wai-aria-practices-1.1/#aria_lh_search). The Textfield uses the [`searchbox` WAI-ARIA `role`](https://www.w3.org/TR/wai-aria-1.1/#searchbox) to identify it to assistive technology as a search input.
+
+### Labelling
+
+A Search can be labelled using a [FieldLabel](/components/FieldLabel), `aria-label` or `aria-labelledby`.
+
+#### Using FieldLabel
+
+Since a Search is a search input group containing the Textfield and, with a `value` set, Button for clearing the field, when labelling using a FieldLabel, use implicit labelling or add the `aria-labelledby` prop to explicitly associate the group of controls to the FieldLabel.
+
+##### Implicit labelling will add `aria-labelledby` automatically
+
+<FieldLabel label="Search">
+  <Search />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Search">
+  <Search />
+</FieldLabel>
+```
+
+##### Explicit labelling requires `aria-labelledby` be added manually
+
+<FieldLabel label="Search" id="search-label-id" labelFor="search-id" />
+<Search id="search-id" aria-labelledby="search-label-id" />
+
+```jsx
+<FieldLabel label="Search" id="search-label-id" labelFor="search-id" />
+<Search id="search-id" aria-labelledby="search-label-id" />
+```

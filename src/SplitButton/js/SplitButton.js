@@ -37,11 +37,11 @@ export default class SplitButton extends React.Component {
   }
 
   onKeyDown(e) {
-    if (e.key === 'ArrowDown' || e.key === 'Down') {
-      if (e.altKey || e.target === ReactDOM.findDOMNode(this.dropdownRef.triggerRef)) {
-        e.preventDefault();
-        this.dropdownRef.overlayTrigger.show(e);
-      }
+    if ((e.key === 'ArrowDown' || e.key === 'Down') &&
+      (e.altKey || e.target === ReactDOM.findDOMNode(this.dropdownRef.triggerRef))) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.dropdownRef.overlayTrigger.show(e);
     }
     if (this.props.onKeyDown) {
       this.props.onKeyDown(e);

@@ -34,6 +34,7 @@ describe('Search', () => {
     const input = findInput(tree);
     assert.equal(input.hasClass('spectrum-Search-input'), true);
     assert.equal(input.prop('role'), 'searchbox');
+    assert.equal(input.prop('type'), 'search');
 
     const button = findButton(tree);
     assert(!button.length);
@@ -216,6 +217,12 @@ describe('Search', () => {
     const tree = mount(<Search />);
     assert(tree.instance().searchbox);
     tree.unmount();
+  });
+
+  it('supports setting value with prop', () => {
+    const tree = shallow(<Search />);
+    tree.setProps({value: 'hello world'});
+    assert.equal(tree.state('value'), 'hello world');
   });
 });
 

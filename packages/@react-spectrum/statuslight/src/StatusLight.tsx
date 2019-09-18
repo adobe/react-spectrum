@@ -1,5 +1,5 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import React, {ReactNode} from 'react';
+import React, {forwardRef, ReactNode, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -9,17 +9,24 @@ interface StatusLightProps extends React.HTMLAttributes<HTMLElement> {
   isDisabled?: boolean
 }
 
-export function StatusLight(props: StatusLightProps) {
+export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<HTMLDivElement>) => {
   let {
     variant = 'positive',
     children,
     isDisabled,
     className,
+    'aria-label': ariaLabel,
     ...otherProps
   } = useProviderProps(props);
 
+  if (!children && !ariaLabel) {
+    console.warn('If no children are provided, an aria-label must be specified');
+  }
+
   return (
     <div
+      {...filterDOMProps(otherProps)}
+      aria-label={ariaLabel}
       className={classNames(
         styles,
         'spectrum-StatusLight',
@@ -28,8 +35,8 @@ export function StatusLight(props: StatusLightProps) {
           'is-disabled': isDisabled
         },
         className)}
-      {...filterDOMProps(otherProps)}>
+      ref={ref} >
       {children}
     </div>
   );
-}
+});

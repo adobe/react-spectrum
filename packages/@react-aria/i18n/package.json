@@ -1,6 +1,7 @@
 {
   "name": "@react-aria/i18n",
   "version": "3.0.0",
+  "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -11,9 +12,6 @@
     "intl-messageformat": "^2.2.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   }
 }

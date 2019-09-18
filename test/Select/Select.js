@@ -26,7 +26,6 @@ import Photoshop from '../src/Icon/Photoshop';
 import React from 'react';
 import Select, {SelectMenu} from '../../src/Select';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -40,6 +39,15 @@ const testOptions = [
 ];
 
 describe('Select', () => {
+  let clock;
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+  after(() => {
+    clock.runAll();
+    clock.restore();
+  });
+
   it('renders a dropdown', () => {
     const tree = shallow(<Select />);
     const dropdown = tree.find(Dropdown);
@@ -166,19 +174,26 @@ describe('Select', () => {
       );
 
     assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id'));
-
   });
 
   it('Labelling of the Select with aria-labelledby is handled correctly', () => {
-    const tree = render(
+    let tree = render(
       <div>
-        <FieldLabel id="bar" label="test" htmlFor="foo" />
+        <FieldLabel id="bar" label="test" labelFor="foo" />
         <Select id="foo" options={testOptions} value="vanilla" aria-labelledby="bar" />
       </div>
     );
 
-    assert.equal(tree.find('button').prop('aria-labelledby'), 'bar ' + tree.find('span').prop('id'));
+    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id'));
 
+    tree = render(
+      <div>
+        <FieldLabel id="bar" label="test" labelFor="foo" />
+        <Select id="foo" options={testOptions} value="vanilla" labelId="bar" />
+      </div>
+    );
+
+    assert.equal(tree.find('button').prop('aria-labelledby'), tree.find('label').prop('id') + ' ' + tree.find('span').prop('id'));
   });
 
   it('Labelling of the Select with aria-label is handled correctly', () => {
@@ -230,7 +245,7 @@ describe('Select', () => {
     }
   });
 
-  it('supports caching of width when componentDidUpdate is called', async () => {
+  it('supports caching of width when componentDidUpdate is called', () => {
     const tree = mount(<Select options={testOptions} />);
 
     // stub offsetWidth getter
@@ -239,7 +254,7 @@ describe('Select', () => {
 
     // show menu
     tree.instance().componentDidUpdate();
-    await sleep(1);
+    clock.runAll();
     assert.equal(tree.instance().state.width, stubWidth);
 
     // restore original offsetWidth getter
@@ -255,18 +270,20 @@ describe('Select', () => {
     assert.deepEqual(tree.find(Button).prop('style'), null);
   });
 
-  it('onClose restores focus to button and calls onClose method if defined', async () => {
-    const spy = sinon.spy();
-    const tree = mount(<Select options={testOptions} onClose={spy} />);
+  it('onClose restores focus to button and calls onClose method if defined', () => {
+    const onCloseSpy = sinon.spy();
+    const onOpenSpy = sinon.spy();
+    const tree = mount(<Select options={testOptions} onClose={onCloseSpy} onOpen={onOpenSpy} />);
     tree.find(Button).getDOMNode().focus();
     tree.find(Button).simulate('click');
-    await sleep(50);
+    clock.runAll();
+    assert(onOpenSpy.calledOnce);
     assert.equal(tree.find(Button).prop('selected'), true);
     assert.notEqual(tree.find(Button).getDOMNode(), document.activeElement);
     tree.find(Button).simulate('click');
     tree.update();
-    assert(spy.calledOnce);
-    await sleep(150);
+    assert(onCloseSpy.calledOnce);
+    clock.tick(150);
     assert.equal(tree.find(Button).getDOMNode(), document.activeElement);
     assert.equal(tree.find(Button).prop('selected'), false);
 

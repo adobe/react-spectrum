@@ -26,10 +26,10 @@ governing permissions and limitations under the License.
 
   position: relative;
 
-  min-height: var(--spectrum-switch-height);
-  max-width: 100%;
+  min-block-size: var(--spectrum-switch-height);
+  max-inline-size: 100%;
 
-  margin-right: calc(var(--spectrum-switch-cursor-hit-x) * 2);
+  margin-inline-end: calc(var(--spectrum-switch-cursor-hit-x) * 2);
 
   vertical-align: top;
 }
@@ -71,7 +71,7 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-switch-text-size);
   transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
 
-  margin-top: var(--spectrum-switch-label-margin-top);
+  margin-block-start: var(--spectrum-switch-label-margin-top);
 }
 
 .spectrum-ToggleSwitch-switch {
@@ -79,8 +79,8 @@ governing permissions and limitations under the License.
   /* positions the pseudo elements relative to this one */
   position: relative;
 
-  height: var(--spectrum-switch-track-height);
-  width: var(--spectrum-switch-track-width);
+  block-size: var(--spectrum-switch-track-height);
+  inline-size: var(--spectrum-switch-track-width);
 
   /* Fix vertical alignment when not wrapping since we're flex-start */
   margin: calc((var(--spectrum-switch-height) - var(--spectrum-switch-track-height)) / 2) 0;
@@ -114,8 +114,8 @@ governing permissions and limitations under the License.
   &::after {
     transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
-    width: var(--spectrum-switch-handle-size);
-    height: var(--spectrum-switch-handle-size);
+    inline-size: var(--spectrum-switch-handle-size);
+    block-size: var(--spectrum-switch-handle-size);
 
     top: 0;
     left: 0;

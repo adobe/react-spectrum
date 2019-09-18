@@ -1,6 +1,7 @@
 {
   "name": "@react-spectrum/utils",
   "version": "3.0.0",
+  "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -9,5 +10,8 @@
   },
   "dependencies": {
     "classnames": "^2.2.5"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
   }
 }

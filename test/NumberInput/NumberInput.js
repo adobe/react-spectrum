@@ -54,7 +54,8 @@ describe('NumberInput', () => {
     const inputId = input.prop('id');
     assert(inputId);
     assert.equal(input.prop('defaultValue'), undefined);
-    assert.equal(input.prop('role'), 'spinbutton');
+    assert.equal(input.prop('type'), 'number');
+    assert.equal(input.prop('role'), undefined);
     assert.equal(input.prop('aria-valuenow'), null);
     assert.equal(input.prop('aria-valuetext'), null);
     assert.equal(input.prop('step'), 1);
@@ -182,6 +183,9 @@ describe('NumberInput', () => {
 
       describe('when mouse wheel is scrolled', () => {
         const simulateWheel = (deltaY = 5) => {
+          // WheelEvent listener is added explicitly to input with `passive: false` when component mounts,
+          // we can simulate triggering the event with shallow component instance by adding an onWheel prop.
+          tree.setProps({onWheel: tree.instance().handleInputScrollWheel.bind(tree.instance())});
           findInput(tree).simulate('wheel', {deltaY, preventDefault: preventDefaultSpy});
         };
 
@@ -331,7 +335,7 @@ describe('NumberInput', () => {
       it('will allow changing value greater than max, but marks it invalid', () => {
         tree.setProps({value: 12});
         assert.equal(findIncrementButton(tree).prop('disabled'), true);
-        assert.equal(findInput(tree).prop('invalid'), true);
+        assert.equal(findInput(tree).prop('validationState'), 'invalid');
       });
     });
   });
@@ -390,7 +394,7 @@ describe('NumberInput', () => {
         tree.setProps({value: -12});
         assert.equal(findDecrementButton(tree).prop('disabled'), true);
         assert.equal(tree.state('valueInvalid'), true);
-        assert.equal(findInput(tree).prop('invalid'), true);
+        assert.equal(findInput(tree).prop('validationState'), 'invalid');
       });
 
       it('will allow input change value to be less than min, but marks it invalid', () => {
@@ -398,7 +402,7 @@ describe('NumberInput', () => {
         findInput(tree).simulate('change', -12, {stopPropagation: spSpy});
         assert.equal(findDecrementButton(tree).prop('disabled'), true);
         assert.equal(tree.state('valueInvalid'), true);
-        assert.equal(findInput(tree).prop('invalid'), true);
+        assert.equal(findInput(tree).prop('validationState'), 'invalid');
         assert(spSpy.called);
       });
     });

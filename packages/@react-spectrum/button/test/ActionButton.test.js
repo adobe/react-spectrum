@@ -1,6 +1,7 @@
 import {ActionButton} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import {triggerPress} from './utils';
 import V2Button from '@react/react-spectrum/Button';
 
 describe('ActionButton', function () {
@@ -18,7 +19,7 @@ describe('ActionButton', function () {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -36,16 +37,16 @@ describe('ActionButton', function () {
   });
 
   it.each`
-    Component        | props
-    ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
-    ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
-  `('v2/3 parity hold affordance', function ({Component, props}) {
+    Name          | Component        | props
+    ${'Button'}   | ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
+    ${'V2Button'} | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
+  `('$Name v2/3 parity hold affordance', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     let holdAffordance = getByRole('presentation');
     expect(holdAffordance).not.toBeNull();
-    fireEvent.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 });

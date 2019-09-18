@@ -1,37 +1,32 @@
-import {configure, addDecorator} from '@storybook/react';
-import { withInfo } from '@storybook/addon-info';
+import 'storybook-chromatic';
+import {configure, addDecorator, addParameters} from '@storybook/react';
+import {configureActions} from '@storybook/addon-actions';
+import isChromatic from 'storybook-chromatic/isChromatic';
 import React from 'react';
-import {StoryWrapper, VerticalCenter} from './layout';
+import {VerticalCenter} from './layout';
 import { withA11y } from '@storybook/addon-a11y';
+import {withProviderSwitcher} from './custom-addons/provider';
+import {withChromaticProvider} from './custom-addons/chromatic';
+
+// decorator order matters, the last one will be the outer most
+
+configureActions({
+  depth: 1
+});
 
 addDecorator(withA11y);
 
-addDecorator(
-  withInfo({
-    inline: true,
-    styles: {
-      infoBody: {
-        backgroundColor: 'transparent',
-        border: 'none',
-        boxShadow: 'none',
-        padding: "0",
-        margin: "0",
-        clear: 'both'
-      }
-    }
-  })
-);
-
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', padding: '0 100px 50px 100px'}}>
-    {story()}
+  <VerticalCenter style={{textAlign: 'left', padding: '50px 150px 50px 150px', minHeight: isChromatic() ? null : '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+    <div>{story()}</div>
   </VerticalCenter>
 ));
 
-addDecorator(story => (
-  <StoryWrapper> {story()} </StoryWrapper>
-));
-
+if (isChromatic()) {
+  addDecorator(withChromaticProvider);
+} else {
+  addDecorator(withProviderSwitcher);
+}
 
 function loadStories() {
   let storiesContext = require.context('../packages', true, /^(.*\/stories\/.*?\.(js|jsx|ts|tsx))$/);

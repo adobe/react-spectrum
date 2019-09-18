@@ -1,9 +1,13 @@
 import {chain} from './chain';
 import classNames from 'classnames';
-import {HTMLAttributes} from 'react';
+import {mergeIds} from './useId';
 
-export function mergeProps(a: HTMLAttributes<Element>, b: HTMLAttributes<Element>): HTMLAttributes<Element> {
-  let res = {};
+interface Props {
+  [key: string]: any
+}
+
+export function mergeProps<T extends Props, U extends Props>(a: T, b: U): T & U {
+  let res: Props = {};
   for (let key in a) {
     // Chain events
     if (/^on[A-Z]/.test(key) && typeof a[key] === 'function' && typeof b[key] === 'function') {
@@ -12,6 +16,9 @@ export function mergeProps(a: HTMLAttributes<Element>, b: HTMLAttributes<Element
     // Merge classnames
     } else if (key === 'className' && a.className && b.className) {
       res[key] = classNames(a.className, b.className);
+
+    } else if (key === 'id' && a.id && b.id) {
+      res.id = mergeIds(a.id, b.id);
 
     // Override others
     } else {
@@ -26,5 +33,5 @@ export function mergeProps(a: HTMLAttributes<Element>, b: HTMLAttributes<Element
     }
   }
 
-  return res;
+  return res as T & U;
 }

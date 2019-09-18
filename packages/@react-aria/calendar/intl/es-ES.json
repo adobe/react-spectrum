@@ -1,0 +1,11 @@
+{
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "selectedDateDescription": "Fecha seleccionada: {date, date, full}",
+  "selectedRangeDescription": "Intervalo de fechas seleccionado: {start, date, long} a {end, date, long}",
+  "todayDate": "Hoy, {date, date, full}",
+  "todayDateSelected": "Hoy, {date, date, full} seleccionados",
+  "dateSelected": "{date, date, full} seleccionados",
+  "startRangeSelectionPrompt": "Haga clic para comenzar a seleccionar el rango de fechas",
+  "finishRangeSelectionPrompt": "Haga clic para terminar de seleccionar el rango de fechas"
+}

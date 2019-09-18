@@ -12,55 +12,60 @@ governing permissions and limitations under the License.
 
 .spectrum-InputGroup {
   &.is-focused {
-    &:not(.is-invalid) {
-      .spectrum-InputGroup-field:not(.is-disabled):not(.is-invalid) {
+    &:not(.is-invalid):not(.is-disabled) {
+      .spectrum-InputGroup-field {
         border-color: var(--spectrum-textfield-border-color-key-focus);
-        ~ .spectrum-FieldButton {
-          border-color: var(--spectrum-textfield-border-color-key-focus);
-        }
+      }
+
+      .spectrum-FieldButton {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
       }
     }
   }
+
   &:hover {
-    &:not(.is-invalid):not(.is-focused) {
-      .spectrum-InputGroup-field:not(.is-disabled):not(.is-invalid) {
+    &:not(.is-invalid):not(.is-focused):not(.is-disabled) {
+      .spectrum-InputGroup-field {
         border-color: var(--spectrum-textfield-border-color-hover);
-        ~ .spectrum-FieldButton {
-          border-color: var(--spectrum-textfield-border-color-hover);
-        }
-        &.is-focused {
-          border-color: var(--spectrum-textfield-border-color-key-focus);
-          ~ .spectrum-FieldButton {
-            border-color: var(--spectrum-textfield-border-color-key-focus);
-          }
-        }
+      }
+
+      .spectrum-FieldButton {
+        border-color: var(--spectrum-textfield-border-color-hover);
       }
     }
   }
 }
 
-.spectrum-InputGroup-field.is-focused {
-  ~ .spectrum-FieldButton {
+.spectrum-InputGroup.is-focused {
+  .spectrum-FieldButton,
+  .spectrum-InputGroup-field {
     border-color: var(--spectrum-dropdown-border-color-key-focus);
   }
 
   &.is-invalid,
   &:invalid {
-    ~ .spectrum-FieldButton {
+    .spectrum-FieldButton,
+    .spectrum-InputGroup-field {
       border-color: var(--spectrum-dropdown-border-color-error);
     }
   }
 }
 
 /* Only add the 2px ring for keyboard focus */
-.spectrum-InputGroup-field:focus-ring {
-  ~ .spectrum-FieldButton {
+.spectrum-InputGroup:focus-ring:not(.spectrum-InputGroup--quiet) {
+  .spectrum-FieldButton {
+    z-index: 1;
+  }
+
+  .spectrum-FieldButton,
+  .spectrum-InputGroup-field {
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
   }
 
   &.is-invalid,
   &:invalid {
-    ~ .spectrum-FieldButton {
+    .spectrum-FieldButton,
+    .spectrum-InputGroup-field {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
     }
   }
@@ -81,32 +86,35 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:hover:not(.is-invalid):not(.is-focused) {
-    .spectrum-InputGroup-field:not(.is-disabled):not(.is-invalid):not(.is-focused) {
-      ~ .spectrum-FieldButton {
-        border-color: var(--spectrum-textfield-quiet-border-color-hover);
-      }
+  &:hover:not(.is-invalid):not(.is-focused):not(.is-disabled) {
+    .spectrum-FieldButton {
+      border-color: var(--spectrum-textfield-quiet-border-color-hover);
     }
   }
 
-  .spectrum-InputGroup-field {
+  &.spectrum-InputGroup {
     &.is-invalid,
     &:invalid {
-      ~ .spectrum-FieldButton {
+      .spectrum-FieldButton,
+      .spectrum-InputGroup-field {
         border-color: var(--spectrum-textfield-border-color-error);
       }
     }
 
     /* Always add the 2px ring for keyboard focus for quiet inputgroups */
     &.is-focused {
-      ~ .spectrum-FieldButton {
+      .spectrum-InputGroup-field {
+        box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
+      }
+      
+      .spectrum-FieldButton {
         box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
 
       &.is-invalid,
       &:invalid {
-        ~ .spectrum-FieldButton {
+        .spectrum-FieldButton {
           box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
           border-color: var(--spectrum-textfield-border-color-error);
         }
@@ -116,14 +124,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Datepicker--range {
-  .spectrum-InputGroup-field {
-    &:focus-ring {
+  &:focus-ring {
+    .spectrum-InputGroup-field {
       box-shadow: none !important;
     }
-    &.is-disabled {
-      ~ .spectrum-Datepicker--rangeDash {
-        color: var(--spectrum-textfield-text-color-disabled);
-      }
+  }
+
+  &.is-disabled {
+    .spectrum-Datepicker--rangeDash {
+      color: var(--spectrum-textfield-text-color-disabled);
     }
   }
 
@@ -134,7 +143,8 @@ governing permissions and limitations under the License.
     &:invalid,
     &.is-invalid {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
-      ~ .spectrum-FieldButton {
+
+      .spectrum-FieldButton {
         box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
       }
     }

@@ -7,7 +7,6 @@ describe('useButton tests', function () {
     let props = {};
     let {result} = renderHook(() => useButton(props));
     expect(typeof result.current.buttonProps.onClick).toBe('function');
-    expect(result.current.buttonProps.ref.current).toBeNull();
   });
   it('handles elements other than button', function () {
     let props = {elementType: 'a'};

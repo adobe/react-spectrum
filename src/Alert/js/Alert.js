@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import AlertMedium from '../../Icon/core/AlertMedium';
+import Button from '../../Button';
 import classNames from 'classnames';
 import filterDOMProps from '../../utils/filterDOMProps';
 import HelpMedium from '../../Icon/core/HelpMedium';
@@ -41,6 +42,8 @@ const formatMessage = messageFormatter(intlMessages);
 export default function Alert({
   header,
   children,
+  closeLabel,
+  onClose,
   variant = 'info', // info, help, success, error, warning
   className,
   alt = formatMessage(variant || 'info'), // alt text for image icon, default is derived from variant
@@ -62,6 +65,15 @@ export default function Alert({
       <AlertIcon size={null} className="spectrum-Alert-icon" alt={alt} />
       <div className="spectrum-Alert-header">{header}</div>
       <div className="spectrum-Alert-content">{children}</div>
+      {closeLabel && (
+        <div className="spectrum-Alert-footer">
+          <Button
+            label={closeLabel}
+            onClick={onClose}
+            quiet
+            variant="primary" />
+        </div>
+      )}
     </div>
   );
 }
@@ -80,7 +92,17 @@ Alert.propTypes = {
   /**
    * Affects the color and icon used by the Alert
    */
-  variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success'])
+  variant: PropTypes.oneOf(['error', 'warning', 'info', 'help', 'success']),
+
+  /**
+   * Label of the cancel button
+   */
+  closeLabel: PropTypes.string,
+
+  /**
+   * Callback when dialog closes
+   */
+  onClose: PropTypes.func
 };
 
 Alert.defaultProps = {

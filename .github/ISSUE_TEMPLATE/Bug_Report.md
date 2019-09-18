@@ -9,7 +9,7 @@ Thanks for filing an issue 😄! Before you submit, please read the following:
 Search open/closed issues before submitting since someone might have asked the same thing before!
 -->
 
-# 🐛 bug report
+# 🐛 Bug Report 
 
 <!--- Provide a general summary of the issue here -->
 
@@ -46,3 +46,11 @@ Search open/closed issues before submitting since someone might have asked the s
 | react-spectrum   |
 | Browser          |
 | Operating System |
+
+## 🧢 Your Team
+
+<!--- Which product is this bug impacting? (i.e. Photoshop) -->
+
+## 🕷 Tracking Issue
+
+<!--- Link to the issue in your system, if applicable (JIRA, Github, etc.) -->

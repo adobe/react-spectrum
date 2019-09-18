@@ -433,5 +433,5 @@ describe('Clock', () => {
 const findFieldset = tree => tree.find('.react-spectrum-Clock');
 const findHourTextfield = tree => tree.find('.react-spectrum-Clock-hour');
 const findMinuteTextfield = tree => tree.find('.react-spectrum-Clock-minute');
-const findTimeValue = tree => tree.find('time');
+const findTimeValue = tree => tree.find('VisuallyHidden[element="time"]').shallow();
 const findMeridiemDropdown = tree => tree.find('.react-spectrum-Clock-meridiem');

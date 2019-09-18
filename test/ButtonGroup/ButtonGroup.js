@@ -23,6 +23,7 @@ import ButtonGroup from '../../src/ButtonGroup';
 import Camera from '../../src/Icon/Camera';
 import CheckmarkCircle from '../../src/Icon/CheckmarkCircle';
 import Delete from '../../src/Icon/Delete';
+import FocusManager from '../../src/utils/FocusManager';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -52,6 +53,14 @@ const toolButtonProps = {
     <Button variant="tool" value="add" icon={<Add />} />
   ]
 };
+
+const classButtonProps = {
+  children: [
+    <Button className="myClass" label="React" value="react" icon={<CheckmarkCircle />} />,
+    <Button label="Add" value="add" icon={<Add />} />
+  ]
+};
+
 
 const selectedValue = [
   'react',
@@ -90,6 +99,11 @@ describe('ButtonGroup', () => {
   it('supports an item being selected', () => {
     const tree = shallow(<ButtonGroup {...defaultProps} value={selectedValue[0]} />);
     assert.equal(tree.find({selected: true}).length, 1);
+  });
+
+  it('supports passing class to child node', () => {
+    const tree = shallow(<ButtonGroup {...classButtonProps} />);
+    assert.equal(tree.find('.myClass').length, 1);
   });
 
   it('supports an item being selected', () => {
@@ -368,6 +382,34 @@ describe('ButtonGroup', () => {
 
           tree.unmount();
         });
+      });
+
+      it('supports `manageTabIndex={false}`', () => {
+        const tree = mount(<ButtonGroup manageTabIndex={false} {...defaultProps} />);
+        assert.equal(tree.find(FocusManager).prop('manageTabIndex'), false);
+        tree.find(Button).first().simulate('focus');
+        tree.find(Button).first().simulate('click');
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+        tree.find(Button).last().simulate('focus');
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+        tree.find(Button).last().simulate('blur');
+
+        // with single selection, only selected item should have tabIndex=0 on blur
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+
+        tree.unmount();
       });
 
       describe('navigation', () => {

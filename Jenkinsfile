@@ -4,8 +4,10 @@ livefyre('''
       label: corpjenkins/node8
     git: true
     commands:
-      - make clean_all
-      - make
+      - make clean_node_modules
+      - make install_no_postinstall
+      - make clean
+      - make -B
       - make jenkins_test
       - make storybook
     xunitResults:
@@ -16,13 +18,13 @@ livefyre('''
       public/storybook: index.html
       public/storybook3: index.html
   deploy:
-    branch: "^(master)$"
+    branch: "^(next)$"
     git: true
     sshAgent: rspbot
     commands:
       - git reset --hard
-      - git checkout master
-      - git reset --hard origin/master
+      - git checkout next
+      - git reset --hard origin/next
       - make ci
 ''')
 

@@ -35,6 +35,20 @@ describe('Textarea', () => {
     assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline');
   });
 
+  it('supports defaultValue', () => {
+    const tree = shallow(<Textarea />);
+    assert(!tree.prop('defaultValue'));
+    tree.setProps({defaultValue: 'blah'});
+    assert.equal(tree.prop('defaultValue'), 'blah');
+  });
+
+  it('supports value', () => {
+    const tree = shallow(<Textarea />);
+    assert(!tree.prop('value'));
+    tree.setProps({value: 'blah'});
+    assert.equal(tree.prop('value'), 'blah');
+  });
+
   it('supports quiet variation', () => {
     const tree = shallow(<Textfield multiLine quiet />);
     assert.equal(tree.prop('className'), 'spectrum-Textfield spectrum-Textfield--multiline spectrum-Textfield--quiet');

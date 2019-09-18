@@ -55,6 +55,13 @@ governing permissions and limitations under the License.
     padding: 0 var(--spectrum-dropdown-padding-x);
     border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
     border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
+    border-width: 1px;
+  }
+
+  &.is-disabled {
+    .spectrum-FieldButton {
+      border-width: 0;
+    }
   }
 }
 
@@ -72,6 +79,7 @@ governing permissions and limitations under the License.
 
     position: relative;
     padding-inline-end: var(--spectrum-combobox-quiet-fieldbutton-padding-right);
+    border-width: 0;
     border-bottom: var(--spectrum-textfield-quiet-affixed-border-size) solid;
 
     /* More hitarea */
@@ -86,6 +94,12 @@ governing permissions and limitations under the License.
 
   .spectrum-InputGroup-icon {
     right: 0;
+  }
+
+  &.is-disabled {
+    .spectrum-FieldButton {
+      border-bottom-width: 1px;
+    }
   }
 }
 
@@ -111,16 +125,19 @@ governing permissions and limitations under the License.
     width: var(--spectrum-datepicker-input-width);
     min-width: var(--spectrum-datepicker-input-width);
     flex: initial;
-    &.spectrum-Datepicker-startField {
+  }
+  .spectrum-Datepicker-startField {
+    .spectrum-InputGroup-field {
       border-inline-end: 0;
       padding-inline-end: var(--spectrum-padding);
-      &.is-invalid,
-      &:invalid {
-        background-image: none;
-        padding-inline-end: var(--spectrum-padding);
-      }
     }
-    &.spectrum-Datepicker-endField {
+    
+    svg {
+      display: none;
+    }
+  }
+  .spectrum-Datepicker-endField {
+    .spectrum-InputGroup-field {
       flex: 1;
       border-inline-start: 0;
       border-radius: 0;

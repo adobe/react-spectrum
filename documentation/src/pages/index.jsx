@@ -26,22 +26,22 @@ export default class Index extends React.Component {
         <Rule />
         <section className="features">
           <section className="feature">
-            <Heading size={2}>⚡️ Powered by Spectrum</Heading>
+            <Heading variant="pageTitle"><span aria-hidden>⚡️</span> Powered by Spectrum</Heading>
             <p><Link href="http://spectrum.corp.adobe.com" target="_blank">Spectrum</Link> is Adobe's shared design system, which provides a consistent look and feel to all Adobe applications.</p>
           </section>
 
           <section className="feature">
-            <Heading size={2}>⚛️ Built with React</Heading>
+            <Heading variant="pageTitle"><span aria-hidden>⚛️</span> Built with React</Heading>
             <p><Link href="http://reactjs.org" target="_blank">React</Link> is a frontend component library from Facebook. react-spectrum builds on this foundation to deliver a rich component library.</p>
           </section>
 
           <section className="feature">
-            <Heading size={2}>♿️ Accessible for all</Heading>
+            <Heading variant="pageTitle"><span aria-hidden>♿️</span> Accessible for all</Heading>
             <p>Accessibility is built into each component in react-spectrum, including keyboard support, screen reader integration, and more.</p>
           </section>
         </section>
         <section className="example">
-          <Heading size={1}>Example</Heading>
+          <Heading variant="display">Example</Heading>
           <Example />
         </section>
       </div>

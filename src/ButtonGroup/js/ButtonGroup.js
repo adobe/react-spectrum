@@ -43,6 +43,11 @@ export default class ButtonGroup extends Component {
     invalid: PropTypes.bool,
 
     /**
+     * Whether to use roving tabIndex so that only one element within the group can receive focus with tab key at a time.
+     */
+    manageTabIndex: PropTypes.bool,
+
+    /**
      * Allows multi select
      */
     multiple: PropTypes.bool,
@@ -73,14 +78,19 @@ export default class ButtonGroup extends Component {
     orientation: PropTypes.oneOf(['horizontal', 'vertical', 'both']),
 
     /**
-     * Value to select one or more buttons in the group
+     * Value to select one or more buttons in the group. Accepts an array of strings if multiple=true,
+     * otherwise accepts a string
      */
-    value: PropTypes.arrayOf(PropTypes.string)
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string)
+    ])
   };
 
   static defaultProps = {
     disabled: false,
     invalid: false,
+    manageTabIndex: true,
     multiple: false,
     readOnly: false,
     required: false,
@@ -183,8 +193,9 @@ export default class ButtonGroup extends Component {
     const role = this.getChildRole();
     const onClick = (!disabled ? this.handleSelect.bind(this, button.props) : null);
     const allowedVariant = ALLOWED_BUTTON_VARIANTS[button.props.variant];
+    const classes = classNames('spectrum-ButtonGroup-item', button.props.className);
     return {
-      className: classNames('spectrum-ButtonGroup-item'),
+      className: classes,
       selected: selected,
       disabled: disabled,
       variant: allowedVariant ? button.props.variant : 'action',
@@ -215,6 +226,7 @@ export default class ButtonGroup extends Component {
       invalid,
       required,
       orientation,
+      manageTabIndex,
       ...otherProps
     } = this.props;
 
@@ -232,7 +244,11 @@ export default class ButtonGroup extends Component {
     }
 
     return (
-      <FocusManager itemSelector={BUTTONGROUP_ITEM_SELECTOR} selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR} orientation={otherProps.role === 'toolbar' ? orientation : 'both'}>
+      <FocusManager
+        itemSelector={BUTTONGROUP_ITEM_SELECTOR}
+        selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR}
+        orientation={otherProps.role === 'toolbar' ? orientation : 'both'}
+        manageTabIndex={manageTabIndex}>
         <div
           aria-invalid={invalid || null}
           aria-required={required || null}

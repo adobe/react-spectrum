@@ -22,6 +22,8 @@ import sinon from 'sinon';
 import Slider from '../../src/Slider';
 
 describe('Slider', function () {
+  const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
   it('should render a basic slider', function () {
     const tree = shallow(<Slider />);
     assert.equal(tree.prop('className'), 'spectrum-Slider');
@@ -436,6 +438,7 @@ describe('Slider', function () {
     const id = tree.instance().sliderId;
 
     assert.equal(findLabel(tree).length, 1);
+    assert.equal(findLabel(tree).text(), labelString);
 
     assert.equal(findValue(tree).length, 0);
 
@@ -459,7 +462,7 @@ describe('Slider', function () {
 
     assert.equal(findInputs(tree).prop('id'), id);
     assert.equal(findInputs(tree).prop('aria-label'), null);
-    assert.equal(findInputs(tree).prop('aria-labelledby'), [ariaLabelledbyString, labelId].join(' '));
+    assert.equal(findInputs(tree).prop('aria-labelledby'), `${ariaLabelledbyString} ${labelId}`);
   });
 
   it('should support adding label and aria-labelledby with renderLabel', function () {
@@ -474,14 +477,14 @@ describe('Slider', function () {
     assert.equal(findLabel(tree).text(), labelString);
     assert.equal(findLabel(tree).prop('hidden'), null);
 
-    assert.equal(findValue(tree).prop('aria-labelledby'), [ariaLabelledbyString, labelId].join(' '));
+    assert.equal(findValue(tree).prop('aria-labelledby'), `${ariaLabelledbyString} ${labelId}`);
     assert.equal(findValue(tree).prop('role'), 'textbox');
     assert.equal(findValue(tree).prop('aria-readonly'), 'true');
     assert.equal(findValue(tree).text(), 50);
 
     assert.equal(findInputs(tree).prop('id'), id);
     assert.equal(findInputs(tree).prop('aria-label'), null);
-    assert.equal(findInputs(tree).prop('aria-labelledby'), [ariaLabelledbyString, labelId].join(' '));
+    assert.equal(findInputs(tree).prop('aria-labelledby'), `${ariaLabelledbyString} ${labelId}`);
   });
 
   it('should submit values when stopped dragging', function () {
@@ -617,6 +620,15 @@ describe('Slider', function () {
     tree.unmount();
   });
 
+  it('should support getAriaValueText', () => {
+    const tree = shallow(<Slider min={0} max={6} defaultValue={2} getAriaValueText={value => DAYS_OF_WEEK[value]} label="Day of Week" renderLabel />);
+    assert.equal(findStartHandleInput(tree).prop('aria-valuetext'), 'Tuesday');
+    assert.equal(findValue(tree).text(), 'Tuesday');
+    tree.setProps({defaultValue: 5});
+    assert.equal(findStartHandleInput(tree).prop('aria-valuetext'), 'Friday');
+    assert.equal(findValue(tree).text(), 'Friday');
+  });
+
   describe('Range slider', () => {
     it('should support clicking on the track to set the value of closest handle', () => {
       const tree = mount(<Slider variant="range" defaultStartValue="20" defaultEndValue="60" />);
@@ -728,9 +740,33 @@ describe('Slider', function () {
       assert.equal(findEndHandleInput(tree).prop('aria-label'), 'Maximum');
       assert.equal(tree.prop('aria-labelledby'), findLabel(tree).prop('id'));
       assert.equal(findStartHandleInput(tree).prop('aria-labelledby'),
-                   [findLabel(tree).prop('id'), findStartHandleInput(tree).prop('id')].join(' '));
+                   `${findLabel(tree).prop('id')} ${findStartHandleInput(tree).prop('id')}`);
       assert.equal(findEndHandleInput(tree).prop('aria-labelledby'),
-                   [findLabel(tree).prop('id'), findEndHandleInput(tree).prop('id')].join(' '));
+                   `${findLabel(tree).prop('id')} ${findEndHandleInput(tree).prop('id')}`);
+    });
+
+    it('should support label on min and max inputs', () => {
+      const tree = shallow(<Slider variant="range" label="Range" min={0} max={100} defaultStartValue={20} defaultEndValue={80} />);
+      assert.equal(findLabel(tree).text(), 'Range');
+      assert.equal(findStartHandleInput(tree).prop('aria-label'), 'Minimum');
+      assert.equal(findEndHandleInput(tree).prop('aria-label'), 'Maximum');
+      assert.equal(tree.prop('aria-labelledby'), findLabel(tree).prop('id'));
+      assert.equal(findStartHandleInput(tree).prop('aria-labelledby'),
+                   `${findLabel(tree).prop('id')} ${findStartHandleInput(tree).prop('id')}`);
+      assert.equal(findEndHandleInput(tree).prop('aria-labelledby'),
+                   `${findLabel(tree).prop('id')} ${findEndHandleInput(tree).prop('id')}`);
+
+    });
+
+    it('should support getAriaValueText', () => {
+      const tree = shallow(<Slider min={0} max={6} defaultStartValue={2} defaultEndValue={4} getAriaValueText={value => DAYS_OF_WEEK[value]} variant="range" label="Days" renderLabel />);
+      assert.equal(findStartHandleInput(tree).prop('aria-valuetext'), 'Tuesday');
+      assert.equal(findEndHandleInput(tree).prop('aria-valuetext'), 'Thursday');
+      assert.equal(findValue(tree).text(), 'Tuesday–Thursday');
+      tree.setProps({defaultStartValue: 1, defaultEndValue: 5});
+      assert.equal(findStartHandleInput(tree).prop('aria-valuetext'), 'Monday');
+      assert.equal(findEndHandleInput(tree).prop('aria-valuetext'), 'Friday');
+      assert.equal(findValue(tree).text(), 'Monday–Friday');
     });
   });
 });

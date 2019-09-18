@@ -29,7 +29,7 @@ import React, {Component} from 'react';
 import Select from '../../Select';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
-import '../../utils/style/index.styl';
+import VisuallyHidden from '../../VisuallyHidden';
 
 const formatMessage = messageFormatter(intlMessages);
 
@@ -493,7 +493,7 @@ export default class Clock extends Component {
         aria-label={groupAriaLabel}
         aria-labelledby={groupAriaLabelledby}
         {...filterDOMProps(otherProps)}>
-        <time id={timeLabelId} className="u-react-spectrum-screenReaderOnly" aria-live={focused ? 'polite' : 'off'} hidden={!focused}>{formattedMoment}</time>
+        <VisuallyHidden element="time" id={timeLabelId} aria-live={focused ? 'polite' : 'off'} hidden={!focused}>{formattedMoment}</VisuallyHidden>
         <Textfield
           ref={el => this.hourRef = el}
           className="react-spectrum-Clock-hour"

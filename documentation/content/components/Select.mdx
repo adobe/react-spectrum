@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Select from '@react/react-spectrum/Select';
 
 ## Overview
@@ -9,6 +10,7 @@ Read more: https://www.w3schools.com/tags/tag_select.asp
 ## Example
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -23,6 +25,7 @@ Read more: https://www.w3schools.com/tags/tag_select.asp
 The `quiet` prop applies a quiet appearance to the button. We can apply `multiple`, `disabled`, `value` props as well with quiet to give the specifc appearances.
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -33,6 +36,7 @@ The `quiet` prop applies a quiet appearance to the button. We can apply `multipl
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -47,6 +51,7 @@ The `quiet` prop applies a quiet appearance to the button. We can apply `multipl
 This prop enforces the user to select at least one option from the list.
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -57,6 +62,7 @@ This prop enforces the user to select at least one option from the list.
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -71,6 +77,7 @@ This prop enforces the user to select at least one option from the list.
 By default the popover list closes when a new value is selected. However, if we want the list to remain open we can achieve this by passing a `false` value to `closeOnSelect` prop.
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -81,6 +88,7 @@ By default the popover list closes when a new value is selected. However, if we 
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -95,6 +103,7 @@ By default the popover list closes when a new value is selected. However, if we 
 The various items are provided as an array to the `options` prop as shown below. `Placeholder` prop is available to provide a placeholder the Select component. Select in Spectum can have a default value(uncontrolled) or value(controlled) to give the component an initial selected value. To support multiple selection of items we have the `multiple` prop.
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -106,6 +115,7 @@ The various items are provided as an array to the `options` prop as shown below.
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -117,6 +127,7 @@ The various items are provided as an array to the `options` prop as shown below.
 ```
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -129,6 +140,7 @@ The various items are provided as an array to the `options` prop as shown below.
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -141,6 +153,7 @@ The various items are provided as an array to the `options` prop as shown below.
 ```
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -153,6 +166,7 @@ The various items are provided as an array to the `options` prop as shown below.
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -183,6 +197,7 @@ element for the type of data being displayed (e.g. `<time>`).
 ### Invalid
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -193,6 +208,7 @@ element for the type of data being displayed (e.g. `<time>`).
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -205,6 +221,7 @@ element for the type of data being displayed (e.g. `<time>`).
 ### Disabled
 
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -215,6 +232,7 @@ element for the type of data being displayed (e.g. `<time>`).
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   options={[
     {label: 'Chocolate',value: 'chocolate'},
     {label: 'Vanilla',value: 'vanilla'},
@@ -229,6 +247,7 @@ element for the type of data being displayed (e.g. `<time>`).
 Events handlers for change, open and close can be registered on a `Select` component as shown below.
 
 <Select
+  aria-label="Ice cream flavor"
   onChange={e => console.log(e, 'changed')}
   onOpen={e => console.log(e, 'opened')}
   onClose={e => console.log(e, 'closed')}
@@ -241,6 +260,7 @@ Events handlers for change, open and close can be registered on a `Select` compo
 
 ```jsx
 <Select
+  aria-label="Ice cream flavor"
   onChange={e => console.log(e, 'changed')}
   onOpen={e => console.log(e, 'opened')}
   onClose={e => console.log(e, 'closed')}
@@ -258,4 +278,64 @@ To internationalize a select, localized strings should be passed to the `label` 
 
 ## Accessibility
 
-Select component is accessible by default. The correct aria roles will automatically be applied.
+### WAI-ARIA Design Pattern
+
+The Select control implements the [Listbox design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox) as a [collapsible dropdown listbox](https://www.w3.org/TR/wai-aria-practices-1.1/examples/listbox/listbox-collapsible.html).
+
+### Labelling
+
+A Select should be labelled using a [FieldLabel](/components/FieldLabel), `aria-label` or `aria-labelledby`, to provide context for Accessibility.
+
+#### Using FieldLabel
+
+When labelling using a FieldLabel, use implicit labelling or add the `aria-labelledby` prop to explicitly associate the Select control to the FieldLabel.
+
+##### Implicit labelling will add `aria-labelledby` automatically
+
+<FieldLabel label="Ice cream flavor">
+  <Select
+    options={[
+      {label: 'Chocolate',value: 'chocolate'},
+      {label: 'Vanilla',value: 'vanilla'},
+      {label: 'Strawberry',value: 'strawberry'}
+    ]}
+  />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Ice cream flavor">
+  <Select
+    options={[
+      {label: 'Chocolate',value: 'chocolate'},
+      {label: 'Vanilla',value: 'vanilla'},
+      {label: 'Strawberry',value: 'strawberry'}
+    ]}
+  />
+</FieldLabel>
+```
+
+##### Explicit labelling requires `aria-labelledby` be added manually
+
+<FieldLabel label="Ice cream flavor" id="select-label-id" labelFor="select-id" />
+<Select
+  id="select-id"
+  aria-labelledby="select-label-id"
+  options={[
+    {label: 'Chocolate',value: 'chocolate'},
+    {label: 'Vanilla',value: 'vanilla'},
+    {label: 'Strawberry',value: 'strawberry'}
+  ]}
+ />
+
+```jsx
+<FieldLabel label="Ice cream flavor" id="select-label-id" labelFor="select-id" />
+<Select
+  id="select-id"
+  aria-labelledby="select-label-id"
+  options={[
+    {label: 'Chocolate',value: 'chocolate'},
+    {label: 'Vanilla',value: 'vanilla'},
+    {label: 'Strawberry',value: 'strawberry'}
+  ]}
+ />
+```

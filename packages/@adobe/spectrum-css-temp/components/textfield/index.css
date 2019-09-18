@@ -31,6 +31,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield {
+  display: inline-block;
+  position: relative;
+}
+
+.spectrum-Textfield-input {
   /* box */
   box-sizing: border-box;
   border: var(--spectrum-textfield-border-size) solid;
@@ -126,55 +131,83 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  &.is-invalid,
-  &:invalid,
-  &.is-valid {
-    background-repeat: no-repeat;
+  .spectrum-Textfield.is-valid & {
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  &.is-invalid,
-  &:invalid {
-    background-size: var(--spectrum-icon-alert-medium-width) var(--spectrum-icon-alert-medium-width);
-    background-position: calc(100% - var(--spectrum-textfield-padding-x)) 50%;
-    padding-right: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  .spectrum-Textfield.is-invalid & { 
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  &.is-valid {
-    background-size: var(--spectrum-icon-checkmark-medium-width) var(--spectrum-icon-checkmark-medium-width);
-    background-position: calc(100% - var(--spectrum-textfield-padding-x)) 50%;
-    padding-right: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  .spectrum-Textfield--multiline & {
+    height: var(--spectrum-textfield-multiline-height);
+    padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
+  
+    /* Remove the default vertical scrollbar for textarea in IE. */
+    overflow: auto;
   }
-}
 
-.spectrum-Textfield--multiline {
-  height: var(--spectrum-textfield-multiline-height);
-  padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
+  .spectrum-Textfield--quiet & {
+    border-radius: var(--spectrum-textfield-quiet-border-radius);
+    border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
 
-  /* Remove the default vertical scrollbar for textarea in IE. */
-  overflow: auto;
+    /* removes the side padding to align the text properly */
+    padding-inline-start: var(--spectrum-textfield-quiet-padding-x);
+    padding-inline-end: var(--spectrum-textfield-quiet-padding-x);
 
-  &.is-invalid,
-  &:invalid,
-  &.is-valid {
-    background-position: calc(100% - calc(var(--spectrum-textfield-icon-size) / 2)) calc(100% - calc(var(--spectrum-textfield-icon-size) / 2));
+    /* Treat all quiet inputs and textareas the same */
+    resize: none;
+    overflow-y: hidden;
   }
 }
 
-.spectrum-Textfield--quiet {
-  border-radius: var(--spectrum-textfield-quiet-border-radius);
-  border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
+/* copied from .spectrum-DecoratedTextfield-icon */
+/* styles the valid/invalid state icons on the right of the textfield 
+   replaces valid/invalid background icon */
+.spectrum-Textfield-validationIcon {
+  position: absolute;
 
-  /* removes the side padding to align the text properly */
-  padding-left: var(--spectrum-textfield-quiet-padding-x);
-  padding-right: var(--spectrum-textfield-quiet-padding-x);
+  padding-inline-end: calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2);
+  pointer-events: all;
 
-  /* Treat all quiet inputs and textareas the same */
-  resize: none;
-  overflow-y: hidden;
+  .spectrum-Textfield--quiet & {
+    padding-inline-end: 0;
+  }
+}
 
-  &.is-invalid,
-  &:invalid,
-  &.is-valid {
-    background-position: var(--spectrum-textfield-quiet-invalid-background-position);
+.spectrum-Textfield.is-invalid .spectrum-Textfield-validationIcon {
+  width: var(--spectrum-icon-alert-medium-width);
+  height: var(--spectrum-icon-alert-medium-height);
+  bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-height) / 2));
+  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2));
+}
+
+.spectrum-Textfield.is-valid .spectrum-Textfield-validationIcon {
+  width: var(--spectrum-icon-checkmark-medium-width);
+  height: var(--spectrum-icon-checkmark-medium-height);
+  bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-height) / 2));
+  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-width) / 2));
+}
+
+/* styles the left icon for textfield */
+.spectrum-Textfield-icon {
+  display: block;
+  position: absolute;
+  inset-inline-start: 12px;
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2));
+}
+
+/* styles the textfield properly if the left icon is provided */
+.spectrum-Textfield-inputIcon {
+  /* Use padding instead of text-indent so long strings don't overlap the icon */
+  padding-inline-start: var(--spectrum-search-padding-left); 
+
+  .spectrum-Textfield--quiet & {
+    padding-inline-start: var(--spectrum-search-quiet-padding-left);
+
+    /* Since quiet button has no left padding, push the icon all the way to the left */
+    & ~ .spectrum-Textfield-icon {
+      inset-inline-start: 0;
+    }
   }
 }

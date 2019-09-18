@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Textarea from '@react/react-spectrum/Textarea';
 
 ## Overview
@@ -6,7 +7,7 @@ The **Textarea** provides an input element for users to enter in data (for forms
 
 ## Examples
 
-<Textarea placeholder="Text here" />
+<Textarea placeholder="Text here" aria-label="Textarea" />
 
 ```jsx
 <Textarea placeholder="Text here" />
@@ -16,7 +17,7 @@ The **Textarea** provides an input element for users to enter in data (for forms
 
 ### Quiet
 
-<Textarea quiet placeholder="Quiet variant" />
+<Textarea quiet placeholder="Quiet variant" aria-label="Quiet variant" />
 
 ```jsx
 <Textarea quiet placeholder="Quiet variant" />
@@ -24,42 +25,44 @@ The **Textarea** provides an input element for users to enter in data (for forms
 
 ### Disabled
 
-Disables text field from interaction
+Disables textarea from interaction
 
-<Textarea disabled="true" placeholder="Disabled variant" />
+<Textarea disabled placeholder="Disabled variant" aria-label="Disabled variant" />
 
 ```jsx
-<Textarea disabled="true" placeholder="Disabled variant" />
+<Textarea disabled placeholder="Disabled variant" />
 ```
 
-### Invalid
+### Validation State
 
-Shows the warning symbol and red border
+There are two validation states: valid, and invalid.
 
-<Textarea invalid="true" placeholder="Invalid variant" />
+<Textarea validationState="valid" placeholder="Valid" style={{marginRight: 20}} aria-label="Valid state" />
+<Textarea validationState="invalid" placeholder="Invalid" aria-label="Invalid state" />
 
 ```jsx
-<Textarea invalid="true" placeholder="Invalid variant" />
+<Textarea validationState="valid" placeholder="Valid" />
+<Textarea validationState="invalid" placeholder="Invalid" />
 ```
 
 ### Read-only
 
 Allows text to be selected but not changed
 
-<Textarea readOnly="true" value="Read-only variant" />
+<Textarea readOnly value="Read-only variant" aria-label="Read-only variant" />
 
 ```jsx
-<Textarea readOnly="true" value="Read-only variant" />
+<Textarea readOnly value="Read-only variant" />
 ```
 
 ### Required
 
-Shows warning if text field is empty
+Shows warning if textarea is empty
 
-<Textarea required="true" placeholder="Required variant" />
+<Textarea required placeholder="Required variant" aria-label="Required variant" />
 
 ```jsx
-<Textarea required="true" placeholder="Required variant" />
+<Textarea required placeholder="Required variant" />
 ```
 
 ## Events
@@ -68,7 +71,7 @@ Shows warning if text field is empty
 
 Function fired when value of textarea is changed.
 
-<Textarea onChange={e => console.log(e)} />
+<Textarea onChange={e => console.log(e)} aria-label="Textarea with onChange event handler" />
 
 ```jsx
 <Textarea onChange={e => console.log(e)} />
@@ -78,7 +81,7 @@ Function fired when value of textarea is changed.
 
 Function fired when the textarea is focused.
 
-<Textarea onFocus={e => console.log(e)} />
+<Textarea onFocus={e => console.log(e)} aria-label="Textarea with onFocus event handler" />
 
 ```jsx
 <Textarea onFocus={e => console.log(e)} />
@@ -88,8 +91,73 @@ Function fired when the textarea is focused.
 
 Function fired when the focus on the textarea is lost.
 
-<Textarea onBlur={e => console.log(e)} />
+<Textarea onBlur={e => console.log(e)} aria-label="Textarea with onBlur event handler" />
 
 ```jsx
 <Textarea onBlur={e => console.log(e)} />
+```
+
+## Additional Behavior
+
+### autoFocus
+
+Controls whether or not the textarea will automatically receive focus when it mounts.
+
+```jsx
+<Textarea autoFocus />
+```
+
+## Accessibility
+
+Textarea has been implemented using the [HTML5 `textarea` control](https://www.w3.org/TR/html52/sec-forms.html#the-textarea-element), and provided it is labelled appropriately, is be accessible by default. 
+
+### Labelling
+
+A Textarea must be labelled using a [FieldLabel](/components/FieldLabel), `aria-label` or `aria-labelledby`, to provide context for Accessibility.
+
+#### Implicit labelling with `FieldLabel`
+
+<FieldLabel label="Comment">
+  <Textarea />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Comment">
+  <Textarea />
+</FieldLabel>
+```
+
+#### Explicit labelling using `FieldLabel` and `labelFor` property
+
+A FieldLabel can explicitly label a Textarea using the `labelFor` prop.
+
+<FieldLabel label="Comment" labelFor="textarea-id" />
+<Textarea id="textarea-id" />
+
+```jsx
+<FieldLabel label="Comment" labelFor="textarea-id" />
+<Textarea id="textarea-id" />
+```
+
+#### Using `aria-label` and `aria-labelledby`
+Use `aria-label` and `aria-labelledby` in rare cases, like the [Clock](Clock) component, where the TextField does not have a visible label or where the Textfield should be labelled by an external element.
+
+<div id="post-0-id">
+  <p>Social media post content</p>
+</div>
+<Textarea
+  id="post-0-reply-id"
+  aria-label="Reply regarding: "
+  aria-labelledby="post-0-reply-id post-0-id"
+  placeholder="Write your reply…" />
+
+```jsx
+<div id="post-0-id">
+  <p>Social media post content</p>
+</div>
+<Textarea
+  id="post-0-reply-id"
+  aria-label="Reply regarding: "
+  aria-labelledby="post-0-reply-id post-0-id"
+  placeholder="Write your reply…" />
 ```

@@ -16,10 +16,12 @@
 **************************************************************************/
 
 import assert from 'assert';
+import {mount, shallow} from 'enzyme';
 import React from 'react';
 import Search from '../../src/Search';
 import SearchWithin from '../../src/SearchWithin';
-import {shallow} from 'enzyme';
+import sinon from 'sinon';
+import Textfield from '../../src/Textfield';
 
 const testOptions = [
   {label: 'Chocolate', value: 'chocolate'},
@@ -32,7 +34,16 @@ const testOptions = [
   {label: 'Some crazy long value that should be cut off', value: 'logVal'}
 ];
 
-describe('Search Within', () => {
+describe('SearchWithin', () => {
+  let clock;
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+  after(() => {
+    clock.runAll();
+    clock.restore();
+  });
+
   it('default', () => {
     const tree = shallow(<SearchWithin scopeOptions={testOptions} />);
     assert.equal(tree.hasClass('spectrum-SearchWithin'), true);
@@ -40,7 +51,7 @@ describe('Search Within', () => {
     assert.equal(tree.prop('aria-label'), 'Search within');
 
     assert.equal(findSelect(tree).prop('aria-labelledby'), tree.prop('id'));
-    assert.equal(findSearch(tree).prop('aria-labelledby'), findSelect(tree).prop('id'));
+    assert.equal(findSearch(tree).prop('aria-labelledby'), tree.prop('id') + ` ${findSelect(tree).prop('id')}-value`);
   });
 
   it('supports value with empty string', () => {
@@ -48,23 +59,70 @@ describe('Search Within', () => {
     assert.equal(tree.find(Search).props().value, '');
   });
 
+  it('supports defaultValue', () => {
+    const tree = shallow(<SearchWithin defaultValue="default" scopeOptions={testOptions} />);
+    assert.equal(tree.find(Search).prop('defaultValue'), 'default');
+  });
+
+  it('supports scope prop to set value of Select', () => {
+    const tree = shallow(<SearchWithin scopeOptions={testOptions} scope="coco" />);
+    assert.equal(findSelect(tree).prop('value'), 'coco');
+  });
+
+  it('supports defaultScope prop to set defaultValue of Select', () => {
+    const tree = shallow(<SearchWithin scopeOptions={testOptions} defaultScope="coco" />);
+    assert.equal(findSelect(tree).prop('defaultValue'), 'coco');
+  });
+
+  it('supports autoFocus', () => {
+    const tree = mount(<SearchWithin scopeOptions={testOptions} autoFocus />);
+    clock.runAll();
+    assert.equal(tree.find(Textfield).getDOMNode(), document.activeElement);
+    tree.unmount();
+  });
+
   it('supports labelling using aria-label', () => {
     const tree = shallow(<SearchWithin scopeOptions={testOptions} aria-label="This is a label" />);
     assert.equal(tree.prop('aria-label'), 'This is a label');
     assert.equal(findSelect(tree).prop('aria-labelledby'), tree.prop('id'));
-    assert.equal(findSearch(tree).prop('aria-labelledby'), findSelect(tree).prop('id'));
+    assert.equal(findSearch(tree).prop('aria-labelledby'), tree.prop('id') + ` ${findSelect(tree).prop('id')}-value`);
   });
   it('supports labelling using aria-labelledby alone', () => {
     const tree = shallow(<SearchWithin scopeOptions={testOptions} aria-labelledby="foo" />);
     assert.equal(tree.prop('aria-labelledby'), 'foo');
     assert.equal(findSelect(tree).prop('aria-labelledby'), 'foo');
-    assert.equal(findSearch(tree).prop('aria-labelledby'), findSelect(tree).prop('id'));
+    assert.equal(findSearch(tree).prop('aria-labelledby'), `foo ${findSelect(tree).prop('id')}-value`);
   });
   it('supports labelling using both aria-labelledby and aria-label', () => {
     const tree = shallow(<SearchWithin scopeOptions={testOptions} aria-label="This is a label" aria-labelledby="foo" />);
     assert.equal(tree.prop('aria-labelledby'), 'foo ' + tree.prop('id'));
     assert.equal(findSelect(tree).prop('aria-labelledby'), 'foo ' + tree.prop('id'));
-    assert.equal(findSearch(tree).prop('aria-labelledby'), findSelect(tree).prop('id'));
+    assert.equal(findSearch(tree).prop('aria-labelledby'), `foo ${tree.prop('id')} ${findSelect(tree).prop('id')}-value`);
+  });
+
+  it('supports additions of custom css classes', () => {
+    const cls = 'sw-abc';
+    const tree = shallow(<SearchWithin scopeOptions={testOptions} className={cls} />);
+    assert(tree.prop('className').includes(cls));
+  });
+
+  it('updates when new scopeOptions are passed in', () => {
+    let tree = shallow(<SearchWithin scopeOptions={testOptions} />);
+    let options = findSelect(tree).prop('options');
+    assert.equal(options.length, 8);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'chocolate'
+    });
+
+    tree.setProps({scopeOptions: [{label: 'Chocolate', value: 'choco'}]});
+    tree.update();
+    options = findSelect(tree).prop('options');
+    assert.equal(options.length, 1);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'choco'
+    });
   });
 });
 

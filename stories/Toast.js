@@ -35,6 +35,10 @@ storiesOf('Toast', module)
     () => <Toast closable actionLabel="Undo" onAction={action('onAction')} onClose={action('onClose')}>The thing that you are trying to do the thing to has been archived.</Toast>
   )
   .add(
+    'actionable, not closable',
+    () => <Toast actionLabel="Undo" onAction={action('onAction')}>The thing that you are trying to do the thing to has been archived.</Toast>
+  )
+  .add(
     'action triggers close',
     () => <Toast closable actionLabel="undo" closeOnAction onAction={action('onAction')} onClose={action('onClose')}>Toast is done.</Toast>
   )

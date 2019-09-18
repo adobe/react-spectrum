@@ -113,7 +113,7 @@ export default class Breadcrumbs extends React.Component {
       let Element = !item.href ? 'div' : 'a';
       return (
         <Element
-          className="spectrum-Breadcrumbs-itemLink react-spectrum-overrride-Breadcrumbs-itemLink"
+          className="spectrum-Breadcrumbs-itemLink"
           role={!item.href ? 'link' : null}
           href={!isCurrent(i) ? item.href : null}
           target={!isCurrent(i) && item.href ? '_self' : null}
