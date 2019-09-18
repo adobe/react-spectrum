@@ -8,7 +8,7 @@ async function run() {
   try {
     let {data: prs} = await octokit.repos.listPullRequestsAssociatedWithCommit({
       ...github.context.repo,
-      commit_sha
+      commit_sha: github.context.sha
     });
 
     if (!prs) {
