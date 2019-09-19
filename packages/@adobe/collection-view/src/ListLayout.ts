@@ -68,7 +68,7 @@ export class ListLayout extends Layout {
         x = this.indentationForItem(this.collectionView.data, key) || 0;
       }
 
-      let rect = new Rect(x, y, this.collectionView.size.width - x, this.rowHeight);
+      let rect = new Rect(x, y, this.collectionView.visibleRect.width - x, this.rowHeight);
       this.layoutInfos[key] = new LayoutInfo('item', key, rect);
 
       y += this.rowHeight;
@@ -78,7 +78,7 @@ export class ListLayout extends Layout {
   }
 
   getContentSize() {
-    return new Size(this.collectionView.size.width, this.contentHeight);
+    return new Size(this.collectionView.visibleRect.width, this.contentHeight);
   }
 
   getKeyAbove(key: string) {

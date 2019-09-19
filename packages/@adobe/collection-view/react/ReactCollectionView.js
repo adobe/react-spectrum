@@ -2,7 +2,8 @@ import {
   CollectionView as _CollectionView,
   EditableCollectionView as _EditableCollectionView,
   ReusableView,
-  Size
+  Size,
+  Rect
 } from '../src';
 import React from 'react';
 import ReactBackend from './ReactBackend';
@@ -27,6 +28,10 @@ function createReactComponent(Super) {
       if (props.className) {
         this.addClass(props.className);
       }
+    }
+
+    render() {
+      return this.renderBackendView(this.backend);
     }
 
     createView(type, section, index) {
@@ -87,7 +92,8 @@ function createReactComponent(Super) {
      */
     updateSize(props = {}) {
       let dom = ReactDOM.findDOMNode(this);
-      this.size = new Size(props.width || dom.offsetWidth, props.height || dom.offsetHeight);
+      // this.size = new Size(props.width || dom.offsetWidth, props.height || dom.offsetHeight);
+      this.visibleRect = new Rect(0, 0, props.width || dom.offsetWidth, props.height || dom.offsetHeight);
     }
 
     componentWillReceiveProps(props) {

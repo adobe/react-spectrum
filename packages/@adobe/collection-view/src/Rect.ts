@@ -1,4 +1,5 @@
 import {Point} from './Point';
+import {Size} from './Size';
 
 export type RectCorner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
@@ -120,6 +121,23 @@ export class Rect {
     }
   
     return null;
+  }
+
+  equals(rect: Rect) {
+    return rect.x === this.x
+        && rect.y === this.y
+        && rect.width === this.width
+        && rect.height === this.height;
+  }
+
+  pointEquals(point: Point | Rect) {
+    return this.x === point.x
+        && this.y === point.y;
+  }
+
+  sizeEquals(size: Size | Rect) {
+    return this.width === size.width
+        && this.height === size.height;
   }
   
   /**

@@ -1,15 +1,15 @@
+import {CancelablePromise, easeOut, tween} from './tween';
+import {Collection, InvalidationContext, Item} from './types';
+import {CollectionViewDelegate} from './Delegate';
 import {concatIterators, difference} from './utils';
+import {Layout} from './Layout';
+import {LayoutInfo} from './LayoutInfo';
 import {Point} from './Point';
 import {Rect, RectCorner} from './Rect';
-import {ScrollView, ScrollViewOptions} from './ScrollView';
-import {Transaction} from './Transaction';
-import {tween, easeOut, CancelablePromise} from './tween';
-import {Layout} from './Layout';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
-import {LayoutInfo} from './LayoutInfo';
-import {InvalidationContext, Collection, Item} from './types';
-import {CollectionViewDelegate} from './Delegate';
+import {Transaction} from './Transaction';
+import {View} from './View';
 
 interface ScrollAnchor {
   key: string,
@@ -18,7 +18,7 @@ interface ScrollAnchor {
   offset: number
 }
 
-export interface CollectionViewOptions extends ScrollViewOptions {
+export interface CollectionViewOptions {
   data?: Collection,
   layout?: Layout,
   size?: Size,
@@ -54,7 +54,7 @@ export interface CollectionViewOptions extends ScrollViewOptions {
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionView extends ScrollView {
+export class CollectionView extends View {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
@@ -75,6 +75,8 @@ export class CollectionView extends ScrollView {
   
   protected _data: Collection;
   protected _layout: Layout;
+  protected _contentSize: Size;
+  protected _visibleRect: Rect;
   protected _reusableViews: {[type: string]: ReusableView[]};
   protected _visibleViews: Map<string, ReusableView>;
   protected _invalidationContext: InvalidationContext | null;
@@ -87,7 +89,10 @@ export class CollectionView extends ScrollView {
   protected _transactionQueue: Transaction[];
 
   constructor(options: CollectionViewOptions = {}) {
-    super(options);
+    super();
+
+    this._contentSize = new Size;
+    this._visibleRect = new Rect;
 
     this._reusableViews = {};
     this._visibleViews = new Map();
@@ -112,20 +117,56 @@ export class CollectionView extends ScrollView {
     }
   }
 
-  setSize(size: Size) {
-    // Ignore if the sizes are equal
-    if (size.equals(this.size)) {
+  _setContentSize(size: Size) {
+    this._contentSize = size;
+  }
+
+  _setContentOffset(offset: Point, forceUpdate = false) {
+    this._setVisibleRect(new Rect(offset.x, offset.y, this._visibleRect.width, this._visibleRect.height), forceUpdate);
+  }
+
+  /**
+   * Get the size of the scrollable content
+   */
+  get contentSize(): Size {
+    return this._contentSize;
+  }
+
+  /**
+   * Get the collection view's currently visible rectangle
+   */
+  get visibleRect(): Rect {
+    return this._visibleRect;
+  }
+
+  /**
+   * Set the collection view's currently visible rectangle
+   */
+  set visibleRect(rect: Rect) {
+    this._setVisibleRect(rect);
+  }
+
+  _setVisibleRect(rect: Rect, forceUpdate = false) {
+    let current = this._visibleRect;
+
+    // Ignore if the rects are equal
+    if (rect.equals(current)) {
       return;
     }
 
-    let visibleRect = this.getVisibleRect(this.contentOffset, size);
-    let shouldInvalidate = this.layout && this.layout.shouldInvalidate(visibleRect);
-    super.setSize(size);
+    let shouldInvalidate = this.layout && this.layout.shouldInvalidate(rect);
+
+    this._resetAnimatedContentOffset();
+    this._visibleRect = rect;
 
     if (shouldInvalidate) {
       this.relayout({
-        sizeChanged: true
+        offsetChanged: !rect.pointEquals(current),
+        sizeChanged: !rect.sizeEquals(current)
       });
+    } else {
+      this.updateSubviews(forceUpdate);
+      this.correctItemOrder();
     }
   }
 
@@ -475,7 +516,7 @@ export class CollectionView extends ScrollView {
 
     // Validate the layout
     this.layout.validate(context);
-    this.setContentSize(this.layout.getContentSize());
+    this._setContentSize(this.layout.getContentSize());
 
     // Trigger the afterLayout hook, if provided
     if (typeof context.afterLayout === 'function') {
@@ -502,7 +543,7 @@ export class CollectionView extends ScrollView {
         this._animatedContentOffset.y += visibleRect.y - contentOffsetY;
         this.updateSubviews(context.contentChanged);
       } else {
-        this.setContentOffset(new Point(contentOffsetX, contentOffsetY), context.contentChanged);
+        this._setContentOffset(new Point(contentOffsetX, contentOffsetY), context.contentChanged);
       }
     } else {
       this.updateSubviews(context.contentChanged);
@@ -523,7 +564,7 @@ export class CollectionView extends ScrollView {
           // Get the content offset to scroll to, taking _animatedContentOffset into account.
           let {x, y} = this.getVisibleRect();
           this._resetAnimatedContentOffset();
-          this.setContentOffset(new Point(x, y));
+          this._setContentOffset(new Point(x, y));
         } else {
           // Make sure items are rendered in correct DOM order for accessibility
           this.correctItemOrder();
@@ -548,12 +589,12 @@ export class CollectionView extends ScrollView {
    * Corrects DOM order of visible views to match item order of collection
    */
   private correctItemOrder() {
-    if (this._scrolling) {
-      return;
-    }
+    // if (this._scrolling) {
+    //   return;
+    // }
 
     // TODO
-    // let current = Array.from(this.inner.children) as ReusableView[];
+    // let current = Array.from(this.children) as ReusableView[];
     // let keys = this._getKeyArray();
 
     // // no need to reparent if visibleViews order matches sortedVisibleViews order
@@ -562,26 +603,26 @@ export class CollectionView extends ScrollView {
     // }
 
     // for (let view of sortedVisibleViews) {
-    //   this.inner.removeChild(view);
-    //   this.inner.addChild(view);
+    //   this.removeChild(view);
+    //   this.addChild(view);
     // }
 
     // // Flush updates if not in a transaction, otherwise that will happen at the end.
     // if (!this._transaction) {
-    //   this.inner.flushUpdates();
+    //   this.flushUpdates();
     // }
   }
 
   protected _enableTransitions() {
     let transition = `none ${this.transitionDuration}ms`;
-    this.inner.css({
+    this.css({
       WebkitTransition: transition,
       transition: transition
     });
   }
 
   protected _disableTransitions() {
-    this.inner.css({
+    this.css({
       WebkitTransition: '',
       transition: ''
     });
@@ -650,10 +691,11 @@ export class CollectionView extends ScrollView {
     return contentOffset;
   }
 
-  getVisibleRect(contentOffset: Point = this.contentOffset, size: Size = this.size): Rect {
-    let x = contentOffset.x - this._animatedContentOffset.x;
-    let y = contentOffset.y - this._animatedContentOffset.y;
-    return new Rect(x, y, size.width, size.height);
+  getVisibleRect(): Rect {
+    let v = this.visibleRect;
+    let x = v.x - this._animatedContentOffset.x;
+    let y = v.y - this._animatedContentOffset.y;
+    return new Rect(x, y, v.width, v.height);
   }
 
   getVisibleLayoutInfos() {
@@ -785,7 +827,7 @@ export class CollectionView extends ScrollView {
 
         // Add the view to the DOM if needed
         if (!removed.has(view)) {
-          this.inner.addChild(view);
+          this.addChild(view);
         }
       }
 
@@ -804,7 +846,7 @@ export class CollectionView extends ScrollView {
       this.removeViews(removed);
     }
 
-    this.inner.flushUpdates(() => {
+    this.flushUpdates(() => {
       // If we're in a transaction, apply animations to visible views
       // and "to be removed" views, which animate off screen.
       if (this._transaction) {
@@ -868,7 +910,7 @@ export class CollectionView extends ScrollView {
 
   removeViews(toRemove: Set<ReusableView>) {
     for (let view of toRemove) {
-      this.inner.removeChild(view);
+      this.removeChild(view);
     }
   }
 
@@ -893,28 +935,10 @@ export class CollectionView extends ScrollView {
     }
   }
 
-  setContentOffset(contentOffset: Point, forceUpdate = false) {
-    let visibleRect = this.getVisibleRect(contentOffset);
-    let shouldInvalidate = this.layout && this.layout.shouldInvalidate(visibleRect);
-
-    this._resetAnimatedContentOffset();
-    let ret = super.setContentOffset(contentOffset);
-
-    if (shouldInvalidate) {
-      this.relayout({
-        offsetChanged: true
-      });
-    } else {
-      this.updateSubviews(forceUpdate);
-      this.correctItemOrder();
-    }
-    return ret;
-  }
-
-  scrollEnded() {
-    super.scrollEnded();
-    this.correctItemOrder();
-  }
+  // scrollEnded() {
+  //   super.scrollEnded();
+  //   this.correctItemOrder();
+  // }
 
   private _resetAnimatedContentOffset() {
     // Reset the animated content offset of subviews. See comment in relayoutNow for details.
@@ -941,10 +965,10 @@ export class CollectionView extends ScrollView {
 
     let offsetX = layoutInfo.rect.x;
     let offsetY = layoutInfo.rect.y;
-    let x = this._contentOffset.x;
-    let y = this._contentOffset.y;
-    let maxX = x + this.size.width;
-    let maxY = y + this.size.height;
+    let x = this.visibleRect.x;
+    let y = this.visibleRect.y;
+    let maxX = x + this.visibleRect.width;
+    let maxY = y + this.visibleRect.height;
 
     if (offsetX <= x) {
       x = offsetX;
@@ -974,12 +998,12 @@ export class CollectionView extends ScrollView {
     }
 
     // Set the content offset synchronously if the duration is zero
-    if (duration <= 0 || this.contentOffset.equals(offset)) {
-      this.setContentOffset(offset);
+    if (duration <= 0 || this.visibleRect.pointEquals(offset)) {
+      this._setContentOffset(offset);
       return Promise.resolve();
     }
 
-    this._scrollAnimation = tween(this._contentOffset, offset, duration, easeOut, offset => {this.setContentOffset(offset);});
+    this._scrollAnimation = tween(this.visibleRect.y, offset, duration, easeOut, offset => {this._setContentOffset(offset);});
     this._scrollAnimation.then(() => {
       this._scrollAnimation = null;
 
@@ -999,7 +1023,7 @@ export class CollectionView extends ScrollView {
 
   convertPoint(point: Point): Point {
     let rect = this.getRect();
-    return new Point(this.contentOffset.x + point.x - rect.x, this.contentOffset.y + point.y - rect.y);
+    return new Point(this.visibleRect.x + point.x - rect.x, this.visibleRect.y + point.y - rect.y);
   }
 
   private _runTransaction(action: () => void, animated?: boolean) {
@@ -1102,11 +1126,11 @@ export class CollectionView extends ScrollView {
         // Remove and reuse views when animations are done
         if (transaction.toRemove.size > 0 || transaction.removed.size > 0) {
           for (let view of concatIterators(transaction.toRemove.values(), transaction.removed.values())) {
-            this.inner.removeChild(view);
+            this.removeChild(view);
             this.reuseView(view);
           }
 
-          this.inner.flushUpdates();
+          this.flushUpdates();
         }
 
         this._transaction = null;

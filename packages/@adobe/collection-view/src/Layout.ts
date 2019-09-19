@@ -31,7 +31,7 @@ export abstract class Layout {
    */
   shouldInvalidate(rect: Rect): boolean {
     // By default, invalidate when the size changes
-    let size = this.collectionView.size;
+    let size = this.collectionView.visibleRect;
     return rect.width !== size.width
         || rect.height !== size.height;
   }

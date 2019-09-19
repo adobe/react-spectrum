@@ -114,7 +114,7 @@ export class EditableCollectionView extends CollectionView {
         this.setAttribute('aria-multiselectable', allowsMultipleSelection);
       }
     }
-    super.updateAccessibilityAttributes(props);
+    // super.updateAccessibilityAttributes(props);
   }
 
   private _setupEvents() {

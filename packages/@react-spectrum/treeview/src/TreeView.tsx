@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import {useTreeViewState} from '@react-stately/treeview';
-import {EditableCollectionView, ListLayout} from '@adobe/collection-view';
+import {CollectionView, EditableCollectionView, ListLayout} from '@adobe/collection-view';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {classNames} from '@react-spectrum/utils';
 import { Tree, Item } from '@react-stately/collections';
@@ -28,7 +28,7 @@ export function TreeView(props) {
   };
 
   return (
-    <EditableCollectionView
+    <CollectionView
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout.current}
       data={tree}
