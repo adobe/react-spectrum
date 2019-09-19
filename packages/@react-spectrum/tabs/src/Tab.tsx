@@ -1,6 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import styles from '@spectrum-css/tabs/dist/index-vars.css';
 import {useTab} from '@react-aria/tabs';
 
 interface TabProps extends React.HTMLAttributes<HTMLElement> {

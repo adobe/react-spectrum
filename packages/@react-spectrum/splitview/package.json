@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",
-    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@spectrum-css/splitview": "^2.0.0-alpha",
     "@react-spectrum/utils": "^3.0.0",
     "@react-aria/splitview": "^3.0.0",
     "@react-stately/splitview": "^3.0.0",

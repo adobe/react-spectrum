@@ -8,7 +8,7 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import styles from '@spectrum-css/calendar/dist/index-vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 

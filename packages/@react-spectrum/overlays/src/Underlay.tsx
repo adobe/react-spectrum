@@ -1,6 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React from 'react';
-import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
+import underlayStyles from '@spectrum-css/underlay/dist/index-vars.css';
 
 interface UnderlayProps {
   isOpen?: boolean
@@ -8,7 +8,7 @@ interface UnderlayProps {
 
 export function Underlay({isOpen, ...props}: UnderlayProps) {
   return (
-    <div 
+    <div
       {...filterDOMProps(props)}
       className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );

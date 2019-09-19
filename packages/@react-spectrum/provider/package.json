@@ -9,7 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@spectrum-css/page": "^2.0.0-alpha",
+    "@spectrum-css/typography": "^2.0.0-alpha",
     "@react-aria/dialog": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",

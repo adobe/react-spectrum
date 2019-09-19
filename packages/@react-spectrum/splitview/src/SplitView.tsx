@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {useRef} from 'react';
 import {SplitViewProps} from '@react-types/shared';
-import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
+import styles from '@spectrum-css/splitview/dist/index-vars.css';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
 import './SplitView.styl';

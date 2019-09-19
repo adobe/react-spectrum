@@ -5,11 +5,11 @@ import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import inputgroupStyles from '@spectrum-css/inputgroup/dist/index-vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumDatePickerProps} from './types';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import textfieldStyles from '@spectrum-css/textfield/dist/index-vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
 

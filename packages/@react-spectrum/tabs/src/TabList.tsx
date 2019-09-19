@@ -1,6 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import styles from '@spectrum-css/tabs/dist/index-vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTabList} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';

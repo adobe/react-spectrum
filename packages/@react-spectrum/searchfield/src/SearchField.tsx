@@ -4,7 +4,7 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
-import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import styles from '@spectrum-css/search/dist/index-vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useTextFieldState} from '@react-stately/textfield';
@@ -66,5 +66,5 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
             isDisabled={isDisabled} />
       }
     </div>
-  );  
+  );
 });

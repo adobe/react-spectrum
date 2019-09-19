@@ -5,8 +5,8 @@ import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from './types';
 import React, {RefObject, useContext, useEffect} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import styles from '@spectrum-css/page/dist/index-vars.css';
+import typographyStyles from '@spectrum-css/typography/dist/index-vars.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';

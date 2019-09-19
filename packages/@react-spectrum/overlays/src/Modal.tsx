@@ -1,5 +1,5 @@
 import {classNames} from '@react-spectrum/utils';
-import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
+import modalStyles from '@spectrum-css/modal/dist/index-vars.css';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';

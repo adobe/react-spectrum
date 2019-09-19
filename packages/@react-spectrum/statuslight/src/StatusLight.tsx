@@ -1,6 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {forwardRef, ReactNode, RefObject} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
+import styles from '@spectrum-css/statuslight/dist/index-vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface StatusLightProps extends React.HTMLAttributes<HTMLElement> {

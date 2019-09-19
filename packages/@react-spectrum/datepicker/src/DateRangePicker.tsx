@@ -8,7 +8,7 @@ import {FocusRing, FocusScope, useFocusManager} from '@react-aria/focus';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
 import {SpectrumDateRangePickerProps} from './types';
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import styles from '@spectrum-css/inputgroup/dist/index-vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
@@ -44,11 +44,11 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   );
 
   return (
-    <FocusRing 
+    <FocusRing
       within
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
-      <div 
+      <div
         {...filterDOMProps(otherProps)}
         {...comboboxProps}
         className={className}
@@ -86,7 +86,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
               )
             )} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}
@@ -121,7 +121,7 @@ function DateRangeDash() {
   };
 
   return (
-    <div 
+    <div
       role="presentation"
       data-testid="date-range-dash"
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}

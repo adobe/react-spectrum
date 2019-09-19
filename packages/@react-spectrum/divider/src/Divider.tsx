@@ -2,7 +2,7 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
+import styles from '@spectrum-css/rule/dist/index-vars.css';
 import {useSeparator} from '@react-aria/separator';
 
 export interface DividerProps extends DOMProps {

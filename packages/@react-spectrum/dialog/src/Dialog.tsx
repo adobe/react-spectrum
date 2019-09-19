@@ -4,7 +4,7 @@ import {DOMProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import styles from '@spectrum-css/dialog/dist/index-vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
 interface DialogProps extends DOMProps {

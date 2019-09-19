@@ -3,7 +3,7 @@ import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
 import React, {ReactNode, RefObject, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
+import styles from '@spectrum-css/popover/dist/index-vars.css';
 import {useOverlay} from '@react-aria/overlays';
 
 type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
@@ -24,7 +24,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
   let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   ref = ref || useRef();
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
-  
+
   return (
     <div
       ref={ref}

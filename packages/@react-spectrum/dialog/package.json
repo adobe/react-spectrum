@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@spectrum-css/dialog": "^2.0.0-alpha",
     "@react-aria/dialog": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/interactions": "^3.0.0",

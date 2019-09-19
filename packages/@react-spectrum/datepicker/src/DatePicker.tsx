@@ -8,8 +8,8 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import {SpectrumDatePickerProps} from './types';
-import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import '@spectrum-css/textfield/dist/index-vars.css'; // HACK: must be included BEFORE inputgroup
+import styles from '@spectrum-css/inputgroup/dist/index-vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
@@ -44,7 +44,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
   );
 
   return (
-    <FocusRing 
+    <FocusRing
       within
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
@@ -68,7 +68,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             formatOptions={formatOptions}
             className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}

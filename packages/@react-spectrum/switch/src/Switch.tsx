@@ -1,7 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, RefObject, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
+import styles from '@spectrum-css/toggle/dist/index-vars.css';
 import {SwitchProps} from '@react-types/switch';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';

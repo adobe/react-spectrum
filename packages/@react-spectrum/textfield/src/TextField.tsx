@@ -5,7 +5,7 @@ import {FocusRing} from '@react-aria/focus';
 import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
-import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import styles from '@spectrum-css/textfield/dist/index-vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
@@ -24,7 +24,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     isDisabled = false,
     ...otherProps
   } = props;
-  
+
   let state = useTextFieldState(props);
   let {textFieldProps} = useTextField(props, state);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
@@ -42,7 +42,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
       ),
       size: 'S'
     });
-  } 
+  }
 
   let validationIcon = isInvalid ? <Alert /> : <Checkmark />;
   let validation = cloneIcon(validationIcon, {
@@ -63,7 +63,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     // @ts-ignore
     validation = (
       <OverlayTrigger placement={placement} trigger={['hover', 'focus']}>
-        {validation}  
+        {validation}
         {validationTooltip}
       </OverlayTrigger>
     );
@@ -101,8 +101,8 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
               },
               className
             )
-          } /> 
-      </FocusRing> 
+          } />
+      </FocusRing>
       {icon}
       {(validationState || (isRequired && state.value === '')) ? validation : null}
     </div>

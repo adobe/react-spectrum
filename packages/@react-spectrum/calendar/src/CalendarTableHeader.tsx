@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import {setDay} from 'date-fns'; // pull these out individually
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import styles from '@spectrum-css/calendar/dist/index-vars.css';
 import {useDateFormatter} from '@react-aria/i18n';
 
 interface CalendarTableHeaderProps {
