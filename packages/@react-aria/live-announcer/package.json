@@ -1,8 +1,11 @@
 {
   "name": "@react-aria/live-announcer",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/LiveAnnouncer.tsx",
+  "main": "dist/LiveAnnouncer.js",
+  "source": "src/LiveAnnouncer.tsx",
+  "files": [
+    "dist"
+  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",

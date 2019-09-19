@@ -2,7 +2,7 @@
   "name": "@react-aria/visually-hidden",
   "version": "3.0.0",
   "main": "dist/VisuallyHidden.js",
-  "source": "src/VisuallyHidden.ts",
+  "source": "src/VisuallyHidden.tsx",
   "files": [
     "dist"
   ],
