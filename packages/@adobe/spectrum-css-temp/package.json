@@ -3,5 +3,8 @@
   "version": "3.0.0",
   "scripts": {
     "prepublishOnly": "postcss ./components/**/*.css -d dist --base components && rm -rf components && mv dist components" 
+  },
+  "devDependencies": {
+    "postcss-cli": "^6.1.3"
   }
 }
