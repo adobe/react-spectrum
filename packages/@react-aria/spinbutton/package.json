@@ -1,8 +1,8 @@
 {
   "name": "@react-aria/spinbutton",
   "version": "3.0.0",
-  "main": "dist/index.js",
-  "source": "src/index.ts",
+  "main": "dist/useSpinButton.js",
+  "source": "src/useSpinButton.ts",
   "files": [
     "dist"
   ],
