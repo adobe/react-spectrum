@@ -11,6 +11,7 @@
   "dependencies": {
     "@spectrum-css/modal": "^2.0.0-alpha",
     "@spectrum-css/popover": "^2.0.0-alpha",
+    "@spectrum-css/tray": "^2.0.0-alpha",
     "@spectrum-css/underlay": "^2.0.0-alpha",
     "@react-aria/overlays": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",

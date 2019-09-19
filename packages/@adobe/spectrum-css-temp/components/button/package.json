@@ -11,5 +11,8 @@
   },
   "bugs": {
     "url": "https://github.com/adobe/spectrum-css/issues"
+  },
+  "dependencies": {
+    "@spectrum-css/commons": "^2.0.0-alpha"
   }
 }

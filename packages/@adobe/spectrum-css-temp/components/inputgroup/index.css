@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
+@import '@spectrum-css/commons/index.css';
 
 /* topdoc
 {{ inputgroup/combobox.yml }}
@@ -131,7 +131,7 @@ governing permissions and limitations under the License.
       border-inline-end: 0;
       padding-inline-end: var(--spectrum-padding);
     }
-    
+
     svg {
       display: none;
     }

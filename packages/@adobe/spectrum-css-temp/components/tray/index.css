@@ -1,0 +1,60 @@
+@import '@spectrum-css/commons/index.css';
+@import '@spectrum-css/overlay/index.css';
+
+:root {
+  /* Bug: this must be 0ms, not 0 */
+  --spectrum-dialog-exit-animation-delay: 0ms;
+  --spectrum-tray-margin-top: 64px;
+}
+
+.spectrum-Tray-wrapper {
+  /* Positioned at the bottom of the window */
+  position: fixed;
+  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  /* Appear above underlay */
+  z-index: 2;
+}
+
+.spectrum-Tray {
+  @inherit: %spectrum-overlay;
+
+  width: var(--spectrum-tray-width);
+  max-width: var(--spectrum-tray-max-width);
+  min-height: var(--spectrum-tray-min-height);
+  max-height: calc(100vh - var(--spectrum-tray-margin-top));
+  overflow: auto;
+  outline: none;
+
+  border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
+  padding: var(--spectrum-tray-padding-y) var(--spectrum-tray-padding-x);
+
+  /* Start offset by the animation distance */
+  transform: translateY(100%);
+
+  /* Exit animations */
+  transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
+    visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
+    transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
+
+  &.is-open {
+    @inherit: %spectrum-overlay--open;
+
+    /* Entry animations */
+    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
+                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+
+    transform: translateY(0);
+  }
+}
+
+/* Should match --spectrum-tray-max-width above */
+@media (max-width: 375px) {
+  .spectrum-Tray {
+    border-radius: var(--spectrum-tray-border-radius);
+  }
+}

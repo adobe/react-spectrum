@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import 'font.css';
+@import '@spectrum-css/commons/index.css';
+@import './font.css';
 
 @mixin typography .spectrum-Body1 {}
 @mixin typography .spectrum-Body2 {}

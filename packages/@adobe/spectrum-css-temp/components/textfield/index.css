@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
+@import '@spectrum-css/commons/index.css';
 
 :root {
   --spectrum-textfield-padding-top: 3px;
@@ -135,14 +135,14 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.is-invalid & { 
+  .spectrum-Textfield.is-invalid & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
-  
+
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
   }
@@ -162,7 +162,7 @@ governing permissions and limitations under the License.
 }
 
 /* copied from .spectrum-DecoratedTextfield-icon */
-/* styles the valid/invalid state icons on the right of the textfield 
+/* styles the valid/invalid state icons on the right of the textfield
    replaces valid/invalid background icon */
 .spectrum-Textfield-validationIcon {
   position: absolute;
@@ -200,7 +200,7 @@ governing permissions and limitations under the License.
 /* styles the textfield properly if the left icon is provided */
 .spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left); 
+  padding-inline-start: var(--spectrum-search-padding-left);
 
   .spectrum-Textfield--quiet & {
     padding-inline-start: var(--spectrum-search-quiet-padding-left);

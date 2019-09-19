@@ -2140,20 +2140,15 @@
   resolved "https://registry.yarnpkg.com/@spectrum-css/alert/-/alert-2.0.0-alpha.6.tgz#8bbe8233d273325d253b950d7b64d5c71dcbea2b"
   integrity sha512-M3Q4la0ijnPjcdsWDdexxT6Ib2jJWmLiGXr3D9md52BZ7VZVbu8KFBfXH+GxpVHfNv71CsR5vqqM8yL/yzHIYg==
 
-"@spectrum-css/button@^2.0.0-alpha":
-  version "2.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@spectrum-css/button/-/button-2.0.0-alpha.6.tgz#43ed64ddda3e0b1434b3d01c125278dc7ee9a95c"
-  integrity sha512-+Uex2KedHKYnMk/wkxihiE1oJzgWdgdlEMWPOZeGl2tRftWFezIkTtCJ0+r7rS120dZ8m3wJXLWOsgenIVnXMg==
+"@spectrum-css/commons@^2.0.0-alpha":
+  version "2.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@spectrum-css/commons/-/commons-2.0.0-alpha.2.tgz#7105a71cf650bb26f87ccc32b9609d678b3ff3d6"
+  integrity sha512-r+lkvJD+EGl4/nMNvKPO9ULEeQkzekoZa9qTN9dVvEj/IVdTlTKQwZWO0Fb/npOcGfmYSc3GUj6mtB9w3tO59A==
 
-"@spectrum-css/icon@^2.0.0-alpha":
-  version "2.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@spectrum-css/icon/-/icon-2.0.0-alpha.6.tgz#b10219a05f59b86753539310946f45696b7ccd90"
-  integrity sha512-WlPhICHOYdBzggHFZVTi64EEmCtb5Gb8iVjLCZSVWdgov4LaazwYkbU2BXG80ZgmaPA9/HWoolqT3xaGv2NcgA==
-
-"@spectrum-css/well@^2.0.0-alpha":
-  version "2.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/@spectrum-css/well/-/well-2.0.0-alpha.5.tgz#184a4a4a7a00c8eb1b1dda897c22eaf65dcd4e45"
-  integrity sha512-NldBpvXKCePqnwUTlDBwGO6DcNDuKFbqRukUb4McrezpK3p5DOuLJKZyzT44skepPBOFUFBdFEb7qGAqGmczrA==
+"@spectrum-css/overlay@^2.0.0-alpha":
+  version "2.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@spectrum-css/overlay/-/overlay-2.0.0-alpha.1.tgz#12d49487224de55fadb36cef4b741a452a327433"
+  integrity sha512-jXZ6q/Xg6rPAZIAzwi9Qy4CXZe0hBBwWFmyN5XvjG5zTqR+1yNEipu72rcCpC5zPA7hnkcuNmDFKuVQJJhnrVQ==
 
 "@spectrum/spectrum-flexbox-grid@1.1.1":
   version "1.1.1"

@@ -92,10 +92,26 @@ module.exports = ({config}, env) => {
           include: path.resolve(__dirname, '../')
         },
         {
+          test: /@spectrum-css\/.*\.css$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                importLoaders: 1,
+                getLocalIdent: (context, localIdentName, localName) => {
+                  return generateScopedName(localName, context.resourcePath);
+                },
+              }
+            }
+          ]
+        },
+        {
           test: /\.css$/,
           loaders: ['style-loader', 'css-loader'],
           include: path.resolve(__dirname, '../'),
-          exclude: /packages\/.*\.css$/
+          exclude: [/packages\/.*\.css$/, /@spectrum-css\/.*\.css$/]
         },
         {
           test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
