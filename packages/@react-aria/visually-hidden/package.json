@@ -1,8 +1,11 @@
 {
   "name": "@react-aria/visually-hidden",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/VisuallyHidden.tsx",
+  "main": "dist/VisuallyHidden.js",
+  "source": "src/VisuallyHidden.ts",
+  "files": [
+    "dist"
+  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
