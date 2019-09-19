@@ -442,7 +442,7 @@ export default class OverlayTrigger extends Component {
   renderOverlay() {
     // Only add overlay to modalManager when it is shown.
     if (this._overlay.props.show) {
-      modalManager.addToModal(this._overlay);
+      modalManager.addToModal(this._overlay, true);
     }
 
     ReactDOM.unstable_renderSubtreeIntoContainer(

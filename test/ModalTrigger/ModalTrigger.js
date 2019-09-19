@@ -109,4 +109,19 @@ describe('ModalTrigger', () => {
     assert(onButtonClickSpy.called);
     assert(component.show.calledOnce);
   });
+
+  it('calls hide on unmount', () => {
+    assert.equal(getComputedStyle(document.body).overflow, '');
+    let wrapper = mount(<ModalTrigger><button /><div backdropClickable modalContent>text</div></ModalTrigger>);
+
+    let component = wrapper.instance();
+    sinon.stub(component, 'show').callThrough();
+    component.forceUpdate();
+
+    wrapper.find('button').at(0).simulate('click');
+    assert(component.show.calledOnce);
+    assert.equal(getComputedStyle(document.body).overflow, 'hidden');
+    wrapper.unmount();
+    assert.equal(getComputedStyle(document.body).overflow, '');
+  });
 });

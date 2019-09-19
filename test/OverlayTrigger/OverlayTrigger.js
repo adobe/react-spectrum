@@ -61,6 +61,7 @@ describe('OverlayTrigger', () => {
       assert(onClickSpy.calledOnce);
       assert(tree.state('show'));
       assert.equal(document.querySelector('.spectrum-Popover'), document.activeElement);
+      assert.equal(getComputedStyle(document.body).overflow, '');
 
       // set lastFocus prop using stub
       tree.setProps({lastFocus});
