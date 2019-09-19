@@ -16,7 +16,7 @@
     "jest": "NODE_ICU_DATA=node_modules/full-icu jest",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
-    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
+    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build)",
     "plop": "plop",
     "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test --build-script-name build-storybook"
   },
@@ -92,6 +92,7 @@
     "nyc": "^10.2.0",
     "plop": "^2.4.0",
     "postcss-calc": "^6.0.0",
+    "postcss-cli": "^6.1.3",
     "postcss-custom-properties": "6.3.1",
     "postcss-dir-pseudo-class": "^5.0.0",
     "postcss-focus-ring": "^1.0.0",

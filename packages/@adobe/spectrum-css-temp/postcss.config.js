@@ -1,5 +1,5 @@
-module.exports = function (keepVars = false) {
-  return [
+module.exports =  {
+  plugins: [
     require('postcss-import'),
     require('postcss-nested'),
     require('postcss-inherit'),
@@ -7,12 +7,12 @@ module.exports = function (keepVars = false) {
     require('postcss-dir-pseudo-class')(),
     require('postcss-custom-properties')({
       noValueNotifications: 'error',
-      warnings: !keepVars
+      warnings: false
     }),
     // require('./lib/postcss-custom-properties-passthrough')(),
     require('postcss-calc'),
-    keepVars ? require('./lib/postcss-custom-properties-mapping') : null,
-    keepVars ? require('./lib/postcss-notnested')({ replace: '.spectrum' }) : null,
+    require('./lib/postcss-custom-properties-mapping'),
+    require('./lib/postcss-notnested')({ replace: '.spectrum' }),
     require('postcss-svg'),
     require('postcss-functions')({
       functions: {
@@ -35,5 +35,5 @@ module.exports = function (keepVars = false) {
     //     'last 2 iOS versions'
     //   ]
     // })
-  ].filter(Boolean);
-}
+  ]
+};
