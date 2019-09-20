@@ -2,8 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches:    
-      - deploy_test_branch_1
+    branches:
       - deploy_test_branch_2
 
 jobs:
