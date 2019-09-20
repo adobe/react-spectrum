@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches:    
+      - next
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node 12
+      uses: actions/setup-node@v1
+      with:
+        node_version: 12.x
+    - name: Write npmrc
+      env:
+        NPMRC: ${{ secrets.NPMRC }}
+      run: echo "$NPMRC" > .npmrc
+    - name: install
+      run: yarn install  
+    - name: deploy
+      run: make ci
