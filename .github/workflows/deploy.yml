@@ -21,4 +21,8 @@ jobs:
     - name: install
       run: yarn install  
     - name: deploy
-      run: make ci
+      run: |
+        git reset --hard
+        git checkout deploy_test_branch_2
+        git reset --hard origin/deploy_test_branch_2
+        make ci
