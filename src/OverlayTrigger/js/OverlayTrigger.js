@@ -176,6 +176,7 @@ export default class OverlayTrigger extends Component {
     this.longPressTimeout = null;
     this._lastFocus = props.lastFocus;
     this.boundariesElement = props.boundariesElement ? props.boundariesElement : () => ownerDocument(this).body;
+    this._scrollParents = null;
     this.state = {
       show: props.show === undefined ? props.defaultShow : props.show
     };
@@ -193,11 +194,6 @@ export default class OverlayTrigger extends Component {
   componentDidMount() {
     this._mountNode = document.createElement('div');
     this.renderOverlay();
-
-    this._scrollParents = getScrollParents(ReactDOM.findDOMNode(this));
-    for (let node of this._scrollParents) {
-      node.addEventListener('scroll', this.hide, false);
-    }
 
     document.body.addEventListener('mouseUp', this.windowMouseUp);
   }
@@ -219,13 +215,7 @@ export default class OverlayTrigger extends Component {
     clearTimeout(this._hoverShowDelay);
     clearTimeout(this._hoverHideDelay);
 
-    if (this._scrollParents) {
-      for (let node of this._scrollParents) {
-        node.removeEventListener('scroll', this.hide, false);
-      }
-
-      this._scrollParents = null;
-    }
+    this.removeListenersFromScrollParents();
     document.body.removeEventListener('mouseUp', this.windowMouseUp);
   }
 
@@ -302,6 +292,7 @@ export default class OverlayTrigger extends Component {
   show(e) {
     if (!this.state.show && !this.props.disabled) {
       this._lastFocus = this.rememberedFocus();
+      this.listenToScrollParents();
       this.setState({show: true});
       if (this.props.onShow) {
         this.props.onShow(e);
@@ -309,7 +300,30 @@ export default class OverlayTrigger extends Component {
     }
   }
 
+  // if we're already listening, remove listeners and reapply
+  listenToScrollParents() {
+    if (this._scrollParents) {
+      this.removeListenersFromScrollParents();
+    }
+    this._scrollParents = getScrollParents(ReactDOM.findDOMNode(this));
+    for (let node of this._scrollParents) {
+      node.addEventListener('scroll', this.hide, false);
+    }
+  }
+
+  // if we have any listeners on parents, remove them
+  removeListenersFromScrollParents() {
+    if (this._scrollParents) {
+      for (let node of this._scrollParents) {
+        node.removeEventListener('scroll', this.hide, false);
+      }
+
+      this._scrollParents = null;
+    }
+  }
+
   hide(e) {
+    this.removeListenersFromScrollParents();
     if (this.state.show) {
       this.setState({show: false});
       if (this.props.onHide) {

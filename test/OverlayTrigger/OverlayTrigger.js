@@ -33,7 +33,7 @@ describe('OverlayTrigger', () => {
       clock = sinon.useFakeTimers();
     });
     afterEach(() => {
-      if (tree) {
+      if (tree && tree.exists()) {
         tree.unmount();
         tree = null;
       }
@@ -105,6 +105,55 @@ describe('OverlayTrigger', () => {
       tree.find(Button).simulate('click');
       assert(!tree.state('show'));
       assert(!tree.find(Button).getDOMNode().hasAttribute('aria-describedby'));
+    });
+
+    it('should add scroll listeners to parents on show and remove on hide or unmount', () => {
+      tree = mount(
+        <div style={{overflow: 'auto'}}>
+          <OverlayTrigger trigger="click">
+            <Button>Hover me</Button>
+            <Tooltip>Tooltip</Tooltip>
+          </OverlayTrigger>
+        </div>
+      );
+      let parent = tree.getDOMNode();
+      let listeners = new Map();
+      sinon.stub(parent, 'addEventListener').callsFake((event, func) => {
+        assert(!listeners.has(func));
+        listeners.set(func, event);
+      });
+      sinon.stub(parent, 'removeEventListener').callsFake((event, func) => {
+        assert(listeners.has(func));
+        listeners.delete(func);
+      });
+      let component = tree.instance();
+      assert.equal(component._scrollParents, null);
+      assert.equal(listeners.size, 0);
+
+      // show
+      tree.find(Button).simulate('click');
+      let overlay = tree.find(OverlayTrigger);
+      assert(overlay.state('show'));
+      assert.equal(overlay.instance()._scrollParents.length, 1);
+      assert.equal(listeners.size, 1);
+
+      // hide
+      tree.find(Button).simulate('click');
+      assert(!overlay.state('show'));
+      assert.equal(overlay.instance()._scrollParents, null);
+      assert.equal(listeners.size, 0);
+
+      // show
+      tree.find(Button).simulate('click');
+      assert(overlay.state('show'));
+      assert.equal(overlay.instance()._scrollParents.length, 1);
+      assert.equal(listeners.size, 1);
+
+      // hide
+      let savedOverlayInstance = overlay.instance();
+      tree.unmount();
+      assert.equal(savedOverlayInstance._scrollParents, null);
+      assert.equal(listeners.size, 0);
     });
 
     it('should support delay', async () => {
