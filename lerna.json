@@ -6,7 +6,8 @@
     "publish": {
       "allowBranch": [
         "master",
-        "test_and_publish_workflow"
+        "test_and_publish_workflow",
+        "deploy_test_branch_2"
       ]
     }
   }
