@@ -3,6 +3,7 @@ name: Deploy
 on:
   push:
     branches:    
+      - deploy_test_branch_1
       - deploy_test_branch_2
 
 jobs:
@@ -20,6 +21,15 @@ jobs:
       run: echo "$NPMRC" > .npmrc
     - name: install
       run: yarn install  
+    - name: Configure CI Git User
+      run: |
+        git remote rm origin
+        git remote add origin "https://github-actions:$GITHUB_TOKEN@github.com/adobe/react-spectrum-v3.git"
+        git fetch
+        git config --global user.email octobot@github.com
+        git config --global user.name GitHub Actions
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     - name: deploy
       run: |
         git reset --hard
