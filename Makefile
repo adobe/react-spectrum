@@ -79,7 +79,7 @@ ci:
 	$(MAKE) publish
 
 publish: build version
-	lerna publish from-git --yes --registry $(NPM_REGISTRY)
+	# lerna publish from-git --yes --registry $(NPM_REGISTRY)
 
 build:
 	lerna exec --parallel --ignore "@adobe/*" --ignore "@spectrum-icons/*" --no-private 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx,.js --no-comments --copy-files'
