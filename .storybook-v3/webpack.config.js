@@ -85,7 +85,7 @@ module.exports = ({config}, env) => {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: require('./postcss.config')(true)
+                plugins: require('../packages/@adobe/spectrum-css-temp/postcss.config').plugins
               }
             }
           ],
