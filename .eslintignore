@@ -1,4 +1,6 @@
 packages/@spectrum-icons/color/**
 packages/@spectrum-icons/ui/**
 packages/@spectrum-icons/workflow/**
+packages/@adobe/spectrum-css-temp/lib
+packages/@adobe/spectrum-css-temp/postcss.config.js
 node_modules

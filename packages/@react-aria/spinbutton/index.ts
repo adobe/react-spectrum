@@ -1,1 +1,1 @@
-export * from "./src/useSpinButton";
+export * from './src/useSpinButton';

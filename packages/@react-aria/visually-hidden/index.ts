@@ -1,1 +1,1 @@
-export * from './src/VisuallyHidden.tsx';
+export * from './src/VisuallyHidden';

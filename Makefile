@@ -84,7 +84,6 @@ publish: build version
 build:
 	lerna exec --parallel --ignore "@adobe/*" --ignore "@spectrum-icons/*" --no-private 'BUILD_ENV=production NODE_ENV=production babel --root-mode upward src --out-dir dist --extensions .ts,.tsx,.js --no-comments --copy-files'
 
-# TODO add --yes to this once everything is finalized and remove --no-push
 # For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
 version:
 	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --yes

@@ -12,20 +12,20 @@ module.exports =  {
     // require('./lib/postcss-custom-properties-passthrough')(),
     require('postcss-calc'),
     require('./lib/postcss-custom-properties-mapping'),
-    require('./lib/postcss-notnested')({ replace: '.spectrum' }),
+    require('./lib/postcss-notnested')({replace: '.spectrum'}),
     require('postcss-svg'),
     require('postcss-functions')({
       functions: {
-        noscale: function(value) {
+        noscale: function (value) {
           return value.toString().toUpperCase();
         },
-        percent: function(value) {
+        percent: function (value) {
           return parseInt(value, 10) / 100;
         }
       }
     }),
     // require('./lib/postcss-strip-comments')({ preserveTopdoc: false }),
-    require('postcss-focus-ring'),
+    require('postcss-focus-ring')
     // require('autoprefixer')({
     //   'browsers': [
     //     'IE >= 10',
