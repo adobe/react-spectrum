@@ -78,7 +78,6 @@ ci-deploy:
 ci:
 	$(MAKE) publish
 
-# add back --contents dist or w/e once we finalize what we want this step to do
 publish: build version
 	lerna publish from-git --yes --registry $(NPM_REGISTRY)
 
@@ -88,4 +87,4 @@ build:
 # TODO add --yes to this once everything is finalized and remove --no-push
 # For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
 version:
-	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --no-push
+	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --yes
