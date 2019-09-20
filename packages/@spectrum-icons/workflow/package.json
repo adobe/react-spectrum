@@ -1,9 +1,6 @@
 {
   "name": "@spectrum-icons/workflow",
   "version": "3.0.0",
-  "files": [
-    "dist"
-  ],
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
