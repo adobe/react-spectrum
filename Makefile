@@ -86,4 +86,4 @@ build:
 
 # For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
 version:
-	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --yes
+	lerna version patch --no-commit-hooks -m "chore(release): publish" --yes

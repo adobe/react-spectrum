@@ -11,6 +11,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 import {useTextFieldState} from '@react-stately/textfield';
 
+function blah() {
+  console.log('dummy change')
+}
+
 export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
   props = useProviderProps(props);
   let {
