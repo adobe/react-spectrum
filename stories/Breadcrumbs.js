@@ -48,4 +48,12 @@ storiesOf('Breadcrumbs', module)
         items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
         onBreadcrumbClick={action('breadcrumbClick')} />
     )
+  )
+  .add(
+    'renderLink',
+    () => (
+      <Breadcrumbs
+        items={[{label: 'Folder 1', href: '#Folder-1'}, {label: 'Folder 2'}, {label: 'Folder 3'}]}
+        renderLink={(props) => <a {...props} data-custom={props.label}>Custom: {props.label}</a>} />
+    )
   );

@@ -76,7 +76,17 @@ export default class Breadcrumbs extends React.Component {
      * @param {Object} event - Event object
      * @param {string} event.label - label of breadcrumb clicked
      */
-    onBreadcrumbClick: PropTypes.func
+    onBreadcrumbClick: PropTypes.func,
+
+    /**
+     * A function that returns a href wrapper component.
+     * Useful in providing custom href component(eg. Link from react-router-dom).
+     *
+     * ```js
+     *  <Breadcrumbs renderLink={(props) => <Link {...props} to="/">Foo</Link>} items={items} />
+     * ```
+     */
+    renderLink: PropTypes.func
   };
 
   static defaultProps = {
@@ -95,11 +105,39 @@ export default class Breadcrumbs extends React.Component {
     e.target.classList.remove('focus-ring');
   }
 
+  renderLink(item, i) {
+    let {items, renderLink} = this.props;
+    let isHref = !!item.href;
+    let isCurrent = this.isCurrent(i);
+    let hasItems = items.length > 1;
+    let linkProps = {
+      className: 'spectrum-Breadcrumbs-itemLink',
+      role: !isHref ? 'link' : null,
+      href: !isCurrent ? item.href : null,
+      target: !isCurrent && isHref ? '_self' : null,
+      onClick: hasItems && !isCurrent ? this.props.onBreadcrumbClick.bind(null, item, items.length - i - 1) : undefined,
+      onFocus: hasItems && !isCurrent ? this.handleFocus.bind(this) : null,
+      onBlur: hasItems && !isCurrent ? this.handleBlur.bind(this) : null,
+      'aria-current': isCurrent ? 'page' : null,
+      tabIndex: !isHref && !isCurrent ? 0 : null
+    };
+
+    if (renderLink) {
+      return renderLink({...linkProps, label: item.label});
+    }
+
+    let Element = !isHref ? 'div' : 'a';
+    return <Element {...linkProps}>{item.label}</Element>;
+  }
+
+  isCurrent(i) {
+    return i === this.props.items.length - 1;
+  }
+
   render() {
     const {
       items,
       icon,
-      onBreadcrumbClick,
       className,
       variant,
       ariaLevel,
@@ -107,25 +145,7 @@ export default class Breadcrumbs extends React.Component {
       ...otherProps
     } = this.props;
     const isTitleVariant = variant === Breadcrumbs.variant.TITLE;
-    const isCurrent = (i) => i === items.length - 1;
-
-    const getLinkMarkup = (item, i) => {
-      let Element = !item.href ? 'div' : 'a';
-      return (
-        <Element
-          className="spectrum-Breadcrumbs-itemLink"
-          role={!item.href ? 'link' : null}
-          href={!isCurrent(i) ? item.href : null}
-          target={!isCurrent(i) && item.href ? '_self' : null}
-          onClick={items.length > 1 && !isCurrent(i) ? onBreadcrumbClick.bind(null, item, items.length - i - 1) : undefined}
-          onFocus={items.length > 1 && !isCurrent(i) ? this.handleFocus.bind(this) : null}
-          onBlur={items.length > 1 && !isCurrent(i) ? this.handleBlur.bind(this) : null}
-          aria-current={isCurrent(i) ? 'page' : null}
-          tabIndex={!item.href && !isCurrent(i) ? 0 : null}>
-          {item.label}
-        </Element>
-      );
-    };
+    
 
     if (!otherProps['aria-label']) {
       otherProps['aria-label'] = formatMessage('Breadcrumbs');
@@ -148,13 +168,13 @@ export default class Breadcrumbs extends React.Component {
           {items.map((item, i) => (
             <li key={`spectrum-Breadcrumb-${i}`} className="spectrum-Breadcrumbs-item">
               {
-                isCurrent(i) && isTitleVariant ?
+                this.isCurrent(i) && isTitleVariant ?
                   <h1 className="spectrum-Heading--pageTitle" aria-level={ariaLevel}>
-                    {getLinkMarkup(item, i)}
+                    {this.renderLink(item, i)}
                   </h1>
-                  : getLinkMarkup(item, i)
+                  : this.renderLink(item, i)
               }
-              {!isCurrent(i) &&
+              {!this.isCurrent(i) &&
                 <ChevronRightSmall size={null} className="spectrum-Breadcrumbs-itemSeparator" />
               }
             </li>
