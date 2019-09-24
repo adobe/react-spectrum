@@ -4,6 +4,7 @@ import { Size } from "./Size";
 import { Point } from "./Point";
 import { View } from "./View";
 import {DropOperation} from './DropOperation';
+import { LayoutInfo, ReusableView } from "../react";
 
 // interface Point {
 //   x: number,
@@ -89,6 +90,17 @@ interface CollectionViewProps {
 // }
 
 // type ChangeEvent = SelectionChangeEvent;
+
+export interface CollectionViewDelegate {
+  setVisibleViews(views: Set<any>): void,
+  setContentSize(size: Size): void,
+  setVisibleRect(rect: Rect): void,
+  getType(content: any): string,
+  renderView(type: string, content: Item): any,
+  renderWrapper(reusableView: ReusableView): any,
+  beginAnimations(): void,
+  endAnimations(): void
+}
 
 interface ScrollViewDelegate {
   getVisibleRect(): Rect;

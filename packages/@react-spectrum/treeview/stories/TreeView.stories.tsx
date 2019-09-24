@@ -4,15 +4,17 @@ import {storiesOf} from '@storybook/react';
 import {Tree, Item} from '@react-stately/collections';
 import { action } from '@storybook/addon-actions';
 
+let items = [];
+for (let i = 0; i < 10000; i++) {
+  items.push(new Item({value: 'Item ' + i}));
+}
+
 storiesOf('TreeView', module)
   .add(
     'Default',
     () => render({
       defaultTree: new Tree(
-        new Item({value: 'Item 1'}),
-        new Item({value: 'Item 2'},
-          new Item({value: 'Child 1'})
-        )
+        ...items
       ),
       onChange: action('change')
     })

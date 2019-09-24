@@ -1,6 +1,5 @@
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection, InvalidationContext, Item} from './types';
-import {CollectionViewDelegate} from './Delegate';
+import {Collection, CollectionViewDelegate, InvalidationContext, Item} from './types';
 import {concatIterators, difference} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
@@ -9,7 +8,6 @@ import {Rect, RectCorner} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
-import {View} from './View';
 
 interface ScrollAnchor {
   key: string,
@@ -54,7 +52,7 @@ export interface CollectionViewOptions {
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionView extends View {
+export class CollectionView {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
@@ -79,6 +77,9 @@ export class CollectionView extends View {
   protected _visibleRect: Rect;
   protected _reusableViews: {[type: string]: ReusableView[]};
   protected _visibleViews: Map<string, ReusableView>;
+  protected _renderedContent: Map<string, any>;
+  protected _renderedViews: Map<number, any>;
+  protected _children: Set<ReusableView>;
   protected _invalidationContext: InvalidationContext | null;
   protected _relayoutRaf: number | null;
   protected _scrollAnimation: CancelablePromise<void> | null;
@@ -89,13 +90,14 @@ export class CollectionView extends View {
   protected _transactionQueue: Transaction[];
 
   constructor(options: CollectionViewOptions = {}) {
-    super();
-
     this._contentSize = new Size;
     this._visibleRect = new Rect;
 
     this._reusableViews = {};
     this._visibleViews = new Map();
+    this._renderedContent = new Map();
+    this._renderedViews = new Map();
+    this._children = new Set();
     this._invalidationContext = null;
 
     this._scrollAnimation = null;
@@ -119,10 +121,12 @@ export class CollectionView extends View {
 
   _setContentSize(size: Size) {
     this._contentSize = size;
+    this.delegate.setContentSize(size);
   }
 
   _setContentOffset(offset: Point, forceUpdate = false) {
     this._setVisibleRect(new Rect(offset.x, offset.y, this._visibleRect.width, this._visibleRect.height), forceUpdate);
+    // this.delegate.setVisibleRect(this._visibleRect);
   }
 
   /**
@@ -265,6 +269,10 @@ export class CollectionView extends View {
    * @param animated Whether to animate the layout change
    */
   setLayout(layout: Layout, animated = false) {
+    if (layout === this._layout) {
+      return;
+    }
+
     let applyLayout = () => {
       if (this._layout) {
         // @ts-ignore
@@ -288,7 +296,8 @@ export class CollectionView extends View {
   }
 
   createView(type: string, key: string): ReusableView {
-    return this.delegate.createView(type, key);
+    // return this.delegate.createView(type, key);
+    return new ReusableView();
   }
 
   private _getReuseType(layoutInfo: LayoutInfo, content: Item | null) {
@@ -317,11 +326,20 @@ export class CollectionView extends View {
       ? reusable.pop() as ReusableView
       : this.createView(type, layoutInfo.key);
 
-    view.collectionView = this;
+    // view.collectionView = this;
     view.viewType = reuseType;
 
-    this._applyLayoutInfo(view, layoutInfo);
-    view.setContent(content);
+    // this._applyLayoutInfo(view, layoutInfo);
+    if (!this._animatedContentOffset.isOrigin()) {
+      layoutInfo = layoutInfo.copy();
+      layoutInfo.rect.x += this._animatedContentOffset.x;
+      layoutInfo.rect.y += this._animatedContentOffset.y;
+    }
+
+    view.layoutInfo = layoutInfo;
+
+    // view.setContent(content);
+    this._renderView(view);
 
     return view;
   }
@@ -331,11 +349,29 @@ export class CollectionView extends View {
       return this.getItem(key);
     }
 
-    if (this.delegate.getContentForExtraView) {
-      return this.delegate.getContentForExtraView(type, key);
-    }
+    // if (this.delegate.getContentForExtraView) {
+    //   return this.delegate.getContentForExtraView(type, key);
+    // }
 
     return null;
+  }
+
+  private _renderView(reusableView: ReusableView) {
+    let {type, key} = reusableView.layoutInfo;
+    let k = this._getViewKey(type, key);
+    reusableView.content = this._renderedContent.get(k) || this._renderContent(type, key);
+
+    let rendered = this.delegate.renderWrapper(reusableView);
+    this._renderedViews.set(reusableView.key, rendered);
+    return rendered;
+  }
+
+  private _renderContent(type: string, key: string) {
+    let content = this._getViewContent(type, key);
+    let rendered = this.delegate.renderView(type, content);
+    let k = this._getViewKey(type, key);
+    this._renderedContent.set(k, rendered);
+    return rendered;
   }
 
   /**
@@ -400,7 +436,7 @@ export class CollectionView extends View {
         return;
       }
 
-      view.setContent(content);
+      // view.setContent(content);
     }, false);
   }
 
@@ -614,18 +650,20 @@ export class CollectionView extends View {
   }
 
   protected _enableTransitions() {
-    let transition = `none ${this.transitionDuration}ms`;
-    this.css({
-      WebkitTransition: transition,
-      transition: transition
-    });
+    // let transition = `none ${this.transitionDuration}ms`;
+    // this.css({
+    //   WebkitTransition: transition,
+    //   transition: transition
+    // });
+    this.delegate.beginAnimations();
   }
 
   protected _disableTransitions() {
-    this.css({
-      WebkitTransition: '',
-      transition: ''
-    });
+    // this.css({
+    //   WebkitTransition: '',
+    //   transition: ''
+    // });
+    this.delegate.endAnimations();
   }
 
   private _getScrollAnchor(): ScrollAnchor | null {
@@ -746,7 +784,7 @@ export class CollectionView extends View {
           continue;
         }
 
-        let item = this.getItem(visibleLayoutInfos.get(key).key)
+        let item = this.getItem(visibleLayoutInfos.get(key).key);
         if (view.content === item) {
           toUpdate.delete(key);
         } else {
@@ -827,7 +865,7 @@ export class CollectionView extends View {
 
         // Add the view to the DOM if needed
         if (!removed.has(view)) {
-          this.addChild(view);
+          this._children.add(view);
         }
       }
 
@@ -837,8 +875,7 @@ export class CollectionView extends View {
 
     for (let key of toUpdate) {
       let view = currentlyVisible.get(key) as ReusableView;
-      let value = this.getItem(visibleLayoutInfos.get(key).key)
-      view.setContent(value);
+      this._renderView(view);
     }
 
     // Remove the remaining rows to delete from the DOM
@@ -846,32 +883,58 @@ export class CollectionView extends View {
       this.removeViews(removed);
     }
 
-    this.flushUpdates(() => {
-      // If we're in a transaction, apply animations to visible views
-      // and "to be removed" views, which animate off screen.
-      if (this._transaction) {
-        this._applyLayoutInfos();
-      }
+    // this.flushUpdates(() => {
+    //   // If we're in a transaction, apply animations to visible views
+    //   // and "to be removed" views, which animate off screen.
+    //   if (this._transaction) {
+    //     this._applyLayoutInfos();
+    //   }
 
-      // If we need a height update, wait until the next frame
-      // so that the browser has time to do layout.
-      if (needsSizeUpdate) {
-        this.relayout();
-      }
-    });
+    //   // If we need a height update, wait until the next frame
+    //   // so that the browser has time to do layout.
+    //   if (needsSizeUpdate) {
+    //     this.relayout();
+    //   }
+    // });
+    this._flushVisibleViews();
+  }
+
+  afterRender() {
+    // If we're in a transaction, apply animations to visible views
+    // and "to be removed" views, which animate off screen.
+    if (this._transaction) {
+      this._applyLayoutInfos();
+    }
+
+    // If we need a height update, wait until the next frame
+    // so that the browser has time to do layout.
+    // if (needsSizeUpdate) {
+    //   this.relayout();
+    // }
+  }
+
+  private _flushVisibleViews() {
+    let children = new Set;
+    for (let child of this._children) {
+      children.add(this._renderedViews.get(child.key));
+    }
+
+    this.delegate.setVisibleViews(children);
   }
 
   private _applyLayoutInfo(view: ReusableView, layoutInfo: LayoutInfo) {
-    if (!this._animatedContentOffset.isOrigin()) {
-      layoutInfo = layoutInfo.copy();
-      layoutInfo.rect.x += this._animatedContentOffset.x;
-      layoutInfo.rect.y += this._animatedContentOffset.y;
+    if (view.layoutInfo === layoutInfo) {
+      return false;
     }
 
-    view.applyLayoutInfo(layoutInfo);
+    view.layoutInfo = layoutInfo;
+    this._renderView(view);
+    return true;
   }
 
   private _applyLayoutInfos() {
+    let updated = false;
+
     // Apply layout infos to visible views
     for (let [key, view] of this._visibleViews) {
       if (this._transaction && this._transaction.initialLayoutInfo.has(key)) {
@@ -881,7 +944,9 @@ export class CollectionView extends View {
       let cur = view.layoutInfo;
       if (cur) {
         let layoutInfo = this.layout.getLayoutInfo(cur.type, cur.key);
-        this._applyLayoutInfo(view, layoutInfo);
+        if (this._applyLayoutInfo(view, layoutInfo)) {
+          updated = true;
+        }
       }
     }
 
@@ -890,7 +955,9 @@ export class CollectionView extends View {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
         let layoutInfo = this.layout.getLayoutInfo(cur.type, cur.key);
-        this._applyLayoutInfo(view, layoutInfo);
+        if (this._applyLayoutInfo(view, layoutInfo)) {
+          updated = true;
+        }
       }
 
       for (let view of this._transaction.removed.values()) {
@@ -898,8 +965,14 @@ export class CollectionView extends View {
         let k = this._getViewKey(cur.type, cur.key);
         let layoutInfo = this._transaction.finalLayoutInfo.get(k) || cur;
         layoutInfo = this.layout.getFinalLayoutInfo(layoutInfo.copy());
-        this._applyLayoutInfo(view, layoutInfo);
+        if (this._applyLayoutInfo(view, layoutInfo)) {
+          updated = true;
+        }
       }
+    }
+
+    if (updated) {
+      this._flushVisibleViews();
     }
   }
 
@@ -910,7 +983,7 @@ export class CollectionView extends View {
 
   removeViews(toRemove: Set<ReusableView>) {
     for (let view of toRemove) {
-      this.removeChild(view);
+      this._children.delete(view);
     }
   }
 
@@ -1126,11 +1199,11 @@ export class CollectionView extends View {
         // Remove and reuse views when animations are done
         if (transaction.toRemove.size > 0 || transaction.removed.size > 0) {
           for (let view of concatIterators(transaction.toRemove.values(), transaction.removed.values())) {
-            this.removeChild(view);
+            this._children.delete(view);
             this.reuseView(view);
           }
 
-          this.flushUpdates();
+          this._flushVisibleViews();
         }
 
         this._transaction = null;

@@ -23,8 +23,8 @@ governing permissions and limitations under the License.
   user-select: none;
   outline: none;
 
-  height: 300px;
-  width: 300px;
+  height: 500px;
+  width: 200px;
 }
 
 .spectrum-TreeView-item {

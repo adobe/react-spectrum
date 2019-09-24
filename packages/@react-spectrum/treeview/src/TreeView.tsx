@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import {useTreeViewState} from '@react-stately/treeview';
 import {CollectionView, EditableCollectionView, ListLayout} from '@adobe/collection-view';
+import {ReactCollectionView} from '@adobe/collection-view/src/ReactCollectionView'
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {classNames} from '@react-spectrum/utils';
 import { Tree, Item } from '@react-stately/collections';
@@ -23,16 +24,17 @@ export function TreeView(props) {
 
   let delegate = {
     renderItemView(type, item) {
+      // console.log('RENDER ITEM', item)
       return <TreeItem item={item} onToggle={() => onToggle(item)} />
     }
   };
 
   return (
-    <CollectionView
+    <ReactCollectionView
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout.current}
       data={tree}
-      delegate={delegate}
+      renderItem={delegate.renderItemView}
       onChange={setTree} />
   );
 }
