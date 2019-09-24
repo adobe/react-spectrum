@@ -35,10 +35,6 @@ export default class ModalTrigger extends Component {
     }
   }
 
-  componentWillUnmount() {
-    this.hide();
-  }
-
   render() {
     let {children, ...otherProps} = this.props;
     children = React.Children.toArray(children);

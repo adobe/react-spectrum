@@ -48,4 +48,19 @@ export default class PortalContainer {
     ReactDOM.unmountComponentAtNode(children[child.key]);
     delete children[child.key];
   }
+
+  /**
+   * Remove all portals from the dom
+   */
+  static removeAll() {
+    for (let child in children) {
+      // skip loop if the property is from prototype
+      if (!children.hasOwnProperty(child)) {
+        continue;
+      }
+
+      ReactDOM.unmountComponentAtNode(children[child]);
+      delete children[child];
+    }
+  }
 }
