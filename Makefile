@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=http://localhost:4873/
+NPM_REGISTRY=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
