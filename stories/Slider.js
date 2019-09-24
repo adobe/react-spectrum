@@ -96,6 +96,25 @@ storiesOf('Slider', module)
         {render({variant: 'range', filled: true, id: 'foo', 'aria-labelledby': 'bar', 'aria-label': 'labeled using aria-labelledby'})}
       </div>
     )
+  )
+  .add(
+    'getAriaValueText',
+    () => render({
+      variant: 'range',
+      min: 0,
+      max: 1440,
+      step: 15,
+      defaultStartValue: 600,
+      defaultEndValue: 840,
+      renderLabel: true,
+      label: 'Time span',
+      getAriaValueText: minutes => {
+        const date = new Date();
+        date.setHours(Math.floor(minutes / 60));
+        date.setMinutes(minutes % 60);
+        return date.toLocaleTimeString('en-us', {hour: '2-digit', minute: '2-digit'});
+      }
+    })
   );
 
 function render(props = {}) {

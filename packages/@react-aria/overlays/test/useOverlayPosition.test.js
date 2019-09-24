@@ -3,14 +3,14 @@ import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
 function Example({triggerTop = 250, ...props}) {
-  let triggerRef = useRef();
+  let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({triggerRef, containerRef, overlayRef, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
-      <div ref={triggerRef} data-testid="trigger" style={{left: 10, top: triggerTop, width: 100, height: 100}}>Trigger</div>
+      <div ref={targetRef} data-testid="trigger" style={{left: 10, top: triggerTop, width: 100, height: 100}}>Trigger</div>
       <div ref={containerRef} data-testid="container" style={{width: 600, height: 600}}>
         <div ref={overlayRef} data-testid="overlay" style={style}>
           <div data-testid="arrow" {...arrowProps} />

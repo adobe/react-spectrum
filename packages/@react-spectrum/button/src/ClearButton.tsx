@@ -1,6 +1,5 @@
 import {ButtonBase} from './Button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {cloneIcon} from '@react/react-spectrum/utils/icon';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {FocusRing} from '@react-aria/focus';
 import React, {RefObject, useRef} from 'react';
@@ -33,7 +32,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
             className
           )
         }>
-        {cloneIcon(<CrossSmall />, {size: 'S'})}
+        <CrossSmall />
       </button>
     </FocusRing>
   );

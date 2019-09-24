@@ -24,12 +24,14 @@ import sinon from 'sinon';
 
 describe('Breadcrumbs', function () {
   let tree;
+
   afterEach(() => {
     if (tree) {
       tree.unmount();
       tree = null;
     }
   });
+
   it('should render breadcrumbs', function () {
     tree = shallow(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     assert.equal(tree.find('ul').prop('className'), 'spectrum-Breadcrumbs');
@@ -73,6 +75,23 @@ describe('Breadcrumbs', function () {
     assert(!link.getDOMNode().classList.contains('focus-ring'));
   });
 
+  it('supports custom renderer for links', () => {
+    let linkRenderer = (props) => {
+      let label = props.label;
+      delete props.label;
+      return <a {...props} data-render="custom">{`CUSTOM: ${label}`}</a>;
+    };
+    tree = mount(
+      <Breadcrumbs
+        items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]}
+        renderLink={linkRenderer} />
+    );
+    let links = tree.find('.spectrum-Breadcrumbs-itemLink');
+    assert.equal(links.length, 3);
+    assert.equal(links.at(0).prop('data-render'), 'custom');
+    assert.equal(links.at(0).text(), 'CUSTOM: Foo');
+  });
+
   describe('variant="title"', () => {
     it('last breadcrumb should render with an h1 element when variant="title"', () => {
       const tree = shallow(<Breadcrumbs variant="title" items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
@@ -82,7 +101,7 @@ describe('Breadcrumbs', function () {
     });
 
     it('h1 element should include an aria-level attribute when ariaLevel is set', () => {
-      tree = shallow(<Breadcrumbs variant="title" ariaLevel="3" items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
+      tree = shallow(<Breadcrumbs variant="title" ariaLevel={3} items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
       assert.equal(tree.find('.spectrum-Breadcrumbs-item').at(2).find('h1').prop('aria-level'), 3);
     });
   });

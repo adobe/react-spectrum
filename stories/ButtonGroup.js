@@ -91,6 +91,10 @@ storiesOf('ButtonGroup', module)
   .add(
     'Tool (vertical)',
     () => (render({orientation: 'vertical', ...toolProps}))
+  )
+  .add(
+    'manageTabIndex: false',
+    () => (render({manageTabIndex: false, ...defaultProps}))
   );
 
 function render(props = {}) {

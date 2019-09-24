@@ -23,6 +23,7 @@ import React, {Component} from 'react';
 
 const TAB_ITEM_SELECTOR = '[role=tab]:not([aria-disabled])';
 const TAB_ITEM_SELECTED_SELECTOR = TAB_ITEM_SELECTOR + '[aria-selected=true]';
+const NAVIGATION_KEYS = ['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'Up', 'ArrowDown', 'Down', 'ArrowLeft', 'Left', 'ArrowRight', 'Right'];
 
 /**
  * selectedIndex: The index of the StepList that should be selected. When selectedIndex is
@@ -75,7 +76,7 @@ export default class TabListBase extends Component {
   }
 
   onFocus(selectedIndex, e) {
-    if (this.props.keyboardActivation === 'automatic' && !this.isMouseDown) {
+    if (this.props.keyboardActivation === 'automatic' && this.isNavigationKeyDown && !this.isMouseDown) {
       this.setSelectedIndex(selectedIndex, e);
     }
   }
@@ -88,9 +89,25 @@ export default class TabListBase extends Component {
     e.currentTarget.focus();
   }
 
-  onMouseUp(e) {
+  onMouseUp() {
     this.isMouseDown = false;
     window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
+  onKeyDown(selectedIndex, e) {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        this.onClickItem(selectedIndex, e);
+        break;
+      default:
+        this.isNavigationKeyDown = NAVIGATION_KEYS.indexOf(e.key) !== -1;
+    }
+  }
+
+  onKeyUp() {
+    this.isNavigationKeyDown = false;
   }
 
   setSelectedIndex(selectedIndex, e) {
@@ -105,7 +122,7 @@ export default class TabListBase extends Component {
     }
 
     if (lastSelectedIndex !== selectedIndex) {
-      this.props.onChange(selectedIndex);
+      this.props.onChange(selectedIndex, e);
     }
   }
 
@@ -121,7 +138,9 @@ export default class TabListBase extends Component {
       tabIndex: (selected ? 0 : -1),
       onClick: this.getChildOnClick(child, index),
       onFocus: this.getChildOnFocus(child, index),
-      onMouseDown: this.getChildOnMouseDown(child)
+      onMouseDown: this.getChildOnMouseDown(child, index),
+      onKeyDown: this.getChildOnKeyDown(child, index),
+      onKeyUp: this.getChildOnKeyUp(child, index)
     };
   }
 
@@ -135,7 +154,9 @@ export default class TabListBase extends Component {
     if (this.props.disabled) { return null; }
     const tabListOnClick = this.onClickItem.bind(this, index);
     return (e) => {
-      if (child.props.onClick) {child.props.onClick(index); }
+      if (child.props.onClick) {
+        child.props.onClick(index, e);
+      }
       tabListOnClick(e);
     };
   }
@@ -146,7 +167,7 @@ export default class TabListBase extends Component {
     }
     return (e) => {
       if (child.props.onFocus) {
-        child.props.onFocus(index);
+        child.props.onFocus(index, e);
       }
       this.onFocus(index, e);
     };
@@ -158,9 +179,33 @@ export default class TabListBase extends Component {
     }
     return (e) => {
       if (child.props.onMouseDown) {
-        child.props.onMouseDown(e);
+        child.props.onMouseDown(e, index);
       }
       this.onMouseDown(e);
+    };
+  }
+
+  getChildOnKeyDown(child, index) {
+    if (this.props.disabled) {
+      return null;
+    }
+    return (e) => {
+      if (child.props.onKeyDown) {
+        child.props.onKeyDown(e, index);
+      }
+      this.onKeyDown(index, e);
+    };
+  }
+
+  getChildOnKeyUp(child, index) {
+    if (this.props.disabled) {
+      return null;
+    }
+    return (e) => {
+      if (child.props.onKeyUp) {
+        child.props.onKeyUp(e, index);
+      }
+      this.onKeyUp(index, e);
     };
   }
 
@@ -194,7 +239,7 @@ export default class TabListBase extends Component {
 
   render() {
     return (
-      <FocusManager autoFocus={this.props.autoFocus} disabled={this.props.disabled}  itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation === 'vertical' ? 'both' : 'horizontal'}>
+      <FocusManager autoFocus={this.props.autoFocus} disabled={this.props.disabled} itemSelector={TAB_ITEM_SELECTOR} selectedItemSelector={TAB_ITEM_SELECTED_SELECTOR} orientation={this.props.orientation === 'vertical' ? 'both' : 'horizontal'}>
         <div
           {...this.cleanProps()}
           role="tablist">

@@ -1,5 +1,6 @@
 {
   "name": "@react-spectrum/pagination",
+  "private": true,
   "version": "3.0.0",
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -20,9 +21,6 @@
     "@spectrum-icons/ui": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   }
 }

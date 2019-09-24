@@ -5,6 +5,7 @@ import React, {Fragment, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Modal', module)
+  .addParameters({chromatic: {disable: true}})
   .add(
     'default',
     () => <ModalExample />

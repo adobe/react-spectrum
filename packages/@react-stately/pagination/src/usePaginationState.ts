@@ -1,4 +1,4 @@
-import {useControlledState} from '@react-stately/utils/src/useControlledState';
+import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
 
 export function usePaginationState(props) {

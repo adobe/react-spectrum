@@ -1,0 +1,14 @@
+{
+  "year": "Year",
+  "month": "Month",
+  "day": "Day",
+  "hour": "Hour",
+  "minute": "Minute",
+  "second": "Second",
+  "dayPeriod": "Day Period",
+  "calendar": "Calendar",
+  "date": "Date",
+  "dateRange": "Date Range",
+  "startDate": "Start Date",
+  "endDate": "End Date"
+}

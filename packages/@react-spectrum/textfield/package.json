@@ -1,6 +1,7 @@
 {
   "name": "@react-spectrum/textfield",
   "version": "3.0.0",
+  "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -9,18 +10,18 @@
   },
   "dependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0",
+    "@react/react-spectrum": "^2.24.0",
+    "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@react-aria/utils": "^3.0.0",
     "@react-aria/textfield": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/textfield": "^3.0.0",
-    "@react-types/textfield": "^3.0.0"
+    "@react-types/textfield": "^3.0.0",
+    "@spectrum-icons/workflow": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   }
 }

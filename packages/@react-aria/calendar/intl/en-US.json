@@ -1,0 +1,11 @@
+{
+  "previous": "Previous",
+  "next": "Next",
+  "selectedDateDescription": "Selected Date: {date, date, full}",
+  "selectedRangeDescription": "Selected Range: {start, date, long} to {end, date, long}",
+  "todayDate": "Today, {date, date, full}",
+  "todayDateSelected": "Today, {date, date, full} selected",
+  "dateSelected": "{date, date, full} selected",
+  "startRangeSelectionPrompt": "Click to start selecting date range",
+  "finishRangeSelectionPrompt": "Click to finish selecting date range"
+}

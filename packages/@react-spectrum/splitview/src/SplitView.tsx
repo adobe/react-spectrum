@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import React, {useRef} from 'react';
 import {SplitViewProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';

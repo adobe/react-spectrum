@@ -1,4 +1,4 @@
-import {CheckboxBase} from '@react-types/checkbox/src';
+import {CheckboxBase} from '@react-types/checkbox';
 import {ToggleState} from '@react-types/toggle';
 import {useControlledState} from '@react-stately/utils';
 

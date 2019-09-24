@@ -20,7 +20,7 @@ governing permissions and limitations under the License.
 {{ statuslight/statuslight-semantic.yml }}
 */
 .spectrum-StatusLight {
-  min-height: var(--spectrum-statuslight-height);
+  min-block-size: var(--spectrum-statuslight-height);
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -36,8 +36,8 @@ governing permissions and limitations under the License.
     flex-grow: 0;
     flex-shrink: 0;
     display: inline-block;
-    width: var(--spectrum-statuslight-dot-size);
-    height: var(--spectrum-statuslight-dot-size);
+    inline-size: var(--spectrum-statuslight-dot-size);
+    block-size: var(--spectrum-statuslight-dot-size);
     border-radius: 50%;
     margin: var(--spectrum-statuslight-padding-y) var(--spectrum-statuslight-text-gap);
   }

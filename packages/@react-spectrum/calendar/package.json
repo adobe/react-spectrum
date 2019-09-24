@@ -1,0 +1,28 @@
+{
+  "name": "@react-spectrum/calendar",
+  "version": "3.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "description": "Spectrum UI components in React",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0",
+    "@react-aria/calendar": "^3.0.0",
+    "@react-aria/focus": "^3.0.0",
+    "@react-aria/i18n": "^3.0.0",
+    "@react-aria/visually-hidden": "^3.0.0",
+    "@react-spectrum/button": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.0",
+    "@react-stately/calendar": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
+    "@react-types/calendar": "^3.0.0",
+    "@spectrum-icons/ui": "^3.0.0",
+    "date-fns": "^1.30.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
+}

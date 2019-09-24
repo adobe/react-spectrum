@@ -245,6 +245,10 @@ export default class Calendar extends Component {
   }
 
   setValue(value) {
+    if (this.props.readOnly || this.props.disabled) {
+      return;
+    }
+    
     const {onChange} = this.props;
 
     if (this.props.selectionType === 'range') {
@@ -388,11 +392,11 @@ export default class Calendar extends Component {
         break;
       case 33: // page up
         e.preventDefault();
-        this.focusTimeUnit(nextMoment.subtract(1, e.metaKey ? 'year' : 'month'));
+        this.focusTimeUnit(nextMoment.subtract(1, e.metaKey || e.shiftKey ? 'year' : 'month'));
         break;
       case 34: // page down
         e.preventDefault();
-        this.focusTimeUnit(nextMoment.add(1, e.metaKey ? 'year' : 'month'));
+        this.focusTimeUnit(nextMoment.add(1, e.metaKey || e.shiftKey ? 'year' : 'month'));
         break;
       case 35: // end
         e.preventDefault();

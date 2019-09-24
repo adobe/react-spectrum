@@ -46,7 +46,7 @@ export default class Search extends Component {
   };
 
   static defaultProps = {
-    icon: <Magnifier />,
+    icon: <Magnifier data-testid="searchicon" />,
     onChange: function () {},
     onSubmit: function () {}
   };
@@ -76,7 +76,7 @@ export default class Search extends Component {
     const {onSubmit, onKeyDown, disabled} = this.props;
     const {value} = this.state;
     const key = e.which;
-
+    
     if (key === 13 || key === 27) {
       e.preventDefault();
     }

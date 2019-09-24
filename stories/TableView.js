@@ -105,9 +105,17 @@ storiesOf('TableView', module)
     () => render({acceptsDrops: true, quiet: true, canReorderItems: true}),
     {info: 'This example shows how TableView supports reordering rows.'}
   ).add(
-    'can shrink colums',
+    'can shrink columns',
     () => render({allowsSelection: false, columns: SHRINKABLE_COLUMNS}),
     {info: 'This example shows how the TableView supports shrink columns on window resize.'}
+  ).add(
+    'can align columns right',
+    () => render({columns: ALIGNED_COLUMNS_RIGHT}),
+    {info: 'This example shows how the TableView supports right aligned columns.'}
+  ).add(
+    'can align columns center',
+    () => render({columns: ALIGNED_COLUMNS_CENTER}),
+    {info: 'This example shows how the TableView supports center aligned columns.'}
   );
 
 var tableData = [
@@ -172,6 +180,58 @@ const SHRINKABLE_COLUMNS = [
     key: 'enabled',
     width: 100,
     announce: false
+  }
+];
+
+const ALIGNED_COLUMNS_RIGHT = [
+  {
+    title: 'Active',
+    key: 'enabled',
+    width: 100,
+    announce: false,
+    align: 'right',
+    divider: true
+  },
+  {
+    title: 'Name',
+    key: 'name',
+    minWidth: 200,
+    sortable: true,
+    divider: true,
+    align: 'right'
+  },
+  {
+    title: 'Description',
+    key: 'description',
+    width: 500,
+    sortable: true,
+    align: 'right'
+  }
+];
+
+const ALIGNED_COLUMNS_CENTER = [
+  {
+    title: 'Active',
+    key: 'enabled',
+    width: 100,
+    announce: false,
+    align: 'center',
+    divider: true
+  },
+  {
+    title: 'Name',
+    key: 'name',
+    minWidth: 200,
+    sortable: true,
+    divider: true,
+    align: 'center'
+  },
+  {
+    title: 'Description',
+    key: 'description',
+    width: 500,
+    sortable: true,
+    align: 'center'
   }
 ];
 

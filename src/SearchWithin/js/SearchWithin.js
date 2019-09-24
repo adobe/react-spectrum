@@ -15,6 +15,7 @@
 * from Adobe.
 **************************************************************************/
 
+import classNames from 'classnames';
 import createId from '../../utils/createId';
 import filterReactDomProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
@@ -91,19 +92,16 @@ export default class SearchWithin extends React.Component {
     /**
      * A callback for when the scope changes
      */
-    onScopeChange: PropTypes.func
+    onScopeChange: PropTypes.func,
+
+    /**
+    * Class given to SearchWithin
+    */
+    className: PropTypes.string
   };
 
   constructor(props) {
     super(props);
-
-    const {scopeOptions} = props;
-
-    // convert strings to <Select>'s expected label/value objects
-    let newScopeOptions = scopeOptions.map(scope => typeof scope === 'string' ? {label: scope, value: scope} : scope);
-
-    this.state = {scopeOptions: newScopeOptions};
-
     this.outerId = createId();
   }
 
@@ -127,8 +125,12 @@ export default class SearchWithin extends React.Component {
       'aria-labelledby': ariaLabelledby,
       'aria-label': ariaLabel = (!ariaLabelledby ? formatMessage('Search within') : null),
       autoFocus,
+      className,
+      scopeOptions,
       ...otherProps
     } = this.props;
+
+    let formattedScopeOptions = scopeOptions.map(scope => typeof scope === 'string' ? {label: scope, value: scope} : scope);
 
     if (ariaLabelledby) {
       if (ariaLabel) {
@@ -143,7 +145,7 @@ export default class SearchWithin extends React.Component {
     if (scope) {
       selectProps.value = scope;
     } else {
-      selectProps.defaultValue = defaultScope ? defaultScope : this.state.scopeOptions[0].value;
+      selectProps.defaultValue = defaultScope ? defaultScope : formattedScopeOptions[0].value;
     }
 
     const select = (
@@ -151,7 +153,7 @@ export default class SearchWithin extends React.Component {
         id={selectId}
         aria-labelledby={ariaLabelledby}
         onChange={onScopeChange}
-        options={this.state.scopeOptions}
+        options={formattedScopeOptions}
         disabled={disabled}
         required
         flexible
@@ -182,7 +184,13 @@ export default class SearchWithin extends React.Component {
 
     return (
       <div
-        className="spectrum-SearchWithin react-spectrum-SearchWithin"
+        className={
+          classNames(
+            'spectrum-SearchWithin',
+            'react-spectrum-SearchWithin',
+            className
+          )
+        }
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledby}
         id={this.outerId}

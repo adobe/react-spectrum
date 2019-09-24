@@ -23,6 +23,7 @@ import ButtonGroup from '../../src/ButtonGroup';
 import Camera from '../../src/Icon/Camera';
 import CheckmarkCircle from '../../src/Icon/CheckmarkCircle';
 import Delete from '../../src/Icon/Delete';
+import FocusManager from '../../src/utils/FocusManager';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -381,6 +382,34 @@ describe('ButtonGroup', () => {
 
           tree.unmount();
         });
+      });
+
+      it('supports `manageTabIndex={false}`', () => {
+        const tree = mount(<ButtonGroup manageTabIndex={false} {...defaultProps} />);
+        assert.equal(tree.find(FocusManager).prop('manageTabIndex'), false);
+        tree.find(Button).first().simulate('focus');
+        tree.find(Button).first().simulate('click');
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+        tree.find(Button).last().simulate('focus');
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+        tree.find(Button).last().simulate('blur');
+
+        // with single selection, only selected item should have tabIndex=0 on blur
+        tree.find(Button).forEach((node, i) => {
+          let tabIndex = !node.prop('disabled') ? 0 : -1;
+          assert.equal(node.getDOMNode().tabIndex, tabIndex);
+          assert.equal(node.prop('tabIndex'), undefined);
+        });
+
+        tree.unmount();
       });
 
       describe('navigation', () => {

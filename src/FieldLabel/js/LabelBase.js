@@ -48,7 +48,6 @@ export default function LabelBase({
       childArray[0],
       {
         id,
-        labelId,
         'aria-labelledby': ariaLabelledby
       }
     );
@@ -86,7 +85,7 @@ export default function LabelBase({
   if (childArray.length > 0) {
     if (wrapperClassName) {
       childArray = (
-        <div className={wrapperClassName}>
+        <div data-testid="wrapperId" className={wrapperClassName}>
           {childArray}
         </div>
       );

@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'import', 'monorepo'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -14,9 +14,9 @@ module.exports = {
     },
     sourceType: 'module'
   },
-  overrides: {
+  overrides: [{
     files: ['packages/**/*.ts', 'packages/**/*.tsx'],
-    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'import', 'monorepo'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
@@ -31,7 +31,13 @@ module.exports = {
       "no-unused-vars": OFF,
       "@typescript-eslint/no-unused-vars": ERROR
     }
-  },
+  }, {
+    files: ['**/test/**', '**/stories/**'],
+    rules: {
+      'import/no-extraneous-dependencies': OFF,
+      'monorepo/no-internal-import': OFF
+    }
+  }],
   env: {
     'browser': true,
     'node': true,
@@ -149,10 +155,11 @@ module.exports = {
         ]
       }
     ],
-    'jsx-a11y/label-has-for': [
+    'jsx-a11y/label-has-associated-control': [
       ERROR,
       {
-        required: { some: ['nesting', 'id'] }
+        'assert': 'either',
+        'depth': 3
       }
     ],
     'jsx-a11y/media-has-caption': ERROR,
@@ -231,6 +238,21 @@ module.exports = {
     'jsx-a11y/role-has-required-aria-props': ERROR,
     'jsx-a11y/role-supports-aria-props': ERROR,
     'jsx-a11y/scope': ERROR,
-    'jsx-a11y/tabindex-no-positive': ERROR
+    'jsx-a11y/tabindex-no-positive': ERROR,
+
+    // importing rules
+    'import/no-extraneous-dependencies': ERROR,
+    'monorepo/no-internal-import': [
+      ERROR,
+      {
+        ignore: [
+          '@adobe/spectrum-css-temp',
+          '@react/react-spectrum',
+          '@spectrum-icons/ui',
+          '@spectrum-icons/workflow'
+        ]
+      }
+    ],
+    'monorepo/no-relative-import': ERROR
   }
 };

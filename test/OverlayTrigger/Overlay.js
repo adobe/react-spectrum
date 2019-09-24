@@ -30,7 +30,6 @@ import React from 'react';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 import Tooltip from '../../src/Tooltip/js/Tooltip';
 
 describe('Overlay', () => {
@@ -104,171 +103,193 @@ describe('Overlay', () => {
     assert(onExited.withArgs({foo: 'bar'}));
   });
 
-  it('should not apply extra css to body', () => {
-    let overlay = mount(
-      <OverlayTrigger trigger="click">
-        <Button>Click me</Button>
-        <Popover>Popover</Popover>
-      </OverlayTrigger>
-    );
-    const prevText = document.body.style.cssText;
+  describe('mounted tests', () => {
+    let tree;
 
-    overlay.setState({'show': true});
-    assert.equal(document.body.style.cssText, prevText);
-    overlay.setState({'show': false});
-    overlay.unmount();
-  });
-
-  it('calls modalManager when rendering and unmounting', () => {
-    const stub = sinon.stub(require('../../src/OverlayTrigger/js/calculatePosition'), 'default').returns({
-      positionLeft: 100,
-      positionTop: 50,
-      maxHeight: 200,
-      arrowOffsetLeft: '0%',
-      arrowOffsetTop: '50%'
+    afterEach(() => {
+      if (tree && tree.exists()) {
+        tree.unmount();
+        tree = null;
+      }
     });
-    const addspy = sinon.spy();
-    const removespy = sinon.spy();
-    const addstub = sinon.stub(ModalContainer.modalManager, 'addToModal').callsFake(addspy);
-    const removestub = sinon.stub(ModalContainer.modalManager, 'removeFromModal').callsFake(removespy);
-    const tree = mount(<OverlayTrigger><button /><Overlay><span>hi</span></Overlay></OverlayTrigger>);
-    assert(!addstub.called);
-    tree.setState({'show': true});
-    assert(addstub.called);
-    stub.restore();
-    stub.resetHistory();
-    tree.unmount();
-    assert(removestub.called);
-  });
 
-  it('context overlay', () => {
-    function SimpleContainer(props, context) {
-      return props.children;
-    }
-    function SimpleComponent(props, context) {
-      return <div id="modal-test">{context.name}</div>;
-    }
-    SimpleContainer.contextTypes = {
-      name: PropTypes.string
-    };
-
-    SimpleComponent.contextTypes = {
-      name: PropTypes.string
-    };
-
-    const context = {
-      name: 'a context has no name'
-    };
-
-    const overlayTrigger = mount(
-      <SimpleContainer>
-        <OverlayTrigger defaultShow placement="right">
-          <Button label="Click Me" variant="primary" />
-          <Popover><SimpleComponent /></Popover>
-        </OverlayTrigger>
-      </SimpleContainer>,
-      {context});
-
-    assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
-
-    overlayTrigger.unmount();
-  });
-
-  it('should only hide if it is the top-most overlay', async () => {
-    let onHideOuter = sinon.spy();
-    let onHideInner = sinon.spy();
-    let overlay = mount(
-      <Overlay show onHide={onHideOuter}>
-        <OverlayTrigger onHide={onHideInner} trigger="click">
+    it('should not apply extra css to body', () => {
+      tree = mount(
+        <OverlayTrigger trigger="click">
           <Button>Click me</Button>
-          <Popover trapFocus={false}>Popover</Popover>
+          <Popover>Popover</Popover>
         </OverlayTrigger>
-      </Overlay>
-    );
+      );
+      const prevText = document.body.style.cssText;
 
-    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
-
-    // Hiding the outer overlay should work fine since the inner overlay hasn't been shown yet
-    overlay.instance().hide();
-
-    assert(onHideOuter.calledOnce);
-    assert(onHideInner.notCalled);
-
-    onHideOuter.resetHistory();
-
-    // Trigger click
-    let event = new window.MouseEvent('click', {
-      bubbles: true,
-      cancelable: true
+      tree.setState({'show': true});
+      assert.equal(document.body.style.cssText, prevText);
+      tree.setState({'show': false});
     });
 
-    document.querySelector('button').dispatchEvent(event);
-    await sleep(17);
-    overlay.update();
+    it('calls modalManager when rendering and unmounting', () => {
+      const stub = sinon.stub(require('../../src/OverlayTrigger/js/calculatePosition'), 'default').returns({
+        positionLeft: 100,
+        positionTop: 50,
+        maxHeight: 200,
+        arrowOffsetLeft: '0%',
+        arrowOffsetTop: '50%'
+      });
+      const addspy = sinon.spy();
+      const removespy = sinon.spy();
+      const addstub = sinon.stub(ModalContainer.modalManager, 'addToModal').callsFake(addspy);
+      const removestub = sinon.stub(ModalContainer.modalManager, 'removeFromModal').callsFake(removespy);
+      tree = mount(
+        <OverlayTrigger>
+          <button />
+          <Overlay><span>hi</span></Overlay>
+        </OverlayTrigger>
+      );
+      assert(!addstub.called);
+      tree.setState({'show': true});
+      assert(addstub.called);
+      stub.restore();
+      stub.resetHistory();
+      tree.unmount();
+      assert(removestub.called);
+    });
 
-    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+    it('context overlay', () => {
+      function SimpleContainer(props, context) {
+        return props.children;
+      }
 
-    // Wait for animation
-    await sleep(125);
+      function SimpleComponent(props, context) {
+        return <div id="modal-test">{context.name}</div>;
+      }
 
-    // Hiding the outer overlay should now do nothing since it is no longer the top overlay
-    overlay.instance().hide();
-    assert(onHideOuter.notCalled);
-    assert(onHideInner.notCalled);
+      SimpleContainer.contextTypes = {
+        name: PropTypes.string
+      };
 
-    // Hiding the inner overlay should work since it is the top overlay
-    document.querySelector('button').dispatchEvent(event);
-    assert(onHideOuter.notCalled);
-    assert(onHideInner.calledOnce);
+      SimpleComponent.contextTypes = {
+        name: PropTypes.string
+      };
 
-    onHideInner.resetHistory();
+      const context = {
+        name: 'a context has no name'
+      };
 
-    // Wait for animation
-    await sleep(125);
-
-    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
-
-    // Hiding the outer overlay should work now since it is the top overlay
-    overlay.instance().hide();
-    assert(onHideOuter.calledOnce);
-    assert(onHideInner.notCalled);
-
-    overlay.unmount();
-  });
-
-  it('should hide all top-most overlays of different role', async () => {
-    const clock = sinon.useFakeTimers();
-    const onHideFirst = sinon.spy();
-    const onHideSecond = sinon.spy();
-    const tree = mount(
-      <Overlay show>
-        <OverlayTrigger onHide={onHideFirst} trigger="click">
-          <OverlayTrigger onHide={onHideSecond} trigger="click">
-            <Button />
-            <Popover />
+      tree = mount(
+        <SimpleContainer>
+          <OverlayTrigger defaultShow placement="right">
+            <Button label="Click Me" variant="primary" />
+            <Popover><SimpleComponent /></Popover>
           </OverlayTrigger>
-          <Tooltip />
-        </OverlayTrigger>
-      </Overlay>
-    );
+        </SimpleContainer>,
+        {context});
 
-    const event = new window.MouseEvent('click', {
-      bubbles: true,
-      cancelable: true
+      assert.equal(document.getElementById('modal-test').textContent, 'a context has no name');
     });
 
-    document.querySelector('button').dispatchEvent(event);
-    clock.tick(100);
-    assert(onHideFirst.notCalled);
-    assert(onHideSecond.notCalled);
-    assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
-    assert.equal(document.querySelectorAll('.spectrum-Tooltip').length, 1);
 
-    document.dispatchEvent(event);
-    clock.tick(100);
-    assert(onHideFirst.calledOnce);
-    assert(onHideSecond.calledOnce);
-    clock.restore();
-    tree.unmount();
+    describe('mocked clock', () => {
+      let clock;
+      beforeEach(() => {
+        clock = sinon.useFakeTimers();
+      });
+      afterEach(() => {
+        clock.runAll();
+        clock.restore();
+        clock = null;
+      });
+      it('should only hide if it is the top-most overlay', async () => {
+        let onHideOuter = sinon.spy();
+        let onHideInner = sinon.spy();
+        tree = mount(
+          <Overlay show onHide={onHideOuter}>
+            <OverlayTrigger onHide={onHideInner} trigger="click">
+              <Button>Click me</Button>
+              <Popover trapFocus={false}>Popover</Popover>
+            </OverlayTrigger>
+          </Overlay>
+        );
+
+        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+        // Hiding the outer overlay should work fine since the inner overlay hasn't been shown yet
+        tree.instance().hide();
+
+        assert(onHideOuter.calledOnce);
+        assert(onHideInner.notCalled);
+
+        onHideOuter.resetHistory();
+
+        // Trigger click
+        let event = new window.MouseEvent('click', {
+          bubbles: true,
+          cancelable: true
+        });
+
+        document.querySelector('button').dispatchEvent(event);
+        clock.tick(17);
+        tree.update();
+
+        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+
+        // Wait for animation
+        clock.tick(125);
+
+        // Hiding the outer overlay should now do nothing since it is no longer the top overlay
+        tree.instance().hide();
+        assert(onHideOuter.notCalled);
+        assert(onHideInner.notCalled);
+
+        // Hiding the inner overlay should work since it is the top overlay
+        document.querySelector('button').dispatchEvent(event);
+        assert(onHideOuter.notCalled);
+        assert(onHideInner.calledOnce);
+
+        onHideInner.resetHistory();
+
+        // Wait for animation
+        clock.tick(125);
+
+        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 0);
+
+        // Hiding the outer overlay should work now since it is the top overlay
+        tree.instance().hide();
+        assert(onHideOuter.calledOnce);
+        assert(onHideInner.notCalled);
+      });
+
+      it('should hide all top-most overlays of different role', () => {
+        const onHideFirst = sinon.spy();
+        const onHideSecond = sinon.spy();
+        tree = mount(
+          <Overlay show>
+            <OverlayTrigger onHide={onHideFirst} trigger="click">
+              <OverlayTrigger onHide={onHideSecond} trigger="click">
+                <Button />
+                <Popover />
+              </OverlayTrigger>
+              <Tooltip />
+            </OverlayTrigger>
+          </Overlay>
+        );
+
+        const event = new window.MouseEvent('click', {
+          bubbles: true,
+          cancelable: true
+        });
+
+        document.querySelector('button').dispatchEvent(event);
+        clock.tick(100);
+        assert(onHideFirst.notCalled);
+        assert(onHideSecond.notCalled);
+        assert.equal(document.querySelectorAll('.spectrum-Popover').length, 1);
+        assert.equal(document.querySelectorAll('.spectrum-Tooltip').length, 1);
+
+        document.dispatchEvent(event);
+        clock.tick(100);
+        assert(onHideFirst.calledOnce);
+        assert(onHideSecond.calledOnce);
+      });
+    });
   });
 });

@@ -59,18 +59,26 @@ lint:
 	npm run check-types
 	eslint src test stories
 	eslint packages --ext .js,.ts,.tsx
+	$(MAKE) lint_packages
+
+lint_packages:
+	@if [ "$$(lerna list)" != "@react/react-spectrum" ]; then \
+		echo "Some packages should be marked as private."; \
+		lerna list | grep -v "@react/react-spectrum"; \
+		false; \
+	fi
 
 test:
 	NODE_ENV=test mocha
 
 jest_test:
-	NODE_ENV=test jest
+	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
 
 cover:
 	NODE_ENV=test BABEL_ENV=cover nyc mocha
 
 jenkins_test: lint
-	NODE_ENV=test jest
+	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
 	# Test in React 15
 	NOYARNPOSTINSTALL=1 yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
 	NODE_ENV=test mocha
@@ -98,8 +106,8 @@ build:
 	cp README.md dist/README.md
 
 storybook:
-	npm run build-storybook
-	npm run build-storybook-v3
+	NODE_ENV=storybook npm run build-storybook
+	NODE_ENV=storybook npm run build-storybook-v3
 	mkdir -p public
 	mv storybook-static public/storybook
 	mv storybook-static-v3 public/storybook3

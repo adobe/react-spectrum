@@ -1,4 +1,4 @@
-import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -239,7 +239,8 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 }
 
 function useRestoreFocus(restoreFocus: boolean) {
-  useEffect(() => {
+  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
+  useLayoutEffect(() => {
     let nodeToRestore = document.activeElement as HTMLElement;
     return () => {
       if (restoreFocus && nodeToRestore) {

@@ -1,7 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-// @ts-ignore
-import Magnifier from '../../../../Icon/core/Magnifier'; // Alternative is Magnify from '@react/react-spectrum/Icon/Magnify';
+import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
@@ -15,7 +14,7 @@ interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldPr
 export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
   props = useProviderProps(props);
   let {
-    icon = <Magnifier />,
+    icon = <Magnifier data-testid="searchicon" />,
     isDisabled,
     className,
     ...otherProps

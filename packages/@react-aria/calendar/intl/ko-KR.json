@@ -1,0 +1,11 @@
+{
+  "previous": "이전으로",
+  "next": "다음",
+  "selectedDateDescription": "선택된 날짜 : {date, date, full}",
+  "selectedRangeDescription": "선택한 기간 : {start, date, long} ~ {end, date, long}",
+  "todayDate": "현재 {date, date, full}",
+  "todayDateSelected": "현재 {date, date, full}이(가) 선택됨",
+  "dateSelected": "{date, date, full}이(가) 선택됨",
+  "startRangeSelectionPrompt": "기간 선택을 시작하려면 클릭하십시오.",
+  "finishRangeSelectionPrompt": "날짜 범위 선택을 마치려면 클릭하십시오."
+}

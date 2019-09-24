@@ -1,6 +1,7 @@
 {
   "name": "@react-aria/textfield",
   "version": "3.0.0",
+  "private": true,
   "main": "src/useTextField.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -11,9 +12,6 @@
     "@react-types/textfield": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   }
 }

@@ -1,31 +1,17 @@
 import addons, { types } from '@storybook/addons';
+import {getQueryParams} from '@storybook/client-api';
+import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
-let LOCALES = [
-  {label: 'Arabic (Egypt)', value: 'ar-EG'},
-  {label: 'Czech (Czech Republic)', value: 'cs-CZ'},
-  {label: 'Danish (Denmark)', value: 'da-DK'},
-  {label: 'German (Germany)', value: 'de-DE'},
-  {label: 'English (United States)', value: 'en-US'},
-  {label: 'Spanish (Spain)', value: 'es-ES'},
-  {label: 'Finnish (Finland)', value: 'fi-FI'},
-  {label: 'French (France)', value: 'fr-FR'},
-  {label: 'Italian (Italy)', value: 'it-IT'},
-  {label: 'Japanese (Japan)', value: 'ja-JP'},
-  {label: 'Korean (Korea)', value: 'ko-KR'},
-  {label: 'Norwegian (Bokmal) (Norway)', value: 'nb-NO'},
-  {label: 'Dutch (Netherlands)', value: 'nl-NL'},
-  {label: 'Polish (Poland)', value: 'pl-PL'},
-  {label: 'Portuguese (Brazil)', value: 'pt-BR'},
-  {label: 'Russian (Russia)', value: 'ru-RU'},
-  {label: 'Swedish (Sweden)', value: 'sv-SE'},
-  {label: 'Turkish (Turkey)', value: 'tr-TR'},
-  {label: 'Chinese (S)', value: 'zh-CN'},
-  {label: 'Chinese (T)', value: 'zh-TW'}
-];
+const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
+  if (k.includes('providerSwitcher-')) {
+    return { ...acc, [k.replace('providerSwitcher-', '')]: v };
+  }
+  return acc;
+}, {});
 
 let THEMES = [
-  {label: 'Auto', value: undefined},
+  {label: 'Auto', value: ''},
   {label: "Light", value: "light"},
   {label: "Lightest", value: "lightest"},
   {label: "Dark", value: "dark"},
@@ -33,7 +19,7 @@ let THEMES = [
 ];
 
 let SCALES = [
-  {label: 'Auto', value: undefined},
+  {label: 'Auto', value: ''},
   {label: "Medium", value: "medium"},
   {label: "Large", value: "large"}
 ];
@@ -49,11 +35,11 @@ let TOAST_POSITIONS = [
   {label: 'bottom right', value: 'bottom right'}
 ];
 
-function ProviderFieldSetter() {
-  let [values, setValues] = useState({locale:'en-US', theme: undefined, scale: undefined, toastPosition: 'top'});
+function ProviderFieldSetter({api}) {
+  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'top'});
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
-    let newValue = e.target.value;
+    let newValue = e.target.value || undefined;
     setValues((old) => {
       let next = {...old, locale: newValue};
       channel.emit('provider/updated', next);
@@ -61,7 +47,7 @@ function ProviderFieldSetter() {
     });
   };
   let onThemeChange = (e) => {
-    let newValue = e.target.value;
+    let newValue = e.target.value || undefined;
     setValues((old) => {
       let next = {...old, theme: newValue};
       channel.emit('provider/updated', next);
@@ -69,7 +55,7 @@ function ProviderFieldSetter() {
     });
   };
   let onScaleChange = (e) => {
-    let newValue = e.target.value;
+    let newValue = e.target.value || undefined;
     setValues((old) => {
       let next = {...old, scale: newValue};
       channel.emit('provider/updated', next);
@@ -94,12 +80,21 @@ function ProviderFieldSetter() {
     };
   });
 
+  useEffect(() => {
+    api.setQueryParams({
+      'providerSwitcher-locale': values.locale || '',
+      'providerSwitcher-theme': values.theme || '',
+      'providerSwitcher-scale': values.scale || '',
+      'providerSwitcher-toastPosition': values.toastPosition || '',
+    });
+  });
+
   return (
     <div style={{display: 'flex', alignItems: 'center', fontSize: '12px'}}>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale}>
-          {LOCALES.map(locale => <option key={locale} value={locale.value}>{locale.label}</option>)}
+          {locales.map(locale => <option key={locale} value={locale.value}>{locale.label}</option>)}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
@@ -124,11 +119,11 @@ function ProviderFieldSetter() {
   )
 }
 
-addons.register('ProviderSwitcher', () => {
+addons.register('ProviderSwitcher', (api) => {
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
     match: ({ viewMode }) => viewMode === 'story',
-    render: () => <ProviderFieldSetter />,
+    render: () => <ProviderFieldSetter api={api} />,
   });
 });

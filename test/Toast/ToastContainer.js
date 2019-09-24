@@ -22,9 +22,18 @@ import ReactDOM from 'react-dom';
 import {setToastPlacement} from '../../src/Toast/js/state';
 import {shallow} from 'enzyme';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 describe('ToastContainer', () => {
+  let clock;
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers();
+  });
+  afterEach(() => {
+    clock.runAll();
+    clock.restore();
+  });
+
   // This is a hack to clean up toast containers after they are rendered and assertions are made.
   const cleanup = () => {
     const nodes = document.querySelectorAll('.react-spectrum-ToastContainer');
@@ -50,14 +59,14 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should render toasts', async () => {
+  it('should render toasts', () => {
     const tree = shallow(<ToastContainer />);
     const toast = <Toast>Test</Toast>;
     tree.instance().add(toast);
     tree.update();
     assert.equal(tree.children().length, 1);
 
-    await sleep(6);
+    clock.tick(6);
     tree.instance().remove(toast);
     tree.update();
     assert.equal(tree.children().length, 0);
@@ -65,7 +74,7 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should pause timer to remove toast when in focus', async () => {
+  it('should pause timer to remove toast when in focus', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
@@ -75,7 +84,7 @@ describe('ToastContainer', () => {
     assert.equal(tree.children().length, 1);
 
     tree.find(Toast).simulate('focus');
-    await sleep(6);
+    clock.tick(6);
     tree.update();
     assert.equal(tree.children().length, 1);
     assert(!closedSpy.calledOnce);
@@ -83,7 +92,7 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should resume timer to remove toast when focus goes out', async () => {
+  it('should resume timer to remove toast when focus goes out', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
@@ -91,11 +100,11 @@ describe('ToastContainer', () => {
     tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 5);
     tree.update();
     assert.equal(tree.children().length, 1);
-    await sleep(3);
+    clock.tick(3);
     tree.find(Toast).simulate('focus');
-    await sleep(6);
+    clock.tick(6);
     tree.find(Toast).simulate('blur');
-    await sleep(3);
+    clock.tick(3);
     tree.update();
     assert.equal(tree.children().length, 0);
     assert(closedSpy.calledOnce);
@@ -103,7 +112,7 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should never remove a toast with timeout 0', async () => {
+  it('should never remove a toast with timeout 0', () => {
     const tree = shallow(<ToastContainer />);
     assert.equal(tree.children().length, 0);
 
@@ -111,7 +120,7 @@ describe('ToastContainer', () => {
     tree.instance().add(<Toast onClose={closedSpy}>Test</Toast>, 0);
     tree.update();
     assert.equal(tree.children().length, 1);
-    await sleep(3);
+    clock.tick(5000);
     tree.update();
     assert.equal(tree.children().length, 1);
     assert(closedSpy.notCalled);
@@ -137,7 +146,7 @@ describe('ToastContainer', () => {
     cleanup();
   });
 
-  it('should render a global toast container', async () => {
+  it('should render a global toast container', () => {
     const toast = <Toast>Test</Toast>;
     addToast(toast);
 
@@ -147,11 +156,11 @@ describe('ToastContainer', () => {
     assert(container.childNodes[0].classList.contains('spectrum-Toast'));
 
     removeToast(toast);
-    await sleep(500); // wait for animation
+    clock.tick(500); // wait for animation
     assert.equal(container.childNodes.length, 0);
   });
 
-  it('should render a toast inside custom container', async() => {
+  it('should render a toast inside custom container', () => {
     const customContainer = ReactDOM.render(<div />, document.createElement('div'));
     const toast = <Toast>Test</Toast>;
     const customContainerDOM = ReactDOM.findDOMNode(customContainer);
@@ -160,7 +169,7 @@ describe('ToastContainer', () => {
     assert(container.classList.contains('react-spectrum-ToastContainer'));
   });
 
-  it('should render a success toast', async () => {
+  it('should render a success toast', () => {
     success('Success');
 
     const container = document.querySelector('.react-spectrum-ToastContainer');

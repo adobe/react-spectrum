@@ -11,6 +11,7 @@ interface AriaButtonProps extends PressHookProps {
   href?: string,
   tabIndex?: number,
   isSelected?: boolean | 'false' | 'true',
+  validationState?: 'valid' | 'invalid',
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
   [others: string]: any
@@ -32,6 +33,7 @@ export function useButton({
   href,
   tabIndex,
   isSelected,
+  validationState,
   'aria-expanded': ariaExpanded,
   'aria-haspopup': ariaHasPopup,
   ref
@@ -59,7 +61,9 @@ export function useButton({
   return {
     isPressed,
     buttonProps: mergeProps(pressProps, {
+      'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
       ...(additionalProps || {}),
       onClick: (e) => {

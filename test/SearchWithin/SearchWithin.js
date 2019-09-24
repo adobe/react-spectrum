@@ -99,6 +99,31 @@ describe('SearchWithin', () => {
     assert.equal(findSelect(tree).prop('aria-labelledby'), 'foo ' + tree.prop('id'));
     assert.equal(findSearch(tree).prop('aria-labelledby'), `foo ${tree.prop('id')} ${findSelect(tree).prop('id')}-value`);
   });
+
+  it('supports additions of custom css classes', () => {
+    const cls = 'sw-abc';
+    const tree = shallow(<SearchWithin scopeOptions={testOptions} className={cls} />);
+    assert(tree.prop('className').includes(cls));
+  });
+
+  it('updates when new scopeOptions are passed in', () => {
+    let tree = shallow(<SearchWithin scopeOptions={testOptions} />);
+    let options = findSelect(tree).prop('options');
+    assert.equal(options.length, 8);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'chocolate'
+    });
+
+    tree.setProps({scopeOptions: [{label: 'Chocolate', value: 'choco'}]});
+    tree.update();
+    options = findSelect(tree).prop('options');
+    assert.equal(options.length, 1);
+    assert.deepEqual(options[0], {
+      label: 'Chocolate',
+      value: 'choco'
+    });
+  });
 });
 
 const findSelect = tree => tree.find('Select');

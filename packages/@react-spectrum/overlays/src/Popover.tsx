@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils/src/classNames';
+import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
@@ -15,12 +15,13 @@ interface PopoverProps extends DOMProps {
   children: ReactNode,
   placement?: Placement,
   arrowProps?: DOMProps,
+  hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void
 }
 
 export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTMLDivElement>) => {
-  let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, ...otherProps} = props;
+  let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   ref = ref || useRef();
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
   
@@ -32,8 +33,8 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
           styles,
           'spectrum-Popover',
           `spectrum-Popover--${placement.split(' ')[0]}`,
-          'spectrum-Popover--withTip',
           {
+            'spectrum-Popover--withTip': !hideArrow,
             'is-open': isOpen
           },
           classNames(
@@ -49,7 +50,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
       {...filterDOMProps(otherProps)}
       {...overlayProps}>
       {children}
-      <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />
+      {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}
     </div>
   );
 });
