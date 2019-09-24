@@ -6,11 +6,13 @@ run();
 
 async function run() {
   try {
-    let {data: prs} = await octokit.repos.listPullRequestsAssociatedWithCommit({
+    let res = await octokit.repos.listPullRequestsAssociatedWithCommit({
       ...github.context.repo,
       commit_sha: github.context.sha
     });
+    console.log('github.context', github.context);
     console.log('in try', prs);
+    console.log('res', res);
     if (!prs) {
       return;
     }
