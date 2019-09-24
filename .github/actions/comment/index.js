@@ -6,9 +6,6 @@ run();
 
 async function run() {
   try {
-    console.log('github.context', github.context);
-    console.log('github.context.repository', github.context.payload.repository.owner);
-    console.log('github.context.repo', github.context.repo);
     await octokit.issues.createComment({
       ...github.context.repo,
       issue_number: github.context.payload.number,
