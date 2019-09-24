@@ -6,20 +6,12 @@ run();
 
 async function run() {
   try {
-    let res = await octokit.repos.listPullRequestsAssociatedWithCommit({
-      ...github.context.repo,
-      commit_sha: github.context.sha
-    });
     console.log('github.context', github.context);
-    console.log('in try', prs);
-    console.log('res', res);
-    if (!prs) {
-      return;
-    }
+    console.log('github.context.repository', github.context.payload.repository.owner);
 
     await octokit.issues.createComment({
-      ...github.context.repo,
-      issue_number: prs[0].number,
+      ...github.context.payload.repository.owner,
+      issue_number: github.context.payload.number,
       body: `Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${github.context.sha}/index.html)`
     });
   } catch (error) {
