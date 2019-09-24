@@ -10,7 +10,7 @@ async function run() {
       ...github.context.repo,
       commit_sha: github.context.sha
     });
-
+    console.log('in try', prs);
     if (!prs) {
       return;
     }
@@ -22,6 +22,5 @@ async function run() {
     });
   } catch (error) {
     core.setFailed(error.message);
-    console.log('prs', prs);
   }
 }
