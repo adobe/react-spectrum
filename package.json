@@ -95,8 +95,6 @@
     "md5": "^2.2.1",
     "mocha": "^6.0.2",
     "mocha-junit-reporter": "^1.18.0",
-    "moment": "^2.15.1",
-    "moment-range": "^3.0.3",
     "nib": "^1.1.2",
     "normalize.css": "^7.0.0",
     "nyc": "^10.2.0",
