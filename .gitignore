@@ -10,10 +10,9 @@ dist
 .package-lock.json
 .cache
 
-documentation/public
-documentation/yarn.lock
 dist
 public
+storybook-static
 
 
 #allow

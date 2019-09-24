@@ -51,8 +51,7 @@ module.exports = {
     '@babel/plugin-syntax-object-rest-spread',
     '@babel/plugin-transform-async-to-generator',
     'transform-glob-import',
-    'babel-plugin-macros',
-    './bin/import-css.js'
+    'babel-plugin-macros'
   ],
   sourceType: 'unambiguous'
 };

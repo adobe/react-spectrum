@@ -43,9 +43,6 @@ describe('Search', () => {
 
     let input = within(outerDiv).getByTestId(testId);
     expect(input).toHaveAttribute('role', 'searchbox');
-    
-    let searchIcon = within(outerDiv).getByTestId('searchicon');
-    expect(searchIcon).toBeTruthy(); 
 
     let clearButton = within(outerDiv).queryByRole('button');
     expect(clearButton).toBeNull();

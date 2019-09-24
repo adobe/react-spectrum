@@ -17,9 +17,6 @@ install_no_postinstall:
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	NODE_ENV=storybook start-storybook -p 9002 --ci -c ".storybook-v2"
-
-run_3:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
 
 clean:
@@ -56,61 +53,16 @@ clean_docs_node_modules:
 	rm -rf documentation/node_modules
 
 lint:
-	npm run check-types
-	eslint src test stories
+	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
-	$(MAKE) lint_packages
-
-lint_packages:
-	@if [ "$$(lerna list)" != "@react/react-spectrum" ]; then \
-		echo "Some packages should be marked as private."; \
-		lerna list | grep -v "@react/react-spectrum"; \
-		false; \
-	fi
 
 test:
-	NODE_ENV=test mocha
+	yarn jest
 
-jest_test:
-	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
-
-cover:
-	NODE_ENV=test BABEL_ENV=cover nyc mocha
-
-jenkins_test: lint
-	NODE_ENV=test NODE_ICU_DATA=node_modules/full-icu jest
-	# Test in React 15
-	NOYARNPOSTINSTALL=1 yarn install-peerdeps --yarn enzyme-adapter-react-15 --extra-args "--ignore-workspace-root-check"
-	NODE_ENV=test mocha
-
-	# Test latest and generate coverage report
-	yarn install-peerdeps --yarn enzyme-adapter-react-16 --extra-args "--ignore-workspace-root-check"
-	NODE_ENV=test BABEL_ENV=cover nyc --reporter cobertura --report-dir . mocha $(MOCHA_OPTS) --reporter mocha-junit-reporter; \
-	find ./node_modules/ -name coverage.json -exec rm {} \; ;\
-
-build:
-	rm -rf dist src/dist
-	cp -R src dist
-	cp -R node_modules/@adobe/spectrum-css/dist/components dist/spectrum-css
-	cp -R spectrum-css-overrides dist/spectrum-css-overrides
-	find dist/spectrum-css -name colorStops -exec rm -rf {} +;
-	BUILD_ENV=production NODE_ENV=production babel dist -d dist
-	find dist \( -name index.styl -o -name "Shell*.styl" \) -exec bash -c 'f="{}"; o=$$(dirname $${f%.styl}.css); stylus --use ./bin/compile-stylus.js $$f -o $$o' \;
-	find dist -name "*.styl" -delete
-	find dist -name "*.js" -exec sed -i.bak 's/index.styl/index.css/g' {} \;
-	find dist -name "*.js" -exec sed -i.bak -E 's/(Shell.*\.)styl/\1css/g' {} \;
-	find dist -name "*.bak" -delete
-	cp -R node_modules/@adobe/focus-ring-polyfill dist/focus-ring-polyfill
-	cp -R node_modules/@react/react-spectrum-icons/dist/* dist/Icon/.
-	cp src/package.json dist/package.json
-	cp README.md dist/README.md
+ci-test: lint test
 
 storybook:
-	npm run build-storybook
-	npm run build-storybook-v3
-	mkdir -p public
-	mv storybook-static public/storybook
-	mv storybook-static-v3 public/storybook3
+	yarn build-storybook
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"

@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@a4u/react-spectrum-ui": "0.0.2",
-    "@a4u/react-spectrum-workflow": "0.0.3",
-    "@a4u/react-spectrum-workflow-color": "0.0.2",
+    "@a4u/react-spectrum-workflow": "0.0.6",
+    "@a4u/react-spectrum-workflow-color": "0.0.6",
     "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0"
