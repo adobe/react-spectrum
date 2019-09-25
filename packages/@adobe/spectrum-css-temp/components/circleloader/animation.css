@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-CircleLoader--indeterminate-fill-submask-2 {
-  animation: 1s infinite linear spectrum-fill-mask-2;
+  animation: spectrum-fill-mask-2 1s infinite linear;
 }
 @keyframes spectrum-fill-mask-1 {
   0% {
