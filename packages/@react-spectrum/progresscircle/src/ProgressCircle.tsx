@@ -34,7 +34,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
   let angle;
   let fillSubmask1Style: CSSProperties = {};
   let fillSubmask2Style: CSSProperties = {};
-  let ariaValue = undefined;
+  let ariaValue;
 
   if (!isIndeterminate) {
     value = Math.min(Math.max(+value, 0), 100);
@@ -71,16 +71,22 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
       aria-valuenow={ariaValue}
       aria-valuemin={0}
       aria-valuemax={100}
-      {...filterDOMProps(otherProps)} >
+      {...filterDOMProps(otherProps)}>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >
-          <div className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')} style={fillSubmask1Style}>
+          <div
+            className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
+            data-testid="fillSubMask1" 
+            style={fillSubmask1Style}>
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask2')} >
-          <div className={classNames(styles, 'spectrum-CircleLoader-fillSubMask2')} style={fillSubmask2Style}>
+          <div
+            className={classNames(styles, 'spectrum-CircleLoader-fillSubMask2')}
+            data-testid="fillSubMask2"
+            style={fillSubmask2Style} >
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>
