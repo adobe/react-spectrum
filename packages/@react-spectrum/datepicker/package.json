@@ -11,6 +11,7 @@
   "dependencies": {
     "@spectrum-css/inputgroup": "^2.0.0-alpha",
     "@spectrum-css/textfield": "^2.0.0-alpha",
+    "@spectrum-css/vars": "^2.0.0-alpha",
     "@react-aria/datepicker": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",

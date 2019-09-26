@@ -1,8 +1,8 @@
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+import themeLight from '@spectrum-css/vars/dist/spectrum-light-unique.css';
 import {Tray} from '../';
 
 let theme = {

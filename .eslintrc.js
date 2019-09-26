@@ -246,7 +246,7 @@ module.exports = {
       ERROR,
       {
         ignore: [
-          '@adobe/spectrum-css-temp',
+          '@adobe/spectrum-css',
           '@react/react-spectrum',
           '@spectrum-icons/ui',
           '@spectrum-icons/workflow'

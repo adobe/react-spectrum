@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '@spectrum-css/commons/index.css';
-@import './font.css';
+@import 'font.css';
 
 @mixin typography .spectrum-Body1 {}
 @mixin typography .spectrum-Body2 {}

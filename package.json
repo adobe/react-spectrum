@@ -21,7 +21,8 @@
     "chromatic": "CHROMATIC_APP_CODE=k5oflhpwx98 chromatic test --build-script-name build-storybook"
   },
   "workspaces": [
-    "packages/*/*"
+    "packages/*/*",
+    "packages/*/*/*"
   ],
   "devDependencies": {
     "@actions/core": "^1.1.0",

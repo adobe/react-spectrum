@@ -2,8 +2,8 @@ import {Button} from '@react-spectrum/button';
 import customTheme from './custom-theme.css';
 import {Provider} from '../';
 import React from 'react';
-import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import scaleLarge from '@spectrum-css/vars/dist/spectrum-large-unique.css';
+import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
 import {storiesOf} from '@storybook/react';
 
 const THEME = {

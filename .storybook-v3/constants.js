@@ -1,9 +1,9 @@
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import themeLightest from '@adobe/spectrum-css-temp/vars/spectrum-lightest-unique.css';
-import themeDark from '@adobe/spectrum-css-temp/vars/spectrum-dark-unique.css';
-import themeDarkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest-unique.css';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
+import themeLight from '@spectrum-css/vars/dist/spectrum-light-unique.css';
+import themeLightest from '@spectrum-css/vars/dist/spectrum-lightest-unique.css';
+import themeDark from '@spectrum-css/vars/dist/spectrum-dark-unique.css';
+import themeDarkest from '@spectrum-css/vars/dist/spectrum-darkest-unique.css';
+import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+import scaleLarge from '@spectrum-css/vars/dist/spectrum-large-unique.css';
 
 const THEME = {
   light: themeLight,

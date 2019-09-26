@@ -13,6 +13,7 @@
     "@spectrum-css/popover": "^2.0.0-alpha",
     "@spectrum-css/tray": "^2.0.0-alpha",
     "@spectrum-css/underlay": "^2.0.0-alpha",
+    "@spectrum-css/vars": "^2.0.0-alpha",
     "@react-aria/overlays": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",

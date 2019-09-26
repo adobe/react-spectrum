@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@spectrum-css/dialog": "^2.0.0-alpha",
+    "@spectrum-css/vars": "^2.0.0-alpha",
     "@react-aria/dialog": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/interactions": "^3.0.0",
