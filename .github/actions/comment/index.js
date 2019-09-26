@@ -10,7 +10,7 @@ async function run() {
       ...github.context.repo,
       commit_sha: github.context.sha
     });
-
+    console.log('prs', prs);
     if (!prs) {
       return;
     }
