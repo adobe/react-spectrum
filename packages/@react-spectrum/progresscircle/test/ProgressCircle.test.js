@@ -1,5 +1,5 @@
-import {ProgressCircle} from '../';
 import {cleanup, render} from '@testing-library/react';
+import {ProgressCircle} from '../';
 import React from 'react';
 import V2ProgressCircle from '@react/react-spectrum/Wait';
 

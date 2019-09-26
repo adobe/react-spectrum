@@ -1,6 +1,5 @@
-import {action} from '@storybook/addon-actions';
-import {ProgressCircle, ProgressCircleProps} from '../src';
 import {number, withKnobs} from '@storybook/addon-knobs';
+import {ProgressCircle, ProgressCircleProps} from '../src';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -44,23 +43,19 @@ storiesOf('ProgressCircle', module)
   )
   .add(
     'variant: overBackground',
-    () => {
-      return (
-        <div style={grayedBoxStyle}>
-          {render({variant: 'overBackground'})}
-        </div>
-      );
-    }
+    () => (
+      <div style={grayedBoxStyle}>
+        {render({variant: 'overBackground'})}
+      </div>
+    )
   )
   .add(
     'isCentered: true',
-    () => {
-      return (
-        <div style={centeredBoxStyle}>
-          {render({isCentered: true})}
-        </div>
-      );
-    }
+    () => (
+      <div style={centeredBoxStyle}>
+        {render({isCentered: true})}
+      </div>
+    )
   )
   .add(
     'isIndeterminate: false',

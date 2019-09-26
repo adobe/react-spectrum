@@ -1,7 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject, CSSProperties} from 'react';
+import React, {CSSProperties, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -51,7 +51,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
   }
 
   return (
-   <div
+    <div
       className={
         classNames(
           styles,
