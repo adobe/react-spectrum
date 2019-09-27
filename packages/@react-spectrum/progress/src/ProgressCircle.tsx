@@ -1,26 +1,22 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
-import React, {CSSProperties, RefObject} from 'react';
+import {ProgressCircleProps} from '@react-types/progress';
+import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
+import {useProgressCircle} from '@react-aria/progress';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface ProgressCircleProps extends DOMProps {
-  value?: number,
-  size?: 'S' | 'M' | 'L',
-  variant?: 'overBackground',
-  isCentered?: boolean,
-  isIndeterminate?: boolean
-}
-
 export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {
-    value: 0,
-    size: 'M',
-    isCentered: false,
-    isIndeterminate: true
-  };
-  let completeProps = Object.assign({}, defaults, useProviderProps(props));
+  props = Object.assign(
+    {},
+    {
+      value: 0,
+      size: 'M',
+      isCentered: false,
+      isIndeterminate: true
+    },
+    useProviderProps(props)
+  );
   let {
     value,
     size,
@@ -29,26 +25,9 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
     isIndeterminate,
     className,
     ...otherProps
-  } = completeProps;
+  } = props;
 
-  let angle;
-  let fillSubmask1Style: CSSProperties = {};
-  let fillSubmask2Style: CSSProperties = {};
-  let ariaValue;
-
-  if (!isIndeterminate) {
-    value = Math.min(Math.max(+value, 0), 100);
-    ariaValue = value;
-    if (value > 0 && value <= 50) {
-      angle = -180 + (value / 50 * 180);
-      fillSubmask1Style.transform = 'rotate(' + angle + 'deg)';
-      fillSubmask2Style.transform = 'rotate(-180deg)';
-    } else if (value > 50) {
-      angle = -180 + (value - 50) / 50 * 180;
-      fillSubmask1Style.transform = 'rotate(0deg)';
-      fillSubmask2Style.transform = 'rotate(' + angle + 'deg)';
-    }
-  }
+  let {progressProps, subMask1Style, subMask2Style} = useProgressCircle({value, isIndeterminate});
 
   return (
     <div
@@ -67,10 +46,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
         )
       }
       ref={ref}
-      role="progressbar"
-      aria-valuenow={ariaValue}
-      aria-valuemin={0}
-      aria-valuemax={100}
+      {...progressProps}
       {...filterDOMProps(otherProps)}>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
@@ -78,7 +54,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
             data-testid="fillSubMask1" 
-            style={fillSubmask1Style}>
+            style={subMask1Style}>
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>
@@ -86,7 +62,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask2')}
             data-testid="fillSubMask2"
-            style={fillSubmask2Style} >
+            style={subMask2Style} >
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>

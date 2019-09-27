@@ -1,5 +1,6 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
-import {ProgressCircle, ProgressCircleProps} from '../src';
+import {ProgressCircle} from '../src';
+import {ProgressCircleProps} from '@react-types/progress';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -27,7 +28,7 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-storiesOf('ProgressCircle', module)
+storiesOf('Progress/ProgressCircle', module)
   .addDecorator(withKnobs)
   .add(
     'Default',
