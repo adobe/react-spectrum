@@ -4,30 +4,19 @@ import {ProgressCircleProps} from '@react-types/progress';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressCircle} from '@react-aria/progress';
-import {useProviderProps} from '@react-spectrum/provider';
 
 export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref: RefObject<HTMLElement>) => {
-  props = Object.assign(
-    {},
-    {
-      value: 0,
-      size: 'M',
-      isCentered: false,
-      isIndeterminate: true
-    },
-    useProviderProps(props)
-  );
   let {
     value,
-    size,
+    size = 'M',
     variant,
-    isCentered,
-    isIndeterminate,
+    isCentered = false,
+    isIndeterminate = true,
     className,
     ...otherProps
   } = props;
 
-  let {progressProps, subMask1Style, subMask2Style} = useProgressCircle({value, isIndeterminate});
+  let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value, isIndeterminate});
 
   return (
     <div
@@ -46,7 +35,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
         )
       }
       ref={ref}
-      {...progressProps}
+      {...ariaProps}
       {...filterDOMProps(otherProps)}>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >

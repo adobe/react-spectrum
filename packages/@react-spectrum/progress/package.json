@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0",
+    "@react-aria/i18n": "^3.0.0",
     "@react-aria/progress": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",

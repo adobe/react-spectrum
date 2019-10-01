@@ -2,7 +2,7 @@ import {AllHTMLAttributes, CSSProperties} from 'react';
 import {ProgressCircleProps} from '@react-types/progress';
 
 interface ProgressCircleAria   {
-  progressProps: AllHTMLAttributes<HTMLDivElement>,
+  ariaProps: AllHTMLAttributes<HTMLDivElement>,
   subMask1Style: CSSProperties,
   subMask2Style: CSSProperties
 }
@@ -35,7 +35,7 @@ export function useProgressCircle({
   }
 
   return {
-    progressProps: {
+    ariaProps: {
       'aria-valuenow': ariaValueNow,
       'aria-valuemin': ariaValueMin,
       'aria-valuemax': ariaValueMax,
