@@ -28,17 +28,11 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'value: 50',
-    () => {
-      const value = number('Value', 50, sliderOptions);
-      return render({value});
-    }
+    () => render({value: 50})
   )
   .add(
     'value: 100',
-    () => {
-      const value = number('Value', 100, sliderOptions);
-      return render({value});
-    }
+    () => render({value: 100})
   )
   .add(
     'size: S',

@@ -30,14 +30,22 @@ export function useProgressBar({
 
   const {labelAriaProps, labelledComponentAriaProps} = useLabel({}, {'aria-label': ariaLabel});
 
-  let percentage = Math.min(Math.max(+value, min), max) / (max - min);
+  let decimalPercentage = Math.min(Math.max(+value, min), max) / (max - min);
+  let percentage = 100 * decimalPercentage;
   let width;
   if (!isIndeterminate) {
-    width = `${100 * percentage}%`;
+    width = `${percentage}%`;
   }
 
-  let valueNow = formatOptions.style === DEFAULT_FORMAT_STYLE ? percentage : value;
-  let formattedValueLabel = useNumberFormatter(formatOptions).format(valueNow);
+  let valueNow, formattedValueLabel;
+  let formatter = useNumberFormatter(formatOptions);
+  if (formatOptions.style === DEFAULT_FORMAT_STYLE) {
+    formattedValueLabel = formatter.format(decimalPercentage);
+    valueNow = percentage;
+  } else {
+    formattedValueLabel = formatter.format(value);
+    valueNow = value;
+  }
 
   return {
     ariaProps: {
