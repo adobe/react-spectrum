@@ -19,6 +19,7 @@ export function UIIcon({
   if (provider !== null) {
     scale = provider.scale === 'large' ? 'L' : 'M';
   }
+  console.log(styles);
 
   return React.cloneElement(children, {
     ...props,
@@ -30,10 +31,11 @@ export function UIIcon({
     className: classNames(
       styles,
       children.props.className,
-      'spectrum-Icon',
+      'spectrum-UIIcon',
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      className)
+      className
+    )
   });
 }
