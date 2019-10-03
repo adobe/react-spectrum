@@ -1,51 +1,40 @@
-import {AllHTMLAttributes, CSSProperties} from 'react';
+import {AllHTMLAttributes} from 'react';
 import {ProgressCircleProps} from '@react-types/progress';
+import {useId} from '@react-aria/utils';
 
 interface ProgressCircleAria   {
-  ariaProps: AllHTMLAttributes<HTMLDivElement>,
-  subMask1Style: CSSProperties,
-  subMask2Style: CSSProperties
+  ariaProps: AllHTMLAttributes<HTMLDivElement>
 }
 
-export function useProgressCircle({
-  value = 0,
-  isIndeterminate = true
-}: ProgressCircleProps): ProgressCircleAria {
+export function useProgressCircle(props: ProgressCircleProps): ProgressCircleAria {
+  let {
+    id,
+    value = 0,
+    isIndeterminate = true,
+    'aria-label': ariaLabel
+  } = props;
 
   let ariaValueMin = 0;
   let ariaValueMax = 100;
   let ariaValueNow;
 
-  let transformSubMask1;
-  let transformSubMask2;
-
   if (!isIndeterminate) {
-    let angle;
-    value = Math.min(Math.max(+value, 0), 100);
-    ariaValueNow = value;
-    if (value > 0 && value <= 50) {
-      angle = -180 + (value / 50 * 180);
-      transformSubMask1 = 'rotate(' + angle + 'deg)';
-      transformSubMask2 = 'rotate(-180deg)';
-    } else if (value > 50) {
-      angle = -180 + (value - 50) / 50 * 180;
-      transformSubMask1 = 'rotate(0deg)';
-      transformSubMask2 = 'rotate(' + angle + 'deg)';
-    }
+    ariaValueNow = Math.min(Math.max(+value, 0), 100);
+  }
+
+  if (!ariaLabel) {
+    console.warn('You must specify an aria-label for accessibility');
   }
 
   return {
     ariaProps: {
+      id: useId(id),
+      'aria-label': ariaLabel,
       'aria-valuenow': ariaValueNow,
       'aria-valuemin': ariaValueMin,
       'aria-valuemax': ariaValueMax,
+      'aria-valuetext': `${ariaValueNow}%`,
       role: 'progressbar'
-    },
-    subMask1Style: {
-      transform: transformSubMask1
-    },
-    subMask2Style: {
-      transform: transformSubMask2
     }
   };
 }

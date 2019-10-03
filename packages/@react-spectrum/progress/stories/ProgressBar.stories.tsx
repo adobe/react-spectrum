@@ -11,6 +11,11 @@ const sliderOptions = {
   step: 1
 };
 
+const formatOptions = {
+  style: 'currency',
+  currency: 'JPY'
+};
+
 const grayedBoxStyle: CSSProperties = {
   width: '250px',
   height: '60px',
@@ -59,10 +64,7 @@ storiesOf('Progress/ProgressBar', module)
       return render({
         showValueLabel: true,
         value,
-        formatOptions: {
-          style: 'currency',
-          currency: 'JPY'
-        }
+        formatOptions
       });
     }
   )
@@ -155,10 +157,7 @@ storiesOf('Progress/ProgressBar', module)
       labelPosition: 'top',
       max: 2147483648,
       value: 715827883,
-      formatOptions: {
-        style: 'currency',
-        currency: 'JPY'
-      }
+      formatOptions
     })
   );
 

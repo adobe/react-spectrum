@@ -63,7 +63,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-flow: row;
   justify-content: space-between;
-  width: auto;
+  width: inline-size;
 
   .spectrum-BarLoader-label {
     margin-inline-end: var(--spectrum-barloader-large-label-gap-x);

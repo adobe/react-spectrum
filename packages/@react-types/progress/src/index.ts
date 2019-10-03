@@ -2,8 +2,9 @@ import {DOMProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface PogressBaseProps extends DOMProps {
+  'aria-label'?: string, // if no children, aria-label is required
   value?: number,
-  isIndeterminate?: boolean
+  isIndeterminate?: boolean,
 }
 
 export interface ProgressCircleProps extends PogressBaseProps {
@@ -15,7 +16,6 @@ export interface ProgressCircleProps extends PogressBaseProps {
 export interface ProgressBarProps extends PogressBaseProps {
   size?: 'S' | 'L',
   children?: ReactNode, // pass in children to render label
-  'aria-label'?: string, // if no children, aria-label is required
   labelPosition?: 'top' | 'side',
   showValueLabel?: boolean, // true by default if label, false by default if not
   formatOptions?: Intl.NumberFormatOptions, // defaults to formatting as a percentage.

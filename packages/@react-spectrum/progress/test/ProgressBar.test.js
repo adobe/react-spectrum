@@ -60,79 +60,11 @@ describe('ProgressBar', function () {
 
   it.each`
     Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{size: 'S'}}
-  `('$Name supports small size', function ({Component, props}) {
+    ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', className: 'testClass'}}
+    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{size: 'S', className: 'testClass'}}
+  `('$Name supports custom class', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
     let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--sideLabel'
-    );
-  });
-
-  it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{variant: 'positive', size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{variant: 'positive', size: 'S'}}
-  `('$Name supports variant positive', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--sideLabel is-positive'
-    );
-  });
-
-  it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{variant: 'warning', size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{variant: 'warning', size: 'S'}}
-  `('$Name supports variant warning', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--sideLabel is-warning'
-    );
-  });
-
-  it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{variant: 'critical', size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{variant: 'critical', size: 'S'}}
-  `('$Name supports variant critical', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--sideLabel is-critical'
-    );
-  });
-
-  it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{variant: 'overBackground', size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{variant: 'overBackground', size: 'S'}}
-  `('$Name supports variant overBackground', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--sideLabel spectrum-BarLoader--overBackground'
-    );
-  });
-
-  it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{isIndeterminate: true, size: 'S'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{isIndeterminate: true, size: 'S'}}
-  `('$Name supports indeterminate', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressBar = getByRole('progressbar');
-    expect(progressBar).toHaveAttribute(
-      'class',
-      'spectrum-BarLoader spectrum-BarLoader--small spectrum-BarLoader--indeterminate spectrum-BarLoader--sideLabel'
-    );
+    expect(progressBar).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 });

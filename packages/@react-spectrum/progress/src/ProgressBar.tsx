@@ -23,10 +23,15 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
     ariaProps,
     labelAriaProps,
     formattedValueLabel,
-    fillStyle
+    percentage
   } = useProgressBar(props);
 
   const {direction} = useLocale();
+
+  let width;
+  if (!isIndeterminate) {
+    width = `${percentage}%`;
+  }
 
   return (
     <div
@@ -66,7 +71,7 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
       <div className={classNames(styles, 'spectrum-BarLoader-track')} >
         <div
           className={classNames(styles, 'spectrum-BarLoader-fill')}
-          style={fillStyle} />
+          style={{width}} />
       </div>
     </div>
   );

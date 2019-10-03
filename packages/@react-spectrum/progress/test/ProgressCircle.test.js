@@ -103,76 +103,11 @@ describe('ProgressCircle', function () {
 
   it.each`
     Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 60, isIndeterminate: false}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 60, indeterminate: false}}
-  `('$Name handles value prop', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute('aria-valuenow', '60');
-  });
-
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{isIndeterminate: true}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{indeterminate: true}}
-  `('$Name supports indeterminate', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute(
-      'class',
-      'spectrum-CircleLoader spectrum-CircleLoader--indeterminate'
-    );
-  });
-
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{isCentered: true}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{centered: true}}
-  `('$Name supports centered', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute(
-      'class',
-      'spectrum-CircleLoader spectrum-CircleLoader--indeterminate react-spectrum-Wait--centered'
-    );
-  });
-
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{size: 'L'}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{size: 'L'}}
-  `('$Name supports size L', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute(
-      'class',
-      'spectrum-CircleLoader spectrum-CircleLoader--indeterminate spectrum-CircleLoader--large'
-    );
-  });
-
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{size: 'S'}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{size: 'S'}}
-  `('$Name supports size S', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute(
-      'class',
-      'spectrum-CircleLoader spectrum-CircleLoader--indeterminate spectrum-CircleLoader--small'
-    );
-  });
-
-  it.each`
-    Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{className: 'testClass'}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
   `('$Name supports custom class', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
     let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute(
-      'class',
-      'spectrum-CircleLoader spectrum-CircleLoader--indeterminate testClass'
-    );
+    expect(progressCircle).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 });

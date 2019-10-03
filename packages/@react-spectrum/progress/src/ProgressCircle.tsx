@@ -1,13 +1,12 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import {ProgressCircleProps} from '@react-types/progress';
-import React, {RefObject} from 'react';
+import React, {CSSProperties, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressCircle} from '@react-aria/progress';
 
 export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref: RefObject<HTMLElement>) => {
   let {
-    value,
     size = 'M',
     variant,
     isCentered = false,
@@ -16,7 +15,24 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
     ...otherProps
   } = props;
 
-  let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value, isIndeterminate});
+  let {ariaProps} = useProgressCircle(props);
+
+  let subMask1Style: CSSProperties = {};
+  let subMask2Style: CSSProperties = {};
+
+  if (!isIndeterminate) {
+    let angle;
+    let ariaValue = ariaProps['aria-valuenow'];
+    if (ariaValue > 0 && ariaValue <= 50) {
+      angle = -180 + (ariaValue / 50 * 180);
+      subMask1Style.transform = 'rotate(' + angle + 'deg)';
+      subMask2Style.transform = 'rotate(-180deg)';
+    } else if (ariaValue > 50) {
+      angle = -180 + (ariaValue - 50) / 50 * 180;
+      subMask1Style.transform = 'rotate(0deg)';
+      subMask2Style.transform = 'rotate(' + angle + 'deg)';
+    }
+  }
 
   return (
     <div

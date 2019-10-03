@@ -1,52 +1,42 @@
 import {cleanup} from '@testing-library/react';
 import React from 'react';
+import {renderHook} from 'react-hooks-testing-library';
 import {useProgressCircle} from '../';
 
 describe('useProgressCircle', function () {
   afterEach(cleanup);
 
+  let state = {};
+
+  let renderProgressCircleHook = (props) => {
+    let {result} = renderHook(() => useProgressCircle(props, state));
+    return result.current;
+  };
+
   it('with default props if no props are provided', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({});
+    let {ariaProps} = renderProgressCircleHook({});
     expect(ariaProps.role).toBe('progressbar');
     expect(ariaProps['aria-valuenow']).toBeUndefined();
     expect(ariaProps['aria-valuemin']).toBe(0);
     expect(ariaProps['aria-valuemax']).toBe(100);
-    expect(subMask1Style.transform).toBeUndefined();
-    expect(subMask2Style.transform).toBeUndefined();
+    expect(ariaProps.id).toBeDefined();
   });
 
-  it('with none of the circle props for 0%', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value: 0, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(0);
-    expect(subMask1Style.transform).toBeUndefined();
-    expect(subMask2Style.transform).toBeUndefined();
-  });
-
-  it('with quarter of the circle props for 25%', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value: 25, isIndeterminate: false});
+  it('with provided props', () => {
+    let {ariaProps} = renderProgressCircleHook({value: 25, isIndeterminate: false});
     expect(ariaProps['aria-valuenow']).toBe(25);
-    expect(subMask1Style.transform).toBe('rotate(-90deg)');
-    expect(subMask2Style.transform).toBe('rotate(-180deg)');
+    expect(ariaProps['aria-valuetext']).toBe('25%');
   });
 
-  it('with half the circle props for 50%', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value: 50, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(50);
-    expect(subMask1Style.transform).toBe('rotate(0deg)');
-    expect(subMask2Style.transform).toBe('rotate(-180deg)');
+  it('with provided props value -1', () => {
+    let {ariaProps} = renderProgressCircleHook({value: -1, isIndeterminate: false});
+    expect(ariaProps['aria-valuenow']).toBe(0);
+    expect(ariaProps['aria-valuetext']).toBe('0%');
   });
 
-  it('with quarter of the circle props for 75%', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value: 75, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(75);
-    expect(subMask1Style.transform).toBe('rotate(0deg)');
-    expect(subMask2Style.transform).toBe('rotate(-90deg)');
-  });
-
-  it('with all of the circle props for 100%', () => {
-    let {ariaProps, subMask1Style, subMask2Style} = useProgressCircle({value: 100, isIndeterminate: false});
+  it('with provided props value 1000', () => {
+    let {ariaProps} = renderProgressCircleHook({value: 1000, isIndeterminate: false});
     expect(ariaProps['aria-valuenow']).toBe(100);
-    expect(subMask1Style.transform).toBe('rotate(0deg)');
-    expect(subMask2Style.transform).toBe('rotate(0deg)');
+    expect(ariaProps['aria-valuetext']).toBe('100%');
   });
 });
