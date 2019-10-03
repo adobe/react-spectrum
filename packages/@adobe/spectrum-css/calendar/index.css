@@ -12,22 +12,6 @@ governing permissions and limitations under the License.
 
 @import '@spectrum-css/commons/index.css';
 
-/* topdoc
-{{ calendar/calendar.yml }}
-*/
-
-/* topdoc
-{{ calendar/calendar-disabled.yml }}
-*/
-
-/* topdoc
-{{ calendar/calendar-focused.yml }}
-*/
-
-/* topdoc
-{{ calendar/calendar-range.yml }}
-*/
-
 :root {
   --spectrum-calendar-border-radius-reset: 0;
   --spectrum-calendar-border-width-reset: 0;
