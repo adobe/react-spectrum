@@ -3,6 +3,7 @@ import {cleanup, render, within} from '@testing-library/react';
 import * as createId from '@react/react-spectrum/utils/createId';
 import {FormItem} from '../';
 import React from 'react';
+import _3DMaterials from '@spectrum-icons/workflow/3DMaterials';
 import * as useId from '@react-aria/utils/src/useId';
 import {FormItem as V2FormItem} from '@react/react-spectrum/Form';
 

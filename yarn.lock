@@ -2,30 +2,15 @@
 # yarn lockfile v1
 
 
-"@a4u/react-spectrum-ui@0.0.2":
-  version "0.0.2"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release-local/@a4u/react-spectrum-ui/-/@a4u/react-spectrum-ui-0.0.2.tgz#378580b3cf042607b2ead0beb18fc89377c0797f"
-  integrity sha1-N4WAs88EJgey6tC+sY/Ik3fAeX8=
-
 "@a4u/react-spectrum-ui@^1.0.0":
   version "1.0.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release-local/@a4u/react-spectrum-ui/-/@a4u/react-spectrum-ui-1.0.0.tgz#5c6913d5c6050c97f20779a5a42126808dc94971"
   integrity sha1-XGkT1cYFDJfyB3mlpCEmgI3JSXE=
 
-"@a4u/react-spectrum-workflow-color@0.0.6":
-  version "0.0.6"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release-local/@a4u/react-spectrum-workflow-color/-/@a4u/react-spectrum-workflow-color-0.0.6.tgz#bc6c23a5f8bc7fd85a3f26f8e1b3b1b48c2a01d9"
-  integrity sha1-vGwjpfi8f9haPyb44bOxtIwqAdk=
-
 "@a4u/react-spectrum-workflow-color@^1.0.0":
   version "1.0.0"
   resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release-local/@a4u/react-spectrum-workflow-color/-/@a4u/react-spectrum-workflow-color-1.0.0.tgz#e6085d4fdd5009160236cd433d9622c518d269c7"
   integrity sha1-5ghdT91QCRYCNs1DPZYixRjSacc=
-
-"@a4u/react-spectrum-workflow@0.0.6":
-  version "0.0.6"
-  resolved "https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-a4u-release-local/@a4u/react-spectrum-workflow/-/@a4u/react-spectrum-workflow-0.0.6.tgz#d942b1694546000183b01fc0003314162890ae52"
-  integrity sha1-2UKxaUVGAAGDsB/AADMUFiiQrlI=
 
 "@a4u/react-spectrum-workflow@^1.0.0":
   version "1.0.0"

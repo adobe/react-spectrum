@@ -19,7 +19,6 @@ export function UIIcon({
   if (provider !== null) {
     scale = provider.scale === 'large' ? 'L' : 'M';
   }
-  console.log(styles);
 
   return React.cloneElement(children, {
     ...props,
