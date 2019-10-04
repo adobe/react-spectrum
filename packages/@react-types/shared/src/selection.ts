@@ -12,6 +12,7 @@ export interface MultipleSelectionBase extends SelectionOptions {
 }
 
 export interface SingleSelectionBase {
+  allowsEmptySelection?: boolean,
   selectedItem?: any,
   defaultSelectedItem?: any,
   onSelectionChange?: (selectedItem: any) => void,
