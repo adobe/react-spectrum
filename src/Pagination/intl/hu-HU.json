@@ -1,4 +1,6 @@
 {
+  "pagination": "Oldalválasztás",
+  "page": "Oldal",
   "next": "Következő",
   "page_count": "/ {n, plural, =one{# oldal} other{# oldal}}",
   "previous": "Előző"

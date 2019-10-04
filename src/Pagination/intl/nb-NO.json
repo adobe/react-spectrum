@@ -1,4 +1,6 @@
 {
+  "pagination": "Navigering på siden",
+  "page": "Siden",
   "next": "Neste",
   "page_count": "av {n, plural, =one{# side} other{# sider}}",
   "previous": "Forrige"

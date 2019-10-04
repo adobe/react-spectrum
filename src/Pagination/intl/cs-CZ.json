@@ -1,4 +1,6 @@
 {
+  "pagination": "Navigace ve stránce",
+  "page": "Stránka",
   "next": "Další",
   "page_count": "z {n, plural, =one{# stránky} other{# stránek}}",
   "previous": "Předchozí"

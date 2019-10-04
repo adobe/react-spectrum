@@ -1,4 +1,6 @@
 {
+  "pagination": "Навигация по страницам",
+  "page": "Страница",
   "next": "Далее",
   "page_count": "из {n, plural, =one{# стр.} other{# стр.}}",
   "previous": "Назад"

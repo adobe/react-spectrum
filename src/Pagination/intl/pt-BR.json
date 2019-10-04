@@ -1,4 +1,6 @@
 {
+  "pagination": "Navegação da página",
+  "page": "Página",
   "next": "Próximo",
   "page_count": "de {n, plural, =one{# página} other{# páginas}}",
   "previous": "Anterior"

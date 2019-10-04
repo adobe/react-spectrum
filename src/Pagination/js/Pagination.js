@@ -20,12 +20,15 @@ import Button from '../../Button';
 import ChevronLeftMedium from '../../Icon/core/ChevronLeftMedium';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
+import LiveRegionAnnouncer from '../../utils/LiveRegionAnnouncer';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import Textfield from '../../Textfield';
+import '../style/index.styl';
 
 importSpectrumCSS('pagination');
 importSpectrumCSS('splitbutton');
@@ -96,10 +99,25 @@ export default class Pagination extends Component {
     pageInput: this.defaultPage
   };
 
+  constructor(props) {
+    super(props);
+    this.defaultId = createId();
+
+    // ref for the Textfield element
+    this.textfieldRef;
+  }
+
   componentWillReceiveProps(nextProps) {
     const currentPage = nextProps.currentPage;
     if ('currentPage' in nextProps && !this.isInvalidPage(currentPage)) {
       this.setState({currentPage, pageInput: currentPage});
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let {currentPage, pageInput} = this.state;
+    if (currentPage === pageInput && pageInput !== prevState.pageInput) {
+      this.announcePageInputValue(pageInput);
     }
   }
 
@@ -113,35 +131,65 @@ export default class Pagination extends Component {
       return;
     }
     if (!('currentPage' in this.props)) {
-      this.setState({currentPage: pageNumber, pageInput: pageNumber});
+      this.setState(
+        {
+          currentPage: pageNumber,
+          pageInput: pageNumber
+        }
+      );
     }
     if (eventToFire) {
       eventToFire(pageNumber, event);
     }
   }
 
+  announcePageInputValue(pageNumber) {
+    if (this.props.variant === 'explicit' && pageNumber !== '') {
+      // Announce new value using a live region
+      LiveRegionAnnouncer.announceAssertive(pageNumber.toString());
+    }
+  }
+
+  onPageInputBlur() {
+    const {currentPage, pageInput} = this.state;
+    if (currentPage !== pageInput) {
+      this.setState({pageInput: currentPage});
+    }
+  }
+
   onPageInputChange(value) {
-    if (value === '' || !this.isInvalidPage(Number(value))) {
+    if (value === '' || !this.isInvalidPage(parseInt(value, 10))) {
       this.setState({pageInput: value});
     }
   }
 
   onKeyDown(event) {
-    let currentPage = Number(this.state.pageInput);
+    let pageInput = parseInt(this.state.pageInput, 10);
+    let currentPage = pageInput;
+    let isArrowKey = false;
     switch (event.key) {
       case 'ArrowUp':
       case 'Up':
         currentPage += 1;
+        isArrowKey = true;
         break;
       case 'ArrowDown':
       case 'Down':
         currentPage -= 1;
+        isArrowKey = true;
         break;
       case 'Enter':
       case ' ':
         return this.changePage(currentPage, this.props.onChange, event);
     }
-    this.onPageInputChange(currentPage);
+
+    if (currentPage !== pageInput) {
+      if (isArrowKey) {
+        this.changePage(currentPage, this.props.onChange, event);
+      } else {
+        this.onPageInputChange(currentPage);
+      }
+    }
   }
 
   onPrevious(e) {
@@ -157,15 +205,24 @@ export default class Pagination extends Component {
       mode,
       variant,
       totalPages,
+      id = this.defaultId,
+      'aria-label': ariaLabel = formatMessage('pagination'),
+      'aria-labelledby': ariaLabelledby,
       ...otherProps
     } = this.props;
 
     delete otherProps.onChange;
 
-    const {pageInput} = this.state;
+    let {pageInput} = this.state;
     const isButtonMode = variant === 'button';
     const isExplicitMode = variant === 'explicit';
     const buttonVariant = isButtonMode ? mode : 'action';
+    const isFirst = this.isInvalidPage(parseInt(pageInput, 10) - 1);
+    const isLast = this.isInvalidPage(parseInt(pageInput, 10) + 1);
+    const previousLabel = formatMessage('previous');
+    const inputLabel = formatMessage('page');
+    const nextLabel = formatMessage('next');
+    const counterId = `${id}-counter`;
 
     return (
       <nav
@@ -173,15 +230,25 @@ export default class Pagination extends Component {
           classNames({
             'spectrum-SplitButton': isButtonMode,
             'spectrum-SplitButton--left': isButtonMode,
+            'spectrum-Pagination': !isButtonMode,
             'spectrum-Pagination--explicit': isExplicitMode
-          })
+          },
+          'react-spectrum-Pagination')
         }
+        id={id}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
         {...filterDOMProps(otherProps)}>
         <Button
+          ref={b => this.prevButtonRef = b}
           onClick={this.onPrevious}
           variant={buttonVariant}
           quiet={!isButtonMode}
-          aria-label={formatMessage('previous')}
+          aria-label={isExplicitMode ? `${previousLabel}, ${pageInput}` : previousLabel}
+          aria-describedby={isExplicitMode ? counterId : null}
+          disabled={(isExplicitMode && isFirst) || null}
+          aria-disabled={(isButtonMode && isFirst) || null}
+          tabIndex={isFirst ? -1 : null}
           className={
             classNames({
               'spectrum-SplitButton-trigger': isButtonMode
@@ -192,29 +259,39 @@ export default class Pagination extends Component {
         { isExplicitMode &&
           [
             <Textfield
+              ref={t => this.textfieldRef = t}
               key={1}
               value={pageInput}
+              onBlur={this.onPageInputBlur}
               onChange={this.onPageInputChange}
               onKeyDown={this.onKeyDown}
+              aria-label={inputLabel}
+              aria-describedby={counterId}
               className="spectrum-Pagination-input" />,
             <span
               key={2}
+              id={counterId}
               className="spectrum-Body--secondary spectrum-Pagination-counter">
               {formatMessage('page_count', {n: totalPages})}
             </span>
           ]
         }
         <Button
+          ref={b => this.nextButtonRef = b}
           onClick={this.onNext}
           variant={buttonVariant}
           quiet={!isButtonMode}
-          aria-label={formatMessage('next')}
+          aria-label={isExplicitMode ? `${nextLabel}, ${pageInput}` : nextLabel}
+          aria-describedby={isExplicitMode ? counterId : null}
+          disabled={(isExplicitMode && isLast) || null}
+          aria-disabled={(isButtonMode && isLast) || null}
+          tabIndex={isLast ? -1 : null}
           className={
             classNames({
               'spectrum-SplitButton-action': isButtonMode
             })
           }>
-          <span className="spectrum-Button-label">{isButtonMode ? formatMessage('next') : ''}</span>
+          <span className="spectrum-Button-label">{isButtonMode ? nextLabel : ''}</span>
           <ChevronRightMedium />
         </Button>
       </nav>);
