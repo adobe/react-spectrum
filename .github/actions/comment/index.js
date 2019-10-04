@@ -11,7 +11,7 @@ async function run() {
       commit_sha: github.context.sha
     });
 
-    if (!prs) {
+    if (!prs || !prs.length) {
       return;
     }
 

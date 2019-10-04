@@ -18,7 +18,7 @@
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
     "plop": "plop",
-    "chromatic": "CHROMATIC_APP_CODE=qx7a91v30wc chromatic test --build-script-name build-storybook"
+    "chromatic": "CHROMATIC_APP_CODE=k5oflhpwx98 chromatic test --build-script-name build-storybook"
   },
   "workspaces": [
     "packages/*/*"
