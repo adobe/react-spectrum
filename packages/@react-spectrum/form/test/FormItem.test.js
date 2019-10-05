@@ -1,8 +1,8 @@
+import _3DMaterials from '@spectrum-icons/workflow/3DMaterials';
 import {cleanup, render, within} from '@testing-library/react';
 import * as createId from '@react/react-spectrum/utils/createId';
 import {FormItem} from '../';
 import React from 'react';
-import Twitter from '@spectrum-icons/workflow/Twitter';
 import * as useId from '@react-aria/utils/src/useId';
 import {FormItem as V2FormItem} from '@react/react-spectrum/Form';
 
@@ -13,7 +13,7 @@ describe('FormItem', () => {
   let datatestid = 'formItem';
   let useIdMock, createIdMock;
 
-  function renderFormItem(FormItemComponent, props, numChildren) {    
+  function renderFormItem(FormItemComponent, props, numChildren) {
     let component = (
       <FormItemComponent data-testid={datatestid} {...props} >
         {numChildren > 0 && <button data-testid="testbutton">test child</button>}
@@ -25,7 +25,7 @@ describe('FormItem', () => {
 
   beforeAll(() => {
     useIdMock = jest.spyOn(useId, 'useId').mockImplementation(() => id);
-    createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id); 
+    createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id);
   });
 
   afterAll(() => {
@@ -35,7 +35,7 @@ describe('FormItem', () => {
 
   afterEach(() => {
     cleanup();
-  }); 
+  });
 
   describe('with label', () => {
     it.each`
@@ -63,7 +63,7 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name supports an icon with the label if provided', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {label, labelFor, icon: <Twitter />}, numChildren);
+      let tree = renderFormItem(Component, {label, labelFor, icon: <_3DMaterials />}, numChildren);
       let fieldLabel = tree.getByText(label);
       expect(within(fieldLabel).getByRole('img')).toBeTruthy();
     });
@@ -134,7 +134,7 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name doesn\'t support an icon if label isn\'t provided', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {labelFor, icon: <Twitter />}, numChildren);
+      let tree = renderFormItem(Component, {labelFor, icon: <_3DMaterials />}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
       expect(within(fieldLabel).queryByRole('img')).toBeFalsy();
     });
@@ -197,10 +197,10 @@ describe('FormItem', () => {
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', 'second');
       expect(fieldLabel).toHaveAttribute('id', 'first');
-   
+
       let button = tree.getByTestId('testbutton');
       expect(button).toHaveAttribute('id', 'second');
-      expect(button).toHaveAttribute('aria-labelledby', 'first'); 
+      expect(button).toHaveAttribute('aria-labelledby', 'first');
     });
 
     it.each`
@@ -246,10 +246,10 @@ describe('FormItem', () => {
       expect(firstButton).toBeTruthy();
       expect(firstButton).not.toHaveAttribute('id');
       expect(firstButton).not.toHaveAttribute('aria-labelledby');
-      
+
       let secondButton = tree.getByTestId('testbutton2');
       expect(secondButton).not.toHaveAttribute('id');
-      expect(secondButton).not.toHaveAttribute('aria-labelledby'); 
+      expect(secondButton).not.toHaveAttribute('aria-labelledby');
     });
 
     it.each`
