@@ -10,7 +10,7 @@ function template(iconName) {
     iconRename = '_' + importName;
   }
   return (
-`import {${iconName} as IconComponent} from '@a4u/react-spectrum-workflow/dist/${importName}';
+`import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow/dist/${importName}';
 import {Icon} from '@react-spectrum/icon';
 import React from 'react';
 
@@ -21,5 +21,5 @@ export default function ${iconRename}(props) {
   );
 }
 
-generateIcons(path.dirname(require.resolve('@a4u/react-spectrum-workflow')), path.join(__dirname, '..', 'src'), exportNameRegex, template);
+generateIcons(path.dirname(require.resolve('@adobe/react-spectrum-workflow')), path.join(__dirname, '..', 'src'), exportNameRegex, template);
 
