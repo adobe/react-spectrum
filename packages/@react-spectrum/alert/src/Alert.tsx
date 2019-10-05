@@ -4,6 +4,7 @@ import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
 import React, {ReactNode} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/alert/dist/index-vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useMessageFormatter} from '@react-aria/i18n';

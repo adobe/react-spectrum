@@ -1,4 +1,5 @@
 packages/@spectrum-icons/color/**
 packages/@spectrum-icons/ui/**
 packages/@spectrum-icons/workflow/**
+packages/@adobe/spectrum-css/**
 node_modules

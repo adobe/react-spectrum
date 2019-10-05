@@ -5,7 +5,9 @@ import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from './types';
 import React, {RefObject, useContext, useEffect} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/page/dist/index-vars.css';
+// eslint-disable-next-line monorepo/no-internal-import
 import typographyStyles from '@spectrum-css/typography/dist/index-vars.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore

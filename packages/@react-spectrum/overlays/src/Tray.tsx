@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import trayStyles from '@spectrum-css/tray/dist/index-vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay} from '@react-aria/overlays';

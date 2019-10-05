@@ -1,5 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/icon/dist/index-vars.css';
 import {useProvider} from '@react-spectrum/provider';
 

@@ -1,5 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/tabs/dist/index-vars.css';
 import {useTab} from '@react-aria/tabs';
 

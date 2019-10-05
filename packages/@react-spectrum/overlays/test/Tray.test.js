@@ -1,7 +1,9 @@
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+// eslint-disable-next-line monorepo/no-internal-import
 import themeLight from '@spectrum-css/vars/dist/spectrum-light-unique.css';
 import {Tray} from '../';
 

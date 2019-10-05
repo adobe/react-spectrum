@@ -4,6 +4,7 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/search/dist/index-vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';

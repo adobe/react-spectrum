@@ -1,5 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {forwardRef, ReactNode, RefObject} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/well/dist/index-vars.css';
 
 interface WellProps extends React.AllHTMLAttributes<HTMLElement> {

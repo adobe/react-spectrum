@@ -1,6 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {useRef} from 'react';
 import {SplitViewProps} from '@react-types/shared';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/splitview/dist/index-vars.css';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';

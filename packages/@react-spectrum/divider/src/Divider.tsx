@@ -2,6 +2,7 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/rule/dist/index-vars.css';
 import {useSeparator} from '@react-aria/separator';
 

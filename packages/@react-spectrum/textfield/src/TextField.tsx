@@ -5,6 +5,7 @@ import {FocusRing} from '@react-aria/focus';
 import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/textfield/dist/index-vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';

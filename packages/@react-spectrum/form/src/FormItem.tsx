@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import {FormItemProps} from './types';
 import {LabelBase} from './LabelBase';
 import React, {forwardRef, RefObject} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/fieldlabel/dist/index-vars.css';
 
 export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, className, children, ...otherProps}: FormItemProps, ref: RefObject<HTMLDivElement> & RefObject<HTMLLabelElement>) => {

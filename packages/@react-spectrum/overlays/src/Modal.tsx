@@ -1,4 +1,5 @@
 import {classNames} from '@react-spectrum/utils';
+// eslint-disable-next-line monorepo/no-internal-import
 import modalStyles from '@spectrum-css/modal/dist/index-vars.css';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';

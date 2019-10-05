@@ -3,6 +3,7 @@ import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
 import React, {ReactNode, RefObject, useRef} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/popover/dist/index-vars.css';
 import {useOverlay} from '@react-aria/overlays';
 

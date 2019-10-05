@@ -8,6 +8,7 @@ import {FocusRing, FocusScope, useFocusManager} from '@react-aria/focus';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
 import {SpectrumDateRangePickerProps} from './types';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/inputgroup/dist/index-vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';

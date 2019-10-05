@@ -8,7 +8,9 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import {SpectrumDatePickerProps} from './types';
+// eslint-disable-next-line monorepo/no-internal-import
 import '@spectrum-css/textfield/dist/index-vars.css'; // HACK: must be included BEFORE inputgroup
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/inputgroup/dist/index-vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';

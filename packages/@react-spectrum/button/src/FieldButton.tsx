@@ -2,6 +2,7 @@ import {ButtonBase} from './Button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {RefObject, useRef} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/button/dist/index-vars.css';
 import {useButton} from '@react-aria/button';
 

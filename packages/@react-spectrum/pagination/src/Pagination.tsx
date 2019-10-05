@@ -4,8 +4,10 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import intlMessages from '../intl';
 import React from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/pagination/dist/index-vars.css';
 import {TextField} from '@react-spectrum/textfield';
+// eslint-disable-next-line monorepo/no-internal-import
 import typographyStyles from '@spectrum-css/typography/dist/index-vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';

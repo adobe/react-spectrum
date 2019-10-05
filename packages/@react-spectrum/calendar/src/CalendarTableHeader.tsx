@@ -1,6 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import {setDay} from 'date-fns'; // pull these out individually
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/calendar/dist/index-vars.css';
 import {useDateFormatter} from '@react-aria/i18n';
 

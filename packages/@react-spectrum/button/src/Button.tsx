@@ -4,6 +4,7 @@ import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/button/dist/index-vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';

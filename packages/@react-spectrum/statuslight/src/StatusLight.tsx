@@ -1,5 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {forwardRef, ReactNode, RefObject} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/statuslight/dist/index-vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 

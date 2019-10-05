@@ -1,6 +1,7 @@
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/calendar/dist/index-vars.css';
 import {useCalendarCell} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';

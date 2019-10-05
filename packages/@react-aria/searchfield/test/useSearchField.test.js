@@ -2,7 +2,9 @@ import intlMessages from '../src/intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
+// eslint-disable-next-line monorepo/no-internal-import
 import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+// eslint-disable-next-line monorepo/no-internal-import
 import themeLight from '@spectrum-css/vars/dist/spectrum-light-unique.css';
 import {useSearchField} from '../';
 

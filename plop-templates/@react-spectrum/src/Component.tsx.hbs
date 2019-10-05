@@ -1,7 +1,8 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
+// eslint-disable-next-line monorepo/no-internal-import
+import styles from '@spectrum-css/{{componentCSS}}/dist/index-vars.css';
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
 import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';

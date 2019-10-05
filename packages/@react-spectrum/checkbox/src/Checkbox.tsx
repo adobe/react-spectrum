@@ -4,6 +4,7 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, RefObject, useRef} from 'react';
+// eslint-disable-next-line monorepo/no-internal-import
 import styles from '@spectrum-css/checkbox/dist/index-vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useToggleState} from '@react-stately/toggle';
