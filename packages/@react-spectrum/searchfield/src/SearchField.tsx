@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
@@ -7,7 +7,7 @@ import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
-import {useTextFieldState} from '@react-stately/textfield';
+import {useSearchFieldState} from '@react-stately/searchfield';
 
 interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
 
@@ -20,10 +20,11 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
     ...otherProps
   } = props;
 
-  let state = useTextFieldState(props);
+  let state = useSearchFieldState(props);
   let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {searchDivProps, searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
-
+  
+  // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <div
       {...searchDivProps}
@@ -39,7 +40,16 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
         )
       }>
       <TextField
-        {...otherProps}
+        {...filterDOMProps(otherProps, {
+          value: false,
+          defaultValue: false,
+          isQuiet: true,
+          onClear: true,
+          validationTooltip: true,
+          multiLine: true,
+          isRequired: true,
+          isReadOnly: true
+        })}
         {...searchFieldProps}
         className={
           classNames(

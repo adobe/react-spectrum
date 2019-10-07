@@ -1,16 +1,18 @@
 {
-  "name": "@react-stately/textfield",
+  "name": "@react-stately/searchfield",
   "version": "3.0.0",
   "private": true,
   "description": "Spectrum UI components in React",
-  "main": "src/useTextFieldState.ts",
+  "main": "src/useSearchFieldState.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@react-stately/utils": "^3.0.0",
-    "@react-types/shared": "^3.0.0",
-    "@react-types/textfield": "^3.0.0"
+    "@react-types/shared": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
   }
 }
