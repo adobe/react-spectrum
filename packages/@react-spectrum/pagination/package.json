@@ -28,7 +28,7 @@
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/pagination": "^3.0.0",
     "@react-types/shared": "^3.0.0",
-    "@spectrum-icons/ui": "^3.0.0"
+    "@spectrum-icons/ui": "^3.0.0-alpha.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0"
