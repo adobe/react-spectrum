@@ -1,12 +1,11 @@
-import AdobeAnalyticsColor from '../AdobeAnalyticsColor';
-import {Icon} from '@react-spectrum/icon';
+import CalendarCheckColor from '../CalendarCheckColor';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Icons/Color', module)
   .add(
     'Color icon with sizes',
-    () => renderIconSizes(AdobeAnalyticsColor, {alt: 'Adobe Analytics Color'})
+    () => renderIconSizes(CalendarCheckColor, {alt: 'Adobe Analytics Color'})
   );
 
 function renderIconSizes(Component, props) {
@@ -14,7 +13,7 @@ function renderIconSizes(Component, props) {
   return (
     <div>
       {sizes.map(size => {
-        return <Component size={size} {...props} />
+        return <Component size={size} style={{padding: '15px'}} {...props} />
       })}
     </div>
   )

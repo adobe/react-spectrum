@@ -1,6 +1,6 @@
 import _123 from '@spectrum-icons/workflow/123';
-import AdobeAnalyticsColor from '@spectrum-icons/color/AdobeAnalyticsColor';
 import {Alert} from '../src/Alert';
+import CalendarCheckColor from '@spectrum-icons/color/CalendarCheckColor';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -48,7 +48,7 @@ function render(props = {}, children = 'This is a React Spectrum alert') {
       {...props}>
       {children}
       <_123 />
-      <AdobeAnalyticsColor />
+      <CalendarCheckColor />
     </Alert>
   );
 }
