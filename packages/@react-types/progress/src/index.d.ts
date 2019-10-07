@@ -4,7 +4,7 @@ import {ReactNode} from 'react';
 export interface PogressBaseProps extends DOMProps {
   'aria-label'?: string, // if no children, aria-label is required
   value?: number,
-  isIndeterminate?: boolean,
+  isIndeterminate?: boolean
 }
 
 export interface ProgressCircleProps extends PogressBaseProps {
