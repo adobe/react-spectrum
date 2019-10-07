@@ -19,7 +19,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/datepicker": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
@@ -33,6 +32,9 @@
     "@spectrum-icons/ui": "^3.0.0",
     "@spectrum-icons/workflow": "^3.0.0",
     "date-fns": "^1.30.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

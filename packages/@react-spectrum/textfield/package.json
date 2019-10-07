@@ -20,7 +20,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
     "@react/react-spectrum": "^2.24.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
@@ -31,6 +30,9 @@
     "@react-stately/textfield": "^3.0.0",
     "@react-types/textfield": "^3.0.0",
     "@spectrum-icons/workflow": "^3.0.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

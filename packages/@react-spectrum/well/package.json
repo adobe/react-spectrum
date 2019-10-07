@@ -20,8 +20,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

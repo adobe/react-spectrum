@@ -20,17 +20,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/label": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-types/label": "^3.0.0",
     "@react-types/shared": "^3.0.0",
     "classnames": "^2.2.5"
   },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0"
+  },
   "peerDependencies": {
     "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "@react/react-spectrum": "^2.0.0"
   }
 }
