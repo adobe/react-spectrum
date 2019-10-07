@@ -1,9 +1,20 @@
 {
   "name": "@react-spectrum/alert",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/Alert.tsx",
   "description": "Spectrum UI components in React",
+  "main": "dist/Alert.js",
+  "module": "dist/Alert.module.js",
+  "types": "dist/Alert.d.ts",
+  "source": "src/Alert.tsx",
+  "files": ["dist"],
+  "targets": {
+    "main": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    },
+    "module": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

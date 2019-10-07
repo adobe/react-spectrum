@@ -22,22 +22,23 @@ interface ButtonAria {
   isPressed: boolean
 }
 
-export function useButton({
-  elementType = 'button',
-  isDisabled,
-  onPress,
-  onPressStart,
-  onPressEnd,
-  onPressChange,
-  onClick: deprecatedOnClick,
-  href,
-  tabIndex,
-  isSelected,
-  validationState,
-  'aria-expanded': ariaExpanded,
-  'aria-haspopup': ariaHasPopup,
-  ref
-}: AriaButtonProps): ButtonAria {
+export function useButton(props: AriaButtonProps): ButtonAria {
+  let {
+    elementType = 'button',
+    isDisabled,
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onClick: deprecatedOnClick,
+    href,
+    tabIndex,
+    isSelected,
+    validationState,
+    'aria-expanded': ariaExpanded,
+    'aria-haspopup': ariaHasPopup,
+    ref
+  } = props;
   let additionalProps;
   if (elementType !== 'button') {
     additionalProps = {

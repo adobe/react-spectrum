@@ -1,9 +1,20 @@
 {
   "name": "@react-spectrum/dialog",
-  "private": true,
   "version": "3.0.0",
-  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": ["dist"],
+  "targets": {
+    "main": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    },
+    "module": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

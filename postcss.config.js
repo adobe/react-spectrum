@@ -1,5 +1,6 @@
-module.exports = function (keepVars = false) {
-  return [
+module.exports = {
+  modules: true,
+  plugins: [
     require('postcss-import'),
     require('postcss-nested'),
     require('postcss-inherit'),
@@ -7,25 +8,25 @@ module.exports = function (keepVars = false) {
     require('postcss-dir-pseudo-class')(),
     require('postcss-custom-properties')({
       noValueNotifications: 'error',
-      warnings: !keepVars
+      warnings: false
     }),
     // require('./lib/postcss-custom-properties-passthrough')(),
     require('postcss-calc'),
-    keepVars ? require('./lib/postcss-custom-properties-mapping') : null,
-    keepVars ? require('./lib/postcss-notnested')({ replace: '.spectrum' }) : null,
+    require('./lib/postcss-custom-properties-mapping'),
+    require('./lib/postcss-notnested')({replace: '.spectrum'}),
     require('postcss-svg'),
     require('postcss-functions')({
       functions: {
-        noscale: function(value) {
+        noscale: function (value) {
           return value.toString().toUpperCase();
         },
-        percent: function(value) {
+        percent: function (value) {
           return parseInt(value, 10) / 100;
         }
       }
     }),
     // require('./lib/postcss-strip-comments')({ preserveTopdoc: false }),
-    require('postcss-focus-ring'),
+    require('postcss-focus-ring')
     // require('autoprefixer')({
     //   'browsers': [
     //     'IE >= 10',
@@ -35,5 +36,5 @@ module.exports = function (keepVars = false) {
     //     'last 2 iOS versions'
     //   ]
     // })
-  ].filter(Boolean);
-}
+  ]
+};

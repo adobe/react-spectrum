@@ -102,6 +102,7 @@
     "postcss-inherit": "^4.1.0",
     "postcss-loader": "^3.0.0",
     "postcss-logical": "^4.0.0",
+    "postcss-modules": "^1.4.1",
     "postcss-nested": "^4.1.2",
     "postcss-svg": "^3.0.0",
     "prop-types": "^15.6.0",

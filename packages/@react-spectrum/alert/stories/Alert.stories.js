@@ -1,6 +1,6 @@
 import _123 from '@spectrum-icons/workflow/123';
 import AdobeAnalyticsColor from '@spectrum-icons/color/AdobeAnalyticsColor';
-import {Alert} from '../src/Alert';
+import {Alert} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

@@ -74,28 +74,16 @@ ci-deploy:
 		$(MAKE) deploy; \
 	fi
 
-# Run this as make version VERSION={patch|minor|major}
-version:
-	lerna version ${VERSION} --yes --no-commit-hooks -m "chore(release): publish"
-	cp src/package.json dist/package.json
-
-ci-version:
-	if [ "$$VERSION" != "publish only" ]; then \
-		$(MAKE) version; \
-	fi
-
-publish: build ci-version
-	lerna publish from-git --yes --registry $(NPM_REGISTRY) --contents dist
-
-ci-publish:
-	@if [ "$$VERSION" != "website only" ]; then \
-		$(MAKE) publish; \
-	fi
-
-# Run this on Jenkins with VERSION={patch|minor|major} as an argument, this will bump all the changed packages
-# So major bumps everything as major, minor bumps everything as minor, ...
+# for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
-	@if [ ! -z "$$VERSION" ] && [ "$$VERSION" != "noop" ]; then \
-		$(MAKE) ci-deploy; \
-		$(MAKE) ci-publish; \
-	fi
+	$(MAKE) publish
+
+publish: build
+	lerna publish from-package --yes
+
+build:
+	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
+
+# For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
+version:
+	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --yes

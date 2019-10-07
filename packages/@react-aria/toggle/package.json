@@ -1,9 +1,12 @@
 {
   "name": "@react-aria/toggle",
   "version": "3.0.0",
-  "private": true,
-  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

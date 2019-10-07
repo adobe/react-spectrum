@@ -2,8 +2,11 @@
   "name": "@react-stately/toggle",
   "version": "3.0.0",
   "description": "Spectrum UI components in React",
-  "private": true,
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

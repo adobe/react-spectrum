@@ -1,9 +1,8 @@
 {
   "name": "@react-types/textfield",
   "version": "3.0.0",
-  "private": true,
   "description": "Spectrum UI components in React",
-  "main": "src/index.ts",
+  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

@@ -1,9 +1,19 @@
 {
   "name": "@react-spectrum/button",
   "version": "3.0.0",
-  "private": true,
   "description": "Spectrum UI components in React",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "targets": {
+    "main": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    },
+    "module": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"

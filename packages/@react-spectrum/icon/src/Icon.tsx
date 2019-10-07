@@ -9,15 +9,17 @@ interface IconProps extends SVGAttributes<SVGElement> {
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL'
 }
 
-export function Icon({
-  children,
-  alt,
-  className,
-  scale,
-  color,
-  size,
-  ...props
-}: IconProps) {
+export function Icon(props: IconProps) {
+  let {
+    children,
+    alt,
+    className,
+    scale,
+    color,
+    size,
+    ...otherProps
+  } = props;
+
   let provider = useProvider();
   let pscale = 'M';
   let pcolor = 'LIGHT';
@@ -36,7 +38,7 @@ export function Icon({
   let iconSize = size ? size : scale;
 
   return React.cloneElement(children, {
-    ...props,
+    ...otherProps,
     scale,
     color,
     focusable: 'false',

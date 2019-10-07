@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {DatePicker} from '../src';
+import {DatePicker} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
