@@ -11,7 +11,7 @@
     "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && pwd && tsc --project './tsconfig.types.json'"
   },
   "dependencies": {
-    "@a4u/react-spectrum-ui": "0.0.2",
+    "@adobe/react-spectrum-ui": "^1.0.0",
     "@react-spectrum/icon": "^3.0.0"
   },
   "devDependencies": {
