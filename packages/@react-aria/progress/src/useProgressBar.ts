@@ -1,4 +1,5 @@
 import {AllHTMLAttributes} from 'react';
+import {clamp} from '@react-aria/utils';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
@@ -30,7 +31,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
 
   const {labelAriaProps, labelledComponentAriaProps} = useLabel({id}, {'aria-label': ariaLabel});
 
-  let decimalPercentage = Math.min(Math.max(+value, min), max) / (max - min);
+  let decimalPercentage = clamp(value, min, max) / (max - min);
   let percentage = 100 * decimalPercentage;
 
   let valueNow, formattedValueLabel;

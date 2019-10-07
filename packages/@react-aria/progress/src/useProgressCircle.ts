@@ -1,6 +1,6 @@
 import {AllHTMLAttributes} from 'react';
+import {clamp, useId} from '@react-aria/utils';
 import {ProgressCircleProps} from '@react-types/progress';
-import {useId} from '@react-aria/utils';
 
 interface ProgressCircleAria   {
   ariaProps: AllHTMLAttributes<HTMLDivElement>
@@ -14,12 +14,12 @@ export function useProgressCircle(props: ProgressCircleProps): ProgressCircleAri
     'aria-label': ariaLabel
   } = props;
 
-  let ariaValueMin = 0;
-  let ariaValueMax = 100;
+  let min = 0;
+  let max = 100;
   let ariaValueNow;
 
   if (!isIndeterminate) {
-    ariaValueNow = Math.min(Math.max(+value, 0), 100);
+    ariaValueNow = clamp(value, min, max);
   }
 
   if (!ariaLabel) {
@@ -31,8 +31,8 @@ export function useProgressCircle(props: ProgressCircleProps): ProgressCircleAri
       id: useId(id),
       'aria-label': ariaLabel,
       'aria-valuenow': ariaValueNow,
-      'aria-valuemin': ariaValueMin,
-      'aria-valuemax': ariaValueMax,
+      'aria-valuemin': min,
+      'aria-valuemax': max,
       'aria-valuetext': `${ariaValueNow}%`,
       role: 'progressbar'
     }
