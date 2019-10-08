@@ -234,13 +234,13 @@ describe('Select', () => {
   });
 
   it('should trigger the menu on key press', () => {
-    const tree = shallow(<Select options={testOptions} />);
+    const tree = shallow(<Select options={testOptions} />).dive();
 
-    for (let key of ['Enter', 'ArrowDown', 'Space']) {
+    for (let key of ['Enter', 'ArrowDown', ' ']) {
       const spy = sinon.spy();
-      tree.instance().button = {onClick: spy};
+      tree.instance().triggerRef = {onClick: spy};
 
-      tree.find(Button).simulate('keyDown', {key, preventDefault: function () {}});
+      tree.find(Button).simulate('keyDown', {key, preventDefault: () => {}, stopPropagation: () => {}});
       assert(spy.called);
     }
   });

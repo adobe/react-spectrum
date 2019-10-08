@@ -174,17 +174,6 @@ export default class Select extends React.Component {
     }
   }
 
-  onKeyDown(e) {
-    switch (e.key) {
-      case 'Enter':
-      case 'ArrowDown':
-      case 'Space':
-        e.preventDefault();
-        this.button.onClick();
-        break;
-    }
-  }
-
   render() {
     let {
       options = [],
@@ -277,7 +266,6 @@ export default class Select extends React.Component {
           disabled={disabled}
           invalid={invalid}
           ref={b => (this.button = b)}
-          onKeyDown={this.onKeyDown}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           id={id}

@@ -227,4 +227,60 @@ describe('Dropdown', function () {
       assert(!overlayTrigger.state.show);
     });
   });
+
+  it('should suppot onClick event on Overlay trigger', () => {
+    const onClickSpy = sinon.spy();
+    const tree = shallow(<Dropdown onClick={onClickSpy}>
+      <Button>Test</Button>
+      <Menu>
+        <MenuItem>Test</MenuItem>
+      </Menu>
+    </Dropdown>);
+    tree.find(OverlayTrigger).simulate('click');
+    assert(onClickSpy.calledOnce);
+  });
+
+  it('should trigger the menu on key press with Enter, ArrowDown or " "', () => {
+    const spy = sinon.spy();
+    const onKeyDownSpy = sinon.spy();
+    const tree = shallow(<Dropdown>
+      <Button onKeyDown={onKeyDownSpy}>Test</Button>
+      <Menu>
+        <MenuItem>Test</MenuItem>
+      </Menu>
+    </Dropdown>);
+
+    let count = 0;
+    for (let key of ['Enter', 'ArrowDown', ' ']) {
+      count++;
+      tree.instance().triggerRef = {onClick: spy};
+
+      tree.find(Button).simulate('keyDown', {
+        key,
+        preventDefault: () => {},
+        stopPropagation: () => {},
+        defaultPrevented: false
+      });
+      assert.equal(onKeyDownSpy.callCount, count);
+      assert.equal(spy.callCount, count);
+    }
+
+    count = 0;
+    spy.resetHistory();
+    onKeyDownSpy.resetHistory();
+
+    // but not if the default is prevented
+    for (let key of ['Enter', 'ArrowDown', ' ']) {
+      count++;
+      tree.instance().triggerRef = {onClick: spy};
+
+      tree.find(Button).simulate('keyDown', {
+        key,
+        defaultPrevented: true,
+        isDefaultPrevented: (key === ' ' ? () => true : undefined)
+      });
+      assert.equal(onKeyDownSpy.callCount, count);
+      assert.equal(spy.callCount, 0);
+    }
+  });
 });
