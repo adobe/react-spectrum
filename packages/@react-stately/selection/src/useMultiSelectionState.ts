@@ -5,21 +5,21 @@ import {useControlledState} from '@react-stately/utils';
 export function useMultiSelectionState(props: MultipleSelectionBase) {
   let {allowsEmptySelection, onSelectionChange, selectedItems, defaultSelectedItems = []} = props;
 
-  let [selectedList, setSelectedList] = useControlledState(selectedItems, defaultSelectedItems);
+  let [selectedList, setSelectedList] = useControlledState(selectedItems, defaultSelectedItems, onSelectionChange);
 
   function handleSelection(key: any) {
     const index = selectedList.findIndex(i => i === key);
+    let list = [...selectedList];
     if (index !== -1) {
-      if (selectedList.length > 1) {
-        selectedList.splice(index, 1);
+      if (list.length > 1) {
+        list.splice(index, 1);
       } else if (allowsEmptySelection) {
-        selectedList = [];
+        list = [];
       }
     } else {
-      selectedList.push(key);
+      list.push(key);
     }
-    setSelectedList([...selectedList]);
-    onSelectionChange && onSelectionChange(selectedList);
+    setSelectedList([...list]);
   }
 
   const isSelected = useCallback(

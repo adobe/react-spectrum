@@ -9,8 +9,9 @@ for (let i = 0; i < 50; data[i] = i++) {}
 // TODO: REMOVE FILE
 export default function (props) {
   const {single, ...rest} = props;
-  let {handleSelection: onSelect, ...state} = single ? useSingleSelectionState(rest) : useMultiSelectionState(rest);
+  const state = single ? useSingleSelectionState(rest) : useMultiSelectionState(rest);
   const isSelected = single ? i => i === state.selectedValue : state.isSelected;
+  const onSelect = single ? state.setSelectedValue : state.handleSelection;
   return (
     <ul>
       {data.map(i => (
