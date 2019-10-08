@@ -6,13 +6,20 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
@@ -20,6 +27,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "@react-aria/calendar": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",
@@ -27,8 +35,8 @@
     "@react-spectrum/button": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/calendar": "^3.0.0",
-    "@react-types/shared": "^3.0.0",
     "@react-types/calendar": "^3.0.0",
+    "@react-types/shared": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0-alpha.0",
     "date-fns": "^1.30.1"
   },

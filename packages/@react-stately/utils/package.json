@@ -6,7 +6,10 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
@@ -16,5 +19,8 @@
   },
   "devDependencies": {
     "react": "^16.8.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2"
   }
 }

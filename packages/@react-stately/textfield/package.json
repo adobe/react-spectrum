@@ -6,12 +6,16 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/useTextFieldState.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "@react-stately/utils": "^3.0.0",
     "@react-types/shared": "^3.0.0",
     "@react-types/textfield": "^3.0.0"

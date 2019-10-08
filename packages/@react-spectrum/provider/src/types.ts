@@ -18,7 +18,7 @@ interface ContextProps {
 
 export interface ProviderProps extends ContextProps, DOMProps {
   children: ReactNode,
-  theme?: Theme,
+  theme: Theme,
   colorScheme?: ColorScheme, // by default, chooses based on OS setting
   defaultColorScheme?: ColorScheme, // if no OS setting, which to choose
   scale?: Scale, // by default, chooses based on touch/mouse

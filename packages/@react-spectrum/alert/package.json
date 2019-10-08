@@ -6,13 +6,20 @@
   "module": "dist/Alert.module.js",
   "types": "dist/Alert.d.ts",
   "source": "src/Alert.tsx",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
@@ -20,9 +27,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.0.0",
-    "@spectrum-icons/ui": "^3.0.0-alpha.0",
-    "@react-spectrum/utils": "^3.0.0"
+    "@react-spectrum/utils": "^3.0.0",
+    "@spectrum-icons/ui": "^3.0.0-alpha.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0"
