@@ -2,9 +2,9 @@
   "name": "@react-spectrum/checkbox",
   "version": "3.0.0",
   "description": "Spectrum UI components in React",
-  "main": "dist/index.js",
-  "module": "dist/index.module.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": ["dist"],
   "targets": {
