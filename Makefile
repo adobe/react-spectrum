@@ -55,6 +55,7 @@ clean_docs_node_modules:
 lint:
 	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
+	node lint-packages.js
 
 test:
 	yarn jest
@@ -68,11 +69,6 @@ deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"
 	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r documentation/public/* "$(SERVER):~/rsp/."
 	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r public/* "$(SERVER):~/rsp/."
-
-ci-deploy:
-	@if [ "$$VERSION" == "major" ] || [ "$$VERSION" == "minor" ] || [ "$$VERSION" == "patch" ] || [ "$$VERSION" == "website only" ]; then \
-		$(MAKE) deploy; \
-	fi
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:

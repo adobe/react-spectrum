@@ -8,6 +8,7 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": ["dist"],
+  "sideEffects": false,
   "targets": {
     "main": {
       "includeNodeModules": ["@adobe/spectrum-css-temp"]
@@ -21,6 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "@react-aria/{{packageName}}": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",
     "@react-stately/{{packageName}}": "^3.0.0"
