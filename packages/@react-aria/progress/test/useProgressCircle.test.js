@@ -6,10 +6,8 @@ import {useProgressCircle} from '../';
 describe('useProgressCircle', function () {
   afterEach(cleanup);
 
-  let state = {};
-
   let renderProgressCircleHook = (props) => {
-    let {result} = renderHook(() => useProgressCircle(props, state));
+    let {result} = renderHook(() => useProgressCircle(props));
     return result.current;
   };
 
@@ -20,6 +18,12 @@ describe('useProgressCircle', function () {
     expect(ariaProps['aria-valuemin']).toBe(0);
     expect(ariaProps['aria-valuemax']).toBe(100);
     expect(ariaProps.id).toBeDefined();
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderProgressCircleHook({});
+    expect(spyWarn).toHaveBeenCalledWith('You must specify an aria-label for accessibility');
   });
 
   it('with provided props', () => {

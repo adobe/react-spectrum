@@ -4,11 +4,19 @@ import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
+type LabelProps = {
+  formattedValueLabel: string
+}
+
+type BarProps = {
+  percentage: number
+}
+
 interface ProgressBarAria   {
   ariaProps: AllHTMLAttributes<HTMLDivElement>,
   labelAriaProps: AllHTMLAttributes<HTMLDivElement>,
-  formattedValueLabel: string,
-  percentage: number
+  labelProps: LabelProps,
+  barProps: BarProps
 }
 
 const DEFAULT_FORMAT_STYLE = 'percent';
@@ -46,7 +54,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
 
   return {
     ariaProps: {
-      id: labelledComponentAriaProps.id,
+      ...labelledComponentAriaProps,
       'aria-valuenow': valueNow,
       'aria-valuemin': min,
       'aria-valuemax': max,
@@ -56,7 +64,11 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
       role: 'progressbar'
     },
     labelAriaProps,
-    formattedValueLabel,
-    percentage
+    labelProps: {
+      formattedValueLabel
+    },
+    barProps: {
+      percentage
+    }
   };
 }

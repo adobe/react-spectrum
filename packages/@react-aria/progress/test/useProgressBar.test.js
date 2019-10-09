@@ -3,18 +3,16 @@ import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useProgressBar} from '../';
 
-describe('useProgressCircle', function () {
+describe('useProgressBar', function () {
   afterEach(cleanup);
 
-  let state = {};
-
   let renderProgressBarHook = (props) => {
-    let {result} = renderHook(() => useProgressBar(props, state));
+    let {result} = renderHook(() => useProgressBar(props));
     return result.current;
   };
 
   it('with default props if no props are provided', () => {
-    let {ariaProps} = renderProgressBarHook({});
+    let {ariaProps, labelAriaProps, labelProps, barProps} = renderProgressBarHook({});
     expect(ariaProps.role).toBe('progressbar');
     expect(ariaProps['aria-valuenow']).toBe(0);
     expect(ariaProps['aria-valuemin']).toBe(0);
@@ -23,6 +21,16 @@ describe('useProgressCircle', function () {
     expect(ariaProps['aria-label']).toBeUndefined();
     expect(ariaProps['aria-labelledby']).toBeUndefined();
     expect(ariaProps.id).toBeDefined();
+    expect(labelAriaProps.id).toBeDefined();
+    expect(labelAriaProps.htmlFor).toBeDefined();
+    expect(labelProps.formattedValueLabel).toBe('0%');
+    expect(barProps.percentage).toBe(0);
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderProgressBarHook({value: 25});
+    expect(spyWarn).toHaveBeenCalledWith('If you do not provide children, you must specify an aria-label for accessibility');
   });
 
   it('with value of 25%', () => {
@@ -45,11 +53,11 @@ describe('useProgressCircle', function () {
 
   it('with custom format options', () => {
     let props = {value: 25, formatOptions: {style: 'currency', currency: 'JPY'}};
-    let {ariaProps, formattedValueLabel, percentage} = renderProgressBarHook(props);
+    let {ariaProps, labelProps, barProps} = renderProgressBarHook(props);
     expect(ariaProps['aria-valuenow']).toBe(25);
     expect(ariaProps['aria-valuetext']).toBe('¥25');
-    expect(formattedValueLabel).toBe('¥25');
-    expect(percentage).toBe(25);
+    expect(labelProps.formattedValueLabel).toBe('¥25');
+    expect(barProps.percentage).toBe(25);
   });
 
   it('with custom children label', () => {

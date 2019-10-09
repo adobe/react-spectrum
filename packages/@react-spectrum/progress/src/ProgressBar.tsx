@@ -3,7 +3,6 @@ import {HTMLElement} from 'react-dom';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
-import {useLocale} from '@react-aria/i18n';
 import {useProgressBar} from '@react-aria/progress';
 
 export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefObject<HTMLElement>) => {
@@ -22,15 +21,13 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
   const {
     ariaProps,
     labelAriaProps,
-    formattedValueLabel,
-    percentage
+    labelProps,
+    barProps
   } = useProgressBar(props);
-
-  const {direction} = useLocale();
 
   let width;
   if (!isIndeterminate) {
-    width = `${percentage}%`;
+    width = `${barProps.percentage}%`;
   }
 
   return (
@@ -53,19 +50,18 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
         )
       }
       ref={ref}
-      dir={direction} 
-      {...ariaProps}
-      {...filterDOMProps(otherProps)}>
+      {...filterDOMProps(otherProps)}
+      {...ariaProps} >
       {children &&
         <div
           className={classNames(styles, 'spectrum-BarLoader-label')}
-          id={labelAriaProps.id} >
+          {...labelAriaProps} >
             {children}
         </div>
       }
       {showValueLabel &&
         <div className={classNames(styles, 'spectrum-BarLoader-percentage')} >
-          {valueLabel || formattedValueLabel}
+          {valueLabel || labelProps.formattedValueLabel}
         </div>
       }
       <div className={classNames(styles, 'spectrum-BarLoader-track')} >

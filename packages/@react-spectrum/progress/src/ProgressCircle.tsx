@@ -25,12 +25,12 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
     let ariaValue = ariaProps['aria-valuenow'];
     if (ariaValue > 0 && ariaValue <= 50) {
       angle = -180 + (ariaValue / 50 * 180);
-      subMask1Style.transform = 'rotate(' + angle + 'deg)';
+      subMask1Style.transform = `rotate(${angle}deg)`;
       subMask2Style.transform = 'rotate(-180deg)';
     } else if (ariaValue > 50) {
       angle = -180 + (ariaValue - 50) / 50 * 180;
       subMask1Style.transform = 'rotate(0deg)';
-      subMask2Style.transform = 'rotate(' + angle + 'deg)';
+      subMask2Style.transform = `rotate(${angle}deg)`;
     }
   }
 
@@ -51,8 +51,8 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
         )
       }
       ref={ref}
-      {...ariaProps}
-      {...filterDOMProps(otherProps)}>
+      {...filterDOMProps(otherProps)}
+      {...ariaProps} >
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >

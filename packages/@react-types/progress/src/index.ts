@@ -1,19 +1,19 @@
 import {DOMProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface PogressBaseProps extends DOMProps {
+export interface ProgressBaseProps extends DOMProps {
   'aria-label'?: string, // if no children, aria-label is required
   value?: number,
   isIndeterminate?: boolean
 }
 
-export interface ProgressCircleProps extends PogressBaseProps {
+export interface ProgressCircleProps extends ProgressBaseProps {
   size?: 'S' | 'M' | 'L',
   variant?: 'overBackground',
   isCentered?: boolean
 }
 
-export interface ProgressBarProps extends PogressBaseProps {
+export interface ProgressBarProps extends ProgressBaseProps {
   size?: 'S' | 'L',
   children?: ReactNode, // pass in children to render label
   labelPosition?: 'top' | 'side',

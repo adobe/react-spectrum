@@ -21,31 +21,22 @@ describe('ProgressCircle', function () {
     expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
   });
 
-  it.each`
-    Name                  | Component
-    ${'ProgressCircle'}   | ${ProgressCircle}
-  `('$Name handles submask defaults', function ({Component}) {
-    let {getByTestId} = render(<Component />);
+  it('handles submask defaults', () => {
+    let {getByTestId} = render(<ProgressCircle value={0} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toBeDefined();
     expect(getByTestId('fillSubMask2')).toBeDefined();
     expect(getByTestId('fillSubMask1')).not.toHaveAttribute('style');
     expect(getByTestId('fillSubMask2')).not.toHaveAttribute('style');
   });
 
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 0, isIndeterminate: false}}
-  `('$Name shows none of the circle for 0%', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} />);
+  it('shows none of the circle for 0%', () => {
+    let {getByTestId} = render(<ProgressCircle value={0} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).not.toHaveAttribute('style');
     expect(getByTestId('fillSubMask2')).not.toHaveAttribute('style');
   });
 
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 25, isIndeterminate: false}}
-  `('$Name shows quarter of the circle for 25%', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} />);
+  it('shows quarter of the circle for 25%', () => {
+    let {getByTestId} = render(<ProgressCircle value={25} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(-90deg);'
@@ -56,11 +47,8 @@ describe('ProgressCircle', function () {
     );
   });
 
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 50, isIndeterminate: false}}
-  `('$Name shows half the circle for 50%', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} />);
+  it('shows half the circle for 50%', () => {
+    let {getByTestId} = render(<ProgressCircle value={50} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
@@ -71,11 +59,8 @@ describe('ProgressCircle', function () {
     );
   });
 
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 75, isIndeterminate: false}}
-  `('$Name shows quarter of the circle for 75%', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} />);
+  it('shows quarter of the circle for 75%', () => {
+    let {getByTestId} = render(<ProgressCircle value={75} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
@@ -86,11 +71,8 @@ describe('ProgressCircle', function () {
     );
   });
 
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 100, isIndeterminate: false}}
-  `('$Name shows all of the circle for 100%', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} />);
+  it('shows all of the circle for 100%', () => {
+    let {getByTestId} = render(<ProgressCircle value={100} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
