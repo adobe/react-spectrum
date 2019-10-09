@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+NPM_REGISTRY=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
@@ -75,11 +75,7 @@ ci:
 	$(MAKE) publish
 
 publish: build
-	lerna publish from-package --yes
+	lerna publish from-package --yes --registry $(NPM_REGISTRY)
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
-
-# For first publish go with hard coded 3.0.0. Will eventually replace with conventional commits version bump determination?
-version:
-	lerna version 3.0.0 --no-commit-hooks -m "chore(release): publish" --yes
