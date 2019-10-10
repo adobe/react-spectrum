@@ -174,7 +174,8 @@ export default class Dropdown extends React.Component {
                   'aria-labelledby': menu.props['aria-labelledby'] || triggerId,
                   onClose: this.onMenuClose,
                   onSelect: this.onSelect,
-                  autoFocus: true
+                  autoFocus: true,
+                  closeOnSelect
                 })}
               </OverlayTrigger>
             );

@@ -89,6 +89,7 @@ export default class Menu extends React.Component {
     const {
       children,
       className,
+      closeOnSelect,
       open,
       onClose,
       onSelect,
@@ -106,7 +107,8 @@ export default class Menu extends React.Component {
       <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style} trapFocus={trapFocus}>
         <List ref={l => this.listRef = l} role={role} className={className} onClick={this.onClick} {...otherProps}>
           {React.Children.map(children, child => React.cloneElement(child, {
-            onSelect
+            onSelect,
+            closeOnSelect
           }))}
         </List>
       </Popover>

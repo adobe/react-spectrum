@@ -33,3 +33,33 @@ export function rAF(func = () => {}) {
 export function nextEventLoopIteration() {
   return new Promise(resolve => process.nextTick(resolve));
 }
+
+export class EventProps {
+  constructor(props = {}) {
+    this._defaultPrevented = false;
+    this._propagationStopped = false;
+    return {
+      preventDefault: this.preventDefault,
+      isDefaultPrevented: this.isDefaultPrevented,
+      stopPropagation: this.stopPropagation,
+      isPropagationStopped: this.isPropagationStopped,
+      ...props
+    };
+  }
+
+  preventDefault() {
+    this._defaultPrevented = true;
+  }
+
+  isDefaultPrevented() {
+    return this._defaultPrevented;
+  }
+
+  stopPropagation() {
+    this._propagationStopped = true;
+  }
+
+  isPropagationStopped() {
+    return this._propagationStopped;
+  }
+}

@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import assert from 'assert';
+import {EventProps} from '../utils';
 import {ListItem} from '../../src/List';
 import React from 'react';
 import {shallow} from 'enzyme';
@@ -44,13 +45,13 @@ describe('ListItem', () => {
 
     it('should focus the currentTarget on mouseEnter if onMouseEnter is undefined', () => {
       const tree = render();
-      tree.simulate('mouseenter', {currentTarget: {focus: focusSpy}});
+      tree.simulate('mouseenter', new EventProps({currentTarget: {focus: focusSpy}}));
       assert(focusSpy.called);
     });
 
     it('shouldn\'t focus the currentTarget on mouseEnter if onMouseEnter is supplied', () => {
       const tree = render({onMouseEnter: () => {}});
-      tree.simulate('mouseenter', {currentTarget: {focus: focusSpy}});
+      tree.simulate('mouseenter', new EventProps({currentTarget: {focus: focusSpy}}));
       assert(!focusSpy.called);
     });
   });
@@ -66,19 +67,20 @@ describe('ListItem', () => {
 
     it('should trigger onClick if onClick is supplied', () => {
       const tree = render({onClick: clickSpy});
-      tree.simulate('click', {preventDefault: () => {}});
+      tree.simulate('click', new EventProps());
       assert(clickSpy.called);
     });
 
     it('should trigger onSelect if onSelect is supplied and onClick is not supplied.', () => {
       const tree = render({onSelect: selectSpy});
-      tree.simulate('click', {preventDefault: () => {}});
+      tree.simulate('click', new EventProps());
       assert(selectSpy.called);
+
     });
 
     it('should trigger onClick and onSelect if both are supplied.', () => {
       const tree = render({onClick: clickSpy, onSelect: selectSpy});
-      tree.simulate('click', {preventDefault: () => {}});
+      tree.simulate('click', new EventProps());
       assert(clickSpy.called);
       assert(selectSpy.called);
     });
@@ -93,7 +95,7 @@ describe('ListItem', () => {
 
     it('should trigger onFocus if onFocus is supplied', () => {
       const tree = render({onFocus: focusSpy});
-      tree.simulate('focus', {preventDefault: () => {}});
+      tree.simulate('focus', new EventProps());
       assert(focusSpy.called);
     });
   });
@@ -107,7 +109,7 @@ describe('ListItem', () => {
 
     it('should trigger onKeyDown if onKeyDown is supplied', () => {
       const tree = render({onKeyDown: keyDownSpy});
-      tree.simulate('keydown', {key: 'ArrowDown', preventDefault: () => {}});
+      tree.simulate('keydown', new EventProps({key: 'ArrowDown'}));
       assert(keyDownSpy.called);
     });
   });
@@ -121,7 +123,7 @@ describe('ListItem', () => {
 
     it('should trigger onBlur if onBlur is supplied', () => {
       const tree = render({onBlur: blurSpy});
-      tree.simulate('blur', {preventDefault: () => {}});
+      tree.simulate('blur', new EventProps());
       assert(blurSpy.called);
     });
   });
