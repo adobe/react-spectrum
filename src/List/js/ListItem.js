@@ -91,7 +91,7 @@ export default class ListItem extends Component {
       this.props.onClick(e);
     }
 
-    if (this.props.onSelect) {
+    if (this.props.onSelect && !e.isPropagationStopped()) {
       this.props.onSelect(this.props.value, e);
     }
   }

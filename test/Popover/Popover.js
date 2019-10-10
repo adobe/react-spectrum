@@ -20,11 +20,28 @@ import {mount, shallow} from 'enzyme';
 import Popover from '../../src/Popover';
 import React from 'react';
 import sinon from 'sinon';
-import {sleep} from '../utils';
 
 describe('Popover', () => {
+  let clock;
+  let consoleErrorStub;
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+  after(() => {
+    clock.runAll();
+    clock.restore();
+  });
+  beforeEach(() => {
+    consoleErrorStub = sinon.stub(console, 'error');
+  });
+  afterEach(() => {
+    consoleErrorStub.restore();
+  });
   it('supports different variants', () => {
-    const tree = shallow(<Popover variant="info" />);
+    const tree = shallow(<Popover variant="error" />);
+    assert.equal(tree.hasClass('spectrum-Dialog--error'), true);
+    tree.setProps({variant: 'info'});
+    assert.equal(consoleErrorStub.args[0][0], 'Warning: Failed prop type: Invalid prop `variant` of value `info` supplied to `Popover`, expected one of ["default","error"].\n    in Popover');
     assert.equal(tree.hasClass('spectrum-Dialog--info'), true);
   });
 
@@ -42,12 +59,12 @@ describe('Popover', () => {
     assert(onFocus.called);
   });
 
-  it('support stopPropagation within onFocus method to prevent trapFocus from executing', async () => {
+  it('support stopPropagation within onFocus method to prevent trapFocus from executing', () => {
     let onFocusStopPropagation = (e) => {
       e.isPropagationStopped = () => true;
     };
     let tree = mount(<Popover onFocus={onFocusStopPropagation} />);
-    await sleep(17);
+    clock.runAll();
     tree.simulate('focus', {type: 'focus'});
     assert.equal(document.activeElement, tree.getDOMNode());
     tree.unmount();
@@ -56,7 +73,7 @@ describe('Popover', () => {
   it('supports trapFocus', () => {
     const preventDefault = sinon.spy();
     const stopPropagation = sinon.spy();
-    const tree = mount(<Popover>
+    let tree = mount(<Popover>
       <button>First</button>
       <button>Last</button>
     </Popover>);
@@ -65,7 +82,7 @@ describe('Popover', () => {
       stopPropagation
     };
     assert.equal(tree.childAt(0).prop('tabIndex'), 1);
-    assert.equal(tree.childAt(0).prop('role'), 'presentation');
+    assert.equal(tree.childAt(0).prop('role'), 'dialog');
     tree.simulate('focus', {...event, type: 'focus'});
     assert(preventDefault.calledOnce);
     assert(stopPropagation.calledOnce);
@@ -82,48 +99,58 @@ describe('Popover', () => {
     assert(stopPropagation.calledThrice);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
 
+    tree.setProps({
+      isDialog: false
+    });
+    assert.equal(tree.childAt(0).prop('role'), 'presentation');
+
     // Should support setting role prop
     tree.setProps({
       role: 'dialog'
     });
     assert.equal(tree.childAt(0).prop('role'), 'dialog');
 
-    // Should support stopPropagation from within onKeyDown event listener
+    tree.simulate('focus', {...event, type: 'focus'});
+    assert.equal(preventDefault.callCount, 4);
+    assert.equal(stopPropagation.callCount, 4);
+    assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
+
     tree.setProps({
-      'onKeyDown': e => e.isPropagationStopped = () => true
+      onKeyDown: e => e.isPropagationStopped = () => true
     });
     event.shiftKey = true;
     tree.find('button').first().simulate('keydown', {...event, type: 'keydown'});
-    assert(preventDefault.calledThrice);
-    assert(stopPropagation.calledThrice);
+    assert.equal(preventDefault.callCount, 4);
+    assert.equal(stopPropagation.callCount, 4);
     assert.equal(document.activeElement, tree.find('button').first().getDOMNode());
     tree.unmount();
   });
 
-  // it('supports different variants', () => {
-  //   const tree = shallow(<Popover variant="info" />);
-  //   const contentTree = shallow(tree.prop('content'));
-  //   assert.equal(contentTree.hasClass('spectrum-Dialog--info'), true);
-  // });
+  it('supports optional title', () => {
+    const tree = shallow(<Popover />);
+    assert(!tree.find('DialogHeader').length);
+    tree.setProps({title: 'Foo'});
+    assert(tree.find('DialogHeader').length);
+    assert.equal(tree.find('DialogHeader').prop('title'), 'Foo');
+    tree.setProps({variant: 'error'});
+    assert.equal(tree.find('DialogHeader').prop('variant'), 'error');
+  });
 
-  // it('supports optional title', () => {
-  //   const tree = shallow(<Popover />);
-  //   let header = shallow(tree.prop('content')).find(DialogHeader);
-  //   assert(!header.node);
-  //   tree.setProps({title: 'Foo'});
-  //   header = shallow(tree.prop('content')).find(DialogHeader);
-  //   assert(header.node);
-  //   assert.equal(header.prop('title'), 'Foo');
-  // });
+  it('supports additional classNames', () => {
+    const tree = shallow(<Popover className="foo" />);
+    assert.equal(tree.hasClass('spectrum-Popover'), true);
+    assert.equal(tree.hasClass('react-spectrum-Popover'), true);
+    assert.equal(tree.hasClass('spectrum-Popover--withTip'), true);
+    assert.equal(tree.hasClass('spectrum-Popover--dialog'), true);
+    assert.equal(tree.hasClass('spectrum-Dialog--default'), true);
+    assert.equal(tree.hasClass('foo'), true);
+  });
 
-  // it('supports additional classNames', () => {
-  //   const tree = shallow(<Popover className="foo" />);
-  //   assert.equal(tree.hasClass('foo'), true);
-  // });
-
-  // it('supports additional properties', () => {
-  //   const tree = shallow(<Popover foo />);
-  //   const contentTree = shallow(tree.prop('content'));
-  //   assert.equal(contentTree.prop('foo'), true);
-  // });
+  it('supports additional properties', () => {
+    const tree = shallow(<Popover aria-label="foo" aria-modal="true" />);
+    assert.equal(tree.prop('aria-label'), 'foo');
+    assert.equal(tree.prop('aria-modal'), 'true');
+    tree.setProps({'aria-modal': null});
+    assert.equal(tree.prop('aria-modal'), null);
+  });
 });

@@ -4,6 +4,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DateRangePicker', module)
+  .addParameters({chromaticProvider: {locales: true}, chromatic: {viewports: [350]}})
   .add(
     'default',
     () => render()

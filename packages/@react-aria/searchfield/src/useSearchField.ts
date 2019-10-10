@@ -1,7 +1,8 @@
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import intlMessages from './intl/*.json';
-import {SearchFieldProps, SearchFieldState} from '@react-types/searchfield';
+import {SearchFieldProps} from '@react-types/searchfield';
+import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
@@ -18,8 +19,9 @@ export function useSearchField(
   let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
-    onSubmit,
-    onClear
+    onSubmit = () => {},
+    onClear,
+    role = 'search'
   } = props;
 
   let onKeyDown = (e) => {
@@ -52,12 +54,13 @@ export function useSearchField(
   
   return {
     searchDivProps: {
-      role: 'search'
+      role
     },
     searchFieldProps: {
       role: 'searchbox',
       value: state.value,
-      onKeyDown: chain(props.onKeyDown, onKeyDown)
+      onKeyDown: chain(props.onKeyDown, onKeyDown),
+      type: 'search'
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),

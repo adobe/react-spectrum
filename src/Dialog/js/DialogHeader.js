@@ -32,6 +32,7 @@ export default function DialogHeader({
   fullscreen,
   confirmDisabled,
   confirmLabel,
+  secondaryLabel,
   cancelLabel,
   onConfirm,
   onCancel,
@@ -57,6 +58,7 @@ export default function DialogHeader({
           autoFocusButton={autoFocusButton}
           variant={variant}
           cancelLabel={cancelLabel}
+          secondaryLabel={secondaryLabel}  
           confirmLabel={confirmLabel}
           confirmDisabled={confirmDisabled}
           onConfirm={onConfirm}

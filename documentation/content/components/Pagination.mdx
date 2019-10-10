@@ -7,55 +7,67 @@ Pagination tracks a current index between 1 and the totalPages. It emits events 
 
 ## Example
 
-<Pagination></Pagination>
+<Pagination />
 
 ```jsx
-<Pagination></Pagination>
+<Pagination />
 ```
 
 ### Variant
 
 #### Button
 
-<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3} />
 
 ```jsx
-<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3} />
 ```
 
 #### Explicit
 
-<Pagination variant="explicit" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="explicit" mode="primary" totalPages={5} defaultPage={3} />
 
 ```jsx
-<Pagination variant="explicit" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="explicit" mode="primary" totalPages={5} defaultPage={3} />
 ```
 
 ### Mode
 
 #### CTA
 
-<Pagination variant="button" mode="cta" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="cta" totalPages={5} defaultPage={3} />
 
 ```jsx
-<Pagination variant="button" mode="cta" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="cta" totalPages={5} defaultPage={3} />
 ```
 
 #### Primary
 
-<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3} />
 
 ```jsx
-<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="primary" totalPages={5} defaultPage={3} />
 ```
 
 #### Secondary
 
-<Pagination variant="button" mode="secondary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="secondary" totalPages={5} defaultPage={3} />
 
 ```jsx
-<Pagination variant="button" mode="secondary" totalPages={5} defaultPage={3}></Pagination>
+<Pagination variant="button" mode="secondary" totalPages={5} defaultPage={3} />
 ```
 
+## Accessibility
 
+By default, the Pagination control is identified as a navigation region labelled for accessibility as "Page navigation".
+This label can be overridden using either `aria-label` or `aria-labelledby`.
 
+The previous and next buttons are labelled as "Previous" and "Next" respectively.
+
+The text field for explicitly entering the current page has the default label "Page".
+
+<Pagination aria-label="Table pagination" variant="explicit" mode="primary" totalPages={5} defaultPage={3} />
+
+```jsx
+<Pagination aria-label="Table pagination" variant="explicit" mode="primary" totalPages={5} defaultPage={3} />
+```

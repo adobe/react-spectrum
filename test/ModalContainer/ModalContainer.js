@@ -129,7 +129,7 @@ describe('ModalContainer', () => {
   it('should disable background scroll', async () => {
     let content = <div id="modal-test">Contents</div>;
     let key = ModalContainer.show(content);
-    assert.equal(document.body.style[';overflow'], 'hidden');
+    assert.equal(getComputedStyle(document.body).overflow, 'hidden');
     ModalContainer.hide(key);
   });
 

@@ -17,6 +17,7 @@ export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelEl
     isEmphasized,
     isDisabled,
     children,
+    className,
     ...otherProps
   } = completeProps;
 
@@ -44,7 +45,8 @@ export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelEl
           {
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
             'is-disabled': isDisabled
-          }
+          },
+          className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

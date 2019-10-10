@@ -50,7 +50,10 @@ export default class TabView extends React.Component {
     /**
      * The same as selectedIndex except that the component is in an uncontrolled state.
      */
-    defaultSelectedIndex: PropTypes.number
+    defaultSelectedIndex: PropTypes.number,
+
+    /** Children are required */
+    children: PropTypes.node.isRequired
   };
 
   static defaultProps = {

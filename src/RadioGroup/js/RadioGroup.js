@@ -25,9 +25,14 @@ importSpectrumCSS('fieldgroup');
 export default class RadioGroup extends Component {
   static propTypes = {
     /**
-     * Index of the selected radio within the group
+     * Value of the starting selected radio within the group
      */
-    defaultSelectedValue: PropTypes.number,
+    defaultSelectedValue: PropTypes.string,
+
+    /**
+     * Controlled: Value of the selected radio within the group
+     */
+    selectedValue: PropTypes.string,
 
     /**
      * Whether the label is rendered below the radio

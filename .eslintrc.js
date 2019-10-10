@@ -155,10 +155,11 @@ module.exports = {
         ]
       }
     ],
-    'jsx-a11y/label-has-for': [
+    'jsx-a11y/label-has-associated-control': [
       ERROR,
       {
-        required: { some: ['nesting', 'id'] }
+        'assert': 'either',
+        'depth': 3
       }
     ],
     'jsx-a11y/media-has-caption': ERROR,

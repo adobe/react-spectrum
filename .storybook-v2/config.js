@@ -4,6 +4,7 @@ import { withInfo } from '@storybook/addon-info';
 import React from 'react';
 import {StoryWrapper, VerticalCenter} from './layout';
 import { withA11y } from '@storybook/addon-a11y';
+import {ModalCleanup} from './ModalCleanup';
 
 configureActions({
   depth: 1
@@ -28,9 +29,11 @@ addDecorator(
 );
 
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', padding: '0 100px 50px 100px'}}>
-    {story()}
-  </VerticalCenter>
+  <ModalCleanup>
+    <VerticalCenter style={{textAlign: 'left', padding: '0 100px 50px 100px'}}>
+      {story()}
+    </VerticalCenter>
+  </ModalCleanup>
 ));
 
 addDecorator(story => (

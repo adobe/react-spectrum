@@ -1,4 +1,6 @@
 {
+  "pagination": "ページナビゲーション",
+  "page": "ページ",
   "next": "次へ",
   "page_count": "／ {n, plural, =one{# ページ} other{# ページ}}",
   "previous": "前へ"

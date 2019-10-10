@@ -49,9 +49,11 @@ governing permissions and limitations under the License.
 /* topdoc
 {{ fieldlabel/fieldlabel-left.yml }}
 */
-.spectrum-FieldLabel--left {
+.spectrum-FieldLabel--alignStart {
   display: inline-block;
-  padding: var(--spectrum-fieldlabel-side-padding-top) var(--spectrum-fieldlabel-side-padding-x) 0 0;
+  text-align: start;
+  padding-top: var(--spectrum-fieldlabel-side-padding-top);
+  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
 
   & .spectrum-FieldLabel-requiredIcon {
     margin: var(--spectrum-fieldlabel-side-asterisk-margin-y) 0 0 var(--spectrum-fieldlabel-asterisk-gap);
@@ -61,10 +63,11 @@ governing permissions and limitations under the License.
 /* topdoc
 {{ fieldlabel/fieldlabel-right.yml }}
 */
-.spectrum-FieldLabel--right {
+.spectrum-FieldLabel--alignEnd {
   display: inline-block;
-  text-align: right;
-  padding: var(--spectrum-fieldlabel-side-padding-top) var(--spectrum-fieldlabel-side-padding-x) 0 0;
+  text-align: end;
+  padding-top: var(--spectrum-fieldlabel-side-padding-top);
+  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
 }
 
 /* topdoc
@@ -75,6 +78,7 @@ governing permissions and limitations under the License.
   border-collapse: separate;
   border-spacing: var(--spectrum-tableform-border-spacing);
   margin: var(--spectrum-tableform-margin);
+  text-align: start;
 }
 
 .spectrum-Form-item {

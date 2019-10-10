@@ -35,13 +35,17 @@ storiesOf('Pagination', module)
   )
   .add(
     'explicit',
-    () => render({variant: 'explicit', totalPages: 50, onChange: action('onChange')})
+    () => render({variant: 'explicit', totalPages: 50})
   )
   .add(
     'controlled',
-    () => render({variant: 'explicit', totalPages: 50, currentPage: 2, onChange: action('onChange')})
+    () => render({variant: 'explicit', totalPages: 50, currentPage: 2})
+  )
+  .add(
+    'labelling for accessibility',
+    () => render({'aria-label': 'Items', variant: 'explicit', totalPages: 10, defaultPage: 3})
   );
 
 function render(props = {}) {
-  return (<Pagination {...props} onPrevious={action('onPrevious')} onNext={action('onNext')} />);
+  return (<Pagination {...props} onPrevious={action('onPrevious')} onNext={action('onNext')} onChange={props.variant === 'explicit' ? action('onChange') : null} />);
 }

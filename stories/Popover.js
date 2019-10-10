@@ -21,6 +21,8 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import './Popover.styl';
 
+const info = 'Note: `trapFocus` has been overridden in these examples so the Popover will not create a focus trap when rendered inline.';
+
 storiesOf('Popover', module)
   .addDecorator(story => (
     <div className="popover-story">
@@ -29,11 +31,13 @@ storiesOf('Popover', module)
   ))
   .add(
     'Default',
-    () => render('Content')
+    () => render('Content'),
+    {info}
   )
   .add(
     'Long content, placement: right top',
-    () => render(longMarkup, {placement: 'right top'})
+    () => render(longMarkup, {placement: 'right top'}),
+    {info}
   )
   .add(
     'open: false',
@@ -41,30 +45,39 @@ storiesOf('Popover', module)
   )
   .add(
     'variant: error',
-    () => render('Content', {variant: 'error'})
+    () => render('Content', {variant: 'error'}),
+    {info}
   )
   .add(
     'placement: top',
-    () => render('Content', {placement: 'top'})
+    () => render('Content', {placement: 'top'}),
+    {info}
   )
   .add(
     'placement: bottom',
-    () => render('Content', {placement: 'bottom'})
+    () => render('Content', {placement: 'bottom'}),
+    {info}
   )
   .add(
     'placement: left',
-    () => render('Content', {placement: 'left'})
+    () => render('Content', {placement: 'left'}),
+    {info}
   )
   .add(
     'placement: right',
-    () => render('Content', {placement: 'right'})
+    () => render('Content', {placement: 'right'}),
+    {info}
   )
   .add(
     'no title',
-    () => render('Content', {title: null})
+    () => render('Content', {title: null}),
+    {info}
   );
 
 function render(content, props = {}) {
+  if (props.open !== false) {
+    props.trapFocus = false;
+  }
   return (
     <Popover
       title="Title"

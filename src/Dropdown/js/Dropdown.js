@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import autobind from 'autobind-decorator';
+import {chain} from '../../utils/events';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {Menu} from '../../Menu';
@@ -108,6 +109,23 @@ export default class Dropdown extends React.Component {
     }
   }
 
+  onKeyDownTrigger(e) {
+    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
+      return;
+    }
+    if (this.triggerRef) {
+      switch (e.key) {
+        case 'Enter':
+        case 'ArrowDown':
+        case ' ':
+          e.preventDefault();
+          e.stopPropagation();
+          this.triggerRef.onClick();
+          break;
+      }
+    }
+  }
+
   render() {
     const {alignRight, closeOnSelect, flip, trigger, onLongClick, ...otherProps} = this.props;
     const children = React.Children.toArray(this.props.children);
@@ -142,6 +160,7 @@ export default class Dropdown extends React.Component {
                   'aria-haspopup': triggerChild.props['aria-haspopup'] || 'true',
                   'aria-expanded': this.state.open || null,
                   'aria-controls': (this.state.open ? menuId : null),
+                  onKeyDown: chain(triggerChild.props.onKeyDown, this.onKeyDownTrigger),
                   ref: (node) => {
                     this.triggerRef = node;
                     const {ref} = triggerChild;
@@ -155,7 +174,8 @@ export default class Dropdown extends React.Component {
                   'aria-labelledby': menu.props['aria-labelledby'] || triggerId,
                   onClose: this.onMenuClose,
                   onSelect: this.onSelect,
-                  autoFocus: true
+                  autoFocus: true,
+                  closeOnSelect
                 })}
               </OverlayTrigger>
             );

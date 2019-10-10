@@ -1,4 +1,4 @@
-import {ActionButton, Button, LogicButton} from '../';
+import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from './utils';
@@ -40,6 +40,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows custom props to be passed through to the button', function ({Component}) {
@@ -55,6 +56,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows a custom classname on the button', function ({Component}) {
@@ -68,6 +70,7 @@ describe('Button', function () {
     Component
     ${ActionButton}
     ${Button}
+    ${ClearButton}
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity handles deprecated onClick', function ({Component}) {
@@ -125,6 +128,7 @@ describe('Button', function () {
     Component      | props
     ${ActionButton}| ${{onPress: onPressSpy, isDisabled: true}}
     ${Button}      | ${{onPress: onPressSpy, isDisabled: true}}
+    ${ClearButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${LogicButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${V2Button}    | ${{onClick: onPressSpy, disabled: true}}
   `('v2/3 parity does not respond when disabled', function ({Component, props}) {

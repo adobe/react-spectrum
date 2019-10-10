@@ -106,8 +106,8 @@ build:
 	cp README.md dist/README.md
 
 storybook:
-	npm run build-storybook
-	npm run build-storybook-v3
+	NODE_ENV=storybook npm run build-storybook
+	NODE_ENV=storybook npm run build-storybook-v3
 	mkdir -p public
 	mv storybook-static public/storybook
 	mv storybook-static-v3 public/storybook3

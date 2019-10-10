@@ -102,14 +102,6 @@ export default class SearchWithin extends React.Component {
 
   constructor(props) {
     super(props);
-
-    const {scopeOptions} = props;
-
-    // convert strings to <Select>'s expected label/value objects
-    let newScopeOptions = scopeOptions.map(scope => typeof scope === 'string' ? {label: scope, value: scope} : scope);
-
-    this.state = {scopeOptions: newScopeOptions};
-
     this.outerId = createId();
   }
 
@@ -134,8 +126,11 @@ export default class SearchWithin extends React.Component {
       'aria-label': ariaLabel = (!ariaLabelledby ? formatMessage('Search within') : null),
       autoFocus,
       className,
+      scopeOptions,
       ...otherProps
     } = this.props;
+
+    let formattedScopeOptions = scopeOptions.map(scope => typeof scope === 'string' ? {label: scope, value: scope} : scope);
 
     if (ariaLabelledby) {
       if (ariaLabel) {
@@ -150,7 +145,7 @@ export default class SearchWithin extends React.Component {
     if (scope) {
       selectProps.value = scope;
     } else {
-      selectProps.defaultValue = defaultScope ? defaultScope : this.state.scopeOptions[0].value;
+      selectProps.defaultValue = defaultScope ? defaultScope : formattedScopeOptions[0].value;
     }
 
     const select = (
@@ -158,7 +153,7 @@ export default class SearchWithin extends React.Component {
         id={selectId}
         aria-labelledby={ariaLabelledby}
         onChange={onScopeChange}
-        options={this.state.scopeOptions}
+        options={formattedScopeOptions}
         disabled={disabled}
         required
         flexible

@@ -1,6 +1,9 @@
 import Button from '@react/react-spectrum/Button';
-import Popover from '@react/react-spectrum/Popover';
+import Datepicker from '@react/react-spectrum/Datepicker';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
+import Popover from '@react/react-spectrum/Popover';
+import Select from '@react/react-spectrum/Select';
 
 ## Overview
 
@@ -56,6 +59,106 @@ visual style (stroke and drop shadow) and floats on top of the rest of the inter
 <OverlayTrigger trigger="click" placement="right">
   <Button label="error" variant="primary" />
   <Popover title="Popover title" variant="error">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+```
+
+## Accessibility
+
+Popover accessibility depends on how it is used.
+
+### When used as a popup dialog
+
+By default, the Popover has the `role` of `dialog` and `trapFocus` is `true`, so that the Popover behaves as a modal dialog.
+[Datepicker](/components/Datepicker) provides an a example of a component that uses the Popover as a dialog.
+
+<Datepicker aria-label="Date" />
+
+```jsx
+<Datepicker aria-label="Date" />
+```
+
+### When used as a menu or listbox
+
+When the Popover is used to contain a dropdown menu or listbox, its `role` will be set to `presentation`,
+because the child Menu or SelectList will have the `role` of `menu` or `listbox` respectively.
+
+<FieldLabel label="Country">
+  <Select
+    options={[
+      {label: 'Afghanistan', value: 'AF'},
+      {label: 'Åland Islands', value: 'AX'},
+      {label: 'Albania', value: 'AL'},
+      {label: 'Algeria', value: 'DZ'},
+      {label: 'American Samoa', value: 'AS'},
+      {label: 'Andorra', value: 'AD'},
+      {label: 'Angola', value: 'AO'},
+      {label: 'Anguilla', value: 'AI'},
+      {label: 'Antarctica', value: 'AQ'},
+      {label: 'Antigua and Barbuda', value: 'AG'}
+    ]} />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Country">
+  <Select
+    options={[
+      {label: 'Afghanistan', value: 'AF'},
+      {label: 'Åland Islands', value: 'AX'},
+      {label: 'Albania', value: 'AL'},
+      {label: 'Algeria', value: 'DZ'},
+      {label: 'American Samoa', value: 'AS'},
+      {label: 'Andorra', value: 'AD'},
+      {label: 'Angola', value: 'AO'},
+      {label: 'Anguilla', value: 'AI'},
+      {label: 'Antarctica', value: 'AQ'},
+      {label: 'Antigua and Barbuda', value: 'AG'}
+    ]} />
+</FieldLabel>
+```
+
+### When used as a Tooltip
+
+When the Popover displays on hover or focus as a tooltip, `role` will be `tooltip` and set `trapFocus` to `false`, so that the Popover will not steal focus and it behaves like a tooltip.
+
+<OverlayTrigger trigger={['hover', 'focus']} placement="right">
+  <Button variant="primary">Hover/Focus</Button>
+  <Popover title="Popover title" variant="default" role="tooltip" trapFocus={false}>
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+
+```jsx
+<OverlayTrigger trigger={['hover', 'focus']} placement="right">
+  <Button variant="primary">Hover/Focus</Button>
+  <Popover title="Popover title" variant="default" role="tooltip" trapFocus={false}>
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+```
+
+## Internationalization
+
+To internationalize a Popover, provide localized strings for the title and body of the popover.
+
+### Labelling
+
+If the Popover renders as a dialog and has a `title` prop, by default, the `title` prop will supply the label for the Popover dialog.
+
+Use `aria-label` or `aria-labelledby` to explicitly assign a label for the Popover dialog.
+
+<OverlayTrigger trigger="click" position="right">
+  <Button>Open Menu</Button>
+  <Popover aria-label="Popover title">
+    Popover content goes here...
+  </Popover>
+</OverlayTrigger>
+
+```jsx
+<OverlayTrigger trigger="click" position="right">
+  <Button>Open Menu</Button>
+  <Popover aria-label="Popover title">
     Popover content goes here...
   </Popover>
 </OverlayTrigger>
