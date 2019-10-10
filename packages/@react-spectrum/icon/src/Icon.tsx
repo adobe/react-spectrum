@@ -30,14 +30,14 @@ export function Icon({
   }
   if (color === undefined) {
     color = pcolor;
-  } 
-  
+  }
+
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
 
   return React.cloneElement(children, {
     ...props,
-    scale,
+    scale: 'M',
     color,
     focusable: 'false',
     'aria-label': props['aria-label'] || alt,
