@@ -92,6 +92,10 @@ storiesOf('Dialog', module)
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
   .add(
+    'mode: fullscreenTakeover with secondary confirmation button',
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', secondaryLabel: 'Replace',  cancelLabel: 'Cancel'})
+  )
+  .add(
     'backdropClickable: true',
     () => render(dialogChildren, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
