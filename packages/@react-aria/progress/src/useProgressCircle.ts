@@ -3,7 +3,7 @@ import {clamp, useId} from '@react-aria/utils';
 import {ProgressCircleProps} from '@react-types/progress';
 
 interface ProgressCircleAria   {
-  ariaProps: AllHTMLAttributes<HTMLDivElement>
+  progressCircleProps: AllHTMLAttributes<HTMLDivElement>
 }
 
 export function useProgressCircle(props: ProgressCircleProps): ProgressCircleAria {
@@ -27,7 +27,7 @@ export function useProgressCircle(props: ProgressCircleProps): ProgressCircleAri
   }
 
   return {
-    ariaProps: {
+    progressCircleProps: {
       id: useId(id),
       'aria-label': ariaLabel,
       'aria-valuenow': ariaValueNow,

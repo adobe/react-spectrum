@@ -13,7 +13,7 @@ type BarProps = {
 }
 
 interface ProgressBarAria   {
-  ariaProps: AllHTMLAttributes<HTMLDivElement>,
+  progressBarProps: AllHTMLAttributes<HTMLDivElement>,
   labelAriaProps: AllHTMLAttributes<HTMLDivElement>,
   labelProps: LabelProps,
   barProps: BarProps
@@ -24,6 +24,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
   let {
     id,
     'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     value = 0,
     min = 0,
     max = 100,
@@ -37,7 +38,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
-  const {labelAriaProps, labelledComponentAriaProps} = useLabel({id}, {'aria-label': ariaLabel});
+  const {labelAriaProps, labelledComponentAriaProps} = useLabel({id}, {'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
   let decimalPercentage = clamp(value, min, max) / (max - min);
   let percentage = 100 * decimalPercentage;
@@ -52,15 +53,19 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
     valueNow = value;
   }
 
+  if (ariaLabelledby || children) {
+    ariaLabelledby = labelledComponentAriaProps['aria-labelledby'];
+  }
+
   return {
-    ariaProps: {
+    progressBarProps: {
       ...labelledComponentAriaProps,
       'aria-valuenow': valueNow,
       'aria-valuemin': min,
       'aria-valuemax': max,
       'aria-valuetext': formattedValueLabel,
       'aria-label': ariaLabel,
-      'aria-labelledby': children && labelAriaProps.id,
+      'aria-labelledby': ariaLabelledby,
       role: 'progressbar'
     },
     labelAriaProps,

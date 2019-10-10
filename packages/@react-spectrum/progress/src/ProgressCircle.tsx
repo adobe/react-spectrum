@@ -15,14 +15,14 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
     ...otherProps
   } = props;
 
-  let {ariaProps} = useProgressCircle(props);
+  let {progressCircleProps} = useProgressCircle(props);
 
   let subMask1Style: CSSProperties = {};
   let subMask2Style: CSSProperties = {};
 
   if (!isIndeterminate) {
     let angle;
-    let ariaValue = ariaProps['aria-valuenow'];
+    let ariaValue = progressCircleProps['aria-valuenow'];
     if (ariaValue > 0 && ariaValue <= 50) {
       angle = -180 + (ariaValue / 50 * 180);
       subMask1Style.transform = `rotate(${angle}deg)`;
@@ -52,7 +52,7 @@ export const ProgressCircle = React.forwardRef((props: ProgressCircleProps, ref:
       }
       ref={ref}
       {...filterDOMProps(otherProps)}
-      {...ariaProps} >
+      {...progressCircleProps} >
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >

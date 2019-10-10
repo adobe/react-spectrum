@@ -12,15 +12,15 @@ describe('useProgressBar', function () {
   };
 
   it('with default props if no props are provided', () => {
-    let {ariaProps, labelAriaProps, labelProps, barProps} = renderProgressBarHook({});
-    expect(ariaProps.role).toBe('progressbar');
-    expect(ariaProps['aria-valuenow']).toBe(0);
-    expect(ariaProps['aria-valuemin']).toBe(0);
-    expect(ariaProps['aria-valuemax']).toBe(100);
-    expect(ariaProps['aria-valuetext']).toBe('0%');
-    expect(ariaProps['aria-label']).toBeUndefined();
-    expect(ariaProps['aria-labelledby']).toBeUndefined();
-    expect(ariaProps.id).toBeDefined();
+    let {progressBarProps, labelAriaProps, labelProps, barProps} = renderProgressBarHook({});
+    expect(progressBarProps.role).toBe('progressbar');
+    expect(progressBarProps['aria-valuenow']).toBe(0);
+    expect(progressBarProps['aria-valuemin']).toBe(0);
+    expect(progressBarProps['aria-valuemax']).toBe(100);
+    expect(progressBarProps['aria-valuetext']).toBe('0%');
+    expect(progressBarProps['aria-label']).toBeUndefined();
+    expect(progressBarProps['aria-labelledby']).toBeUndefined();
+    expect(progressBarProps.id).toBeDefined();
     expect(labelAriaProps.id).toBeDefined();
     expect(labelAriaProps.htmlFor).toBeDefined();
     expect(labelProps.formattedValueLabel).toBe('0%');
@@ -34,35 +34,35 @@ describe('useProgressBar', function () {
   });
 
   it('with value of 25%', () => {
-    let {ariaProps} = renderProgressBarHook({value: 25});
-    expect(ariaProps['aria-valuenow']).toBe(25);
-    expect(ariaProps['aria-valuetext']).toBe('25%');
+    let {progressBarProps} = renderProgressBarHook({value: 25});
+    expect(progressBarProps['aria-valuenow']).toBe(25);
+    expect(progressBarProps['aria-valuetext']).toBe('25%');
   });
 
   it('with provided props value -1', () => {
-    let {ariaProps} = renderProgressBarHook({value: -1});
-    expect(ariaProps['aria-valuenow']).toBe(0);
-    expect(ariaProps['aria-valuetext']).toBe('0%');
+    let {progressBarProps} = renderProgressBarHook({value: -1});
+    expect(progressBarProps['aria-valuenow']).toBe(0);
+    expect(progressBarProps['aria-valuetext']).toBe('0%');
   });
 
   it('with provided props value 1000', () => {
-    let {ariaProps} = renderProgressBarHook({value: 1000});
-    expect(ariaProps['aria-valuenow']).toBe(100);
-    expect(ariaProps['aria-valuetext']).toBe('100%');
+    let {progressBarProps} = renderProgressBarHook({value: 1000});
+    expect(progressBarProps['aria-valuenow']).toBe(100);
+    expect(progressBarProps['aria-valuetext']).toBe('100%');
   });
 
   it('with custom format options', () => {
     let props = {value: 25, formatOptions: {style: 'currency', currency: 'JPY'}};
-    let {ariaProps, labelProps, barProps} = renderProgressBarHook(props);
-    expect(ariaProps['aria-valuenow']).toBe(25);
-    expect(ariaProps['aria-valuetext']).toBe('¥25');
+    let {progressBarProps, labelProps, barProps} = renderProgressBarHook(props);
+    expect(progressBarProps['aria-valuenow']).toBe(25);
+    expect(progressBarProps['aria-valuetext']).toBe('¥25');
     expect(labelProps.formattedValueLabel).toBe('¥25');
     expect(barProps.percentage).toBe(25);
   });
 
   it('with custom children label', () => {
     let props = {children: 'React test', value: 25};
-    let {ariaProps, labelAriaProps} = renderProgressBarHook(props);
-    expect(ariaProps['aria-labelledby']).toBe(labelAriaProps.id);
+    let {progressBarProps, labelAriaProps} = renderProgressBarHook(props);
+    expect(progressBarProps['aria-labelledby']).toBe(labelAriaProps.id);
   });
 });

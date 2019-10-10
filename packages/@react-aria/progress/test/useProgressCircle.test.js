@@ -12,12 +12,12 @@ describe('useProgressCircle', function () {
   };
 
   it('with default props if no props are provided', () => {
-    let {ariaProps} = renderProgressCircleHook({});
-    expect(ariaProps.role).toBe('progressbar');
-    expect(ariaProps['aria-valuenow']).toBeUndefined();
-    expect(ariaProps['aria-valuemin']).toBe(0);
-    expect(ariaProps['aria-valuemax']).toBe(100);
-    expect(ariaProps.id).toBeDefined();
+    let {progressCircleProps} = renderProgressCircleHook({});
+    expect(progressCircleProps.role).toBe('progressbar');
+    expect(progressCircleProps['aria-valuenow']).toBeUndefined();
+    expect(progressCircleProps['aria-valuemin']).toBe(0);
+    expect(progressCircleProps['aria-valuemax']).toBe(100);
+    expect(progressCircleProps.id).toBeDefined();
   });
 
   it('warns user if no aria-label is provided', () => {
@@ -27,20 +27,20 @@ describe('useProgressCircle', function () {
   });
 
   it('with provided props', () => {
-    let {ariaProps} = renderProgressCircleHook({value: 25, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(25);
-    expect(ariaProps['aria-valuetext']).toBe('25%');
+    let {progressCircleProps} = renderProgressCircleHook({value: 25, isIndeterminate: false});
+    expect(progressCircleProps['aria-valuenow']).toBe(25);
+    expect(progressCircleProps['aria-valuetext']).toBe('25%');
   });
 
   it('with provided props value -1', () => {
-    let {ariaProps} = renderProgressCircleHook({value: -1, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(0);
-    expect(ariaProps['aria-valuetext']).toBe('0%');
+    let {progressCircleProps} = renderProgressCircleHook({value: -1, isIndeterminate: false});
+    expect(progressCircleProps['aria-valuenow']).toBe(0);
+    expect(progressCircleProps['aria-valuetext']).toBe('0%');
   });
 
   it('with provided props value 1000', () => {
-    let {ariaProps} = renderProgressCircleHook({value: 1000, isIndeterminate: false});
-    expect(ariaProps['aria-valuenow']).toBe(100);
-    expect(ariaProps['aria-valuetext']).toBe('100%');
+    let {progressCircleProps} = renderProgressCircleHook({value: 1000, isIndeterminate: false});
+    expect(progressCircleProps['aria-valuenow']).toBe(100);
+    expect(progressCircleProps['aria-valuetext']).toBe('100%');
   });
 });
