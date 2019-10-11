@@ -16,7 +16,7 @@ export function useDialog({ref, role = 'dialog'}: DialogProps): DialogAria {
       ref.current.focus();
     }
   }, [ref]);
-  
+
   return {
     dialogProps: {
       role,
