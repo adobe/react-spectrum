@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import addons, { makeDecorator } from '@storybook/addons';
-import {getQueryParams} from '@storybook/client-api';
+import React from 'react';
+import { makeDecorator } from '@storybook/addons';
 import {Provider} from '@react-spectrum/provider';
 import Heading from '@react/react-spectrum/Heading';
 import {themes, scales, locales} from '../../constants';
+import './styles.css';
 
 export const withChromaticProvider = makeDecorator({
   name: 'withChromaticProvider',
@@ -16,8 +16,8 @@ export const withChromaticProvider = makeDecorator({
     return (
       <div style={{height}}>
         {(options.colorSchemes || Object.keys(themes)).map(colorScheme =>
-          (options.scales || Object.keys(scales)).map(scale => 
-            (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale => 
+          (options.scales || Object.keys(scales)).map(scale =>
+            (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>
               <Provider key={`${colorScheme}_${scale}_${locale}`} theme={themes[colorScheme]} colorScheme={colorScheme.replace(/est$/, '')} scale={scale} locale={locale} typekitId="pbi5ojv">
                 <Heading variant="subtitle3" style={{margin: 0, padding: '10px'}}>{`${colorScheme}, ${scale}, ${locale}`}</Heading>
                 {getStory(context)}
