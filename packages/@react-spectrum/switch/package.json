@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@spectrum-css/toggle": "^2.0.0-alpha",
+    "@spectrum-css/toggle": "^2.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/switch": "^3.0.0",
     "@react-aria/utils": "^3.0.0",

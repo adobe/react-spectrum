@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@spectrum-css/pagination": "^2.0.0-alpha",
-    "@spectrum-css/typography": "^2.0.0-alpha",
+    "@spectrum-css/pagination": "^2.0.0",
+    "@spectrum-css/typography": "^2.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@react-aria/pagination": "^3.0.0",
     "@react-spectrum/button": "^3.0.0",

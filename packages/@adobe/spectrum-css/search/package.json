@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-css/search",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0",
   "description": "The Spectrum CSS search component",
   "author": "",
   "license": "Apache-2.0",
@@ -13,6 +13,6 @@
     "url": "https://github.com/adobe/spectrum-css/issues"
   },
   "dependencies": {
-    "@spectrum-css/commons": "^2.0.0-alpha"
+    "@spectrum-css/commons": "^2.0.0"
   }
 }

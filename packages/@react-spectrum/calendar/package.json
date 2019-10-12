@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@spectrum-css/calendar": "^2.0.0-alpha",
-    "@spectrum-css/vars": "^2.0.0-alpha",
+    "@spectrum-css/calendar": "^2.0.0",
+    "@spectrum-css/vars": "^2.0.0",
     "@react-aria/calendar": "^3.0.0",
     "@react-aria/focus": "^3.0.0",
     "@react-aria/i18n": "^3.0.0",

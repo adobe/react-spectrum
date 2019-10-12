@@ -9,11 +9,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@spectrum-css/modal": "^2.0.0-alpha",
-    "@spectrum-css/popover": "^2.0.0-alpha",
-    "@spectrum-css/tray": "^2.0.0-alpha",
-    "@spectrum-css/underlay": "^2.0.0-alpha",
-    "@spectrum-css/vars": "^2.0.0-alpha",
+    "@spectrum-css/modal": "^2.0.0",
+    "@spectrum-css/popover": "^2.0.0",
+    "@spectrum-css/tray": "^2.0.0",
+    "@spectrum-css/underlay": "^2.0.0",
+    "@spectrum-css/vars": "^2.0.0",
     "@react-aria/overlays": "^3.0.0",
     "@react-spectrum/provider": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0",

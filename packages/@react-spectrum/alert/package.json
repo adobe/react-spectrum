@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@spectrum-css/alert": "^2.0.0-alpha",
+    "@spectrum-css/alert": "^2.0.0",
     "@react-aria/i18n": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0",
     "@react-spectrum/utils": "^3.0.0"

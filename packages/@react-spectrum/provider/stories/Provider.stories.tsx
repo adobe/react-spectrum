@@ -3,9 +3,9 @@ import customTheme from './custom-theme.css';
 import {Provider} from '../';
 import React from 'react';
 // eslint-disable-next-line monorepo/no-internal-import
-import scaleLarge from '@spectrum-css/vars/dist/spectrum-large-unique.css';
+import scaleLarge from '@adobe/spectrum-css/dist/vars/spectrum-large-unique.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+import scaleMedium from '@adobe/spectrum-css/dist/vars/spectrum-medium-unique.css';
 import {storiesOf} from '@storybook/react';
 
 const THEME = {

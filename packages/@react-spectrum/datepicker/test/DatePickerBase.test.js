@@ -3,9 +3,9 @@ import {DatePicker, DateRangePicker} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 // eslint-disable-next-line monorepo/no-internal-import
-import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium-unique.css';
+import scaleMedium from '@adobe/spectrum-css/dist/vars/spectrum-medium-unique.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import themeLight from '@spectrum-css/vars/dist/spectrum-light-unique.css';
+import themeLight from '@adobe/spectrum-css/dist/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/button/test/utils';
 
 let theme = {
