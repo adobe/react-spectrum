@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import calculatePosition from './calculatePosition';
 import classNames from 'classnames';
+import filterDOMProps from '../../utils/filterDOMProps';
 import getContainer from 'react-overlays/lib/utils/getContainer';
 import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
 import React, {cloneElement} from 'react';
@@ -53,7 +54,7 @@ export default class Position extends React.Component {
     containerPadding: 10,
     offset: 0,
     crossOffset: 0
-  }
+  };
 
   componentDidMount() {
     this.updatePosition(this.getTarget());
@@ -79,21 +80,12 @@ export default class Position extends React.Component {
     const {children, className, ...props} = this.props;
     const {positionLeft, positionTop, maxHeight, arrowOffsetLeft, arrowOffsetTop, placement} = this.state;
 
-    // These should not be forwarded to the child.
     delete props.target;
-    delete props.container;
-    delete props.containerPadding;
-    delete props.shouldUpdatePosition;
-    delete props.flip;
-    delete props.boundariesElement;
-    delete props.offset;
-    delete props.crossOffset;
-
     const child = React.Children.only(children);
     return cloneElement(
       child,
       {
-        ...props,
+        ...filterDOMProps(props),
         placement,
         className: classNames(className, child.props.className),
         arrowStyle: {
@@ -133,7 +125,14 @@ export default class Position extends React.Component {
   }
 
   updatePosition(target) {
-    const {placement, containerPadding, offset, crossOffset, flip, boundariesElement} = this.props;
+    const {
+      placement,
+      containerPadding,
+      offset,
+      crossOffset,
+      flip,
+      boundariesElement
+    } = this.props;
     this._lastTarget = target;
 
     if (!target) {

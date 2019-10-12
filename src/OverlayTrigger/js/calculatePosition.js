@@ -27,7 +27,8 @@ const AXIS = {
   top: 'top',
   bottom: 'top',
   left: 'left',
-  right: 'left'
+  right: 'left',
+  center: 'left'
 };
 
 const FLIPPED_DIRECTION = {

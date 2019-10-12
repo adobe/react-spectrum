@@ -61,7 +61,6 @@ const classButtonProps = {
   ]
 };
 
-
 const selectedValue = [
   'react',
   'add',
@@ -198,6 +197,35 @@ describe('ButtonGroup', () => {
         }} />
     );
     tree.find(Button).first().simulate('click');
+  });
+
+  it('supports buttons having their own onClick', () => {
+    const onChangeSpy = sinon.spy();
+    const onClickButtonSpy = sinon.spy();
+    const onClickGroupSpy = sinon.spy();
+    const onClickProps = {
+      children: [
+        <Button label="Add" value="add" icon={<Add />} />,
+        <Button label="Delete" value="delete" icon={<Delete />} onClick={onClickButtonSpy} />
+      ]
+    };
+    const tree = shallow(<ButtonGroup {...onClickProps} onChange={onChangeSpy} onClick={onClickGroupSpy} />);
+    let selectedItems = tree.find({selected: true});
+    let buttons = tree.find(Button);
+
+    buttons.at(0).simulate('click');
+    selectedItems = tree.find({selected: true});
+    assert.equal(selectedItems.length, 1);
+    assert(onChangeSpy.calledOnce);
+    assert(onClickGroupSpy.calledOnce);
+    assert(onClickButtonSpy.notCalled);
+
+    buttons.at(1).simulate('click');
+    selectedItems = tree.find({selected: true});
+    assert.equal(selectedItems.length, 1);
+    assert(onChangeSpy.calledTwice);
+    assert(onClickGroupSpy.calledTwice);
+    assert(onClickButtonSpy.calledOnce);
   });
 
   describe('Accessibility', () => {

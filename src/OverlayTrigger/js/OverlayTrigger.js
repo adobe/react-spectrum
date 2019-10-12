@@ -93,6 +93,13 @@ export default class OverlayTrigger extends Component {
      */
     defaultShow: PropTypes.bool,
     /**
+     * Specify the position of the overlay relative to the trigger element.
+     */
+    placement: PropTypes.string,
+    /**
+     * An element or text to overlay next to the target.
+     */
+    /**
      * Callback when the overlay trigger is blurred.
      */
     onBlur: PropTypes.func,
@@ -143,7 +150,6 @@ export default class OverlayTrigger extends Component {
     /**
      * By default, the body of the owning document. The overlay will do a hit test to see if it
      * extends outside the boundaries and move it to a new position if it collides.
-     * Unused it would seem...
      */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string

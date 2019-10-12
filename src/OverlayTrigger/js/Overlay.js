@@ -131,11 +131,15 @@ export default class Overlay extends React.Component {
       shouldUpdatePosition,
       rootClose,
       children,
-      ...props
+      show,
+      onExit,
+      onExiting,
+      onEnter,
+      onEntering
     } = this.props;
 
     // Don't un-render the overlay while it's transitioning out.
-    const mountOverlay = props.show || !this.state.exited;
+    const mountOverlay = show || !this.state.exited;
     if (!mountOverlay) {
       // Don't bother showing anything if we don't have to.
       return null;
@@ -153,10 +157,9 @@ export default class Overlay extends React.Component {
 
     // This animates the child node by injecting props, so it must precede
     // anything that adds a wrapping div.
-    let {onExit, onExiting, onEnter, onEntering} = props;
     child = (
       <OpenTransition
-        in={props.show}
+        in={show}
         appear
         onExit={onExit}
         onExiting={onExiting}

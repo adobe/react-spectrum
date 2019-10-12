@@ -31,9 +31,16 @@ describe('Position', () => {
   }
 
   const target = ReactDOM.render(<Target />, container);
+  let tree;
+  afterEach(() => {
+    if (tree) {
+      tree.unmount();
+      tree = null;
+    }
+  });
 
   it('passes props to child', () => {
-    const tree = shallow(<Position target={target}><div>test</div></Position>, {disableLifecycleMethods: true});
+    tree = shallow(<Position target={target}><div>test</div></Position>, {disableLifecycleMethods: true});
     assert.equal(tree.type(), 'div');
     assert.deepEqual(tree.prop('style'), {
       position: 'absolute',
@@ -57,7 +64,7 @@ describe('Position', () => {
       arrowOffsetLeft: '0%',
       arrowOffsetTop: '50%'
     });
-    const tree = mount(<Position flip={false} placement="bottom" target={target} containerPadding={15}><div>test</div></Position>);
+    tree = mount(<Position flip={false} placement="bottom" target={target} containerPadding={15}><div>test</div></Position>);
     const div = tree.find('div');
 
     assert(stub.calledOnce);
@@ -78,7 +85,6 @@ describe('Position', () => {
 
     stub.restore();
     stub.resetHistory();
-    tree.unmount();
   });
 
   it('updates position on prop change', () => {
@@ -89,7 +95,7 @@ describe('Position', () => {
       arrowOffsetLeft: '0%',
       arrowOffsetTop: '50%'
     });
-    const tree = mount(<Position flip={false} placement="bottom" target={target}><div>test</div></Position>);
+    tree = mount(<Position flip={false} placement="bottom" target={target}><div>test</div></Position>);
 
     stub.returns({
       positionLeft: 50,
@@ -121,7 +127,6 @@ describe('Position', () => {
 
     stub.restore();
     stub.resetHistory();
-    tree.unmount();
   });
 
   it('updates position on window resize', () => {
@@ -132,7 +137,7 @@ describe('Position', () => {
       arrowOffsetLeft: '0%',
       arrowOffsetTop: '50%'
     });
-    const tree = mount(<Position flip={false} placement="bottom" target={target}><div>test</div></Position>);
+    tree = mount(<Position flip={false} placement="bottom" target={target}><div>test</div></Position>);
 
     stub.returns({
       positionLeft: 50,
@@ -166,6 +171,5 @@ describe('Position', () => {
 
     stub.restore();
     stub.resetHistory();
-    tree.unmount();
   });
 });

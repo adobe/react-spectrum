@@ -132,7 +132,7 @@ describe('calculatePosition', function () {
 
     it(title, function () {
       const result = calculatePosition(placement, overlay, target, container, 50, flip, getBoundariesElement, offset, crossOffset);
-      assert.deepEqual(result, expectedPosition);
+      assert.deepStrictEqual(result, expectedPosition);
       document.documentElement.removeChild(parentElement);
     });
   }
@@ -333,5 +333,4 @@ describe('calculatePosition', function () {
       document.body.removeChild(target);
     });
   });
-
 });
