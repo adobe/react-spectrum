@@ -1,15 +1,15 @@
 // eslint-disable-next-line monorepo/no-internal-import
-import themeLight from '@adobe/spectrum-css/dist/vars/spectrum-light-unique.css';
+import themeLight from '@adobe/spectrum-css/dist/vars/spectrum-light.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import themeLightest from '@adobe/spectrum-css/dist/vars/spectrum-lightest-unique.css';
+import themeLightest from '@adobe/spectrum-css/dist/vars/spectrum-lightest.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import themeDark from '@adobe/spectrum-css/dist/vars/spectrum-dark-unique.css';
+import themeDark from '@adobe/spectrum-css/dist/vars/spectrum-dark.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import themeDarkest from '@adobe/spectrum-css/dist/vars/spectrum-darkest-unique.css';
+import themeDarkest from '@adobe/spectrum-css/dist/vars/spectrum-darkest.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import scaleMedium from '@adobe/spectrum-css/dist/vars/spectrum-medium-unique.css';
+import scaleMedium from '@adobe/spectrum-css/dist/vars/spectrum-medium.css';
 // eslint-disable-next-line monorepo/no-internal-import
-import scaleLarge from '@adobe/spectrum-css/dist/vars/spectrum-large-unique.css';
+import scaleLarge from '@adobe/spectrum-css/dist/vars/spectrum-large.css';
 
 const THEME = {
   light: themeLight,

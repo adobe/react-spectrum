@@ -11,13 +11,39 @@ governing permissions and limitations under the License.
 */
 var postcss = require('postcss');
 var valueParser = require('postcss-value-parser');
-var {mapping, static} = require('./vars');
+let varUtils = require('./varUtils.js');
 
 // match custom property inclusions
 const customPropertiesRegExp = /(^|[^\w-])var\([\W\w]+\)/;
 
-module.exports = postcss.plugin('postcss-custom-properties-mapping', function () {
-  return function (root, result) {
+let staticVars;
+let allVars;
+async function fetchVars() {
+  if (staticVars && allVars) {
+    return true;
+  }
+
+  // Read in all static vars
+  staticVars = Object.assign(
+    {},
+    await varUtils.readDNAVariables('globals/spectrum-staticAliases.css'),
+    await varUtils.readDNAVariables('globals/spectrum-fontGlobals.css'),
+    await varUtils.readDNAVariables('globals/spectrum-fontGlobals.css'),
+    await varUtils.readDNAVariables('globals/spectrum-dimensionGlobals.css'),
+    await varUtils.readDNAVariables('globals/spectrum-colorGlobals.css'),
+    await varUtils.readDNAVariables('globals/spectrum-animationGlobals.css')
+  );
+
+  // Read in all variables so we have the value they resolve to
+  allVars = await varUtils.getAllComponentVars();
+
+  return true;
+}
+
+module.exports = postcss.plugin('postcss-custom-properties-mapping', function() {
+  return async function (root, result) {
+    await fetchVars();
+
     root.walkRules((rule, ruleIndex) => {
       rule.walkDecls((decl) => {
         if (customPropertiesRegExp.test(decl.value)) {
@@ -29,10 +55,11 @@ module.exports = postcss.plugin('postcss-custom-properties-mapping', function ()
 
               // If the value is static, replace the variable with the value.
               // Otherwise, change the variable name to the mapped name.
-              if (static[v]) {
-                nodes.splice(index, 1, ...valueParser(`var(${v}, ${static[v]})`).nodes);
-              } else if (mapping[v]) {
-                nodes.splice(index, 1, ...valueParser(`var(${v}, var(${mapping[v]}))`).nodes);
+              if (staticVars[v]) {
+                nodes.splice(index, 1, ...valueParser(`var(${v}, ${staticVars[v]})`).nodes);
+              }
+              else if (allVars[v]) {
+                nodes.splice(index, 1, ...valueParser(`var(${v}, ${allVars[v]})`).nodes);
               }
             }
           });
