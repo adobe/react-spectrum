@@ -1,4 +1,4 @@
-module.exports = function (keepVars = false) {
+module.exports = function (keepVars = false, notNested = true, secondNotNested = true) {
   return [
     require('postcss-import'),
     require('postcss-nested'),
@@ -9,10 +9,10 @@ module.exports = function (keepVars = false) {
       noValueNotifications: 'error',
       warnings: !keepVars
     }),
-    // require('./lib/postcss-custom-properties-passthrough')(),
+    require('./lib/postcss-custom-properties-passthrough')(),
     require('postcss-calc'),
     keepVars ? require('./lib/postcss-custom-properties-mapping') : null,
-    keepVars ? require('./lib/postcss-notnested')({ replace: '.spectrum' }) : null,
+    notNested ? require('./lib/postcss-notnested')({ replace: '.spectrum' }) : null,
     require('postcss-svg'),
     require('postcss-functions')({
       functions: {
@@ -24,16 +24,17 @@ module.exports = function (keepVars = false) {
         }
       }
     }),
-    // require('./lib/postcss-strip-comments')({ preserveTopdoc: false }),
     require('postcss-focus-ring'),
-    // require('autoprefixer')({
-    //   'browsers': [
-    //     'IE >= 10',
-    //     'last 2 Chrome versions',
-    //     'last 2 Firefox versions',
-    //     'last 2 Safari versions',
-    //     'last 2 iOS versions'
-    //   ]
-    // })
+    secondNotNested ? require('./lib/postcss-notnested')() : null, // Second one to catch all stray &
+    require('postcss-discard-empty'),
+    /*require('autoprefixer')({
+      'browsers': [
+        'IE >= 10',
+        'last 2 Chrome versions',
+        'last 2 Firefox versions',
+        'last 2 Safari versions',
+        'last 2 iOS versions'
+      ]
+    })*/
   ].filter(Boolean);
 }

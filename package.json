@@ -108,6 +108,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-logical": "^4.0.0",
     "postcss-nested": "^4.1.2",
+    "postcss-discard-empty": "^4.0.1",
     "postcss-svg": "^3.0.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
