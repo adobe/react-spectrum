@@ -1,6 +1,5 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressCircle} from '../src';
-import {ProgressCircleProps} from '@react-types/progress';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -102,7 +101,7 @@ storiesOf('Progress/ProgressCircle', module)
     }
   );
 
-function render(props:ProgressCircleProps = {}) {
+function render(props = {}) {
   return (
     <ProgressCircle {...props} />
   );

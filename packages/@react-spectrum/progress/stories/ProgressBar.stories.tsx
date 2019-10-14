@@ -1,6 +1,5 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressBar} from '../src';
-import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -161,7 +160,7 @@ storiesOf('Progress/ProgressBar', module)
     })
   );
 
-function render(props:ProgressBarProps = {}) {
+function render(props = {}) {
   return (
     <ProgressBar
       aria-label="Progress bar aria label"

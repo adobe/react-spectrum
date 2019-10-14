@@ -1,37 +1,57 @@
+import {clamp} from '@react-aria/utils';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
-import {ProgressBarProps} from '@react-types/progress';
-import React, {RefObject} from 'react';
+import React, {CSSProperties, RefObject} from 'react';
+import {SpectrumProgressBarProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
+import {useNumberFormatter} from '@react-aria/i18n';
 import {useProgressBar} from '@react-aria/progress';
 
-export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefObject<HTMLElement>) => {
+const DEFAULT_FORMAT_OPTION = 'percent';
+
+export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, ref: RefObject<HTMLElement>) => {
   let {
+    value = 0,
+    min = 0,
+    max = 100,
     size = 'L',
     children,
-    valueLabel,
-    showValueLabel = !!valueLabel, // Whether the label should be shown or not
     variant,
+    valueLabel,
+    showValueLabel = !!valueLabel,
     labelPosition = 'side',
     isIndeterminate = false,
+    formatOptions = {
+      style: DEFAULT_FORMAT_OPTION
+    },
     className,
     ...otherProps
   } = props;
 
+  value = clamp(value, min, max);
+  let percentage = value / (max - min);
+  let formatter = useNumberFormatter(formatOptions);
+
+  if (showValueLabel && !valueLabel) {
+    let valueToFormat = formatOptions.style === DEFAULT_FORMAT_OPTION ? percentage : value;
+    valueLabel = formatter.format(valueToFormat);
+  }
+
   const {
     progressBarProps,
-    labelAriaProps,
-    labelProps,
-    barProps
-  } = useProgressBar(props);
+    labelAriaProps
+  } = useProgressBar({...props, value, min, max, isIndeterminate, 'aria-valuetext': valueLabel});
 
-  let width;
+  let barStyle: CSSProperties = {};
   if (!isIndeterminate) {
-    width = `${barProps.percentage}%`;
+    barStyle.width = `${Math.round(percentage * 100)}%`;
   }
 
   return (
     <div
+      {...filterDOMProps(otherProps)}
+      {...progressBarProps}
+      ref={ref}
       className={
         classNames(
           styles,
@@ -48,10 +68,7 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
           },
           className
         )
-      }
-      ref={ref}
-      {...filterDOMProps(otherProps)}
-      {...progressBarProps} >
+      } >
       {children &&
         <div
           className={classNames(styles, 'spectrum-BarLoader-label')}
@@ -61,13 +78,13 @@ export const ProgressBar = React.forwardRef((props: ProgressBarProps, ref: RefOb
       }
       {showValueLabel &&
         <div className={classNames(styles, 'spectrum-BarLoader-percentage')} >
-          {valueLabel || labelProps.formattedValueLabel}
+          {valueLabel}
         </div>
       }
       <div className={classNames(styles, 'spectrum-BarLoader-track')} >
         <div
           className={classNames(styles, 'spectrum-BarLoader-fill')}
-          style={{width}} />
+          style={barStyle} />
       </div>
     </div>
   );

@@ -19,6 +19,40 @@ describe('ProgressCircle', function () {
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
     expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
+    expect(progressCircle).not.toHaveAttribute('aria-valuenow');
+    expect(progressCircle).not.toHaveAttribute('aria-valuetext');
+  });
+
+  it.each`
+    Name                  | Component           | props
+    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 30, isIndeterminate: false}}
+    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 30, indeterminate: false}}
+  `('$Name handles defaults', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} />);
+    let progressCircle = getByRole('progressbar');
+    expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
+    expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
+    expect(progressCircle).toHaveAttribute('aria-valuenow', '30');
+  });
+
+  it.each`
+    Name               | Component        | props
+    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: -1, isIndeterminate: false}}
+    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: -1, indeterminate: false}}
+  `('$Name clamps values to 0', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} />);
+    let progressCircle = getByRole('progressbar');
+    expect(progressCircle).toHaveAttribute('aria-valuenow', '0');
+  });
+
+  it.each`
+    Name               | Component        | props
+    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 1000, isIndeterminate: false}}
+    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 1000, indeterminate: false}}
+  `('$Name clamps values to 100', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} />);
+    let progressCircle = getByRole('progressbar');
+    expect(progressCircle).toHaveAttribute('aria-valuenow', '100');
   });
 
   it('handles submask defaults', () => {
