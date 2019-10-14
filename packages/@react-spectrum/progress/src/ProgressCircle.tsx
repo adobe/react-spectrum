@@ -1,6 +1,7 @@
 import {clamp} from '@react-aria/utils';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
+import progressStyles from './index.css';
 import React, {CSSProperties, RefObject} from 'react';
 import {SpectrumProgressCircleProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
@@ -51,9 +52,14 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
             'spectrum-CircleLoader--indeterminate': isIndeterminate,
             'spectrum-CircleLoader--small': size === 'S',
             'spectrum-CircleLoader--large': size === 'L',
-            'spectrum-CircleLoader--overBackground': variant === 'overBackground',
-            'react-spectrum-Wait--centered': isCentered
+            'spectrum-CircleLoader--overBackground': variant === 'overBackground'
           },
+          classNames(
+            progressStyles,
+            {
+              'react-spectrum-ProgressCircle--centered': isCentered
+            }
+          ),
           className
         )
       } >

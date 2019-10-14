@@ -71,8 +71,8 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
       } >
       {children &&
         <div
-          className={classNames(styles, 'spectrum-BarLoader-label')}
-          {...labelAriaProps} >
+          {...labelAriaProps}
+          className={classNames(styles, 'spectrum-BarLoader-label')} >
             {children}
         </div>
       }

@@ -114,13 +114,6 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-CircleLoader.react-spectrum-Wait--centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 /* topdoc
 {{ circleloader/circleloader-indeterminate-default.yml }}
 */
