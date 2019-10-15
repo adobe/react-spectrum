@@ -37,12 +37,12 @@ module.exports = {
     },
     production: {
       plugins: [
-        ['react-remove-properties', {'properties': ['data-testid']}]
+        ['react-remove-properties', {'properties': ['data-testid']}],
+        ['@babel/plugin-transform-runtime', {useESModules: true, version: '^7.6.2'}]
       ]
     }
   },
   plugins: [
-    ['@babel/plugin-transform-runtime', {useESModules: true, version: '^7.6.2'}],
     ['@babel/plugin-proposal-decorators', {legacy: true}],
     ['@babel/plugin-proposal-class-properties', {loose: false}],
     '@babel/plugin-proposal-export-default-from',

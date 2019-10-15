@@ -63,7 +63,7 @@ test:
 ci-test: lint test
 
 storybook:
-	yarn build-storybook
+	NODE_ENV=storybook yarn build-storybook
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"
