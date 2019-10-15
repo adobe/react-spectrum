@@ -14,7 +14,9 @@ function render({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
         <ActionButton>Tooltip</ActionButton>
-        <Tooltip/>
+        <Tooltip>
+        <span><i>Italicized</i> Hi, I'm a tooltip </span>
+        </Tooltip>
     </div>
   );
 }
