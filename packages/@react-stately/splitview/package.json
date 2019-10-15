@@ -21,5 +21,8 @@
   },
   "devDependencies": {
     "@react-types/shared": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

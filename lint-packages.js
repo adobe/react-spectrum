@@ -25,4 +25,6 @@ for (let pkg of packages) {
       }
     }, `${pkg} did not match "targets"`);
   }
+
+  assert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
 }

@@ -19,5 +19,8 @@
     "@react-stately/utils": "^3.0.0",
     "@react-types/shared": "^3.0.0",
     "@react-types/textfield": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
