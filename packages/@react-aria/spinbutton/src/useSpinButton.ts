@@ -16,21 +16,23 @@ export interface SpinbuttonAria {
   spinButtonProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useSpinButton({
-  value,
-  textValue,
-  minValue,
-  maxValue,
-  isDisabled,
-  isReadOnly,
-  isRequired,
-  onIncrement,
-  onIncrementPage,
-  onDecrement,
-  onDecrementPage,
-  onDecrementToMin,
-  onIncrementToMax
-}: SpinButtonProps): SpinbuttonAria {  
+export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
+  let {
+    value,
+    textValue,
+    minValue,
+    maxValue,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    onIncrement,
+    onIncrementPage,
+    onDecrement,
+    onDecrementPage,
+    onDecrementToMin,
+    onIncrementToMax
+  } = props;
+  
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
       return;

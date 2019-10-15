@@ -1,3 +1,4 @@
+import {CalendarAria} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isSameDay} from 'date-fns';
@@ -8,7 +9,7 @@ import {useCalendarBase} from './useCalendarBase';
 import {useMemo} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendarState) {
+export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendarState): CalendarAria {
   // Compute localized message for the selected date or range
   let formatMessage = useMessageFormatter(intlMessages);
   let {start, end} = state.highlightedRange || {start: null, end: null};

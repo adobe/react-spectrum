@@ -1,4 +1,4 @@
-import {Calendar, RangeCalendar} from '../src';
+import {Calendar, RangeCalendar} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';

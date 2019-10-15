@@ -9,15 +9,16 @@ interface FocusRingProps {
   within?: boolean
 }
 
-export function FocusRing({children, focusClass, focusRingClass, within}: FocusRingProps) {
+export function FocusRing(props: FocusRingProps) {
+  let {children, focusClass, focusRingClass, within} = props;
   let [isFocused, setFocused] = useState(false);
   let [isFocusVisible, setFocusVisible] = useState(false);
-  let props = within
+  let focusProps = within
     ? {onFocusWithinChange: setFocused, onFocusVisibleWithinChange: setFocusVisible}
     : {onFocusChange: setFocused, onFocusVisibleChange: setFocusVisible};
 
   return (
-    <Focus {...props}>
+    <Focus {...focusProps}>
       {React.cloneElement(React.Children.only(children), {
         className: classNames(children.props.className, {
           [focusClass || '']: isFocused,

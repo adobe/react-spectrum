@@ -51,7 +51,8 @@ interface FocusProps {
   onFocusVisibleWithinChange?: (isFocusVisible: boolean) => void
 }
 
-export function Focus({children, onFocusChange, onFocusVisibleChange, onFocusWithinChange, onFocusVisibleWithinChange}: FocusProps) {
+export function Focus(props: FocusProps): ReactElement {
+  let {children, onFocusChange, onFocusVisibleChange, onFocusWithinChange, onFocusVisibleWithinChange} = props;
   let stateRef = useRef({
     isFocused: false,
     isFocusVisible: false,

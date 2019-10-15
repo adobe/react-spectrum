@@ -1,11 +1,16 @@
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {getCalendarId, getCellId} from './useCalendarBase';
+import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 
-export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState) {
+interface CalendarCellAria {
+  cellProps: PressProps & HTMLAttributes<HTMLElement>
+}
+
+export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 

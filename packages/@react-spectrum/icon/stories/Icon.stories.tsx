@@ -1,4 +1,4 @@
-import {Icon} from '../src';
+import {Icon} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
