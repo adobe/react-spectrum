@@ -6,7 +6,7 @@ import {useTooltip} from '../';
 describe('useTooltip', function () {
   afterEach(cleanup);
 
-  it('fill me in', function () {
+  it('exists', function () {
     expect(true).toBeTruthy();
   });
 });

@@ -12,10 +12,9 @@ storiesOf('Tooltip', module)
 
 function render({width = 'auto', ...props}) {
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
-        <ActionButton>Tooltip</ActionButton>
+    <div style={{display: 'inline-block'}}>
         <Tooltip>
-        <span><i>Italicized</i> Hi, I'm a tooltip </span>
+          <span> Hi, I'm a Tooltip </span>
         </Tooltip>
     </div>
   );
