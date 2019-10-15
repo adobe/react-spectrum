@@ -37,7 +37,7 @@
     "@react-stately/textfield": "^3.0.0-alpha.1",
     "@react-types/textfield": "^3.0.0-alpha.1",
     "@react/react-spectrum": "^2.24.0",
-    "@spectrum-icons/workflow": "^3.0.0-alpha.0"
+    "@spectrum-icons/workflow": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

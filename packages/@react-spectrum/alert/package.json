@@ -30,7 +30,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.0"
+    "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
