@@ -1,5 +1,5 @@
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Form, FormItem} from '../src';
+import {Form, FormItem} from '../';
 import Link from '@react/react-spectrum/Link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';

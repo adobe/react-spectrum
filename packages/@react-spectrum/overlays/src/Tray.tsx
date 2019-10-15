@@ -16,9 +16,11 @@ interface TrayWrapperProps extends TrayProps {
   isOpen?: boolean
 }
 
-export function Tray({children, onClose, ...props}: TrayProps) {
+export function Tray(props: TrayProps) {
+  let {children, onClose, ...otherProps} = props;
+
   return (
-    <Overlay {...props}>
+    <Overlay {...otherProps}>
       <Underlay />
       <TrayWrapper onClose={onClose}>
         {children}

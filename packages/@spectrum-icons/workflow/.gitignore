@@ -6,3 +6,4 @@
 !tsconfig.types.json
 !/stories/
 !/scripts/
+!.npmignore

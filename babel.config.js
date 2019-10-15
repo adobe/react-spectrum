@@ -2,7 +2,7 @@ module.exports = {
   presets: [
     '@babel/preset-typescript',
     '@babel/preset-react',
-    '@babel/preset-env'
+    '@parcel/babel-preset-env'
   ],
   env: {
     storybook: {
@@ -37,7 +37,8 @@ module.exports = {
     },
     production: {
       plugins: [
-        ['react-remove-properties', {'properties': ['data-testid']}]
+        ['react-remove-properties', {'properties': ['data-testid']}],
+        ['@babel/plugin-transform-runtime', {useESModules: true, version: '^7.6.2'}]
       ]
     }
   },

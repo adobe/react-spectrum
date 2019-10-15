@@ -16,9 +16,11 @@ interface ModalWrapperProps extends ModalProps {
   isOpen?: boolean
 }
 
-export function Modal({children, onClose, ...props}: ModalProps) {
+export function Modal(props: ModalProps) {
+  let {children, onClose, ...otherProps} = props;
+
   return (
-    <Overlay {...props}>
+    <Overlay {...otherProps}>
       <Underlay />
       <ModalWrapper onClose={onClose}>
         {children}
@@ -27,7 +29,8 @@ export function Modal({children, onClose, ...props}: ModalProps) {
   );
 }
 
-function ModalWrapper({children, onClose, isOpen}: ModalWrapperProps) {
+function ModalWrapper(props: ModalWrapperProps) {
+  let {children, onClose, isOpen} = props;
   let ref = useRef(null);
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
   useModal();

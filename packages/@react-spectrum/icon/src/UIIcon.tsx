@@ -8,12 +8,14 @@ interface IconProps extends SVGAttributes<SVGElement> {
   children: ReactElement
 }
 
-export function UIIcon({
- alt,
- className,
- children,
- ...props
-}: IconProps) {
+export function UIIcon(props: IconProps) {
+  let {
+    alt,
+    className,
+    children,
+    ...otherProps
+  } = props;
+
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {
@@ -21,7 +23,7 @@ export function UIIcon({
   }
 
   return React.cloneElement(children, {
-    ...props,
+    ...otherProps,
     scale,
     focusable: 'false',
     'aria-label': props['aria-label'] || alt,

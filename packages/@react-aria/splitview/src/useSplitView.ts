@@ -4,7 +4,7 @@ import {useDrag1D} from '@react-aria/utils';
 import {useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
 
-export function useSplitView(props: SplitViewAriaProps, {containerState, handleState}: SplitViewState): AriaSplitViewProps {
+export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): AriaSplitViewProps {
   let {
     containerRef,
     id: providedId,
@@ -17,6 +17,7 @@ export function useSplitView(props: SplitViewAriaProps, {containerState, handleS
     allowsResizing = true,
     onMouseDown: propsOnMouseDown
   } = props;
+  let {containerState, handleState} = state;
   let id = useId(providedId);
   let size = useRef(0);
   let reverse = primaryPane === 1;

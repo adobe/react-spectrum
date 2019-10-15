@@ -1,6 +1,6 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Well} from '../src';
+import {Well} from '../';
 
 storiesOf('Well', module)
   .add(

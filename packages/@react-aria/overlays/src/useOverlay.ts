@@ -13,7 +13,9 @@ interface OverlayAria {
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
-export function useOverlay({ref, onClose, isOpen}: OverlayProps): OverlayAria {
+export function useOverlay(props: OverlayProps): OverlayAria {
+  let {ref, onClose, isOpen} = props;
+  
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen) {

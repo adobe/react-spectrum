@@ -1,4 +1,8 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {AriaAttributes, ReactNode, useContext, useEffect, useState} from 'react';
+
+interface ModalProviderProps {
+  children: ReactNode
+}
 
 interface ModalContext {
   parent: ModalContext | null,
@@ -16,7 +20,8 @@ const Context = React.createContext<ModalContext | null>(null);
 // subtree from screen readers. This is done using React context in order to account for things
 // like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
 // TODO: maybe move this?
-export function ModalProvider({children}) {
+export function ModalProvider(props: ModalProviderProps) {
+  let {children} = props;
   let parent = useContext(Context);
   let [modalCount, setModalCount] = useState(parent ? parent.modalCount : 0);
   let context = {
@@ -43,7 +48,11 @@ export function ModalProvider({children}) {
   );
 }
 
-export function useModalProvider() {
+interface ModalProviderAria {
+  modalProviderProps: AriaAttributes
+}
+
+export function useModalProvider(): ModalProviderAria {
   let context = useContext(Context);
   return {
     modalProviderProps: {
@@ -52,7 +61,11 @@ export function useModalProvider() {
   };
 }
 
-export function useModalDialog() {
+interface ModalDialogAria {
+  modalProps: AriaAttributes
+}
+
+export function useModalDialog(): ModalDialogAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {

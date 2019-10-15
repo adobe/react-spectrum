@@ -28,14 +28,16 @@ let ICONS = {
   success: SuccessMedium
 };
 
-export function Alert({
- header,
- children,
- variant = 'info', // info, help, success, error, warning
- className,
- alt, // alt text for image icon, default is derived from variant
- ...otherProps
-}: AlertProps) {
+export function Alert(props: AlertProps) {
+  let {
+    header,
+    children,
+    variant = 'info', // info, help, success, error, warning
+    className,
+    alt, // alt text for image icon, default is derived from variant
+    ...otherProps
+  } = props;
+
   // let AlertIcon = ICONS[variant];
   let formatMessage = useMessageFormatter(intlMessages);
   if (!alt) {

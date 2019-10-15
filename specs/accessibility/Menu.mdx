@@ -1,0 +1,158 @@
+# Menu Accessibility Specification
+
+## Overview
+
+A [`Menu`](https://react-spectrum.corp.adobe.com/components/Menu) is a widget that offers a list of choices to the user, such as a set of actions or functions.
+The various elements inside a menu are given as `<MenuItem/>`, or `<MenuHeading/>` in case of Menu Heading. Menus can also have nested menus using a `SubMenu`.
+A `<MenuDivider/>` can be used to separate between groups of similar menu items.
+
+A menu is usually opened, or made visible, by activating a [`Dropdown`](https://react-spectrum.corp.adobe.com/components/Dropdown), or  [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton), choosing an item in a menu that opens a sub menu, or by invoking a command, such as <kbd>Shift + F10</kbd> in Windows, that opens a context specific menu. When a user activates a choice in a menu, the menu usually closes unless the choice opened a submenu.
+
+A menu that is visually persistent is a menubar. A menubar is typically horizontal and is often used to create a menu bar similar to those found near the top of the window in many desktop applications, offering the user quick access to a consistent set of commands.
+
+A common convention for indicating that a menu item launches a dialog box is to append "…" (ellipsis) to the menu item label, e.g., "Save as …".
+
+## WAI-ARIA Design Pattern
+
+The [`Menu`](https://react-spectrum.corp.adobe.com/components/Menu) component implements the [Menu or Menu bar design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#menu).
+
+### Keyboard Interaction
+
+The following description of keyboard behaviors assumes:
+
+1. A horizontal `menubar` containing several `menuitem` elements.
+2. All items in the `menubar` have child submenus that contain multiple vertically arranged items.
+3. Some of the `menuitem` elements in the submenus have child submenus with items that are also vertically arranged.
+
+When reading the following descriptions, also keep in mind that:
+
+1. Focusable elements, which may have role `menuitem`, `menuitemradio`, or `menuitemcheckbox`, are referred to as items.
+2. If a behavior applies to only certain types of items, e.g., `menuitem` elements, the specific role name is used.
+3. Submenus, also known as pop-up menus, are elements with role `menu`.
+4. Except where noted, menus opened from a menu button behave the same as menus opened from a menubar.
+
+- When a `menu` opens, or when a `menubar` receives focus, keyboard focus is placed on the first item. All items are focusable and keyboard focus is managed within the menu using a roving tabindex as described in [§ 6.6 Keyboard Navigation Inside Components](https://www.w3.org/TR/wai-aria-practices-1.1/#kbd_general_within).
+- <kbd>Enter</kbd>:
+
+  - When focus is on a `menuitem` that has a submenu, opens the submenu and places focus on its first item.
+  - Otherwise, activates the item and closes the menu.
+
+- <kbd>Space</kbd>:
+
+  - (Optional): When focus is on a `menuitemcheckbox`, changes the state without closing the menu.
+  - (Optional): When focus is on a `menuitemradio` that is not checked, without closing the menu, checks the focused `menuitemradio` and unchecks any other checked `menuitemradio` element in the same group.
+  - (Optional): When focus is on a `menuitem` that has a submenu, opens the submenu and places focus on its first item.
+  - (Optional): When focus is on a `menuitem` that does not have a submenu, activates the `menuitem` and closes the menu.
+
+- <kbd>Down Arrow</kbd>:
+
+  - When focus is on a `menuitem` in a `menubar`, opens its submenu and places focus on the first item in the submenu.
+  - When focus is in a `menu`, moves focus to the next item, optionally wrapping from the last to the first.
+
+- <kbd>Up Arrow</kbd>:
+
+  - When focus is in a `menu`, moves focus to the previous item, optionally wrapping from the first to the last.
+  - (Optional): When focus is on a `menuitem` in a `menubar`, opens its submenu and places focus on the last item in the submenu.
+
+- <kbd>Right Arrow</kbd>:
+
+  - When focus is in a `menubar`, moves focus to the next item, optionally wrapping from the last to the first.
+  - When focus is in a `menu` and on a `menuitem` that has a submenu, opens the submenu and places focus on its first item.
+  - When focus is in a `menu` and on an item that does not have a submenu, performs the following 3 actions:
+
+    1. Closes the submenu and any parent menus.
+    2. Moves focus to the next `menuitem` in the `menubar`.
+    3. Either: (Recommended) opens the submenu of that `menuitem` without moving focus into the submenu, or opens the submenu of that `menuitem` and places focus on the first item in the submenu.
+
+    Note that if the `menubar` were not present, e.g., the menus were opened from a menu button, Right Arrow would not do anything when focus is on an item that does not have a submenu.
+
+- <kbd>Left Arrow</kbd>:
+
+  - When focus is in a `menubar`, moves focus to the previous item, optionally wrapping from the first to the last.
+  - When focus is in a submenu of an item in a `menu`, closes the submenu and returns focus to the parent `menuitem`.
+  - When focus is in a submenu of an item in a `menubar`, performs the following 3 actions:
+
+    1. Closes the submenu.
+    2. Moves focus to the previous `menuitem` in the `menubar`.
+    3. Either: (Recommended) opens the submenu of that `menuitem` without moving focus into the submenu, or opens the submenu of that `menuitem` and places focus on the first item in the submenu.
+
+- <kbd>Home</kbd>: If arrow key wrapping is not supported, moves focus to the first item in the current <code>menu</code> or <code>menubar</code>.
+- <kbd>End</kbd>: If arrow key wrapping is not supported, moves focus to the last item in the current <code>menu</code> or <code>menubar</code>.
+- Any key that corresponds to a printable character (Optional): Move focus to the next menu item in the current menu whose label begins with that printable character.
+- <kbd>Escape</kbd>: Close the <code>menu</code> that contains focus and return focus to the element or context, e.g., menu button or parent `menuitem`, from which the menu was opened.
+- <kbd>Tab</kbd>: Moves focus to the next element in the tab sequence, and if the item that had focus is not in a <code>menubar</code>, closes its <code>menu</code> and all open parent <code>menu</code> containers.
+- <kbd>Shift + Tab</kbd>: Moves focus to the previous element in the tab sequence, and if the item that had focus is not in a <code>menubar</code>, closes its <code>menu</code> and all open parent <code>menu</code> containers.
+
+#### NOTE:
+
+1. Disabled menu items are focusable but cannot be activated.
+2. A [separator](https://www.w3.org/TR/wai-aria-1.1/#separator), (e.g. `MenuDivider`) in a menu is not focusable or interactive.
+3. If a <code>menu</code> is opened or a <code>menubar</code> receives focus as a result of a context action, <kbd>Escape</kbd> or <kbd>Enter</kbd> may return focus to the invoking context. For example, a rich text editor may have a <code>menubar</code> that receives focus when a shortcut key, e.g., <kbd>alt + F10</kbd>, is pressed while editing. In this case, pressing <kbd>Escape</kbd> or activating a command from the menu may return focus to the editor.
+4. Although it is recommended that authors avoid doing so, some implementations of navigation menubars may have <code>menuitem</code> elements that both perform a function and open a submenu. In such implementations, <kbd>Enter</kbd> and <kbd>Space</kbd> perform a navigation function, e.g., load new content, while <kbd>Down Arrow</kbd>, in a horizontal menubar, opens the submenu associated with that same <code>menuitem</code>.
+5. When items in a <code>menubar</code> are arranged vertically and items in <code>menu</code>  containers are arranged horizontally:
+
+    - <kbd>Down Arrow</kbd> performs as <kbd>Right Arrow</kbd> is described above, and vice versa.
+    - <kbd>Up Arrow</kbd> performs as <kbd>Left Arrow</kbd> is described above, and vice versa.
+
+### Roles, States, and Properties
+
+- A menu is a container of items that represent choices. The element serving as the menu has a role of either [`menu`](https://www.w3.org/TR/wai-aria-1.1/#menu) or [`menubar`](https://www.w3.org/TR/wai-aria-1.1/#menubar).
+- The items contained in a menu are child elements of the containing menu or menubar and have any of the following roles:
+
+  - [`menuitem`](https://www.w3.org/TR/wai-aria-1.1/#menuitem)
+  - [`menuitemcheckbox`](https://www.w3.org/TR/wai-aria-1.1/#menuitemcheckbox)
+  - [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio)
+- If activating a [`menuitem`](https://www.w3.org/TR/wai-aria-1.1/#menuitem) opens a submenu, the `menuitem` is known as a parent `menuitem`. A submenu's `menu` element is:
+
+  - Contained inside the same `menu` element as its parent `menuitem`. (Note: React Spectrum uses [`aria-owns`](https://www.w3.org/TR/wai-aria-1.1/#aria-owns) to define the relationship between the parent `menuitem` and its expanded submenu)
+  - Is the sibling element immediately following its parent `menuitem`.
+- A parent `menuitem` has [`aria-haspopup`](https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup) set to either `menu` or `true`.
+- A parent `menuitem` has [`aria-expanded`](https://www.w3.org/TR/wai-aria-1.1/#aria-expanded) set to `false` when its child `menu` is not visible and set to `true` when the child `menu` is visible.
+- One of the following approaches is used to enable scripts to move focus among items in a `menu` as described in [§ 6.6 Keyboard Navigation Inside Components](https://www.w3.org/TR/wai-aria-practices-1.1/#kbd_general_within):
+
+  - The menu container has `tabindex` set to `-1` or `0` and [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant) set to the ID of the focused item.
+  - Each item in the menu has `tabindex` set to `-1`, except in a menubar, where the first item has `tabindex` set to 0.
+- When a [`menuitemcheckbox`](https://www.w3.org/TR/wai-aria-1.1/#menuitemcheckbox) or [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio) is checked, [`aria-checked`](https://www.w3.org/TR/wai-aria-1.1/#aria-checked) is set to `true`.
+- When a menu item is disabled, [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.1/#aria-disabled) is set to true.
+- Items in a menu may be divided into groups by placing an element with a role of [separator](https://www.w3.org/TR/wai-aria-1.1/#separator) between groups. For example, this technique should be used when a menu contains a set of [`menuitemradio`](https://www.w3.org/TR/wai-aria-1.1/#menuitemradio) items.
+- All [separators](https://www.w3.org/TR/wai-aria-1.1/#separator) should have [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) consistent with the separator's orientation.
+- If a `menubar` has a visible label, the element with role `menubar` has [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) set to a value that refers to the labelling element. Otherwise, the `menubar` element has a label provided by [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label).
+- If a `menubar` is vertically oriented, it has [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) set to `vertical`. The default value of `aria-orientation` for a `menubar` is `horizontal`.
+- An element with role `menu` either has:
+  - [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) set to a value that refers to the `menuitem` or `button` that controls its display.
+  - A label provided by [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label).
+- If a `menu` is horizontally oriented, it has [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) set to `horizontal`. The default value of `aria-orientation` for a `menu` is `vertical`.
+
+#### NOTE
+
+If [`aria-owns`](https://www.w3.org/TR/wai-aria-1.1/#aria-owns) is set on the `menu` container to include elements that are not DOM children of the container, those elements will appear in the reading order in the sequence they are referenced and after any items that are DOM children. Scripts that manage focus need to ensure the visual focus order matches this assistive technology reading order.
+
+
+## v2 Implementation details
+
+In React Spectrum, `Menu` has been implemented as a [`List`](https://react-spectrum.corp.adobe.com/components/List) contained within a [`Popover`](https://react-spectrum.corp.adobe.com/components/Popover). `MenuItem`, `MenuHeading` and `MenuDivider`
+
+In the [`Menu`](https://react-spectrum.corp.adobe.com/components/Menu) component:
+- The `Menu` component uses role `menu` by default, but may also use role `listbox` depending on context. For example, in [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete), the `Menu` uses role `listbox`).
+- `MenuItem` component accepts role `menuitem`, `menuitemcheckbox`, and `menuitemradio`, but may also use role `option` depending on context. For example, in [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete), `MenuItem` uses role `option`)
+
+When a `MenuItem` has role `menuitemcheckbox` or `menuitemradio`, `aria-checked` is used to indicate the selected state, rather than `aria-selected`.
+
+`Menu` inherits keyboard interaction from `List`, which uses the `FocusManager` utility component with the following parameters:
+- `itemSelector` equal to `.spectrum-Menu-item:not(.is-disabled)`.
+- `selectedItemSelector` equal to `.spectrum-Menu-item:not(.is-disabled).is-selected`.
+- `typeToSelect` defaults to `true`
+- In `Menu`, `autoFocus` defaults to `true`, so that the `Menu` will receive focus when it mounts within an `Overlay`.
+- When rendered in a `Portal` using an `Overlay`, `Menu` and `SubMenu` both trap focus, pressing `Tab` or `Shift + Tab` does not advance to the next or previous tabbable element, because the next focusable element before or after the element that opened the `Menu` is difficult to determine without crawling the DOM.
+
+### Dependencies
+- `Popover`
+- `List`
+- `ListItem`
+- `OverlayTrigger`
+
+### Dependees
+- [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete)
+- [`Dropdown`](https://react-spectrum.corp.adobe.com/components/Dropdown)
+- [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton)
+- [`SplitButton`](https://react-spectrum.corp.adobe.com/components/SplitButton)
