@@ -27,6 +27,13 @@ const BaseTooltip = React.forwardRef(({children, className, ...otherProps}: Tool
   ref = ref || useRef();
   let {tooltipProps} = useTooltip({ref});
 
+  // this works
+  return (
+    <div> hello!!! </div>
+  );
+
+  // this does not work 
+  /*
   return (
       <div
         className={classNames(
@@ -39,4 +46,7 @@ const BaseTooltip = React.forwardRef(({children, className, ...otherProps}: Tool
         {children}
       </div>
   );
+  */
+
+
 });

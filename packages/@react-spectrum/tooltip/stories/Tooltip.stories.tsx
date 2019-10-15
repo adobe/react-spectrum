@@ -1,3 +1,4 @@
+import {ActionButton} from '@react-spectrum/button';
 import {action} from '@storybook/addon-actions';
 import {Tooltip, TooltipProps} from '../src';
 import React from 'react';
@@ -9,9 +10,11 @@ storiesOf('Tooltip', module)
     () => render({})
   );
 
-function render(props:TooltipProps = {}) {
+function render({width = 'auto', ...props}) {
   return (
-    <Tooltip {...props}>
-    </Tooltip>
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+        <ActionButton>Tooltip</ActionButton>
+        <Tooltip/>
+    </div>
   );
 }

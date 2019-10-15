@@ -5,7 +5,7 @@ interface TooltipProps {
   role?: 'tooltip'
 }
 
-interface TooltipAria { // extends AllHTMLAttributes
+interface TooltipAria { 
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
