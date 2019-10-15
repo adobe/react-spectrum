@@ -1,4 +1,5 @@
-import {ColorScheme, Scale, Theme} from './types';
+import {ColorScheme, Scale} from './types';
+import {Theme} from '@react-types/shared';
 import {useMediaQuery} from '@react-spectrum/utils';
 
 export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {
