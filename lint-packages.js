@@ -13,7 +13,7 @@ for (let pkg of packages) {
   assert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
   assert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
   assert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
-  assert(!json.dependencies || !json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
+  assert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
 
   if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
     assert.deepEqual(json.targets, {
