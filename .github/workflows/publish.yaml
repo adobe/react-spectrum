@@ -29,7 +29,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: deploy
       run: |
-        git reset --hard
-        git checkout next
-        git reset --hard origin/next
+        git update-index --assume-unchanged .npmrc
         make ci
