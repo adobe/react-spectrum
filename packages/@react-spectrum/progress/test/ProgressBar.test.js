@@ -67,4 +67,12 @@ describe('ProgressBar', function () {
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
+
+  it('Can handle negative values', () => {
+    let {getByRole} = render(<ProgressBar value={0} min={-5} max={5} />);
+    let progressBar = getByRole('progressbar');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '0');
+    expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
+  });
+
 });

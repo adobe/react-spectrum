@@ -29,10 +29,10 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
   } = props;
 
   value = clamp(value, min, max);
-  let percentage = value / (max - min);
+  let percentage = (value - min) / (max - min);
   let formatter = useNumberFormatter(formatOptions);
 
-  if (showValueLabel && !valueLabel) {
+  if (!valueLabel) {
     let valueToFormat = formatOptions.style === DEFAULT_FORMAT_OPTION ? percentage : value;
     valueLabel = formatter.format(valueToFormat);
   }
