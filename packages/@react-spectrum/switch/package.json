@@ -34,7 +34,7 @@
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/toggle": "^3.0.0-alpha.1",
     "@react-types/switch": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.0"
+    "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
