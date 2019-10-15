@@ -28,10 +28,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/tabs": "^3.0.0",
-    "@react-spectrum/provider": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-stately/tabs": "^3.0.0",
+    "@react-aria/tabs": "^3.0.0-alpha.1",
+    "@react-spectrum/provider": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-stately/tabs": "^3.0.0-alpha.1",
     "classnames": "^2.2.5"
   },
   "devDependencies": {

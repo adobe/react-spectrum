@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0",
-    "@react-types/shared": "^3.0.0",
-    "@react-types/textfield": "^3.0.0"
+    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-alpha.1",
+    "@react-types/textfield": "^3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"

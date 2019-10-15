@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/toggle": "^3.0.0",
-    "@react-types/switch": "^3.0.0",
-    "@react-types/toggle": "^3.0.0"
+    "@react-aria/toggle": "^3.0.0-alpha.1",
+    "@react-types/switch": "^3.0.0-alpha.1",
+    "@react-types/toggle": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
