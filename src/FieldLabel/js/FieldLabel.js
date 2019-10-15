@@ -33,7 +33,7 @@ export default function FieldLabel({label, position, children, className, labelF
   };
   let icon = null;
   if (necessityIndicator === 'icon' && necessity === 'required') {
-    icon = <Asterisk className="spectrum-UIIcon-Asterisk spectrum-fieldLabel-requiredIcon" size="S" alt={formatMessage('(required)')} />;
+    icon = <Asterisk role="presentation" className="spectrum-UIIcon-Asterisk spectrum-fieldLabel-requiredIcon" size="S" alt={formatMessage('(required)')} />;
   }
 
   return (
@@ -80,7 +80,7 @@ FieldLabel.propTypes = {
    * Like in a form, with what input should the label be associated
    */
   labelFor: PropTypes.string,
-  
+
   /**
    * Style for communicating whether the associated input is required or optional.
    */

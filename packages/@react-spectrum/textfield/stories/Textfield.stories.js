@@ -37,7 +37,7 @@ storiesOf('TextField', module)
   .add(
     'validationState: invalid, validationTooltip',
     () => render({
-      validationState: 'invalid', 
+      validationState: 'invalid',
       validationTooltip: (
         <Tooltip>
           tooltip

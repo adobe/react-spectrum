@@ -25,7 +25,7 @@ governing permissions and limitations under the License.
 {{ fieldlabel/fieldlabel-required.yml }}
 */
 .spectrum-FieldLabel {
-  display: block;
+  display: flex;
 
   box-sizing: border-box;
 
@@ -40,6 +40,11 @@ governing permissions and limitations under the License.
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: auto;
   font-smoothing: subpixel-antialiased;
+  text-align: start;
+}
+
+.spectrum-FieldLabel-label {
+  margin-inline-end: 5px;
 }
 
 .spectrum-FieldLabel-requiredIcon {
