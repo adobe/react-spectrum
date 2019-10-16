@@ -2759,14 +2759,6 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
-"@spectrum-icons/ui@^3.0.0-alpha.1":
-  version "3.0.0-alpha.1"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@spectrum-icons/ui/-/@spectrum-icons/ui-3.0.0-alpha.1.tgz#289476ee2c9ff629c1e37eb7254f40811b7e4f58"
-  integrity sha1-KJR27iyf9inB4363JU9AgRt+T1g=
-  dependencies:
-    "@adobe/react-spectrum-ui" "^1.0.0"
-    "@react-spectrum/icon" "^3.0.0-alpha.1"
-
 "@storybook/addon-a11y@^5.2.1":
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/@storybook/addon-a11y/-/addon-a11y-5.2.4.tgz#01a641bf37e2fbeb5ac23ec60824847356cb8dfc"
@@ -7512,7 +7504,7 @@ fast-glob@^2.0.2, fast-glob@^2.2.6:
     merge2 "^1.2.3"
     micromatch "^3.1.10"
 
-fast-glob@^3.0.4:
+fast-glob@^3.0.4, fast-glob@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.1.0.tgz#77375a7e3e6f6fc9b18f061cddd28b8d1eec75ae"
   integrity sha512-TrUz3THiq2Vy3bjfQUB2wNyPdGBeGmdjbzzBLhfHN4YFurYptCKwGq/TfiRavbGywFRzY6U2CdmQ1zmsY5yYaw==
