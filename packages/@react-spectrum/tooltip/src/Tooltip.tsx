@@ -1,8 +1,6 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, RefObject, useContext, useRef} from 'react';
+import {classNames} from '@react-spectrum/utils';
+import React, {ReactNode, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
-import {useTooltip} from '@react-aria/tooltip';
 
 interface TooltipProps {
   children: ReactNode,
@@ -12,18 +10,17 @@ interface TooltipProps {
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
   return (
-      <div
-        className={classNames(
-          styles,
-          'spectrum-Tooltip', 'is-open'
-        )}
-        ref={ref}
-        >
-        {props.children && (
-          <span className={classNames(styles, 'spectrum-Tooltip-label')}>
-            {props.children}
-          </span>
-        )}
-      </div>
+    <div
+      className={classNames(
+        styles,
+        'spectrum-Tooltip', 'is-open'
+      )}
+      ref={ref}>
+      {props.children && (
+        <span className={classNames(styles, 'spectrum-Tooltip-label')}>
+          {props.children}
+        </span>
+      )}
+    </div>
   );
 });

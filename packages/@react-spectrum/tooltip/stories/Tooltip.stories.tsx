@@ -1,21 +1,19 @@
-import {ActionButton} from '@react-spectrum/button';
-import {action} from '@storybook/addon-actions';
-import {Tooltip} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Tooltip} from '../src';
 
 storiesOf('Tooltip', module)
   .add(
     'default',
-    () => render({})
+    () => render()
   );
 
-function render({width = 'auto', ...props}) {
+function render() {
   return (
     <div style={{display: 'inline-block'}}>
-        <Tooltip>
-          <span> Hi, I'm a Tooltip </span>
-        </Tooltip>
+      <Tooltip>
+        <span> Hi, I'm a Tooltip </span>
+      </Tooltip>
     </div>
   );
 }
