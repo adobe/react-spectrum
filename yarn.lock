@@ -2687,16 +2687,6 @@
     react-lifecycles-compat "^3.0.4"
     warning "^3.0.0"
 
-"@react-stately/textfield@^3.0.0-alpha.1":
-  version "3.0.0-alpha.1"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/@react-stately/textfield/-/@react-stately/textfield-3.0.0-alpha.1.tgz#b96834fead212b505515a92676febb0937f303af"
-  integrity sha1-uWg0/q0hK1BVFakmdv67CTfzA68=
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-stately/utils" "^3.0.0-alpha.1"
-    "@react-types/shared" "^3.0.0-alpha.1"
-    "@react-types/textfield" "^3.0.0-alpha.1"
-
 "@react/collection-view@^4.1.5":
   version "4.1.5"
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/collection-view/-/@react/collection-view-4.1.5.tgz#17034aab37f9cdb91a479b5096d900914ae08ca2"
