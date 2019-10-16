@@ -11,8 +11,7 @@
   "dependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0",
     "@react-aria/tooltip": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-stately/tooltip": "^3.0.0"
+    "@react-spectrum/utils": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",
