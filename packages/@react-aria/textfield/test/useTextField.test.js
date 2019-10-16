@@ -3,33 +3,20 @@ import {renderHook} from 'react-hooks-testing-library';
 import {useTextField} from '../';
 
 describe('useTextField hook', () => {
-  let state = {};
-  let setValue = jest.fn();
-
   let renderTextFieldHook = (props) => {
-    let {result} = renderHook(() => useTextField(props, state));
+    let {result} = renderHook(() => useTextField(props));
     return result.current.textFieldProps;
   };
-
-  beforeEach(() => {
-    state.value = '';
-    state.setValue = setValue;
-  });
-
-  afterEach(() => {
-    setValue.mockClear();
-  });
 
   describe('should return textFieldProps', () => {
     it('with default textfield props if no props are provided', () => {
       let props = renderTextFieldHook({});
       expect(props.type).toBe('text');
       expect(props.disabled).toBeFalsy();
-      expect(props.required).toBeFalsy();
       expect(props.readOnly).toBeFalsy();
       expect(props['aria-invalid']).toBeUndefined();
+      expect(props['aria-required']).toBeUndefined();
       expect(typeof props.onChange).toBe('function');
-      expect(props.value).toBe(state.value);
       expect(props.autoFocus).toBeFalsy();
     });
 
@@ -49,10 +36,10 @@ describe('useTextField hook', () => {
 
     it('with appropriate props if isRequired is defined', () => {
       let props = renderTextFieldHook({isRequired: true});
-      expect(props.required).toBeTruthy();
+      expect(props['aria-required']).toBeTruthy();
 
       props = renderTextFieldHook({isRequired: false});
-      expect(props.required).toBeFalsy();
+      expect(props['aria-required']).toBeUndefined();
     });
 
     it('with appropriate props if isReadOnly is defined', () => {
@@ -79,8 +66,9 @@ describe('useTextField hook', () => {
       expect(props.autoFocus).toBeFalsy();
     });
 
-    it('with an onChange that sets the state value when called', () => {
-      let props = renderTextFieldHook({});
+    it('with an onChange that calls user specified onChange with appropriate values', () => {
+      let onChange = jest.fn();
+      let props = renderTextFieldHook({onChange});
       let mockEvent = {
         target: {
           value: 1
@@ -88,8 +76,9 @@ describe('useTextField hook', () => {
       };
       
       props.onChange(mockEvent);
-      expect(state.setValue).toHaveBeenCalledTimes(1);
-      expect(state.setValue).toHaveBeenCalledWith(mockEvent.target.value, mockEvent);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(mockEvent.target.value, mockEvent);
+      onChange.mockClear();
     });
   });
 });

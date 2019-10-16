@@ -35,7 +35,7 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^3.0.0"
+    "react": "^16.8.0"
   },
   "publishConfig": {
     "access": "public"

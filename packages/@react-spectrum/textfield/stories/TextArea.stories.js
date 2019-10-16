@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import Info from '@react/react-spectrum/Icon/Info';
+import Info from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
@@ -24,6 +24,10 @@ storiesOf('TextArea', module)
   .add(
     'isDisabled: true',
     () => render({isDisabled: true})
+  )
+  .add(
+    'isDisabled, isQuiet',
+    () => render({isDisabled: true, isQuiet: true})
   )
   .add(
     'validationState: invalid',
@@ -52,6 +56,14 @@ storiesOf('TextArea', module)
   .add(
     'icon: Info, isQuiet',
     () => render({icon: <Info />, isQuiet: true})
+  )
+  .add(
+    'icon: Info, isDisabled',
+    () => render({icon: <Info />, isDisabled: true})
+  )
+  .add(
+    'icon: Info, isQuiet, isDisabled',
+    () => render({icon: <Info />, isQuiet: true, isDisabled: true})
   )
   .add(
     'icon: Info, validationState: invalid, isQuiet',

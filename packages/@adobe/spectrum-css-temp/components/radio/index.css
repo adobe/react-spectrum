@@ -29,10 +29,10 @@ governing permissions and limitations under the License.
 
   position: relative;
 
-  min-height: var(--spectrum-radio-height);
-  max-width: 100%;
+  min-block-size: var(--spectrum-radio-height);
+  max-inline-size: 100%;
 
-  margin-right: calc(var(--spectrum-radio-cursor-hit-x) * 2);
+  margin-inline-end: calc(var(--spectrum-radio-cursor-hit-x) * 2);
 
   vertical-align: top;
 }
@@ -59,8 +59,10 @@ governing permissions and limitations under the License.
   position: absolute;
   top: 0;
   left: calc(var(--spectrum-radio-cursor-hit-x) * -1);
-  width: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
-  height: 100%;
+  /* right wins in rtl because inline-size is specified */
+  right: calc(var(--spectrum-radio-cursor-hit-x) * -1);
+  inline-size: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
+  block-size: 100%;
 
   opacity: .0001;
   z-index: 1;
@@ -77,20 +79,20 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio-label {
-  margin-left: var(--spectrum-radio-text-gap);
+  margin-inline-start: var(--spectrum-radio-text-gap);
   font-size: var(--spectrum-radio-text-size);
 
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 
   /* Hardcoded as no good way to calculate this */
-  margin-top: var(--spectrum-radio-label-margin-top);
+  margin-block-start: var(--spectrum-radio-label-margin-top);
 }
 
 .spectrum-Radio-button {
   position: relative;
   box-sizing: border-box;
-  width: var(--spectrum-radio-circle-diameter);
-  height: var(--spectrum-radio-circle-diameter);
+  inline-size: var(--spectrum-radio-circle-diameter);
+  block-size: var(--spectrum-radio-circle-diameter);
 
   /* Fix vertical alignment when not wrapping since we're flex-start */
   margin: calc((var(--spectrum-radio-height) - var(--spectrum-radio-circle-diameter)) / 2) 0;
@@ -109,7 +111,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  height: var(--spectrum-radio-labelbelow-height);
+  block-size: var(--spectrum-radio-labelbelow-height);
 
   .spectrum-Radio-button {
     flex-shrink: 0;

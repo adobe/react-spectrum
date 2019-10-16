@@ -85,7 +85,7 @@ storiesOf('DialogTrigger', module)
     'popover inside scroll view',
     () => (
       <div style={{height: 100, display: 'flex'}}>
-        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
           <div style={{height: 200}}>
             <DialogTrigger type="popover">
               <ActionButton>Trigger</ActionButton>
