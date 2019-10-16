@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/label": "^3.0.0",
+    "@react-aria/label": "^3.0.0-alpha.1",
     "@react-types/progress": "^3.0.0"
   },
   "peerDependencies": {
