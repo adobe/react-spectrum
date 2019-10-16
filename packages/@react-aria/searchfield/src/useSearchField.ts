@@ -1,7 +1,8 @@
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import intlMessages from './intl/*.json';
-import {SearchFieldProps, SearchFieldState} from '@react-types/searchfield';
+import {SearchFieldProps} from '@react-types/searchfield';
+import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
@@ -11,7 +12,7 @@ interface SearchFieldAria {
 }
 
 export function useSearchField(
-  props: SearchFieldProps, 
+  props: SearchFieldProps,
   state: SearchFieldState,
   searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
 ): SearchFieldAria {
@@ -50,7 +51,7 @@ export function useSearchField(
     state.setValue('', e);
     searchFieldRef.current.focus();
   };
-  
+
   return {
     searchDivProps: {
       role

@@ -9,7 +9,6 @@ import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
-import {useTextFieldState} from '@react-stately/textfield';
 
 export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
   props = useProviderProps(props);
@@ -20,15 +19,15 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     validationTooltip,
     className,
     multiLine,
-    isRequired = false,
     isDisabled = false,
+    value,
+    defaultValue,
     ...otherProps
   } = props;
   
-  let state = useTextFieldState(props);
-  let {textFieldProps} = useTextField(props, state);
+  let {textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-  let isInvalid = validationState === 'invalid' || (isRequired && state.value === '');
+  let isInvalid = validationState === 'invalid';
   let {direction} = useLocale();
 
   if (icon) {
@@ -92,6 +91,8 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
           })}
           {...textFieldProps}
           ref={ref}
+          value={value}
+          defaultValue={defaultValue}
           className={
             classNames(
               styles,
@@ -104,7 +105,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
           } /> 
       </FocusRing> 
       {icon}
-      {(validationState || (isRequired && state.value === '')) ? validation : null}
+      {validationState ? validation : null}
     </div>
   );
 

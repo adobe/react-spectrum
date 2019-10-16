@@ -1,11 +1,11 @@
 {
-  "name": "@react-stately/textfield",
+  "name": "@react-stately/radio",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
-  "source": "src/useTextFieldState.ts",
+  "source": "src/useRadioGroupState.ts",
   "files": [
     "dist"
   ],
@@ -17,8 +17,13 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-stately/utils": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1",
-    "@react-types/textfield": "^3.0.0-alpha.1"
+    "@react-types/radio": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0"
   },
   "publishConfig": {
     "access": "public"

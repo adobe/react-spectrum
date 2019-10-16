@@ -33,7 +33,7 @@ email = [ADOBE EMAIL]
 
 The auth key can be obtained by following the steps listed [here](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#npmRegistry-UsingBasicAuthentication). Sample cURL:
 ```
- curl -u danilu:<API KEY> https://artifactory.corp.adobe.com/artifactory/api/npm/auth
+ curl -u <ARTIFACTORY USERNAME>:<API KEY> https://artifactory.corp.adobe.com/artifactory/api/npm/auth
 ```
 
 Then you should be able to install with npm:

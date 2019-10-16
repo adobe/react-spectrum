@@ -4,7 +4,13 @@ import {SplitView} from '../';
 import {storiesOf} from '@storybook/react';
 import './SplitView.styl';
 
+let styles = {
+  width: '900px'
+};
+const CenterDecorator = storyFn => <div style={styles}>{storyFn()}</div>;
+
 storiesOf('SplitView', module)
+  .addDecorator(CenterDecorator)
   .add(
     'Default',
     () => (
