@@ -1,5 +1,5 @@
 import {classNames} from '@react-spectrum/utils';
-import React, {ReactNode, RefObject} from 'react';
+import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 
 interface TooltipProps {
@@ -9,6 +9,8 @@ interface TooltipProps {
 }
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
+  ref = ref || useRef();
+  
   return (
     <div
       className={classNames(
