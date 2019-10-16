@@ -1,5 +1,4 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {TooltipContext} from './context';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';

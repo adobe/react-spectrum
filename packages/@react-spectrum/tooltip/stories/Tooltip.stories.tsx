@@ -1,6 +1,6 @@
 import {ActionButton} from '@react-spectrum/button';
 import {action} from '@storybook/addon-actions';
-import {Tooltip, TooltipProps} from '../src';
+import {Tooltip} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

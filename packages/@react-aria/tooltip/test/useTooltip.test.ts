@@ -1,6 +1,6 @@
+import React from 'react';
 import {cleanup, render} from '@testing-library/react';
 import {renderHook} from 'react-hooks-testing-library';
-import React, {useRef} from 'react';
 import {useTooltip} from '../';
 
 describe('useTooltip', function () {
