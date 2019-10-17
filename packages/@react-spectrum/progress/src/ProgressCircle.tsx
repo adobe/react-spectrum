@@ -13,7 +13,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
     size = 'M',
     variant,
     isCentered = false,
-    isIndeterminate = true,
+    isIndeterminate = false,
     className,
     ...otherProps
   } = props;

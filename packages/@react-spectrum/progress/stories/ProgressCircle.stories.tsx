@@ -34,71 +34,82 @@ storiesOf('Progress/ProgressCircle', module)
     () => render()
   )
   .add(
+    'value: 50',
+    () => {
+      const value = number('Value', 50, sliderOptions);
+      return render({value});
+    }
+  )
+  .add(
+    'value: 100',
+    () => {
+      const value = number('Value', 100, sliderOptions);
+      return render({value});
+    }
+  )
+  .add(
     'size: S',
-    () => render({size: 'S'})
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({value, size: 'S'});
+    }
   )
   .add(
     'size: L',
-    () => render({size: 'L'})
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({value, size: 'L'});
+    }
   )
   .add(
     'variant: overBackground',
-    () => (
-      <div style={grayedBoxStyle}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'isCentered: true',
-    () => (
-      <div style={centeredBoxStyle}>
-        {render({isCentered: true})}
-      </div>
-    )
-  )
-  .add(
-    'isIndeterminate: false',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({isIndeterminate: false, value});
-    }
-  )
-  .add(
-    'isIndeterminate: false, size: S',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({isIndeterminate: false, size: 'S', value});
-    }
-  )
-  .add(
-    'isIndeterminate: false, size: L',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({isIndeterminate: false, size: 'L', value});
-    }
-  )
-  .add(
-    'isIndeterminate: false, variant: overBackground',
-    () => {
+    () =>  {
       const value = number('Value', 32, sliderOptions);
       return (
         <div style={grayedBoxStyle}>
-          {render({isIndeterminate: false, variant: 'overBackground', value})}
+          {render({value, variant: 'overBackground'})}
         </div>
       );
     }
   )
   .add(
-    'isIndeterminate: false, isCentered: true',
-    () => {
+    'isCentered: true',
+    () =>  {
       const value = number('Value', 32, sliderOptions);
       return (
         <div style={centeredBoxStyle}>
-          {render({isIndeterminate: false, isCentered: true, value})}
+          {render({value, isCentered: true})}
         </div>
       );
     }
+  )
+  .add(
+    'isIndeterminate: true',
+    () => render({isIndeterminate: true})
+  )
+  .add(
+    'isIndeterminate: true, size: S',
+    () => render({isIndeterminate: true, size: 'S'})
+  )
+  .add(
+    'isIndeterminate: true, size: L',
+    () => render({isIndeterminate: true, size: 'L'})
+  )
+  .add(
+    'isIndeterminate: true, variant: overBackground',
+    () => (
+      <div style={grayedBoxStyle}>
+        {render({isIndeterminate: true, variant: 'overBackground'})}
+      </div>
+    )
+  )
+  .add(
+    'isIndeterminate: true, isCentered: true',
+    () => (
+      <div style={centeredBoxStyle}>
+        {render({isIndeterminate: true, isCentered: true})}
+      </div>
+    )
   );
 
 function render(props = {}) {
