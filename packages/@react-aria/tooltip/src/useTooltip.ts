@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, RefObject, useEffect} from 'react';
+import {AllHTMLAttributes, RefObject} from 'react';
 
 interface TooltipProps {
   ref: RefObject<HTMLElement | null>,
@@ -9,10 +9,16 @@ interface TooltipAria {
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useTooltip({ref, role = 'tooltip'}: TooltipProps): TooltipAria {
+export function useTooltip(props: TooltipProps): TooltipProps {
+
+  let {
+    ref,
+    role
+  } = props;
+
   return {
-    tooltipProps: {
-      role
-    }
+    ref,
+    role 
   };
+
 }
