@@ -12,7 +12,7 @@ function render() {
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip>
-        <span> Hi, I'm a Tooltip </span>
+        Hi, I'm a Tooltip
       </Tooltip>
     </div>
   );

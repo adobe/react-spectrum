@@ -10,7 +10,7 @@ interface TooltipProps {
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
-  
+
   return (
     <div
       className={classNames(

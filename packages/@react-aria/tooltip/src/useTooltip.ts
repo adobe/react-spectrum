@@ -5,22 +5,14 @@ interface TooltipProps {
   role?: 'tooltip'
 }
 
-interface TooltipAria { 
+interface TooltipAria {
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTooltip({ref, role = 'tooltip'}: TooltipProps): TooltipAria {
-  // Focus the dialog itself on mount, unless a child element is already focused.
-  useEffect(() => {
-    if (ref.current && !ref.current.contains(document.activeElement)) {
-      ref.current.focus();
-    }
-  }, [ref]);
-
   return {
     tooltipProps: {
-      role,
-      tabIndex: -1
+      role
     }
   };
 }
