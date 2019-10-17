@@ -1,6 +1,5 @@
 .DS_Store
 coverage
-lib
 node_modules
 npm-debug.log
 test-reports.xml
@@ -9,11 +8,11 @@ dist
 .idea
 .package-lock.json
 .cache
+.parcel-cache
 
-documentation/public
-documentation/yarn.lock
 dist
 public
+storybook-static
 
 
 #allow

@@ -1,18 +1,28 @@
 {
   "name": "@react-aria/label",
-  "version": "3.0.0",
-  "main": "src/useLabel.ts",
-  "private": true,
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/useLabel.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.0.0",
-    "@react-types/label": "^3.0.0"
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/utils": "^3.0.0-alpha.1",
+    "@react-types/label": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

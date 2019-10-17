@@ -2,3 +2,4 @@ packages/@spectrum-icons/color/**
 packages/@spectrum-icons/ui/**
 packages/@spectrum-icons/workflow/**
 node_modules
+packages/*/*/dist

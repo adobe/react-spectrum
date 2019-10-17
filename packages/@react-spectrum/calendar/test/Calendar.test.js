@@ -140,10 +140,14 @@ describe('Calendar', () => {
       expect(onChange.mock.calls[1][0].valueOf()).toBe(new Date(2019, 5, 3).valueOf()); // v2 returns a moment object
     });
 
+    // v2 tests disabled until next release
+    // it.each`
+    //   Name      | Calendar      | props
+    //   ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
+    //   ${'v2'}   | ${V2Calendar} | ${{readOnly: true}}
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
-      ${'v2'}   | ${V2Calendar} | ${{readOnly: true}}
     `('$Name does not select a date on keyDown Enter/Space if isReadOnly', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText} = render(
@@ -170,10 +174,14 @@ describe('Calendar', () => {
       expect(onChange).not.toHaveBeenCalled();
     });
 
+    // v2 tests disabled until next release
+    // it.each`
+    //   Name      | Calendar
+    //   ${'v3'}   | ${Calendar}
+    //   ${'v2'}   | ${V2Calendar}
     it.each`
       Name      | Calendar
       ${'v3'}   | ${Calendar}
-      ${'v2'}   | ${V2Calendar}
     `('$Name selects a date on click (uncontrolled)', ({Calendar}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
@@ -233,10 +241,14 @@ describe('Calendar', () => {
       expect(onChange).not.toHaveBeenCalled();
     });
 
+    // v2 tests disabled until next release
+    // it.each`
+    //   Name      | Calendar      | props
+    //   ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
+    //   ${'v2'}   | ${V2Calendar} | ${{readOnly: true}}
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
-      ${'v2'}   | ${V2Calendar} | ${{readOnly: true}}
     `('$Name does not select a date on click if isReadOnly', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(

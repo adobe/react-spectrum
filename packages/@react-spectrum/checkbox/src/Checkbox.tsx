@@ -22,6 +22,7 @@ export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLab
     isEmphasized,
     isDisabled,
     children,
+    className,
     ...otherProps
   } = completeProps;
 
@@ -55,7 +56,8 @@ export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLab
             'spectrum-Checkbox--quiet': !isEmphasized,
             'is-invalid': inputProps['aria-invalid'],
             'is-disabled': isDisabled
-          }
+          },
+          className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

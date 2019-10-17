@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {Checkbox} from '../src';
+import {Checkbox} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

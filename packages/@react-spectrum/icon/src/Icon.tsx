@@ -9,15 +9,17 @@ interface IconProps extends SVGAttributes<SVGElement> {
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL'
 }
 
-export function Icon({
-  children,
-  alt,
-  className,
-  scale,
-  color,
-  size,
-  ...props
-}: IconProps) {
+export function Icon(props: IconProps) {
+  let {
+    children,
+    alt,
+    className,
+    scale,
+    color,
+    size,
+    ...otherProps
+  } = props;
+
   let provider = useProvider();
   let pscale = 'M';
   let pcolor = 'LIGHT';
@@ -30,14 +32,14 @@ export function Icon({
   }
   if (color === undefined) {
     color = pcolor;
-  } 
-  
+  }
+
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
 
   return React.cloneElement(children, {
-    ...props,
-    scale,
+    ...otherProps,
+    scale: 'M',
     color,
     focusable: 'false',
     'aria-label': props['aria-label'] || alt,

@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {LogicButton} from '../src';
+import {LogicButton} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

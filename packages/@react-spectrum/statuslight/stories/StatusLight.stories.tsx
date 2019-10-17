@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusLight} from '../src';
+import {StatusLight} from '../';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('StatusLight', module)

@@ -1,10 +1,16 @@
 import {action} from '@storybook/addon-actions';
 import React from 'react';
-import {SplitView} from '../src/SplitView';
+import {SplitView} from '../';
 import {storiesOf} from '@storybook/react';
 import './SplitView.styl';
 
+let styles = {
+  width: '900px'
+};
+const CenterDecorator = storyFn => <div style={styles}>{storyFn()}</div>;
+
 storiesOf('SplitView', module)
+  .addDecorator(CenterDecorator)
   .add(
     'Default',
     () => (

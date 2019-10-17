@@ -1,4 +1,4 @@
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, Theme} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
@@ -24,17 +24,6 @@ export interface ProviderProps extends ContextProps, DOMProps {
   scale?: Scale, // by default, chooses based on touch/mouse
   typekitId?: string,
   locale?: string
-}
-
-export interface CSSModule {
-  [className: string]: string
-}
-
-export interface Theme {
-  light?: CSSModule,
-  dark?: CSSModule,
-  medium?: CSSModule,
-  large?: CSSModule
 }
 
 export interface ProviderContext extends ContextProps {

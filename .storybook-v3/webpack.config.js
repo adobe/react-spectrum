@@ -23,14 +23,6 @@ const generateScopedName = (localName, resourcePath) => {
 };
 
 module.exports = ({config}, env) => {
-  // Hack to get icons loading in the storybook without copying them over, these need to stay in for as long as we are using V2 components
-  // in the v3 storybook. only use right now is the Provider selection menus in the top right for scale, theme, etc
-  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/Icon\/(core\/)?([^\/\.]+)$/, function (resource) {
-    resource.request = '@react/react-spectrum-icons/dist/' + (/core/.test(resource.request) ? 'core/' : '') + path.basename(resource.request);
-  }));
-  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\/js\/Icon/, path.resolve(__dirname + '/../src/Icon/js/Icon.js')));
-  config.plugins.push(new webpack.NormalModuleReplacementPlugin(/\.\/focus-ring-polyfill/, '@adobe/focus-ring-polyfill'));
-
   if (env === 'PRODUCTION') {
     // see https://github.com/storybooks/storybook/issues/1570
     config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'UglifyJsPlugin')
@@ -69,7 +61,7 @@ module.exports = ({config}, env) => {
                 set: {
                   'include css': true
                 },
-                use: [require('svg-stylus')(), require('nib')()]
+                use: [require('svg-stylus')()]
               }
             }
           ],
@@ -93,7 +85,7 @@ module.exports = ({config}, env) => {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: require('./postcss')(true)
+                plugins: require('../postcss.config').plugins
               }
             }
           ],

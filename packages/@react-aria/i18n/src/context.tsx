@@ -16,7 +16,8 @@ const I18nContext = React.createContext<LocaleContext>({
   direction: 'ltr'
 });
 
-export function Provider({locale, children}: ProviderProps) {
+export function Provider(props: ProviderProps) {
+  let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
   if (!locale) {
     locale = defaultLocale;

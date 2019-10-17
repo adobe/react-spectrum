@@ -1,19 +1,43 @@
 {
   "name": "@react-spectrum/statuslight",
-  "version": "3.0.0",
-  "private": true,
-  "main": "src/index.ts",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react-spectrum/provider": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0"
+    "@babel/runtime": "^7.6.2",
+    "@react-spectrum/provider": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

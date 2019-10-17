@@ -1,17 +1,12 @@
 {
+  "lerna": "3.0.0",
+  "version": "independent",
   "useWorkspaces": true,
-  "packages": [
-    "src"
-  ],
-  "ignoreChanges": [
-    "**/test/**"
-  ],
   "command": {
     "publish": {
       "allowBranch": [
         "next"
       ]
     }
-  },
-  "version": "2.24.0"
+  }
 }
