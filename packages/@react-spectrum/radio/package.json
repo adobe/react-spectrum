@@ -1,0 +1,48 @@
+{
+  "name": "@react-spectrum/radio",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.0.0-alpha.1",
+    "@react-aria/radio": "^3.0.0-alpha.1",
+    "@react-spectrum/provider": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-stately/radio": "^3.0.0-alpha.1",
+    "@react-types/radio": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@react/react-spectrum": "^2.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,4 +1,4 @@
-import {TextFieldProps, TextFieldState} from '@react-types/textfield';
+import {TextFieldProps} from '@react-types/textfield';
 
 export interface SearchFieldProps extends TextFieldProps {
   isDisabled?: boolean,
@@ -6,5 +6,3 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: (e: Event) => void,
   onKeyDown?: (e: Event) => void 
 }
-
-export interface SearchFieldState extends TextFieldState {}

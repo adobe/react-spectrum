@@ -4,13 +4,14 @@ export interface InputBase {
   isRequired?: boolean,
   validationState?: ValidationState,
   isReadOnly?: boolean,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  type?: string
 }
 
 export interface ValueBase<T> {
   value?: T,
   defaultValue?: T,
-  onChange?: (value: T, e?: Event) => void,
+  onChange?: (value: T, e?: React.ChangeEvent<HTMLInputElement>) => void,
 }
 
 export interface TextInputBase {

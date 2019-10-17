@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 
 function writeToFile(filepath, data) {
-  let buffer = new Buffer(data);
+  let buffer = Buffer.from(data);
   fs.writeFile(filepath, buffer);
 }
 

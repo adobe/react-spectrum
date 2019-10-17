@@ -1,7 +1,7 @@
 import {act, renderHook} from 'react-hooks-testing-library';
-import {useTextFieldState} from '../';
+import {useSearchFieldState} from '../';
 
-describe('useTextFieldState', () => {
+describe('useSearchFieldState', () => {
   let onChange = jest.fn();
   let newValue = 'newValue';
 
@@ -14,7 +14,7 @@ describe('useTextFieldState', () => {
       value: 'blah',
       onChange
     };
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.value);
     act(() => result.current.setValue(newValue));
     expect(result.current.value).toBe(props.value);
@@ -27,7 +27,7 @@ describe('useTextFieldState', () => {
       defaultValue: 'blah',
       onChange
     };
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.defaultValue);
     act(() => result.current.setValue(newValue));
     expect(result.current.value).toBe(newValue);
@@ -38,7 +38,7 @@ describe('useTextFieldState', () => {
     let props = {
       onChange
     };
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe('');
     act(() => result.current.setValue(newValue));
     expect(result.current.value).toBe(newValue);
@@ -50,7 +50,7 @@ describe('useTextFieldState', () => {
       defaultValue: 13
     };
 
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.defaultValue.toString()); 
   });
 
@@ -59,7 +59,7 @@ describe('useTextFieldState', () => {
       defaultValue: ['hi', 'this', 'is', 'me']
     };
 
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.defaultValue.toString()); 
   });
 
@@ -68,7 +68,7 @@ describe('useTextFieldState', () => {
       value: 13
     };
     
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.value.toString()); 
   });
 
@@ -77,7 +77,7 @@ describe('useTextFieldState', () => {
       value: ['hi', 'this', 'is', 'me']
     };
 
-    let {result} = renderHook(() => useTextFieldState(props));
+    let {result} = renderHook(() => useSearchFieldState(props));
     expect(result.current.value).toBe(props.value.toString()); 
   });
 });

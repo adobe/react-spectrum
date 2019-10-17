@@ -226,20 +226,17 @@ describe('Shared TextField behavior', () => {
     }
   });
 
-  // Omitting SearchField because I don't think we support this use case. If we do, will need to change css a bit
-  // Test fails because aria-invalid only appears if prop.validationState === 'invalid'. Is this bug? Will check with design
-  // TODO: Update test to fit new isRequired behavior work in https://jira.corp.adobe.com/browse/RSP-1177
-  // Handled in https://github.com/adobe/react-spectrum/pull/477
   it.each`
-    Name                | Component        | props
-    ${'v3 TextField'}   | ${TextField}     | ${{isRequired: true}}
-    ${'v3 TextArea'}    | ${TextArea}      | ${{isRequired: true}}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{required: true}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{required: true}}
-  `('$Name supports a isRequired prop', ({Component, props}) => {
+    Name                | Component        | props                 | expected
+    ${'v3 TextField'}   | ${TextField}     | ${{isRequired: true}} | ${'aria-required'}
+    ${'v3 TextArea'}    | ${TextArea}      | ${{isRequired: true}} | ${'aria-required'}
+    ${'v3 SearchField'} | ${SearchField}   | ${{isRequired: true}} | ${'aria-required'}
+    ${'v2 TextField'}   | ${V2TextField}   | ${{required: true}}   | ${'required'}
+    ${'v2 TextArea'}    | ${V2TextArea}    | ${{required: true}}   | ${'required'}
+  `('$Name supports a isRequired prop', ({Component, props, expected}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
-    expect(input).toHaveAttribute('required');
+    expect(input).toHaveAttribute(expected);
   });
 
   it.each`
