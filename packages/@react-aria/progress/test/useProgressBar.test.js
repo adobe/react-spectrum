@@ -12,7 +12,7 @@ describe('useProgressBar', function () {
   };
 
   it('with default props if no props are provided', () => {
-    let {progressBarProps, labelAriaProps} = renderProgressBarHook({});
+    let {progressBarProps, labelProps} = renderProgressBarHook({});
     expect(progressBarProps.role).toBe('progressbar');
     expect(progressBarProps['aria-valuemin']).toBe(0);
     expect(progressBarProps['aria-valuemax']).toBe(100);
@@ -21,8 +21,8 @@ describe('useProgressBar', function () {
     expect(progressBarProps['aria-label']).toBeUndefined();
     expect(progressBarProps['aria-labelledby']).toBeUndefined();
     expect(progressBarProps.id).toBeDefined();
-    expect(labelAriaProps.id).toBeDefined();
-    expect(labelAriaProps.htmlFor).toBeDefined();
+    expect(labelProps.id).toBeDefined();
+    expect(labelProps.htmlFor).toBeDefined();
   });
 
   it('warns user if no aria-label is provided', () => {
@@ -54,7 +54,7 @@ describe('useProgressBar', function () {
 
   it('with custom children label', () => {
     let props = {children: 'React test', value: 25};
-    let {progressBarProps, labelAriaProps} = renderProgressBarHook(props);
-    expect(progressBarProps['aria-labelledby']).toBe(labelAriaProps.id);
+    let {progressBarProps, labelProps} = renderProgressBarHook(props);
+    expect(progressBarProps['aria-labelledby']).toBe(labelProps.id);
   });
 });

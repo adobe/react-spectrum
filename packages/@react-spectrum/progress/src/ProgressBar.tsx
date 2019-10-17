@@ -39,7 +39,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
 
   const {
     progressBarProps,
-    labelAriaProps
+    labelProps
   } = useProgressBar({...props, value, min, max, isIndeterminate, 'aria-valuetext': valueLabel});
 
   let barStyle: CSSProperties = {};
@@ -71,7 +71,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
       } >
       {children &&
         <div
-          {...labelAriaProps}
+          {...labelProps}
           className={classNames(styles, 'spectrum-BarLoader-label')} >
             {children}
         </div>

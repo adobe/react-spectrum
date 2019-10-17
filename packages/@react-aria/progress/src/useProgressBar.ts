@@ -4,7 +4,7 @@ import {useLabel} from '@react-aria/label';
 
 interface ProgressBarAria {
   progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  labelAriaProps: AllHTMLAttributes<HTMLDivElement>
+  labelProps: AllHTMLAttributes<HTMLDivElement>
 }
 
 export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
@@ -48,6 +48,6 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
       'aria-labelledby': ariaLabelledby,
       role: 'progressbar'
     },
-    labelAriaProps
+    labelProps: labelAriaProps
   };
 }

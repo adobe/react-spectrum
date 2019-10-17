@@ -55,6 +55,17 @@ describe('ProgressCircle', function () {
     expect(progressCircle).toHaveAttribute('aria-valuenow', '100');
   });
 
+  it.each`
+    Name                  | Component           | props
+    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{className: 'testClass'}}
+    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
+  `('$Name supports custom class', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} />);
+    let progressCircle = getByRole('progressbar');
+    expect(progressCircle).toHaveAttribute('class', expect.stringContaining('testClass'));
+  });
+
+  // These tests only work against v3 for data-testid
   it('handles submask defaults', () => {
     let {getByTestId} = render(<ProgressCircle value={0} isIndeterminate={false} />);
     expect(getByTestId('fillSubMask1')).toBeDefined();
@@ -115,15 +126,5 @@ describe('ProgressCircle', function () {
       'style',
       'transform: rotate(0deg);'
     );
-  });
-
-  it.each`
-    Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{className: 'testClass'}}
-    ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
-  `('$Name supports custom class', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-    let progressCircle = getByRole('progressbar');
-    expect(progressCircle).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 });

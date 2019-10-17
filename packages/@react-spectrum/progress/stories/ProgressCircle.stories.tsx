@@ -1,5 +1,5 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
-import {ProgressCircle} from '../src';
+import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 

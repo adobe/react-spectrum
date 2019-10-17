@@ -1,5 +1,5 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
-import {ProgressBar} from '../src';
+import {ProgressBar} from '../';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
 
