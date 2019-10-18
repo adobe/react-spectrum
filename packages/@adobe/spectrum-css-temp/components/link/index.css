@@ -20,9 +20,10 @@ governing permissions and limitations under the License.
   background-color: transparent;
   /* Remove gaps in links underline in iOS 8+ and Safari 8+. */
   -webkit-text-decoration-skip: objects;
-  text-decoration: none;
+  text-decoration: underline;
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
   outline: none;
+  cursor: pointer;
 
   &:hover {
     text-decoration: underline;
@@ -48,9 +49,8 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--subtle,
-/** @deprecated */.spectrum-Link--quiet {
-  text-decoration: underline;
+.spectrum-Link--quiet {
+  text-decoration: none;
 }
 
 .spectrum-Link--overBackground {
