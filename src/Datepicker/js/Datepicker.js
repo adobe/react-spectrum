@@ -756,7 +756,7 @@ export default class Datepicker extends Component {
             quiet={quiet}
             type="button"
             icon={type === 'time' ? <ClockIcon /> : <CalendarIcon />}
-            invalid={invalid}
+            invalid={invalid || (required && !valueText)}
             disabled={readOnly || disabled}
             aria-label={triggerAriaLabel}
             aria-labelledby={ariaLabelledby ? `${ariaLabelledby} ${buttonId}` : null}
