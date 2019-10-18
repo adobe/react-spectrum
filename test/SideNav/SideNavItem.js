@@ -38,8 +38,8 @@ describe('SideNavItem', () => {
   });
 
   it('supports extra props', () => {
-    let tree = render({'aria-custom': 'value'});
-    assert.equal(tree.find('li').prop('aria-custom'), 'value');
+    let tree = render({'title': 'value'});
+    assert.equal(tree.find('li').prop('title'), 'value');
   });
 
   it('supports updating props', () => {

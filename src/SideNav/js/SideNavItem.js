@@ -296,6 +296,7 @@ export default class SideNavItem extends Component {
       manageTabIndex,
       onSelect,
       ariaLevel,
+      hidden,
       ...otherProps
     } = this.props;
 
@@ -318,7 +319,7 @@ export default class SideNavItem extends Component {
     }
 
     delete otherProps.label;
-
+    delete otherProps.target;
     delete otherProps['aria-current'];
 
     return (
@@ -350,7 +351,7 @@ export default class SideNavItem extends Component {
             id={this.getDescendantId('child')}
             aria-labelledby={header ? this.getDescendantId('header') : id}
             ariaLevel={ariaLevel + 1}
-            hidden={isTreeItem ? !expanded : undefined}
+            hidden={hidden || (isTreeItem ? !expanded : undefined)}
             value={_nestedNavValue}
             onSelect={onSelect}>
             {children}

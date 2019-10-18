@@ -61,7 +61,7 @@ storiesOf('SideNav', module)
   .add(
     'MultiLevel',
     () => (
-      <SideNav variant="multiLevel" defaultValue="2.3.1" onSelect={action('onSelect')}>
+      <SideNav variant="multiLevel" defaultValue="2.3.1" onSelect={action('onSelect')} typeToSelect>
         <SideNavItem value="foo" label="foo" />
         <SideNavItem value="baz" label="baz">
           <SideNavItem value="2.1" label="2.1" />
