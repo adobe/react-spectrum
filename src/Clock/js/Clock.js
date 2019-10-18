@@ -33,6 +33,9 @@ import VisuallyHidden from '../../VisuallyHidden';
 
 const formatMessage = messageFormatter(intlMessages);
 
+/* In Firefox, input[type=number] always strips leading 0. */
+const useTextInputType = 'MozAppearance' in document.documentElement.style;
+
 @autobind
 export default class Clock extends Component {
   static displayName = 'Clock';
@@ -116,6 +119,8 @@ export default class Clock extends Component {
   constructor(props) {
     super(props);
 
+    this._useTextInputType = useTextInputType;
+
     this.clockId = createId();
 
     const {value, defaultValue, displayFormat, valueFormat} = this.props;
@@ -136,7 +141,13 @@ export default class Clock extends Component {
 
   componentDidMount() {
     if (this.props.autoFocus) {
-      requestAnimationFrame(() => this.focus());
+      this.autoFocusTimeout = requestAnimationFrame(() => this.focus());
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.autoFocusTimeout) {
+      cancelAnimationFrame(this.autoFocusTimeout);
     }
   }
 
@@ -399,7 +410,7 @@ export default class Clock extends Component {
    */
   getDisplayHour(hour, displayMeridiem) {
     const newHour = displayMeridiem ? (hour + 11) % 12 + 1 : hour;
-    return newHour.toString();
+    return newHour.toString().padStart(2, '0');
   }
 
   /**
@@ -443,8 +454,8 @@ export default class Clock extends Component {
     } = this.props;
 
     const {hourText, minuteText, meridiemVal, newTime, value, focused, displayMeridiem} = this.state;
-    const hourMax = displayMeridiem ? '12' : '23';
-    const hourMin = displayMeridiem ? '1' : '0';
+    const hourMax = displayMeridiem ? 12 : 23;
+    const hourMin = displayMeridiem ? 1 : 0;
     const groupId = id + '-group';
     const timeLabelId = id + '-time-label';
     const ariaLabel = otherProps['aria-label'];
@@ -470,6 +481,10 @@ export default class Clock extends Component {
     delete otherProps.valueFormat;
     delete otherProps.value;
     delete otherProps.defaultValue;
+
+    const useTextInputType = this._useTextInputType;
+    const inputType = useTextInputType ? 'text' : 'number';
+    const inputRole = useTextInputType ? 'spinbutton' : null;
 
     // cant use input text with pattern to handle our validation
     // IE 11 requires that no two options in an alternation be able to start with the
@@ -497,11 +512,18 @@ export default class Clock extends Component {
         <Textfield
           ref={el => this.hourRef = el}
           className="react-spectrum-Clock-hour"
-          type="number"
+          type={inputType}
+          role={inputRole}
+          inputMode="numeric"
+          pattern={displayMeridiem ? '1[0-2]|0?[1-9]' : '2[0-3]|[01]?[0-9]'}
           value={hourText}
           placeholder={displayMeridiem ? 'hh' : 'HH'}
-          min={hourMin}
-          max={hourMax}
+          min={!useTextInputType ? hourMin : null}
+          max={!useTextInputType ? hourMax : null}
+          aria-valuemin={hourMin}
+          aria-valuemax={hourMax}
+          aria-valuenow={hourText || null}
+          aria-valuetext={hourText ? hourText.padStart(2, '0') : null}
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}
@@ -519,11 +541,18 @@ export default class Clock extends Component {
         <Textfield
           ref={el => this.minuteRef = el}
           className="react-spectrum-Clock-minute"
-          type="number"
+          type={inputType}
+          role={inputRole}
+          inputMode="numeric"
+          pattern="[0-5]?[0-9]"
           value={minuteText}
           placeholder="mm"
-          min="0"
-          max="59"
+          min={!useTextInputType ? 0 : null}
+          max={!useTextInputType ? 59 : null}
+          aria-valuemin={0}
+          aria-valuemax={59}
+          aria-valuenow={minuteText || null}
+          aria-valuetext={minuteText ? minuteText.padStart(2, '0') : null}
           invalid={invalid}
           disabled={disabled}
           readOnly={readOnly}

@@ -302,7 +302,7 @@ describe('Datepicker', () => {
 
       const changeTimeAndGetNewDate = (wrapper, value, field) => {
         const clockEl = shallow(wrapper.find(Clock).getElement()).find(`.react-spectrum-Clock-${field}`);
-        clockEl.simulate('change', value, {stopPropagation: function () {}, target: {value: `${value}`}});
+        clockEl.simulate('change', `${value}`, {stopPropagation: function () {}, target: {value: `${value}`}});
         return spy.lastCall.args[1];
       };
 

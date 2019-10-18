@@ -19,11 +19,21 @@ import assert from 'assert';
 import Clock from '../../src/Clock';
 import moment from 'moment';
 import {mount, shallow} from 'enzyme';
-import {rAF} from '../utils';
 import React from 'react';
 import sinon from 'sinon';
 
 describe('Clock', () => {
+  let clock;
+
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.runAll();
+    clock.restore();
+  });
+
   it('default', () => {
     const tree = shallow(<Clock />);
     assert(tree.hasClass('react-spectrum-Clock'));
@@ -202,7 +212,7 @@ describe('Clock', () => {
 
   it('supports autoFocus', async () => {
     const tree = mount(<Clock autoFocus />);
-    await rAF();
+    clock.runAll();
     assert.equal(document.activeElement, findHourTextfield(tree).at(0).getDOMNode());
     tree.unmount();
   });
@@ -212,6 +222,7 @@ describe('Clock', () => {
     findHourTextfield(tree).simulate('focus');
     assert(tree.state('focused'));
     findHourTextfield(tree).simulate('blur', {target: {value: '1'}});
+    clock.runAll();
     tree.update();
     assert(!tree.state('focused'));
     assert.equal(tree.state('hourText'), '01');
@@ -219,119 +230,105 @@ describe('Clock', () => {
     tree.update();
     assert(tree.state('focused'));
     findMinuteTextfield(tree).simulate('blur', {target: {value: '1'}});
+    clock.runAll();
     tree.update();
     assert(!tree.state('focused'));
     assert.equal(tree.state('minuteText'), '01');
     findHourTextfield(tree).simulate('blur', {target: {value: '10'}});
+    clock.runAll();
     tree.update();
     assert(!tree.state('focused'));
     assert.equal(tree.state('hourText'), '10');
     findMinuteTextfield(tree).simulate('blur', {target: {value: '10'}});
+    clock.runAll();
     tree.update();
     assert(!tree.state('focused'));
     assert.equal(tree.state('minuteText'), '10');
   });
 
   it('supports looping at min/max and changing am/pm with arrow keys', () => {
+    const preventDefaultSpy = sinon.spy();
     const tree = shallow(<Clock defaultValue="23:59" displayFormat="hh:mm a" />);
     assert.equal(tree.state('hourText'), '11');
     assert.equal(tree.state('minuteText'), '59');
     assert.equal(tree.state('meridiemVal'), 'pm');
     assert.equal(findTimeValue(tree).text(), '11:59 pm');
     let textfield = findHourTextfield(tree);
-    let min = textfield.prop('min');
-    let max = textfield.prop('max');
     textfield.simulate('keydown', {
       key: 'ArrowUp',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('hourText'), '12');
     assert.equal(tree.state('meridiemVal'), 'am');
     assert.equal(findTimeValue(tree).text(), '12:59 am');
+    assert.equal(preventDefaultSpy.callCount, 1);
+
     textfield = findHourTextfield(tree);
     textfield.simulate('keydown', {
       key: 'Up',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('hourText'), '01');
     assert.equal(tree.state('meridiemVal'), 'am');
     assert.equal(findTimeValue(tree).text(), '01:59 am');
+    assert.equal(preventDefaultSpy.callCount, 2);
+
     textfield = findHourTextfield(tree);
     textfield.simulate('keydown', {
       key: 'ArrowDown',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('hourText'), '12');
     assert.equal(tree.state('meridiemVal'), 'am');
     assert.equal(findTimeValue(tree).text(), '12:59 am');
+    assert.equal(preventDefaultSpy.callCount, 3);
+
     textfield = findHourTextfield(tree);
     textfield.simulate('keydown', {
       key: 'Down',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('hourText'), '11');
     assert.equal(tree.state('meridiemVal'), 'pm');
     assert.equal(findTimeValue(tree).text(), '11:59 pm');
+    assert.equal(preventDefaultSpy.callCount, 4);
 
     textfield = findMinuteTextfield(tree);
-    min = textfield.prop('min');
-    max = textfield.prop('max');
     textfield.simulate('keydown', {
       key: 'ArrowUp',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('minuteText'), '00');
     assert.equal(findTimeValue(tree).text(), '12:00 am');
+    assert.equal(preventDefaultSpy.callCount, 5);
+
     textfield = findMinuteTextfield(tree);
     textfield.simulate('keydown', {
       key: 'ArrowDown',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
     assert.equal(tree.state('minuteText'), '59');
     assert.equal(findTimeValue(tree).text(), '11:59 pm');
+    assert.equal(preventDefaultSpy.callCount, 6);
+
     textfield = findMinuteTextfield(tree);
     textfield.simulate('keydown', {
       key: 'Down',
-      target: {
-        value: textfield.prop('value'),
-        min,
-        max
-      },
-      preventDefault: () => {}
+      preventDefault: preventDefaultSpy
     });
 
     assert.equal(tree.state('minuteText'), '58');
     assert.equal(findTimeValue(tree).text(), '11:58 pm');
+    assert.equal(preventDefaultSpy.callCount, 7);
+
+    textfield = findHourTextfield(tree);
+    textfield.simulate('keydown', {
+      key: 'Tab',
+      preventDefault: preventDefaultSpy
+    });
+    assert.equal(tree.state('hourText'), '11');
+    assert.equal(findTimeValue(tree).text(), '11:58 pm');
+    assert.equal(preventDefaultSpy.callCount, 7);
   });
 
   describe('Accessibility', () => {
@@ -355,6 +352,97 @@ describe('Clock', () => {
       assert.equal(findFieldset(tree).prop('aria-label'), 'foo');
       assert.equal(findHourTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId].join(' '));
       assert.equal(findMinuteTextfield(tree).prop('aria-labelledby'), [clockId + '-group', clockId + '-minutes'].join(' '));
+    });
+
+    describe('in Firefox', () => {
+      it('has type="text" and role="spinbutton"', () => {
+        let tree = shallow(<Clock value="13:00" displayFormat="hh:mm a" />);
+        let instance =  tree.instance();
+
+        // stub _useTextInputText value ('MozAppearance' in document.documentElement.style)
+        instance._useTextInputType = true;
+
+        // force update to re-render.
+        instance.forceUpdate();
+
+        let hourTextfield = findHourTextfield(tree);
+        let minuteTextfield = findMinuteTextfield(tree);
+
+        assert.equal(hourTextfield.prop('type'), 'text');
+        assert.equal(hourTextfield.prop('role'), 'spinbutton');
+        assert.equal(hourTextfield.prop('min'), null);
+        assert.equal(hourTextfield.prop('max'), null);
+        assert.equal(hourTextfield.prop('aria-valuemin'), 1);
+        assert.equal(hourTextfield.prop('aria-valuemax'), 12);
+        assert.equal(hourTextfield.prop('aria-valuenow'), 1);
+        assert.equal(hourTextfield.prop('aria-valuetext'), '01');
+        assert.equal(hourTextfield.prop('pattern'), '1[0-2]|0?[1-9]');
+
+        assert.equal(minuteTextfield.prop('type'), 'text');
+        assert.equal(minuteTextfield.prop('role'), 'spinbutton');
+        assert.equal(minuteTextfield.prop('min'), null);
+        assert.equal(minuteTextfield.prop('max'), null);
+        assert.equal(minuteTextfield.prop('aria-valuemin'), 0);
+        assert.equal(minuteTextfield.prop('aria-valuemax'), 59);
+        assert.equal(minuteTextfield.prop('aria-valuenow'), 0);
+        assert.equal(minuteTextfield.prop('aria-valuetext'), '00');
+        assert.equal(minuteTextfield.prop('pattern'), '[0-5]?[0-9]');
+
+        tree = shallow(<Clock value="13:00" displayFormat="HH:MM" />);
+        instance =  tree.instance();
+
+        // stub _useTextInputText value ('MozAppearance' in document.documentElement.style)
+        instance._useTextInputType = true;
+
+        // force update to re-render.
+        instance.forceUpdate();
+
+        hourTextfield = findHourTextfield(tree);
+        minuteTextfield = findMinuteTextfield(tree);
+        assert.equal(hourTextfield.prop('pattern'), '2[0-3]|[01]?[0-9]');
+        assert.equal(hourTextfield.prop('aria-valuemin'), 0);
+        assert.equal(hourTextfield.prop('aria-valuemax'), 23);
+        assert.equal(hourTextfield.prop('aria-valuenow'), 13);
+        assert.equal(hourTextfield.prop('aria-valuetext'), '13');
+      });
+    });
+
+    describe('in other browsers', () => {
+      it('has type="number"', () => {
+        let tree = shallow(<Clock value="13:00" displayFormat="hh:mm a" />);
+
+        let hourTextfield = findHourTextfield(tree);
+        let minuteTextfield = findMinuteTextfield(tree);
+
+        assert.equal(hourTextfield.prop('type'), 'number');
+        assert.equal(hourTextfield.prop('role'), null);
+        assert.equal(hourTextfield.prop('min'), 1);
+        assert.equal(hourTextfield.prop('max'), 12);
+        assert.equal(hourTextfield.prop('aria-valuemin'), 1);
+        assert.equal(hourTextfield.prop('aria-valuemax'), 12);
+        assert.equal(hourTextfield.prop('aria-valuenow'), 1);
+        assert.equal(hourTextfield.prop('aria-valuetext'), '01');
+        assert.equal(hourTextfield.prop('pattern'), '1[0-2]|0?[1-9]');
+
+        assert.equal(minuteTextfield.prop('type'), 'number');
+        assert.equal(minuteTextfield.prop('role'), null);
+        assert.equal(minuteTextfield.prop('min'), 0);
+        assert.equal(minuteTextfield.prop('max'), 59);
+        assert.equal(minuteTextfield.prop('aria-valuemin'), 0);
+        assert.equal(minuteTextfield.prop('aria-valuemax'), 59);
+        assert.equal(minuteTextfield.prop('aria-valuenow'), 0);
+        assert.equal(minuteTextfield.prop('aria-valuetext'), '00');
+        assert.equal(minuteTextfield.prop('pattern'), '[0-5]?[0-9]');
+
+        tree = shallow(<Clock value="13:00" displayFormat="HH:MM" />);
+
+        hourTextfield = findHourTextfield(tree);
+        minuteTextfield = findMinuteTextfield(tree);
+        assert.equal(hourTextfield.prop('pattern'), '2[0-3]|[01]?[0-9]');
+        assert.equal(hourTextfield.prop('min'), 0);
+        assert.equal(hourTextfield.prop('max'), 23);
+        assert.equal(hourTextfield.prop('value'), 13);
+      });
     });
   });
 
@@ -403,7 +491,7 @@ describe('Clock', () => {
 
     it('handles 13:00 as 1pm', () => {
       const tree = shallow(<Clock value="13:00" displayFormat="hh:mm a" />);
-      assert.equal(tree.state('hourText'), '1');
+      assert.equal(tree.state('hourText'), '01');
       assert.equal(tree.state('meridiemVal'), 'pm');
       assert.equal(findTimeValue(tree).text(), '01:00 pm');
     });
