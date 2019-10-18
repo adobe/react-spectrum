@@ -46,7 +46,7 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-fieldlabel-text-size);
   font-weight: var(--spectrum-fieldlabel-text-font-weight);
   line-height: var(--spectrum-fieldlabel-text-line-height);
-  text-align: left;
+  text-align: start;
   margin-bottom: var(--spectrum-barloader-large-label-gap-y);
 }
 
@@ -56,23 +56,23 @@ governing permissions and limitations under the License.
 
 .spectrum-BarLoader-percentage {
   align-self: flex-start;
-  margin-left: var(--spectrum-barloader-small-label-gap-x);
+  margin-inline-start: var(--spectrum-barloader-small-label-gap-x);
 }
 
 .spectrum-BarLoader--sideLabel {
   display: inline-flex;
   flex-flow: row;
   justify-content: space-between;
-  width: auto;
+  inline-size: auto;
 
   .spectrum-BarLoader-label {
-    margin-right: var(--spectrum-barloader-large-label-gap-x);
+    margin-inline-end: var(--spectrum-barloader-large-label-gap-x);
     margin-bottom: 0;
   }
   .spectrum-BarLoader-percentage {
     order: 3;
-    text-align: right;
-    margin-left: var(--spectrum-barloader-large-label-gap-x);
+    text-align: end;
+    margin-inline-start: var(--spectrum-barloader-large-label-gap-x);
     margin-bottom: 0;
   }
 }

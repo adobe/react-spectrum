@@ -1,13 +1,12 @@
 import {AllHTMLAttributes, ChangeEvent} from 'react';
-import {TextFieldProps, TextFieldState} from '@react-types/textfield';
+import {TextFieldProps} from '@react-types/textfield';
 
 interface TextFieldAria {
   textFieldProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTextField(
-  props: TextFieldProps,
-  state: TextFieldState
+  props: TextFieldProps
 ): TextFieldAria {
   let {
     isDisabled = false,
@@ -15,18 +14,18 @@ export function useTextField(
     isReadOnly = false,
     autoFocus = false,
     validationState,
-    type = 'text'
+    type = 'text',
+    onChange = () => {}
   } = props;
 
   return {
     textFieldProps: {
       type,
       disabled: isDisabled,
-      required: isRequired,
       readOnly: isReadOnly,
+      'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => state.setValue(e.target.value, e),
-      value: state.value,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value, e),
       autoFocus
     }
   };

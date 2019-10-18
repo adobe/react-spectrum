@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {addWeeks} from 'date-fns';
-import {Calendar} from '../src';
+import {Calendar} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

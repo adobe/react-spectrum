@@ -5,7 +5,8 @@ interface InteractOutsideProps {
   onInteractOutside?: (e: SyntheticEvent) => void
 }
 
-export function useInteractOutside({ref, onInteractOutside}: InteractOutsideProps) {
+export function useInteractOutside(props: InteractOutsideProps) {
+  let {ref, onInteractOutside} = props;
   let stateRef = useRef({
     ignoreEmulatedMouseEvents: false
   });

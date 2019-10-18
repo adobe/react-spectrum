@@ -1,21 +1,45 @@
 {
   "name": "@react-spectrum/alert",
-  "version": "3.0.0",
-  "private": true,
-  "main": "src/Alert.tsx",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
+  "main": "dist/Alert.js",
+  "module": "dist/Alert.module.js",
+  "types": "dist/Alert.d.ts",
+  "source": "src/Alert.tsx",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react-aria/i18n": "^3.0.0",
-    "@spectrum-icons/ui": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0"
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

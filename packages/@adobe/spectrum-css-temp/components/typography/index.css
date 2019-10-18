@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 @import 'font.css';
 
-@mixin typography .spectrum-Body1 {}
+/*@mixin typography .spectrum-Body1 {}
 @mixin typography .spectrum-Body2 {}
 @mixin typography .spectrum-Body3 {}
 @mixin typography .spectrum-Body4 {}
@@ -128,7 +128,7 @@ governing permissions and limitations under the License.
 }
 @mixin typography .spectrum-Code5, body-code-5, true {
   font-family: var(--spectrum-body-code-5-text-font-family);
-}
+}*/
 
 /* topdoc
 {{ typography/typography.yml }}
@@ -155,6 +155,7 @@ governing permissions and limitations under the License.
   font-style: var(--spectrum-body-4-emphasis-text-font-style);
 }
 
+/*
 .spectrum-Body--large {
   @extend .spectrum-Body2;
 }
@@ -185,4 +186,4 @@ governing permissions and limitations under the License.
 
 .spectrum-Heading--subtitle3 {
   @extend .spectrum-Subheading;
-}
+}*/

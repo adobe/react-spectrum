@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '../src';
+import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import React from 'react';
 import {storiesOf} from '@storybook/react';

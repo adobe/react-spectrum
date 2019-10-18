@@ -18,6 +18,7 @@ export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, clas
 
   return (
     <LabelBase
+      {...otherProps}
       label={label}
       className={
         classNames(
@@ -30,7 +31,6 @@ export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, clas
       wrapperClassName={wrapperClassName}
       labelFor={labelFor}
       componentName="FormItem"
-      {...otherProps}
       ref={ref}>
       {children}
     </LabelBase>

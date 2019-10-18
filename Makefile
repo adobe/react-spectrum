@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
+NPM_REGISTRY=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
@@ -55,6 +55,7 @@ clean_docs_node_modules:
 lint:
 	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
+	node lint-packages.js
 
 test:
 	yarn jest
@@ -62,40 +63,19 @@ test:
 ci-test: lint test
 
 storybook:
-	yarn build-storybook
+	NODE_ENV=storybook yarn build-storybook
 
 deploy: storybook docs
 	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"
 	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r documentation/public/* "$(SERVER):~/rsp/."
 	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r public/* "$(SERVER):~/rsp/."
 
-ci-deploy:
-	@if [ "$$VERSION" == "major" ] || [ "$$VERSION" == "minor" ] || [ "$$VERSION" == "patch" ] || [ "$$VERSION" == "website only" ]; then \
-		$(MAKE) deploy; \
-	fi
-
-# Run this as make version VERSION={patch|minor|major}
-version:
-	lerna version ${VERSION} --yes --no-commit-hooks -m "chore(release): publish"
-	cp src/package.json dist/package.json
-
-ci-version:
-	if [ "$$VERSION" != "publish only" ]; then \
-		$(MAKE) version; \
-	fi
-
-publish: build ci-version
-	lerna publish from-git --yes --registry $(NPM_REGISTRY) --contents dist
-
-ci-publish:
-	@if [ "$$VERSION" != "website only" ]; then \
-		$(MAKE) publish; \
-	fi
-
-# Run this on Jenkins with VERSION={patch|minor|major} as an argument, this will bump all the changed packages
-# So major bumps everything as major, minor bumps everything as minor, ...
+# for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
-	@if [ ! -z "$$VERSION" ] && [ "$$VERSION" != "noop" ]; then \
-		$(MAKE) ci-deploy; \
-		$(MAKE) ci-publish; \
-	fi
+	$(MAKE) publish
+
+publish: build
+	lerna publish from-package --yes --registry $(NPM_REGISTRY)
+
+build:
+	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify

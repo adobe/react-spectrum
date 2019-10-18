@@ -1,3 +1,4 @@
+import {CalendarAria} from './types';
 import {CalendarProps} from '@react-types/calendar';
 import {CalendarState} from '@react-stately/calendar';
 // @ts-ignore
@@ -6,7 +7,7 @@ import {useCalendarBase} from './useCalendarBase';
 import {useMemo} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-export function useCalendar(props: CalendarProps, state: CalendarState) {
+export function useCalendar(props: CalendarProps, state: CalendarState): CalendarAria {
   // Compute localized message for the selected date
   let formatMessage = useMessageFormatter(intlMessages);
   let selectedDateDescription = useMemo(

@@ -1,5 +1,5 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
-import {DatePicker, DateRangePicker} from '../src';
+import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';

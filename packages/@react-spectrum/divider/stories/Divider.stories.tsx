@@ -1,5 +1,5 @@
 import {ActionButton} from '@react-spectrum/button/src';
-import {Divider} from '../src';
+import {Divider} from '../';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
