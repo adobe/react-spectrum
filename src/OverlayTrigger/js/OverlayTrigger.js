@@ -340,21 +340,30 @@ export default class OverlayTrigger extends Component {
 
   onMouseDown = (e) => {
     if (!this.props.disabled && e.button === MOUSE_BUTTONS.left) {
+      const target = e.currentTarget;
       this.longPressTimeout = setTimeout(() => {
         this.longPressTimeout = null;
-        if (this.props.onLongClick) {
-          this.props.onLongClick();
-        }
+        // In Safari, buttons are force blurred after the mouse down event since we don't call e.preventDefault()
+        // Changing Button to prevent default would be a breaking change. So, assume that we want to restore
+        // focus to the trigger element when the overlay closes.
+        this._lastFocus = target;
         this.show(e);
       }, 250);
     }
   };
 
   onMouseUp = (e) => {
+    // Prevent focus from being forced back to the button on long click.
+    // It will already be inside the popover/menu.
+    if (!this.longPressTimeout) {
+      e.preventDefault();
+    }
+
     if (!this.props.disabled && this.longPressTimeout && e.button === MOUSE_BUTTONS.left) {
       if (this.props.onClick) {
         this.props.onClick(e);
       }
+      this.hide(e);
       clearTimeout(this.longPressTimeout);
       this.longPressTimeout = null;
     }
