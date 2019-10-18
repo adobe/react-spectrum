@@ -117,7 +117,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'keyboardConfirm: true',
-    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', keyboardConfirm: true, onConfirm: action('confirm'), onCancel: action('cancel'), onKeyDown: action('onKeyDown')}),
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', secondaryLabel: 'Replace', cancelLabel: 'Cancel', keyboardConfirm: true, onConfirm: action('confirm'), onCancel: action('cancel'), onKeyDown: action('onKeyDown')}),
     {info: 'Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the "Confirm" button.'}
   );
 
