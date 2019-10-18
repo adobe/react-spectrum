@@ -1,18 +1,40 @@
 {
   "name": "@react-aria/numberfield",
-  "version": "3.0.0",
+  "version": "3.0.0-alpha.1",
   "private": true,
-  "main": "src/index.ts",
   "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.0.0",
-    "@react-aria/spinbutton": "^3.0.0"
+    "@react-aria/button": "^3.0.0-alpha.1",
+    "@react-aria/spinbutton": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
