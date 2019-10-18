@@ -16,7 +16,9 @@
 **************************************************************************/
 
 import AlertMedium from '../../Icon/core/AlertMedium';
+import Button from '../../Button';
 import classNames from 'classnames';
+import CrossLarge from '../../Icon/core/CrossLarge';
 import DialogButtons from './DialogButtons';
 import filterDOMProps from '../../utils/filterDOMProps';
 import Heading from '../../Heading';
@@ -36,9 +38,11 @@ export default function DialogHeader({
   cancelLabel,
   onConfirm,
   onCancel,
+  onClose,
   className,
   autoFocusButton,
   id,
+  isDismissible,
   ...otherProps
 }) {
   let Icon = VARIANT_ICONS[variant];
@@ -53,12 +57,20 @@ export default function DialogHeader({
       )}>
       <Heading size={3} className="spectrum-Dialog-title" id={id}>{title}</Heading>
       {Icon && <Icon size={null} className="spectrum-Dialog-typeIcon" />}
+      {isDismissible && !fullscreen &&
+        <Button
+          className="spectrum-Dialog-closeButton"
+          variant="action"
+          onClick={onClose}
+          quiet
+          icon={<CrossLarge size="L" />} />
+      }
       {fullscreen && confirmLabel &&
         <DialogButtons
           autoFocusButton={autoFocusButton}
           variant={variant}
           cancelLabel={cancelLabel}
-          secondaryLabel={secondaryLabel}  
+          secondaryLabel={secondaryLabel}
           confirmLabel={confirmLabel}
           confirmDisabled={confirmDisabled}
           onConfirm={onConfirm}

@@ -80,6 +80,10 @@ storiesOf('Dialog', module)
     () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'})
   )
   .add(
+    'isDismissible: true',
+    () => render(dialogChildren, {title: 'Title', isDismissible: true})
+  )
+  .add(
     'mode: alert',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'alert', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )

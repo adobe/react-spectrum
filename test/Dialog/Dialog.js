@@ -97,6 +97,12 @@ describe('Dialog', () => {
     assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
   });
 
+  it('supports dismissible dialog', () => {
+    const tree = shallow(<Dialog isDismissible confirmLabel="Go" />);
+    assert(tree.hasClass('spectrum-Dialog--dismissible'));
+    assert.equal(tree.find('.spectrum-Dialog-footer').length, 0);
+  });
+
   it('renders content comp if there is a title', () => {
     const tree = shallow(<Dialog title="test"><span>bar</span></Dialog>);
     let content = tree.find('.spectrum-Dialog-content');
