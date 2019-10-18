@@ -64,8 +64,8 @@ export const Tag = ((props: TagProps) => {
         {removable &&
           <ClearButton
             tabIndex={tagProps.tabIndex}
-            focusClassName={classNames(styles, 'clearButton-focus')}
-            className={classNames(styles, 'spectrum-Tags-item-ClearButton')}
+            focusClassName={classNames(styles, 'is-focused')}
+            className={classNames(styles, 'spectrum-Tags-itemClearButton')}
             {...clearButtonProps} />
         }
       </div>

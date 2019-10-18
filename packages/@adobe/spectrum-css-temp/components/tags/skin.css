@@ -47,11 +47,8 @@ governing permissions and limitations under the License.
       color: var(--spectrum-tag-text-color-error);
     }
     .spectrum-Tags-itemIcon,
-    .spectrum-Tags-item-ClearButton {
+    .spectrum-Tags-itemClearButton {
       color: var(--spectrum-tag-border-color-error);
-      &.clearButton-focus {
-         color: white;
-      }
     }
 
   }
@@ -97,10 +94,11 @@ governing permissions and limitations under the License.
     }
   }
 
-  > .spectrum-Tags-item-ClearButton {
-    &.clearButton-focus {
-      background-color: var(--spectrum-tag-deletable-background-color-focus);
-      color: white;
+  .spectrum-Tags-itemClearButton {
+    &.is-focused {
+      border: 2px solid var(--spectrum-tag-deletable-border-color-key-focus);
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      background-color: var(--spectrum-global-color-gray-300);
     }
     &:hover {
       background-color: var(--spectrum-global-color-gray-300)
