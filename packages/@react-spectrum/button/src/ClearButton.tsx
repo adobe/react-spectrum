@@ -6,11 +6,14 @@ import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
-interface ClearButtonProps extends ButtonBase {}
+interface ClearButtonProps extends ButtonBase {
+  variant?: 'overBackground'
+}
 
 export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefObject<HTMLButtonElement>) => {
   let {
     className,
+    variant,
     ...otherProps
   } = props;
   ref = ref || useRef();
@@ -27,6 +30,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
             styles,
             'spectrum-ClearButton',
             {
+              [`spectrum-ClearButton--${variant}`]: variant,
               'is-active': isPressed
             },
             className

@@ -1,5 +1,5 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, ICON_VARIANTS} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
@@ -20,14 +20,6 @@ interface AlertProps {
   alt: string,
 }
 
-let ICONS = {
-  error: AlertMedium,
-  warning: AlertMedium,
-  info: InfoMedium,
-  help: HelpMedium,
-  success: SuccessMedium
-};
-
 export function Alert(props: AlertProps) {
   let {
     header,
@@ -43,7 +35,7 @@ export function Alert(props: AlertProps) {
   if (!alt) {
     alt = formatMessage(variant);
   }
-  let Icon = ICONS[variant];
+  let Icon = ICON_VARIANTS[variant];
 
   return (
     <div
