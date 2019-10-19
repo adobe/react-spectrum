@@ -34,31 +34,31 @@ const TAGLIST_SELECTED_SELECTOR = TAGLIST_SELECTOR + '[aria-selected=true]';
 
 @focusRing
 export default class TagList extends React.Component {
-  
+
   static displayName = 'TagList';
-  
+
   static propTypes = {
     /** Custom CSS class to add to the tag list */
     className: PropTypes.string,
-  
+
     /** Whether to disable the tag list */
     disabled: PropTypes.bool,
-  
+
     /** Name of tag list **/
     name: PropTypes.string,
-  
+
     /** Function called when focus is taken away from the tag list */
     onBlur: PropTypes.func,
-  
+
     /** Function called when a tag  in the tag list is closed */
     onClose: PropTypes.func,
-  
+
     /** Function called when focus is put on the tag list */
     onFocus: PropTypes.func,
-  
+
     /** Whether the tag list can only be read */
     readOnly: PropTypes.bool,
-  
+
     /** Initial tags in the tag list */
     values: PropTypes.arrayOf(PropTypes.string)
   };
@@ -89,7 +89,7 @@ export default class TagList extends React.Component {
     this.setSelectedIndex(selectedIndex, e);
   }
 
- 
+
   setSelectedIndex(selectedIndex, e) {
     const lastSelectedIndex = this.state.selectedIndex;
 
@@ -183,6 +183,8 @@ export default class TagList extends React.Component {
 
     const {focused} = this.state;
 
+    const renderedChildren =  this.renderChildren();
+
     return (
       <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal">
         <div
@@ -199,7 +201,7 @@ export default class TagList extends React.Component {
           name={name}
           readOnly={readOnly}
           disabled={disabled}
-          role="grid"
+          role={!renderedChildren || !renderedChildren.length ? 'group' : 'grid'}
           aria-atomic="false"
           aria-relevant="additions"
           aria-live={focused ? 'polite' : 'off'}
@@ -207,7 +209,7 @@ export default class TagList extends React.Component {
           aria-invalid={invalid}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}>
-          {this.renderChildren()}
+          {renderedChildren}
         </div>
       </FocusManager>
     );

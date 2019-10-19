@@ -37,9 +37,9 @@ describe('TagList', () => {
     assert.equal(findTagList(tree).hasClass('squid'), true);
   });
 
-  it('sets the role', () => {
+  it('sets role="group" when there are no children', () => {
     const tree = shallow(<TagList />);
-    assert.equal(findTagList(tree).prop('role'), 'grid');
+    assert.equal(findTagList(tree).prop('role'), 'group');
   });
 
   it('sets the name', () => {
@@ -100,6 +100,11 @@ describe('TagList', () => {
       child2 = tree.find('.two');
     }
 
+    it('sets role="grid" when there are children', () => {
+      run();
+      assert.equal(findTagList(tree).prop('role'), 'grid');
+    });
+
     it('supports inline', () => {
       run();
       assert.equal(child1.length, 1);
@@ -147,6 +152,7 @@ describe('TagList', () => {
 
     it('supports values', () => {
       run({values: ['test1', 'test2', 'test3']});
+      assert.equal(findTagList(tree).prop('role'), 'grid');
       assert.equal(findTagList(tree).children().length, 3);
     });
 
