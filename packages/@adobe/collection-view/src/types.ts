@@ -51,6 +51,8 @@ export interface SelectableItem extends Item {
 export interface Collection {
   getKeys(): Iterable<string>,
   getItem(key: string): Item,
+  getKeyBefore(key: string): string | null,
+  getKeyAfter(key: string): string | null
 }
 
 export interface EditableCollection extends Collection {

@@ -82,11 +82,11 @@ export class ListLayout extends Layout {
   }
 
   getKeyAbove(key: string) {
-    return this.collectionView.incrementKey(key, -1);
+    return this.collectionView.data.getKeyBefore(key);
   }
 
   getKeyBelow(key: string) {
-    return this.collectionView.incrementKey(key, 1);
+    return this.collectionView.data.getKeyAfter(key);
   }
 
   getDragTarget(point: Point) {

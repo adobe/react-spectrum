@@ -107,6 +107,7 @@ export function ReactCollectionView({renderItem, layout, data, ...otherProps}) {
   return (
     <ScrollView 
       {...otherProps}
+      innerStyle={isAnimating ? {transition: `none ${collectionView.current.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}
       onVisibleRectChange={onVisibleRectChange}>
@@ -115,7 +116,7 @@ export function ReactCollectionView({renderItem, layout, data, ...otherProps}) {
   );
 }
 
-function ScrollView({contentSize, visibleRect, onVisibleRectChange, children, ...otherProps}) {
+function ScrollView({contentSize, visibleRect, onVisibleRectChange, children, innerStyle, ...otherProps}) {
   let ref = useRef();
   let lastScrollTop = useRef(0);
   let lastScrollLeft = useRef(0);
@@ -196,7 +197,7 @@ function ScrollView({contentSize, visibleRect, onVisibleRectChange, children, ..
 
   return (
     <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
-      <div style={{width: contentSize.width, height: contentSize.height, pointerEvents: scrolling ? 'none' : 'auto'}}>
+      <div style={{width: contentSize.width, height: contentSize.height, /*pointerEvents: scrolling ? 'none' : 'auto'*/ ...innerStyle}}>
         {children}
       </div>
     </div>

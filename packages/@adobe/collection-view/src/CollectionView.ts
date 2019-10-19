@@ -215,39 +215,6 @@ export class CollectionView {
     return this._data ? this._data.getItem(key) : null;
   }
 
-  private _getKeyArray(): string[] {
-    let keys = this._data ? this._data.getKeys() : [];
-    return Array.isArray(keys) ? keys : [...keys];
-  }
-
-  getKeyIndex(key: string) {
-    if (!this._data) {
-      return null;
-    }
-
-    let keyArray = this._getKeyArray();
-    let index = keyArray.indexOf(key);
-    if (index < 0) {
-      return null;
-    }
-
-    return index;
-  }
-
-  incrementKey(key: string, amount: number): string | null {
-    if (!this._data) {
-      return null;
-    }
-
-    let keyArray = this._getKeyArray();
-    let index = keyArray.indexOf(key);
-    if (index >= 0 && index + amount < keyArray.length) {
-      return keyArray[index + amount];
-    }
-
-    return null;
-  }
-
   /**
    * Get the collection view's layout
    */
@@ -897,6 +864,9 @@ export class CollectionView {
     //   }
     // });
     this._flushVisibleViews();
+    if (this._transaction) {
+      requestAnimationFrame(() => requestAnimationFrame(() => this._applyLayoutInfos()));
+    }
   }
 
   afterRender() {
@@ -934,11 +904,13 @@ export class CollectionView {
 
   private _applyLayoutInfos() {
     let updated = false;
+    let waitFrame = false;
 
     // Apply layout infos to visible views
     for (let [key, view] of this._visibleViews) {
-      if (this._transaction && this._transaction.initialLayoutInfo.has(key)) {
-        view.forceStyleUpdate();
+      if (this._transaction && this._transaction.initialLayoutInfo.get(key) === view.layoutInfo) {
+        // view.forceStyleUpdate();
+        waitFrame = true;
       }
 
       let cur = view.layoutInfo;
