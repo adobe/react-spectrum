@@ -28,6 +28,39 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
   }
 
+  &.is-selected {
+    background-color: var(--spectrum-tag-deletable-text-color);
+    /* Remove after dna pr is merged */
+    color: white;
+    border-color: inherit;
+    &:hover {
+      background-color: var(--spectrum-body-1-text-color);
+    }
+
+    &.focus-ring {
+      box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+      border-color: inherit;
+    }
+    &.is-invalid {
+      /* Remove after dna pr is merged */
+      border-color: white;
+      .spectrum-Tags-itemIcon,
+      .spectrum-Tags-itemLabel,
+      .spectrum-Tags-itemClearButton {
+        /* Remove after dna pr is merged */
+        color: white;
+      }
+      &.focus-ring {
+        box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+        /* Remove after dna pr is merged */
+        border-color: white;
+      }
+      &:hover {
+        border-color: initial;
+      }
+    }
+  }
+
   &.is-invalid {
     color: var(--spectrum-tag-text-color-error);
     border-color: var(--spectrum-tag-border-color-error);

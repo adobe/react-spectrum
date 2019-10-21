@@ -13,6 +13,7 @@ export const Tag = ((props: TagProps) => {
     className,
     isDisabled,
     isRemovable,
+    isSelected,
     validationState,
     ...otherProps
   } = props;
@@ -48,6 +49,7 @@ export const Tag = ((props: TagProps) => {
           'spectrum-Tags-item',
           {
             'is-disabled': disabled,
+            'is-selected': isSelected,
             'spectrum-Tags-item--deletable': removable,
             'is-invalid': isInvalid
           },

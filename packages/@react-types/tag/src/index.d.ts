@@ -5,6 +5,7 @@ export interface TagProps extends DOMProps, Removable<ReactChild, void> {
   children?: ReactChild,
   icon?: ReactElement,
   isDisabled?: boolean,
+  isSelected?: boolean,
   validationState?: 'invalid' | 'valid'
 }
 

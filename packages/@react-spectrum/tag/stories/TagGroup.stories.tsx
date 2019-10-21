@@ -21,11 +21,11 @@ storiesOf('TagGroup', module)
   ).add(
     'with child wrapper, disabled',
     () => (
-      <TagGroup isDisabled>
+      <TagGroup>
         <div>
-          <Tag>Tag 1</Tag>
-          <Tag isDisabled={false}>Tag 2</Tag>
-          <Tag>Tag 3</Tag>
+          <Tag isSelected>Tag 1</Tag>
+          <Tag isDisabled>Tag 2</Tag>
+          <Tag validationState="invalid" isSelected>Tag 3</Tag>
         </div>
       </TagGroup>
     )
