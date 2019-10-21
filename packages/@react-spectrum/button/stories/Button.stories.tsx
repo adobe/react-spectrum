@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button, ButtonProps} from '../src';
+import {Button, ButtonProps} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 

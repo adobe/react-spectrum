@@ -1,5 +1,5 @@
 import _123 from '@spectrum-icons/workflow/123';
-import {Alert} from '../src/Alert';
+import {Alert} from '../';
 import CalendarCheckColor from '@spectrum-icons/color/CalendarCheckColor';
 import React from 'react';
 import {storiesOf} from '@storybook/react';

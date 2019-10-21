@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import React from 'react';
-import Refresh from '@react/react-spectrum/Icon/Refresh';
+import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
@@ -18,24 +18,24 @@ storiesOf('SearchField', module)
     () => render({value: 'React'})
   )
   .add(
-    'disabled: true',
-    () => render({value: 'React', isDisabled: true})
-  )
-  .add(
-    'icon: refresh',
-    () => render({value: 'React', icon: <Refresh />})
-  )
-  .add(
-    'quiet',
+    'isQuiet: true',
     () => render({isQuiet: true})
   )
   .add(
-    'quiet disabled',
-    () => render({isQuiet: true, isDisabled: true})
+    'isDisabled: true',
+    () => render({defaultValue: 'React', isDisabled: true})
   )
   .add(
-    'quiet icon: refresh',
-    () => render({isQuiet: true, icon: <Refresh />})
+    'isQuiet, isDisabled',
+    () => render({defaultValue: 'React', isQuiet: true, isDisabled: true})
+  )
+  .add(
+    'icon: refresh',
+    () => render({defaultValue: 'React', icon: <Refresh />})
+  )
+  .add(
+    'isQuiet, icon: refresh',
+    () => render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})
   )
   .add(
     'onClear',

@@ -29,7 +29,8 @@ let activeScope: RefObject<HTMLElement[]> = null;
 // https://github.com/reactjs/rfcs/pull/109
 // For now, it relies on the DOM tree order rather than the React tree order, and is probably
 // less optimized for performance.
-export function FocusScope({children, contain, restoreFocus, autoFocus}: FocusScopeProps) {
+export function FocusScope(props: FocusScopeProps) {
+  let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);

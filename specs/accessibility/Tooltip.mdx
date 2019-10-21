@@ -1,0 +1,62 @@
+# Tooltip Accessibility Specification
+
+## Overview
+
+A [`Tooltip`](https://react-spectrum.corp.adobe.com/components/Tooltip) appears when a user hovers, taps, or focuses on an element.
+The information it displays is simple and concise. It can be the description
+of an icon, a simple explanation of a behavior or help text.
+
+## WAI-ARIA Design Pattern
+
+The [`Tooltip`](https://react-spectrum.corp.adobe.com/components/Tooltip) component implements the [Tooltip design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#tooltip), which defines a tooltip as a popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+It typically appears after a small delay and disappears when <kbd>Escape</kbd> is pressed or on mouse out.
+
+Tooltip widgets do not receive focus. A hover that contains focusable elements can be made using a [`Popover`](https://react-spectrum.corp.adobe.com/components/Popover) as a non-modal dialog.
+
+### Keyboard Interaction
+
+<kbd>Escape</kbd>: Dismisses the tooltip.
+
+#### NOTE:
+
+1. Focus stays on the triggering element while the tooltip is displayed.
+2. If the tooltip is invoked when the trigger element receives focus, then it is dismissed when it no longer has focus (`onBlur`). If the tooltip is invoked with `mouseIn`, then it is dismissed with `mouseOut`.
+
+Tooltip should also comply with [WCAG 2.1 Success Criterion 1.4.13 Content on Hover or Focus](https://www.w3.org/TR/WCAG21/#content-on-hover-or-focus) which states:
+> Where receiving and then removing pointer hover or keyboard focus triggers additional content to become visible and then hidden, the following are true:
+> * **Dismissable**: A mechanism is available to dismiss the additional content without moving pointer hover or keyboard focus (e.g. the <kbd>Escape</kbd> key), unless the additional content communicates an [input error](https://www.w3.org/TR/WCAG21/#dfn-input-error) or does not obscure or replace other content;
+> * **Hoverable**: If pointer hover can trigger the additional content, then the pointer can be moved over the additional content without the additional content disappearing. This can be verified in the [Tooltip
+with OverlayTrigger: using hover and focus storybook example](https://react-spectrum.corp.adobe.com/storybook/?path=/story/tooltip--with-overlaytrigger-using-hover-and-focus);
+> * **Persistent**: The additional content remains visible until the hover or focus trigger is removed, the user dismisses it, or its information is no longer valid.
+>
+> Exception: The visual presentation of the additional content is controlled by the user agent and is not modified by the author (e.g. the `title` attribute).
+
+### Mobile
+
+On touch devices:
+- If the element that triggers the tooltip triggers some other action, tapping or clicking the element should execute the action without opening the tooltip.
+- If the tooltip text is significant to the description of the element receiving input on mobile, the tooltip text should be explicitly concatenated to the element's accessibility name using the `aria-label` property.
+- If the sole purpose of the element that triggers the tooltip is to provide a target for the tooltip (e.g. a "?" icon button indicating that additional information is available), use `['hover', 'focus', 'click']` as the `trigger` prop for the `OverlayTrigger` component that wraps the trigger element.
+
+### Roles, States, and Properties
+
+- The element that serves as the tooltip container has role [`tooltip`](https://www.w3.org/TR/wai-aria-1.1/#tooltip).
+- The element that triggers the tooltip references the tooltip element with [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.1/#aria-describedby).
+
+## v2 Implementation details
+`Tooltip` relys on the [`OverlayTrigger`](https://react-spectrum.corp.adobe.com/components/OverlayTrigger) component to control display of the `Tooltip` on keyboard focus or on hover.
+
+When an `OverlayTrigger` opens an element with `role` equal to `tooltip`, an appropriate `aria-describedby` attribute will be added to the trigger element.
+
+```jsx
+<OverlayTrigger placement="right">
+  <Button label="Tooltip" variant="cta" />
+  <Tooltip variant="info">
+    Displays a tooltip
+  </Tooltip>
+</OverlayTrigger>
+```
+
+### Dependencies
+- `Overlay`
+- `OverlayTrigger`

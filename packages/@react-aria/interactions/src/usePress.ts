@@ -52,7 +52,12 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   return props;
 }
 
-export function usePress(props: PressHookProps) {
+interface PressResult {
+  isPressed: boolean,
+  pressProps: HTMLAttributes<HTMLElement>
+}
+
+export function usePress(props: PressHookProps): PressResult {
   let {
     onPress,
     onPressChange,

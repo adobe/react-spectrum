@@ -121,19 +121,19 @@ governing permissions and limitations under the License.
   .spectrum-CircleLoader-fills {
     will-change: transform;
     transform: translateZ(0);
-    animation: 1s infinite cubic-bezier(.25,.78,.48,.89) spectrum-fills-rotate;
+    animation: spectrum-fills-rotate 1s infinite cubic-bezier(.25,.78,.48,.89);
     transform-origin: center;
   }
   .spectrum-CircleLoader-fillSubMask1 {
     will-change: transform;
     transform: translateZ(0);
-    animation: 1s infinite linear spectrum-fill-mask-1;
+    animation: spectrum-fill-mask-1 1s infinite linear;
   }
 
   .spectrum-CircleLoader-fillSubMask2 {
     will-change: transform;
     transform: translateZ(0);
-    animation: 1s infinite linear spectrum-fill-mask-2;
+    animation: spectrum-fill-mask-2 1s infinite linear;
   }
 }
 /* topdoc

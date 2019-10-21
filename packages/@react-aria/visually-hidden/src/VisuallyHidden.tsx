@@ -9,13 +9,15 @@ interface VisuallyHiddenProps extends DOMProps {
   isFocusable?: boolean
 }
 
-export function VisuallyHidden({
-  children,
-  className,
-  elementType: Element = 'div',
-  isFocusable,
-  ...otherProps
-}: VisuallyHiddenProps) {
+export function VisuallyHidden(props: VisuallyHiddenProps) {
+  let {
+    children,
+    className,
+    elementType: Element = 'div',
+    isFocusable,
+    ...otherProps
+  } = props;
+  
   className = classNames(
     styles['u-react-spectrum-screenReaderOnly'],
     {[styles['is-focusable']]: isFocusable},

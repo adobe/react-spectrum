@@ -1,0 +1,72 @@
+# Select Accessibility Specification
+
+## Overview
+
+A [`Select`](https://react-spectrum.corp.adobe.com/components/Select), used along with one or more options, creates a drop-down list of options functionally similar to an [HTML `select` element](https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement) with the attribute `size="1"`.
+
+`Select` consists of a [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton) element that expands to reveal a [`Popover`](https://react-spectrum.corp.adobe.com/components/Popover) containing a [`SelectList`](https://react-spectrum.corp.adobe.com/components/SelectList) component. The items in the list are provided using the `ListItem` component, which can have a icon, label or both.
+
+
+## WAI-ARIA Design Pattern
+
+The [`Select`](https://react-spectrum.corp.adobe.com/components/Select) component implements the [Listbox design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox) as a [collapsible dropdown listbox](https://www.w3.org/TR/wai-aria-practices-1.1/examples/listbox/listbox-collapsible.html).
+
+The widget consists of a button that triggers the display of a listbox. In its default state, the widget is collapsed (the listbox is not visible) and the button label shows the currently selected option from the listbox. When the button is activated, the listbox is displayed and the current option is focused and selected.
+
+### Keyboard Interaction
+
+- `Enter`:
+  - If the focus is on the button, expands the listbox and places focus on the currently selected option in the list.
+  - If focus is in the listbox, collapses the listbox and keeps the currently selected option as the button label.
+- `Escape`: If the listbox is displayed, collapses the listbox and moves focus to the button.
+- `Down Arrow`:
+  - Moves focus to and selects the next option.
+  - If the listbox is collapsed, also expands the list.
+- `Up Arrow`:
+  - Moves focus to and selects the previous option.
+  - If the listbox is collapsed, also expands the list.
+- `Home`:	If the listbox is displayed, moves focus to and selects the first option.
+- `End`:	If the listbox is displayed, moves focus to and selects the last option.
+- `PageUp`: When the list scrolls, moves focus to the item one page before the item with focus, or if the list does not scroll, the first item. Optionally, in a single-select listbox, selection may also move with focus.
+- `PageDown`: When the list scrolls, moves focus to the item one page after the item with focus, or if the list does not scroll, the last item. Optionally, in a single-select listbox, selection may also move with focus.
+- Printable Characters:
+  - Type a character: focus moves to the next item with a name that starts with the typed character.
+  - Type multiple characters in rapid succession: focus moves to the next item with a name that starts with the string of characters typed.
+
+### Roles, States, and Properties
+
+- The button element:
+  - Has [`aria-haspopup`](https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup) set to `listbox` to indicate that activating the button displays a listbox.
+  - Has [`aria-expanded`](https://www.w3.org/TR/wai-aria-1.1/#aria-expanded) set to `true` when the listbox is expanded. The `aria-expanded` attribute should be set to `false` or omitted when the listbox is not expanded.
+  - The button should have an [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) property that:
+    - References the two elements whose labels are concatenated by the browser to label the button.
+    - The first element should be a visible external `label` or [`FieldLabel`](https://react-spectrum.corp.adobe.com/components/FieldLabel).
+    - The second element is the button itself; the button text is set to the name of the currently chosen option element.
+- When the Select is expanded:
+  - The element that contains or owns all the listbox options has role [`listbox`](https://www.w3.org/TR/wai-aria-1.1/#listbox).
+  - Each option in the listbox has role [`option`](https://www.w3.org/TR/wai-aria-1.1/#option) and is a DOM descendant of the element with role `listbox` or is referenced by an [`aria-owns`](https://www.w3.org/TR/wai-aria-1.1/#aria-owns) property on the listbox element.
+  - The listbox should have an [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) property that references the same visible external label referenced by the button.
+  - In a single-select listbox, the selected option has [`aria-selected`](https://www.w3.org/TR/wai-aria-1.1/#aria-selected) set to `true`.
+    - If the listbox supports multiple selection:
+      - The element with role `listbox` has [`aria-multiselectable`](https://www.w3.org/TR/wai-aria-1.1/#aria-multiselectable) set to `true`.
+      - All selected options have [`aria-selected`](https://www.w3.org/TR/wai-aria-1.1/#aria-selected) set to `true`.
+      - All options that are not selected have [`aria-selected`](https://www.w3.org/TR/wai-aria-1.1/#aria-selected) set to `false`.
+  - If the complete set of available options is not present in the DOM due to dynamic loading as the user scrolls, their [`aria-setsize`](https://www.w3.org/TR/wai-aria-1.1/#aria-setsize) and [`aria-posinset`](https://www.w3.org/TR/wai-aria-1.1/#aria-posinset) attributes are set appropriately.
+
+## v2 Implementation details
+In React Spectrum, `Select` consists of a [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton) element that expands to reveal a [`Popover`](https://react-spectrum.corp.adobe.com/components/Popover) containing a [`SelectList`](https://react-spectrum.corp.adobe.com/components/SelectList) component. The items in the list are provided using the `ListItem` component, which can have a icon, label or both.
+
+`SelectList` inherits keyboard interaction from `List`, which uses the `FocusManager` utility component with the following parameters:
+- `itemSelector` equal to `.spectrum-Menu-item:not(.is-disabled)`.
+- `selectedItemSelector` equal to `.spectrum-Menu-item:not(.is-disabled).is-selected`.
+- `typeToSelect` defaults to `true`
+- In `Select`, `autoFocus` defaults to `true`, so that the `SelectList` will receive focus when it mounts within an `Overlay`.
+- When rendered in a `Portal` using an `Overlay`, `SelectList` traps focus, pressing `Tab` or `Shift + Tab` does not advance to the next or previous tabbable element, because the next focusable element before or after the element that opened the `SelectList` is difficult to determine without crawling the DOM.
+
+### Dependencies
+- `OverlayTrigger`
+- `DropdownButton`
+- `Popover`
+- `SelectList`
+- `List`
+- `ListItem`
