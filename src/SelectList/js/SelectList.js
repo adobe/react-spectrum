@@ -15,10 +15,12 @@
 * from Adobe.
 **************************************************************************/
 
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import {List, ListItem} from '../../List';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
+@convertUnsafeMethod
 export default class SelectList extends Component {
   static propTypes = {
     /** Whether the SelectList is disabled */
@@ -67,7 +69,7 @@ export default class SelectList extends Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
       this.setState({
         value: props.value

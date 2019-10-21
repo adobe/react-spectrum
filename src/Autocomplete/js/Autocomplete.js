@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {Menu, MenuItem} from '../../Menu';
 import Overlay from '../../OverlayTrigger/js/Overlay';
@@ -32,6 +33,7 @@ const getLabel = o => (typeof o === 'string' ? o : o.label);
 const LISTBOX = '-listbox';
 const OPTION = '-option-';
 
+@convertUnsafeMethod
 @autobind
 export default class Autocomplete extends React.Component {
   static propTypes = {
@@ -112,11 +114,11 @@ export default class Autocomplete extends React.Component {
     this.autocompleteId = createId();
   }
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
+  UNSAFE_componentWillMount() {
+    this.UNSAFE_componentWillReceiveProps ? this.UNSAFE_componentWillReceiveProps(this.props) : this.componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.state.value) {
       this.setValue(props.value, this._selectedValue !== props.value);
       this._selectedValue = null;

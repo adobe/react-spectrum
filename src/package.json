@@ -23,7 +23,8 @@
     "moment-range": "^3.0.3",
     "prop-types": "^15.6.0",
     "react-overlays": "0.8.3",
-    "react-transition-group": "^2.2.0"
+    "react-transition-group": "^2.2.0",
+    "semver-compare": "^1.0.0"
   },
   "devDependencies": {
     "@adobe/focus-ring-polyfill": "^0.x",

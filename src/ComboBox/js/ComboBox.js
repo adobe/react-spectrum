@@ -21,6 +21,7 @@ import Button from '../../Button';
 import {chain} from '../../utils/events';
 import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
@@ -33,6 +34,7 @@ importSpectrumCSS('inputgroup');
 const getLabel = o => (typeof o === 'string' ? o : o.label);
 const formatMessage = messageFormatter(intlMessages);
 
+@convertUnsafeMethod
 @autobind
 export default class ComboBox extends React.Component {
   static propTypes = {
@@ -103,7 +105,7 @@ export default class ComboBox extends React.Component {
     this.comboBoxId = createId();
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.showMenu != null && props.showMenu !== this.props.showMenu) {
       this.setState({open: props.showMenu});
     }

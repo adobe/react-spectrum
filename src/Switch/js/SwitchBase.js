@@ -17,12 +17,14 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {focusAfterMouseEvent} from '../../utils/events';
 import focusRing from '../../utils/focusRing';
 import {getTextFromReact} from '../../utils/string';
 import React, {Component} from 'react';
 
+@convertUnsafeMethod
 @focusRing
 @autobind
 export default class SwitchBase extends Component {
@@ -52,7 +54,7 @@ export default class SwitchBase extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('checked' in nextProps) {
       this.setState({
         checked: nextProps.checked

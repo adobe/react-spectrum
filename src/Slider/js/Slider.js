@@ -17,6 +17,7 @@
 
 import {clamp, snapValueToStep} from '../../utils/number';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
@@ -44,6 +45,7 @@ const STYLE_KEY = {
   }
 };
 
+@convertUnsafeMethod
 export default class Slider extends React.Component {
   static propTypes = {
 
@@ -152,11 +154,11 @@ export default class Slider extends React.Component {
     this.sliderId = createId();
   }
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
+  UNSAFE_componentWillMount() {
+    this.UNSAFE_componentWillReceiveProps ? this.UNSAFE_componentWillReceiveProps(this.props) : this.componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     // For range slider
     if (props.variant === 'range') {
       let startValue = (props.startValue == null) ? props.defaultStartValue : props.startValue;

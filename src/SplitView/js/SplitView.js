@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
@@ -44,6 +45,7 @@ const CURSORS = {
   }
 };
 
+@convertUnsafeMethod
 @autobind
 @focusRing
 export default class SplitView extends React.Component {
@@ -207,7 +209,7 @@ export default class SplitView extends React.Component {
     window.removeEventListener('resize', this.resize, false);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {primarySize} = this.props;
 
     if (nextProps.primarySize !== primarySize) {

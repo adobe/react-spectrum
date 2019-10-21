@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -26,6 +27,7 @@ import {TagList} from '../../TagList';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
+@convertUnsafeMethod
 @autobind
 export default class TagField extends React.Component {
   static propTypes = {
@@ -94,7 +96,7 @@ export default class TagField extends React.Component {
     isFocusVisible: false
   };
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
       const deleting = props.value.length < this.state.tags.length;
       const hadFocus = this.taglist && ReactDOM.findDOMNode(this).contains(document.activeElement);

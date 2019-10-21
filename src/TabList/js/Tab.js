@@ -17,6 +17,7 @@
 
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
@@ -26,6 +27,7 @@ import React, {Component} from 'react';
 /**
  * An individual tab in a TabList or TabView
  */
+@convertUnsafeMethod
 @focusRing
 export default class Tab extends Component {
   static displayName = 'Tab';

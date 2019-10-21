@@ -15,6 +15,7 @@
 * from Adobe.
 **************************************************************************/
 
+import convertUnsafeMethod from './convertUnsafeMethod';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
@@ -132,6 +133,7 @@ export default class LiveRegionAnnouncer extends Component {
   }
 }
 
+@convertUnsafeMethod
 export class LiveRegion extends Component {
   state = {
     assertiveMessage1: '',
@@ -148,7 +150,7 @@ export class LiveRegion extends Component {
     politeMessage: PropTypes.string
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {
       assertiveMessage: oldAssertiveMessage,
       politeMessage: oldPoliteMessage

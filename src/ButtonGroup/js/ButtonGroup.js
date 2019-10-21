@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
@@ -30,6 +31,7 @@ const ALLOWED_BUTTON_VARIANTS = {
   action: true
 };
 
+@convertUnsafeMethod
 export default class ButtonGroup extends Component {
   static propTypes = {
     /**
@@ -104,7 +106,7 @@ export default class ButtonGroup extends Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
       this.setState({
         value: props.value

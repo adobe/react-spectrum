@@ -17,6 +17,7 @@
 
 import classNames from 'classnames';
 import configureTypekit from '../../utils/configureTypekit';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import {defaultLocale, setLocale} from '../../utils/intl';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
@@ -28,6 +29,7 @@ import '../style/index.styl';
 importSpectrumCSS('page');
 importSpectrumCSS('typography');
 
+@convertUnsafeMethod
 export default class Provider extends Component {
   static propTypes = {
     /**
@@ -92,7 +94,7 @@ export default class Provider extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('locale' in nextProps) {
       setLocale(nextProps.locale);
     }

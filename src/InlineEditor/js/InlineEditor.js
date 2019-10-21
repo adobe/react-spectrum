@@ -17,12 +17,14 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import PropTypes from 'prop-types';
 import React, {Component}  from 'react';
 import ReactDOM from 'react-dom';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
+@convertUnsafeMethod
 @autobind
 export default class InlineEditor extends Component {
   static propTypes = {
@@ -52,7 +54,7 @@ export default class InlineEditor extends Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.props.value) {
       this.setState({value: props.value});
     }

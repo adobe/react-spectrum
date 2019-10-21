@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import {chain} from '../../utils/events';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
@@ -65,6 +66,8 @@ function getScrollParents(node) {
  * Class based on React-bootstrap
  * https://github.com/react-bootstrap/react-bootstrap/blob/master/src/OverlayTrigger.js
  */
+
+@convertUnsafeMethod
 @autobind
 export default class OverlayTrigger extends Component {
   static propTypes = {
@@ -188,7 +191,7 @@ export default class OverlayTrigger extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('lastFocus' in nextProps && nextProps.lastFocus !== this.props.lastFocus) {
       this._lastFocus = nextProps.lastFocus;
     }

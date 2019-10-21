@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import CollectionView from '../../utils/CollectionView';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import GridItem from './GridItem';
 import {IndexPath, IndexPathSet, Layout} from '@react/collection-view';
 import ListDataSource from '../../ListDataSource';
@@ -25,6 +26,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import '../style/index.styl';
 
+@convertUnsafeMethod
 @autobind
 export default class GridView extends React.Component {
   static propTypes = {
@@ -114,7 +116,7 @@ export default class GridView extends React.Component {
     throw new Error('Invalid layout prop passed to GridView. Must be a Layout constructor or an instanceof the Layout class.');
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.layout !== this.props.layout || props.cardSize !== this.props.cardSize) {
       this.setState({layout: this.getLayout(props.layout, props.cardSize)});
     }

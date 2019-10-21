@@ -19,6 +19,7 @@ import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import Column from './Column';
 import ColumnViewDataSource from './ColumnViewDataSource';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -31,6 +32,7 @@ importSpectrumCSS('miller');
 /**
  * The top-level column view renders a list of columns
  */
+@convertUnsafeMethod
 @autobind
 export default class ColumnView extends React.Component {
   static propTypes = {
@@ -96,15 +98,15 @@ export default class ColumnView extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
+  UNSAFE_componentWillMount() {
+    this.UNSAFE_componentWillReceiveProps ? this.UNSAFE_componentWillReceiveProps(this.props) : this.componentWillReceiveProps(this.props);
   }
 
   componentDidMount() {
     this.mounted = true;
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     let dataSource = this.state.dataSource;
     if (!dataSource || props.dataSource !== this.props.dataSource) {
       dataSource = this.updateDataSource(props.dataSource);

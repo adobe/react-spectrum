@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
@@ -29,6 +30,7 @@ const LIST_ITEM_SELECTOR = '.spectrum-Menu-item';
 const NOT_DISABLED_SELECTOR = ':not(.is-disabled)';
 const SELECTED_LIST_ITEM_SELECTOR = LIST_ITEM_SELECTOR + NOT_DISABLED_SELECTOR + '.is-selected';
 
+@convertUnsafeMethod
 @focusRing
 export default class List extends Component {
   static propTypes = {

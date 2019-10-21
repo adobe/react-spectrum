@@ -19,6 +19,7 @@ import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
@@ -33,6 +34,8 @@ const FOCUSABLE_SIDENAV_ITEMLINK_SELECTOR = '.spectrum-SideNav-itemLink[tabIndex
 /**
  * An item in a sidenav
  */
+
+@convertUnsafeMethod
 @autobind
 @focusRing
 export default class SideNavItem extends Component {
@@ -134,7 +137,7 @@ export default class SideNavItem extends Component {
     return children && typeof children !== 'string';
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {expanded} = nextProps;
     if (expanded !== this.props.expanded) {
       this.setState(prevState => ({...prevState, expanded}));

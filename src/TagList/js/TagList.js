@@ -17,6 +17,7 @@
 
 import {chain} from '../../utils/events';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
@@ -32,6 +33,7 @@ importSpectrumCSS('tags');
 const TAGLIST_SELECTOR = '[role=row]:not([aria-disabled])';
 const TAGLIST_SELECTED_SELECTOR = TAGLIST_SELECTOR + '[aria-selected=true]';
 
+@convertUnsafeMethod
 @focusRing
 export default class TagList extends React.Component {
 
@@ -77,7 +79,7 @@ export default class TagList extends React.Component {
     focused: false
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
         selectedIndex: nextProps.selectedIndex

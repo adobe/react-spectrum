@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {DragTarget, EditableCollectionView, IndexPath, ListLayout} from '@react/collection-view';
 import PropTypes from 'prop-types';
@@ -33,6 +34,7 @@ importSpectrumCSS('treeview');
 /**
  * TreeView renders a collapseable heirarchical tree
  */
+@convertUnsafeMethod
 @autobind
 export default class TreeView extends React.Component {
   static propTypes = {
@@ -149,7 +151,7 @@ export default class TreeView extends React.Component {
     return Object.assign({}, proxy(delegate), proxy(this));
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.dataSource !== this.props.dataSource) {
       this.state.dataSource.teardown();
       let dataSource = this.getDataSource(props);

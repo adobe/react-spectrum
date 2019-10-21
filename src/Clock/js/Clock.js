@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import {clamp} from '../../utils/number';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import {formatMoment, toMoment} from '../../utils/moment';
@@ -33,9 +34,11 @@ import VisuallyHidden from '../../VisuallyHidden';
 
 const formatMessage = messageFormatter(intlMessages);
 
+
 /* In Firefox, input[type=number] always strips leading 0. */
 const useTextInputType = 'MozAppearance' in document.documentElement.style;
 
+@convertUnsafeMethod
 @autobind
 export default class Clock extends Component {
   static displayName = 'Clock';
@@ -151,7 +154,7 @@ export default class Clock extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       this.setValue(nextProps.value, nextProps.valueFormat || this.props.valueFormat);
     }

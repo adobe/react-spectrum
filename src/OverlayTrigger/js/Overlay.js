@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import closest from 'dom-helpers/query/closest';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import OpenTransition from '../../utils/OpenTransition';
 import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
 import Portal from 'react-overlays/lib/Portal';
@@ -28,6 +29,7 @@ import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 const VISIBLE_OVERLAYS = new Map;
 const DEFAULT_BUCKET_KEY = 'all';
 
+@convertUnsafeMethod
 @autobind
 export default class Overlay extends React.Component {
   static defaultProps = {
@@ -81,7 +83,7 @@ export default class Overlay extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.target && nextProps.target !== this.props.target) {
       this.setState({...this.state, targetNode: ReactDOM.findDOMNode(nextProps.target)});
     }

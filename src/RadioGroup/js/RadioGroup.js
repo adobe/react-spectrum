@@ -16,12 +16,14 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 importSpectrumCSS('fieldgroup');
 
+@convertUnsafeMethod
 export default class RadioGroup extends Component {
   static propTypes = {
     /**
@@ -73,7 +75,7 @@ export default class RadioGroup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedValue' in nextProps) {
       this.setState({
         selectedValue: nextProps.selectedValue

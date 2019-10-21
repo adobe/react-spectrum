@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import {clamp, snapValueToStep} from '../../utils/number';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -27,6 +28,7 @@ importSpectrumCSS('slider');
 const LABEL_POSTFIX = '-label';
 const DRAGGED_BODY_CLASS_NAME = 'u-isGrabbing';
 
+@convertUnsafeMethod
 @autobind
 export default class Dial extends React.Component {
   static propTypes = {
@@ -93,7 +95,7 @@ export default class Dial extends React.Component {
     this.state.startValue = this.getStartValueFromProps(props);
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     const startValue = this.getStartValueFromProps(props);
     if (startValue != null) {
       this.setState({startValue});

@@ -17,11 +17,14 @@
 
 import assert from 'assert';
 import classNames from 'classnames';
+import cmp from 'semver-compare';
+import convertUnsafeMethod from '../../src/utils/convertUnsafeMethod';
 import focusRing from '../../src/utils/focusRing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+@convertUnsafeMethod
 @focusRing
 class TestButton extends React.Component {
   static defaultProps = {
@@ -37,7 +40,7 @@ class TestButton extends React.Component {
     this._isMounted = false;
   }
 
-  componentWillUpdate(props, state) {
+  UNSAFE_componentWillUpdate(props, state) {
     this._isUpdated = {props, state};
   }
 
@@ -85,7 +88,12 @@ describe('focusRing', function () {
   it('Calls super component lifecycle methods', () => {
     const didMountSpy = sinon.spy(TestButton.prototype, 'componentDidMount');
     const willUnmountSpy = sinon.spy(TestButton.prototype, 'componentWillUnmount');
-    const willUpdateSpy = sinon.spy(TestButton.prototype, 'componentWillUpdate');
+    let willUpdateSpy;
+    if (cmp(React.version, '16.3.0') === -1) {
+      willUpdateSpy = sinon.spy(TestButton.prototype, 'componentWillUpdate');
+    } else {
+      willUpdateSpy = sinon.spy(TestButton.prototype, 'UNSAFE_componentWillUpdate');
+    }
     const didUpdateSpy = sinon.spy(TestButton.prototype, 'componentDidUpdate');
 
     const tree = shallow(<TestButton className="foo">bar</TestButton>);

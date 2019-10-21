@@ -20,6 +20,7 @@ import Button from '../../Button';
 import ChevronLeftMedium from '../../Icon/core/ChevronLeftMedium';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import intlMessages from '../intl/*.json';
@@ -35,6 +36,7 @@ importSpectrumCSS('splitbutton');
 
 const formatMessage = messageFormatter(intlMessages);
 
+@convertUnsafeMethod
 @autobind
 export default class Pagination extends Component {
   static propTypes = {
@@ -107,7 +109,7 @@ export default class Pagination extends Component {
     this.textfieldRef;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const currentPage = nextProps.currentPage;
     if ('currentPage' in nextProps && !this.isInvalidPage(currentPage)) {
       this.setState({currentPage, pageInput: currentPage});

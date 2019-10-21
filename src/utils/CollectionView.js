@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from './convertUnsafeMethod';
 import {DragTarget, EditableCollectionView} from '@react/collection-view';
 import loadingLayout from './loadingLayout';
 import PropTypes from 'prop-types';
@@ -30,6 +31,7 @@ import './style/CollectionView/index.styl';
 let REQUEST_ID = 1;
 let LAST_REQUEST = Symbol('lastRequest');
 
+@convertUnsafeMethod
 @autobind
 export default class CollectionView extends React.Component {
   // These come from the parent Provider. Used to set the correct props
@@ -62,7 +64,7 @@ export default class CollectionView extends React.Component {
     this.reloadData();
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.layout !== this.props.layout) {
       props.layout.component = this;
       if (this.collection) {

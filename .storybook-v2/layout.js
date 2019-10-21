@@ -23,7 +23,7 @@ export class StoryWrapper extends React.Component {
     toastPlacement: 'top'
   };
 
-  componentWillMount() {
+  componentDidMount() {
     // add lang attribute to html element
     document.documentElement.lang = getLocale();
 

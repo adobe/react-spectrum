@@ -20,6 +20,7 @@ import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import ChevronDownMedium from '../../Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import Dropdown from '../../Dropdown';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -35,6 +36,7 @@ require('../style/index.styl');
 let POPOVER_MAX_WIDTH = null;
 let QUIET_MARGIN = 24;
 
+@convertUnsafeMethod
 @autobind
 export default class Select extends React.Component {
   static propTypes = {
@@ -119,7 +121,7 @@ export default class Select extends React.Component {
     this.selectId = createId();
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if ('value' in props && props.value !== this.state.value) {
       this.setState({value: props.value});
     }

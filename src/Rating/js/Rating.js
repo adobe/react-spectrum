@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
@@ -26,6 +27,7 @@ import StarOutline from '../../Icon/core/StarOutline';
 
 importSpectrumCSS('rating');
 
+@convertUnsafeMethod
 @autobind
 export default class Rating extends React.Component {
   static propTypes = {
@@ -66,7 +68,7 @@ export default class Rating extends React.Component {
     this.inputId = createId();
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value != null) {
       this.setState({
         currentRating: props.value || 0

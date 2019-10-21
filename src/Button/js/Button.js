@@ -18,6 +18,7 @@
 import {chain, focusAfterMouseEvent} from '../../utils/events';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import CornerTriangle from '../../Icon/core/CornerTriangle';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
@@ -48,6 +49,7 @@ const VARIANTS = {
  * perform an action or to navigate to another page. Buttons in Spectrum have several variations
  * for different uses and multiple levels of loudness for various attention-getting needs.
  */
+@convertUnsafeMethod
 @focusRing
 export default class Button extends Component {
   static propTypes = {

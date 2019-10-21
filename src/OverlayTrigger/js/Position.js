@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import calculatePosition from './calculatePosition';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import getContainer from 'react-overlays/lib/utils/getContainer';
 import ownerDocument from 'react-overlays/lib/utils/ownerDocument';
@@ -33,6 +34,7 @@ import ReactDOM from 'react-dom';
  * It also injects "arrow" `left`, and `top` values for styling callout arrows
  * for giving your components a sense of directionality.
  */
+@convertUnsafeMethod
 @autobind
 export default class Position extends React.Component {
   constructor(props, context) {
@@ -61,7 +63,7 @@ export default class Position extends React.Component {
     window.addEventListener('resize', this.maybeUpdatePosition, false);
   }
 
-  componentWillReceiveProps() {
+  UNSAFE_componentWillReceiveProps() {
     this._needsFlush = true;
   }
 
