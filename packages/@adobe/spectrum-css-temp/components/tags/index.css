@@ -34,7 +34,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
-  float: start;
+  float: inline-start;
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
@@ -65,6 +65,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Tags-itemClearButton {
+    display: flex;
     margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
     margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
     block-size: var(--spectrum-alias-font-size-default);

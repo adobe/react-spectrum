@@ -1,25 +1,28 @@
 import {AriaTagProps} from '@react-types/tag';
 import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent} from 'react';
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TagAria {
   tagProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export function useTag(props: AriaTagProps): TagAria {
   const {
-    isRemovable,
     isDisabled,
+    isRemovable,
+    isSelected,
     onRemove,
     children,
-    selected,
     role
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
   const removeString = formatMessage('remove');
+  const tagId = useId();
+  const buttonId = useId();
 
   function onKeyDown(e: KeyboardEvent<HTMLElement>) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -32,15 +35,22 @@ export function useTag(props: AriaTagProps): TagAria {
   };
   return {
     tagProps: {
-      'aria-selected': role === 'gridcell' ? undefined : !isDisabled && selected,
+      'aria-selected': role === 'gridcell' ? undefined : !isDisabled && isSelected,
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      role,
+      role: role === 'gridcell' ? 'row' : null,
       tabIndex: isDisabled ? -1 : 0
     },
+    labelProps: {
+      id: tagId,
+      role
+    },
     clearButtonProps: mergeProps(pressProps, {
-      'aria-label': children ? `${removeString}: ${children}` : removeString,
+      'aria-label': removeString,
+      'aria-labelledby': `${buttonId} ${tagId}`,
+      id: buttonId,
       title: removeString,
-      isDisabled
+      isDisabled,
+      role
     })
   };
 }

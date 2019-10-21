@@ -24,16 +24,17 @@ export const Tag = ((props: TagProps) => {
     role
   } =  useTagGroupProvider();
 
-  let removable = isRemovable || isGroupRemovable;
-  let disabled = isDisabled || isGroupDisabled;
-  let isInvalid = (validationState || groupValidationState) === 'invalid';
-  let {clearButtonProps, tagProps} = useTag({
+  let removable = isRemovable !== undefined ? isRemovable : isGroupRemovable;
+  let disabled = isDisabled !== undefined ? isDisabled : isGroupDisabled;
+  let isInvalid = (validationState !== undefined ? validationState : groupValidationState) === 'invalid';
+  let {clearButtonProps, labelProps, tagProps} = useTag({
     ...props,
     isRemovable: removable,
     isDisabled: disabled,
     onRemove: props.onRemove || onRemove,
     role
   });
+  let {role: buttonRole, ...otherButtonProps} = clearButtonProps;
   let icon = props.icon || (isInvalid && <Alert />);
 
   // TODO: add avatar component
@@ -54,19 +55,18 @@ export const Tag = ((props: TagProps) => {
         )}>
         {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span
-          role={tagProps.role}
-          className={classNames(
-            styles,
-            'spectrum-Tags-itemLabel'
-          )}>
+          {...labelProps}
+          className={classNames(styles, 'spectrum-Tags-itemLabel')}>
           {props.children}
         </span>
         {removable &&
-          <ClearButton
-            tabIndex={tagProps.tabIndex}
-            focusClassName={classNames(styles, 'is-focused')}
-            className={classNames(styles, 'spectrum-Tags-itemClearButton')}
-            {...clearButtonProps} />
+          <span role={buttonRole}>
+            <ClearButton
+              tabIndex={tagProps.tabIndex}
+              focusClassName={classNames(styles, 'is-focused')}
+              className={classNames(styles, 'spectrum-Tags-itemClearButton')}
+              {...otherButtonProps} />
+          </span>
         }
       </div>
     </FocusRing>

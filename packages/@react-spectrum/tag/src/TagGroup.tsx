@@ -63,9 +63,7 @@ export const TagGroup = ((props: TagGroupProps) => {
           validationState,
           role: 'gridcell'
         }}>
-        <span role="row">
-          {children}
-        </span>
+        {children}
       </TagGroupContext.Provider>
     </div>
   );

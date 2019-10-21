@@ -18,6 +18,17 @@ storiesOf('TagGroup', module)
     () => render({
       isDisabled: true
     })
+  ).add(
+    'with child wrapper, disabled',
+    () => (
+      <TagGroup isDisabled>
+        <div>
+          <Tag>Tag 1</Tag>
+          <Tag isDisabled={false}>Tag 2</Tag>
+          <Tag>Tag 3</Tag>
+        </div>
+      </TagGroup>
+    )
   );
 
 function render(props: any = {}) {
