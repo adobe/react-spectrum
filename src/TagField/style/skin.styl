@@ -18,7 +18,9 @@
 .react-spectrum-TagField {
   &.is-focused:not(.is-invalid) {
     border-color: $spectrum-alias-focus-blue;
-    box-shadow: 0 0 0 1px $spectrum-alias-focus-blue;
+    &.focus-ring {
+      box-shadow: 0 0 0 1px $spectrum-alias-focus-blue;
+    }
   }
 
   &.is-disabled {
@@ -29,7 +31,10 @@
 
   &.is-invalid {
     &.is-focused {
-      box-shadow: 0 0 0 1px $spectrum-alias-text-color-invalid;
+      border-color: $spectrum-alias-text-color-invalid;
+      &.focus-ring {
+        box-shadow: 0 0 0 1px $spectrum-alias-text-color-invalid;
+      }
     }
   }
 }
@@ -37,7 +42,9 @@
 .react-spectrum-TagField--quiet {
   &.is-focused:not(.is-invalid) {
     border-color: $spectrum-alias-focus-blue;
-    box-shadow: 0 1px 0 $spectrum-alias-focus-blue;
+    &.focus-ring {
+      box-shadow: 0 1px 0 $spectrum-alias-focus-blue;
+    }
   }
 
   &.is-disabled {
@@ -47,7 +54,10 @@
 
   &.is-invalid {
     &.is-focused {
-      box-shadow: 0 1px 0 $spectrum-alias-text-color-invalid;
+      border-color: $spectrum-alias-text-color-invalid;
+      &.focus-ring {
+        box-shadow: 0 1px 0 $spectrum-alias-text-color-invalid;
+      }
     }
   }
 }

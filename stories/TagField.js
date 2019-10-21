@@ -65,85 +65,85 @@ storiesOf('TagField', module)
   .add(
     'Default',
     () => (
-      <TagField placeholder="Tags" />
+      <TagField placeholder="Tags" aria-label="Tags" />
     )
   )
   .add(
     'Autocomplete',
     () => (
-      <TagField placeholder="Tags" getCompletions={getCompletions} />
+      <TagField placeholder="Tags" aria-label="Tags" getCompletions={getCompletions} />
     )
   )
   .add(
     'Display existing values',
     () => (
-      <TagField placeholder="Tags" value={EXISTING_VALUES} />
+      <TagField placeholder="Tags" aria-label="Tags" value={EXISTING_VALUES} />
     )
   )
   .add(
     'Disallow new tags',
     () => (
-      <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObject} />
+      <TagField allowCreate={false} placeholder="Tags" aria-label="Tags" getCompletions={getCompletionsObject} />
     )
   )
   .add(
     'Allow duplicate tags',
     () => (
-      <TagField allowDuplicates placeholder="Tags" getCompletions={getCompletionsObject} />
+      <TagField allowDuplicates placeholder="Tags" aria-label="Tags" getCompletions={getCompletionsObject} />
     )
   )
   .add(
     'Handle additions and removals',
     () => (
-      <TagField placeholder="Tags" onChange={action('change')} />
+      <TagField placeholder="Tags" aria-label="Tags" onChange={action('change')} />
     )
   )
   .add(
     'disabled',
     () => (
-      <TagField placeholder="Tags" disabled />
+      <TagField placeholder="Tags" aria-label="Tags" disabled />
     )
   )
   .add(
     'invalid',
     () => (
-      <TagField placeholder="Tags" invalid />
+      <TagField placeholder="Tags" aria-label="Tags" invalid />
     )
   )
   .add(
     'quiet',
     () => (
-      <TagField placeholder="Tags" quiet />
+      <TagField placeholder="Tags" aria-label="Tags" quiet />
     )
   )
   .add(
     'quiet disabled',
     () => (
-      <TagField placeholder="Tags" quiet disabled />
+      <TagField placeholder="Tags" aria-label="Tags" quiet disabled />
     )
   )
   .add(
     'quiet invalid',
     () => (
-      <TagField placeholder="Tags" quiet invalid />
+      <TagField placeholder="Tags" aria-label="Tags" quiet invalid />
     )
   )
   .add(
     'controlled',
     () => (
-      <TagField placeholder="Tags" value={['one', 'two']} onChange={action('change')} />
+      <TagField placeholder="Tags" aria-label="Tags" value={['one', 'two']} onChange={action('change')} />
     )
   )
   .add(
     'renderItem',
     () => (
-      <TagField placeholder="Tags" getCompletions={getCompletions} renderItem={item => <em>{item}</em>} />
+      <TagField placeholder="Tags" aria-label="Tags" getCompletions={getCompletions} renderItem={item => <em>{item}</em>} />
     ),
     {info: 'This example uses the renderItem prop to italicize text in the Autocomplete'}
   )
   .add(
     'With custom tag rendering',
     () => (
-      <TagField allowCreate={false} placeholder="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+      <TagField allowCreate={false} placeholder="Tags" aria-label="Tags" getCompletions={getCompletionsObjectWithAvatar} renderTag={(tag, index) => <Tag avatar={tag.avatar} key={index}>{tag.label}</Tag>} />
     )
   );

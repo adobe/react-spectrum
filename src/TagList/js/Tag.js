@@ -49,7 +49,7 @@ export default class Tag extends React.Component {
     disabled: PropTypes.bool,
 
     /** Icon to use in the tag */
-    icon: PropTypes.string,
+    icon: PropTypes.object,
 
     /** Whether the tag is selected */
     selected: PropTypes.bool,

@@ -114,18 +114,28 @@ describe('TagList', () => {
       run({}, {selectedIndex: 1, focused: true});
       assert.equal(child1.prop('selected'), false);
       assert.equal(child2.prop('selected'), true);
+
+      // update selectedIndex via props.
+      tree.setProps({selectedIndex: 0});
+      assert.equal(tree.find('.one').prop('selected'), true);
+      assert.equal(tree.find('.two').prop('selected'), false);
     });
 
     it('sets tab index when selectedIndex matches index', () => {
       run({}, {selectedIndex: 1});
       assert.equal(child1.prop('tabIndex'), -1);
       assert.equal(child2.prop('tabIndex'), 0);
+
+      // update selectedIndex via props.
+      tree.setProps({selectedIndex: 0});
+      assert.equal(tree.find('.one').prop('tabIndex'), 0);
+      assert.equal(tree.find('.two').prop('tabIndex'), -1);
     });
 
     it('doesn\'t set tab index when disabled', () => {
       run({disabled: true}, {selectedIndex: 1});
-      assert.equal(child1.prop('tabIndex'), -1);
-      assert.equal(child2.prop('tabIndex'), -1);
+      assert.equal(child1.prop('tabIndex'), undefined);
+      assert.equal(child2.prop('tabIndex'), undefined);
     });
 
     it('sets closable', () => {
@@ -173,14 +183,19 @@ describe('TagList', () => {
 
     it("triggers tag's onClick handler", () => {
       const onClick = sinon.spy();
+      const onChange = sinon.spy();
       tree = shallow(
-        <TagList>
+        <TagList onChange={onChange}>
           <Tag className="one" onClick={onClick} closable>Tag 1</Tag>
-          <Tag className="two" closable>Tag 2</Tag>
+          <Tag className="two" onClick={onClick} closable>Tag 2</Tag>
         </TagList>
       );
       tree.find(Tag).at(0).simulate('click');
       assert(onClick.calledOnce);
+      assert(onChange.calledWith(0));
+      tree.find(Tag).at(1).simulate('click');
+      assert(onClick.calledTwice);
+      assert(onChange.calledWith(1));
     });
 
     describe('Keyboard navigation', () => {

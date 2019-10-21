@@ -125,6 +125,11 @@ export default class Autocomplete extends React.Component {
     if (props.showMenu != null && props.showMenu !== this.state.showMenu) {
       this.setState({showMenu: props.showMenu});
     }
+
+    // Reset selectedIndex to -1 if menu is not shown to prevent invalid selection
+    if (!props.showMenu) {
+      this.setState({selectedIndex: -1});
+    }
   }
 
   componentDidMount() {
@@ -203,11 +208,17 @@ export default class Autocomplete extends React.Component {
     }
   }
 
-  onFocus() {
+  onFocus(event) {
     this.setState({isFocused: true});
+    if (this.props.onFocus) {
+      this.props.onFocus(event);
+    }
   }
 
   onBlur(event) {
+    if (this.props.onBlur) {
+      this.props.onBlur(event);
+    }
     if (this.wrapper && this.wrapper.contains(event.relatedTarget)) {
       // If the element receiving focus is a child of the Autocomplete,
       // for example the toggle button on a ComboBox,
@@ -447,7 +458,10 @@ export default class Autocomplete extends React.Component {
             });
           }
 
-          return child;
+          return React.cloneElement(child, {
+            onFocus: chain(child.props.onFocus, this.onFocus),
+            onBlur: chain(child.props.onBlur, this.onBlur)
+          });
         })}
 
         <Overlay target={this.wrapper} show={menuShown} placement="bottom left" role="presentation">

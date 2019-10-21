@@ -60,16 +60,16 @@ export default class TagList extends React.Component {
     readOnly: PropTypes.bool,
 
     /** Initial tags in the tag list */
-    values: PropTypes.arrayOf(PropTypes.string)
+    values: PropTypes.arrayOf(PropTypes.string),
+
+    /** Whether TagList should use roving tabIndex so that only one item can receive focus at a time. */
+    manageTabIndex: PropTypes.bool
   };
 
   static defaultProps = {
     readOnly: false,
     disabled: false,
-    onClose: function () {},
-    onFocus: function () {},
-    onBlur: function () {},
-    onChange: function () {}
+    manageTabIndex: true
   };
 
   state = {
@@ -101,31 +101,34 @@ export default class TagList extends React.Component {
       });
     }
 
-    if (lastSelectedIndex !== selectedIndex) {
-      this.props.onChange(selectedIndex);
+    if (lastSelectedIndex !== selectedIndex && this.props.onChange) {
+      this.props.onChange(selectedIndex, e);
     }
   }
 
   handleFocus = e => {
-    const {onFocus} = this.props;
     this.setState({focused: true});
-    onFocus(e);
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
   }
 
   handleBlur = e => {
-    const {onBlur} = this.props;
     this.setState({focused: false});
-    onBlur(e);
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
   }
 
-
   baseChildProps(index, child = {props: {}}) {
-    const {readOnly, onClose, disabled} = this.props;
+    const {readOnly, onClose, disabled, manageTabIndex} = this.props;
     const {selectedIndex, focused} = this.state;
+    const tabIndex = selectedIndex === index || (!focused && (selectedIndex === null || manageTabIndex === false)) ? 0 : -1;
+
     return {
       key: index,
       selected: !disabled && focused && selectedIndex === index,
-      tabIndex: !disabled && (selectedIndex === index || (!focused && selectedIndex === null)) ? 0 : -1,
+      tabIndex: (!disabled ? tabIndex : null),
       closable: !readOnly,
       disabled,
       onClick: chain(this.getChildOnClick(index), child.props.onClick),
@@ -178,6 +181,7 @@ export default class TagList extends React.Component {
       readOnly,
       disabled,
       invalid,
+      manageTabIndex,
       ...otherProps
     } = this.props;
 
@@ -186,7 +190,7 @@ export default class TagList extends React.Component {
     const renderedChildren =  this.renderChildren();
 
     return (
-      <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal">
+      <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal" manageTabIndex={focused || manageTabIndex}>
         <div
           {...filterDOMProps(otherProps)}
           className={
