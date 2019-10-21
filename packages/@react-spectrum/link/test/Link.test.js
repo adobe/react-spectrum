@@ -33,4 +33,47 @@ describe('Link', function () {
     triggerPress(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
+
+  it.each`
+    Name        | Component | props
+    ${'Link'}   | ${Link}   | ${{className: 'test-class'}}
+    ${'V2Link'} | ${V2Link} | ${{className: 'test-class'}}
+  `('$Name handles class name prop', function ({Component, props}) {
+    let {getByText} = render(<Component {...props} >Click me</Component>);
+    let link = getByText('Click me');
+    expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
+  });
+
+  // New v3 functionality, omitting v2 component
+  // V3 will clone custom child element and map the class/event handlers
+  it('Wraps string to span', () => {
+    let {getByRole} = render(<Link >Click me</Link>);
+    let link = getByRole('link');
+    expect(link).toBeDefined();
+    expect(link.nodeName).toBe('SPAN');
+  });
+
+  it('Wraps custom child element', () => {
+    let {getByRole} = render(
+      <Link className="test-class" onPress={onPressSpy} >
+        <a href="http://example.com" >Click me </a>
+      </Link>
+    );
+    let link = getByRole('link');
+    expect(link).toBeDefined();
+    expect(link.nodeName).toBe('A');
+    expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
+    triggerPress(link);
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('Handles deprecated onClick', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByRole} = render(<Link onClick={onPressSpy} >Click me</Link>);
+    let link = getByRole('link');
+    triggerPress(link);
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
+  });
+
 });

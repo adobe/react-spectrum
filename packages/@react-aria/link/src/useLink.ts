@@ -1,6 +1,7 @@
 import {AllHTMLAttributes, SyntheticEvent} from 'react';
 import {LinkProps} from '@react-types/link';
 import {PressEvent, usePress} from '@react-aria/interactions';
+import {useId} from '@react-aria/utils';
 
 export interface AriaLinkProps extends LinkProps {
   tabIndex?: number,
@@ -14,6 +15,7 @@ export interface LinkAria {
 
 export function useLink(props: AriaLinkProps): LinkAria {
   let {
+    id,
     tabIndex = 0,
     onPress,
     onClick: deprecatedOnClick
@@ -24,6 +26,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
   return {
     linkProps: {
       ...pressProps,
+      id: useId(id),
       role: 'link',
       tabIndex,
       onClick: (e) => {
