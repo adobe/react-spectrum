@@ -4,6 +4,7 @@ import {PressEvent, usePress} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 export interface AriaLinkProps extends LinkProps {
+  href?: string,
   tabIndex?: number,
   onPress?: (e: PressEvent) => void,
   onClick?: (e: SyntheticEvent) => void
@@ -16,19 +17,32 @@ export interface LinkAria {
 export function useLink(props: AriaLinkProps): LinkAria {
   let {
     id,
+    href,
     tabIndex = 0,
+    children,
     onPress,
     onClick: deprecatedOnClick
   } = props;
+
+  let linkProps;
+  if (typeof children === 'string') {
+    linkProps = {
+      role: 'link',
+      tabIndex
+    };
+  }
+
+  if (href) {
+    console.warn('href is deprecated, please use an anchor element as children');
+  }
 
   let {pressProps}  = usePress({onPress}); 
 
   return {
     linkProps: {
       ...pressProps,
+      ...linkProps,
       id: useId(id),
-      role: 'link',
-      tabIndex,
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);

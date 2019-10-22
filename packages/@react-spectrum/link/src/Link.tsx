@@ -24,7 +24,7 @@ export const Link = React.forwardRef((props: SpectrumLinkProps, ref: RefObject<H
 
   let element;
   if (typeof children === 'string') {
-    element = React.createElement('span', null, children);
+    element = <span>{children}</span>;
   } else {
     element = React.Children.only(children);
   }
