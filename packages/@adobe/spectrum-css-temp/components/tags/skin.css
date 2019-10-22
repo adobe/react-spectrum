@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-deletable-text-color);
     /* Remove after dna pr is merged */
     color: white;
-    border-color: inherit;
+    border-color: var(--spectrum-alias-border-color-transparent);
     &:hover {
       background-color: var(--spectrum-body-1-text-color);
     }
@@ -43,7 +43,7 @@ governing permissions and limitations under the License.
     }
     &.is-invalid {
       /* Remove after dna pr is merged */
-      border-color: white;
+      border-color: var(--spectrum-alias-border-color-transparent);
       .spectrum-Tags-itemIcon,
       .spectrum-Tags-itemLabel,
       .spectrum-Tags-itemClearButton {
@@ -56,7 +56,7 @@ governing permissions and limitations under the License.
         border-color: white;
       }
       &:hover {
-        border-color: initial;
+        border-color: var(--spectrum-alias-border-color-transparent);
       }
     }
   }
@@ -124,6 +124,25 @@ governing permissions and limitations under the License.
 
     &.is-invalid {
       color: var(--spectrum-tag-deletable-text-color-error-key-focus);
+    }
+  }
+
+  &.is-selected {
+    color: white;
+    &.is-focused {
+       color: white;
+    }
+    .spectrum-Tags-itemClearButton {
+      color: white;
+      &.is-focused {
+         border-color: transparent;
+         border-radius: var(--spectrum-alias-border-radius-regular);
+         background-color: white;
+         color: var(--spectrum-tag-deletable-text-color);
+      }
+      &:hover {
+         background-color: var(--spectrum-global-color-gray-500)
+      }
     }
   }
 

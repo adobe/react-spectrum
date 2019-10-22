@@ -26,6 +26,7 @@ storiesOf('TagGroup', module)
           <Tag isSelected>Tag 1</Tag>
           <Tag isDisabled>Tag 2</Tag>
           <Tag validationState="invalid" isSelected>Tag 3</Tag>
+          <Tag isRemovable onRemove={action('onRemove')} isSelected>Tag 3</Tag>
         </div>
       </TagGroup>
     )

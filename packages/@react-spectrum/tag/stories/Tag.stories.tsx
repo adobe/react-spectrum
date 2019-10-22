@@ -33,6 +33,29 @@ storiesOf('Tag', module)
     }, 'Cool tag')
   )
   .add(
+    'selected, removable',
+    () => (
+      <React.Fragment>
+        {render({
+          onRemove: action('onRemove'),
+          isRemovable: true
+        }, 'Cool tag')}
+        {render({
+          onRemove: action('onRemove'),
+          isRemovable: true,
+          isSelected: true
+        }, 'Selected tag')}
+      </React.Fragment>
+    )
+  )
+  .add(
+    'selected, invalid',
+    () => render({
+      validationState: 'invalid',
+      isSelected: true
+    }, 'Cool tag')
+  )
+  .add(
     'invalid, removable',
     () => render({
       validationState: 'invalid',
@@ -49,7 +72,7 @@ storiesOf('Tag', module)
     }, 'Cool tag')
   )
   .add(
-  'disabled icon, removable',
+  'disabled, icon, removable',
   () => render({
     isDisabled: true,
     icon: <Camera />,
