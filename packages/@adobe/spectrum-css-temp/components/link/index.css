@@ -49,14 +49,14 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--quiet {
-  text-decoration: none;
-}
-
 .spectrum-Link--secondary {
   text-decoration: underline;
 }
 
 .spectrum-Link--overBackground {
   text-decoration: underline;
+}
+
+.spectrum-Link--quiet {
+  text-decoration: none;
 }
