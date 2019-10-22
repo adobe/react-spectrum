@@ -32,24 +32,18 @@ export default function convertUnsafeMethod(WrappedComponent) {
       proto.componentWillUpdate = function (props, state) {
         UNSAFE_componentWillUpdate.apply(this, arguments);
       };
-
-      delete proto.UNSAFE_componentWillUpdate;
     }
 
     if (UNSAFE_componentWillMount) {
       proto.componentWillMount = function () {
         UNSAFE_componentWillMount.apply(this, arguments);
       };
-      
-      delete proto.UNSAFE_componentWillMount;
     }
 
     if (UNSAFE_componentWillReceiveProps) {
       proto.componentWillReceiveProps = function (props) {
         UNSAFE_componentWillReceiveProps.apply(this, arguments);
       };
-      
-      delete proto.UNSAFE_componentWillReceiveProps;
     }
   }
 }

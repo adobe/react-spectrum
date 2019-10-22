@@ -155,7 +155,7 @@ export default class Slider extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    this.UNSAFE_componentWillReceiveProps ? this.UNSAFE_componentWillReceiveProps(this.props) : this.componentWillReceiveProps(this.props);
+    this.UNSAFE_componentWillReceiveProps(this.props);
   }
 
   UNSAFE_componentWillReceiveProps(props) {

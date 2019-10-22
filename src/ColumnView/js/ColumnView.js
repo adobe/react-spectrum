@@ -99,7 +99,7 @@ export default class ColumnView extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    this.UNSAFE_componentWillReceiveProps ? this.UNSAFE_componentWillReceiveProps(this.props) : this.componentWillReceiveProps(this.props);
+    this.UNSAFE_componentWillReceiveProps(this.props);
   }
 
   componentDidMount() {
