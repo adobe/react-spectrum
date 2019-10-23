@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tag, TagGroup} from '../src';
 
@@ -30,6 +30,11 @@ storiesOf('TagGroup', module)
         </div>
       </TagGroup>
     )
+  ).add(
+    'with announcing',
+    () => (
+      <WithAnnouncing />
+    )
   );
 
 function render(props: any = {}) {
@@ -39,5 +44,25 @@ function render(props: any = {}) {
       <Tag>Cool Tag 2</Tag>
       <Tag>Cool Tag 3</Tag>
     </TagGroup>
+  );
+}
+
+function WithAnnouncing() {
+  let [tags, setTags] = useState(['Tag']);
+
+  function handleKeyDown(e) {
+    if (e.ctrlKey && e.key === 'd') {
+      e.preventDefault();
+      setTags([...tags, 'New Tag']);
+    }
+  }
+  return (
+    <React.Fragment>
+      {/*
+        // @ts-ignore */}
+      <TagGroup onKeyDown={handleKeyDown}>
+        {tags.map(t => <Tag>{t}</Tag>)}
+      </TagGroup>
+    </React.Fragment>
   );
 }

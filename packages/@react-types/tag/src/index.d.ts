@@ -17,6 +17,7 @@ export interface TagGroupProps extends DOMProps, MultipleSelectionBase {
 export interface AriaTagProps extends Removable<ReactChild, void> {
   children?: ReactChild,
   isDisabled?: boolean,
+  isGroupFocused?: boolean,
   isSelected?: boolean,
   role?: string
 }
