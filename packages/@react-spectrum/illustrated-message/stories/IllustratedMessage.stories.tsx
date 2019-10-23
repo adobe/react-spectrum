@@ -17,7 +17,7 @@ storiesOf('IllustratedMessage', module)
   )
   .add(
     'heading, description',
-    () => render({heading: 'No Results', description: 'Try another search', illustration: noResultsImg()})
+    () => render({heading: 'No Results', description: 'Try another search', illustration: noResultsImg(), ariaLevel: 3})
   );
 
 function render(props:IllustratedMessageProps = {}) {

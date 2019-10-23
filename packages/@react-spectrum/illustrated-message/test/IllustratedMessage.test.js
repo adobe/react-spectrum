@@ -18,7 +18,7 @@ describe('IllustratedMessage', function () {
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
     ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
   `('$Name should treat the illustration as decorative by default', function ({Component, props}) {
-    let {getByRole, getByText, container} = render(<Component {...props} />);
+    let {debug, getByRole, getByText, container} = render(<Component {...props} />);
 
     let illustration;
     if (Component === IllustratedMessage) {
@@ -63,7 +63,7 @@ describe('IllustratedMessage', function () {
 
   it.each`
     Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />, 'aria-level': 3}}
+    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />, 'ariaLevel': 3}}
     ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />, 'ariaLevel': 3}}
   `('$Name should support aria-level on the header', function ({Component, props}) {
     let {getByText} = render(<Component {...props} />);

@@ -1,10 +1,11 @@
 import {AllHTMLAttributes, ReactElement, ReactNode, SVGAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
 
-interface IllustratedMessageProps {
+interface IllustratedMessageAriaProps extends DOMProps {
   heading?: string,
   description?: ReactNode,
   illustration?: ReactElement,
-  'aria-level'?: number
+  'ariaLevel'?: number
 }
 
 interface IllustratedMessageAria {
@@ -12,12 +13,12 @@ interface IllustratedMessageAria {
   headingProps: AllHTMLAttributes<HTMLHeadingElement>
 }
 
-export function useIllustratedMessage(props: IllustratedMessageProps): IllustratedMessageAria {
+export function useIllustratedMessage(props: IllustratedMessageAriaProps): IllustratedMessageAria {
   let {
     illustration,
     heading,
     description,
-    'aria-level': ariaLevel
+    ariaLevel
   } = props;
 
   function isDecorative() {
