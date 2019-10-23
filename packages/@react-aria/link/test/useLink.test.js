@@ -16,8 +16,8 @@ describe('useLink', function () {
     expect(linkProps.role).toBe('link');
     expect(linkProps.tabIndex).toBe(0);
     expect(linkProps.id).toBeDefined();
-    expect(typeof linkProps.onClick).toBe('function');
     expect(typeof linkProps.onKeyDown).toBe('function');
+    expect(typeof linkProps.onKeyUp).toBe('function');
   });
 
   it('handles custom children', function () {
@@ -27,9 +27,16 @@ describe('useLink', function () {
     expect(linkProps.id).toBeDefined();
   });
 
-  it('handles warning', function () {
+  it('handles href warning', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderLinkHook({children: 'Test Link', href: '#'});
     expect(spyWarn).toHaveBeenCalledWith('href is deprecated, please use an anchor element as children');
+  });
+
+  it('handles onClick warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {linkProps} = renderLinkHook({children: 'Test Link', onClick: () => {}});
+    linkProps.onClick();
+    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
 });
