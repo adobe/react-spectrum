@@ -18,7 +18,7 @@ describe('IllustratedMessage', function () {
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
     ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
   `('$Name should treat the illustration as decorative by default', function ({Component, props}) {
-    let {debug, getByRole, getByText, container} = render(<Component {...props} />);
+    let {getByRole, getByText, container} = render(<Component {...props} />);
 
     let illustration;
     if (Component === IllustratedMessage) {
