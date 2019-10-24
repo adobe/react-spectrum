@@ -18,7 +18,8 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
   let {
     variant = 'neutral',
     placement = 'right',
-    showIcon = true
+    showIcon = true,
+    arrowStyle,
   } = props;
 
   return (
@@ -39,6 +40,7 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
           {props.children}
         </span>
       )}
+      <span className="spectrum-Tooltip-tip" style={arrowStyle} />
     </div>
   );
 });

@@ -1,3 +1,4 @@
+import {ActionButton} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
@@ -49,12 +50,15 @@ storiesOf('Tooltip', module)
   );
 
 function render(content, props = {}) {
+  console.log(props)
   if (props.trigger) {
-    console.log("trigger")
     return (
-      <Tooltip>
-        {content}
-      </Tooltip>
+      <TooltipTrigger {...props}>
+        <ActionButton>Trigger</ActionButton>
+        <Tooltip>
+          {content}
+        </Tooltip>
+      </TooltipTrigger>
     );
   }
 
