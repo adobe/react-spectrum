@@ -37,7 +37,7 @@ export function useTag(props: AriaTagProps): TagAria {
 
   return {
     tagProps: {
-      'aria-selected': role === 'gridcell' ? undefined : !isDisabled && isSelected,
+      'aria-selected': !isDisabled && isSelected,
       'aria-invalid': validationState === 'invalid' || undefined,
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       role: role === 'gridcell' ? 'row' : null,

@@ -6,10 +6,29 @@ describe('useTag tests', () => {
     let props = {};
     let {result} = renderHook(() => useTag(props));
     expect(result.current.tagProps.onKeyDown).toBeDefined();
+    expect(result.current.tagProps['aria-selected']).not.toBeDefined();
+    expect(result.current.tagProps['aria-invalid']).not.toBeDefined();
     expect(result.current.clearButtonProps.onPress).toBeDefined();
+    expect(result.current.labelProps.id).toBeDefined();
   });
 
-  it('handles disabled flag', () => {
+  it('set correct aria if it is invalid', () => {
+    let props = {validationState: 'invalid'};
+    let {result} = renderHook(() => useTag(props));
+    expect(result.current.tagProps['aria-invalid']).toBe(true);
+  });
+
+  it('set correct aria if it is selected', () => {
+    let props = {isSelected: true};
+    let hook = renderHook(() => useTag(props));
+    expect(hook.result.current.tagProps['aria-selected']).toBe(true);
+
+    props = {isSelected: true, isDisabled: true};
+    hook = renderHook(() => useTag(props));
+    expect(hook.result.current.tagProps['aria-selected']).toBe(false);
+  });
+
+  it('handles isDisabled flag', () => {
     let props = {isDisabled: true};
     let {result} = renderHook(() => useTag(props));
     expect(result.current.tagProps.onKeyDown).toBe(null);
