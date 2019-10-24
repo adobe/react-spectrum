@@ -1,7 +1,9 @@
 import {AllHTMLAttributes} from 'react';
+import {useId} from '@react-aria/utils';
 
 interface TooltipProps {
-  role?: 'tooltip'
+  role?: 'tooltip',
+  id?: string
 }
 
 interface TooltipAria {
@@ -9,12 +11,14 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: TooltipProps): TooltipAria {
+  let tooltipId = useId();
   let {
     role
   } = props;
   return {
     tooltipProps: {
-      role
+      role,
+      id: tooltipId
     }
   };
 }

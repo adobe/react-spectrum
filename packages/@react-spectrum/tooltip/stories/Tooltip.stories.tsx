@@ -5,54 +5,60 @@ import {Tooltip, TooltipTrigger} from '../src';
 storiesOf('Tooltip', module)
   .add(
     'default',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'placement: left',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'placement: top',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'placement: bottom',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'variant: neutral',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'variant: positive',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'variant: negative',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'variant: info',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'long content',
-    () => render()
+    () => render(longMarkup)
   )
   .add(
     'triggered using click',
-    () => render()
+    () => render('This is a tooltip.')
   )
   .add(
     'triggered using hover',
-    () => render()
+    () => render('This is a tooltip.')
   );
 
-function render() {
+function render(content, props = {}) {
+  if (props.trigger){
+    return (
+      {/* TODO: add tooltip trigger implementation */}
+    );
+  }
+
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip>
-        Hi, I'm a Tooltip
+        {content}
       </Tooltip>
     </div>
   );
