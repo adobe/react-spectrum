@@ -40,9 +40,9 @@ const OBJECT_OPTIONS = [
 ];
 
 const OBJECT_OPTIONS_WITH_AVATAR = [
-  {label: 'Chocolate', id: '1', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'},
-  {label: 'Vanilla', id: '2', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'},
-  {label: 'Strawberry', id: '3', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}
+  {label: 'Chocolate', id: '1', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'},
+  {label: 'Vanilla', id: '2', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'},
+  {label: 'Strawberry', id: '3', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'}
 ];
 
 const EXISTING_VALUES = [

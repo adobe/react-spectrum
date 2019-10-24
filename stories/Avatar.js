@@ -23,18 +23,18 @@ storiesOf('Avatar', module)
   .add(
     'Default',
     () => (
-      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" />
+      <Avatar src="https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658" />
     )
   )
   .add(
     'Disabled',
     () => (
-      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" disabled />
+      <Avatar src="https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658" disabled />
     )
   )
   .add(
     'With alt text',
     () => (
-      <Avatar src="http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg" alt="Shantanu Narayen" />
+      <Avatar src="https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658" alt="Shantanu Narayen" />
     )
   );

@@ -1,0 +1,92 @@
+.spectrum-Checkbox-label {
+  color: rgb(75, 75, 75);
+}
+.spectrum-Checkbox-box {
+  border-color: rgb(142, 142, 142);
+  background-color: rgb(250, 250, 250);
+}
+.spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
+.spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+  border-color: rgb(20, 115, 230);
+}
+.spectrum-Checkbox:hover.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox:hover .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-color: rgb(13, 102, 208);
+
+  }
+.spectrum-Checkbox:active.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox:active .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-color: rgb(9, 90, 186);
+
+  }
+.spectrum-Checkbox {
+  border-color: rgb(142, 142, 142);
+}
+.spectrum-Checkbox:hover .spectrum-Checkbox-box {
+      border-color: rgb(110, 110, 110);
+
+      box-shadow: none;
+    }
+.spectrum-Checkbox:hover .spectrum-Checkbox-label {
+      color: rgb(44, 44, 44);
+    }
+.spectrum-Checkbox:active .spectrum-Checkbox-box {
+      border-color: rgb(75, 75, 75);
+
+    }
+.spectrum-Checkbox:active .spectrum-Checkbox-label {
+      color: rgb(44, 44, 44);
+    }
+.spectrum-Checkbox .spectrum-Checkbox-checkmark,
+  .spectrum-Checkbox .spectrum-Checkbox-partialCheckmark {
+    color: rgb(250, 250, 250);
+  }
+.spectrum-Checkbox-input:disabled + .spectrum-Checkbox-box {
+    border-color: rgb(202, 202, 202) !important;
+
+    background-color: rgb(250, 250, 250);
+  }
+.spectrum-Checkbox-input:disabled ~ .spectrum-Checkbox-label {
+    color: rgb(179, 179, 179);
+  }
+.spectrum-Checkbox-input.focus-ring + .spectrum-Checkbox-box {
+    border-color: rgb(38, 128, 235) !important;
+
+    box-shadow: 0 0 0 1px rgb(38, 128, 235) !important;
+  }
+.spectrum-Checkbox-input.focus-ring ~ .spectrum-Checkbox-label {
+    color: rgb(13, 102, 208) !important;
+  }
+.spectrum-Checkbox--quiet.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox--quiet .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+  border-color: rgb(110, 110, 110);
+}
+.spectrum-Checkbox--quiet:hover.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox--quiet:hover .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-color: rgb(75, 75, 75);
+  }
+.spectrum-Checkbox--quiet:active.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox--quiet:active .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-color: rgb(44, 44, 44);
+  }
+.spectrum-Checkbox.is-invalid .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
+  .spectrum-Checkbox.is-invalid .spectrum-Checkbox-box {
+    border-color: rgb(215, 55, 63);
+  }
+.spectrum-Checkbox.is-invalid .spectrum-Checkbox-label {
+    color: rgb(201, 37, 45);
+  }
+.spectrum-Checkbox.is-invalid:hover .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
+    .spectrum-Checkbox.is-invalid:hover .spectrum-Checkbox-box {
+      border-color: rgb(201, 37, 45);
+    }
+.spectrum-Checkbox.is-invalid:hover .spectrum-Checkbox-label {
+      color: rgb(187, 18, 26);
+    }
+.spectrum-Checkbox.is-invalid:active .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
+    .spectrum-Checkbox.is-invalid:active .spectrum-Checkbox-box {
+      border-color: rgb(187, 18, 26);
+    }
+.spectrum-Checkbox.is-invalid:active .spectrum-Checkbox-label {
+      color: rgb(187, 18, 26);
+    }

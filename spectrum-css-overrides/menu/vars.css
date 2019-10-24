@@ -1,0 +1,30 @@
+
+.spectrum-Menu {
+  --spectrum-popover-padding-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-icon-checkmark-medium-width: undefined;
+  --spectrum-selectlist-option-icon-padding-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-selectlist-option-padding: var(--spectrum-global-dimension-static-size-150);
+  --spectrum-popover-border-size: var(--spectrum-alias-border-size-thin);
+  --spectrum-selectlist-border-size-key-focus: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-selectlist-option-height: undefined;
+  --spectrum-selectlist-option-text-size: var(--spectrum-alias-font-size-default);
+  --spectrum-selectlist-option-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-selectlist-thumbnail-image-padding-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-selectlist-divider-size: var(--spectrum-alias-border-size-thick);
+  --spectrum-selectlist-divider-padding: 3px;
+  --spectrum-alias-line-height-medium: var(--spectrum-global-dimension-size-250);
+  --spectrum-selectlist-background-color: var(--spectrum-alias-background-color-transparent);
+  --spectrum-selectlist-option-background-color: var(--spectrum-alias-background-color-transparent);
+  --spectrum-selectlist-option-text-color: var(--spectrum-alias-text-color);
+  --spectrum-selectlist-option-background-color-key-focus: var(--spectrum-alias-background-color-hover-overlay);
+  --spectrum-selectlist-option-text-color-key-focus: var(--spectrum-alias-text-color);
+  --spectrum-selectlist-option-focus-indicator-color: var(--spectrum-alias-border-color-focus);
+  --spectrum-selectlist-option-background-color-hover: var(--spectrum-alias-background-color-hover-overlay);
+  --spectrum-selectlist-option-text-color-hover: var(--spectrum-alias-text-color);
+  --spectrum-selectlist-option-icon-color-selected: var(--spectrum-alias-icon-color-selected);
+  --spectrum-selectlist-option-background-color-down: var(--spectrum-alias-background-color-hover-overlay);
+  --spectrum-selectlist-option-background-color-disabled: var(--spectrum-alias-background-color-transparent);
+  --spectrum-selectlist-option-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-700);
+  --spectrum-selectlist-divider-color: var(--spectrum-alias-border-color-extralight);
+}

@@ -1,0 +1,42 @@
+.spectrum--dark .spectrum-Menu {
+  background-color: transparent;
+}
+.spectrum--dark .spectrum-Menu-item {
+  background-color: transparent;
+  color: rgb(227, 227, 227);
+}
+.spectrum--dark .spectrum-Menu-item.focus-ring,
+.spectrum--dark .spectrum-Menu-item.is-focused {
+    background-color: rgba(255,255,255,0.06);
+    color: rgb(227, 227, 227);
+    border-left-color: rgb(38, 128, 235);
+  }
+.spectrum--dark .spectrum-Menu-item:hover,
+.spectrum--dark .spectrum-Menu-item:focus,
+.spectrum--dark .spectrum-Menu-item.is-highlighted,
+.spectrum--dark .spectrum-Menu-item.is-open {
+    background-color: rgba(255,255,255,0.06);
+    color: rgb(227, 227, 227);
+  }
+.spectrum--dark .spectrum-Menu-item.is-selected {
+    color: rgb(75, 156, 245);
+  }
+.spectrum--dark .spectrum-Menu-item.is-selected .spectrum-Menu-checkmark {
+      color: rgb(55, 142, 240);
+    }
+.spectrum--dark .spectrum-Menu-item .is-active,
+.spectrum--dark .spectrum-Menu-item:active {
+    background-color: rgba(255,255,255,0.06);
+  }
+.spectrum--dark .spectrum-Menu-item.is-disabled {
+    background-color: transparent;
+    background-image: none;
+    color: rgb(110, 110, 110);
+    cursor: default;
+  }
+.spectrum--dark .spectrum-Menu-sectionHeading {
+  color: rgb(185, 185, 185);
+}
+.spectrum--dark .spectrum-Menu-divider {
+  background-color: rgb(50, 50, 50);
+}

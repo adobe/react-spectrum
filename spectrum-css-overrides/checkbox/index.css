@@ -1,0 +1,101 @@
+.spectrum-Checkbox {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-align: start;
+      align-items: flex-start;
+
+  position: relative;
+
+  min-height: 32px;
+  max-width: 100%;
+
+  margin-right: 16px;
+
+  vertical-align: top;
+}
+.spectrum-Checkbox-input {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  overflow: visible;
+  box-sizing: border-box;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: calc(100% + 16px);;
+  height: 100%;
+
+  opacity: .0001;
+  z-index: 1;
+
+  cursor: pointer;
+}
+.spectrum-Checkbox-input:disabled {
+    cursor: default;
+  }
+.spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-width: 7px;
+  }
+.spectrum-Checkbox-input:checked + .spectrum-Checkbox-box .spectrum-Checkbox-checkmark {
+      transform: scale(1);
+      opacity: 1;
+    }
+.spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-width: 7px;
+  }
+.spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box .spectrum-Checkbox-checkmark, .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box .spectrum-Checkbox-checkmark {
+      display: none;
+    }
+.spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box .spectrum-Checkbox-partialCheckmark, .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box .spectrum-Checkbox-partialCheckmark {
+      display: block;
+
+      transform: scale(1);
+      opacity: 1;
+    }
+.spectrum-Checkbox-label {
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 130ms ease-in-out;
+
+  margin-top: 6px;
+}
+.spectrum-Checkbox-box {
+  position: relative;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  margin: 9px 0;
+
+  -ms-flex-positive: 0;
+
+      flex-grow: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+
+  border-radius: 2px;
+  border-width: 2px;
+  border-style: solid;
+
+  transition: border 130ms ease-in-out, box-shadow 130ms ease-in-out;
+}
+.spectrum-Checkbox-checkmark,
+.spectrum-Checkbox-partialCheckmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  margin-top: -5px;
+  margin-left: -5px;
+
+  opacity: 0;
+  transform: scale(0);
+
+  transition: opacity 130ms ease-in-out, transform 130ms ease-in-out;
+}
+.spectrum-Checkbox-partialCheckmark {
+  display: none;
+}

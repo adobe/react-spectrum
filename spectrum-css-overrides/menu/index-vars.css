@@ -1,0 +1,181 @@
+.spectrum-Menu {
+  display: inline-block;
+
+  box-sizing: border-box;
+
+  margin: var(--spectrum-popover-padding-y, var(--spectrum-global-dimension-size-50)) 0;
+  padding: 0;
+
+  list-style-type: none;
+
+  overflow: auto;
+}
+
+.spectrum-Menu > .spectrum-Menu-sectionHeading {
+    margin-top: var(--spectrum-global-dimension-size-40);
+    margin-bottom: var(--spectrum-global-dimension-size-40);
+  }
+
+.spectrum-Menu.is-selectable .spectrum-Menu-item {
+      padding-right: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x, var(--spectrum-global-dimension-size-150)));
+    }
+
+.spectrum-Menu.is-selectable .spectrum-Menu-item.is-selected {
+        padding-right: calc(var(--spectrum-selectlist-option-padding, var(--spectrum-global-dimension-static-size-150)) - var(--spectrum-popover-border-size, var(--spectrum-alias-border-size-thin)));
+      }
+
+.spectrum-Menu-checkmark {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.spectrum-Menu-item {
+  cursor: pointer;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+
+  box-sizing: border-box;
+
+  padding: var(--spectrum-global-dimension-size-85) var(--spectrum-selectlist-option-padding, var(--spectrum-global-dimension-static-size-150)) var(--spectrum-global-dimension-size-85) calc(var(--spectrum-selectlist-option-padding, var(--spectrum-global-dimension-static-size-150)) - var(--spectrum-selectlist-border-size-key-focus, var(--spectrum-global-dimension-static-size-25)));
+
+  margin: 0;
+
+  border-left: var(--spectrum-selectlist-border-size-key-focus, var(--spectrum-global-dimension-static-size-25)) solid transparent;
+
+  min-height: var(--spectrum-selectlist-option-height);
+
+  font-size: var(--spectrum-selectlist-option-text-size, var(--spectrum-alias-font-size-default));
+  font-weight: var(--spectrum-selectlist-option-text-font-weight, var(--spectrum-global-font-weight-regular));
+  font-style: normal;
+  text-decoration: none;
+}
+
+.spectrum-Menu-item:focus {
+    outline: none;
+  }
+
+.spectrum-Menu-item.is-selected {
+    padding-right: calc(var(--spectrum-selectlist-option-padding, var(--spectrum-global-dimension-static-size-150)) - var(--spectrum-popover-border-size, var(--spectrum-alias-border-size-thin)));
+  }
+
+.spectrum-Menu-item.is-selected .spectrum-Menu-checkmark {
+      display: block;
+    }
+
+.spectrum-Menu-item .spectrum-Icon {
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    -ms-flex-item-align: start;
+        align-self: flex-start;
+  }
+
+.spectrum-Menu-item .spectrum-Icon + .spectrum-Menu-itemLabel {
+    margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x, var(--spectrum-global-dimension-size-100));
+  }
+
+.spectrum-Menu-itemLabel {
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  line-height: 1.3;
+}
+
+.spectrum-Menu-itemLabel--wrapping {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.spectrum-Menu-checkmark {
+  display: none;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
+.spectrum-Menu-checkmark,
+.spectrum-Menu-chevron {
+  -ms-flex-positive: 0;
+      flex-grow: 0;
+  margin-left: var(--spectrum-selectlist-option-icon-padding-x, var(--spectrum-global-dimension-size-150));
+  margin-top: var(--spectrum-global-dimension-size-50);
+}
+
+.spectrum-Menu-divider {
+  box-sizing: content-box;
+  overflow: visible;
+
+  height: var(--spectrum-selectlist-divider-size, var(--spectrum-alias-border-size-thick));
+  margin: calc(var(--spectrum-selectlist-divider-padding, 3px) / 2) var(--spectrum-selectlist-option-padding, var(--spectrum-global-dimension-static-size-150));
+  padding: 0 0;
+  border: none;
+}
+
+.spectrum-Menu-sectionHeading {
+  display: block;
+  margin: var(--spectrum-global-dimension-size-75) 0 0 0;
+  padding: 0 var(--spectrum-global-dimension-size-450) 0 var(--spectrum-global-dimension-size-150);
+
+  font-size: var(--spectrum-global-dimension-font-size-50);
+  font-weight: 400;
+  line-height: var(--spectrum-alias-line-height-medium, var(--spectrum-global-dimension-size-250));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.spectrum-Menu .spectrum-Menu {
+  display: block;
+}
+
+.spectrum-Menu {
+  background-color: var(--spectrum-selectlist-background-color, var(--spectrum-alias-background-color-transparent));
+}
+
+.spectrum-Menu-item {
+  background-color: var(--spectrum-selectlist-option-background-color, var(--spectrum-alias-background-color-transparent));
+  color: var(--spectrum-selectlist-option-text-color, var(--spectrum-alias-text-color));
+}
+
+.spectrum-Menu-item.focus-ring,
+  .spectrum-Menu-item.is-focused {
+    background-color: var(--spectrum-selectlist-option-background-color-key-focus, var(--spectrum-alias-background-color-hover-overlay));
+    color: var(--spectrum-selectlist-option-text-color-key-focus, var(--spectrum-alias-text-color));
+    border-left-color: var(--spectrum-selectlist-option-focus-indicator-color, var(--spectrum-alias-border-color-focus));
+  }
+
+.spectrum-Menu-item:hover,
+  .spectrum-Menu-item:focus,
+  .spectrum-Menu-item.is-highlighted,
+  .spectrum-Menu-item.is-open {
+    background-color: var(--spectrum-selectlist-option-background-color-hover, var(--spectrum-alias-background-color-hover-overlay));
+    color: var(--spectrum-selectlist-option-text-color-hover, var(--spectrum-alias-text-color));
+  }
+
+.spectrum-Menu-item.is-selected {
+    color: var(--spectrum-global-color-blue-600);
+  }
+
+.spectrum-Menu-item.is-selected .spectrum-Menu-checkmark {
+      color: var(--spectrum-selectlist-option-icon-color-selected, var(--spectrum-alias-icon-color-selected));
+    }
+
+.spectrum-Menu-item .is-active,
+  .spectrum-Menu-item:active {
+    background-color: var(--spectrum-selectlist-option-background-color-down, var(--spectrum-alias-background-color-hover-overlay));
+  }
+
+.spectrum-Menu-item.is-disabled {
+    background-color: var(--spectrum-selectlist-option-background-color-disabled, var(--spectrum-alias-background-color-transparent));
+    background-image: none;
+    color: var(--spectrum-selectlist-option-text-color-disabled, var(--spectrum-alias-text-color-disabled));
+    cursor: default;
+  }
+
+.spectrum-Menu-sectionHeading {
+  color: var(--spectrum-heading-subtitle3-text-color, var(--spectrum-global-color-gray-700));
+}
+
+.spectrum-Menu-divider {
+  background-color: var(--spectrum-selectlist-divider-color, var(--spectrum-alias-border-color-extralight));
+}
