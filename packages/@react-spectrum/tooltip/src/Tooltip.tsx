@@ -8,18 +8,29 @@ import {useTooltip} from '@react-aria/tooltip';
 interface TooltipProps {
   children: ReactNode,
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
+  placement?: 'right' | 'left' | 'top' | 'bottom',
   showIcon?: boolean
 }
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
   let {tooltipProps} = useTooltip({ref});
+  let {
+    variant = 'neutral',
+    placement = 'right',
+    showIcon = true
+  } = props;
 
   return (
     <div
       className={classNames(
         styles,
-        'spectrum-Tooltip', 'is-open'
+        'spectrum-Tooltip',
+        `spectrum-Tooltip--${variant}`,
+        `spectrum-Tooltip--${placement.split(' ')[0]}`,
+        {
+          'is-open': showIcon
+        }
       )}
       ref={ref}
       {...mergeProps(filterDOMProps(props), tooltipProps)}>

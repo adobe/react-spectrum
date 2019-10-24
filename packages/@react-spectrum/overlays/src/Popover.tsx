@@ -24,7 +24,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
   let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   ref = ref || useRef();
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
-  
+
   return (
     <div
       ref={ref}

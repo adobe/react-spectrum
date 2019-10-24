@@ -9,31 +9,31 @@ storiesOf('Tooltip', module)
   )
   .add(
     'placement: left',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {placement: 'left'})
   )
   .add(
     'placement: top',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {placement: 'top'})
   )
   .add(
     'placement: bottom',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {placement: 'bottom'})
   )
   .add(
     'variant: neutral',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {variant: 'neutral'})
   )
   .add(
     'variant: positive',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {variant: 'positive'})
   )
   .add(
     'variant: negative',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {variant: 'negative'})
   )
   .add(
     'variant: info',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {variant: 'info'})
   )
   .add(
     'long content',
@@ -41,23 +41,27 @@ storiesOf('Tooltip', module)
   )
   .add(
     'triggered using click',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {trigger: 'click'})
   )
   .add(
     'triggered using hover',
-    () => render('This is a tooltip.')
+    () => render('This is a tooltip.', {trigger: ['hover', 'focus']})
   );
 
 function render(content, props = {}) {
-  if (props.trigger){
+  if (props.trigger) {
+    console.log("trigger")
     return (
-      {/* TODO: add tooltip trigger implementation */}
+      <Tooltip>
+        {content}
+      </Tooltip>
     );
   }
 
   return (
     <div style={{display: 'inline-block'}}>
-      <Tooltip>
+      <Tooltip
+        {...props}>
         {content}
       </Tooltip>
     </div>
