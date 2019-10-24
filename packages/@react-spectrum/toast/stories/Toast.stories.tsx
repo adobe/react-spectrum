@@ -1,5 +1,6 @@
 import {action} from '@storybook/addon-actions';
-import {Toast, ToastProps} from '../';
+import {Toast} from '../';
+import {ToastProps} from '@react-types/toast';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
