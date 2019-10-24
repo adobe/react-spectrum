@@ -9,15 +9,17 @@ export interface TagProps extends DOMProps, Removable<ReactChild, void> {
   validationState?: 'invalid' | 'valid'
 }
 
-export interface TagGroupProps extends DOMProps, MultipleSelectionBase {
+export interface TagGroupProps extends DOMProps, MultipleSelectionBase, Removable<ReactChild[], void> {
   children: ReactElement<AriaTagProps> | ReactElement<AriaTagProps>[],
   isDisabled?: boolean
+  isReadOnly?: boolean,
+  validationState?: 'invalid' | 'valid'
 }
 
 export interface AriaTagProps extends Removable<ReactChild, void> {
   children?: ReactChild,
   isDisabled?: boolean,
-  isGroupFocused?: boolean,
+  validationState?: 'invalid' | 'valid',
   isSelected?: boolean,
   role?: string
 }

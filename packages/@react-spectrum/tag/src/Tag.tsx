@@ -21,7 +21,6 @@ export const Tag = ((props: TagProps) => {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
     validationState: groupValidationState,
-    isFocused,
     onRemove,
     role
   } =  useTagGroupProvider();
@@ -31,9 +30,9 @@ export const Tag = ((props: TagProps) => {
   let isInvalid = (validationState !== undefined ? validationState : groupValidationState) === 'invalid';
   let {clearButtonProps, labelProps, tagProps} = useTag({
     ...props,
-    isGroupFocused: isFocused,
     isRemovable: removable,
     isDisabled: disabled,
+    validationState: validationState !== undefined ? validationState : groupValidationState,
     onRemove: props.onRemove || onRemove,
     role
   });

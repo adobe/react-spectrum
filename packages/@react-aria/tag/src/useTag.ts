@@ -13,6 +13,7 @@ interface TagAria {
 export function useTag(props: AriaTagProps): TagAria {
   const {
     isDisabled,
+    validationState,
     isRemovable,
     isSelected,
     onRemove,
@@ -37,6 +38,7 @@ export function useTag(props: AriaTagProps): TagAria {
   return {
     tagProps: {
       'aria-selected': role === 'gridcell' ? undefined : !isDisabled && isSelected,
+      'aria-invalid': validationState === 'invalid' || undefined,
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       role: role === 'gridcell' ? 'row' : null,
       tabIndex: isDisabled ? -1 : 0
