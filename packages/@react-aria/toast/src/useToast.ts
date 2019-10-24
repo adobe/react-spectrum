@@ -1,8 +1,8 @@
-import {AllHTMLAttributes, SyntheticEvent} from 'react';
+import {AllHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressEvent} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {ToastProps} from '@react-types/toast';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface ActionButtonProps extends AllHTMLAttributes<HTMLHeadingElement> {
   onPress?: (e: PressEvent) => void,
@@ -53,5 +53,5 @@ export function useToast(props: ToastProps): ToastAria {
       'aria-label': formatMessage('close'),
       onPress: onClose
     }
-  }
+  };
 }

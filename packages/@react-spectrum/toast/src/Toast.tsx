@@ -22,8 +22,8 @@ import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import {ToastProps} from '@react-types/toast';
-import {useToast} from '@react-aria/toast';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useToast} from '@react-aria/toast';
 
 export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};

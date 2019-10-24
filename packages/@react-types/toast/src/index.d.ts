@@ -3,9 +3,9 @@ import {ReactNode} from 'react';
 
 export interface ToastOptions {
   actionLabel?: ReactNode,
-  onAction?: () => void,
+  onAction?: (...args: any[]) => void,
   shouldCloseOnAction?: boolean,
-  onClose?: () => void,
+  onClose?: (...args: any[]) => void,
   timeout?: number
 }
 

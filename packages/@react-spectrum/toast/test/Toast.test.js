@@ -1,6 +1,6 @@
-import Toast from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import Toast from '../';
 import V2Toast from '@react/react-spectrum/Toast';
 
 

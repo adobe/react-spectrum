@@ -1,8 +1,8 @@
 import {action} from '@storybook/addon-actions';
-import {Toast} from '../';
-import {ToastProps} from '@react-types/toast';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Toast} from '../';
+import {ToastProps} from '@react-types/toast';
 
 storiesOf('Toast', module)
   .add(
