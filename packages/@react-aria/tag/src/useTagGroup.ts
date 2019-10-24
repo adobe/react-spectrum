@@ -1,8 +1,9 @@
-import {HTMLAttributes, useRef} from 'react';
+import {HTMLAttributes} from 'react';
 import {MultipleSelectionBase} from '@react-types/shared';
 
 interface AriaTagGroupProps extends MultipleSelectionBase {
   isDisabled?: boolean,
+  isFocused?: boolean,
   isReadOnly?: boolean, // removes close button
   validationState?: 'valid' | 'invalid'
 }
@@ -12,16 +13,14 @@ interface TagGroupAria {
 }
 
 export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
-  const {isDisabled, validationState} = props;
-
-  let isFocused = useRef(false);
+  const {isDisabled, isFocused, validationState} = props;
 
   return {
     tagGroupProps: {
       role: 'grid',
       'aria-atomic': false,
       'aria-relevant': 'additions',
-      'aria-live': isFocused.current ? 'polite' : 'off',
+      'aria-live': isFocused ? 'polite' : 'off',
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid'
     }

@@ -1,6 +1,5 @@
-import {announce} from '@react-aria/live-announcer';
 import {AriaTagProps} from '@react-types/tag';
-import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
+import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent} from 'react';
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -15,7 +14,6 @@ export function useTag(props: AriaTagProps): TagAria {
   const {
     isDisabled,
     isRemovable,
-    isGroupFocused,
     isSelected,
     onRemove,
     children,
@@ -35,11 +33,7 @@ export function useTag(props: AriaTagProps): TagAria {
   const pressProps = {
     onPress: e => onRemove(children, e)
   };
-  useEffect(() => {
-    if (isGroupFocused) {
-      announce(children, 'polite');
-    }
-  }, []);
+
   return {
     tagProps: {
       'aria-selected': role === 'gridcell' ? undefined : !isDisabled && isSelected,

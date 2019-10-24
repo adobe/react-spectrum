@@ -40,7 +40,6 @@ export const Tag = ((props: TagProps) => {
   let {role: buttonRole, ...otherButtonProps} = clearButtonProps;
   let icon = props.icon || (isInvalid && <Alert />);
 
-  // TODO: add avatar component
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div

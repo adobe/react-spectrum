@@ -35,18 +35,17 @@ export const TagGroup = ((props: TagGroupProps) => {
     className,
     ...otherProps
   } = completeProps;
-
-  const {tagGroupProps} = useTagGroup(completeProps);
-
-  function removeAll(tags) {
-    // TODO: implement when selection state hook is available
-    onRemove([tags]);
-  }
   let isFocused = useRef(false);
 
   let handleFocusWithin = (focused) => {
     isFocused.current = focused;
   };
+
+  const {tagGroupProps} = useTagGroup({...completeProps, isFocused});
+
+  function removeAll(tags) {
+    onRemove([tags]);
+  }
 
   return (
     <Focus onFocusWithinChange={handleFocusWithin}>
@@ -68,7 +67,6 @@ export const TagGroup = ((props: TagGroupProps) => {
             isRemovable: !isReadOnly && isRemovable,
             isDisabled,
             onRemove: removeAll,
-            isFocused: isFocused.current,
             validationState,
             role: 'gridcell'
           }}>
