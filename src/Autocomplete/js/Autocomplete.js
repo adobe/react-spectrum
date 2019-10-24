@@ -488,7 +488,10 @@ export default class Autocomplete extends React.Component {
                   focused={selectedIndex === i}
                   selected={label === value}
                   onMouseEnter={this.onMouseEnter.bind(this, i)}
-                  onMouseDown={e => e.preventDefault()}>
+                  onMouseDown={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
                   {renderItem ? renderItem(result) : label}
                 </MenuItem>
               );
