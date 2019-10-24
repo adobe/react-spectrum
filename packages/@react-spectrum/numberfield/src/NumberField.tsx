@@ -2,7 +2,7 @@ import {ActionButton} from '@react-spectrum/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {FocusRing, FocusScope} from '@react-aria/focus';
+import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {InputBase, RangeInputBase, TextInputBase, ValidationState, ValueBase} from '@react-types/shared';
 import React, {RefObject} from 'react';
@@ -10,8 +10,8 @@ import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
+import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useNumberFieldState} from '../../../@react-stately/numberfield/src';
 
 interface NumberField extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number> {
   isQuiet?: boolean,
@@ -59,14 +59,21 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
       <div
         {...filterDOMProps(completeProps)}
         ref={ref}
-        className={classNames(stepperStyle, 'spectrum-Stepper', 'react-spectrum-Stepper', {'spectrum-Stepper--quiet': isQuiet}, className)}>
+        className={classNames(
+          stepperStyle,
+          'spectrum-Stepper',
+          'react-spectrum-Stepper',
+          {'spectrum-Stepper--quiet': isQuiet},
+          className
+        )}>
         <TextField
           // autoComplete="off""
           validationState={validationState as ValidationState}
+          isQuiet={isQuiet}
           className={classNames(stepperStyle, 'spectrum-Stepper-input')}
           {...numberFieldProps} />
         {showStepper &&
-        <FocusRing focusRingClass={classNames(stepperStyle, 'focus-ring')}>
+        <div>
           <span
             className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
             role="presentation">
@@ -85,7 +92,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
               <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
             </ActionButton>
           </span>
-        </FocusRing>
+        </div>
         }
       </div>
     </FocusRing>

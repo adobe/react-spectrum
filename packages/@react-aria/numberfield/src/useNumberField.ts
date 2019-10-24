@@ -52,8 +52,8 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
   const incrementButtonProps = {
     'aria-label': incrementAriaLabel || formatMessage('Increment'),
     'aria-controls': inputId,
-    onPress: onIncrement,
-    isDisabled: isDisabled || (value >= maxValue)
+    isDisabled: isDisabled || (value >= maxValue),
+    onPress: onIncrement
   };
   const decrementButtonProps = {
     'aria-label': decrementAriaLabel || formatMessage('Decrement'),
@@ -89,7 +89,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
         handleInputScrollWheel
       );
     };
-  }, [inputId]);
+  }, [handleInputScrollWheel, inputId]);
 
   return {
     numberFieldProps: mergeProps(spinButtonProps, {
