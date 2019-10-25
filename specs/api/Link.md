@@ -1,6 +1,6 @@
 # Link
 
-```javascript
+```typescript
 interface Link {
   variant?: 'primary' | 'secondary' | 'overBackground',
   children: ReactNode,
@@ -22,16 +22,6 @@ interface Link {
 ## Packages
 - `@react-aria/link`
 - `@react-spectrum/link`
-
-## To Do
-[x] Should we match breadcrumbs and use children as the link, and just apply the spectrum class?
-[x] react-aria? maybe for role props for custom element types? could also use in button.
-[x] Can over background be combined with quiet? -yes
-[x] Is standard really emphasized?
-[x] Available in no underline and not blue but hover is darker and underlined
-[x] primary/secondary with isQuiet
-[x] isQuiet removes underline
-[x] Over background keeps the underline always? - no
 
 ## Example
     // If only text, then we will wrap in a span with the spectrum class.

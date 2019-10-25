@@ -1,6 +1,6 @@
 # Provider
 
-```javascript
+```typescript
 type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
   | 'bottom' | 'bottom left' | 'bottom center' | 'bottom right';
 

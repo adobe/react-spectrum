@@ -1,6 +1,6 @@
 # Radio
 
-```javascript
+```typescript
 interface RadioGroup extends ValueBase<string>, InputBase {
   orientation?: 'horizontal' | 'vertical',
   labelPosition?: 'side' | 'bottom',

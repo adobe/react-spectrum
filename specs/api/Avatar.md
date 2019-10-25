@@ -1,6 +1,6 @@
 # Avatar
 
-```javascript
+```typescript
 interface Avatar {
   src: string,
   alt?: string,

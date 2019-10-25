@@ -1,6 +1,6 @@
 # Divider
 
-```javascript
+```typescript
 interface Divider {
   size?: 'S' | 'M' | 'L',
   orientation?: 'horizontal' | 'vertical'

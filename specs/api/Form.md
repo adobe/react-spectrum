@@ -1,6 +1,6 @@
 # Form and FieldLabel
 
-```javascript
+```typescript
 interface Form {
   children: ReactElement<FormItem> | ReactElement<FormItem>[]
 }

@@ -1,6 +1,6 @@
 # Button
 
-```javascript
+```typescript
 interface ButtonBase {
   isDisabled?: boolean,
   icon?: ReactNode,

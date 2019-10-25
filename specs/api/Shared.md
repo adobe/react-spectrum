@@ -1,7 +1,7 @@
 # Shared APIs
 
 ## Inputs
-```javascript
+```typescript
 interface InputBase {
   isDisabled?: boolean,
   isRequired?: boolean,

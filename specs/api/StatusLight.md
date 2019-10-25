@@ -1,6 +1,6 @@
 # StatusLight
 
-```javascript
+```typescript
 interface StatusLight {
   children: ReactNode,
   variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',

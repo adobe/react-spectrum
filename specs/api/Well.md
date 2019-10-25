@@ -1,6 +1,6 @@
 # Well
 
-```javascript
+```typescript
 interface Well {
   children: ReactNode
 }

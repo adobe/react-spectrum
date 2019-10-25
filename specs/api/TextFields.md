@@ -1,6 +1,6 @@
 # Text Fields
 
-```javascript
+```typescript
 interface TextField extends InputBase, TextInputBase, ValueBase<string> {
   icon?: ReactNode,
   isQuiet?: boolean,

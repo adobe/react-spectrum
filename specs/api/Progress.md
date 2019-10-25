@@ -1,6 +1,6 @@
 # ProgressBar and ProgressCircle
 
-```javascript
+```typescript
 interface ProgressBar {
   value?: number,
   minValue?: number,

@@ -1,6 +1,6 @@
 # QuickActions
 
-```javascript
+```typescript
 interface QuickActions {
   variant?: 'icon' | 'text',
   maxVisibleItems?: number,

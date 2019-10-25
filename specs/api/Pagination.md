@@ -1,6 +1,6 @@
 # Pagination
 
-```javascript
+```typescript
 interface PaginationBase extends ValueBase<number> {
   maxValue: number,
   onPrevious?: (value: number, e: Event) => void,

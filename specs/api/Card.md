@@ -1,6 +1,6 @@
 # Card
 
-```javascript
+```typescript
 interface Card {
   variant?: 'quiet' | 'gallery', // Change to layout names instead?
   size?: 'L' | 'S',
