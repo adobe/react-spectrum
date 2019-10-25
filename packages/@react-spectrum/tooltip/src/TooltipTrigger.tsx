@@ -57,7 +57,6 @@ function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, 
     containerPadding: props.containerPadding,
     offset: props.offset,
     crossOffset: props.crossOffset,
-    shouldFlip: props.shouldFlip,
     isOpen
   });
 

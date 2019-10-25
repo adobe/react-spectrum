@@ -40,7 +40,7 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
           {props.children}
         </span>
       )}
-      <span className="spectrum-Tooltip-tip" style={arrowStyle} />
+      <span className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
 });

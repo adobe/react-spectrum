@@ -43,10 +43,6 @@ storiesOf('Tooltip', module)
   .add(
     'triggered using click',
     () => render('This is a tooltip.', {trigger: 'click'})
-  )
-  .add(
-    'triggered using hover',
-    () => render('This is a tooltip.', {trigger: ['hover', 'focus']})
   );
 
 function render(content, props = {}) {
