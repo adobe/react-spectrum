@@ -1,8 +1,9 @@
 import {LayoutInfo} from './LayoutInfo';
-import ReusableView from './ReusableView';
+import {ReusableView} from './ReusableView';
+import { Key } from 'react';
 
-type LayoutInfoMap = Map<string, LayoutInfo>;
-export class Transaction {
+type LayoutInfoMap = Map<Key, LayoutInfo>;
+export class Transaction<T, V> {
   level = 0;
   actions: (() => void)[] = [];
   animated = true;
@@ -10,6 +11,6 @@ export class Transaction {
   finalMap: LayoutInfoMap = new Map();
   initialLayoutInfo: LayoutInfoMap = new Map();
   finalLayoutInfo: LayoutInfoMap = new Map();
-  removed: Map<string, ReusableView> = new Map();
-  toRemove: Map<string, ReusableView> = new Map();
+  removed: Map<Key, ReusableView<T, V>> = new Map();
+  toRemove: Map<Key, ReusableView<T, V>> = new Map();
 }

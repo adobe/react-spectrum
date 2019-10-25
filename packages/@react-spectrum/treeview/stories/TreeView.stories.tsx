@@ -5,8 +5,8 @@ import {storiesOf} from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 // let items = [];
-// for (let i = 0; i < 10; i++) {
-//   items.push({id: i, value: 'Item ' + i});
+// for (let i = 0; i < 1000; i++) {
+//   items.push({name: 'Item ' + i});
 // }
 
 let items = [
@@ -38,8 +38,8 @@ storiesOf('TreeView', module)
     () => (
       <TreeView items={items} itemKey="name">
         {item => 
-          <Section items={item.children}>
-            {item => <Item>{item.name}</Item>}
+          <Section items={item.children} title={item.name}>
+            {item => <Item childItems={item.children}>{item.name}</Item>}
           </Section>
         }
       </TreeView>
@@ -51,11 +51,29 @@ storiesOf('TreeView', module)
       <TreeView>
         <Item>One</Item>
         <Item>Two</Item>
-        <Item>Three</Item>
+        <Item title="Three">
+          <Item>Four</Item>
+          <Item title="Five">
+            <Item>Six</Item>
+          </Item>
+        </Item>
+      </TreeView>
+    )
+  )
+  .add(
+    'Static sections',
+    () => (
+      <TreeView>
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
       </TreeView>
     )
   );
-
-function render(props = {}) {
-  return <TreeView {...props}></TreeView>;
-}

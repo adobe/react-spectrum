@@ -1,10 +1,11 @@
-import {DragTarget} from './DragTarget';
-import {CollectionView} from './CollectionView';
+import {CollectionManager} from './CollectionManager';
 import {Rect} from './Rect';
 import {LayoutInfo} from './LayoutInfo';
 import {Point} from './Point';
 import {Size} from './Size';
 import {InvalidationContext} from './types';
+import { Key } from 'react';
+import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
  * {@link CollectionView} supports arbitrary layout objects, which compute what views are visible, and how
@@ -19,9 +20,9 @@ import {InvalidationContext} from './types';
  * - {@link getVisibleLayoutInfos}
  * - {@link getLayoutInfo}
  */
-export abstract class Layout {
+export abstract class Layout<T> {
   /** The CollectionView the layout is currently attached to */
-  collectionView: CollectionView;
+  collectionManager: CollectionManager<T, any, any>;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -31,7 +32,7 @@ export abstract class Layout {
    */
   shouldInvalidate(rect: Rect): boolean {
     // By default, invalidate when the size changes
-    let size = this.collectionView.visibleRect;
+    let size = this.collectionManager.visibleRect;
     return rect.width !== size.width
         || rect.height !== size.height;
   }
@@ -42,7 +43,7 @@ export abstract class Layout {
    * Called by the collection view before {@link getVisibleLayoutInfos}
    * or {@link getLayoutInfo} are called.
    */
-  validate(invalidationContext: InvalidationContext) {}
+  validate(invalidationContext: InvalidationContext<T, any>) {}
 
   /**
    * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
@@ -57,7 +58,7 @@ export abstract class Layout {
    * @param type The type of the LayoutInfo to retrieve
    * @param key The key of the LayoutInfo to retrieve
    */
-  abstract getLayoutInfo(type: string, key: string): LayoutInfo;
+  abstract getLayoutInfo(type: string, key: Key): LayoutInfo;
 
   /**
    * Returns size of the content. By default, it returns collectionView's size.
@@ -70,12 +71,15 @@ export abstract class Layout {
    * @param point The point at which the drag occurred
    */
   getDragTarget(point: Point): DragTarget | null {
-    let target = this.collectionView.keyAtPoint(point);
+    let target = this.collectionManager.keyAtPoint(point);
     if (!target) {
       return null;
     }
 
-    return new DragTarget('item', target);
+    return {
+      type: 'item',
+      key: target
+    };
   }
 
   /**
@@ -83,7 +87,7 @@ export abstract class Layout {
    * to reject the drop. The dropped items will be inserted before the resulting target.
    * @param point The point at which the drop occurred
    */
-  getDropTarget(point: Point): DragTarget | null {
+  getDropTarget(point: Point): DropTarget | null {
     return null;
   }
 
@@ -114,7 +118,7 @@ export abstract class Layout {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyAbove(key: string): string | null {
+  getKeyAbove(key: Key): Key | null {
     return null;
   }
 
@@ -123,7 +127,7 @@ export abstract class Layout {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyBelow(key: string): string | null {
+  getKeyBelow(key: Key): Key | null {
     return null;
   }
 
@@ -132,7 +136,7 @@ export abstract class Layout {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyLeftOf(key: string): string | null {
+  getKeyLeftOf(key: Key): Key | null {
     return null;
   }
 
@@ -141,7 +145,7 @@ export abstract class Layout {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyRightOf(key: string): string | null {
+  getKeyRightOf(key: Key): Key | null {
     return null;
   }
 }

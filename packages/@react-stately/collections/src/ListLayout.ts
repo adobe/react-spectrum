@@ -1,15 +1,16 @@
-import {DragTarget, DropPosition} from './DragTarget';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
 import {Size} from './Size';
-import {Collection} from './types';
+import {Collection, Node} from './types';
 import {Point} from './Point';
+import { Key } from 'react';
+import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
-type ListLayoutOptions = {
+type ListLayoutOptions<T> = {
   /** the height of a row in px. */
   rowHeight?: number,
-  indentationForItem?: (collection: Collection, key: string) => number
+  indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number
 };
 
 /**
@@ -22,9 +23,9 @@ type ListLayoutOptions = {
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
-export class ListLayout extends Layout {
+export class ListLayout<T> extends Layout<Node<T>> {
   private rowHeight: number;
-  private indentationForItem?: (collection: Collection, key: string) => number;
+  private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
   private contentHeight: number;
 
@@ -32,7 +33,7 @@ export class ListLayout extends Layout {
    * Creates a new ListLayout with options. See the list of properties below for a description
    * of the options that can be provided.
    */
-  constructor(options: ListLayoutOptions = {}) {
+  constructor(options: ListLayoutOptions<T> = {}) {
     super();
     this.rowHeight = options.rowHeight || 48;
     this.indentationForItem = options.indentationForItem;
@@ -40,7 +41,7 @@ export class ListLayout extends Layout {
     this.contentHeight = 0;
   }
 
-  getLayoutInfo(type: string, key: string) {
+  getLayoutInfo(type: string, key: Key) {
     return this.layoutInfos[key];
   }
 
@@ -61,15 +62,17 @@ export class ListLayout extends Layout {
 
     let y = 0;
 
-    let keys = this.collectionView.data.getKeys();
+    let keys = this.collectionManager.collection.getKeys();
     for (let key of keys) {
+      let type = this.collectionManager.collection.getItem(key).type;
+
       let x = 0;
       if (typeof this.indentationForItem === 'function') {
-        x = this.indentationForItem(this.collectionView.data, key) || 0;
+        x = this.indentationForItem(this.collectionManager.collection, key) || 0;
       }
 
-      let rect = new Rect(x, y, this.collectionView.visibleRect.width - x, this.rowHeight);
-      this.layoutInfos[key] = new LayoutInfo('item', key, rect);
+      let rect = new Rect(x, y, this.collectionManager.visibleRect.width - x, this.rowHeight);
+      this.layoutInfos[key] = new LayoutInfo(type, key, rect);
 
       y += this.rowHeight;
     }
@@ -78,31 +81,39 @@ export class ListLayout extends Layout {
   }
 
   getContentSize() {
-    return new Size(this.collectionView.visibleRect.width, this.contentHeight);
+    return new Size(this.collectionManager.visibleRect.width, this.contentHeight);
   }
 
-  getKeyAbove(key: string) {
-    return this.collectionView.data.getKeyBefore(key);
+  getKeyAbove(key: Key) {
+    return this.collectionManager.collection.getKeyBefore(key);
   }
 
-  getKeyBelow(key: string) {
-    return this.collectionView.data.getKeyAfter(key);
+  getKeyBelow(key: Key) {
+    return this.collectionManager.collection.getKeyAfter(key);
   }
 
-  getDragTarget(point: Point) {
+  getDragTarget(point: Point): DragTarget {
     let visible = this.getVisibleLayoutInfos(new Rect(point.x, point.y, 1, 1));
     if (visible.length > 0) {
       visible = visible.sort((a, b) => b.zIndex - a.zIndex);
-      return new DragTarget('item', visible[0].key);
+      // return new DragTarget('item', visible[0].key);
+      return {
+        type: 'item',
+        key: visible[0].key
+      };
     }
 
     return null;
   }
 
-  getDropTarget(point: Point) {
-    let key = this.collectionView.keyAtPoint(point);
+  getDropTarget(point: Point): DropTarget {
+    let key = this.collectionManager.keyAtPoint(point);
     if (key) {
-      return new DragTarget('item', key, DropPosition.ON);
+      return {
+        type: 'item',
+        key,
+        dropPosition: DropPosition.ON
+      };
     }
 
     return null;

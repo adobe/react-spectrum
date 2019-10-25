@@ -1,5 +1,5 @@
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection, CollectionViewDelegate, InvalidationContext, Item} from './types';
+import {Collection, CollectionManagerDelegate, InvalidationContext} from './types';
 import {concatIterators, difference} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
@@ -8,22 +8,24 @@ import {Rect, RectCorner} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
+import { Key } from 'react';
+import { OverscanManager } from './OverscanManager';
 
 interface ScrollAnchor {
-  key: string,
+  key: Key,
   layoutInfo: LayoutInfo,
   corner: RectCorner,
   offset: number
 }
 
-export interface CollectionViewOptions {
-  data?: Collection,
-  layout?: Layout,
-  size?: Size,
-  delegate?: CollectionViewDelegate,
+export interface CollectionManagerOptions<T, V, W> {
+  collection?: Collection<T>,
+  layout?: Layout<T>,
+  delegate?: CollectionManagerDelegate<T, V, W>,
   transitionDuration?: number,
   anchorScrollPosition?: boolean,
-  anchorScrollPositionAtTop?: boolean
+  anchorScrollPositionAtTop?: boolean,
+  shouldOverscan?: boolean
 }
 
 /**
@@ -52,12 +54,12 @@ export interface CollectionViewOptions {
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionView {
+export class CollectionManager<T, V, W> {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
    */
-  delegate: CollectionViewDelegate;
+  delegate: CollectionManagerDelegate<T, V, W>;
 
   /** The duration of animated layout changes, in milliseconds. Default is 500ms. */
   transitionDuration: number;
@@ -70,26 +72,33 @@ export class CollectionView {
 
   /** Whether to anchor the scroll position when at the top of the content. Default is off. */
   anchorScrollPositionAtTop: boolean;
-  
-  protected _data: Collection;
-  protected _layout: Layout;
-  protected _contentSize: Size;
-  protected _visibleRect: Rect;
-  protected _reusableViews: {[type: string]: ReusableView[]};
-  protected _visibleViews: Map<string, ReusableView>;
-  protected _renderedContent: Map<string, any>;
-  protected _renderedViews: Map<number, any>;
-  protected _children: Set<ReusableView>;
-  protected _invalidationContext: InvalidationContext | null;
-  protected _relayoutRaf: number | null;
-  protected _scrollAnimation: CancelablePromise<void> | null;
-  protected _sizeUpdateQueue: Set<string>;
-  protected _animatedContentOffset: Point;
-  protected _transaction: Transaction | null;
-  protected _nextTransaction: Transaction | null;
-  protected _transactionQueue: Transaction[];
 
-  constructor(options: CollectionViewOptions = {}) {
+  /** 
+   * Whether to overscan the visible area to pre-render items slightly outside and 
+   * improve performance. Default is on.
+   */
+  shouldOverscan: boolean;
+  
+  private _collection: Collection<T>;
+  private _layout: Layout<T>;
+  private _contentSize: Size;
+  private _visibleRect: Rect;
+  private _reusableViews: {[type: string]: ReusableView<T, V>[]};
+  private _visibleViews: Map<Key, ReusableView<T, V>>;
+  private _renderedContent: Map<Key, V>;
+  private _renderedViews: Map<Key, W>;
+  private _children: Set<ReusableView<T, V>>;
+  private _invalidationContext: InvalidationContext<T, V> | null;
+  private _overscanManager: OverscanManager;
+  private _relayoutRaf: number | null;
+  private _scrollAnimation: CancelablePromise<void> | null;
+  private _sizeUpdateQueue: Set<Key>;
+  private _animatedContentOffset: Point;
+  private _transaction: Transaction<T, V> | null;
+  private _nextTransaction: Transaction<T, V> | null;
+  private _transactionQueue: Transaction<T, V>[];
+
+  constructor(options: CollectionManagerOptions<T, V, W> = {}) {
     this._contentSize = new Size;
     this._visibleRect = new Rect;
 
@@ -99,6 +108,7 @@ export class CollectionView {
     this._renderedViews = new Map();
     this._children = new Set();
     this._invalidationContext = null;
+    this._overscanManager = new OverscanManager();
 
     this._scrollAnimation = null;
     this._sizeUpdateQueue = new Set();
@@ -112,7 +122,8 @@ export class CollectionView {
     this.transitionDuration = options.transitionDuration || 500;
     this.anchorScrollPosition = options.anchorScrollPosition || false;
     this.anchorScrollPositionAtTop = options.anchorScrollPositionAtTop || false;
-    for (let key of ['delegate', 'size', 'layout', 'data']) {
+    this.shouldOverscan = options.shouldOverscan !== false;
+    for (let key of ['delegate', 'size', 'layout', 'collection']) {
       if (options[key]) {
         this[key] = options[key];
       }
@@ -125,8 +136,9 @@ export class CollectionView {
   }
 
   _setContentOffset(offset: Point, forceUpdate = false) {
+    // TODO: controlled??
     this._setVisibleRect(new Rect(offset.x, offset.y, this._visibleRect.width, this._visibleRect.height), forceUpdate);
-    // this.delegate.setVisibleRect(this._visibleRect);
+    this.delegate.setVisibleRect(this._visibleRect);
   }
 
   /**
@@ -158,6 +170,10 @@ export class CollectionView {
       return;
     }
 
+    if (this.shouldOverscan) {
+      this._overscanManager.setVisibleRect(rect);
+    }
+
     let shouldInvalidate = this.layout && this.layout.shouldInvalidate(rect);
 
     this._resetAnimatedContentOffset();
@@ -174,25 +190,25 @@ export class CollectionView {
     }
   }
 
-  get data(): Collection {
-    return this._data;
+  get collection(): Collection<T> {
+    return this._collection;
   }
 
-  set data(data: Collection) {
+  set collection(data: Collection<T>) {
     this._setData(data);
   }
 
-  protected _setData(data: Collection) {
-    if (data === this._data) {
+  private _setData(data: Collection<T>) {
+    if (data === this._collection) {
       return;
     }
 
-    if (this._data) {
+    if (this._collection) {
       this._runTransaction(() => {
-        this._data = data;
+        this._collection = data;
       });
     } else {
-      this._data = data;
+      this._collection = data;
       this.reloadData();
     }
   }
@@ -211,21 +227,21 @@ export class CollectionView {
   /**
    * Returns the item with the given key.
    */
-  getItem(key: string) {
-    return this._data ? this._data.getItem(key) : null;
+  getItem(key: Key) {
+    return this._collection ? this._collection.getItem(key) : null;
   }
 
   /**
    * Get the collection view's layout
    */
-  get layout(): Layout {
+  get layout(): Layout<T> {
     return this._layout;
   }
 
   /**
    * Set the collection view's layout
    */
-  set layout(layout: Layout) {
+  set layout(layout: Layout<T>) {
     this.setLayout(layout);
   }
 
@@ -235,7 +251,7 @@ export class CollectionView {
    * @param layout The layout to switch to
    * @param animated Whether to animate the layout change
    */
-  setLayout(layout: Layout, animated = false) {
+  setLayout(layout: Layout<T>, animated = false) {
     if (layout === this._layout) {
       return;
     }
@@ -243,10 +259,10 @@ export class CollectionView {
     let applyLayout = () => {
       if (this._layout) {
         // @ts-ignore
-        this._layout.collectionView = null;
+        this._layout.collectionManager = null;
       }
 
-      layout.collectionView = this;
+      layout.collectionManager = this;
       this._layout = layout;
     };
 
@@ -262,12 +278,7 @@ export class CollectionView {
     }
   }
 
-  createView(type: string, key: string): ReusableView {
-    // return this.delegate.createView(type, key);
-    return new ReusableView();
-  }
-
-  private _getReuseType(layoutInfo: LayoutInfo, content: Item | null) {
+  private _getReuseType(layoutInfo: LayoutInfo, content: T | null) {
     if (layoutInfo.type === 'item' && content) {
       let type = this.delegate.getType ? this.delegate.getType(content) : 'item';
       let reuseType = type === 'item' ? 'item' : layoutInfo.type + '_' + type;
@@ -280,7 +291,7 @@ export class CollectionView {
     };
   }
 
-  getReusableView(layoutInfo: LayoutInfo): ReusableView {
+  getReusableView(layoutInfo: LayoutInfo): ReusableView<T, V> {
     let content = this._getViewContent(layoutInfo.type, layoutInfo.key);
     let {type, reuseType} = this._getReuseType(layoutInfo, content);
 
@@ -290,8 +301,8 @@ export class CollectionView {
 
     let reusable = this._reusableViews[reuseType];
     let view = reusable.length > 0
-      ? reusable.pop() as ReusableView
-      : this.createView(type, layoutInfo.key);
+      ? reusable.pop()
+      : new ReusableView<T, V>();
 
     // view.collectionView = this;
     view.viewType = reuseType;
@@ -311,10 +322,10 @@ export class CollectionView {
     return view;
   }
 
-  private _getViewContent(type: string, key: string): Item | null {
-    if (type === 'item') {
+  private _getViewContent(type: string, key: Key): T | null {
+    // if (type === 'item') {
       return this.getItem(key);
-    }
+    // }
 
     // if (this.delegate.getContentForExtraView) {
     //   return this.delegate.getContentForExtraView(type, key);
@@ -323,17 +334,18 @@ export class CollectionView {
     return null;
   }
 
-  private _renderView(reusableView: ReusableView) {
+  private _renderView(reusableView: ReusableView<T, V>) {
     let {type, key} = reusableView.layoutInfo;
     let k = this._getViewKey(type, key);
-    reusableView.content = this._renderedContent.get(k) || this._renderContent(type, key);
+    reusableView.content = this._getViewContent(type, key);
+    reusableView.rendered = this._renderedContent.get(k) || this._renderContent(type, key);
 
     let rendered = this.delegate.renderWrapper(reusableView);
     this._renderedViews.set(reusableView.key, rendered);
     return rendered;
   }
 
-  private _renderContent(type: string, key: string) {
+  private _renderContent(type: string, key: Key) {
     let content = this._getViewContent(type, key);
     let rendered = this.delegate.renderView(type, content);
     let k = this._getViewKey(type, key);
@@ -345,7 +357,7 @@ export class CollectionView {
    * Returns an array of all currently visible views, including both
    * item views and supplementary views.
    */
-  get visibleViews(): ReusableView[] {
+  get visibleViews(): ReusableView<T, V>[] {
     return Array.from(this._visibleViews.values());
   }
 
@@ -353,7 +365,7 @@ export class CollectionView {
    * Gets the visible item view for the given key. Returns null if
    * the view is not currently visible.
    */
-  getItemView(key: string): ReusableView | null {
+  getItemView(key: Key): ReusableView<T, V> | null {
     return this.getView('item', key);
   }
 
@@ -364,7 +376,7 @@ export class CollectionView {
    * @param type The view type. `'item'` for an item view.
    * @param key The key of the view to retrieve
   */
-  getView(type: string, key: string): ReusableView | null {
+  getView(type: string, key: Key): ReusableView<T, V> | null {
     try {
       let k = this._getViewKey(type, key);
       return this._visibleViews.get(k) || null;
@@ -377,7 +389,7 @@ export class CollectionView {
    * Returns an array of visible views matching the given type.
    * @param type The view type to find. `'item'` for item views.
    */
-  getViewsOfType(type: string): ReusableView[] {
+  getViewsOfType(type: string): ReusableView<T, V>[] {
     return this.visibleViews.filter(v => v.layoutInfo && v.layoutInfo.type === type);
   }
 
@@ -389,7 +401,7 @@ export class CollectionView {
    * @param type The view type. `'item'` for an item view.
    * @param key The key of the view to reload.
    */
-  reloadSupplementaryView(type: string, key: string) {
+  reloadSupplementaryView(type: string, key: Key) {
     if (type === 'item') {
       throw new Error('Do not reload item views with this method. ' +
         'Emit a "reloadItem" or "reloadSection" event from your data source instead.');
@@ -423,7 +435,7 @@ export class CollectionView {
    * Returns the key for the given view. Returns null
    * if the view is not currently visible.
    */
-  keyForView(view: ReusableView): string | null {
+  keyForView(view: ReusableView<T, V>): Key | null {
     if (view && view.layoutInfo && view.layoutInfo.type === 'item') {
       return view.layoutInfo.key;
     }
@@ -434,7 +446,7 @@ export class CollectionView {
   /**
    * Returns the key for the item view currently at the given point.
    */
-  keyAtPoint(point: Point): string | null {
+  keyAtPoint(point: Point): Key | null {
     let rect = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
@@ -447,25 +459,9 @@ export class CollectionView {
   }
 
   /**
-   * Returns the key for the item view containing a given DOM node
-   */
-  keyAtDOMNode(node: HTMLElement): string | null {
-    let view = Array.from(this._visibleViews.values()).find(v => {
-      const domNode = v.getDOMNode();
-      return v.layoutInfo!.type === 'item' && domNode && (domNode === node || domNode.contains(node));
-    });
-
-    if (!view || !view.layoutInfo) {
-      return null;
-    }
-
-    return view.layoutInfo.key;
-  }
-
-  /**
    * Triggers a layout invalidation, and updates the visible subviews.
    */
-  relayout(context: InvalidationContext = {}) {
+  relayout(context: InvalidationContext<T, V> = {}) {
     // Ignore relayouts while animating the scroll position
     if (this._scrollAnimation) {
       return;
@@ -489,7 +485,7 @@ export class CollectionView {
    * Performs a relayout immediately. Prefer {@link relayout} over this method
    * where possible, since it coalesces multiple layout passes in the same tick.
    */
-  relayoutNow(context: InvalidationContext = this._invalidationContext || {}) {
+  relayoutNow(context: InvalidationContext<T, V> = this._invalidationContext || {}) {
     // Cancel the scheduled relayout, since we're doing it now.
     if (this._relayoutRaf) {
       cancelAnimationFrame(this._relayoutRaf);
@@ -501,7 +497,7 @@ export class CollectionView {
 
     // Do nothing if we don't have a layout or content, or we are
     // in the middle of an animated scroll transition.
-    if (!this.layout || !this._data || this._scrollAnimation) {
+    if (!this.layout || !this._collection || this._scrollAnimation) {
       return;
     }
 
@@ -616,20 +612,11 @@ export class CollectionView {
     // }
   }
 
-  protected _enableTransitions() {
-    // let transition = `none ${this.transitionDuration}ms`;
-    // this.css({
-    //   WebkitTransition: transition,
-    //   transition: transition
-    // });
+  private _enableTransitions() {
     this.delegate.beginAnimations();
   }
 
-  protected _disableTransitions() {
-    // this.css({
-    //   WebkitTransition: '',
-    //   transition: ''
-    // });
+  private _disableTransitions() {
     this.delegate.endAnimations();
   }
 
@@ -679,7 +666,7 @@ export class CollectionView {
     return cornerAnchor;
   }
 
-  private _restoreScrollAnchor(scrollAnchor: ScrollAnchor | null, context: InvalidationContext) {
+  private _restoreScrollAnchor(scrollAnchor: ScrollAnchor | null, context: InvalidationContext<T, V>) {
     let contentOffset = this.getVisibleRect();
 
     if (scrollAnchor) {
@@ -704,10 +691,11 @@ export class CollectionView {
   }
 
   getVisibleLayoutInfos() {
-    return this._getLayoutInfoMap(this.getVisibleRect());
+    let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    return this._getLayoutInfoMap(rect);
   }
 
-  private _getViewKey(type: string, key: string) {
+  private _getViewKey(type: string, key: Key) {
     return type + ':' + key;
   }
 
@@ -728,7 +716,7 @@ export class CollectionView {
   }
 
   updateSubviews(forceUpdate = false) {
-    if (!this._data) {
+    if (!this._collection) {
       return;
     }
 
@@ -778,7 +766,7 @@ export class CollectionView {
     // Track views that should be removed. They are not removed from
     // the DOM immediately, since we may reuse and need to re-insert
     // them back into the DOM anyway.
-    let removed = new Set;
+    let removed = new Set<ReusableView<T, V>>();
 
     for (let key of toRemove.keys()) {
       let view = this._visibleViews.get(key);
@@ -801,7 +789,7 @@ export class CollectionView {
 
     for (let key of toAdd.keys()) {
       let layoutInfo = visibleLayoutInfos.get(key);
-      let view: ReusableView | void;
+      let view: ReusableView<T, V> | void;
 
       // We need to recompute view sizes if we only
       // have an estimated size for this row.
@@ -841,7 +829,8 @@ export class CollectionView {
     }
 
     for (let key of toUpdate) {
-      let view = currentlyVisible.get(key) as ReusableView;
+      let view = currentlyVisible.get(key) as ReusableView<T, V>;
+      this._renderedContent.delete(key);
       this._renderView(view);
     }
 
@@ -850,41 +839,32 @@ export class CollectionView {
       this.removeViews(removed);
     }
 
-    // this.flushUpdates(() => {
-    //   // If we're in a transaction, apply animations to visible views
-    //   // and "to be removed" views, which animate off screen.
-    //   if (this._transaction) {
-    //     this._applyLayoutInfos();
-    //   }
-
-    //   // If we need a height update, wait until the next frame
-    //   // so that the browser has time to do layout.
-    //   if (needsSizeUpdate) {
-    //     this.relayout();
-    //   }
-    // });
     this._flushVisibleViews();
-    if (this._transaction) {
-      requestAnimationFrame(() => requestAnimationFrame(() => this._applyLayoutInfos()));
+    if (this._transaction || needsSizeUpdate) {
+      requestAnimationFrame(() => {
+        // If we're in a transaction, apply animations to visible views
+        // and "to be removed" views, which animate off screen.
+        if (this._transaction) {
+          requestAnimationFrame(() => this._applyLayoutInfos());
+        }
+
+        // If we need a height update, wait until the next frame
+        // so that the browser has time to do layout.
+        if (needsSizeUpdate) {
+          this.relayout();
+        }
+      });
     }
   }
 
   afterRender() {
-    // If we're in a transaction, apply animations to visible views
-    // and "to be removed" views, which animate off screen.
-    if (this._transaction) {
-      this._applyLayoutInfos();
+    if (this.shouldOverscan) {
+      this._overscanManager.collectMetrics();
     }
-
-    // If we need a height update, wait until the next frame
-    // so that the browser has time to do layout.
-    // if (needsSizeUpdate) {
-    //   this.relayout();
-    // }
   }
 
   private _flushVisibleViews() {
-    let children = new Set;
+    let children = new Set<W>();
     for (let child of this._children) {
       children.add(this._renderedViews.get(child.key));
     }
@@ -892,7 +872,7 @@ export class CollectionView {
     this.delegate.setVisibleViews(children);
   }
 
-  private _applyLayoutInfo(view: ReusableView, layoutInfo: LayoutInfo) {
+  private _applyLayoutInfo(view: ReusableView<T, V>, layoutInfo: LayoutInfo) {
     if (view.layoutInfo === layoutInfo) {
       return false;
     }
@@ -904,13 +884,11 @@ export class CollectionView {
 
   private _applyLayoutInfos() {
     let updated = false;
-    let waitFrame = false;
 
     // Apply layout infos to visible views
     for (let [key, view] of this._visibleViews) {
       if (this._transaction && this._transaction.initialLayoutInfo.get(key) === view.layoutInfo) {
         // view.forceStyleUpdate();
-        waitFrame = true;
       }
 
       let cur = view.layoutInfo;
@@ -948,18 +926,18 @@ export class CollectionView {
     }
   }
 
-  reuseView(view: ReusableView) {
+  reuseView(view: ReusableView<T, V>) {
     view.prepareForReuse();
     this._reusableViews[view.viewType].push(view);
   }
 
-  removeViews(toRemove: Set<ReusableView>) {
+  removeViews(toRemove: Set<ReusableView<T, V>>) {
     for (let view of toRemove) {
       this._children.delete(view);
     }
   }
 
-  updateItemSize(key: string) {
+  updateItemSize(key: Key) {
     // TODO: we should be able to invalidate a single index path
     // @ts-ignore
     if (!this.layout.updateItemSize) {
@@ -998,7 +976,7 @@ export class CollectionView {
    * @param key The key of the item to scroll into view
    * @param duration The duration of the scroll animation
    */
-  scrollToItem(key: string, duration: number = 300) {
+  scrollToItem(key: Key, duration: number = 300) {
     if (!key) {
       return;
     }
@@ -1064,11 +1042,6 @@ export class CollectionView {
     });
 
     return this._scrollAnimation;
-  }
-
-  convertPoint(point: Point): Point {
-    let rect = this.getRect();
-    return new Point(this.visibleRect.x + point.x - rect.x, this.visibleRect.y + point.y - rect.y);
   }
 
   private _runTransaction(action: () => void, animated?: boolean) {
@@ -1139,7 +1112,7 @@ export class CollectionView {
     return new Rect(0, 0, this.contentSize.width, this.contentSize.height);
   }
 
-  private _performTransaction(transaction: Transaction) {
+  private _performTransaction(transaction: Transaction<T, V>) {
     this._transaction = transaction;
 
     this.relayoutNow({
@@ -1184,7 +1157,7 @@ export class CollectionView {
     });
   }
 
-  private _setupTransactionAnimations(transaction: Transaction) {
+  private _setupTransactionAnimations(transaction: Transaction<T, V>) {
     let {initialMap, finalMap} = transaction;
 
     // Store initial and final layout infos for animations

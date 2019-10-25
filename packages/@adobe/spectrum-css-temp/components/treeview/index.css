@@ -168,3 +168,8 @@ governing permissions and limitations under the License.
 /* topdoc
 {{ treeview/treeview-disabled.yml }}
 */
+
+.spectrum-TreeView-heading {
+  padding: calc(calc(var(--spectrum-treeview-item-margin-y) * 2) + var(--spectrum-treeview-item-padding-y)) 10px;
+  font-weight: bold;
+}

@@ -1,99 +1,55 @@
-import {Item, ItemOptions} from './Item';
-import {Section} from './Section';
+import {Key} from 'react';
+import {Node, Collection} from './types';
 
-type TreeItem = Section | Item;
-type LoadFunction<T> = (item: Item) => T[] | Promise<T[]>;
-interface TreeOptions {
-  children?: TreeItem[],
-  load?: LoadFunction<TreeItem[]>,
-  loadMore?: LoadFunction<TreeItem[]>
-}
+export class Tree<T> implements Collection<Node<T>> {
+  private keyMap: Map<Key, Node<T>> = new Map();
+  private iterable: Iterable<Node<T>>;
 
-export class Tree {
-  children: Item[];
-  load?: LoadFunction<TreeItem[]>;
-  loadMore?: LoadFunction<TreeItem[]>;
-  private map: Map<string, any> | null;
+  constructor(nodes: Iterable<Node<T>>) {
+    this.iterable = nodes;
 
-  constructor(opts?: TreeOptions);
-  constructor(load?: LoadFunction<TreeItem[]>);
-  constructor(...children: TreeItem[]);
-  constructor(...args: any[]) {
-    if (typeof args[0] === 'function') {
-      this.load = args[0];
-    } else if (args[0] instanceof Item) {
-      this.children = args;
-    } else {
-      let opts = args[0];
-      this.children = opts.children;
-      this.load = opts.load;
-      this.loadMore = opts.loadMore;
-    }
+    let visit = (node: Node<T>) => {
+      this.keyMap.set(node.key, node);
 
-    this.map = null;
-  }
-
-  copy(opts: TreeOptions) {
-    return new Tree(Object.assign({}, this, opts));
-  }
-
-  update(key, changes: ItemOptions) {
-    let oldItem = this.getItem(key);
-    let item = oldItem.copy(changes);
-    let parents = this.getMap().get(key).parents;
-    for (let i = parents.length - 1; i >= 0; i--) {
-      let children = parents[i].children.map(i => i === oldItem ? item : i);
-      oldItem = parents[i];
-      item = oldItem.copy({
-        children
-      });
-    }
-
-    return item;
-  }
-
-  private getMap() {
-    if (this.map) {
-      return this.map;
-    }
-
-    let map = new Map();
-
-    let walk = (parents: (Tree | Section | Item)[], node: Tree | Section | Item) => {
-      if (node instanceof Item) {
-        map.set(node.key, {parents, node});
-      }
-
-      if (!(node instanceof Item) || node.isExpanded) {
-        let p = [...parents, node];
-        for (let child of node.children) {
-          walk(p, child);
+      if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
+        for (let child of node.childNodes) {
+          visit(child);
         }
       }
     };
-    
-    walk([], this);
-    this.map = map;
-    return this.map;
+
+    for (let node of nodes) {
+      visit(node);
+    }
+
+    let last: Node<T>;
+    for (let [key, node] of this.keyMap) {
+      if (last) {
+        last.nextKey = key;
+        node.prevKey = last.key;
+      }
+    }
+  }
+
+  *[Symbol.iterator]() {
+    yield* this.iterable;
   }
 
   getKeys() {
-    return this.getMap().keys();
+    return this.keyMap.keys();
   }
 
-  getItem(key) {
-    let item = this.getMap().get(key);
-    if (item) {
-      return item.node;
-    }
+  getKeyBefore(key: Key) {
+    let node = this.keyMap.get(key);
+    return node ? node.prevKey : null;
   }
 
-  getLevel(key) {
-    let item = this.getMap().get(key);
-    if (item) {
-      return item.parents.length - 1;
-    }
-
-    return 0;
+  getKeyAfter(key: Key) {
+    let node = this.keyMap.get(key);
+    return node ? node.nextKey : null;
+  }
+  
+  getItem(key: Key) {
+    return this.keyMap.get(key);
   }
 }

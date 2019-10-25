@@ -3,7 +3,7 @@
  * @private
  */
 export function keyDiff<T>(a: Map<T, any>, b: Map<T, any>): Set<T> {
-  let res = new Set;
+  let res = new Set<T>();
 
   for (let key of a.keys()) {
     if (!b.has(key)) {

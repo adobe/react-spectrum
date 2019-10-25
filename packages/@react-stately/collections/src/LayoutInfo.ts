@@ -1,4 +1,5 @@
 import {Rect} from './Rect';
+import {Key} from 'react';
 
 /**
  * Instances of this lightweight class are created by {@link Layout} subclasses
@@ -16,7 +17,7 @@ export class LayoutInfo {
   /**
    * A unique key for this view. For item views, it should match the content key.
    */
-  key: string;
+  key: Key;
 
   /**
    * The rectangle describing the size and position of this view.
@@ -49,7 +50,7 @@ export class LayoutInfo {
    * @param key The unique key for this view.
    * @param rect The rectangle describing the size and position of this view.
    */
-  constructor(type: string, key: string, rect: Rect) {
+  constructor(type: string, key: Key, rect: Rect) {
     this.type = type;
     this.key = key;
     this.rect = rect;

@@ -25,14 +25,14 @@ governing permissions and limitations under the License.
 .spectrum-TreeView-itemLink {
   color: var(--spectrum-treeview-item-text-color);
 
-  /* &:hover,
+  &:hover,
   &.is-selected {
     color: var(--spectrum-treeview-item-text-color-hover);
 
     &::before {
       background-color: var(--spectrum-treeview-item-background-color-hover);
     }
-  } */
+  }
 
   &:focus-ring {
     color: var(--spectrum-treeview-item-text-color-hover);
