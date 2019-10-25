@@ -46,6 +46,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
                   'spectrum-Heading--pageTitle'
                 )
               }
+              data-testid="breadcrumb-heading"
               aria-level={headingAriaLevel}>
               {React.cloneElement(child, {isCurrent})}
             </h1>
@@ -70,6 +71,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
       {...breadcrumbProps}
       ref={ref} >
       <ul
+        data-testid="breadcrumb-list"
         className={
           classNames(
             styles,

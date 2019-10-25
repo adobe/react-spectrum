@@ -16,4 +16,11 @@ describe('useBreadcrumbs', function () {
     expect(breadcrumbProps['aria-label']).toBe('Breadcrumbs');
     expect(breadcrumbProps.id).toBeDefined();
   });
+
+  it('handles custom aria label', function () {
+    let {breadcrumbProps} = renderLinkHook({'aria-label': 'test-label'});
+    expect(breadcrumbProps['aria-label']).toBe('test-label');
+    expect(breadcrumbProps.id).toBeDefined();
+  });
+
 });
