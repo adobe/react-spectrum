@@ -1,3 +1,4 @@
+import {cleanup} from '@testing-library/react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useToast} from '../';
 
@@ -8,6 +9,7 @@ describe('useToast', () => {
   afterEach(() => {
     onClose.mockClear();
     onAction.mockClear();
+    cleanup();
   });
 
   let renderToastHook = (props) => {

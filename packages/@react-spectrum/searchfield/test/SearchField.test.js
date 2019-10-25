@@ -2,7 +2,7 @@ import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '../';
-import {triggerPress} from '@react-spectrum/button/test/utils'; // TODO: Move this util funct to test-utils folder (https://github.com/adobe/react-spectrum/pull/491)
+import {triggerPress} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 
@@ -16,7 +16,7 @@ function renderComponent(Component, props) {
 // Note: Running this test suite will result in some warnings of the following class:
 // 1. "Textfield contains an input of type search with both value and defaultValue props.  This is a v2 SearchField issue
 // 2. "An update to ForwardRef inside a test was not wrapped in act(...)". See https://github.com/testing-library/react-testing-library/issues/281
-// 3. Various warnings about componentWillReceiveProps and componentDidUpdate. Prob a TODO to update v2 components so we don't use these renamed/deprecated lifecycle methods 
+// 3. Various warnings about componentWillReceiveProps and componentDidUpdate. Prob a TODO to update v2 components so we don't use these renamed/deprecated lifecycle methods
 
 describe('Search', () => {
   let onChange = jest.fn();
@@ -30,7 +30,7 @@ describe('Search', () => {
     onSubmit.mockClear();
     onClear.mockClear();
     cleanup();
-  }); 
+  });
 
   it.each`
     Name                | Component
@@ -58,7 +58,7 @@ describe('Search', () => {
     expect(outerDiv).toBeTruthy();
 
     expect(tree.queryByRole('search')).toBeNull();
-  });    
+  });
 
   it.each`
     Name                | Component
@@ -68,7 +68,7 @@ describe('Search', () => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});
     expect(tree.getByTestId('testicon')).toBeTruthy();
-  });  
+  });
 
   it.each`
     Name                | Component
@@ -77,7 +77,7 @@ describe('Search', () => {
   `('$Name should support no icons', ({Component}) => {
     let tree = renderComponent(Component, {icon: ''});
     expect(tree.queryByTestId('searchicon')).toBeNull();
-  }); 
+  });
 
   it.each`
     Name                | Component
@@ -109,7 +109,7 @@ describe('Search', () => {
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
-    
+
     fireEvent.change(input, {target: {value: ''}});
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(2);
@@ -168,8 +168,8 @@ describe('Search', () => {
     // onClear was added in v3
     expect(onClear).toBeCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
-  }); 
-  
+  });
+
   // Omitting v2 searchfield because fireEvent.keyDown seems bugged, doesn't actually propagate the key code
   // which v2 searchfield handleTextKeyDown relies on
   it.each`
@@ -185,7 +185,7 @@ describe('Search', () => {
 
     // onClear was added in v3
     expect(onClear).toBeCalledTimes(0);
-  });  
+  });
 
   it.each`
     Name                | Component
@@ -198,13 +198,13 @@ describe('Search', () => {
     expect(input.value).toBe(inputText);
     triggerPress(clearButton);
     expect(onChange).toBeCalledTimes(1);
-    
+
     if (Component === SearchField) {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
     } else {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything(), {'from': 'clearButton'});
     }
-    
+
     expect(input.value).toBe('');
     expect(document.activeElement).toBe(input);
 
@@ -226,13 +226,13 @@ describe('Search', () => {
     expect(input.value).toBe(inputText);
     userEvent.click(clearButton);
     expect(onChange).toBeCalledTimes(1);
-    
+
     if (Component === SearchField) {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
     } else {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything(), {'from': 'clearButton'});
     }
-    
+
     expect(input.value).toBe(inputText);
     expect(document.activeElement).toBe(input);
 
@@ -241,8 +241,8 @@ describe('Search', () => {
       expect(onClear).toBeCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
     }
-  }); 
-  
+  });
+
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}

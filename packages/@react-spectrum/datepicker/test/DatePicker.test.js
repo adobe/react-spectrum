@@ -4,7 +4,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/button/test/utils';
+import {triggerPress} from '@react-spectrum/utils';
 
 let theme = {
   light: themeLight,
@@ -129,7 +129,7 @@ describe('DatePicker', function () {
 
       let button = getByRole('button');
       triggerPress(button);
-      
+
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
 
@@ -158,7 +158,7 @@ describe('DatePicker', function () {
 
       let button = getByRole('button');
       triggerPress(button);
-      
+
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
 

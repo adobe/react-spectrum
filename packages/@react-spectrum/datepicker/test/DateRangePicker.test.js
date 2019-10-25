@@ -4,7 +4,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/button/test/utils';
+import {triggerPress} from '@react-spectrum/utils';
 
 let theme = {
   light: themeLight,
@@ -17,50 +17,50 @@ describe('DateRangePicker', function () {
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);
-  
+
       let combobox = getByRole('combobox');
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
-  
+
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(6);
-  
+
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
-  
+
       expect(segments[1].textContent).toBe('3');
       expect(segments[1].getAttribute('aria-label')).toBe('Day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
-  
+
       expect(segments[2].textContent).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('Year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[2].getAttribute('aria-valuemax')).toBe('9999');
-  
+
       expect(segments[3].textContent).toBe('5');
       expect(segments[3].getAttribute('aria-label')).toBe('Month');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('5');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('May');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
-  
+
       expect(segments[4].textContent).toBe('6');
       expect(segments[4].getAttribute('aria-label')).toBe('Day');
       expect(segments[4].getAttribute('aria-valuenow')).toBe('6');
       expect(segments[4].getAttribute('aria-valuetext')).toBe('6');
       expect(segments[4].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[4].getAttribute('aria-valuemax')).toBe('31');
-  
+
       expect(segments[5].textContent).toBe('2019');
       expect(segments[5].getAttribute('aria-label')).toBe('Year');
       expect(segments[5].getAttribute('aria-valuenow')).toBe('2019');
@@ -68,7 +68,7 @@ describe('DateRangePicker', function () {
       expect(segments[5].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[5].getAttribute('aria-valuemax')).toBe('9999');
     });
-  
+
     it('should render a DateRangePicker with a custom date format', function () {
       let format = {
         year: 'numeric',
@@ -79,103 +79,103 @@ describe('DateRangePicker', function () {
         second: 'numeric'
       };
       let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} formatOptions={format} />);
-  
+
       let combobox = getByRole('combobox');
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
-  
+
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(14);
-  
+
       expect(segments[0].textContent).toBe('February');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
-  
+
       expect(segments[1].textContent).toBe('3');
       expect(segments[1].getAttribute('aria-label')).toBe('Day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
-  
+
       expect(segments[2].textContent).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('Year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[2].getAttribute('aria-valuemax')).toBe('9999');
-  
+
       expect(segments[3].textContent).toBe('12');
       expect(segments[3].getAttribute('aria-label')).toBe('Hour');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('12 AM');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('11');
-  
+
       expect(segments[4].textContent).toBe('00');
       expect(segments[4].getAttribute('aria-label')).toBe('Minute');
       expect(segments[4].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[4].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[4].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[4].getAttribute('aria-valuemax')).toBe('59');
-  
+
       expect(segments[5].textContent).toBe('00');
       expect(segments[5].getAttribute('aria-label')).toBe('Second');
       expect(segments[5].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[5].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[5].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[5].getAttribute('aria-valuemax')).toBe('59');
-  
+
       expect(segments[6].textContent).toBe('AM');
       expect(segments[6].getAttribute('aria-label')).toBe('Day Period');
       expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
-  
+
       expect(segments[7].textContent).toBe('May');
       expect(segments[7].getAttribute('aria-label')).toBe('Month');
       expect(segments[7].getAttribute('aria-valuenow')).toBe('5');
       expect(segments[7].getAttribute('aria-valuetext')).toBe('May');
       expect(segments[7].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[7].getAttribute('aria-valuemax')).toBe('12');
-  
+
       expect(segments[8].textContent).toBe('6');
       expect(segments[8].getAttribute('aria-label')).toBe('Day');
       expect(segments[8].getAttribute('aria-valuenow')).toBe('6');
       expect(segments[8].getAttribute('aria-valuetext')).toBe('6');
       expect(segments[8].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[8].getAttribute('aria-valuemax')).toBe('31');
-  
+
       expect(segments[9].textContent).toBe('2019');
       expect(segments[9].getAttribute('aria-label')).toBe('Year');
       expect(segments[9].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[9].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[9].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[9].getAttribute('aria-valuemax')).toBe('9999');
-  
+
       expect(segments[10].textContent).toBe('12');
       expect(segments[10].getAttribute('aria-label')).toBe('Hour');
       expect(segments[10].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[10].getAttribute('aria-valuetext')).toBe('12 AM');
       expect(segments[10].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[10].getAttribute('aria-valuemax')).toBe('11');
-  
+
       expect(segments[11].textContent).toBe('00');
       expect(segments[11].getAttribute('aria-label')).toBe('Minute');
       expect(segments[11].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[11].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[11].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[11].getAttribute('aria-valuemax')).toBe('59');
-  
+
       expect(segments[12].textContent).toBe('00');
       expect(segments[12].getAttribute('aria-label')).toBe('Second');
       expect(segments[12].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[12].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[12].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[12].getAttribute('aria-valuemax')).toBe('59');
-  
+
       expect(segments[13].textContent).toBe('AM');
       expect(segments[13].getAttribute('aria-label')).toBe('Day Period');
       expect(segments[13].getAttribute('aria-valuetext')).toBe('12 AM');
@@ -198,7 +198,7 @@ describe('DateRangePicker', function () {
 
       let button = getByRole('button');
       triggerPress(button);
-      
+
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
 
@@ -255,7 +255,7 @@ describe('DateRangePicker', function () {
       let combobox = getByRole('combobox');
       expect(combobox).toHaveAttribute('aria-label', 'Birth date');
       expect(combobox).toHaveAttribute('id');
-      
+
       let startDate = getByLabelText('Start Date');
       expect(startDate).toHaveAttribute('aria-labelledby', `${combobox.id} ${startDate.id}`);
 
@@ -345,7 +345,7 @@ describe('DateRangePicker', function () {
     it('should edit a date range with the arrow keys (uncontrolled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -372,7 +372,7 @@ describe('DateRangePicker', function () {
     it('should edit a date range with the arrow keys (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -399,7 +399,7 @@ describe('DateRangePicker', function () {
     it('should edit a date range by entering text (uncontrolled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -430,7 +430,7 @@ describe('DateRangePicker', function () {
     it('should edit a date range by entering text (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -458,7 +458,7 @@ describe('DateRangePicker', function () {
     it('should support backspace (uncontrolled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           defaultValue={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -476,7 +476,7 @@ describe('DateRangePicker', function () {
     it('should support backspace (controlled)', function () {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <DateRangePicker 
+        <DateRangePicker
           value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}}
           onChange={onChange} />
       );
@@ -671,7 +671,7 @@ describe('DateRangePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: '2'});
       expect(onChange).toHaveBeenCalledTimes(1);
       fireEvent.keyDown(document.activeElement, {key: '0'});
-      expect(onChange).toHaveBeenCalledTimes(2);  
+      expect(onChange).toHaveBeenCalledTimes(2);
       fireEvent.keyDown(document.activeElement, {key: '2'});
       expect(onChange).toHaveBeenCalledTimes(3);
       fireEvent.keyDown(document.activeElement, {key: '2'});
