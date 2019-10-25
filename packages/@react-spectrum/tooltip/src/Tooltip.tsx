@@ -3,7 +3,6 @@ import {mergeProps} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
-import {useTooltip} from '@react-aria/tooltip';
 
 interface TooltipProps {
   children: ReactNode,
@@ -14,12 +13,10 @@ interface TooltipProps {
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
-  let {tooltipProps} = useTooltip({ref});
   let {
     variant = 'neutral',
     placement = 'right',
     showIcon = true,
-    arrowStyle,
   } = props;
 
   return (
@@ -33,8 +30,7 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
           'is-open': showIcon
         }
       )}
-      ref={ref}
-      {...mergeProps(filterDOMProps(props), tooltipProps)}>
+      ref={ref}>
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}

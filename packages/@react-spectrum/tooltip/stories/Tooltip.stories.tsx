@@ -42,7 +42,7 @@ storiesOf('Tooltip', module)
   )
   .add(
     'triggered by click',
-    () => render('This is a tooltip.', {trigger: 'click', placement: 'right'})
+    () => renderWithClickTrigger('This is a tooltip.', {trigger: 'click', placement: 'right'})
   ).add(
     'triggered by hover',
     () => render('This is a tooltip.', {trigger: 'hover', placement: 'right'})
@@ -50,17 +50,6 @@ storiesOf('Tooltip', module)
 
 function render(content, props = {}) {
   console.log(props)
-  if (props.trigger) {
-    return (
-      <TooltipTrigger {...props}>
-        <ActionButton>Trigger</ActionButton>
-        <Tooltip>
-          {content}
-        </Tooltip>
-      </TooltipTrigger>
-    );
-  }
-
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip
@@ -68,6 +57,18 @@ function render(content, props = {}) {
         {content}
       </Tooltip>
     </div>
+  );
+}
+
+function renderWithClickTrigger(content, props = {}) {
+  console.log(props)
+  return (
+    <TooltipTrigger {...props}>
+      <ActionButton>Trigger</ActionButton>
+      <Tooltip>
+        {content}
+      </Tooltip>
+    </TooltipTrigger>
   );
 }
 

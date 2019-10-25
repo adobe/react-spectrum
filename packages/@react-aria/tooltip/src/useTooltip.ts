@@ -2,7 +2,7 @@ import {AllHTMLAttributes} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface TooltipProps {
-  role?: 'tooltip',
+  role?: 'tooltip'
   id?: string
 }
 
