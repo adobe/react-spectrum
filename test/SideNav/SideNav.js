@@ -50,6 +50,7 @@ describe('SideNav', () => {
     // Nested multiLevel SideNav will be a div element with role='group'
     tree.setProps({isNested: true});
     assert.equal(tree.type(), 'div', 'Nested multiLevel SideNav will be a div element');
+    assert.equal(tree.prop('role'), 'presentation', 'Nested multiLevel SideNav container element will have role="presentation"');
     assert.equal(tree.find('.spectrum-SideNav--multiLevel').prop('role'), 'group', 'Nested multiLevel SideNav will have role="group"');
   });
 

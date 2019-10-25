@@ -19,6 +19,7 @@ import autobind from 'autobind-decorator';
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import CrossSmall from '../../Icon/core/CrossSmall';
 import intlMessages from '../intl/*.json';
 import Magnifier from '../../Icon/core/Magnifier';
@@ -32,6 +33,7 @@ const formatMessage = messageFormatter(intlMessages);
 
 const normalizeValue = value => value || '';
 
+@convertUnsafeMethod
 @autobind
 export default class Search extends Component {
   static propTypes = {
@@ -64,7 +66,7 @@ export default class Search extends Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (normalizeValue(props.value) !== this.state.value) {
       this.setState({
         value: props.value

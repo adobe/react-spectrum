@@ -134,4 +134,25 @@ describe('DialogButtons', () => {
     assert(!tree.find(Button).at(0).prop('disabled'));
     assert(!tree.find(Button).at(1).prop('disabled'));
   });
+
+  it('calls stopPropagation on a simulated keypress', () => {
+    const stopPropagation = sinon.spy();
+    const event = {
+      stopPropagation
+    };
+    const tree = shallow(<DialogButtons confirmLabel="OK" secondaryLabel="Replace" cancelLabel="Cancel" />);
+    let buttons = tree.find(Button);
+    buttons.at(0).simulate('keydown', {key: 'Enter', ...event});
+    assert(stopPropagation.called);
+    buttons.at(1).simulate('keydown', {key: 'Enter', ...event});
+    assert(stopPropagation.calledTwice);
+    buttons.at(2).simulate('keydown', {key: 'Enter', ...event});
+    assert(stopPropagation.calledThrice);
+    buttons.at(0).simulate('keydown', {key: ' ', ...event});
+    assert.equal(stopPropagation.callCount, 4);
+    buttons.at(1).simulate('keydown', {key: ' ', ...event});
+    assert.equal(stopPropagation.callCount, 5);
+    buttons.at(2).simulate('keydown', {key: ' ', ...event});
+    assert.equal(stopPropagation.callCount, 6);
+  });
 });

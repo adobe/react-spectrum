@@ -3,6 +3,7 @@ import {ReactNode} from 'react';
 
 export interface CheckboxBase extends InputBase {
   children?: ReactNode, // pass in children to render label
+  className?: string,
   'aria-label'?: string, // if no children, aria-label is required
 
   defaultSelected?: boolean,

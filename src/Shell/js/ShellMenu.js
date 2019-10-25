@@ -16,12 +16,14 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import {getTransitionEvent} from '../../utils/transition';
 import Portal from 'react-overlays/lib/Portal';
 import React, {Component} from 'react';
 import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
 import '../style/ShellMenu.styl';
 
+@convertUnsafeMethod
 export default class ShellMenu extends Component {
   static defaultProps = {
     defaultOpen: false,
@@ -50,7 +52,7 @@ export default class ShellMenu extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('open' in nextProps) {
       this.setState({open: nextProps.open});
     }

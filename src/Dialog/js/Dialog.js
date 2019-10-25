@@ -120,7 +120,12 @@ export default class Dialog extends Component {
      * When true, the Esc key will not close the Dialog or trigger an onCancel event.
      * Use for rare cases when a Dialog requires confirmation before being dismissed.
      */
-    disableEscKey: PropTypes.bool
+    disableEscKey: PropTypes.bool,
+
+    /**
+     * Whether it is a dismissible dialogs. Dismissible dialogs should not have buttons.
+     */
+    isDismissible: PropTypes.bool
   };
 
   static defaultProps = {
@@ -132,7 +137,8 @@ export default class Dialog extends Component {
     autoFocusButton: null,
     onClose: function () {},
     trapFocus: true,
-    disableEscKey: false
+    disableEscKey: false,
+    isDismissible: false
   };
 
   constructor(props) {
@@ -213,6 +219,7 @@ export default class Dialog extends Component {
       role,
       tabIndex,
       trapFocus,
+      isDismissible,
       id = this.dialogId,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
@@ -236,7 +243,8 @@ export default class Dialog extends Component {
           {
             [`spectrum-Dialog--${mode}`]: mode,
             'spectrum-Dialog--error': variant === 'error',
-            'is-open': open
+            'is-open': open,
+            'spectrum-Dialog--dismissible': isDismissible
           },
           className
         )}
@@ -258,6 +266,7 @@ export default class Dialog extends Component {
             confirmLabel={confirmLabel}
             secondaryLabel={secondaryLabel}
             cancelLabel={cancelLabel}
+            isDismissible={isDismissible}
             id={`${id}-heading`}
             {...otherProps}
             onConfirm={this.onConfirm}
@@ -266,7 +275,7 @@ export default class Dialog extends Component {
 
         {title ? <div className="spectrum-Dialog-content" id={`${id}-content`}>{children}</div> : children}
 
-        {!fullscreen && confirmLabel &&
+        {!isDismissible && !fullscreen && confirmLabel &&
         <DialogButtons
           {...this.props}
           variant={derivedVariant}

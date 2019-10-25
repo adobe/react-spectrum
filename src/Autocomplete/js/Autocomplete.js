@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import {chain, interpretKeyboardEvent} from '../../utils/events';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {Menu, MenuItem} from '../../Menu';
 import Overlay from '../../OverlayTrigger/js/Overlay';
@@ -32,6 +33,7 @@ const getLabel = o => (typeof o === 'string' ? o : o.label);
 const LISTBOX = '-listbox';
 const OPTION = '-option-';
 
+@convertUnsafeMethod
 @autobind
 export default class Autocomplete extends React.Component {
   static propTypes = {
@@ -112,11 +114,11 @@ export default class Autocomplete extends React.Component {
     this.autocompleteId = createId();
   }
 
-  componentWillMount() {
-    this.componentWillReceiveProps(this.props);
+  UNSAFE_componentWillMount() {
+    this.UNSAFE_componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value != null && props.value !== this.state.value) {
       this.setValue(props.value, this._selectedValue !== props.value);
       this._selectedValue = null;
@@ -124,6 +126,11 @@ export default class Autocomplete extends React.Component {
 
     if (props.showMenu != null && props.showMenu !== this.state.showMenu) {
       this.setState({showMenu: props.showMenu});
+    }
+
+    // Reset selectedIndex to -1 if menu is not shown to prevent invalid selection
+    if (!props.showMenu) {
+      this.setState({selectedIndex: -1});
     }
   }
 
@@ -203,11 +210,17 @@ export default class Autocomplete extends React.Component {
     }
   }
 
-  onFocus() {
+  onFocus(event) {
     this.setState({isFocused: true});
+    if (this.props.onFocus) {
+      this.props.onFocus(event);
+    }
   }
 
   onBlur(event) {
+    if (this.props.onBlur) {
+      this.props.onBlur(event);
+    }
     if (this.wrapper && this.wrapper.contains(event.relatedTarget)) {
       // If the element receiving focus is a child of the Autocomplete,
       // for example the toggle button on a ComboBox,
@@ -447,7 +460,10 @@ export default class Autocomplete extends React.Component {
             });
           }
 
-          return child;
+          return React.cloneElement(child, {
+            onFocus: chain(child.props.onFocus, this.onFocus),
+            onBlur: chain(child.props.onBlur, this.onBlur)
+          });
         })}
 
         <Overlay target={this.wrapper} show={menuShown} placement="bottom left" role="presentation">
@@ -472,7 +488,10 @@ export default class Autocomplete extends React.Component {
                   focused={selectedIndex === i}
                   selected={label === value}
                   onMouseEnter={this.onMouseEnter.bind(this, i)}
-                  onMouseDown={e => e.preventDefault()}>
+                  onMouseDown={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
                   {renderItem ? renderItem(result) : label}
                 </MenuItem>
               );

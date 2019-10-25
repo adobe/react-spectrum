@@ -1,0 +1,43 @@
+
+.spectrum-ToggleSwitch {
+  --spectrum-switch-height: var(--spectrum-global-dimension-size-400);
+  --spectrum-switch-cursor-hit-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-switch-track-width: undefined;
+  --spectrum-switch-handle-size: var(--spectrum-global-dimension-size-175);
+  --spectrum-switch-text-gap: var(--spectrum-global-dimension-size-125);
+  --spectrum-switch-text-size: var(--spectrum-alias-font-size-default);
+  --spectrum-switch-track-height: var(--spectrum-global-dimension-size-175);
+  --spectrum-switch-handle-border-size: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-handle-border-radius: undefined;
+  --spectrum-switch-emphasized-track-color: var(--spectrum-global-color-gray-300);
+  --spectrum-switch-emphasized-handle-background-color: var(--spectrum-global-color-gray-75);
+  --spectrum-switch-emphasized-handle-border-color: var(--spectrum-global-color-gray-600);
+  --spectrum-switch-emphasized-text-color: var(--spectrum-alias-text-color);
+  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-switch-emphasized-handle-border-color-hover: var(--spectrum-global-color-gray-700);
+  --spectrum-switch-emphasized-text-color-hover: var(--spectrum-alias-text-color-hover);
+  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-switch-emphasized-handle-border-color-down: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-emphasized-text-color-down: var(--spectrum-alias-text-color-down);
+  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-global-color-blue-700);
+  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-global-color-blue-700);
+  --spectrum-switch-emphasized-track-color-disabled: var(--spectrum-global-color-gray-300);
+  --spectrum-switch-emphasized-handle-border-color-disabled: var(--spectrum-global-color-gray-400);
+  --spectrum-switch-emphasized-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-switch-emphasized-track-color-selected-disabled: var(--spectrum-global-color-gray-400);
+  --spectrum-switch-emphasized-handle-border-color-selected-disabled: var(--spectrum-global-color-gray-400);
+  --spectrum-switch-emphasized-text-color-selected-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-switch-quiet-track-color-selected: var(--spectrum-global-color-gray-700);
+  --spectrum-switch-quiet-handle-border-color-selected: var(--spectrum-global-color-gray-700);
+  --spectrum-switch-quiet-track-color-selected-hover: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-quiet-handle-border-color-selected-hover: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-quiet-track-color-selected-down: var(--spectrum-global-color-gray-900);
+  --spectrum-switch-quiet-handle-border-color-selected-down: var(--spectrum-global-color-gray-900);
+  --spectrum-switch-emphasized-handle-border-color-key-focus: var(--spectrum-global-color-blue-400);
+  --spectrum-switch-emphasized-text-color-key-focus: var(--spectrum-alias-text-color-key-focus);
+  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-global-color-blue-400);
+  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-global-color-blue-400);
+  --spectrum-switch-emphasized-text-color-selected-key-focus: var(--spectrum-alias-text-color-key-focus);
+}

@@ -16,18 +16,25 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
 importSpectrumCSS('fieldgroup');
 
+@convertUnsafeMethod
 export default class RadioGroup extends Component {
   static propTypes = {
     /**
-     * Index of the selected radio within the group
+     * Value of the starting selected radio within the group
      */
-    defaultSelectedValue: PropTypes.number,
+    defaultSelectedValue: PropTypes.string,
+
+    /**
+     * Controlled: Value of the selected radio within the group
+     */
+    selectedValue: PropTypes.string,
 
     /**
      * Whether the label is rendered below the radio
@@ -68,7 +75,7 @@ export default class RadioGroup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedValue' in nextProps) {
       this.setState({
         selectedValue: nextProps.selectedValue

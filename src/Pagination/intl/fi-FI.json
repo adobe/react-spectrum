@@ -1,4 +1,6 @@
 {
+  "pagination": "Sivulla siirtyminen",
+  "page": "Sivu",
   "next": "Seuraava",
   "page_count": "/ {n, plural, =one{# sivu} other{# sivua}}",
   "previous": "Edellinen"

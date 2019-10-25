@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import createId from '../../utils/createId';
 import DialogHeader from '../../Dialog/js/DialogHeader';
 import filterDOMProps from '../../utils/filterDOMProps';
 import PropTypes from 'prop-types';
@@ -74,6 +75,11 @@ export default class Popover extends Component {
     trapFocus: true
   };
 
+  constructor(props) {
+    super(props);
+    this.defaultId = createId();
+  }
+
   componentDidMount() {
     if (this.props.trapFocus) {
       this._trapFocusTimeout = requestAnimationFrame(() => {
@@ -128,12 +134,19 @@ export default class Popover extends Component {
       isDialog = true, // private. for use only by Menu.
       trapFocus,
       tabIndex = null,
+      id = this.defaultId,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
       ...otherProps
     } = this.props;
 
-    let content = isDialog ? <div className="spectrum-Dialog-content">{children}</div> : children;
+    delete otherProps.target;
+
+    let content = isDialog ? <div className="spectrum-Dialog-content" role="presentation" id={`${id}-content`}>{children}</div> : children;
 
     return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         ref={p => this.popoverRef = p}
         className={
@@ -150,7 +163,11 @@ export default class Popover extends Component {
             className
           )
         }
-        role="presentation"
+        role={isDialog ? 'dialog' : 'presentation'}
+        id={id}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby || (isDialog && title && !ariaLabel ? `${id}-heading` : null)}
+        aria-describedby={ariaDescribedby || (isDialog && title && children ? `${id}-content` : null)}
         data-testid="popover"
         {...filterDOMProps(otherProps)}
         onFocus={this.onFocus}
@@ -158,11 +175,12 @@ export default class Popover extends Component {
         tabIndex={trapFocus && tabIndex === null ? 1 : tabIndex}>
         {isDialog && title &&
           <DialogHeader
+            id={`${id}-heading`}
             title={title}
             variant={variant} />
         }
         {content}
-        {isDialog && <div className="spectrum-Popover-tip" style={arrowStyle} data-testid="tip" />}
+        {isDialog && <div className="spectrum-Popover-tip" style={arrowStyle} aria-hidden="true" data-testid="tip" />}
       </div>
     );
   }

@@ -18,6 +18,7 @@
 import Checkbox from '../../Checkbox';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
 import React from 'react';
@@ -25,6 +26,7 @@ import React from 'react';
 /*
  * A wrapper for an Item within an ItemColumn that will manage the Item's state
  */
+@convertUnsafeMethod
 @focusRing
 export default class Item extends React.Component {
   focus() {

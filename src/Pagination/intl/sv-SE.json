@@ -1,4 +1,6 @@
 {
+  "pagination": "Sidnavigering",
+  "page": "Sida",
   "next": "Nästa",
   "page_count": "av {n, plural, =one{# sida} other{# sidor}}",
   "previous": "Föregående"

@@ -18,12 +18,14 @@
 import ArrowDownSmall from '../../Icon/core/ArrowDownSmall';
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {FOCUSABLE_ELEMENT_SELECTOR} from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+@convertUnsafeMethod
 @focusRing
 @autobind
 export default class TableCell extends React.Component {

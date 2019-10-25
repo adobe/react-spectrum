@@ -22,6 +22,7 @@ import ChevronDownSmall from '../../Icon/core/ChevronDownSmall';
 import ChevronUpSmall from '../../Icon/core/ChevronUpSmall';
 import {clamp, handleDecimalOperation} from '../../utils/number';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import InputGroup from '../../InputGroup';
@@ -37,6 +38,7 @@ importSpectrumCSS('stepper');
 
 const formatMessage = messageFormatter(intlMessages);
 
+@convertUnsafeMethod
 @autobind
 export default class NumberInput extends Component {
   static propTypes = {
@@ -160,7 +162,7 @@ export default class NumberInput extends Component {
     return '';
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('value' in nextProps) {
       this.setState({
         value: this.getValue(nextProps.value),

@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
@@ -28,6 +29,7 @@ const ACCORDION_ITEM_HEADER_SELECTOR = '.spectrum-Accordion-item:not(.is-disable
 /**
  * An accordion is a list of expandable and collapsible sections.
  */
+@convertUnsafeMethod
 export default class Accordion extends Component {
   static propTypes = {
     /**
@@ -90,7 +92,7 @@ export default class Accordion extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
         selectedIndex: this.normalizeSelectedIndex(nextProps.selectedIndex)

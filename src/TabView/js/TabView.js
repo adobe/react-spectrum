@@ -18,6 +18,7 @@
 import {arraysEqual} from '../../utils/array';
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -25,6 +26,7 @@ import {TabList} from '../../TabList';
 import TabListBase from '../../TabList/js/TabListBase';
 import '../style/index.styl';
 
+@convertUnsafeMethod
 @autobind
 export default class TabView extends React.Component {
   static propTypes = {
@@ -69,7 +71,7 @@ export default class TabView extends React.Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     // Reset selected index when children change
     let oldChildren = React.Children.toArray(this.props.children).map(child => child.key);
     let newChildren = React.Children.toArray(props.children).map(child => child.key);

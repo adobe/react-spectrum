@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import ImageCache from './ImageCache';
 import PropTypes from 'prop-types';
@@ -29,6 +30,7 @@ const DEFAULT_STATE = {
   isPlaceholder: false
 };
 
+@convertUnsafeMethod
 @autobind
 export default class Image extends React.Component {
   static propTypes = {
@@ -119,7 +121,7 @@ export default class Image extends React.Component {
     this.mounted = false;
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.src !== this.props.src) {
       ImageCache.abort(this.props.src, this._loadCallback);
       this.reset();

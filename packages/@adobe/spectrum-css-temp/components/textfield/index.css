@@ -194,7 +194,7 @@ governing permissions and limitations under the License.
   display: block;
   position: absolute;
   inset-inline-start: 12px;
-  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2));
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2) - calc(var(--spectrum-textfield-padding-bottom) - var(--spectrum-textfield-padding-top)));
 }
 
 /* styles the textfield properly if the left icon is provided */

@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
 import CollectionView, {RowWrapper} from '../../utils/CollectionView';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {IndexPath, IndexPathSet} from '@react/collection-view';
 import ListDataSource from '../../ListDataSource';
@@ -48,6 +49,7 @@ const sortDescriptorShape = PropTypes.shape({
   direction: PropTypes.oneOf([-1, 1]).isRequired
 });
 
+@convertUnsafeMethod
 @autobind
 export default class TableView extends Component {
   static propTypes = {
@@ -155,7 +157,7 @@ export default class TableView extends Component {
     this.focusedColumnIndex = null;
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.columns && props.columns !== this.props.columns) {
       this.setState({
         columns: props.columns

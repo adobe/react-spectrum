@@ -719,8 +719,10 @@ describe('Autocomplete', () => {
       assert.equal(findInput(tree).prop('aria-activedescendant'), menuItems.at(2).prop('id'));
 
       let mouseDownPreventDefault = sinon.spy();
-      menuItems.at(2).simulate('mouseDown', {preventDefault: mouseDownPreventDefault});
+      let mouseDownStopPropagation = sinon.spy();
+      menuItems.at(2).simulate('mouseDown', {preventDefault: mouseDownPreventDefault, stopPropagation: mouseDownStopPropagation});
       assert(mouseDownPreventDefault.called);
+      assert(mouseDownStopPropagation.called);
 
       findInput(tree).simulate('keydown', {key: 'Enter', preventDefault: function () {}});
 

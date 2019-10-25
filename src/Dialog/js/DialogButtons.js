@@ -40,6 +40,12 @@ export default function DialogButtons({
 }) {
   const confirmVariant = BUTTON_VARIANTS[variant] || 'primary';
 
+  let onKeyDown = (event) => {
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.stopPropagation();
+    }
+  };
+
   return (
     <div
       className={classNames(
@@ -51,7 +57,8 @@ export default function DialogButtons({
           variant="secondary"
           label={cancelLabel}
           onClick={onCancel}
-          autoFocus={autoFocusButton === 'cancel'} />
+          autoFocus={autoFocusButton === 'cancel'}
+          onKeyDown={onKeyDown} />
       }
       {secondaryLabel &&
         <Button
@@ -59,7 +66,8 @@ export default function DialogButtons({
           label={secondaryLabel}
           onClick={onConfirm ? onConfirm.bind(null, 'secondary') : null}
           autoFocus={autoFocusButton === 'secondary'}
-          disabled={confirmDisabled || null} />
+          disabled={confirmDisabled || null}
+          onKeyDown={onKeyDown} />
       }
       {confirmLabel &&
         <Button
@@ -67,7 +75,8 @@ export default function DialogButtons({
           label={confirmLabel}
           onClick={onConfirm ? onConfirm.bind(null, 'primary') : null}
           autoFocus={autoFocusButton === 'confirm'}
-          disabled={confirmDisabled || null} />
+          disabled={confirmDisabled || null}
+          onKeyDown={onKeyDown} />
       }
     </div>
   );

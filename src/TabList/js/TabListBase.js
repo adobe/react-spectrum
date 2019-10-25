@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import autobind from 'autobind-decorator';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import FocusManager from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
 import PropTypes from 'prop-types';
@@ -39,6 +40,7 @@ const NAVIGATION_KEYS = ['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'Up', '
  * childMappingFunction: allows you to map additional properties for each tab child
  * @private
  */
+@convertUnsafeMethod
 @focusRing
 @autobind
 export default class TabListBase extends Component {
@@ -63,7 +65,7 @@ export default class TabListBase extends Component {
     return 0;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
         selectedIndex: nextProps.selectedIndex

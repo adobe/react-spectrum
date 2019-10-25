@@ -49,7 +49,7 @@ export default class Tag extends React.Component {
     disabled: PropTypes.bool,
 
     /** Icon to use in the tag */
-    icon: PropTypes.string,
+    icon: PropTypes.object,
 
     /** Whether the tag is selected */
     selected: PropTypes.bool,
@@ -161,6 +161,7 @@ export default class Tag extends React.Component {
         {closable &&
           <span role={role}>
             <Button
+              type="button"
               tabIndex={(role === 'gridcell' || disabled) ? '-1' : undefined}
               aria-label={ariaLabel}
               className="spectrum-ClearButton--small"

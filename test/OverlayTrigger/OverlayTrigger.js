@@ -45,8 +45,10 @@ describe('OverlayTrigger', () => {
         focus: sinon.spy()
       };
       let onClickSpy = sinon.spy();
+      let onExitedSpy = sinon.spy();
+      let onEnteredSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger onClick={onClickSpy} trigger="click">
+        <OverlayTrigger onClick={onClickSpy} onEntered={onEnteredSpy} onExited={onExitedSpy} trigger="click">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -59,6 +61,7 @@ describe('OverlayTrigger', () => {
 
       assert.equal(tree.instance().rememberedFocus(), tree.find(Button).getDOMNode());
       assert(onClickSpy.calledOnce);
+      assert(onEnteredSpy.calledOnce);
       assert(tree.state('show'));
       assert.equal(document.querySelector('.spectrum-Popover'), document.activeElement);
       assert.equal(getComputedStyle(document.body).overflow, '');
@@ -70,6 +73,7 @@ describe('OverlayTrigger', () => {
       clock.tick(125);
 
       assert(onClickSpy.calledTwice);
+      assert(onExitedSpy.calledOnce);
       assert(!tree.state('show'));
       assert(lastFocus.focus.called);
     });
@@ -241,6 +245,13 @@ describe('OverlayTrigger', () => {
       clock.tick(delayHide);
       assert(!tree.state('show'));
 
+      tree.setProps({delay: 0, delayHide: undefined});
+      tree.find(Button).simulate('mouseOver');
+      assert(tree.state('show'));
+      tree.find(Button).simulate('mouseOut');
+      clock.tick(0);
+      assert(!tree.state('show'));
+      tree.setProps({delayHide, delay: undefined});
 
       const hideStub = sinon.spy();
       tree.instance().hide = hideStub;
@@ -265,9 +276,11 @@ describe('OverlayTrigger', () => {
 
     it('supports longClicks to open', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
+      let preventDefaultSpy = sinon.spy();
+      let onShowSpy = sinon.spy();
+      let onHideSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+        <OverlayTrigger onClick={clickSpy} onShow={onShowSpy} onHide={onHideSpy} trigger="longClick">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -277,18 +290,26 @@ describe('OverlayTrigger', () => {
       clock.tick(250);
       assert(tree.state('show'));
       assert(!clickSpy.called);
-      assert(longClickSpy.calledOnce);
-      button.simulate('mouseUp', {button: 0});
+      assert(onShowSpy.calledOnce);
+      button.simulate('mouseUp', {button: 0, preventDefault: preventDefaultSpy});
+      assert(tree.state('show'));
+      assert(preventDefaultSpy.calledOnce);
+      assert(!clickSpy.called);
+      button.simulate('mouseDown', {button: 0});
+      clock.tick(125);
       assert(tree.state('show'));
       assert(!clickSpy.called);
-      assert(longClickSpy.calledOnce);
+      button.simulate('mouseUp', {button: 0, preventDefault: preventDefaultSpy});
+      assert(!tree.state('show'));
+      assert(preventDefaultSpy.calledOnce);
+      assert(clickSpy.called);
+      assert(onHideSpy.calledOnce);
     });
 
     it('does not call long click prop if the mouse is lifted before the timeout', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+        <OverlayTrigger onClick={clickSpy} trigger="longClick">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -300,14 +321,12 @@ describe('OverlayTrigger', () => {
       button.simulate('mouseUp', {button: 0});
       assert(!tree.state('show'));
       assert(clickSpy.called);
-      assert(!longClickSpy.called);
     });
 
     it('opens using keyboard event, ArrowDown + Alt', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+        <OverlayTrigger onClick={clickSpy} trigger="longClick">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -316,14 +335,12 @@ describe('OverlayTrigger', () => {
       button.simulate('keyDown', {key: 'ArrowDown', altKey: true});
       assert(tree.state('show'));
       assert(!clickSpy.called);
-      assert(!longClickSpy.called);
     });
 
     it('opens using keyboard event, Down + Alt', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
       tree = mount(
-        <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+        <OverlayTrigger onClick={clickSpy} trigger="longClick">
           <Button>Click me</Button>
           <Popover>Popover</Popover>
         </OverlayTrigger>
@@ -332,7 +349,6 @@ describe('OverlayTrigger', () => {
       button.simulate('keyDown', {key: 'Down', altKey: true});
       assert(tree.state('show'));
       assert(!clickSpy.called);
-      assert(!longClickSpy.called);
     });
   });
 
@@ -360,10 +376,9 @@ describe('OverlayTrigger', () => {
 
     it('does not open if mouseout and mouseup before the timeout', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
       tree = mount(
         <div>
-          <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+          <OverlayTrigger onClick={clickSpy} trigger="longClick">
             <Button>Click me</Button>
             <Popover>Popover</Popover>
           </OverlayTrigger>
@@ -381,19 +396,16 @@ describe('OverlayTrigger', () => {
       ReactDOM.findDOMNode(externalTarget.instance()).dispatchEvent(new MouseEvent('mouseUp', {button: 0, bubbles: true}));
       assert(!overlayTrigger.state.show);
       assert(!clickSpy.called);
-      assert(!longClickSpy.calledOnce);
       clock.tick(50); // got to end of timeout and make sure we still don't show
       assert(!overlayTrigger.state.show);
       assert(!clickSpy.called);
-      assert(!longClickSpy.calledOnce);
     });
 
     it('opens if mouseout before timeout and mouseup after the timeout', () => {
       let clickSpy = sinon.spy();
-      let longClickSpy = sinon.spy();
       tree = mount(
         <div>
-          <OverlayTrigger onClick={clickSpy} onLongClick={longClickSpy} trigger="longClick">
+          <OverlayTrigger onClick={clickSpy} trigger="longClick">
             <Button>Click me</Button>
             <Popover>Popover</Popover>
           </OverlayTrigger>
@@ -411,7 +423,26 @@ describe('OverlayTrigger', () => {
       ReactDOM.findDOMNode(externalTarget.instance()).dispatchEvent(new MouseEvent('mouseUp', {button: 0, bubbles: true}));
       assert(overlayTrigger.state.show);
       assert(!clickSpy.called);
-      assert(longClickSpy.calledOnce);
+    });
+
+    it('fires onHide prop if controlled', () => {
+      let onHideSpy = sinon.spy();
+      tree = mount(
+        <div>
+          <OverlayTrigger onHide={onHideSpy} trigger="click" show>
+            <Button>Click me</Button>
+            <Popover>Popover</Popover>
+          </OverlayTrigger>
+          <div className="externalTarget">external</div>
+        </div>,
+        {attachTo: mountNode}
+      );
+      let overlayTrigger = tree.find(OverlayTrigger).instance();
+      let externalTarget = tree.find('.externalTarget');
+      assert(overlayTrigger.state.show);
+      ReactDOM.findDOMNode(externalTarget.instance()).dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      assert(overlayTrigger.state.show);
+      assert(onHideSpy.called);
     });
   });
 });

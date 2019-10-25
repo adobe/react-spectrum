@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import {getBoundingClientRect} from './getBoundingClientRect';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -38,6 +39,7 @@ const VARIANTS = {
 /**
  * A TabList displays a list of tabs
  */
+@convertUnsafeMethod
 @autobind
 export default class TabList extends React.Component {
   static propTypes = {
@@ -107,7 +109,7 @@ export default class TabList extends React.Component {
     tooNarrow: false
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
         selectedIndex: nextProps.selectedIndex

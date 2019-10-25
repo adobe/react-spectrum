@@ -1,4 +1,6 @@
 {
+  "pagination": "페이지 탐색",
+  "page": "페이지",
   "next": "다음",
   "page_count": "/{n, plural, =other{#페이지}}",
   "previous": "이전"

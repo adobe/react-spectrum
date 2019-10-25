@@ -18,12 +18,14 @@
 import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import VisuallyHidden from '../../VisuallyHidden';
 
 importSpectrumCSS('cyclebutton');
 
+@convertUnsafeMethod
 export default class CycleButton extends Component {
   static propTypes = {
     /**
@@ -105,7 +107,7 @@ export default class CycleButton extends Component {
     this.setState({ariaLive: 'assertive'});
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.setActionState(props.action);
   }
 

@@ -18,6 +18,8 @@
 import autobind from 'autobind-decorator';
 import Autocomplete from '../../Autocomplete';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
+import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -25,6 +27,7 @@ import {TagList} from '../../TagList';
 import Textfield from '../../Textfield';
 import '../style/index.styl';
 
+@convertUnsafeMethod
 @autobind
 export default class TagField extends React.Component {
   static propTypes = {
@@ -53,7 +56,12 @@ export default class TagField extends React.Component {
     quiet: PropTypes.bool,
 
     /** List of tags to display */
-    value: PropTypes.arrayOf(PropTypes.string),
+    value: PropTypes.arrayOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object
+      ])
+    ),
 
     /**
      * A function called when a tag is added or removed.
@@ -62,12 +70,12 @@ export default class TagField extends React.Component {
     onChange: PropTypes.func,
 
     /**
-     * A function that returns a wrapper component to render a list item label. 
+     * A function that returns a wrapper component to render a list item label.
      * Useful in providing custom html to the rendered label.
      * Passed to the underlying Autocomplete component.
      */
     renderItem: PropTypes.func,
-    
+
     /**
      * A function that takes a tag object and returns a custom Tag component
      * If this prop is not specified, tags will render with default behavior
@@ -77,15 +85,18 @@ export default class TagField extends React.Component {
 
   static defaultProps = {
     allowCreate: true,
-    allowDuplicates: false
+    allowDuplicates: false,
+    getCompletions: () => []
   };
 
   state = {
     value: '',
-    tags: this.props.value || []
+    tags: this.props.value || [],
+    showMenu: false,
+    isFocusVisible: false
   };
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
       const deleting = props.value.length < this.state.tags.length;
       const hadFocus = this.taglist && ReactDOM.findDOMNode(this).contains(document.activeElement);
@@ -104,7 +115,8 @@ export default class TagField extends React.Component {
       return;
     }
 
-    this.setState({value: ''});
+    // Menu should always hide when item is selected.
+    this.setState({value: '', showMenu: false});
 
     let tags = [...this.state.tags, value];
     this.onChange(tags);
@@ -113,6 +125,14 @@ export default class TagField extends React.Component {
   onRemove(value) {
     let tags = this.state.tags.filter(t => t.label !== value && t !== value);
     this.onChange(tags);
+  }
+
+  onFocus() {
+    this.setState({isFocusVisible: this.textfield && ReactDOM.findDOMNode(this.textfield).classList.contains(FOCUS_RING_CLASSNAME)});
+  }
+
+  onBlur() {
+    this.setState({isFocusVisible: false});
   }
 
   focus(deleting) {
@@ -139,9 +159,17 @@ export default class TagField extends React.Component {
     }
   }
 
+  onMenuToggle(showMenu) {
+    // menu should not be shown when there is no value
+    if (showMenu && this.state.value === '') {
+      showMenu = false;
+    }
+    this.setState({showMenu});
+  }
+
   render() {
     let {getCompletions, allowCreate, disabled, invalid, quiet, className, placeholder, renderTag, renderItem, ...props} = this.props;
-    let {value, tags} = this.state;
+    let {value, tags, showMenu, isFocusVisible} = this.state;
 
     delete props.onChange;
 
@@ -151,22 +179,28 @@ export default class TagField extends React.Component {
           'spectrum-Textfield--quiet': quiet,
           'react-spectrum-TagField--quiet': quiet,
           'is-disabled': disabled,
-          'is-invalid': invalid
+          'is-invalid': invalid,
+          [FOCUS_RING_CLASSNAME]: isFocusVisible
         }, className)}
         getCompletions={getCompletions}
         allowCreate={allowCreate}
         onSelect={this.onSelect}
         value={value}
+        showMenu={showMenu}
         onChange={this.onTextfieldChange}
+        onMenuToggle={this.onMenuToggle}
+        onFocus={this.onFocus}
+        onBlur={this.onBlur}
         renderItem={renderItem}>
         <TagList
+          manageTabIndex={false}
           ref={tl => this.taglist = tl}
           disabled={disabled}
           onClose={this.onRemove}
           values={(!renderTag && tags.map(tag => tag.label || tag)) || undefined}
-          aria-labelledby={this.props['aria-labelledby']}
-          aria-label={this.props['aria-label']}>
-          { renderTag && tags.map(tag => renderTag(tag)) }
+          aria-labelledby={props['aria-labelledby']}
+          aria-label={props['aria-label']}>
+          { renderTag && tags.map((tag, index) => renderTag(tag, index)) }
         </TagList>
         <Textfield
           ref={tf => this.textfield = tf}

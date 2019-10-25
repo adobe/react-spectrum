@@ -17,6 +17,7 @@
 
 import assert from 'assert';
 import Autocomplete from '../../src/Autocomplete';
+import {FOCUS_RING_CLASSNAME} from '../../src/utils/focusRing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -84,10 +85,9 @@ describe('TagField', () => {
         {label: 'Chocolate', id: '1'},
         {label: 'Vanilla', id: '2'},
         {label: 'Strawberry', id: '3'}
-
     ];
     let text = 'ta';
-    const tree = shallow(<TagField onChange={onChange} getCompletions={OBJECT_OPTIONS.filter(o => o.label.toLowerCase().startsWith(text.toLowerCase()))} />);
+    const tree = shallow(<TagField onChange={onChange} getCompletions={() => OBJECT_OPTIONS.filter(o => o.label.toLowerCase().startsWith(text.toLowerCase()))} />);
 
     tree.simulate('change', 'test');
     assert.equal(tree.prop('value'), 'test');
@@ -246,6 +246,29 @@ describe('TagField', () => {
     tree.unmount();
   });
 
+  it('focus should set isFocusedVisible to add .focus-ring when textfield has keyboard focus', () => {
+    const onFocusSpy = sinon.spy();
+    const onBlurSpy = sinon.spy();
+    const tree = mount(<TagField onFocus={onFocusSpy} onBlur={onBlurSpy} />);
+    tree.setState({tags: ['foo', 'hi']});
+    tree.update();
+    let input = tree.find('input.react-spectrum-TagField-input');
+    // simulate keyboard focus with focus-ring-polyfill
+    input.getDOMNode().classList.add(FOCUS_RING_CLASSNAME);
+    input.simulate('focus');
+    tree.update();
+    assert.equal(tree.state('isFocusVisible'), true);
+    assert.equal(tree.find('div.react-spectrum-TagField').hasClass(FOCUS_RING_CLASSNAME), true);
+    assert.equal(onFocusSpy.calledOnce, true);
+    input = tree.find('input.react-spectrum-TagField-input');
+    input.simulate('blur');
+    tree.update();
+    assert.equal(tree.state('isFocusVisible'), false);
+    assert.equal(tree.find('div.react-spectrum-TagField').hasClass(FOCUS_RING_CLASSNAME), false);
+    assert.equal(onBlurSpy.calledOnce, true);
+    tree.unmount();
+  });
+
   it('should not show placeholder text if there is one or more tags', () => {
     const tree = shallow(<TagField placeholder="this is bat country" />);
     assert.equal(tree.find(Textfield).prop('placeholder'), 'this is bat country');
@@ -265,11 +288,27 @@ describe('TagField', () => {
     assert.equal(tree.find(Autocomplete).prop('renderItem'), renderItem);
   });
   it('should allow custom tag rendering', () => {
-    let renderTag = (tag) => <Tag>{tag.label + tag.meta}</Tag>;
+    let renderTag = (tag, index) => <Tag key={index}>{tag.label + tag.meta}</Tag>;
     const tree = mount(<TagField value={[{label: 'one', meta: '1'}]} renderTag={renderTag} />);
 
     assert.equal(tree.find('.spectrum-Tags-itemLabel').text(), 'one1');
     tree.unmount();
+  });
+  it('Autocomplete menu should only display when there is a Textfield value', () => {
+    const OBJECT_OPTIONS = [
+      {label: 'Chocolate', id: '1'},
+      {label: 'Vanilla', id: '2'},
+      {label: 'Strawberry', id: '3'}
+    ];
+    const tree = shallow(<TagField getCompletions={() => OBJECT_OPTIONS} />);
+    tree.setState({value: 'ch'});
+    assert.equal(tree.state('value'), 'ch');
+    tree.instance().onMenuToggle(true);
+    assert.equal(tree.state('showMenu'), true);
+    tree.simulate('select', OBJECT_OPTIONS[0]);
+    assert.equal(tree.state('value'), '');
+    tree.instance().onMenuToggle(true);
+    assert.equal(tree.state('showMenu'), false);
   });
 });
 

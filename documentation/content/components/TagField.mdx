@@ -102,7 +102,7 @@ that takes a `tag` object and returns a [`<Tag>`](taglist) component.
 
 <TagField 
     placeholder="Custom tags" 
-    getCompletions={() => [{label: 'With avatar', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}]} 
+    getCompletions={() => [{label: 'With avatar', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'}]} 
     renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
 
 ```jsx
@@ -111,7 +111,6 @@ import TagField from '@react/react-spectrum/TagField';
 
 <TagField 
     placeholder="Custom tags" 
-    getCompletions={() => [{label: 'With avatar', avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'}]} 
+    getCompletions={() => [{label: 'With avatar', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'}]} 
     renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
 ```
-

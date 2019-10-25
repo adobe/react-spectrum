@@ -1,4 +1,6 @@
 {
+  "pagination": "Sayfada gezinme",
+  "page": "Sayfa",
   "next": "Sonraki",
   "page_count": "/ {n, plural, =one{# sayfa} other{# sayfa}}",
   "previous": "Önceki"

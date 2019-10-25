@@ -16,10 +16,12 @@
 **************************************************************************/
 
 import assert from 'assert';
+import Button from '../../src/Button';
 import DialogButtons from '../../src/Dialog/js/DialogButtons';
 import DialogHeader from '../../src/Dialog/js/DialogHeader';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
+import sinon from 'sinon';
 import {sleep} from '../utils';
 
 describe('DialogHeader', () => {
@@ -73,5 +75,13 @@ describe('DialogHeader', () => {
     tree.setProps({confirmDisabled: false});
     assert(!tree.find(DialogButtons).prop('confirmDisabled'));
     assert(!tree.find(DialogButtons).dive().find('Button').prop('disabled'));
+  });
+
+  it('supports dismissible dialog', () => {
+    const spy = sinon.spy();
+    const tree = shallow(<DialogHeader isDismissible onClose={spy} />);
+    assert(tree.find(Button).hasClass('spectrum-Dialog-closeButton'));
+    tree.find(Button).simulate('click');
+    assert(spy.calledOnce);
   });
 });

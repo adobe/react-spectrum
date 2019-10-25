@@ -2,7 +2,6 @@ import {cleanup, render, within} from '@testing-library/react';
 import * as createId from '@react/react-spectrum/utils/createId';
 import {FormItem} from '../';
 import React from 'react';
-import Twitter from '@spectrum-icons/workflow/Twitter';
 import * as useId from '@react-aria/utils/src/useId';
 import {FormItem as V2FormItem} from '@react/react-spectrum/Form';
 
@@ -13,7 +12,7 @@ describe('FormItem', () => {
   let datatestid = 'formItem';
   let useIdMock, createIdMock;
 
-  function renderFormItem(FormItemComponent, props, numChildren) {    
+  function renderFormItem(FormItemComponent, props, numChildren) {
     let component = (
       <FormItemComponent data-testid={datatestid} {...props} >
         {numChildren > 0 && <button data-testid="testbutton">test child</button>}
@@ -25,7 +24,7 @@ describe('FormItem', () => {
 
   beforeAll(() => {
     useIdMock = jest.spyOn(useId, 'useId').mockImplementation(() => id);
-    createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id); 
+    createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id);
   });
 
   afterAll(() => {
@@ -35,7 +34,7 @@ describe('FormItem', () => {
 
   afterEach(() => {
     cleanup();
-  }); 
+  });
 
   describe('with label', () => {
     it.each`
@@ -48,24 +47,22 @@ describe('FormItem', () => {
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should render a label if provided', ({Component, numChildren}) => {
       let tree = renderFormItem(Component, {label, labelFor}, numChildren);
-      let fieldLabel = tree.getByText(label);
+      let fieldLabel = tree.getByTestId(datatestid);
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', id);
+      expect(within(fieldLabel).getByText(label)).toBeTruthy();
     });
 
     it.each`
-      Name                               | Component     | numChildren
-      ${'v3 FormItem no children'}       | ${FormItem}   | ${0}
-      ${'v2 FormItem no children'}       | ${V2FormItem} | ${0}
-      ${'v3 FormItem one child'}         | ${FormItem}   | ${1}
-      ${'v2 FormItem one child'}         | ${V2FormItem} | ${1}
-      ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
-      ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
-    `('$Name supports an icon with the label if provided', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {label, labelFor, icon: <Twitter />}, numChildren);
-      let fieldLabel = tree.getByText(label);
-      expect(within(fieldLabel).getByRole('img')).toBeTruthy();
+      Name                               | Component     | numChildren | props
+      ${'v3 FormItem no children'}       | ${FormItem}   | ${0}        | ${{isRequired: true, necessityIndicator: 'icon'}}
+      ${'v3 FormItem one child'}         | ${FormItem}   | ${1}        | ${{isRequired: true, necessityIndicator: 'icon'}}
+      ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}        | ${{isRequired: true, necessityIndicator: 'icon'}}
+    `('$Name will show an asterix when required with icon indicator', ({Component, numChildren, props}) => {
+      let tree = renderFormItem(Component, {label, labelFor, ...props}, numChildren);
+      let fieldLabel = tree.getByTestId(datatestid);
+      expect(within(fieldLabel).getByRole('presentation')).toBeTruthy();
     });
 
     // Forwarding ref is v3 specific
@@ -77,7 +74,7 @@ describe('FormItem', () => {
     `('$Name should attach the user provided ref to the label', ({Component, numChildren}) => {
       let ref = React.createRef();
       let tree = renderFormItem(Component, {label, labelFor, ref}, numChildren);
-      let fieldLabel = tree.getByText(label);
+      let fieldLabel = tree.getByTestId(datatestid);
       expect(fieldLabel).toBe(ref.current);
     });
 
@@ -91,7 +88,7 @@ describe('FormItem', () => {
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
       let tree = renderFormItem(Component, {label, labelFor, disabled: true}, numChildren);
-      let fieldLabel = tree.getByText(label);
+      let fieldLabel = tree.getByTestId(datatestid);
       expect(fieldLabel).toHaveAttribute('disabled', '');
     });
 
@@ -128,20 +125,6 @@ describe('FormItem', () => {
     it.each`
       Name                               | Component     | numChildren
       ${'v3 FormItem no children'}       | ${FormItem}   | ${0}
-      ${'v2 FormItem no children'}       | ${V2FormItem} | ${0}
-      ${'v3 FormItem one child'}         | ${FormItem}   | ${1}
-      ${'v2 FormItem one child'}         | ${V2FormItem} | ${1}
-      ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
-      ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
-    `('$Name doesn\'t support an icon if label isn\'t provided', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {labelFor, icon: <Twitter />}, numChildren);
-      let fieldLabel = tree.getByTestId(datatestid);
-      expect(within(fieldLabel).queryByRole('img')).toBeFalsy();
-    });
-
-    it.each`
-      Name                               | Component     | numChildren
-      ${'v3 FormItem no children'}       | ${FormItem}   | ${0}
       ${'v3 FormItem one child'}         | ${FormItem}   | ${1}
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
     `('$Name should attach the user provided ref to the div', ({Component, numChildren}) => {
@@ -166,24 +149,6 @@ describe('FormItem', () => {
     });
   });
 
-  describe('with no children', () => {
-    it.each`
-      Name             | Component     | label
-      ${'v3 FormItem'} | ${FormItem}   | ${label}
-      ${'v2 FormItem'} | ${V2FormItem} | ${label}
-      ${'v3 FormItem'} | ${FormItem}   | ${null}
-      ${'v2 FormItem'} | ${V2FormItem} | ${null}
-    `('$Name should combine the provided class name and labelClassName', ({Component}) => {
-      let tree = renderFormItem(Component, {label, labelFor, className: 'testClass', labelClassName: 'labelClass'}, 0);
-      let fieldLabel = tree.getByText(label);
-      expect(fieldLabel).toHaveAttribute('class', expect.stringContaining('testClass'));
-      expect(fieldLabel).toHaveAttribute('class', expect.stringContaining('labelClass'));
-      
-      let wrapper = tree.queryByTestId('wrapperId');
-      expect(wrapper).toBeNull();
-    });
-  });
-
   describe('with 1 child', () => {
     it.each`
       Name             | Component
@@ -196,17 +161,17 @@ describe('FormItem', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFormItem(Component, {label}, 1);
-      let fieldLabel = tree.getByText(label);
+      let fieldLabel = tree.getByTestId(datatestid);
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', 'second');
       expect(fieldLabel).toHaveAttribute('id', 'first');
-   
+
       let wrapper = tree.getByTestId('wrapperId');
       expect(wrapper).toBeTruthy();
 
       let button = within(wrapper).getByTestId('testbutton');
       expect(button).toHaveAttribute('id', 'second');
-      expect(button).toHaveAttribute('aria-labelledby', 'first'); 
+      expect(button).toHaveAttribute('aria-labelledby', 'first');
     });
 
     it.each`
@@ -217,17 +182,6 @@ describe('FormItem', () => {
       let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
       renderFormItem(Component, {label}, 1);
       expect(spyWarn).not.toHaveBeenCalled();
-    });
-
-    it.each`
-      Name             | Component
-      ${'v3 FormItem'} | ${FormItem}
-      ${'v2 FormItem'} | ${V2FormItem}
-    `('$Name shouldn\'t combine the provided class name and labelClassName', ({Component}) => {
-      let tree = renderFormItem(Component, {label, className: 'testClass', labelClassName: 'labelClass'}, 1);
-      let fieldLabel = tree.getByText(label);
-      expect(fieldLabel).toHaveAttribute('class', expect.not.stringContaining('testClass'));
-      expect(fieldLabel).toHaveAttribute('class', expect.stringContaining('labelClass'));
     });
   });
 
@@ -243,11 +197,11 @@ describe('FormItem', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFormItem(Component, {label, labelFor}, 2);
-      let fieldLabel = tree.getByText(label);
+      let fieldLabel = tree.getByTestId(datatestid);
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', 'first');
-   
+
       let wrapper = tree.getByTestId('wrapperId');
       expect(wrapper).toBeTruthy();
 
@@ -255,21 +209,10 @@ describe('FormItem', () => {
       expect(firstButton).toBeTruthy();
       expect(firstButton).not.toHaveAttribute('id');
       expect(firstButton).not.toHaveAttribute('aria-labelledby');
-      
+
       let secondButton = within(wrapper).getByTestId('testbutton2');
       expect(secondButton).not.toHaveAttribute('id');
-      expect(secondButton).not.toHaveAttribute('aria-labelledby'); 
-    });
-
-    it.each`
-      Name             | Component
-      ${'v3 FormItem'} | ${FormItem}
-      ${'v2 FormItem'} | ${V2FormItem}
-    `('$Name shouldn\'t combine the provided class name and labelClassName', ({Component}) => {
-      let tree = renderFormItem(Component, {label, className: 'testClass', labelClassName: 'labelClass'}, 2);
-      let fieldLabel = tree.getByText(label);
-      expect(fieldLabel).toHaveAttribute('class', expect.not.stringContaining('testClass'));
-      expect(fieldLabel).toHaveAttribute('class', expect.stringContaining('labelClass'));
+      expect(secondButton).not.toHaveAttribute('aria-labelledby');
     });
   });
 });

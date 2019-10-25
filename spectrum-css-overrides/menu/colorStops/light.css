@@ -1,0 +1,42 @@
+.spectrum-Menu {
+  background-color: transparent;
+}
+.spectrum-Menu-item {
+  background-color: transparent;
+  color: rgb(75, 75, 75);
+}
+.spectrum-Menu-item.focus-ring,
+  .spectrum-Menu-item.is-focused {
+    background-color: rgba(44,44,44,0.04);
+    color: rgb(75, 75, 75);
+    border-left-color: rgb(38, 128, 235);
+  }
+.spectrum-Menu-item:hover,
+  .spectrum-Menu-item:focus,
+  .spectrum-Menu-item.is-highlighted,
+  .spectrum-Menu-item.is-open {
+    background-color: rgba(44,44,44,0.04);
+    color: rgb(75, 75, 75);
+  }
+.spectrum-Menu-item.is-selected {
+    color: rgb(13, 102, 208);
+  }
+.spectrum-Menu-item.is-selected .spectrum-Menu-checkmark {
+      color: rgb(20, 115, 230);
+    }
+.spectrum-Menu-item .is-active,
+  .spectrum-Menu-item:active {
+    background-color: rgba(44,44,44,0.04);
+  }
+.spectrum-Menu-item.is-disabled {
+    background-color: transparent;
+    background-image: none;
+    color: rgb(179, 179, 179);
+    cursor: default;
+  }
+.spectrum-Menu-sectionHeading {
+  color: rgb(110, 110, 110);
+}
+.spectrum-Menu-divider {
+  background-color: rgb(245, 245, 245);
+}

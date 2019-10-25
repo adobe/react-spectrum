@@ -20,6 +20,7 @@ import Button from '../../Button';
 import ChevronLeftLarge from '../../Icon/core/ChevronLeftLarge';
 import ChevronRightLarge from '../../Icon/core/ChevronRightLarge';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
 import filterDOMProps from '../../utils/filterDOMProps';
@@ -37,6 +38,7 @@ importSpectrumCSS('calendar');
 
 const formatMessage = messageFormatter(intlMessages);
 
+@convertUnsafeMethod
 @autobind
 export default class Calendar extends Component {
   static displayName = 'Calendar';
@@ -158,7 +160,7 @@ export default class Calendar extends Component {
     this.calendarId = createId();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const {
       value,
       defaultValue,
@@ -187,7 +189,7 @@ export default class Calendar extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {min, max, valueFormat} = this.props;
 
     if (min !== nextProps.min || valueFormat !== nextProps.valueFormat) {

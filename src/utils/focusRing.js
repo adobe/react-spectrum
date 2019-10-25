@@ -26,15 +26,15 @@ export const FOCUS_RING_CLASSNAME = 'focus-ring';
 */
 export default function focusRing(WrappedComponent) {
   const proto = WrappedComponent.prototype;
-  const componentWillUpdate = proto.componentWillUpdate;
+  const UNSAFE_componentWillUpdate = proto.UNSAFE_componentWillUpdate;
   const componentDidUpdate = proto.componentDidUpdate;
 
   let elementWithFocusRing = null;
 
-  proto.componentWillUpdate = function (props, state) {
+  proto.UNSAFE_componentWillUpdate = function (props, state) {
     // call original method
-    if (componentWillUpdate) {
-      componentWillUpdate.apply(this, arguments);
+    if (UNSAFE_componentWillUpdate) {
+      UNSAFE_componentWillUpdate.apply(this, arguments);
     }
 
     if (elementWithFocusRing == null || elementWithFocusRing !== document.activeElement) {

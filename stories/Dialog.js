@@ -80,6 +80,10 @@ storiesOf('Dialog', module)
     () => render(dialogChildren, {title: 'Error', variant: 'error', confirmLabel: 'OK'})
   )
   .add(
+    'isDismissible: true',
+    () => render(dialogChildren, {title: 'Title', isDismissible: true})
+  )
+  .add(
     'mode: alert',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'alert', confirmLabel: 'OK', cancelLabel: 'Cancel'})
   )
@@ -90,6 +94,10 @@ storiesOf('Dialog', module)
   .add(
     'mode: fullscreenTakeover',
     () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', cancelLabel: 'Cancel'})
+  )
+  .add(
+    'mode: fullscreenTakeover with secondary confirmation button',
+    () => render(dialogChildren, {title: 'Dialog Title', mode: 'fullscreenTakeover', confirmLabel: 'OK', secondaryLabel: 'Replace',  cancelLabel: 'Cancel'})
   )
   .add(
     'backdropClickable: true',
@@ -113,7 +121,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'keyboardConfirm: true',
-    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', cancelLabel: 'Cancel', keyboardConfirm: true, onConfirm: action('confirm'), onCancel: action('cancel'), onKeyDown: action('onKeyDown')}),
+    () => render(<Textfield aria-label="Textfield" placeholder="Textfield" autoFocus />, {title: 'Dialog Title', backdropClickable: true, confirmLabel: 'OK', secondaryLabel: 'Replace', cancelLabel: 'Cancel', keyboardConfirm: true, onConfirm: action('confirm'), onCancel: action('cancel'), onKeyDown: action('onKeyDown')}),
     {info: 'Setting keyboardConfirm prop to true makes it so pressing the Enter key executes the default action for the Dialog. It is the equivalent of pressing the "Confirm" button.'}
   );
 

@@ -23,6 +23,7 @@ import classNames from 'classnames';
 import Clock from '../../Clock';
 import ClockIcon from '../../Icon/Clock';
 import CloseIcon from '../../Icon/Close';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {DateRange} from 'moment-range';
 import FieldLabel from '../../FieldLabel';
@@ -51,6 +52,7 @@ const SELECTION_TYPES = {
 
 const formatMessage = messageFormatter(intlMessages);
 
+@convertUnsafeMethod
 @autobind
 export default class Datepicker extends Component {
   static propTypes = {
@@ -207,7 +209,7 @@ export default class Datepicker extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const valueFormatChanged = this.props.valueFormat !== nextProps.valueFormat;
     const displayFormatChanged = this.props.displayFormat !== nextProps.displayFormat;
 
@@ -756,7 +758,7 @@ export default class Datepicker extends Component {
             quiet={quiet}
             type="button"
             icon={type === 'time' ? <ClockIcon /> : <CalendarIcon />}
-            invalid={invalid}
+            invalid={invalid || (required && !valueText)}
             disabled={readOnly || disabled}
             aria-label={triggerAriaLabel}
             aria-labelledby={ariaLabelledby ? `${ariaLabelledby} ${buttonId}` : null}

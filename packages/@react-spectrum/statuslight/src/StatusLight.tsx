@@ -15,18 +15,16 @@ export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<H
     children,
     isDisabled,
     className,
-    'aria-label': ariaLabel,
     ...otherProps
   } = useProviderProps(props);
 
-  if (!children && !ariaLabel) {
+  if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
   return (
     <div
       {...filterDOMProps(otherProps)}
-      aria-label={ariaLabel}
       className={classNames(
         styles,
         'spectrum-StatusLight',

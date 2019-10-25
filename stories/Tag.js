@@ -32,11 +32,11 @@ storiesOf('Tag', module)
   )
   .add(
     'avatar',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg'})
+    () => render({avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'})
   )
   .add(
     'avatar, closable: true',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', closable: true})
+    () => render({avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658', closable: true})
   )
   .add(
     'icon',
@@ -52,7 +52,7 @@ storiesOf('Tag', module)
   )
   .add(
     'avatar, invalid: true',
-    () => render({avatar: 'http://opensource.adobe.com/spectrum-css/2.7.2/docs/img/example-ava.jpg', invalid: true, closable: true})
+    () => render({avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658', invalid: true, closable: true})
   )
   .add(
     'selected',

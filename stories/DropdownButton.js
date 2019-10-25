@@ -27,40 +27,52 @@ import SocialNetwork from '../src/Icon/SocialNetwork';
 import {storiesOf} from '@storybook/react';
 import Twitter from '../src/Icon/Twitter';
 
+const note = 'A `ModalTrigger` opening a `Dialog` wraps the `MenuItem` labelled "Instagram…". \n\n\
+  Note that the `Dialog` uses the following `onHide` event handler to restore focus to the `DropdownButton` by `id` when it closes: \n\n\
+  `onHide={() => document.getElementById(dropdownButtonId).focus()}`.';
+
 storiesOf('DropdownButton', module)
   .add(
     'Default',
-    () => render({label: 'Action'})
+    () => render({label: 'Action'}),
+    {info: `A basic demonstration of a DropdownButton. \n\n${note}`}
   )
   .add(
     'Icon only',
-    () => render({icon: <SocialNetwork alt="Social Network" />})
+    () => render({icon: <SocialNetwork alt="Social Network" />}),
+    {info: `An icon-only DropdownButton. \n\n${note}`}
   )
   .add(
     'alignRight',
-    () => render({label: 'Action', alignRight: true})
+    () => render({label: 'Action', alignRight: true}),
+    {info: `A DropdownButton where the menu aligns to the right of the target button. \n\n${note}`}
   )
   .add(
     'disabled',
-    () => render({label: 'Action', disabled: true})
+    () => render({label: 'Action', disabled: true}),
+    {info: 'A disabled DropdownButton.'}
   )
   .add(
     'Stay open on select',
-    () => render({label: 'Action', closeOnSelect: false})
+    () => render({label: 'Action', closeOnSelect: false}),
+    {info: `A DropdownButton that remains expanded after a menu item is selected. \n\n${note}`}
   )
   .add(
     'holdAffordance',
-    () => render({holdAffordance: true})
+    () => render({holdAffordance: true}),
+    {info: `A DropdownButton where the menu expands following a 250ms delay while holding the mouse down on the button. Alt+ArrowDown serves as a keyboard accessible way to expand the menu. \n\n${note}`}
   );
 
 function render(props = {}) {
+  let dropdownButtonId = 'dropdown-button-id';
   return (
-    <DropdownButton {...props} onClick={action('click')} onSelect={action('select')}>
+    <DropdownButton id={dropdownButtonId} {...props} onClick={action('click')} onSelect={action('select')}>
       <MenuItem icon={<Twitter />} value="twitter">Twitter</MenuItem>
       <MenuItem icon={<Facebook />} onClick={action('click')} value="facebook">Facebook</MenuItem>
       <ModalTrigger>
-        <MenuItem onClick={action('click')} icon={<Instagram />} value="instagram">Instagram</MenuItem>
+        <MenuItem onClick={action('click')} icon={<Instagram />} value="instagram">Instagram…</MenuItem>
         <Dialog
+          onHide={() => document.getElementById(dropdownButtonId).focus()}
           modalContent
           title="Instagram"
           confirmLabel="Do it"

@@ -17,6 +17,7 @@
 
 import {chain} from '../../utils/events';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import focusRing from '../../utils/focusRing';
@@ -32,44 +33,45 @@ importSpectrumCSS('tags');
 const TAGLIST_SELECTOR = '[role=row]:not([aria-disabled])';
 const TAGLIST_SELECTED_SELECTOR = TAGLIST_SELECTOR + '[aria-selected=true]';
 
+@convertUnsafeMethod
 @focusRing
 export default class TagList extends React.Component {
-  
+
   static displayName = 'TagList';
-  
+
   static propTypes = {
     /** Custom CSS class to add to the tag list */
     className: PropTypes.string,
-  
+
     /** Whether to disable the tag list */
     disabled: PropTypes.bool,
-  
+
     /** Name of tag list **/
     name: PropTypes.string,
-  
+
     /** Function called when focus is taken away from the tag list */
     onBlur: PropTypes.func,
-  
+
     /** Function called when a tag  in the tag list is closed */
     onClose: PropTypes.func,
-  
+
     /** Function called when focus is put on the tag list */
     onFocus: PropTypes.func,
-  
+
     /** Whether the tag list can only be read */
     readOnly: PropTypes.bool,
-  
+
     /** Initial tags in the tag list */
-    values: PropTypes.arrayOf(PropTypes.string)
+    values: PropTypes.arrayOf(PropTypes.string),
+
+    /** Whether TagList should use roving tabIndex so that only one item can receive focus at a time. */
+    manageTabIndex: PropTypes.bool
   };
 
   static defaultProps = {
     readOnly: false,
     disabled: false,
-    onClose: function () {},
-    onFocus: function () {},
-    onBlur: function () {},
-    onChange: function () {}
+    manageTabIndex: true
   };
 
   state = {
@@ -77,7 +79,7 @@ export default class TagList extends React.Component {
     focused: false
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('selectedIndex' in nextProps) {
       this.setState({
         selectedIndex: nextProps.selectedIndex
@@ -89,7 +91,7 @@ export default class TagList extends React.Component {
     this.setSelectedIndex(selectedIndex, e);
   }
 
- 
+
   setSelectedIndex(selectedIndex, e) {
     const lastSelectedIndex = this.state.selectedIndex;
 
@@ -101,31 +103,34 @@ export default class TagList extends React.Component {
       });
     }
 
-    if (lastSelectedIndex !== selectedIndex) {
-      this.props.onChange(selectedIndex);
+    if (lastSelectedIndex !== selectedIndex && this.props.onChange) {
+      this.props.onChange(selectedIndex, e);
     }
   }
 
   handleFocus = e => {
-    const {onFocus} = this.props;
     this.setState({focused: true});
-    onFocus(e);
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
   }
 
   handleBlur = e => {
-    const {onBlur} = this.props;
     this.setState({focused: false});
-    onBlur(e);
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
   }
 
-
   baseChildProps(index, child = {props: {}}) {
-    const {readOnly, onClose, disabled} = this.props;
+    const {readOnly, onClose, disabled, manageTabIndex} = this.props;
     const {selectedIndex, focused} = this.state;
+    const tabIndex = selectedIndex === index || (!focused && (selectedIndex === null || manageTabIndex === false)) ? 0 : -1;
+
     return {
       key: index,
       selected: !disabled && focused && selectedIndex === index,
-      tabIndex: !disabled && (selectedIndex === index || (!focused && selectedIndex === null)) ? 0 : -1,
+      tabIndex: (!disabled ? tabIndex : null),
       closable: !readOnly,
       disabled,
       onClick: chain(this.getChildOnClick(index), child.props.onClick),
@@ -178,13 +183,16 @@ export default class TagList extends React.Component {
       readOnly,
       disabled,
       invalid,
+      manageTabIndex,
       ...otherProps
     } = this.props;
 
     const {focused} = this.state;
 
+    const renderedChildren =  this.renderChildren();
+
     return (
-      <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal">
+      <FocusManager itemSelector={TAGLIST_SELECTOR} selectedItemSelector={TAGLIST_SELECTED_SELECTOR} orientation="horizontal" manageTabIndex={focused || manageTabIndex}>
         <div
           {...filterDOMProps(otherProps)}
           className={
@@ -199,7 +207,7 @@ export default class TagList extends React.Component {
           name={name}
           readOnly={readOnly}
           disabled={disabled}
-          role="grid"
+          role={!renderedChildren || !renderedChildren.length ? 'group' : 'grid'}
           aria-atomic="false"
           aria-relevant="additions"
           aria-live={focused ? 'polite' : 'off'}
@@ -207,7 +215,7 @@ export default class TagList extends React.Component {
           aria-invalid={invalid}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}>
-          {this.renderChildren()}
+          {renderedChildren}
         </div>
       </FocusManager>
     );

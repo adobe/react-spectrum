@@ -17,6 +17,7 @@
 
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import focusRing from '../../utils/focusRing';
@@ -26,6 +27,7 @@ import React, {Component} from 'react';
 /**
  * An AccordionItem component represents an item in an accordion
  */
+@convertUnsafeMethod
 @focusRing
 export default class AccordionItem extends Component {
   static propTypes = {

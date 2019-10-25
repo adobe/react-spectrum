@@ -17,6 +17,7 @@
 
 import autobind from 'autobind-decorator';
 import {chain} from '../../utils/events';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import {modalManager} from '../../ModalContainer/js/ModalContainer.js';
 import Overlay from './Overlay';
@@ -65,6 +66,8 @@ function getScrollParents(node) {
  * Class based on React-bootstrap
  * https://github.com/react-bootstrap/react-bootstrap/blob/master/src/OverlayTrigger.js
  */
+
+@convertUnsafeMethod
 @autobind
 export default class OverlayTrigger extends Component {
   static propTypes = {
@@ -92,6 +95,13 @@ export default class OverlayTrigger extends Component {
      * control, consider using the Overlay component directly.
      */
     defaultShow: PropTypes.bool,
+    /**
+     * Specify the position of the overlay relative to the trigger element.
+     */
+    placement: PropTypes.string,
+    /**
+     * An element or text to overlay next to the target.
+     */
     /**
      * Callback when the overlay trigger is blurred.
      */
@@ -143,7 +153,6 @@ export default class OverlayTrigger extends Component {
     /**
      * By default, the body of the owning document. The overlay will do a hit test to see if it
      * extends outside the boundaries and move it to a new position if it collides.
-     * Unused it would seem...
      */
     boundariesElement: PropTypes.oneOfType([
       PropTypes.func, PropTypes.string
@@ -182,7 +191,7 @@ export default class OverlayTrigger extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('lastFocus' in nextProps && nextProps.lastFocus !== this.props.lastFocus) {
       this._lastFocus = nextProps.lastFocus;
     }
@@ -334,21 +343,30 @@ export default class OverlayTrigger extends Component {
 
   onMouseDown = (e) => {
     if (!this.props.disabled && e.button === MOUSE_BUTTONS.left) {
+      const target = e.currentTarget;
       this.longPressTimeout = setTimeout(() => {
         this.longPressTimeout = null;
-        if (this.props.onLongClick) {
-          this.props.onLongClick();
-        }
+        // In Safari, buttons are force blurred after the mouse down event since we don't call e.preventDefault()
+        // Changing Button to prevent default would be a breaking change. So, assume that we want to restore
+        // focus to the trigger element when the overlay closes.
+        this._lastFocus = target;
         this.show(e);
       }, 250);
     }
   };
 
   onMouseUp = (e) => {
+    // Prevent focus from being forced back to the button on long click.
+    // It will already be inside the popover/menu.
+    if (!this.longPressTimeout) {
+      e.preventDefault();
+    }
+
     if (!this.props.disabled && this.longPressTimeout && e.button === MOUSE_BUTTONS.left) {
       if (this.props.onClick) {
         this.props.onClick(e);
       }
+      this.hide(e);
       clearTimeout(this.longPressTimeout);
       this.longPressTimeout = null;
     }

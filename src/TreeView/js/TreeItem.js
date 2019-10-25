@@ -18,11 +18,13 @@
 import autobind from 'autobind-decorator';
 import ChevronRightMedium from '../../Icon/core/ChevronRightMedium';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import focusRing from '../../utils/focusRing';
 import React from 'react';
 import VisuallyHidden from '../../VisuallyHidden';
 
+@convertUnsafeMethod
 @autobind
 @focusRing
 export default class TreeItem extends React.Component {

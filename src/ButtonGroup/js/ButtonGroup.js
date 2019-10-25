@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
 import PropTypes from 'prop-types';
@@ -30,6 +31,7 @@ const ALLOWED_BUTTON_VARIANTS = {
   action: true
 };
 
+@convertUnsafeMethod
 export default class ButtonGroup extends Component {
   static propTypes = {
     /**
@@ -104,7 +106,7 @@ export default class ButtonGroup extends Component {
     };
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     if (props.value && props.value !== this.state.value) {
       this.setState({
         value: props.value
@@ -151,6 +153,12 @@ export default class ButtonGroup extends Component {
       }
     }
 
+    // Support button's onClicks
+    if (button.onClick) {
+      button.onClick(e);
+    }
+
+    // Allow's the ButtonGroup's onClick to be called when a button is clicked
     if (this.props.onClick) {
       this.props.onClick(button.value, e);
     }
@@ -217,7 +225,7 @@ export default class ButtonGroup extends Component {
   }
 
   render() {
-    const {
+    let {
       children = [],
       className,
       multiple,
@@ -227,33 +235,37 @@ export default class ButtonGroup extends Component {
       required,
       orientation,
       manageTabIndex,
+      role,
       ...otherProps
     } = this.props;
 
     delete otherProps.onChange;
     delete otherProps.onClick;
 
-    if (!readOnly && !multiple) {
+    if (!role) {
+      if (!readOnly && !multiple) {
 
-      // With single-selection, the wrapper element should have role=radiogroup.
-      otherProps.role = 'radiogroup';
-    } else if (readOnly || children.length > 2) {
+        // With single-selection, the wrapper element should have role=radiogroup.
+        role = 'radiogroup';
+      } else if (readOnly || children.length > 2) {
 
-      // With readOnly and more than one button, the wrapper element should have role=toolbar, otherwise with less than two items or multi-selection, use role=group.
-      otherProps.role = readOnly && children.length > 2 ? 'toolbar' : 'group';
+        // With readOnly and more than one button, the wrapper element should have role=toolbar, otherwise with less than two items or multi-selection, use role=group.
+        role = readOnly && children.length > 2 ? 'toolbar' : 'group';
+      }
     }
 
     return (
       <FocusManager
         itemSelector={BUTTONGROUP_ITEM_SELECTOR}
         selectedItemSelector={BUTTONGROUP_SELECTED_ITEM_SELECTOR}
-        orientation={otherProps.role === 'toolbar' ? orientation : 'both'}
+        orientation={role === 'toolbar' ? orientation : 'both'}
         manageTabIndex={manageTabIndex}>
         <div
           aria-invalid={invalid || null}
           aria-required={required || null}
           aria-disabled={disabled || null}
-          aria-orientation={orientation !== 'both' && otherProps.role === 'toolbar' ? orientation : null}
+          aria-orientation={orientation !== 'both' && role === 'toolbar' ? orientation : null}
+          role={role}
           {...filterDOMProps(otherProps)}
           className={
             classNames(

@@ -19,6 +19,7 @@ import autobind from 'autobind-decorator';
 import Checkbox from '../../Checkbox';
 import classNames from 'classnames';
 import closest from 'dom-helpers/query/closest';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager, {FOCUSABLE_ELEMENT_SELECTOR} from '../../utils/FocusManager';
@@ -31,6 +32,7 @@ import TableCell from './TableCell';
 const formatMessage = messageFormatter(intlMessages);
 const CELL_SELECTOR = '[role="gridcell"],[role="columnheader"],[role="rowheader"]';
 
+@convertUnsafeMethod
 @focusRing
 @autobind
 export default class TableRow extends React.Component {
@@ -43,7 +45,7 @@ export default class TableRow extends React.Component {
     this.rowId = createId();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if ('focused' in nextProps) {
       this.setState({
         focused: nextProps.focused

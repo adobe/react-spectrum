@@ -17,12 +17,14 @@
 
 import Button from '../../Button';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import React, {Component} from 'react';
 import Search from '../../Search';
 import SelectList from '../../SelectList';
 import ShellMenu from './ShellMenu';
 import '../style/ShellOrgSwitcher.styl';
 
+@convertUnsafeMethod
 export default class ShellOrgSwitcher extends Component {
   static defaultProps = {
     value: '',
@@ -36,7 +38,7 @@ export default class ShellOrgSwitcher extends Component {
     visibleOptions: this.filterVisibleOptions(this.props.options, '')
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.options !== this.props.options) {
       this.setState({
         visibleOptions: this.filterVisibleOptions(nextProps.options, this.state.searchTerm)

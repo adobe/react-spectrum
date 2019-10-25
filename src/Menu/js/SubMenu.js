@@ -70,6 +70,7 @@ export default class SubMenu extends Component {
       case 'ArrowLeft':
       case 'Left':
         event.preventDefault();
+        event.stopPropagation();
         this.setState({opened: false});
         break;
 
@@ -78,6 +79,7 @@ export default class SubMenu extends Component {
       case 'ArrowRight':
       case 'Right':
         event.preventDefault();
+        event.stopPropagation();
         this.setState({opened: true});
         break;
     }
@@ -121,23 +123,34 @@ export default class SubMenu extends Component {
     return cloneElement(item, props);
   }
 
-  onExited() {
-    ReactDOM.findDOMNode(this.menuItem).focus();
-  }
-
   onHide() {
     this.hide();
+  }
+
+  onMenuClose() {
+    this.overlayTrigger.hide();
+  }
+
+  onSelect(...args) {
+    if (this.props.closeOnSelect) {
+      this.onMenuClose();
+    }
+    if (this.props.onSelect) {
+      this.props.onSelect(...args);
+    }
   }
 
   render() {
     const {
       children,
-      onSelect,
-      label,
       className,
+      closeOnSelect,
+      label,
       trapFocus,
       ...otherProps
     } = this.props;
+
+    delete otherProps.onSelect;
 
     const {opened} = this.state;
 
@@ -149,7 +162,8 @@ export default class SubMenu extends Component {
         selected={false}
         show={opened}
         onHide={this.onHide}
-        onExited={this.onExited}>
+        closeOnSelect={closeOnSelect}
+        ref={t => this.overlayTrigger = t}>
         <MenuItem
           id={this.menuId}
           className={
@@ -174,7 +188,7 @@ export default class SubMenu extends Component {
         </MenuItem>
         <Menu
           id={this.subMenuId}
-          onSelect={onSelect}
+          onSelect={this.onSelect}
           autoFocus
           aria-labelledby={this.menuId}
           onMouseEnter={this.show}

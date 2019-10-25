@@ -18,6 +18,7 @@
 import autobind from 'autobind-decorator';
 import {chain} from '../../utils/events';
 import classNames from 'classnames';
+import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
 import FocusManager from '../../utils/FocusManager';
@@ -39,6 +40,7 @@ const isNestedSelected = (props, value) => props.children && props.children.filt
   return c.props.value === value;
 }).length !== 0;
 
+@convertUnsafeMethod
 @autobind
 @focusRing
 export default class SideNav extends Component {
@@ -107,7 +109,7 @@ export default class SideNav extends Component {
     this.id = createId();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {value} = nextProps;
     if (value !== this.props.value) {
       this.setState({value});
