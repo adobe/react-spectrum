@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/searchfield",
-  "version": "2.26.0",
+  "version": "2.26.1",
   "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -13,7 +13,7 @@
     "@react-aria/searchfield": "^2.26.0",
     "@react-spectrum/button": "^2.26.0",
     "@react-spectrum/provider": "^2.26.0",
-    "@react-spectrum/textfield": "^2.26.0",
+    "@react-spectrum/textfield": "^2.26.1",
     "@react-spectrum/utils": "^2.26.0",
     "@react-stately/searchfield": "^2.26.0",
     "@react-types/searchfield": "^2.26.0",

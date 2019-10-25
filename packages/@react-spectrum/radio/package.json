@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/radio",
-  "version": "2.26.0",
+  "version": "2.26.1",
   "private": true,
   "description": "Spectrum UI components in React",
   "main": "src/index.ts",
@@ -21,6 +21,6 @@
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@react/react-spectrum": "^2.26.0"
+    "@react/react-spectrum": "^2.26.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/form",
-  "version": "2.26.0",
+  "version": "2.26.1",
   "main": "src/index.ts",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -22,6 +22,6 @@
   },
   "devDependencies": {
     "@react-spectrum/checkbox": "^2.26.0",
-    "@react/react-spectrum": "^2.26.0"
+    "@react/react-spectrum": "^2.26.1"
   }
 }

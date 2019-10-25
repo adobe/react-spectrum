@@ -1,7 +1,7 @@
 {
   "name": "@react-spectrum/pagination",
   "private": true,
-  "version": "2.26.0",
+  "version": "2.26.1",
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {
@@ -14,7 +14,7 @@
     "@react-aria/pagination": "^2.26.0",
     "@react-spectrum/button": "^2.26.0",
     "@react-spectrum/provider": "^2.26.0",
-    "@react-spectrum/textfield": "^2.26.0",
+    "@react-spectrum/textfield": "^2.26.1",
     "@react-spectrum/utils": "^2.26.0",
     "@react-stately/pagination": "^2.26.0",
     "@react-types/shared": "^2.26.0",
