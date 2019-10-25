@@ -49,7 +49,7 @@ storiesOf('Tooltip', module)
   );
 
 function render(content, props = {}) {
-  console.log(props)
+  console.log(props);
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip
@@ -61,7 +61,7 @@ function render(content, props = {}) {
 }
 
 function renderWithClickTrigger(content, props = {}) {
-  console.log(props)
+  console.log(props);
   return (
     <TooltipTrigger {...props}>
       <ActionButton>Trigger</ActionButton>

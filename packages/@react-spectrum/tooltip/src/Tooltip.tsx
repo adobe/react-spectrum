@@ -1,6 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames} from '@react-spectrum/utils';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 
@@ -16,7 +14,7 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
   let {
     variant = 'neutral',
     placement = 'right',
-    showIcon = true,
+    showIcon = true
   } = props;
 
   return (

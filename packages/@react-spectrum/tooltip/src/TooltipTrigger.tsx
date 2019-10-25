@@ -1,5 +1,5 @@
 import {Overlay} from '@react-spectrum/overlays';
-import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactNode, ReactElement, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -31,10 +31,10 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(false);
   };
 
-  console.log("Sdfsd")
-  console.log(props)
-  console.log(props.placement)
-  console.log("Sdfsd")
+  console.log('Sdfsd');
+  console.log(props);
+  console.log(props.placement);
+  console.log('Sdfsd');
 
   return (
     <TooltipTriggerContainer
