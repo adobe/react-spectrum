@@ -20,14 +20,49 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
     ...otherProps
   } = props;
 
+  let isMultiline = size === 'L'; 
+
   let {breadcrumbProps} = useBreadcrumbs(props);
 
   let childArray = React.Children.toArray(children);
-  let isCurrent = (i) => (
-    i === childArray.length - 1
-  );
-
-  let isMultiline = size === 'L'; 
+  let lastIndex = childArray.length - 1;
+  let breadcrumbItems = childArray.map((child, index) => {
+    let isCurrent = index === lastIndex;
+    return (
+      <li
+        key={child.key}
+        className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs-item'
+          )
+        }>
+        {
+          isCurrent && isMultiline ?
+            <h1 
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Heading--pageTitle'
+                )
+              }
+              aria-level={headingAriaLevel}>
+              {React.cloneElement(child, {isCurrent})}
+            </h1>
+            : React.cloneElement(child, {isCurrent})
+        }
+        {!isCurrent &&
+          <ChevronRightSmall
+            className={
+              classNames(
+                styles,
+                'spectrum-Breadcrumbs-itemSeparator'
+              )
+            } />
+        }
+      </li>
+    );
+  });
 
   return (
     <nav
@@ -35,41 +70,18 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
       {...breadcrumbProps}
       ref={ref} >
       <ul
-        className={classNames(
-          styles,
-          'spectrum-Breadcrumbs',
-          {
-            'spectrum-Breadcrumbs--compact': size === 'S',
-            'spectrum-Breadcrumbs--multiline': isMultiline
-          },
-          className)}>
-        {childArray.map((child, i) => (
-          <li
-            key={`spectrum-Breadcrumb-${i}`}
-            className={classNames(
-              styles,
-              'spectrum-Breadcrumbs-item'
-            )}>
+        className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs',
             {
-              isCurrent(i) && isMultiline ?
-                <h1 
-                  className={classNames(
-                    styles,
-                    'spectrum-Heading--pageTitle'
-                    )}
-                  aria-level={headingAriaLevel}>
-                  {React.cloneElement(child, {isCurrent: isCurrent(i)})}
-                </h1>
-                : React.cloneElement(child, {isCurrent: isCurrent(i)})
-            }
-            {!isCurrent(i) &&
-              <ChevronRightSmall
-                className={classNames(
-                styles,
-                'spectrum-Breadcrumbs-itemSeparator')} />
-            }
-          </li>
-        ))}
+              'spectrum-Breadcrumbs--compact': size === 'S',
+              'spectrum-Breadcrumbs--multiline': isMultiline
+            },
+            className
+          )
+        }>
+        {breadcrumbItems}
       </ul>
     </nav>
   );

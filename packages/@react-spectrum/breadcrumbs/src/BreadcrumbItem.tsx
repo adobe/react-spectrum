@@ -8,6 +8,7 @@ import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref: RefObject<HTMLElement>) => {
   let {
     children,
+    className,
     ...otherProps
   } = props;
 
@@ -26,9 +27,12 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
         ...filterDOMProps(otherProps),
         ...breadcrumbItemProps,
         ref,
-        className: classNames(
-          styles,
-          'spectrum-Breadcrumbs-itemLink')
+        className:
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs-itemLink',
+            className
+          )
       })}
     </FocusRing>
   );

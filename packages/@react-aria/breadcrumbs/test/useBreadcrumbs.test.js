@@ -1,12 +1,19 @@
-import {cleanup, render} from '@testing-library/react';
+import {cleanup} from '@testing-library/react';
+import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
-import React, {useRef} from 'react';
 import {useBreadcrumbs} from '../';
 
 describe('useBreadcrumbs', function () {
   afterEach(cleanup);
 
-  it('fill me in', function () {
-    expect(true).toBeTruthy();
+  let renderLinkHook = (props) => {
+    let {result} = renderHook(() => useBreadcrumbs(props));
+    return result.current;
+  };
+
+  it('handles defaults', function () {
+    let {breadcrumbProps} = renderLinkHook({});
+    expect(breadcrumbProps['aria-label']).toBe('Breadcrumbs');
+    expect(breadcrumbProps.id).toBeDefined();
   });
 });

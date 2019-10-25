@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {Breadcrumbs, BreadcrumbItem} from '../';
+import {BreadcrumbItem, Breadcrumbs} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -15,14 +15,24 @@ storiesOf('Breadcrumbs', module)
   .add(
     'size: L',
     () => render({size: 'L'})
-  );;
+  )
+  .add(
+    'onPress',
+    () => render(
+      {},
+      [
+        {children: 'Folder 1', onPress: action('press Folder 1')},
+        {children: 'Folder 2', onPress: action('press Folder 2')},
+        {children: 'Folder 3', onPress: action('press Folder 3')}
+      ]
+    )
+  );
 
-function render(props = {}) {
+function render(props = {}, children = []) {
+  let breadcrumbItems = children || [{children: 'Folder 1'}, {children: 'Folder 2'}, {children: 'Folder 3'}];
   return (
     <Breadcrumbs {...props}>
-      <BreadcrumbItem>Folder 1</BreadcrumbItem>
-      <BreadcrumbItem>Folder 2</BreadcrumbItem>
-      <BreadcrumbItem>Folder 3</BreadcrumbItem>
+      {breadcrumbItems.map(item => <BreadcrumbItem {...item} />)}
     </Breadcrumbs>
   );
 }
