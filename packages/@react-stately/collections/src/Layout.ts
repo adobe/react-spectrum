@@ -5,7 +5,7 @@ import {Point} from './Point';
 import {Size} from './Size';
 import {InvalidationContext} from './types';
 import { Key } from 'react';
-import { DragTarget, DropTarget } from '@react-types/shared';
+// import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
  * {@link CollectionView} supports arbitrary layout objects, which compute what views are visible, and how
@@ -70,26 +70,26 @@ export abstract class Layout<T> {
    * Return `null` to cancel the drag. The default implementation returns the view at the given point.
    * @param point The point at which the drag occurred
    */
-  getDragTarget(point: Point): DragTarget | null {
-    let target = this.collectionManager.keyAtPoint(point);
-    if (!target) {
-      return null;
-    }
+  // getDragTarget(point: Point): DragTarget | null {
+  //   let target = this.collectionManager.keyAtPoint(point);
+  //   if (!target) {
+  //     return null;
+  //   }
 
-    return {
-      type: 'item',
-      key: target
-    };
-  }
+  //   return {
+  //     type: 'item',
+  //     key: target
+  //   };
+  // }
 
   /**
    * Returns a {@link DragTarget} object describing where a drop should occur. Return `null`
    * to reject the drop. The dropped items will be inserted before the resulting target.
    * @param point The point at which the drop occurred
    */
-  getDropTarget(point: Point): DropTarget | null {
-    return null;
-  }
+  // getDropTarget(point: Point): DropTarget | null {
+  //   return null;
+  // }
 
   /**
    * Returns the starting attributes for an animated insertion.

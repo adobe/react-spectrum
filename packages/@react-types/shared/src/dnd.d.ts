@@ -5,6 +5,7 @@ export interface DndBase {
   dropDelegate?: DropDelegate
 }
 
+// TODO: move this somewhere - enums in .d.ts files don't work well
 export enum DropOperation {
   /** The drop is not allowed. */
   NONE = 0,

@@ -5,7 +5,7 @@ import {Size} from './Size';
 import {Collection, Node} from './types';
 import {Point} from './Point';
 import { Key } from 'react';
-import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
+// import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
 type ListLayoutOptions<T> = {
   /** the height of a row in px. */
@@ -92,32 +92,31 @@ export class ListLayout<T> extends Layout<Node<T>> {
     return this.collectionManager.collection.getKeyAfter(key);
   }
 
-  getDragTarget(point: Point): DragTarget {
-    let visible = this.getVisibleLayoutInfos(new Rect(point.x, point.y, 1, 1));
-    if (visible.length > 0) {
-      visible = visible.sort((a, b) => b.zIndex - a.zIndex);
-      // return new DragTarget('item', visible[0].key);
-      return {
-        type: 'item',
-        key: visible[0].key
-      };
-    }
+  // getDragTarget(point: Point): DragTarget {
+  //   let visible = this.getVisibleLayoutInfos(new Rect(point.x, point.y, 1, 1));
+  //   if (visible.length > 0) {
+  //     visible = visible.sort((a, b) => b.zIndex - a.zIndex);
+  //     return {
+  //       type: 'item',
+  //       key: visible[0].key
+  //     };
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
-  getDropTarget(point: Point): DropTarget {
-    let key = this.collectionManager.keyAtPoint(point);
-    if (key) {
-      return {
-        type: 'item',
-        key,
-        dropPosition: DropPosition.ON
-      };
-    }
+  // getDropTarget(point: Point): DropTarget {
+  //   let key = this.collectionManager.keyAtPoint(point);
+  //   if (key) {
+  //     return {
+  //       type: 'item',
+  //       key,
+  //       dropPosition: DropPosition.ON
+  //     };
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;

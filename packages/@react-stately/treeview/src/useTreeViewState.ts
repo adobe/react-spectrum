@@ -1,77 +1,55 @@
 import {useControlledState} from '@react-stately/utils';
-import { useEffect, useRef } from 'react';
-import {Tree} from '@react-stately/collections';
-import TreeDataSource from '@react/react-spectrum/TreeDataSource';
-import {TreeViewDataSource} from '@react/react-spectrum/TreeView';
+import {CollectionBuilder, Node, Tree} from '@react-stately/collections';
+import { CollectionBase, Expandable, MultipleSelection } from '@react-types/shared';
+import { Key, useMemo } from 'react';
 
-interface TreeViewProps {
-  tree?: Tree,
-  defaultTree?: Tree,
-  onChange?: (tree: Tree) => void
-}
+export function useTreeViewState<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
+  let [expandedKeys, setExpandedKeys] = useControlledState(
+    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
+    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
+    props.onExpandedChange
+  );
 
-export function useTreeViewState(props: TreeViewProps) {
-  let [tree, setTree] = useControlledState(props.tree, props.defaultTree, props.onChange);
-  // let dataSourceRef = useRef<TreeViewDataSource>();
-  // useEffect(() => {
-  //   dataSourceRef.current = new TreeViewDataSource(new V3TreeViewDataSource(tree));
-  // }, []);
-  // let dataSource = dataSourceRef.current;
+  let [selectedKeys, setSelectedKeys] = useControlledState(
+    props.selectedKeys ? new Set(props.selectedKeys) : undefined,
+    props.defaultSelectedKeys ? new Set(props.defaultSelectedKeys) : new Set(),
+    props.onSelectionChange
+  );
 
-  // useEffect(() => {
-  //   if (tree.changes.length > 0) {
-  //     dataSource.dataSource.applyChanges(tree);
-  //   }
-  // });
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let tree = useMemo(() => {
+    let nodes = builder.build(props, key => ({
+      isExpanded: expandedKeys.has(key),
+      isSelected: selectedKeys.has(key)
+    }));
+
+    return new Tree(nodes);
+  }, [builder, props.items, typeof props.children === 'function' ? null : props.children, expandedKeys, selectedKeys]);
+
+  let onToggle = (item: Node<T>) => {
+    setExpandedKeys(expandedKeys => toggleKey(expandedKeys, item.key));
+  };
+
+  let onSelectToggle = (item: Node<T>) => {
+    setSelectedKeys(selectedKeys => toggleKey(selectedKeys, item.key));
+  };
 
   return {
     tree,
-    setTree,
-    // dataSource
+    expandedKeys,
+    selectedKeys,
+    onToggle,
+    onSelectToggle // TODO: replace with general selection hook
   };
 }
 
-class V3TreeViewDataSource extends TreeDataSource {
-  constructor(tree: Tree) {
-    super();
-
-    this.tree = tree;
-    this.items = new Map();
+function toggleKey(set: Set<Key>, key: Key): Set<Key> {
+  let res = new Set(set);
+  if (res.has(key)) {
+    res.delete(key);
+  } else {
+    res.add(key);
   }
 
-  getChildren(item) {
-    let items = item ? item.children : this.tree.children;
-    for (let item of items) {
-      this.items.set(item.key, item);
-    }
-
-    return items;
-  }
-
-  hasChildren(item) {
-    return item.hasChildren;
-  }
-
-  applyChanges(tree) {
-    console.log(tree.changes)
-    for (let change of tree.changes) {
-      switch (change.type) {
-        case 'update':
-          this.applyUpdate(change);
-          break;
-      }
-    }
-  }
-
-  applyUpdate(change) {
-    let item = this.items.get(change.key);
-    if (change.changes.isExpanded != null) {
-      item.isExpanded = change.changes.isExpanded;
-      if (change.changes.isExpanded) {
-        this.emit('expandItem', item);
-      }else {
-        this.emit('collapseItem', item);
-      }
-    }
-  }
+  return res;
 }

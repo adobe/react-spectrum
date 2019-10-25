@@ -3,35 +3,18 @@ import {CollectionView} from '@react-aria/collections'
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {useControlledState} from '@react-stately/utils';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {Item, Section, CollectionBuilder, Node, Tree, ListLayout} from '@react-stately/collections';
+import {Item, Section, Node, Tree, ListLayout} from '@react-stately/collections';
+import {useTreeViewState} from '@react-stately/treeview';
 
 export {Item, Section};
 
 export function TreeView<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
-  // let {tree, setTree} = useTreeViewState(props);
-  let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
-    props.onExpandedChange
-  );
-
-  let [selectedKeys, setSelectedKeys] = useControlledState(
-    props.selectedKeys ? new Set(props.selectedKeys) : undefined,
-    props.defaultSelectedKeys ? new Set(props.defaultSelectedKeys) : new Set(),
-    props.onSelectionChange
-  );
-
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
-  let tree = useMemo(() => {
-    let nodes = builder.build(props, key => ({
-      isExpanded: expandedKeys.has(key),
-      isSelected: selectedKeys.has(key)
-    }));
-
-    return new Tree(nodes);
-  }, [builder, props.items, typeof props.children === 'function' ? null : props.children, expandedKeys, selectedKeys]);
+  let {
+    tree,
+    onToggle,
+    onSelectToggle
+  } = useTreeViewState(props);
 
   let layout = useMemo(() => 
     new ListLayout({
@@ -42,32 +25,6 @@ export function TreeView<T>(props: CollectionBase<T> & Expandable & MultipleSele
       }
     })
   , []);
-
-  let onToggle = (item: Node<T>) => {
-    setExpandedKeys(expandedKeys => {
-      let expanded = new Set(expandedKeys);
-      if (expanded.has(item.key)) {
-        expanded.delete(item.key);
-      } else {
-        expanded.add(item.key);
-      }
-  
-      return expanded;
-    });
-  };
-
-  let onSelectToggle = (item: Node<T>) => {
-    setSelectedKeys(selectedKeys => {
-      let selected = new Set(selectedKeys);
-      if (selected.has(item.key)) {
-        selected.delete(item.key);
-      } else {
-        selected.add(item.key);
-      }
-  
-      return selected;
-    })
-  };
 
   return (
     <CollectionView
@@ -113,8 +70,6 @@ function TreeItem<T>({item, onToggle, onSelectToggle}: TreeItemProps<T>) {
     // 'is-focused': focused,
     // 'is-drop-target': isDropTarget
   });
-
-  // console.log('RENDER', item, isExpanded, isSelected)
   
   return (
     <div className={itemClassName} role="presentation" onMouseDown={() => onSelectToggle(item)}>
