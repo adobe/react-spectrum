@@ -1,8 +1,6 @@
 # Form and FieldLabel
 
 ```javascript
-import {ReactElement, ReactNode} from 'react';
-
 interface Form {
   children: ReactElement<FormItem> | ReactElement<FormItem>[]
 }

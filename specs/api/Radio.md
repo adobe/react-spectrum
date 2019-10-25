@@ -1,8 +1,6 @@
 # Radio
 
 ```javascript
-import {ReactNode, ReactElement} from 'react';
-
 interface RadioGroup extends ValueBase<string>, InputBase {
   orientation?: 'horizontal' | 'vertical',
   labelPosition?: 'side' | 'bottom',

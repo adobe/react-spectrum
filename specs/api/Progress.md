@@ -1,8 +1,6 @@
 # ProgressBar and ProgressCircle
 
 ```javascript
-import {ReactNode} from 'react';
-
 interface ProgressBar {
   value?: number,
   minValue?: number,

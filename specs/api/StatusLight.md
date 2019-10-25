@@ -1,4 +1,5 @@
 # StatusLight
+
 ```javascript
 interface StatusLight {
   children: ReactNode,

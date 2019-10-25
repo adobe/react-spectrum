@@ -1,10 +1,10 @@
 # Divider
 
 ```javascript
-    interface Divider {
-      size?: 'S' | 'M' | 'L',
-      orientation?: 'horizontal' | 'vertical'
-    }
+interface Divider {
+  size?: 'S' | 'M' | 'L',
+  orientation?: 'horizontal' | 'vertical'
+}
 ```
 
 | **v2**             | **v3**        | Notes |

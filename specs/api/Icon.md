@@ -1,7 +1,6 @@
 # Icon
 
 ```javascript
-
 interface Icon extends SVGAttributes<SVGElement> {
   alt?: string,
   children: ReactElement,

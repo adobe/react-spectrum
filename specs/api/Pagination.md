@@ -1,4 +1,5 @@
 # Pagination
+
 ```javascript
 interface PaginationBase extends ValueBase<number> {
   maxValue: number,

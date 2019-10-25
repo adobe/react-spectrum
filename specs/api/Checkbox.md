@@ -1,28 +1,26 @@
 # Checkbox and Switch
 
 ```javascript
-    import {ReactNode} from 'react';
+interface CheckboxBase extends InputBase {
+  children?: ReactNode, // pass in children to render label
+  'aria-label'?: string, // if no children, aria-label is required
 
-    interface CheckboxBase extends InputBase {
-      children?: ReactNode, // pass in children to render label
-      'aria-label'?: string, // if no children, aria-label is required
+  defaultSelected?: boolean,
+  isSelected?: boolean,
+  onChange?: (isSelected: boolean, e: Event) => void,
 
-      defaultSelected?: boolean,
-      isSelected?: boolean,
-      onChange?: (isSelected: boolean, e: Event) => void,
+  /* Cannot use InputProps because value is a
+  valid dom prop for input as well as checked */
+  value?: string, // dom prop for input element
+  name?: string,
+  isEmphasized?: boolean
+}
 
-      /* Cannot use InputProps because value is a
-      valid dom prop for input as well as checked */
-      value?: string, // dom prop for input element
-      name?: string,
-      isEmphasized?: boolean
-    }
+interface Checkbox extends CheckboxBase {
+  isIndeterminate?: boolean
+}
 
-    interface Checkbox extends CheckboxBase {
-      isIndeterminate?: boolean
-    }
-
-    interface Switch extends CheckboxBase {}
+interface Switch extends CheckboxBase {}
 ```
 
 ## Changes

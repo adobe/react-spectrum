@@ -1,4 +1,5 @@
 # QuickActions
+
 ```javascript
 interface QuickActions {
   variant?: 'icon' | 'text',

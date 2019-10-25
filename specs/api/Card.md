@@ -1,4 +1,5 @@
 # Card
+
 ```javascript
 interface Card {
   variant?: 'quiet' | 'gallery', // Change to layout names instead?
