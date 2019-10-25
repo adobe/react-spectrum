@@ -1,4 +1,4 @@
-import {Overlay, Popover} from '@react-spectrum/overlays';
+import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactNode, ReactElement, RefObject, useRef} from 'react';
@@ -31,6 +31,11 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(false);
   };
 
+  console.log("Sdfsd")
+  console.log(props)
+  console.log(props.placement)
+  console.log("Sdfsd")
+
   return (
     <TooltipTriggerContainer
       isOpen={isOpen}
@@ -38,7 +43,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       onClose={onClose}
       targetRef={targetRef}
       trigger={trigger}
-      content={content} />
+      content={content}
+      placement={props.placement} />
   );
 
 }
@@ -54,17 +60,12 @@ function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, 
     targetRef: targetRef || triggerRef,
     overlayRef,
     placement: props.placement,
-    containerPadding: props.containerPadding,
-    offset: props.offset,
-    crossOffset: props.crossOffset,
     isOpen
   });
 
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>
-      <Popover {...overlayProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps}>
         {content}
-      </Popover>
     </Overlay>
   );
 

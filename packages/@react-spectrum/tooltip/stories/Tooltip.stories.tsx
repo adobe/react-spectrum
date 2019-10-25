@@ -41,8 +41,11 @@ storiesOf('Tooltip', module)
     () => render(longMarkup)
   )
   .add(
-    'triggered using click',
-    () => render('This is a tooltip.', {trigger: 'click'})
+    'triggered by click',
+    () => render('This is a tooltip.', {trigger: 'click', placement: 'right'})
+  ).add(
+    'triggered by hover',
+    () => render('This is a tooltip.', {trigger: 'hover', placement: 'right'})
   );
 
 function render(content, props = {}) {
