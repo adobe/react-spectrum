@@ -1,0 +1,14 @@
+{
+  "name": "@react-types/progress",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "main": "src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-types/shared": "^3.0.0-alpha.1",
+    "react": "^16.8.0"
+  }
+}
