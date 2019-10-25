@@ -1,11 +1,11 @@
-import {useMemo, useState, Key, useLayoutEffect} from 'react';
-import { CollectionManager } from './CollectionManager';
-import { Rect } from './Rect';
-import { Size } from './Size';
-import { Layout } from './Layout';
-import { Collection } from './types';
-import { DOMProps } from '@react-types/shared';
-import { ReusableView } from './ReusableView';
+import {Collection} from './types';
+import {CollectionManager} from './CollectionManager';
+import {DOMProps} from '@react-types/shared';
+import {Key, useLayoutEffect, useMemo, useState} from 'react';
+import {Layout} from './Layout';
+import {Rect} from './Rect';
+import {ReusableView} from './ReusableView';
+import {Size} from './Size';
 
 interface CollectionProps<T, V, W> extends DOMProps {
   renderView(type: string, content: T): V,

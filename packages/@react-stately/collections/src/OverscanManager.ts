@@ -1,5 +1,5 @@
-import { Rect } from "./Rect";
-import { Point } from "./Point";
+import {Point} from './Point';
+import {Rect} from './Rect';
 
 class RollingAverage {
   private count: number = 0;
@@ -55,7 +55,7 @@ export class OverscanManager {
   getOverscannedRect() {
     let overscanned = this.visibleRect.copy();
 
-    let overscanY = Math.round(Math.min(this.visibleRect.height * 2, this.overscanY.value) / 100) * 100
+    let overscanY = Math.round(Math.min(this.visibleRect.height * 2, this.overscanY.value) / 100) * 100;
     if (this.velocity.y > 0) {
       overscanned.y -= overscanY * 0.2;
       overscanned.height += overscanY + overscanY * 0.2;

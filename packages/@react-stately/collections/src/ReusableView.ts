@@ -1,5 +1,5 @@
-import {LayoutInfo} from './LayoutInfo';
 import {Key} from 'react';
+import {LayoutInfo} from './LayoutInfo';
 
 let KEY = 0;
 

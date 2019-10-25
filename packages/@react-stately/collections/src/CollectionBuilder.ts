@@ -1,12 +1,12 @@
+import {CollectionBase, CollectionElement, ItemElement, ItemProps, ItemRenderer, SectionElement, SectionProps} from '@react-types/shared';
+import {ItemStates, Node} from './types';
 import React, {Key, ReactElement} from 'react';
-import { CollectionElement, CollectionBase, ItemProps, ItemRenderer, ItemElement, SectionElement, SectionProps } from '@react-types/shared';
-import {Node, ItemStates} from './types';
 
-export function Item<T>(props: ItemProps<T>): ReactElement {
+export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-export function Section<T>(props: SectionProps<T>): ReactElement {
+export function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 

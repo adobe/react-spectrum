@@ -1,10 +1,10 @@
+import {Collection, Node} from './types';
+import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
+// import {Point} from './Point';
 import {Rect} from './Rect';
 import {Size} from './Size';
-import {Collection, Node} from './types';
-import {Point} from './Point';
-import { Key } from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
 type ListLayoutOptions<T> = {

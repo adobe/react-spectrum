@@ -1,10 +1,10 @@
-import React, {Key, useMemo } from 'react';
-import {CollectionView} from '@react-aria/collections'
-import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {Item, Section, Node, Tree, ListLayout} from '@react-stately/collections';
+import {CollectionView} from '@react-aria/collections';
+import {Item, ListLayout, Node, Section, Tree} from '@react-stately/collections';
+import React, {Key, useMemo} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {useTreeViewState} from '@react-stately/treeview';
 
 export {Item, Section};
@@ -33,7 +33,7 @@ export function TreeView<T>(props: CollectionBase<T> & Expandable & MultipleSele
       collection={tree}>
       {(type, item) => {
         if (type === 'section') {
-          return <TreeHeading item={item} />
+          return <TreeHeading item={item} />;
         }
 
         return (
@@ -66,7 +66,7 @@ function TreeItem<T>({item, onToggle, onSelectToggle}: TreeItemProps<T>) {
   });
 
   let linkClassName = classNames(styles, 'spectrum-TreeView-itemLink', {
-    'is-selected': isSelected,
+    'is-selected': isSelected
     // 'is-focused': focused,
     // 'is-drop-target': isDropTarget
   });

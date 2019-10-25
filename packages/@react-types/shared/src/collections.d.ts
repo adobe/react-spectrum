@@ -1,5 +1,5 @@
 
-import {ReactElement, ReactNode, Key} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
@@ -76,7 +76,6 @@ interface FocusManagerDelegate {
   getKeyAbove?(key: Key): Key,
   getKeyBelow?(key: Key): Key
 }
-
 
 
 interface AsyncListOptions<T> {

@@ -1,8 +1,6 @@
+import {Item, Section, TreeView} from '../src';
 import React from 'react';
-import {TreeView, Item, Section} from '../src';
 import {storiesOf} from '@storybook/react';
-// import {Tree, Item} from '@react-stately/collections';
-import { action } from '@storybook/addon-actions';
 
 // let items = [];
 // for (let i = 0; i < 1000; i++) {
@@ -38,9 +36,9 @@ storiesOf('TreeView', module)
     () => (
       <TreeView items={items} itemKey="name">
         {item => 
-          <Section items={item.children} title={item.name}>
+          (<Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
-          </Section>
+          </Section>)
         }
       </TreeView>
     )

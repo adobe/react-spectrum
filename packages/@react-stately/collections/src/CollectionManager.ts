@@ -1,15 +1,15 @@
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection, CollectionManagerDelegate, InvalidationContext} from './types';
 import {concatIterators, difference} from './utils';
+import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
+import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
 import {Rect, RectCorner} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
-import { Key } from 'react';
-import { OverscanManager } from './OverscanManager';
 
 interface ScrollAnchor {
   key: Key,
@@ -293,7 +293,7 @@ export class CollectionManager<T, V, W> {
 
   getReusableView(layoutInfo: LayoutInfo): ReusableView<T, V> {
     let content = this._getViewContent(layoutInfo.type, layoutInfo.key);
-    let {type, reuseType} = this._getReuseType(layoutInfo, content);
+    let {reuseType} = this._getReuseType(layoutInfo, content);
 
     if (!this._reusableViews[reuseType]) {
       this._reusableViews[reuseType] = [];
@@ -304,10 +304,8 @@ export class CollectionManager<T, V, W> {
       ? reusable.pop()
       : new ReusableView<T, V>();
 
-    // view.collectionView = this;
     view.viewType = reuseType;
 
-    // this._applyLayoutInfo(view, layoutInfo);
     if (!this._animatedContentOffset.isOrigin()) {
       layoutInfo = layoutInfo.copy();
       layoutInfo.rect.x += this._animatedContentOffset.x;
@@ -316,22 +314,20 @@ export class CollectionManager<T, V, W> {
 
     view.layoutInfo = layoutInfo;
 
-    // view.setContent(content);
     this._renderView(view);
-
     return view;
   }
 
   private _getViewContent(type: string, key: Key): T | null {
     // if (type === 'item') {
-      return this.getItem(key);
+    return this.getItem(key);
     // }
 
     // if (this.delegate.getContentForExtraView) {
     //   return this.delegate.getContentForExtraView(type, key);
     // }
 
-    return null;
+    // return null;
   }
 
   private _renderView(reusableView: ReusableView<T, V>) {
@@ -407,7 +403,8 @@ export class CollectionManager<T, V, W> {
         'Emit a "reloadItem" or "reloadSection" event from your data source instead.');
     }
 
-    let content = this._getViewContent(type, key);
+    // TODO
+    // let content = this._getViewContent(type, key);
 
     this._runTransaction(() => {
       let view = this.getView(type, key);

@@ -1,10 +1,10 @@
 import {CollectionManager} from './CollectionManager';
-import {Rect} from './Rect';
-import {LayoutInfo} from './LayoutInfo';
-import {Point} from './Point';
-import {Size} from './Size';
 import {InvalidationContext} from './types';
-import { Key } from 'react';
+import {Key} from 'react';
+import {LayoutInfo} from './LayoutInfo';
+// import {Point} from './Point';
+import {Rect} from './Rect';
+import {Size} from './Size';
 // import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
@@ -43,7 +43,7 @@ export abstract class Layout<T> {
    * Called by the collection view before {@link getVisibleLayoutInfos}
    * or {@link getLayoutInfo} are called.
    */
-  validate(invalidationContext: InvalidationContext<T, any>) {}
+  validate(invalidationContext: InvalidationContext<T, any>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
   /**
    * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
@@ -118,7 +118,7 @@ export abstract class Layout<T> {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyAbove(key: Key): Key | null {
+  getKeyAbove(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 
@@ -127,7 +127,7 @@ export abstract class Layout<T> {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyBelow(key: Key): Key | null {
+  getKeyBelow(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 
@@ -136,7 +136,7 @@ export abstract class Layout<T> {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyLeftOf(key: Key): Key | null {
+  getKeyLeftOf(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 
@@ -145,7 +145,7 @@ export abstract class Layout<T> {
    * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
    * by default.
    */
-  getKeyRightOf(key: Key): Key | null {
+  getKeyRightOf(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 }

@@ -1,8 +1,8 @@
 import {Key, ReactNode} from 'react';
-import {Transaction} from './Transaction';
+import {Rect} from './Rect';
+import {ReusableView} from './ReusableView';
 import {Size} from './Size';
-import { Rect } from './Rect';
-import { ReusableView } from './ReusableView';
+import {Transaction} from './Transaction';
 
 export interface ItemStates {
   isSelected?: boolean,

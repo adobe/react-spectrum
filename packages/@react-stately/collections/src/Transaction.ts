@@ -1,6 +1,6 @@
+import {Key} from 'react';
 import {LayoutInfo} from './LayoutInfo';
 import {ReusableView} from './ReusableView';
-import { Key } from 'react';
 
 type LayoutInfoMap = Map<Key, LayoutInfo>;
 export class Transaction<T, V> {

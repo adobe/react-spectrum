@@ -1,6 +1,5 @@
-import React from 'react';
+// import React from 'react';
 
-export function useTreeView(props) {
-
+export function useTreeView() {
   return {};
 }

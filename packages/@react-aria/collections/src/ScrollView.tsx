@@ -1,7 +1,7 @@
-import React, { useRef, useCallback, useEffect, ReactNode, CSSProperties, useState, useLayoutEffect } from 'react';
-import { flushSync } from 'react-dom';
-import { Rect, Size } from '@react-stately/collections';
-import { DOMProps } from '@react-types/shared';
+import {DOMProps} from '@react-types/shared';
+import {flushSync} from 'react-dom';
+import React, {CSSProperties, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {Rect, Size} from '@react-stately/collections';
 
 interface ScrollViewProps extends DOMProps {
   contentSize: Size,
@@ -48,7 +48,7 @@ export function ScrollView(props: ScrollViewProps) {
         }, 300);
       }
     });
-  }, [onVisibleRectChange]);
+  }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
   
   useEffect(() => {
     // TODO: resize observer
@@ -74,7 +74,7 @@ export function ScrollView(props: ScrollViewProps) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, []);
+  }, [onVisibleRectChange, state.height, state.scrollLeft, state.scrollTop, state.width]);
 
   useLayoutEffect(() => {
     let dom = ref.current;
@@ -91,7 +91,7 @@ export function ScrollView(props: ScrollViewProps) {
       state.scrollTop = visibleRect.y;
       dom.scrollTop = visibleRect.y;
     }
-  }, [visibleRect.x, visibleRect.y]);
+  }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
   return (
     <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>

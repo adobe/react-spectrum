@@ -1,4 +1,4 @@
-import {ReactNode, Key} from 'react';
+import {Key, ReactNode} from 'react';
 
 export interface DndBase {
   dragDelegate?: DragDelegate,

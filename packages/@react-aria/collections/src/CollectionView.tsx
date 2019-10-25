@@ -1,8 +1,8 @@
-import { LayoutInfo, Layout, Collection } from '@react-stately/collections';
-import React, {CSSProperties } from 'react';
-import { DOMProps } from '@react-types/shared';
-import { useCollectionState } from '@react-stately/collections';
+import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
+import {DOMProps} from '@react-types/shared';
+import React, {CSSProperties} from 'react';
 import {ScrollView} from './ScrollView';
+import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T, V> extends DOMProps {
   children: (type: string, content: T) => V,
@@ -23,13 +23,11 @@ export function CollectionView<T, V>(props: CollectionViewProps<T, V>) {
     layout,
     collection,
     renderView,
-    renderWrapper: (reusableView) => {
-      return (
-        <div key={reusableView.key} role="presentation" style={layoutInfoToStyle(reusableView.layoutInfo)}>
-          {reusableView.rendered}
-        </div>
-      );
-    }
+    renderWrapper: (reusableView) => (
+      <div key={reusableView.key} role="presentation" style={layoutInfoToStyle(reusableView.layoutInfo)}>
+        {reusableView.rendered}
+      </div>
+      )
   });
   
   return (
