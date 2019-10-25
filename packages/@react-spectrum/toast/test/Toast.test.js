@@ -44,6 +44,18 @@ describe('Toast', function () {
   });
 
   it.each`
+    Name           | Component    | props                      | message
+    ${'Toast'}     | ${Toast}     | ${{variant: 'info'}}  | ${'Toast time!'}
+    ${'V2Toast'}   | ${V2Toast}   | ${{variant: 'info'}}  | ${'Toast time!'}
+  `('$Name supports variant info', function ({Component, props, message}) {
+    let {getByTestId} = renderComponent(Component, props, message);
+    let className = getByTestId(testId).className;
+
+    expect(className.includes('spectrum-Toast')).toBeTruthy();
+    expect(className.includes('spectrum-Toast--info')).toBeTruthy();
+  });
+
+  it.each`
     Name           | Component    | props                     | message
     ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo'}}  | ${'Toast time!'}
     ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true}}  | ${'Toast time!'}
