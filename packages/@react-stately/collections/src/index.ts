@@ -1,5 +1,5 @@
 export * from './CollectionBuilder';
-export * from './Tree';
+export * from './TreeCollection';
 export * from './types';
 
 export * from './CollectionManager';

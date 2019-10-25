@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/treeview",
+  "name": "@react-spectrum/tree",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/treeview": "^3.0.0-alpha.1",
+    "@react-stately/tree": "^3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "peerDependencies": {

@@ -1,4 +1,4 @@
-import {Item, Section, TreeView} from '../src';
+import {Item, Section, Tree} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -22,31 +22,31 @@ let items = [
   ]}
 ];
 
-storiesOf('TreeView', module)
+storiesOf('Tree', module)
   .add(
     'Default',
     () => (
-      <TreeView items={items} itemKey="name">
+      <Tree items={items} itemKey="name">
         {item => <Item childItems={item.children}>{item.name}</Item>}
-      </TreeView>
+      </Tree>
     )
   )
   .add(
     'Sections',
     () => (
-      <TreeView items={items} itemKey="name">
+      <Tree items={items} itemKey="name">
         {item => 
           (<Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
           </Section>)
         }
-      </TreeView>
+      </Tree>
     )
   )
   .add(
     'Static',
     () => (
-      <TreeView>
+      <Tree>
         <Item>One</Item>
         <Item>Two</Item>
         <Item title="Three">
@@ -55,13 +55,13 @@ storiesOf('TreeView', module)
             <Item>Six</Item>
           </Item>
         </Item>
-      </TreeView>
+      </Tree>
     )
   )
   .add(
     'Static sections',
     () => (
-      <TreeView>
+      <Tree>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -72,6 +72,6 @@ storiesOf('TreeView', module)
           <Item>Two</Item>
           <Item>Three</Item>
         </Section>
-      </TreeView>
+      </Tree>
     )
   );

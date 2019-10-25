@@ -2,24 +2,24 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
-import {Item, ListLayout, Node, Section, Tree} from '@react-stately/collections';
+import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
 import React, {Key, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
-import {useTreeViewState} from '@react-stately/treeview';
+import {useTreeState} from '@react-stately/tree';
 
 export {Item, Section};
 
-export function TreeView<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
+export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let {
     tree,
     onToggle,
     onSelectToggle
-  } = useTreeViewState(props);
+  } = useTreeState(props);
 
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 44,
-      indentationForItem(tree: Tree<T>, key: Key) {
+      indentationForItem(tree: TreeCollection<T>, key: Key) {
         let level = tree.getItem(key).level;
         return 28 * level;
       }

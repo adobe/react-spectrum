@@ -1,5 +1,5 @@
 // import React from 'react';
 
-export function useTreeView() {
+export function useTree() {
   return {};
 }

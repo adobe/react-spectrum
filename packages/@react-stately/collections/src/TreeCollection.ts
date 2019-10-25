@@ -1,7 +1,7 @@
 import {Collection, Node} from './types';
 import {Key} from 'react';
 
-export class Tree<T> implements Collection<Node<T>> {
+export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
   private iterable: Iterable<Node<T>>;
 

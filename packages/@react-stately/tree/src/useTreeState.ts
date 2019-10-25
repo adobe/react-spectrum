@@ -1,9 +1,9 @@
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {CollectionBuilder, Node, Tree} from '@react-stately/collections';
+import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
 import {Key, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
-export function useTreeViewState<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
+export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
@@ -23,7 +23,7 @@ export function useTreeViewState<T>(props: CollectionBase<T> & Expandable & Mult
       isSelected: selectedKeys.has(key)
     }));
 
-    return new Tree(nodes);
+    return new TreeCollection(nodes);
   }, [builder, props, expandedKeys, selectedKeys]);
 
   let onToggle = (item: Node<T>) => {
