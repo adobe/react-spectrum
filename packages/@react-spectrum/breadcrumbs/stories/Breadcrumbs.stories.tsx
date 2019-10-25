@@ -18,21 +18,25 @@ storiesOf('Breadcrumbs', module)
   )
   .add(
     'onPress',
-    () => render(
-      {},
-      [
-        {children: 'Folder 1', onPress: action('press Folder 1')},
-        {children: 'Folder 2', onPress: action('press Folder 2')},
-        {children: 'Folder 3', onPress: action('press Folder 3')}
-      ]
-    )
+    () => renderPress({})
   );
 
-function render(props = {}, children = []) {
-  let breadcrumbItems = children || [{children: 'Folder 1'}, {children: 'Folder 2'}, {children: 'Folder 3'}];
+function render(props = {}) {
   return (
     <Breadcrumbs {...props}>
-      {breadcrumbItems.map(item => <BreadcrumbItem {...item} />)}
+      <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      <BreadcrumbItem>Folder 2</BreadcrumbItem>
+      <BreadcrumbItem>Folder 3</BreadcrumbItem>
+    </Breadcrumbs>
+  );
+}
+
+function renderPress(props = {}) {
+  return (
+    <Breadcrumbs {...props}>
+      <BreadcrumbItem onPress={action('press Folder 1')}>Folder 1</BreadcrumbItem>
+      <BreadcrumbItem onPress={action('press Folder 2')}>Folder 2</BreadcrumbItem>
+      <BreadcrumbItem onPress={action('press Folder 3')}>Folder 3</BreadcrumbItem>
     </Breadcrumbs>
   );
 }
