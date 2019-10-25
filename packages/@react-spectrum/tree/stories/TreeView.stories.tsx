@@ -35,11 +35,11 @@ storiesOf('Tree', module)
     'Sections',
     () => (
       <Tree items={items} itemKey="name">
-        {item => 
-          (<Section items={item.children} title={item.name}>
+        {item => (
+          <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
-          </Section>)
-        }
+          </Section>
+        )}
       </Tree>
     )
   )
