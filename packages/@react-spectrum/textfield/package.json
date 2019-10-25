@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/textfield",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -9,16 +9,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react/react-spectrum": "^2.0.0",
-    "@react-aria/focus": "^3.0.0",
-    "@react-aria/i18n": "^3.0.0",
-    "@react-aria/utils": "^3.0.0",
-    "@react-aria/textfield": "^3.0.0",
-    "@react-spectrum/provider": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-types/textfield": "^3.0.0",
-    "@spectrum-icons/workflow": "^3.0.0"
+    "@adobe/spectrum-css-temp": "^2.26.0",
+    "@react-aria/focus": "^2.26.0",
+    "@react-aria/i18n": "^2.26.0",
+    "@react-aria/textfield": "^2.26.0",
+    "@react-aria/utils": "^2.26.0",
+    "@react-spectrum/provider": "^2.26.0",
+    "@react-spectrum/utils": "^2.26.0",
+    "@react-types/textfield": "^2.26.0",
+    "@react/react-spectrum": "^2.26.0",
+    "@spectrum-icons/workflow": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

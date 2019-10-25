@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/divider",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "description": "Spectrum UI components in React",
   "main": "src/index.ts",
@@ -9,16 +9,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react-aria/separator": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-types/shared": "^3.0.0"
+    "@adobe/spectrum-css-temp": "^2.26.0",
+    "@react-aria/separator": "^2.26.0",
+    "@react-spectrum/utils": "^2.26.0",
+    "@react-types/shared": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
-    "@react/react-spectrum": "^2.0.0"
+    "@react/react-spectrum": "^2.26.0"
   }
 }

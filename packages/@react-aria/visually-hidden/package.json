@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/visually-hidden",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/VisuallyHidden.tsx",
   "description": "Spectrum UI components in React",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.0",
+    "@react-types/shared": "^2.26.0",
     "classnames": "^2.2.5"
   },
   "peerDependencies": {

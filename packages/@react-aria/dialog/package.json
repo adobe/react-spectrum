@@ -1,7 +1,7 @@
 {
   "name": "@react-aria/dialog",
   "private": true,
-  "version": "3.0.0",
+  "version": "2.26.0",
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
   "repository": {

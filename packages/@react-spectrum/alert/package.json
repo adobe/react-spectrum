@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/alert",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/Alert.tsx",
   "description": "Spectrum UI components in React",
@@ -9,10 +9,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react-aria/i18n": "^3.0.0",
-    "@spectrum-icons/ui": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0"
+    "@adobe/spectrum-css-temp": "^2.26.0",
+    "@react-aria/i18n": "^2.26.0",
+    "@react-spectrum/utils": "^2.26.0",
+    "@spectrum-icons/ui": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",

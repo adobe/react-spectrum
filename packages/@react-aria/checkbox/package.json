@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/checkbox",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/toggle": "^3.0.0",
-    "@react-types/checkbox": "^3.0.0",
-    "@react-types/toggle": "^3.0.0"
+    "@react-aria/toggle": "^2.26.0",
+    "@react-types/checkbox": "^2.26.0",
+    "@react-types/toggle": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",
