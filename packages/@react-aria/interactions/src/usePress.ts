@@ -163,12 +163,14 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onPointerEnter = (e) => {
+        console.log("entered!!!!!!!")
         if (e.pointerId === state.activePointerId && state.isPressed) {
           triggerPressStart(e.target, e.pointerType);
         }
       };
 
       pressProps.onPointerLeave = (e) => {
+        console.log("leaving!!!!!!!")
         if (e.pointerId === state.activePointerId && state.isPressed) {
           triggerPressEnd(e.target, e.pointerType, false);
         }
@@ -200,26 +202,28 @@ export function usePress(props: PressHookProps): PressResult {
           e.nativeEvent.preventDefault();
           return;
         }
-        
+
         state.isPressed = true;
         state.target = e.currentTarget;
         triggerPressStart(e.target, 'mouse');
-        
+
         document.addEventListener('mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
+        console.log("mouse enter")
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           triggerPressStart(e.target, 'mouse');
         }
       };
 
       pressProps.onMouseLeave = (e) => {
+        console.log("mouse exit")
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           triggerPressEnd(e.target, 'mouse', false);
         }
       };
-    
+
       let onMouseUp = (e) => {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
@@ -228,10 +232,10 @@ export function usePress(props: PressHookProps): PressResult {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
-    
+
         triggerPressEnd(state.target, 'mouse');
       };
-    
+
       pressProps.onTouchStart = (e) => {
         let touch = getTouchFromEvent(e.nativeEvent);
         if (!touch) {

@@ -65,9 +65,13 @@ function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, 
 
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>
-        {content}
+          {content}
     </Overlay>
   );
+
+  console.log("&&&&&")
+  console.log(content) // props: {children: "This is a tooltip."}
+  console.log("&&&&&")
 
   return (
     <TooltipTriggerBase
@@ -80,6 +84,10 @@ function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, 
 }
 
 function TooltipTriggerBase({isOpen, onPress, trigger, overlay}) {
+
+  console.log("??????")
+  console.log(trigger) // props: {children: "Click Me"}
+  console.log("??????")
 
   return (
     <Fragment>
