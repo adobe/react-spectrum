@@ -26,6 +26,7 @@ describe('Breadcrumbs', function () {
     let {getByText} = render(<BreadcrumbItem isCurrent >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.tabIndex).toBe(-1);
+    expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
   });
 
   it('Handles onPress', () => {
