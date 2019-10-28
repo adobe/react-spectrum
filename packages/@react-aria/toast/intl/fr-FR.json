@@ -1,7 +1,4 @@
 {
   "close": "Fermer",
-  "error": "Erreur",
-  "info": "Informations",
-  "success": "Succès",
-  "warning": "Avertissement"
+  "info": "Informations"
 }

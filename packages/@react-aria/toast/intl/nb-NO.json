@@ -1,7 +1,4 @@
 {
   "close": "Lukk",
-  "error": "Feil",
-  "info": "Informasjon",
-  "success": "Vellykket",
-  "warning": "Advarsel"
+  "info": "Informasjon"
 }

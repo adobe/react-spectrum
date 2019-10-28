@@ -1,7 +1,4 @@
 {
   "close": "Stäng",
-  "error": "Fel",
-  "info": "Information",
-  "success": "Lyckades",
-  "warning": "Varning"
+  "info": "Information"
 }

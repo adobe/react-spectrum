@@ -37,8 +37,12 @@ export const ICONS = {
 export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};
   let completeProps = Object.assign({}, defaults, useProviderProps(props));
-  let ariaProps = useToast(completeProps);
-
+  let {
+    actionButtonProps,
+    closeButtonProps,
+    iconProps,
+    toastProps
+  } = useToast(completeProps);
   let {
     actionLabel,
     children,
@@ -51,7 +55,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...ariaProps.toastProps}
+      {...toastProps}
       ref={ref}
       className={classNames(styles,
         'spectrum-Toast',
@@ -60,7 +64,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
       )}>
       {Icon &&
         <Icon
-          {...ariaProps.iconProps}
+          {...iconProps}
           size={null}
           className={classNames(styles, 'spectrum-Toast-typeIcon')} />
       }
@@ -68,13 +72,13 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
         <div className={classNames(styles, 'spectrum-Toast-content')}>{children}</div>
         {actionLabel &&
           <Button
-            {...ariaProps.actionButtonProps}
+            {...actionButtonProps}
             isQuiet
             variant="overBackground">{actionLabel}</Button>
         }
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...ariaProps.closeButtonProps} variant="overBackground">
+        <ClearButton {...closeButtonProps} variant="overBackground">
           <CrossMedium />
         </ClearButton>
       </div>

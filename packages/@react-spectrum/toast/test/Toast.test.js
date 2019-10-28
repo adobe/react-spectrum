@@ -1,7 +1,7 @@
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {Toast} from '../';
-import {triggerPress} from '@react-spectrum/utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import {Toast as V2Toast} from '@react/react-spectrum/Toast';
 
 let testId = 'test-id';

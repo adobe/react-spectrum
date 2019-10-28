@@ -1,7 +1,7 @@
 import {cleanup, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways

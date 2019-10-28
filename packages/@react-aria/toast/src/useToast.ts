@@ -1,22 +1,14 @@
 import {AllHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
-import {PressEvent} from '@react-aria/interactions';
+import {PressProps} from '@react-aria/interactions';
 import {ToastProps} from '@react-types/toast';
 import {useMessageFormatter} from '@react-aria/i18n';
-
-interface ActionButtonProps extends AllHTMLAttributes<HTMLHeadingElement> {
-  onPress?: (e: PressEvent) => void,
-}
-
-interface CloseButtonProps extends AllHTMLAttributes<HTMLHeadingElement> {
-  onPress?: (e: PressEvent) => void,
-}
 
 interface ToastAria {
   toastProps: AllHTMLAttributes<HTMLHeadingElement>,
   iconProps: AllHTMLAttributes<HTMLHeadingElement>,
-  actionButtonProps: ActionButtonProps,
-  closeButtonProps: CloseButtonProps
+  actionButtonProps: PressProps,
+  closeButtonProps: AllHTMLAttributes<HTMLHeadingElement> | PressProps
 }
 
 export function useToast(props: ToastProps): ToastAria {
