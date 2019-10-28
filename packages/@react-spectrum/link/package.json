@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/{{packageName}}",
+  "name": "@react-spectrum/link",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -23,9 +23,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/{{packageName}}": "^3.0.0-alpha.1",
+    "@react-aria/focus": "^3.0.0-alpha.1",
+    "@react-aria/link": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/{{packageName}}": "^3.0.0-alpha.1"
+    "@react-types/link": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
