@@ -27,7 +27,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
     holdAffordance,
     ...otherProps
   } = props;
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let {buttonProps, isPressed, isHovering} = useButton({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

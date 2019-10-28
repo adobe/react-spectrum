@@ -67,10 +67,22 @@ function TooltipTriggerContainer({type, isOpen, onPress, onClose, targetRef, tri
     isOpen
   });
 
+  let triggerPropsWithRef = {
+    ref: triggerRef
+  };
+
+
+  console.log("placement....", overlayProps) // top and left are at 0!! That's the top left corner!
+
+
+  let blah = React.cloneElement(content, {...props, ref: overlayRef, ...overlayProps, showIcon: isOpen})
+  console.log("right here... ", blah)
+
+
   let overlay = (
-    <Overlay isOpen={isOpen} ref={containerRef}>
-          {content}
-    </Overlay>
+    // <Overlay isOpen={isOpen} ref={containerRef}>
+      blah
+    // </Overlay>
   );
 
   console.log("&&&&&")
@@ -83,6 +95,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, onClose, targetRef, tri
   if (type === 'click') {
     return (
       <TooltipClickTrigger
+        xyz={triggerPropsWithRef}
         isOpen={isOpen}
         onPress={onPress}
         trigger={trigger}
@@ -100,7 +113,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, onClose, targetRef, tri
 
 }
 
-function TooltipClickTrigger({isOpen, onPress, trigger, overlay}) {
+function TooltipClickTrigger({xyz, isOpen, onPress, trigger, overlay}) {
 
   console.log("??????")
   console.log(trigger) // props: {children: "Click Me"}
@@ -109,6 +122,7 @@ function TooltipClickTrigger({isOpen, onPress, trigger, overlay}) {
   return (
     <Fragment>
       <PressResponder
+        {...xyz}
         isPressed={isOpen}
         onPress={onPress}>
         {trigger}

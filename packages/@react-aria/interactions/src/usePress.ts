@@ -34,7 +34,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    console.log("press has context") // runs 
+    console.log("press has context") // runs
     let {register, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
@@ -144,6 +144,8 @@ export function usePress(props: PressHookProps): PressResult {
         }
       }
     };
+
+    console.log(PointerEvent)
 
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {

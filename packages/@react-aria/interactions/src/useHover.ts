@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {HoverResponderContext} from './hoverContext';
 
@@ -30,7 +30,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
   let context = useContext(HoverResponderContext);
   if (context) {
-    console.log("hover has context") // does not run 
+    console.log("hover has context") // called
     let {register, ...contextProps} = context;
     props = mergeProps(contextProps, props) as HoverHookProps;
     register();
@@ -81,13 +81,14 @@ export function useHover(props: HoverHookProps): HoverResult {
 
     let state = ref.current;
 
-    let triggerHoverStart = (target, pointerType) => {
+    console.log(state)
+
+    let triggerHoverStart = (target) => {
 
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
-          target,
-          pointerType
+          target
         });
       }
 
@@ -98,13 +99,12 @@ export function useHover(props: HoverHookProps): HoverResult {
       setHover(true);
     };
 
-    let triggerHoverEnd = (target, pointerType, wasHovered = true) => {
+    let triggerHoverEnd = (target, wasHovered = true) => {
 
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
-          target,
-          pointerType
+          target
         });
       }
 
@@ -114,36 +114,47 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
-      if (onPress && wasHovered) {
-        onPress({
-          type: 'press',
-          target,
-          pointerType
+      if (onHover && wasHovered) {
+        onHover({
+          type: 'hovering',
+          target
         });
       }
     };
 
-    if (typeof PointerEvent !== 'undefined') {
 
-      pressProps.onPointerEnter = (e) => {
-        console.log("hovering")
-      };
 
-      pressProps.onPointerLeave = (e) => {
-        console.log("not hovering")
-      };
+    let hoverProps: HTMLAttributes<HTMLElement> = {
+      onMouseEnter(e) {
+        if (!state.isHovering) {
+          state.isHovering = true;
+          triggerHoverStart(e.target);
+          console.log("hover state triggered")
+        }
+      },
+      onMouseLeave(e) {
+        if (state.isHovering) {
+          state.isHovering = false;
+          triggerHoverEnd(e.target);
+          console.log("hover state ended")
+        }
+      }
+    };
 
-    } else {
+    console.log(PointerEvent) // called
 
-      pressProps.onMouseEnter = (e) => {
-        console.log("mouse enter")
-      };
 
-      pressProps.onMouseLeave = (e) => {
-        console.log("mouse exit")
-      };
+    hoverProps.onMouseEnter = (e) => {
+      console.log("mouse enter")
+      state.target = e.currentTarget;
+      triggerHoverStart(e.target);
+    };
 
-    }
+    hoverProps.onMouseLeave = (e) => {
+      console.log("mouse exit")
+      triggerHoverEnd(e.target);
+    };
+
 
     return hoverProps;
   }, [onHover, onHoverStart, onHoverEnd, onHoverChange]);

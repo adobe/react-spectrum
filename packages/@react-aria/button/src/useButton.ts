@@ -1,8 +1,8 @@
 import {chain, mergeProps} from '@react-aria/utils';
 import {JSXElementConstructor, SyntheticEvent} from 'react';
-import {PressHookProps, usePress} from '@react-aria/interactions';
+import {PressHookProps, HoverHookProps, usePress, useHover} from '@react-aria/interactions';
 
-interface AriaButtonProps extends PressHookProps {
+interface AriaButtonProps extends PressHookProps, HoverHookProps {
   elementType?: string | JSXElementConstructor<any>,
   /**
    * for backwards compatibility
@@ -19,7 +19,8 @@ interface AriaButtonProps extends PressHookProps {
 
 interface ButtonAria {
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
-  isPressed: boolean
+  isPressed: boolean,
+  isHovering: boolean
 }
 
 export function useButton(props: AriaButtonProps): ButtonAria {
@@ -30,6 +31,10 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     onPressStart,
     onPressEnd,
     onPressChange,
+    onHover,
+    onHoverChange,
+    onHoverStart,
+    onHoverEnd,
     onClick: deprecatedOnClick,
     href,
     tabIndex,
@@ -59,8 +64,17 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     ref
   });
 
+  let {hoverProps, isHovering} = useHover({
+    onHoverStart: chain(onHoverStart, (e) => e.target.focus()),
+    onHoverEnd: chain(onHoverEnd, (e) => e.target.focus()),
+    onHoverChange,
+    onHover,
+    ref
+  });
+
   return {
     isPressed,
+    isHovering,
     buttonProps: mergeProps(pressProps, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
