@@ -82,7 +82,6 @@ describe('Toast', function () {
   `('$Name handles action and close button clicks when action closes', function ({Component, props, message}) {
     let {getAllByRole, getByText} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
-    // fireEvent.focus(input);
 
     // action button
     triggerPress(button[0]);
@@ -100,7 +99,7 @@ describe('Toast', function () {
     Name           | Component    | props                     | message
     ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true}}  | ${'Toast time!'}
     ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}  | ${'Toast time!'}
-  `('$Name handles action and close button clicks when action closes', function ({Component, props, message}) {
+  `('$Name action button and close button are focusable', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
 

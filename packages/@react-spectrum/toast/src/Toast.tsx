@@ -66,7 +66,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
         <ClearButton {...ariaProps.closeButtonProps} variant="overBackground">
-          <CrossMedium size={null} />
+          <CrossMedium />
         </ClearButton>
       </div>
     </div>

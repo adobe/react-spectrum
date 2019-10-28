@@ -38,7 +38,7 @@ export const ICON_VARIANTS = {
   positive: SuccessMedium,
   success: SuccessMedium,
   warning: AlertMedium
-}
+};
 
 export function cloneIcon(icon, opts:CloneIconOptions = {}) {
   if (!icon) {
