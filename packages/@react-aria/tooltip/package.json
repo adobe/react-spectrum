@@ -1,21 +1,22 @@
 {
-  "name": "@react-stately/{{packageName}}",
+  "name": "@react-aria/tooltip",
   "version": "3.0.0-alpha.1",
+  "main": "dist/main.js",
   "description": "Spectrum UI components in React",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
-  "source": "src/index.ts",
-  "files": ["dist"],
+  "source": "src/useTooltip.ts",
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-alpha.1"
+    "@babel/runtime": "^7.6.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

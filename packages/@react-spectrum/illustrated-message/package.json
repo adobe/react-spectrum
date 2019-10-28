@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/{{packageName}}",
+  "name": "@react-spectrum/illustrated-message",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -23,9 +23,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/{{packageName}}": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/{{packageName}}": "^3.0.0-alpha.1"
+    "@react-aria/illustrated-message": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
