@@ -15,15 +15,24 @@
 * from Adobe.
 **************************************************************************/
 
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, ICON_VARIANTS} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {HTMLElement} from 'react-dom';
+import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
+import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {ToastProps} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToast} from '@react-aria/toast';
+
+export const ICONS = {
+  info: InfoMedium,
+  negative: AlertMedium,
+  positive: SuccessMedium
+};
 
 export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};
@@ -37,7 +46,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
     variant,
     ...otherProps
   } = completeProps;
-  let Icon = ICON_VARIANTS[variant];
+  let Icon = ICONS[variant];
 
   return (
     <div

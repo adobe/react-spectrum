@@ -15,12 +15,8 @@
 * from Adobe.
 **************************************************************************/
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import classNames from 'classnames';
-import HelpMedium from '@spectrum-icons/ui/HelpMedium';
-import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
-import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 
 interface CloneIconOptions {
   className?: string,
@@ -29,16 +25,6 @@ interface CloneIconOptions {
   'aria-hidden'?: boolean,
   alt?: string
 }
-
-export const ICON_VARIANTS = {
-  error: AlertMedium,
-  help: HelpMedium,
-  info: InfoMedium,
-  negative: AlertMedium,
-  positive: SuccessMedium,
-  success: SuccessMedium,
-  warning: AlertMedium
-};
 
 export function cloneIcon(icon, opts:CloneIconOptions = {}) {
   if (!icon) {
