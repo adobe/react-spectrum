@@ -42,10 +42,10 @@ storiesOf('Tooltip', module)
   )
   .add(
     'triggered by click',
-    () => renderWithClickTrigger('This is a tooltip.', {placement: 'right'})
+    () => renderWithClickTrigger('This is a tooltip.', {placement: 'right', type: 'click'})
   ).add(
     'triggered by hover',
-    () => render('This is a tooltip.', {trigger: 'hover', placement: 'right'})
+    () => renderWithHoverTrigger('This is a tooltip.', {placement: 'right', type: 'hover'})
   );
 
 function render(content, props = {}) {
@@ -74,6 +74,17 @@ function renderWithClickTrigger(content, props = {}) {
       </Tooltip>
     </TooltipTrigger>
   );
+}
+
+function renderWithHoverTrigger(content, props = {}) {
+  return (
+    <TooltipTrigger {...props}>
+      <ActionButton>Hover Over Me</ActionButton>
+      <Tooltip>
+        {content}
+      </Tooltip>
+    </TooltipTrigger>
+  )
 }
 
 const longMarkup = (

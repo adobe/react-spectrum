@@ -1,5 +1,5 @@
-import {HoverProps} from './usePress';
-import {HoverResponderContext} from './context';
+import {HoverProps} from './useHover';
+import {HoverResponderContext} from './hoverContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface HoverResponderProps extends PressProps {
@@ -19,7 +19,8 @@ export const HoverResponder = React.forwardRef(({children, ...props}: HoverRespo
   useEffect(() => {
     if (!isRegistered.current) {
       console.warn(
-        'A HoverResponder was rendered without a hoverable child. '
+        'A HoverResponder was rendered without a hoverable child.' +
+        ' Make sure you are using the useHover hook.'
       );
     }
   }, []);

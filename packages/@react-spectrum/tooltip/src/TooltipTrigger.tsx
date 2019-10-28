@@ -1,11 +1,13 @@
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
+import {HoverResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactNode, ReactElement, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 interface TooltipTriggerProps extends PositionProps {
   children: ReactNode,
+  type?: 'click' | 'hover',
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   defaultOpen?: boolean,
@@ -16,6 +18,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let {
     children,
+    type,
     targetRef,
     ...positionProps
   } = props;
@@ -38,6 +41,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   return (
     <TooltipTriggerContainer
+      type={type}
       isOpen={isOpen}
       onPress={onPress}
       onClose={onClose}
@@ -49,7 +53,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
 }
 
-function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, content, ...props}) {
+function TooltipTriggerContainer({type, isOpen, onPress, onClose, targetRef, trigger, content, ...props}) {
 
   let containerRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<HTMLElement>();
@@ -72,18 +76,31 @@ function TooltipTriggerContainer({isOpen, onPress, onClose, targetRef, trigger, 
   console.log("&&&&&")
   console.log(content) // props: {children: "This is a tooltip."}
   console.log("&&&&&")
+  console.log(type) // passes correct value
+  console.log("&&&&&")
 
-  return (
-    <TooltipTriggerBase
-      isOpen={isOpen}
-      onPress={onPress}
-      trigger={trigger}
-      overlay={overlay} />
-  );
+
+  if (type === 'click') {
+    return (
+      <TooltipClickTrigger
+        isOpen={isOpen}
+        onPress={onPress}
+        trigger={trigger}
+        overlay={overlay} />
+    );
+  } else {
+    return (
+      <TooltipHoverTrigger
+        isOpen={isOpen}
+        onPress={onPress}
+        trigger={trigger}
+        overlay={overlay} />
+    );
+  }
 
 }
 
-function TooltipTriggerBase({isOpen, onPress, trigger, overlay}) {
+function TooltipClickTrigger({isOpen, onPress, trigger, overlay}) {
 
   console.log("??????")
   console.log(trigger) // props: {children: "Click Me"}
@@ -96,6 +113,21 @@ function TooltipTriggerBase({isOpen, onPress, trigger, overlay}) {
         onPress={onPress}>
         {trigger}
       </PressResponder>
+        {overlay}
+    </Fragment>
+  );
+
+}
+
+function TooltipHoverTrigger({isOpen, onPress, trigger, overlay}) {
+
+  return (
+    <Fragment>
+      <HoverResponder
+        isPressed={isOpen}
+        onPress={onPress}>
+        {trigger}
+      </HoverResponder>
         {overlay}
     </Fragment>
   );

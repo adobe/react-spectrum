@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {HoverResponderContext} from './hoverContext';
 
 export interface HoverEvent {
   type: 'hoverstart' | 'hoverend' | 'hovering',
@@ -29,6 +30,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
   let context = useContext(HoverResponderContext);
   if (context) {
+    console.log("hover has context") // does not run 
     let {register, ...contextProps} = context;
     props = mergeProps(contextProps, props) as HoverHookProps;
     register();
