@@ -28,7 +28,6 @@ export const TagGroup = ((props: TagGroupProps) => {
   let {
     isReadOnly,
     isDisabled,
-    isRemovable,
     onRemove,
     validationState,
     children,
@@ -64,9 +63,9 @@ export const TagGroup = ((props: TagGroupProps) => {
         {...tagGroupProps}>
         <TagGroupContext.Provider
           value={{
-            isRemovable: !isReadOnly && isRemovable,
+            isRemovable: isReadOnly ? false : isReadOnly,
             isDisabled,
-            onRemove: removeAll,
+            onRemove: isReadOnly ? null : removeAll,
             validationState,
             role: 'gridcell'
           }}>

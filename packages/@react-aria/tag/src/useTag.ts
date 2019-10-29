@@ -1,10 +1,19 @@
-import {AriaTagProps} from '@react-types/tag';
-import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent} from 'react';
+import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode} from 'react';
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
+import {Removable} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface TagAria {
+
+export interface AriaTagProps extends Removable<ReactNode, void> {
+  children?: ReactNode,
+  isDisabled?: boolean,
+  validationState?: 'invalid' | 'valid',
+  isSelected?: boolean,
+  role?: string
+}
+
+export interface TagAria {
   tagProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>

@@ -13,7 +13,6 @@ export const Tag = ((props: TagProps) => {
     className,
     isDisabled,
     isRemovable,
-    isSelected,
     validationState,
     ...otherProps
   } = props;
@@ -25,8 +24,8 @@ export const Tag = ((props: TagProps) => {
     role
   } =  useTagGroupProvider();
 
-  let removable = isRemovable !== undefined ? isRemovable : isGroupRemovable;
-  let disabled = isDisabled !== undefined ? isDisabled : isGroupDisabled;
+  let removable = isGroupRemovable !== undefined ? isGroupRemovable : isRemovable;
+  let disabled = isGroupDisabled !== undefined ? isGroupDisabled : isDisabled;
   let isInvalid = (validationState !== undefined ? validationState : groupValidationState) === 'invalid';
   let {clearButtonProps, labelProps, tagProps} = useTag({
     ...props,
@@ -49,8 +48,8 @@ export const Tag = ((props: TagProps) => {
           'spectrum-Tags-item',
           {
             'is-disabled': disabled,
-            'is-selected': isSelected,
-            'spectrum-Tags-item--deletable': removable,
+            // 'is-selected': isSelected,
+            'spectrum-Tags-item--removable': removable,
             'is-invalid': isInvalid
           },
           className

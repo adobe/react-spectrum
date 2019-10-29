@@ -14,15 +14,15 @@ describe('TagGroup', function () {
 
   it('provides context for Tag component', function () {
     let {container} = render(
-      <TagGroup isRemovable onRemove={onRemoveSpy}>
+      <TagGroup onRemove={onRemoveSpy}>
         <div>
-          <Tag>Tag 1</Tag>
+          <Tag isRemovable>Tag 1</Tag>
         </div>
         <div>
-          <Tag>Tag 2</Tag>
+          <Tag isRemovable>Tag 2</Tag>
         </div>
         <div>
-          <Tag>Tag 3</Tag>
+          <Tag isRemovable>Tag 3</Tag>
         </div>
       </TagGroup>
     );

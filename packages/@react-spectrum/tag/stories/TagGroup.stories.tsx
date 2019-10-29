@@ -8,9 +8,8 @@ storiesOf('TagGroup', module)
     'default',
     () => render({})
   ).add(
-    'with remove',
-    () => render({
-      isRemovable: true,
+    'onRemove',
+    () => renderWithRemovableTags({
       onRemove: action('onRemove')
     })
   ).add(
@@ -19,17 +18,10 @@ storiesOf('TagGroup', module)
       isDisabled: true
     })
   ).add(
-    'with child wrapper, disabled',
-    () => (
-      <TagGroup>
-        <div>
-          <Tag isSelected>Tag 1</Tag>
-          <Tag isDisabled>Tag 2</Tag>
-          <Tag validationState="invalid" isSelected>Tag 3</Tag>
-          <Tag isRemovable onRemove={action('onRemove')} isSelected>Tag 3</Tag>
-        </div>
-      </TagGroup>
-    )
+    'isReadOnly',
+    () => renderWithRemovableTags({
+      isReadOnly: true
+    })
   ).add(
     'with announcing',
     () => (
@@ -43,6 +35,16 @@ function render(props: any = {}) {
       <Tag>Cool Tag 1</Tag>
       <Tag>Cool Tag 2</Tag>
       <Tag>Cool Tag 3</Tag>
+    </TagGroup>
+  );
+}
+
+function renderWithRemovableTags(props: any = {}) {
+  return (
+    <TagGroup {...props}>
+      <Tag isRemovable>Cool Tag 1</Tag>
+      <Tag isRemovable>Cool Tag 2</Tag>
+      <Tag isRemovable>Cool Tag 3</Tag>
     </TagGroup>
   );
 }
@@ -61,7 +63,7 @@ function WithAnnouncing() {
       {/*
         // @ts-ignore */}
       <TagGroup onKeyDown={handleKeyDown}>
-        {tags.map(t => <Tag>{t}</Tag>)}
+        {tags.map((t, index) => <Tag key={index}>{t}</Tag>)}
       </TagGroup>
     </React.Fragment>
   );
