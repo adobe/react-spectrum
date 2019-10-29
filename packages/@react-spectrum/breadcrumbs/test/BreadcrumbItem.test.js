@@ -51,13 +51,14 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbItem.href).toBeDefined();
   });
 
-  it('Can forward ref', function () {
+  it('Should handle forward ref', function () {
     let ref;
     let Component = () => {
       ref = useRef();
       return <BreadcrumbItem ref={ref}>Breadcrumb item</BreadcrumbItem>;
     };
     let {getByText} = render(<Component />);
-    expect(ref.current).toEqual(getByText('Breadcrumb item'));
+    let breadcrumbItem = getByText('Breadcrumb item');
+    expect(breadcrumbItem).toEqual(ref.current);
   });
 });

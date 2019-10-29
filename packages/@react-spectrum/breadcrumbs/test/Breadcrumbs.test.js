@@ -62,7 +62,7 @@ describe('Breadcrumbs', function () {
     expect(item).toBeDefined();
   });
 
-  it('Can forward ref', function () {
+  it('Should handle forward ref', function () {
     let ref;
     let Component = () => {
       ref = useRef();
@@ -73,7 +73,8 @@ describe('Breadcrumbs', function () {
       );
     };
     let {getByLabelText} = render(<Component />);
-    expect(ref.current).toEqual(getByLabelText('breadcrumbs-test'));
+    let breadcrumb = getByLabelText('breadcrumbs-test');
+    expect(breadcrumb).toBe(ref.current);
   });
 
   it('Handles custom heading aria level prop', () => {
