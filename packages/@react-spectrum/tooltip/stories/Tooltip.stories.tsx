@@ -52,7 +52,8 @@ function render(content, props = {}) {
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip
-        {...props}>
+        {...props}
+        open>
         {content}
       </Tooltip>
     </div>

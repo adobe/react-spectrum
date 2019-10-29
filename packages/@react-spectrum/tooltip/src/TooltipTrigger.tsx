@@ -56,7 +56,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, targetRef, trigger, con
   };
 
   let overlay = (
-    React.cloneElement(content, {...props, ref: overlayRef, ...overlayProps, showIcon: isOpen})
+    React.cloneElement(content, {...props, ref: overlayRef, ...overlayProps, open: isOpen})
   );
 
   if (type === 'click') {
