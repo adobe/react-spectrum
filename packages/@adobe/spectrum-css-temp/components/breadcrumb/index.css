@@ -142,26 +142,12 @@ governing permissions and limitations under the License.
         text-decoration: none;
       }
     }
+  
+    .spectrum-Heading--pageTitle {
+      margin: 0;
 
-  }
-}
-
-/* @deprecated */
-.spectrum-Breadcrumbs--title .spectrum-Breadcrumbs-item {
-  &:last-of-type {
-    width: 100%;
-
-    margin: var(--spectrum-breadcrumb-title-margin);
-
-    font-size: var(--spectrum-breadcrumb-title-active-text-size);
-    font-weight: var(--spectrum-breadcrumb-title-active-text-font-weight);
-    line-height: var(--spectrum-breadcrumb-title-active-text-line-height);
-  }
-
-  .spectrum-Heading--pageTitle {
-    margin: 0;
-
-    font-size: inherit;
-    font-weight: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+    }
   }
 }
