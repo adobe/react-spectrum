@@ -5,9 +5,9 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {InputBase, RangeInputBase, TextInputBase, ValidationState, ValueBase} from '@react-types/shared';
+import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject} from 'react';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css'; // HACK: must be included BEFORE inputgroup
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
@@ -41,7 +41,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
   });
 
   className = classNames(
-    styles,
+    inputgroupStyles,
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
@@ -54,8 +54,8 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
   return (
     <FocusRing
       within
-      focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}>
+      focusClass={classNames(inputgroupStyles, 'is-focused')}
+      focusRingClass={classNames(inputgroupStyles, 'focus-ring')}>
       <div
         {...filterDOMProps(completeProps)}
         ref={ref}
@@ -70,29 +70,27 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           // autoComplete="off""
           validationState={validationState as ValidationState}
           isQuiet={isQuiet}
-          className={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          className={`${classNames(stepperStyle, 'spectrum-Stepper-input')} ${classNames(inputgroupStyles, 'spectrum-FieldButton')}`}
           {...numberFieldProps} />
         {showStepper &&
-        <div>
-          <span
-            className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
-            role="presentation">
-            <ActionButton
-              className={classNames(stepperStyle, 'spectrum-Stepper-stepUp')}
-              {...incrementButtonProps}
-              isQuiet={isQuiet}
-              tabIndex={-1}>
-              <ChevronUpSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
-            </ActionButton>
-            <ActionButton
-              className={classNames(stepperStyle, 'spectrum-Stepper-stepDown')}
-              {...decrementButtonProps}
-              isQuiet={isQuiet}
-              tabIndex={-1}>
-              <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
-            </ActionButton>
-          </span>
-        </div>
+        <span
+          className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
+          role="presentation">
+          <ActionButton
+            className={`${classNames(inputgroupStyles, 'spectrum-FieldButton')} ${classNames(stepperStyle, 'spectrum-Stepper-stepUp')}`}
+            {...incrementButtonProps}
+            isQuiet={isQuiet}
+            tabIndex={-1}>
+            <ChevronUpSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
+          </ActionButton>
+          <ActionButton
+            className={`${classNames(inputgroupStyles, 'spectrum-FieldButton')} ${classNames(stepperStyle, 'spectrum-Stepper-stepDown')}`}
+            {...decrementButtonProps}
+            isQuiet={isQuiet}
+            tabIndex={-1}>
+            <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
+          </ActionButton>
+        </span>
         }
       </div>
     </FocusRing>

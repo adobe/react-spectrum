@@ -12,7 +12,7 @@ export function useNumberFieldState(props) {
   } = props;
 
   let isValid = useRef(true);
-  let [numValue, setNumValue] = useControlledState(value, defaultValue, onChange);
+  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
 
   let onIncrement = () => {
     setNumValue(previousValue => {
@@ -58,9 +58,7 @@ export function useNumberFieldState(props) {
     // the onChange handler, but we do want to update the value state.
     const resemblesNumber = numeric || value === '-' || value === '';
 
-    if (isInputValueInvalid(value, maxValue, minValue)) {
-      isValid.current = false;
-    }
+    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
     if (resemblesNumber) {
       setNumValue(value);
     }
