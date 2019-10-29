@@ -7,6 +7,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
 interface ClearButtonProps extends ButtonBase {
+  focusClassName?: string,
   variant?: 'overBackground'
 }
 
@@ -14,6 +15,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
   let {
     children = <CrossSmall />,
     className,
+    focusClassName,
     variant,
     ...otherProps
   } = props;
@@ -21,7 +23,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
   let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)}>
       <button
         {...filterDOMProps(otherProps, {icon: false})}
         {...buttonProps}

@@ -1,5 +1,4 @@
-import {cleanup, render} from '@testing-library/react';
-import {fireEvent} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
 import React, {useRef} from 'react';
 import V2Link from '@react/react-spectrum/Link';
