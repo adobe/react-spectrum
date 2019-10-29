@@ -2307,7 +2307,7 @@
   --spectrum-tag-icon-color-disabled: rgb(188, 188, 188);
   --spectrum-tag-border-color-error: rgb(227, 72, 80);
   --spectrum-tag-icon-color-error: rgb(227, 72, 80);
-  --spectrum-tag-text-color-error: rgb(215, 55, 63);
+  --spectrum-tag-text-color-error: rgb(116, 116, 116);
   --spectrum-tag-border-color-error-hover: rgb(215, 55, 63);
   --spectrum-tag-icon-color-error-hover: rgb(215, 55, 63);
   --spectrum-tag-text-color-error-hover: rgb(50, 50, 50);
@@ -2330,8 +2330,6 @@
   --spectrum-tag-deletable-text-color-down: rgb(116, 116, 116);
   --spectrum-tag-deletable-icon-color-down: rgb(50, 50, 50);
   --spectrum-tag-deletable-background-color-key-focus: rgb(255, 255, 255);
-  --spectrum-tag-deletable-color-focus: rgb(255, 255, 255);
-  --spectrum-tag-deletable-background-color-focus: rgb(55, 142, 240);
   --spectrum-tag-deletable-border-color-key-focus: rgb(55, 142, 240);
   --spectrum-tag-deletable-text-color-key-focus: rgb(116, 116, 116);
   --spectrum-tag-deletable-icon-color-key-focus: rgb(50, 50, 50);
