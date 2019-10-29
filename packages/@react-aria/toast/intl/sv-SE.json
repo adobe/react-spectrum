@@ -1,4 +1,6 @@
 {
   "close": "Stäng",
-  "info": "Information"
+  "info": "Information",
+  "negative": "Fel",
+  "positive": "Lyckades"
 }

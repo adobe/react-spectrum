@@ -1,4 +1,6 @@
 {
   "close": "Luk",
-  "info": "Oplysninger"
+  "info": "Oplysninger",
+  "negative": "Fejl",
+  "positive": "Fuldført"
 }

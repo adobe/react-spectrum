@@ -1,4 +1,6 @@
 {
   "close": "Lukk",
-  "info": "Informasjon"
+  "info": "Informasjon",
+  "negative": "Feil",
+  "positive": "Vellykket"
 }

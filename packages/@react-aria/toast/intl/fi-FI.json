@@ -1,4 +1,6 @@
 {
   "close": "Sulje",
-  "info": "Tiedot"
+  "info": "Tiedot",
+  "negative": "Virhe",
+  "positive": "Onnistui"
 }

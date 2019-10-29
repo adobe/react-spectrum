@@ -1,4 +1,6 @@
 {
   "close": "Kapat",
-  "info": "Bilgiler"
+  "info": "Bilgiler",
+  "negative": "Hata",
+  "positive": "Başarılı"
 }

@@ -1,4 +1,6 @@
 {
   "close": "Bezárás",
-  "info": "Információ"
+  "info": "Információ",
+  "negative": "Hiba",
+  "positive": "Siker"
 }

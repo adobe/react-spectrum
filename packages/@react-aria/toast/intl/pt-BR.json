@@ -1,4 +1,6 @@
 {
   "close": "Fechar",
-  "info": "Informação"
+  "info": "Informação",
+  "negative": "Erro",
+  "positive": "Sucesso"
 }

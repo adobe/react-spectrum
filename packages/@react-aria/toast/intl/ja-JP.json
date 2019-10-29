@@ -1,4 +1,6 @@
 {
   "close": "閉じる",
-  "info": "情報"
+  "info": "情報",
+  "negative": "エラー",
+  "positive": "成功"
 }
