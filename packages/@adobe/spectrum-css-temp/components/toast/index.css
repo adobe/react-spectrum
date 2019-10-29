@@ -31,7 +31,10 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-toast-border-radius);
 
-  padding: var(--spectrum-toast-padding-y) var(--spectrum-toast-padding-right) var(--spectrum-toast-padding-y) var(--spectrum-toast-padding-left);
+  padding-block-start: var(--spectrum-toast-padding-y);
+  padding-inline-end: var(--spectrum-toast-padding-right);
+  padding-block-end: var(--spectrum-toast-padding-y);
+  padding-inline-start: var(--spectrum-toast-padding-left);
 
   font-size: var(--spectrum-toast-text-size);
   font-weight: var(--spectrum-toast-text-font-weight);
@@ -42,15 +45,21 @@ governing permissions and limitations under the License.
   flex-shrink: 0;
   flex-grow: 0;
 
-  margin: var(--spectrum-toast-icon-padding-y) var(--spectrum-toast-icon-padding-right) var(--spectrum-toast-icon-padding-y) 0;
+  margin-block-start: var(--spectrum-toast-icon-padding-y);
+  margin-inline-end: var(--spectrum-toast-icon-padding-right);
+  margin-block-end: var(--spectrum-toast-icon-padding-y);
+  margin-inline-start: 0;
 }
 
 .spectrum-Toast-content {
   flex: 1 1 auto;
   display: inline-block;
   box-sizing: border-box;
-  padding: var(--spectrum-toast-content-padding-top) var(--spectrum-toast-content-padding-right) var(--spectrum-toast-content-padding-bottom) 0;
-  text-align: left;
+  padding-block-start: var(--spectrum-toast-content-padding-top);
+  padding-inline-end: var(--spectrum-toast-content-padding-right);
+  padding-block-end: var(--spectrum-toast-content-padding-bottom);
+  padding-inline-start: 0;
+  text-align: start;
 }
 
 .spectrum-Toast-buttons {
@@ -62,7 +71,7 @@ governing permissions and limitations under the License.
   .spectrum-ClearButton {
     & + .spectrum-Button,
     & + .spectrum-ClearButton {
-      margin-left: var(--spectrum-toast-button-gap);
+      margin-inline-start: var(--spectrum-toast-button-gap);
     }
   }
 }
@@ -72,14 +81,14 @@ governing permissions and limitations under the License.
   align-self: center;
 
   .spectrum-Button {
-    float: right;
-    margin-right: var(--spectrum-toast-button-margin-right);
+    float: inline-end;
+    margin-inline-end: var(--spectrum-toast-button-margin-right);
   }
 
   & + .spectrum-Toast-buttons {
-    padding-left: var(--spectrum-toast-padding-right);
+    padding-inline-start: var(--spectrum-toast-padding-right);
 
-    border-left-width: 1px;
-    border-left-style: solid;
+    border-inline-start-width: 1px;
+    border-inline-start-style: solid;
   }
 }
