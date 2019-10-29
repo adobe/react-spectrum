@@ -49,9 +49,6 @@ storiesOf('Tooltip', module)
   );
 
 function render(content, props = {}) {
-  console.log("lksjfdklsa")
-  console.log(props);
-  console.log("lksjfdklsa")
   return (
     <div style={{display: 'inline-block'}}>
       <Tooltip
@@ -63,9 +60,6 @@ function render(content, props = {}) {
 }
 
 function renderWithClickTrigger(content, props = {}) {
-  console.log("******")
-  console.log(props);
-  console.log("******")
   return (
     <TooltipTrigger {...props}>
       <ActionButton>Click Me</ActionButton>
@@ -84,7 +78,7 @@ function renderWithHoverTrigger(content, props = {}) {
         {content}
       </Tooltip>
     </TooltipTrigger>
-  )
+  );
 }
 
 const longMarkup = (

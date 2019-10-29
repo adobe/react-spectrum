@@ -34,7 +34,6 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    console.log("press has context") // runs
     let {register, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
@@ -145,8 +144,6 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
-    console.log(PointerEvent)
-
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         if (!state.isPressed) {
@@ -166,14 +163,12 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onPointerEnter = (e) => {
-        console.log("entered!!!!!!!")
         if (e.pointerId === state.activePointerId && state.isPressed) {
           triggerPressStart(e.target, e.pointerType);
         }
       };
 
       pressProps.onPointerLeave = (e) => {
-        console.log("leaving!!!!!!!")
         if (e.pointerId === state.activePointerId && state.isPressed) {
           triggerPressEnd(e.target, e.pointerType, false);
         }
@@ -214,14 +209,12 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseEnter = (e) => {
-        console.log("mouse enter")
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           triggerPressStart(e.target, 'mouse');
         }
       };
 
       pressProps.onMouseLeave = (e) => {
-        console.log("mouse exit")
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           triggerPressEnd(e.target, 'mouse', false);
         }

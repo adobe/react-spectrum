@@ -76,9 +76,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   ];
 
   let updatePosition = () => {
-    console.log("overlay Ref..............", overlayRef.current)
-    console.log("target ref............" , targetRef.current)
-    console.log("container ref................", containerRef.current)
     if (shouldUpdatePosition === false || !overlayRef.current || !targetRef.current || !containerRef.current) {
       return;
     }

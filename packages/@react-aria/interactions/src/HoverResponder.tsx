@@ -2,7 +2,7 @@ import {HoverProps} from './useHover';
 import {HoverResponderContext} from './hoverContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
-interface HoverResponderProps extends PressProps {
+interface HoverResponderProps extends HoverProps {
   children: ReactNode
 }
 

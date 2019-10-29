@@ -1,6 +1,6 @@
 import {chain, mergeProps} from '@react-aria/utils';
+import {HoverHookProps, PressHookProps, useHover, usePress} from '@react-aria/interactions';
 import {JSXElementConstructor, SyntheticEvent} from 'react';
-import {PressHookProps, HoverHookProps, usePress, useHover} from '@react-aria/interactions';
 
 interface AriaButtonProps extends PressHookProps, HoverHookProps {
   elementType?: string | JSXElementConstructor<any>,
@@ -72,10 +72,12 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     ref
   });
 
+  let interactionProps = mergeProps(pressProps, hoverProps);
+
   return {
     isPressed,
     isHovering,
-    buttonProps: mergeProps(pressProps, {
+    buttonProps: mergeProps(interactionProps, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,

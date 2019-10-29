@@ -41,7 +41,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
-              'is-active': isPressed,
+              'is-active': isPressed || isHovering,
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
