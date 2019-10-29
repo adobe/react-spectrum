@@ -1,6 +1,6 @@
 {
   "close": "Close",
   "info": "Info",
-  "negative": "Negative",
-  "positive": "Positive"
+  "negative": "Error",
+  "positive": "Success"
 }
