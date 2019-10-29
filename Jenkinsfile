@@ -26,6 +26,7 @@ livefyre('''
       - git checkout next
       - git reset --hard origin/next
       - make ci
+    timeout: 30
 ''')
 
 properties([parameters([choice(choices: 'noop\nmajor\nminor\npatch\npreminor\nprerelease\npublish only\nwebsite only', description: 'Bump npm version', name: 'VERSION')])])
