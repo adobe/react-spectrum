@@ -67,7 +67,7 @@ governing permissions and limitations under the License.
     }
 
     &.focus-ring {
-      color: var(--spectrum-tag-text-color-error-key-focus);
+      color: var(--spectrum-tag-icon-color-error-hover);
       border-color: var(--spectrum-tag-border-color-key-focus);
       box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
     }
@@ -107,6 +107,12 @@ governing permissions and limitations under the License.
         color: var(--spectrum-tag-removable-border-color-error-hover);
       }
     }
+
+    .spectrum-Tags-itemClearButton {
+      &.is-focused {
+         color: var(--spectrum-tag-icon-color-error-hover);
+       }
+     }
 
     &:active {
       border-color: var(--spectrum-tag-removable-border-color-error-down);
