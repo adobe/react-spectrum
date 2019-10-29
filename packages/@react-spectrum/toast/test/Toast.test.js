@@ -21,14 +21,17 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props  | message
+    name           | Component    | props  | message
     ${'Toast'}     | ${Toast}     | ${{}}  | ${'Toast time!'}
     ${'V2Toast'}   | ${V2Toast}   | ${{}}  | ${'Toast time!'}
-  `('$Name handles defaults', function ({Component, props, message}) {
-    let {getByRole, getByText} = renderComponent(Component, props, message);
+  `('$name handles defaults', function ({name, Component, props, message}) {
+    let {getAllByRole, getByRole, getByText} = renderComponent(Component, props, message);
 
     expect(getByRole('alert')).toBeTruthy();
     expect(getByText(message)).toBeTruthy();
+    if (name === 'Toast') {
+      expect(getAllByRole('presentation').length).toBe(1);
+    }
   });
 
   it.each`
@@ -39,20 +42,16 @@ describe('Toast', function () {
     let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
 
-    expect(className.includes('spectrum-Toast')).toBeTruthy();
     expect(className.includes('myClass')).toBeTruthy();
   });
 
   it.each`
     Name           | Component    | props                      | message
     ${'Toast'}     | ${Toast}     | ${{variant: 'info'}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{variant: 'info'}}  | ${'Toast time!'}
   `('$Name supports variant info', function ({Component, props, message}) {
-    let {getByTestId} = renderComponent(Component, props, message);
-    let className = getByTestId(testId).className;
+    let {getAllByRole} = renderComponent(Component, props, message);
 
-    expect(className.includes('spectrum-Toast')).toBeTruthy();
-    expect(className.includes('spectrum-Toast--info')).toBeTruthy();
+    expect(getAllByRole('presentation').length).toBe(2);
   });
 
   it.each`

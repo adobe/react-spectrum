@@ -65,7 +65,6 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
       {Icon &&
         <Icon
           {...iconProps}
-          size={null}
           className={classNames(styles, 'spectrum-Toast-typeIcon')} />
       }
       <div className={classNames(styles, 'spectrum-Toast-body')}>

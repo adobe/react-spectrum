@@ -12,6 +12,7 @@ interface ClearButtonProps extends ButtonBase {
 
 export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefObject<HTMLButtonElement>) => {
   let {
+    children = <CrossSmall />,
     className,
     variant,
     ...otherProps
@@ -36,7 +37,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
             className
           )
         }>
-        <CrossSmall />
+        {children}
       </button>
     </FocusRing>
   );
