@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/pagination",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/index.ts",
   "description": "Spectrum UI components in React",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.0.0"
+    "@react-aria/i18n": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/form",
-  "version": "3.0.0",
+  "version": "2.26.1",
   "main": "src/index.ts",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -9,19 +9,19 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0",
-    "@react-aria/i18n": "^3.0.0",
-    "@react-aria/label": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-types/label": "^3.0.0",
-    "@react-types/shared": "^3.0.0",
-    "@spectrum-icons/ui": "^3.0.0"
+    "@adobe/spectrum-css-temp": "^2.26.0",
+    "@react-aria/i18n": "^2.26.0",
+    "@react-aria/label": "^2.26.0",
+    "@react-spectrum/utils": "^2.26.0",
+    "@react-types/label": "^2.26.0",
+    "@react-types/shared": "^2.26.0",
+    "@spectrum-icons/ui": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@react-spectrum/checkbox": "^3.0.0",
-    "@react/react-spectrum": "^2.0.0"
+    "@react-spectrum/checkbox": "^2.26.0",
+    "@react/react-spectrum": "^2.26.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/tabs",
-  "version": "3.0.0",
+  "version": "2.26.0",
   "private": true,
   "main": "src/useTabList.ts",
   "description": "Spectrum UI components in React",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.0.0"
+    "@react-aria/utils": "^2.26.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

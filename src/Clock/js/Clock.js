@@ -36,7 +36,7 @@ const formatMessage = messageFormatter(intlMessages);
 
 
 /* In Firefox, input[type=number] always strips leading 0. */
-const useTextInputType = 'MozAppearance' in document.documentElement.style;
+let useTextInputType = typeof document !== 'undefined' ? 'MozAppearance' in document.documentElement.style : null;
 
 @convertUnsafeMethod
 @autobind
