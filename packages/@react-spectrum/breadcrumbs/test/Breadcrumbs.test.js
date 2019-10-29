@@ -32,6 +32,36 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
+  it('Handles multiple items', () => {
+    let {getByTestId} = render(
+      <Breadcrumbs className="test-class">
+        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
+        <BreadcrumbItem data-testid="item-3" >Folder 3</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let item1 = getByTestId('item-1');
+    expect(item1.tabIndex).toBe(0);
+    expect(item1).not.toHaveAttribute('aria-current');
+    let item2 = getByTestId('item-2');
+    expect(item2.tabIndex).toBe(0);
+    expect(item2).not.toHaveAttribute('aria-current');
+    let item3 = getByTestId('item-3');
+    expect(item3.tabIndex).toBe(-1);
+    expect(item3).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('Handles multiple items with size L', () => {
+    let {getByTestId} = render(
+      <Breadcrumbs size="L">
+        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+        <BreadcrumbItem>Folder 2</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let item = getByTestId('breadcrumb-heading');
+    expect(item).toBeDefined();
+  });
+
   it('Can forward ref', function () {
     let ref;
     let Component = () => {

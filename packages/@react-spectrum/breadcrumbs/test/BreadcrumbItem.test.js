@@ -1,12 +1,7 @@
 import {BreadcrumbItem} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
-
-export function triggerPress(element) {
-  fireEvent.mouseDown(element);
-  fireEvent.mouseUp(element);
-  fireEvent.click(element);
-}
+import {triggerPress} from '@react-spectrum/button/test/utils'; 
 
 // v3 component
 describe('Breadcrumbs', function () {
@@ -41,6 +36,19 @@ describe('Breadcrumbs', function () {
     let {getByText} = render(<BreadcrumbItem className="test-class" >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem).toHaveAttribute('class', expect.stringContaining('test-class'));
+  });
+
+  it('Handles custom element type', () => {
+    let {getByText} = render(
+      <BreadcrumbItem className="test-class" >
+        <a href="http://example.com/">Breadcrumb item </a>
+      </BreadcrumbItem>
+    );
+    let breadcrumbItem = getByText('Breadcrumb item');
+    expect(breadcrumbItem.id).toBeDefined();
+    expect(breadcrumbItem.tabIndex).toBe(0);
+    expect(breadcrumbItem).toHaveAttribute('class', expect.stringContaining('test-class'));
+    expect(breadcrumbItem.href).toBeDefined();
   });
 
   it('Can forward ref', function () {
