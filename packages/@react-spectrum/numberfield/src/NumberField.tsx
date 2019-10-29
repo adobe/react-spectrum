@@ -34,7 +34,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
     showStepper = true,
     ...otherProps
   } = completeProps;
-  let {validationState, ...numberFieldState} = useNumberFieldState(otherProps);
+  let {validationState, onChange, ...numberFieldState} = useNumberFieldState(otherProps);
   let {numberFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
     ...completeProps,
     ...numberFieldState
@@ -67,11 +67,12 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           className
         )}>
         <TextField
-          // autoComplete="off""
+          autoComplete="off"
           validationState={validationState as ValidationState}
           isQuiet={isQuiet}
           className={`${classNames(stepperStyle, 'spectrum-Stepper-input')} ${classNames(inputgroupStyles, 'spectrum-FieldButton')}`}
-          {...numberFieldProps} />
+          {...numberFieldProps}
+          onChange={onChange} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}

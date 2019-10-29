@@ -25,7 +25,6 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     isRequired,
     minValue,
     maxValue,
-    onChange,
     onIncrement,
     onIncrementToMax,
     onDecrement,
@@ -62,22 +61,22 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     onPress: onDecrement
   };
 
-  const handleInputScrollWheel = e => {
-    // If the input isn't supposed to receive input, do nothing.
-    // TODO: add focus
-    if (isDisabled || isReadOnly) {
-      return;
-    }
-
-    e.preventDefault();
-    if (e.deltaY < 0) {
-      onIncrement();
-    } else {
-      onDecrement();
-    }
-  };
-
   useEffect(() => {
+    const handleInputScrollWheel = e => {
+      // If the input isn't supposed to receive input, do nothing.
+      // TODO: add focus
+      if (isDisabled || isReadOnly) {
+        return;
+      }
+
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        onIncrement();
+      } else {
+        onDecrement();
+      }
+    };
+
     document.getElementById(inputId).addEventListener(
       'wheel',
       handleInputScrollWheel,
@@ -89,7 +88,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
         handleInputScrollWheel
       );
     };
-  }, [handleInputScrollWheel, inputId]);
+  }, [inputId, isReadOnly, isDisabled, onDecrement, onIncrement]);
 
   return {
     numberFieldProps: mergeProps(spinButtonProps, {
@@ -97,7 +96,6 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
       id: inputId,
       min: minValue,
       max: maxValue,
-      onChange,
       placeholder: formatMessage('Enter a number'),
       type: 'number',
       step,

@@ -27,7 +27,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@babel/runtime": "^7.6.2",
     "@react-aria/numberfield": "^3.0.0-alpha.1",
     "@react-aria/focus": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
@@ -35,6 +35,9 @@
     "@react-spectrum/textfield": "^3.0.0-alpha.1",
     "@react-spectrum/provider": "^3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
