@@ -1,4 +1,5 @@
 import Bell from '@react/react-spectrum/Icon/Bell';
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import {Tag} from '@react/react-spectrum/TagList';
 import {TagList} from '@react/react-spectrum/TagList';
 
@@ -7,7 +8,7 @@ import {TagList} from '@react/react-spectrum/TagList';
 
 ## Example
 
-<TagList onClose={e => console.log(e)}>
+<TagList aria-label="Example TagList" onClose={e => console.log(e)}>
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
   <Tag>This is a longer tab</Tag>
@@ -27,7 +28,7 @@ import {TagList} from '@react/react-spectrum/TagList';
 
 ### Read-only
 
-<TagList readOnly>
+<TagList readOnly aria-label="Read-only TagList">
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
 </TagList>
@@ -41,7 +42,7 @@ import {TagList} from '@react/react-spectrum/TagList';
 
 ### Disabled
 
-<TagList disabled>
+<TagList disabled aria-label="disabled TagList">
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
 </TagList>
@@ -57,7 +58,7 @@ import {TagList} from '@react/react-spectrum/TagList';
 
 Use provided values rather than tag text
 
-<TagList values={["Leonardo", "Donatello", "Michelangelo", "Raphael"]}>
+<TagList values={["Leonardo", "Donatello", "Michelangelo", "Raphael"]} aria-label="TagList using provided values rather than tag text" >
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
   <Tag>Tag 3</Tag>
@@ -79,7 +80,7 @@ Use provided values rather than tag text
 
 Function fired when a tag is closed.
 
-<TagList onClose={e => console.log(e)}>
+<TagList onClose={e => console.log(e)} aria-label="TagList with onClose event handler">
   <Tag closable>Tag 1</Tag>
   <Tag closable>Tag 2</Tag>
 </TagList>
@@ -96,7 +97,7 @@ Function fired when a tag is closed.
 
 Function fired when a tag is focused (clicked).
 
-<TagList onFocus={e => console.log(e)}>
+<TagList onFocus={e => console.log(e)} aria-label="TagList with onFocus event handler">
   <Tag>Tag 1</Tag>
   <Tag>Tag 2</Tag>
 </TagList>
@@ -219,4 +220,52 @@ import Bell from '@react/react-spectrum/Icon/Bell';
 <Tag icon={<Bell />}>
 Bell icon
 </Tag>
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+The TagList implements the [WAI-ARIA 1.1 Layout Grid](https://www.w3.org/TR/wai-aria-practices-1.1/#grid) design pattern, and in particular the example demonstrating a [Pill List For a List of Message Recipients](https://www.w3.org/TR/wai-aria-practices-1.1/examples/grid/LayoutGrids.html#ex2_label).
+
+### Labelling
+
+A TagList component should be labelled to provide context for Accessibility using either the `aria-label` or `aria-labelledby` attribute.
+
+#### Using `aria-label`
+
+<TagList aria-label="Keyword filters">
+  <Tag>Education</Tag>
+  <Tag>Healthcare</Tag>
+  <Tag>Nonprofit</Tag>
+  <Tag>Public Sector</Tag>
+</TagList>
+
+```jsx
+<TagList aria-label="Keyword filters">
+  <Tag>Education</Tag>
+  <Tag>Healthcare</Tag>
+  <Tag>Nonprofit</Tag>
+  <Tag>Public Sector</Tag>
+</TagList>
+```
+
+#### Using `aria-labelledby`
+
+<FieldLabel id="taglist-label-id" labelFor="taglist-id" label="Keyword filters" />
+<TagList id="taglist-id" aria-labelledby="taglist-label-id">
+  <Tag>Education</Tag>
+  <Tag>Healthcare</Tag>
+  <Tag>Nonprofit</Tag>
+  <Tag>Public Sector</Tag>
+</TagList>
+
+```jsx
+<FieldLabel id="taglist-label-id" labelFor="taglist-id" label="Keyword filters" />
+<TagList id="taglist-id" aria-labelledby="taglist-label-id">
+  <Tag>Education</Tag>
+  <Tag>Healthcare</Tag>
+  <Tag>Nonprofit</Tag>
+  <Tag>Public Sector</Tag>
+</TagList>
 ```

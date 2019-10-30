@@ -1,3 +1,5 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
+import {Tag} from '@react/react-spectrum/TagList';
 import TagField from '@react/react-spectrum/TagField';
 
 ## Overview
@@ -9,7 +11,7 @@ then display in a [TagList](taglist).
 
 ## Example
 
-<TagField placeholder="Tags" />
+<TagField placeholder="Tags" aria-label="Example" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -20,7 +22,7 @@ import TagField from '@react/react-spectrum/TagField';
 
 You can show existing tags by specifying a list of strings in the TagField's `value` property.
 
-<TagField placeholder="Tags" value={['Batman', 'Robin']}/>
+<TagField placeholder="Tags" value={['Batman', 'Robin']} aria-label="Displaying existing values" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -33,7 +35,7 @@ import TagField from '@react/react-spectrum/TagField';
 The `onChange` function that is called whenever a tag is added or removed from the TagField. It is passed
 an array of strings containing the updated list of tags.
 
-<TagField placeholder="Tags" onChange={tags => console.log(tags)}/>
+<TagField placeholder="Tags" onChange={tags => console.log(tags)} aria-label="Handling additions and removals" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -48,7 +50,7 @@ You can control the behaviour of autocomplete functionality by specifying a func
 in the TagField's `getCompletions` property. More details on this functionality
 is described under the [Autocomplete component docs](autocomplete).
 
-<TagField placeholder="Tags" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} />
+<TagField placeholder="Tags" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} aria-label="Autocomplete" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -61,7 +63,7 @@ import TagField from '@react/react-spectrum/TagField';
 You can disable the creation of new tags by setting the `allowCreate` property
 to `false`.
 
-<TagField placeholder="Nope!" allowCreate={false} />
+<TagField placeholder="Nope!" allowCreate={false} aria-label="Disabling Creation of New Tags" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -74,7 +76,7 @@ import TagField from '@react/react-spectrum/TagField';
 Duplicates are, by default, not allowed. You can allow it by ensuring the
 `allowDuplicates` property is present.
 
-<TagField placeholder="I like duplicates" allowDuplicates />
+<TagField placeholder="I like duplicates" allowDuplicates aria-label="Allowing Duplicates" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -86,7 +88,7 @@ import TagField from '@react/react-spectrum/TagField';
 You can customize the way items are rendered in the autocomplete suggestions by using the `renderItem` property.
 More details on this functionality is described under the [Autocomplete component docs](autocomplete)
 
-<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} />
+<TagField placeholder="Render item" getCompletions={() => ['Batman', 'Robin', 'Riddler', 'Penguin']} renderItem={item => <time>{item}</time>} aria-label="Custom item rendering in Autocomplete dropdown" />
 
 ```jsx
 import TagField from '@react/react-spectrum/TagField';
@@ -95,22 +97,128 @@ import TagField from '@react/react-spectrum/TagField';
 ```
 ## Custom tag rendering
 
-If the function passed to `getCompletions` returns a list of objects, by default 
-the TagField will render the individual tags with the `label` property. To customize the 
+If the function passed to `getCompletions` returns a list of objects, by default
+the TagField will render the individual tags with the `label` property. To customize the
 way tags are rendered (eg. to show an avatar), use the `renderTag` property which is a function
 that takes a `tag` object and returns a [`<Tag>`](taglist) component.
 
-<TagField 
-    placeholder="Custom tags" 
+<TagField
+    placeholder="Custom tags"
     getCompletions={() => [{label: 'With avatar', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'}]} 
-    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>}
+    aria-label="Custom tag rendering" />
 
 ```jsx
 import {Tag} from '@react/react-spectrum/TagList'
 import TagField from '@react/react-spectrum/TagField';
 
-<TagField 
-    placeholder="Custom tags" 
+<TagField
+    placeholder="Custom tags"
     getCompletions={() => [{label: 'With avatar', avatar: 'https://a5.behance.net/8adfcc7bd72ed18f2087e4eb472eb174c865716d/img/profile/no-image-138.png?cb=264615658'}]} 
-    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>} />
+    renderTag={(tag) => <Tag avatar={tag.avatar}>{tag.label}</Tag>}
+    aria-label="Custom tag rendering" />
+```
+
+## Accessibility
+
+### WAI-ARIA Design Pattern
+
+A **TagField** is a [TagList](taglist) component coupled with an
+[Autocomplete](autocomplete) component.
+
+With autocomplete features enabled by specifying a function
+in the TagField's `getCompletions` property, the TagField implements the
+[WAI-ARIA 1.1 ComboBox](https://www.w3.org/TR/wai-aria-practices/#combobox) design pattern.
+Otherwise, the TagField will be exposed as a text input.
+
+When Tags are displayed, a [TagList](taglist) component that implements the
+[WAI-ARIA 1.1 Layout Grid](https://www.w3.org/TR/wai-aria-practices-1.1/#grid) design pattern
+will render before the text input within the combo box control.
+
+### Labelling
+
+A TagField component must be labelled to provide for Accessibility using a FieldLabel, or either the `aria-label` or `aria-labelledby` attribute.
+
+#### Implicit labelling
+
+<FieldLabel label="Filter by industry">
+  <TagField
+    placeholder="Keyword…"
+    getCompletions={(text) => [
+      'Education',
+      'Financial services',
+      'Healthcare',
+      'High tech',
+      'Manufacturing',
+      'Media & entertainment',
+      'Nonprofit',
+      'Public sector',
+      'Retail',
+      'Telecommunications',
+      'Travel & hospitality'
+    ].filter(o => o.toLowerCase().startsWith(text.toLowerCase()))} />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Filter by Industry">
+  <TagField
+    placeholder="Keyword…"
+    getCompletions={(text) => [
+      'Education',
+      'Financial services',
+      'Healthcare',
+      'High tech',
+      'Manufacturing',
+      'Media & entertainment',
+      'Nonprofit',
+      'Public sector',
+      'Retail',
+      'Telecommunications',
+      'Travel & hospitality'
+    ].filter(o => o.toLowerCase().startsWith(text.toLowerCase()))} />
+</FieldLabel>
+```
+
+#### Explicit labelling
+
+TagField is a composite control, so it is necessary to use the `aria-labelledby` property to ensure that both the text field and the [TagList](taglist) are labelled appropriately.
+
+<FieldLabel label="Filter by Industry" labelFor="tagfield-id" id="tagfield-label-id" />
+<TagField
+  id="tagfield-id"
+  aria-labelledby="tagfield-label-id"
+  placeholder="Keyword…"
+  getCompletions={(text) => [
+      'Education',
+      'Financial services',
+      'Healthcare',
+      'High tech',
+      'Manufacturing',
+      'Media & entertainment',
+      'Nonprofit',
+      'Public sector',
+      'Retail',
+      'Telecommunications',
+      'Travel & hospitality'
+    ].filter(o => o.toLowerCase().startsWith(text.toLowerCase()))} />
+
+```jsx
+<FieldLabel label="Filter by Industry" labelFor="tagfield-id" id="tagfield-label-id" />
+<TagField
+  id="tagfield-id"
+  aria-labelledby="tagfield-label-id"
+  placeholder="Keyword…"
+  getCompletions={(text) => [
+      'Education',
+      'Financial services',
+      'Healthcare',
+      'High tech',
+      'Manufacturing',
+      'Media & entertainment',
+      'Nonprofit',
+      'Public sector',
+      'Retail',
+      'Telecommunications',
+      'Travel & hospitality'
+    ].filter(o => o.toLowerCase().startsWith(text.toLowerCase()))} />
 ```
