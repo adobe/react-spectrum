@@ -104,7 +104,7 @@ export default class Menu extends React.Component {
     delete otherProps.onClick;
 
     return (
-      <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={style} trapFocus={trapFocus}>
+      <Popover isDialog={false} placement={placement} open={open} onClose={onClose} style={{...style, overflowY: 'auto'}} trapFocus={trapFocus}>
         <List ref={l => this.listRef = l} role={role} className={className} onClick={this.onClick} {...otherProps}>
           {React.Children.map(children, child => React.cloneElement(child, {
             onSelect,

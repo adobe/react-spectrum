@@ -292,6 +292,7 @@ export default class Select extends React.Component {
           required={required}
           quiet={quiet}
           style={{
+            overflowY: 'auto',
             minWidth: minWidth,
             maxWidth: this.state.width > POPOVER_MAX_WIDTH ? this.state.width : null,
             marginRight: quiet && alignRight ? -1 * (QUIET_MARGIN / 2) : null
