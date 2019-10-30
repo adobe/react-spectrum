@@ -29,6 +29,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.0.0-alpha.1",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-aria/splitview": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/splitview": "^3.0.0-alpha.1",
