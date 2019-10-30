@@ -30,8 +30,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--quiet,
-/** @deprecated */.spectrum-Link--subtle {
+.spectrum-Link--secondary{
   color: inherit;
 
   &:hover {
