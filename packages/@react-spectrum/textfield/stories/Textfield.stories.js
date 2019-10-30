@@ -3,7 +3,6 @@ import Info from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
-import Tooltip from '@react/react-spectrum/Tooltip';
 
 storiesOf('TextField', module)
   .add(
@@ -33,17 +32,6 @@ storiesOf('TextField', module)
   .add(
     'validationState: invalid',
     () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: invalid, validationTooltip',
-    () => render({
-      validationState: 'invalid',
-      validationTooltip: (
-        <Tooltip>
-          tooltip
-        </Tooltip>
-      )
-    })
   )
   .add(
     'validationState: valid',
