@@ -21,7 +21,8 @@ export function useSearchField(
     isDisabled,
     onSubmit = () => {},
     onClear,
-    role = 'search'
+    role = undefined,
+    type = 'search'
   } = props;
 
   let onKeyDown = (e) => {
@@ -54,13 +55,12 @@ export function useSearchField(
 
   return {
     searchDivProps: {
-      role
     },
     searchFieldProps: {
-      role: 'searchbox',
+      role,
       value: state.value,
       onKeyDown: chain(props.onKeyDown, onKeyDown),
-      type: 'search'
+      type
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),

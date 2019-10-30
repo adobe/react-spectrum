@@ -31,22 +31,25 @@ describe('useSearchField hook', () => {
   });
 
   describe('should return searchDivProps', () => {
-    it('with a default search role', () => {
+    it('with a default container element that has no role', () => {
       let {searchDivProps} = renderSearchHook({});
-      expect(searchDivProps.role).toBe('search');
+      expect(!searchDivProps.role);
     });
 
     it('with a user specified role if provided', () => {
-      let role = 'button';
-      let {searchDivProps} = renderSearchHook({role});
-      expect(searchDivProps.role).toBe(role);
+      let role = 'combobox';
+      let type = 'text';
+      let {searchDivProps, searchFieldProps} = renderSearchHook({role, type});
+      expect(!searchDivProps.role);
+      expect(searchFieldProps.role).toBe(role);
+      expect(searchFieldProps.type).toBe(type);
     });
   });
-  
+
   describe('should return searchFieldProps', () => {
     it('with base props and value equal to state.value', () => {
       let {searchFieldProps} = renderSearchHook({});
-      expect(searchFieldProps.role).toBe('searchbox');
+      expect(!searchFieldProps.role);
       expect(searchFieldProps.type).toBe('search');
       expect(searchFieldProps.value).toBe(state.value);
       expect(typeof searchFieldProps.onKeyDown).toBe('function');
@@ -114,7 +117,7 @@ describe('useSearchField hook', () => {
       });
     });
   });
-  
+
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
@@ -122,7 +125,7 @@ describe('useSearchField hook', () => {
         light: themeLight,
         medium: scaleMedium
       };
-      
+
       let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);
