@@ -101,7 +101,14 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     shouldFlip: props.shouldFlip,
     isOpen
   });
-
+  // console.log('overlayProps', overlayProps);
+  // console.log('placement', placement);
+  console.log('props', props)
+  console.log('props placement', props.placement);
+  console.log('containerRef', containerRef.current)
+  console.log('targetRef', targetRef);
+  console.log('triggerRef', triggerRef.current);
+  console.log('overlayRef', overlayRef.current);
   let {triggerProps, dialogProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',

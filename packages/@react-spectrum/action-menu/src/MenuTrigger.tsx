@@ -91,12 +91,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
       }
     }
   }
-  console.log('placement', `${direction} ${align}`)
+
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     containerRef,
     targetRef: menuTriggerRef,
     overlayRef: menuRef,
-    placement: `${direction} ${align}`, // Legit?
+    placement: `${direction} ${align}`, // Legit? For some reason bottom/top right/left works but not bottom/top start/end. Do I just convert to right/left
     shouldFlip: shouldFlip,
     isOpen
   })
@@ -120,12 +120,13 @@ export function MenuTrigger(props: MenuTriggerProps) {
   menu = React.cloneElement(menu, {
     ...overlayProps, 
     placement, 
-    // arrowProps,
+    arrowProps,
     ref: menuRef,
     onSelect: onSelect,
     id: menuId,
     role: menu.props['role'] || 'menu',
-    'aria-labelledby': menu.props['aria-labelledby'] || menuTriggerId
+    'aria-labelledby': menu.props['aria-labelledby'] || menuTriggerId,
+    hideArrow: true
   });
   // console.log('menu', menu);
   // console.log('containerRef', containerRef.current);

@@ -5,8 +5,6 @@ import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-import {Dialog} from '@react-spectrum/dialog';
-
 storiesOf('MenuTrigger', module)
   .add(
     'default',
@@ -14,11 +12,13 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'align="start"',
-    () => render({align: 'start'})
+    // () => render({align: 'start'})
+    () => render({align: 'left'})
   )
   .add(
     'align="end"',
-    () => render({align: 'end'})
+    // () => render({align: 'end'})
+    () => render({align: 'right'})
   )
   .add(
     'direction="top"',
@@ -84,12 +84,9 @@ function render(props:MenuTriggerProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Dialog>
-          awlengakwjeg
-        </Dialog>
-        {/* <Popover>
-          <div>Hi</div>
-        </Popover> */}
+        <Popover>
+          <div>Hi glakwegklaweg knwaelkgn awknelk</div>
+        </Popover>
       </MenuTrigger>
     </div>
   );
