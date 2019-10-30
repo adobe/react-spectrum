@@ -68,7 +68,7 @@ module.exports = ({config}, env) => {
           include: path.resolve(__dirname, '../')
         },
         {
-          test: /packages\/.*\.css$/,
+          test: /\.css$/,
           use: [
             'style-loader',
             {
@@ -89,7 +89,7 @@ module.exports = ({config}, env) => {
               }
             }
           ],
-          include: path.resolve(__dirname, '../')
+          include: path.resolve(__dirname, '../packages')
         },
         {
           test: /\.css$/,

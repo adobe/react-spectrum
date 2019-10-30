@@ -1,0 +1,16 @@
+{
+  "name": "@react-types/splitview",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "main": "src/index.ts",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-types/shared": "3.0.0-alpha.1",
+    "react": "^16.8.0"
+  },
+  "devDependencies": {}
+}

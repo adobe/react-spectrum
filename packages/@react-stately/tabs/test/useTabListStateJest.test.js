@@ -4,7 +4,7 @@ import React from 'react';
 import sinon from 'sinon';
 import {useTabListState} from '../';
 
-test.skip('test with react-hooks-testing, controled index', function () {
+test.skip('test with react-hooks-testing, controlled index', function () {
   let props = {
     selectedIndex: 1,
     onChange: sinon.spy()

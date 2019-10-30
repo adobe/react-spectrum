@@ -25,7 +25,7 @@ describe('SplitView tests', function () {
     Name             | Component
     ${'SplitView'}   | ${SplitView}
     ${'V2SplitView'} | ${V2SplitView}
-  `('$Name handles defaults', async function ({Component}) {
+  `('$Name handles defaults', async function ({Name, Component}) {
     let onResizeSpy = jest.fn();
     let onResizeEndSpy = jest.fn();
     let {getByRole} = render(
@@ -146,27 +146,36 @@ describe('SplitView tests', function () {
     fireEvent.keyUp(splitSeparator, {key: 'Home'});
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
 
-    // use keyboard to navigate Enter should do nothing because default does not allow collapsings
+    // use keyboard to navigate Enter should do nothing because default does not allow collapsing
     fireEvent.keyDown(splitSeparator, {key: 'Enter'});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     fireEvent.keyUp(splitSeparator, {key: 'Enter'});
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
 
-    // use keyboard to navigate right 304px + 10px = 314px and then use Enter, should do nothing
+    // use keyboard to navigate right 304px + 10px = 314px and then use Enter, should put primary at min size of 304
+    // in V2, this didn't work right, and instead it did nothing
     fireEvent.keyDown(splitSeparator, {key: 'Right'});
     expect(primaryPane).toHaveAttribute('style', 'width: 314px;');
     fireEvent.keyUp(splitSeparator, {key: 'Right'});
     fireEvent.keyDown(splitSeparator, {key: 'Enter'});
-    expect(primaryPane).toHaveAttribute('style', 'width: 314px;');
+    if (Name === 'V2SplitView') {
+      expect(primaryPane).toHaveAttribute('style', 'width: 314px;');
+    } else {
+      expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
+    }
     fireEvent.keyUp(splitSeparator, {key: 'Enter'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '2');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '2');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    }
   });
 
   it.each`
-    Component
-    ${SplitView}
-    ${V2SplitView}
-  `('handles primaryPane being second', function ({Component}) {
+    Name             | Component
+    ${'SplitView'}   | ${SplitView}
+    ${'V2SplitView'} | ${V2SplitView}
+  `('$Name handles primaryPane being second', function ({Component}) {
     let {getByRole} = render(
       <Component className="splitview" primaryPane={1} style={{width: '100%'}}>
         <div>Left</div>
@@ -248,10 +257,10 @@ describe('SplitView tests', function () {
 
 
   it.each`
-    Component     | props
-    ${SplitView}  | ${{allowsCollapsing: true}}
-    ${V2SplitView}| ${{collapsible: true}}
-  `('handles allowsCollapsing', function ({Component, props}) {
+    Name             | Component     | props
+    ${'SplitView'}   | ${SplitView}  | ${{allowsCollapsing: true}}
+    ${'V2SplitView'} | ${V2SplitView}| ${{collapsible: true}}
+  `('$Name handles allowsCollapsing', function ({Name, Component, props}) {
     let {getByRole} = render(
       <Component {...props} className="splitview" style={{width: '100%'}}>
         <div>Left</div>
@@ -267,7 +276,11 @@ describe('SplitView tests', function () {
     let id = primaryPane.getAttribute('id');
     expect(splitSeparator).toHaveAttribute('aria-controls', id);
     expect(splitSeparator).toHaveAttribute('tabindex', '0');
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
     expect(splitSeparator).toHaveAttribute('aria-valuemin', '0');
     expect(splitSeparator).toHaveAttribute('aria-valuemax', '100');
     expect(document.body.style.cursor).toBe('');
@@ -280,7 +293,11 @@ describe('SplitView tests', function () {
     fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY: 20});
     fireEvent.mouseUp(splitSeparator, {clientX: 310, clientY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 310px;');
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '1');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '1');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '44');
+    }
 
     // move mouse to the far end so that it maxes out 1000px - secondaryMin(304px) = 696px
     fireEvent.mouseEnter(splitSeparator, {clientX: 310, clientY: 20});
@@ -300,7 +317,11 @@ describe('SplitView tests', function () {
     fireEvent.mouseMove(splitSeparator, {clientX: 253, clientY: 20});
     fireEvent.mouseUp(splitSeparator, {clientX: 253, clientY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 0px;');
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    }
 
     // move mouse so we recover from the collapsing
     fireEvent.mouseEnter(splitSeparator, {clientX: 0, clientY: 20});
@@ -310,37 +331,61 @@ describe('SplitView tests', function () {
     fireEvent.mouseMove(splitSeparator, {clientX: 254, clientY: 20});
     fireEvent.mouseUp(splitSeparator, {clientX: 254, clientY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
 
     // use keyboard to navigate right 304px + 10px = 314px
     fireEvent.keyDown(splitSeparator, {key: 'Right'});
     expect(primaryPane).toHaveAttribute('style', 'width: 314px;');
     fireEvent.keyUp(splitSeparator, {key: 'Right'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '2');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '2');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '45');
+    }
 
     // use keyboard to navigate left 314px - 10px = 304px
     fireEvent.keyDown(splitSeparator, {key: 'Left'});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     fireEvent.keyUp(splitSeparator, {key: 'Left'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
 
     // use keyboard to navigate left a second time should do nothing
     fireEvent.keyDown(splitSeparator, {key: 'Left'});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     fireEvent.keyUp(splitSeparator, {key: 'Left'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
 
     // use keyboard to navigate up shouldn't move
     fireEvent.keyDown(splitSeparator, {key: 'Up'});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     fireEvent.keyUp(splitSeparator, {key: 'Up'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
 
     // use keyboard to navigate down shouldn't move
     fireEvent.keyDown(splitSeparator, {key: 'Down'});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     fireEvent.keyUp(splitSeparator, {key: 'Down'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '43');
+    }
 
     // use keyboard to navigate End should maximize the primary view -> 696px
     fireEvent.keyDown(splitSeparator, {key: 'End'});
@@ -358,7 +403,11 @@ describe('SplitView tests', function () {
     fireEvent.keyDown(splitSeparator, {key: 'Home'});
     expect(primaryPane).toHaveAttribute('style', 'width: 0px;');
     fireEvent.keyUp(splitSeparator, {key: 'Home'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    }
 
     // reset us to max size -> 696px
     fireEvent.keyDown(splitSeparator, {key: 'End'});
@@ -370,7 +419,11 @@ describe('SplitView tests', function () {
     fireEvent.keyDown(splitSeparator, {key: 'Enter'});
     expect(primaryPane).toHaveAttribute('style', 'width: 0px;');
     fireEvent.keyUp(splitSeparator, {key: 'Enter'});
-    expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    if (Name === 'V2SplitView') {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
+    } else {
+      expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
+    }
 
     // use keyboard to navigate Right should restore it to the last size
     fireEvent.keyDown(splitSeparator, {key: 'Enter'});

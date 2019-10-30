@@ -1,6 +1,7 @@
 {
   "name": "@react-spectrum/splitview",
   "version": "3.0.0-alpha.1",
+  "private": true,
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -27,12 +28,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/focus-ring-polyfill": "^0.x",
     "@babel/runtime": "^7.6.2",
     "@react-aria/splitview": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/splitview": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1"
+    "@react-types/shared": "^3.0.0-alpha.1",
+    "@react-types/splitview": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

@@ -1,20 +1,42 @@
-import {AriaSplitViewProps, SplitViewAriaProps, SplitViewState} from '@react-types/shared';
-import {chain} from '@react-aria/utils';
-import {useDrag1D} from '@react-aria/utils';
-import {useEffect, useRef} from 'react';
-import {useId} from '@react-aria/utils';
+import {AllHTMLAttributes, MouseEventHandler, MutableRefObject, useEffect, useRef} from 'react';
+import {chain, useId} from '@react-aria/utils';
+import {direction, orientation} from '@react-types/shared';
+import {SplitViewState} from '@react-stately/splitview';
+import {useMoveable} from '@react-aria/interactions';
 
-export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): AriaSplitViewProps {
+export interface SplitViewAriaProps {
+  id?: string,
+  onMouseDown?: MouseEventHandler,
+  allowsResizing?: boolean,
+  allowsCollapsing?: boolean,
+  orientation?: orientation,
+  primaryPane?: 0 | 1,
+  primaryMinSize?: number,
+  primaryMaxSize?: number,
+  secondaryMinSize?: number,
+  secondaryMaxSize?: number,
+  'aria-label'?: string,
+  'aria-labelledby'?: string,
+  containerRef?: MutableRefObject<HTMLDivElement>
+}
+
+export interface AriaSplitViewProps {
+  handleProps: AllHTMLAttributes<HTMLElement>,
+  primaryPaneProps: AllHTMLAttributes<HTMLElement>
+}
+
+export function useSplitView(props: SplitViewAriaProps, state: SplitViewState, textDirection: direction): AriaSplitViewProps {
   let {
     containerRef,
     id: providedId,
-    primaryPane = 0,
-    primaryMinSize = 304,
-    primaryMaxSize = Infinity,
-    secondaryMinSize = 304,
-    secondaryMaxSize = Infinity,
-    orientation = 'horizontal' as 'horizontal',
+    primaryPane,
+    primaryMinSize,
+    primaryMaxSize,
+    secondaryMinSize,
+    secondaryMaxSize,
+    orientation = 'horizontal',
     allowsResizing = true,
+    allowsCollapsing,
     onMouseDown: propsOnMouseDown
   } = props;
   let {containerState, handleState} = state;
@@ -44,15 +66,29 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
     };
   }, [containerRef, containerState, primaryMinSize, primaryMaxSize, secondaryMinSize, secondaryMaxSize, orientation, size]);
 
-  let draggableProps = useDrag1D({
+  // LTR vs RTL flip across the y axis, they never flip across the x axis
+  let flipAxis;
+  if (textDirection === 'rtl') {
+    if (orientation === 'horizontal' && !reverse) {
+      flipAxis = 'y';
+    } else if (orientation === 'vertical' && reverse) {
+      flipAxis = 'x';
+    }
+  } else {
+    if (orientation === 'horizontal' && reverse) {
+      flipAxis = 'y';
+    } else if (orientation === 'vertical' && reverse) {
+      flipAxis = 'x';
+    }
+  }
+  let draggableProps = useMoveable({
     containerRef,
-    reverse,
-    orientation,
+    flipAxis,
     onHover: (hovered) => handleState.setHover(hovered),
     onDrag: (dragging) => handleState.setDragging(dragging),
     onPositionChange: (position) => handleState.setOffset(position),
-    onIncrement: () => handleState.increment(),
-    onDecrement: () => handleState.decrement(),
+    onIncrement: (axis) => handleState.increment(axis),
+    onDecrement: (axis) => handleState.decrement(axis),
     onIncrementToMax: () => handleState.incrementToMax(),
     onDecrementToMin: () => handleState.decrementToMin(),
     onCollapseToggle: () => handleState.collapseToggle()
@@ -60,7 +96,9 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
 
   let ariaValueMin = 0;
   let ariaValueMax = 100;
-  let ariaValueNow = (handleState.offset - containerState.minPos) / (containerState.maxPos - containerState.minPos) * 100 | 0;
+  let ariaValueNow = allowsCollapsing ?
+    (handleState.offset / containerState.maxPos * 100) | 0 :
+    ((handleState.offset - containerState.minPos) / (containerState.maxPos - containerState.minPos) * 100) | 0;
 
   let onMouseDown = allowsResizing ? chain(draggableProps.onMouseDown, propsOnMouseDown) : undefined;
   let onMouseEnter = allowsResizing ? draggableProps.onMouseEnter : undefined;
@@ -69,9 +107,6 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
   let tabIndex = allowsResizing ? 0 : undefined;
 
   return {
-    containerProps: {
-      id
-    },
     handleProps: {
       tabIndex,
       'aria-valuenow': ariaValueNow,

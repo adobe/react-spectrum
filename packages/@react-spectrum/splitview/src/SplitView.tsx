@@ -1,10 +1,12 @@
 import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
-import {SplitViewProps} from '@react-types/shared';
+import rspStyles from './SplitView.css';
+import {SplitViewProps} from '@react-types/splitview';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
+import {useLocale} from '@react-aria/i18n';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
-import './SplitView.styl';
 
 
 const ORIENTATIONS = {
@@ -26,16 +28,26 @@ const CURSORS = {
 };
 
 export function SplitView(props: SplitViewProps) {
+  let {direction} = useLocale();
+  let completeProps = Object.assign(
+    {},
+    {
+      orientation: 'horizontal',
+      allowsResizing: true,
+      primaryPane: 0,
+      defaultPrimarySize: 304,
+      primaryMinSize: 304,
+      primaryMaxSize: Infinity,
+      secondaryMinSize: 304,
+      secondaryMaxSize: Infinity
+    },
+    props
+  );
   let {
-    orientation = 'horizontal' as 'horizontal',
-    allowsResizing = true,
-    primaryPane = 0 as 0,
-    primaryMinSize = 304,
-    primaryMaxSize = Infinity,
-    secondaryMinSize = 304,
-    secondaryMaxSize = Infinity,
-    ...remainingProps
-  } = props;
+    orientation,
+    allowsResizing,
+    primaryPane
+  } = completeProps;
   let containerRef = useRef(null);
 
   let children = React.Children.toArray(props.children);
@@ -43,26 +55,21 @@ export function SplitView(props: SplitViewProps) {
     throw new Error(`SplitView must have 2 children, ${children.length} found.`);
   }
 
-  let {containerState, handleState} = useSplitViewState(props);
+  let {containerState, handleState} = useSplitViewState(completeProps);
 
   let {
-    containerProps,
     handleProps,
     primaryPaneProps
-  } = useSplitView({
-    containerRef,
-    orientation,
-    allowsResizing,
-    primaryPane,
-    primaryMinSize,
-    primaryMaxSize,
-    secondaryMinSize,
-    secondaryMaxSize,
-    ...remainingProps
-  }, {
-    containerState,
-    handleState
-  });
+  } = useSplitView(
+    {
+      containerRef,
+      ...completeProps
+    }, {
+      containerState,
+      handleState
+    },
+      direction
+  );
 
   let dimension = ORIENTATIONS[orientation];
   let secondaryPane = Number(!primaryPane);
@@ -101,25 +108,26 @@ export function SplitView(props: SplitViewProps) {
 
   return (
     <div
-      {...containerProps}
       ref={containerRef}
       className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}>
       {primaryPane === 0 ? primary : secondary}
-      <div
-        {...handleProps}
-        className={classNames(styles,
-          'spectrum-SplitView-splitter',
-          `react-spectrum-SplitView--${orientation}`,
-          {
-            'is-draggable': allowsResizing,
-            'is-hovered': handle.hovered,
-            'is-active': handle.dragging,
-            'is-collapsed-start': handle.offset === 0 && primaryPane === 0,
-            'is-collapsed-end': handle.offset === 0 && primaryPane === 1
-          }
-        )}>
-        {allowsResizing ? <div className={classNames(styles, 'spectrum-SplitView-gripper')} /> : null}
-      </div>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+        <div
+          {...handleProps}
+          className={classNames(styles,
+            'spectrum-SplitView-splitter',
+            {
+              'is-draggable': allowsResizing,
+              'is-hovered': handle.hovered,
+              'is-active': handle.dragging,
+              'is-collapsed-start': handle.offset === 0 && primaryPane === 0,
+              'is-collapsed-end': handle.offset === 0 && primaryPane === 1
+            },
+            classNames(rspStyles, `react-spectrum-SplitView--${orientation}`)
+          )}>
+          {allowsResizing ? <div className={classNames(styles, 'spectrum-SplitView-gripper')} /> : null}
+        </div>
+      </FocusRing>
       {primaryPane === 1 ? primary : secondary}
     </div>
   );
