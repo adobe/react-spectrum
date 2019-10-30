@@ -680,11 +680,10 @@ describe('Autocomplete', () => {
       assert.equal(tree.prop('role'), 'combobox');
       assert.equal(tree.prop('aria-controls'), undefined);
       assert.equal(tree.prop('aria-expanded'), false);
-      assert.equal(tree.prop('aria-haspopup'), 'true');
+      assert.equal(tree.prop('aria-haspopup'), 'listbox');
       assert.equal(tree.prop('aria-owns'), undefined);
 
       assert.equal(findInput(tree).prop('id'), 'foo');
-      assert.equal(findInput(tree).prop('role'), 'textbox');
       assert.equal(findInput(tree).prop('aria-autocomplete'), 'list');
       assert.equal(findInput(tree).prop('aria-controls'), undefined);
 

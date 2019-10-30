@@ -12,7 +12,7 @@ interface SearchFieldAria {
 }
 
 export function useSearchField(
-  props: SearchFieldProps, 
+  props: SearchFieldProps,
   state: SearchFieldState,
   searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
 ): SearchFieldAria {
@@ -21,7 +21,8 @@ export function useSearchField(
     isDisabled,
     onSubmit = () => {},
     onClear,
-    role = 'search'
+    role = undefined,
+    type = 'search'
   } = props;
 
   let onKeyDown = (e) => {
@@ -51,16 +52,15 @@ export function useSearchField(
     state.setValue('', e);
     searchFieldRef.current.focus();
   };
-  
+
   return {
     searchDivProps: {
-      role
     },
     searchFieldProps: {
-      role: 'searchbox',
+      role,
       value: state.value,
       onKeyDown: chain(props.onKeyDown, onKeyDown),
-      type: 'search'
+      type
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),

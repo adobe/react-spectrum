@@ -16,6 +16,7 @@
 **************************************************************************/
 
 import assert from 'assert';
+import Autocomplete from '../../src/Autocomplete';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import Refresh from '../../src/Icon/Refresh';
@@ -26,14 +27,13 @@ describe('Search', () => {
   it('default', () => {
     const tree = shallow(<Search />);
     assert.equal(tree.hasClass('spectrum-Search'), true);
-    assert.equal(tree.prop('role'), 'search');
+    assert.equal(tree.prop('role'), undefined);
 
     const icon = tree.find('.spectrum-Search-icon');
     assert.equal(icon.prop('className'), 'spectrum-Search-icon');
 
     const input = findInput(tree);
     assert.equal(input.hasClass('spectrum-Search-input'), true);
-    assert.equal(input.prop('role'), 'searchbox');
     assert.equal(input.prop('type'), 'search');
 
     const button = findButton(tree);
@@ -194,13 +194,8 @@ describe('Search', () => {
   });
 
   it('supports additional properties', () => {
-    const tree = shallow(<Search foo />);
-    assert.equal(findInput(tree).prop('foo'), true);
-  });
-
-  it('supports overiding role of wrapping div', () => {
-    const tree = shallow(<Search role="presentation" />);
-    assert.equal(tree.prop('role'), 'presentation');
+    const tree = shallow(<Search aria-hidden="true" />);
+    assert.equal(findInput(tree).prop('aria-hidden'), 'true');
   });
 
   it('restores focus to input when clear button is clicked', () => {
@@ -223,6 +218,44 @@ describe('Search', () => {
     const tree = shallow(<Search />);
     tree.setProps({value: 'hello world'});
     assert.equal(tree.state('value'), 'hello world');
+  });
+
+  describe('within Autocomplete', () => {
+    it('supports prop overrides to implement WAI-ARIA combobox', () => {
+      const tree = shallow(<Autocomplete getCompletions={() => []}><Search type="text" /></Autocomplete>);
+      const search = tree.find(Search).dive();
+      assert.equal(tree.prop('role'), 'combobox');
+      assert.equal(tree.prop('aria-expanded'), false);
+      assert.equal(tree.prop('aria-haspopup'), 'listbox');
+      assert.equal(search.prop('role'), undefined);
+      assert.equal(findInput(search).prop('aria-autocomplete'), 'list');
+      assert.equal(findInput(search).prop('type'), 'text', 'input element can receive type=text, to keep automated accessibility testing tools happy');
+    });
+  });
+
+  describe('with custom combobox implementation', () => {
+    it('supports prop overrides to implement WAI-ARIA 1.0 combobox', () => {
+      const tree = shallow(
+        <Search
+          type="text"
+          role="combobox"
+          aria-expanded="true"
+          aria-haspopup="listbox"
+          aria-owns="listbox-id"
+          aria-autocomplete="list"
+          aria-controls="listbox-id"
+          aria-activedescendant="listbox-id-item-0" />
+      );
+      assert.equal(findInput(tree).prop('type'), 'text', 'input element should receive type=text');
+      assert.equal(findInput(tree).prop('role'), 'combobox', 'input element should receive combobox role');
+      assert.equal(findInput(tree).prop('aria-expanded'), 'true', 'input element should receive aria-expanded prop');
+      assert.equal(findInput(tree).prop('aria-haspopup'), 'listbox', 'input element should receive aria-haspopup prop');
+      assert.equal(findInput(tree).prop('aria-owns'), 'listbox-id', 'input element should receive aria-owns prop');
+      assert.equal(findInput(tree).prop('aria-controls'), 'listbox-id', 'input element should receive aria-controls prop');
+      assert.equal(findInput(tree).prop('aria-autocomplete'), 'list', 'input element should receive aria-autocomplete prop');
+      assert.equal(findInput(tree).prop('aria-controls'), 'listbox-id', 'input element should receive aria-controls prop');
+      assert.equal(findInput(tree).prop('aria-activedescendant'), 'listbox-id-item-0', 'input element should receive aria-activedescendant prop');
+    });
   });
 });
 

@@ -427,7 +427,7 @@ export default class Autocomplete extends React.Component {
   }
 
   render() {
-    let {id, className, renderItem} = this.props;
+    let {id, className, renderItem, 'aria-haspopup': ariaHaspopup = 'listbox'} = this.props;
     let {isFocused, results = [], selectedIndex, showMenu, value} = this.state;
     let children = React.Children.toArray(this.props.children);
     let trigger = children.find(c => c.props.autocompleteInput) || children[0];
@@ -441,7 +441,7 @@ export default class Autocomplete extends React.Component {
         role="combobox"
         aria-controls={this.getListboxId()}
         aria-expanded={menuShown}
-        aria-haspopup="true"
+        aria-haspopup={ariaHaspopup}
         aria-owns={this.getListboxId()}>
         {children.map(child => {
           if (child === trigger) {
@@ -453,7 +453,6 @@ export default class Autocomplete extends React.Component {
               onBlur: chain(child.props.onBlur, this.onBlur),
               id: inputId,
               autoComplete: 'off',
-              role: 'textbox',
               'aria-activedescendant': this.getActiveDescendantId(),
               'aria-autocomplete': 'list',
               'aria-controls': this.getListboxId()

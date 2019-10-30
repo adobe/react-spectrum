@@ -1,3 +1,4 @@
+import Autocomplete from '@react/react-spectrum/Autocomplete';
 import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Search from '@react/react-spectrum/Search';
 import Refresh from '@react/react-spectrum/Icon/Refresh';
@@ -142,7 +143,9 @@ To internationalize a search, a localized string should be passed to the `value`
 
 ### WAI-ARIA Design Pattern
 
-Search uses WAI-ARIA to ensure that the Textfield and associated Button for clearing the field are contained within a [search landmark region](https://www.w3.org/TR/wai-aria-practices-1.1/#aria_lh_search). The Textfield uses the [`searchbox` WAI-ARIA `role`](https://www.w3.org/TR/wai-aria-1.1/#searchbox) to identify it to assistive technology as a search input.
+Search consists of a Textfield with `type="search"`, which has an implicit WAI-ARIA role of `searchbox`, wrapped within a generic container `div`.
+
+The `role` prop for the Search component specifies the role for the `Textfield` element. Add a containing element with `role="search"` around the `Search` control and any other related components, like for example the search results, or controls for setting the context for the search, to define a [search landmark region](https://www.w3.org/TR/wai-aria-practices-1.1/#aria_lh_search).
 
 ### Labelling
 
@@ -150,9 +153,7 @@ A Search can be labelled using a [FieldLabel](/components/FieldLabel), `aria-lab
 
 #### Using FieldLabel
 
-Since a Search is a search input group containing the Textfield and, with a `value` set, Button for clearing the field, when labelling using a FieldLabel, use implicit labelling or add the `aria-labelledby` prop to explicitly associate the group of controls to the FieldLabel.
-
-##### Implicit labelling will add `aria-labelledby` automatically
+##### Implicit labelling
 
 <FieldLabel label="Search">
   <Search />
@@ -164,12 +165,63 @@ Since a Search is a search input group containing the Textfield and, with a `val
 </FieldLabel>
 ```
 
-##### Explicit labelling requires `aria-labelledby` be added manually
+##### Explicit labelling
 
-<FieldLabel label="Search" id="search-label-id" labelFor="search-id" />
-<Search id="search-id" aria-labelledby="search-label-id" />
+<FieldLabel label="Search" labelFor="search-id" />
+<Search id="search-id" />
 
 ```jsx
-<FieldLabel label="Search" id="search-label-id" labelFor="search-id" />
-<Search id="search-id" aria-labelledby="search-label-id" />
+<FieldLabel label="Search" labelFor="search-id" />
+<Search id="search-id" />
+```
+
+### Within an Autocomplete
+
+When wrapped in an Autocomplete, Search will use the `combobox` WAI-ARIA role. Add a containing element with `role="search"` to define a `search` landmark region.
+
+<div role="search">
+  <FieldLabel label="Search Ice Cream Flavors">
+    <Autocomplete
+      getCompletions={text => (
+        ['Chocolate', 'Vanilla', 'Strawberry', 'Caramel', 'Cookies and Cream', 'Coconut', 'Peppermint']
+        .filter(o => o.toLowerCase().startsWith(text.toLowerCase()))
+      )}>
+      <Search placeholder="Enter text" type="text" />
+    </Autocomplete>
+  </FieldLabel>
+</div>
+
+```jsx
+<div role="search">
+  <FieldLabel label="Search Ice Cream Flavors">
+    <Autocomplete
+      getCompletions={text => (
+        ['Chocolate', 'Vanilla', 'Strawberry', 'Caramel', 'Cookies and Cream', 'Coconut', 'Peppermint']
+        .filter(o => o.toLowerCase().startsWith(text.toLowerCase()))
+      )}>
+      <Search placeholder="Enter text" />
+    </Autocomplete>
+  </FieldLabel>
+</div>
+```
+
+### Using combobox role
+
+Search props can also be overridden for a custom implementation of the [WAI-ARIA 1.0 Combo Box design pattern](https://www.w3.org/TR/wai-aria-practices/examples/combobox/aria1.0pattern/combobox-autocomplete-list.html). Add a containing element with `role="search"` to define a `search` landmark region.
+
+```jsx
+<div role="search">
+  <FieldLabel label="Search">
+    <Search
+      role="combobox"
+
+      aria-expanded="true"
+      aria-haspopup="listbox"
+      aria-owns="listbox-id"
+
+      aria-autocomplete="list"
+      aria-controls="listbox-id"
+      aria-activedescendant="listbox-id-item-0" />
+  </FieldLabel>
+</div>
 ```

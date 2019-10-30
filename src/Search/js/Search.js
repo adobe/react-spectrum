@@ -20,6 +20,7 @@ import Button from '../../Button';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
+import createId from '../../utils/createId';
 import CrossSmall from '../../Icon/core/CrossSmall';
 import intlMessages from '../intl/*.json';
 import Magnifier from '../../Icon/core/Magnifier';
@@ -56,6 +57,8 @@ export default class Search extends Component {
   constructor(props) {
     super(props);
 
+    this.searchId = createId();
+
     const {
       value,
       defaultValue
@@ -78,7 +81,7 @@ export default class Search extends Component {
     const {onSubmit, onKeyDown, disabled} = this.props;
     const {value} = this.state;
     const key = e.which;
-    
+
     if (key === 13 || key === 27) {
       e.preventDefault();
     }
@@ -128,14 +131,13 @@ export default class Search extends Component {
       disabled,
       className,
       icon,
-      role = 'search',
+      id = this.searchId,
       ...otherProps
     } = this.props;
     const {value} = this.state;
 
     return (
       <div
-        role={role}
         className={
           classNames(
             'spectrum-Search',
@@ -145,11 +147,11 @@ export default class Search extends Component {
         }>
         <Textfield
           type="search"
-          role="searchbox"
           ref={s => this.searchbox = s}
           className="spectrum-Search-input"
           value={value}
           disabled={disabled}
+          id={id}
           {...otherProps}
           onKeyDown={this.handleTextKeyDown}
           onChange={this.handleTextChange} />
@@ -158,8 +160,10 @@ export default class Search extends Component {
           value !== '' &&
             <Button
               aria-label={formatMessage('Clear search')}
+              aria-labelledby={`${id} ${id}-clear-button`}
               variant="clear"
               icon={<CrossSmall />}
+              id={`${id}-clear-button`}
               disabled={disabled}
               onClick={this.handleClearButtonClick} />
         }
