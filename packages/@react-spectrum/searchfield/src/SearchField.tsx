@@ -22,12 +22,11 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
 
   let state = useSearchFieldState(props);
   let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {searchDivProps, searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
+  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
 
   // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <div
-      {...searchDivProps}
       className={
         classNames(
           styles,

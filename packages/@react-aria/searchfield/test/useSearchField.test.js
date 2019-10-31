@@ -30,29 +30,20 @@ describe('useSearchField hook', () => {
     onClear.mockClear();
   });
 
-  describe('should return searchDivProps', () => {
-    it('with a default container element that has no role', () => {
-      let {searchDivProps} = renderSearchHook({});
-      expect(!searchDivProps.role);
+  describe('should return searchFieldProps', () => {
+    it('with base props and value equal to state.value', () => {
+      let {searchFieldProps} = renderSearchHook({});
+      expect(searchFieldProps.type).toBe('search');
+      expect(searchFieldProps.value).toBe(state.value);
+      expect(typeof searchFieldProps.onKeyDown).toBe('function');
     });
 
     it('with a user specified role if provided', () => {
       let role = 'combobox';
       let type = 'text';
-      let {searchDivProps, searchFieldProps} = renderSearchHook({role, type});
-      expect(!searchDivProps.role);
+      let {searchFieldProps} = renderSearchHook({role, type});
       expect(searchFieldProps.role).toBe(role);
       expect(searchFieldProps.type).toBe(type);
-    });
-  });
-
-  describe('should return searchFieldProps', () => {
-    it('with base props and value equal to state.value', () => {
-      let {searchFieldProps} = renderSearchHook({});
-      expect(!searchFieldProps.role);
-      expect(searchFieldProps.type).toBe('search');
-      expect(searchFieldProps.value).toBe(state.value);
-      expect(typeof searchFieldProps.onKeyDown).toBe('function');
     });
 
     describe('with specific onKeyDown behavior', () => {
