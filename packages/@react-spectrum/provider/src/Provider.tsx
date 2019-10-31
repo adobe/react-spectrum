@@ -7,6 +7,7 @@ import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
+import {ToastContainer} from '@react-spectrum/toast';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
@@ -65,10 +66,13 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
+        {!prevContext && <ToastContainer />}
         {contents}
       </ProviderWrapper>
     );
   }
+
+  console.log('contents', contents);
 
   return (
     <Context.Provider value={context}>
