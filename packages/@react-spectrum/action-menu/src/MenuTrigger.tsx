@@ -20,13 +20,6 @@ export interface MenuTriggerProps {
   onSelect?: (...args) => void
 }
 
-// Things todo:
-// Address RTL: ex: if align
-// Add Accessibility from v2 Dropdown (onClick/onPress, onKeyDownTrigger)
-// Add accessibility behavior like keyboard interaction focus stuff, roles and stuff
-// All here: https://github.com/adobe/react-spectrum-v3/pull/25/files?short_path=7f28627#diff-7f286272a2fabd4d97fd8b3a9950550d
-
-
 export function MenuTrigger(props: MenuTriggerProps) {
   let containerRef = useRef<HTMLDivElement>();
   let menuRef = useRef<HTMLElement>();
@@ -51,7 +44,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
  
   // TODO outofscope: handle mobile, but see DialogTrigger for inspiration
 
-  // Initialize "open" state (controlled vs uncontrolled), default closed
+  // Initialize "open" state (controlled vs uncontrolled), default closed. Is onToggle or onOpenChange supposed to go here?
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onToggle);
 
   // Press handler for menuTrigger
@@ -96,13 +89,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
     containerRef,
     targetRef: menuTriggerRef,
     overlayRef: menuRef,
-    placement: `${direction} ${align}`, // Legit? For some reason bottom/top right/left works but not bottom/top start/end. Do I just convert to right/left
+    placement: `${direction} ${align}`, // Legit? For some reason bottom/top right/left works but not bottom/top start/end. Do I just convert to right/left or should I alter calculatePosition so that it can check for RTL?
     shouldFlip: shouldFlip,
     isOpen
   })
 
   // Do I need to use useOverlayTrigger to handle scrolling?
   // I could use it to get the aria triggerProps (will need to add some addition aria-haspopup stuff to it)
+  // Otherwise probably move some of this stuff to aria hook?
   let menuTriggerProps = {
     id: menuTriggerId,
     role: 'button',
@@ -113,9 +107,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ref: menuTriggerRef
   }
 
-  // Can use cloneElement? Depends on how Menu component will be structured. If it is
-  // a Popover containing a ul, then I guess I could use a context so that the popover only gets the positioning bits and
-  // the ul gets the id/aria stuff
+  // Can use cloneElement? I presume Menu component will handle putting the placement props on to the Popover
+  // and the aria stuff onto the actual Menu component
   // Clone menu and pass positioning props to it and other things (aria role)
   menu = React.cloneElement(menu, {
     ...overlayProps, 

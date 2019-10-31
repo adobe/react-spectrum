@@ -5,6 +5,8 @@ import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
+import {Menu} from '../';
+
 storiesOf('MenuTrigger', module)
   .add(
     'default',
@@ -77,16 +79,18 @@ storiesOf('MenuTrigger', module)
 function render(props:MenuTriggerProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <MenuTrigger onToggle={action('toggle')} {...props}>
+      <MenuTrigger onToggle={action('toggle')} onSelect={action('select')} {...props}>
         <Button
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Popover>
-          <div>Hi glakwegklaweg knwaelkgn awknelk</div>
-        </Popover>
+        <Menu>
+          <li><span>ewagawg</span></li>
+          <li>galwengklwnealkgnlk</li>
+          <li>gawenglkawengklawengk</li>
+        </Menu>
       </MenuTrigger>
     </div>
   );
