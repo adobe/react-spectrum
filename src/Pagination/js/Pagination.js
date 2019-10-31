@@ -252,9 +252,7 @@ export default class Pagination extends Component {
           aria-disabled={(isButtonMode && isFirst) || null}
           tabIndex={isFirst ? -1 : null}
           className={
-            classNames({
-              'spectrum-SplitButton-trigger': isButtonMode
-            })
+            isButtonMode ? 'spectrum-SplitButton-trigger' : 'spectrum-Pagination-prevButton'
           }>
           <ChevronLeftMedium />
         </Button>
@@ -289,9 +287,7 @@ export default class Pagination extends Component {
           aria-disabled={(isButtonMode && isLast) || null}
           tabIndex={isLast ? -1 : null}
           className={
-            classNames({
-              'spectrum-SplitButton-action': isButtonMode
-            })
+            isButtonMode ? 'spectrum-SplitButton-action' : 'spectrum-Pagination-nextButton'
           }>
           <span className="spectrum-Button-label">{isButtonMode ? nextLabel : ''}</span>
           <ChevronRightMedium />

@@ -57,6 +57,9 @@ describe('Pagination', () => {
 
   it('supports explicit variant', () => {
     const tree = shallow(<Pagination variant="explicit" />, {disableLifecycleMethods: true});
+    const buttons = tree.find('Button');
+    assert.equal(buttons.at(0).prop('className'), 'spectrum-Pagination-prevButton');
+    assert.equal(buttons.at(1).prop('className'), 'spectrum-Pagination-nextButton');
     assert(tree.find('Textfield').length === 1);
   });
 
