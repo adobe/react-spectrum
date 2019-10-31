@@ -2699,7 +2699,7 @@
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum-icons/-/@react/react-spectrum-icons-2.2.0.tgz#e848f5470ea42b4e825d32a127623d01f964b914"
   integrity sha1-6Ej1Rw6kK06CXTKhJ2I9AflkuRQ=
 
-"@react/react-spectrum@^2.0.0", "@react/react-spectrum@^2.24.0", "@react/react-spectrum@^2.25.0":
+"@react/react-spectrum@^2.24.0":
   version "2.25.0"
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum/-/@react/react-spectrum-2.25.0.tgz#3b2d51fb0c472c78f99e96e42319068c1381f236"
   integrity sha1-Oy1R+wxHLHj5npbkIxkGjBOB8jY=

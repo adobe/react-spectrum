@@ -36,8 +36,7 @@
     "@react-types/radio": "^3.0.0-alpha.1"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
-    "@react/react-spectrum": "^2.0.0"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

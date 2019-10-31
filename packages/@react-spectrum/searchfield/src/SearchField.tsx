@@ -45,7 +45,6 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
           defaultValue: false,
           isQuiet: true,
           onClear: true,
-          validationTooltip: true,
           multiLine: true,
           isRequired: true,
           isReadOnly: true
