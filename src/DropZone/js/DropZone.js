@@ -35,6 +35,8 @@ export default class DropZone extends React.Component {
   static propTypes = {
     /**
      * Controls the cursor displayed when dragging over the drop zone
+     * This is the standard DataTransfer.dropEffect https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/dropEffect
+     * and also affects what the target will accept.
      */
     dropEffect: PropTypes.oneOf(['copy', 'move', 'link', 'none']),
 
