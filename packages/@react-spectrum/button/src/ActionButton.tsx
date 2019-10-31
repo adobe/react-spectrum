@@ -27,7 +27,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
     holdAffordance,
     ...otherProps
   } = props;
-  let {buttonProps, isPressed, isHovering} = useButton({...props, ref});
+  let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -41,7 +41,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
-              'is-active': isPressed || isHovering,
+              'is-active': isPressed,
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },

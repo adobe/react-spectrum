@@ -25,6 +25,11 @@ interface HoverState {
   target: HTMLElement | null
 }
 
+interface HoverResult {
+  isHovering: boolean,
+  hoverProps: HTMLAttributes<HTMLElement>
+}
+
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
   let context = useContext(HoverResponderContext);
@@ -47,11 +52,6 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   return props;
 }
 
-interface HoverResult {
-  isHovering: boolean,
-  hoverProps: HTMLAttributes<HTMLElement>
-}
-
 export function useHover(props: HoverHookProps): HoverResult {
   let {
     onHover,
@@ -59,8 +59,6 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHoverStart,
     onHoverEnd,
     isHovering: isHoveringProp,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
   } = useHoverResponderContext(props);
 
@@ -70,72 +68,53 @@ export function useHover(props: HoverHookProps): HoverResult {
     target: null
   });
 
-
   let hoverProps = useMemo(() => {
-
     let state = ref.current;
 
     let triggerHoverStart = (target) => {
-
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
           target
         });
       }
-
+      if (onHover) {
+        console.log('on hover active');
+        onHover({
+          type: 'hovering',
+          target
+        });
+      }
       if (onHoverChange) {
         onHoverChange(true);
       }
-
       setHover(true);
     };
 
-    let triggerHoverEnd = (target, wasHovered = true) => {
-
+    let triggerHoverEnd = (target) => {
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
           target
         });
       }
-
       if (onHoverChange) {
         onHoverChange(false);
       }
-
       setHover(false);
-
-      if (onHover && wasHovered) {
-        onHover({
-          type: 'hovering',
-          target
-        });
-      }
     };
 
-    let hoverProps: HTMLAttributes<HTMLElement> = {
-      onMouseEnter(e) {
-        if (!state.isHovering) {
-          state.isHovering = true;
-          triggerHoverStart(e.target);
-        }
-      },
-      onMouseLeave(e) {
-        if (state.isHovering) {
-          state.isHovering = false;
-          triggerHoverEnd(e.target);
-        }
-      }
-    };
+    let hoverProps: HTMLAttributes<HTMLElement> = {};
 
     hoverProps.onMouseEnter = (e) => {
+      console.log('mouse entered');
       state.target = e.currentTarget;
       state.isHovering = true;
       triggerHoverStart(e.target);
     };
 
     hoverProps.onMouseLeave = (e) => {
+      console.log('mouse left');
       state.isHovering = false;
       triggerHoverEnd(e.target);
     };
@@ -143,10 +122,8 @@ export function useHover(props: HoverHookProps): HoverResult {
     return hoverProps;
   }, [onHover, onHoverStart, onHoverEnd, onHoverChange]);
 
-
   return {
     isHovering: isHoveringProp || isHovering,
     hoverProps: mergeProps(domProps, hoverProps)
   };
-
 }

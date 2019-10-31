@@ -24,7 +24,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
-  let onPress = () => {
+  let onInteraction = () => {
     setOpen(!isOpen);
   };
 
@@ -32,14 +32,14 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     <TooltipTriggerContainer
       type={type}
       isOpen={isOpen}
-      onPress={onPress}
+      onInteraction={onInteraction}
       targetRef={targetRef}
       trigger={trigger}
       content={content} />
   );
 }
 
-function TooltipTriggerContainer({type, isOpen, onPress, targetRef, trigger, content, ...props}) {
+function TooltipTriggerContainer({type, isOpen, onInteraction, targetRef, trigger, content, ...props}) {
   let containerRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
@@ -56,7 +56,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, targetRef, trigger, con
   };
 
   let overlay = (
-    React.cloneElement(content, {...props, ref: overlayRef, ...overlayProps, open: isOpen})
+    React.cloneElement(content, {...props, ref: overlayRef, ...overlayProps, isOpen: isOpen})
   );
 
   if (type === 'click') {
@@ -64,7 +64,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, targetRef, trigger, con
       <TooltipClickTrigger
         triggerPropsWithRef={triggerPropsWithRef}
         isOpen={isOpen}
-        onPress={onPress}
+        onPress={onInteraction}
         trigger={trigger}
         overlay={overlay} />
     );
@@ -72,7 +72,7 @@ function TooltipTriggerContainer({type, isOpen, onPress, targetRef, trigger, con
     return (
       <TooltipHoverTrigger
         isOpen={isOpen}
-        onHover={onPress}
+        onHover={onInteraction}
         trigger={trigger}
         overlay={overlay} />
     );

@@ -65,8 +65,8 @@ export function useButton(props: AriaButtonProps): ButtonAria {
   });
 
   let {hoverProps, isHovering} = useHover({
-    onHoverStart: chain(onHoverStart, (e) => e.target.focus()),
-    onHoverEnd: chain(onHoverEnd, (e) => e.target.focus()),
+    onHoverStart,
+    onHoverEnd,
     onHoverChange,
     onHover,
     ref

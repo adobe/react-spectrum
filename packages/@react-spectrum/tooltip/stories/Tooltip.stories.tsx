@@ -53,7 +53,7 @@ function render(content, props = {}) {
     <div style={{display: 'inline-block'}}>
       <Tooltip
         {...props}
-        open>
+        isOpen>
         {content}
       </Tooltip>
     </div>
