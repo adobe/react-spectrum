@@ -1,0 +1,4 @@
+{
+  "Star Rating": "Star Rating",
+  "# star(s)": "{currentRating, plural, =1{# star} other{# stars}}"
+}

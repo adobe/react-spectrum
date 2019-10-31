@@ -1,0 +1,4 @@
+{
+  "Star Rating": "Klasyfikacja w formie gwiazdek",
+  "# star(s)": "{currentRating, plural, =1{# gwiazdka} =5{# gwiazdek} other{# gwiazdki}}"
+}

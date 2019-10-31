@@ -1,0 +1,4 @@
+{
+  "Star Rating": "Hodnocení hvězdičkami",
+  "# star(s)": "{currentRating, plural, =1{# hvězdička} =5{# hvězdiček} other{# hvězdičky}}"
+}

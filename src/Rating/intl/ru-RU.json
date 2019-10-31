@@ -1,0 +1,4 @@
+{
+  "Star Rating": "Оценка по звездам",
+  "# star(s)": "{currentRating, plural, =1{# звездочка} =5{# звезд} other{# звезды}}"
+}

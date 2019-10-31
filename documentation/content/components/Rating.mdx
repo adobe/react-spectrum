@@ -1,3 +1,4 @@
+import FieldLabel from '@react/react-spectrum/FieldLabel';
 import Rating from '@react/react-spectrum/Rating';
 
 ## Overview
@@ -6,11 +7,21 @@ import Rating from '@react/react-spectrum/Rating';
 
 ## Example
 
-<Rating aria-label="Default rating" />
+<Rating />
 
 ```jsx
 
-<Rating aria-label="Default rating" />
+<Rating />
+```
+
+## Variants
+
+### Quiet
+
+<Rating quiet defaultValue={3} />
+
+```jsx
+<Rating quiet defaultValue={3} />
 ```
 
 ## States
@@ -19,37 +30,120 @@ Rating component has a number of props for controlling their visual state. It su
 
 ### Disabled
 
-<Rating aria-label="Disabled rating" disabled value={3} />
+<Rating disabled value={3} />
 
 ```jsx
-
-<Rating aria-label="Disabled rating" disabled value={3} />
+<Rating disabled value={3} />
 ```
 
 ### Controlled
 
-<Rating aria-label="Controlled rating" value={3} />
+<Rating value={3} />
 
 ```jsx
+<Rating value={3} />
+```
 
-<Rating aria-label="Controlled rating" value={3} />
+### Default value
+
+Use `defaultValue` to specify a starting value other than 0 for a Rating that is not controlled.
+
+<Rating defaultValue={3} />
+
+```jsx
+<Rating defaultValue={3} />
+```
+
+### readOnly
+
+<Rating readOnly value={3}  />
+
+```jsx
+<Rating readOnly value={3} />
 ```
 
 ## Handling Events
 
-Events handlers for change can be registered on a `Radio Button` as shown below.
+Events handlers for change can be registered on a `Rating` as shown below.
 
 <Rating value={3} onChange={e => console.log(e)} />
 
 ```jsx
-
 <Rating value={3} onChange={e => console.log(e)} />
 ```
 
 ## Accessibility
 
-Ratings can be made accessible using the `aria-label` prop.
+### WAI-ARIA Design Pattern
+
+The Rating component is implemented using a native HTML input element with a type attribute whose value is “range” and behaves like a slider control.
+
+### Labelling
+
+By default, the Rating component uses the localized string “Star Rating” as a label for the `input` element. This default label can be overridden using a FieldLabel, `aria-label` or `aria-labelledby` prop.
+
+Also, when the value is updated, the input element's `aria-valuetext` attribute is updated using a localized string to communicate the number of stars, “{0} stars”. The value text can be overidden using a custom `getValueText` method prop.
+
+#### Using `aria-label`
+
+<Rating aria-label="Rate your experience" />
 
 ```jsx
-<Rating aria-label="Default rating" />
+<Rating aria-label="Rate your experience" />
 ```
+
+#### Using `aria-labelledby`
+
+<FieldLabel label="Rate your experience" id="rating-label-id" labelFor="rating-id" />
+<Rating id="rating-id" aria-labelledby="rating-label-id rating-id" />
+
+```jsx
+<FieldLabel label="Rate your experience" id="rating-label-id" labelFor="rating-id" />
+<Rating id="rating-id" aria-labelledby="rating-label-id rating-id" />
+```
+
+#### Using `FieldLabel`
+
+<FieldLabel label="Rate your experience">
+  <Rating />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Rate your experience">
+  <Rating />
+</FieldLabel>
+```
+
+#### Customize value text using `valueTextStrings` prop
+
+<FieldLabel label="Rate your experience">
+  <Rating
+    valueTextStrings={[
+      'No rating',
+      '1 Star (Poor)',
+      '2 Stars (Fair)',
+      '3 Stars (Average)',
+      '4 Stars (Good)',
+      '5 Stars (Excellent)'
+    ]}
+    defaultValue={3}
+  />
+</FieldLabel>
+
+```jsx
+<FieldLabel label="Rate your experience">
+  <Rating
+    valueTextStrings={[
+      'No rating',
+      '1 Star (Poor)',
+      '2 Stars (Fair)',
+      '3 Stars (Average)',
+      '4 Stars (Good)',
+      '5 Stars (Excellent)'
+    ]}
+    defaultValue={3}
+  />
+</FieldLabel>
+```
+
+

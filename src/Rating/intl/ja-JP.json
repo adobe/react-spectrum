@@ -1,0 +1,4 @@
+{
+  "Star Rating": "星評価",
+  "# star(s)": "{currentRating, plural, =1{# つ星} other{# つ星}}"
+}

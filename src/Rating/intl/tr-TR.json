@@ -1,0 +1,4 @@
+{
+  "Star Rating": "Yıldız Derecelendirme",
+  "# star(s)": "{currentRating, plural, =1{# yıldız} other{# yıldız}}"
+}

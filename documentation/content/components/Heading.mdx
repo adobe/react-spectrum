@@ -34,3 +34,31 @@ Headings in Spectrum are available in 5 variants, each having a different size a
 ## Internationalization
 
 To internationalize a heading, a localized string should be passed as a child.
+
+## Accessibility
+
+Each Heading variant is rendered using a corresponding HTML `<h1>`–`<h4>` element.
+The default "display" variant renders with `<h1>`, both "pageTitle" and "subtitle1" variants render with `<h2>`, the "subtitle2" variant renders with `<h3>`, and "subtitle3" renders with `<h4>`.
+
+### Using `aria-level`
+
+Depending on context, it may sometimes be necessary to override the default heading level to match the hierarchy of headings within the web page using the `aria-level` prop.
+
+<Heading variant="subtitle2" aria-level={4}>Heading at {<code>aria-level</code>} 4</Heading>
+
+```jsx
+<Heading variant="subtitle2" aria-level={4}>Heading at {<code>aria-level</code>} 4</Heading>
+```
+
+### `id` prop
+
+If the the Heading is associated with a navigation or collection component, add an `id` attribute and use `aria-labelledby` to assign the Heading as a label for the control.
+
+For example, here a SideNav component is labelled using a Heading as the navigation for "Spectrum Components":
+
+```jsx
+<Heading variant="subtitle2" id="sidenav-header-id">Spectrum Components</Heading>
+<SideNav aria-labelledby="sidenav-header-id">
+  …
+</SideNav>
+```
