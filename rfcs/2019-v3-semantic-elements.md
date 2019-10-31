@@ -1,6 +1,6 @@
 - Start Date: 2019-10-31
 - RFC PR: (leave this empty, to be filled in later)
-- Authors: Rob Snow
+- Authors: Rob Snow, Devon Govett
 
 # React Spectrum v3 Semantic Elements
 
