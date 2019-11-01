@@ -109,7 +109,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   console.log('targetRef', targetRef);
   console.log('triggerRef', triggerRef.current);
   console.log('overlayRef', overlayRef.current);
-  let {triggerProps, dialogProps} = useOverlayTrigger({
+  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',
     onClose,
@@ -117,7 +117,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   });
 
   let triggerPropsWithRef = {
-    ...triggerProps,
+    ...triggerAriaProps,
     ref: targetRef ? undefined : triggerRef
   };
 
@@ -136,7 +136,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
       onPress={onPress}
       onClose={onClose}
       triggerProps={triggerPropsWithRef}
-      dialogProps={dialogProps}
+      dialogProps={overlayAriaProps}
       trigger={trigger}
       overlay={overlay} />
   );

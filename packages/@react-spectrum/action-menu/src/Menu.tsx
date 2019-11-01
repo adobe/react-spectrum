@@ -28,7 +28,7 @@ export const Menu = React.forwardRef((props, ref) => {
   let menuProps = {
     id,
     role,
-    labelledBy
+    'aria-labelledby': labelledBy
   }
 
 

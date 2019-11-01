@@ -75,11 +75,61 @@ storiesOf('MenuTrigger', module)
     'menu+submenus TODO out of scope',
     () => render()
   )
+  .add(
+    'popup with role=list',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
+          <Button
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}>
+              Menu Button
+          </Button>
+          <Menu role="listbox">
+            <li><span>ewagawg</span></li>
+            <li>galwengklwnealkgnlk</li>
+            <li>gawenglkawengklawengk</li>
+          </Menu>
+        </MenuTrigger>
+      </div>
+    )
+  )
+  .add(
+    'menu closes on scroll',
+    () => (
+      <div style={{height: 100, display: 'flex'}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
+          <div style={{height: 200}}>
+            <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
+            <Button
+              onPress={action('press')}
+              onPressStart={action('pressstart')}
+              onPressEnd={action('pressend')}>
+                Menu Button
+            </Button>
+            <Menu role="list">
+              <li><span>ewagawg</span></li>
+              <li>galwengklwnealkgnlk</li>
+              <li>gawenglkawengklawengk</li>
+            </Menu>
+          </MenuTrigger>
+          </div>
+        </div>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1}}>
+          <div style={{height: 200}}>
+            other
+          </div>
+        </div>
+      </div>
+    )
+  )
+  
 
 function render(props:MenuTriggerProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <MenuTrigger onToggle={action('toggle')} onSelect={action('select')} {...props}>
+      <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')} {...props}>
         <Button
           onPress={action('press')}
           onPressStart={action('pressstart')}
