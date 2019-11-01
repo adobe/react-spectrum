@@ -38,8 +38,11 @@ softAssert.equal = function (val, val2, message) {
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
   softAssert(json.main, `${pkg} did not have "main"`);
+  softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
   softAssert(json.module, `${pkg} did not have "module"`);
+  softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
   softAssert(json.types, `${pkg} did not have "types"`);
+  softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   softAssert(json.source, `${pkg} did not have "source"`);
   softAssert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
   softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
