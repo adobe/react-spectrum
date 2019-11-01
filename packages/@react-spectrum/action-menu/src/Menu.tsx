@@ -1,7 +1,7 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {MenuContext} from './context';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {useContext} from 'react';
 import {Popover} from '@react-spectrum/overlays';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 

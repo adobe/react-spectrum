@@ -1,7 +1,7 @@
-import {chain, useId} from '@react-aria/utils';
+import {chain} from '@react-aria/utils';
 import {MenuContext} from './context';
 import {Overlay} from '@react-spectrum/overlays';
-import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef, ReactElement} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -37,13 +37,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
   // Split into menuTrigger and menu
   let [menuTrigger, menu] = React.Children.toArray(children);
   
-  // TODO: move id generation and all the aria stuff into a MenuTrigger aria hook if I don't end up using 
-  // useOverlayTrigger + modifications
-  // let menuId = useId(menu.props.id);
-  // let menuTriggerId = useId(menuTrigger.props.id);
- 
-  // TODO outofscope: handle mobile, but see DialogTrigger for inspiration
-
   // Initialize "open" state (controlled vs uncontrolled), default closed.
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
@@ -106,8 +99,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     isOpen
   })
 
-  
-  let context = {
+  let menuContext = {
     ...overlayProps, 
     ...menuAriaProps,
     placement, 
@@ -116,39 +108,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onSelect: onSelect,
     hideArrow: true
   }
-  // // TODO: replace with context stuff, split into menu props and popover context
-  // menu = React.cloneElement(menu, {
-  //   ...overlayProps, 
-  //   ...menuAriaProps,
-  //   placement, 
-  //   arrowProps,
-  //   ref: menuRef,
-  //   onSelect: onSelect,
-  //   hideArrow: true,
-  //   // id: menuId,
-  //   // role: menu.props['role'] || 'menu',
-  //   // 'aria-labelledby': menu.props['aria-labelledby'] || menuTriggerId,
-  // });
 
-  // Note: use useOverlayTrigger, and possiblly refactor some stuff so common stuff is common to dialog + menu
-  // pull out menu and dialog specific stuff into their own hooks
   let menuTriggerProps = {
-    // id: menuTriggerId,
-    // role: 'button',
-    // 'aria-haspopup': menuTrigger.props['aria-haspopup'] || menu.props.role || 'true', // Double check this logic, can I just do menu.props.role?
-    // 'aria-expanded': isOpen,
-    // 'aria-controls': (isOpen ? menuId : null),
     ...menuTriggerAriaProps,
     onKeyDown: chain(menuTrigger.props.onKeyDown, onKeyDownTrigger),
     ref: menuTriggerRef
   }
-
-  
-  // console.log('menu', menu);
-  // console.log('containerRef', containerRef.current);
-  // console.log('menuTriggerRef', menuTriggerRef.current);
-  // console.log('menuRef', menuRef.current);
-  // console.log('overlayprops e.g. styles', overlayProps);
 
   return (
     <Fragment>
@@ -158,7 +123,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
         isPressed={isOpen}>
         {menuTrigger}
       </PressResponder>
-      <MenuContext.Provider value={context}>
+      <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
           {menu}
         </Overlay>

@@ -22,20 +22,18 @@ export function useMenuTrigger(menuProps: MenuProps, menuTriggerProps:MenuTrigge
   });
   let menuId = overlayAriaProps.id;
 
-  // handle roles stuff here since overlaytrigger handles type attribute
-
   return {
     menuTriggerAriaProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
-      'aria-haspopup': menuTriggerProps['aria-haspopup'] || menuProps['role'] || 'true',
+      'aria-haspopup': menuTriggerProps['aria-haspopup'] || menuProps.role || 'true',
       role: 'button',
       type: 'button'
     },
     menuAriaProps: {
       id: menuId,
       'aria-labelledby': menuProps['aria-labelledby'] || menuTriggerId,
-      role: menuProps['role'] || 'menu',
+      role: menuProps.role || 'menu',
     }
   };
 }
