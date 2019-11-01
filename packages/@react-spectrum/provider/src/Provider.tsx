@@ -66,8 +66,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
-        {!prevContext && <ToastContainer />}
-        {contents}
+        <ToastContainer>
+          {contents}
+        </ToastContainer>
       </ProviderWrapper>
     );
   }
@@ -77,9 +78,11 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Context.Provider value={context}>
       <I18nProvider locale={locale}>
-        <ModalProvider>
-          {contents}
-        </ModalProvider>
+
+          <ModalProvider>
+            {contents}
+          </ModalProvider>
+
       </I18nProvider>
     </Context.Provider>
   );

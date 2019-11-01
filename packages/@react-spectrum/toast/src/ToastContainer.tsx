@@ -16,7 +16,7 @@
 **************************************************************************/
 
 import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement, ReactNode, useContext} from 'react';
+import React, {ReactElement, ReactNode, useContext, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import {Toast} from './';
 import {ToastOptions} from '@react-types/toast';
@@ -24,34 +24,40 @@ import {useProviderProps} from '@react-spectrum/provider';
 // import {useToast} from '@react-aria/toast';
 
 interface ToastContainerContextProps {
-  addChildren: (child: ReactNode) => {}
+  setMessage?: (any) => {}
+  positive?: (any) => {}
 }
 
-export const ToastContainerContext = React.createContext<ToastContainerContextProps | null>(null);
-
-export function useToastProvider(): ToastContainerContext {
-  return useContext(ToastContainerContext);
-}
+export const ToastContainerContext = React.createContext<ToastContainerContextProps | null>();
 
 export function ToastContainer(props: ToastOptions): ReactElement {
   let defaults = {};
   let completeProps = Object.assign({}, defaults, useProviderProps(props));
   // let {toastProps} = useToast(completeProps);
+  let [toast, setToast] = useState();
+  // console.log('setMessage', setMessage);
   let {
     children
   } = completeProps;
   // let toastContext = useToastProvider();
 
-
-  let addChildren = (child) => {
-    console.log('child', child);
-    children.add(child);
+  let renderToasts = () => {
+    return (<Toast {...toast.props}>{toast.message}</Toast>);
   };
+
+  let contextValue = {
+    positive: (message, props) =>
+      setToast({
+        message,
+        props: {...props, variant: 'positive'}
+      })
+  }
 
   return (
     <div className={classNames(styles, 'spectrum-Toast')}>
-      <ToastContainerContext.Provider value={{addChildren}}>
-        <div>See me</div>
+      <ToastContainerContext.Provider value={contextValue}>
+        {toast && renderToasts()}
+        {children}
       </ToastContainerContext.Provider>
     </div>
   );
@@ -72,7 +78,8 @@ function addToast(toast, timeout, toastContext) {
   );*/
 }
 
-export function positive(content: ReactNode, options: ToastOptions, toastContext): void {
+export function usePositive(content: ReactNode, options: ToastOptions): void {
   // addToast(<Toast variant="positive" {...options}>{message}</Toast>, options.timeout, options.container);
-  addToast(<Toast variant="positive" {...options}>{content}</Toast>, options.timeout, toastContext);
+  let toastContext = useContext(ToastContainerContext);
+  toastContext.positive(content);
 }

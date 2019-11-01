@@ -1,9 +1,9 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import React, {useContext} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Toast} from '../';
-import {positive, ToastContainerContext, useToastProvider} from '../';
+import {ToastContainer, ToastContainerContext, usePositive} from '../';
 import {ToastProps} from '@react-types/toast';
 
 storiesOf('Toast', module)
@@ -37,7 +37,11 @@ storiesOf('Toast', module)
   )
   .add(
     'add positive',
-    () => renderPositive()
+    () => {
+      return (
+          <RenderPositive />
+      );
+    }
   );
 
 function render(props:ToastProps = {}, message:String) {
@@ -48,34 +52,21 @@ function render(props:ToastProps = {}, message:String) {
   );
 }
 
-function renderPositive() {
+
+
+function RenderPositive() {
   let toastContext = useContext(ToastContainerContext);
-  let containerRef = React.useRef();
-  let Blah = React.forwardRef((props, ref) => {
-    console.log('props.toast', props.toast);
-    return (
-      <div ref={ref}>
-         {props.toast}
-      </div>
-    )
-  });
+
   return (
     <div>
-      <Blah ref={containerRef}></Blah>
-      <Button
-        onPress={() => {
-          // positive('Toast is perfect.', {}, toastContext);
-          function addToast(content) {
-            console.log('ref?', containerRef.current.toast);
-            console.log('toast?', () => {return content});
-            containerRef.current.toast = () => {return content};
-          };
-          console.log('pressed');
-          addToast(<Toast variant="positive">Toast is perfect</Toast>);
-        }}
-        variant="primary">
-          Show Toast
-      </Button>
+        <Button
+          onPress={() => {
+            toastContext.positive('Toast is positive')
+            // usePositive('Toast is positive');
+          }}
+          variant="primary">
+            Show Toast
+        </Button>
     </div>
   );
 
