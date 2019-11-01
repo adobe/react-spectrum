@@ -1,16 +1,17 @@
 import {chain} from '@react-aria/utils';
+import {DOMProps} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Overlay} from '@react-spectrum/overlays';
-import {useOverlayPosition} from '@react-aria/overlays';
+import {Placement, useOverlayPosition} from '@react-aria/overlays';
+import {Popover} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef, ReactElement} from 'react';
+import React, {Fragment, ReactElement, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-
 import {useMenuTrigger} from '@react-aria/action-menu';
 
-export interface MenuTriggerProps {
+export interface MenuTriggerProps extends DOMProps {
   children: ReactElement[],
-  trigger: 'press' | 'longPress',
+  trigger?: 'press' | 'longPress',
   align?: 'start' | 'end',
   direction?: 'bottom' | 'top', // left right?
   isOpen?: boolean,
@@ -22,15 +23,14 @@ export interface MenuTriggerProps {
 
 export function MenuTrigger(props: MenuTriggerProps) {
   let containerRef = useRef<HTMLDivElement>();
-  let menuPopoverRef = useRef<HTMLElement>();
+  let menuPopoverRef = useRef<HTMLDivElement>();
   let menuTriggerRef = useRef<HTMLElement>();
   let {
     children,
-    trigger = "press", // TODO: actually use this prop when longPress is implemented
     onOpenChange,
-    align = "start",
+    align = 'start',
     shouldFlip = false,
-    direction = "bottom",
+    direction = 'bottom',
     ...otherProps
   } = props;
   
@@ -38,11 +38,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   
   // Initialize "open" state (controlled vs uncontrolled), default closed.
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
   let onClose = () => {
     setOpen(false);
-  }
+  };
 
   let {menuTriggerAriaProps, menuAriaProps} = useMenuTrigger(
     {
@@ -55,21 +55,21 @@ export function MenuTrigger(props: MenuTriggerProps) {
       ref: menuTriggerRef
     },
     isOpen
-  )
+  );
 
   // Press handler for menuTrigger
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
       setOpen(!isOpen);
     }
-  }
+  };
 
   // Menu item selection handler
   let onSelect = (...args) => {
     if (otherProps.onSelect) {
       otherProps.onSelect(...args);
     }
-  }
+  };
 
   let onKeyDownTrigger = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
@@ -88,32 +88,27 @@ export function MenuTrigger(props: MenuTriggerProps) {
           break;
       }
     }
-  }
+  };
 
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     containerRef,
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
-    placement: `${direction} ${align}`, // Legit? For some reason bottom/top right/left works but not bottom/top start/end. Do I just convert to right/left or should I alter calculatePosition so that it can check for RTL?
+    placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
     isOpen
-  })
+  });
 
   let menuContext = {
-    ...overlayProps, 
     ...menuAriaProps,
-    placement, 
-    arrowProps,
-    menuPopoverRef,
-    onSelect: onSelect,
-    hideArrow: true
-  }
+    onSelect: onSelect
+  };
 
   let menuTriggerProps = {
     ...menuTriggerAriaProps,
     onKeyDown: chain(menuTrigger.props.onKeyDown, onKeyDownTrigger),
     ref: menuTriggerRef
-  }
+  };
 
   return (
     <Fragment>
@@ -125,9 +120,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
-          {menu}
+          <Popover {...overlayProps} ref={menuPopoverRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow>
+            {menu}
+          </Popover>
         </Overlay>
       </MenuContext.Provider> 
     </Fragment>
   );
-};
+}

@@ -1,41 +1,30 @@
 import {classNames} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
 import {MenuContext} from './context';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext} from 'react';
-import {Popover} from '@react-spectrum/overlays';
+import React, {ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 
-export const Menu = React.forwardRef((props, ref) => {
-  let contextProps = useContext(MenuContext) || {};
+interface MenuProps extends DOMProps{
+  onSelect?: (...args) => void,
+  children?: ReactElement[]
+}
 
+export const Menu = React.forwardRef((props: MenuProps) => {
+  let contextProps = useContext(MenuContext) || {};
   let {
-    placement,
-    arrowProps,
     onSelect,
     id,
     role,
     'aria-labelledby': labelledBy,
-    hideArrow,
-    style,
-    isOpen,
-    children,
-    menuPopoverRef
+    children
   } = mergeProps(contextProps, props);
-
-  let popoverProps = {
-    placement,
-    arrowProps,
-    hideArrow,
-    style,
-    isOpen
-  }
 
   let menuProps = {
     id,
     role,
     'aria-labelledby': labelledBy
-  }
-
+  };
 
   children = React.Children.map(children, (c) => 
     React.cloneElement(c, {
@@ -45,16 +34,15 @@ export const Menu = React.forwardRef((props, ref) => {
         'spectrum-Menu-item'
       )
     })
-  )
+  );
+
   return (
-    <Popover {...popoverProps} ref={menuPopoverRef}>
-      <ul 
-        {...menuProps}
-        className={classNames(
-          styles,
-          'spectrum-Menu')}>
-        {children}
-      </ul>
-    </Popover>
-  )
-})
+    <ul
+      {...menuProps}
+      className={classNames(
+        styles,
+        'spectrum-Menu')}>
+      {children}
+    </ul>
+  );
+});

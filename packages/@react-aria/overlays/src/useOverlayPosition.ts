@@ -2,7 +2,7 @@ import {calculatePosition} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
 import {useLocale} from '@react-aria/i18n'; 
 
-type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
+export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
     'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';

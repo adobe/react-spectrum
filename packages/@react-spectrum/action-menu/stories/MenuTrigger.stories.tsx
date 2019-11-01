@@ -1,11 +1,9 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {MenuTrigger, MenuTriggerProps} from '../';
-import {Popover} from '@react-spectrum/overlays';
+import {Menu} from '../';
+import {MenuTrigger} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-
-import {Menu} from '../';
 
 storiesOf('MenuTrigger', module)
   .add(
@@ -107,19 +105,19 @@ storiesOf('MenuTrigger', module)
         <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
           <div style={{height: 200}}>
             <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
-            <Button
-              onKeyDown={action('onKeyDown')}
-              onPress={action('press')}
-              onPressStart={action('pressstart')}
-              onPressEnd={action('pressend')}>
-                Menu Button
-            </Button>
-            <Menu role="menu">
-              <li><span>ewagawg</span></li>
-              <li>galwengklwnealkgnlk</li>
-              <li>gawenglkawengklawengk</li>
-            </Menu>
-          </MenuTrigger>
+              <Button
+                onKeyDown={action('onKeyDown')}
+                onPress={action('press')}
+                onPressStart={action('pressstart')}
+                onPressEnd={action('pressend')}>
+                  Menu Button
+              </Button>
+              <Menu role="menu">
+                <li><span>ewagawg</span></li>
+                <li>galwengklwnealkgnlk</li>
+                <li>gawenglkawengklawengk</li>
+              </Menu>
+            </MenuTrigger>
           </div>
         </div>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1}}>
@@ -129,10 +127,9 @@ storiesOf('MenuTrigger', module)
         </div>
       </div>
     )
-  )
+  );
   
-
-function render(props:MenuTriggerProps = {}) {
+function render(props = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')} {...props}>
