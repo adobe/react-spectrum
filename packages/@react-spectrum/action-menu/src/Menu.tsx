@@ -1,9 +1,13 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {MenuContext} from './context';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useRef} from 'react';
 import {Popover} from '@react-spectrum/overlays';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 
 export const Menu = React.forwardRef((props, ref) => {
+  let contextProps = useContext(MenuContext) || {};
+
   let {
     placement,
     arrowProps,
@@ -14,8 +18,9 @@ export const Menu = React.forwardRef((props, ref) => {
     hideArrow,
     style,
     isOpen,
-    children
-  } = props;
+    children,
+    menuPopoverRef
+  } = mergeProps(contextProps, props);
 
   let popoverProps = {
     placement,
@@ -42,7 +47,7 @@ export const Menu = React.forwardRef((props, ref) => {
     })
   )
   return (
-    <Popover {...popoverProps} ref={ref}>
+    <Popover {...popoverProps} ref={menuPopoverRef}>
       <ul 
         {...menuProps}
         className={classNames(

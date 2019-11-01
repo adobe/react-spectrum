@@ -46,27 +46,33 @@ storiesOf('MenuTrigger', module)
     'multiple menus',
     () => (
       <div>
-        <MenuTrigger onToggle={action('toggle')}>
+        <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
           <Button
+            onKeyDown={action('onKeyDown')}
             onPress={action('press')}
             onPressStart={action('pressstart')}
             onPressEnd={action('pressend')}>
               Menu Button #1
           </Button>
-          <Popover>
-            <div>Hi</div>
-          </Popover>
+          <Menu>
+            <li><span>hi</span></li>
+            <li>hi2</li>
+            <li>hi3</li>
+          </Menu>
         </MenuTrigger>
-        <MenuTrigger onToggle={action('toggle')}>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
           <Button
+            onKeyDown={action('onKeyDown')}
             onPress={action('press')}
             onPressStart={action('pressstart')}
             onPressEnd={action('pressend')}>
               Menu Button #2
           </Button>
-          <Popover>
-            <div>Hi2</div>
-          </Popover>
+          <Menu>
+            <li><span>bye</span></li>
+            <li>bye2</li>
+            <li>bye3</li>
+          </Menu>
         </MenuTrigger>
       </div>
     )
@@ -81,6 +87,7 @@ storiesOf('MenuTrigger', module)
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
         <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
           <Button
+            onKeyDown={action('onKeyDown')}
             onPress={action('press')}
             onPressStart={action('pressstart')}
             onPressEnd={action('pressend')}>
@@ -103,12 +110,13 @@ storiesOf('MenuTrigger', module)
           <div style={{height: 200}}>
             <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
             <Button
+              onKeyDown={action('onKeyDown')}
               onPress={action('press')}
               onPressStart={action('pressstart')}
               onPressEnd={action('pressend')}>
                 Menu Button
             </Button>
-            <Menu role="list">
+            <Menu role="menu">
               <li><span>ewagawg</span></li>
               <li>galwengklwnealkgnlk</li>
               <li>gawenglkawengklawengk</li>
@@ -131,6 +139,7 @@ function render(props:MenuTriggerProps = {}) {
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')} {...props}>
         <Button
+          onKeyDown={action('onKeyDown')}
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>

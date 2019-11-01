@@ -1,4 +1,5 @@
-import {chain, filterDOMProps, useId} from '@react-aria/utils';
+import {chain, useId} from '@react-aria/utils';
+import {MenuContext} from './context';
 import {Overlay} from '@react-spectrum/overlays';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
@@ -8,7 +9,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/action-menu';
 
 export interface MenuTriggerProps {
-  children: ReactElement,
+  children: ReactElement[],
   trigger: 'press' | 'longPress',
   align?: 'start' | 'end',
   direction?: 'bottom' | 'top', // left right?
@@ -21,7 +22,7 @@ export interface MenuTriggerProps {
 
 export function MenuTrigger(props: MenuTriggerProps) {
   let containerRef = useRef<HTMLDivElement>();
-  let menuRef = useRef<HTMLElement>();
+  let menuPopoverRef = useRef<HTMLElement>();
   let menuTriggerRef = useRef<HTMLElement>();
   let {
     children,
@@ -54,7 +55,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     {
       ...menu.props,
       onClose,
-      ref: menuRef
+      ref: menuPopoverRef
     },
     {
       ...menuTrigger.props,
@@ -99,25 +100,35 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     containerRef,
     targetRef: menuTriggerRef,
-    overlayRef: menuRef,
+    overlayRef: menuPopoverRef,
     placement: `${direction} ${align}`, // Legit? For some reason bottom/top right/left works but not bottom/top start/end. Do I just convert to right/left or should I alter calculatePosition so that it can check for RTL?
     shouldFlip: shouldFlip,
     isOpen
   })
 
-  // TODO: replace with context stuff, split into menu props and popover context
-  menu = React.cloneElement(menu, {
+  
+  let context = {
     ...overlayProps, 
     ...menuAriaProps,
     placement, 
     arrowProps,
-    ref: menuRef,
+    menuPopoverRef,
     onSelect: onSelect,
-    hideArrow: true,
-    // id: menuId,
-    // role: menu.props['role'] || 'menu',
-    // 'aria-labelledby': menu.props['aria-labelledby'] || menuTriggerId,
-  });
+    hideArrow: true
+  }
+  // // TODO: replace with context stuff, split into menu props and popover context
+  // menu = React.cloneElement(menu, {
+  //   ...overlayProps, 
+  //   ...menuAriaProps,
+  //   placement, 
+  //   arrowProps,
+  //   ref: menuRef,
+  //   onSelect: onSelect,
+  //   hideArrow: true,
+  //   // id: menuId,
+  //   // role: menu.props['role'] || 'menu',
+  //   // 'aria-labelledby': menu.props['aria-labelledby'] || menuTriggerId,
+  // });
 
   // Note: use useOverlayTrigger, and possiblly refactor some stuff so common stuff is common to dialog + menu
   // pull out menu and dialog specific stuff into their own hooks
@@ -147,9 +158,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
         isPressed={isOpen}>
         {menuTrigger}
       </PressResponder>
-      <Overlay isOpen={isOpen} ref={containerRef}>
-        {menu}
-      </Overlay> 
+      <MenuContext.Provider value={context}>
+        <Overlay isOpen={isOpen} ref={containerRef}>
+          {menu}
+        </Overlay>
+      </MenuContext.Provider> 
     </Fragment>
   );
 };
