@@ -14,13 +14,11 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'align="start"',
-    // () => render({align: 'start'})
-    () => render({align: 'left'})
+    () => render({align: 'start'})
   )
   .add(
     'align="end"',
-    // () => render({align: 'end'})
-    () => render({align: 'right'})
+    () => render({align: 'end'})
   )
   .add(
     'direction="top"',
