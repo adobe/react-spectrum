@@ -30,6 +30,11 @@ interface PressState {
   isOverTarget: boolean
 }
 
+interface PressResult {
+  isPressed: boolean,
+  pressProps: HTMLAttributes<HTMLElement>
+}
+
 function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
@@ -50,11 +55,6 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   }, [context, props.ref]);
 
   return props;
-}
-
-interface PressResult {
-  isPressed: boolean,
-  pressProps: HTMLAttributes<HTMLElement>
 }
 
 export function usePress(props: PressHookProps): PressResult {
