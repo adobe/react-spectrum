@@ -4,7 +4,7 @@ import {useMenuTrigger} from '../';
 
 describe('useMenuTrigger', function () {
   it('fill me in', function () {
-    let blah = renderHook(() => useMenuTrigger({}));
+    renderHook(() => useMenuTrigger({}));
     expect(true).toBeTruthy();
   });
 });

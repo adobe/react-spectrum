@@ -1,4 +1,4 @@
-import {cleanup, render} from '@testing-library/react';
+import {cleanup} from '@testing-library/react';
 import {MenuTrigger} from '../';
 import React from 'react';
 import V2MenuTrigger from '@react/react-spectrum/Dropdown';
