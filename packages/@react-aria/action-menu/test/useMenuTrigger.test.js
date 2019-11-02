@@ -1,12 +1,10 @@
-// import {cleanup, render} from '@testing-library/react';
-// import {renderHook} from 'react-hooks-testing-library';
-// import React, {useRef} from 'react';
-// import {useMenuTrigger} from '../';
+import React from 'react';
+import {renderHook} from 'react-hooks-testing-library';
+import {useMenuTrigger} from '../';
 
-// describe('useMenuTrigger', function () {
-//   afterEach(cleanup);
-
-//   it('fill me in', function () {
-//     expect(true).toBeTruthy();
-//   });
-// });
+describe('useMenuTrigger', function () {
+  it('fill me in', function () {
+    let blah = renderHook(() => useMenuTrigger({}));
+    expect(true).toBeTruthy();
+  });
+});
