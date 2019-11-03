@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
-  "source": "src/VisuallyHidden.tsx",
+  "source": "src/index.ts",
   "files": [
     "dist"
   ],
