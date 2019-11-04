@@ -15,57 +15,68 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-tag-background-color);
   border-color: var(--spectrum-tag-border-color);
 
-  .spectrum-ClearButton {
-    color: var(--spectrum-tag-deletable-icon-color);
-  }
-
   &:hover {
     background-color: var(--spectrum-tag-background-color-hover);
     color: var(--spectrum-tag-text-color-hover);
     border-color: var(--spectrum-tag-border-color-hover);
-
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-deletable-icon-color-hover);
-    }
   }
 
-  &:focus-ring {
+  &.focus-ring {
     background-color: var(--spectrum-tag-background-color-key-focus);
     color: var(--spectrum-tag-text-color-key-focus);
     border-color: var(--spectrum-tag-border-color-key-focus);
     box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
+  }
 
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-deletable-icon-color-key-focus);
+  &.is-selected {
+    background-color: var(--spectrum-tag-background-color-selected);
+    color: var(--spectrum-tag-text-color-selected);
+    border-color: var(--spectrum-tag-border-color-selected);
+    &:hover {
+      background-color: var(--spectrum-tag-background-color-selected-hover);
+    }
+
+    &.focus-ring {
+      box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-selected-key-focus);
+      border-color: var(--spectrum-tag-text-color-selected-key-focus);
+    }
+    &.is-invalid {
+      border-color: var(--spectrum-tag-border-color-error-selected);
+      .spectrum-Tags-itemIcon,
+      .spectrum-Tags-itemLabel,
+      .spectrum-Tags-itemClearButton {
+        color: var(--spectrum-tag-text-color-error-selected);
+      }
+      &.focus-ring {
+        box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+        border-color: var(--spectrum-tag-border-color-error-selected);
+      }
+      &:hover {
+        border-color: var(--spectrum-tag-border-color-selected);
+      }
     }
   }
 
   &.is-invalid {
-    color: var(--spectrum-tag-text-color-error);
+    color: var(--spectrum-tag-icon-color-error);
     border-color: var(--spectrum-tag-border-color-error);
 
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-icon-color-error);
-    }
-
     &:hover {
-      color: var(--spectrum-tag-text-color-error-hover);
+      color: var(--spectrum-tag-icon-color-error-hover);
       border-color: var(--spectrum-tag-border-color-error-hover);
-
-      .spectrum-ClearButton {
-        color: var(--spectrum-tag-icon-color-error-hover);
-      }
     }
 
-    &:focus-ring {
-      color: var(--spectrum-tag-text-color-error-key-focus);
+    &.focus-ring {
+      color: var(--spectrum-tag-icon-color-error-hover);
       border-color: var(--spectrum-tag-border-color-key-focus);
       box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
-
-      .spectrum-ClearButton {
-        color: var(--spectrum-tag-icon-color-error-key-focus);
-      }
     }
+
+    .spectrum-Tags-itemIcon,
+    .spectrum-Tags-itemClearButton {
+      color: var(--spectrum-tag-border-color-error);
+    }
+
   }
 
   &.is-disabled {
@@ -80,58 +91,67 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Tags-item--deletable {
+.spectrum-Tags-item--removable {
   &:hover {
-    color: var(--spectrum-tag-deletable-text-color-hover);
-
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-deletable-icon-color-hover);
-    }
+    color: var(--spectrum-tag-removable-text-color-hover);
   }
 
   &:active {
-    color: var(--spectrum-tag-deletable-text-color-down);
-
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-deletable-icon-color-down);
-    }
+    color: var(--spectrum-tag-removable-text-color-down);
   }
 
   &.is-invalid {
     &:hover {
-      border-color: var(--spectrum-tag-deletable-border-color-error-hover);
-      color: var(--spectrum-tag-deletable-text-color-error-hover);
-
-      .spectrum-ClearButton {
-        color: var(--spectrum-tag-deletable-icon-color-error-hover);
+      border-color: var(--spectrum-tag-removable-border-color-error-hover);
+      .spectrum-Tags-itemClearButton {
+        color: var(--spectrum-tag-removable-border-color-error-hover);
       }
     }
+
+    .spectrum-Tags-itemClearButton {
+      &.is-focused {
+         color: var(--spectrum-tag-icon-color-error-hover);
+       }
+     }
 
     &:active {
-      border-color: var(--spectrum-tag-deletable-border-color-error-down);
-      color: var(--spectrum-tag-deletable-text-color-error-down);
+      border-color: var(--spectrum-tag-removable-border-color-error-down);
+      color: var(--spectrum-tag-removable-text-color-error-down);
+    }
+  }
 
-      .spectrum-ClearButton {
-        color: var(--spectrum-tag-deletable-icon-color-error-down);
+  &.is-focused {
+    color: var(--spectrum-tag-removable-text-color-key-focus);
+
+    &.is-invalid {
+      color: var(--spectrum-tag-removable-text-color-error-key-focus);
+    }
+  }
+
+  &.is-selected {
+    color: var(--spectrum-tag-removable-text-color-selected);
+    &.is-focused {
+       color: var(--spectrum-tag-removable-text-color-selected-key-focus);
+    }
+    .spectrum-Tags-itemClearButton {
+      color: var(--spectrum-tag-removable-button-icon-color-selected);
+      &:hover {
+         background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
+         color: var(--spectrum-tag-removable-button-icon-color-selected-hover);
       }
     }
   }
 
-  &:focus-ring {
-    color: var(--spectrum-tag-deletable-text-color-key-focus);
-
-    .spectrum-ClearButton {
-      color: var(--spectrum-tag-deletable-icon-color-key-focus);
+  .spectrum-Tags-itemClearButton {
+    &.is-focused {
+       border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
+       border-radius: var(--spectrum-alias-border-radius-regular);
+       background-color: var(--spectrum-tag-removable-button-background-color-key-focus);
+       color: var(--spectrum-tag-removable-button-icon-color-key-focus);
     }
-
-    &.is-invalid {
-      color: var(--spectrum-tag-deletable-text-color-error-key-focus);
+    &:hover {
+      background-color: var(--spectrum-tag-removable-button-background-color-hover);
+      color: var(--spectrum-tag-removable-button-icon-color-hover);
     }
-  }
-}
-
-.spectrum-Tags-item.is-disabled .spectrum-ClearButton {
-  .spectrum-Icon {
-    color: var(--spectrum-tag-icon-color-disabled);
   }
 }
