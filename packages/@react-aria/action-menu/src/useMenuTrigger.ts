@@ -33,7 +33,8 @@ export function useMenuTrigger(menuProps: MenuProps, menuTriggerProps:MenuTrigge
       ...triggerAriaProps,
       id: menuTriggerId,
       'aria-haspopup': menuTriggerProps['aria-haspopup'] || menuProps.role || 'true',
-      role: 'button'
+      role: 'button',
+      type: 'button'
     },
     menuAriaProps: {
       ...overlayAriaProps,
