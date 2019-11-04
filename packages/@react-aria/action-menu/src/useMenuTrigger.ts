@@ -4,10 +4,8 @@ import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuProps extends DOMProps{
-  ref: RefObject<HTMLDivElement | null>,
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
   onClose?: () => void,
-  // id?: string, 
   role: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
 }
 
@@ -29,18 +27,16 @@ export function useMenuTrigger(menuProps: MenuProps, menuTriggerProps:MenuTrigge
     onClose: menuProps.onClose,
     isOpen
   });
-  let menuId = overlayAriaProps.id;
 
   return {
     menuTriggerAriaProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
       'aria-haspopup': menuTriggerProps['aria-haspopup'] || menuProps.role || 'true',
-      role: 'button',
-      type: 'button'
+      role: 'button'
     },
     menuAriaProps: {
-      id: menuId,
+      ...overlayAriaProps,
       'aria-labelledby': menuProps['aria-labelledby'] || menuTriggerId,
       role: menuProps.role || 'menu'
     }

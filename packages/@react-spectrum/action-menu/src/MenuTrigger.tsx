@@ -1,9 +1,8 @@
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {MenuContext} from './context';
-import {Overlay} from '@react-spectrum/overlays';
+import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
-import {Popover} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -33,11 +32,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     direction = 'bottom',
     ...otherProps
   } = props;
-  
-  // Split into menuTrigger and menu
+
   let [menuTrigger, menu] = React.Children.toArray(children);
-  
-  // Initialize "open" state (controlled vs uncontrolled), default closed.
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
   let onClose = () => {
@@ -47,8 +43,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let {menuTriggerAriaProps, menuAriaProps} = useMenuTrigger(
     {
       ...menu.props,
-      onClose,
-      ref: menuPopoverRef
+      onClose
     },
     {
       ...menuTrigger.props,
@@ -57,14 +52,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
     isOpen
   );
 
-  // Press handler for menuTrigger
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
       setOpen(!isOpen);
     }
   };
 
-  // Menu item selection handler
   let onSelect = (...args) => {
     if (otherProps.onSelect) {
       otherProps.onSelect(...args);
