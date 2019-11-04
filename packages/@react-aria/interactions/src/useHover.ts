@@ -79,7 +79,6 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
       if (onHover) {
-        console.log('on hover active');
         onHover({
           type: 'hovering',
           target
@@ -107,14 +106,12 @@ export function useHover(props: HoverHookProps): HoverResult {
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
     hoverProps.onMouseEnter = (e) => {
-      console.log('mouse entered');
       state.target = e.currentTarget;
       state.isHovering = true;
       triggerHoverStart(e.target);
     };
 
     hoverProps.onMouseLeave = (e) => {
-      console.log('mouse left');
       state.isHovering = false;
       triggerHoverEnd(e.target);
     };
