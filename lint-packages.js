@@ -2,7 +2,6 @@ const glob = require('fast-glob');
 const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
-
 let path = require('path');
 let packages = glob.sync(__dirname + '/packages/@react-{aria,spectrum,stately}/*/package.json');
 let errors = false;
