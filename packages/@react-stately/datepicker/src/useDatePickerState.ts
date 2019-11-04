@@ -16,21 +16,22 @@ export interface DatePickerState {
 export function useDatePickerState(props: DatePickerProps): DatePickerState {
   let [isOpen, setOpen] = useState(false);
   let [value, setValue] = useControlledState(props.value, props.defaultValue || null, props.onChange);
+  let dateValue = value != null ? new Date(value) : null;
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: Date) => {
     if (value) {
-      setTime(newValue, value);
+      setTime(newValue, dateValue);
     }
     setValue(newValue);
     setOpen(false);
   };
   
   let validationState: ValidationState = props.validationState || 
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null);
+    (isInvalid(dateValue, props.minValue, props.maxValue) ? 'invalid' : null);
 
   return {
-    value,
+    value: dateValue,
     setValue,
     selectDate,
     isOpen,
