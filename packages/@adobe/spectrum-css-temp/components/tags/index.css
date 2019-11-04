@@ -34,15 +34,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
-  float: left;
+  float: inline-start;
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
 
   margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
   padding: 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
-  height: var(--spectrum-tag-height);
-  max-width: 100%;
+  block-size: var(--spectrum-tag-height);
+  max-inline-size: 100%;
 
   border-width: var(--spectrum-tag-border-size);
   border-style: solid;
@@ -59,25 +59,23 @@ governing permissions and limitations under the License.
     pointer-events: none;
   }
 
-  > .spectrum-Icon,
-  > .spectrum-Avatar {
-    margin-right: var(--spectrum-tag-icon-padding-x);
-
-    /* Add padding for "avatar" variant */
-    margin-left: calc(var(--spectrum-tag-avatar-padding-x) - var(--spectrum-tag-padding-x));
-
-    ~ .spectrum-Tags-itemLabel {
-      margin-right: calc(var(--spectrum-tag-avatar-padding-x) - var(--spectrum-tag-padding-x));
-    }
+  > .spectrum-Tags-itemIcon {
+    margin-inline-end: var(--spectrum-tag-icon-padding-x);
+    margin-inline-start: calc(-1 * var(--spectrum-tag-deletable-border-size-key-focus));
   }
 
-  .spectrum-ClearButton {
-    margin-right: calc(-1 * var(--spectrum-tag-padding-x));
+  .spectrum-Tags-itemClearButton {
+    display: flex;
+    margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
+    margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
+    block-size: var(--spectrum-alias-font-size-default);
+    inline-size: var(--spectrum-alias-font-size-default);
+    border-radius: var(--spectrum-alias-border-radius-small);
   }
 }
 
 .spectrum-Tags-itemLabel {
-  height: 100%;
+  block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
   flex: 1 1 auto;
   font-size: var(--spectrum-tag-text-size);

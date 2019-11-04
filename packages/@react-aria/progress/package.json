@@ -2,7 +2,7 @@
   "name": "@react-aria/progress",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",

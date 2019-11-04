@@ -4,47 +4,68 @@ import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
+const info = 'A containing element with  `role="search"` has been added to define a **search** landmark region.';
+
 storiesOf('SearchField', module)
   .add(
     'Default',
-    () => render()
+    () => renderSearchLandmark(render()),
+    {info}
   )
   .add(
     'defaultValue (uncontrolled)',
-    () => render({defaultValue: 'React'})
+    () => renderSearchLandmark(render({defaultValue: 'React'})),
+    {info}
   )
   .add(
     'value (controlled)',
-    () => render({value: 'React'})
+    () => renderSearchLandmark(render({value: 'React'})),
+    {info}
   )
   .add(
     'isQuiet: true',
-    () => render({isQuiet: true})
+    () => renderSearchLandmark(render({isQuiet: true})),
+    {info}
   )
   .add(
     'isDisabled: true',
-    () => render({defaultValue: 'React', isDisabled: true})
+    () => renderSearchLandmark(render({defaultValue: 'React', isDisabled: true})),
+    {info}
   )
   .add(
     'isQuiet, isDisabled',
-    () => render({defaultValue: 'React', isQuiet: true, isDisabled: true})
+    () => renderSearchLandmark(render({defaultValue: 'React', isQuiet: true, isDisabled: true})),
+    {info}
   )
   .add(
     'icon: refresh',
-    () => render({defaultValue: 'React', icon: <Refresh />})
+    () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
+    {info}
   )
   .add(
     'isQuiet, icon: refresh',
-    () => render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})
+    () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})),
+    {info}
   )
   .add(
     'onClear',
-    () => render({onClear: action('clear')})
+    () => renderSearchLandmark(render({onClear: action('clear')})),
+    {info}
+  )
+  .add(
+    'using combobox role',
+    () => renderSearchLandmark(render({type: 'text', role: 'combobox', 'aria-expanded': 'false', 'aria-haspopup': 'listbox', 'aria-autocomplete': 'list'})),
+    {info: `This example demonstrates how to overide Search props for a custom implementation of the WAI-ARIA 1.0 ComboBox design pattern. ${info}`}
   );
+
+function renderSearchLandmark(child) {
+  return <div role="search">{child}</div>;
+}
 
 function render(props = {}) {
   return (
     <SearchField
+      aria-label="Search"
       placeholder="Enter text"
       {...props}
       onChange={action('change')}
