@@ -30,6 +30,11 @@ interface PressState {
   isOverTarget: boolean
 }
 
+interface PressResult {
+  isPressed: boolean,
+  pressProps: HTMLAttributes<HTMLElement>
+}
+
 function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
@@ -50,11 +55,6 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   }, [context, props.ref]);
 
   return props;
-}
-
-interface PressResult {
-  isPressed: boolean,
-  pressProps: HTMLAttributes<HTMLElement>
 }
 
 export function usePress(props: PressHookProps): PressResult {
@@ -200,11 +200,11 @@ export function usePress(props: PressHookProps): PressResult {
           e.nativeEvent.preventDefault();
           return;
         }
-        
+
         state.isPressed = true;
         state.target = e.currentTarget;
         triggerPressStart(e.target, 'mouse');
-        
+
         document.addEventListener('mouseup', onMouseUp, false);
       };
 
@@ -219,7 +219,7 @@ export function usePress(props: PressHookProps): PressResult {
           triggerPressEnd(e.target, 'mouse', false);
         }
       };
-    
+
       let onMouseUp = (e) => {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
@@ -228,10 +228,10 @@ export function usePress(props: PressHookProps): PressResult {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
-    
+
         triggerPressEnd(state.target, 'mouse');
       };
-    
+
       pressProps.onTouchStart = (e) => {
         let touch = getTouchFromEvent(e.nativeEvent);
         if (!touch) {
