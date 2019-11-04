@@ -83,7 +83,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     }
   };
 
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({
+  let {overlayProps, placement} = useOverlayPosition({
     containerRef,
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
@@ -113,7 +113,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...overlayProps} ref={menuPopoverRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow>
+          <Popover {...overlayProps} ref={menuPopoverRef} onClose={onClose} placement={placement} hideArrow>
             {menu}
           </Popover>
         </Overlay>
