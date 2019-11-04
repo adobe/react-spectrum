@@ -104,7 +104,7 @@ governing permissions and limitations under the License.
   border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
 
-  /*z-index: 1;*/
+  z-index: 1;
 }
 
 .spectrum-Stepper--quiet {

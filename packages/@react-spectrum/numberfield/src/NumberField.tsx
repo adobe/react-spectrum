@@ -4,7 +4,7 @@ import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
-import {InputBase, RangeInputBase, TextInputBase, ValidationState, ValueBase} from '@react-types/shared';
+import {InputBase, RangeInputBase, TextInputBase, ValueBase} from '@react-types/shared';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject} from 'react';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css'; // HACK: must be included BEFORE inputgroup
@@ -34,8 +34,8 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
     showStepper = true,
     ...otherProps
   } = completeProps;
-  let {validationState, onChange, ...numberFieldState} = useNumberFieldState(otherProps);
-  let {numberFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
+  let {onChange, ...numberFieldState} = useNumberFieldState(otherProps);
+  let {numberFieldProps, inputFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
     ...completeProps,
     ...numberFieldState
   });
@@ -45,50 +45,45 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': validationState === 'invalid',
+      'is-invalid': numberFieldState.validationState === 'invalid',
       'is-disabled': isDisabled
     },
-    className
+    classNames(
+      stepperStyle,
+      'spectrum-Stepper',
+      {'spectrum-Stepper--quiet': isQuiet},
+      className
+    )
   );
 
   return (
     <FocusRing
-      within
-      focusClass={classNames(inputgroupStyles, 'is-focused')}
-      focusRingClass={classNames(inputgroupStyles, 'focus-ring')}>
+      focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
+      focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}>
       <div
         {...filterDOMProps(completeProps)}
+        {...numberFieldProps}
         ref={ref}
-        className={classNames(
-          stepperStyle,
-          'spectrum-Stepper',
-          'react-spectrum-Stepper',
-          {'spectrum-Stepper--quiet': isQuiet},
-          className
-        )}>
+        className={className}>
         <TextField
-          autoComplete="off"
-          validationState={validationState as ValidationState}
           isQuiet={isQuiet}
-          className={`${classNames(stepperStyle, 'spectrum-Stepper-input')} ${classNames(inputgroupStyles, 'spectrum-FieldButton')}`}
-          {...numberFieldProps}
+          className={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          {...inputFieldProps}
           onChange={onChange} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">
           <ActionButton
-            className={`${classNames(inputgroupStyles, 'spectrum-FieldButton')} ${classNames(stepperStyle, 'spectrum-Stepper-stepUp')}`}
+            className={classNames(stepperStyle, 'spectrum-Stepper-stepUp')}
             {...incrementButtonProps}
-            isQuiet={isQuiet}
-            tabIndex={-1}>
+            isQuiet={isQuiet}>
             <ChevronUpSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
           </ActionButton>
           <ActionButton
-            className={`${classNames(inputgroupStyles, 'spectrum-FieldButton')} ${classNames(stepperStyle, 'spectrum-Stepper-stepDown')}`}
+            className={classNames(stepperStyle, 'spectrum-Stepper-stepDown')}
             {...decrementButtonProps}
-            isQuiet={isQuiet}
-            tabIndex={-1}>
+            isQuiet={isQuiet}>
             <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
           </ActionButton>
         </span>

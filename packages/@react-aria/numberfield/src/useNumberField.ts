@@ -11,13 +11,14 @@ interface NumberFieldProps extends SpinButtonProps {
 }
 
 interface NumberFieldAria {
-  numberFieldProps: AllHTMLAttributes<HTMLInputElement>,
+  inputFieldProps: AllHTMLAttributes<HTMLInputElement>,
+  numberFieldProps: AllHTMLAttributes<HTMLDivElement>,
   incrementButtonProps: AllHTMLAttributes<HTMLButtonElement>,
   decrementButtonProps: AllHTMLAttributes<HTMLButtonElement>
 }
 
 export function useNumberField(props: NumberFieldProps): NumberFieldAria {
-  const {
+  let {
     decrementAriaLabel,
     incrementAriaLabel,
     isDisabled,
@@ -30,7 +31,8 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     onDecrement,
     onDecrementToMin,
     step,
-    value
+    value,
+    validationState
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
   const inputId = useId();
@@ -48,17 +50,28 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     value
   });
 
+  incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
+  decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
+
   const incrementButtonProps = {
-    'aria-label': incrementAriaLabel || formatMessage('Increment'),
+    'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
-    isDisabled: isDisabled || (value >= maxValue),
-    onPress: onIncrement
+    tabIndex: -1,
+    title: incrementAriaLabel,
+    isDisabled: isDisabled || (value >= maxValue) || isReadOnly,
+    onPress: onIncrement,
+    onMouseDown: e => e.preventDefault(),
+    onMouseUp: e => e.preventDefault()
   };
   const decrementButtonProps = {
-    'aria-label': decrementAriaLabel || formatMessage('Decrement'),
+    'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
-    isDisabled: isDisabled || (value <= minValue),
-    onPress: onDecrement
+    tabIndex: -1,
+    title: decrementAriaLabel,
+    isDisabled: isDisabled || (value <= minValue || isReadOnly),
+    onPress: onDecrement,
+    onMouseDown: e => e.preventDefault(),
+    onMouseUp: e => e.preventDefault()
   };
 
   useEffect(() => {
@@ -91,15 +104,25 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
   }, [inputId, isReadOnly, isDisabled, onDecrement, onIncrement]);
 
   return {
-    numberFieldProps: mergeProps(spinButtonProps, {
-      'aria-label': value, // TODO: change this
+    numberFieldProps: {
+      role: 'group',
+      'aria-label': props['aria-label'] || null,
+      'aria-labelledby': props['aria-labelledby'] || null,
+      'aria-disabled': isDisabled,
+      'aria-invalid': validationState === 'invalid'
+    },
+    inputFieldProps: mergeProps(spinButtonProps, {
+      autoComplete: 'off',
+      'aria-label': props['aria-label'] || null,
+      'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
       min: minValue,
       max: maxValue,
       placeholder: formatMessage('Enter a number'),
       type: 'number',
       step,
-      value
+      value,
+      validationState
     }),
     incrementButtonProps,
     decrementButtonProps
