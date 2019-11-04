@@ -89,8 +89,7 @@ function TooltipClickTrigger(props) {
     isOpen,
     onPress,
     trigger,
-    overlay,
-    ...otherProps
+    overlay
   } = props;
   return (
     <Fragment>
