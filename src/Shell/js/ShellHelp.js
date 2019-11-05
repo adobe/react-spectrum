@@ -76,7 +76,7 @@ export default class ShellHelp extends Component {
 
     const {searchTerm} = this.state;
 
-    // https://git.corp.adobe.com/React/react-coral/issues/134
+    // https://github.com/adobe/react-coral/issues/134
     // unicode for: '&nbsp; &bull; &nbsp';
     const separator = '\u00a0 \u2022 \u00a0';
     const allResults = {

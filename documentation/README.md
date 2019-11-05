@@ -1,6 +1,6 @@
 # Contributing Documentation
 
-The react-spectrum documentation website includes documentation about each component, along with guides about various topics. It uses [Gatsby](https://www.gatsbyjs.org/) as a framework, which allows us to do GraphQL queries for data about files on the filesystem, extract data from each component's source files, import markdown and more. The [code](https://git.corp.adobe.com/React/react-spectrum/tree/master/documentation) lives in the same repo as the rest of react-spectrum, under the `documentation` folder.
+The react-spectrum documentation website includes documentation about each component, along with guides about various topics. It uses [Gatsby](https://www.gatsbyjs.org/) as a framework, which allows us to do GraphQL queries for data about files on the filesystem, extract data from each component's source files, import markdown and more. The [code](https://github.com/adobe/react-spectrum/tree/master/documentation) lives in the same repo as the rest of react-spectrum, under the `documentation` folder.
 
 There are two main sections of the site: guides, component documentation.
 

@@ -36,5 +36,5 @@ if (process.browser) {
 console.warn(
   'react-spectrum/page is deprecated and will be removed in the next major version. ' +
   'Please wrap your app in a <Provider> component instead. ' +
-  'See https://git.corp.adobe.com/React/react-spectrum/releases/tag/v2.6.0'
+  'See https://github.com/adobe/react-spectrum/releases/tag/v2.6.0'
 );

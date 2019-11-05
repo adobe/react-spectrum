@@ -312,5 +312,5 @@ This is a major refactor so it will take significant time and resources. There i
 
 - [react-spectrum-uxp](https://git.corp.adobe.com/torq/react-spectrum-uxp)
 - [Presentation on previous approaches considered for UXP](https://cocky-wright-d19a05.netlify.com/0)
-- [Prototype of stateless components for UXP](https://git.corp.adobe.com/React/react-spectrum/compare/jasper/stateless-prototype)
+- [Prototype of stateless components for UXP](https://github.com/adobe/react-spectrum/compare/jasper/stateless-prototype)
 - [reach-ui](http://github.com/reach/reach-ui) - third party library implementing style-less components with accessibility in mind

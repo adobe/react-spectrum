@@ -2,7 +2,7 @@
   "name": "react-spectrum-docs",
   "private": true,
   "version": "1.0.0",
-  "repository": "https://git.corp.adobe.com/React/react-spectrum",
+  "repository": "https://github.com/adobe/react-spectrum",
   "dependencies": {
     "@mapbox/rehype-prism": "^0.2.0",
     "@react/react-spectrum": "file:../dist/",

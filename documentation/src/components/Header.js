@@ -12,7 +12,7 @@ export default function Header({className}) {
         <Link href="/guides/getting_started">Guides</Link>
         <Link href="/community">Community</Link>
         <Link href="/storybook" target="_blank">Storybook</Link>
-        <Link href="http://git.corp.adobe.com/React/react-spectrum/releases" target="_blank">Releases</Link>
+        <Link href="http://github.com/adobe/react-spectrum/releases" target="_blank">Releases</Link>
         <Link href="https://github.com/adobe/react-spectrum" target="_blank">Github</Link>
       </nav>
     </header>
