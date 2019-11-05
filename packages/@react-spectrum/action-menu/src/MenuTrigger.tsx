@@ -108,7 +108,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let popoverProps = {
     ...overlayProps,
     ref: menuPopoverRef,
-    onClose, 
     placement, 
     hideArrow: true
   };
