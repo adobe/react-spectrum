@@ -145,7 +145,7 @@ interface MenuProps extends DOMProps {
   children?: any
 }
 
-const Menu = React.forwardRef((props: MenuProps, ref: RefObject<HTMLElement>) => {
+const Menu = React.forwardRef((props: MenuProps) => {
   let {
     children,
     label = '',
@@ -153,7 +153,7 @@ const Menu = React.forwardRef((props: MenuProps, ref: RefObject<HTMLElement>) =>
   } = props;
 
   return (
-    <DialogTrigger type="popover" ref={ref}>
+    <DialogTrigger type="popover">
       <ActionButton
         icon={<FolderBreadcrumb />}
         isDisabled={isDisabled}
