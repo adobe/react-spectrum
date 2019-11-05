@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/tooltip",
+  "name": "@react-stately/tree",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
@@ -15,7 +15,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2"
+    "@babel/runtime": "^7.6.2",
+    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

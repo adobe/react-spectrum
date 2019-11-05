@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/tooltip",
+  "name": "@react-spectrum/tree",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
@@ -10,14 +10,32 @@
     "dist"
   ],
   "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2"
+    "@babel/runtime": "^7.6.2",
+    "@react-stately/tree": "^3.0.0-alpha.1",
+    "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
     "react": "^16.8.0"
   },
   "publishConfig": {
