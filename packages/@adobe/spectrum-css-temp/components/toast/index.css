@@ -81,7 +81,6 @@ governing permissions and limitations under the License.
   align-self: center;
 
   .spectrum-Button {
-    float: inline-end;
     margin-inline-end: var(--spectrum-toast-button-margin-right);
   }
 

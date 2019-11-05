@@ -1,14 +1,14 @@
-import {AllHTMLAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps} from '@react-types/toast';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface ToastAria {
-  toastProps: AllHTMLAttributes<HTMLHeadingElement>,
-  iconProps: AllHTMLAttributes<HTMLHeadingElement>,
+  toastProps: DOMProps,
+  iconProps: {alt?: String},
   actionButtonProps: PressProps,
-  closeButtonProps: AllHTMLAttributes<HTMLHeadingElement> | PressProps
+  closeButtonProps: {'aria-label'?: string} | PressProps
 }
 
 export function useToast(props: ToastProps): ToastAria {

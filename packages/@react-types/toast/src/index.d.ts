@@ -10,5 +10,5 @@ export interface ToastOptions {
 }
 
 interface ToastProps extends ToastOptions, DOMProps {
-  variant?: String
+  variant?: 'positive' | 'negative' | 'info'
 }

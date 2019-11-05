@@ -1,5 +1,10 @@
 import {cleanup} from '@testing-library/react';
+import intlMessages from '../intl/*.json';
+import {Provider} from '@react-spectrum/provider';
+import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useToast} from '../';
 
 describe('useToast', () => {
@@ -12,8 +17,8 @@ describe('useToast', () => {
     cleanup();
   });
 
-  let renderToastHook = (props) => {
-    let {result} = renderHook(() => useToast(props));
+  let renderToastHook = (props, wrapper) => {
+    let {result} = renderHook(() => useToast(props), {wrapper});
     return result.current;
   };
 
@@ -28,9 +33,28 @@ describe('useToast', () => {
   });
 
   it('variant sets icon alt property', function () {
+    let {toastProps} = renderToastHook({role: 'info'});
+
+    expect(toastProps.role).toBe('info');
+  });
+
+  it('variant sets icon alt property', function () {
     let {iconProps} = renderToastHook({variant: 'info'});
 
     expect(iconProps.alt).toBe('Info');
+  });
+
+  it('with a localized aria-label', () => {
+    let locale = 'de-DE';
+    let theme = {
+      light: themeLight,
+      medium: scaleMedium
+    };
+
+    let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
+    let expectedIntl = intlMessages[locale]['info'];
+    let {iconProps} = renderToastHook({variant: 'info'}, wrapper);
+    expect(iconProps.alt).toBe(expectedIntl);
   });
 
   it('handles onClose', function () {

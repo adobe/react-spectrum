@@ -35,8 +35,7 @@ export const ICONS = {
 };
 
 export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
-  let completeProps = Object.assign({}, defaults, useProviderProps(props));
+  let completeProps = useProviderProps(props);
   let {
     actionButtonProps,
     closeButtonProps,
@@ -72,6 +71,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
         {actionLabel &&
           <Button
             {...actionButtonProps}
+            className={classNames(styles, 'spectrum-Button')}
             isQuiet
             variant="overBackground">{actionLabel}</Button>
         }
