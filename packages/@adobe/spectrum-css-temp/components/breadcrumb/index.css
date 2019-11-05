@@ -13,13 +13,20 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Breadcrumbs {
-  display: inline-flex;
+  display: flex;
   justify-content: start;
   list-style-type: none;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
 
   margin: 0;
   padding: 0;
+
+  &.is-hidden {
+    visibility: hidden;
+  }
 }
 
 .spectrum-Breadcrumbs-itemSeparator {
@@ -46,6 +53,7 @@ governing permissions and limitations under the License.
 
   position: relative;
 
+  white-space: nowrap;
   font-size: var(--spectrum-breadcrumb-item-text-size);
   font-weight: var(--spectrum-breadcrumb-item-text-font-weight);
   line-height: var(--spectrum-breadcrumb-item-text-line-height);
@@ -113,6 +121,10 @@ governing permissions and limitations under the License.
   pointer-events: none;
 }
 
+.spectrum-Breadcrumbs-dropdown {
+  position: absolute;
+}
+
 .spectrum-Breadcrumbs--compact {
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-compact-item-text-size);
@@ -120,6 +132,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Breadcrumbs--multiline {
+  flex-wrap: wrap;
+
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
     font-weight: var(--spectrum-breadcrumb-multiline-item-text-font-weight);
@@ -128,7 +142,7 @@ governing permissions and limitations under the License.
     &:last-of-type {
       height: auto;
 
-      width: 100%;
+      flex: 0 1 100%;
 
       margin-top: var(--spectrum-breadcrumb-multiline-title-margin-top);
 

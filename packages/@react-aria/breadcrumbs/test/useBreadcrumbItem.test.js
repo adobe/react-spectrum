@@ -22,7 +22,7 @@ describe('useBreadcrumbItem', function () {
   it('handles isCurrent', function () {
     let {breadcrumbItemProps} = renderLinkHook({isCurrent: true});
     expect(breadcrumbItemProps.id).toBeDefined();
-    expect(breadcrumbItemProps.tabIndex).toBeUndefined();
+    expect(breadcrumbItemProps.tabIndex).toBe(-1);
     expect(breadcrumbItemProps['aria-current']).toBe('page');
     expect(breadcrumbItemProps.onKeyDown).toBeUndefined();
     expect(breadcrumbItemProps.onKeyUp).toBeUndefined();
