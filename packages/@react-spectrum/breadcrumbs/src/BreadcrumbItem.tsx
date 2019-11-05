@@ -41,7 +41,7 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
     <Fragment>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         {
-          isCurrent && isHeading ?
+          isHeading ?
             <h1 
               className={
                 classNames(
