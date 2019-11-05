@@ -11,10 +11,6 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'align="start"',
-    () => render({align: 'start'})
-  )
-  .add(
     'align="end"',
     () => render({align: 'end'})
   )
@@ -51,9 +47,9 @@ storiesOf('MenuTrigger', module)
               Menu Button #1
           </Button>
           <Menu>
-            <li><span>hi</span></li>
-            <li>hi2</li>
-            <li>hi3</li>
+            <li><span>Menu Item 1</span></li>
+            <li>Menu Item 2</li>
+            <li>Menu Item 3</li>
           </Menu>
         </MenuTrigger>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
@@ -65,9 +61,9 @@ storiesOf('MenuTrigger', module)
               Menu Button #2
           </Button>
           <Menu>
-            <li><span>bye</span></li>
-            <li>bye2</li>
-            <li>bye3</li>
+            <li>MenuItem1</li>
+            <li>MenuItem2</li>
+            <li>MenuItem3</li>
           </Menu>
         </MenuTrigger>
       </div>
@@ -78,25 +74,8 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'popup with role=list',
-    () => (
-      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-        <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')}>
-          <Button
-            onKeyDown={action('onKeyDown')}
-            onPress={action('press')}
-            onPressStart={action('pressstart')}
-            onPressEnd={action('pressend')}>
-              Menu Button
-          </Button>
-          <Menu role="listbox">
-            <li><span>ewagawg</span></li>
-            <li>galwengklwnealkgnlk</li>
-            <li>gawenglkawengklawengk</li>
-          </Menu>
-        </MenuTrigger>
-      </div>
-    )
+    'popup with role=listbox',
+    () => render({}, {role: 'listbox'})
   )
   .add(
     'menu closes on scroll',
@@ -112,10 +91,10 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </Button>
-              <Menu role="menu">
-                <li><span>ewagawg</span></li>
-                <li>galwengklwnealkgnlk</li>
-                <li>gawenglkawengklawengk</li>
+              <Menu>
+                <li>MenuItem1111111111111111</li>
+                <li>MenuItem22222222222222222</li>
+                <li>MenuItem33333333333333333</li>
               </Menu>
             </MenuTrigger>
           </div>
@@ -129,7 +108,7 @@ storiesOf('MenuTrigger', module)
     )
   );
   
-function render(props = {}) {
+function render(props = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} onSelect={action('select')} {...props}>
@@ -140,10 +119,10 @@ function render(props = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu>
-          <li><span>ewagawg</span></li>
-          <li>galwengklwnealkgnlk</li>
-          <li>gawenglkawengklawengk</li>
+        <Menu {...menuProps}>
+          <li>MenuItem1111111111111111</li>
+          <li>MenuItem22222222222222222</li>
+          <li>MenuItem33333333333333333</li>
         </Menu>
       </MenuTrigger>
     </div>

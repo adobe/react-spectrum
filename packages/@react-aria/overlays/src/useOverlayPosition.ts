@@ -136,7 +136,6 @@ function useResize(onResize) {
 function translateRTL(position, direction) {
   if (direction === 'rtl') {
     return position.replace('start', 'right').replace('end', 'left');
-  } else if (direction === 'ltr') {
-    return position.replace('start', 'left').replace('end', 'right');
   }
+  return position.replace('start', 'left').replace('end', 'right');
 }

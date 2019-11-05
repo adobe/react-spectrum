@@ -100,20 +100,27 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let menuTriggerProps = {
     ...menuTriggerAriaProps,
     onKeyDown: chain(menuTrigger.props.onKeyDown, onKeyDownTrigger),
-    ref: menuTriggerRef
+    ref: menuTriggerRef,
+    onPress,
+    isPressed: isOpen
+  };
+
+  let popoverProps = {
+    ...overlayProps,
+    ref: menuPopoverRef,
+    onClose, 
+    placement, 
+    hideArrow: true
   };
 
   return (
     <Fragment>
-      <PressResponder
-        {...menuTriggerProps}
-        onPress={onPress}
-        isPressed={isOpen}>
+      <PressResponder {...menuTriggerProps}>
         {menuTrigger}
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...overlayProps} ref={menuPopoverRef} onClose={onClose} placement={placement} hideArrow>
+          <Popover {...popoverProps}>
             {menu}
           </Popover>
         </Overlay>

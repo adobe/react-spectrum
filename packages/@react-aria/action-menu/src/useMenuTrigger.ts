@@ -3,10 +3,12 @@ import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
+type MenuRole = 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid';
+
 interface MenuProps extends DOMProps{
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
+  type: MenuRole,
   onClose?: () => void,
-  role: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
+  role: MenuRole
 }
 
 interface MenuTriggerProps extends DOMProps {
