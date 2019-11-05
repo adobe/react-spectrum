@@ -48,8 +48,7 @@ function TooltipTriggerContainer(props) {
     onInteraction,
     targetRef,
     trigger,
-    content,
-    ...otherProps
+    content
   } = props;
 
   let containerRef = useRef<HTMLDivElement>();
@@ -68,7 +67,7 @@ function TooltipTriggerContainer(props) {
   };
 
   let overlay = (
-    React.cloneElement(content, {...otherProps, ref: overlayRef, ...overlayProps, isOpen: isOpen})
+    React.cloneElement(content, {ref: overlayRef, ...overlayProps, isOpen: isOpen})
   );
 
   if (type === 'click') {

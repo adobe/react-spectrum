@@ -6,7 +6,8 @@ interface TooltipProps {
   children: ReactNode,
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   placement?: 'right' | 'left' | 'top' | 'bottom',
-  isOpen?: boolean
+  isOpen?: boolean,
+  className?: string
 }
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
@@ -14,7 +15,8 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
   let {
     variant = 'neutral',
     placement = 'right',
-    isOpen
+    isOpen,
+    className
   } = props;
 
   return (
@@ -26,7 +28,8 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
         `spectrum-Tooltip--${placement}`,
         {
           'is-open': isOpen
-        }
+        },
+        className
       )}
       ref={ref}>
       {props.children && (

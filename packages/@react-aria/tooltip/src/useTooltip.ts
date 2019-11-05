@@ -11,9 +11,9 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: TooltipProps): TooltipAria {
-  let tooltipId = useId();
+  let tooltipId = useId(props.id);
   let {
-    role
+    role = 'tooltip'
   } = props;
   return {
     tooltipProps: {
