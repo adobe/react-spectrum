@@ -19,6 +19,7 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useContext, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import {Toast, ToastContext} from './';
+import toastContainerStyles from './toastContainer.css';
 import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 // import {useToast} from '@react-aria/toast';
@@ -40,7 +41,7 @@ export function ToastContainer(props: ToastOptions): ReactElement {
   };
 
   return (
-    <div className={classNames(styles, 'spectrum-Toast-Container')}>
+    <div className={classNames(toastContainerStyles, 'spectrum-ToastContainer')}>
       {toasts && renderToasts()}
     </div>
   );
