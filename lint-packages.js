@@ -43,7 +43,7 @@ for (let pkg of packages) {
   softAssert(json.types, `${pkg} did not have "types"`);
   softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   softAssert(json.source, `${pkg} did not have "source"`);
-  softAssert.deepEqual(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
+  softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
   softAssert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
   softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
   softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
