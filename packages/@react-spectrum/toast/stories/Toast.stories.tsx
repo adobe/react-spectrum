@@ -3,7 +3,7 @@ import {Button} from '@react-spectrum/button';
 import React, {useContext, useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Toast} from '../';
-import {ToastContainer, ToastContainerContext, usePositive} from '../';
+import {ToastContainer, useToastProvider} from '../';
 import {ToastProps} from '@react-types/toast';
 
 storiesOf('Toast', module)
@@ -55,15 +55,12 @@ function render(props:ToastProps = {}, message:String) {
 
 
 function RenderPositive() {
-  let toastContext = useContext(ToastContainerContext);
+  let toastContext = useToastProvider();
 
   return (
     <div>
         <Button
-          onPress={() => {
-            toastContext.positive('Toast is positive')
-            // usePositive('Toast is positive');
-          }}
+          onPress={() => toastContext.positive('Toast is positive')}
           variant="primary">
             Show Toast
         </Button>

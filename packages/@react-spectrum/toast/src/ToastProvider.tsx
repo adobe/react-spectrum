@@ -18,30 +18,46 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useContext, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
-import {Toast, ToastContext} from './';
+import {Toast, ToastContainer} from './';
 import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 // import {useToast} from '@react-aria/toast';
 
-export function ToastContainer(props: ToastOptions): ReactElement {
+interface ToastContextProps {
+  toasts?: ReactNode,
+  positive?: (any) => {}
+}
+
+export const ToastContext = React.createContext<ToastContextProps | null>();
+
+export function useToastProvider() {
+  return useContext(ToastContext);
+}
+
+export function ToastProvider(props: ToastOptions): ReactElement {
   let defaults = {};
   let completeProps = Object.assign({}, defaults, useProviderProps(props));
   // let {toastProps} = useToast(completeProps);
+  let [toasts, setToast] = useState();
+  // console.log('setMessage', setMessage);
   let {
     children
   } = completeProps;
-  let {
-    toasts
-  } = useContext(ToastContext);
+  // let toastContext = useToastProvider();
 
-
-  let renderToasts = () => {
-    return (<Toast {...toasts.props}>{toasts.message}</Toast>);
-  };
+  let contextValue = {
+    toasts,
+    positive: (message, props) =>
+      setToast({
+        message,
+        props: {...props, variant: 'positive'}
+      })
+  }
 
   return (
-    <div className={classNames(styles, 'spectrum-Toast-Container')}>
-      {toasts && renderToasts()}
-    </div>
+    <ToastContext.Provider value={contextValue}>
+      <ToastContainer />
+      {children}
+    </ToastContext.Provider>
   );
 }
