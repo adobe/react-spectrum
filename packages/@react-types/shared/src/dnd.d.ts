@@ -1,15 +1,25 @@
-import {ReactNode} from 'react';
+import {Key, ReactNode} from 'react';
 
 export interface DndBase {
   dragDelegate?: DragDelegate,
   dropDelegate?: DropDelegate
 }
 
+// TODO: move this somewhere - enums in .d.ts files don't work well
 export enum DropOperation {
+  /** The drop is not allowed. */
   NONE = 0,
+
+  /** The dropped data can be moved between the source and destination. */
   MOVE = 1 << 0,
+
+  /** The dropped data can be copied between the source and destination. */
   COPY = 1 << 1,
+
+  /** The dropped data can be shared between the source and destination. */
   LINK = 1 << 2,
+
+  /** All types of drops are allowed. */
   ALL = MOVE | COPY | LINK
 }
 
@@ -20,12 +30,23 @@ export enum DropPosition {
 }
 
 export interface DragTarget {
-  value: any
+  /** The type of view being dragged */
+  type: string,
+
+  /** The key of the view being dragged */
+  key: Key
 }
 
 export interface DropTarget {
-  value: null | any, // if null, represents the entire tree/table
-  index: number, // todo: figure out tableview sections
+  /** The type of view being dropped on or between. */
+  type: string,
+
+  /** 
+   * The key of the view being dropped on or between. 
+   * If null, it represents the entire collection view.
+   */
+  key: Key | null
+
   dropPosition: DropPosition
 }
 
