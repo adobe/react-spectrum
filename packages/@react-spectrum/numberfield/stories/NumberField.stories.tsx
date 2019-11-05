@@ -1,3 +1,4 @@
+import {action} from '@storybook/addon-actions';
 import {NumberField} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -5,7 +6,7 @@ import {storiesOf} from '@storybook/react';
 storiesOf('NumberField', module)
   .add(
     'default',
-    () => render({})
+    () => render({onChange: action('onChange')})
   )
   .add(
     'isQuiet',

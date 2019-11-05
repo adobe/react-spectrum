@@ -58,10 +58,15 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
 
   return (
     <FocusRing
+      within
       focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}>
       <div
-        {...filterDOMProps(completeProps)}
+        {...filterDOMProps(completeProps, {
+          value: false,
+          defaultValue: false,
+          onChange: false
+        })}
         {...numberFieldProps}
         ref={ref}
         className={className}>

@@ -1,5 +1,4 @@
-import {useControlledState} from '@react-stately/utils';
-import {useRef} from 'react';
+import {useCallback, useRef, useState} from 'react';
 
 export function useNumberFieldState(props) {
   let {
@@ -12,7 +11,13 @@ export function useNumberFieldState(props) {
   } = props;
 
   let isValid = useRef(true);
-  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
+  let [numValue, setNumValue] = useState(value || defaultValue || '');
+
+  let triggerChange = (value) => {
+    if (onChange) {
+      onChange(value);
+    }
+  };
 
   let onIncrement = () => {
     setNumValue(previousValue => {
@@ -22,12 +27,16 @@ export function useNumberFieldState(props) {
       } else {
         newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
       }
-      setNumValue(newValue);
+      if (previousValue !== newValue) {
+        triggerChange(newValue);
+      }
+      return newValue;
     });
   };
 
   let onIncrementToMax = () => {
     if (maxValue != null) {
+      triggerChange(maxValue);
       setNumValue(maxValue);
     }
   };
@@ -40,7 +49,10 @@ export function useNumberFieldState(props) {
       } else {
         newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
       }
-      setNumValue(newValue);
+      if (previousValue !== newValue) {
+        triggerChange(newValue);
+      }
+      return newValue;
     });
   };
 
@@ -50,7 +62,9 @@ export function useNumberFieldState(props) {
     }
   };
 
-  let setValue = (value: string) => {
+  let setValue = (value: string, e) => {
+    e.stopPropagation();
+
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
 
@@ -60,15 +74,16 @@ export function useNumberFieldState(props) {
 
     isValid.current = !isInputValueInvalid(value, maxValue, minValue);
     if (resemblesNumber) {
-      setNumValue(value);
+      triggerChange(valueAsNumber);
+      setNumValue(valueAsNumber);
     }
   };
 
   return {
     onChange: setValue,
-    onIncrement,
+    onIncrement: useCallback(onIncrement, [maxValue, minValue, step]),
     onIncrementToMax,
-    onDecrement,
+    onDecrement: useCallback(onDecrement, [maxValue, minValue, step]),
     onDecrementToMin,
     value: numValue,
     validationState: !isValid.current && 'invalid'
