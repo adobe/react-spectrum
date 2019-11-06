@@ -16,8 +16,7 @@ export interface MenuTriggerProps extends DOMProps {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
-  shouldFlip?: boolean,
-  onSelect?: (...args) => void
+  shouldFlip?: boolean
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -29,12 +28,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onOpenChange,
     align = 'start',
     shouldFlip = false,
-    direction = 'bottom',
-    ...otherProps
+    direction = 'bottom'
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let [isOpen, setOpen] = useControlledState(otherProps.isOpen, otherProps.defaultOpen || false, onOpenChange);
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
   let onClose = () => {
     setOpen(false);
@@ -55,12 +53,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
       setOpen(!isOpen);
-    }
-  };
-
-  let onSelect = (...args) => {
-    if (otherProps.onSelect) {
-      otherProps.onSelect(...args);
     }
   };
 
@@ -94,7 +86,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let menuContext = {
     ...menuAriaProps,
-    onSelect: onSelect
+    onClose
   };
 
   let menuTriggerProps = {

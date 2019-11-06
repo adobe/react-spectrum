@@ -6,14 +6,12 @@ import React, {ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 
 interface MenuProps extends DOMProps{
-  onSelect?: (...args) => void,
   children?: ReactElement[]
 }
 
 export function Menu(props: MenuProps) {
   let contextProps = useContext(MenuContext) || {};
   let {
-    onSelect,
     id,
     role,
     'aria-labelledby': labelledBy,
@@ -28,7 +26,6 @@ export function Menu(props: MenuProps) {
 
   children = React.Children.map(children, (c) => 
     React.cloneElement(c, {
-      onClick: onSelect,
       className: classNames(
         styles,
         'spectrum-Menu-item'
