@@ -4,7 +4,13 @@ import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
-import styles from '@spectrum-css/button/dist/index-vars.css';
+
+// Include overridden button styles
+import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+
+// Include official Spectrum CSS button styles
+// import styles from '@spectrum-css/button/dist/index-vars.css';
+
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
