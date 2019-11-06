@@ -42,4 +42,4 @@ export function Menu(props: MenuProps) {
       {children}
     </ul>
   );
-};
+}

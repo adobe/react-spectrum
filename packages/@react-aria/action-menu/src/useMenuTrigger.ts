@@ -5,10 +5,10 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 
 type MenuRole = 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid';
 
-interface MenuProps extends DOMProps{
+interface MenuProps extends DOMProps {
   type: MenuRole,
   onClose?: () => void,
-  role: MenuRole
+  role?: MenuRole
 }
 
 interface MenuTriggerProps extends DOMProps {
@@ -20,7 +20,7 @@ interface MenuTriggerAria {
   menuAriaProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useMenuTrigger(menuProps: MenuProps, menuTriggerProps:MenuTriggerProps, isOpen: boolean): MenuTriggerAria {
+export function useMenuTrigger(menuProps: MenuProps, menuTriggerProps: MenuTriggerProps, isOpen: boolean): MenuTriggerAria {
   let menuTriggerId = useId(menuTriggerProps.id);
   let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
     ref: menuTriggerProps.ref,
