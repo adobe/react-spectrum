@@ -4,4 +4,5 @@ export * from './selection';
 export * from './splitview';
 export * from './dnd';
 export * from './theme';
+export * from './collections';
 export * from './removable';

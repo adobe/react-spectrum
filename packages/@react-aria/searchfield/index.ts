@@ -1,1 +1,1 @@
-export * from './src/useSearchField';
+export * from './src';

@@ -76,9 +76,9 @@ export function useDatePickerFieldState(props: DatePickerProps): DatePickerField
   // until all segments are set. If the value === null (not undefined), then assume the component
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(props.placeholderDate || new Date(new Date().getFullYear(), 0, 1));
-  let [date, setDate] = useControlledState(
-    props.value === null ? placeholderDate : convertValue(props.value),
+  let [placeholderDate, setPlaceholderDate] = useState(convertValue(props.placeholderDate) || new Date(new Date().getFullYear(), 0, 1));
+  let [date, setDate] = useControlledState<Date>(
+    props.value === null ? convertValue(placeholderDate) : convertValue(props.value),
     convertValue(props.defaultValue),
     props.onChange
   );
