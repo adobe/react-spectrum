@@ -107,13 +107,6 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'variant: warning',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'warning', value});
-    }
-  )
-  .add(
     'variant: critical',
     () => {
       const value = number('Value', 32, sliderOptions);
