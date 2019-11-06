@@ -1,11 +1,13 @@
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import themeLightest from '@adobe/spectrum-css-temp/vars/spectrum-lightest-unique.css';
-import themeDark from '@adobe/spectrum-css-temp/vars/spectrum-dark-unique.css';
-import themeDarkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest-unique.css';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large-unique.css';
+import themeGlobal from '@spectrum-css/vars/dist/spectrum-global.css';
+import themeLight from '@spectrum-css/vars/dist/spectrum-light.css';
+import themeLightest from '@spectrum-css/vars/dist/spectrum-lightest.css';
+import themeDark from '@spectrum-css/vars/dist/spectrum-dark.css';
+import themeDarkest from '@spectrum-css/vars/dist/spectrum-darkest.css';
+import scaleMedium from '@spectrum-css/vars/dist/spectrum-medium.css';
+import scaleLarge from '@spectrum-css/vars/dist/spectrum-large.css';
 
 const THEME = {
+  global: themeGlobal,
   light: themeLight,
   lightest: themeLightest,
   dark: themeDark,
@@ -18,6 +20,7 @@ export const scales = {
 };
 
 export let defaultTheme = {
+  global: THEME.global,
   light: THEME.light,
   dark: THEME.dark,
   medium: scales.medium,

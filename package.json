@@ -48,6 +48,7 @@
     "@react/collection-view": "^4.1.5",
     "@react/react-spectrum": "^2.24.0",
     "@react/react-spectrum-icons": "^2.1.0",
+    "@spectrum-css/vars": "^2.0.0",
     "@storybook/addon-a11y": "^5.2.1",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-info": "^5.2.1",
@@ -131,5 +132,8 @@
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-middleware": "^2.24.3",
     "wsrun": "^5.0.0"
+  },
+  "dependencies": {
+    "@spectrum-css/component-builder": "^1.0.0"
   }
 }

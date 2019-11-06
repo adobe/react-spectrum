@@ -90,7 +90,11 @@ const ProviderWrapper = React.forwardRef(({children, className, ...otherProps}: 
   className = classNames(
     className,
     styles['spectrum'],
+    'spectrum',
+    'spectrum--light',
+    'spectrum--medium',
     typographyStyles['spectrum'],
+    theme.global ? Object.values(theme.global) : null,
     theme[colorScheme][themeKey],
     theme[scale][scaleKey],
     {
