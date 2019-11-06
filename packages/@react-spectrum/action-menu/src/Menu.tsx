@@ -10,7 +10,7 @@ interface MenuProps extends DOMProps{
   children?: ReactElement[]
 }
 
-export const Menu = React.forwardRef((props: MenuProps) => {
+export function Menu(props: MenuProps) {
   let contextProps = useContext(MenuContext) || {};
   let {
     onSelect,
@@ -45,4 +45,4 @@ export const Menu = React.forwardRef((props: MenuProps) => {
       {children}
     </ul>
   );
-});
+};

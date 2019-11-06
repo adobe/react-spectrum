@@ -34,7 +34,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
+  let [isOpen, setOpen] = useControlledState(otherProps.isOpen, otherProps.defaultOpen || false, onOpenChange);
 
   let onClose = () => {
     setOpen(false);
