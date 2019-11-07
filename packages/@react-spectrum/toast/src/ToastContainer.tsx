@@ -37,7 +37,9 @@ export function ToastContainer(props: ToastOptions): ReactElement {
 
 
   let renderToasts = () => {
-    return (<Toast {...toasts.props}>{toasts.message}</Toast>);
+    return toasts.map((toast) =>
+     (<Toast {...toast.props}>{toast.content}</Toast>)
+   );
   };
 
   return (

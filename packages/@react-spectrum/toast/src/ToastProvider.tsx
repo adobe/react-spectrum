@@ -15,43 +15,45 @@
 * from Adobe.
 **************************************************************************/
 
-import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useContext, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
-import {Toast, ToastContainer} from './';
+import {ToastContainer} from './';
 import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
-// import {useToast} from '@react-aria/toast';
 
 interface ToastContextProps {
-  toasts?: ReactNode,
-  positive?: (any) => {}
+  toasts?: {content: ReactNode, props: ToastOptions}[],
+  positive?: (content: ReactNode, options: ToastOptions) => void,
+  negative?: (content: ReactNode, options: ToastOptions) => void,
+  neutral?: (content: ReactNode, options: ToastOptions) => void,
+  info?: (content: ReactNode, options: ToastOptions) => void
 }
 
-export const ToastContext = React.createContext<ToastContextProps | null>();
+interface ToastProviderProps {
+  children: ReactNode
+}
+
+export const ToastContext = React.createContext<ToastContextProps | null>(null);
 
 export function useToastProvider() {
   return useContext(ToastContext);
 }
 
-export function ToastProvider(props: ToastOptions): ReactElement {
-  let defaults = {};
-  let completeProps = Object.assign({}, defaults, useProviderProps(props));
-  // let {toastProps} = useToast(completeProps);
-  let [toasts, setToast] = useState();
-  // console.log('setMessage', setMessage);
+export function ToastProvider(props: ToastProviderProps): ReactElement {
+  let [toasts, setToasts] = useState([]);
   let {
     children
-  } = completeProps;
-  // let toastContext = useToastProvider();
+  } = useProviderProps(props);
 
   let contextValue = {
     toasts,
-    positive: (message, props) =>
-      setToast({
-        message,
-        props: {...props, variant: 'positive'}
+    positive: (content, options) => {
+      let tempToasts = [...toasts];
+      tempToasts.push({
+        content,
+        props: {...options, variant: 'positive'}
       })
+      setToasts(tempToasts);
+    }
   }
 
   return (
