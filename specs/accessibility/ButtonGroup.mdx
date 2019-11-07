@@ -55,6 +55,7 @@ Because arrow keys are used to navigate among elements of a toolbar and the `Tab
   - When focus is on the first Button in the ButtonGroup and that Button is also the first element in the toolbar, moves focus to the last element in the toolbar.
 - `ArrowDown` (optional): Moves focus to the next Button in the ButtonGroup. If focus is on the last Button in the ButtonGroup, moves focus to the first Button in the toolbar.
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
+- When focus moves away from the ButtonGroup, even if the Button that last had focus was not selected, tabbing back into the ButtonGroup should restore focus the selected Button,
 
 #### Roles, States, and Properties
 
@@ -102,6 +103,7 @@ For consistency and by default, a ButtonGroup that allows multiple selection sti
   - When focus is on the first Button in the ButtonGroup and that Button is also the first element in the toolbar, moves focus to the last element in the toolbar.
 - `ArrowDown` (optional): Moves focus to the next Button in the ButtonGroup. If focus is on the last Button in the ButtonGroup, moves focus to the first Button in the toolbar.
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
+- When focus moves away from the ButtonGroup, even if the Button that last had focus was not selected, tabbing back into the ButtonGroup should restore focus the first selected Button in the tab navigation direction. If the Button that last had focus was selected, focus should be restored to that Button.
 
 #### Roles, States, and Properties
 
@@ -140,6 +142,7 @@ For consistency and by default, a ButtonGroup that does not allow selection stil
   - When focus is on the first Button in the ButtonGroup and that Button is also the first element in the toolbar, moves focus to the last element in the toolbar.
 - `ArrowDown` (optional): Moves focus to the next Button in the ButtonGroup. If focus is on the last Button in the ButtonGroup, moves focus to the first Button in the toolbar.
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
+- When focus moves away from the ButtonGroup, tabbing back into the ButtonGroup should restore focus the first enabled Button in the tab navigation direction.
 
 #### Roles, States, and Properties
 
