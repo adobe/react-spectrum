@@ -1,4 +1,4 @@
-import {AsyncListOptions, AsyncListProps} from '@react-types/shared';
+import {AsyncListOptions, AsyncListProps, SortDescriptor} from '@react-types/shared';
 import {useCallback, useEffect, useState} from 'react';
 
 export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T> {
@@ -7,7 +7,8 @@ export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T>
   let [state, setState] = useState({
     isLoading: true,
     items: [] as Iterable<T>,
-    sortDescriptor: defaultSortDescriptor || null
+    sortDescriptor: defaultSortDescriptor || null,
+    callbackFn: load
   });
 
   const updateState = useCallback(
@@ -15,28 +16,28 @@ export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T>
     []
   );
   const fetchData = useCallback(async (fn: Function, additionalState?: object) => {
-    updateState({isLoading: true});
     let response = await fn({...state});
-    console.log('AFTER FETCHING -------> ', response);
-    updateState({isLoading: false, items: response.items, ...additionalState});
+    updateState({isLoading: false, ...response, ...additionalState});
   }, [state, updateState]);
 
   const onLoadMore = !loadMore ? null : (() => {
-    fetchData(loadMore)
-      .catch(() => updateState({isLoading: false, items: state.items}));
+    updateState({isLoading: true, callbackFn: loadMore});
   });
 
-  const onSortChange = (desc) => {
-    fetchData(sort || load, {sortDescriptor: desc});
+  const onSortChange = (desc: SortDescriptor) => {
+    updateState({isLoading: true, callbackFn: sort || load, sortDescriptor: desc});
   };
 
+  let {callbackFn, ...otherState} = state;
   useEffect(() => {
-    fetchData(load)
-      .catch(() => updateState({isLoading: false, items: []})); // how to handle errors?
-  }, []);
+    if (state.isLoading) {
+      fetchData(callbackFn)
+        .catch(() => updateState({isLoading: false, items: []})); // how to handle errors?
+    }
+  }, [state.isLoading, callbackFn, fetchData, updateState]);
 
   return {
-    ...state,
+    ...otherState,
     onLoadMore,
     onSortChange
   };

@@ -7,10 +7,13 @@ import {useAsyncList} from '../src/useAsyncList';
 storiesOf('TestAsync', module)
   .add(
     'with loading indicator',
-    () => (
-      <Component />
-      )
+    () => <Component />
   );
+
+interface IItem {
+  name: string,
+  key: string
+}
 
 let ITEMS = [
   {name: 'Aardvark', key: '1'},
@@ -28,26 +31,42 @@ let ITEMS = [
   {name: 'Aardvar1k', key: '13'},
   {name: '1K2angaroo', key: '14'}
 ];
+
+let MORE_ITEMS = [
+  {name: '1', key: 'a1a'},
+  {name: '2', key: 'b2a'},
+  {name: '3', key: 'c3a'},
+  {name: '4', key: 'd4a'},
+  {name: '5', key: 'e5a'},
+  {name: '6', key: 'f6a'},
+  {name: '7', key: 'g7a'},
+  {name: '8', key: 'h8a'},
+  {name: '9', key: 'i9a'}
+];
+
 function Component() {
-  let {isLoading, items, onLoadMore} = useAsyncList<string>({
+  let scrolling = useRef<boolean>(false);
+  let {isLoading, items, onLoadMore} = useAsyncList<IItem>({
     load: async () => {
       let res = await retrieve();
       return {items: res};
     },
     loadMore: async ({items}) => {
       let res = await retrieveMore();
+      scrolling.current = false;
       return {items: [...items, ...res]};
     }
   });
-  let collection = useRef();
+  let collection = useRef<any>();
 
   function onWheelHandle() {
     let container = collection.current;
-    if (!container) {
+    if (!container || scrolling.current) {
       return;
     }
-    // @ts-ignore
+
     if (container.firstElementChild.scrollTop > 100) {
+      scrolling.current = true;
       onLoadMore();
     }
   }
@@ -63,31 +82,17 @@ function Component() {
 }
 
 async function retrieve() {
-  return new Promise<string[]>((resolve) => {
+  return new Promise<IItem[]>((resolve) => {
     setTimeout(() => {
-      // @ts-ignore
       resolve(ITEMS);
     }, 1000);
   });
 }
 
 async function retrieveMore() {
-  return new Promise<string[]>((resolve) => {
+  return new Promise<IItem[]>((resolve) => {
     setTimeout(() => {
-      // @ts-ignore
       resolve(MORE_ITEMS);
     }, 1500);
   });
 }
-
-let MORE_ITEMS = [
-  {name: '1', key: '1a'},
-  {name: '2', key: '2a'},
-  {name: '3', key: '3a'},
-  {name: '4', key: '4a'},
-  {name: '5', key: '5a'},
-  {name: '6', key: '6a'},
-  {name: '7', key: '7a'},
-  {name: '8', key: '8a'},
-  {name: '9', key: '9a'}
-];
