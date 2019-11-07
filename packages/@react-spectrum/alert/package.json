@@ -5,7 +5,7 @@
   "main": "dist/Alert.js",
   "module": "dist/Alert.module.js",
   "types": "dist/Alert.d.ts",
-  "source": "src/Alert.tsx",
+  "source": "src/index.ts",
   "files": [
     "dist"
   ],

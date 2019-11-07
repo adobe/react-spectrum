@@ -38,11 +38,11 @@ describe('Search', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name default behavior check', ({Component}) => {
     let tree = renderComponent(Component);
-    let outerDiv = tree.getByRole('search');
+    let outerDiv = tree.container;
     expect(outerDiv).toBeTruthy();
 
     let input = within(outerDiv).getByTestId(testId);
-    expect(input).toHaveAttribute('role', 'searchbox');
+    expect(input).toHaveAttribute('type', 'search');
 
     let clearButton = within(outerDiv).queryByRole('button');
     expect(clearButton).toBeNull();
@@ -52,7 +52,7 @@ describe('Search', () => {
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
     ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name supports overriding role of wrapping div', ({Component}) => {
+  `('$Name supports overriding role and type of search input', ({Component}) => {
     let tree = renderComponent(Component, {role: 'menuitem'});
     let outerDiv = tree.getByRole('menuitem');
     expect(outerDiv).toBeTruthy();

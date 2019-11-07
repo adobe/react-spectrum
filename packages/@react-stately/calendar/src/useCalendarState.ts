@@ -7,7 +7,8 @@ import {useWeekStart} from './useWeekStart';
 
 export function useCalendarState(props: CalendarProps): CalendarState {
   let [value, setControlledValue] = useControlledState(props.value || undefined, props.defaultValue, props.onChange);
-  let defaultMonth = value ? new Date(value) : new Date();
+  let dateValue = value ? new Date(value) : null;
+  let defaultMonth = dateValue || new Date();
   let [currentMonth, setCurrentMonth] = useState(defaultMonth); // TODO: does this need to be in state at all??
   let [focusedDate, setFocusedDate] = useState(defaultMonth);
   let [isFocused, setFocused] = useState(false);
@@ -44,7 +45,7 @@ export function useCalendarState(props: CalendarProps): CalendarState {
   }
 
   return {
-    value,
+    value: dateValue,
     setValue,
     currentMonth,
     setCurrentMonth,

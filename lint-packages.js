@@ -2,9 +2,8 @@ const glob = require('fast-glob');
 const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
-
+let path = require('path');
 let packages = glob.sync(__dirname + '/packages/@react-{aria,spectrum,stately}/*/package.json');
-
 let errors = false;
 
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
@@ -38,9 +37,13 @@ softAssert.equal = function (val, val2, message) {
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
   softAssert(json.main, `${pkg} did not have "main"`);
+  softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
   softAssert(json.module, `${pkg} did not have "module"`);
+  softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
   softAssert(json.types, `${pkg} did not have "types"`);
+  softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   softAssert(json.source, `${pkg} did not have "source"`);
+  softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
   softAssert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
   softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
   softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
@@ -58,6 +61,14 @@ for (let pkg of packages) {
   }
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
+
+  let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
+  if (topIndexExists) {
+    let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
+    softAssert.equal(contents, "export * from './src';\n", `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
+  }
+  softAssert(topIndexExists, `${pkg} is missing an index.ts`);
+  softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
 }
 
 if (errors) {
