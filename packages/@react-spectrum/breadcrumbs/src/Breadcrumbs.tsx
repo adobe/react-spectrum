@@ -6,7 +6,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 
@@ -36,7 +36,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   const [hidden, setHidden] = useState(false);
   const listRef = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let onResize = () => {
       if (isCollapisble) {
         setHidden(listRef.current.scrollWidth > listRef.current.offsetWidth);
