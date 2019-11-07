@@ -581,6 +581,7 @@ export default class Clock extends Component {
               {label: this.getMeridiemLabel('pm', displayFormat), value: 'pm'}
             ]}
             value={meridiemVal}
+            disabled={disabled}
             alignRight
             flexible />
         }

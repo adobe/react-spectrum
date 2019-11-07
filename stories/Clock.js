@@ -41,9 +41,14 @@ storiesOf('Clock', module)
     'using aria-labelledby',
     () => render({value: 'today', id: clockId, 'aria-labelledby': clockId + '-label', labelText: 'Start time'}),
     {info: 'Labeling using a FieldLabel with labelFor and id, and aria-labelledby on the Clock ensures that the fieldset is labeled and clicking on the label will focus the hours field.'}
-  ).add(
+  )
+  .add(
     'AM/PM',
     () => render({defaultValue: 'today', displayFormat: 'hh:mm a'})
+  )
+  .add(
+    'disabled: true',
+    () => render({defaultValue: 'today', displayFormat: 'hh:mm a', disabled: true})
   );
 
 function renderClock(props = {}) {
