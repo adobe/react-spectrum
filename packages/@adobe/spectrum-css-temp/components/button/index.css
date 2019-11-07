@@ -82,11 +82,6 @@ governing permissions and limitations under the License.
     margin-block-end: -2PX;
   }
 
-  /* Restore the focus styles unset by the previous rule. */
-  &:-moz-focusring {
-    outline: 1px dotted ButtonText;
-  }
-
   &:disabled,
   &.is-disabled {
     cursor: default;
@@ -187,6 +182,9 @@ a.spectrum-ActionButton {
 .spectrum-Button-label {
   align-self: center;
   justify-self: center;
+
+  /* Fixes horizontal alignment of text in anchor buttons */
+  text-align: center;
 
   /* @safari10 Workaround for https://bugs.webkit.org/show_bug.cgi?id=169700 */
   inline-size: 100%;

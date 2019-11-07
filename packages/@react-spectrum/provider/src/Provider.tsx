@@ -89,19 +89,17 @@ const ProviderWrapper = React.forwardRef(({children, className, ...otherProps}: 
 
   className = classNames(
     className,
-    styles['spectrum'],
     'spectrum',
     `spectrum--${colorScheme}`,
     `spectrum--${scale}`,
-    typographyStyles['spectrum'],
     theme.global ? Object.values(theme.global) : null,
     theme[colorScheme][themeKey],
     theme[scale][scaleKey],
     {
       'react-spectrum-provider': shouldKeepSpectrumClassNames,
       spectrum: shouldKeepSpectrumClassNames,
-      [themeKey]: shouldKeepSpectrumClassNames,
-      [scaleKey]: shouldKeepSpectrumClassNames
+      [`spectrum--${colorScheme}`]: shouldKeepSpectrumClassNames,
+      [`spectrum--${scale}`]: shouldKeepSpectrumClassNames
     }
   );
 

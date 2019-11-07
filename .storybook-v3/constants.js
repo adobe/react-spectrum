@@ -28,6 +28,7 @@ export let defaultTheme = {
 };
 
 export let altTheme = {
+  global: THEME.global,
   light: THEME.lightest,
   dark: THEME.darkest,
   medium: scales.medium,
