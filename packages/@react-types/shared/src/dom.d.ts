@@ -20,5 +20,6 @@ export interface DOMProps extends AriaAttributes {
   type?: string,
 
   // WAI-ARIA
+  'aria-label'?: string,
   role?: string
 }
