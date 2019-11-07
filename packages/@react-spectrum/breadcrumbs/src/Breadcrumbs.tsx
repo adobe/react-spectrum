@@ -105,6 +105,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
       {
         hidden &&
         <div
+          data-testid="breadcrumb-dropdown"
           className={
             classNames(
               styles,
