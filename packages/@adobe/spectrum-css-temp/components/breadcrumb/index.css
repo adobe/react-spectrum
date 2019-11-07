@@ -34,8 +34,9 @@ governing permissions and limitations under the License.
 
   /* Fix alignment, it's not quite centered */
   top: var(--spectrum-global-dimension-size-10);
-  width: var(--spectrum-global-dimension-size-200);
-  height: var(--spectrum-global-dimension-size-200);
+
+  width: var(--spectrum-breadcrumb-ui-icon-width);
+  height: var(--spectrum-breadcrumb-ui-icon-height);
 
   transform: scale(1);
 
@@ -78,7 +79,7 @@ governing permissions and limitations under the License.
   align-items: center;
   justify-content: start;
 
-  padding: 0 var(--spectrum-global-dimension-size-50);
+  padding: 0 var(--spectrum-breadcrumb-item-padding-x);
   height: var(--spectrum-breadcrumb-list-height);
 
   margin-right: var(--spectrum-breadcrumb-item-margin-right);
