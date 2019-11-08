@@ -66,7 +66,7 @@ function TooltipTriggerContainer(props) {
     overlayRef,
     isOpen
   });
-  // delete overlayProps.style.maxHeight;
+  delete overlayProps.style.position;
 
   let triggerPropsWithRef = {
     ref: triggerRef
@@ -74,9 +74,11 @@ function TooltipTriggerContainer(props) {
 
   console.log("overlayProps", overlayProps)
 
+  // style: overlayProps.style
+
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, ref: overlayRef, style: {top: overlayProps.style.top, left: overlayProps.style.left}, isOpen: isOpen})}
+      {React.cloneElement(content, {placement: placement, ref: overlayRef, ...overlayProps, isOpen: isOpen})}
     </Overlay>
   );
 
