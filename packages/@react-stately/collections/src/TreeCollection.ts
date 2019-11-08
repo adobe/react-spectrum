@@ -40,7 +40,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       last = node;
     }
 
-    this.lastKey = last.key
+    this.lastKey = last.key;
   }
 
   *[Symbol.iterator]() {
