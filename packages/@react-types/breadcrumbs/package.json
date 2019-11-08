@@ -1,0 +1,17 @@
+{
+  "name": "@react-types/breadcrumbs",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "types": "src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/interactions": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
+}

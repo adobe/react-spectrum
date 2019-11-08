@@ -1,1 +1,1 @@
-export * from './src/Divider';
+export * from './src';

@@ -1,3 +1,4 @@
+import {DateValue} from '@react-types/datepicker';
 import {endOfDay, getDaysInMonth, isSameDay, startOfDay} from 'date-fns';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
@@ -14,13 +15,14 @@ export function useRangeCalendarState(props: RangeCalendarProps): RangeCalendarS
     onChange
   );
 
+  let dateRange = value != null ? convertRange(value) : null;
   let [anchorDate, setAnchorDate] = useState(null);
   let calendar = useCalendarState({
     ...calendarProps,
     value: value && value.start
   });
 
-  let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
+  let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(dateRange.start, dateRange.end);
   let selectDate = (date: Date) => {
     if (props.isReadOnly) {
       return;
@@ -36,7 +38,7 @@ export function useRangeCalendarState(props: RangeCalendarProps): RangeCalendarS
 
   return {
     ...calendar,
-    value,
+    value: dateRange,
     setValue,
     anchorDate,
     setAnchorDate,
@@ -72,4 +74,11 @@ function makeRange(start: Date, end: Date): RangeValue<Date> {
   }
 
   return {start: startOfDay(start), end: endOfDay(end)};
+}
+
+function convertRange(range: RangeValue<DateValue>): RangeValue<Date> {
+  return {
+    start: new Date(range.start),
+    end: new Date(range.end)
+  };
 }

@@ -1,0 +1,51 @@
+# Breadcrumbs Accessibility Specification
+
+## Overview
+
+In a hierarchical navigation, [`Breadcrumbs`](https://react-spectrum.corp.adobe.com/components/Breadcrumbs) show the user the pages that exist directly between the current page and the root (or topmost) level of the navigational structure.
+This aids users in orienting themselves within a product, especially ones with exceptionally complex or deep navigational trees.
+As space becomes limited, or as a user navigates deeper within a hierarchical structure, nested breadcrumbs provide a solution by displaying as many bottom level navigation items as possible while also providing an icon-only dropdown menu that opens to show all navigation items in the breadcrumb hierarchy.
+In some cases, only the current page may be displayed, and in rare cases the icon-only dropdown menu alone may be displayed.
+In certain cases, root context needs to be displayed, which is also an option when breadcrumb items are nested within an icon-only dropdown menu.
+Breadcrumbs can also allow for a drag-and-drop interaction when they are used in a file management context.
+
+Breadcrumbs in Spectrum have a multi-line (`title` in v2) variant, where the last item renders as a `Header`.
+
+## WAI-ARIA Design Pattern
+
+The [`Breadcrumbs`](https://react-spectrum.corp.adobe.com/components/Breadcrumbs) component implements the [Breadcrumb design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#breadcrumb).
+
+### Keyboard
+
+Breadcrumbs are presented as a list of links. Each Breadcrumb link should be included in the tab keyboard navigation for the page.
+
+Similarly, when Breadcrumbs are nested within an icon-only dropdown menu, the menu button should be included in the tab keyboard navigation for the page.
+
+### Roles, States, and Properties
+
+- Breadcrumb trail is contained within a navigation landmark region.
+- The landmark region is labelled via [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label) or [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby). By default, the localized string 'Breadcrumbs' is used to label the navigation landmark region.
+- The link to the current page has [`aria-current`](https://www.w3.org/TR/wai-aria-1.1/#aria-current) set to `page` or, if the Breadcrumbs represent a file system hierarchy, `location`.
+- The icon-only dropdown menu button for nested breadcrumb links implements the [Menu Button design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#menubutton).
+
+### Drag-and-Drop in file management context.
+
+Keyboard accessibility for drag-and-drop of files onto Breadcrumb items requires more discussion, but there are a few ways to provide equivalent support using the keyboard alone.
+
+1. Items could be selected to be moved from a TableView or GridView.
+  - The user could then press `Ctrl + C` to Copy or `Ctrl + X` to Cut the items to prepare to move them.
+  - The user could then tab to the Breadcrumb item drop target and press `Ctrl + V` to paste the selected items.
+2. Items could be selected to be moved from a TableView or GridView.
+  - The user could then tab to the Breadcrumb item drop target, at which point the question is whether items are to be copied or moved.
+  - User could then press `Shift + F10`, or `MenuKey` on Windows, or `Enter` to bring up a context menu with options to either Copy or Move selected items to the Breadcrumb item location.
+
+When dragging, the icon-only dropdown menu button for nested breadcrumb links should expand on hover.
+
+## v2 Implementation details
+
+The v2 [`Breadcrumbs`](https://react-spectrum.corp.adobe.com/components/Breadcrumbs) implementation does not currently support the icon-only dropdown menu button for nested breadcrumb links or drag-and-drop.
+
+`Breadcrumbs` consists of a `<nav>` element surrounding a list of links.
+
+With the `title` variant, the last breadcrumb item link is contained within an `<h1>` element.
+The `ariaLevel` prop can be used to ensure the appropriate heading level within the page for accessibility.

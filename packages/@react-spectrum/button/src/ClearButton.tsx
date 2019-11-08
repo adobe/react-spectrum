@@ -6,18 +6,21 @@ import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
-interface ClearButtonProps extends ButtonBase {}
+interface ClearButtonProps extends ButtonBase {
+  focusClassName?: string,
+}
 
 export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefObject<HTMLButtonElement>) => {
   let {
     className,
+    focusClassName,
     ...otherProps
   } = props;
   ref = ref || useRef();
   let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)}>
       <button
         {...filterDOMProps(otherProps, {icon: false})}
         {...buttonProps}
