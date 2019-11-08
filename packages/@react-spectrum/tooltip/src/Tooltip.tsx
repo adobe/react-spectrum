@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 
@@ -16,11 +16,20 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
     variant = 'neutral',
     placement = 'right',
     isOpen,
-    className
+    className,
+    ...otherProps
   } = props;
+
+  console.log("props", props);
+  /**/
+
+  console.log("********")
+
+  console.log("Otherprops", otherProps);
 
   return (
     <div
+      {...filterDOMProps(otherProps)}
       className={classNames(
         styles,
         'spectrum-Tooltip',

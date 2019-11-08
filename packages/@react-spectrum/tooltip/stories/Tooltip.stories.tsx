@@ -42,7 +42,7 @@ storiesOf('Tooltip', module)
   )
   .add(
     'triggered by click',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'click'})
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click'})
   );
 
 function render(content, props = {}) {

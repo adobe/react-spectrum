@@ -1,4 +1,5 @@
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
+import {Overlay} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactNode, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -14,6 +15,7 @@ interface TooltipTriggerProps extends PositionProps {
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
+    placement,
     children,
     type,
     targetRef,
@@ -32,6 +34,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   return (
     <TooltipTriggerContainer
+      placement={placement}
       type={type}
       isOpen={open}
       onInteraction={onInteraction}
@@ -43,6 +46,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
 function TooltipTriggerContainer(props) {
   let {
+    placement,
     type,
     isOpen,
     onInteraction,
@@ -56,18 +60,24 @@ function TooltipTriggerContainer(props) {
   let overlayRef = useRef<HTMLDivElement>();
 
   let {overlayProps} = useOverlayPosition({
+    placement,
     containerRef,
     targetRef: targetRef || triggerRef,
     overlayRef,
     isOpen
   });
+  // delete overlayProps.style.maxHeight;
 
   let triggerPropsWithRef = {
     ref: triggerRef
   };
 
+  console.log("overlayProps", overlayProps)
+
   let overlay = (
-    React.cloneElement(content, {ref: overlayRef, ...overlayProps, isOpen: isOpen})
+    <Overlay isOpen={isOpen} ref={containerRef}>
+      {React.cloneElement(content, {placement: placement, ref: overlayRef, style: {top: overlayProps.style.top, left: overlayProps.style.left}, isOpen: isOpen})}
+    </Overlay>
   );
 
   if (type === 'click') {
