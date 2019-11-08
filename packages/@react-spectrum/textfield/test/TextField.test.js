@@ -321,7 +321,7 @@ describe('Shared TextField behavior', () => {
     let ref = React.createRef();
     let tree = renderComponent(Component, {ref});
     let input = findInput(tree);
-    expect(ref.current).toEqual(input);
+    expect(ref.current).toEqual(input.parentNode);
   });
 
   it.each`
