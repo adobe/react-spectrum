@@ -1,17 +1,18 @@
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
 import {DOMProps} from '@react-types/shared';
-import React, {CSSProperties} from 'react';
+import React, {CSSProperties, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T, V> extends DOMProps {
   children: (type: string, content: T) => V,
   layout: Layout<T>,
-  collection: Collection<T>
+  collection: Collection<T>,
+  focusedKey?: Key
 }
 
 export function CollectionView<T, V>(props: CollectionViewProps<T, V>) {
-  let {children: renderView, layout, collection, ...otherProps} = props;
+  let {children: renderView, layout, collection, focusedKey, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
@@ -27,12 +28,41 @@ export function CollectionView<T, V>(props: CollectionViewProps<T, V>) {
       <div key={reusableView.key} role="presentation" style={layoutInfoToStyle(reusableView.layoutInfo)}>
         {reusableView.rendered}
       </div>
-      )
+    )
+  });
+
+  let ref = useRef<HTMLDivElement>();
+
+  // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
+  // is up to the implementation using CollectionView since we don't have refs
+  // to all of the item DOM nodes.
+  useEffect(() => {
+    if (focusedKey) {
+      collectionManager.scrollToItem(focusedKey);
+    }
+  }, [focusedKey, collectionManager]);
+
+  let isFocusWithin = useRef(false);
+  let onFocus = useCallback(() => isFocusWithin.current = true, []);
+  let onBlur = useCallback(() => isFocusWithin.current = false, []);
+
+  // When the focused item is scrolled out of view and is removed from the DOM, 
+  // move focus to the collection view as a whole if focus was within before.
+  useEffect(() => {
+    if (focusedKey) {
+      let focusedView = collectionManager.getItemView(focusedKey);
+      if (!focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
+        ref.current.focus();
+      }
+    }
   });
   
   return (
     <ScrollView 
       {...otherProps}
+      ref={ref}
+      onFocus={onFocus}
+      onBlur={onBlur}
       innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}

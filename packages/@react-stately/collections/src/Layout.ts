@@ -112,40 +112,4 @@ export abstract class Layout<T> {
   getFinalLayoutInfo(layoutInfo: LayoutInfo): LayoutInfo {
     return layoutInfo;
   }
-
-  /**
-   * Returns the key visually above the given one, or `null` for none.
-   * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
-   * by default.
-   */
-  getKeyAbove(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return null;
-  }
-
-  /**
-   * Returns the key visually below the given one, or `null` for none.
-   * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
-   * by default.
-   */
-  getKeyBelow(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return null;
-  }
-
-  /**
-   * Returns the key visually to the left of the given one, or `null` for none.
-   * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
-   * by default.
-   */
-  getKeyLeftOf(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return null;
-  }
-
-  /**
-   * Returns the key visually to the right of the given one, or `null` for none.
-   * Used for keyboard navigation. Should be implemented by subclasses, returns `null`
-   * by default.
-   */
-  getKeyRightOf(key: Key): Key | null { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return null;
-  }
 }

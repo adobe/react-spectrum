@@ -4,6 +4,8 @@ import {Key} from 'react';
 export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
   private iterable: Iterable<Node<T>>;
+  private firstKey: Key;
+  private lastKey: Key;
 
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
@@ -24,11 +26,21 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
     let last: Node<T>;
     for (let [key, node] of this.keyMap) {
+      if (node.type !== 'item') {
+        continue;
+      }
+      
       if (last) {
         last.nextKey = key;
         node.prevKey = last.key;
+      } else {
+        this.firstKey = key;
       }
+
+      last = node;
     }
+
+    this.lastKey = last.key
   }
 
   *[Symbol.iterator]() {
@@ -47,6 +59,14 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
     return node ? node.nextKey : null;
+  }
+
+  getFirstKey() {
+    return this.firstKey;
+  }
+
+  getLastKey() {
+    return this.lastKey;
   }
   
   getItem(key: Key) {

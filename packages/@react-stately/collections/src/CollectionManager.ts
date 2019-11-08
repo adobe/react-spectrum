@@ -54,7 +54,7 @@ export interface CollectionManagerOptions<T, V, W> {
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionManager<T, V, W> {
+export class CollectionManager<T extends object, V, W> {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
@@ -85,7 +85,7 @@ export class CollectionManager<T, V, W> {
   private _visibleRect: Rect;
   private _reusableViews: {[type: string]: ReusableView<T, V>[]};
   private _visibleViews: Map<Key, ReusableView<T, V>>;
-  private _renderedContent: Map<Key, V>;
+  private _renderedContent: WeakMap<T, V>;
   private _renderedViews: Map<Key, W>;
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
@@ -104,7 +104,7 @@ export class CollectionManager<T, V, W> {
 
     this._reusableViews = {};
     this._visibleViews = new Map();
-    this._renderedContent = new Map();
+    this._renderedContent = new WeakMap();
     this._renderedViews = new Map();
     this._children = new Set();
     this._invalidationContext = null;
@@ -135,10 +135,9 @@ export class CollectionManager<T, V, W> {
     this.delegate.setContentSize(size);
   }
 
-  _setContentOffset(offset: Point, forceUpdate = false) {
-    // TODO: controlled??
-    this._setVisibleRect(new Rect(offset.x, offset.y, this._visibleRect.width, this._visibleRect.height), forceUpdate);
-    this.delegate.setVisibleRect(this._visibleRect);
+  _setContentOffset(offset: Point) {
+    let rect = new Rect(offset.x, offset.y, this._visibleRect.width, this._visibleRect.height);
+    this.delegate.setVisibleRect(rect);
   }
 
   /**
@@ -206,7 +205,7 @@ export class CollectionManager<T, V, W> {
     if (this._collection) {
       this._runTransaction(() => {
         this._collection = data;
-      });
+      }, false); // TODO: determine if we should animate somehow??
     } else {
       this._collection = data;
       this.reloadData();
@@ -332,20 +331,22 @@ export class CollectionManager<T, V, W> {
 
   private _renderView(reusableView: ReusableView<T, V>) {
     let {type, key} = reusableView.layoutInfo;
-    let k = this._getViewKey(type, key);
     reusableView.content = this._getViewContent(type, key);
-    reusableView.rendered = this._renderedContent.get(k) || this._renderContent(type, key);
+    reusableView.rendered = this._renderContent(type, reusableView.content);
 
     let rendered = this.delegate.renderWrapper(reusableView);
     this._renderedViews.set(reusableView.key, rendered);
     return rendered;
   }
 
-  private _renderContent(type: string, key: Key) {
-    let content = this._getViewContent(type, key);
+  private _renderContent(type: string, content: T) {
+    let cached = this._renderedContent.get(content);
+    if (cached != null) {
+      return cached;
+    }
+
     let rendered = this.delegate.renderView(type, content);
-    let k = this._getViewKey(type, key);
-    this._renderedContent.set(k, rendered);
+    this._renderedContent.set(content, rendered);
     return rendered;
   }
 
@@ -539,7 +540,7 @@ export class CollectionManager<T, V, W> {
         this._animatedContentOffset.y += visibleRect.y - contentOffsetY;
         this.updateSubviews(context.contentChanged);
       } else {
-        this._setContentOffset(new Point(contentOffsetX, contentOffsetY), context.contentChanged);
+        this._setContentOffset(new Point(contentOffsetX, contentOffsetY));
       }
     } else {
       this.updateSubviews(context.contentChanged);
@@ -1023,7 +1024,7 @@ export class CollectionManager<T, V, W> {
       return Promise.resolve();
     }
 
-    this._scrollAnimation = tween(this.visibleRect.y, offset, duration, easeOut, offset => {this._setContentOffset(offset);});
+    this._scrollAnimation = tween(this.visibleRect, offset, duration, easeOut, offset => {this._setContentOffset(offset);});
     this._scrollAnimation.then(() => {
       this._scrollAnimation = null;
 
