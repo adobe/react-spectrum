@@ -45,6 +45,9 @@ storiesOf('Tooltip', module)
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click'})
   );
 
+
+// TODO: add another story to show a different position 
+
 function render(content, props = {}) {
   return (
     <div style={{display: 'inline-block'}}>
