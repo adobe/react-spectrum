@@ -30,20 +30,20 @@ describe('useSearchField hook', () => {
     onClear.mockClear();
   });
 
-  describe('should return searchFieldProps', () => {
+  describe('should return inputProps', () => {
     it('with base props and value equal to state.value', () => {
-      let {searchFieldProps} = renderSearchHook({});
-      expect(searchFieldProps.type).toBe('search');
-      expect(searchFieldProps.value).toBe(state.value);
-      expect(typeof searchFieldProps.onKeyDown).toBe('function');
+      let {inputProps} = renderSearchHook({});
+      expect(inputProps.type).toBe('search');
+      expect(inputProps.value).toBe(state.value);
+      expect(typeof inputProps.onKeyDown).toBe('function');
     });
 
     it('with a user specified role if provided', () => {
       let role = 'combobox';
       let type = 'text';
-      let {searchFieldProps} = renderSearchHook({role, type});
-      expect(searchFieldProps.role).toBe(role);
-      expect(searchFieldProps.type).toBe(type);
+      let {inputProps} = renderSearchHook({role, type});
+      expect(inputProps.role).toBe(role);
+      expect(inputProps.type).toBe(type);
     });
 
     describe('with specific onKeyDown behavior', () => {
@@ -60,23 +60,23 @@ describe('useSearchField hook', () => {
       });
 
       it('preventDefault is called for Enter and Escape', () => {
-        let {searchFieldProps} = renderSearchHook({});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({});
+        inputProps.onKeyDown(event('Enter'));
         expect(preventDefault).toHaveBeenCalledTimes(1);
-        searchFieldProps.onKeyDown(event('Escape'));
+        inputProps.onKeyDown(event('Escape'));
         expect(preventDefault).toHaveBeenCalledTimes(2);
       });
 
       it('onSubmit is called if Enter is pressed', () => {
-        let {searchFieldProps} = renderSearchHook({onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({onSubmit});
+        inputProps.onKeyDown(event('Enter'));
         expect(onSubmit).toHaveBeenCalledTimes(1);
         expect(onSubmit).toHaveBeenCalledWith(state.value);
       });
 
       it('pressing the Escape key sets the state value to "" and calls onClear if provided', () => {
-        let {searchFieldProps} = renderSearchHook({onClear});
-        searchFieldProps.onKeyDown(event('Escape'));
+        let {inputProps} = renderSearchHook({onClear});
+        inputProps.onKeyDown(event('Escape'));
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('', event('Escape'));
         expect(onClear).toHaveBeenCalledTimes(1);
@@ -84,12 +84,12 @@ describe('useSearchField hook', () => {
       });
 
       it('onSubmit and onClear aren\'t called if isDisabled is true', () => {
-        let {searchFieldProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
+        inputProps.onKeyDown(event('Enter'));
         expect(preventDefault).toHaveBeenCalledTimes(1);
         expect(onSubmit).toHaveBeenCalledTimes(0);
         expect(onClear).toHaveBeenCalledTimes(0);
-        searchFieldProps.onKeyDown(event('Escape'));
+        inputProps.onKeyDown(event('Escape'));
         expect(onSubmit).toHaveBeenCalledTimes(0);
         expect(onClear).toHaveBeenCalledTimes(0);
         expect(preventDefault).toHaveBeenCalledTimes(2);
@@ -97,8 +97,8 @@ describe('useSearchField hook', () => {
 
       it('chain calls a user provided onKeyDown if provided', () => {
         let onKeyDown = jest.fn();
-        let {searchFieldProps} = renderSearchHook({onKeyDown, onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({onKeyDown, onSubmit});
+        inputProps.onKeyDown(event('Enter'));
         // Verify that props.onKeyDown triggers
         expect(onKeyDown).toHaveBeenCalledTimes(1);
         expect(onKeyDown).toHaveBeenCalledWith(event('Enter'));

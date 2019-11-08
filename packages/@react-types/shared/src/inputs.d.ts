@@ -15,7 +15,13 @@ export interface ValueBase<T> {
 }
 
 export interface TextInputBase {
-  placeholder?: string
+  // DOM props that are acceptable for text <input> elements
+  placeholder?: string,
+  name?: string,
+  pattern?: string,
+  minLength?: number,
+  maxLength?: number,
+  autoComplete?: string
 }
 
 export interface RangeValue<T> {

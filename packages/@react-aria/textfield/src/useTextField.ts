@@ -2,7 +2,7 @@ import {AllHTMLAttributes, ChangeEvent} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
 
 interface TextFieldAria {
-  textFieldProps: AllHTMLAttributes<HTMLElement>
+  inputProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTextField(
@@ -19,7 +19,7 @@ export function useTextField(
   } = props;
 
   return {
-    textFieldProps: {
+    inputProps: {
       type,
       disabled: isDisabled,
       readOnly: isReadOnly,

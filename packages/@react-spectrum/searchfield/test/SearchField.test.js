@@ -6,11 +6,10 @@ import {triggerPress} from '@react-spectrum/button/test/utils'; // TODO: Move th
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 
-let testId = 'test-id';
 let inputText = 'blah';
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component {...props} />);
 }
 
 // Note: Running this test suite will result in some warnings of the following class:
@@ -41,23 +40,11 @@ describe('Search', () => {
     let outerDiv = tree.container;
     expect(outerDiv).toBeTruthy();
 
-    let input = within(outerDiv).getByTestId(testId);
+    let input = within(outerDiv).getByRole('searchbox');
     expect(input).toHaveAttribute('type', 'search');
 
     let clearButton = within(outerDiv).queryByRole('button');
     expect(clearButton).toBeNull();
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name supports overriding role and type of search input', ({Component}) => {
-    let tree = renderComponent(Component, {role: 'menuitem'});
-    let outerDiv = tree.getByRole('menuitem');
-    expect(outerDiv).toBeTruthy();
-
-    expect(tree.queryByRole('search')).toBeNull();
   });
 
   it.each`
@@ -88,7 +75,7 @@ describe('Search', () => {
     let clearButton = tree.getByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
 
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     fireEvent.change(input, {target: {value: ''}});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeNull();
@@ -105,7 +92,7 @@ describe('Search', () => {
     ${'v3 SearchField'} | ${SearchField}
   `('$Name submits the textfield value when enter is pressed', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
@@ -123,7 +110,7 @@ describe('Search', () => {
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
   `('$Name doesn\'t submits the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     expect(onSubmit).toBeCalledTimes(0);
   });
@@ -135,7 +122,7 @@ describe('Search', () => {
     ${'v3 SearchField'} | ${SearchField}
   `('$Name clears the input field if the escape key is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     expect(input.value).toBe(inputText);
     fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
@@ -157,7 +144,7 @@ describe('Search', () => {
     ${'v3 SearchField'} | ${SearchField}
   `('$Name doesn\'t clear the input field if the escape key is pressed and the field is controlled', ({Component}) => {
     let tree = renderComponent(Component, {value: inputText, onChange, onClear});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     expect(input.value).toBe(inputText);
     fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
@@ -177,7 +164,7 @@ describe('Search', () => {
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
   `('$Name doesn\'t clear the input field if the escape key is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     expect(input.value).toBe(inputText);
     fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(0);
@@ -193,7 +180,7 @@ describe('Search', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
     triggerPress(clearButton);
@@ -221,7 +208,7 @@ describe('Search', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is controlled', ({Component}) => {
     let tree = renderComponent(Component, {value: inputText, onChange, onClear});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
     userEvent.click(clearButton);
@@ -249,7 +236,7 @@ describe('Search', () => {
     ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('searchbox');
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
     userEvent.click(clearButton);
@@ -260,5 +247,28 @@ describe('Search', () => {
     if (Component === SearchField) {
       expect(onClear).toBeCalledTimes(0);
     }
+  });
+
+  // Only supported in v3
+  it.each`
+    Name                  | Component
+    ${'v3 SearchField'}   | ${SearchField}
+  `('$Name should accept childElementProps', ({Component}) => {
+    let tree = renderComponent(Component, {
+      defaultValue: 'test',
+      childElementProps: {
+        textField: {'data-testid': 'textfield'},
+        input: {'data-testid': 'input'},
+        clearButton: {'data-testid': 'clear-button'}
+      }
+    });
+
+    tree.getByTestId('textfield'); // will throw if it doesn't exist
+
+    let input = tree.getByRole('searchbox');
+    expect(input).toHaveAttribute('data-testid', 'input');
+
+    let clearButton = tree.getByLabelText('Clear search');
+    expect(clearButton).toHaveAttribute('data-testid', 'clear-button');
   });
 });

@@ -3,11 +3,10 @@ import React from 'react';
 import {TextArea} from '../';
 import V2TextArea from '@react/react-spectrum/Textarea';
 
-let testId = 'test-id';
 let mockScrollHeight = 500;
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component {...props} />);
 }
 
 describe('TextArea', () => {
@@ -37,7 +36,7 @@ describe('TextArea', () => {
     ${'v2 TextArea'}    | ${V2TextArea}    | ${{quiet: true, onChange}}
   `('$Name quiet variant automatically adjusts its vertical height on change', ({Component, props}) => {  
     let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
+    let input = tree.getByRole('textbox');
   
     expect(input.style.height).toBe('');
     fireEvent.change(input, {target: {value: '15', style: {}}});

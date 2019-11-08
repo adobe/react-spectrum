@@ -6,7 +6,7 @@ import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
-  searchFieldProps: AllHTMLAttributes<HTMLInputElement>,
+  inputProps: AllHTMLAttributes<HTMLInputElement>,
   clearButtonProps: any // TODO: Replace any with AriaButtonProps from useButton when buttons is added to react-types
 }
 
@@ -53,7 +53,7 @@ export function useSearchField(
   };
 
   return {
-    searchFieldProps: {
+    inputProps: {
       role,
       value: state.value,
       onKeyDown: chain(props.onKeyDown, onKeyDown),

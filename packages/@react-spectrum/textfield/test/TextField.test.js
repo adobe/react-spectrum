@@ -8,11 +8,14 @@ import V2SearchField from '@react/react-spectrum/Search';
 import V2TextArea from '@react/react-spectrum/Textarea';
 import V2TextField from '@react/react-spectrum/Textfield';
 
-let testId = 'test-id';
 let inputText = 'blah';
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component {...props} />);
+}
+
+function findInput(tree) {
+  return tree.getByRole(/textbox|searchbox/);
 }
 
 // Note: Running this test suite will result in some warnings of the following class:
@@ -54,7 +57,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField} | ${'search'}  | ${'INPUT'}
   `('$Name renders with default textfield behavior', ({Component, expectedType, expectedTagName}) => {
     let tree = renderComponent(Component);
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input.value).toBe('');
     userEvent.type(input, inputText);
     expect(input.value).toBe(inputText);
@@ -73,7 +76,7 @@ describe('Shared TextField behavior', () => {
   `('$Name allow custom naming', ({Component}) => {  
     let name = 'blah';
     let tree = renderComponent(Component, {name});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).toHaveAttribute('name', name);
   });  
 
@@ -88,7 +91,7 @@ describe('Shared TextField behavior', () => {
   `('$Name renders with placeholder text', ({Component}) => {
     let tree = renderComponent(Component, {placeholder: inputText});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input.placeholder).toBe(inputText);
   });
 
@@ -102,7 +105,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onChange when text changes', ({Component}) => {
     let tree = renderComponent(Component, {onChange});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     fireEvent.change(input, {target: {value: inputText}});
     expect(onChange).toHaveBeenCalledTimes(1);
 
@@ -132,7 +135,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onFocus when the the input field is focused', ({Component}) => {
     let tree = renderComponent(Component, {onFocus});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     fireEvent.focus(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
     userEvent.click(input);
@@ -149,7 +152,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onBlur when the input field loses focus', ({Component}) => {
     let tree = renderComponent(Component, {onBlur});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     fireEvent.blur(input);
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
@@ -166,7 +169,7 @@ describe('Shared TextField behavior', () => {
     let defaultValue = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, defaultValue});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input.value).toBe(defaultValue);
     userEvent.type(input, newValue);
     expect(input.value).toBe(newValue);
@@ -185,7 +188,7 @@ describe('Shared TextField behavior', () => {
     let value = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, value});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input.value).toBe(value);
     userEvent.type(input, newValue);
     expect(input.value).toBe(value);
@@ -201,7 +204,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a invalid icon if validationState=invalid', ({Component}) => {
     let tree = renderComponent(Component, {validationState: 'invalid'});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
       let invalidIcon = tree.getByRole('img');
@@ -218,7 +221,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a valid icon if validationState=valid', ({Component}) => {
     let tree = renderComponent(Component, {validationState: 'valid'});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
       let validIcon = tree.getByRole('img');
@@ -235,7 +238,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextArea'}    | ${V2TextArea}    | ${{required: true}}   | ${'required'}
   `('$Name supports a isRequired prop', ({Component, props, expected}) => {
     let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).toHaveAttribute(expected);
   });
 
@@ -249,7 +252,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField}
   `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component}) => {
     let tree = renderComponent(Component, {autoFocus: true, onFocus});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
 
     // v2 components seem to focus the entire body, not sure if bug, but functionally is the same
     if (Name.indexOf('v2') !== -1) {
@@ -270,7 +273,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField} | ${{readOnly: true}}
   `('$Name should support isReadOnly', ({Component, props}) => { 
     let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).toHaveAttribute('readonly');
     userEvent.click(input);
     expect(document.activeElement).toEqual(input);
@@ -289,7 +292,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name should disable the input field if isDisabled=true', ({Component, props}) => { 
     let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(input).toHaveAttribute('disabled');
     userEvent.click(input);
     expect(document.activeElement).not.toEqual(input);
@@ -314,11 +317,20 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-    ${'v3 SearchField'} | ${SearchField}
   `('$Name will attach a ref to the input field if provided as a prop', ({Component}) => {
     let ref = React.createRef();
     let tree = renderComponent(Component, {ref});
-    let input = tree.getByTestId(testId);
+    let input = findInput(tree);
     expect(ref.current).toEqual(input);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name should accept childElementProps', ({Component}) => {
+    let tree = renderComponent(Component, {childElementProps: {input: {'data-testid': 'input'}}});
+    let input = findInput(tree);
+    expect(input).toHaveAttribute('data-testid', 'input');
   });
 });

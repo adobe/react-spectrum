@@ -2,6 +2,7 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
@@ -19,10 +20,19 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     isDisabled = false,
     value,
     defaultValue,
+    placeholder,
+    name,
+    pattern,
+    minLength,
+    maxLength,
+    autoComplete,
+    childElementProps: {
+      input: inputChildProps = {}
+    } = {},
     ...otherProps
   } = props;
   
-  let {textFieldProps} = useTextField(props);
+  let {inputProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
@@ -53,6 +63,12 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
 
   let component = (
     <div
+      {...filterDOMProps(otherProps, {
+        value: false,
+        defaultValue: false,
+        onChange: false,
+        placeholder: false
+      })}
       className={
         classNames(
           styles,
@@ -62,20 +78,22 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
             'is-valid': validationState === 'valid',
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
-          }
+          },
+          className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <ElementType
-          {...filterDOMProps(otherProps, {
-            value: false,
-            defaultValue: false,
-            onChange: false
-          })}
-          {...textFieldProps}
+          {...mergeProps(inputProps, filterDOMProps(inputChildProps))}
           ref={ref}
           value={value}
           defaultValue={defaultValue}
+          placeholder={placeholder}
+          name={name}
+          pattern={pattern}
+          minLength={minLength}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
           className={
             classNames(
               styles,
@@ -83,7 +101,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
               {
                 'spectrum-Textfield-inputIcon': icon
               },
-              className
+              inputProps.className
             )
           } /> 
       </FocusRing> 
