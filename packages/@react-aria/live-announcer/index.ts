@@ -1,1 +1,1 @@
-export * from './src/LiveAnnouncer';
+export * from './src';
