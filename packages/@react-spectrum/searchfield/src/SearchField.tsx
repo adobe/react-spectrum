@@ -12,13 +12,13 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 
 interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {
   childElementProps?: {
-    textField: HTMLAttributes<HTMLElement>,
-    input: HTMLAttributes<HTMLInputElement>,
-    clearButton: HTMLAttributes<HTMLElement>
+    textField: HTMLAttributes<HTMLDivElement> & {ref?: RefObject<HTMLDivElement>},
+    input: HTMLAttributes<HTMLInputElement & HTMLTextAreaElement> & {ref?: RefObject<HTMLInputElement & HTMLTextAreaElement>},
+    clearButton: HTMLAttributes<HTMLElement> & {ref?: RefObject<HTMLElement>}
   }
 }
 
-export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     icon = <Magnifier data-testid="searchicon" />,
@@ -44,8 +44,9 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
   } = props;
 
   let state = useSearchFieldState(props);
-  let searchFieldRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {inputProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
+  let fallbackRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let inputRef = inputChildProps.ref || fallbackRef;
+  let {inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
@@ -72,6 +73,7 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
         childElementProps={{
           input: {
             ...mergeProps(inputChildProps, inputProps),
+            ref: inputRef,
             className: classNames(
               styles,
               'spectrum-Search-input',
@@ -79,7 +81,7 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
             )
           }
         }}
-        ref={searchFieldRef}
+        ref={textFieldProps.ref}
         isDisabled={isDisabled}
         isReadOnly={isReadOnly}
         isRequired={isRequired}
@@ -99,6 +101,7 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
         state.value !== '' &&
           <ClearButton
             {...mergeProps(clearButtonProps, filterDOMProps(clearChildProps))}
+            ref={clearChildProps.ref}
             className={
               classNames(
                 styles,

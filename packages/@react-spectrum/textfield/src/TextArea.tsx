@@ -4,7 +4,7 @@ import {SpectrumTextFieldProps} from './types';
 import {TextField} from './TextField';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     isDisabled = false,

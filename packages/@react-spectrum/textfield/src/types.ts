@@ -1,4 +1,4 @@
-import {HTMLAttributes, ReactNode} from 'react';
+import {HTMLAttributes, ReactNode, RefObject} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
 
 export interface SpectrumTextFieldProps extends TextFieldProps {
@@ -6,6 +6,6 @@ export interface SpectrumTextFieldProps extends TextFieldProps {
   isQuiet?: boolean,
   multiLine?: boolean,
   childElementProps?: {
-    input: HTMLAttributes<HTMLInputElement>
+    input: HTMLAttributes<HTMLInputElement & HTMLTextAreaElement> & {ref?: RefObject<HTMLInputElement & HTMLTextAreaElement>}
   }
 }

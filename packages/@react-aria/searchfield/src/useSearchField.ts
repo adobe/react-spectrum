@@ -13,7 +13,7 @@ interface SearchFieldAria {
 export function useSearchField(
   props: SearchFieldProps,
   state: SearchFieldState,
-  searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  searchFieldRef: RefObject<HTMLInputElement>
 ): SearchFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {

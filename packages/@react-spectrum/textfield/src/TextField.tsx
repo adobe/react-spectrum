@@ -9,7 +9,7 @@ import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     validationState,
@@ -86,6 +86,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <ElementType
           {...mergeProps(inputProps, filterDOMProps(inputChildProps))}
+          ref={inputChildProps.ref}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
