@@ -1,5 +1,5 @@
-import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {Overlay} from '@react-spectrum/overlays';
+import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactNode, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -71,10 +71,6 @@ function TooltipTriggerContainer(props) {
   let triggerPropsWithRef = {
     ref: triggerRef
   };
-
-  console.log("overlayProps", overlayProps)
-
-  // style: overlayProps.style
 
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>

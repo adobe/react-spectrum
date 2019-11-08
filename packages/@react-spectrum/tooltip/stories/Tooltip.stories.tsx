@@ -41,12 +41,18 @@ storiesOf('Tooltip', module)
     () => render(longMarkup)
   )
   .add(
-    'triggered by click',
+    'triggered by click, placement: right',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'click'})
+  ).add(
+    'triggered by click, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click'})
+  ).add(
+    'triggered by click, placement: top',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'click'})
+  ).add(
+    'triggered by click, placement: bottom',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
   );
-
-
-// TODO: add another story to show a different position 
 
 function render(content, props = {}) {
   return (

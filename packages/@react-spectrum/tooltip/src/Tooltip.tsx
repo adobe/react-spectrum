@@ -20,13 +20,6 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
     ...otherProps
   } = props;
 
-  console.log("props", props);
-  /**/
-
-  console.log("********")
-
-  console.log("Otherprops", otherProps);
-
   return (
     <div
       {...filterDOMProps(otherProps)}
