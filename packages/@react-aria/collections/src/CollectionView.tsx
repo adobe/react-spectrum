@@ -4,14 +4,14 @@ import React, {CSSProperties, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
-interface CollectionViewProps<T, V> extends DOMProps {
+interface CollectionViewProps<T extends object, V> extends DOMProps {
   children: (type: string, content: T) => V,
   layout: Layout<T>,
   collection: Collection<T>,
   focusedKey?: Key
 }
 
-export function CollectionView<T, V>(props: CollectionViewProps<T, V>) {
+export function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>) {
   let {children: renderView, layout, collection, focusedKey, ...otherProps} = props;
   let {
     visibleViews,

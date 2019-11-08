@@ -20,7 +20,7 @@ import {Size} from './Size';
  * - {@link getVisibleLayoutInfos}
  * - {@link getLayoutInfo}
  */
-export abstract class Layout<T> {
+export abstract class Layout<T extends object> {
   /** The CollectionView the layout is currently attached to */
   collectionManager: CollectionManager<T, any, any>;
 

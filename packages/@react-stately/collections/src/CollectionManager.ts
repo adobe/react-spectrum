@@ -18,7 +18,7 @@ interface ScrollAnchor {
   offset: number
 }
 
-export interface CollectionManagerOptions<T, V, W> {
+export interface CollectionManagerOptions<T extends object, V, W> {
   collection?: Collection<T>,
   layout?: Layout<T>,
   delegate?: CollectionManagerDelegate<T, V, W>,
