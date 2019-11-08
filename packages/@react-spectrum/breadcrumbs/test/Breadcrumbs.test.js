@@ -51,17 +51,6 @@ describe('Breadcrumbs', function () {
     expect(item3).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Handles multiple items with size L', () => {
-    let {getByTestId} = render(
-      <Breadcrumbs size="L">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
-        <BreadcrumbItem>Folder 2</BreadcrumbItem>
-      </Breadcrumbs>
-    );
-    let item = getByTestId('breadcrumb-heading');
-    expect(item).toBeDefined();
-  });
-
   it('Should handle forward ref', function () {
     let ref;
     let Component = () => {

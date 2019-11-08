@@ -31,15 +31,15 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   } = props;
 
   let isCollapisble = maxVisibleItems === 'auto';
-  let childArray = Object.assign([], React.Children.toArray(children));
+  let childArray = React.Children.toArray(children);
 
   const [hidden, setHidden] = useState(false);
-  const listRef = useRef(null);
+  ref = ref || useRef();
 
   useEffect(() => {
     let onResize = () => {
       if (isCollapisble) {
-        setHidden(listRef.current.scrollWidth > listRef.current.offsetWidth);
+        setHidden(ref.current.scrollWidth > ref.current.offsetWidth);
       }
     };
 
@@ -53,7 +53,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   let {breadcrumbProps} = useBreadcrumbs(props);
 
   if (!isCollapisble && childArray.length > maxVisibleItems) {
-    let rootItems = childArray.splice(0, showRoot ? 1 : 0); // pull out the root item
+    let rootItems = showRoot ? [childArray[0]] : [];
 
     // TODO: replace with menu component
     let menuItem = (
@@ -117,7 +117,6 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
         </div>
       }
       <ul
-        ref={listRef}
         data-testid="breadcrumb-list"
         className={
           classNames(

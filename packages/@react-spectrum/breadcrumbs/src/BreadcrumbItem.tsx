@@ -49,7 +49,6 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
                   'spectrum-Heading--pageTitle'
                 )
               }
-              data-testid="breadcrumb-heading"
               aria-level={headingAriaLevel}>
               {element}
             </h1>

@@ -67,7 +67,7 @@ governing permissions and limitations under the License.
   }
 
   > .spectrum-ActionButton {
-    margin-right: var(--spectrum-breadcrumb-button-gap);
+    margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
 }
 
@@ -82,7 +82,7 @@ governing permissions and limitations under the License.
   padding: 0 var(--spectrum-breadcrumb-item-padding-x);
   height: var(--spectrum-breadcrumb-list-height);
 
-  margin-right: var(--spectrum-breadcrumb-item-margin-right);
+  margin-inline-end: var(--spectrum-breadcrumb-item-margin-right);
 
   border-radius: var(--spectrum-breadcrumb-item-border-radius);
 
@@ -106,7 +106,7 @@ governing permissions and limitations under the License.
 .spectrum-Breadcrumbs-itemLink:focus-ring:before {
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
 
   box-sizing: border-box;
   display: block;

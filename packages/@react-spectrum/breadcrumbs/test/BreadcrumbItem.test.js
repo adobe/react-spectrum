@@ -24,13 +24,6 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Handles isHeading', () => {
-    let {getByTestId} = render(<BreadcrumbItem isHeading headingAriaLevel="2" >Breadcrumb item</BreadcrumbItem>);
-    let breadcrumbItem = getByTestId('breadcrumb-heading');
-    expect(breadcrumbItem.tabIndex).toBe(-1);
-    expect(breadcrumbItem).toHaveAttribute('aria-level', '2');
-  });
-
   it('Handles disabled', () => {
     let onPressSpy = jest.fn();
     let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} isDisabled >Breadcrumb item</BreadcrumbItem>);
