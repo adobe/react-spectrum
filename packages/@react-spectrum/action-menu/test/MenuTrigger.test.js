@@ -38,16 +38,18 @@ function renderComponent(Component, props) {
   } else {
     return render(
       <Provider theme={theme}>
-        <Component {...props}>
-          <Button id={buttonId}>
-            {triggerText}
-          </Button>
-          <Menu id={menuId}>
-            <li>Foo</li>
-            <li>Bar</li>
-            <li>Baz</li>
-          </Menu>
-        </Component>
+        <div data-testid="scrollable">
+          <Component {...props}>
+            <Button id={buttonId}>
+              {triggerText}
+            </Button>
+            <Menu id={menuId}>
+              <li>Foo</li>
+              <li>Bar</li>
+              <li>Baz</li>
+            </Menu>
+          </Component>
+        </div>
       </Provider>
     );
   }
@@ -258,21 +260,7 @@ describe('MenuTrigger', function () {
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name closes the menu upon trigger body scroll', async function ({Component, props}) {
-    let tree = render(
-      <Provider theme={theme}>
-        <div data-testid="scrollable">
-          <Component {...props}>
-            <Button>Button 1</Button>
-            <Menu>
-              <li>Foo</li>
-              <li>Bar</li>
-              <li>Baz</li>
-            </Menu>
-          </Component>
-        </div>
-      </Provider>
-    );
-
+    let tree = renderComponent(Component, props);
     let button = tree.getByRole('button');
     triggerPress(button);
     await waitForDomChange();
