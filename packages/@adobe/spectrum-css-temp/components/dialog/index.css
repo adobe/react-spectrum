@@ -34,9 +34,6 @@ governing permissions and limitations under the License.
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
 }
 
-/* topdoc
-{{ dialog/dialog.yml }}
-*/
 
 .spectrum-Dialog {
   /* Be a flexbox to allow a full sized content area that scrolls */

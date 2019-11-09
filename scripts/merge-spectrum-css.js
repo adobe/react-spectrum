@@ -22,12 +22,14 @@ function getFilesizeInBytes(filename) {
 }
 
 let promises = [];
-console.log(components);
-console.log(existingComponents);
+console.log('components', components);
+console.log('ignoreComponents', ignoreComponents);
+console.log('existingComponents', existingComponents);
 if (!fs.existsSync(`${__dirname}/temp`)) {
   fs.mkdirSync(`${__dirname}/temp`);
   components.forEach((componentName) => {
-    if (componentName in ignoreComponents && !(componentName in existingComponents)) {
+    console.log('componentName', componentName);
+    if (ignoreComponents.includes(componentName) || !existingComponents.includes(componentName)) {
       return;
     }
     let rootDir = `${__dirname}/temp/${componentName}`;
@@ -56,7 +58,7 @@ if (!fs.existsSync(`${__dirname}/temp`)) {
 
 Promise.all(promises).then(() => {
   components.forEach(componentName => {
-    if (componentName in ignoreComponents && !(componentName in existingComponents)) {
+    if (ignoreComponents.includes(componentName) || !existingComponents.includes(componentName)) {
       return;
     }
     let rootDir = `${__dirname}/temp/${componentName}`;
@@ -69,7 +71,7 @@ Promise.all(promises).then(() => {
         try {
           execSync(`cd ${rootDir}; p4merge-cli index-basefile index-remotefile index-localfile index.css`);
         } catch (error) {
-          // console.log('error', error);
+          console.log(componentName, 'index.css');
         }
       }
       if (getFilesizeInBytes(`${rootDir}/index.css`) > 0) {
@@ -86,7 +88,7 @@ Promise.all(promises).then(() => {
         try {
           execSync(`cd ${rootDir}; p4merge-cli skin-basefile skin-remotefile skin-localfile skin.css`);
         } catch (error) {
-          // console.log('error', error);
+          console.log(componentName, 'skin.css');
         }
       }
       if (getFilesizeInBytes(`${rootDir}/skin.css`) > 0) {

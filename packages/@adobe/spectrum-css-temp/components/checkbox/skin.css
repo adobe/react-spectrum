@@ -10,149 +10,131 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+@import '../commons/index.css';
+
+:root {
+  /* Hardcoded for wrapping study */
+  --spectrum-checkbox-label-margin-top: var(--spectrum-global-dimension-size-75);
+}
+
+.spectrum-Checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+
+  position: relative;
+
+  min-block-size: var(--spectrum-checkbox-height);
+  max-inline-size: 100%;
+
+  margin-inline-end: calc(var(--spectrum-checkbox-cursor-hit-x) * 2);
+
+  vertical-align: top;
+}
+
+.spectrum-Checkbox-input {
+  /* Change the font styles in all browsers for input. */
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+
+  /* Remove the margin for input in Firefox and Safari. */
+  margin: 0;
+
+  /* Show the overflow for input in Edge. */
+  overflow: visible;
+
+  /* Add the correct box sizing for [type="checkbox"] in IE 10-. */
+  box-sizing: border-box;
+
+  /* Remove the padding for [type="checkbox"] in IE 10-. */
+  padding: 0;
+
+  /* Hit area */
+  position: absolute;
+  top: 0;
+  left: calc(var(--spectrum-checkbox-cursor-hit-x) * -1);
+  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 2);;
+  block-size: 100%;
+
+  opacity: .0001;
+  z-index: 1;
+
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:checked + .spectrum-Checkbox-box {
+    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+
+    .spectrum-Checkbox-checkmark {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+.spectrum-Checkbox.is-indeterminate {
+  .spectrum-Checkbox-box,
+  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+
+    .spectrum-Checkbox-checkmark {
+      display: none;
+    }
+
+    .spectrum-Checkbox-partialCheckmark {
+      display: block;
+
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
 .spectrum-Checkbox-label {
-  color: var(--spectrum-checkbox-text-color);
+  margin-inline-start: var(--spectrum-checkbox-text-gap);
+  font-size: var(--spectrum-checkbox-text-size);
+  font-weight: var(--spectrum-checkbox-text-font-weight);
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  margin-block-start: var(--spectrum-checkbox-label-margin-top);
+}
+
+.spectrum-Checkbox-box {
+  position: relative;
+  box-sizing: border-box;
+  inline-size: var(--spectrum-checkbox-box-size);
+  block-size: var(--spectrum-checkbox-box-size);
+
+  /* Fix vertical alignment when not wrapping since we're flex-start */
+  margin: calc((var(--spectrum-checkbox-height) - var(--spectrum-checkbox-box-size)) / 2) 0;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  border-radius: var(--spectrum-checkbox-box-border-radius);
+  border-width: var(--spectrum-checkbox-box-border-size);
+  border-style: solid;
+
+  transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Checkbox-checkmark,
 .spectrum-Checkbox-partialCheckmark {
-  color: var(--spectrum-checkbox-checkmark-color);
+  position: absolute;
+  top: 50%;
+
+  margin-block-start: calc(var(--spectrum-icon-checkmark-small-height) / -2);
+  margin-inline-start: calc(var(--spectrum-icon-checkmark-small-width) / -2);
+
+  opacity: 0;
+  transform: scale(0);
+
+  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Checkbox-box {
-  border-color: var(--spectrum-checkbox-box-border-color);
-  background-color: var(--spectrum-checkbox-box-background-color);
-}
-
-/* Indetermiate is basically a checked state, so handle colors for checked state here */
-.spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
-.spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-  border-color: var(--spectrum-checkbox-box-border-color-selected);
-}
-
-.spectrum-Checkbox:hover {
-  &.is-indeterminate .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-box-border-color-selected-hover);
-
-  }
-}
-
-.spectrum-Checkbox:active {
-  &.is-indeterminate .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-box-border-color-selected-down);
-
-  }
-}
-
-/* topdoc
-{{ checkbox/checkbox.yml }}
-*/
-.spectrum-Checkbox {
-  border-color: var(--spectrum-checkbox-box-border-color);
-
-  &:hover {
-    .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-hover);
-
-      box-shadow: none;
-    }
-    .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-hover);
-    }
-  }
-
-  &:active {
-    .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-down);
-
-    }
-    .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-down);
-    }
-  }
-}
-
-.spectrum-Checkbox-input {
-  &:disabled + .spectrum-Checkbox-box {
-    /* Use important to override hover states */
-    border-color: var(--spectrum-checkbox-box-border-color-disabled) !important;
-
-    background-color: var(--spectrum-checkbox-box-background-color-disabled);
-  }
-
-  &:disabled ~ .spectrum-Checkbox-label {
-    color: var(--spectrum-checkbox-text-color-disabled);
-  }
-}
-
-/* Focus */
-.spectrum-Checkbox-input {
-  &:focus-ring + .spectrum-Checkbox-box {
-    /* Since the specificity of .focus-ring is less than :hover, we need important */
-    border-color: var(--spectrum-checkbox-box-border-color-key-focus) !important;
-
-    box-shadow: 0 0 0 1px var(--spectrum-checkbox-box-border-color-key-focus) !important;
-  }
-
-  &:focus-ring ~ .spectrum-Checkbox-label {
-    color: var(--spectrum-checkbox-text-color-key-focus) !important;
-  }
-}
-
-/* topdoc
-{{ checkbox/checkbox-quiet.yml }}
-*/
-.spectrum-Checkbox--quiet.is-indeterminate .spectrum-Checkbox-box,
-  .spectrum-Checkbox--quiet .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-  border-color: var(--spectrum-checkbox-quiet-box-border-color-selected);
-}
-
-.spectrum-Checkbox--quiet:hover {
-  &.is-indeterminate .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-quiet-box-border-color-selected-hover);
-  }
-}
-
-.spectrum-Checkbox--quiet:active {
-  &.is-indeterminate .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-quiet-box-border-color-selected-down);
-  }
-}
-
-.spectrum-Checkbox.is-invalid {
-  /* Extra-specific selectors added here to handle checked state */
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
-  .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-box-border-color-error);
-  }
-
-  .spectrum-Checkbox-label {
-    color: var(--spectrum-checkbox-text-color-error);
-  }
-
-  &:hover {
-    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
-    .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-error-hover);
-    }
-
-    .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-error-hover);
-    }
-  }
-
-  &:active {
-    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
-    .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-error-down);
-    }
-
-    .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-error-down);
-    }
-  }
+.spectrum-Checkbox-partialCheckmark {
+  display: none;
 }

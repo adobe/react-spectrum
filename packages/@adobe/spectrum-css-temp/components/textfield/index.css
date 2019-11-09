@@ -23,6 +23,7 @@ governing permissions and limitations under the License.
 
   --spectrum-textfield-multiline-height: auto;
   --spectrum-textfield-multiline-min-height: var(--spectrum-global-dimension-size-700);
+
   --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
   --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
@@ -69,6 +70,7 @@ governing permissions and limitations under the License.
 
   outline: none;
 
+  -webkit-appearance: none;
   /*
     Removes the native spin buttons in Firefox; -moz-appearance: none results in spinners.
     This has to come after -webkit-appearance or it gets overridden (#214)
@@ -78,7 +80,6 @@ governing permissions and limitations under the License.
     Details: https://github.com/csstools/normalize.css/blob/master/normalize.css#L297
   */
   -moz-appearance: textfield;
-  -webkit-appearance: none;
 
   &::placeholder {
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
