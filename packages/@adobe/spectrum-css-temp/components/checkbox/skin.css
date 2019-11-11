@@ -44,7 +44,7 @@ governing permissions and limitations under the License.
 .spectrum-Checkbox {
   border-color: var(--spectrum-checkbox-emphasized-box-border-color);
 
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Checkbox-box {
       border-color: var(--spectrum-checkbox-emphasized-box-border-color-hover);
 
@@ -128,7 +128,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-checkbox-text-color-error);
   }
 
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
     .spectrum-Checkbox-box {
       border-color: var(--spectrum-checkbox-box-border-color-error-hover);

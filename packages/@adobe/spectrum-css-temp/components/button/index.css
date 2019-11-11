@@ -113,7 +113,7 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-button-primary-text-size);
   font-weight: var(--spectrum-button-primary-text-font-weight);
 
-  &:hover,
+  @media(hover: hover),
   &:active {
     box-shadow: none;
   }

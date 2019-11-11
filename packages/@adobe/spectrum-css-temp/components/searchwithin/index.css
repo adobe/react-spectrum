@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
     border-top-left-radius: var(--spectrum-searchwithin-border-radius);
     border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
 
-    &:hover, &:focus {
+    @media(hover: hover), &:focus {
       position: relative; /* shows left border */
     }
   }

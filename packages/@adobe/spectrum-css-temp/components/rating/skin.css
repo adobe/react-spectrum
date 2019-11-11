@@ -19,12 +19,12 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 var(--spectrum-global-dimension-static-size-25) var(--spectrum-rating-focus-ring-color);
   }
 
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Rating-icon {
       /* Make all stars colored when the component is hovered */
       color: var(--spectrum-rating-icon-color-selected);
 
-      &:hover {
+      @media(hover: hover) {
         /* The icon that's actually hovered is darker */
         color: var(--spectrum-rating-icon-color-hover);
       }
@@ -52,7 +52,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-alias-icon-color-selected);
   }
 
-  &:hover {
+  @media(hover: hover) {
     /* All stars following the hovered star */
     & ~ .spectrum-Rating-icon {
       color: var(--spectrum-rating-icon-color);
@@ -69,12 +69,12 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Rating-icon {
       /* Make all stars selected when the component is hovered */
       color: var(--spectrum-rating-quiet-icon-color-selected);
 
-      &:hover {
+      @media(hover: hover) {
         /* The icon that's actually hovered is darker */
         color: var(--spectrum-rating-quiet-icon-color-hover);
       }

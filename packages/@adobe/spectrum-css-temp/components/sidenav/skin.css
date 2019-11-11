@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-sidenav-item-background-color);
   color: var(--spectrum-sidenav-item-text-color);
 
-  &:hover {
+  @media(hover: hover) {
     background-color: var(--spectrum-sidenav-item-background-color-hover);
     color: var(--spectrum-sidenav-item-text-color-hover);
   }

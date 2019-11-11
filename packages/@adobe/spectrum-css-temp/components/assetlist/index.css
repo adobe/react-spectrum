@@ -68,7 +68,7 @@ governing permissions and limitations under the License.
 
   &.is-selectable,
   &.is-selected,
-  &:hover,
+  @media(hover: hover),
   &:focus {
     /* checkbox on the left, shows up always */
     .spectrum-Checkbox {

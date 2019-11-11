@@ -489,7 +489,7 @@ governing permissions and limitations under the License.
 
     &.spectrum-Slider--color {
       .spectrum-Slider-handle {
-        &:hover,
+        @media(hover: hover),
         &:active {
           border-width: var(--spectrum-slider-color-handle-outset-border-size);
         }

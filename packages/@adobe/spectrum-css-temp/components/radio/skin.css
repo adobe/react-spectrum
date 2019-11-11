@@ -26,7 +26,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio {
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Radio-button {
       border-color: var(--spectrum-radio-emphasized-circle-border-color-hover);
       box-shadow: none;
@@ -63,7 +63,7 @@ governing permissions and limitations under the License.
   .spectrum-Radio-input:checked + .spectrum-Radio-button {
     border-color: var(--spectrum-radio-quiet-circle-border-color-selected);
   }
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Radio-input:checked + .spectrum-Radio-button {
       border-color: var(--spectrum-radio-quiet-circle-border-color-selected-hover);
     }
@@ -115,7 +115,7 @@ governing permissions and limitations under the License.
 
 /* Focus Overrides all */
 .spectrum-Radio, .spectrum-Radio--quiet {
-  & .spectrum-Radio-input:focus-ring, &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-ring, @media(hover: hover) .spectrum-Radio-input:focus-ring {
     & + .spectrum-Radio-button {
       border-color: var(--spectrum-radio-emphasized-circle-border-color-key-focus);
       box-shadow: 0 0 0 1px var(--spectrum-radio-emphasized-circle-border-color-key-focus);

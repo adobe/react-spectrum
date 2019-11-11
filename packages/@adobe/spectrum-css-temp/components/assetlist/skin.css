@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-AssetList-item {
-  &:hover {
+  @media(hover: hover) {
     background-color: var(--spectrum-miller-column-item-background-color-hover);
   }
 
@@ -29,7 +29,7 @@ governing permissions and limitations under the License.
   &.is-navigated {
     /* gray background */
     background-color: var(--spectrum-miller-column-item-background-color-down);
-    &:hover,
+    @media(hover: hover),
     &:focus {
       background-color: var(--spectrum-miller-column-item-background-color-down);
     }
@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     background-color: var(--spectrum-miller-column-item-background-color-selected);
-    &:hover,
+    @media(hover: hover),
     &:focus {
       background-color: var(--spectrum-miller-column-item-background-color-selected-hover);
     }

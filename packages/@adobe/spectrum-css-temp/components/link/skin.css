@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 .spectrum-Link {
   color: var(--spectrum-link-text-color);
 
-  &:hover {
+  @media(hover: hover) {
     color: var(--spectrum-link-text-color-hover);
   }
 
@@ -34,7 +34,7 @@ governing permissions and limitations under the License.
 /** @deprecated */.spectrum-Link--subtle {
   color: inherit;
 
-  &:hover {
+  @media(hover: hover) {
     color: inherit;
   }
 
@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
 .spectrum-Link--overBackground {
   color: var(--spectrum-link-over-background-text-color);
 
-  &:hover {
+  @media(hover: hover) {
     color: var(--spectrum-link-over-background-text-color-hover);
   }
 

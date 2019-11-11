@@ -82,7 +82,7 @@ governing permissions and limitations under the License.
 
   text-decoration: none;
 
-  &:hover,
+  @media(hover: hover),
   &:focus-ring {
     text-decoration: underline;
   }
@@ -142,7 +142,7 @@ governing permissions and limitations under the License.
         text-decoration: none;
       }
     }
-  
+
     .spectrum-Heading--pageTitle {
       margin: 0;
 

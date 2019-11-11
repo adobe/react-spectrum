@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
     border-left-color: var(--spectrum-selectlist-option-focus-indicator-color);
   }
 
-  &:hover,
+  @media(hover: hover),
   &:focus,
   &.is-open {
     background-color: var(--spectrum-selectlist-option-background-color-hover);

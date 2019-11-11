@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-textfield-placeholder-text-color);
   }
 
-  &:hover {
+  @media(hover: hover) {
     border-color: var(--spectrum-textfield-border-color-hover);
     box-shadow: none;
 
@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-textfield-quiet-background-color);
   border-color: var(--spectrum-textfield-quiet-border-color);
 
-  &:hover {
+  @media(hover: hover) {
     border-color: var(--spectrum-textfield-quiet-border-color-hover);
   }
 

@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
   &.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color);
 
-    &:hover {
+    @media(hover: hover) {
       color: var(--spectrum-dropdown-placeholder-text-color-hover);
     }
 

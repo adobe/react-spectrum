@@ -25,7 +25,7 @@ governing permissions and limitations under the License.
 .spectrum-TreeView-itemLink {
   color: var(--spectrum-treeview-item-text-color);
 
-  &:hover,
+  @media(hover: hover),
   &.is-selected {
     color: var(--spectrum-treeview-item-text-color-hover);
 

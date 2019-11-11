@@ -29,7 +29,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tabs-icon-color)
   }
 
-  &:hover {
+  @media(hover: hover) {
     color: var(--spectrum-tabs-text-color-hover);
 
     .spectrum-Icon {

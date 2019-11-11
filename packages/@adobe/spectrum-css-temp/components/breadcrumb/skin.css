@@ -31,7 +31,7 @@ governing permissions and limitations under the License.
   .spectrum-Breadcrumbs-itemLink {
     color: inherit;
 
-    &:hover {
+    @media(hover: hover) {
       color: var(--spectrum-breadcrumb-text-color-hover);
     }
 

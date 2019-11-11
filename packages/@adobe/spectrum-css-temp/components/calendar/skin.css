@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar-date {
-  &:hover {
+  @media(hover: hover) {
     color: var(--spectrum-calendar-day-text-color-hover);
 
     &:not(.is-selection-end):not(.is-selection-start) {
@@ -69,7 +69,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-calendar-day-today-border-color);
     }
 
-    &:hover {
+    @media(hover: hover) {
       &.is-selected:not(.is-range-selection) {
         &:before {
           background: var(--spectrum-calendar-day-today-background-color-selected-hover);

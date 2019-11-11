@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
   }
 
   /* When the entire component is hovered, show all solid icons */
-  &:hover {
+  @media(hover: hover) {
     .spectrum-Rating-icon {
       @extend %spectrum-Rating-filledStar;
     }
@@ -94,7 +94,7 @@ governing permissions and limitations under the License.
   }
 
   /* All stars following the hovered star */
-  &:hover ~ .spectrum-Rating-icon {
+  @media(hover: hover) ~ .spectrum-Rating-icon {
     @extend %spectrum-Rating-strokedStar;
   }
 }
