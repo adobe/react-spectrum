@@ -46,40 +46,11 @@ module.exports = ({config}, env) => {
           ]
         },
         {
-          test: /\.styl$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            {
-              loader: 'stylus-loader',
-              options: {
-                paths: [__dirname + '/../node_modules'],
-                define: {
-                  'embedurl': require('stylus').url()
-                },
-                'resolve url': true,
-                set: {
-                  'include css': true
-                },
-                use: [require('svg-stylus')()]
-              }
-            }
-          ],
-          include: path.resolve(__dirname, '../')
-        },
-        {
           test: /packages\/.*\.css$/,
           use: [
             'style-loader',
             {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                importLoaders: 1,
-                getLocalIdent: (context, localIdentName, localName) => {
-                  return generateScopedName(localName, context.resourcePath);
-                },
-              }
+              loader: 'css-loader'
             },
             {
               loader: 'postcss-loader',

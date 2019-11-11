@@ -2,7 +2,7 @@ import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {SplitView} from '../';
 import {storiesOf} from '@storybook/react';
-import './SplitView.styl';
+import './SplitView.css';
 
 let styles = {
   width: '900px'
