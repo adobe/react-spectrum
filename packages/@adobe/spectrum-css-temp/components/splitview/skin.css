@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
 
 .spectrum-SplitView-splitter {
   &.is-draggable {
-    @media(hover: hover),
+    &:hover,
     &.is-hovered {
       background-color: var(--spectrum-rail-handle-background-color-hover);
 

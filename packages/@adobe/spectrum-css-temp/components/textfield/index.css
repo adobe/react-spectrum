@@ -107,7 +107,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  @media(hover: hover) {
+  &:hover {
     &::placeholder {
       font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     }

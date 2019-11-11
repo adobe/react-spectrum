@@ -202,23 +202,23 @@ governing permissions and limitations under the License.
     transform: translate(-50%, var(--spectrum-tooltip-tip-margin));
   }
 
-  @media(hover: hover) .spectrum-Tooltip {
+  &:hover .spectrum-Tooltip {
     opacity: 1;
   }
 
-  @media(hover: hover) .spectrum-Tooltip.spectrum-Tooltip--bottom {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--bottom {
     transform: translate(-50%, 0);
   }
 
-  @media(hover: hover) .spectrum-Tooltip.spectrum-Tooltip--top {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--top {
     transform: translate(-50%, calc(-1 * var(--spectrum-tooltip-tip-margin)));
   }
 
-  @media(hover: hover) .spectrum-Tooltip.spectrum-Tooltip--left {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--left {
     transform: translate(calc(-100% - var(--spectrum-tooltip-tip-margin)), -50%);
   }
 
-  @media(hover: hover) .spectrum-Tooltip.spectrum-Tooltip--right {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--right {
     transform: translate(var(--spectrum-tooltip-tip-margin), -50%);
   }
 }

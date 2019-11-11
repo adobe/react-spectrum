@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Pagination-pageButton {
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-pagination-page-button-background-color-hover);
   }
 

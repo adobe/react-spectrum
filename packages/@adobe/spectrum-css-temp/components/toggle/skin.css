@@ -224,7 +224,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  @media(hover: hover) {
+  &:hover {
     .spectrum-ToggleSwitch-input {
       &:checked:enabled + .spectrum-ToggleSwitch-switch {
         &::before {

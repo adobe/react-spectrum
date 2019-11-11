@@ -31,7 +31,7 @@ governing permissions and limitations under the License.
 
   color: var(--spectrum-clearbutton-medium-icon-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-clearbutton-medium-background-color-hover);
 
     color: var(--spectrum-clearbutton-medium-icon-color-hover);
@@ -62,7 +62,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-cta-border-color);
   color: var(--spectrum-button-cta-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-cta-background-color-hover);
     border-color: var(--spectrum-button-cta-border-color-hover);
     color: var(--spectrum-button-cta-text-color-hover);
@@ -93,7 +93,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-primary-border-color);
   color: var(--spectrum-button-primary-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-primary-background-color-hover);
     border-color: var(--spectrum-button-primary-border-color-hover);
     color: var(--spectrum-button-primary-text-color-hover);
@@ -124,7 +124,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-secondary-border-color);
   color: var(--spectrum-button-secondary-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-secondary-background-color-hover);
     border-color: var(--spectrum-button-secondary-border-color-hover);
     color: var(--spectrum-button-secondary-text-color-hover);
@@ -155,7 +155,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-warning-border-color);
   color: var(--spectrum-button-warning-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-warning-background-color-hover);
     border-color: var(--spectrum-button-warning-border-color-hover);
     color: var(--spectrum-button-warning-text-color-hover);
@@ -186,7 +186,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-over-background-border-color);
   color: var(--spectrum-button-over-background-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-over-background-background-color-hover);
     border-color: var(--spectrum-button-over-background-border-color-hover);
     color: inherit;
@@ -220,7 +220,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-quiet-over-background-border-color);
   color: var(--spectrum-button-quiet-over-background-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-quiet-over-background-background-color-hover);
     border-color: var(--spectrum-button-quiet-over-background-border-color-hover);
     color: var(--spectrum-button-quiet-over-background-text-color-hover);
@@ -253,7 +253,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-quiet-primary-border-color);
   color: var(--spectrum-button-quiet-primary-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-quiet-primary-background-color-hover);
     border-color: var(--spectrum-button-quiet-primary-border-color-hover);
     color: var(--spectrum-button-quiet-primary-text-color-hover);
@@ -284,7 +284,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-quiet-secondary-border-color);
   color: var(--spectrum-button-quiet-secondary-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-quiet-secondary-background-color-hover);
     border-color: var(--spectrum-button-quiet-secondary-border-color-hover);
     color: var(--spectrum-button-quiet-secondary-text-color-hover);
@@ -323,7 +323,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-actionbutton-hold-icon-color);
   }
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-actionbutton-background-color-hover);
     border-color: var(--spectrum-actionbutton-border-color-hover);
     box-shadow: none;
@@ -398,7 +398,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    @media(hover: hover) {
+    &:hover {
       background-color: var(--spectrum-actionbutton-background-color-selected-hover);
       border-color: var(--spectrum-actionbutton-border-color-selected-hover);
       color: var(--spectrum-actionbutton-text-color-selected-hover);
@@ -436,7 +436,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-actionbutton-quiet-border-color);
   color: var(--spectrum-actionbutton-quiet-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-actionbutton-quiet-background-color-hover);
     border-color: var(--spectrum-actionbutton-quiet-border-color-hover);
     color: var(--spectrum-actionbutton-quiet-text-color-hover);
@@ -475,7 +475,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-actionbutton-quiet-text-color-selected-key-focus);
     }
 
-    @media(hover: hover) {
+    &:hover {
       background-color: var(--spectrum-actionbutton-quiet-background-color-selected-hover);
       border-color: var(--spectrum-actionbutton-quiet-border-color-selected-hover);
       color: var(--spectrum-actionbutton-quiet-text-color-selected-hover);
@@ -501,7 +501,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-quiet-warning-border-color);
   color: var(--spectrum-button-quiet-warning-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-button-quiet-warning-background-color-hover);
     border-color: var(--spectrum-button-quiet-warning-border-color-hover);
     color: var(--spectrum-button-quiet-warning-text-color-hover);
@@ -532,7 +532,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-logicbutton-and-border-color);
   color: var(--spectrum-logicbutton-and-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-logicbutton-and-background-color-hover);
     border-color: var(--spectrum-logicbutton-and-border-color-hover);
     color: var(--spectrum-logicbutton-and-text-color);
@@ -557,7 +557,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-logicbutton-or-border-color);
   color: var(--spectrum-logicbutton-or-text-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-logicbutton-or-background-color-hover);
     border-color: var(--spectrum-logicbutton-or-border-color-hover);
     color: var(--spectrum-logicbutton-or-text-color);
@@ -582,7 +582,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-fieldbutton-background-color);
   border-color: var(--spectrum-fieldbutton-border-color);
 
-  @media(hover: hover) {
+  &:hover {
     color: var(--spectrum-fieldbutton-text-color-hover);
     background-color: var(--spectrum-fieldbutton-background-color-hover);
     border-color: var(--spectrum-fieldbutton-border-color-hover);
@@ -614,7 +614,7 @@ governing permissions and limitations under the License.
   &.is-invalid {
     border-color: var(--spectrum-fieldbutton-border-color-error);
 
-    @media(hover: hover) {
+    &:hover {
       border-color: var(--spectrum-fieldbutton-border-color-error-hover);
     }
 
@@ -649,7 +649,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-fieldbutton-quiet-border-color);
   background-color: var(--spectrum-fieldbutton-quiet-background-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-fieldbutton-quiet-background-color-hover);
     color: var(--spectrum-fieldbutton-text-color-hover);
   }
@@ -707,7 +707,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-tool-hold-icon-color-selected);
     }
 
-    @media(hover: hover) {
+    &:hover {
       .spectrum-Icon {
         color: var(--spectrum-tool-icon-color-selected-hover);
       }
@@ -755,7 +755,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tool-hold-icon-color);
   }
 
-  @media(hover: hover) {
+  &:hover {
     .spectrum-Tool-hold {
       color: var(--spectrum-tool-hold-icon-color-hover);
     }

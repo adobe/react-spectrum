@@ -146,7 +146,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper-stepUp,
 .spectrum-Stepper-stepDown {
-  @media(hover: hover) {
+  &:hover {
     /* Keep the border on hover */
     border-color: var(--spectrum-textfield-border-color);
   }

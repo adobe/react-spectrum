@@ -22,7 +22,7 @@ governing permissions and limitations under the License.
   outline: none;
   cursor: pointer;
 
-  @media(hover: hover) {
+  &:hover {
     text-decoration: underline;
   }
 
@@ -39,7 +39,7 @@ governing permissions and limitations under the License.
     cursor: default;
     pointer-events: none;
 
-    @media(hover: hover),
+    &:hover,
     &:focus {
       text-decoration: none;
     }

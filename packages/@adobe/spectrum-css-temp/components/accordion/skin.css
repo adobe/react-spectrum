@@ -22,7 +22,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-accordion-text-color);
 
   &:focus,
-  @media(hover: hover) {
+  &:hover {
     color: var(--spectrum-accordion-text-color-hover);
 
     background-color: var(--spectrum-accordion-background-color-hover);
@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-item {
   &.is-open {
     .spectrum-Accordion-itemHeader {
-      @media(hover: hover) {
+      &:hover {
         background-color: transparent;
       }
     }
@@ -52,7 +52,7 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-item.is-disabled {
   .spectrum-Accordion-itemHeader {
     &,
-    @media(hover: hover),
+    &:hover,
     &:focus {
       color: var(--spectrum-accordion-text-color-disabled);
       background-color: transparent;

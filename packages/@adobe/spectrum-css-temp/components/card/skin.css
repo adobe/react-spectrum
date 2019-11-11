@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
 
-  @media(hover: hover) {
+  &:hover {
     border-color: var(--spectrum-card-border-color-hover);
   }
 
@@ -53,7 +53,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-card-quiet-preview-background-color);
   }
 
-  @media(hover: hover) {
+  &:hover {
     border-color: transparent;
     .spectrum-Card-preview {
       background-color: var(--spectrum-card-quiet-preview-background-color-hover);

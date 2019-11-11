@@ -43,7 +43,7 @@ governing permissions and limitations under the License.
   &.is-focused,
   &.is-selected,
   &:focus,
-  @media(hover: hover) {
+  &:hover {
     .spectrum-Card-quickActions,
     .spectrum-Card-actions {
       /* Ideally, this would simply apply is-open to the QuickActions component */

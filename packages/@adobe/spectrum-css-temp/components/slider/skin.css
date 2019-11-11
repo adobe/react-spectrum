@@ -76,7 +76,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-slider-handle-border-color);
   background: var(--spectrum-alias-background-color-default);
 
-  @media(hover: hover) {
+  &:hover {
     border-color: var(--spectrum-slider-handle-border-color-hover);
   }
 
@@ -190,7 +190,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-dial-handle-marker-color);
   }
 
-  @media(hover: hover) {
+  &:hover {
     &::after {
       background-color: var(--spectrum-dial-handle-marker-color-hover);
     }
@@ -240,7 +240,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-slider-handle-border-color-disabled);
       background: var(--spectrum-alias-background-color-default);
 
-      @media(hover: hover),
+      &:hover,
       &:active {
         border-color: var(--spectrum-slider-handle-border-color-disabled);
         background: var(--spectrum-slider-handle-background-color);
@@ -264,7 +264,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-slider-handle-border-color-disabled);
       background: var(--spectrum-alias-background-color-default);
 
-      @media(hover: hover),
+      &:hover,
       &:active {
         border-color: var(--spectrum-slider-handle-border-color-disabled);
         background: var(--spectrum-slider-handle-background-color);
@@ -308,7 +308,7 @@ governing permissions and limitations under the License.
         box-shadow: none;
         border-color: var(--spectrum-slider-color-handle-border-color-disabled);
 
-        @media(hover: hover),
+        &:hover,
         &:active {
           background: var(--spectrum-slider-color-handle-color-disabled);
           box-shadow: none;

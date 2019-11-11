@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-table-header-sort-icon-color);
     }
 
-    @media(hover: hover) {
+    &:hover {
       color: var(--spectrum-table-header-text-color-hover);
 
       .spectrum-Table-sortedIcon {
@@ -111,7 +111,7 @@ tbody.spectrum-Table-body {
   border-bottom: 1px solid var(--spectrum-table-cell-border-color);
   background-color: var(--spectrum-table-row-background-color);
 
-  @media(hover: hover) {
+  &:hover {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
@@ -127,7 +127,7 @@ tbody.spectrum-Table-body {
   &.is-selected {
     background-color: var(--spectrum-table-row-background-color-selected);
 
-    @media(hover: hover) {
+    &:hover {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
@@ -173,7 +173,7 @@ tbody.spectrum-Table-body {
   .spectrum-Table-row {
     background-color: var(--spectrum-table-quiet-row-background-color);
 
-    @media(hover: hover) {
+    &:hover {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
@@ -189,7 +189,7 @@ tbody.spectrum-Table-body {
     &.is-selected {
       background-color: var(--spectrum-table-quiet-row-background-color-selected);
 
-      @media(hover: hover) {
+      &:hover {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 
