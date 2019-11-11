@@ -2749,11 +2749,6 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
-"@spectrum-css/button@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@spectrum-css/button/-/button-2.0.0.tgz#d6acc88d98404c1586bb31b96f014fae5d7d749d"
-  integrity sha512-Ru2/CRiRl1SdemodFuTuNWdVccp5gjAlexWsSgG6l6QItVLeVhssZ1T9Xn6NsaN1zmSmBsLtn//WvWMa5P97wQ==
-
 "@spectrum-css/component-builder@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@spectrum-css/component-builder/-/component-builder-1.0.0.tgz#6a3aa1041ba3ce2f281feb3e3deab351aa849795"
