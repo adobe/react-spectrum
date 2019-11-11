@@ -10,15 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-
 .spectrum-Well {
-  text-align: start;
-  display: block;
-  min-inline-size: 248px;
-  padding: 16px;
-  margin-block-start: 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: var(--spectrum-border-radius);
+  background-color: var(--spectrum-well-background-color);
+  border-color: var(--spectrum-well-border-color);
 }

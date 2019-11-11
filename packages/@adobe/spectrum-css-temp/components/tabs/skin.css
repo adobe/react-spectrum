@@ -3,6 +3,7 @@ Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
@@ -24,62 +25,62 @@ governing permissions and limitations under the License.
 .spectrum-Tabs-item {
   color: var(--spectrum-tabs-text-color);
 
-.spectrum-Icon {
-  color: var(--spectrum-tabs-icon-color)
-}
+  .spectrum-Icon {
+    color: var(--spectrum-tabs-icon-color)
+  }
 
-&:hover {
-   color: var(--spectrum-tabs-text-color-hover);
+  &:hover {
+    color: var(--spectrum-tabs-text-color-hover);
 
-.spectrum-Icon {
-  color: var(--spectrum-tabs-icon-color-hover)
-}
-}
+    .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-hover)
+    }
+  }
 
-&.is-selected {
-   color: var(--spectrum-tabs-text-color-selected);
+  &.is-selected {
+    color: var(--spectrum-tabs-text-color-selected);
 
-.spectrum-Icon {
-  color: var(--spectrum-tabs-icon-color-selected)
-}
-}
+    .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-selected)
+    }
+  }
 
-&:focus-ring {
-   color: var(--spectrum-tabs-text-color-key-focus);
+  &:focus-ring {
+    color: var(--spectrum-tabs-text-color-key-focus);
 
-&::before {
-   border-color: var(--spectrum-tabs-focus-ring-color);
- }
+    &::before {
+      border-color: var(--spectrum-tabs-focus-ring-color);
+    }
 
-.spectrum-Icon {
-  color: var(--spectrum-tabs-icon-color-key-focus)
-}
-}
+    .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-key-focus)
+    }
+  }
 
-&.is-disabled {
-   color: var(--spectrum-tabs-text-color-disabled);
+  &.is-disabled {
+    color: var(--spectrum-tabs-text-color-disabled);
 
-.spectrum-Icon {
-  color: var(--spectrum-tabs-icon-color-disabled)
-}
-}
+    .spectrum-Icon {
+      color: var(--spectrum-tabs-icon-color-disabled)
+    }
+  }
 }
 
 .spectrum-Tabs--quiet {
   border-bottom-color: var(--spectrum-tabs-quiet-rule-color);
 
-.spectrum-Tabs-selectionIndicator {
-  background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
-}
+  .spectrum-Tabs-selectionIndicator {
+    background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+  }
 }
 
 .spectrum-Tabs--vertical {
-&.spectrum-Tabs--quiet,
-&.spectrum-Tabs--compact {
-   border-left-color: var(--spectrum-tabs-quiet-vertical-rule-color);
+  &.spectrum-Tabs--quiet,
+  &.spectrum-Tabs--compact {
+    border-left-color: var(--spectrum-tabs-quiet-vertical-rule-color);
 
-.spectrum-Tabs-selectionIndicator {
-  background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
-}
-}
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+    }
+  }
 }

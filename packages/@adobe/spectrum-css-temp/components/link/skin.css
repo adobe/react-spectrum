@@ -10,50 +10,59 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-
 .spectrum-Link {
-  /* Remove the gray background on active links in IE 10. */
-  background-color: transparent;
-  /* Remove gaps in links underline in iOS 8+ and Safari 8+. */
-  -webkit-text-decoration-skip: objects;
-  text-decoration: underline;
-  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-  outline: none;
-  cursor: pointer;
+  color: var(--spectrum-link-text-color);
 
   &:hover {
-    text-decoration: underline;
+    color: var(--spectrum-link-text-color-hover);
+  }
+
+  &:active {
+    color: var(--spectrum-link-text-color-down);
   }
 
   &:focus-ring {
-    text-decoration: underline;
-  }
-
-  &:focus-ring {
-    text-decoration: underline;
-    text-decoration-style: double;
+    color: var(--spectrum-link-text-color-key-focus);
   }
 
   &.is-disabled {
-    cursor: default;
-    pointer-events: none;
-
-    &:hover,
-    &:focus {
-      text-decoration: none;
-    }
+    color: var(--spectrum-link-text-color-disabled);
   }
 }
 
-.spectrum-Link--secondary {
-  text-decoration: underline;
+.spectrum-Link--quiet,
+/** @deprecated */.spectrum-Link--subtle {
+  color: inherit;
+
+  &:hover {
+    color: inherit;
+  }
+
+  &:active {
+    color: inherit;
+  }
+
+  &:focus {
+    color: inherit;
+  }
 }
 
 .spectrum-Link--overBackground {
-  text-decoration: underline;
-}
+  color: var(--spectrum-link-over-background-text-color);
 
-.spectrum-Link--quiet {
-  text-decoration: none;
+  &:hover {
+    color: var(--spectrum-link-over-background-text-color-hover);
+  }
+
+  &:active {
+    color: var(--spectrum-link-over-background-text-color-down);
+  }
+
+  &:focus {
+    color: var(--spectrum-link-over-background-text-color-key-focus);
+  }
+
+  &.is-disabled {
+    color: var(--spectrum-link-over-background-text-color-disabled);
+  }
 }

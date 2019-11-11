@@ -10,132 +10,60 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-
-:root {
-  --spectrum-splitview-vertical-width: 100%;
-  --spectrum-splitview-vertical-gripper-width: 50%;
-  --spectrum-splitview-vertical-gripper-outer-width: 100%;
-  --spectrum-splitview-vertical-gripper-reset: 0;
-}
-
-.spectrum-SplitView {
-  display: flex;
-  overflow: hidden;
-}
-
 .spectrum-SplitView-pane {
-  height: 100%;
-}
-
-.spectrum-SplitView-gripper {
-  content: '';
-  display: block;
-  position: absolute;
-  border-style: solid;
-  border-radius: var(--spectrum-rail-gripper-border-radius);
-
-  top: 50%;
-  transform: translate(0, -50%);
-
-  /* half of (width + horizontal border - handle width) * -1 (for negative opposite) */
-  left: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
-  width: var(--spectrum-rail-gripper-width);
-  height: var(--spectrum-rail-gripper-height);
-  border-width: var(--spectrum-rail-gripper-border-width-vertical) var(--spectrum-rail-gripper-border-width-horizontal);
+  background-color: var(--spectrum-rail-content-background-color);
 }
 
 .spectrum-SplitView-splitter {
-  /* Contain the gripper */
-  position: relative;
+  background-color: var(--spectrum-rail-handle-background-color);
+}
 
-  /* Prevent text selection while dragging */
-  user-select: none;
-
-  width: var(--spectrum-rail-handle-width);
-  height: 100%;
-  z-index: 1;
-
-  &.is-collapsed-start,
-  &.is-collapsed-end {
-    .spectrum-SplitView-gripper {
-      /* make the center line of the gripper */
-      &:before {
-        content: '';
-        position: absolute;
-
-        top: 0;
-        left: calc(50% - calc(var(--spectrum-rail-handle-width) / 2));
-        width: var(--spectrum-rail-handle-width);
-        height: 100%;
-      }
-    }
-  }
-
-  &.is-collapsed-start {
-    .spectrum-SplitView-gripper {
-      left: 0;
-    }
-  }
-
-  &.is-collapsed-end {
-    .spectrum-SplitView-gripper {
-      right: 0;
-      left: auto;
-    }
+.spectrum-SplitView-gripper {
+  border-color: var(--spectrum-rail-handle-background-color);
+  &:before {
+    background-color: var(--spectrum-rail-handle-background-color);
   }
 }
 
-.spectrum-SplitView--vertical {
-  flex-direction: column;
+.spectrum-SplitView-splitter {
+  &.is-draggable {
+    &:hover,
+    &.is-hovered {
+      background-color: var(--spectrum-rail-handle-background-color-hover);
 
-  .spectrum-SplitView-pane {
-    height: auto;
-    width: var(--spectrum-splitview-vertical-width);
-  }
-
-  .spectrum-SplitView-gripper {
-    /* half of (height + vertical border - handle width) * -1 (for negative opposite) */
-    top: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
-
-    transform: translate(calc(-1 * var(--spectrum-splitview-vertical-gripper-width)), 0);
-    left: var(--spectrum-splitview-vertical-gripper-width);
-    width: var(--spectrum-rail-gripper-height); /* same as default height */
-    height: var(--spectrum-rail-gripper-width); /* same as default width */
-
-    /* opposite of default border-width */
-    border-width: var(--spectrum-rail-gripper-border-width-horizontal) var(--spectrum-rail-gripper-border-width-vertical);
-  }
-
-  .spectrum-SplitView-splitter {
-    width: var(--spectrum-splitview-vertical-width);
-    height: var(--spectrum-rail-handle-width);
-
-    &.is-collapsed-start,
-    &.is-collapsed-end {
       .spectrum-SplitView-gripper {
-        left: var(--spectrum-splitview-vertical-gripper-width);
-
-        /* make the center line of the gripper */
+        border-color: var(--spectrum-rail-handle-background-color-hover);
         &:before {
-          top: calc(var(--spectrum-splitview-vertical-gripper-width) - calc(var(--spectrum-rail-handle-width) / 2));
-          left: var(--spectrum-splitview-vertical-gripper-reset);
-          width: var(--spectrum-splitview-vertical-gripper-outer-width);
-          height: var(--spectrum-rail-handle-width);
+          background-color: var(--spectrum-rail-handle-background-color-hover);
         }
       }
     }
 
-    &.is-collapsed-start {
+    &:active,
+    &.is-active {
+      background-color: var(--spectrum-rail-handle-background-color-down);
+
       .spectrum-SplitView-gripper {
-        top: var(--spectrum-splitview-vertical-gripper-reset);
+        border-color: var(--spectrum-rail-handle-background-color-down);
+        &:before {
+          background-color: var(--spectrum-rail-handle-background-color-down);
+        }
       }
     }
 
-    &.is-collapsed-end {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-alias-focus-color);
+
       .spectrum-SplitView-gripper {
-        top: auto;
-        bottom: var(--spectrum-splitview-vertical-gripper-reset);
+        border-color: var(--spectrum-alias-focus-color);
+        box-shadow: 0 0 0 1px var(--spectrum-alias-focus-color);
+        &:before {
+          background-color: var(--spectrum-alias-focus-color);
+        }
       }
     }
   }

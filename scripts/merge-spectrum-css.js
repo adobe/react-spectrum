@@ -92,7 +92,7 @@ Promise.all(promises).then(() => {
         }
       }
       if (getFilesizeInBytes(`${rootDir}/skin.css`) > 0) {
-        exec(`cp ${rootDir}/index.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/skin.css`);
+        exec(`cp ${rootDir}/skin.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/skin.css`);
       }
     }
   });
