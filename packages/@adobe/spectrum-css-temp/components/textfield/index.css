@@ -22,9 +22,11 @@ governing permissions and limitations under the License.
   --spectrum-textfield-quiet-invalid-background-position: 100% 50%;
 
   --spectrum-textfield-multiline-height: auto;
+  --spectrum-textfield-multiline-min-height: var(--spectrum-global-dimension-size-700);
 
-  --spectrum-textfield-multiline-padding-y: 4px;
-  --spectrum-textfield-multiline-padding-x: 8px;
+  --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
+  --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
+  --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
 
   /* Todo: DNA uses incorrect font family "Adobe Clean" */;
   --spectrum-textfield-text-font-family-fixed: adobe-clean, Helvetica, Arial, sans-serif;
@@ -39,7 +41,7 @@ governing permissions and limitations under the License.
   /* box */
   box-sizing: border-box;
   border: var(--spectrum-textfield-border-size) solid;
-  border-radius: var(--spectrum-border-radius);
+  border-radius: var(--spectrum-textfield-border-radius);
 
   /* Apply padding by default to center text, giving consistency between input and textfield */
   padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) var(--spectrum-textfield-padding-x);
@@ -61,22 +63,29 @@ governing permissions and limitations under the License.
   /* Change the input font styles in all browsers */
   font-family: var(--spectrum-textfield-text-font-family-fixed);
   font-size: var(--spectrum-textfield-text-size);
-  line-height: var(--spectrum-text-body-line-height);
+  line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
   outline: none;
 
-  /* removes the native spin buttons in firefox. -mox-appearance: none has no effect */
-  /* http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29 */
-  -moz-appearance: textfield;
   -webkit-appearance: none;
+  /*
+    Removes the native spin buttons in Firefox; -moz-appearance: none results in spinners.
+    This has to come after -webkit-appearance or it gets overridden (#214)
+    Details: http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29
+
+    Sets the opacity to 1 as normalize.css sets an opacity to placeholders
+    Details: https://github.com/csstools/normalize.css/blob/master/normalize.css#L297
+  */
+  -moz-appearance: textfield;
 
   &::placeholder {
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+    opacity: 1;
   }
 
   /* added to work with Edge, note, it needs double ::
@@ -86,6 +95,7 @@ governing permissions and limitations under the License.
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+    opacity: 1;
   }
 
   &:lang(ja), &:lang(zh), &:lang(ko) {

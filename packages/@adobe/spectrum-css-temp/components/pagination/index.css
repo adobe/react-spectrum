@@ -12,9 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ pagination/pagination-listing.yml }}
-*/
 .spectrum-Pagination--explicit,
 .spectrum-Pagination--listing {
   display: flex;
@@ -22,9 +19,6 @@ governing permissions and limitations under the License.
   align-items: center;
 }
 
-/* topdoc
-{{ pagination/pagination-explicit.yml }}
-*/
 .spectrum-Pagination-input {
   width: var(--spectrum-pagination-textfield-width);
   min-width: var(--spectrum-pagination-textfield-width);
@@ -41,15 +35,3 @@ governing permissions and limitations under the License.
 .spectrum-Pagination-nextButton {
   margin-left: var(--spectrum-pagination-page-button-margin-horizontal);
 }
-
-/* topdoc
-{{ pagination/pagination-button-style-cta.yml }}
-*/
-
-/* topdoc
-{{ pagination/pagination-button-style-primary.yml }}
-*/
-
-/* topdoc
-{{ pagination/pagination-button-style-secondary.yml }}
-*/

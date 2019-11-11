@@ -10,17 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ textfield/textarea.yml }}
-*/
-
-/* topdoc
-{{ textfield/textarea-quiet.yml }}
-*/
-
-/* topdoc
-{{ textfield/textfield.yml }}
-*/
 .spectrum-Textfield-input {
   background-color: var(--spectrum-textfield-background-color);
   border-color: var(--spectrum-textfield-border-color);
