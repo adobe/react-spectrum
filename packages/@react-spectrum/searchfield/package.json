@@ -31,6 +31,7 @@
     "@react-aria/searchfield": "^3.0.0-alpha.1",
     "@react-spectrum/button": "^3.0.0-alpha.1",
     "@react-spectrum/provider": "^3.0.0-alpha.1",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.1",
     "@react-spectrum/textfield": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/searchfield": "^3.0.0-alpha.1",
