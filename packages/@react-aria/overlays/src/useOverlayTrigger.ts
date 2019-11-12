@@ -15,7 +15,7 @@ interface OverlayTriggerAria {
 
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
   let {ref, type, onClose, isOpen} = props;
-  
+
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
   useEffect(() => {

@@ -73,7 +73,7 @@ storiesOf('DatePicker', module)
 
 function render(props = {}) {
   return (
-    <DatePicker 
+    <DatePicker
       onChange={action('change')}
       {...props} />
   );
