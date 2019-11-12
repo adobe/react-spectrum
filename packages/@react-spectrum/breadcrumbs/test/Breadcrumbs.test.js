@@ -1,5 +1,5 @@
 import {BreadcrumbItem, Breadcrumbs} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, render, within} from '@testing-library/react';
 import React, {useRef} from 'react';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
@@ -23,12 +23,12 @@ describe('Breadcrumbs', function () {
 
   // v3 functionality, omitting v2 component
   it('Handles custom class name', () => {
-    let {getByTestId} = render(
+    let {getByRole} = render(
       <Breadcrumbs className="test-class">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let breadcrumbs = getByTestId('breadcrumb-list');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
@@ -67,19 +67,17 @@ describe('Breadcrumbs', function () {
   });
 
   it('Handles heading child and headingAriaLevel', () => {
-    let {getByTestId} = render(
+    let {getByRole} = render(
       <Breadcrumbs headingAriaLevel={2} size="L">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let list = getByTestId('breadcrumb-list');
-    let heading = list.children[0].children[0];
-    expect(heading.nodeName).toBe('H1');
+    let heading = getByRole('heading');
     expect(heading).toHaveAttribute('aria-level', '2');
   });
 
   it('Handles max visible items', () => {
-    let {getByTestId} = render(
+    let {getByText, getByRole} = render(
       <Breadcrumbs maxVisibleItems="3" >
         <BreadcrumbItem >Folder 1</BreadcrumbItem>
         <BreadcrumbItem >Folder 2</BreadcrumbItem>
@@ -88,15 +86,17 @@ describe('Breadcrumbs', function () {
         <BreadcrumbItem >Folder 5</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let {children} = getByTestId('breadcrumb-list');
-    expect(children.length).toBe(3);
-    expect(children[0].children[0].nodeName).toBe('BUTTON');
-    expect(children[1].children[0].textContent).toBe('Folder 4');
-    expect(children[2].children[0].textContent).toBe('Folder 5');
+    let {children} = getByRole('list');
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
+    expect(getByText('Folder 5')).toBeTruthy();
   });
 
   it('Handles max visible items with showRoot', () => {
-    let {getByTestId} = render(
+    let {getByText, getByRole} = render(
       <Breadcrumbs maxVisibleItems="3" showRoot>
         <BreadcrumbItem >Folder 1</BreadcrumbItem>
         <BreadcrumbItem >Folder 2</BreadcrumbItem>
@@ -105,11 +105,13 @@ describe('Breadcrumbs', function () {
         <BreadcrumbItem >Folder 5</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let {children} = getByTestId('breadcrumb-list');
-    expect(children.length).toBe(3);
-    expect(children[0].children[0].textContent).toBe('Folder 1');
-    expect(children[1].children[0].nodeName).toBe('BUTTON');
-    expect(children[2].children[0].textContent).toBe('Folder 5');
+    let {children} = getByRole('list');
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
   });
 
   it('Handles isDisabled', () => {
@@ -119,6 +121,7 @@ describe('Breadcrumbs', function () {
         <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
       </Breadcrumbs>
     );
+
     let item1 = getByTestId('item-1');
     expect(item1).toHaveAttribute('aria-disabled', 'true');
     let item2 = getByTestId('item-2');

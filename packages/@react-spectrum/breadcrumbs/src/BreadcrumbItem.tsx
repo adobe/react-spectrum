@@ -5,6 +5,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {Fragment, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
+import {useLocale} from '@react-aria/i18n';
 
 export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref: RefObject<HTMLElement>) => {
   let {
@@ -17,6 +18,7 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
     ...otherProps
   } = props;
 
+  let {direction} = useLocale();
   let {breadcrumbItemProps} = useBreadcrumbItem(props);
 
   let element = React.cloneElement(
@@ -60,7 +62,10 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
           className={
             classNames(
               styles,
-              'spectrum-Breadcrumbs-itemSeparator'
+              'spectrum-Breadcrumbs-itemSeparator',
+              {
+                'is-reversed': direction === 'rtl'
+              }
             )
           } />
       }
