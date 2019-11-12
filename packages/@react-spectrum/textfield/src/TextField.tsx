@@ -2,11 +2,9 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
@@ -16,7 +14,6 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     validationState,
     icon,
     isQuiet = false,
-    validationTooltip,
     className,
     multiLine,
     isDisabled = false,
@@ -28,7 +25,6 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
   let {textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
-  let {direction} = useLocale();
 
   if (icon) {
     icon = cloneIcon(icon, {
@@ -54,19 +50,6 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
       }
     )
   });
-
-  // Note: tooltip positioning will be off if it doesn't fit within the page
-  if (validationTooltip) {
-    let placement = direction === 'ltr' ? 'right' : 'left';
-
-    // @ts-ignore
-    validation = (
-      <OverlayTrigger placement={placement} trigger={['hover', 'focus']}>
-        {validation}  
-        {validationTooltip}
-      </OverlayTrigger>
-    );
-  }
 
   let component = (
     <div

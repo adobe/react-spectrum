@@ -1,1 +1,1 @@
-export * from './src/VisuallyHidden';
+export * from './src';

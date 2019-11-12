@@ -27,6 +27,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
 
   return (
     <div
+      {...filterDOMProps(otherProps)}
       ref={ref}
       className={
         classNames(
@@ -47,7 +48,6 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
       }
       role="presentation"
       data-testid="popover"
-      {...filterDOMProps(otherProps)}
       {...overlayProps}>
       {children}
       {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}

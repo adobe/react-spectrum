@@ -1,7 +1,6 @@
 {
   "name": "@react-aria/tooltip",
   "version": "3.0.0-alpha.1",
-  "main": "dist/main.js",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
