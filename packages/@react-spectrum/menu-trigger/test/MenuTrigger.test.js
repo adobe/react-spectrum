@@ -222,43 +222,6 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  `('$Name supports having multiple menus open', async function ({Component, props}) {
-    let tree = render(
-      <Provider theme={theme}>
-        <Component {...props}>
-          <Button>Button 1</Button>
-          <Menu id={menuId}>
-            <li>Foo</li>
-            <li>Bar</li>
-            <li>Baz</li>
-          </Menu>
-        </Component>
-        <Component {...props}>
-          <Button>Button 2</Button>
-          <Menu id={menuId}>
-            <li>1</li>
-            <li>2</li>
-            <li>3</li>
-          </Menu>
-        </Component>
-      </Provider>
-    );
-    let button1 = tree.getByText('Button 1');
-    let button2 = tree.getByText('Button 2');
-    triggerPress(button1);
-    triggerPress(button2);
-    await waitForDomChange();
-
-    let menu1 = tree.getByText('Foo');
-    let menu2 = tree.getByText('1');
-    expect(menu1).toBeTruthy();
-    expect(menu2).toBeTruthy();
-  });
-
-  // New functionality in v3
-  it.each`
-    Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name closes the menu upon trigger body scroll', async function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let button = tree.getByRole('button');

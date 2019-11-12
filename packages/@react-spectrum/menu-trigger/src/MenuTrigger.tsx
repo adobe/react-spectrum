@@ -78,7 +78,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ...overlayProps,
     ref: menuPopoverRef,
     placement, 
-    hideArrow: true
+    hideArrow: true,
+    onClose
   };
 
   return (

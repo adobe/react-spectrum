@@ -35,41 +35,6 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'multiple menus',
-    () => (
-      <div>
-        <MenuTrigger onOpenChange={action('onOpenChange')}>
-          <Button
-            onKeyDown={action('onKeyDown')}
-            onPress={action('press')}
-            onPressStart={action('pressstart')}
-            onPressEnd={action('pressend')}>
-              Menu Button #1
-          </Button>
-          <Menu>
-            <li><span>Menu Item 1</span></li>
-            <li>Menu Item 2</li>
-            <li>Menu Item 3</li>
-          </Menu>
-        </MenuTrigger>
-        <MenuTrigger onOpenChange={action('onOpenChange')}>
-          <Button
-            onKeyDown={action('onKeyDown')}
-            onPress={action('press')}
-            onPressStart={action('pressstart')}
-            onPressEnd={action('pressend')}>
-              Menu Button #2
-          </Button>
-          <Menu>
-            <li>MenuItem1</li>
-            <li>MenuItem2</li>
-            <li>MenuItem3</li>
-          </Menu>
-        </MenuTrigger>
-      </div>
-    )
-  )
-  .add(
     'menu+submenus TODO out of scope',
     () => render()
   )
