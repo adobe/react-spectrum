@@ -130,13 +130,6 @@ governing permissions and limitations under the License.
   font-family: var(--spectrum-body-code-5-text-font-family);
 }*/
 
-/* topdoc
-{{ typography/typography.yml }}
-*/
-/* topdoc
-{{ typography/typography-deprecated.yml }}
-*/
-
 /*
   The &.spectrum makes it so users can do <div class="spectrum spectrum--large"> and still get the right font sizes
   Without this, they would have to do <div class="spectrum--large"><div class="spectrum">, which makes no sense

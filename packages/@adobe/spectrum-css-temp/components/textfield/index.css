@@ -145,14 +145,15 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.is-invalid & { 
+  .spectrum-Textfield.is-invalid & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
-    padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
-  
+    min-height: var(--spectrum-textfield-multiline-min-height);
+    padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) var(--spectrum-textfield-multiline-padding-x);
+
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
   }

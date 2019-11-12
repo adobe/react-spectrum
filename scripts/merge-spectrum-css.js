@@ -27,7 +27,7 @@ if (!fs.existsSync(`${__dirname}/temp`)) {
   fs.mkdirSync(`${__dirname}/temp`);
   components.forEach((componentName) => {
     console.log('componentName', componentName);
-    if (ignoreComponents.includes(componentName) || !existingComponents.includes(componentName)) {
+    if (ignoreComponents.includes(componentName)) {
       return;
     }
     let rootDir = `${__dirname}/temp/${componentName}`;
@@ -56,7 +56,7 @@ if (!fs.existsSync(`${__dirname}/temp`)) {
 
 Promise.all(promises).then(() => {
   components.forEach(componentName => {
-    if (ignoreComponents.includes(componentName) || !existingComponents.includes(componentName)) {
+    if (ignoreComponents.includes(componentName)) {
       return;
     }
     let rootDir = `${__dirname}/temp/${componentName}`;
