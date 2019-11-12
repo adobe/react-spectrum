@@ -17,6 +17,7 @@
 
 import assert from 'assert';
 import Breadcrumbs from '../../src/Breadcrumbs';
+import {FOCUS_RING_CLASSNAME} from '../../src/utils/focusRing';
 import FolderIcon from '../../src/Icon/Folder';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
@@ -63,16 +64,16 @@ describe('Breadcrumbs', function () {
     tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     let link = tree.find('.spectrum-Breadcrumbs-itemLink').at(0);
     link.simulate('focus', {target: link.getDOMNode()});
-    assert(link.getDOMNode().classList.contains('focus-ring'));
+    assert(link.getDOMNode().classList.contains(FOCUS_RING_CLASSNAME));
   });
 
   it('on losing focus, a breadcrumb should not display focus-ring style', function () {
     tree = mount(<Breadcrumbs items={[{label: 'Foo'}, {label: 'Bar'}, {label: 'Baz'}]} />);
     let link = tree.find('.spectrum-Breadcrumbs-itemLink').at(0);
     link.simulate('focus', {target: link.getDOMNode()});
-    assert(link.getDOMNode().classList.contains('focus-ring'));
+    assert(link.getDOMNode().classList.contains(FOCUS_RING_CLASSNAME));
     link.simulate('blur', {target: link.getDOMNode()});
-    assert(!link.getDOMNode().classList.contains('focus-ring'));
+    assert(!link.getDOMNode().classList.contains(FOCUS_RING_CLASSNAME));
   });
 
   it('supports custom renderer for links', () => {

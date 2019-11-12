@@ -22,6 +22,7 @@ import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
 import CrossSmall from '../../Icon/core/CrossSmall';
 import filterDOMProps from '../../utils/filterDOMProps';
+import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
@@ -137,7 +138,7 @@ export default class Tag extends React.Component {
               'spectrum-Tags-item--deletable': closable,
               'is-invalid': invalid
             },
-            {'focus-ring': tagFocused},
+            {[FOCUS_RING_CLASSNAME]: tagFocused},
             className
           )
         }

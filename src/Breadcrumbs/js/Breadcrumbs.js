@@ -18,6 +18,7 @@
 import ChevronRightSmall from '../../Icon/core/ChevronRightSmall';
 import classNames from 'classnames';
 import {cloneIcon} from '../../utils/icon';
+import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
@@ -98,11 +99,11 @@ export default class Breadcrumbs extends React.Component {
   };
 
   handleFocus(e) {
-    e.target.classList.add('focus-ring');
+    e.target.classList.add(FOCUS_RING_CLASSNAME);
   }
 
   handleBlur(e) {
-    e.target.classList.remove('focus-ring');
+    e.target.classList.remove(FOCUS_RING_CLASSNAME);
   }
 
   renderLink(item, i) {
@@ -145,7 +146,7 @@ export default class Breadcrumbs extends React.Component {
       ...otherProps
     } = this.props;
     const isTitleVariant = variant === Breadcrumbs.variant.TITLE;
-    
+
 
     if (!otherProps['aria-label']) {
       otherProps['aria-label'] = formatMessage('Breadcrumbs');

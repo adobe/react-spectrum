@@ -19,7 +19,7 @@ import assert from 'assert';
 import classNames from 'classnames';
 import cmp from 'semver-compare';
 import convertUnsafeMethod from '../../src/utils/convertUnsafeMethod';
-import focusRing from '../../src/utils/focusRing';
+import focusRing, {FOCUS_RING_CLASSNAME} from '../../src/utils/focusRing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -114,21 +114,21 @@ describe('focusRing', function () {
     let tree = mount(<TestButton className="foo">bar</TestButton>);
     let button = tree.instance().button;
 
-    assert(!button.classList.contains('focus-ring'));
+    assert(!button.classList.contains(FOCUS_RING_CLASSNAME));
 
     // make sure node has focus
     button.focus();
     assert.equal(button, document.activeElement);
 
     // simulate .focus-ring className being added by focus-ring polyfill
-    button.classList.add('focus-ring');
-    assert(button.classList.contains('focus-ring'));
+    button.classList.add(FOCUS_RING_CLASSNAME);
+    assert(button.classList.contains(FOCUS_RING_CLASSNAME));
 
     // set prop to force a render
     tree.setProps({selected: true});
 
     // make sure that the focus-ring is still present
-    assert(button.classList.contains('focus-ring'));
+    assert(button.classList.contains(FOCUS_RING_CLASSNAME));
     assert(button.classList.contains('is-selected'));
 
     tree.unmount();
@@ -138,21 +138,21 @@ describe('focusRing', function () {
     let tree = mount(<TestButton className="foo" wrapped>bar</TestButton>);
     let button = tree.instance().button;
 
-    assert(!button.classList.contains('focus-ring'));
+    assert(!button.classList.contains(FOCUS_RING_CLASSNAME));
 
     // make sure node has focus
     button.focus();
     assert.equal(button, document.activeElement);
 
     // simulate .focus-ring className being added by focus-ring polyfill
-    button.classList.add('focus-ring');
-    assert(button.classList.contains('focus-ring'));
+    button.classList.add(FOCUS_RING_CLASSNAME);
+    assert(button.classList.contains(FOCUS_RING_CLASSNAME));
 
     // set prop to force a render
     tree.setProps({selected: true});
 
     // make sure that the focus-ring is still present
-    assert(button.classList.contains('focus-ring'));
+    assert(button.classList.contains(FOCUS_RING_CLASSNAME));
     assert(button.classList.contains('is-selected'));
 
     tree.unmount();

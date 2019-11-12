@@ -21,7 +21,7 @@ import {cloneIcon} from '../../utils/icon';
 import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import CornerTriangle from '../../Icon/core/CornerTriangle';
 import filterDOMProps from '../../utils/filterDOMProps';
-import focusRing from '../../utils/focusRing';
+import focusRing, {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import '../style/index.styl';
@@ -259,7 +259,7 @@ export default class Button extends Component {
               'is-disabled': disabled,
               'is-invalid': invalid,
               'spectrum-Button--block': block,
-              'focus-ring': autoFocus
+              [FOCUS_RING_CLASSNAME]: autoFocus
             },
             className
           )

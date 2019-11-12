@@ -19,6 +19,7 @@
 
 import assert from 'assert';
 import FieldLabel from '../../src/FieldLabel';
+import {FOCUS_RING_CLASSNAME} from '../../src/utils/focusRing';
 import {mount, shallow} from 'enzyme';
 import Rating from '../../src/Rating';
 import React from 'react';
@@ -266,7 +267,7 @@ describe('Rating', function () {
       onBlur: sinon.spy()
     };
     rating = mount(<Rating {...props} />);
-    rating.find('input').getDOMNode().classList.add('focus-ring');
+    rating.find('input').getDOMNode().classList.add(FOCUS_RING_CLASSNAME);
     rating.find('input').simulate('focus', {});
     assert(props.onFocus.calledOnce);
     assert(rating.state('focused'));

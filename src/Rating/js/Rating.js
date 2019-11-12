@@ -20,6 +20,7 @@ import classNames from 'classnames';
 import convertUnsafeMethod from '../../utils/convertUnsafeMethod';
 import createId from '../../utils/createId';
 import filterDOMProps from '../../utils/filterDOMProps';
+import {FOCUS_RING_CLASSNAME} from '../../utils/focusRing';
 import intlMessages from '../intl/*.json';
 import {messageFormatter} from '../../utils/intl';
 import PropTypes from 'prop-types';
@@ -163,7 +164,7 @@ export default class Rating extends React.Component {
 
   updateFocusedState() {
     if (this.input && !this.state.focused) {
-      this.setState({'focused': this.input.classList.contains('focus-ring')});
+      this.setState({'focused': this.input.classList.contains(FOCUS_RING_CLASSNAME)});
     }
   }
 
