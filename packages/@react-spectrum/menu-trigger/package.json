@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/action-menu",
+  "name": "@react-spectrum/menu-trigger",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/action-menu": "^3.0.0-alpha.1",
+    "@react-aria/menu-trigger": "^3.0.0-alpha.1",
     "@react-aria/interactions": "^3.0.0-alpha.1",
     "@react-aria/overlays": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",

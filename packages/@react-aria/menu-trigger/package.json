@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/action-menu",
+  "name": "@react-aria/menu-trigger",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",

@@ -1,4 +1,3 @@
-import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
@@ -6,7 +5,7 @@ import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useMenuTrigger} from '@react-aria/action-menu';
+import {useMenuTrigger} from '@react-aria/menu-trigger';
 
 export interface MenuTriggerProps extends DOMProps {
   children: ReactElement[],
@@ -38,42 +37,22 @@ export function MenuTrigger(props: MenuTriggerProps) {
     setOpen(false);
   };
 
-  let {menuTriggerAriaProps, menuAriaProps} = useMenuTrigger(
+  let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ...menu.props,
-      onClose
-    },
-    {
-      ...menuTrigger.props,
-      ref: menuTriggerRef
-    },
-    isOpen
-  );
-
-  let onPress = (e) => {
-    if (e.pointerType !== 'keyboard') {
-      setOpen(!isOpen);
-    }
-  };
-
-  let onKeyDownTrigger = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
-      return;
-    }
-
-    if (menuTriggerRef && menuTriggerRef.current) {
-      switch (e.key) {
-        case 'Enter': 
-        case 'ArrowDown':
-        case 'ArrowUp':
-        case ' ':
-          e.preventDefault();
-          e.stopPropagation();
-          onPress(e);
-          break;
+      menuProps: {
+        ...menu.props,
+        onClose
+      },
+      triggerProps: {
+        ...menuTrigger.props,
+        ref: menuTriggerRef
+      },
+      state: {
+        isOpen, 
+        setOpen
       }
     }
-  };
+  );
 
   let {overlayProps, placement} = useOverlayPosition({
     containerRef,
@@ -85,15 +64,13 @@ export function MenuTrigger(props: MenuTriggerProps) {
   });
 
   let menuContext = {
-    ...menuAriaProps,
+    ...menuProps,
     onClose
   };
 
-  let menuTriggerProps = {
-    ...menuTriggerAriaProps,
-    onKeyDown: chain(menuTrigger.props.onKeyDown, onKeyDownTrigger),
+  let triggerProps = {
+    ...menuTriggerProps,
     ref: menuTriggerRef,
-    onPress,
     isPressed: isOpen
   };
 
@@ -101,12 +78,13 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ...overlayProps,
     ref: menuPopoverRef,
     placement, 
-    hideArrow: true
+    hideArrow: true,
+    onClose
   };
 
   return (
     <Fragment>
-      <PressResponder {...menuTriggerProps}>
+      <PressResponder {...triggerProps}>
         {menuTrigger}
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
