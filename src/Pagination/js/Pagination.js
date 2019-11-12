@@ -128,21 +128,32 @@ export default class Pagination extends Component {
     return isNaN(page) || page < 1 || totalPages && page > totalPages;
   }
 
-  changePage(pageNumber, eventToFire, event) {
-    if (this.isInvalidPage(pageNumber)) {
+  changePage(newPage, eventToFire, event) {
+    if (this.isInvalidPage(newPage)) {
       return;
     }
-    if (!('currentPage' in this.props)) {
+    let isControlled = 'currentPage' in this.props;
+    if (eventToFire && newPage !== this.state.currentPage) {
+      eventToFire(newPage, event);
+    }
+    if (!isControlled) {
       this.setState(
         {
-          currentPage: pageNumber,
-          pageInput: pageNumber
+          currentPage: newPage,
+          pageInput: newPage
+        }
+      );
+    } else if (isControlled && this.state.currentPage !== this.state.pageInput) {
+      this.setState(
+        {
+          pageInput: this.state.currentPage
         }
       );
     }
-    if (eventToFire) {
-      eventToFire(pageNumber, event);
-    }
+  }
+
+  commitPageInput(value, event) {
+    this.changePage(value, this.props.onChange, event);
   }
 
   announcePageInputValue(pageNumber) {
@@ -168,29 +179,26 @@ export default class Pagination extends Component {
   onKeyDown(event) {
     let pageInput = parseInt(this.state.pageInput, 10);
     let currentPage = pageInput;
-    let isArrowKey = false;
     switch (event.key) {
       case 'ArrowUp':
       case 'Up':
-        currentPage += 1;
-        isArrowKey = true;
+        this.commitPageInput(this.state.currentPage + 1, event);
         break;
       case 'ArrowDown':
       case 'Down':
-        currentPage -= 1;
-        isArrowKey = true;
+        this.commitPageInput(this.state.currentPage - 1, event);
         break;
       case 'Enter':
+        if (isNaN(currentPage)) {
+          currentPage = this.state.currentPage;
+        }
+        this.commitPageInput(currentPage, event);
+        break;
       case ' ':
-        return this.changePage(currentPage, this.props.onChange, event);
-    }
-
-    if (currentPage !== pageInput) {
-      if (isArrowKey) {
-        this.changePage(currentPage, this.props.onChange, event);
-      } else {
+        this.commitPageInput(currentPage, event);
+        break;
+      default:
         this.onPageInputChange(currentPage);
-      }
     }
   }
 

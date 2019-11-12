@@ -24,6 +24,8 @@ import sinon from 'sinon';
 const ENTER_EVENT = {key: 'Enter'};
 const ARROW_DOWN_EVENT = {key: 'ArrowDown'};
 const ARROW_UP_EVENT = {key: 'ArrowUp'};
+const DOWN_EVENT = {key: 'Down'};
+const UP_EVENT = {key: 'Up'};
 
 describe('Pagination', () => {
   let clock;
@@ -84,28 +86,40 @@ describe('Pagination', () => {
       assert(spy.callCount === 1);
     });
 
-    it('onChange triggers', () => {
+    it('onChange triggers on an uncontrolled component', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination variant="explicit" onChange={spy} />);
       tree.find('Textfield').simulate('change', '20');
       tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
       assert(spy.calledWith(20, ENTER_EVENT));
+      assert.equal(tree.find('Textfield').prop('value'), 20);
     });
 
-    it('onChange not triggered when empty input', () => {
+    it('onChange triggers on a controlled component', () => {
+      const spy = sinon.spy();
+      const tree = shallow(<Pagination variant="explicit" currentPage={2} onChange={spy} />);
+      tree.find('Textfield').simulate('change', '20');
+      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
+      assert(spy.calledWith(20, ENTER_EVENT));
+      assert.equal(tree.find('Textfield').prop('value'), 2);
+    });
+
+    it('onChange not triggered when enter is pressed if empty input', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination totalPages={15} defaultPage={13} variant="explicit" onChange={spy} />);
       tree.find('Textfield').simulate('change', '');
       tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
       assert(spy.callCount === 0);
+      assert.equal(tree.find('Textfield').prop('value'), 13);
     });
 
-    it('onChange triggered with same pagenumber when invalid value is input', () => {
+    it('invalid input is not accepted', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination totalPages={15} defaultPage={13} variant="explicit" onChange={spy} />);
       tree.find('Textfield').simulate('change', 'dsdfsd');
       tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(13, ENTER_EVENT));
+      assert(spy.callCount === 0);
+      assert.equal(tree.find('Textfield').prop('value'), 13);
     });
   });
 
@@ -114,39 +128,32 @@ describe('Pagination', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination defaultPage={10} variant="explicit" onChange={spy} />);
       tree.find('Textfield').simulate('keyDown', ARROW_DOWN_EVENT);
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(9, ENTER_EVENT));
+      assert(spy.calledWith(9, ARROW_DOWN_EVENT));
       tree.find('Textfield').simulate('keyDown', ARROW_DOWN_EVENT);
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(8, ENTER_EVENT));
-
+      assert(spy.calledWith(8, ARROW_DOWN_EVENT));
     });
 
     it('on ArrowUp key', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination defaultPage={10} variant="explicit" onChange={spy} />);
       tree.find('Textfield').simulate('keyDown', ARROW_UP_EVENT);
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(11, ENTER_EVENT));
+      assert(spy.calledWith(11, ARROW_UP_EVENT));
       tree.find('Textfield').simulate('keyDown', ARROW_UP_EVENT);
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(12, ENTER_EVENT));
+      assert(spy.calledWith(12, ARROW_UP_EVENT));
     });
 
-    it('on key down when on firstPage', () => {
+    it('when on firstPage, arrow down does nothing', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination defaultPage={1} totalPages={20} variant="explicit" onChange={spy} />);
-      tree.find('Textfield').simulate('keyDown', {key: 'Down'});
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(1, ENTER_EVENT));
+      tree.find('Textfield').simulate('keyDown', {key: DOWN_EVENT});
+      assert(spy.callCount === 0);
     });
 
-    it('on key up when on lastPage', () => {
+    it('when on lastPage, arrow up does nothing', () => {
       const spy = sinon.spy();
       const tree = shallow(<Pagination defaultPage={20} totalPages={20} variant="explicit" onChange={spy} />);
-      tree.find('Textfield').simulate('keyDown', {key: 'Up'});
-      tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
-      assert(spy.calledWith(20, ENTER_EVENT));
+      tree.find('Textfield').simulate('keyDown', {key: UP_EVENT});
+      assert(spy.callCount === 0);
     });
 
     it('on Tab key', () => {
@@ -201,7 +208,7 @@ describe('Pagination', () => {
       assert(onNextSpy.calledWith(8));
     });
 
-    it('always triggers with currentIndex prop irrespective of internal actions', () => {
+    it('onChange is called with result of action but currentPage is not altered', () => {
       const onNextSpy = sinon.spy();
       const onPreviousSpy = sinon.spy();
       const onChangeSpy = sinon.spy();
@@ -209,8 +216,31 @@ describe('Pagination', () => {
       tree.find('Textfield').simulate('change', '20');
       tree.find('Textfield').simulate('keyDown', ENTER_EVENT);
       assert(onChangeSpy.calledWith(20, ENTER_EVENT));
+      assert.equal(tree.find('Textfield').prop('value'), 3);
       tree.find('Button').at(0).simulate('click');
       assert(onPreviousSpy.calledWith(2));
+    });
+
+    it('onChange triggered on ArrowDown key press if empty input', () => {
+      const onChangeSpy = sinon.spy();
+      const tree = shallow(<Pagination currentPage={2} totalPages={20} variant="explicit" onChange={onChangeSpy} />);
+      tree.find('Textfield').simulate('change', '');
+      tree.find('Textfield').simulate('keyDown', ARROW_DOWN_EVENT);
+      assert(onChangeSpy.calledWith(1));
+      assert.equal(tree.state('currentPage'), 2);
+      assert.equal(tree.find('Textfield').prop('value'), 2);
+      assert(onChangeSpy.callCount === 1);
+    });
+
+    it('onChange triggered on ArrowUp key press if empty input', () => {
+      const onChangeSpy = sinon.spy();
+      const tree = shallow(<Pagination currentPage={2} totalPages={20} variant="explicit" onChange={onChangeSpy} />);
+      tree.find('Textfield').simulate('change', '');
+      tree.find('Textfield').simulate('keyDown', ARROW_UP_EVENT);
+      assert(onChangeSpy.calledWith(3));
+      assert.equal(tree.state('currentPage'), 2);
+      assert.equal(tree.find('Textfield').prop('value'), 2);
+      assert(onChangeSpy.callCount === 1);
     });
   });
 
