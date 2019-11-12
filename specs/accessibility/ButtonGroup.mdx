@@ -47,20 +47,22 @@ Because arrow keys are used to navigate among elements of a toolbar and the `Tab
 - `Enter` (optional): If the focused Button is not selected, unchecks the currently selected Button and selects the focused Button. Otherwise, does nothing.
 - `ArrowRight`:
   - When focus is on a Button and that Button is not the last Button in the ButtonGroup, moves focus to the next Button.
-  - When focus is on the last Button in the ButtonGroup and that Button is not the last element in the toolbar, moves focus to the next element in the toolbar.
-  - When focus is on the last Button in the ButtonGroup and that Button is also the last element in the toolbar, moves focus to the first element in the toolbar.
+  - When focus is on the last Button in the ButtonGroup and the ButtonGroup is not the last element in the toolbar, moves focus to the next element in the toolbar.
+  - When focus is on the last Button in the ButtonGroup and the ButtonGroup is also the last element in the toolbar, moves focus to the first element in the toolbar.
 - `ArrowLeft`:
   - When focus is on a Button and that Button is not the first Button in the ButtonGroup, moves focus to the previous Button.
-  - When focus is on the first Button in the ButtonGroup and that Button is not the first element in the toolbar, moves focus to the previous element in the toolbar.
-  - When focus is on the first Button in the ButtonGroup and that Button is also the first element in the toolbar, moves focus to the last element in the toolbar.
+  - When focus is on the first Button in the ButtonGroup and the ButtonGroup is not the first element in the toolbar, moves focus to the previous element in the toolbar.
+  - When focus is on the first Button in the ButtonGroup and the ButtonGroup is also the first element in the toolbar, moves focus to the last element in the toolbar.
 - `ArrowDown` (optional): Moves focus to the next Button in the ButtonGroup. If focus is on the last Button in the ButtonGroup, moves focus to the first Button in the toolbar.
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
 - When focus moves away from the ButtonGroup, even if the Button that last had focus was not selected, tabbing back into the ButtonGroup should restore focus the selected Button,
 
+Buttons with the `disabled` boolean prop should be skipped by ButtonGroup focus management
+
 #### Roles, States, and Properties
 
-- The Buttons are contained in or owned by an element with `role` `radiogroup`.
-- Each Button element has `role` `radio`.
+- The Buttons are contained in or owned by an element with the `role` of `radiogroup`.
+- Each Button element has the `role` of `radio`.
 - If a Button is selected, the `radio` element has `aria-checked` set to `true`. If it is not selected, it has `aria-checked` set to `false`.
 - Each Button is labelled by its content, has a visible label referenced by `aria-labelledby`, or has a label specified with `aria-label`.
 - The `radiogroup` element has a visible label referenced by `aria-labelledby` or has a label specified with `aria-label`.
@@ -105,9 +107,11 @@ For consistency and by default, a ButtonGroup that allows multiple selection sti
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
 - When focus moves away from the ButtonGroup, even if the Button that last had focus was not selected, tabbing back into the ButtonGroup should restore focus the first selected Button in the tab navigation direction. If the Button that last had focus was selected, focus should be restored to that Button.
 
+Buttons with the `disabled` boolean prop should be skipped by ButtonGroup focus management
+
 #### Roles, States, and Properties
 
-- The Buttons are contained in or owned by an element with `role` `toolbar`. This can be overridden, with `role` `group` for example, if the ButtonGroup is contained within a parent with `role` `toolbar`.
+- The Buttons are contained in or owned by an element with the `role` of `toolbar`. This can be overridden, with the `role` of `group` for example, if the ButtonGroup is contained within a parent with `role` of `toolbar`.
 - Each Button element has `role` `checkbox`.
 - If a Button is selected, the `checkbox` element has `aria-checked` set to `true`. If it is not selected, it has `aria-checked` set to `false`.
 - Each Button is labelled by its content, has a visible label referenced by `aria-labelledby`, or has a label specified with `aria-label`.
@@ -116,13 +120,26 @@ For consistency and by default, a ButtonGroup that allows multiple selection sti
 
 ### No Selection
 
-With no selection using the `readOnly` prop, ButtonGroup implements the [Toolbar design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#toolbar).
+In React-Spectrum, the `readOnly` prop on a ButtonGroup indicates that the Buttons do not allow selection. Unlike a TextField, where `readOnly` means that the input does not accept user interaction to change the value, Buttons in a `readOnly` ButtonGroup are actionable unless explicitly disabled using the `disabled` prop.
+
+When selection is not allowed, by using the `readOnly` prop, ButtonGroup implements the [Toolbar design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#toolbar).
 
 ```jsx
-<ButtonGroup aria-label="Tools" readOnly>
-  <Button label="Brush" value="Brush" icon={<Brush />} />
-  <Button label="Bell" value="Bell" icon={<Bell />} />
-  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+<ButtonGroup
+  aria-label="Tools"
+  readOnly>
+  <Button
+    label="Brush"
+    value="Brush"
+    icon={<Brush />} />
+  <Button
+    label="Bell"
+    value="Bell"
+    icon={<Bell />} />
+  <Button
+    label="AddCircle"
+    value="Add"
+    icon={<AddCircle />} />
 </ButtonGroup>
 ```
 
@@ -144,10 +161,12 @@ For consistency and by default, a ButtonGroup that does not allow selection stil
 - `ArrowUp` (optional): Moves focus to the previous Button in the ButtonGroup. If focus is on the first Button in the ButtonGroup, moves focus to the last Button in the toolbar.
 - When focus moves away from the ButtonGroup, tabbing back into the ButtonGroup should restore focus the first enabled Button in the tab navigation direction.
 
+Buttons with the `disabled` boolean prop should be skipped by ButtonGroup focus management
+
 #### Roles, States, and Properties
 
-- The Buttons are contained in or owned by an element with `role` `toolbar`. This can be overridden, with `role` `group` for example, if the ButtonGroup is contained within a parent with `role` `toolbar`.
-- Each Button element retains implicit role of `button`.
+- The Buttons are contained in or owned by an element with `role` of `toolbar`. This can be overridden, with the `role` of `group` for example, if the ButtonGroup is contained within a parent with the `role` of `toolbar`.
+- Each Button element retains the implicit `role` of `button`.
 - Each Button is labelled by its content, has a visible label referenced by `aria-labelledby`, or has a label specified with `aria-label`.
 - The `toolbar` element has a visible label referenced by `aria-labelledby` or has a label specified with `aria-label`.
 - If elements providing additional information about either the toolbar or each button are present, those elements are referenced by the `toolbar` element or `button` elements with the `aria-describedby` property.
@@ -157,10 +176,22 @@ For consistency and by default, a ButtonGroup that does not allow selection stil
 By default, ButtonGroup uses a [roving tab index](https://www.w3.org/TR/wai-aria-practices/#kbd_roving_tabindex) so that only one button in the group is included in the tab navigation order at a time. This behavior can be overridden, so that all buttons will be included in the tab navigation order, by setting the `manageTabIndex` prop to `false`.
 
 ```jsx
-<ButtonGroup aria-label="Tools" readOnly manageTabIndex={false}>
-  <Button label="Brush" value="Brush" icon={<Brush />} />
-  <Button label="Bell" value="Bell" icon={<Bell />} />
-  <Button label="AddCircle" value="Add" icon={<AddCircle />} />
+<ButtonGroup
+  aria-label="Tools"
+  readOnly
+  manageTabIndex={false}>
+  <Button
+    label="Brush"
+    value="Brush"
+    icon={<Brush />} />
+  <Button
+    label="Bell"
+    value="Bell"
+    icon={<Bell />} />
+  <Button
+    label="AddCircle"
+    value="Add"
+    icon={<AddCircle />} />
 </ButtonGroup>
 ```
 
