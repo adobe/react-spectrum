@@ -80,33 +80,16 @@ function TooltipTriggerContainer(props) {
 
   if (type === 'click') {
     return (
-      <TooltipClickTrigger
-        triggerPropsWithRef={triggerPropsWithRef}
-        isOpen={isOpen}
-        onPress={onInteraction}
-        trigger={trigger}
-        overlay={overlay} />
+      <Fragment>
+        <PressResponder
+          {...triggerPropsWithRef}
+          isPressed={isOpen}
+          onPress={onInteraction}>
+          {trigger}
+        </PressResponder>
+        {overlay}
+      </Fragment>
     );
   }
-}
-
-function TooltipClickTrigger(props) {
-  let {
-    triggerPropsWithRef,
-    isOpen,
-    onPress,
-    trigger,
-    overlay
-  } = props;
-  return (
-    <Fragment>
-      <PressResponder
-        {...triggerPropsWithRef}
-        isPressed={isOpen}
-        onPress={onPress}>
-        {trigger}
-      </PressResponder>
-      {overlay}
-    </Fragment>
-  );
+  
 }
