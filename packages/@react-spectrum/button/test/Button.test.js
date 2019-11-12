@@ -1,7 +1,7 @@
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from './utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
