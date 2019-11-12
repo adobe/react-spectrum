@@ -1,11 +1,11 @@
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactNode, RefObject, useRef} from 'react';
+import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 interface TooltipTriggerProps extends PositionProps {
-  children: ReactNode,
+  children: ReactElement[],
   type?: 'click',
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
