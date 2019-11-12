@@ -15,7 +15,6 @@ interface TooltipTriggerProps extends PositionProps {
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
-    // placement,
     children,
     type,
     targetRef,
@@ -31,31 +30,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let onInteraction = () => {
     setOpen(!open);
   };
-
-  console.log("props placement in top level funtion: ", props.placement) // always proper
-
-  return (
-    <TooltipTriggerContainer
-      // placement={placement}
-      type={type}
-      isOpen={open}
-      onInteraction={onInteraction}
-      targetRef={targetRef}
-      trigger={trigger}
-      content={content} />
-  );
-}
-
-function TooltipTriggerContainer(props) {
-  let {
-    // placement,
-    type,
-    isOpen,
-    onInteraction,
-    targetRef,
-    trigger,
-    content
-  } = props;
 
   let containerRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<HTMLElement>();
@@ -75,14 +49,9 @@ function TooltipTriggerContainer(props) {
     ref: triggerRef
   };
 
-  // <Popover {...overlayProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
-
-  console.log("placement inside container: ", placement) // always bottom
-  console.log("props placment inside container: ", props.placement) // always undefined
-
   let overlay = (
-    <Overlay isOpen={isOpen} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, ref: overlayRef, ...overlayProps, isOpen: isOpen} )}
+    <Overlay isOpen={open} ref={containerRef}>
+      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
     </Overlay>
   );
 
@@ -99,5 +68,4 @@ function TooltipTriggerContainer(props) {
       </Fragment>
     );
   }
-
 }
