@@ -15,7 +15,7 @@ interface TooltipTriggerProps extends PositionProps {
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
-    placement,
+    // placement,
     children,
     type,
     targetRef,
@@ -32,9 +32,11 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(!open);
   };
 
+  console.log("props placement in top level funtion: ", props.placement) // always proper
+
   return (
     <TooltipTriggerContainer
-      placement={placement}
+      // placement={placement}
       type={type}
       isOpen={open}
       onInteraction={onInteraction}
@@ -46,7 +48,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
 function TooltipTriggerContainer(props) {
   let {
-    placement,
+    // placement,
     type,
     isOpen,
     onInteraction,
@@ -59,22 +61,28 @@ function TooltipTriggerContainer(props) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {overlayProps} = useOverlayPosition({
-    placement,
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({
+    placement: props.placement,
     containerRef,
     targetRef: targetRef || triggerRef,
     overlayRef,
     isOpen
   });
+
   delete overlayProps.style.position;
 
   let triggerPropsWithRef = {
     ref: triggerRef
   };
 
+  // <Popover {...overlayProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
+
+  console.log("placement inside container: ", placement) // always bottom
+  console.log("props placment inside container: ", props.placement) // always undefined
+
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, ref: overlayRef, ...overlayProps, isOpen: isOpen})}
+      {React.cloneElement(content, {placement: placement, ref: overlayRef, ...overlayProps, isOpen: isOpen} )}
     </Overlay>
   );
 
@@ -91,5 +99,5 @@ function TooltipTriggerContainer(props) {
       </Fragment>
     );
   }
-  
+
 }
