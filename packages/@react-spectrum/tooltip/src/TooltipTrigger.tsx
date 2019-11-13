@@ -1,3 +1,4 @@
+import {HoverResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
@@ -64,6 +65,18 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           onPress={onInteraction}>
           {trigger}
         </PressResponder>
+        {overlay}
+      </Fragment>
+    );
+  } else if (type === 'hover') {
+    return (
+      <Fragment>
+        <HoverResponder
+          {...triggerPropsWithRef}
+          isHovering={isOpen}
+          onHover={onInteraction}>
+          {trigger}
+        </HoverResponder>
         {overlay}
       </Fragment>
     );

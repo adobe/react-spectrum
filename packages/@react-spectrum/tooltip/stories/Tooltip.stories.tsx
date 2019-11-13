@@ -47,11 +47,11 @@ storiesOf('Tooltip', module)
     'triggered by click, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click'})
   ).add(
-    'triggered by click, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'click'})
+    'triggered by hover, placement: top',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'hover'})
   ).add(
-    'triggered by click, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
+    'triggered by hover, placement: bottom',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'hover'})
   );
 
 function render(content, props = {}) {
@@ -69,7 +69,7 @@ function render(content, props = {}) {
 function renderWithTrigger(content, props = {}) {
   return (
     <TooltipTrigger {...props}>
-      <ActionButton>Click Me</ActionButton>
+      <ActionButton>Trigger</ActionButton>
       <Tooltip>
         {content}
       </Tooltip>
