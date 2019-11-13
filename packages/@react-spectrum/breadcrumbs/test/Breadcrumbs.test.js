@@ -1,5 +1,5 @@
 import {BreadcrumbItem, Breadcrumbs} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, render, within} from '@testing-library/react';
 import React, {useRef} from 'react';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
@@ -23,12 +23,12 @@ describe('Breadcrumbs', function () {
 
   // v3 functionality, omitting v2 component
   it('Handles custom class name', () => {
-    let {getByTestId} = render(
+    let {getByRole} = render(
       <Breadcrumbs className="test-class">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let breadcrumbs = getByTestId('breadcrumb-list');
+    let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
@@ -51,17 +51,6 @@ describe('Breadcrumbs', function () {
     expect(item3).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Handles multiple items with size L', () => {
-    let {getByTestId} = render(
-      <Breadcrumbs size="L">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
-        <BreadcrumbItem>Folder 2</BreadcrumbItem>
-      </Breadcrumbs>
-    );
-    let item = getByTestId('breadcrumb-heading');
-    expect(item).toBeDefined();
-  });
-
   it('Should handle forward ref', function () {
     let ref;
     let Component = () => {
@@ -77,13 +66,66 @@ describe('Breadcrumbs', function () {
     expect(breadcrumb).toBe(ref.current);
   });
 
-  it('Handles custom heading aria level prop', () => {
-    let {getByTestId} = render(
+  it('Handles heading child and headingAriaLevel', () => {
+    let {getByRole} = render(
       <Breadcrumbs headingAriaLevel={2} size="L">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let breadcrumbs = getByTestId('breadcrumb-heading');
-    expect(breadcrumbs).toHaveAttribute('aria-level', '2');
+    let heading = getByRole('heading');
+    expect(heading).toHaveAttribute('aria-level', '2');
   });
+
+  it('Handles max visible items', () => {
+    let {getByText, getByRole} = render(
+      <Breadcrumbs maxVisibleItems="3" >
+        <BreadcrumbItem >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem >Folder 2</BreadcrumbItem>
+        <BreadcrumbItem >Folder 3</BreadcrumbItem>
+        <BreadcrumbItem >Folder 4</BreadcrumbItem>
+        <BreadcrumbItem >Folder 5</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let {children} = getByRole('list');
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('Handles max visible items with showRoot', () => {
+    let {getByText, getByRole} = render(
+      <Breadcrumbs maxVisibleItems="3" showRoot>
+        <BreadcrumbItem >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem >Folder 2</BreadcrumbItem>
+        <BreadcrumbItem >Folder 3</BreadcrumbItem>
+        <BreadcrumbItem >Folder 4</BreadcrumbItem>
+        <BreadcrumbItem >Folder 5</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let {children} = getByRole('list');
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('Handles isDisabled', () => {
+    let {getByTestId} = render(
+      <Breadcrumbs isDisabled>
+        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+
+    let item1 = getByTestId('item-1');
+    expect(item1).toHaveAttribute('aria-disabled', 'true');
+    let item2 = getByTestId('item-2');
+    expect(item2).toHaveAttribute('aria-disabled', 'true');
+  });
+
 });

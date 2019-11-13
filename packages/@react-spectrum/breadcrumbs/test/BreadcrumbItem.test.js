@@ -24,6 +24,16 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
   });
 
+  it('Handles disabled', () => {
+    let onPressSpy = jest.fn();
+    let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} isDisabled >Breadcrumb item</BreadcrumbItem>);
+    let breadcrumbItem = getByText('Breadcrumb item');
+    expect(breadcrumbItem.tabIndex).toBe(-1);
+    expect(breadcrumbItem).toHaveAttribute('aria-disabled', 'true');
+    triggerPress(breadcrumbItem);
+    expect(onPressSpy).toHaveBeenCalledTimes(0);
+  });
+
   it('Handles onPress', () => {
     let onPressSpy = jest.fn();
     let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} >Breadcrumb item</BreadcrumbItem>);
