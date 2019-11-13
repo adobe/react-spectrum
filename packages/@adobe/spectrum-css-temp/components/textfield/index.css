@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
 }
 
@@ -146,7 +146,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield.is-invalid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+      padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
@@ -172,12 +172,11 @@ governing permissions and limitations under the License.
   }
 }
 
-/* copied from .spectrum-DecoratedTextfield-icon */
-/* styles the valid/invalid state icons on the right of the textfield 
-   replaces valid/invalid background icon */
 .spectrum-Textfield-validationIcon {
+  /* TODO: Confirm if this is ok for the validation icon sizing
+    Note that the sizes are a bit different when compared with old background icons(more noticable for checkmark)
+  */
   position: absolute;
-
   padding-inline-end: calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2);
   pointer-events: all;
 
@@ -192,7 +191,6 @@ governing permissions and limitations under the License.
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-height) / 2));
   inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2));
 }
-
 .spectrum-Textfield.is-valid .spectrum-Textfield-validationIcon {
   width: var(--spectrum-icon-checkmark-medium-width);
   height: var(--spectrum-icon-checkmark-medium-height);
@@ -204,6 +202,8 @@ governing permissions and limitations under the License.
 .spectrum-Textfield-icon {
   display: block;
   position: absolute;
+  height: var(--spectrum-icon-magnifier-height);
+  width: var(--spectrum-icon-magnifier-width);
   inset-inline-start: 12px;
   top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2) - calc(var(--spectrum-textfield-padding-bottom) - var(--spectrum-textfield-padding-top)));
 }
@@ -211,7 +211,7 @@ governing permissions and limitations under the License.
 /* styles the textfield properly if the left icon is provided */
 .spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left); 
+  padding-inline-start: var(--spectrum-search-padding-left);
 
   .spectrum-Textfield--quiet & {
     padding-inline-start: var(--spectrum-search-quiet-padding-left);
