@@ -2,6 +2,7 @@ import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
+import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -49,8 +50,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...filterDOMProps(otherProps)}
-        {...buttonProps}
+        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
         ref={ref}
         className={
           classNames(
