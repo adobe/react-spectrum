@@ -2,7 +2,6 @@ import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useMenuTrigger} from '../';
 
-// TODO: Refactor this so I can actually render a component and use hooks and stuff
 describe('useMenuTrigger', function () {
   let state = {};
   let setOpen = jest.fn();
@@ -16,6 +15,10 @@ describe('useMenuTrigger', function () {
     state.isOpen = false;
     state.setOpen = setOpen;
   });
+
+  afterEach(() => {
+    setOpen.mockClear();
+  })
 
   it('should return default props for menu and menu trigger', function () {
     let {menuTriggerProps, menuProps} = renderMenuTriggerHook({}, state);
@@ -45,11 +48,61 @@ describe('useMenuTrigger', function () {
     expect(menuTriggerProps['aria-haspopup']).toBeTruthy();
   });
 
-  it('returns a onPress that toggles the menu open state', function () {
-    // TODO, perhaps test this in the MenuTrigger test instead?
+  // Comprehensive onPress functionality is tested in MenuTrigger test
+  it('returns a onPress for the menuTrigger', function () {
+    let props = {
+      type: 'menu'
+    };
+
+    let {menuTriggerProps} = renderMenuTriggerHook(props, state);
+    expect(typeof menuTriggerProps.onPress).toBe('function');
+    menuTriggerProps.onPress({pointerType: 'keyboard'});
+    expect(setOpen).toHaveBeenCalledTimes(0);
+    menuTriggerProps.onPress({pointerType: 'not keyboard'});
+    expect(setOpen).toHaveBeenCalledTimes(1);
+    expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
   });
 
+  // Comprehensive onKeyDown functionality is tested in MenuTrigger test
   it('returns a onKeyDown that toggles the menu open state for specific key strokes', function () {
-   // TODO, perhaps test this in the MenuTrigger test instead?
+    let props = {
+      type: 'menu',
+      ref: {current: true}
+    };
+
+    let preventDefault = jest.fn();
+    let stopPropagation = jest.fn();
+
+    let {menuTriggerProps} = renderMenuTriggerHook(props, state);
+    expect(typeof menuTriggerProps.onKeyDown).toBe('function');
+
+    // doesn't trigger event if isDefaultPrevented returns true
+    menuTriggerProps.onKeyDown({
+      pointerType: 'not keyboard', 
+      isDefaultPrevented: () => true,
+      key: 'Enter'
+    });
+    expect(setOpen).toHaveBeenCalledTimes(0);
+
+    // doesn't trigger event if defaultPrevented is true
+    menuTriggerProps.onKeyDown({
+      pointerType: 'not keyboard', 
+      defaultPrevented: true,
+      key: 'Enter'
+    });
+    expect(setOpen).toHaveBeenCalledTimes(0);
+
+     // triggers event if defaultPrevented is not true and it matches one of the keys
+    menuTriggerProps.onKeyDown({
+      pointerType: 'not keyboard', 
+      defaultPrevented: false,
+      key: 'Enter',
+      preventDefault,
+      stopPropagation
+    });
+    expect(setOpen).toHaveBeenCalledTimes(1);
+    expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
+    expect(stopPropagation).toHaveBeenCalledTimes(1);
+    expect(preventDefault).toHaveBeenCalledTimes(1);
   });
 });
