@@ -26,7 +26,8 @@ module.exports = {
       }
     }),
     // require('./lib/postcss-strip-comments')({ preserveTopdoc: false }),
-    require('postcss-focus-ring')
+    require('postcss-focus-ring'),
+    require('./lib/postcss-hover-media')
     // require('autoprefixer')({
     //   'browsers': [
     //     'IE >= 10',

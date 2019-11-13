@@ -94,13 +94,11 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-primary-border-color);
   color: var(--spectrum-button-primary-text-color);
 
-@media(hover: hover) {
   &:hover {
     background-color: var(--spectrum-button-primary-background-color-hover);
     border-color: var(--spectrum-button-primary-border-color-hover);
     color: var(--spectrum-button-primary-text-color-hover);
   }
-}
 
   &:focus-ring {
     background-color: var(--spectrum-button-primary-background-color-key-focus);
@@ -130,13 +128,11 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-button-secondary-border-color);
   color: var(--spectrum-button-secondary-text-color);
 
-@media(hover: hover) {
   &:hover {
     background-color: var(--spectrum-button-secondary-background-color-hover);
     border-color: var(--spectrum-button-secondary-border-color-hover);
     color: var(--spectrum-button-secondary-text-color-hover);
   }
-}
 
   &:focus-ring {
     background-color: var(--spectrum-button-secondary-background-color-key-focus);
