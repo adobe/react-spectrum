@@ -1,5 +1,4 @@
 import {action} from '@storybook/addon-actions';
-import {FieldLabel} from '../../form/src';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
@@ -120,19 +119,18 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
 function renderExternalLabel() {
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
-      <FieldLabel label="I'm an independent label">
-        <RadioGroup onChange={action('onChange')}>
-          <Radio value="dogs">
-            Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
-          </Radio>
-          <Radio value="cats">
-            Cats
-          </Radio>
-          <Radio value="dragons">
-            Dragons
-          </Radio>
-        </RadioGroup>
-      </FieldLabel>
+      <label id="the-label" htmlFor="the-radiogroup">I'm an independent label</label>
+      <RadioGroup id="the-radiogroup" aria-labelledby="the-label" onChange={action('onChange')}>
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
     </div>
   );
 }
