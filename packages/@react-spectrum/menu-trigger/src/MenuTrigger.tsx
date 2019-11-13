@@ -39,18 +39,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      menuProps: {
-        ...menu.props,
-        onClose
-      },
-      triggerProps: {
-        ...menuTrigger.props,
-        ref: menuTriggerRef
-      },
-      state: {
-        isOpen, 
-        setOpen
-      }
+      ref: menuTriggerRef,
+      type: 'menu'
+    },
+    {
+      isOpen, 
+      setOpen
     }
   );
 

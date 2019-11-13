@@ -74,7 +74,8 @@ export function useButton(props: AriaButtonProps): ButtonAria {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');
         }
-      }
+      },
+      onKeyDown: props.onKeyDown
     })
   };
 }
