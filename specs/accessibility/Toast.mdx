@@ -1,0 +1,50 @@
+# Toast Accessibility Specification
+
+## Overview
+
+A [`Toast`](https://react-spectrum.corp.adobe.com/components/Toast) displays a brief temporary notification. Toasts are noticeable, but do not disrupt the user experience and do not require an action to be taken.
+
+## WAI-ARIA Design Pattern
+
+`Toast` implements the [WAI-ARIA 1.1 Alert design pattern](https://www.w3.org/TR/wai-aria-practices-1.1/#alert).
+An [alert](https://www.w3.org/TR/wai-aria-1.1/#alert) is an element that displays a brief, important message in a way that attracts the user's attention without interrupting the user's task.
+Dynamically rendered alerts are automatically announced by most screen readers, and in some operating systems, they may trigger an alert sound.
+It is important to note that, at this time, screen readers do not inform users of alerts that are present on the page before page load completes.
+
+Because alerts are intended to provide important and potentially time-sensitive information without interfering with the user's ability to continue working, it is crucial they do not affect keyboard focus. The [alert dialog](https://www.w3.org/TR/wai-aria-practices-1.1/#alertdialog) is designed for situations where interrupting work flow is necessary.
+
+It is also important to, wherever possible, avoid designing alerts that disappear automatically. An alert that disappears too quickly can lead to failure to meet [WCAG 2.0 success criterion 2.2.3](https://www.w3.org/TR/WCAG21/#no-timing).
+
+If a `Toast` is designed to disappear after a period of time, a good length of time to keep the message up is 5 seconds plus 1 extra second for every 120 words, rounding up. This is how fast the average American reads. That means the shortest default that should be used as a best practice is 6 seconds.[¹](https://medium.com/@sheribyrnehaber/designing-toast-messages-for-accessibility-fb610ac364be#65bf)
+
+Another critical design consideration is the frequency of interruption caused by alerts. Frequent interruptions inhibit usability for people with visual and cognitive disabilities, which makes meeting the requirements of [WCAG 2.1 success criterion 2.2.4](https://www.w3.org/TR/WCAG21/#interruptions) more difficult.
+
+Toasts render into a landmark region, labelled by default as "Notifications", so that a screen reader user can easily locate and review persistent Toast messages.
+It is recommended to position the container landmark region at a consistent place in the application from page to page, for example as the first child of the Provider, so that a screen reader user can always find it there when looking for open Toast messages.
+
+### Keyboard
+
+`Toast` does not have any inherent keyboard interaction, but interactive descendants like the close button or action button should be included in the keyboard navigation order for the web page.
+
+`Toast` should not disappear automatically, i.e. the timeout should pause or stop, when focus is on the close button or action button within it
+
+As a separate issue, the container landmark region where Toasts render, should be keyboard accessible through an implementation of landmark navigation. A keyboard user should be able to cycle through available landmark regions in the page using `F6` or `Shift+F6` to reach the Toast container region.
+
+### Roles, States, and Properties
+
+- Each `Toast` element has a `role` of [`alert`](https://www.w3.org/TR/wai-aria-1.1/#alert).
+
+- Remove button should have `aria-label` prop with localized string, "Close".
+
+- Optional status, image icons within for `Toast` variants should have `alt` prop with the localized string describing the variant, "Error", "Warning", "Success", or "Information".
+
+- The container landmark region into which Toasts are rendered has `role` of [`region`](https://www.w3.org/TR/wai-aria-1.1/#region). By default, the container landmark region should be labelledy using the `aria-label` and a localized string, "Notifications".
+
+## v2 Implementation details
+
+In React Spectrum, [`Toast`](https://react-spectrum.corp.adobe.com/components/Toast) the following open PRs provide labelling for the landmark region into which Toasts are rendered, and navigation of landmark regions using the keyboard:
+- [#495: Fix #494 [Accessibility] ToastContainer should be labelled landmark region](https://github.com/adobe/react-spectrum/pull/495)
+- [#549: Fix #537 [Accessibility] Provide mechanism for navigation to landmark regions](https://github.com/adobe/react-spectrum/pull/549)
+
+### Dependencies
+- `Provider`
