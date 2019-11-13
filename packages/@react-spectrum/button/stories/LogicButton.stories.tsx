@@ -20,6 +20,9 @@ function render(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         {...props}>
         Default
       </LogicButton>
@@ -27,6 +30,9 @@ function render(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isDisabled
         {...props}>
         Disabled

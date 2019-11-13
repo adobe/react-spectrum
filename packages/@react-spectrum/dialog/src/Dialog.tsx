@@ -35,13 +35,13 @@ const BaseDialog = React.forwardRef(({children, className, ...otherProps}: Dialo
   return (
     <FocusScope contain restoreFocus autoFocus>
       <div
+        {...mergeProps(filterDOMProps(otherProps), dialogProps)}
         className={classNames(
           styles,
           'spectrum-Dialog',
           className
         )}
-        ref={ref}
-        {...mergeProps(filterDOMProps(otherProps), dialogProps)}>
+        ref={ref}>
         {children}
       </div>
     </FocusScope>

@@ -4,7 +4,7 @@ import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useSt
 import {mergeProps} from '@react-aria/utils';
 
 export interface HoverEvent {
-  type: 'hoverstart' | 'hoverend' | 'hovering',
+  type: 'hoverstart' | 'hoverend',
   pointerType: 'mouse' | 'touch',
   target: HTMLElement
 }
@@ -13,7 +13,7 @@ export interface HoverProps {
   isHovering?: boolean,
   isDisabled?: boolean,
   onHover?: (e: HoverEvent) => void,
-  onHoverStart?: (e:HoverEvent) => void,
+  onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void,
   onHoverChange?: (isHovering: boolean) => void
 }
@@ -81,9 +81,15 @@ export function useHover(props: HoverHookProps): HoverResult {
         return;
       }
 
+      if(onHoverStart) {
+        console.log('...available...')
+      } else {
+        console.log('not available')
+      }
+
       if (onHover) {
         onHover({
-          type: 'hovering',
+          type: 'hoverstart',
           target,
           pointerType
         });
