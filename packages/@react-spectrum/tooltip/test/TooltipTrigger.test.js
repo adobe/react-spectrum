@@ -4,18 +4,33 @@ import {Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {triggerHover} from '@react-spectrum/test-utils';
+import {Provider} from '@react-spectrum/provider';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
-// TODO: add the test for esc button working after animation loads as well
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('TooltipTrigger', function () {
-  afterEach(cleanup);
+  let onOpen = jest.fn();
+  let onClose = jest.fn();
+
+  afterEach(() => {
+    onOpen.mockClear();
+    onClose.mockClear();
+    cleanup();
+  });
 
   it('triggered by click event', function () {
     let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
         <TooltipTrigger type="click">
           <ActionButton>Trigger</ActionButton>
-          <Tooltip>contents</Tooltip>
+          <Tooltip>content</Tooltip>
         </TooltipTrigger>
+      </Provider>
     );
 
     expect(() => {
@@ -30,13 +45,14 @@ describe('TooltipTrigger', function () {
 
   });
 
-
   it('triggered by hover event', function () {
     let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
         <TooltipTrigger type="hover">
           <ActionButton>Trigger</ActionButton>
-          <Tooltip>contents</Tooltip>
+          <Tooltip>content</Tooltip>
         </TooltipTrigger>
+      </Provider>
     );
 
     expect(() => {
@@ -51,233 +67,168 @@ describe('TooltipTrigger', function () {
 
   });
 
+  it('pressing esc should close the tooltip after a click event', async function () {
+    let {getByRole} = render(
+      <TooltipTrigger type="click">
+        <ActionButton>Trigger</ActionButton>
+        <Tooltip>{content}</Tooltip>
+      </TooltipTrigger>
+    );
 
-  ////////// from v2
+    let button = getByRole('button');
+    triggerPress(button);
 
-  /*
-    it('should add aria-describedby to trigger when Overlay is a Tooltip', () => {
-      tree = mount(
-        <OverlayTrigger trigger="click">
-          <Button>Hover me</Button>
-          <Tooltip id="foo">Tooltip</Tooltip>
-        </OverlayTrigger>
-      );
-      tree.find(Button).simulate('click');
-      assert(tree.state('show'));
-      assert.equal(tree.find(Button).getDOMNode().getAttribute('aria-describedby'), 'foo');
-      assert.equal(document.querySelector('.spectrum-Tooltip').id, 'foo');
-      tree.find(Button).simulate('click');
-      assert(!tree.state('show'));
-      assert(!tree.find(Button).getDOMNode().hasAttribute('aria-describedby'));
-    });
+    let tooltip = getByRole('tooltip');
+    await waitForDomChange(); // wait for animation
+    expect(document.activeElement).toBe(tooltip);
 
-    it('should add aria-describedby to trigger when Overlay is a Tooltip using the tooltip generated id', () => {
-      tree = mount(
-        <OverlayTrigger trigger="click">
-          <Button>Hover me</Button>
-          <Tooltip>Tooltip</Tooltip>
-        </OverlayTrigger>
-      );
+    fireEvent.keyDown(tooltip, {key: 'Escape'});
+    await waitForDomChange(); // wait for animation
+    expect(tooltip).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+    expect(onClose).toBeCalledTimes(1);
+  });
 
-      tree.find(Button).simulate('click');
-      assert(tree.state('show'));
-      assert.equal(tree.find(Button).getDOMNode().getAttribute('aria-describedby'),
-        document.querySelector('.spectrum-Tooltip').id);
-      tree.find(Button).simulate('click');
-      assert(!tree.state('show'));
-      assert(!tree.find(Button).getDOMNode().hasAttribute('aria-describedby'));
-    });
+  it('pressing esc should close the tooltip after a hover event', async function () {
+    let {getByRole} = render(
+      <TooltipTrigger type="hover">
+        <ActionButton>Trigger</ActionButton>
+        <Tooltip>{content}</Tooltip>
+      </TooltipTrigger>
+    );
 
-    it('should support delay', async () => {
-      const delay = 10;
-      tree = mount(
-        <OverlayTrigger trigger="hover" delay={delay}>
-          <Button>Click me</Button>
-          <Popover trapFocus={false}>Popover</Popover>
-        </OverlayTrigger>
-      );
+    let button = getByRole('button');
+    triggerPress(button);
 
-      tree.find(Button).simulate('mouseOver');
-      assert(!tree.state('show'));
-      clock.tick(delay);
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      assert(tree.state('show'));
+    let tooltip = getByRole('tooltip');
+    await waitForDomChange(); // wait for animation
+    expect(document.activeElement).toBe(tooltip);
 
-      // test clearTimeout for mouseOut
-      clock.tick(delay - 5);
-      tree.find(Button).simulate('mouseOver');
-      clock.tick(delay);
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      clock.tick(delay);
-      assert(!tree.state('show'));
+    fireEvent.keyDown(tooltip, {key: 'Escape'});
+    await waitForDomChange(); // wait for animation
+    expect(tooltip).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+    expect(onClose).toBeCalledTimes(1);
+  });
 
-      // test clearTimeout for mouseOver
-      tree.find(Button).simulate('mouseOver');
-      assert(!tree.state('show'));
-      clock.tick(delay - 5);
-      tree.find(Button).simulate('mouseOut');
-      assert(!tree.state('show'));
-      clock.tick(delay);
-      assert(!tree.state('show'));
+  it('opens using keyboard event, ArrowDown + Alt', () => {
+    let {getByRole} = render(
+      <TooltipTrigger type="click">
+        <ActionButton>Trigger</ActionButton>
+        <Tooltip>{content}</Tooltip>
+      </TooltipTrigger>
+    );
 
-      // with no delay show/hide immediately
-      tree.setProps({delay: null});
-      tree.find(Button).simulate('mouseOver');
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      clock.tick(tree.prop('delayHide'));
-      assert(!tree.state('show'));
-    });
+    let button = getByRole('button');
+    triggerPress(button);
 
-    it('should support delayShow', async () => {
-      let delayShow = 10;
-      tree = mount(
-        <OverlayTrigger trigger="hover" delayShow={delayShow}>
-          <Button>Click me</Button>
-          <Popover trapFocus={false}>Popover</Popover>
-        </OverlayTrigger>
-      );
+    fireEvent.keyDown(tooltip, {key: 'ArrowDown', altKey: true});
+    await waitForDomChange(); // wait for animation
+    expect(tooltip).toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+    expect(onOpen).toBeCalledTimes(1);
+  });
 
-      tree.find(Button).simulate('mouseOver');
-      assert(!tree.state('show'));
-      clock.tick(delayShow);
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      clock.tick(tree.prop('delayHide'));
-      assert(!tree.state('show'));
+  it('opens using keyboard event, Down + Alt', () => {
+    let {getByRole} = render(
+      <TooltipTrigger type="click">
+        <ActionButton>Trigger</ActionButton>
+        <Tooltip>{content}</Tooltip>
+      </TooltipTrigger>
+    );
 
-      tree.setProps({delayShow: null});
-      tree.find(Button).simulate('mouseOver');
-      assert(tree.state('show'));
-      const showStub = sinon.spy();
-      tree.instance().show = showStub;
-      tree.instance().handleDelayedShow();
-      assert(tree.state('show'));
-      assert(!showStub.called);
-    });
+    let button = getByRole('button');
+    triggerPress(button);
 
-    it('should support delayHide', () => {
-      let delayHide = 10;
-      tree = mount(
-        <OverlayTrigger trigger="hover" delayHide={delayHide}>
-          <Button>Click me</Button>
-          <Popover trapFocus={false}>Popover</Popover>
-        </OverlayTrigger>
-      );
+    fireEvent.keyDown(tooltip, {key: 'ArrowDown', altKey: true});
+    await waitForDomChange(); // wait for animation
+    expect(tooltip).toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+    expect(onOpen).toBeCalledTimes(1);
+  });
 
-      tree.find(Button).simulate('mouseOver');
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      clock.tick(delayHide);
-      assert(!tree.state('show'));
+  it('should add aria-describedby to trigger', function () {
+    let {getByRole, getByTestId} = render(
+        <TooltipTrigger type="click">
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip id="foo">content</Tooltip>
+        </TooltipTrigger>
+    );
 
-      tree.setProps({delay: 0, delayHide: undefined});
-      tree.find(Button).simulate('mouseOver');
-      assert(tree.state('show'));
-      tree.find(Button).simulate('mouseOut');
-      clock.tick(0);
-      assert(!tree.state('show'));
-      tree.setProps({delayHide, delay: undefined});
+    expect(() => {
+      getByRole('tooltip');
+    }).toThrow();
 
-      const hideStub = sinon.spy();
-      tree.instance().hide = hideStub;
-      tree.instance().handleDelayedHide();
-      assert(!tree.state('show'));
-      assert(!hideStub.called);
-    });
+    let button = getByRole('button');
+    triggerPress(button);
 
-    it('disabled prop should hide overlay', () => {
-      tree = mount(
-        <OverlayTrigger trigger="click">
-          <Button>Click me</Button>
-          <Popover>Popover</Popover>
-        </OverlayTrigger>
-      );
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
 
-      tree.find(Button).simulate('click');
-      assert(tree.state('show'));
-      tree.setProps({disabled: true});
-      assert(!tree.state('show'));
-    });
+    let ariaLabel = document.getElementById(tooltip.getAttribute('aria-describedby'), 'foo');
 
-    it('supports longClicks to open', () => {
-      let clickSpy = sinon.spy();
-      let preventDefaultSpy = sinon.spy();
-      let onShowSpy = sinon.spy();
-      let onHideSpy = sinon.spy();
-      tree = mount(
-        <OverlayTrigger onClick={clickSpy} onShow={onShowSpy} onHide={onHideSpy} trigger="longClick">
-          <Button>Click me</Button>
-          <Popover>Popover</Popover>
-        </OverlayTrigger>
-      );
-      let button = tree.find(Button);
-      button.simulate('mouseDown', {button: 0});
-      clock.tick(250);
-      assert(tree.state('show'));
-      assert(!clickSpy.called);
-      assert(onShowSpy.calledOnce);
-      button.simulate('mouseUp', {button: 0, preventDefault: preventDefaultSpy});
-      assert(tree.state('show'));
-      assert(preventDefaultSpy.calledOnce);
-      assert(!clickSpy.called);
-      button.simulate('mouseDown', {button: 0});
-      clock.tick(125);
-      assert(tree.state('show'));
-      assert(!clickSpy.called);
-      button.simulate('mouseUp', {button: 0, preventDefault: preventDefaultSpy});
-      assert(!tree.state('show'));
-      assert(preventDefaultSpy.calledOnce);
-      assert(clickSpy.called);
-      assert(onHideSpy.calledOnce);
-    });
+    expect(tooltip).toHaveAttribute('aria-describedby', 'foo');
 
-    it('does not call long click prop if the mouse is lifted before the timeout', () => {
-      let clickSpy = sinon.spy();
-      tree = mount(
-        <OverlayTrigger onClick={clickSpy} trigger="longClick">
-          <Button>Click me</Button>
-          <Popover>Popover</Popover>
-        </OverlayTrigger>
-      );
-      let button = tree.find(Button);
-      button.simulate('mouseDown', {button: 0});
-      clock.tick(125);
-      assert(!tree.state('show'));
-      button.simulate('mouseUp', {button: 0});
-      assert(!tree.state('show'));
-      assert(clickSpy.called);
-    });
+    triggerPress(button); // click again
 
-    it('opens using keyboard event, ArrowDown + Alt', () => {
-      let clickSpy = sinon.spy();
-      tree = mount(
-        <OverlayTrigger onClick={clickSpy} trigger="longClick">
-          <Button>Click me</Button>
-          <Popover>Popover</Popover>
-        </OverlayTrigger>
-      );
-      let button = tree.find(Button);
-      button.simulate('keyDown', {key: 'ArrowDown', altKey: true});
-      assert(tree.state('show'));
-      assert(!clickSpy.called);
-    });
+    expect(tooltip).not.toHaveAttribute('aria-describedby');
 
-    it('opens using keyboard event, Down + Alt', () => {
-      let clickSpy = sinon.spy();
-      tree = mount(
-        <OverlayTrigger onClick={clickSpy} trigger="longClick">
-          <Button>Click me</Button>
-          <Popover>Popover</Popover>
-        </OverlayTrigger>
-      );
-      let button = tree.find(Button);
-      button.simulate('keyDown', {key: 'Down', altKey: true});
-      assert(tree.state('show'));
-      assert(!clickSpy.called);
-    });
-*/
+  });
+
+  it('should add aria-describedby to trigger when using the tooltip generated id', function () {
+    let {getByRole, getByTestId} = render(
+        <TooltipTrigger type="click">
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip>content</Tooltip>
+        </TooltipTrigger>
+    );
+
+    expect(() => {
+      getByRole('tooltip');
+    }).toThrow();
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+
+    let ariaLabel = document.getElementById(tooltip.getAttribute('aria-describedby'));
+
+    expect(tooltip).toHaveAttribute('aria-describedby', ariaLabel.id);
+
+    triggerPress(button); // click again
+
+    expect(tooltip).not.toHaveAttribute('aria-describedby');
+
+  });
+
+  it('disabled prop should hide overlay', () => {
+    tree = mount(
+      <OverlayTrigger trigger="click">
+        <Button>Click me</Button>
+        <Popover>Popover</Popover>
+      </OverlayTrigger>
+    );
+
+    tree.find(Button).simulate('click');
+    assert(tree.state('show'));
+    tree.setProps({disabled: true});
+    assert(!tree.state('show'));
+  });
+
+  it.each`
+    Name             | Component      | props
+    ${'TooltipTrigger'} | ${TooltipTrigger} | ${{disabled: true}}
+  `('$Name does not open when disabled prop is ultized', async function ({Component, props}) {
+    let tree = render(Component, props);
+
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    await waitForDomChange();
+
+    let tooltip = tree.getByRole('tooltip');
+    expect(tooltip).toBeFalsy();
+  });
 
 });

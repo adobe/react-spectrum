@@ -69,7 +69,7 @@ function render(content, props = {}) {
 function renderWithTrigger(content, props = {}) {
   return (
     <TooltipTrigger {...props}>
-      <ActionButton>Trigger</ActionButton>
+      <ActionButton>Tooltip Trigger</ActionButton>
       <Tooltip>
         {content}
       </Tooltip>
