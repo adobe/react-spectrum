@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:12.10
+      - image: mcr.microsoft.com/azure-cli
 
     working_directory: ~/react-spectrum-v3
     steps:
