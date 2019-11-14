@@ -30,7 +30,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
     direction = 'bottom'
   } = props;
 
-  let [menuTrigger, menu] = React.Children.toArray(children);
+  let childrenArray = React.Children.toArray(children);
+  let menuTrigger = childrenArray.find(c => c.props.dropdownTrigger) || childrenArray[0];
+  let menu = childrenArray.find(c => c.props.dropdownMenu || c.type === 'menu') || childrenArray[1];
+  let otherChildren = childrenArray.filter(c => (c !== menu && c !== menuTrigger));
+
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
   let onClose = () => {
@@ -78,6 +82,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   return (
     <Fragment>
+      {otherChildren}
       <PressResponder {...triggerProps}>
         {menuTrigger}
       </PressResponder>
@@ -87,7 +92,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
             {menu}
           </Popover>
         </Overlay>
-      </MenuContext.Provider> 
+      </MenuContext.Provider>
     </Fragment>
   );
 }

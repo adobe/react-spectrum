@@ -264,4 +264,64 @@ describe('MenuTrigger', function () {
     await waitForDomChange();
     expect(menu).not.toBeInTheDocument();
   });
+
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
+  `('$Name allows the user to specify more than 2 children', async function ({Component, props}) {
+    let tree;
+    let actionButtonText = 'action';
+    if (Component === V2Dropdown) {
+      tree = render(
+        <Component {...props}>
+          <V2Button
+            variant="cta">
+            {actionButtonText}
+          </V2Button>
+          <V2Button
+            dropdownTrigger
+            variant="cta">
+            {triggerText}
+          </V2Button>
+          <V2Menu dropdownMenu>
+            <V2MenuItem value="foo">Foo</V2MenuItem>
+            <V2MenuItem value="bar">Bar</V2MenuItem>
+            <V2MenuItem value="baz">Baz</V2MenuItem>
+          </V2Menu>
+        </Component>
+      );
+    } else {
+      tree = render(
+        <Provider theme={theme}>
+          <div data-testid="scrollable">
+            <Component {...props}>
+              <Button>
+                {actionButtonText}
+              </Button>
+              <Button dropdownTrigger>
+                {triggerText}
+              </Button>
+              <Menu dropdownMenu>
+                <li>Foo</li>
+                <li>Bar</li>
+                <li>Baz</li>
+              </Menu>
+            </Component>
+          </div>
+        </Provider>
+      );
+    }
+    
+    let actionButton = tree.getByText(actionButtonText);
+    let menuButton = tree.getByText(triggerText);
+    triggerPress(actionButton);
+    let menu = tree.queryByRole('menu');
+    expect(menu).not.toBeInTheDocument();
+
+    triggerPress(menuButton);
+    await waitForDomChange();
+    menu = tree.getByRole('menu');
+    expect(menu).toBeInTheDocument();
+  });
 });
