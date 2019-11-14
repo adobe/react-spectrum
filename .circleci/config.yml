@@ -42,13 +42,19 @@ jobs:
           name: build storybook
           command: make storybook
 
+      - persist_to_workspace:
+          root: storybook-static
+          paths:
+            - '**'
+
   deploy:
     executor: azure-cli/azure-docker
-    working_directory: ~/react-spectrum-v3
     steps:
+      - attach_workspace:
+        at: /tmp/storybook-static
       - run:
           name: deploy storybook
-          command: az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum
+          command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
 
 workflows:
   version: 2
