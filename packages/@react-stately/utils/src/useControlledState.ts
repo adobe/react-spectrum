@@ -1,10 +1,10 @@
 import {useCallback, useRef, useState} from 'react';
 
-export function useControlledState(
-  value: any,
-  defaultValue: any,
-  onChange: (value: any, ...args: any[]) => void
-): [any, (value: any, ...args: any[]) => void]  {
+export function useControlledState<T>(
+  value: T, 
+  defaultValue: T, 
+  onChange: (value: T, ...args: any[]) => void
+): [T, (value: T | ((prevState: T) => T), ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);
   let wasControlled = ref.current;

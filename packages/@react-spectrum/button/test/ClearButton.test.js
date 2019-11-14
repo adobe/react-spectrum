@@ -1,11 +1,11 @@
 import {cleanup, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
-import {triggerPress} from './utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
-// Refinement of ClearButton to be done later 
+// Refinement of ClearButton to be done later
 describe('ClearButton', function () {
   let onPressSpy = jest.fn();
   let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
@@ -14,7 +14,7 @@ describe('ClearButton', function () {
     cleanup();
     onPressSpy.mockClear();
   });
-  
+
   it.each`
     Name                | Component      | props
     ${'v3 ClearButton'} | ${ClearButton} | ${{onPress: onPressSpy}}

@@ -1,1 +1,1 @@
-export * from './src/usePaginationState';
+export * from './src';

@@ -4,5 +4,6 @@ export * from './selection';
 export * from './positions';
 export * from './dnd';
 export * from './theme';
+export * from './collections';
 export * from './removable';
 export * from './localization';

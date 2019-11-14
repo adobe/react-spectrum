@@ -1,0 +1,60 @@
+# MenuTrigger Accessibility Specification
+
+## Overview
+
+A `MenuTrigger` is a component that surrounds a trigger `Button` and either a `Menu` or a `Popover` that expands to display when the `Button` is clicked.
+
+The trigger `Button` is often styled as a typical push button with a downward pointing arrow or triangle to hint that activating the button will display a menu.
+
+## WAI-ARIA Design Pattern
+
+The `MenuTrigger` component implements the [Menu Button design pattern, per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices-1.1/#menubutton).
+
+### Keyboard Interaction
+
+With focus on the button:
+ - <kbd>Enter</kbd>: opens the menu and places focus on the first menu item.
+ - <kbd>Space</kbd>: Opens the menu and places focus on the first menu item.
+ - (Optional) <kbd>ArrowDown</kbd>: opens the menu and moves focus to the first menu item.
+ - (Optional) <kbd>ArrowUp</kbd>: opens the menu and moves focus to the last menu item. Note that v2, does not implement this behavior.
+
+The keyboard behaviors needed after the menu is open are described in the [Menu Accessibility spec](Menu.mdx).
+
+Note, that it is important for the `Button` component to have `type` equal to `button` so clicking a `MenuTrigger` button within a `form` does not submit the form.
+
+### Roles, States, and Properties
+
+- The element that opens the menu has role [`button`](https://www.w3.org/TR/wai-aria-1.1/#button). With a `<button>` element, role `button` will be implicit.
+- The element with role `button` has [`aria-haspopup`](https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup) set to
+  - `menu` or `true` if the popup is a [`menu`](https://www.w3.org/TR/wai-aria-1.1/#menu),
+  - `listbox` if the popup is a [`listbox`](https://www.w3.org/TR/wai-aria-1.1/#listbox),
+  - `tree` if the popup is a [`tree`](https://www.w3.org/TR/wai-aria-1.1/#tree),
+  - `grid` if the popup is a [`grid`](https://www.w3.org/TR/wai-aria-1.1/#grid), or
+  - `dialog` if the popup is a [`dialog`](https://www.w3.org/TR/wai-aria-1.1/#dialog).
+- When the popover is displayed, the element with role `button` has [`aria-expanded`](https://www.w3.org/TR/wai-aria-1.1/#aria-expanded) set to `true`. When the popover is hidden, it is recommended that `aria-expanded` is not present. If `aria-expanded` is specified when the popover is hidden, it is set to `false`.
+- The popover that displays by activating the button has a role [`menu`](https://www.w3.org/TR/wai-aria-1.1/#menu) or matching that declared using the `aria-haspopup` prop on the button.
+- Optionally, the element with role `button` has a value specified for [`aria-controls`](https://www.w3.org/TR/wai-aria-1.1/#aria-controls) that refers to the popover element with the role declared using the `aria-haspopup` by `id`.
+- Additional roles, states, and properties needed for the `menu` element are described in the [Menu Accessibility spec](Menu.mdx).
+
+## v2 Implementation details
+
+In React Spectrum, `MenuTrigger` has been implemented as a [`Dropdown`](https://react-spectrum.corp.adobe.com/components/Dropdown) or with [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton), which make use of [`OverlayTrigger`](https://react-spectrum.corp.adobe.com/components/OverlayTrigger).
+
+### longClick and holdAffordance
+
+`OverlayTrigger` supports `longClick`, which expands the popover on mouse down after a 250ms delay, as an option for the `trigger` prop.
+The `holdAffordance` boolean prop specifies the visual affordance for the `longClick` behavior on the trigger button.
+In `DropdownButton`, setting `holdAffordance` to `true` automatically sets `longClick` as the `trigger` prop on the `OverlayTrigger`.
+The keyboard combination <kbd>Alt + ArrowDown</kbd> will expand the popover with `longClick` as the `trigger`.
+
+### Dependencies
+- `OverlayTrigger`
+- `Overlay`
+- `Menu`
+- `Popover`
+
+### Dependees
+- [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete)
+- [`Dropdown`](https://react-spectrum.corp.adobe.com/components/Dropdown)
+- [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton)
+- [`SplitButton`](https://react-spectrum.corp.adobe.com/components/SplitButton)
