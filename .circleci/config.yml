@@ -60,6 +60,7 @@ jobs:
     docker:
       - image: circleci/node:12.10
     steps:
+      - checkout
       - run:
           name: comment on pr
           command: node .circleci/comment.js
