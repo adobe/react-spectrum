@@ -55,6 +55,11 @@ jobs:
       - run:
           name: deploy storybook
           command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
+
+  comment:
+    docker:
+      - image: circleci/node:12.10
+    steps:
       - run:
           name: comment on pr
           command: node .circleci/comment.js
@@ -67,3 +72,6 @@ workflows:
       - deploy:
           requires:
             - build
+      - comment:
+          requires:
+            - deploy
