@@ -1,9 +1,10 @@
 version: 2
+orbs:
+  azure-cli: circleci/azure-cli@1.1.0
 jobs:
   build:
     docker:
       - image: circleci/node:12.10
-      - image: microsoft/azure-cli
 
     working_directory: ~/react-spectrum-v3
     steps:
@@ -41,6 +42,18 @@ jobs:
           name: build storybook
           command: make storybook
 
+  deploy:
+    executor: azure-cli/azure-docker
+    steps:
       - run:
           name: deploy storybook
           command: az storage blob upload-batch -d reactspectrum -s storybook-static --account-name reactspectrum
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
