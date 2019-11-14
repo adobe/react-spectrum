@@ -73,7 +73,7 @@ export function usePress(props: PressHookProps): PressResult {
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
     isPressed: false,
-    ignoreEmulatedMouseEvents: false,
+    ignoreEmulatedMouseEvents: false, // if this is true then ignore mouse events 
     activePointerId: null,
     target: null,
     isOverTarget: false
