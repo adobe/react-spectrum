@@ -4,6 +4,9 @@ import {ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps extends DOMProps {
   isCurrent?: boolean,
+  isHeading?: boolean,
+  isDisabled?: boolean,
+  headingAriaLevel?: number,
   onPress?: (e: PressEvent) => void,
   children: ReactNode
 }
