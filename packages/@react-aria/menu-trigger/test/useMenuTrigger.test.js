@@ -18,7 +18,7 @@ describe('useMenuTrigger', function () {
 
   afterEach(() => {
     setOpen.mockClear();
-  })
+  });
 
   it('should return default props for menu and menu trigger', function () {
     let {menuTriggerProps, menuProps} = renderMenuTriggerHook({}, state);
