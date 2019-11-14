@@ -66,8 +66,8 @@ export function TabList(props: TabListProps) {
 
   return (
     <div
-      ref={ref}
       {...filterDOMProps(otherProps)}
+      ref={ref}
       className={classNames(
         styles,
         'spectrum-Tabs',

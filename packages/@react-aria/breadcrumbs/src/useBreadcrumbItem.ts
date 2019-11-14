@@ -11,19 +11,23 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps): BreadcrumbItemAri
   let {
     id,
     isCurrent,
+    isDisabled,
     'aria-current': ariaCurrent,
     onPress
   } = props;
 
-  let {pressProps} = usePress({onPress}); 
+  let {pressProps} = usePress({onPress, isDisabled}); 
+
 
   let itemProps = isCurrent
     ? {'aria-current': ariaCurrent || 'page'}
-    : {...pressProps, tabIndex: 0};
+    : {...pressProps};
 
   return {
     breadcrumbItemProps: {
       id: useId(id),
+      tabIndex: isDisabled || isCurrent ? -1 : 0,
+      'aria-disabled': isDisabled,
       ...itemProps
     }
   };

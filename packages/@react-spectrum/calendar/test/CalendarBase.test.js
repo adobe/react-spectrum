@@ -5,7 +5,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/button/test/utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let theme = {
@@ -23,7 +23,7 @@ describe('CalendarBase', () => {
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
-  
+
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
   });
@@ -132,7 +132,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{defaultValue: new Date(2019, 5, 5)}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
-    `('$Name should change the month when previous or next buttons are clicked', ({Calendar, props}) => {  
+    `('$Name should change the month when previous or next buttons are clicked', ({Calendar, props}) => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<Calendar {...props} />);
 
       let heading = getByRole('heading');

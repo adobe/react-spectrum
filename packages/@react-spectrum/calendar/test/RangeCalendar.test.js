@@ -4,7 +4,7 @@ import {cleanup, fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {startOfDay} from 'date-fns';
-import {triggerPress} from '@react-spectrum/button/test/utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
@@ -16,7 +16,7 @@ describe('RangeCalendar', () => {
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
-  
+
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
   });
@@ -34,7 +34,7 @@ describe('RangeCalendar', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(30);
-  
+
       let selectedDates = getAllByLabelText('Selected', {exact: false});
       let labels = [
         'Wednesday, June 5, 2019 selected',
@@ -66,7 +66,7 @@ describe('RangeCalendar', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(30);
-  
+
       let selectedDates = getAllByLabelText('Selected', {exact: false});
       let labels = [
         'Wednesday, June 5, 2019 selected',
@@ -133,10 +133,10 @@ describe('RangeCalendar', () => {
         expect(cell).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
-  
+
       let nextButton = getByLabelText('Next');
       triggerPress(nextButton);
-  
+
       selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(selected.length).toBe(10);
       let julyLabels = [
@@ -157,7 +157,7 @@ describe('RangeCalendar', () => {
         expect(cell).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', julyLabels[i++]);
       }
-  
+
       expect(heading).toHaveTextContent('July 2019');
       gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(31);
@@ -210,7 +210,7 @@ describe('RangeCalendar', () => {
     `('$Name can select a range with the keyboard (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           {...props}
           autoFocus
           onChange={onChange} />
@@ -263,7 +263,7 @@ describe('RangeCalendar', () => {
     `('$Name can select a range with the keyboard (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           {...props}
           autoFocus
           onChange={onChange} />
@@ -324,7 +324,7 @@ describe('RangeCalendar', () => {
       expect(cell).not.toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
     });
-    
+
     it.each`
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
@@ -332,7 +332,7 @@ describe('RangeCalendar', () => {
     `('$Name selects a range with the mouse (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           {...props}
           onChange={onChange} />
       );
@@ -378,7 +378,7 @@ describe('RangeCalendar', () => {
     `('$Name selects a range with the mouse (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           {...props}
           onChange={onChange} />
       );
@@ -439,7 +439,7 @@ describe('RangeCalendar', () => {
     `('$Name does not select a date on click if isDisabled', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           {...props}
           onChange={onChange} />
       );
@@ -460,7 +460,7 @@ describe('RangeCalendar', () => {
     `('$Name does not select a date on click if outside the valid date range', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText, getAllByLabelText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           onChange={onChange}
           {...props} />
       );
@@ -501,7 +501,7 @@ describe('RangeCalendar', () => {
     `('$Name cancels the selection when the escape key is pressed', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getByText, getAllByLabelText} = render(
-        <RangeCalendar 
+        <RangeCalendar
           autoFocus
           onChange={onChange}
           {...props} />
@@ -537,7 +537,7 @@ describe('RangeCalendar', () => {
   describe('announcing', () => {
     it('announces when the current month changes', () => {
       let {getByLabelText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} />);
-  
+
       let nextButton = getByLabelText('Next');
       triggerPress(nextButton);
 
@@ -547,7 +547,7 @@ describe('RangeCalendar', () => {
 
     it('announces when the selected date range changes', () => {
       let {getByText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} />);
-  
+
       triggerPress(getByText('17'));
       triggerPress(getByText('10'));
 
@@ -561,7 +561,7 @@ describe('RangeCalendar', () => {
       let grid = getByRole('grid');
       let onBlur = jest.fn();
       let onFocus = jest.fn();
-      
+
       grid.addEventListener('blur', onBlur);
       grid.addEventListener('focus', onFocus);
 

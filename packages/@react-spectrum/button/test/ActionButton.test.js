@@ -1,7 +1,7 @@
 import {ActionButton} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from './utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 describe('ActionButton', function () {

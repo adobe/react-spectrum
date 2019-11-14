@@ -1,7 +1,8 @@
 import {calculatePosition} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {useLocale} from '@react-aria/i18n'; 
 
-type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
+export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
     'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
@@ -39,6 +40,7 @@ interface PositionState {
 }
 
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
+  let {direction} = useLocale();
   let {
     containerRef,
     targetRef,
@@ -72,17 +74,18 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     boundaryElement,
     offset,
     crossOffset,
-    isOpen
+    isOpen,
+    direction
   ];
 
   let updatePosition = () => {
     if (shouldUpdatePosition === false || !overlayRef.current || !targetRef.current || !containerRef.current) {
       return;
     }
-
+    
     setPosition(
       calculatePosition(
-        placement,
+        translateRTL(placement, direction),
         overlayRef.current,
         targetRef.current,
         containerRef.current,
@@ -128,4 +131,11 @@ function useResize(onResize) {
       window.removeEventListener('resize', onResize, false);
     };
   }, [onResize]);
+}
+
+function translateRTL(position, direction) {
+  if (direction === 'rtl') {
+    return position.replace('start', 'right').replace('end', 'left');
+  }
+  return position.replace('start', 'left').replace('end', 'right');
 }

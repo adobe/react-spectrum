@@ -37,7 +37,8 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
-    ref
+    ref,
+    type = 'button'
   } = props;
   let additionalProps;
   if (elementType !== 'button') {
@@ -66,6 +67,7 @@ export function useButton(props: AriaButtonProps): ButtonAria {
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
+      type,
       ...(additionalProps || {}),
       onClick: (e) => {
         if (deprecatedOnClick) {
