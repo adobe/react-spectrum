@@ -59,6 +59,7 @@ jobs:
   comment:
     docker:
       - image: circleci/node:12.10
+    working_directory: ~/react-spectrum-v3
     steps:
       - checkout
       - restore_cache:
