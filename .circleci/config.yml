@@ -51,7 +51,7 @@ jobs:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
-        at: /tmp/storybook-static
+          at: /tmp/storybook-static
       - run:
           name: deploy storybook
           command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
