@@ -1,5 +1,0 @@
-name: 'PR Comment'
-description: 'Comment on the PR attached to a commit'
-runs:
-  using: 'node12'
-  main: 'index.js'
