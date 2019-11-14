@@ -148,50 +148,68 @@ export function usePress(props: PressHookProps): PressResult {
       pressProps.onPointerDown = (e) => {
         if (!state.isPressed) {
           state.isPressed = true;
+          state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
           triggerPressStart(e.target, e.pointerType);
 
+          document.addEventListener('pointermove', onPointerMove, false);
           document.addEventListener('pointerup', onPointerUp, false);
           document.addEventListener('pointercancel', onPointerCancel, false);
         }
       };
 
       let unbindEvents = () => {
+        document.removeEventListener('pointermove', onPointerMove, false);
         document.removeEventListener('pointerup', onPointerUp, false);
         document.removeEventListener('pointercancel', onPointerCancel, false);
       };
 
-      pressProps.onPointerEnter = (e) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
-          triggerPressStart(e.target, e.pointerType);
+      // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
+      // Use pointer move events instead to implement our own hit testing.
+      // See https://bugs.webkit.org/show_bug.cgi?id=199803
+      let onPointerMove = (e: PointerEvent) => {
+        if (e.pointerId !== state.activePointerId) {
+          return;
         }
-      };
 
-      pressProps.onPointerLeave = (e) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
-          triggerPressEnd(e.target, e.pointerType, false);
-        }
-      };
-
-      let onPointerUp = (e) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
-          state.isPressed = false;
-          state.activePointerId = null;
-          unbindEvents();
-
-          if (state.target && state.target.contains(e.target)) {
-            triggerPressEnd(state.target, e.pointerType);
+        let rect = state.target.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          if (!state.isOverTarget) {
+            state.isOverTarget = true;
+            triggerPressStart(state.target, e.pointerType);
           }
+        } else if (state.isOverTarget) {
+          state.isOverTarget = false;
+          triggerPressEnd(state.target, e.pointerType, false);
         }
       };
 
-      let onPointerCancel = (e) => {
-        if (state.isPressed) {
+      let onPointerUp = (e: PointerEvent) => {
+        if (e.pointerId === state.activePointerId && state.isPressed) {
+          let rect = state.target.getBoundingClientRect();
+          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            triggerPressEnd(state.target, e.pointerType);
+          } else if (state.isOverTarget) {
+            triggerPressEnd(state.target, e.pointerType, false);
+          }
+
           state.isPressed = false;
+          state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
-          triggerPressEnd(state.target, e.pointerType, false);
+        }
+      };
+
+      let onPointerCancel = (e: PointerEvent) => {
+        if (state.isPressed) {
+          if (state.isOverTarget) {
+            triggerPressEnd(state.target, e.pointerType, false);
+          }
+          state.isPressed = false;
+          state.isOverTarget = false;
+          state.activePointerId = null;
+          unbindEvents();
         }
       };
     } else {
