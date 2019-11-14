@@ -1,7 +1,7 @@
 import {BreadcrumbItem} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
-import {triggerPress} from '@react-spectrum/button/test/utils'; 
+import {triggerPress} from '@react-spectrum/test-utils'; 
 
 // v3 component
 describe('Breadcrumbs', function () {
@@ -22,6 +22,16 @@ describe('Breadcrumbs', function () {
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.tabIndex).toBe(-1);
     expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('Handles disabled', () => {
+    let onPressSpy = jest.fn();
+    let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} isDisabled >Breadcrumb item</BreadcrumbItem>);
+    let breadcrumbItem = getByText('Breadcrumb item');
+    expect(breadcrumbItem.tabIndex).toBe(-1);
+    expect(breadcrumbItem).toHaveAttribute('aria-disabled', 'true');
+    triggerPress(breadcrumbItem);
+    expect(onPressSpy).toHaveBeenCalledTimes(0);
   });
 
   it('Handles onPress', () => {

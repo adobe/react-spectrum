@@ -8,12 +8,15 @@ import {useButton} from '@react-aria/button';
 
 interface ClearButtonProps extends ButtonBase {
   focusClassName?: string,
+  variant?: 'overBackground'
 }
 
 export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefObject<HTMLButtonElement>) => {
   let {
+    children = <CrossSmall />,
     className,
     focusClassName,
+    variant,
     ...otherProps
   } = props;
   ref = ref || useRef();
@@ -30,12 +33,13 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
             styles,
             'spectrum-ClearButton',
             {
+              [`spectrum-ClearButton--${variant}`]: variant,
               'is-active': isPressed
             },
             className
           )
         }>
-        <CrossSmall />
+        {children}
       </button>
     </FocusRing>
   );
