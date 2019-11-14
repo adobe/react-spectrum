@@ -61,6 +61,9 @@ jobs:
       - image: circleci/node:12.10
     steps:
       - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
       - run:
           name: comment on pr
           command: node .circleci/comment.js
