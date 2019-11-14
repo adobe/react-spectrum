@@ -12,12 +12,16 @@ If a button is not one of these, its variant will be overridden to be action.
 
 The ButtonGroup accessibility implementation depends on the selection mode.
 
-### Default (mutually exclusive selection)
+### selectionMode: "single"
 
-By default, Button selection is mutually exclusive, and ButtonGroup implements the [RadioGroup design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#radiobutton).
+When Button selection is mutually exclusive, and ButtonGroup implements the [RadioGroup design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#radiobutton).
+
+Note that in v2, this is the default behavior.
 
 ```jsx
-<ButtonGroup aria-label="Text Alignment">
+<ButtonGroup
+  aria-label="Text Alignment"
+  selectionMode="single">
   <Button
     value="TextAlignLeft"
     aria-label="Left"
@@ -68,12 +72,16 @@ Buttons with the `disabled` boolean prop should be skipped by ButtonGroup focus 
 - The `radiogroup` element has a visible label referenced by `aria-labelledby` or has a label specified with `aria-label`.
 - If elements providing additional information about either the radio group or each radio button are present, those elements are referenced by the `radiogroup` element or `radio` elements with the `aria-describedby` property.
 
-### Multiple Selection
+### selectionMode: "multiple"
 
-When multiple selection is set using the `multiple` prop, the ButtonGroup behaves as a group of checkboxes.
+When multiple selection is set using the `selectionMode` of `multiple`, the ButtonGroup behaves as a group of checkboxes.
+
+Note that v2, multiple selection is indicated using the boolean prop `multiple`.
 
 ```jsx
-<ButtonGroup aria-label="Text Styling" multiple>
+<ButtonGroup
+  aria-label="Text Styling"
+  selectionMode="multiple">
   <Button
     value="Italic"
     aria-label="Italic"
@@ -118,16 +126,16 @@ Buttons with the `disabled` boolean prop should be skipped by ButtonGroup focus 
 - The `toolbar` element has a visible label referenced by `aria-labelledby` or has a label specified with `aria-label`.
 - If elements providing additional information about either the toolbar or each checkbox button are present, those elements are referenced by the `toolbar` element or `checkbox` elements with the `aria-describedby` property.
 
-### No Selection
+### selectionMode: "none"
 
-In React-Spectrum, the `readOnly` prop on a ButtonGroup indicates that the Buttons do not allow selection. Unlike a TextField, where `readOnly` means that the input does not accept user interaction to change the value, Buttons in a `readOnly` ButtonGroup are actionable unless explicitly disabled using the `disabled` prop.
+When no selection of Buttons is set using the `selectionMode` of `none`, ButtonGroup implements the [Toolbar design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#toolbar), and Buttons within the ButtonGroup should be actionable unless explicitly disabled using the `disabled` prop.
 
-When selection is not allowed, by using the `readOnly` prop, ButtonGroup implements the [Toolbar design pattern per WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-practices/#toolbar).
+Note that in v2, the selection mode when no item can be selected is indicated using the boolean prop `readOnly`.
 
 ```jsx
 <ButtonGroup
   aria-label="Tools"
-  readOnly>
+  selectionMode="none">
   <Button
     label="Brush"
     value="Brush"
@@ -178,7 +186,7 @@ By default, ButtonGroup uses a [roving tab index](https://www.w3.org/TR/wai-aria
 ```jsx
 <ButtonGroup
   aria-label="Tools"
-  readOnly
+  selectionMode="none"
   manageTabIndex={false}>
   <Button
     label="Brush"
@@ -196,6 +204,11 @@ By default, ButtonGroup uses a [roving tab index](https://www.w3.org/TR/wai-aria
 ```
 
 ## v2 Implementation details
+
+Single selection is the default selection mode.
+Multiple selection is indicated using the boolean prop `multiple`.
+No selection is indicated using the boolean prop `readOnly`.
+
 Keyboard navigation in `ButtonGroup` is provided by the `FocusManager` utility component with the following parameters:
 - `itemSelector` equal to `.spectrum-ButtonGroup-item:not([disabled]):not([aria-disabled])`.
 - `selectedItemSelector` equal to `.spectrum-ButtonGroup-item:not([disabled]):not([aria-disabled])[aria-checked=true].is-selected`.
