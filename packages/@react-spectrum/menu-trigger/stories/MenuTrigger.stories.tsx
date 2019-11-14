@@ -1,7 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {Menu} from '../';
-import {MenuTrigger} from '../';
+import {Menu, MenuTrigger} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
