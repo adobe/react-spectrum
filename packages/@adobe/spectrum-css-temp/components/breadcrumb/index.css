@@ -13,13 +13,20 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Breadcrumbs {
-  display: inline-flex;
+  display: flex;
   justify-content: start;
   list-style-type: none;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0%;
 
   margin: 0;
   padding: 0;
+
+  &.is-hidden {
+    visibility: hidden;
+  }
 }
 
 .spectrum-Breadcrumbs-itemSeparator {
@@ -34,6 +41,10 @@ governing permissions and limitations under the License.
   transform: scale(1);
 
   opacity: 1;
+
+  &.is-reversed {
+    transform: scale(-1);
+  }
 }
 
 .spectrum-Breadcrumbs-item {
@@ -46,6 +57,7 @@ governing permissions and limitations under the License.
 
   position: relative;
 
+  white-space: nowrap;
   font-size: var(--spectrum-breadcrumb-item-text-size);
   font-weight: var(--spectrum-breadcrumb-item-text-font-weight);
   line-height: var(--spectrum-breadcrumb-item-text-line-height);
@@ -59,7 +71,7 @@ governing permissions and limitations under the License.
   }
 
   > .spectrum-ActionButton {
-    margin-right: var(--spectrum-breadcrumb-button-gap);
+    margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
 }
 
@@ -74,7 +86,7 @@ governing permissions and limitations under the License.
   padding: 0 var(--spectrum-breadcrumb-item-padding-x);
   height: var(--spectrum-breadcrumb-list-height);
 
-  margin-right: var(--spectrum-breadcrumb-item-margin-right);
+  margin-inline-end: var(--spectrum-breadcrumb-item-margin-right);
 
   border-radius: var(--spectrum-breadcrumb-item-border-radius);
 
@@ -98,7 +110,7 @@ governing permissions and limitations under the License.
 .spectrum-Breadcrumbs-itemLink:focus-ring:before {
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
 
   box-sizing: border-box;
   display: block;
@@ -113,6 +125,10 @@ governing permissions and limitations under the License.
   pointer-events: none;
 }
 
+.spectrum-Breadcrumbs-dropdown {
+  position: absolute;
+}
+
 .spectrum-Breadcrumbs--compact {
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-compact-item-text-size);
@@ -120,6 +136,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Breadcrumbs--multiline {
+  flex-wrap: wrap;
+
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
     font-weight: var(--spectrum-breadcrumb-multiline-item-text-font-weight);
@@ -128,7 +146,7 @@ governing permissions and limitations under the License.
     &:last-of-type {
       height: auto;
 
-      width: 100%;
+      flex: 0 1 100%;
 
       margin-top: var(--spectrum-breadcrumb-multiline-title-margin-top);
 

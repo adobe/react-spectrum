@@ -3,7 +3,10 @@ import {DateRangePicker} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
+const BlockDecorator = storyFn => <div>{storyFn()}</div>;
+
 storiesOf('DateRangePicker', module)
+  .addDecorator(BlockDecorator)
   .addParameters({chromaticProvider: {locales: true}, chromatic: {viewports: [350]}})
   .add(
     'default',
