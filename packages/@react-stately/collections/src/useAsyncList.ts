@@ -5,36 +5,40 @@ export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T>
   const {load, loadMore, sort, defaultSortDescriptor} = options;
 
   let [state, setState] = useState({
+    error: null,
     isLoading: true,
     items: [] as Iterable<T>,
     sortDescriptor: defaultSortDescriptor || null,
-    callbackFn: load
+    fetchFunction: load
   });
 
   const updateState = useCallback(
     (newState) => setState(prevState => ({...prevState, ...newState})),
     []
   );
-  const fetchData = useCallback(async (fn: Function, additionalState?: object) => {
-    let response = await fn({...state});
-    updateState({isLoading: false, ...response, ...additionalState});
+  const fetchData = useCallback(async (fn) => {
+    try {
+      let response = await fn({...state});
+      updateState({isLoading: false, ...response});
+    } catch (e) {
+      updateState({isLoading: false, error: e});
+    }
   }, [state, updateState]);
 
   const onLoadMore = !loadMore ? null : (() => {
-    updateState({isLoading: true, callbackFn: loadMore});
+    updateState({isLoading: true, fetchFunction: loadMore});
   });
 
   const onSortChange = (desc: SortDescriptor) => {
-    updateState({isLoading: true, callbackFn: sort || load, sortDescriptor: desc});
+    updateState({isLoading: true, fetchFunction: sort || load, sortDescriptor: desc});
   };
 
-  let {callbackFn, ...otherState} = state;
+  let {fetchFunction, ...otherState} = state;
   useEffect(() => {
     if (state.isLoading) {
-      fetchData(callbackFn)
-        .catch(() => updateState({isLoading: false, items: []})); // how to handle errors?
+      fetchData(fetchFunction);
     }
-  }, [state.isLoading, callbackFn, fetchData, updateState]);
+  });
 
   return {
     ...otherState,

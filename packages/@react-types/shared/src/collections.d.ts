@@ -97,6 +97,7 @@ interface ListState<T> {
 interface AsyncListProps<T> {
   items: Iterable<T>,
   isLoading: boolean,
+  error?: Error,
   onLoadMore?: () => void,
   sortDescriptor?: SortDescriptor,
   onSortChange?: (desc: SortDescriptor) => void,
