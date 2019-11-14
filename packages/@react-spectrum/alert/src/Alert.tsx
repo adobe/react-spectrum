@@ -47,6 +47,7 @@ export function Alert(props: AlertProps) {
 
   return (
     <div
+      {...filterDOMProps(otherProps)}
       className={
         classNames(
           styles,
@@ -55,8 +56,7 @@ export function Alert(props: AlertProps) {
           className
         )
       }
-      role="alert"
-      {...filterDOMProps(otherProps)}>
+      role="alert">
       <Icon className={classNames(styles, 'spectrum-Alert-icon')} alt={alt} />
       <div className={classNames(styles, 'spectrum-Alert-header')}>{header}</div>
       <div className={classNames(styles, 'spectrum-Alert-content')}>{children}</div>

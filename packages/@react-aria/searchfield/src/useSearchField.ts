@@ -1,12 +1,11 @@
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
-import intlMessages from './intl/*.json';
+import intlMessages from '../intl/*.json';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
-  searchDivProps: AllHTMLAttributes<HTMLDivElement>,
   searchFieldProps: AllHTMLAttributes<HTMLInputElement>,
   clearButtonProps: any // TODO: Replace any with AriaButtonProps from useButton when buttons is added to react-types
 }
@@ -21,7 +20,8 @@ export function useSearchField(
     isDisabled,
     onSubmit = () => {},
     onClear,
-    role = 'search'
+    role = undefined,
+    type = 'search'
   } = props;
 
   let onKeyDown = (e) => {
@@ -53,14 +53,11 @@ export function useSearchField(
   };
 
   return {
-    searchDivProps: {
-      role
-    },
     searchFieldProps: {
-      role: 'searchbox',
+      role,
       value: state.value,
       onKeyDown: chain(props.onKeyDown, onKeyDown),
-      type: 'search'
+      type
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),

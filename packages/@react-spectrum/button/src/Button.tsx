@@ -13,7 +13,8 @@ export interface ButtonBase extends DOMProps, PressProps {
   elementType?: string | JSXElementConstructor<any>,
   icon?: ReactNode,
   children?: ReactNode,
-  href?: string
+  href?: string,
+  onKeyDown?: (e) => void
 }
 
 export interface ButtonProps extends ButtonBase {

@@ -1,4 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {LinkProps} from '@react-types/link';
@@ -22,29 +22,25 @@ export const Link = React.forwardRef((props: SpectrumLinkProps, ref: RefObject<H
 
   let {linkProps} = useLink(props);
 
-  let element;
-  if (typeof children === 'string') {
-    element = <span>{children}</span>;
-  } else {
-    element = React.Children.only(children);
-  }
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      {React.cloneElement(element, {
-        ...filterDOMProps(otherProps),
-        ...linkProps,
-        ref,
-        className: classNames(
-          styles,
-          'spectrum-Link',
-          {
-            'spectrum-Link--quiet': isQuiet,
-            [`spectrum-Link--${variant}`]: variant
-          },
-          className
-        )
-      })}
+      {React.cloneElement(
+        getWrappedElement(children),
+        {
+          ...filterDOMProps(otherProps),
+          ...linkProps,
+          ref,
+          className: classNames(
+            styles,
+            'spectrum-Link',
+            {
+              'spectrum-Link--quiet': isQuiet,
+              [`spectrum-Link--${variant}`]: variant
+            },
+            className
+          )
+        }
+      )}
     </FocusRing>
   );
 });

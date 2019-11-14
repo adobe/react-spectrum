@@ -1,4 +1,4 @@
-import intlMessages from '../src/intl/*.json';
+import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
@@ -30,26 +30,20 @@ describe('useSearchField hook', () => {
     onClear.mockClear();
   });
 
-  describe('should return searchDivProps', () => {
-    it('with a default search role', () => {
-      let {searchDivProps} = renderSearchHook({});
-      expect(searchDivProps.role).toBe('search');
-    });
-
-    it('with a user specified role if provided', () => {
-      let role = 'button';
-      let {searchDivProps} = renderSearchHook({role});
-      expect(searchDivProps.role).toBe(role);
-    });
-  });
-  
   describe('should return searchFieldProps', () => {
     it('with base props and value equal to state.value', () => {
       let {searchFieldProps} = renderSearchHook({});
-      expect(searchFieldProps.role).toBe('searchbox');
       expect(searchFieldProps.type).toBe('search');
       expect(searchFieldProps.value).toBe(state.value);
       expect(typeof searchFieldProps.onKeyDown).toBe('function');
+    });
+
+    it('with a user specified role if provided', () => {
+      let role = 'combobox';
+      let type = 'text';
+      let {searchFieldProps} = renderSearchHook({role, type});
+      expect(searchFieldProps.role).toBe(role);
+      expect(searchFieldProps.type).toBe(type);
     });
 
     describe('with specific onKeyDown behavior', () => {
@@ -114,7 +108,7 @@ describe('useSearchField hook', () => {
       });
     });
   });
-  
+
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
@@ -122,7 +116,7 @@ describe('useSearchField hook', () => {
         light: themeLight,
         medium: scaleMedium
       };
-      
+
       let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);
