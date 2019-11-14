@@ -3,7 +3,7 @@ import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/button/test/utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
@@ -14,7 +14,7 @@ describe('Calendar', () => {
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
-  
+
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
   });
@@ -32,7 +32,7 @@ describe('Calendar', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(30);
-  
+
       let selectedDate = getByLabelText('Selected', {exact: false});
       expect(selectedDate).toHaveAttribute('role', 'gridcell');
       expect(selectedDate).toHaveAttribute('aria-selected', 'true');
@@ -51,7 +51,7 @@ describe('Calendar', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(30);
-  
+
       let selectedDate = getByLabelText('Selected', {exact: false});
       expect(selectedDate).toHaveAttribute('role', 'gridcell');
       expect(selectedDate).toHaveAttribute('aria-selected', 'true');
@@ -83,7 +83,7 @@ describe('Calendar', () => {
     `('$Name selects a date on keyDown Enter/Space (uncontrolled)', ({Calendar}) => {
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar 
+        <Calendar
           defaultValue={new Date(2019, 5, 5)}
           autoFocus
           onChange={onChange} />
@@ -115,7 +115,7 @@ describe('Calendar', () => {
     `('$Name selects a date on keyDown Enter/Space (controlled)', ({Calendar}) => {
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar 
+        <Calendar
           value={new Date(2019, 5, 5)}
           autoFocus
           onChange={onChange} />
@@ -151,7 +151,7 @@ describe('Calendar', () => {
     `('$Name does not select a date on keyDown Enter/Space if isReadOnly', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar 
+        <Calendar
           defaultValue={new Date(2019, 5, 5)}
           autoFocus
           onChange={onChange}
@@ -185,7 +185,7 @@ describe('Calendar', () => {
     `('$Name selects a date on click (uncontrolled)', ({Calendar}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar 
+        <Calendar
           defaultValue={new Date(2019, 5, 5)}
           onChange={onChange} />
       );
@@ -206,7 +206,7 @@ describe('Calendar', () => {
     `('$Name selects a date on click (controlled)', ({Calendar}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar 
+        <Calendar
           value={new Date(2019, 5, 5)}
           onChange={onChange} />
       );
@@ -227,7 +227,7 @@ describe('Calendar', () => {
     `('$Name does not select a date on click if isDisabled', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar 
+        <Calendar
           value={new Date(2019, 5, 5)}
           onChange={onChange}
           {...props} />
@@ -252,7 +252,7 @@ describe('Calendar', () => {
     `('$Name does not select a date on click if isReadOnly', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar 
+        <Calendar
           value={new Date(2019, 5, 5)}
           onChange={onChange}
           {...props} />
@@ -273,7 +273,7 @@ describe('Calendar', () => {
     `('$Name does not select a date on click if outside the valid date range', ({Calendar, props}) => {
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar 
+        <Calendar
           onChange={onChange}
           {...props} />
       );
@@ -308,7 +308,7 @@ describe('Calendar', () => {
   describe('announcing', () => {
     it('announces when the current month changes', () => {
       let {getByLabelText} = render(<Calendar defaultValue={new Date(2019, 5, 5)} />);
-  
+
       let nextButton = getByLabelText('Next');
       triggerPress(nextButton);
 
@@ -318,7 +318,7 @@ describe('Calendar', () => {
 
     it('announces when the selected date changes', () => {
       let {getByText} = render(<Calendar defaultValue={new Date(2019, 5, 5)} />);
-  
+
       let newDate = getByText('17');
       triggerPress(newDate);
 
@@ -332,7 +332,7 @@ describe('Calendar', () => {
       let grid = getByRole('grid');
       let onBlur = jest.fn();
       let onFocus = jest.fn();
-      
+
       grid.addEventListener('blur', onBlur);
       grid.addEventListener('focus', onFocus);
 

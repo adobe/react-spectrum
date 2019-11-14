@@ -24,9 +24,10 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
   let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   ref = ref || useRef();
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
-  
+
   return (
     <div
+      {...filterDOMProps(otherProps)}
       ref={ref}
       className={
         classNames(
@@ -47,7 +48,6 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
       }
       role="presentation"
       data-testid="popover"
-      {...filterDOMProps(otherProps)}
       {...overlayProps}>
       {children}
       {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}

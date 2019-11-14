@@ -15,6 +15,7 @@ describe('useBreadcrumbItem', function () {
     let {breadcrumbItemProps} = renderLinkHook({});
     expect(breadcrumbItemProps.id).toBeDefined();
     expect(breadcrumbItemProps.tabIndex).toBe(0);
+    expect(breadcrumbItemProps['aria-disabled']).toBeUndefined();
     expect(typeof breadcrumbItemProps.onKeyDown).toBe('function');
     expect(typeof breadcrumbItemProps.onKeyUp).toBe('function');
   });
@@ -22,9 +23,16 @@ describe('useBreadcrumbItem', function () {
   it('handles isCurrent', function () {
     let {breadcrumbItemProps} = renderLinkHook({isCurrent: true});
     expect(breadcrumbItemProps.id).toBeDefined();
-    expect(breadcrumbItemProps.tabIndex).toBeUndefined();
+    expect(breadcrumbItemProps.tabIndex).toBe(-1);
     expect(breadcrumbItemProps['aria-current']).toBe('page');
     expect(breadcrumbItemProps.onKeyDown).toBeUndefined();
     expect(breadcrumbItemProps.onKeyUp).toBeUndefined();
+  });
+
+  it('handles isDisabled', function () {
+    let {breadcrumbItemProps} = renderLinkHook({isDisabled: true});
+    expect(breadcrumbItemProps.id).toBeDefined();
+    expect(breadcrumbItemProps.tabIndex).toBe(-1);
+    expect(breadcrumbItemProps['aria-disabled']).toBe(true);
   });
 });
