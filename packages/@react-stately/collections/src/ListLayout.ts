@@ -95,7 +95,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo('item', key);
-    let pageY = Math.max(0, layoutInfo.rect.y - this.collectionManager.visibleRect.height);
+    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.collectionManager.visibleRect.height);
     while (layoutInfo.rect.y > pageY && layoutInfo) {
       let keyAbove = this.getKeyAbove(layoutInfo.key);
       layoutInfo = this.getLayoutInfo('item', keyAbove);
@@ -110,7 +110,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageBelow(key: Key) {
     let layoutInfo = this.getLayoutInfo('item', key);
-    let pageY = Math.min(this.collectionManager.contentSize.height, layoutInfo.rect.y + this.collectionManager.visibleRect.height);
+    let pageY = Math.min(this.collectionManager.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.collectionManager.visibleRect.height);
     while (layoutInfo && layoutInfo.rect.y < pageY) {
       let keyBelow = this.getKeyBelow(layoutInfo.key);
       layoutInfo = this.getLayoutInfo('item', keyBelow);
