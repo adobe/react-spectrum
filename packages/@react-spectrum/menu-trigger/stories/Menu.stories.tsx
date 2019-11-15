@@ -47,7 +47,7 @@ storiesOf('Menu', module)
   .add(
     'Default Menu',
     () => (
-      <V3Menu items={flatMenu} itemKey="name">
+      <V3Menu aria-labelledby="me" aria-label="hi" items={flatMenu} itemKey="name">
         {item => <Item childItems={item.children}>{item.name}</Item>}
       </V3Menu>
     )

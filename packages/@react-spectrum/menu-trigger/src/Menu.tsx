@@ -12,6 +12,7 @@ import {FocusRing, FocusScope} from '@react-aria/focus';
 import {useTreeState} from '@react-stately/tree';
 import {Item, ListLayout, Section} from '@react-stately/collections';
 import {CollectionView} from '@react-aria/collections';
+import {useMenu} from '@react-aria/menu-trigger';
 
 // Testing submenus
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -66,8 +67,10 @@ export function Menu(props: MenuProps) {
 // For now, export a v3 version of Menu just so I can gradually replace the mock Menu component above
 export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   // Do we want it to look like v2 Menu or spectrum-css example? v2 Menu has the sectionHeading class on the <li>
-  // wheras spectrum-css has it on the <span>
+  // whereas spectrum-css has it on the <span>
   
+  // Given the typing of the Menu interface, are users meant to be able to pass in other dom props? Probably yeah?
+
   
   // grab context from MenuTrigger its got things like id, aria stuff etc, spread it on the top
 
@@ -95,15 +98,7 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
     onSelectToggle
   } = useTreeState(completeProps);
 
-  let {
-    id,
-    role = 'menu',
-    'aria-labelledby': labelledBy
-  } = completeProps
-
-  // TODO: put all of the above and the aria-orientation below into an react-aria hook (useMenu)
-  // id should be generated if not provided
-  // should accept a user defined aria-label
+  let {menuProps} = useMenu(completeProps); 
 
   let layout = useMemo(() => 
     new ListLayout({
@@ -115,10 +110,7 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
     <Popover isOpen hideArrow> 
       <FocusScope autoFocus>
         <CollectionView
-          id={id}
-          role={role}
-          aria-labelledby={labelledBy}
-          aria-orientation="vertical"
+          {...menuProps}
           className={classNames(styles, 'spectrum-Menu')} // I had to add a static height and width to menu css to use this style, doesn't seem right. This is because the wrapping divs do some kind of calc and hard set a width
           layout={layout}
           collection={tree}>
@@ -161,7 +153,7 @@ export function MenuItem({item, onSelectToggle, onToggle}) {
   // console.log('item in menuItem', item);
   // Missing checkmark selection icon at the moment, I'll put it in later
   // Missing aria-disabled, need something to tell me that it is disabled first
-
+  // Will need additional aria-owns and stuff when submenus are finalized
   let renderedItem = (
     <li
       role="menuitem"
@@ -246,8 +238,10 @@ interface MenuDividerProps {
 
 // For now export just to see what it looks like, remove after
 export function MenuDivider() {
+  // Will need logic to change aria-orientation (if we support horizonal menus)
   return (
     <li 
+      aria-orientation="horizontal"
       className={classNames(
         styles,
         'spectrum-Menu-divider'
