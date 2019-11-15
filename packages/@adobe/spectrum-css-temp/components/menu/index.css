@@ -43,6 +43,9 @@ governing permissions and limitations under the License.
 
   overflow: auto;
 
+  height: 500px;
+  width: 200px;
+
   > .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
     margin-top: var(--spectrum-menu-margin-x);
