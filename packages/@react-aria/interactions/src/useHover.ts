@@ -4,7 +4,7 @@ import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useSt
 import {mergeProps} from '@react-aria/utils';
 
 export interface HoverEvent {
-  type: 'hoverstart' | 'hoverend',
+  type: 'hoverstart' | 'hoverend' | 'hover',
   pointerType: 'mouse' | 'touch',
   target: HTMLElement
 }
@@ -14,8 +14,7 @@ export interface HoverProps {
   isDisabled?: boolean,
   onHover?: (e: HoverEvent) => void,
   onHoverStart?: (e: HoverEvent) => void,
-  onHoverEnd?: (e: HoverEvent) => void,
-  onHoverChange?: (isHovering: boolean) => void
+  onHoverEnd?: (e: HoverEvent) => void
 }
 
 export interface HoverHookProps extends HoverProps, DOMProps {
@@ -58,7 +57,6 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
 export function useHover(props: HoverHookProps): HoverResult {
   let {
     onHover,
-    onHoverChange,
     onHoverStart,
     onHoverEnd,
     isDisabled,
@@ -70,7 +68,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let ref = useRef<HoverState>({
     isHovering: false,
-    ignoreEmulatedMouseEvents: false,
+    ignoreEmulatedMouseEvents: false, // if this is true then ignore mouse events
     target: null
   });
 
@@ -81,45 +79,49 @@ export function useHover(props: HoverHookProps): HoverResult {
         return;
       }
 
-      if(onHoverStart) {
-        console.log('...available...')
-      } else {
-        console.log('not available')
-      }
-
-      if (onHover) {
-        onHover({
+      if (onHoverStart) {
+        onHoverStart({
           type: 'hoverstart',
           target,
           pointerType
         });
       }
 
-      if (onHoverChange) {
-        onHoverChange(true);
+      if (onHover) {
+        onHover({
+          type: 'hover',
+          target,
+          pointerType
+        });
       }
 
       setHover(true);
     };
 
-    let triggerHoverEnd = (target, pointerType) => {
+    let triggerHoverEnd = (target, pointerType, didHover=true) => {
       if (isDisabled) {
         return;
       }
 
-      if (onHover) {
-        onHover({
+      if (onHoverEnd) {
+        onHoverEnd({
           type: 'hoverend',
           target,
           pointerType
         });
       }
 
-      if (onHoverChange) {
-        onHoverChange(false);
+      setHover(false);
+
+      if (onHover && didHover) {
+        onHover({
+          type: 'hover',
+          target,
+          pointerType
+        });
       }
 
-      setHover(false);
+
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -157,7 +159,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     }
 
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, onHoverChange, isDisabled]);
+  }, [onHover, onHoverStart, onHoverEnd, isDisabled]);
 
   return {
     isHovering: isHoveringProp || isHovering,

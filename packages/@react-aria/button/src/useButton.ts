@@ -32,7 +32,6 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     onPressEnd,
     onPressChange,
     onHover,
-    onHoverChange,
     onHoverStart,
     onHoverEnd,
     onClick: deprecatedOnClick,
@@ -68,13 +67,12 @@ export function useButton(props: AriaButtonProps): ButtonAria {
   let {hoverProps, isHovering} = useHover({
     onHoverStart,
     onHoverEnd,
-    onHoverChange,
     onHover,
+    isDisabled,
     ref
   });
 
   let interactionProps = mergeProps(pressProps, hoverProps);
-
 
   return {
     isPressed,

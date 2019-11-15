@@ -1,3 +1,4 @@
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -69,7 +70,15 @@ function render(content, props = {}) {
 function renderWithTrigger(content, props = {}) {
   return (
     <TooltipTrigger {...props}>
-      <ActionButton>Tooltip Trigger</ActionButton>
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}>
+          Tooltip Trigger
+      </ActionButton>
       <Tooltip>
         {content}
       </Tooltip>

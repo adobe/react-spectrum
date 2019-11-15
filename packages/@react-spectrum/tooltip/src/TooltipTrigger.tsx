@@ -24,21 +24,16 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     onOpenChange
   } = props;
 
-
-  ///////
-
-
-  // Tooltip should add aria-describedby attribute to trigger element.    -> keep this comment 
-  // triggerProps['aria-describedby'] = props.id;                         -> look for an example of where to put this
-
-  /////
-
   let [trigger, content] = React.Children.toArray(children);
 
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
   let onInteraction = () => {
     setOpen(!open);
+  };
+
+  let onClose = () => {
+    setOpen(false);
   };
 
   let containerRef = useRef<HTMLDivElement>();
@@ -58,6 +53,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerPropsWithRef = {
     ref: triggerRef
   };
+
+  console.log("Tooltip: ", content)
 
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>

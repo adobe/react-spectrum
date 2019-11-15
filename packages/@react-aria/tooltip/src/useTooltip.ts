@@ -12,11 +12,14 @@ interface TooltipAria {
 
 export function useTooltip(props: TooltipProps): TooltipAria {
   let tooltipId = useId(props.id);
+
   let {
     role = 'tooltip'
   } = props;
+
   return {
     tooltipProps: {
+      'aria-describedby': tooltipId,
       role,
       id: tooltipId
     }
