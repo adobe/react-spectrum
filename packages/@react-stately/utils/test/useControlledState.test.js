@@ -1,7 +1,13 @@
 import {act, renderHook} from 'react-hooks-testing-library';
+import {cleanup, render} from '@testing-library/react';
+import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
+import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
+
+  afterEach(() => cleanup());
+
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
@@ -46,6 +52,28 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+  });
+
+  it('does not trigger too many renders', () => {
+    let renderSpy = jest.fn();
+
+    let TestComponent = (props) => {
+      let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
+      useEffect(() => renderSpy());
+      return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
+    };
+
+    let TestComponentWrapper = (props) => {
+      let [state, setState] = useState(props.defaultValue);
+      return <TestComponent onChange={(value) => setState(value)} value={state} />;
+    };
+
+    let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
+    let button = getByRole('button');
+    getByTestId('5');
+    userEvent.click(button);
+    getByTestId('6');
+    expect(renderSpy.mock.calls.length).toBe(1);
   });
 
   it('can handle controlled setValue behavior', () => {
