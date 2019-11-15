@@ -77,7 +77,8 @@ describe('useAsyncList', () => {
   it('will call sort callback function when onSortChange is called', async () => {
     let {result, waitForNextUpdate} = renderHook(() => useAsyncList({
       load: loadSpy,
-      sort: sortSpy
+      sort: sortSpy,
+      defaultSortDescriptor: {direction: 'ASC'}
     }));
     await act(async () => {
       await waitForNextUpdate();
@@ -90,5 +91,23 @@ describe('useAsyncList', () => {
     });
     expect(sortSpy).toHaveBeenCalled();
     expect(loadSpy).not.toHaveBeenCalled();
+    expect(result.current.sortDescriptor).toStrictEqual({});
+  });
+
+  it('will return error in case fetch throws an error', async () => {
+    let loadSpyThatThrows = jest.fn().mockRejectedValue(new Error('error'));
+    let {result, waitForNextUpdate} = renderHook(() => useAsyncList({
+      load: loadSpyThatThrows
+    }));
+
+    await act(async () => {
+      await waitForNextUpdate();
+    });
+
+    expect(loadSpyThatThrows).toHaveBeenCalled();
+    expect(result.current.error).toBeDefined();
+    expect(result.current.error.message).toBe('error');
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items.length).toBe(0);
   });
 });
