@@ -33,7 +33,6 @@ export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelectio
   return (
     <CollectionView
       {...listProps}
-      tabIndex={-1}
       focusedKey={state.selectionManager.focusedKey}
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout}

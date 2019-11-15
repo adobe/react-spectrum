@@ -17,7 +17,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   get focusedKey() {
-    return this.state.focusedKey;
+    return this.state.focusedKey || this.collection.getFirstKey();
   }
 
   setFocusedKey(key: Key) {

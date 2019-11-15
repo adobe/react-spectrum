@@ -83,8 +83,12 @@ storiesOf('Tree', module)
   .add(
     'Long list',
     () => (
-      <Tree items={longList} itemKey="name">
-        {item => <Item>{item.name}</Item>}
-      </Tree>
+      <div>
+        <input />
+        <Tree items={longList} itemKey="name">
+          {item => <Item>{item.name}</Item>}
+        </Tree>
+        <input />
+      </div>
     )
   );

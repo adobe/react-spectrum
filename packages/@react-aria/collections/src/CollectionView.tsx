@@ -1,6 +1,6 @@
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
 import {DOMProps} from '@react-types/shared';
-import React, {CSSProperties, Key, useCallback, useEffect, useRef} from 'react';
+import React, {CSSProperties, Key, useCallback, useEffect, useRef, FocusEvent} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
@@ -43,26 +43,38 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
   }, [focusedKey, collectionManager]);
 
   let isFocusWithin = useRef(false);
-  let onFocus = useCallback(() => isFocusWithin.current = true, []);
-  let onBlur = useCallback(() => isFocusWithin.current = false, []);
+  let onFocus = useCallback((e: FocusEvent) => {
+    // If the focused item is scrolled out of view and is not in the DOM, the CollectionView
+    // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
+    // We only want to do this if the CollectionView itself is receiving focus, not a child
+    // element, and we aren't moving focus to the CollectionView from within (see below).
+    if (e.target === ref.current && !isFocusWithin.current) {
+      collectionManager.scrollToItem(focusedKey);
+    }
+
+    isFocusWithin.current = e.target !== ref.current;
+  }, [focusedKey]);
+
+  let onBlur = useCallback((e: FocusEvent) => {
+    isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
+  }, []);
 
   // When the focused item is scrolled out of view and is removed from the DOM, 
   // move focus to the collection view as a whole if focus was within before.
+  let focusedView = collectionManager.getItemView(focusedKey);
   useEffect(() => {
-    if (focusedKey) {
-      let focusedView = collectionManager.getItemView(focusedKey);
-      if (!focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-        ref.current.focus();
-      }
+    if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
+      ref.current.focus();
     }
   });
   
   return (
     <ScrollView 
       {...otherProps}
+      tabIndex={focusedView ? undefined : 0}
       ref={ref}
-      onFocus={onFocus}
-      onBlur={onBlur}
+      onFocusCapture={onFocus}
+      onBlurCapture={onBlur}
       innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}
