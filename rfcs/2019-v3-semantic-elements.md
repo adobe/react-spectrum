@@ -31,6 +31,62 @@ Create elements that represent real DOM nodes that are used in content.
 Heading to represent `<h1>`..., Section for `<section>`, Avatar for a type of `<img>`, Preview for a different type of `<img>`.
 These components all support reading from the context object where they will pick up the className they should apply.
 
+We can consider Semantic Elements to be a subset of [Slots]('./2019-v3-slots.md') because there may be many elements that are semantically descriptions. Slots gives us that flexibility.
+
+Consider these examples
+
+Card
+```jsx
+<Card>
+  <CardHeader />
+  <CardDescription />
+  <CardFooter />
+</Card>
+```
+
+Dialog
+```jsx
+<Dialog>
+  <DialogHeader />
+  <DialogDescription />
+  <DialogFooter />
+</Dialog>
+```
+
+This is the kind of component pattern we have used before. Instead, let's reuse our components and have something more like this:
+
+Card
+```jsx
+<Card>
+  <Header />
+  <Description />
+  <Footer />
+</Card>
+```
+
+Dialog
+```jsx
+<Dialog>
+  <Header />
+  <Description />
+  <Footer />
+</Dialog>
+```
+
+We also want to enable arbitrary DOM structure and still maintain the right styles on semantic elements.
+In this example, Card would provide the classes on the context and even if they are nested, the class will still get applied.
+
+```jsx
+<Card>
+  <div>
+    <Header>Title</Header>
+    <Button>X</Button>
+  </div>
+  <Description>Description goes here</Description>
+</Card>
+```
+
+
 ## Design Example
 
 Design should be able to give us two component designs that have clearly semantically similar children.
@@ -45,6 +101,7 @@ The headings have different font sizes, but the rest are the same.
 
 For the CSS, we might get something like this.
 ```css
+/* @adobe/spectrum-css/components/card/vars.css */
 .spectrum-Card {
   border: 1px solid lightgrey;
   border-radius: 4px;
@@ -55,6 +112,7 @@ For the CSS, we might get something like this.
     font-size: 14px;
 }
 -------------------------------------
+/* @adobe/spectrum-css/components/dialog/vars.css */
 .spectrum-Dialog {
   border: 1px solid lightgrey;
   border-radius: 4px;
@@ -65,7 +123,24 @@ For the CSS, we might get something like this.
     font-size: 18px;
 }
 ```
-There would be some limitations, we'd have to accept the general form of descendent, we might not be able to guarantee direct child or any other DOM structures.
+There would be some limitations, we'd have to accept the general form of descendent, we might not be able to guarantee direct child or any other DOM structure pattern matching.
+
+```jsx
+import styles from '@adobe/spectrum-css/components/card/vars.css';
+export const Card = (props) => {
+
+  return (
+    <div className={classNames(styles, 'spectrum-Card')}>
+      <SlotContext.Provider
+        value={{
+          title: classNames(styles, 'spectrum-Card-title')
+        }}>
+        {props.children}
+      </SlotContext.Provider>
+    </div>
+  );
+};
+```
 
 ## React Example
 
@@ -74,11 +149,11 @@ We could have Semantic Elements clear out the context after they've consumed it,
 
 ```jsx
 export const Heading = (props) => {
-  let { heading } = useItemProvider();
+  let { heading } = useSlotProvider();
 
   return (
     <h1 className={classNames(styles, heading, props.className)}>
-      <ItemContext.Provider
+      <SlotContext.Provider
         value={{
           avatar: null,
           heading: null,
@@ -88,7 +163,7 @@ export const Heading = (props) => {
           item: null
         }}>
         {props.children}
-      </ItemContext.Provider>
+      </SlotContext.Provider>
     </h1>
   );
 };
@@ -103,36 +178,21 @@ export const Card = (props) => {
 
   return (
     <div className={classNames(styles, 'spectrum-Card')}>
-      <ItemContext.Provider
+      <SlotContext.Provider
         value={{
           heading: classNames(styles, 'heading'),
           description: classNames(styles, 'description')
         }}>
         {props.children}
-      </ItemContext.Provider>
+      </SlotContext.Provider>
     </div>
   );
 };
 ```
 
-## End user example
-
-A user could then concievably use the Semantic Elements as follows.
-Card would provide the classes on the context and even if they are nested like this, the class will still get applied.
-
-```jsx
-<Card>
-  <div>
-    <Heading>Title</Heading>
-    <Button>X</Button>
-  </div>
-  <Description>Description goes here</Description>
-</Card>
-```
 
 
 ## What will this take
 
  - Buy in from Spectrum CSS
  - Buy in from Design
- - 

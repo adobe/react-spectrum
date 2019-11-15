@@ -8,7 +8,22 @@
 
 Sometimes we need to make a container component that can have multiple complex layouts to solve a variety of use cases.
 By default we want it to be easy to do the “right thing”.
-Children to a component should be laid out in the right places regardless of the components used.
+Children to a component should be laid out in the right places regardless of the components used or what order they appear in the DOMs.
+
+For instance:
+```jsx
+<Card>
+  <Image />
+  <Avatar />
+</Card>
+```
+should produce the same design as
+```jsx
+<Card>
+  <Avatar />
+  <Image />
+</Card>
+```
 
 ## Motivation
 
@@ -19,7 +34,7 @@ Some approaches that have been tried.
         - hard to document, difficult for people to remember, can’t evolve with design easily
    - components expect a specific set of children and some method to identify them
         - in React it’s hard to identify children, sometimes there can be HoC’s in-between the container and any given child
-   - components expose props for different slots where they will render, there are limited to no children (Web components)
+   - components expose props for different slots where they will render, they are limited to no children (Web components)
         - isn’t all that flexible for overriding, requires us to update when design updates
    - helper layout components are used (Box - Chakra, Adobe Flex)
         - dom structure is locked in, so if there’s a different layout for smaller screens, then a new dom structure is needed
@@ -46,6 +61,7 @@ For the CSS, we might get something like this.
   background: white;
 }
 
+/* example grid css https://css-tricks.com/snippets/css/complete-guide-grid/ */
 .container {
   display: grid;
   grid-template-columns: 14px auto 1fr 1fr 14px;
@@ -110,6 +126,36 @@ export const Card = (props) => {
   return (
     <div className={classNames(styles, 'spectrum-Card')}>
       <Grid slots={slots}>
+        <Image slot="preview" />
+        <Avatar slot="avatar" />
+        <Flex slot="title">
+          <Title>Title</Title>
+          <Button>More</Button>
+        </Flex>
+        <Description slot="description">Description</Description>
+        <Footer slot="footer">Final remarks</Footer>
+      </Grid>
+    </div>
+  );
+};
+```
+
+Or to make a more general container.
+```jsx
+export const Card = (props) => {
+  let defaults = {slots: {
+      container: classNames(styles, 'container'),
+      preview: classNames(styles, 'preview'),
+      avatar: classNames(styles, 'avatar'),
+      title: classNames(styles, 'title'),
+      footer: classNames(styles, 'footer'),
+      divider: classNames(styles, 'divider')
+    }};
+  let {slots} = {...defaults, ...props};
+
+  return (
+    <div className={classNames(styles, 'spectrum-Card')}>
+      <Grid slots={slots}>
         {props.children}
       </Grid>
     </div>
@@ -123,7 +169,7 @@ An end user could just use our Cards, but they may also want to specify their ow
 Components that implement grid layouts should expose their slots to override the grid.
 
 I've included a special Slot component, but it's not strictly necessary depending on the implementation. What is necessary is that all slots are direct descendants in the DOM of the container displaying grid.
-Items not children of the grid do not participate in grid layout. [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#Nesting_grids)
+Items that aren't children of the grid do not participate in grid layout. [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#Nesting_grids)
 
 ```jsx
 import styles from './CustomCardStyles.css';
@@ -145,14 +191,17 @@ import styles from './CustomCardStyles.css';
 
 These next examples show how easily we can achieve vastly different layouts without changing anything in React Spectrum or in products.
 Only the things that need changing have been included.
+
 It's all CSS.
 
+Both of these examples use the same JSX from the [previous example](#end-user-example)
 
 #### Horizontal layout
 Design
 ![Image of Redlined grid](images/slots/horizontal-card-layout.png)
 
 Spectrum CSS
+
 ```css
 .container {
   display: grid;
@@ -228,6 +277,19 @@ Custom CSS
   grid-area: footer;
 }
 ```
+
+## What components need to implement Slot
+
+We have a couple options here:
+ - All of our Components could implement this
+ - We could build a <Box> like component that takes a `renderAs` prop and the name of the dom element it needs to render, this `Box` component would replace the top level node of every Component we create.
+ 
+## What new components are needed
+ - Grid (name?)
+ 
+## What components should support the slot prop?
+ - every component
+ - semantic elements should have a default slot name
 
 ## What will this take
 
