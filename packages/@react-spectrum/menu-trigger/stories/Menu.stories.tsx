@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 // import {Button} from '@react-spectrum/button';
-import {Item, Menu, MenuDivider, MenuHeading, MenuItem, Section, V3Menu, V2MenuDivider, V2MenuHeading, V2MenuItem} from '../';
+import {Item, Menu, Section, V3Menu, V2MenuDivider, V2MenuHeading, V2MenuItem} from '../';
 // import {MenuTrigger} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -20,7 +20,9 @@ let withSection = [
   {name: 'People', children: [
     {name: 'Danni'},
     {name: 'Devon'},
-    {name: 'Ross'}
+    {name: 'Ross', children: [
+      {name: 'Tests'}
+    ]}
   ]}
 ];
 

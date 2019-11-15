@@ -81,7 +81,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     hideArrow: true,
     onClose
   };
-
+   
   return (
     <Fragment>
       <PressResponder {...triggerProps}>

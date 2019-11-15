@@ -13,6 +13,10 @@ import {useTreeState} from '@react-stately/tree';
 import {Item, ListLayout, Section} from '@react-stately/collections';
 import {CollectionView} from '@react-aria/collections';
 
+// Testing submenus
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
+import {MenuTrigger} from './';
+import {Pressable} from '@react-aria/interactions';
 
 export {Item, Section};
 
@@ -68,6 +72,7 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
   // grab context from MenuTrigger its got things like id, aria stuff etc, spread it on the top
 
   // Is Menu going to be an internal component? If not, do I need to move Popover back into here and adjust the MenuTrigger context obj to contain the popover props as well
+  // Think about how submenu will need to render
   
   // Ask about SelectionGroup stuff that is in the Dropbox, is that gonna be something here?
   // If it is gona be a thing, probably add it to CollectionBuilder and figure out what it will look like
@@ -126,7 +131,7 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
                 </Fragment>
               )
             }
-            console.log('item', item);
+            // console.log('item', item);
             return (
               <MenuItem 
                 item={item}
@@ -146,37 +151,69 @@ interface MenuItemProps extends DOMProps {
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-export function MenuItem({item, onSelectToggle}) {
+export function MenuItem({item, onSelectToggle, onToggle}) {
   let {
     rendered,
-    isSelected
+    isSelected,
+    hasChildNodes,
+    value
   } = item;
-
+  // console.log('item in menuItem', item);
   // Missing checkmark selection icon at the moment, I'll put it in later
   // Missing aria-disabled, need something to tell me that it is disabled first
+
+  let renderedItem = (
+    <li
+      role="menuitem"
+      tabIndex="0" // will probably need disabled logic
+      onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onSelectToggle(item);
+      }} // Looks like if you click too fast it stops being responsive and falls out of sync
+      // Will also need to adjust MenuTrigger so that onPress doesn't fire if preventDefault is called?
+      className={classNames(
+        styles,
+        'spectrum-Menu-item',
+        {
+          'is-disabled': false, // no disabled info attached to item? Should I add it in useTreeState?
+          'is-selected': isSelected
+        }
+      )}>
+      <span
+        className={classNames(
+          styles,
+          'spectrum-Menu-itemLabel')}>
+        {hasChildNodes &&
+          <ChevronRightMedium
+            className={classNames(styles, 'spectrum-TreeView-indicator')}
+            onMouseDown={e => e.stopPropagation()}
+            onClick={onToggle}
+            size={null} />
+        }
+        {rendered}
+      </span>
+    </li>
+  );
+  
+  if (hasChildNodes) {
+    renderedItem = (
+      <MenuTrigger>
+        <Pressable>
+          {renderedItem}
+        </Pressable>
+        <V3Menu items={value.children} itemKey="name">
+          {item => <Item childItems={item.children}>{item.name}</Item>}
+        </V3Menu>
+      </MenuTrigger>
+    )
+  }
+
   return (
     <FocusRing 
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
-        role="menuitem"
-        tabIndex="0" // will probably need disabled logic
-        onMouseDown={() => onSelectToggle(item)} // Looks like if you click too fast it stops being responsive and falls out of sync
-        className={classNames(
-          styles,
-          'spectrum-Menu-item',
-          {
-            'is-disabled': false, // no disabled info attached to item? Should I add it in useTreeState?
-            'is-selected': isSelected
-          }
-        )}>
-        <span
-          className={classNames(
-            styles,
-            'spectrum-Menu-itemLabel')}>
-          {rendered}
-        </span>
-      </li>
+     {renderedItem}
    </FocusRing>
   )
 }
