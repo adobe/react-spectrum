@@ -5,7 +5,7 @@ import {mergeProps} from '@react-aria/utils';
 
 export interface HoverEvent {
   type: 'hoverstart' | 'hoverend' | 'hover',
-  pointerType: 'mouse' | 'touch',
+  pointerType: 'mouse' | 'touch' | 'pen' | 'keyboard',
   target: HTMLElement
 }
 
@@ -68,7 +68,6 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let ref = useRef<HoverState>({
     isHovering: false,
-    ignoreEmulatedMouseEvents: false, // if this is true then ignore mouse events
     target: null
   });
 
@@ -76,6 +75,10 @@ export function useHover(props: HoverHookProps): HoverResult {
     let state = ref.current;
     let triggerHoverStart = (target, pointerType) => {
       if (isDisabled) {
+        return;
+      }
+
+      if (pointerType === 'touch') {
         return;
       }
 
@@ -103,6 +106,10 @@ export function useHover(props: HoverHookProps): HoverResult {
         return;
       }
 
+      if (pointerType === 'touch') {
+        return;
+      }
+
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
@@ -121,40 +128,29 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
-
     if (typeof PointerEvent !== 'undefined') {
+
+      hoverProps.onPointerEnter = (e) => {
+        triggerHoverStart(e.target, e.pointerType);
+      };
+
+      hoverProps.onPointerLeave = (e) => {
+        triggerHoverEnd(e.target, e.pointerType);
+      };
+
+    } else {
+
       hoverProps.onMouseEnter = (e) => {
-        console.log('mouse enter');
         triggerHoverStart(e.target, 'mouse');
       };
 
       hoverProps.onMouseLeave = (e) => {
-        console.log('mouse leave');
         triggerHoverEnd(e.target, 'mouse');
       };
-
-
-    } else {
-      console.log('pointer event is defined');
-      // onPointerEnter -> for checking the pointerType (if 'touch' don't fire)
-      // test on mobile ... there should be no hover on mobile
-
-      // pressProps.onPointerEnter = (e) => {
-      //   if (e.pointerId === state.activePointerId && state.isPressed) {
-      //     triggerPressStart(e.target, e.pointerType);
-      //   }
-      // };
-      //
-      // pressProps.onPointerLeave = (e) => {
-      //   if (e.pointerId === state.activePointerId && state.isPressed) {
-      //     triggerPressEnd(e.target, e.pointerType, false);
-      //   }
-      // };
 
     }
 
