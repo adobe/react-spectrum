@@ -143,7 +143,9 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
 
   return {
     listProps: {
-      onKeyDown
+      onKeyDown,
+      onFocus: () => manager.setFocused(true),
+      onBlur: () => manager.setFocused(false)
     }
   };
 }

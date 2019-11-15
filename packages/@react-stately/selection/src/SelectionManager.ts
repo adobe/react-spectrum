@@ -16,8 +16,16 @@ export class SelectionManager implements MultipleSelectionManager {
     return this.state.selectionMode;
   }
 
+  get isFocused() {
+    return this.state.isFocused;
+  }
+
+  setFocused(isFocused: boolean) {
+    this.state.setFocused(isFocused);
+  }
+
   get focusedKey() {
-    return this.state.focusedKey || this.collection.getFirstKey();
+    return this.state.focusedKey;
   }
 
   setFocusedKey(key: Key) {

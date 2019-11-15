@@ -40,10 +40,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = itemKey === manager.focusedKey;
   useEffect(() => {
-    if (isFocused && document.activeElement !== itemRef.current) {
+    if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
       itemRef.current.focus({preventScroll: true});
     }
-  }, [itemRef, isFocused]);
+  }, [itemRef, isFocused, manager]);
 
   return {
     itemProps: {

@@ -2,6 +2,8 @@ import {Key} from 'react';
 import {SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
+  isFocused: boolean,
+  setFocused(isFocused: boolean): void,
   focusedKey: Key,
   setFocusedKey(key: Key): void,
 }

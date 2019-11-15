@@ -1,10 +1,10 @@
+import {chain} from '@react-aria/utils';
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
-import {DOMProps} from '@react-types/shared';
-import React, {CSSProperties, FocusEvent, Key, useCallback, useEffect, useRef} from 'react';
+import React, {CSSProperties, FocusEvent, HTMLAttributes, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
-interface CollectionViewProps<T extends object, V> extends DOMProps {
+interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
   children: (type: string, content: T) => V,
   layout: Layout<T>,
   collection: Collection<T>,
@@ -71,10 +71,10 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
   return (
     <ScrollView 
       {...otherProps}
-      tabIndex={focusedView ? undefined : 0}
+      tabIndex={focusedView ? -1 : 0}
       ref={ref}
-      onFocusCapture={onFocus}
-      onBlurCapture={onBlur}
+      onFocus={chain(otherProps.onFocus, onFocus)}
+      onBlur={chain(otherProps.onBlur, onBlur)}
       innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}
