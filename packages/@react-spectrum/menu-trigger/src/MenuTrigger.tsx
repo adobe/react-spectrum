@@ -33,7 +33,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let childrenArray = React.Children.toArray(children);
   let menuTrigger = childrenArray.find(c => c.props.dropdownTrigger) || childrenArray[0];
   let menu = childrenArray.find(c => c.props.dropdownMenu || c.type === 'menu') || childrenArray[1];
-  let otherChildren = childrenArray.filter(c => (c !== menu && c !== menuTrigger));
 
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
@@ -82,17 +81,26 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   return (
     <Fragment>
-      {otherChildren}
-      <PressResponder {...triggerProps}>
-        {menuTrigger}
-      </PressResponder>
-      <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...popoverProps}>
-            {menu}
-          </Popover>
-        </Overlay>
-      </MenuContext.Provider>
+      {childrenArray.map((child) => {
+        if (child === menuTrigger) {
+          return (
+            <Fragment>
+              <PressResponder {...triggerProps}>
+                {menuTrigger}
+              </PressResponder>
+              <MenuContext.Provider value={menuContext}>
+                <Overlay isOpen={isOpen} ref={containerRef}>
+                  <Popover {...popoverProps}>
+                    {menu}
+                  </Popover>
+                </Overlay>
+              </MenuContext.Provider>
+            </Fragment>
+          );
+        } else if (child !== menu) {
+          return child;
+        } 
+      })}
     </Fragment>
   );
 }
