@@ -1,6 +1,6 @@
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
 import {DOMProps} from '@react-types/shared';
-import React, {CSSProperties, Key, useCallback, useEffect, useRef, FocusEvent} from 'react';
+import React, {CSSProperties, FocusEvent, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
@@ -53,7 +53,7 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [focusedKey]);
+  }, [focusedKey, collectionManager]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
