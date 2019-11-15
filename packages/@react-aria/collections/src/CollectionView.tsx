@@ -38,7 +38,7 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
   // to all of the item DOM nodes.
   useEffect(() => {
     if (focusedKey) {
-      collectionManager.scrollToItem(focusedKey);
+      collectionManager.scrollToItem(focusedKey, 0);
     }
   }, [focusedKey, collectionManager]);
 
@@ -49,7 +49,7 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     // We only want to do this if the CollectionView itself is receiving focus, not a child
     // element, and we aren't moving focus to the CollectionView from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
-      collectionManager.scrollToItem(focusedKey);
+      collectionManager.scrollToItem(focusedKey, 0);
     }
 
     isFocusWithin.current = e.target !== ref.current;
