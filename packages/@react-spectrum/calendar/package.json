@@ -33,6 +33,7 @@
     "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-aria/visually-hidden": "^3.0.0-alpha.1",
     "@react-spectrum/button": "^3.0.0-alpha.1",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/calendar": "^3.0.0-alpha.1",
     "@react-types/calendar": "^3.0.0-alpha.1",

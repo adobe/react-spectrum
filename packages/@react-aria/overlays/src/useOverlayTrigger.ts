@@ -5,16 +5,17 @@ interface OverlayTriggerProps {
   ref: RefObject<HTMLElement | null>,
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
   onClose?: () => void,
-  isOpen?: boolean
+  isOpen?: boolean,
+  id?: string
 }
 
 interface OverlayTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement>,
-  dialogProps: HTMLAttributes<HTMLElement>
+  triggerAriaProps: HTMLAttributes<HTMLElement>,
+  overlayAriaProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
-  let {ref, type, onClose, isOpen} = props;
+  let {ref, type, onClose, isOpen, id} = props;
   
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
@@ -41,19 +42,19 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
     };
   }, [isOpen, onClose, ref]);
 
-  let dialogId = useId();
+  let overlayId = useId(id);
   return {
-    triggerProps: {
+    triggerAriaProps: {
       // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
       // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
       // However, we only add it for menus for now because screen readers often 
       // announce it as a menu even for other values.
       'aria-haspopup': type === 'menu' ? true : undefined,
       'aria-expanded': isOpen,
-      'aria-controls': isOpen ? dialogId : null
+      'aria-controls': isOpen ? overlayId : null
     },
-    dialogProps: {
-      id: dialogId
+    overlayAriaProps: {
+      id: overlayId
     }
   };
 }

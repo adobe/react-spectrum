@@ -2,7 +2,7 @@ import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '../';
-import {triggerPress} from '@react-spectrum/button/test/utils'; // TODO: Move this util funct to test-utils folder (https://github.com/adobe/react-spectrum/pull/491)
+import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 
