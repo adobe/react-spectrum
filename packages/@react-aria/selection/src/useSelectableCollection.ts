@@ -1,4 +1,4 @@
-import {HTMLAttributes, KeyboardEvent, FocusEvent} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
