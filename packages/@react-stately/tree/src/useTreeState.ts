@@ -1,6 +1,6 @@
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {Key, useMemo} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
@@ -16,15 +16,20 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
     props.onSelectionChange
   );
 
+  let [disabledKeys] = useState(
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set()
+  );
+
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let tree = useMemo(() => {
-    let nodes = builder.build(props, key => ({
-      isExpanded: expandedKeys.has(key),
-      isSelected: selectedKeys.has(key)
+    let nodes = builder.build(props, (key, item) => ({
+      isExpanded: expandedKeys.has(key) || (item && item.props && item.props.isExpanded),
+      isSelected: selectedKeys.has(key) || (item && item.props && item.props.isSelected),
+      isDisabled: disabledKeys.has(key) || (item && item.props && item.props.isDisabled)
     }));
 
     return new TreeCollection(nodes);
-  }, [builder, props, expandedKeys, selectedKeys]);
+  }, [builder, props, expandedKeys, selectedKeys, disabledKeys]);
 
   let onToggle = (item: Node<T>) => {
     setExpandedKeys(expandedKeys => toggleKey(expandedKeys, item.key));
@@ -38,6 +43,7 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
     tree,
     expandedKeys,
     selectedKeys,
+    disabledKeys,
     onToggle,
     onSelectToggle // TODO: replace with general selection hook
   };

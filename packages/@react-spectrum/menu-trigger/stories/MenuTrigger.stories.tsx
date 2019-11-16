@@ -1,8 +1,29 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {Menu, MenuTrigger} from '../';
+import {Item, Menu, MenuTrigger, Section, V3Menu} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+
+let flatMenu = [
+  {name: 'Aardvark'},
+  {name: 'Kangaroo'},
+  {name: 'Snake'}
+];
+
+let withSection = [
+  {name: 'Animals', children: [
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ]},
+  {name: 'People', children: [
+    {name: 'Danni'},
+    {name: 'Devon'},
+    {name: 'Ross', children: [
+      {name: 'Tests'}
+    ]}
+  ]}
+];
 
 storiesOf('MenuTrigger', module)
   .add(
@@ -55,11 +76,13 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </Button>
-              <Menu>
-                <li>MenuItem1111111111111111</li>
-                <li>MenuItem22222222222222222</li>
-                <li>MenuItem33333333333333333</li>
-              </Menu>
+              <V3Menu items={withSection} itemKey="name">
+                {item => (
+                  <Section items={item.children} title={item.name}>
+                    {item => <Item childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
+              </V3Menu>
             </MenuTrigger>
           </div>
         </div>
@@ -83,11 +106,13 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu {...menuProps}>
-          <li>MenuItem1111111111111111</li>
-          <li>MenuItem22222222222222222</li>
-          <li>MenuItem33333333333333333</li>
-        </Menu>
+        <V3Menu items={withSection} itemKey="name">
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => <Item childItems={item.children}>{item.name}</Item>}
+            </Section>
+          )}
+        </V3Menu>
       </MenuTrigger>
     </div>
   );

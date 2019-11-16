@@ -30,13 +30,13 @@ function shallowEqual<T>(a: T, b: T) {
 export class CollectionBuilder<T> {
   private itemKey: string;
   private cache: Map<T, Node<T>> = new Map();
-  private getItemStates: (key: Key) => ItemStates;
+  private getItemStates: (key: Key, item?: ReactElement) => ItemStates;
 
   constructor(itemKey: string) {
     this.itemKey = itemKey;
   }
 
-  build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
+  build(props: CollectionBase<T>, getItemStates?: (key: Key, item?: ReactElement) => ItemStates) {
     this.getItemStates = getItemStates || (() => ({}));
     return iterable(() => this.iterateCollection(props));
   }
@@ -61,7 +61,7 @@ export class CollectionBuilder<T> {
 
   getNode(item: CollectionElement<T>, level: number, value: T, childNodes: Iterable<Node<T>>, parentKey?: Key): Node<T> {
     let key = this.getKey(item, value, parentKey);
-    let states = item.type === Section ? null : this.getItemStates(key);
+    let states = item.type === Section ? null : this.getItemStates(key, item);
     let node: Node<T> = {
       type: item.type === Section ? 'section' : 'item',
       key,
@@ -70,6 +70,7 @@ export class CollectionBuilder<T> {
       hasChildNodes: item.type === Item ? this.hasChildItems(item.props) : true,
       childNodes,
       rendered: item.type === Item ? item.props.title || item.props.children : item.props.title,
+      props: item.props,
       ...states
     };
 

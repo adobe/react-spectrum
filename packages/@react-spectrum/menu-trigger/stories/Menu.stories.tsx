@@ -1,7 +1,5 @@
 import {action} from '@storybook/addon-actions';
-// import {Button} from '@react-spectrum/button';
 import {Item, Menu, Section, V3Menu, V2MenuDivider, V2MenuHeading, V2MenuItem} from '../';
-// import {MenuTrigger} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -148,28 +146,36 @@ storiesOf('Menu', module)
         </Section>
       </V3Menu>
     )
+  )
+  .add(
+    'with disabled menu items',
+    () => (
+      <V3Menu items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item blah='aweg' childItems={item.children}>{item.name}</Item>}
+          </Section>
+        )}
+      </V3Menu>
+    )
+  )
+  .add(
+    'static with disabled menu items',
+    () => (
+      <V3Menu>
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item isDisabled>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </V3Menu>
+    )
   );
-  // .add(
-  // Not available in useTreeState?
-  //   'with disabled menu items',
-  //   () => (
-
-  //   )
-  // )
-  // .add(
-  //   'static with disabled menu items',
-  //   () => (
-      
-  //   )
-  // )
-  // .add(
-  //   'with submenus, OUT OF SCOPE',
-  //   () => ()
-  // )
-  // .add(
-  //   'static with submenus, OUT OF SCOPE',
-  //   () => ()
-  // );
   
 function render(props = {}, menuProps = {}) {
   return (

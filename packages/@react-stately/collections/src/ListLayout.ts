@@ -10,6 +10,7 @@ import {Size} from './Size';
 type ListLayoutOptions<T> = {
   /** the height of a row in px. */
   rowHeight?: number,
+  headingHeight?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number
 };
 
@@ -25,6 +26,7 @@ type ListLayoutOptions<T> = {
  */
 export class ListLayout<T> extends Layout<Node<T>> {
   private rowHeight: number;
+  private headingHeight: number;
   private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
   private contentHeight: number;
@@ -36,6 +38,7 @@ export class ListLayout<T> extends Layout<Node<T>> {
   constructor(options: ListLayoutOptions<T> = {}) {
     super();
     this.rowHeight = options.rowHeight || 48;
+    this.headingHeight = options.headingHeight || 48;
     this.indentationForItem = options.indentationForItem;
     this.layoutInfos = {};
     this.contentHeight = 0;
@@ -65,16 +68,16 @@ export class ListLayout<T> extends Layout<Node<T>> {
     let keys = this.collectionManager.collection.getKeys();
     for (let key of keys) {
       let type = this.collectionManager.collection.getItem(key).type;
-
+      let rectHeight = type === 'item' ? this.rowHeight : this.headingHeight
       let x = 0;
       if (typeof this.indentationForItem === 'function') {
         x = this.indentationForItem(this.collectionManager.collection, key) || 0;
       }
 
-      let rect = new Rect(x, y, this.collectionManager.visibleRect.width - x, this.rowHeight);
+      let rect = new Rect(x, y, this.collectionManager.visibleRect.width - x, rectHeight);
       this.layoutInfos[key] = new LayoutInfo(type, key, rect);
 
-      y += this.rowHeight;
+      y += rectHeight;
     }
 
     this.contentHeight = y;
