@@ -1,4 +1,4 @@
-import {HTMLAttributes, KeyboardEvent} from 'react';
+import {HTMLAttributes, KeyboardEvent, FocusEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -141,11 +141,31 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     }
   };
 
+  let onFocus = (e: FocusEvent) => {
+    manager.setFocused(true);
+
+    if (manager.focusedKey == null && e.target === e.currentTarget) {
+      // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
+      // Attempt to detect whether the user is tabbing forward or backward into the collection
+      // and either focus the first or last item accordingly.
+      let relatedTarget = e.relatedTarget as Element;
+      if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+        manager.setFocusedKey(delegate.getLastKey());
+      } else {
+        manager.setFocusedKey(delegate.getFirstKey());
+      }
+    }
+  };
+
+  let onBlur = () => {
+    manager.setFocused(false);
+  };
+
   return {
     listProps: {
       onKeyDown,
-      onFocus: () => manager.setFocused(true),
-      onBlur: () => manager.setFocused(false)
+      onFocus,
+      onBlur
     }
   };
 }

@@ -31,14 +31,6 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
     return new TreeCollection(nodes);
   }, [builder, props, expandedKeys, selectionState.selectedKeys, selectionState.focusedKey]);
 
-  // Default the focused key to the first one so you can tab into the collection with the keyboard.
-  if (selectionState.focusedKey == null) {
-    let firstKey = tree.getFirstKey();
-    if (firstKey != null) {
-      selectionState.setFocusedKey(firstKey);
-    }
-  }
-
   let onToggle = (key: Key) => {
     setExpandedKeys(expandedKeys => toggleKey(expandedKeys, key));
   };
