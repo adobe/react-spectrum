@@ -1,4 +1,4 @@
-import intlMessages from '../src/intl/*.json';
+import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
