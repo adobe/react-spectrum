@@ -77,25 +77,21 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'more than 2 children (split button)',
-    // @ts-ignore
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <Button
+          onKeyDown={action('keydown 1')}
+          onPress={action('press 1')}
+          onPressStart={action('pressstart 1')}
+          onPressEnd={action('pressend 1')}
+          className={classNames(
+            styles,
+            'spectrum-SplitButton-action'
+          )}>
+          Hi
+        </Button>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
           <Button
-            onKeyDown={action('keydown 1')}
-            onPress={action('press 1')}
-            onPressStart={action('pressstart 1')}
-            onPressEnd={action('pressend 1')}
-            className={classNames(
-              styles,
-              'spectrum-SplitButton-action'
-            )}>
-            Hi
-          </Button>
-          {/* 
-            // @ts-ignore */}
-          <Button
-            dropdownTrigger
             onKeyDown={action('onKeyDown 2')}
             onPress={action('press 2')}
             onPressStart={action('pressstart 2')}
@@ -106,9 +102,7 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          {/* 
-            // @ts-ignore */}
-          <Menu dropdownMenu>
+          <Menu>
             <li>MenuItem1111111111111111</li>
             <li>MenuItem22222222222222222</li>
             <li>MenuItem33333333333333333</li>
