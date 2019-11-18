@@ -16,12 +16,10 @@ import {useTreeState} from '@react-stately/tree';
 
 export {Item, Section};
 
-// For now, export a v3 version of Menu just so I can gradually replace the mock Menu component above
-export function Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelection & DOMProps) {
-  // Given the typing of the Menu interface, are users meant to be able to pass in other dom props? Probably yeah?
-  // Yes, adjust the above interface
+interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {};
 
-  // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState)
+export function Menu<T>(props: MenuProps<T>) {
+  // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState?)
 
   // Figure out how to get the Focus working
   // Where to put Focus scope? FocusRing can go around the MenuItem
