@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {Item, Menu, MenuTrigger, Section, V3Menu} from '../';
+import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -76,13 +76,13 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </Button>
-              <V3Menu items={withSection} itemKey="name">
+              <Menu items={withSection} itemKey="name">
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
                   </Section>
                 )}
-              </V3Menu>
+              </Menu>
             </MenuTrigger>
           </div>
         </div>
@@ -106,13 +106,13 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <V3Menu items={withSection} itemKey="name">
+        <Menu items={withSection} itemKey="name">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </V3Menu>
+        </Menu>
       </MenuTrigger>
     </div>
   );

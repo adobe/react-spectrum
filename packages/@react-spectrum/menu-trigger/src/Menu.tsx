@@ -1,70 +1,23 @@
-import {classNames} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import {MenuContext} from './context';
-import {mergeProps} from '@react-aria/utils';
-import React, {Fragment, ReactElement, useContext, useMemo, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-
-
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {FocusRing, FocusScope} from '@react-aria/focus';
-import {useTreeState} from '@react-stately/tree';
-import {Item, ListLayout, Section} from '@react-stately/collections';
-import {CollectionView} from '@react-aria/collections';
-import {useMenu} from '@react-aria/menu-trigger';
-
-// Testing submenus
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
+import {classNames} from '@react-spectrum/utils';
+import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
+import {CollectionView} from '@react-aria/collections';
+import {DOMProps} from '@react-types/shared';
+import {Item, ListLayout, Node, Section} from '@react-stately/collections';
+import {FocusRing} from '@react-aria/focus';
+import {MenuContext} from './context';
 import {MenuTrigger} from './';
+import {mergeProps} from '@react-aria/utils';
 import {Pressable} from '@react-aria/interactions';
+import React, {Fragment, useContext, useMemo} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useMenu} from '@react-aria/menu-trigger';
+import {useTreeState} from '@react-stately/tree';
 
 export {Item, Section};
 
-interface MenuProps extends DOMProps{
-  children?: ReactElement | ReactElement[]
-}
-
-// This is a filler Menu component, used to illustrate how the MenuContext might be consumed. 
-// It will get replaced by the real Menu component when it gets written
-
-export function Menu(props: MenuProps) {
-  let contextProps = useContext(MenuContext) || {};
-  let {
-    id,
-    role,
-    'aria-labelledby': labelledBy,
-    children
-  } = mergeProps(contextProps, props);
-
-  let menuProps = {
-    id,
-    role,
-    'aria-labelledby': labelledBy
-  };
-
-  children = React.Children.map(children, (c) => 
-    React.cloneElement(c, {
-      className: classNames(
-        styles,
-        'spectrum-Menu-item'
-      )
-    })
-  );
-
-  return (
-    <ul
-      {...menuProps}
-      className={classNames(
-        styles,
-        'spectrum-Menu')}>
-      {children}
-    </ul>
-  );
-}
-
-
 // For now, export a v3 version of Menu just so I can gradually replace the mock Menu component above
-export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelection & DOMProps) {
+export function Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelection & DOMProps) {
   // Given the typing of the Menu interface, are users meant to be able to pass in other dom props? Probably yeah?
   // Yes, adjust the above interface
 
@@ -100,7 +53,7 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
       className={classNames(styles, 'spectrum-Menu')}
       layout={layout}
       collection={tree}>
-      {(type, item) => {
+      {(type, item: Node<T>) => {
         if (type === 'section') {
           return (
             <Fragment>
@@ -121,14 +74,16 @@ export function V3Menu<T>(props: CollectionBase<T> & Expandable & MultipleSelect
   );
 }
 
-interface MenuItemProps extends DOMProps {
-
+interface MenuItemProps<T> {
+  item: Node<T>,
+  onToggle: (item: Node<T>) => void,
+  onSelectToggle: (item: Node<T>) => void
 }
 
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-export function MenuItem({item, onSelectToggle, onToggle}) {
+function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
   let {
     rendered,
     isSelected,
@@ -171,16 +126,23 @@ export function MenuItem({item, onSelectToggle, onToggle}) {
       </span>
     </li>
   );
-  
+
   if (hasChildNodes) {
     renderedItem = (
       <MenuTrigger>
         <Pressable isDisabled={isDisabled}>
           {renderedItem}
         </Pressable>
-        <V3Menu items={value.children} itemKey="name">
-          {item => <Item childItems={item.children}>{item.name}</Item>}
-        </V3Menu>
+         {/*
+            // @ts-ignore */}
+        <Menu items={value.children} itemKey="name">
+          {
+            item => {
+              // @ts-ignore
+              return (<Item childItems={item.children}>{item.name}</Item>)
+            }
+          } 
+        </Menu>
       </MenuTrigger>
     )
   }
@@ -194,35 +156,7 @@ export function MenuItem({item, onSelectToggle, onToggle}) {
   )
 }
 
-export function V2MenuItem(props) {
-  return (
-    <FocusRing 
-      focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
-        role="menuitem"
-        tabIndex="0"
-        className={classNames(
-          styles,
-          'spectrum-Menu-item')}>
-        <span
-          className={classNames(
-            styles,
-            'spectrum-Menu-itemLabel')}>
-          {props.children}
-        </span>
-      </li>
-   </FocusRing>
-  )
-}
-
-interface MenuDividerProps {
-
-}
-
-// For now export just to see what it looks like, remove after
-export function MenuDivider() {
-  // Will need logic to change aria-orientation (if we support horizonal menus)
+function MenuDivider() {
   return (
     <li 
       aria-orientation="horizontal"
@@ -234,25 +168,11 @@ export function MenuDivider() {
   )
 }
 
-// For now export just to see what it looks like, remove after
-export function V2MenuDivider() {
-  return (
-    <li 
-      aria-orientation="horizontal"
-      className={classNames(
-        styles,
-        'spectrum-Menu-divider'
-      )}
-      role="separator" />
-  )
+interface MenuHeadingProps<T> {
+  item: Node<T>
 }
 
-interface MenuHeadingProps {
-  children?: ReactElement | ReactElement[];
-}
-
-// For now export just to see what it looks like, remove after
-export function MenuHeading({item}) {
+function MenuHeading<T>({item}: MenuHeadingProps<T>) {
   return (
     <li role="presentation">
       <span 
@@ -262,21 +182,6 @@ export function MenuHeading({item}) {
           styles,
           'spectrum-Menu-sectionHeading')}>
         {item.rendered}
-      </span>
-    </li>
-  )
-}
-
-export function V2MenuHeading(props) {
-  return (
-    <li role="presentation">
-      <span 
-        role="heading" 
-        aria-hidden="true"
-        className={classNames(
-          styles,
-          'spectrum-Menu-sectionHeading')}>
-        {props.children}
       </span>
     </li>
   )

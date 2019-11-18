@@ -1,9 +1,13 @@
 import {Button} from '@react-spectrum/button';
+import {classNames} from '@react-spectrum/utils';
 import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
-import {Menu, MenuTrigger} from '../';
+import {MenuContext} from '../src/context';
+import {MenuTrigger} from '../';
+import {mergeProps} from '@react-aria/utils';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useContext} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
@@ -238,3 +242,43 @@ describe('MenuTrigger', function () {
     expect(menu).toBeFalsy();
   });
 });
+
+
+// This is a filler Menu component, the new Menu component doesn't seem to play well with the testing framework
+// since it only renders the first Item in the Menu. Will need to investigate further since it works in storybook
+// so for now use this mock Menu
+
+function Menu(props) {
+  let contextProps = useContext(MenuContext) || {};
+  let {
+    id,
+    role,
+    'aria-labelledby': labelledBy,
+    children
+  } = mergeProps(contextProps, props);
+
+  let menuProps = {
+    id,
+    role,
+    'aria-labelledby': labelledBy
+  };
+
+  children = React.Children.map(children, (c) => 
+    React.cloneElement(c, {
+      className: classNames(
+        styles,
+        'spectrum-Menu-item'
+      )
+    })
+  );
+
+  return (
+    <ul
+      {...menuProps}
+      className={classNames(
+        styles,
+        'spectrum-Menu')}>
+      {children}
+    </ul>
+  );
+}
