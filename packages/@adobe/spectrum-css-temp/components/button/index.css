@@ -156,7 +156,7 @@ a.spectrum-ActionButton {
   font-size: var(--spectrum-actionbutton-text-size);
   font-weight: var(--spectrum-actionbutton-text-font-weight);
 
-  .spectrum-Icon + .spectrum-ActionButton-label {
+  .spectrum-ActionButton-label {
     /* Have icon padding on the left */
     padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
 
@@ -313,4 +313,36 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton + .spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
+}
+
+.spectrum-Tool-hold {
+  position: absolute;
+  inset-block-end: var(--spectrum-tool-hold-icon-padding-bottom);
+  inset-inline-end: var(--spectrum-tool-hold-icon-padding-right);
+
+  &.is-reversed {
+    transform: rotate(90deg);
+  }
+} 
+
+.spectrum-ButtonGroup-item--vertical {
+  .spectrum-ActionButton-label {
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  &.spectrum-Button + .spectrum-Button {
+    margin-block-start: var(--spectrum-buttongroup-button-gap-y);
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  }
+
+  &.spectrum-ActionButton + .spectrum-ActionButton {
+    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  }
+
+  &.spectrum-Tool + .spectrum-Tool {
+    margin-block-start: var(--spectrum-toolgroup-text-button-gap-y);
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  }
 }

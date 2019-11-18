@@ -44,7 +44,7 @@ export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefOb
             className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon')})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

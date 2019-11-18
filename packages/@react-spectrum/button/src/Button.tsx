@@ -65,7 +65,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
             className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon')})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>
