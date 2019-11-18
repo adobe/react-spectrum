@@ -1,0 +1,82 @@
+version: 2.1
+orbs:
+  azure-cli: circleci/azure-cli@1.1.0
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Write npmrc
+          command: |
+            cp .circleci/.npmrc .npmrc
+
+      - run:
+          name: yarn install
+          command: |
+            make clean_node_modules
+            make install_no_postinstall
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: build
+          command: |
+            make clean
+            make -B
+
+      - run:
+          name: test
+          command: make ci-test
+
+      - run:
+          name: build storybook
+          command: make storybook
+
+      - persist_to_workspace:
+          root: storybook-static
+          paths:
+            - '**'
+
+  deploy:
+    executor: azure-cli/azure-docker
+    steps:
+      - attach_workspace:
+          at: /tmp/storybook-static
+      - run:
+          name: deploy storybook
+          command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
+
+  comment:
+    docker:
+      - image: circleci/node:12.10
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: comment on pr
+          command: node .circleci/comment.js
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+      - comment:
+          requires:
+            - deploy
