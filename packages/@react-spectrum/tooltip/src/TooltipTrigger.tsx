@@ -4,6 +4,7 @@ import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useTooltipTrigger} from '@react-aria/tooltip';
 
 interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
@@ -40,6 +41,26 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
+  // These are the variables you get out ... the parameters you pass in of course can't be used in the function
+  let {tooltipTriggerProps, tooltipProps} = useTooltipTrigger(
+    {
+      tooltipProps: {
+        ...content.props,
+        onClose
+      },
+      triggerProps: {
+        ...trigger.props,
+        ref: triggerRef
+      },
+      state: {
+        isOpen,
+        setOpen
+      }
+    }
+  );
+
+  // console.log("tooltip trigger props", tooltipTriggerProps)
+
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     placement: props.placement,
     containerRef,
@@ -50,12 +71,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   delete overlayProps.style.position;
 
-  let triggerPropsWithRef = {
-    ref: triggerRef
-  };
+  // console.log("Tooltip: ", content)
 
-  console.log("Tooltip: ", content)
-
+  // TODO: use the provider & context here instead of cloneElement & bring all the props into a single object that you can spread instead of all these commas
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
@@ -66,7 +84,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <PressResponder
-          {...triggerPropsWithRef}
+          {...tooltipTriggerProps}
           isPressed={isOpen}
           onPress={onInteraction}>
           {trigger}
@@ -78,7 +96,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <HoverResponder
-          {...triggerPropsWithRef}
+          {...tooltipTriggerProps}
           isHovering={isOpen}
           onHover={onInteraction}>
           {trigger}

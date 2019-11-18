@@ -21,12 +21,13 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
     ...otherProps
   } = props;
 
+  // needed in case a user has their own trigger implementation
   let {tooltipProps} = useTooltip(props);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...tooltipProps}
+      {...tooltipProps} 
       className={classNames(
         styles,
         'spectrum-Tooltip',

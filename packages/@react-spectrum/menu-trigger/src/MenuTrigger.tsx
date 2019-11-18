@@ -37,6 +37,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     setOpen(false);
   };
 
+  console.log("menu", menu)
+
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       menuProps: {
@@ -48,7 +50,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
         ref: menuTriggerRef
       },
       state: {
-        isOpen, 
+        isOpen,
         setOpen
       }
     }
@@ -77,7 +79,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let popoverProps = {
     ...overlayProps,
     ref: menuPopoverRef,
-    placement, 
+    placement,
     hideArrow: true,
     onClose
   };
@@ -93,7 +95,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
             {menu}
           </Popover>
         </Overlay>
-      </MenuContext.Provider> 
+      </MenuContext.Provider>
     </Fragment>
   );
 }

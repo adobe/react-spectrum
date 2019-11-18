@@ -90,6 +90,7 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
+/*
       if (onHover) {
         onHover({
           type: 'hover',
@@ -97,6 +98,23 @@ export function useHover(props: HoverHookProps): HoverResult {
           pointerType
         });
       }
+*/
+
+
+
+      if (onHover) {
+        let hoverShowDelay = setTimeout(() => {
+          onHover({
+            type: 'hover',
+            target,
+            pointerType
+          });
+        }, 500)
+        // console.log("start target", target.target)
+        // console.log("start related target", target.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining 
+      }
+
+
 
       setHover(true);
     };
@@ -120,6 +138,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
+/*
       if (onHover && didHover) {
         onHover({
           type: 'hover',
@@ -127,6 +146,23 @@ export function useHover(props: HoverHookProps): HoverResult {
           pointerType
         });
       }
+*/
+
+
+      if (onHover && didHover) {
+        let hoverHideDelay = setTimeout(() => {
+          onHover({
+            type: 'hover',
+            target,
+            pointerType
+          });
+        }, 500)
+        // console.log("end target", target.target)
+        // console.log("end related target", target.relatedTarget) // is the tooltip!
+      }
+
+
+
 
     };
 
@@ -135,11 +171,11 @@ export function useHover(props: HoverHookProps): HoverResult {
     if (typeof PointerEvent !== 'undefined') {
 
       hoverProps.onPointerEnter = (e) => {
-        triggerHoverStart(e.target, e.pointerType);
+        triggerHoverStart(e, e.pointerType); // can just pass e
       };
 
       hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e.target, e.pointerType);
+        triggerHoverEnd(e, e.pointerType); // can just pass e
       };
 
     } else {
@@ -162,3 +198,70 @@ export function useHover(props: HoverHookProps): HoverResult {
     hoverProps: mergeProps(domProps, hoverProps)
   };
 }
+
+/*
+
+// likely needed to give animation some time so that the related target can be picked up
+handleDelayedShow(e) {
+    if (this._hoverHideDelay != null) {
+      clearTimeout(this._hoverHideDelay);
+      this._hoverHideDelay = null;
+      return;
+    }
+
+    if (this.state.show || this._hoverShowDelay != null) {
+      return;
+    }
+
+    const delay = this.props.delayShow != null ?
+      this.props.delayShow : this.props.delay;
+
+    if (!delay) {
+      this.show(e);
+      return;
+    }
+
+    this._hoverShowDelay = setTimeout(() => {
+      this._hoverShowDelay = null;
+      this.show(e);
+    }, delay);
+  }
+
+// likely needed to give the user some time to hover over the tooltip before it disapears
+handleDelayedHide(e) {
+  if (this._hoverShowDelay != null) {
+    clearTimeout(this._hoverShowDelay);
+    this._hoverShowDelay = null;
+    return;
+  }
+
+  if (!this.state.show || this._hoverHideDelay != null) {
+    return;
+  }
+
+  let delay = (!this.props.delayHide || this.props.delayHide === OverlayTrigger.defaultProps.delayHide) && this.props.delay != null ? this.props.delay : this.props.delayHide;
+
+  if (!delay) {
+    this.hide(e);
+    return;
+  }
+
+  this._hoverHideDelay = setTimeout(() => {
+    this._hoverHideDelay = null;
+    this.hide(e);
+  }, delay);
+}
+
+
+handleMouseOverOut(handler, e) {
+    const target = e.currentTarget;
+    console.log("target!!!!!!!", target)
+    const related = e.relatedTarget || e.nativeEvent.toElement;
+    console.log("related!!!!!!!", related)
+
+    if (!related || related !== target && !target.contains(related)) {
+      console.log("true....!")
+      handler(e);
+    }
+  }
+*/
