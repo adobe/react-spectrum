@@ -31,7 +31,7 @@ Create elements that represent real DOM nodes that are used in content.
 Heading to represent `<h1>`..., Section for `<section>`, Avatar for a type of `<img>`, Preview for a different type of `<img>`.
 These components all support reading from the context object where they will pick up the className they should apply.
 
-We can consider Semantic Elements to be a subset of [Slots]('./2019-v3-slots.md') because there may be many elements that are semantically descriptions. Slots gives us that flexibility.
+We can consider Semantic Elements to be a subset of [Slots]('./2019-v3-slots.md') because there may be many elements that are semantically descriptions. Slots gives us that flexibility. Semantic elements have a default slot that is their name.
 
 Consider these examples
 

@@ -177,10 +177,10 @@ import styles from './CustomCardStyles.css';
 <Card slots={styles}>
   <Image slot="preview" />
   <Avatar slot="avatar" />
-  <Slot slot="title">
+  <Flex slot="title">
     <Title>Title</Title>
     <Button>More</Button>
-  </Slot>
+  </Flex>
   <Description slot="description">Description</Description>
   <Footer slot="footer">Final remarks</Footer>
 </Card>
@@ -282,10 +282,12 @@ Custom CSS
 
 We have a couple options here:
  - All of our Components could implement this
- - We could build a <Box> like component that takes a `renderAs` prop and the name of the dom element it needs to render, this `Box` component would replace the top level node of every Component we create.
+ - We could build a <Box> like component that takes a `renderAs` prop and the name of the dom element it needs to render, this `Box` component would replace the top level node of every Component we create. All components would still need to accept a 'slot' prop and pass it through to <Box>.
  
 ## What new components are needed
  - Grid (name?)
+ - Flex (maybe in a different PR?)
+ - Box?
  
 ## What components should support the slot prop?
  - every component
