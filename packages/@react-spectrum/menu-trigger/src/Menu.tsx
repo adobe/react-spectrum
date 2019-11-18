@@ -16,7 +16,9 @@ import {useTreeState} from '@react-stately/tree';
 
 export {Item, Section};
 
-interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {};
+interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
+  onSelect: (...args) => void
+};
 
 export function Menu<T>(props: MenuProps<T>) {
   // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState?)
@@ -65,7 +67,8 @@ export function Menu<T>(props: MenuProps<T>) {
           <MenuItem 
             item={item}
             onToggle={() => onToggle(item)} 
-            onSelectToggle={() => onSelectToggle(item)} />
+            onSelectToggle={() => onSelectToggle(item)}
+            onSelect={completeProps.onSelect} />
         );
       }}
     </CollectionView>
@@ -75,13 +78,14 @@ export function Menu<T>(props: MenuProps<T>) {
 interface MenuItemProps<T> {
   item: Node<T>,
   onToggle: (item: Node<T>) => void,
-  onSelectToggle: (item: Node<T>) => void
+  onSelectToggle: (item: Node<T>) => void,
+  onSelect?: (...args) => void
 }
 
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
+function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T>) {
   let {
     rendered,
     isSelected,
@@ -97,8 +101,9 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
       role="menuitem"
       tabIndex={isDisabled ? null : 0}
       onMouseDown={() => {
-        if (!isDisabled) {
+        if (!isDisabled && !hasChildNodes) {
           onSelectToggle(item);
+          onSelect(item);
         }
       }}
       className={classNames(
@@ -133,7 +138,7 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
         </Pressable>
          {/*
             // @ts-ignore */}
-        <Menu items={value.children} itemKey="name">
+        <Menu items={value.children} itemKey="name" onSelect={onSelect}>
           {
             item => {
               // @ts-ignore

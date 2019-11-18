@@ -68,7 +68,7 @@ storiesOf('MenuTrigger', module)
       <div style={{height: 100, display: 'flex'}}>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
           <div style={{height: 200}}>
-            <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
+            <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} defaultOpen>
               <Button
                 onKeyDown={action('onKeyDown')}
                 onPress={action('press')}
@@ -98,7 +98,7 @@ storiesOf('MenuTrigger', module)
 function render(props = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
+      <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} {...props}>
         <Button
           onKeyDown={action('onKeyDown')}
           onPress={action('press')}
