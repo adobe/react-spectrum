@@ -2,6 +2,7 @@ import {DOMProps} from '@react-types/shared';
 import {HoverResponderContext} from './hoverContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {chain} from '@react-aria/utils';
 
 export interface HoverEvent {
   type: 'hoverstart' | 'hoverend' | 'hover',
@@ -100,8 +101,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 */
 
-
-
       if (onHover) {
         let hoverShowDelay = setTimeout(() => {
           onHover({
@@ -111,12 +110,12 @@ export function useHover(props: HoverHookProps): HoverResult {
           });
         }, 500)
         // console.log("start target", target.target)
-        // console.log("start related target", target.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining 
+        // console.log("start related target", target.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining
       }
 
 
-
-      setHover(true);
+      // not working for some reason
+      // setHover(true);
     };
 
     let triggerHoverEnd = (target, pointerType, didHover=true) => {
@@ -136,7 +135,8 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-      setHover(false);
+      // not working for some reason
+      // setHover(false);
 
 /*
       if (onHover && didHover) {
@@ -171,11 +171,21 @@ export function useHover(props: HoverHookProps): HoverResult {
     if (typeof PointerEvent !== 'undefined') {
 
       hoverProps.onPointerEnter = (e) => {
-        triggerHoverStart(e, e.pointerType); // can just pass e
+        state.isHovering = true
+        console.log(state.isHovering)
+        if(state.isHovering) {
+          triggerHoverStart(e, e.pointerType); // can just pass e
+        }
+
       };
 
       hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e, e.pointerType); // can just pass e
+        state.isHovering = false
+        console.log(state.isHovering)
+        if(state.isHovering === false){
+          triggerHoverEnd(e, e.pointerType); // can just pass e
+        }
+
       };
 
     } else {
@@ -199,69 +209,28 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-/*
-
-// likely needed to give animation some time so that the related target can be picked up
-handleDelayedShow(e) {
-    if (this._hoverHideDelay != null) {
-      clearTimeout(this._hoverHideDelay);
-      this._hoverHideDelay = null;
-      return;
-    }
-
-    if (this.state.show || this._hoverShowDelay != null) {
-      return;
-    }
-
-    const delay = this.props.delayShow != null ?
-      this.props.delayShow : this.props.delay;
-
-    if (!delay) {
-      this.show(e);
-      return;
-    }
-
-    this._hoverShowDelay = setTimeout(() => {
-      this._hoverShowDelay = null;
-      this.show(e);
-    }, delay);
-  }
-
-// likely needed to give the user some time to hover over the tooltip before it disapears
-handleDelayedHide(e) {
-  if (this._hoverShowDelay != null) {
-    clearTimeout(this._hoverShowDelay);
-    this._hoverShowDelay = null;
-    return;
-  }
-
-  if (!this.state.show || this._hoverHideDelay != null) {
-    return;
-  }
-
-  let delay = (!this.props.delayHide || this.props.delayHide === OverlayTrigger.defaultProps.delayHide) && this.props.delay != null ? this.props.delay : this.props.delayHide;
-
-  if (!delay) {
-    this.hide(e);
-    return;
-  }
-
-  this._hoverHideDelay = setTimeout(() => {
-    this._hoverHideDelay = null;
-    this.hide(e);
-  }, delay);
+// give the animation some extra time on the screen so that the related target can be picked up
+function handleDelayedShow(e) {
+  let hoverShowDelay = setTimeout(() => {
+    console.log("handle dealyed show")
+  }, 500);
 }
 
+// give the user some time to hover over the tooltip before it disapears
+function handleDelayedHide(e) {
+  let hoverHideDelay = setTimeout(() => {
+    console.log("handle delayed hide")
+  }, 500);
+}
 
-handleMouseOverOut(handler, e) {
-    const target = e.currentTarget;
-    console.log("target!!!!!!!", target)
-    const related = e.relatedTarget || e.nativeEvent.toElement;
-    console.log("related!!!!!!!", related)
+function handleMouseOverOut(handler, e) {
+  const target = e.currentTarget;
+  console.log("target!!!!!!!", target)
+  const related = e.relatedTarget || e.nativeEvent.toElement;
+  console.log("related!!!!!!!", related)
 
-    if (!related || related !== target && !target.contains(related)) {
-      console.log("true....!")
-      handler(e);
-    }
+  if (!related || related !== target && !target.contains(related)) {
+    console.log("true....!")
+    handler(e);
   }
-*/
+}

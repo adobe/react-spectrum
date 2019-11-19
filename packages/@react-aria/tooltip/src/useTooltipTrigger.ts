@@ -54,9 +54,15 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         console.log("esc button called from tooltip")
-        // e.preventDefault();
-        // e.stopPropagation();
-        // onHover or onClose?
+        e.preventDefault();
+        e.stopPropagation();
+
+        state.setOpen(false); // this doesn't toggle open
+
+        // console.log(state.open)
+        // state.open = false; // this doesn't close the tooltip
+        
+        console.log(state) // why is open still true if you use use setOpen?
       }
 
     }
