@@ -1,10 +1,23 @@
 import {AsyncListOptions, AsyncListProps, SortDescriptor} from '@react-types/shared';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useReducer} from 'react';
+
+function reducer(state, {type, ...rest}) {
+  switch (type) {
+    case 'fetching':
+    case 'sorting':
+      return {...state, ...rest, isLoading: true};
+    case 'error':
+      return {...state, ...rest, isLoading: false};
+    case 'success':
+      return {...state, ...rest, isLoading: false};
+    default: throw new Error();
+  }
+}
 
 export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T> {
   const {load, loadMore, sort, defaultSortDescriptor} = options;
 
-  let [state, setState] = useState({
+  let [state, dispatch] = useReducer(reducer, {
     error: null,
     isLoading: true,
     items: [] as Iterable<T>,
@@ -12,25 +25,21 @@ export function useAsyncList<T>(options: AsyncListOptions<T>): AsyncListProps<T>
     fetchFunction: load
   });
 
-  const updateState = useCallback(
-    (newState) => setState(prevState => ({...prevState, ...newState})),
-    []
-  );
-  const fetchData = useCallback(async (fn) => {
+  const fetchData = async fn => {
     try {
       let response = await fn({...state});
-      updateState({isLoading: false, ...response});
+      dispatch({type: 'success', ...response});
     } catch (e) {
-      updateState({isLoading: false, error: e});
+      dispatch({type: 'error', error: e});
     }
-  }, [state, updateState]);
+  };
 
   const onLoadMore = !loadMore ? null : (() => {
-    updateState({isLoading: true, fetchFunction: loadMore});
+    dispatch({type: 'fetching', fetchFunction: loadMore});
   });
 
   const onSortChange = (desc: SortDescriptor) => {
-    updateState({isLoading: true, fetchFunction: sort || load, sortDescriptor: desc});
+    dispatch({type: 'sorting', fetchFunction: sort || load, sortDescriptor: desc});
   };
 
   let {fetchFunction, ...otherState} = state;
