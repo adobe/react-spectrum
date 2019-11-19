@@ -46,7 +46,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     {
       tooltipProps: {
         ...content.props,
-        onClose                                   
+        onClose
       },
       triggerProps: {
         ...trigger.props,

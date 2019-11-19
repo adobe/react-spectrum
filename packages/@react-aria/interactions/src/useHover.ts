@@ -33,6 +33,10 @@ interface HoverResult {
   hoverProps: HTMLAttributes<HTMLElement>
 }
 
+let blahBlah = false
+let hoverHideDelay = null
+let hoverShowDelay = null
+
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
   let context = useContext(HoverResponderContext);
@@ -105,6 +109,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 */
 
       if (onHover) {
+        /*
         let hoverShowDelay = setTimeout(() => {
           onHover({
             type: 'hover',
@@ -113,9 +118,13 @@ export function useHover(props: HoverHookProps): HoverResult {
           });
         }, 500)
         console.log("start target", event.target)
-        console.log("start related target", event.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining
-      }
+        console.log("start related target", event.relatedTarget)
+        */
 
+        handleMouseOverOut(handleDelayedShow(onHover, event), event)
+
+
+      }
 
       // not working for some reason
       // setHover(true);
@@ -123,9 +132,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 
 
-
-
-    let triggerHoverEnd = (target, pointerType, didHover=true) => {
+    let triggerHoverEnd = (event, pointerType, didHover=true) => {
       if (isDisabled) {
         return;
       }
@@ -134,10 +141,12 @@ export function useHover(props: HoverHookProps): HoverResult {
         return;
       }
 
+      let hoverTarget = event.target;
+
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
-          target,
+          hoverTarget,
           pointerType
         });
       }
@@ -149,7 +158,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHover && didHover) {
         onHover({
           type: 'hover',
-          target,
+          hoverTarget,
           pointerType
         });
       }
@@ -164,7 +173,7 @@ export function useHover(props: HoverHookProps): HoverResult {
         //   /*
         //   onHover({
         //     type: 'hover',
-        //     target,
+        //     hoverTarget,
         //     pointerType
         //   });
         //   */
@@ -173,23 +182,15 @@ export function useHover(props: HoverHookProps): HoverResult {
         //
         //
         // }, 500)
-        // // console.log("end target", target.target)
-        // // console.log("end related target", target.relatedTarget) // is the tooltip!
+        // // console.log("end target", event.target)
+        // // console.log("end related target", event.relatedTarget) // is the tooltip!
         //
 
-        console.log("hi")
 
-        callFirst(onHover)
-
-        // handleMouseOverOut(onHover, target)
+        handleMouseOverOut(handleDelayedHide(onHover, event), event)
 
 
       }
-
-
-
-
-      // sample()
 
 
     };
@@ -200,18 +201,18 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       hoverProps.onPointerEnter = (e) => {
         state.isHovering = true
-        console.log(state.isHovering)
+        // console.log(state.isHovering)
         if(state.isHovering) {
-          triggerHoverStart(e, e.pointerType); // can just pass e
+          triggerHoverStart(e, e.pointerType);
         }
 
       };
 
       hoverProps.onPointerLeave = (e) => {
         state.isHovering = false
-        console.log(state.isHovering)
+        // console.log(state.isHovering)
         if(state.isHovering === false){
-          triggerHoverEnd(e, e.pointerType); // can just pass e
+          triggerHoverEnd(e, e.pointerType);
         }
 
       };
@@ -237,48 +238,59 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-
-//triggerProps.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
-//triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
-//onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
-
-let sample = chain(callFirst, callSecond) // this worked
-
-
-function callFirst(funcAarg) {  // this worked 
-  console.log("I'm first!")
-  funcAarg()
-}
-
-function callSecond() {
-  console.log("I'm second!")
-}
-
-
-
-
 // give the animation some extra time on the screen so that the related target can be picked up
-function handleDelayedShow(e) {
-  let hoverShowDelay = setTimeout(() => {
-    console.log("handle dealyed show")
+function handleDelayedShow(onHover, e) {
+
+
+  if(hoverHideDelay != null) {
+    clearTimeout(hoverHideDelay);
+    hoverHideDelay = null;
+    console.log("block 1")
+  }
+
+  console.log(blahBlah)
+
+  hoverShowDelay = setTimeout(() => {
+    onHover()
+    console.log("handled dealyed show")
   }, 500);
 }
 
 // give the user some time to hover over the tooltip before it disapears
-function handleDelayedHide(e) {
-  let hoverHideDelay = setTimeout(() => {
-    console.log("handle delayed hide")
+function handleDelayedHide(onHover, e) {
+
+  if(hoverShowDelay != null) {
+    clearTimeout(hoverShowDelay);
+    hoverShowDelay = null;
+    console.log("block 2")
+  }
+
+  if(blahBlah) { // this is not recognized until the next loop
+    console.log("don't close")
+  }
+
+  hoverHideDelay = setTimeout(() => {
+    onHover()
+    console.log("handled delayed hide")
   }, 500);
+
 }
 
 function handleMouseOverOut(handler, e) {
-  const target1 = e.currentTarget;
-  console.log("target!!!!!!!", target1)
-  const related1 = e.relatedTarget || e.nativeEvent.toElement;
-  console.log("related!!!!!!!", related1)
+  const target = e.currentTarget;
+  console.log("target!!...", target)
+  const related = e.relatedTarget || e.nativeEvent.toElement;
+  console.log("related!!...", related)
+  const parent = related.parentNode
+  console.log("parent!!...", parent)
+  if(parent.getAttribute('role') === "tooltip") {
+    console.log("hi")
+    blahBlah = true
+    return; // why doesn't this block the handler from being called?
+  }
 
-  if (!related1 || related1 !== target1 && !target1.contains(related1)) {
-    console.log("true....!")
-    handler(); // handler(e)
+  if (!related || related !== target && !target.contains(related)) { // this doesn't stop the tooltip from going away and isn't supposed to 
+    console.log("handler triggered!!...")
+    handler
   }
 }
