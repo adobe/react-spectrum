@@ -4,12 +4,6 @@ import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-let flatMenu = [
-  {name: 'Aardvark'},
-  {name: 'Kangaroo'},
-  {name: 'Snake'}
-];
-
 let withSection = [
   {name: 'Animals', children: [
     {name: 'Aardvark'},
@@ -97,7 +91,7 @@ storiesOf('MenuTrigger', module)
   
 function render(props = {}, menuProps = {}) {
   return (
-    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+    <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} {...props}>
         <Button
           onKeyDown={action('onKeyDown')}

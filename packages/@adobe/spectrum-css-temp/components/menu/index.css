@@ -19,7 +19,9 @@ governing permissions and limitations under the License.
   --spectrum-selectlist-heading-text-transform: uppercase;
   --spectrum-selectlist-heading-letter-spacing: 0.06em;
   --spectrum-selectlist-heading-margin: var(--spectrum-global-dimension-size-75) 0 0 0;
-  --spectrum-selectlist-heading-padding: 0 var(--spectrum-global-dimension-size-450) 0 var(--spectrum-global-dimension-size-150);
+  --spectrum-selectlist-heading-padding-left: var(--spectrum-global-dimension-size-150);
+  --spectrum-selectlist-heading-padding-right: var(--spectrum-global-dimension-size-450);
+
 
   --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-size-85);
 
@@ -32,6 +34,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu {
+  text-align: start;
   display: inline-block;
 
   box-sizing: border-box;
@@ -43,7 +46,7 @@ governing permissions and limitations under the License.
 
   overflow: auto;
 
-  height: 500px;
+  height: 250px;
   width: 200px;
 
   > .spectrum-Menu-sectionHeading {
@@ -54,10 +57,10 @@ governing permissions and limitations under the License.
 
   &.is-selectable {
     .spectrum-Menu-item {
-      padding-right: var(--spectrum-selectlist-option-selectable-padding-right);
+      padding-inline-end: var(--spectrum-selectlist-option-selectable-padding-right);
 
       &.is-selected {
-        padding-right: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
+        padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
       }
     }
   }
@@ -75,12 +78,15 @@ governing permissions and limitations under the License.
   align-items: center;
 
   box-sizing: border-box;
-
-  padding: var(--spectrum-selectlist-option-padding-y) var(--spectrum-selectlist-option-padding) var(--spectrum-selectlist-option-padding-y) calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
+  
+  padding-top: var(--spectrum-selectlist-option-padding-y);
+  padding-bottom: var(--spectrum-selectlist-option-padding-y);
+  padding-inline-end: var(--spectrum-selectlist-option-padding);
+  padding-inline-start: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
 
   margin: 0;
 
-  border-left: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
+  border-inline-start: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
   min-height: var(--spectrum-selectlist-option-height);
 
@@ -94,7 +100,7 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     /* Redundant, but included for backwards compatibility */
-    padding-right: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
+    padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
 
     .spectrum-Menu-checkmark {
       display: block;
@@ -108,7 +114,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Icon + .spectrum-Menu-itemLabel {
-    margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x);
+    margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
 
@@ -132,7 +138,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
   flex-grow: 0;
-  margin-left: var(--spectrum-selectlist-option-icon-padding-x);
+  margin-inline-start: var(--spectrum-selectlist-option-icon-padding-x);
 }
 
 .spectrum-Menu-divider {
@@ -151,7 +157,10 @@ governing permissions and limitations under the License.
 .spectrum-Menu-sectionHeading {
   display: block;
   margin: var(--spectrum-selectlist-heading-margin);
-  padding: var(--spectrum-selectlist-heading-padding);
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-inline-start: var(--spectrum-selectlist-heading-padding-left);
+  padding-inline-end: var(--spectrum-selectlist-heading-padding-right);
 
   font-size: var(--spectrum-selectlist-heading-text-size);
   font-weight: var(--spectrum-selectlist-heading-text-font-weight);
