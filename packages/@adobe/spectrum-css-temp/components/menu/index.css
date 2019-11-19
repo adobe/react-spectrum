@@ -71,18 +71,15 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: pointer;
   position: relative;
-  display: flex;
-  align-items: center;
 
   box-sizing: border-box;
-
-  padding: var(--spectrum-selectlist-option-padding-y) var(--spectrum-selectlist-option-padding) var(--spectrum-selectlist-option-padding-y) calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
 
   margin: 0;
 
   border-left: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
   min-height: var(--spectrum-selectlist-option-height);
+  height: 1px; /* lol css, hacking for the moment https://stackoverflow.com/questions/14752188/nested-div-does-not-fill-parent-div-with-min-height-100/14752346 */
 
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
@@ -101,19 +98,14 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Icon {
-    /* Don't get smaller, you're an icon! */
-    flex-shrink: 0;
-    align-self: flex-start;
-  }
-
   .spectrum-Icon + .spectrum-Menu-itemLabel {
     margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
 
 .spectrum-Menu-itemLabel {
-  flex: 1 1 auto;
+  grid-area: label;
+  align-self: center;
   line-height: var(--spectrum-selectlist-option-label-line-height);
 }
 
@@ -131,7 +123,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
-  flex-grow: 0;
+  grid-area: tools;
   margin-left: var(--spectrum-selectlist-option-icon-padding-x);
 }
 
@@ -163,4 +155,15 @@ governing permissions and limitations under the License.
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
+}
+
+.spectrum-Menu-itemGrid {
+  display: grid;
+  grid-template-columns: 5px auto 1fr auto 5px;
+  grid-template-rows: 5px 1fr auto 5px;
+  grid-template-areas:
+    ". .    .           .     ."
+    ". icon label       tools ."
+    ". icon description tools ."
+    ". .    .           .     .";
 }

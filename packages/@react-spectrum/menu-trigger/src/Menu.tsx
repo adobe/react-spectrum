@@ -13,6 +13,7 @@ import React, {Fragment, useContext, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu-trigger';
 import {useTreeState} from '@react-stately/tree';
+import {Grid, Flex, Label} from "../../layout/src";
 
 export {Item, Section};
 
@@ -35,9 +36,9 @@ export function Menu<T>(props: MenuProps<T>) {
     onToggle
   } = useTreeState(completeProps);
 
-  let {menuProps} = useMenu(completeProps); 
+  let {menuProps} = useMenu(completeProps);
 
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
       headingHeight: 26 // Same as above
@@ -62,9 +63,9 @@ export function Menu<T>(props: MenuProps<T>) {
         }
 
         return (
-          <MenuItem 
+          <MenuItem
             item={item}
-            onToggle={() => onToggle(item)} 
+            onToggle={() => onToggle(item)}
             onSelectToggle={() => onSelectToggle(item)} />
         );
       }}
@@ -109,19 +110,25 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
           'is-selected': isSelected
         }
       )}>
-      <span
-        className={classNames(
-          styles,
-          'spectrum-Menu-itemLabel')}>
-        {rendered}
-        {hasChildNodes &&
-          <ChevronRightMedium
-            className={classNames(styles, 'spectrum-Menu-chevron')}
-            onMouseDown={e => e.stopPropagation()}
-            onClick={onToggle}
-            size={null} />
-        }
-      </span>
+      <Grid
+        className={classNames(styles, 'spectrum-Menu-itemGrid')}
+        slots={{
+          label: styles['spectrum-Menu-itemLabel'],
+          tools: styles['spectrum-Menu-tools']
+        }}>
+        <Label>
+          {rendered}
+        </Label>
+        <Flex slot="tools">
+          {hasChildNodes &&
+            <ChevronRightMedium
+              className={classNames(styles, 'spectrum-Menu-chevron')}
+              onMouseDown={e => e.stopPropagation()}
+              onClick={onToggle}
+              size={null} />
+          }
+        </Flex>
+      </Grid>
     </li>
   );
 
@@ -131,32 +138,32 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
         <Pressable isDisabled={isDisabled}>
           {renderedItem}
         </Pressable>
-         {/*
+        {/*
             // @ts-ignore */}
         <Menu items={value.children} itemKey="name">
           {
             item => {
               // @ts-ignore
-              return (<Item childItems={item.children}>{item.name}</Item>)
+              return (<Item childItems={item.children}>{item.name}</Item>);
             }
-          } 
+          }
         </Menu>
       </MenuTrigger>
     )
   }
 
   return (
-    <FocusRing 
+    <FocusRing
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
-     {renderedItem}
-   </FocusRing>
-  )
+      {renderedItem}
+    </FocusRing>
+  );
 }
 
 function MenuDivider() {
   return (
-    <li 
+    <li
       aria-orientation="horizontal"
       className={classNames(
         styles,
@@ -173,8 +180,8 @@ interface MenuHeadingProps<T> {
 function MenuHeading<T>({item}: MenuHeadingProps<T>) {
   return (
     <li role="presentation">
-      <span 
-        role="heading" 
+      <span
+        role="heading"
         aria-hidden="true"
         className={classNames(
           styles,

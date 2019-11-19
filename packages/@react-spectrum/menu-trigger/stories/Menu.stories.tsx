@@ -1,4 +1,3 @@
-import {action} from '@storybook/addon-actions';
 import {Item, Menu, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -7,7 +6,7 @@ let flatMenu = [
   {name: 'Aardvark'},
   {name: 'Kangaroo'},
   {name: 'Snake'}
-]
+];
 
 let withSection = [
   {name: 'Animals', children: [
@@ -159,7 +158,7 @@ storiesOf('Menu', module)
       </Menu>
     )
   );
-  
+
 function render(props = {}, menuProps = {}) {
   return (
     <div>filler</div>
