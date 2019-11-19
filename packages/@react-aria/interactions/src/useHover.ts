@@ -74,7 +74,8 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let hoverProps = useMemo(() => {
     let state = ref.current;
-    let triggerHoverStart = (target, pointerType) => {
+
+    let triggerHoverStart = (event, pointerType) => {
       if (isDisabled) {
         return;
       }
@@ -83,10 +84,12 @@ export function useHover(props: HoverHookProps): HoverResult {
         return;
       }
 
+      let hoverTarget = event.target;
+
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
-          target,
+          hoverTarget,
           pointerType
         });
       }
@@ -95,7 +98,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHover) {
         onHover({
           type: 'hover',
-          target,
+          hoverTarget,
           pointerType
         });
       }
@@ -105,18 +108,22 @@ export function useHover(props: HoverHookProps): HoverResult {
         let hoverShowDelay = setTimeout(() => {
           onHover({
             type: 'hover',
-            target,
+            hoverTarget,
             pointerType
           });
         }, 500)
-        // console.log("start target", target.target)
-        // console.log("start related target", target.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining
+        console.log("start target", event.target)
+        console.log("start related target", event.relatedTarget) // didn't get the tooltip to show here but it's clear you still need to use chaining
       }
 
 
       // not working for some reason
       // setHover(true);
     };
+
+
+
+
 
     let triggerHoverEnd = (target, pointerType, didHover=true) => {
       if (isDisabled) {
@@ -150,18 +157,39 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 
       if (onHover && didHover) {
-        let hoverHideDelay = setTimeout(() => {
-          onHover({
-            type: 'hover',
-            target,
-            pointerType
-          });
-        }, 500)
-        // console.log("end target", target.target)
-        // console.log("end related target", target.relatedTarget) // is the tooltip!
+
+        //
+        // let hoverHideDelay = setTimeout(() => {
+        //
+        //   /*
+        //   onHover({
+        //     type: 'hover',
+        //     target,
+        //     pointerType
+        //   });
+        //   */
+        //
+        //   sample()
+        //
+        //
+        // }, 500)
+        // // console.log("end target", target.target)
+        // // console.log("end related target", target.relatedTarget) // is the tooltip!
+        //
+
+        console.log("hi")
+
+        callFirst(onHover)
+
+        // handleMouseOverOut(onHover, target)
+
+
       }
 
 
+
+
+      // sample()
 
 
     };
@@ -209,6 +237,26 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
+
+//triggerProps.onMouseOver = this.handleMouseOverOut.bind(this, this.handleDelayedShow);
+//triggerProps.onMouseOut = this.handleMouseOverOut.bind(this, this.handleDelayedHide);
+//onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
+
+let sample = chain(callFirst, callSecond) // this worked
+
+
+function callFirst(funcAarg) {  // this worked 
+  console.log("I'm first!")
+  funcAarg()
+}
+
+function callSecond() {
+  console.log("I'm second!")
+}
+
+
+
+
 // give the animation some extra time on the screen so that the related target can be picked up
 function handleDelayedShow(e) {
   let hoverShowDelay = setTimeout(() => {
@@ -224,13 +272,13 @@ function handleDelayedHide(e) {
 }
 
 function handleMouseOverOut(handler, e) {
-  const target = e.currentTarget;
-  console.log("target!!!!!!!", target)
-  const related = e.relatedTarget || e.nativeEvent.toElement;
-  console.log("related!!!!!!!", related)
+  const target1 = e.currentTarget;
+  console.log("target!!!!!!!", target1)
+  const related1 = e.relatedTarget || e.nativeEvent.toElement;
+  console.log("related!!!!!!!", related1)
 
-  if (!related || related !== target && !target.contains(related)) {
+  if (!related1 || related1 !== target1 && !target1.contains(related1)) {
     console.log("true....!")
-    handler(e);
+    handler(); // handler(e)
   }
 }

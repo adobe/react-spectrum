@@ -30,7 +30,7 @@ interface TooltipTriggerAria {
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
-  console.log("usage")
+  // console.log("usage")
   let {
     tooltipProps,
     triggerProps,
@@ -61,7 +61,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
         // console.log(state.open)
         // state.open = false; // this doesn't close the tooltip
-        
+
         console.log(state) // why is open still true if you use use setOpen?
       }
 
