@@ -7,7 +7,7 @@ let flatMenu = [
   {name: 'Aardvark'},
   {name: 'Kangaroo'},
   {name: 'Snake'}
-]
+];
 
 let withSection = [
   {name: 'Animals', children: [

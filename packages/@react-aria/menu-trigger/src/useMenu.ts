@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, ReactElement} from 'react';
+import {AllHTMLAttributes} from 'react';
 import {CollectionBase, DOMProps, Expandable, MultipleSelection} from '@react-types/shared';
 import {useLabels} from '@react-aria/utils';
 
@@ -11,7 +11,7 @@ interface MenuAria {
 export function useMenu<T>(props: CollectionBase<T> & Expandable & MultipleSelection & DOMProps): MenuAria {
   let {
     'aria-orientation': ariaOrientation = 'vertical' as orientation,
-    role = 'menu',
+    role = 'menu'
   } = props;
    
   let labelProps = useLabels(props);
@@ -24,8 +24,7 @@ export function useMenu<T>(props: CollectionBase<T> & Expandable & MultipleSelec
     menuProps: {
       ...labelProps,
       role,
-      'aria-orientation': ariaOrientation,
-
+      'aria-orientation': ariaOrientation
     }
   };
 }

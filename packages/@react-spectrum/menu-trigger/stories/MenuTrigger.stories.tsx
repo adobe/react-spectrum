@@ -100,7 +100,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu items={withSection} itemKey="name">
+        <Menu items={withSection} itemKey="name" {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

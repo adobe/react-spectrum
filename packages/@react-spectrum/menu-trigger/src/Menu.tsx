@@ -1,10 +1,10 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
-import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {FocusRing} from '@react-aria/focus';
+import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
@@ -17,8 +17,8 @@ import {useTreeState} from '@react-stately/tree';
 export {Item, Section};
 
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
-  onSelect: (...args) => void
-};
+  onSelect?: (...args) => void
+}
 
 export function Menu<T>(props: MenuProps<T>) {
   // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState?)
@@ -37,7 +37,12 @@ export function Menu<T>(props: MenuProps<T>) {
     onToggle
   } = useTreeState(completeProps);
 
-  let {menuProps} = useMenu(completeProps); 
+  let {menuProps} = useMenu(completeProps);
+
+  let {
+    onSelect,
+    ...otherProps
+  } = completeProps;
 
   let layout = useMemo(() => 
     new ListLayout({
@@ -49,10 +54,12 @@ export function Menu<T>(props: MenuProps<T>) {
   // Remove FocusScope? Need to figure out how to focus the first or last item depending on ArrowUp/Down event in MenuTrigger
   return (
     <CollectionView
+      {...filterDOMProps(otherProps)}
       {...menuProps}
       className={classNames(styles, 'spectrum-Menu')}
       layout={layout}
-      collection={tree}>
+      collection={tree}
+      elementType="ul">
       {(type, item: Node<T>) => {
         if (type === 'section') {
           return (
@@ -60,7 +67,7 @@ export function Menu<T>(props: MenuProps<T>) {
               <MenuHeading item={item} />
               <MenuDivider />
             </Fragment>
-          )
+          );
         }
 
         return (
@@ -68,7 +75,7 @@ export function Menu<T>(props: MenuProps<T>) {
             item={item}
             onToggle={() => onToggle(item)} 
             onSelectToggle={() => onSelectToggle(item)}
-            onSelect={completeProps.onSelect} />
+            onSelect={onSelect} />
         );
       }}
     </CollectionView>
@@ -136,27 +143,25 @@ function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T
         <Pressable isDisabled={isDisabled}>
           {renderedItem}
         </Pressable>
-         {/*
-            // @ts-ignore */}
+        {/*
+          // @ts-ignore */}
         <Menu items={value.children} itemKey="name" onSelect={onSelect}>
           {
-            item => {
-              // @ts-ignore
-              return (<Item childItems={item.children}>{item.name}</Item>)
-            }
+            // @ts-ignore
+            item => (<Item childItems={item.children}>{item.name}</Item>)
           } 
         </Menu>
       </MenuTrigger>
-    )
+    );
   }
 
   return (
     <FocusRing 
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
-     {renderedItem}
-   </FocusRing>
-  )
+      {renderedItem}
+    </FocusRing>
+  );
 }
 
 function MenuDivider() {
@@ -168,7 +173,7 @@ function MenuDivider() {
         'spectrum-Menu-divider'
       )}
       role="separator" />
-  )
+  );
 }
 
 interface MenuHeadingProps<T> {
@@ -187,5 +192,5 @@ function MenuHeading<T>({item}: MenuHeadingProps<T>) {
         {item.rendered}
       </span>
     </li>
-  )
+  );
 }

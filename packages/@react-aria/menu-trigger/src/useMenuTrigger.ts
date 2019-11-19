@@ -83,7 +83,7 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
     }
 
     state.setOpen(false);
-  }
+  };
 
   return {
     menuTriggerProps: {

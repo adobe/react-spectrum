@@ -1,6 +1,6 @@
 import {DOMProps} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {CSSProperties, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {CSSProperties, JSXElementConstructor, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/collections';
 
 interface ScrollViewProps extends DOMProps {
@@ -8,11 +8,20 @@ interface ScrollViewProps extends DOMProps {
   visibleRect: Rect,
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
-  innerStyle: CSSProperties
+  innerStyle: CSSProperties,
+  elementType?: string | JSXElementConstructor<any>
 }
 
 export function ScrollView(props: ScrollViewProps) {
-  let {contentSize, visibleRect, onVisibleRectChange, children, innerStyle, ...otherProps} = props;
+  let {
+    contentSize, 
+    visibleRect, 
+    onVisibleRectChange, 
+    children, 
+    innerStyle, 
+    elementType: ElementType = 'div',
+    ...otherProps
+  } = props;
   let ref = useRef<HTMLDivElement>();
   let state = useRef({
     scrollTop: 0,
@@ -94,10 +103,10 @@ export function ScrollView(props: ScrollViewProps) {
   }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
   return (
-    <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
+    <ElementType {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
       <div style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
         {children}
       </div>
-    </div>
+    </ElementType>
   );
 }

@@ -1,13 +1,14 @@
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
 import {DOMProps} from '@react-types/shared';
-import React, {CSSProperties} from 'react';
+import React, {CSSProperties, JSXElementConstructor} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T, V> extends DOMProps {
   children: (type: string, content: T) => V,
   layout: Layout<T>,
-  collection: Collection<T>
+  collection: Collection<T>,
+  elementType?: string | JSXElementConstructor<any>
 }
 
 export function CollectionView<T, V>(props: CollectionViewProps<T, V>) {
