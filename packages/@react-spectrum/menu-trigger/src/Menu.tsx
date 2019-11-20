@@ -25,7 +25,7 @@ interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection,
 }
 
 export function Menu<T>(props: MenuProps<T>) {
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
       headingHeight: 26 // Same as above
@@ -66,12 +66,31 @@ export function Menu<T>(props: MenuProps<T>) {
           );
         }
 
-        return (
-          <MenuItem
-            item={item}
-            state={state}
-            onSelect={onSelect} />
-        );
+        if (item.hasChildNodes) {
+          return (
+            <MenuTrigger>
+              <MenuItem
+                item={item}
+                state={state}
+                onSelect={onSelect} />
+              {/*
+                // @ts-ignore */}
+              <Menu items={item.value.children} itemKey="name" onSelect={onSelect}>
+                {
+                  // @ts-ignore
+                  item => <Item childItems={item.children}>{item.name}</Item>
+                }
+              </Menu>
+            </MenuTrigger>
+          );
+        } else {
+          return (
+            <MenuItem
+              item={item}
+              state={state}
+              onSelect={onSelect} />
+          )
+        }
       }}
     </CollectionView>
   );
@@ -103,90 +122,69 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
   });
 
   // Prob should be in a useMenuItem aria hook
-  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
+  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem
   let onPressStart = () => {
     if (!isDisabled && !hasChildNodes) {
       onSelect(item);
     }
-  }; 
+  };
 
   let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
 
   // Will need additional aria-owns and stuff when submenus are finalized
-  let renderedItem = (
-    <li
-      {...mergeProps(pressProps, filterDOMProps(itemProps))}
-      ref={ref}
-      aria-disabled={isDisabled}
-      role="menuitem"
-      tabIndex={isDisabled ? null : 0}
-      className={classNames(
-        styles,
-        'spectrum-Menu-item',
-        {
-          'is-disabled': isDisabled,
-          'is-selected': isSelected
-        }
-      )}>
-      <Grid
-        className={classNames(styles, 'spectrum-Menu-itemGrid')}
-        slots={{
-          label: styles['spectrum-Menu-itemLabel'],
-          tools: styles['spectrum-Menu-tools'],
-          icon: styles['spectrum-Menu-icon'],
-          detail: styles['spectrum-Menu-detail']
-        }}>
-        {!Array.isArray(rendered) && (
-          <Fragment>
-            <Label>
-              {rendered}
-            </Label>
-            <Flex slot="tools">
-              {hasChildNodes &&
-                <ChevronRightMedium
-                className={classNames(styles, 'spectrum-Menu-chevron')}
-                onMouseDown={e => e.stopPropagation()}
-                onClick={onToggle}
-                size={null} />
-              }
-            </Flex>
-          </Fragment>
-        )}
-        {Array.isArray(rendered) && rendered}
-      </Grid>
-    </li>
+  return (
+    <FocusRing
+      focusClass={classNames(styles, 'is-focused')}
+      focusRingClass={classNames(styles, 'focus-ring')}>
+      <li
+        {...mergeProps(pressProps, filterDOMProps(itemProps))}
+        ref={ref}
+        aria-disabled={isDisabled}
+        role="menuitem"
+        tabIndex={isDisabled ? null : 0}
+        className={classNames(
+          styles,
+          'spectrum-Menu-item',
+          {
+            'is-disabled': isDisabled,
+            'is-selected': isSelected
+          }
+        )}>
+        <Grid
+          className={classNames(styles, 'spectrum-Menu-itemGrid')}
+          slots={{
+            label: styles['spectrum-Menu-itemLabel'],
+            tools: styles['spectrum-Menu-tools'],
+            icon: styles['spectrum-Menu-icon'],
+            detail: styles['spectrum-Menu-detail']
+          }}>
+          {!Array.isArray(rendered) && (
+            <Fragment>
+              <Label>
+                {rendered}
+              </Label>
+              <Flex slot="tools">
+                {hasChildNodes &&
+                  <ChevronRightMedium
+                  className={classNames(styles, 'spectrum-Menu-chevron')}
+                  onMouseDown={e => e.stopPropagation()}
+                  onClick={onToggle}
+                  size={null} />
+                }
+              </Flex>
+            </Fragment>
+          )}
+          {Array.isArray(rendered) && rendered}
+        </Grid>
+      </li>
+    </FocusRing>
   );
-  
+
   // Need to figure out the alternative to using Pressable below, it breaks some stuff
   // like the useEffect in useSelectableItem. Prob will need a separate trigger from MenuTrigger maybe?
   // Maybe need to modify MenuTrigger itself so it works with non RSP Button elements
   // Also has an issue where the focus ring stuff doesn't appear on menu items with child nodes,
   // maybe a ref issue?
-  if (hasChildNodes) {
-    renderedItem = (
-      <MenuTrigger>
-        {/* <Pressable isDisabled={isDisabled}> */}
-        {renderedItem}
-        {/* </Pressable> */}
-        {/*
-          // @ts-ignore */}
-        <Menu items={value.children} itemKey="name" onSelect={onSelect}>
-          {
-            // @ts-ignore
-            item => (<Item childItems={item.children}>{item.name}</Item>)
-          }
-        </Menu>
-      </MenuTrigger>
-    );
-  }
-
-  return (
-    <FocusRing
-      focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}>
-      {renderedItem}
-    </FocusRing>
-  );
 }
 
 function MenuDivider() {
