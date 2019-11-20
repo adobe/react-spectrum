@@ -9,7 +9,7 @@ export interface FlexProps {
 
 export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};
-  let completeProps = Object.assign({}, defaults);
+  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
@@ -18,6 +18,7 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
   } = completeProps;
   let {[slot]: slotClassName} = useSlotProvider();
 
+  console.log(slot, slotClassName);
   return (
     <div {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'flex', slotClassName, className)}>
       {children}

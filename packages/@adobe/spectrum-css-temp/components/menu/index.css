@@ -49,7 +49,7 @@ governing permissions and limitations under the License.
   height: 250px;
   width: 200px;
 
-  > .spectrum-Menu-sectionHeading {
+  & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
     margin-top: var(--spectrum-menu-margin-x);
     margin-bottom: var(--spectrum-menu-margin-x);
@@ -58,10 +58,6 @@ governing permissions and limitations under the License.
   &.is-selectable {
     .spectrum-Menu-item {
       padding-inline-end: var(--spectrum-selectlist-option-selectable-padding-right);
-
-      &.is-selected {
-        padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
-      }
     }
   }
 }
@@ -76,11 +72,6 @@ governing permissions and limitations under the License.
   position: relative;
 
   box-sizing: border-box;
-  
-  padding-top: var(--spectrum-selectlist-option-padding-y);
-  padding-bottom: var(--spectrum-selectlist-option-padding-y);
-  padding-inline-end: var(--spectrum-selectlist-option-padding);
-  padding-inline-start: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
 
   margin: 0;
 
@@ -98,9 +89,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    /* Redundant, but included for backwards compatibility */
-    padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
-
     .spectrum-Menu-checkmark {
       display: block;
     }
@@ -170,11 +158,24 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-itemGrid {
   display: grid;
-  grid-template-columns: 5px auto 1fr auto 5px;
-  grid-template-rows: 5px 1fr auto 5px;
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto var(--spectrum-selectlist-option-padding);
+  grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
     ". .    .           .     ."
     ". icon label       tools ."
     ". icon description tools ."
     ". .    .           .     .";
+}
+
+.spectrum-Menu-tools {
+  grid-area: tools;
+  align-items: center;
+}
+.spectrum-Menu-icon {
+  grid-area: icon;
+  align-items: center;
+  padding-inline-end: 5px;
+}
+.spectrum-Menu-detail {
+  font-family: monospace;
 }

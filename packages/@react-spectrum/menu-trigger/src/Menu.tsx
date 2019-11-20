@@ -46,7 +46,7 @@ export function Menu<T>(props: MenuProps<T>) {
     ...otherProps
   } = completeProps;
 
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
       headingHeight: 26 // Same as above
@@ -103,6 +103,7 @@ function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T
     value
   } = item;
 
+  console.log(rendered);
   // Will need additional aria-owns and stuff when submenus are finalized
   let renderedItem = (
     <li
@@ -127,20 +128,27 @@ function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T
         className={classNames(styles, 'spectrum-Menu-itemGrid')}
         slots={{
           label: styles['spectrum-Menu-itemLabel'],
-          tools: styles['spectrum-Menu-tools']
+          tools: styles['spectrum-Menu-tools'],
+          icon: styles['spectrum-Menu-icon'],
+          detail: styles['spectrum-Menu-detail']
         }}>
-        <Label>
-          {rendered}
-        </Label>
-        <Flex slot="tools">
-          {hasChildNodes &&
-            <ChevronRightMedium
-              className={classNames(styles, 'spectrum-Menu-chevron')}
-              onMouseDown={e => e.stopPropagation()}
-              onClick={onToggle}
-              size={null} />
-          }
-        </Flex>
+        {!Array.isArray(rendered) && (
+          <Fragment>
+            <Label>
+              {rendered}
+            </Label>
+            <Flex slot="tools">
+              {hasChildNodes &&
+                <ChevronRightMedium
+                className={classNames(styles, 'spectrum-Menu-chevron')}
+                onMouseDown={e => e.stopPropagation()}
+                onClick={onToggle}
+                size={null} />
+              }
+            </Flex>
+          </Fragment>
+        )}
+        {Array.isArray(rendered) && rendered}
       </Grid>
     </li>
   );

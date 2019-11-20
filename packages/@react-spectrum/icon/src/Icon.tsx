@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
+import {useSlotProvider} from "@react-spectrum/layout";
 
 interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
@@ -17,8 +18,10 @@ export function Icon(props: IconProps) {
     scale,
     color,
     size,
+    slot,
     ...otherProps
   } = props;
+  let {[slot ? slot : 'icon']: slotClassName} = useSlotProvider();
 
   let provider = useProvider();
   let pscale = 'M';
@@ -50,6 +53,8 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      className)
+      slotClassName,
+      className
+    )
   });
 }

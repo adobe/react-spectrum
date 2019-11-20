@@ -1,8 +1,8 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
-import styles from './layout.css';
-import {useSlotProvider} from './Slots';
+import styles from '../layout.css';
+import {useSlotProvider} from '../Slots';
 
 export interface LabelProps {
 }

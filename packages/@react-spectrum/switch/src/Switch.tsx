@@ -5,6 +5,7 @@ import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
 import {SwitchProps} from '@react-types/switch';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
+import {useSlotProvider} from "@react-spectrum/layout";
 
 export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelElement>) => {
   let completeProps = Object.assign({}, {
@@ -18,8 +19,10 @@ export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelEl
     isDisabled,
     children,
     className,
+    slot,
     ...otherProps
   } = completeProps;
+  let {[slot ? slot : 'switch']: slotClassName} = useSlotProvider();
 
   let inputRef = useRef<HTMLInputElement>();
   let {
@@ -46,6 +49,7 @@ export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelEl
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
             'is-disabled': isDisabled
           },
+          slotClassName,
           className
         )
       }>
