@@ -8,7 +8,7 @@ export interface HeadingProps {
 }
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
+  let defaults = {slot: 'heading'};
   let completeProps = Object.assign({}, defaults, props);
   let {
     children,
@@ -16,7 +16,7 @@ export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTM
     slot,
     ...otherProps
   } = completeProps;
-  let {[slot ? slot : 'heading']: slotClassName} = useSlotProvider();
+  let {[slot]: slotClassName} = useSlotProvider();
 
   return (
     <h1 {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'heading', slotClassName, className)}>

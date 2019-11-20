@@ -8,7 +8,7 @@ export interface DetailProps {
 }
 
 export const Detail = React.forwardRef((props: DetailProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
+  let defaults = {slot: 'detail'};
   let completeProps = Object.assign({}, defaults, props);
   let {
     children,
@@ -16,7 +16,7 @@ export const Detail = React.forwardRef((props: DetailProps, ref: RefObject<HTMLE
     slot,
     ...otherProps
   } = completeProps;
-  let {[slot ? slot : 'detail']: slotClassName} = useSlotProvider();
+  let {[slot]: slotClassName} = useSlotProvider();
 
   return (
     <kbd {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'detail', slotClassName, className)}>
