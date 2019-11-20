@@ -1,8 +1,8 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, SingleSelectionBase} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
-import {ListLayout} from '@react-stately/collections';
-import React, {useMemo} from 'react';
+import {ListLayout, Node} from '@react-stately/collections';
+import React, {AllHTMLAttributes, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useNav} from '@react-aria/sidenav';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -49,8 +49,14 @@ export function SideNav<T>(props: SideNavProps<T>) {
   );
 }
 
-function SideNavItem(props) {
-  let {className, onSelectToggle, isSelected, isDisabled, icon, item, ...otherProps} = props;
+interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
+  item: Node<T>,
+  onToggle: (item: Node<T>) => void, // only for multi level
+  onSelectToggle: (item: Node<T>) => void
+}
+function SideNavItem<T>({item, onSelectToggle, ...otherProps}: SideNavItemProps<T>) {
+  let {isSelected, isDisabled, rendered} = item;
+  let {className, ...other} = otherProps;
   className = classNames(
     styles,
     'spectrum-SideNav-itemLink',
@@ -60,15 +66,15 @@ function SideNavItem(props) {
     },
     className
   );
+  // TODO: How to handle icon prop that existed in v2 SideNavItem?
   return (
     <div className={classNames(styles, 'spectrum-SideNav-item')}>
       <a
         className={className}
         role="presentation"
-        onClick={onSelectToggle}
-        {...otherProps}>
-        {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-SideNav-itemIcon')})}
-        {item.rendered}
+        onClick={() => onSelectToggle(item)}
+        {...other}>
+        {rendered}
       </a>
     </div>
   );
