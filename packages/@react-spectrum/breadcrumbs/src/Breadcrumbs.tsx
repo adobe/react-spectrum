@@ -13,6 +13,7 @@ import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 
 export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
+  isHeading?: boolean,
   headingAriaLevel?: number,
   showRoot?: boolean,
   isDisabled?: boolean,
@@ -23,6 +24,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   let {
     size = 'M',
     children,
+    isHeading,
     headingAriaLevel,
     showRoot,
     isDisabled,
@@ -88,7 +90,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
           child,
           {
             isCurrent,
-            isHeading: isCurrent && size === 'L',
+            isHeading: isCurrent && (isHeading || size === 'L'),
             headingAriaLevel,
             isDisabled
           }
@@ -155,13 +157,13 @@ const Menu = React.forwardRef((props: MenuProps) => {
   return (
     <DialogTrigger type="popover">
       <ActionButton
-        icon={<FolderBreadcrumb />}
+        icon={<FolderBreadcrumb alt="…" />}
         isDisabled={isDisabled}
-        isQuiet >
-        {label && React.cloneElement(label, {isCurrent: true})}
+        isQuiet>
+        {label && React.cloneElement(label, {isCurrent: undefined})}
       </ActionButton>
       <Dialog>
-        {children.map((child) => React.cloneElement(child, {isCurrent: true}))}
+        {children.map((child) => React.cloneElement(child, {isCurrent: undefined}))}
       </Dialog>
     </DialogTrigger>
   );

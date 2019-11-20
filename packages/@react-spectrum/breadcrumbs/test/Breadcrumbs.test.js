@@ -76,6 +76,16 @@ describe('Breadcrumbs', function () {
     expect(heading).toHaveAttribute('aria-level', '2');
   });
 
+  it('Handles isHeading and headingAriaLevel', () => {
+    let {getByRole} = render(
+      <Breadcrumbs headingAriaLevel={2} isHeading>
+        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let heading = getByRole('heading');
+    expect(heading).toHaveAttribute('aria-level', '2');
+  });
+
   it('Handles max visible items', () => {
     let {getByText, getByRole} = render(
       <Breadcrumbs maxVisibleItems="3" >

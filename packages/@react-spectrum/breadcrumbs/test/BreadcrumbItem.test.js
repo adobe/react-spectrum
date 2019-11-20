@@ -1,7 +1,7 @@
 import {BreadcrumbItem} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
-import {triggerPress} from '@react-spectrum/test-utils'; 
+import {triggerPress} from '@react-spectrum/test-utils';
 
 // v3 component
 describe('Breadcrumbs', function () {

@@ -15,6 +15,10 @@ storiesOf('Breadcrumbs', module)
     () => render({})
   )
   .add(
+    'isHeading: true',
+    () => render({isHeading: true})
+  )
+  .add(
     'size: S',
     () => render({size: 'S'})
   )

@@ -1,9 +1,10 @@
-import React, {ReactElement, ReactNode} from 'react';
+import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export function getWrappedElement(children: string | ReactElement | ReactNode): ReactElement {
+export function getWrappedElement(children: string | ReactElement | ReactNode, elementType?: string | JSXElementConstructor<any>): ReactElement {
   let element;
+  let ElementType = elementType || 'span';
   if (typeof children === 'string') {
-    element = <span>{children}</span>;
+    element = <ElementType>{children}</ElementType>;
   } else {
     element = React.Children.only(children);
   }

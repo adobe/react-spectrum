@@ -13,7 +13,8 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
     isHeading,
     isCurrent,
     isDisabled,
-    headingAriaLevel,
+    headingAriaLevel = 1,
+    href,
     ...otherProps
   } = props;
 
@@ -21,10 +22,11 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
   let {breadcrumbItemProps} = useBreadcrumbItem(props);
 
   let element = React.cloneElement(
-    getWrappedElement(children),
+    getWrappedElement(children, 'a'),
     {
       ...filterDOMProps(otherProps),
       ...breadcrumbItemProps,
+      href,
       ref,
       className:
         classNames(
@@ -42,20 +44,21 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         {
           isHeading ?
-            <h1 
+            <span
               className={
                 classNames(
                   styles,
                   'spectrum-Heading--pageTitle'
                 )
               }
+              role="heading"
               aria-level={headingAriaLevel}>
               {element}
-            </h1>
+            </span>
             : element
         }
       </FocusRing>
-      {!isCurrent &&
+      {isCurrent === false &&
         <ChevronRightSmall
           className={
             classNames(
