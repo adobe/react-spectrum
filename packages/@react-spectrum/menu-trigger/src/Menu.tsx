@@ -64,12 +64,31 @@ export function Menu<T>(props: MenuProps<T>) {
           );
         }
 
-        return (
-          <MenuItem 
-            item={item}
-            state={state}
-            onSelect={onSelect} />
-        );
+        if (item.hasChildNodes) {
+          return (
+            <MenuTrigger>
+              <MenuItem
+                item={item}
+                state={state}
+                onSelect={onSelect} />
+              {/*
+                // @ts-ignore */}
+              <Menu items={item.value.children} itemKey="name" onSelect={onSelect}>
+                {
+                  // @ts-ignore
+                  item => <Item childItems={item.children}>{item.name}</Item>
+                }
+              </Menu>
+            </MenuTrigger>
+          );
+        } else {
+          return (
+            <MenuItem
+              item={item}
+              state={state}
+              onSelect={onSelect} />
+          )
+        }
       }}
     </CollectionView>
   );
@@ -111,33 +130,37 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
   let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
 
   // Will need additional aria-owns and stuff when submenus are finalized
-  let renderedItem = (
-    <li
-      {...mergeProps(pressProps, filterDOMProps(itemProps))}
-      ref={ref}
-      aria-disabled={isDisabled}
-      role="menuitem"
-      tabIndex={isDisabled ? null : 0}
-      className={classNames(
-        styles,
-        'spectrum-Menu-item',
-        {
-          'is-disabled': isDisabled,
-          'is-selected': isSelected
-        }
-      )}>
-      <span
+  return (
+    <FocusRing 
+      focusClass={classNames(styles, 'is-focused')}
+      focusRingClass={classNames(styles, 'focus-ring')}>
+      <li
+        {...mergeProps(pressProps, filterDOMProps(itemProps))}
+        ref={ref}
+        aria-disabled={isDisabled}
+        role="menuitem"
+        tabIndex={isDisabled ? null : 0}
         className={classNames(
           styles,
-          'spectrum-Menu-itemLabel')}>
-        {rendered}
-        {hasChildNodes &&
-          <ChevronRightMedium
-            className={classNames(styles, 'spectrum-Menu-chevron')}
-            onMouseDown={e => e.stopPropagation()} />
-        }
-      </span>
-    </li>
+          'spectrum-Menu-item',
+          {
+            'is-disabled': isDisabled,
+            'is-selected': isSelected
+          }
+        )}>
+        <span
+          className={classNames(
+            styles,
+            'spectrum-Menu-itemLabel')}>
+          {rendered}
+          {hasChildNodes &&
+            <ChevronRightMedium
+              className={classNames(styles, 'spectrum-Menu-chevron')}
+              onMouseDown={e => e.stopPropagation()} />
+          }
+        </span>
+      </li>
+    </FocusRing>
   );
   
   // Need to figure out the alternative to using Pressable below, it breaks some stuff
@@ -145,31 +168,6 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
   // Maybe need to modify MenuTrigger itself so it works with non RSP Button elements
   // Also has an issue where the focus ring stuff doesn't appear on menu items with child nodes,
   // maybe a ref issue?
-  if (hasChildNodes) {
-    renderedItem = (
-      <MenuTrigger>
-        {/* <Pressable isDisabled={isDisabled}> */}
-        {renderedItem}
-        {/* </Pressable> */}
-        {/*
-          // @ts-ignore */}
-        <Menu items={value.children} itemKey="name" onSelect={onSelect}>
-          {
-            // @ts-ignore
-            item => (<Item childItems={item.children}>{item.name}</Item>)
-          } 
-        </Menu>
-      </MenuTrigger>
-    );
-  }
-
-  return (
-    <FocusRing 
-      focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}>
-      {renderedItem}
-    </FocusRing>
-  );
 }
 
 function MenuDivider() {
