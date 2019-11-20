@@ -87,9 +87,9 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {label, labelFor, disabled: true}, numChildren);
+      let tree = renderFormItem(Component, {label, labelFor, 'data-testid': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-testid', 'foo');
     });
 
     it.each`
@@ -143,9 +143,9 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {labelFor, disabled: true}, numChildren);
+      let tree = renderFormItem(Component, {labelFor, 'data-testid': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-testid', 'foo');
     });
   });
 

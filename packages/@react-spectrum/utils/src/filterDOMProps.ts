@@ -4,6 +4,7 @@ import {DOMProps} from '@react-types/shared';
 const DOMPropNames = {
   id: 1,
   tabIndex: 1,
+  role: 1,
   'aria-label': 1,
   'aria-labelledby': 1,
   'aria-describedby': 1,

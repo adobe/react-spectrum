@@ -89,9 +89,9 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
       ${'v2 FieldLabel multiple children'} | ${V2FieldLabel} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFieldLabel(Component, {label, labelFor, disabled: true}, numChildren);
+      let tree = renderFieldLabel(Component, {label, labelFor, 'data-testid': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-testid', 'food');
     });
 
     it.each`
@@ -152,9 +152,9 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
       ${'v2 FieldLabel multiple children'} | ${V2FieldLabel} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFieldLabel(Component, {labelFor, disabled: true}, numChildren);
+      let tree = renderFieldLabel(Component, {labelFor, 'data-testid': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-testid', 'foo');
     });
   });
 

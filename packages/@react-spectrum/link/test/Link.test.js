@@ -35,9 +35,9 @@ describe('Link', function () {
 
   it.each`
     Name        | Component | props
-    ${'Link'}   | ${Link}   | ${{className: 'test-class'}}
+    ${'Link'}   | ${Link}   | ${{UNASFE_className: 'test-class'}}
     ${'V2Link'} | ${V2Link} | ${{className: 'test-class'}}
-  `('$Name handles custom class name', function ({Component, props}) {
+  `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);
     let link = getByText('Click me');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
@@ -54,7 +54,7 @@ describe('Link', function () {
 
   it('Wraps custom child element', () => {
     let {getByRole} = render(
-      <Link className="test-class" onPress={onPressSpy} >
+      <Link UNSAFE_className="test-class" onPress={onPressSpy} >
         <a href="http://example.com" >Click me </a>
       </Link>
     );

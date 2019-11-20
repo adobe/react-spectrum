@@ -44,12 +44,11 @@ describe('Button', function () {
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows custom props to be passed through to the button', function ({Component}) {
-    let {getByRole} = render(<Component data-foo="bar" aria-hidden name="s">Click Me</Component>);
+    let {getByRole} = render(<Component data-foo="bar" aria-hidden>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
     expect(button).toHaveAttribute('aria-hidden', 'true');
-    expect(button).toHaveAttribute('name', 's');
   });
 
   it.each`
