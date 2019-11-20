@@ -73,8 +73,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     );
   }
 
-  console.log('contents', contents);
-
   return (
     <Context.Provider value={context}>
       <I18nProvider locale={locale}>

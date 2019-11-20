@@ -15,9 +15,10 @@
 * from Adobe.
 **************************************************************************/
 
+import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, ReactNode, useContext, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
+// import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import {Toast, ToastContext} from './';
 import toastContainerStyles from './toastContainer.css';
 import {ToastOptions} from '@react-types/toast';
@@ -32,19 +33,38 @@ export function ToastContainer(props: ToastOptions): ReactElement {
     children
   } = completeProps;
   let {
-    toasts
+    toasts,
+    setToasts,
   } = useContext(ToastContext);
+
+  let removeToast = (toastRef, e) => {
+    console.log('toastRef', toastRef);
+    console.log('toasts before', toasts.length);
+    let filtered = toasts.filter(t => {
+      console.log('t.ref.current.id', t.ref.current.id);
+      console.log('toastRef.current.id', toastRef.current.id);
+      return t.ref.current.id !== toastRef.current.id;
+    });
+
+    console.log('toasts after', toasts.length);
+    setToasts(toasts);
+  }
 
 
   let renderToasts = () => {
-    return toasts.map((toast) =>
-     (<Toast {...toast.props}>{toast.content}</Toast>)
-   );
+    console.log('toasts.length', toasts.length);
+    return toasts.map((toast) => {
+      let {
+        onClose,
+        ...otherProps
+      } = toast.props;
+      return (<Toast {...otherProps} onClose={chain(onClose, (e) => removeToast(toast.ref, e))} ref={toast.ref}>{toast.content}</Toast>)
+    });
   };
 
   return (
     <div className={classNames(toastContainerStyles, 'spectrum-ToastContainer')}>
-      {toasts && renderToasts()}
+      {renderToasts()}
     </div>
   );
 }

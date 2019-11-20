@@ -15,13 +15,15 @@
 * from Adobe.
 **************************************************************************/
 
-import React, {ReactElement, ReactNode, useContext, useState} from 'react';
+import {chain} from '@react-aria/utils';
+import React, {createRef, ReactElement, ReactNode, useContext, useState} from 'react';
 import {ToastContainer} from './';
 import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface ToastContextProps {
-  toasts?: {content: ReactNode, props: ToastOptions}[],
+  setToasts?: (any) => void,
+  toasts?: {content: ReactNode, props: ToastOptions, ref: any}[],
   positive?: (content: ReactNode, options: ToastOptions) => void,
   negative?: (content: ReactNode, options: ToastOptions) => void,
   neutral?: (content: ReactNode, options: ToastOptions) => void,
@@ -44,14 +46,37 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
     children
   } = useProviderProps(props);
 
+  /* let removeToast = (toastRef, e) => {
+    console.log('toastRef', toastRef);
+    console.log('toasts before', toasts.length);
+    // let filtered = toasts.filter(t => t.ref.current.id !== toastRef.current);
+
+    console.log('toasts after', toasts.length);
+    setToasts(toasts);
+  }*/
+
   let contextValue = {
     toasts,
-    positive: (content, options) => {
+    setToasts,
+    positive: (content: ReactNode, options: ToastOptions = {}) => {
       let tempToasts = [...toasts];
+      let {
+        timeout,
+        ...otherProps
+      } = options;
+      let toastRef = createRef();
+
+      // otherProps.onClose = chain(otherProps.onClose, (e) => removeToast(toastRef, e));
+
       tempToasts.push({
         content,
-        props: {...options, variant: 'positive'}
-      })
+        props: {
+          variant: 'positive',
+          ...otherProps
+        },
+        ref: toastRef
+      });
+      console.log('tempToasts', tempToasts);
       setToasts(tempToasts);
     }
   }

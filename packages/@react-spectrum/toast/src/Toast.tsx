@@ -25,6 +25,7 @@ import React from 'react';
 import {SpectrumToastProps} from '@react-types/toast';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
+import toastContainerStyles from './toastContainer.css';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -50,6 +51,8 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
 
+  console.log('ref', ref);
+
   return (
     <div
       {...filterDOMProps(otherProps)}
@@ -59,7 +62,11 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
-        styleProps.className
+        styleProps.className,
+        classNames(
+          toastContainerStyles,
+          'spectrum-Toast'
+        )
       )}>
       {Icon &&
         <Icon

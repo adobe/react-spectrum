@@ -60,7 +60,7 @@ function RenderPositive() {
   return (
     <div>
         <Button
-          onPress={() => toastContext.positive('Toast is positive')}
+          onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
           variant="primary">
             Show Toast
         </Button>
