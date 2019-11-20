@@ -20,7 +20,6 @@ export function useSearchField(
     isDisabled,
     onSubmit = () => {},
     onClear,
-    role = undefined,
     type = 'search'
   } = props;
 
@@ -54,9 +53,8 @@ export function useSearchField(
 
   return {
     searchFieldProps: {
-      role,
       value: state.value,
-      onKeyDown: chain(props.onKeyDown, onKeyDown),
+      onKeyDown,
       type
     },
     clearButtonProps: {

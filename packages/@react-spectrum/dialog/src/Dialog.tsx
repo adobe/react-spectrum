@@ -4,10 +4,11 @@ import {DOMProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useRef} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
-interface DialogProps extends DOMProps {
+interface DialogProps extends DOMProps, StyleProps {
   children: ReactNode
 }
 
@@ -28,20 +29,22 @@ const ModalDialog = React.forwardRef((props: DialogProps, ref: RefObject<HTMLDiv
   return <BaseDialog {...mergeProps(props, modalProps)} ref={ref} />;
 });
 
-const BaseDialog = React.forwardRef(({children, className, ...otherProps}: DialogProps, ref: RefObject<HTMLDivElement>) => {
+const BaseDialog = React.forwardRef(({children, ...otherProps}: DialogProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
   let {dialogProps} = useDialog({ref});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusScope contain restoreFocus autoFocus>
       <div
+        {...mergeProps(filterDOMProps(otherProps), dialogProps)}
+        {...styleProps}
         className={classNames(
           styles,
           'spectrum-Dialog',
-          className
+          styleProps.className
         )}
-        ref={ref}
-        {...mergeProps(filterDOMProps(otherProps), dialogProps)}>
+        ref={ref}>
         {children}
       </div>
     </FocusScope>

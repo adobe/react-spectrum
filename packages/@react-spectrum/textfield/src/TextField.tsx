@@ -6,6 +6,7 @@ import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 import {useTextField} from '@react-aria/textfield';
 
 export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
@@ -14,13 +15,13 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
     validationState,
     icon,
     isQuiet = false,
-    className,
     multiLine,
     isDisabled = false,
     value,
     defaultValue,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
   
   let {textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
@@ -53,6 +54,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
 
   let component = (
     <div
+      {...styleProps}
       className={
         classNames(
           styles,
@@ -67,11 +69,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <ElementType
-          {...filterDOMProps(otherProps, {
-            value: false,
-            defaultValue: false,
-            onChange: false
-          })}
+          {...filterDOMProps(otherProps)}
           {...textFieldProps}
           ref={ref}
           value={value}
@@ -83,7 +81,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
               {
                 'spectrum-Textfield-inputIcon': icon
               },
-              className
+              styleProps.className // TODO: move this to the top-level element
             )
           } /> 
       </FocusRing> 
