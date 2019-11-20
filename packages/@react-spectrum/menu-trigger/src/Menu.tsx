@@ -13,7 +13,8 @@ import React, {Fragment, useContext, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu-trigger';
 import {useTreeState} from '@react-stately/tree';
-import {Grid, Flex, Label} from "../../layout/src";
+import {Grid, Heading, Flex, Label, SlotContext} from "../../layout/src";
+import {Divider} from "@react-spectrum/divider";
 
 export {Item, Section};
 
@@ -163,14 +164,10 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
 
 function MenuDivider() {
   return (
-    <li
-      aria-orientation="horizontal"
-      className={classNames(
-        styles,
-        'spectrum-Menu-divider'
-      )}
-      role="separator" />
-  )
+    <li>
+      <Divider size="S" />
+    </li>
+  );
 }
 
 interface MenuHeadingProps<T> {
@@ -180,14 +177,11 @@ interface MenuHeadingProps<T> {
 function MenuHeading<T>({item}: MenuHeadingProps<T>) {
   return (
     <li role="presentation">
-      <span
-        role="heading"
-        aria-hidden="true"
-        className={classNames(
-          styles,
-          'spectrum-Menu-sectionHeading')}>
-        {item.rendered}
-      </span>
+      <SlotContext.Provider value={{heading: styles['spectrum-Menu-sectionHeading']}}>
+        <Heading>
+          {item.rendered}
+        </Heading>
+      </SlotContext.Provider>
     </li>
-  )
+  );
 }
