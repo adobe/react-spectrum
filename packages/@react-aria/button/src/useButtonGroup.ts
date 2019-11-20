@@ -1,11 +1,6 @@
 import {AllHTMLAttributes} from 'react';
-import {DOMProps} from '@react-types/shared';
-import {MultipleSelectionBase} from '@react-types/shared';
-
-export interface ButtonGroupProps extends DOMProps, MultipleSelectionBase {
-  orientation?: 'horizontal' | 'vertical',
-  isDisabled?: boolean
-}
+import {ButtonGroupProps} from '@react-types/button';
+import {useId} from '@react-aria/utils';
 
 export interface ButtonGroupAria {
   buttonGroupProps: AllHTMLAttributes<HTMLElement>,
@@ -14,14 +9,21 @@ export interface ButtonGroupAria {
 
 export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
   let {
-    allowsMultipleSelection, //TODO: change to selectionMode,
+    id,
+    allowsMultipleSelection, // TODO: replace with selectionMode,
     isDisabled,
     orientation,
+    role
   } = props;
+
+  if (!role) {
+    role = allowsMultipleSelection ? 'toolbar' : 'radiogroup';
+  }
 
   return {
     buttonGroupProps: {
-      role: allowsMultipleSelection ? 'group' : 'radiogroup',
+      id: useId(id),
+      role,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled
     },

@@ -65,6 +65,7 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     buttonProps: mergeProps(pressProps, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-checked': isSelected,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
       type,

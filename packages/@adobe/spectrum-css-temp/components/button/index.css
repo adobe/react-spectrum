@@ -156,7 +156,7 @@ a.spectrum-ActionButton {
   font-size: var(--spectrum-actionbutton-text-size);
   font-weight: var(--spectrum-actionbutton-text-font-weight);
 
-  .spectrum-ActionButton-label {
+  .spectrum-Icon + .spectrum-ActionButton-label {
     /* Have icon padding on the left */
     padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
 
@@ -345,4 +345,38 @@ a.spectrum-ActionButton {
     margin-block-start: var(--spectrum-toolgroup-text-button-gap-y);
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
+}
+
+
+.spectrum-ButtonGroup-item--connected {
+  &:focus-ring {
+    z-index: 1;
+  }
+
+  &.spectrum-ActionButton {
+    border-radius: 0;
+
+    &:first-child {
+      border-top-left-radius: var(--spectrum-actionbutton-border-radius);
+      border-bottom-left-radius: var(--spectrum-actionbutton-border-radius);
+    }
+
+    &:last-child {
+      border-top-right-radius: var(--spectrum-actionbutton-border-radius);
+      border-bottom-right-radius: var(--spectrum-actionbutton-border-radius);
+    }
+  }
+
+  &.spectrum-ActionButton + .spectrum-ActionButton {
+    margin-inline-start: 0;
+  }
+
+  .spectrum-ActionButton-label {
+    inline-size: auto;
+  }
+
+}
+
+.spectrum-ButtonGroup-item--justified {
+  flex: 1
 }

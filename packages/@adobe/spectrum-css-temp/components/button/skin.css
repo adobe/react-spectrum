@@ -457,6 +457,128 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-ActionButton--emphasized {
+  background-color: var(--spectrum-actionbutton-emphasized-background-color);
+  border-color: var(--spectrum-actionbutton-emphasized-border-color);
+  color: var(--spectrum-actionbutton-emphasized-text-color);
+
+  .spectrum-Icon {
+    color: var(--spectrum-actionbutton-emphasized-icon-color);
+  }
+
+  .spectrum-ActionButton-hold {
+    color: var(--spectrum-actionbutton-emphasized-hold-icon-color);
+  }
+
+  &:hover {
+    background-color: var(--spectrum-actionbutton-emphasized-background-color-hover);
+    border-color: var(--spectrum-actionbutton-emphasized-border-color-hover);
+    box-shadow: none;
+    color: var(--spectrum-actionbutton-emphasized-text-color-hover);
+
+    .spectrum-Icon {
+      color: var(--spectrum-actionbutton-emphasized-icon-color-hover);
+    }
+
+    .spectrum-ActionButton-hold {
+      color: var(--spectrum-actionbutton-emphasized-hold-icon-color-hover);
+    }
+  }
+
+  &:focus-ring {
+    background-color: var(--spectrum-actionbutton-emphasized-background-color-key-focus);
+    border-color: var(--spectrum-actionbutton-emphasized-border-color-key-focus);
+    box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-actionbutton-border-color-key-focus);
+    color: var(--spectrum-actionbutton-emphasized-text-color-key-focus);
+
+    .spectrum-Icon {
+      color: var(--spectrum-actionbutton-emphasized-icon-color-key-focus);
+    }
+
+    .spectrum-ActionButton-hold {
+      color: var(--spectrum-actionbutton-emphasized-hold-icon-color-key-focus);
+    }
+  }
+
+  &.is-active {
+    background-color: var(--spectrum-actionbutton-emphasized-background-color-down);
+    border-color: var(--spectrum-actionbutton-emphasized-border-color-down);
+    box-shadow: none;
+    color: var(--spectrum-actionbutton-emphasized-text-color-down);
+
+    .spectrum-ActionButton-hold {
+      color: var(--spectrum-actionbutton-emphasized-hold-icon-color-down);
+    }
+  }
+
+  &:disabled,
+  &.is-disabled {
+    background-color: var(--spectrum-actionbutton-emphasized-background-color-disabled);
+    border-color: var(--spectrum-actionbutton-emphasized-border-color-disabled);
+    color: var(--spectrum-actionbutton-emphasized-text-color-disabled);
+
+    .spectrum-Icon {
+      color: var(--spectrum-actionbutton-emphasized-icon-color-disabled);
+    }
+
+    .spectrum-ActionButton-hold {
+      color: var(--spectrum-actionbutton-emphasized-hold-icon-color-disabled);
+    }
+  }
+
+  &.spectrum-ActionButton--quiet.is-selected,
+  &.is-selected {
+    background-color: var(--spectrum-actionbutton-emphasized-background-color-selected);
+    border-color: var(--spectrum-actionbutton-emphasized-border-color-selected);
+    color: var(--spectrum-actionbutton-emphasized-text-color-selected);
+
+    .spectrum-Icon {
+      color: var(--spectrum-actionbutton-emphasized-icon-color-selected);
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-key-focus);
+      border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-key-focus);
+      color: var(--spectrum-actionbutton-emphasized-text-color-selected-key-focus);
+
+      .spectrum-Icon {
+        color: var(--spectrum-actionbutton-emphasized-icon-color-selected-key-focus);
+      }
+    }
+
+    &:hover {
+      background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-hover);
+      border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-hover);
+      color: var(--spectrum-actionbutton-emphasized-text-color-selected-hover);
+
+      .spectrum-Icon {
+        color: var(--spectrum-actionbutton-emphasized-icon-color-selected-hover);
+      }
+    }
+
+    &.is-active {
+      background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-down);
+      border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-down);
+      color: var(--spectrum-actionbutton-emphasized-text-color-selected-down);
+
+      .spectrum-Icon {
+        color: var(--spectrum-actionbutton-emphasized-icon-color-selected-down);
+      }
+    }
+
+    &:disabled,
+    &.is-disabled {
+      background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-disabled);
+      border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-disabled);
+      color: var(--spectrum-actionbutton-emphasized-text-color-selected-disabled);
+
+      .spectrum-Icon {
+        color: var(--spectrum-actionbutton-emphasized-icon-color-selected-disabled);
+      }
+    }
+  }
+}
+
 /* topdoc
 {{ button/actionbutton-quiet.yml }}
 */
@@ -522,94 +644,6 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-actionbutton-quiet-border-color-selected-disabled);
       color: var(--spectrum-actionbutton-quiet-text-color-selected-disabled);
     }
-  }
-}
-
-/* topdoc
-{{ button/button-quiet-warning.yml }}
-*/
-.spectrum-Button--warning.spectrum-Button--quiet {
-  background-color: var(--spectrum-button-quiet-warning-background-color);
-  border-color: var(--spectrum-button-quiet-warning-border-color);
-  color: var(--spectrum-button-quiet-warning-text-color);
-
-  &:hover {
-    background-color: var(--spectrum-button-quiet-warning-background-color-hover);
-    border-color: var(--spectrum-button-quiet-warning-border-color-hover);
-    color: var(--spectrum-button-quiet-warning-text-color-hover);
-  }
-
-  &:focus-ring {
-    background-color: var(--spectrum-button-quiet-warning-background-color-key-focus);
-    border-color: var(--spectrum-button-quiet-warning-border-color-key-focus);
-    color: var(--spectrum-button-quiet-warning-text-color-key-focus);
-  }
-
-  &.is-active {
-    background-color: var(--spectrum-button-quiet-warning-background-color-down);
-    border-color: var(--spectrum-button-quiet-warning-border-color-down);
-    color: var(--spectrum-button-quiet-warning-text-color-down);
-  }
-
-  &:disabled,
-  &.is-disabled {
-    background-color: var(--spectrum-button-quiet-warning-background-color-disabled);
-    border-color: var(--spectrum-button-quiet-warning-border-color-disabled);
-    color: var(--spectrum-button-quiet-warning-text-color-disabled);
-  }
-}
-
-/* topdoc
-{{ button/logicbutton.yml }}
-*/
-
-.spectrum-LogicButton--and {
-  background-color: var(--spectrum-logicbutton-and-background-color);
-  border-color: var(--spectrum-logicbutton-and-border-color);
-  color: var(--spectrum-logicbutton-and-text-color);
-
-  &:hover {
-    background-color: var(--spectrum-logicbutton-and-background-color-hover);
-    border-color: var(--spectrum-logicbutton-and-border-color-hover);
-    color: var(--spectrum-logicbutton-and-text-color);
-  }
-
-  &:focus-ring {
-    background-color: var(--spectrum-logicbutton-and-background-color-key-focus);
-    border-color: var(--spectrum-logicbutton-and-border-color-key-focus);
-    color: var(--spectrum-logicbutton-and-text-color);
-  }
-
-  &:disabled,
-  &.is-disabled {
-    background-color: var(--spectrum-logicbutton-and-background-color-disabled);
-    border-color: var(--spectrum-logicbutton-and-border-color-disabled);
-    color: var(--spectrum-logicbutton-and-text-color-disabled);
-  }
-}
-
-.spectrum-LogicButton--or {
-  background-color: var(--spectrum-logicbutton-or-background-color);
-  border-color: var(--spectrum-logicbutton-or-border-color);
-  color: var(--spectrum-logicbutton-or-text-color);
-
-  &:hover {
-    background-color: var(--spectrum-logicbutton-or-background-color-hover);
-    border-color: var(--spectrum-logicbutton-or-border-color-hover);
-    color: var(--spectrum-logicbutton-or-text-color);
-  }
-
-  &:focus-ring {
-    background-color: var(--spectrum-logicbutton-or-background-color-key-focus);
-    border-color: var(--spectrum-logicbutton-or-border-color-key-focus);
-    color: var(--spectrum-logicbutton-or-text-color);
-  }
-
-  &:disabled,
-  &.is-disabled {
-    background-color: var(--spectrum-button-secondary-background-color-disabled);
-    border-color: var(--spectrum-button-secondary-border-color-disabled);
-    color: var(--spectrum-logicbutton-and-text-color-disabled);
   }
 }
 
@@ -730,6 +764,99 @@ governing permissions and limitations under the License.
 
     &:focus-ring {
       box-shadow: none;
+    }
+  }
+}
+
+.spectrum-ActionButton {
+  .spectrum-Tool-hold {
+    color: var(--spectrum-tool-hold-icon-color);
+  }
+
+  &:hover {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-hold-icon-color-hover);
+    }
+  }
+
+  &:active {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-hold-icon-color-down);
+    }
+  }
+
+  &:focus-ring {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-hold-icon-color-key-focus);
+    }
+  }
+
+  &.is-disabled,
+  &:disabled {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-hold-icon-color-disabled);
+    }
+  }
+}
+
+.spectrum-ActionButton--emphasized {
+  &.is-selected {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-high-emphasis-icon-color-selected);
+    }
+
+    &:hover {
+      .spectrum-Tool-hold {
+        color: var(--spectrum-high-emphasis-hold-icon-color-selected-hover);
+      }
+    }
+
+    &:active {
+      .spectrum-Tool-hold {
+        color: var(--spectrum-tool-high-emphasis-icon-color-selected-down);
+      }
+    }
+
+    &:focus-ring {
+      .spectrum-Tool-hold {
+        color: var(--spectrum-tool-high-emphasis-icon-color-selected-key-focus);
+      }
+    }
+
+    &:disabled,
+    &.is-disabled {
+      .spectrum-Tool-hold {
+        color: var(--spectrum-tool-high-emphasis-icon-color-disabled);
+      }
+    }
+  }
+
+  .spectrum-Tool-hold {
+    color: var(--spectrum-tool-high-emphasis-icon-color);
+  }
+
+  &:hover {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-high-emphasis-icon-color-hover);
+    }
+  }
+
+  &:active {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-high-emphasis-icon-color-down);
+    }
+  }
+
+  &:focus-ring {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-high-emphasis-icon-color-key-focus);
+    }
+  }
+
+  &.is-disabled,
+  &:disabled {
+    .spectrum-Tool-hold {
+      color: var(--spectrum-tool-high-emphasis-icon-color-disabled);
     }
   }
 }

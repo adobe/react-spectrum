@@ -1,13 +1,16 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, ButtonGroup} from '../';
 import Add from '@spectrum-icons/workflow/Add';
+import Bell from '@spectrum-icons/workflow/Bell';
+import Brush from '@spectrum-icons/workflow/Brush';
+import Camera from '@spectrum-icons/workflow/Camera';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import Delete from '@spectrum-icons/workflow/Delete';
-import Bell from '@spectrum-icons/workflow/Bell';
-import Camera from '@spectrum-icons/workflow/Camera';
-import Undo from '@spectrum-icons/workflow/Undo';
 import React from 'react';
+import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
+import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
+import Undo from '@spectrum-icons/workflow/Undo';
 
 storiesOf('ButtonGroup', module)
   .add(
@@ -15,16 +18,48 @@ storiesOf('ButtonGroup', module)
     () => render()
   )
   .add(
-    'vertical',
+    'isQuiet',
+    () => render({isQuiet: true})
+  )
+  .add(
+    'holdAffordance',
+    () => render({holdAffordance: true})
+  )
+  .add(
+    'isDisabled',
+    () => render({isDisabled: true})
+  )
+  .add(
+    'isConnected',
+    () => render({isConnected: true})
+  )
+  .add(
+    'isJustefied, isConected',
+    () => (
+      <div style={{width: '600px'}}>
+        {render({isConnected: true, isJustified: true})}
+      </div>
+    )
+  )
+  .add(
+    'orientation: vertical',
     () => render({orientation: 'vertical'})
   )
   .add(
-    'tool',
-    () => renderIcons({holdAffordance: true})
+    'icons only',
+    () => renderToolIcons({})
   )
   .add(
-    'vertical tool',
-    () => renderIcons({orientation: 'vertical', holdAffordance: true})
+    'icons only, isQuiet',
+    () => renderToolIcons({isQuiet: true})
+  )
+   .add(
+    'icons only, orientation: vertical, holdAffordance: true',
+    () => renderToolIcons({orientation: 'vertical', holdAffordance: true})
+  )
+  .add(
+    'icons only, orientation: vertical, isQuiet',
+    () => renderToolIcons({orientation: 'vertical', holdAffordance: true, isQuiet: true})
   );
 
 const childrenProps =
@@ -37,32 +72,40 @@ const childrenProps =
     {children: 'Undo', icon: <Undo />}
   ];
 
+const toolIcons =
+  [
+    {icon: <Brush />},
+    {icon: <Select />},
+    {icon: <RegionSelect />}
+  ];
+
+
 function render(props = {}) {
   return (
     <ButtonGroup {...props}>
       {
         childrenProps.map(childProps => (
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          {...childProps} />
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            {...childProps} />
         ))
       }
     </ButtonGroup>
   );
 }
 
-function renderIcons(props = {}) {
+function renderToolIcons(props = {}) {
   return (
     <ButtonGroup {...props}>
       {
-        childrenProps.map(childProps => (
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          icon={childProps.icon} />
+        toolIcons.map(childProps => (
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            {...childProps} />
         ))
       }
     </ButtonGroup>

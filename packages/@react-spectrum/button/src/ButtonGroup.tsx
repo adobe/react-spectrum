@@ -1,45 +1,42 @@
-import {ActionButton} from './';
-import {ButtonGroupBase} from '@react-types/button';
+import {ActionButtonProps} from './';
+import {ButtonGroupProps} from '@react-types/button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {PressProps} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
-import React, {ReactElement, RefObject, useRef, useContext} from 'react';
+import React, {ReactElement, RefObject, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
-import {MultipleSelectionBase} from '@react-types/shared';
 
-type ButtonGroupButton = ReactElement<ActionButton>;
+type ButtonGroupButton = ReactElement<ActionButtonProps>;
 
-interface ButtonGroupContextBase {
+interface ButtonGroupContext {
   isDisabled?: boolean,
-  isQuiet?: boolean,
   isEmphasized?: boolean,
+  isQuiet?: boolean,
   holdAffordance?: boolean,
+  className?: any,
+  role?: string
 }
 
-interface ButtonGroupContext extends ButtonGroupContextBase {
-  className?: string,
-  role?: 'checkbox' | 'radio'
-}
-
-export interface SpectrumButtonGroupProps extends ButtonGroupBase, ButtonGroupContextBase, MultipleSelectionBase {
+export interface SpectrumButtonGroupProps extends ButtonGroupProps {
+  isEmphasized?: boolean,
+  isConnected?: boolean
+  isJustified?: boolean,
+  isQuiet?: boolean,
+  holdAffordance?: boolean,
   children: ButtonGroupButton | ButtonGroupButton[],
   orientation?: 'horizontal' | 'vertical'
 }
 
-const ButtonContext = React.createContext<ButtonGroupContext | null>(null);
+const ButtonContext = React.createContext<ButtonGroupContext | {}>({});
 
 export function useButtonProvider(): ButtonGroupContext {
   return useContext(ButtonContext);
 }
 
-export const ButtonGroup = React.forwardRef((props: ButtonGroupProps, ref: RefObject<HTMLElement>) => {
-  ref = ref || useRef();
+export const ButtonGroup = React.forwardRef((props: SpectrumButtonGroupProps, ref: RefObject<HTMLDivElement>) => {
   let {
     isEmphasized,
-    isConnected,
-    isJustified, // no quiet option available in this mode  
+    isConnected, // no quiet option available in this mode
+    isJustified,
     isDisabled,
     children,
     orientation = 'horizontal',
@@ -50,6 +47,17 @@ export const ButtonGroup = React.forwardRef((props: ButtonGroupProps, ref: RefOb
   } = props;
 
   let {buttonGroupProps, buttonProps} = useButtonGroup(props);
+  let isVertical = orientation === 'vertical';
+
+  let itemClassName;
+  if (isVertical) {
+    itemClassName = 'spectrum-ButtonGroup-item--vertical';
+  } else {
+    itemClassName = {
+      'spectrum-ButtonGroup-item--connected': isConnected && !isQuiet,
+      'spectrum-ButtonGroup-item--justified': isJustified
+    };
+  }
 
   return (
     <div
@@ -61,23 +69,20 @@ export const ButtonGroup = React.forwardRef((props: ButtonGroupProps, ref: RefOb
           styles,
           'spectrum-ButtonGroup',
           {
-            'spectrum-ButtonGroup--vertical': orientation === 'vertical',
-            'spectrum-ButtonGroup--connected': isConnected,
-            'spectrum-ButtonGroup--justified': isJustified && !isQuiet
+            'spectrum-ButtonGroup--vertical': isVertical
           },
           className
         )
-      }
-       >
+      } >
       <ButtonContext.Provider
-          value={{
-            ...buttonProps,
-            isEmphasized,
-            isDisabled,
-            isQuiet: isQuiet && !isConnected,
-            holdAffordance,
-            className: `spectrum-ButtonGroup-item--${orientation}`,
-          }}>
+        value={{
+          ...buttonProps,
+          isEmphasized,
+          isDisabled,
+          isQuiet,
+          holdAffordance,
+          className: itemClassName
+        }}>
         {children}
       </ButtonContext.Provider>
     </div>
