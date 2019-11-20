@@ -68,7 +68,7 @@ export class ListLayout<T> extends Layout<Node<T>> {
     let keys = this.collectionManager.collection.getKeys();
     for (let key of keys) {
       let type = this.collectionManager.collection.getItem(key).type;
-      let rectHeight = type === 'item' ? this.rowHeight : this.headingHeight
+      let rectHeight = type === 'item' ? this.rowHeight : this.headingHeight;
       let x = 0;
       if (typeof this.indentationForItem === 'function') {
         x = this.indentationForItem(this.collectionManager.collection, key) || 0;

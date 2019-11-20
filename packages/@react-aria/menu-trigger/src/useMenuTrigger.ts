@@ -26,7 +26,8 @@ interface MenuTriggerState {
 interface MenuTriggerProps {
   menuProps: MenuProps,
   triggerProps: TriggerProps,
-  state: MenuTriggerState
+  state: MenuTriggerState,
+  onSelect?: (...args) => void
 }
 
 interface MenuTriggerAria {
@@ -76,6 +77,14 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
     }
   };
 
+  let onSelect = (...args) => {
+    if (props.onSelect) {
+      props.onSelect(...args);
+    }
+
+    state.setOpen(false);
+  };
+
   return {
     menuTriggerProps: {
       ...triggerAriaProps,
@@ -89,7 +98,8 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
     menuProps: {
       ...overlayAriaProps,
       'aria-labelledby': menuProps['aria-labelledby'] || menuTriggerId,
-      role: menuProps.role || 'menu'
+      role: menuProps.role || 'menu',
+      onSelect
     }
   };
 }

@@ -1,10 +1,10 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
-import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {FocusRing} from '@react-aria/focus';
+import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
@@ -18,7 +18,9 @@ import {Divider} from "@react-spectrum/divider";
 
 export {Item, Section};
 
-interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {};
+interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
+  onSelect?: (...args) => void
+}
 
 export function Menu<T>(props: MenuProps<T>) {
   // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState?)
@@ -39,7 +41,12 @@ export function Menu<T>(props: MenuProps<T>) {
 
   let {menuProps} = useMenu(completeProps);
 
-  let layout = useMemo(() =>
+  let {
+    onSelect,
+    ...otherProps
+  } = completeProps;
+
+  let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
       headingHeight: 26 // Same as above
@@ -49,10 +56,12 @@ export function Menu<T>(props: MenuProps<T>) {
   // Remove FocusScope? Need to figure out how to focus the first or last item depending on ArrowUp/Down event in MenuTrigger
   return (
     <CollectionView
+      {...filterDOMProps(otherProps)}
       {...menuProps}
       className={classNames(styles, 'spectrum-Menu')}
       layout={layout}
-      collection={tree}>
+      collection={tree}
+      elementType="ul">
       {(type, item: Node<T>) => {
         if (type === 'section') {
           return (
@@ -60,14 +69,15 @@ export function Menu<T>(props: MenuProps<T>) {
               <MenuHeading item={item} />
               <MenuDivider />
             </Fragment>
-          )
+          );
         }
 
         return (
           <MenuItem
             item={item}
             onToggle={() => onToggle(item)}
-            onSelectToggle={() => onSelectToggle(item)} />
+            onSelectToggle={() => onSelectToggle(item)}
+            onSelect={onSelect} />
         );
       }}
     </CollectionView>
@@ -77,13 +87,14 @@ export function Menu<T>(props: MenuProps<T>) {
 interface MenuItemProps<T> {
   item: Node<T>,
   onToggle: (item: Node<T>) => void,
-  onSelectToggle: (item: Node<T>) => void
+  onSelectToggle: (item: Node<T>) => void,
+  onSelect?: (...args) => void
 }
 
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
+function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T>) {
   let {
     rendered,
     isSelected,
@@ -99,8 +110,9 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
       role="menuitem"
       tabIndex={isDisabled ? null : 0}
       onMouseDown={() => {
-        if (!isDisabled) {
+        if (!isDisabled && !hasChildNodes) {
           onSelectToggle(item);
+          onSelect(item);
         }
       }}
       className={classNames(
@@ -140,17 +152,15 @@ function MenuItem<T>({item, onSelectToggle, onToggle}: MenuItemProps<T>) {
           {renderedItem}
         </Pressable>
         {/*
-            // @ts-ignore */}
-        <Menu items={value.children} itemKey="name">
+          // @ts-ignore */}
+        <Menu items={value.children} itemKey="name" onSelect={onSelect}>
           {
-            item => {
-              // @ts-ignore
-              return (<Item childItems={item.children}>{item.name}</Item>);
-            }
+            // @ts-ignore
+            item => (<Item childItems={item.children}>{item.name}</Item>)
           }
         </Menu>
       </MenuTrigger>
-    )
+    );
   }
 
   return (

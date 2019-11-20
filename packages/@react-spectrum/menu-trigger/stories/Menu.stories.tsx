@@ -27,7 +27,7 @@ storiesOf('Menu', module)
   .add(
     'Default Menu',
     () => (
-      <Menu aria-labelledby="me" aria-label="hi" items={flatMenu} itemKey="name">
+      <Menu aria-labelledby="me" aria-label="hi" onSelect={action('onSelect')} items={flatMenu} itemKey="name">
         {item => <Item>{item.name}</Item>}
       </Menu>
     )
@@ -35,7 +35,7 @@ storiesOf('Menu', module)
   .add(
     'Menu w/ sections',
     () => (
-      <Menu items={withSection} itemKey="name">
+      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -47,7 +47,7 @@ storiesOf('Menu', module)
   .add(
     'Static',
     () => (
-      <Menu>
+      <Menu onSelect={action('onSelect')}>
         <Item>One</Item>
         <Item>Two</Item>
         <Item>Three</Item>
@@ -57,7 +57,7 @@ storiesOf('Menu', module)
   .add(
     'Static with sections',
     () => (
-      <Menu>
+      <Menu onSelect={action('onSelect')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -74,7 +74,7 @@ storiesOf('Menu', module)
   .add(
     'with default selected menu items',
     () => (
-      <Menu items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -86,7 +86,7 @@ storiesOf('Menu', module)
   .add(
     'static with default selected menu items',
     () => (
-      <Menu>
+      <Menu onSelect={action('onSelect')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -103,7 +103,7 @@ storiesOf('Menu', module)
   .add(
     'with selected menu items (controlled)',
     () => (
-      <Menu items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -115,7 +115,7 @@ storiesOf('Menu', module)
   .add(
     'static with selected menu items (controlled)',
     () => (
-      <Menu>
+      <Menu onSelect={action('onSelect')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -132,7 +132,7 @@ storiesOf('Menu', module)
   .add(
     'with disabled menu items',
     () => (
-      <Menu items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -144,7 +144,7 @@ storiesOf('Menu', module)
   .add(
     'static with disabled menu items',
     () => (
-      <Menu>
+      <Menu onSelect={action('onSelect')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -158,9 +158,3 @@ storiesOf('Menu', module)
       </Menu>
     )
   );
-
-function render(props = {}, menuProps = {}) {
-  return (
-    <div>filler</div>
-  );
-}

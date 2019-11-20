@@ -70,7 +70,6 @@ export class CollectionBuilder<T> {
       hasChildNodes: item.type === Item ? this.hasChildItems(item.props) : true,
       childNodes,
       rendered: item.type === Item ? item.props.title || item.props.children : item.props.title,
-      props: item.props,
       ...states
     };
 

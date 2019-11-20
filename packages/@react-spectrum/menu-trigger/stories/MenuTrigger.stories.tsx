@@ -4,12 +4,6 @@ import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-let flatMenu = [
-  {name: 'Aardvark'},
-  {name: 'Kangaroo'},
-  {name: 'Snake'}
-];
-
 let withSection = [
   {name: 'Animals', children: [
     {name: 'Aardvark'},
@@ -68,7 +62,7 @@ storiesOf('MenuTrigger', module)
       <div style={{height: 100, display: 'flex'}}>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
           <div style={{height: 200}}>
-            <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
+            <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} defaultOpen>
               <Button
                 onKeyDown={action('onKeyDown')}
                 onPress={action('press')}
@@ -97,8 +91,8 @@ storiesOf('MenuTrigger', module)
   
 function render(props = {}, menuProps = {}) {
   return (
-    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
+    <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+      <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} {...props}>
         <Button
           onKeyDown={action('onKeyDown')}
           onPress={action('press')}
@@ -106,7 +100,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu items={withSection} itemKey="name">
+        <Menu items={withSection} itemKey="name" {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
