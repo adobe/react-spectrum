@@ -12,7 +12,7 @@ interface ButtonGroupContext {
   isEmphasized?: boolean,
   isQuiet?: boolean,
   holdAffordance?: boolean,
-  className?: any,
+  className?: string | Object,
   role?: string
 }
 
