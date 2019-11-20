@@ -22,6 +22,10 @@ describe('FormItem', () => {
     return render(component);
   }
 
+  function findLabel() {
+    return document.querySelector('label');
+  }
+
   beforeAll(() => {
     useIdMock = jest.spyOn(useId, 'useId').mockImplementation(() => id);
     createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id);
@@ -46,8 +50,8 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should render a label if provided', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {label, labelFor}, numChildren);
-      let fieldLabel = tree.getByTestId(datatestid);
+      renderFormItem(Component, {label, labelFor}, numChildren);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', id);
@@ -69,9 +73,18 @@ describe('FormItem', () => {
     it.each`
       Name                               | Component     | numChildren
       ${'v3 FormItem no children'}       | ${FormItem}   | ${0}
+    `('$Name should attach the user provided ref to the label', ({Component, numChildren}) => {
+      let ref = React.createRef();
+      renderFormItem(Component, {label, labelFor, ref}, numChildren);
+      let fieldLabel = findLabel();
+      expect(fieldLabel).toBe(ref.current);
+    });
+
+    it.each`
+      Name                               | Component     | numChildren
       ${'v3 FormItem one child'}         | ${FormItem}   | ${1}
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
-    `('$Name should attach the user provided ref to the label', ({Component, numChildren}) => {
+    `('$Name should attach the user provided ref to the div', ({Component, numChildren}) => {
       let ref = React.createRef();
       let tree = renderFormItem(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
@@ -87,9 +100,9 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {label, labelFor, 'data-testid': 'foo'}, numChildren);
+      let tree = renderFormItem(Component, {label, labelFor, 'data-test': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('data-testid', 'foo');
+      expect(fieldLabel).toHaveAttribute('data-test', 'foo');
     });
 
     it.each`
@@ -143,9 +156,9 @@ describe('FormItem', () => {
       ${'v3 FormItem multiple children'} | ${FormItem}   | ${2}
       ${'v2 FormItem multiple children'} | ${V2FormItem} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFormItem(Component, {labelFor, 'data-testid': 'foo'}, numChildren);
+      let tree = renderFormItem(Component, {labelFor, 'data-test': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('data-testid', 'foo');
+      expect(fieldLabel).toHaveAttribute('data-test', 'foo');
     });
   });
 
@@ -161,7 +174,7 @@ describe('FormItem', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFormItem(Component, {label}, 1);
-      let fieldLabel = tree.getByTestId(datatestid);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', 'second');
       expect(fieldLabel).toHaveAttribute('id', 'first');
@@ -195,7 +208,7 @@ describe('FormItem', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFormItem(Component, {label, labelFor}, 2);
-      let fieldLabel = tree.getByTestId(datatestid);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', 'first');

@@ -35,7 +35,7 @@ describe('Link', function () {
 
   it.each`
     Name        | Component | props
-    ${'Link'}   | ${Link}   | ${{UNASFE_className: 'test-class'}}
+    ${'Link'}   | ${Link}   | ${{UNSAFE_className: 'test-class'}}
     ${'V2Link'} | ${V2Link} | ${{className: 'test-class'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);

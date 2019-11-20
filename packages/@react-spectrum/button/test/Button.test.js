@@ -52,14 +52,14 @@ describe('Button', function () {
   });
 
   it.each`
-    Component
-    ${ActionButton}
-    ${Button}
-    ${ClearButton}
-    ${LogicButton}
-    ${V2Button}
-  `('v2/3 parity allows a custom classname on the button', function ({Component}) {
-    let {getByRole} = render(<Component className="x-men-first-class">Click Me</Component>);
+    Component         | props
+    ${ActionButton}   | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${Button}         | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${ClearButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${LogicButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${V2Button}       | ${{className: 'x-men-first-class'}}
+  `('v2/3 parity allows a custom classname on the button', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button.getAttribute('class')).toEqual(expect.stringContaining('x-men-first-class'));

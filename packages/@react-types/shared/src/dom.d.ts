@@ -1,7 +1,11 @@
+import {ClipboardEventHandler, CompositionEventHandler, FocusEventHandler, FormEventHandler, KeyboardEventHandler, ReactEventHandler} from 'react';
+
 // A set of common DOM props that are allowed on any component
+// Ensure this is synced with DOMPropNames in filterDOMProps
 export interface DOMProps {
   id?: string,
   tabIndex?: number,
+  role?: string,
 
   /**
    * Defines a string value that labels the current element.
@@ -38,4 +42,50 @@ export interface DOMProps {
    * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
    */
   'aria-hidden'?: boolean | 'false' | 'true'
+}
+
+export interface KeyboardEvents<T = HTMLElement> {
+  onKeyDown?: KeyboardEventHandler<T>,
+  onKeyUp?: KeyboardEventHandler<T>
+}
+
+export interface FocusableProps<T = HTMLElement> extends KeyboardEvents<T> {
+  autoFocus?: boolean,
+  onFocus?: FocusEventHandler<T>,
+  onBlur?: FocusEventHandler<T>
+}
+
+// DOM props that apply to all text inputs
+// Ensure this is synced with TextInputDOMPropNames in filterDOMProps
+export interface TextInputDOMProps extends DOMProps, FocusableProps<HTMLInputElement> {
+  autoComplete?: string,
+  maxLength?: number,
+  minLength?: number,
+  name?: string,
+  pattern?: string,
+  placeholder?: string,
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | string,
+
+  /**
+   * Hints at the type of data that might be entered by the user while editing the element or its contents
+   * @see https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
+   */
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search',
+
+  // Clipboard events
+  onCopy?: ClipboardEventHandler<HTMLInputElement>,
+  onCut?: ClipboardEventHandler<HTMLInputElement>,
+  onPaste?: ClipboardEventHandler<HTMLInputElement>,
+
+  // Composition events
+  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
+  onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
+  onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
+
+  // Selection events
+  onSelect?: ReactEventHandler<HTMLInputElement>,
+
+  // Input events
+  onBeforeInput?: FormEventHandler<HTMLInputElement>,
+  onInput?: FormEventHandler<HTMLInputElement>
 }

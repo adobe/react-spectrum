@@ -1,6 +1,6 @@
 import Alert from '@spectrum-icons/workflow/Alert';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, cloneIcon, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
@@ -69,7 +69,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <ElementType
-          {...filterDOMProps(otherProps)}
+          {...filterDOMProps(otherProps, TextInputDOMPropNames)}
           {...textFieldProps}
           ref={ref}
           value={value}

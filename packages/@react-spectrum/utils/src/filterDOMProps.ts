@@ -19,8 +19,40 @@ export const KeyboardEvents = {
 };
 
 export const FocusEvents = {
+  ...KeyboardEvents,
   onFocus: 1,
   onBlur: 1
+};
+
+// Sync with TypeScript definition of TextInputDOMProps
+export const TextInputDOMPropNames = {
+  ...FocusEvents,
+  autoComplete: 1,
+  autoFocus: 1,
+  maxLength: 1,
+  minLength: 1,
+  name: 1,
+  pattern: 1,
+  placeholder: 1,
+  type: 1,
+  inputMode: 1,
+
+  // Clipboard events
+  onCopy: 1,
+  onCut: 1,
+  onPaste: 1,
+
+  // Composition events
+  onCompositionEnd: 1,
+  onCompositionStart: 1,
+  onCompositionUpdate: 1,
+
+  // Selection events
+  onSelect: 1,
+
+  // Input events
+  onBeforeInput: 1,
+  onInput: 1
 };
 
 /**
@@ -31,7 +63,7 @@ const propRe = /^(data-.*)$/;
 // Filters out all props that aren't valid DOM props or are user defined via override prop obj.
 export function filterDOMProps(props, override = {}): DOMProps {
   const filterProps = {};
-  const propFilter = Object.assign({}, DOMPropNames, override);
+  const propFilter = {...DOMPropNames, ...override};
 
   for (const prop in props) {
     if (props.hasOwnProperty(prop) && (propFilter[prop] || propRe.test(prop))) {
