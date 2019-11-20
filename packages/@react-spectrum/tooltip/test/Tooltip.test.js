@@ -5,6 +5,10 @@ import {Tooltip} from '../';
 
 let testId = 'test-id';
 
+function renderComponent(Component, props, message) {
+  return render(<Component {...props} data-testid={testId}>{message}</Component>);
+}
+
 
 describe('Tooltip', function () {
 
@@ -16,44 +20,36 @@ describe('Tooltip', function () {
     Name      | Component
     ${'Tooltip'}   | ${Tooltip}
   `('$Name supports children', ({Component}) => {
-    let {getByText} = render(<Component>I am a Tooltip</Component>);
-    expect(getByText('I am a Tooltip')).toBeTruthy();
+    let {getByText} = render(<Component>This is a tooltip</Component>);
+    expect(getByText('This is a tooltip')).toBeTruthy();
   });
 
-  /*
-  // ${'V2Tooltip'}   | ${V2Tooltip}   | ${{className: 'foo'}}
   it.each`
-    Name           | Component    | props
-    ${'Tooltip'}     | ${Tooltip}     | ${{className: 'foo'}}
-  `('$Name supports additional classNames', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props}>My Tooltip</Component>);
+    Name           | Component    | props                  | message
+    ${'Tooltip'}   | ${Tooltip}   | ${{className: 'foo'}}  | ${'This is a tooltip'}
+  `('$Name supports additional classNames', function ({Component, props, message}) {
+    let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
     expect(className.includes('spectrum-Tooltip')).toBeTruthy();
     expect(className.includes('foo')).toBeTruthy();
   });
-  */
-
-  /*
 
   it.each`
     Name           | Component    | props
-    ${'Tooltip'}     | ${Tooltip}     | ${{placement: 'top'}}
-    ${'V2Tooltip'}   | ${V2Tooltip}   | ${{placement: 'top'}}
-  `('$Name supports different placements', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props}>My Tooltip</Component>);
-    let className = getByTestId(testId).className;
-    expect(className.includes('spectrum-Tooltip--top')).toBeTruthy();
-  });
-
-  it.each`
-    Name           | Component    | props
-    ${'Tooltip'}     | ${Tooltip}     | ${{variant: 'info'}}
-    ${'V2Tooltip'}   | ${V2Tooltip}   | ${{variant: 'info'}}
+    ${'Tooltip'}   | ${Tooltip}   | ${{variant: 'info'}}
   `('$Name supports different variants', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props}>My Tooltip</Component>);
+    let {getByTestId} = renderComponent(Component, props);
     let className = getByTestId(testId).className;
     expect(className.includes('spectrum-Tooltip--info')).toBeTruthy();
   });
-  */
+
+  it.each`
+    Name           | Component    | props
+    ${'Tooltip'}   | ${Tooltip}   | ${{placement: 'top'}}
+  `('$Name supports different placements', function ({Component, props}) {
+    let {getByTestId} = renderComponent(Component, props);
+    let className = getByTestId(testId).className;
+    expect(className.includes('spectrum-Tooltip--top')).toBeTruthy();
+  });
 
 });
