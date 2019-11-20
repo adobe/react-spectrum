@@ -22,7 +22,7 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
   let selectionState = useMultipleSelectionState(props);
 
   let [disabledKeys] = useState(
-    props.disabledKeys ? new Set(props.disabledKeys) : undefined
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   );
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);

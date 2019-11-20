@@ -1,6 +1,6 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
+import {CollectionBase, Expandable, MultipleSelection, SelectionMode} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -8,11 +8,13 @@ import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
-import {Pressable} from '@react-aria/interactions';
-import React, {Fragment, useContext, useMemo} from 'react';
+
+import React, {Fragment, useContext, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {TreeState, useTreeState} from '@react-stately/tree';
 import {useMenu} from '@react-aria/menu-trigger';
-import {useTreeState} from '@react-stately/tree';
+import {usePress} from '@react-aria/interactions';
+import {useSelectableItem} from '@react-aria/selection';
 
 export {Item, Section};
 
@@ -21,29 +23,6 @@ interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection,
 }
 
 export function Menu<T>(props: MenuProps<T>) {
-  // Figure out how to propagate the onSelect event (prop just placed on the top level menu and passed to useTreeState?)
-
-  // Figure out how to get the Focus working
-  // Where to put Focus scope? FocusRing can go around the MenuItem
-  // see if that gives me the ability to use arrow keys to shift focus, otherwise look at v2 dropdown to see
-  // Actually I'm pretty sure this is handled in devon's selection and focus management pull
-
-  let contextProps = useContext(MenuContext) || {};
-  let completeProps = mergeProps(contextProps, props);
-
-  let {
-    tree,
-    onSelectToggle,
-    onToggle
-  } = useTreeState(completeProps);
-
-  let {menuProps} = useMenu(completeProps);
-
-  let {
-    onSelect,
-    ...otherProps
-  } = completeProps;
-
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
@@ -51,14 +30,29 @@ export function Menu<T>(props: MenuProps<T>) {
     })
   , []);
 
+  let contextProps = useContext(MenuContext) || {};
+  let completeProps = {
+    ...mergeProps(contextProps, props),
+    selectionMode: 'single' as SelectionMode
+  };
+  let state = useTreeState(completeProps);
+
+  let {menuProps} = useMenu(completeProps, state, layout);
+
+  let {
+    onSelect,
+    ...otherProps
+  } = completeProps;
+
   // Remove FocusScope? Need to figure out how to focus the first or last item depending on ArrowUp/Down event in MenuTrigger
   return (
     <CollectionView
       {...filterDOMProps(otherProps)}
       {...menuProps}
+      focusedKey={state.selectionManager.focusedKey}
       className={classNames(styles, 'spectrum-Menu')}
       layout={layout}
-      collection={tree}
+      collection={state.tree}
       elementType="ul">
       {(type, item: Node<T>) => {
         if (type === 'section') {
@@ -73,8 +67,7 @@ export function Menu<T>(props: MenuProps<T>) {
         return (
           <MenuItem 
             item={item}
-            onToggle={() => onToggle(item)} 
-            onSelectToggle={() => onSelectToggle(item)}
+            state={state}
             onSelect={onSelect} />
         );
       }}
@@ -84,15 +77,14 @@ export function Menu<T>(props: MenuProps<T>) {
 
 interface MenuItemProps<T> {
   item: Node<T>,
-  onToggle: (item: Node<T>) => void,
-  onSelectToggle: (item: Node<T>) => void,
+  state: TreeState<T>,
   onSelect?: (...args) => void
 }
 
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T>) {
+function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
   let {
     rendered,
     isSelected,
@@ -101,18 +93,31 @@ function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T
     value
   } = item;
 
+  let ref = useRef<HTMLLIElement>();
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    itemKey: item.key,
+    itemRef: ref
+  });
+
+  // Prob should be in a useMenuItem aria hook
+  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
+  let onPressStart = () => {
+    if (!isDisabled && !hasChildNodes) {
+      onSelect(item);
+    }
+  }; 
+
+  let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
+
   // Will need additional aria-owns and stuff when submenus are finalized
   let renderedItem = (
     <li
+      {...mergeProps(pressProps, filterDOMProps(itemProps))}
+      ref={ref}
       aria-disabled={isDisabled}
       role="menuitem"
       tabIndex={isDisabled ? null : 0}
-      onMouseDown={() => {
-        if (!isDisabled && !hasChildNodes) {
-          onSelectToggle(item);
-          onSelect(item);
-        }
-      }}
       className={classNames(
         styles,
         'spectrum-Menu-item',
@@ -129,20 +134,23 @@ function MenuItem<T>({item, onSelectToggle, onToggle, onSelect}: MenuItemProps<T
         {hasChildNodes &&
           <ChevronRightMedium
             className={classNames(styles, 'spectrum-Menu-chevron')}
-            onMouseDown={e => e.stopPropagation()}
-            onClick={onToggle}
-            size={null} />
+            onMouseDown={e => e.stopPropagation()} />
         }
       </span>
     </li>
   );
-
+  
+  // Need to figure out the alternative to using Pressable below, it breaks some stuff
+  // like the useEffect in useSelectableItem. Prob will need a separate trigger from MenuTrigger maybe?
+  // Maybe need to modify MenuTrigger itself so it works with non RSP Button elements
+  // Also has an issue where the focus ring stuff doesn't appear on menu items with child nodes,
+  // maybe a ref issue?
   if (hasChildNodes) {
     renderedItem = (
       <MenuTrigger>
-        <Pressable isDisabled={isDisabled}>
-          {renderedItem}
-        </Pressable>
+        {/* <Pressable isDisabled={isDisabled}> */}
+        {renderedItem}
+        {/* </Pressable> */}
         {/*
           // @ts-ignore */}
         <Menu items={value.children} itemKey="name" onSelect={onSelect}>
