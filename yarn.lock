@@ -2699,10 +2699,10 @@
   resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum-icons/-/@react/react-spectrum-icons-2.2.0.tgz#e848f5470ea42b4e825d32a127623d01f964b914"
   integrity sha1-6Ej1Rw6kK06CXTKhJ2I9AflkuRQ=
 
-"@react/react-spectrum@^2.24.0":
-  version "2.25.0"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum/-/@react/react-spectrum-2.25.0.tgz#3b2d51fb0c472c78f99e96e42319068c1381f236"
-  integrity sha1-Oy1R+wxHLHj5npbkIxkGjBOB8jY=
+"@react/react-spectrum@^2.26.1":
+  version "2.26.1"
+  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum/-/@react/react-spectrum-2.26.1.tgz#38dbe2c3c41da6453152243774b37a199fefc931"
+  integrity sha1-ONviw8QdpkUxUiQ3dLN6GZ/vyTE=
   dependencies:
     "@react/collection-view" "^4.1.5"
     autobind-decorator "^1.4.0"
@@ -2714,6 +2714,7 @@
     prop-types "^15.6.0"
     react-overlays "0.8.3"
     react-transition-group "^2.2.0"
+    semver-compare "^1.0.0"
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.2"
@@ -16319,6 +16320,11 @@ select@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/select/-/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
   integrity sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
+
+semver-compare@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/semver-compare/-/semver-compare-1.0.0.tgz#0dee216a1c941ab37e9efb1788f6afc5ff5537fc"
+  integrity sha1-De4hahyUGrN+nvsXiPavxf9VN/w=
 
 semver-greatest-satisfied-range@^1.1.0:
   version "1.1.0"
