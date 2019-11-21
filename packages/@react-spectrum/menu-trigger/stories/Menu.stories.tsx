@@ -95,7 +95,10 @@ storiesOf('Menu', module)
         </Section>
         <Section title="Section 2">
           <Item>One</Item>
-          <Item>Two</Item>
+          <Item title="blah">
+            <Item>gawegkawe</Item>
+            <Item>fwaegawkjgbakw</Item>
+          </Item>
           <Item>Three</Item>
         </Section>
       </Menu>

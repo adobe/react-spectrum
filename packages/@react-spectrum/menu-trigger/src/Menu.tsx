@@ -9,7 +9,7 @@ import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
 
-import React, {Fragment, useContext, useMemo, useRef} from 'react';
+import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useMenu} from '@react-aria/menu-trigger';
@@ -19,7 +19,9 @@ import {useSelectableItem} from '@react-aria/selection';
 export {Item, Section};
 
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
-  onSelect?: (...args) => void
+  onSelect?: (...args) => void,
+  autoFocus?: boolean, // whether or not to autoFocus on Menu opening
+  focusStrategy?: 'first' | 'last' // whether or not to focus the first or last item
 }
 
 export function Menu<T>(props: MenuProps<T>) {
@@ -44,6 +46,25 @@ export function Menu<T>(props: MenuProps<T>) {
     ...otherProps
   } = completeProps;
 
+  useEffect(() => {
+    let selectionManager = state.selectionManager;
+    console.log('completeProps.autoFocus.current', completeProps);
+    if (completeProps.focusStrategy) {
+      state.selectionManager.setFocused(true);
+      if (completeProps.focusStrategy === 'first') {
+        selectionManager.setFocusedKey(layout.getFirstKey());
+      } else if (completeProps.focusStrategy === 'last') {
+        selectionManager.setFocusedKey(layout.getLastKey());
+      } else {
+        let selectedKeys = selectionManager.selectedKeys;
+        if (selectedKeys.size) {
+          selectionManager.setFocusedKey(selectedKeys.values().next().value);
+        }
+      }
+      completeProps.setFocusStrategy(null);
+    }
+  }, []);
+
   // Remove FocusScope? Need to figure out how to focus the first or last item depending on ArrowUp/Down event in MenuTrigger
   return (
     <CollectionView
@@ -63,7 +84,7 @@ export function Menu<T>(props: MenuProps<T>) {
             </Fragment>
           );
         }
-
+        console.log('in menu items', item);
         if (item.hasChildNodes) {
           return (
             <MenuTrigger>
@@ -73,10 +94,13 @@ export function Menu<T>(props: MenuProps<T>) {
                 onSelect={onSelect} />
               {/*
                 // @ts-ignore */}
-              <Menu items={item.value.children} itemKey="name" onSelect={onSelect}>
+              <Menu items={item.childNodes} onSelect={onSelect}>
                 {
                   // @ts-ignore
-                  item => <Item childItems={item.children}>{item.name}</Item>
+                  item => {
+                    console.log('item', item);
+                    return <Item childItems={item.childNodes}>{item.rendered}</Item>
+                  }
                 }
               </Menu>
             </MenuTrigger>
