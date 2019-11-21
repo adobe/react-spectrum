@@ -39,17 +39,17 @@ The auth key can be obtained by following the steps listed [here](https://www.jf
 Then you should be able to install with npm:
 
 ```
-npm install @react/react-spectrum --save
+npm install @react-spectrum/dialog --save
 ```
 
 ### Example
 
 ```javascript
 // Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
-import Provider from '@react/react-spectrum/Provider';
+import Provider from '@react-spectrum/Provider';
 
 // Import the component you want to use
-import Button from '@react/react-spectrum/Button';
+import Button from '@react-spectrum/Button';
 
 // Render it!
 ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
