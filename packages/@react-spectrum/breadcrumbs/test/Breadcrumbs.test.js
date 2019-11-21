@@ -4,7 +4,7 @@ import React, {useRef} from 'react';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
 
-describe('Breadcrumbs', function () {
+describe.only('Breadcrumbs', function () {
 
   afterEach(() => {
     cleanup();
@@ -66,14 +66,14 @@ describe('Breadcrumbs', function () {
     expect(breadcrumb).toBe(ref.current);
   });
 
-  it('Handles heading child and headingAriaLevel', () => {
+  it('Handles size="L"', () => {
     let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} size="L">
+      <Breadcrumbs size="L">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
-    let heading = getByRole('heading');
-    expect(heading).toHaveAttribute('aria-level', '2');
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--multiline'));
   });
 
   it('Handles isHeading and headingAriaLevel', () => {

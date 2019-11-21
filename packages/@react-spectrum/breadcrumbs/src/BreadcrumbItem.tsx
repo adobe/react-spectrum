@@ -13,20 +13,17 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
     isHeading,
     isCurrent,
     isDisabled,
-    headingAriaLevel = 1,
-    href,
-    ...otherProps
+  ...otherProps
   } = props;
 
   let {direction} = useLocale();
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
+  let {breadcrumbItemProps, breadcrumbItemHeadingProps} = useBreadcrumbItem(props);
 
   let element = React.cloneElement(
-    getWrappedElement(children, 'a'),
+    getWrappedElement(children),
     {
       ...filterDOMProps(otherProps),
       ...breadcrumbItemProps,
-      href,
       ref,
       className:
         classNames(
@@ -45,14 +42,13 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
         {
           isHeading ?
             <span
+              {...breadcrumbItemHeadingProps}
               className={
                 classNames(
                   styles,
                   'spectrum-Heading--pageTitle'
                 )
-              }
-              role="heading"
-              aria-level={headingAriaLevel}>
+              }>
               {element}
             </span>
             : element

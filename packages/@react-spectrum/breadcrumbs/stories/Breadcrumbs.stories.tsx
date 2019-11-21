@@ -15,10 +15,6 @@ storiesOf('Breadcrumbs', module)
     () => render({})
   )
   .add(
-    'isHeading: true',
-    () => render({isHeading: true})
-  )
-  .add(
     'size: S',
     () => render({size: 'S'})
   )
@@ -53,6 +49,10 @@ storiesOf('Breadcrumbs', module)
   .add(
     'isDisabled: true, size: L',
     () => render({isDisabled: true, size: 'L'})
+  )
+  .add(
+    'isHeading: true',
+    () => render({isHeading: true})
   );
 
 function render(props = {}) {

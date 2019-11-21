@@ -90,7 +90,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
           child,
           {
             isCurrent,
-            isHeading: isCurrent && (isHeading || size === 'L'),
+            isHeading: isCurrent && isHeading,
             headingAriaLevel,
             isDisabled
           }

@@ -13,7 +13,7 @@ export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, chil
 
   let wrapperClassName = classNames(
     styles,
-    'spectrum-Form-itemField',
+    'spectrum-Form-itemField'
   );
 
   return (
