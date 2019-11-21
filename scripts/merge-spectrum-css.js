@@ -36,6 +36,8 @@ if (!fs.existsSync(`${__dirname}/temp`)) {
     } else {
       return;
     }
+    // TODO: yes, these are hard coded for now, whoever comes along next can figure out how to get these off the cli
+    // it's also likely moving forward that base will be at components/${componentName}/ instead of at src
     promises.push(promiseFromChildProcess(exec(`cd ${__dirname}/../../spectrum-css; git show 1ab4e023b3db0e40556979555ebd69cdccceccac:src/${componentName}/index.css > ${rootDir}/index-basefile`)));
     promises.push(promiseFromChildProcess(exec(`cd ${__dirname}/../../spectrum-css; git show 1ab4e023b3db0e40556979555ebd69cdccceccac:src/${componentName}/skin.css > ${rootDir}/skin-basefile`)));
     promises.push(promiseFromChildProcess(exec(`cd ${__dirname}/../../spectrum-css; git show HEAD:components/${componentName}/index.css > ${rootDir}/index-remotefile`)));
