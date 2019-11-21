@@ -14,7 +14,9 @@ let withSection = [
     {name: 'Danni'},
     {name: 'Devon'},
     {name: 'Ross', children: [
-      {name: 'Tests'}
+      {name: 'Tests', children: [
+        {name: 'blah'}
+      ]}
     ]}
   ]}
 ];
@@ -100,7 +102,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu items={withSection} itemKey="name" {...menuProps}>
+        <Menu autoFocus items={withSection} itemKey="name" selectedKeys={['Kangaroo']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
