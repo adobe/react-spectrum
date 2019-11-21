@@ -3,7 +3,7 @@ import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {PressProps} from '@react-aria/interactions';
-import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
+import React, {JSXElementConstructor, ReactElement, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -11,7 +11,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 export interface ButtonBase extends DOMProps, PressProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
-  icon?: ReactNode,
+  icon?: ReactElement,
   children?: ReactNode,
   href?: string,
   onKeyDown?: (e) => void
