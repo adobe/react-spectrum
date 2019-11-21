@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, RefObject, useRef} from 'react';
+import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -13,7 +13,7 @@ interface MenuProps extends DOMProps {
   type: MenuRole,
   onClose?: () => void,
   role?: MenuRole,
-  focusStrategy?: React.MutableRefObject<focusStrategy>
+  focusStrategy: React.MutableRefObject<focusStrategy>
 }
 
 interface TriggerProps extends DOMProps, PressProps, AllHTMLAttributes<HTMLElement> {
@@ -72,13 +72,13 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
           e.preventDefault();
           e.stopPropagation();
           onPress(e);
-          menuProps.focusStrategy.current = 'first'
+          menuProps.focusStrategy.current = 'first';
           break;
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
           onPress(e);
-          menuProps.focusStrategy.current = 'last'
+          menuProps.focusStrategy.current = 'last';
           break;
       }
     }

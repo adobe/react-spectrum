@@ -4,15 +4,14 @@ import {CollectionBase, Expandable, MultipleSelection, SelectionMode} from '@rea
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
-
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
-import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -72,7 +71,7 @@ export function Menu<T>(props: MenuProps<T>) {
         focusedKey = layout.getLastKey();
       }
       // Reset focus strategy so it doesn't get permanently applied
-      focusStrategy.current = null
+      focusStrategy.current = null;
     }
 
     selectionManager.setFocusedKey(focusedKey);
@@ -105,15 +104,8 @@ export function Menu<T>(props: MenuProps<T>) {
                 item={item}
                 state={state}
                 onSelect={onSelect} />
-              {/*
-                // @ts-ignore */}
               <Menu items={item.childNodes} onSelect={onSelect}>
-                {
-                  // @ts-ignore
-                  item => {
-                    return <Item childItems={item.childNodes}>{item.rendered}</Item>
-                  }
-                }
+                {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
               </Menu>
             </MenuTrigger>
           );
@@ -123,7 +115,7 @@ export function Menu<T>(props: MenuProps<T>) {
               item={item}
               state={state}
               onSelect={onSelect} />
-          )
+          );
         }
       }}
     </CollectionView>
@@ -144,8 +136,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    hasChildNodes,
-    value
+    hasChildNodes
   } = item;
 
   let ref = useRef<HTMLLIElement>();
@@ -163,7 +154,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     }
   }; 
 
-  let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
@@ -198,12 +189,6 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
       </li>
     </FocusRing>
   );
-  
-  // Need to figure out the alternative to using Pressable below, it breaks some stuff
-  // like the useEffect in useSelectableItem. Prob will need a separate trigger from MenuTrigger maybe?
-  // Maybe need to modify MenuTrigger itself so it works with non RSP Button elements
-  // Also has an issue where the focus ring stuff doesn't appear on menu items with child nodes,
-  // maybe a ref issue?
 }
 
 function MenuDivider() {

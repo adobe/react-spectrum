@@ -56,8 +56,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       tabIndex: isFocused ? 0 : -1,
       onFocus() {
         manager.setFocusedKey(itemKey);
-      },
-      ref: itemRef
+      }
     }
   };
 }

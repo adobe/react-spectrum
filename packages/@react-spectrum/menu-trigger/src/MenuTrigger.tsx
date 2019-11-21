@@ -5,7 +5,7 @@ import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {focusStrategy, useMenuTrigger} from '@react-aria/menu-trigger';
+import {useMenuTrigger} from '@react-aria/menu-trigger';
 
 export interface MenuTriggerProps extends DOMProps {
   children: ReactElement[],
@@ -31,7 +31,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     direction = 'bottom',
     onSelect
   } = props;
-  let focusStrategy = useRef<focusStrategy>(null);
+  let focusStrategy = useRef(null);
   let [menuTrigger, menu] = React.Children.toArray(children);
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
