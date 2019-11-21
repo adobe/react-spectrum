@@ -50,10 +50,9 @@ export function Menu<T>(props: MenuProps<T>) {
   useEffect(() => {
     let focusedKey;
     let selectionManager = state.selectionManager;
-
+    state.selectionManager.setFocused(true);
     // Perhaps the below block goes into useSelectableCollection
     if (autoFocus) {
-      state.selectionManager.setFocused(true);
       // TODO: add other default focus behaviors
 
       // Default behavior, focus the first selected key (if any)

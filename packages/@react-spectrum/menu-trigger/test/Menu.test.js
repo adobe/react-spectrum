@@ -1,4 +1,4 @@
-import {cleanup, render, waitForDomChange} from '@testing-library/react';
+import {cleanup, render} from '@testing-library/react';
 import {Item, Menu, Section} from '../';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
@@ -76,7 +76,7 @@ describe('Menu', function () {
     ${'V2Menu'} | ${V2Menu} | ${{}}
   `('$Name has default behavior', async function ({Component}) {
     let tree = renderComponent(Component);
-    await waitForDomChange();
-    tree.debug();
+    let heading = tree.getByText('Heading 1');
+    expect(heading).toBeTruthy();
   });
 });

@@ -143,7 +143,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
 
   let onFocus = (e: FocusEvent) => {
     manager.setFocused(true);
-
+    
     if (manager.focusedKey == null && e.target === e.currentTarget) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
@@ -160,7 +160,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let onBlur = () => {
     manager.setFocused(false);
   };
-  
+
   return {
     listProps: {
       onKeyDown,

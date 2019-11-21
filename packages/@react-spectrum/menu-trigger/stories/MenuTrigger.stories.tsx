@@ -1,5 +1,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import {classNames} from '@react-spectrum/utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -118,10 +120,12 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu>
-            <li>MenuItem1111111111111111</li>
-            <li>MenuItem22222222222222222</li>
-            <li>MenuItem33333333333333333</li>
+          <Menu items={withSection} itemKey="name">
+            {item => (
+              <Section items={item.children} title={item.name}>
+                {item => <Item childItems={item.children}>{item.name}</Item>}
+              </Section>
+            )}
           </Menu>
         </MenuTrigger>
       </div>
