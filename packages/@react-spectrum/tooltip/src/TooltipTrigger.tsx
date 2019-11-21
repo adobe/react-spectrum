@@ -107,7 +107,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <HoverResponder
           {...tooltipTriggerProps}
           isHovering={isOpen}
-          onHover={onInteraction}>
+          onHover={onHoverInteraction}>
           {trigger}
         </HoverResponder>
         {overlay} {/* DEVON FEEDBACK: the overlay is the tooltip ... you can put a HoverResponder around this */}

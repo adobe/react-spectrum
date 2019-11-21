@@ -70,15 +70,6 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let [isHovering, setHover] = useState(false);
 
-  useEffect(() => {
-    if (isHovering) {
-      console.log("set hover is true")
-    }
-    if(isHovering === false){
-      console.log("set hover is false")
-    }
-  }, [isHovering]);
-
   // when refs update they don't trigger a re-render
   let ref = useRef<HoverState>({
     ignoreEmulatedMouseEvents: false,
@@ -189,7 +180,6 @@ export function useHover(props: HoverHookProps): HoverResult {
         //   });
         //   */
         //
-        //   sample()
         //
         //
         // }, 500)
@@ -220,11 +210,11 @@ export function useHover(props: HoverHookProps): HoverResult {
     } else {
 
       hoverProps.onMouseEnter = (e) => {
-        triggerHoverStart(e.target, 'mouse');
+        triggerHoverStart(e, 'mouse');
       };
 
       hoverProps.onMouseLeave = (e) => {
-        triggerHoverEnd(e.target, 'mouse');
+        triggerHoverEnd(e, 'mouse');
       };
 
     }
@@ -248,7 +238,7 @@ function handleDelayedShow(onHover, e) {
   }
 
   hoverShowDelay = setTimeout(() => {
-    onHover()
+    onHover(true)
     console.log("handled dealyed show")
   }, 500);
 }
@@ -263,7 +253,7 @@ function handleDelayedHide(onHover, e) {
   }
 
   hoverHideDelay = setTimeout(() => {
-    onHover()
+    onHover(false)
     console.log("handled delayed hide")
   }, 500);
 
