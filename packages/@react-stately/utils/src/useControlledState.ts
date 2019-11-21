@@ -18,10 +18,10 @@ export function useControlledState<T>(
   ref.current = isControlled;
 
   let setValue = useCallback((value, ...args) => {
-    let onChangeCaller = (value, ...args) => {
+    let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
         if (stateRef.current !== value) {
-          onChange(value, ...args);
+          onChange(value, ...onChangeArgs);
         }
       }
       if (!isControlled) {
@@ -30,15 +30,15 @@ export function useControlledState<T>(
     };
 
     if (typeof value === 'function') {
-      let wrapFunc = (oldValue, ...rest) => {
-        let interceptedValue = value(oldValue, ...rest);
+      let updateFunction = (oldValue, ...functionArgs) => {
+        let interceptedValue = value(oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;
         }
         return oldValue;
       };
-      setStateValue(wrapFunc);
+      setStateValue(updateFunction);
     } else {
       if (!isControlled) {
         setStateValue(value);
