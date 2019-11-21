@@ -17,9 +17,6 @@ governing permissions and limitations under the License.
   --spectrum-dropdown-width: var(--spectrum-global-dimension-size-2400);
 }
 
-/* topdoc
-{{ dropdown/dropdown.yml }}
-*/
 .spectrum-Dropdown {
   position: relative;
   display: inline-block;
@@ -125,9 +122,6 @@ governing permissions and limitations under the License.
   margin-left: var(--spectrum-dropdown-icon-gap);
 }
 
-/* topdoc
-{{ dropdown/dropdown-quiet.yml }}
-*/
 .spectrum-Dropdown--quiet {
   width: auto;
   min-width: var(--spectrum-dropdown-quiet-min-width);

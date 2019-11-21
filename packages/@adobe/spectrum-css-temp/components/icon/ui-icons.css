@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* Hide UI icons on older browsers with SVG 1.1 implementations */
 .spectrum--medium {
   .spectrum-UIIcon--large {
     display: none;
@@ -28,7 +29,7 @@ governing permissions and limitations under the License.
   }
 }
 
-/* Workaround browsers that implement SVG 2 correctly */
+/* Hide UI icons on browsers that implement SVG 2 correctly (Firefox 56+) */
 .spectrum--large {
   x--ui-icon-large-display: block;
   x--ui-icon-medium-display: none;
@@ -43,4 +44,142 @@ governing permissions and limitations under the License.
 }
 .spectrum-UIIcon--medium {
   display: xvar(--ui-icon-medium-display);
+}
+
+/* UI Icons */
+.spectrum-UIIcon-AlertMedium {
+  inline-size: var(--spectrum-icon-alert-medium-width);
+  block-size: var(--spectrum-icon-alert-medium-height);
+}
+.spectrum-UIIcon-AlertSmall {
+  inline-size: var(--spectrum-icon-alert-small-width);
+  block-size: var(--spectrum-icon-alert-small-height);
+}
+.spectrum-UIIcon-ArrowDownSmall {
+  inline-size: var(--spectrum-icon-arrow-down-small-width);
+  block-size: var(--spectrum-icon-arrow-down-small-height);
+}
+.spectrum-UIIcon-ArrowLeftMedium {
+  inline-size: var(--spectrum-icon-arrow-left-medium-width);
+  block-size: var(--spectrum-icon-arrow-left-medium-height);
+}
+.spectrum-UIIcon-Asterisk {
+  inline-size: var(--spectrum-fieldlabel-asterisk-size);
+  block-size: var(--spectrum-fieldlabel-asterisk-size);
+}
+.spectrum-UIIcon-CheckmarkMedium {
+  inline-size: var(--spectrum-icon-checkmark-medium-width);
+  block-size: var(--spectrum-icon-checkmark-medium-height);
+}
+.spectrum-UIIcon-CheckmarkSmall {
+  inline-size: var(--spectrum-icon-checkmark-small-width);
+  block-size: var(--spectrum-icon-checkmark-small-height);
+}
+.spectrum-UIIcon-ChevronDownMedium {
+  inline-size: var(--spectrum-icon-chevron-down-medium-width);
+  block-size: var(--spectrum-icon-chevron-down-medium-height);
+}
+.spectrum-UIIcon-ChevronDownSmall {
+  inline-size: var(--spectrum-icon-chevron-down-small-width);
+  block-size: var(--spectrum-icon-chevron-down-small-height);
+}
+.spectrum-UIIcon-ChevronLeftLarge {
+  inline-size: var(--spectrum-icon-chevron-left-large-width);
+  block-size: var(--spectrum-icon-chevron-left-large-height);
+}
+.spectrum-UIIcon-ChevronLeftMedium {
+  inline-size: var(--spectrum-icon-chevron-left-medium-width);
+  block-size: var(--spectrum-icon-chevron-left-medium-height);
+}
+.spectrum-UIIcon-ChevronRightLarge {
+  inline-size: var(--spectrum-icon-chevron-right-large-width);
+  block-size: var(--spectrum-icon-chevron-right-large-height);
+}
+.spectrum-UIIcon-ChevronRightMedium {
+  inline-size: var(--spectrum-icon-chevron-right-medium-width);
+  block-size: var(--spectrum-icon-chevron-right-medium-height);
+}
+.spectrum-UIIcon-ChevronRightSmall {
+  inline-size: var(--spectrum-icon-chevron-right-small-width);
+  block-size: var(--spectrum-icon-chevron-right-small-height);
+}
+.spectrum-UIIcon-ChevronUpSmall {
+  inline-size: var(--spectrum-icon-chevron-up-small-width);
+  block-size: var(--spectrum-icon-chevron-up-small-height);
+}
+.spectrum-UIIcon-CornerTriangle {
+  inline-size: var(--spectrum-icon-cornertriangle-width);
+  block-size: var(--spectrum-icon-cornertriangle-height);
+}
+.spectrum-UIIcon-CrossLarge {
+  inline-size: var(--spectrum-icon-cross-large-width);
+  block-size: var(--spectrum-icon-cross-large-height);
+}
+.spectrum-UIIcon-CrossMedium {
+  inline-size: var(--spectrum-icon-cross-medium-width);
+  block-size: var(--spectrum-icon-cross-medium-height);
+}
+.spectrum-UIIcon-CrossSmall {
+  inline-size: var(--spectrum-icon-cross-small-width);
+  block-size: var(--spectrum-icon-cross-small-height);
+}
+.spectrum-UIIcon-DashSmall {
+  inline-size: var(--spectrum-icon-dash-small-width);
+  block-size: var(--spectrum-icon-dash-small-height);
+}
+.spectrum-UIIcon-DoubleGripper {
+  inline-size: var(--spectrum-icon-doublegripper-width);
+  block-size: var(--spectrum-icon-doublegripper-height);
+}
+.spectrum-UIIcon-FolderBreadcrumb {
+  inline-size: var(--spectrum-icon-folderbreadcrumb-width);
+  block-size: var(--spectrum-icon-folderbreadcrumb-height);
+}
+.spectrum-UIIcon-HelpMedium {
+  inline-size: var(--spectrum-icon-info-medium-width);
+  block-size: var(--spectrum-icon-info-medium-height);
+}
+.spectrum-UIIcon-HelpSmall {
+  inline-size: var(--spectrum-icon-info-small-width);
+  block-size: var(--spectrum-icon-info-small-height);
+}
+.spectrum-UIIcon-InfoMedium {
+  inline-size: var(--spectrum-icon-info-medium-width);
+  block-size: var(--spectrum-icon-info-medium-height);
+}
+.spectrum-UIIcon-InfoSmall {
+  inline-size: var(--spectrum-icon-info-small-width);
+  block-size: var(--spectrum-icon-info-small-height);
+}
+.spectrum-UIIcon-Magnifier {
+  inline-size: var(--spectrum-icon-magnifier-width);
+  block-size: var(--spectrum-icon-magnifier-height);
+}
+.spectrum-UIIcon-SkipLeft {
+  inline-size: var(--spectrum-icon-skip-left-width);
+  block-size: var(--spectrum-icon-skip-left-height);
+}
+.spectrum-UIIcon-SkipRight {
+  inline-size: var(--spectrum-icon-skip-right-width);
+  block-size: var(--spectrum-icon-skip-right-height);
+}
+.spectrum-UIIcon-Star {
+  inline-size: var(--spectrum-icon-star-width);
+  block-size: var(--spectrum-icon-star-height);
+}
+.spectrum-UIIcon-StarOutline {
+  inline-size: var(--spectrum-icon-star-outline-width);
+  block-size: var(--spectrum-icon-star-outline-height);
+}
+.spectrum-UIIcon-SuccessMedium {
+  inline-size: var(--spectrum-icon-success-medium-width);
+  block-size: var(--spectrum-icon-success-medium-height);
+}
+.spectrum-UIIcon-SuccessSmall {
+  inline-size: var(--spectrum-icon-success-small-width);
+  block-size: var(--spectrum-icon-success-small-height);
+}
+.spectrum-UIIcon-TripleGripper {
+  inline-size: var(--spectrum-icon-triplegripper-width);
+  block-size: var(--spectrum-icon-triplegripper-height);
 }

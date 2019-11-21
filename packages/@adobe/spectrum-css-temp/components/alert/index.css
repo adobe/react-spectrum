@@ -20,9 +20,6 @@ governing permissions and limitations under the License.
   --spectrum-alert-border-width: 2px;
 }
 
-/* topdoc
-{{ alert/alert-closeable.yml }}
-*/
 .spectrum-Alert {
   position: relative;
 

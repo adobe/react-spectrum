@@ -10,14 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ illustratedmessage/illustratedmessage.yml }}
-*/
-
-/* topdoc
-{{ illustratedmessage/illustratedmessage-cta.yml }}
-*/
-
 :root {
   --spectrum-illustrated-message-description-max-width: 500px;
   --spectrum-illustrated-message-heading-max-width: 500px;
