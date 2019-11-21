@@ -63,7 +63,7 @@ Events should be intentially supported by individual components rather than alwa
 
 ### Refs
 
-The React team [advises](https://reactjs.org/docs/refs-and-the-dom.html#exposing-dom-refs-to-parent-components) against exposing direct refs to DOM nodes. Rather than forwarding refs to the top-level DOM node, we shoul expose an interface that's specific to each component. For example, for a TextField we could have `focus()` and `select()` methods. As an escape hatch, if we need to allow access to the actual DOM node, we could support an `UNSAFE_getDOMNode()` method or similar.
+The React team [advises](https://reactjs.org/docs/refs-and-the-dom.html#exposing-dom-refs-to-parent-components) against exposing direct refs to DOM nodes. Rather than forwarding refs to the top-level DOM node, we should expose an interface that's specific to each component. For example, for a TextField we could have `focus()` and `select()` methods. As an escape hatch, if we need to allow access to the actual DOM node, we could support an `UNSAFE_getDOMNode()` method or similar.
 
 ## Documentation
 
