@@ -50,7 +50,6 @@ export function Menu<T>(props: MenuProps<T>) {
 
   useEffect(() => {
     let selectionManager = state.selectionManager;
-    console.log('completeProps.autoFocus.current', completeProps);
     if (completeProps.focusStrategy) {
       state.selectionManager.setFocused(true);
       if (completeProps.focusStrategy === 'first') {
@@ -86,7 +85,7 @@ export function Menu<T>(props: MenuProps<T>) {
             </Fragment>
           );
         }
-        console.log('in menu items', item);
+
         if (item.hasChildNodes) {
           return (
             <MenuTrigger>
@@ -99,10 +98,7 @@ export function Menu<T>(props: MenuProps<T>) {
               <Menu items={item.childNodes} onSelect={onSelect}>
                 {
                   // @ts-ignore
-                  item => {
-                    console.log('item', item);
-                    return <Item childItems={item.childNodes}>{item.rendered}</Item>
-                  }
+                  child =>  <Item>{child.rendered}</Item>
                 }
               </Menu>
             </MenuTrigger>
@@ -155,6 +151,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
 
   let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
 
+  console.log(item, rendered);
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
     <FocusRing
