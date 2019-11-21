@@ -279,7 +279,7 @@ function Menu(props) {
   let contextProps = useContext(MenuContext) || {};
   let {
     id,
-    role,
+    role = 'menu',
     'aria-labelledby': labelledBy,
     children
   } = mergeProps(contextProps, props);
