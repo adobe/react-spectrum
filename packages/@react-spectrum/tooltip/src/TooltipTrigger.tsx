@@ -29,9 +29,18 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
-  let onInteraction = () => {
+  let onInteraction = () => { //DEVON FEEDBACK: a boolean argument and instead of toggling ... set the state
     setOpen(!open);
   };
+
+  let onPressInteraction = () => {
+    setOpen(!open);
+  };
+
+  let onHoverInteraction = (isHovering) => {
+    setOpen(isHovering);
+  }
+
 
   let onClose = () => {
     setOpen(false);
@@ -86,7 +95,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <PressResponder
           {...tooltipTriggerProps}
           isPressed={isOpen}
-          onPress={onInteraction}>
+          onPress={onPressInteraction}>
           {trigger}
         </PressResponder>
         {overlay}
@@ -101,7 +110,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           onHover={onInteraction}>
           {trigger}
         </HoverResponder>
-        {overlay}
+        {overlay} {/* DEVON FEEDBACK: the overlay is the tooltip ... you can put a HoverResponder around this */}
       </Fragment>
     );
   }

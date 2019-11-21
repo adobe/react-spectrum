@@ -23,7 +23,6 @@ export interface HoverHookProps extends HoverProps, DOMProps {
 }
 
 interface HoverState {
-  isHovering: boolean,
   ignoreEmulatedMouseEvents: boolean,
   target: HTMLElement | null
 }
@@ -33,7 +32,6 @@ interface HoverResult {
   hoverProps: HTMLAttributes<HTMLElement>
 }
 
-let blahBlah = false
 let hoverHideDelay = null
 let hoverShowDelay = null
 
@@ -60,6 +58,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
 }
 
 export function useHover(props: HoverHookProps): HoverResult {
+
   let {
     onHover,
     onHoverStart,
@@ -71,10 +70,21 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let [isHovering, setHover] = useState(false);
 
+  useEffect(() => {
+    if (isHovering) {
+      console.log("set hover is true")
+    }
+    if(isHovering === false){
+      console.log("set hover is false")
+    }
+  }, [isHovering]);
+
+  // when refs update they don't trigger a re-render
   let ref = useRef<HoverState>({
-    isHovering: false,
+    ignoreEmulatedMouseEvents: false,
     target: null
   });
+
 
   let hoverProps = useMemo(() => {
     let state = ref.current;
@@ -85,15 +95,16 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (pointerType === 'touch') {
+        state.ignoreEmulatedMouseEvents = true;
         return;
       }
 
-      let hoverTarget = event.target;
+      let target = event.target;
 
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
-          hoverTarget,
+          target,
           pointerType
         });
       }
@@ -102,18 +113,19 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHover) {
         onHover({
           type: 'hover',
-          hoverTarget,
+          target,
           pointerType
         });
       }
 */
+
 
       if (onHover) {
         /*
         let hoverShowDelay = setTimeout(() => {
           onHover({
             type: 'hover',
-            hoverTarget,
+            target,
             pointerType
           });
         }, 500)
@@ -121,13 +133,13 @@ export function useHover(props: HoverHookProps): HoverResult {
         console.log("start related target", event.relatedTarget)
         */
 
-        handleMouseOverOut(handleDelayedShow(onHover, event), event)
+        handleDelayedShow(onHover, event)
 
 
       }
 
-      // not working for some reason
-      // setHover(true);
+
+      setHover(true);
     };
 
 
@@ -138,32 +150,31 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (pointerType === 'touch') {
+        state.ignoreEmulatedMouseEvents = true;
         return;
       }
 
-      let hoverTarget = event.target;
+      let target = event.target;
 
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
-          hoverTarget,
+          target,
           pointerType
         });
       }
 
-      // not working for some reason
-      // setHover(false);
+      setHover(false);
 
 /*
       if (onHover && didHover) {
         onHover({
           type: 'hover',
-          hoverTarget,
+          target,
           pointerType
         });
       }
 */
-
 
       if (onHover && didHover) {
 
@@ -173,7 +184,7 @@ export function useHover(props: HoverHookProps): HoverResult {
         //   /*
         //   onHover({
         //     type: 'hover',
-        //     hoverTarget,
+        //     target,
         //     pointerType
         //   });
         //   */
@@ -186,12 +197,9 @@ export function useHover(props: HoverHookProps): HoverResult {
         // // console.log("end related target", event.relatedTarget) // is the tooltip!
         //
 
-
-        handleMouseOverOut(handleDelayedHide(onHover, event), event)
-
+        handleMouseOverOut(onHover, event) // this worked to freeze when over tooltip ...
 
       }
-
 
     };
 
@@ -200,21 +208,13 @@ export function useHover(props: HoverHookProps): HoverResult {
     if (typeof PointerEvent !== 'undefined') {
 
       hoverProps.onPointerEnter = (e) => {
-        state.isHovering = true
-        // console.log(state.isHovering)
-        if(state.isHovering) {
-          triggerHoverStart(e, e.pointerType);
-        }
-
+        triggerHoverStart(e, e.pointerType);
+        // DEVON FEEDBACK: don't toggle, just set to true
       };
 
       hoverProps.onPointerLeave = (e) => {
-        state.isHovering = false
-        // console.log(state.isHovering)
-        if(state.isHovering === false){
-          triggerHoverEnd(e, e.pointerType);
-        }
-
+        triggerHoverEnd(e, e.pointerType);
+        // DEVON FEEDBACK: don't toggle, just set to false
       };
 
     } else {
@@ -241,14 +241,11 @@ export function useHover(props: HoverHookProps): HoverResult {
 // give the animation some extra time on the screen so that the related target can be picked up
 function handleDelayedShow(onHover, e) {
 
-
   if(hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
     hoverHideDelay = null;
     console.log("block 1")
   }
-
-  console.log(blahBlah)
 
   hoverShowDelay = setTimeout(() => {
     onHover()
@@ -265,10 +262,6 @@ function handleDelayedHide(onHover, e) {
     console.log("block 2")
   }
 
-  if(blahBlah) { // this is not recognized until the next loop
-    console.log("don't close")
-  }
-
   hoverHideDelay = setTimeout(() => {
     onHover()
     console.log("handled delayed hide")
@@ -276,21 +269,23 @@ function handleDelayedHide(onHover, e) {
 
 }
 
-function handleMouseOverOut(handler, e) {
+// DEVON FEEDBACK: create a seperate hook for the tooltip .... it needs its own recognition
+
+function handleMouseOverOut(onHover, e) {
   const target = e.currentTarget;
   console.log("target!!...", target)
   const related = e.relatedTarget || e.nativeEvent.toElement;
   console.log("related!!...", related)
   const parent = related.parentNode
   console.log("parent!!...", parent)
-  if(parent.getAttribute('role') === "tooltip") {
+  if(parent.getAttribute('role') === "tooltip") { // add in the other checks -> if (!related || related !== target && !target.contains(related)) {}
     console.log("hi")
-    blahBlah = true
-    return; // why doesn't this block the handler from being called?
+    return
+  } else {
+    hoverHideDelay = setTimeout(() => {
+      onHover()
+      console.log("handled delayed hide")
+    }, 500);
   }
 
-  if (!related || related !== target && !target.contains(related)) { // this doesn't stop the tooltip from going away and isn't supposed to 
-    console.log("handler triggered!!...")
-    handler
-  }
 }
