@@ -30,6 +30,11 @@ export function useControlledState<T>(
     };
 
     if (typeof value === 'function') {
+      // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
+      // when someone using useControlledState calls setControlledState(myFunc)
+      // this will call our useState setState with a function as well which invokes myFunc and calls onChange with the value from myFunc
+      // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
+      // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
         let interceptedValue = value(oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
