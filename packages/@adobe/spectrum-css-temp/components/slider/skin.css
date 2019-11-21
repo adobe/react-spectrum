@@ -10,31 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ slider/slider.yml }}
-*/
-/* topdoc
-{{ slider/slider-label.yml }}
-*/
-/* topdoc
-{{ slider/slider-filled.yml }}
-*/
-/* topdoc
-{{ slider/slider-filled-offset.yml }}
-*/
-/* topdoc
-{{ slider/slider-player.yml }}
-*/
-/* topdoc
-{{ slider/slider-tick.yml }}
-*/
-/* topdoc
-{{ slider/slider-tick-label.yml }}
-*/
-/* topdoc
-{{ slider/slider-ramp.yml }}
-*/
-
 .spectrum-Slider-track {
   &::before {
     background: var(--spectrum-slider-track-color);
@@ -119,9 +94,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ slider/slider-range.yml }}
-*/
 .spectrum-Slider--range {
   .spectrum-Slider-track {
     &:not(:first-of-type):not(:last-of-type) {
@@ -132,9 +104,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ slider/slider-colored.yml }}
-*/
 .spectrum-Slider--color {
   .spectrum-Slider-controls::before {
     background-color: var(--spectrum-global-color-static-white);
@@ -173,12 +142,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ slider/dial.yml }}
-*/
-/* topdoc
-{{ slider/dial-label.yml }}
-*/
 .spectrum-Dial-labelContainer {
   @inherit: .spectrum-Slider-labelContainer;
 }
