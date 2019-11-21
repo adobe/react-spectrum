@@ -10,13 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ menu/menu-default.yml }}
-*/
-/* topdoc
-{{ menu/menu-nested.yml }}
-*/
-
 .spectrum-Menu {
   background-color: var(--spectrum-selectlist-background-color);
 }
@@ -34,6 +27,7 @@ governing permissions and limitations under the License.
 
   &:hover,
   &:focus,
+  &.is-highlighted,
   &.is-open {
     background-color: var(--spectrum-selectlist-option-background-color-hover);
     color: var(--spectrum-selectlist-option-text-color-hover);

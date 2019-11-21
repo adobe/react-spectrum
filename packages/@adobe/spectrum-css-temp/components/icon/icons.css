@@ -10,10 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-QuickActions-overlay {
-  background-color: var(--spectrum-quickactions-overlay-color);
-}
+.spectrum-Icon,
+.spectrum-UIIcon {
+  display: inline-block;
 
-.spectrum-QuickActions {
-  background-color: var(--spectrum-quickactions-background-color);
+  /* Inherit the text color */
+  color: inherit;
+
+  /* Fill should match the current text color */
+  fill: currentColor;
+
+  /* Hide the svg overflow in IE. */
+  &:not(:root) {
+    overflow: hidden;
+  }
+
+  /* Don't catch clicks or hover, otherwise they may not escape the SVG */
+  pointer-events: none;
 }

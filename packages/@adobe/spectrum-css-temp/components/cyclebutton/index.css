@@ -12,9 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ cyclebutton/cyclebutton-default.yml }}
-*/
 .spectrum-CycleButton {
   /* Be square */
   padding: 0 var(--spectrum-actionbutton-icon-padding-x);
