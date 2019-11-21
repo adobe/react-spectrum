@@ -127,11 +127,11 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getFirstKey() {
-    return this.collectionManager.collection.getFirstKey();
+    return this.collectionManager && this.collectionManager.collection && this.collectionManager.collection.getFirstKey();
   }
 
   getLastKey() {
-    return this.collectionManager.collection.getLastKey();
+    return this.collectionManager && this.collectionManager.collection && this.collectionManager.collection.getLastKey();
   }
 
   // getDragTarget(point: Point): DragTarget {

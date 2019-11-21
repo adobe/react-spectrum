@@ -1,4 +1,4 @@
-import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -160,6 +160,13 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let onBlur = () => {
     manager.setFocused(false);
   };
+
+  // useEffect(() => {
+    // focu
+  //   console.log('firing useEffect');
+  //   manager.setFocused(true);
+  //   manager.setFocusedKey(delegate.getFirstKey());
+  // }, []);
 
   return {
     listProps: {

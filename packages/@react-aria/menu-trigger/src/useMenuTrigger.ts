@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AllHTMLAttributes, RefObject, useRef, useState} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -51,6 +51,8 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
     isOpen: state.isOpen
   });
 
+  let [focusStrategy, setFocusStrategy] = useState(menuProps.autoFocus || null);
+  // let focusStrategy = menuProps.autoFocus || null;
 
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
@@ -67,11 +69,17 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
       switch (e.key) {
         case 'Enter': 
         case 'ArrowDown':
-        case 'ArrowUp':
         case ' ':
           e.preventDefault();
           e.stopPropagation();
           onPress(e);
+          setFocusStrategy('first');
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          e.stopPropagation();
+          onPress(e);
+          setFocusStrategy('last'); 
           break;
       }
     }
@@ -99,7 +107,9 @@ export function useMenuTrigger(props: MenuTriggerProps): MenuTriggerAria {
       ...overlayAriaProps,
       'aria-labelledby': menuProps['aria-labelledby'] || menuTriggerId,
       role: menuProps.role || 'menu',
-      onSelect
+      onSelect,
+      focusStrategy,
+      setFocusStrategy
     }
   };
 }
