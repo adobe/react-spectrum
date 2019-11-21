@@ -7,7 +7,7 @@ import {HTMLElement} from 'react-dom';
 import {InputBase, RangeInputBase, TextInputBase, ValueBase} from '@react-types/shared';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject} from 'react';
-import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css'; // HACK: must be included BEFORE inputgroup
+import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
@@ -22,19 +22,16 @@ interface NumberField extends InputBase, TextInputBase, ValueBase<number>, Range
 }
 
 export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
-  let completeProps = Object.assign({}, defaults, useProviderProps(props));
+  let completeProps = Object.assign({}, useProviderProps(props));
   let {
     // formatOptions,
     isQuiet,
     isDisabled,
-    // isReadOnly,
-    // isRequired,
     className,
     showStepper = true,
     ...otherProps
   } = completeProps;
-  let {onChange, ...numberFieldState} = useNumberFieldState(otherProps);
+  let {setValue, ...numberFieldState} = useNumberFieldState(otherProps);
   let {numberFieldProps, inputFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
     ...completeProps,
     ...numberFieldState
@@ -74,7 +71,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           isQuiet={isQuiet}
           className={classNames(stepperStyle, 'spectrum-Stepper-input')}
           {...inputFieldProps}
-          onChange={onChange} />
+          onChange={setValue} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}

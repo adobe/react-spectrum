@@ -2,7 +2,7 @@ import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {NumberField} from '../';
 import NumberInput from '@react/react-spectrum/NumberInput';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/button/test/utils'; // TODO: Move this util funct to test-utils folder (https://github.com/adobe/react-spectrum/pull/491)
+import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('NumberField', function () {
@@ -18,9 +18,9 @@ describe('NumberField', function () {
 
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
-    let buttons = within(container).queryAllByRole('presentation')[0];
-    let incrementButton = buttons.children[0];
-    let decrementButton = buttons.children[1];
+    let buttons = within(container).queryAllByRole('button');
+    let incrementButton = buttons[0];
+    let decrementButton = buttons[1];
     // in v3 TextField is wrapped with one more div
     if (Component === NumberField) {
       textField = textField.firstChild;
@@ -63,6 +63,20 @@ describe('NumberField', function () {
 
     userEvent.type(textField, '5');
     expect(onChangeSpy).toHaveBeenCalledWith(5);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+    ${'v2 NumberField'} | ${NumberInput}
+  `('$Name handles input change with custom step number', ({Component}) => {
+    let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 5});
+
+    userEvent.type(textField, '2');
+    expect(onChangeSpy).toHaveBeenCalledWith(2);
+    onChangeSpy.mockReset();
+    triggerPress(incrementButton);
+    expect(onChangeSpy).toHaveBeenCalledWith(7);
   });
 
   it.each`
@@ -125,5 +139,16 @@ describe('NumberField', function () {
     fireEvent.focus(textField);
     fireEvent.wheel(textField, {deltaY: -10});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name can hide step buttons', ({Component}) => {
+    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: false});
+
+    expect(textField).toBeDefined();
+    expect(incrementButton).not.toBeDefined();
+    expect(decrementButton).not.toBeDefined();
   });
 });

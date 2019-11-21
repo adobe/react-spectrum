@@ -1,8 +1,7 @@
 import {AllHTMLAttributes, useEffect} from 'react';
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
-import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface NumberFieldProps extends SpinButtonProps {
@@ -116,6 +115,9 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
+      isDisabled,
+      isReadOnly,
+      isRequired,
       min: minValue,
       max: maxValue,
       placeholder: formatMessage('Enter a number'),

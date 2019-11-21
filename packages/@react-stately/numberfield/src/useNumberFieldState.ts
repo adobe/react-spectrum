@@ -1,3 +1,4 @@
+import {clamp} from '@react-aria/utils';
 import {useCallback, useRef, useState} from 'react';
 
 export function useNumberFieldState(props) {
@@ -80,7 +81,7 @@ export function useNumberFieldState(props) {
   };
 
   return {
-    onChange: setValue,
+    setValue,
     onIncrement: useCallback(onIncrement, [maxValue, minValue, step]),
     onIncrementToMax,
     onDecrement: useCallback(onDecrement, [maxValue, minValue, step]),
@@ -118,8 +119,4 @@ function handleDecimalOperation(operator, value1, value2) {
   }
 
   return result;
-}
-
-function clamp(number, min = -Infinity, max = Infinity) {
-  return Math.min(Math.max(number, min), max);
 }
