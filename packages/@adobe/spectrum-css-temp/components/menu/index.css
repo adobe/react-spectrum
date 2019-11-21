@@ -120,6 +120,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
   grid-area: tools;
+  align-self: center;
   margin-inline-start: var(--spectrum-selectlist-option-icon-padding-x);
 }
 
@@ -169,13 +170,14 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-tools {
   grid-area: tools;
-  align-items: center;
+  align-self: center;
 }
 .spectrum-Menu-icon {
   grid-area: icon;
-  align-items: center;
+  align-self: center;
   padding-inline-end: 5px;
 }
 .spectrum-Menu-detail {
   font-family: monospace;
+  align-self: center;
 }

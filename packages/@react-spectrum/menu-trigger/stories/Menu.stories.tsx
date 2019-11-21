@@ -220,8 +220,9 @@ storiesOf('Menu', module)
             </Flex>
           </Item>
         </Section>
-        <Item name="hasChildren">
+        <Item title="hasChildren">
           <Item>something here</Item>
+          <Item>or nothing here</Item>
         </Item>
       </Menu>
     )

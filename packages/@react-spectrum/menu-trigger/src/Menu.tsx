@@ -159,22 +159,17 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
             detail: styles['spectrum-Menu-detail']
           }}>
           {!Array.isArray(rendered) && (
-            <Fragment>
-              <Label>
-                {rendered}
-              </Label>
-              <Flex slot="tools">
-                {hasChildNodes &&
-                  <ChevronRightMedium
-                  className={classNames(styles, 'spectrum-Menu-chevron')}
-                  onMouseDown={e => e.stopPropagation()}
-                  onClick={onToggle}
-                  size={null} />
-                }
-              </Flex>
-            </Fragment>
+            <Label>
+              {rendered}
+            </Label>
           )}
           {Array.isArray(rendered) && rendered}
+          {hasChildNodes &&
+            <ChevronRightMedium
+              slot="tools"
+              className={classNames(styles, 'spectrum-Menu-chevron')}
+              onMouseDown={e => e.stopPropagation()} />
+          }
         </Grid>
       </li>
     </FocusRing>

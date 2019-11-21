@@ -18,10 +18,10 @@ export function Icon(props: IconProps) {
     scale,
     color,
     size,
-    slot,
+    slot = 'icon',
     ...otherProps
   } = props;
-  let {[slot ? slot : 'icon']: slotClassName} = useSlotProvider();
+  let {[slot]: slotClassName} = useSlotProvider();
 
   let provider = useProvider();
   let pscale = 'M';

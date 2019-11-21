@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
+import {useSlotProvider} from "@react-spectrum/layout";
 
 interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
@@ -13,8 +14,10 @@ export function UIIcon(props: IconProps) {
     alt,
     className,
     children,
+    slot = 'uiIcon',
     ...otherProps
   } = props;
+  let {[slot]: slotClassName} = useSlotProvider();
 
   let provider = useProvider();
   let scale = 'M';
@@ -36,6 +39,7 @@ export function UIIcon(props: IconProps) {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
+      slotClassName,
       className)
   });
 }
