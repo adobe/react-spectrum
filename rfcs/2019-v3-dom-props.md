@@ -25,7 +25,7 @@ The solution is to be very intentional about which props are supported on which 
 * Only DOM props that make sense for each component are supported. There is a much smaller set of default supported DOM props for all components (just 9 props).
 * DOM props are passed to the element that makes the most sense - the one that is least likely to change. Most of the time this is the outer most one, but sometimes a wrapper could exist (e.g. Textfield props go to the inner `<input>` element).
 * Custom `className` and `style` are unsupported (see below).
-* Refs should not forward directly to a DOM element, but should expose an explicitly documented and supported interface (TBD).
+* Refs should not forward directly to a DOM element, but should expose an explicitly documented and supported interface.
 
 ### Styling
 
