@@ -49,7 +49,6 @@
     "@react/collection-view": "^4.1.5",
     "@react/react-spectrum": "^2.26.1",
     "@react/react-spectrum-icons": "^2.1.0",
-    "@spectrum-css/vars": "^2.0.0",
     "@storybook/addon-a11y": "^5.2.1",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-info": "^5.2.1",
