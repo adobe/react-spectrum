@@ -2,6 +2,7 @@ import {ButtonBase} from './Button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
@@ -25,8 +26,7 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)}>
       <button
-        {...filterDOMProps(otherProps, {icon: false})}
-        {...buttonProps}
+        {...mergeProps(filterDOMProps(otherProps, {icon: false}), buttonProps)}
         ref={ref}
         className={
           classNames(

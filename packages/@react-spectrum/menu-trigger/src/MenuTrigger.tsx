@@ -41,20 +41,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      menuProps: {
-        ...menu.props,
-        onClose,
-        focusStrategy
-      },
-      triggerProps: {
-        ...menuTrigger.props,
-        ref: menuTriggerRef
-      },
-      state: {
-        isOpen, 
-        setOpen
-      },
-      onSelect
+      ref: menuTriggerRef,
+      type: 'menu',
+      onSelect,
+      focusStrategy
+    },
+    {
+      isOpen, 
+      setOpen
     }
   );
 
@@ -97,7 +91,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
             {menu}
           </Popover>
         </Overlay>
-      </MenuContext.Provider> 
+      </MenuContext.Provider>
     </Fragment>
   );
 }

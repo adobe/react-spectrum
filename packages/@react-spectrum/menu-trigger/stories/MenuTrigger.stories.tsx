@@ -3,6 +3,7 @@ import {Button} from '@react-spectrum/button';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
 
 let withSection = [
   {name: 'Animals', children: [
@@ -87,6 +88,42 @@ storiesOf('MenuTrigger', module)
             other
           </div>
         </div>
+      </div>
+    )
+  )
+  .add(
+    'more than 2 children (split button)',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <Button
+          onKeyDown={action('keydown 1')}
+          onPress={action('press 1')}
+          onPressStart={action('pressstart 1')}
+          onPressEnd={action('pressend 1')}
+          className={classNames(
+            styles,
+            'spectrum-SplitButton-action'
+          )}>
+          Hi
+        </Button>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
+          <Button
+            onKeyDown={action('onKeyDown 2')}
+            onPress={action('press 2')}
+            onPressStart={action('pressstart 2')}
+            onPressEnd={action('pressend 2')}
+            className={classNames(
+              styles,
+              'spectrum-SplitButton-trigger'
+            )}>
+            <ChevronDownMedium />
+          </Button>
+          <Menu>
+            <li>MenuItem1111111111111111</li>
+            <li>MenuItem22222222222222222</li>
+            <li>MenuItem33333333333333333</li>
+          </Menu>
+        </MenuTrigger>
       </div>
     )
   );
