@@ -7,7 +7,7 @@ import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 
-interface CollectionProps<T, V, W> extends DOMProps {
+interface CollectionProps<T extends object, V, W> extends DOMProps {
   renderView(type: string, content: T): V,
   renderWrapper(reusableView: ReusableView<T, V>): W,
   layout: Layout<T>,
@@ -15,7 +15,7 @@ interface CollectionProps<T, V, W> extends DOMProps {
   getScrollAnchor?(rect: Rect): Key
 }
 
-interface CollectionState<T, V, W> {
+interface CollectionState<T extends object, V, W> {
   visibleViews: Set<W>,
   visibleRect: Rect,
   setVisibleRect: (rect: Rect) => void,
@@ -24,7 +24,7 @@ interface CollectionState<T, V, W> {
   collectionManager: CollectionManager<T, V, W>
 }
 
-export function useCollectionState<T, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
+export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
   let [visibleViews, setVisibleViews] = useState(new Set<W>());
   let [visibleRect, setVisibleRect] = useState(new Rect());
   let [contentSize, setContentSize] = useState(new Size());
