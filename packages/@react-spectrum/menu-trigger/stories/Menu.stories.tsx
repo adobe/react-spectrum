@@ -3,6 +3,8 @@ import {Detail, Flex, Label} from "@react-spectrum/layout";
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import Blower from '@spectrum-icons/workflow/Blower';
+import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -29,6 +31,23 @@ let withSection = [
     {name: 'Ross', children: [
       {name: 'Tests'}
     ]}
+  ]}
+];
+
+let hardModeProgrammatic = [
+  {name: 'Section 1', isSection: true, children: [
+    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+  ]},
+  {name: 'Section 2', isSection: true, children: [
+    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
+    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
+    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'}
+  ]},
+  {name: 'hasChildren', children: [
+      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
   ]}
 ];
 
@@ -224,9 +243,38 @@ storiesOf('Menu', module)
           </Item>
         </Section>
         <Item title="hasChildren">
-          <Item>something here</Item>
-          <Item>or nothing here</Item>
+          <Item>
+            <Blower size="S" />
+            <Label>Thailand</Label>
+            <Flex slot="tools">
+              <Detail>⌘T</Detail>
+            </Flex>
+          </Item>
+          <Item>
+            <Book size="S" />
+            <Label>Germany</Label>
+            <Flex slot="tools">
+              <Detail>⌘G</Detail>
+            </Flex>
+          </Item>
         </Item>
       </Menu>
     )
-  );
+  )
+  /*.add(
+    'Hardmode programmatic w/ sections',
+    () => (
+      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
+        {item => {
+          if (item.isSection) {
+            return (
+              <Section items={item.children} title={item.name}>
+                {item => <Item childItems={item.children}>{item.name}</Item>}
+              </Section>
+            );
+          }
+          return <Item childItems={item.children}>{item.name}</Item>;
+        }}
+      </Menu>
+    )
+  )*/;
