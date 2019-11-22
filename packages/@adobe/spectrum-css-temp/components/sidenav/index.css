@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
   list-style-type: none;
   margin: 0;
   padding: 0;
+  outline: none;
 
   height: 400px;
   width: 200px;
