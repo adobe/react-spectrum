@@ -1,4 +1,4 @@
-# react-spectrum <img src='https://git.corp.adobe.com/pages/brownlee/stupid-stuff/spectrum-badge.svg' height=20 />
+# react-spectrum
 
 [Spectrum](http://spectrum.corp.adobe.com) UI components in React.
 
@@ -19,14 +19,12 @@ If you are manually managing your version of Node, then refer to `.nvmrc` for th
 Add the following to your `~/.npmrc`:
 
 ```
-registry=https://artifactory-uw2.adobeitc.com:443/artifactory/api/npm/npm-adobe-release/
+registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/
 
 _auth = [AUTH KEY]
 always-auth = true
 email = [ADOBE EMAIL]
 
-@spectrum:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/
-//artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/:always-auth=true
 @react:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/
 //artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/:always-auth=false
 ```
@@ -47,10 +45,10 @@ npm install @react-spectrum/dialog --save
 
 ```javascript
 // Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
-import Provider from '@react-spectrum/Provider';
+import Provider from '@react-spectrum/provider';
 
 // Import the component you want to use
-import Button from '@react-spectrum/Button';
+import Button from '@react-spectrum/button';
 
 // Render it!
 ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
