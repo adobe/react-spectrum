@@ -67,7 +67,7 @@ export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObje
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
         <ElementType
           {...filterDOMProps(otherProps, TextInputDOMPropNames)}
           {...textFieldProps}
