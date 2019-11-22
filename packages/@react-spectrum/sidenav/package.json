@@ -23,8 +23,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/collections": "^3.0.0-alpha.1",
     "@react-aria/sidenav": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1"
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-stately/tree": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

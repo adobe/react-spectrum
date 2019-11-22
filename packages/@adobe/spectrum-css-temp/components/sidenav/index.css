@@ -92,6 +92,7 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-sidenav-header-border-radius);
 
+  text-align: start;
   font-size: var(--spectrum-sidenav-header-text-size);
   font-weight: var(--spectrum-sidenav-header-font-weight);
   font-style: normal;

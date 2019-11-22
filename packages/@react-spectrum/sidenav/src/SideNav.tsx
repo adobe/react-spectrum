@@ -5,14 +5,12 @@ import {ListLayout, Node} from '@react-stately/collections';
 import React, {AllHTMLAttributes, useMemo} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useNav} from '@react-aria/sidenav';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useTreeState} from '@react-stately/tree';
 
 export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
-  let completeProps = Object.assign({}, useProviderProps(props));
-  let {navProps, listProps, listItemProps} = useNav(completeProps);
+  let {navProps, listProps, listItemProps} = useNav(props);
   let {
     tree: navigation,
     onToggle,
@@ -23,7 +21,7 @@ export function SideNav<T>(props: SideNavProps<T>) {
 
   return (
     <nav
-      {...filterDOMProps(completeProps)}
+      {...filterDOMProps(props)}
       {...navProps}
       className={classNames(styles, 'react-spectrum-SideNav')}>
       <CollectionView
