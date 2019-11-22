@@ -42,6 +42,9 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   if (props.onBlurWithin || props.onFocusWithinChange) {
     onBlur = (e: FocusEvent) => {
+      // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
+      // when moving focus inside the element. Only trigger if the currentTarget doesn't 
+      // include the relatedTarget (where focus is moving).
       if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
         if (props.onBlurWithin) {
           props.onBlurWithin(e);
