@@ -49,8 +49,9 @@ storiesOf('MenuTrigger', module)
     'menu closes on scroll',
     () => (
       <div style={{height: 100, display: 'flex'}}>
-        <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
           <div style={{height: 200}}>
+            <div>Scrolling here will close the Menu</div>
             <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
               <Button
                 onKeyDown={action('onKeyDown')}
@@ -67,9 +68,9 @@ storiesOf('MenuTrigger', module)
             </MenuTrigger>
           </div>
         </div>
-        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1, background: 'grey'}}>
           <div style={{height: 200}}>
-            other
+            Scrolling here won't close the Menu
           </div>
         </div>
       </div>
