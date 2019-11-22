@@ -1,5 +1,6 @@
 import {ActionButtonProps} from './';
 import {ButtonGroupProps} from '@react-types/button';
+import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, RefObject, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
@@ -12,7 +13,7 @@ interface ButtonGroupContext {
   isEmphasized?: boolean,
   isQuiet?: boolean,
   holdAffordance?: boolean,
-  className?: string | Object,
+  className?: string,
   role?: string
 }
 
@@ -81,7 +82,7 @@ export const ButtonGroup = React.forwardRef((props: SpectrumButtonGroupProps, re
           isDisabled,
           isQuiet,
           holdAffordance,
-          className: itemClassName
+          className: classNames(buttonStyles, itemClassName)
         }}>
         {children}
       </ButtonContext.Provider>
