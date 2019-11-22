@@ -3,6 +3,7 @@ export interface CSSModule {
 }
 
 export interface Theme {
+  global?: CSSModule,
   light?: CSSModule,
   dark?: CSSModule,
   medium?: CSSModule,

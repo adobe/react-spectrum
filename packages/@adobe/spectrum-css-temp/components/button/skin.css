@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-button-primary-border-size-increase-key-focus: 1px;
+  --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
+}
+
 .spectrum-Button {
   &:focus-ring {
     box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-button-primary-border-color-key-focus);
@@ -52,9 +57,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-cta.yml }}
-*/
 .spectrum-Button--cta {
   background-color: var(--spectrum-button-cta-background-color);
   border-color: var(--spectrum-button-cta-border-color);
@@ -86,9 +88,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-primary.yml }}
-*/
 .spectrum-Button--primary {
   background-color: var(--spectrum-button-primary-background-color);
   border-color: var(--spectrum-button-primary-border-color);
@@ -120,9 +119,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-secondary.yml }}
-*/
 .spectrum-Button--secondary {
   background-color: var(--spectrum-button-secondary-background-color);
   border-color: var(--spectrum-button-secondary-border-color);
@@ -154,9 +150,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-warning.yml }}
-*/
 .spectrum-Button--warning {
   background-color: var(--spectrum-button-warning-background-color);
   border-color: var(--spectrum-button-warning-border-color);
@@ -188,9 +181,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-over-background.yml }}
-*/
 .spectrum-Button--overBackground {
   background-color: var(--spectrum-button-over-background-background-color);
   border-color: var(--spectrum-button-over-background-border-color);
@@ -224,9 +214,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-quiet-over-background.yml }}
-*/
 .spectrum-Button--overBackground.spectrum-Button--quiet,
 .spectrum-ClearButton--overBackground {
   background-color: var(--spectrum-button-quiet-over-background-background-color);
@@ -261,9 +248,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-quiet-primary.yml }}
-*/
 .spectrum-Button--primary.spectrum-Button--quiet {
   background-color: var(--spectrum-button-quiet-primary-background-color);
   border-color: var(--spectrum-button-quiet-primary-border-color);
@@ -295,9 +279,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-quiet-secondary.yml }}
-*/
 .spectrum-Button--secondary.spectrum-Button--quiet {
   background-color: var(--spectrum-button-quiet-secondary-background-color);
   border-color: var(--spectrum-button-quiet-secondary-border-color);
@@ -329,9 +310,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/actionbutton.yml }}
-*/
 .spectrum-ActionButton {
   background-color: var(--spectrum-actionbutton-background-color);
   border-color: var(--spectrum-actionbutton-border-color);
@@ -453,9 +431,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/actionbutton-quiet.yml }}
-*/
 .spectrum-ActionButton--quiet {
   background-color: var(--spectrum-actionbutton-quiet-background-color);
   border-color: var(--spectrum-actionbutton-quiet-border-color);
@@ -521,9 +496,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-quiet-warning.yml }}
-*/
 .spectrum-Button--warning.spectrum-Button--quiet {
   background-color: var(--spectrum-button-quiet-warning-background-color);
   border-color: var(--spectrum-button-quiet-warning-border-color);
@@ -554,10 +526,6 @@ governing permissions and limitations under the License.
     color: var(--spectrum-button-quiet-warning-text-color-disabled);
   }
 }
-
-/* topdoc
-{{ button/logicbutton.yml }}
-*/
 
 .spectrum-LogicButton--and {
   background-color: var(--spectrum-logicbutton-and-background-color);
@@ -608,10 +576,6 @@ governing permissions and limitations under the License.
     color: var(--spectrum-logicbutton-and-text-color-disabled);
   }
 }
-
-/* topdoc
-{{ button/clearbutton-medium.yml }}
-*/
 
 .spectrum-FieldButton {
   color: var(--spectrum-fieldbutton-text-color);

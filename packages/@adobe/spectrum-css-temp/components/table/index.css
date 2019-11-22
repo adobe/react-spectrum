@@ -12,19 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ table/table-standard.yml }}
-*/
-/* topdoc
-{{ table/table-divs.yml }}
-*/
-/* topdoc
-{{ table/table-divs-quiet.yml }}
-*/
-/* topdoc
-{{ table/table-dropzone.yml }}
-*/
-
 .spectrum-Table {
   border-collapse: separate;
   border-spacing: 0;
@@ -202,9 +189,6 @@ governing permissions and limitations under the License.
   border-bottom-style: none;
 }
 
-/* topdoc
-{{ table/table-quiet.yml }}
-*/
 .spectrum-Table--quiet {
   .spectrum-Table-body {
     border-radius: var(--spectrum-table-quiet-border-radius);
@@ -220,10 +204,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ table/table-standard-multiselect.yml }}
-*/
-
 .spectrum-Table-checkboxCell {
   padding-right: var(--spectrum-table-cell-checkbox-padding-right);
   /* have to eliminate vertical padding to allow proper vertical alignment */
@@ -235,11 +215,3 @@ governing permissions and limitations under the License.
 .spectrum-Table-checkbox {
   vertical-align: super;
 }
-
-/* topdoc
-{{ table/table-quiet-multiselect.yml }}
-*/
-
-/* topdoc
-{{ table/table-dividers.yml }}
-*/
