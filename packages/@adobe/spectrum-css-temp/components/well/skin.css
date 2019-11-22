@@ -10,9 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ well/well.yml }}
-*/
 .spectrum-Well {
   background-color: var(--spectrum-well-background-color);
   border-color: var(--spectrum-well-border-color);

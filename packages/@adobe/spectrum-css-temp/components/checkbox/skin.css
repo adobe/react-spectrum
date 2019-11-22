@@ -11,29 +11,24 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Checkbox-label {
-  color: var(--spectrum-checkbox-text-color);
-}
-
-.spectrum-Checkbox-checkmark,
-.spectrum-Checkbox-partialCheckmark {
-  color: var(--spectrum-checkbox-checkmark-color);
+  color: var(--spectrum-checkbox-emphasized-text-color);
 }
 
 .spectrum-Checkbox-box {
-  border-color: var(--spectrum-checkbox-box-border-color);
-  background-color: var(--spectrum-checkbox-box-background-color);
+  border-color: var(--spectrum-checkbox-emphasized-box-border-color);
+  background-color: var(--spectrum-checkbox-emphasized-box-background-color);
 }
 
 /* Indetermiate is basically a checked state, so handle colors for checked state here */
 .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
 .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-  border-color: var(--spectrum-checkbox-box-border-color-selected);
+  border-color: var(--spectrum-checkbox-emphasized-box-border-color-selected);
 }
 
 .spectrum-Checkbox:hover {
   &.is-indeterminate .spectrum-Checkbox-box,
   .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-box-border-color-selected-hover);
+    border-color: var(--spectrum-checkbox-emphasized-box-border-color-selected-hover);
 
   }
 }
@@ -41,49 +36,51 @@ governing permissions and limitations under the License.
 .spectrum-Checkbox:active {
   &.is-indeterminate .spectrum-Checkbox-box,
   .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-color: var(--spectrum-checkbox-box-border-color-selected-down);
+    border-color: var(--spectrum-checkbox-emphasized-box-border-color-selected-down);
 
   }
 }
 
-/* topdoc
-{{ checkbox/checkbox.yml }}
-*/
 .spectrum-Checkbox {
-  border-color: var(--spectrum-checkbox-box-border-color);
+  border-color: var(--spectrum-checkbox-emphasized-box-border-color);
 
   &:hover {
     .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-hover);
+      border-color: var(--spectrum-checkbox-emphasized-box-border-color-hover);
 
       box-shadow: none;
     }
     .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-hover);
+      color: var(--spectrum-checkbox-emphasized-text-color-hover);
     }
   }
 
   &:active {
     .spectrum-Checkbox-box {
-      border-color: var(--spectrum-checkbox-box-border-color-down);
+      border-color: var(--spectrum-checkbox-emphasized-box-border-color-down);
 
     }
     .spectrum-Checkbox-label {
-      color: var(--spectrum-checkbox-text-color-down);
+      color: var(--spectrum-checkbox-emphasized-text-color-down);
     }
+  }
+
+  .spectrum-Checkbox-checkmark,
+  .spectrum-Checkbox-partialCheckmark {
+    color: var(--spectrum-checkbox-emphasized-checkmark-color);
   }
 }
 
 .spectrum-Checkbox-input {
   &:disabled + .spectrum-Checkbox-box {
     /* Use important to override hover states */
-    border-color: var(--spectrum-checkbox-box-border-color-disabled) !important;
+    border-color: var(--spectrum-checkbox-emphasized-box-border-color-disabled) !important;
 
-    background-color: var(--spectrum-checkbox-box-background-color-disabled);
+    background-color: var(--spectrum-checkbox-emphasized-box-background-color-disabled);
   }
 
   &:disabled ~ .spectrum-Checkbox-label {
-    color: var(--spectrum-checkbox-text-color-disabled);
+    color: var(--spectrum-checkbox-emphasized-text-color-disabled);
   }
 }
 
@@ -91,19 +88,16 @@ governing permissions and limitations under the License.
 .spectrum-Checkbox-input {
   &:focus-ring + .spectrum-Checkbox-box {
     /* Since the specificity of .focus-ring is less than :hover, we need important */
-    border-color: var(--spectrum-checkbox-box-border-color-key-focus) !important;
+    border-color: var(--spectrum-checkbox-emphasized-box-border-color-key-focus) !important;
 
-    box-shadow: 0 0 0 1px var(--spectrum-checkbox-box-border-color-key-focus) !important;
+    box-shadow: 0 0 0 1px var(--spectrum-checkbox-emphasized-box-border-color-key-focus) !important;
   }
 
   &:focus-ring ~ .spectrum-Checkbox-label {
-    color: var(--spectrum-checkbox-text-color-key-focus) !important;
+    color: var(--spectrum-checkbox-emphasized-text-color-key-focus) !important;
   }
 }
 
-/* topdoc
-{{ checkbox/checkbox-quiet.yml }}
-*/
 .spectrum-Checkbox--quiet.is-indeterminate .spectrum-Checkbox-box,
   .spectrum-Checkbox--quiet .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
   border-color: var(--spectrum-checkbox-quiet-box-border-color-selected);
