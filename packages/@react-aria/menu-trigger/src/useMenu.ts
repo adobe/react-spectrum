@@ -2,7 +2,7 @@ import {AllHTMLAttributes} from 'react';
 import {CollectionBase, DOMProps, Expandable, MultipleSelection} from '@react-types/shared';
 import {ListLayout} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
-import {useLabels} from '@react-aria/utils';
+import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
 type orientation = 'vertical' | 'horizontal'
@@ -18,10 +18,11 @@ interface MenuLayout<T> extends ListLayout<T> {}
 export function useMenu<T>(props: CollectionBase<T> & Expandable & MultipleSelection & DOMProps, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
   let {
     'aria-orientation': ariaOrientation = 'vertical' as orientation,
-    role = 'menu'
+    role = 'menu',
+    id
   } = props;
-   
-  let labelProps = useLabels(props);
+
+  let menuId = useId(id);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
@@ -31,7 +32,7 @@ export function useMenu<T>(props: CollectionBase<T> & Expandable & MultipleSelec
   return {
     menuProps: {
       ...listProps,
-      ...labelProps,
+      id: menuId,
       role,
       'aria-orientation': ariaOrientation
     }

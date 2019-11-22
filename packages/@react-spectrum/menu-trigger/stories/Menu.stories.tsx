@@ -28,7 +28,7 @@ storiesOf('Menu', module)
   .add(
     'Default Menu',
     () => (
-      <Menu aria-labelledby="me" aria-label="hi" onSelect={action('onSelect')} items={flatMenu} itemKey="name">
+      <Menu onSelect={action('onSelect')} items={flatMenu} itemKey="name">
         {item => <Item>{item.name}</Item>}
       </Menu>
     )
