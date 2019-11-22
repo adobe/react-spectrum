@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useState} from 'react';
 import {useFocus, useFocusVisible, useFocusWithin} from '@react-aria/interactions';
 
@@ -17,12 +18,13 @@ export function FocusRing(props: FocusRingProps) {
   let {isFocusVisible} = useFocusVisible(props);
   let {focusProps} = useFocus({isDisabled: within, onFocusChange: setFocused});
   let {focusWithinProps} = useFocusWithin({isDisabled: !within, onFocusWithinChange: setFocusWithin});
+  let child = React.Children.only(children);
 
-  return React.cloneElement(React.Children.only(children), {
+  return React.cloneElement(child, mergeProps(child.props, {
     ...(within ? focusWithinProps : focusProps),
     className: classNames(children.props.className, {
       [focusClass || '']: (within ? isFocusWithin : isFocused),
       [focusRingClass || '']: (within ? isFocusWithin : isFocused) && isFocusVisible
     })
-  });
+  }));
 }

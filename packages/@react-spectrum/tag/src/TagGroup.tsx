@@ -1,7 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps, Removable} from '@react-types/shared';
-import {Focus} from '@react-aria/focus';
-import React, {useContext, useRef} from 'react';
+import React, {useContext} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {TagGroupProps} from '@react-types/tag';
@@ -37,45 +36,37 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     ...otherProps
   } = completeProps;
   let {styleProps} = useStyleProps(otherProps);
-  let isFocused = useRef(false);
-
-  let handleFocusWithin = (focused) => {
-    isFocused.current = focused;
-  };
-
-  const {tagGroupProps} = useTagGroup({...completeProps, isFocused: isFocused.current});
+  const {tagGroupProps} = useTagGroup(completeProps);
 
   function removeAll(tags) {
     onRemove([tags]);
   }
 
   return (
-    <Focus onFocusWithinChange={handleFocusWithin}>
-      <div
-        {...filterDOMProps(otherProps)}
-        {...styleProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-Tags',
-            {
-              'is-disabled': isDisabled
-            },
-            styleProps.className
-          )
-        }
-        {...tagGroupProps}>
-        <TagGroupContext.Provider
-          value={{
-            isRemovable: isReadOnly ? false : isReadOnly,
-            isDisabled,
-            onRemove: isReadOnly ? null : removeAll,
-            validationState,
-            role: 'gridcell'
-          }}>
-          {children}
-        </TagGroupContext.Provider>
-      </div>
-    </Focus>
+    <div
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      className={
+        classNames(
+          styles,
+          'spectrum-Tags',
+          {
+            'is-disabled': isDisabled
+          },
+          styleProps.className
+        )
+      }
+      {...tagGroupProps}>
+      <TagGroupContext.Provider
+        value={{
+          isRemovable: isReadOnly ? false : isReadOnly,
+          isDisabled,
+          onRemove: isReadOnly ? null : removeAll,
+          validationState,
+          role: 'gridcell'
+        }}>
+        {children}
+      </TagGroupContext.Provider>
+    </div>
   );
 });
