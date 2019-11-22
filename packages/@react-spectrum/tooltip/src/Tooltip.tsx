@@ -2,7 +2,6 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import {useTooltip} from '@react-aria/tooltip';
-
 import {mergeProps} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 
@@ -26,14 +25,6 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
 
   // needed in case a user has their own trigger implementation
   let {tooltipProps} = useTooltip(props);
-
-  // {...mergeProps(filterDOMProps(otherProps), tooltipProps)}        ... this still didn't get rid of the linting issue
-
-  /* this is what it was before
-
-  {...filterDOMProps(otherProps)}
-  {...tooltipProps}
-  */
 
   return (
     <div

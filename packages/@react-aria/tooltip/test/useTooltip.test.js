@@ -17,4 +17,6 @@ describe('useTooltip', function () {
      expect(tooltipProps.role).toBe('tooltip');
    });
 
+   // TODO: add a test for the mouse leave functionality ... make a mouse leave in test utils?
+
  });

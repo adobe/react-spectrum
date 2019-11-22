@@ -14,7 +14,7 @@ interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
 }
 
 interface TooltipTriggerState {
-  open: boolean,                    // before was isOpen
+  open: boolean,
   setOpen(value: boolean): void
 }
 
@@ -41,31 +41,29 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
-    isOpen: state.open                       // before was state.isOpen
+    isOpen: state.open
   });
 
   let onKeyDownTrigger = (e) => {
 
-    console.log("in key down trigger")
+    console.log('in key down trigger');
 
     if (triggerProps.ref && triggerProps.ref.current) {
-
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
-        console.log("esc button called from tooltip")
+        console.log('esc button called from tooltip');
         e.preventDefault();
-        //e.stopPropagation();
+        e.stopPropagation();
         state.setOpen(false);
       }
-
     }
-
   };
 
   return {
     tooltipTriggerProps: {
       ...overlayProps,
-      ref: triggerProps.ref, // this line is necessary for functionality and removing it doesn't get rid of the ref warning
+      // @ts-ignore
+      ref: triggerProps.ref, // I thought maybe I could get rid of this since it is already in overlayProps
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
@@ -73,6 +71,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
-    }
+    }//,
+    // triggerProps: {
+    //   ref: triggerProps.ref // it's trigger props that has the ref property so thought this would work .... return type of Aria doens't include triggerProps, change this?
+    // }
   };
 }

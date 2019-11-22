@@ -12,7 +12,7 @@ export interface HoverEvent {
 export interface HoverProps {
   isHovering?: boolean,
   isDisabled?: boolean,
-  onHover?: (e: HoverEvent) => void,
+  onHover?: (isHovering: boolean) => void,
   onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void
 }
@@ -31,8 +31,8 @@ interface HoverResult {
   hoverProps: HTMLAttributes<HTMLElement>
 }
 
-let hoverHideDelay = null
-let hoverShowDelay = null
+let hoverHideDelay = null;
+let hoverShowDelay = null;
 
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
@@ -99,23 +99,12 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-/*
       if (onHover) {
-        onHover({
-          type: 'hover',
-          target,
-          pointerType
-        });
-      }
-*/
-
-      if (onHover) {
-        handleDelayedShow(onHover, event)
+        handleDelayedShow(onHover, event);
       }
 
       setHover(true);
     };
-
 
 
     let triggerHoverEnd = (event, pointerType, didHover=true) => {
@@ -140,18 +129,8 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
-/*
       if (onHover && didHover) {
-        onHover({
-          type: 'hover',
-          target,
-          pointerType
-        });
-      }
-*/
-
-      if (onHover && didHover) {
-        handleMouseOverOut(onHover, event)
+        handleMouseOverOut(onHover, event);
       }
 
     };
@@ -195,12 +174,12 @@ function handleDelayedShow(onHover, e) {
   if(hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
     hoverHideDelay = null;
-    console.log("block 1")
+    console.log('block 1...this is never called right?');
   }
 
   hoverShowDelay = setTimeout(() => {
     onHover(true)
-    console.log("handled dealyed show")
+    console.log('handled dealyed show');
   }, 500);
 }
 
@@ -210,30 +189,27 @@ function handleDelayedHide(onHover, e) {
   if(hoverShowDelay != null) {
     clearTimeout(hoverShowDelay);
     hoverShowDelay = null;
-    console.log("block 2")
+    console.log('block 2...this is never called right?');
   }
 
   hoverHideDelay = setTimeout(() => {
     onHover(false)
-    console.log("handled delayed hide")
   }, 500);
 
 }
 
 function handleMouseOverOut(onHover, e) {
   const target = e.currentTarget;
-  // console.log("target!!...", target)
   const related = e.relatedTarget || e.nativeEvent.toElement;
-  console.log("related!!...", related)
   const parent = related.parentNode
-  // console.log("parent!!...", parent)
-  if(parent.getAttribute('role') === "tooltip") { // add in the other checks -> if (!related || related !== target && !target.contains(related)) {}
-    console.log("hi")
+  if (parent.getAttribute('role') === "tooltip") {
+    console.log('you are on the tooltip');
     return
   } else {
+    console.log('does this ever even get reached??');
     hoverHideDelay = setTimeout(() => {
-      onHover()
-      console.log("handled delayed hide")
+      onHover();
+      console.log('handled dealyed hide');
     }, 500);
   }
 

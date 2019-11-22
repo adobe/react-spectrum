@@ -9,7 +9,7 @@ interface MenuProps extends DOMProps{
   children?: ReactElement[]
 }
 
-// This is a filler Menu component, used to illustrate how the MenuContext might be consumed. 
+// This is a filler Menu component, used to illustrate how the MenuContext might be consumed.
 // It will get replaced by the real Menu component when it gets written
 
 export function Menu(props: MenuProps) {
@@ -27,7 +27,7 @@ export function Menu(props: MenuProps) {
     'aria-labelledby': labelledBy
   };
 
-  children = React.Children.map(children, (c) => 
+  children = React.Children.map(children, (c) =>
     React.cloneElement(c, {
       className: classNames(
         styles,

@@ -1,5 +1,5 @@
-import {TooltipHoverProps} from './useTooltipHover';
 import React, {MutableRefObject} from 'react';
+import {TooltipHoverProps} from './useTooltipHover';
 
 interface TooltipHoverResponderContext extends TooltipHoverProps {
   register(): void,

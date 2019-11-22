@@ -37,8 +37,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
     setOpen(false);
   };
 
-  console.log("menu", menu)
-
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       menuProps: {
@@ -50,7 +48,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
         ref: menuTriggerRef
       },
       state: {
-        isOpen,
+        isOpen, 
         setOpen
       }
     }

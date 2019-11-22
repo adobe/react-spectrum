@@ -1,6 +1,6 @@
+import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 import {TooltipHoverProps} from './useTooltipHover';
 import {TooltipHoverResponderContext} from './tooltipHoverContext';
-import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface TooltipHoverResponderProps extends TooltipHoverProps {
   children: ReactNode

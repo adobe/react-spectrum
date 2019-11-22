@@ -74,7 +74,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   delete overlayProps.style.position;
 
-  // TODO: use the provider & context here instead of cloneElement & bring all the props into a single object that you can spread instead of all these commas
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}

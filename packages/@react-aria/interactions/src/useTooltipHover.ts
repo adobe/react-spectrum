@@ -11,7 +11,7 @@ export interface TooltipHoverEvent {
 
 export interface TooltipHoverProps {
   isHovering?: boolean,
-  isOverTooltip?: (e: TooltipHoverEvent) => void
+  isOverTooltip?: (isHovering: boolean) => void
 }
 
 export interface TooltipHoverHookProps extends TooltipHoverProps, DOMProps {
@@ -69,18 +69,18 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
   let hoverProps = useMemo(() => {
     let state = ref.current;
 
-    // let triggerHoverStart = (event, pointerType) => {
-    //
-    //   let target = event.target;
-    //   console.log("start target", target)
-    //
-    //   if (isOverTooltip) {
-    //     console.log("you're ON the tooltip")
-    //     // isOverTooltip(true)
-    //   }
-    //
-    //   setHover(true);
-    // };
+    let triggerHoverStart = (event, pointerType) => {
+
+      let target = event.target;
+      console.log("start target", target)
+
+      if (isOverTooltip) {
+        console.log("you're ON the tooltip")
+        // isOverTooltip(true)
+      }
+
+      setHover(true);
+    };
 
 
     let triggerHoverEnd = (event, pointerType, didHover=true) => {
