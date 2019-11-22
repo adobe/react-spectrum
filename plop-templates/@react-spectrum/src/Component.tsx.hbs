@@ -1,5 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
@@ -16,7 +17,7 @@ export const {{componentName}} = React.forwardRef((props: {{componentName}}Props
   let ariaProps = use{{componentName}}(completeProps, state);
 
   return (
-    <div {...filterDOMProps(completeProps)} {...ariaProps} ref={ref} className={classNames(styles, '')}>
+    <div {...mergeProps(filterDOMProps(completeProps), ariaProps)} {...ariaProps} ref={ref} className={classNames(styles, '')}>
 
     </div>
   );
