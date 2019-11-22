@@ -17,9 +17,6 @@ governing permissions and limitations under the License.
   --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-75);
 }
 
-/* topdoc
-{{ toggle/toggle-onoffdefault.yml }}
-*/
 .spectrum-ToggleSwitch {
   display: inline-flex;
   align-items: flex-start;
@@ -125,7 +122,3 @@ governing permissions and limitations under the License.
     border-style: solid;
   }
 }
-
-/* topdoc
-{{ toggle/toggle-abdefault.yml }}
-*/
