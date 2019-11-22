@@ -19,7 +19,6 @@ function setupGlobalFocusEvents() {
 
   let onKeyboardEvent = (e) => {
     if (
-      e.key === 'Tab' &&
       !(
         e.metaKey ||
         (!isMac && e.altKey) ||
