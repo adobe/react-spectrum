@@ -1,4 +1,5 @@
 import {HoverResponder} from '@react-aria/interactions';
+import {TooltipHoverResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
@@ -29,10 +30,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
-  let onInteraction = () => { //DEVON FEEDBACK: a boolean argument and instead of toggling ... set the state
-    setOpen(!open);
-  };
-
   let onPressInteraction = () => {
     setOpen(!open);
   };
@@ -40,7 +37,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let onHoverInteraction = (isHovering) => {
     setOpen(isHovering);
   }
-
 
   let onClose = () => {
     setOpen(false);
@@ -68,8 +64,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     }
   );
 
-  // console.log("tooltip trigger props", tooltipTriggerProps)
-
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     placement: props.placement,
     containerRef,
@@ -79,8 +73,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   });
 
   delete overlayProps.style.position;
-
-  // console.log("Tooltip: ", content)
 
   // TODO: use the provider & context here instead of cloneElement & bring all the props into a single object that you can spread instead of all these commas
   let overlay = (
@@ -104,13 +96,19 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   } else if (type === 'hover') {
     return (
       <Fragment>
+
         <HoverResponder
           {...tooltipTriggerProps}
           isHovering={isOpen}
           onHover={onHoverInteraction}>
           {trigger}
         </HoverResponder>
-        {overlay} {/* DEVON FEEDBACK: the overlay is the tooltip ... you can put a HoverResponder around this */}
+
+        <TooltipHoverResponder
+          isOverTooltip={onHoverInteraction}>
+          {overlay}
+        </TooltipHoverResponder>
+
       </Fragment>
     );
   }

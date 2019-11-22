@@ -14,7 +14,7 @@ interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
 }
 
 interface TooltipTriggerState {
-  isOpen: boolean,
+  open: boolean,                    // before was isOpen
   setOpen(value: boolean): void
 }
 
@@ -30,7 +30,6 @@ interface TooltipTriggerAria {
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
-  // console.log("usage")
   let {
     tooltipProps,
     triggerProps,
@@ -42,7 +41,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
-    isOpen: state.isOpen
+    isOpen: state.open                       // before was state.isOpen
   });
 
   let onKeyDownTrigger = (e) => {
@@ -54,19 +53,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         console.log("esc button called from tooltip")
-
         e.preventDefault();
         //e.stopPropagation();
-
         state.setOpen(false);
-
-        console.log("state.open", state.open) // true
-        console.log("state.isOpen", state.isOpen) // undefined
-        console.log("state", state) // why is open still true if you use use setOpen?
-        //state.open = false // doesn't do anything that affects the ui
-        //console.log("state", state) // goes to false but toggle is still wrong
-        
-
       }
 
     }
@@ -76,7 +65,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     tooltipTriggerProps: {
       ...overlayProps,
-      ref: triggerProps.ref,
+      ref: triggerProps.ref, // this line is necessary for functionality and removing it doesn't get rid of the ref warning
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)

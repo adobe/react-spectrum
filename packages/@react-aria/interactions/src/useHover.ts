@@ -2,11 +2,10 @@ import {DOMProps} from '@react-types/shared';
 import {HoverResponderContext} from './hoverContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import {chain} from '@react-aria/utils';
 
 export interface HoverEvent {
   type: 'hoverstart' | 'hoverend' | 'hover',
-  pointerType: 'mouse' | 'touch' | 'pen' | 'keyboard',
+  pointerType: 'mouse' | 'touch' | 'pen',
   target: HTMLElement
 }
 
@@ -110,25 +109,9 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 */
 
-
       if (onHover) {
-        /*
-        let hoverShowDelay = setTimeout(() => {
-          onHover({
-            type: 'hover',
-            target,
-            pointerType
-          });
-        }, 500)
-        console.log("start target", event.target)
-        console.log("start related target", event.relatedTarget)
-        */
-
         handleDelayedShow(onHover, event)
-
-
       }
-
 
       setHover(true);
     };
@@ -168,27 +151,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 */
 
       if (onHover && didHover) {
-
-        //
-        // let hoverHideDelay = setTimeout(() => {
-        //
-        //   /*
-        //   onHover({
-        //     type: 'hover',
-        //     target,
-        //     pointerType
-        //   });
-        //   */
-        //
-        //
-        //
-        // }, 500)
-        // // console.log("end target", event.target)
-        // // console.log("end related target", event.relatedTarget) // is the tooltip!
-        //
-
-        handleMouseOverOut(onHover, event) // this worked to freeze when over tooltip ...
-
+        handleMouseOverOut(onHover, event)
       }
 
     };
@@ -199,12 +162,10 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       hoverProps.onPointerEnter = (e) => {
         triggerHoverStart(e, e.pointerType);
-        // DEVON FEEDBACK: don't toggle, just set to true
       };
 
       hoverProps.onPointerLeave = (e) => {
         triggerHoverEnd(e, e.pointerType);
-        // DEVON FEEDBACK: don't toggle, just set to false
       };
 
     } else {
@@ -259,15 +220,13 @@ function handleDelayedHide(onHover, e) {
 
 }
 
-// DEVON FEEDBACK: create a seperate hook for the tooltip .... it needs its own recognition
-
 function handleMouseOverOut(onHover, e) {
   const target = e.currentTarget;
-  console.log("target!!...", target)
+  // console.log("target!!...", target)
   const related = e.relatedTarget || e.nativeEvent.toElement;
   console.log("related!!...", related)
   const parent = related.parentNode
-  console.log("parent!!...", parent)
+  // console.log("parent!!...", parent)
   if(parent.getAttribute('role') === "tooltip") { // add in the other checks -> if (!related || related !== target && !target.contains(related)) {}
     console.log("hi")
     return

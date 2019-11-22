@@ -4,3 +4,6 @@ export * from './Pressable';
 export * from './PressResponder';
 export * from './useHover';
 export * from './HoverResponder';
+export * from './useTooltipHover';
+export * from './TooltipHoverResponder';
+export * from './tooltipHoverContext';
