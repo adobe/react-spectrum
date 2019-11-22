@@ -37,6 +37,7 @@ The auth key can be obtained by following the steps listed [here](https://www.jf
 ```
 
 Then you should be able to install with npm:
+Eventually we'll support a single package with all of them, but for now you must install individual ones
 
 ```
 npm install @react-spectrum/dialog --save
