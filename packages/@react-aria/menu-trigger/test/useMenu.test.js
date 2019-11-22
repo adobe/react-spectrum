@@ -10,15 +10,6 @@ describe('useMenu', function () {
     headingHeight: 26
   });
 
-  beforeEach(() => {
-    jest.mock('@react-stately/selection');
-  
-  });
-
-  afterEach(() => {
-    jest.unmock('@react-stately/selection');
-  });
-
   let renderMenuHook = (menuProps) => {
     let {result} = renderHook(() => useMenu(menuProps, mockState, mockLayout));
     return result.current;
@@ -34,7 +25,7 @@ describe('useMenu', function () {
     expect(menuProps.onBlur).toBeTruthy();
   });
 
-  it('should accomadate user defined aria attributes', function () {
+  it('should accommodate user defined aria attributes', function () {
     let props = {
       'aria-label': 'blah',
       'aria-labelledby': 'heh',

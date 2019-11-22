@@ -46,7 +46,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let isFocused = itemKey === manager.focusedKey;
   useEffect(() => {
     if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
-      itemRef.current && itemRef.current.focus({preventScroll: true});
+      itemRef.current.focus({preventScroll: true});
     }
   }, [itemRef, isFocused, manager]);
 
