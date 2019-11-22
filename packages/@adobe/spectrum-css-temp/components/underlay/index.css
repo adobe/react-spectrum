@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-@import '../commons/overlay.css';
+@import '../overlay/index.css';
 
 :root {
   /* Bug: this must be 0ms, not 0 */

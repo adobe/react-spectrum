@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ stepper/stepper-default.yml }}
-*/
-
 .spectrum-Stepper {
   .spectrum-Stepper-input {
     &:focus {
@@ -152,9 +148,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ stepper/stepper-quiet.yml }}
-*/
 .spectrum-Stepper--quiet {
   .spectrum-Stepper-stepUp,
   .spectrum-Stepper-stepDown {

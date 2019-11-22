@@ -65,7 +65,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
             className={
               classNames(
                 styles,
-                'spectrum-Tool-hold',
+                'spectrum-ActionButton-hold',
                 {
                   'is-reversed': direction === 'rtl'
                 }

@@ -13,9 +13,6 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 @import 'animation.css';
 
-/* topdoc
-{{ circleloader/circleloader-medium.yml }}
-*/
 .spectrum-CircleLoader {
   display: inline-block;
   width: var(--spectrum-loader-circle-medium-width);
@@ -67,9 +64,6 @@ governing permissions and limitations under the License.
   transform: rotate(0deg);
 }
 
-/* topdoc
-{{ circleloader/circleloader-small.yml }}
-*/
 .spectrum-CircleLoader--small {
   width: var(--spectrum-loader-circle-small-width);
   height: var(--spectrum-loader-circle-small-height);
@@ -90,9 +84,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ circleloader/circleloader-large.yml }}
-*/
 .spectrum-CircleLoader--large {
   width: var(--spectrum-loader-circle-large-width);
   height: var(--spectrum-loader-circle-large-height);
@@ -114,9 +105,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ circleloader/circleloader-indeterminate-default.yml }}
-*/
 .spectrum-CircleLoader--indeterminate {
   .spectrum-CircleLoader-fills {
     will-change: transform;
@@ -136,22 +124,3 @@ governing permissions and limitations under the License.
     animation: spectrum-fill-mask-2 1s infinite linear;
   }
 }
-/* topdoc
-{{ circleloader/circleloader-indeterminate-small.yml }}
-*/
-
-/* topdoc
-{{ circleloader/circleloader-indeterminate-large.yml }}
-*/
-/* topdoc
-{{ circleloader/circleloader-small-over-background.yml }}
-*/
-/* topdoc
-{{ circleloader/circleloader-medium-over-background.yml }}
-*/
-/* topdoc
-{{ circleloader/circleloader-large-over-background.yml }}
-*/
-/* topdoc
-{{ circleloader/circleloader-indeterminate-over-background.yml }}
-*/
