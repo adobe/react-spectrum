@@ -500,9 +500,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/button-quiet-warning.yml }}
-*/
 .spectrum-Button--warning.spectrum-Button--quiet {
   background-color: var(--spectrum-button-quiet-warning-background-color);
   border-color: var(--spectrum-button-quiet-warning-border-color);
@@ -595,6 +592,18 @@ governing permissions and limitations under the License.
 
   .spectrum-ActionButton-hold {
     color: var(--spectrum-actionbutton-emphasized-hold-icon-color);
+  }
+
+  &.is-selected {
+    .spectrum-ActionButton-hold {
+      color: var(--spectrum-actionbutton-emphasized-hold-icon-color-selected);
+    }
+
+    &:hover {
+      .spectrum-ActionButton-hold {
+        color: var(--spectrum-actionbutton-emphasized-text-color-selected-hover);
+      }
+    }
   }
 
   &:hover {
@@ -706,9 +715,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ button/actionbutton-quiet.yml }}
-*/
 .spectrum-ActionButton--quiet {
   background-color: var(--spectrum-actionbutton-quiet-background-color);
   border-color: var(--spectrum-actionbutton-quiet-border-color);
@@ -773,10 +779,6 @@ governing permissions and limitations under the License.
     }
   }
 }
-
-/* topdoc
-{{ button/clearbutton-medium.yml }}
-*/
 
 .spectrum-FieldButton {
   color: var(--spectrum-fieldbutton-text-color);
@@ -891,99 +893,6 @@ governing permissions and limitations under the License.
 
     &:focus-ring {
       box-shadow: none;
-    }
-  }
-}
-
-.spectrum-ActionButton {
-  .spectrum-Tool-hold {
-    color: var(--spectrum-tool-hold-icon-color);
-  }
-
-  &:hover {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-hold-icon-color-hover);
-    }
-  }
-
-  &:active {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-hold-icon-color-down);
-    }
-  }
-
-  &:focus-ring {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-hold-icon-color-key-focus);
-    }
-  }
-
-  &.is-disabled,
-  &:disabled {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-hold-icon-color-disabled);
-    }
-  }
-}
-
-.spectrum-ActionButton--emphasized {
-  &.is-selected {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-high-emphasis-icon-color-selected);
-    }
-
-    &:hover {
-      .spectrum-Tool-hold {
-        color: var(--spectrum-high-emphasis-hold-icon-color-selected-hover);
-      }
-    }
-
-    &:active {
-      .spectrum-Tool-hold {
-        color: var(--spectrum-tool-high-emphasis-icon-color-selected-down);
-      }
-    }
-
-    &:focus-ring {
-      .spectrum-Tool-hold {
-        color: var(--spectrum-tool-high-emphasis-icon-color-selected-key-focus);
-      }
-    }
-
-    &:disabled,
-    &.is-disabled {
-      .spectrum-Tool-hold {
-        color: var(--spectrum-tool-high-emphasis-icon-color-disabled);
-      }
-    }
-  }
-
-  .spectrum-Tool-hold {
-    color: var(--spectrum-tool-high-emphasis-icon-color);
-  }
-
-  &:hover {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-high-emphasis-icon-color-hover);
-    }
-  }
-
-  &:active {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-high-emphasis-icon-color-down);
-    }
-  }
-
-  &:focus-ring {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-high-emphasis-icon-color-key-focus);
-    }
-  }
-
-  &.is-disabled,
-  &:disabled {
-    .spectrum-Tool-hold {
-      color: var(--spectrum-tool-high-emphasis-icon-color-disabled);
     }
   }
 }
