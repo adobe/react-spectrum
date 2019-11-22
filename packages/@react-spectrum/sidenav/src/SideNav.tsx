@@ -1,23 +1,28 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, SingleSelectionBase} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
+import {FocusRing} from '@react-aria/focus';
 import {ListLayout, Node} from '@react-stately/collections';
-import React, {AllHTMLAttributes, useMemo} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {TreeState, useTreeState} from '@react-stately/tree';
 import {useNav} from '@react-aria/sidenav';
-import {useTreeState} from '@react-stately/tree';
+import {usePress} from '@react-aria/interactions';
+import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
   let {navProps, listProps, listItemProps} = useNav(props);
-  let {
-    tree: navigation,
-    onToggle,
-    onSelectToggle
-  } = useTreeState(props);
+  let state = useTreeState({...props, selectionMode: 'single'});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
+
+  let {listProps: selectionProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate: layout
+  });
 
   return (
     <nav
@@ -25,10 +30,12 @@ export function SideNav<T>(props: SideNavProps<T>) {
       {...navProps}
       className={classNames(styles, 'react-spectrum-SideNav')}>
       <CollectionView
+        {...selectionProps}
         {...listProps}
+        focusedKey={state.selectionManager.focusedKey}
         className={classNames(styles, 'spectrum-SideNav')}
         layout={layout}
-        collection={navigation}>
+        collection={state.tree}>
         {(type, item) => {
           if (type === 'section') {
             return <SideNavHeading item={item} />;
@@ -37,8 +44,7 @@ export function SideNav<T>(props: SideNavProps<T>) {
           return (
             <SideNavItem
               {...listItemProps}
-              onToggle={onToggle}
-              onSelectToggle={onSelectToggle}
+              state={state}
               item={item} />
           );
         }}
@@ -49,31 +55,41 @@ export function SideNav<T>(props: SideNavProps<T>) {
 
 interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
   item: Node<T>,
-  onToggle: (item: Node<T>) => void, // only for multi level
-  onSelectToggle: (item: Node<T>) => void
+  state: TreeState<T>
 }
-function SideNavItem<T>({item, onSelectToggle, ...otherProps}: SideNavItemProps<T>) {
+
+function SideNavItem<T>({item, state, ...otherProps}: SideNavItemProps<T>) {
   let {isSelected, isDisabled, rendered} = item;
-  let {className, ...other} = otherProps;
-  className = classNames(
+  let className = classNames(
     styles,
-    'spectrum-SideNav-itemLink',
+    'spectrum-SideNav-item',
     {
       'is-selected': isSelected,
       'is-disabled': isDisabled
-    },
-    className
+    }
   );
-  // TODO: How to handle icon prop that existed in v2 SideNavItem?
+
+  let ref = useRef<HTMLAnchorElement>();
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    itemKey: item.key,
+    itemRef: ref
+  });
+
+  let {pressProps} = usePress(itemProps);
+
   return (
-    <div className={classNames(styles, 'spectrum-SideNav-item')}>
-      <a
-        className={className}
-        role="presentation"
-        onClick={() => onSelectToggle(item)}
-        {...other}>
-        {rendered}
-      </a>
+    <div className={className}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+        <a
+          ref={ref}
+          {...mergeProps(pressProps, filterDOMProps(itemProps))}
+          className={classNames(styles, 'spectrum-SideNav-itemLink')}
+          role="presentation"
+          {...otherProps}>
+          {rendered}
+        </a>
+      </FocusRing>
     </div>
   );
 }
