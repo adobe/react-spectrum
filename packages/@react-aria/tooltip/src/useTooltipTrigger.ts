@@ -62,8 +62,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     tooltipTriggerProps: {
       ...overlayProps,
-      // @ts-ignore
-      ref: triggerProps.ref, // I thought maybe I could get rid of this since it is already in overlayProps
+      // ref: triggerProps.ref, // I thought maybe I could get rid of this since it is already in overlayProps
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)

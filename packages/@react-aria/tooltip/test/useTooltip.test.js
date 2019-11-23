@@ -19,4 +19,6 @@ describe('useTooltip', function () {
 
    // TODO: add a test for the mouse leave functionality ... make a mouse leave in test utils?
 
+   // same thing as before ... mock the state, don't worry about the hover web event 
+
  });

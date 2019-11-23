@@ -28,8 +28,12 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
+// this should be moved over to react-stately in a tooltip trigger package
+// the state should be passed to useTooltipTrigger, see Switch component useState followed by useAria
+// stateley should be short
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
+// these three functions should get pushed into useTooltipTrigger, as they are interactions
   let onPressInteraction = () => {
     setOpen(!open);
   };
@@ -85,6 +89,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <PressResponder
           {...tooltipTriggerProps}
+          ref={triggerRef}
           isPressed={isOpen}
           onPress={onPressInteraction}>
           {trigger}
@@ -98,6 +103,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
         <HoverResponder
           {...tooltipTriggerProps}
+          ref={triggerRef}
           isHovering={isOpen}
           onHover={onHoverInteraction}>
           {trigger}

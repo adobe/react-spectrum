@@ -10,6 +10,8 @@ function renderComponent(Component, props, message) {
 }
 
 
+// don't test classNames anymore ...
+// get rid of classname tests
 describe('Tooltip', function () {
 
   afterEach(() => {
