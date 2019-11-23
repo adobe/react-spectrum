@@ -13,7 +13,7 @@ import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useMenu} from '@react-aria/menu-trigger';
-import {Grid, Heading, Flex, Label, SlotContext} from "../../layout/src";
+import {Grid, Heading, Flex, Text, SlotContext} from "../../layout/src";
 import {Divider} from "@react-spectrum/divider";
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
@@ -151,7 +151,6 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
 
   let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
 
-  console.log(item, rendered);
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
     <FocusRing
@@ -180,9 +179,9 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
             detail: styles['spectrum-Menu-detail']
           }}>
           {!Array.isArray(rendered) && (
-            <Label>
+            <Text>
               {rendered}
-            </Label>
+            </Text>
           )}
           {Array.isArray(rendered) && rendered}
           {hasChildNodes &&

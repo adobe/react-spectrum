@@ -1,17 +1,28 @@
 import {action} from '@storybook/addon-actions';
-import {Detail, Flex, Label} from "@react-spectrum/layout";
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import Paste from '@spectrum-icons/workflow/Paste';
+import {Flex, Keyboard, Text} from '@react-spectrum/layout';
 import {Item, Menu, Section} from '../';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+
+let iconMap = {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Blower,
+  Book,
+  Copy,
+  Cut,
+  Paste
+};
 
 let flatMenu = [
   {name: 'Aardvark'},
@@ -35,19 +46,19 @@ let withSection = [
 ];
 
 let hardModeProgrammatic = [
-  {name: 'Section 1', isSection: true, children: [
+  {name: 'Section 1', children: [
     {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
     {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
     {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
   ]},
-  {name: 'Section 2', isSection: true, children: [
+  {name: 'Section 2', children: [
     {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
     {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
-    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'}
-  ]},
-  {name: 'hasChildren', children: [
-      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
-      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
+    {name: 'hasChildren', children: [
+        {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+        {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+    ]}
   ]}
 ];
 
@@ -196,85 +207,102 @@ storiesOf('Menu', module)
         <Section title="Section 1">
           <Item>
             <Copy size="S" />
-            <Label>Copy</Label>
+            <Text>Copy</Text>
             <Flex slot="tools">
               <Switch />
-              <Detail>⌘C</Detail>
+              <Keyboard>⌘C</Keyboard>
             </Flex>
           </Item>
           <Item>
             <Cut size="S" />
-            <Label>Cut</Label>
+            <Text>Cut</Text>
             <Flex slot="tools">
               <Switch />
-              <Detail>⌘X</Detail>
+              <Keyboard>⌘X</Keyboard>
             </Flex>
           </Item>
           <Item>
             <Paste size="S" />
-            <Label>Paste</Label>
+            <Text>Paste</Text>
             <Flex slot="tools">
               <Switch />
-              <Detail>⌘V</Detail>
+              <Keyboard>⌘V</Keyboard>
             </Flex>
           </Item>
         </Section>
         <Section title="Section 2">
           <Item>
             <AlignLeft size="S" />
-            <Label>Puppy</Label>
+            <Text>Puppy</Text>
             <Flex slot="tools">
-              <Detail>⌘P</Detail>
+              <Keyboard>⌘P</Keyboard>
             </Flex>
           </Item>
           <Item>
             <AlignCenter size="S" />
-            <Label>Doggo</Label>
+            <Text>Doggo</Text>
             <Flex slot="tools">
-              <Detail>⌘D</Detail>
+              <Keyboard>⌘D</Keyboard>
             </Flex>
           </Item>
           <Item>
             <AlignRight size="S" />
-            <Label>Floof</Label>
+            <Text>Floof</Text>
             <Flex slot="tools">
-              <Detail>⌘F</Detail>
+              <Keyboard>⌘F</Keyboard>
             </Flex>
+          </Item>
+          <Item title="hasChildren">
+            <Item>
+              <Blower size="S" />
+              <Text>Thailand</Text>
+              <Flex slot="tools">
+                <Switch />
+                <Keyboard>⌘T</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              <Book size="S" />
+              <Text>Germany</Text>
+              <Flex slot="tools">
+                <Switch />
+                <Keyboard>⌘G</Keyboard>
+              </Flex>
+            </Item>
           </Item>
         </Section>
-        <Item title="hasChildren">
-          <Item>
-            <Blower size="S" />
-            <Label>Thailand</Label>
-            <Flex slot="tools">
-              <Detail>⌘T</Detail>
-            </Flex>
-          </Item>
-          <Item>
-            <Book size="S" />
-            <Label>Germany</Label>
-            <Flex slot="tools">
-              <Detail>⌘G</Detail>
-            </Flex>
-          </Item>
-        </Item>
       </Menu>
     )
-  )
-  /*.add(
+  );
+
+/*
+TODO: How should this work?? i want it to render the same as the static story but in the programmatic way
+ */
+/*
+  .add(
     'Hardmode programmatic w/ sections',
     () => (
-      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
-        {item => {
-          if (item.isSection) {
-            return (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
-              </Section>
-            );
-          }
-          return <Item childItems={item.children}>{item.name}</Item>;
-        }}
+      <Menu items={hardModeProgrammatic} itemKey="name" onSelect={action('onSelect')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {customMenuItem}
+          </Section>
+        )}
       </Menu>
     )
-  )*/;
+  );
+
+let customMenuItem = item => {
+  let Icon = iconMap[item.icon];
+  return (
+    <Item childItems={item.children}>
+      <Icon size="S" />
+      <Text>{item.name}</Text>
+      <Flex slot="tools">
+        <Switch />
+        <Keyboard>{item.shortcut}</Keyboard>
+      </Flex>
+    </Item>
+  );
+};
+*/
