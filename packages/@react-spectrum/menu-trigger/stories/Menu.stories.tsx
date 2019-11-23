@@ -210,7 +210,7 @@ storiesOf('Menu', module)
             <Text>Copy</Text>
             <Flex slot="tools">
               <Switch />
-              <Keyboard>⌘C</Keyboard>
+              <Keyboard slot="detail">⌘C</Keyboard>
             </Flex>
           </Item>
           <Item>
@@ -218,7 +218,7 @@ storiesOf('Menu', module)
             <Text>Cut</Text>
             <Flex slot="tools">
               <Switch />
-              <Keyboard>⌘X</Keyboard>
+              <Keyboard slot="detail">⌘X</Keyboard>
             </Flex>
           </Item>
           <Item>
@@ -226,7 +226,7 @@ storiesOf('Menu', module)
             <Text>Paste</Text>
             <Flex slot="tools">
               <Switch />
-              <Keyboard>⌘V</Keyboard>
+              <Keyboard slot="detail">⌘V</Keyboard>
             </Flex>
           </Item>
         </Section>
@@ -235,21 +235,21 @@ storiesOf('Menu', module)
             <AlignLeft size="S" />
             <Text>Puppy</Text>
             <Flex slot="tools">
-              <Keyboard>⌘P</Keyboard>
+              <Keyboard slot="detail">⌘P</Keyboard>
             </Flex>
           </Item>
           <Item>
             <AlignCenter size="S" />
             <Text>Doggo</Text>
             <Flex slot="tools">
-              <Keyboard>⌘D</Keyboard>
+              <Keyboard slot="detail">⌘D</Keyboard>
             </Flex>
           </Item>
           <Item>
             <AlignRight size="S" />
             <Text>Floof</Text>
             <Flex slot="tools">
-              <Keyboard>⌘F</Keyboard>
+              <Keyboard slot="detail">⌘F</Keyboard>
             </Flex>
           </Item>
           <Item title="hasChildren">
@@ -258,7 +258,7 @@ storiesOf('Menu', module)
               <Text>Thailand</Text>
               <Flex slot="tools">
                 <Switch />
-                <Keyboard>⌘T</Keyboard>
+                <Keyboard slot="detail">⌘T</Keyboard>
               </Flex>
             </Item>
             <Item>
@@ -266,7 +266,7 @@ storiesOf('Menu', module)
               <Text>Germany</Text>
               <Flex slot="tools">
                 <Switch />
-                <Keyboard>⌘G</Keyboard>
+                <Keyboard slot="detail">⌘G</Keyboard>
               </Flex>
             </Item>
           </Item>
