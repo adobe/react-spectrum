@@ -4,15 +4,14 @@ import {CollectionBase, Expandable, MultipleSelection, SelectionMode} from '@rea
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
-
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
-import {useMenu} from '@react-aria/menu-trigger';
 import {Grid, Heading, Flex, Text, SlotContext} from "../../layout/src";
 import {Divider} from "@react-spectrum/divider";
 import {usePress} from '@react-aria/interactions';
@@ -21,9 +20,9 @@ import {useSelectableItem} from '@react-aria/selection';
 export {Item, Section};
 
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
-  onSelect?: (...args) => void,
-  autoFocus?: boolean, // whether or not to autoFocus on Menu opening
-  focusStrategy?: 'first' | 'last' // whether or not to focus the first or last item
+  onSelect?: (...args) => void, // user provided onSelect callback
+  autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
+  focusStrategy?: React.MutableRefObject<focusStrategy> // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
 }
 
 export function Menu<T>(props: MenuProps<T>) {
@@ -45,28 +44,41 @@ export function Menu<T>(props: MenuProps<T>) {
 
   let {
     onSelect,
+    focusStrategy,
+    autoFocus,
     ...otherProps
   } = completeProps;
 
   useEffect(() => {
+    let focusedKey;
     let selectionManager = state.selectionManager;
-    if (completeProps.focusStrategy) {
-      state.selectionManager.setFocused(true);
-      if (completeProps.focusStrategy === 'first') {
-        selectionManager.setFocusedKey(layout.getFirstKey());
-      } else if (completeProps.focusStrategy === 'last') {
-        selectionManager.setFocusedKey(layout.getLastKey());
-      } else {
-        let selectedKeys = selectionManager.selectedKeys;
-        if (selectedKeys.size) {
-          selectionManager.setFocusedKey(selectedKeys.values().next().value);
-        }
+    state.selectionManager.setFocused(true);
+    // Perhaps the below block goes into useSelectableCollection
+    if (autoFocus) {
+      // TODO: add other default focus behaviors
+
+      // Default behavior, focus the first selected key (if any)
+      let selectedKeys = selectionManager.selectedKeys;
+      if (selectedKeys.size) {
+        focusedKey = selectedKeys.values().next().value;
       }
-      completeProps.setFocusStrategy(null);
     }
+
+    // Override focus strategy if focusStrategy is defined (e.g. if menu opened via key press)
+    if (focusStrategy) {
+      if (focusStrategy.current === 'first') {
+        focusedKey = layout.getFirstKey();
+      } else if (focusStrategy.current === 'last') {
+        focusedKey = layout.getLastKey();
+      }
+      // Reset focus strategy so it doesn't get permanently applied
+      focusStrategy.current = null;
+    }
+
+    selectionManager.setFocusedKey(focusedKey);
   }, []);
 
-  // Remove FocusScope? Need to figure out how to focus the first or last item depending on ArrowUp/Down event in MenuTrigger
+
   return (
     <CollectionView
       {...filterDOMProps(otherProps)}
@@ -93,13 +105,8 @@ export function Menu<T>(props: MenuProps<T>) {
                 item={item}
                 state={state}
                 onSelect={onSelect} />
-              {/*
-                // @ts-ignore */}
               <Menu items={item.childNodes} onSelect={onSelect}>
-                {
-                  // @ts-ignore
-                  child =>  <Item>{child.rendered}</Item>
-                }
+                {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
               </Menu>
             </MenuTrigger>
           );
@@ -109,7 +116,7 @@ export function Menu<T>(props: MenuProps<T>) {
               item={item}
               state={state}
               onSelect={onSelect} />
-          )
+          );
         }
       }}
     </CollectionView>
@@ -130,8 +137,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    hasChildNodes,
-    value
+    hasChildNodes
   } = item;
 
   let ref = useRef<HTMLLIElement>();
@@ -149,7 +155,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     }
   };
 
-  let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
@@ -194,12 +200,6 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
       </li>
     </FocusRing>
   );
-
-  // Need to figure out the alternative to using Pressable below, it breaks some stuff
-  // like the useEffect in useSelectableItem. Prob will need a separate trigger from MenuTrigger maybe?
-  // Maybe need to modify MenuTrigger itself so it works with non RSP Button elements
-  // Also has an issue where the focus ring stuff doesn't appear on menu items with child nodes,
-  // maybe a ref issue?
 }
 
 function MenuDivider() {

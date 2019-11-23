@@ -12,13 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ search/search.yml }}
-*/
-/* topdoc
-{{ search/search-quiet.yml }}
-*/
-
 .spectrum-Search {
   display: inline-block;
   position: relative;

@@ -1,4 +1,4 @@
-import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -143,7 +143,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
 
   let onFocus = (e: FocusEvent) => {
     manager.setFocused(true);
-
+    
     if (manager.focusedKey == null && e.target === e.currentTarget) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
@@ -160,13 +160,6 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let onBlur = () => {
     manager.setFocused(false);
   };
-
-  // useEffect(() => {
-    // focu
-  //   console.log('firing useEffect');
-  //   manager.setFocused(true);
-  //   manager.setFocusedKey(delegate.getFirstKey());
-  // }, []);
 
   return {
     listProps: {

@@ -69,9 +69,8 @@ export function useButton(props: AriaButtonProps): ButtonAria {
       disabled: isDisabled,
       type,
       ...(additionalProps || {}),
-      onClick: (e) => {
+      onClick: () => {
         if (deprecatedOnClick) {
-          deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');
         }
       }

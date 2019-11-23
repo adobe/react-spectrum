@@ -1,8 +1,11 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import {classNames} from '@react-spectrum/utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
 
 let withSection = [
   {name: 'Animals', children: [
@@ -14,7 +17,9 @@ let withSection = [
     {name: 'Danni'},
     {name: 'Devon'},
     {name: 'Ross', children: [
-      {name: 'Tests'}
+      {name: 'Tests', children: [
+        {name: 'blah'}
+      ]}
     ]}
   ]}
 ];
@@ -87,6 +92,44 @@ storiesOf('MenuTrigger', module)
         </div>
       </div>
     )
+  )
+  .add(
+    'more than 2 children (split button)',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <Button
+          onKeyDown={action('keydown 1')}
+          onPress={action('press 1')}
+          onPressStart={action('pressstart 1')}
+          onPressEnd={action('pressend 1')}
+          className={classNames(
+            styles,
+            'spectrum-SplitButton-action'
+          )}>
+          Hi
+        </Button>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
+          <Button
+            onKeyDown={action('onKeyDown 2')}
+            onPress={action('press 2')}
+            onPressStart={action('pressstart 2')}
+            onPressEnd={action('pressend 2')}
+            className={classNames(
+              styles,
+              'spectrum-SplitButton-trigger'
+            )}>
+            <ChevronDownMedium />
+          </Button>
+          <Menu items={withSection} itemKey="name">
+            {item => (
+              <Section items={item.children} title={item.name}>
+                {item => <Item childItems={item.children}>{item.name}</Item>}
+              </Section>
+            )}
+          </Menu>
+        </MenuTrigger>
+      </div>
+    )
   );
   
 function render(props = {}, menuProps = {}) {
@@ -100,7 +143,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </Button>
-        <Menu items={withSection} itemKey="name" {...menuProps}>
+        <Menu autoFocus items={withSection} itemKey="name" selectedKeys={['Kangaroo']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

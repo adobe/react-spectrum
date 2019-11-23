@@ -31,7 +31,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     direction = 'bottom',
     onSelect
   } = props;
-
+  let focusStrategy = useRef(null);
   let [menuTrigger, menu] = React.Children.toArray(children);
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
 
@@ -41,19 +41,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      menuProps: {
-        ...menu.props,
-        onClose
-      },
-      triggerProps: {
-        ...menuTrigger.props,
-        ref: menuTriggerRef
-      },
-      state: {
-        isOpen, 
-        setOpen
-      },
-      onSelect
+      ref: menuTriggerRef,
+      type: 'menu',
+      onSelect,
+      focusStrategy
+    },
+    {
+      isOpen, 
+      setOpen
     }
   );
 
@@ -67,7 +62,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
   });
 
   let menuContext = {
-    ...menuProps
+    ...menuProps,
+    focusStrategy
   };
 
   let triggerProps = {
@@ -95,7 +91,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
             {menu}
           </Popover>
         </Overlay>
-      </MenuContext.Provider> 
+      </MenuContext.Provider>
     </Fragment>
   );
 }
