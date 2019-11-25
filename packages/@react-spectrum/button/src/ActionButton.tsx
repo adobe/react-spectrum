@@ -48,10 +48,10 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
             className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
         {holdAffordance &&
-          <CornerTriangle className={classNames(styles, 'spectrum-Tool-hold')} />
+          <CornerTriangle className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
       </ElementType>
     </FocusRing>

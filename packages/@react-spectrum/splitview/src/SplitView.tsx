@@ -4,7 +4,7 @@ import {SplitViewProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
-import './SplitView.styl';
+import './SplitView.css';
 
 
 const ORIENTATIONS = {
