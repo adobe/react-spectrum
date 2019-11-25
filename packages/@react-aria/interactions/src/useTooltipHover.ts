@@ -68,8 +68,7 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
       }
 
       if (isOverTooltip) {
-        console.log('you are ON the tooltip');
-        // isOverTooltip(true)
+        isOverTooltip(true);
       }
 
       setHover(true);

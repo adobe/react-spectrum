@@ -45,13 +45,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   });
 
   let onKeyDownTrigger = (e) => {
-
-    console.log('in key down trigger');
-
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
-        console.log('esc button called from tooltip');
         e.preventDefault();
         e.stopPropagation();
         state.setOpen(false);

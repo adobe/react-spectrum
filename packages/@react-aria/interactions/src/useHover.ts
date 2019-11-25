@@ -57,7 +57,6 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
 }
 
 export function useHover(props: HoverHookProps): HoverResult {
-
   let {
     onHover,
     onHoverStart,
@@ -69,12 +68,10 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let [isHovering, setHover] = useState(false);
 
-  // when refs update they don't trigger a re-render
   let ref = useRef<HoverState>({
     ignoreEmulatedMouseEvents: false,
     target: null
   });
-
 
   let hoverProps = useMemo(() => {
     let state = ref.current;
@@ -132,7 +129,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHover && didHover) {
         handleMouseOverOut(onHover, event);
       }
-
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -156,9 +152,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       hoverProps.onMouseLeave = (e) => {
         triggerHoverEnd(e, 'mouse');
       };
-
     }
-
     return hoverProps;
   }, [onHover, onHoverStart, onHoverEnd, isDisabled]);
 
@@ -168,18 +162,15 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-// give the animation some extra time on the screen so that the related target can be picked up
 function handleDelayedShow(onHover) {
 
   if (hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
     hoverHideDelay = null;
-    console.log('block 1...this is never called right?');
   }
 
   hoverShowDelay = setTimeout(() => {
     onHover(true);
-    console.log('handled dealyed show');
   }, 400);
 }
 
@@ -187,14 +178,11 @@ function handleMouseOverOut(onHover, e) {
   const related = e.relatedTarget || e.nativeEvent.toElement;
   const parent = related.parentNode;
   if (parent.getAttribute('role') === 'tooltip') {
-    console.log('you are on the tooltip');
     clearTimeout(hoverShowDelay);
     return;
   } else {
-    console.log('does this ever even get reached??');
     hoverHideDelay = setTimeout(() => {
       onHover();
-      console.log('handled dealyed hide');
     }, 400);
   }
 }
