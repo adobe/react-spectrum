@@ -1,7 +1,7 @@
 import {AllHTMLAttributes, useContext} from 'react';
-import {useId, mergeProps} from '@react-aria/utils';
-import {TooltipHoverProps, TooltipHoverResponderContext, useTooltipHover} from '@react-aria/interactions';
 import {DOMProps} from '@react-types/shared';
+import {TooltipHoverResponderContext} from '@react-aria/interactions';
+import {useId} from '@react-aria/utils';
 
 interface TooltipProps extends DOMProps {
   role?: 'tooltip'
@@ -11,7 +11,7 @@ interface TooltipAria {
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
-interface blah {
+interface useTooltipProps {
   'aria-describedby': string,
   role: string,
   id: string,
@@ -19,36 +19,6 @@ interface blah {
 }
 
 export function useTooltip(props: TooltipProps): TooltipAria {
-
-  // let tooltipId = useId(props.id);
-  //
-  // let contextProps = useContext(TooltipHoverResponderContext)|| {};
-  //
-  // // let {
-  // //   isOverTooltip = false, // add to the context interace so you can pull this out as a default?
-  // //   ...contextProps
-  // // } = useContext(TooltipHoverResponderContext)|| {};
-  //
-  // let onMouseLeave = (e) => {
-  //   if (contextProps.isOverTooltip) {
-  //     contextProps.isOverTooltip(false)
-  //   }
-  // }
-  //
-  // let {
-  //   role = 'tooltip'
-  // } = mergeProps(contextProps, props);
-  //
-  // return {
-  //   tooltipProps: {
-  //     'aria-describedby': tooltipId,
-  //     role,
-  //     id: tooltipId,
-  //     onMouseLeave: onMouseLeave
-  //   }
-  // };
-
-
 
   let contextProps = useContext(TooltipHoverResponderContext);
 
@@ -58,31 +28,23 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  // put these things in props using the equal sign and in the interace as well?
   let tooltipProps = {
     'aria-describedby': tooltipId,
     role,
     id: tooltipId
-  } as blah
+  } as useTooltipProps;
 
   if (contextProps) {
-    let onMouseLeave = (e) => {
+    let onMouseLeave = () => {
       if (contextProps.isOverTooltip) {
-        contextProps.isOverTooltip(false)
+        contextProps.isOverTooltip(false);
       }
-    }
-    // conditionally adding
-    tooltipProps.onMouseLeave = onMouseLeave
+    };
+    tooltipProps.onMouseLeave = onMouseLeave;
   }
 
-
-  return {tooltipProps}
-
-
-
-
-
-
-
+  return {
+    tooltipProps
+  };
 
 }

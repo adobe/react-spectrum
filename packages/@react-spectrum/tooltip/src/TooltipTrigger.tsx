@@ -1,9 +1,9 @@
 import {HoverResponder} from '@react-aria/interactions';
-import {TooltipHoverResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
+import {TooltipHoverResponder} from '@react-aria/interactions';
 import {useControlledState} from '@react-stately/utils';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 
@@ -28,19 +28,17 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
-// this should be moved over to react-stately in a tooltip trigger package
-// the state should be passed to useTooltipTrigger, see Switch component useState followed by useAria
-// stateley should be short
+  // Potential TODO: move this to react-statley in a tooltip trigger package similar to the Switch component?
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
-// these three functions should get pushed into useTooltipTrigger, as they are interactions
+  // Potential TODO: move these three functions into useTooltipTrigger, as they are interactions?
   let onPressInteraction = () => {
     setOpen(!open);
   };
 
   let onHoverInteraction = (isHovering) => {
     setOpen(isHovering);
-  }
+  };
 
   let onClose = () => {
     setOpen(false);
@@ -50,8 +48,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  // These are the variables you get out ... the parameters you pass in of course can't be used in the function
-  let {tooltipTriggerProps, tooltipProps} = useTooltipTrigger(
+  let {tooltipTriggerProps} = useTooltipTrigger(
     {
       tooltipProps: {
         ...content.props,
@@ -100,7 +97,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   } else if (type === 'hover') {
     return (
       <Fragment>
-
         <HoverResponder
           {...tooltipTriggerProps}
           ref={triggerRef}
@@ -108,12 +104,10 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           onHover={onHoverInteraction}>
           {trigger}
         </HoverResponder>
-
         <TooltipHoverResponder
           isOverTooltip={onHoverInteraction}>
           {overlay}
         </TooltipHoverResponder>
-
       </Fragment>
     );
   }

@@ -1,9 +1,9 @@
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {HoverProps} from '@react-aria/interactions';
 import {HTMLElement} from 'react-dom';
 import {PressProps} from '@react-aria/interactions';
-import {HoverProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';

@@ -1,11 +1,11 @@
 import {DOMProps} from '@react-types/shared';
-import {TooltipHoverResponderContext} from './tooltipHoverContext';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {TooltipHoverResponderContext} from './tooltipHoverContext';
 
 export interface TooltipHoverEvent {
   type: 'hoverstart' | 'hoverend' | 'hover',
-  pointerType: 'mouse' | 'pen',
+  pointerType: 'mouse' | 'touch' | 'pen',
   target: HTMLElement
 }
 
@@ -26,8 +26,6 @@ interface TooltipHoverResult {
   isHovering: boolean,
   hoverProps: HTMLAttributes<HTMLElement>
 }
-
-let hoverHideDelay = null
 
 function useTooltipHoverResponderContext(props: TooltipHoverHookProps): TooltipHoverHookProps {
   // Consume context from <TooltipHoverResponder> and merge with props.
@@ -61,39 +59,20 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
 
   let [isHovering, setHover] = useState(false);
 
-  let ref = useRef<HoverState>({
-    target: null
-  });
-
-
   let hoverProps = useMemo(() => {
-    let state = ref.current;
 
     let triggerHoverStart = (event, pointerType) => {
 
-      let target = event.target;
-      console.log("start target", target)
+      if (pointerType === 'touch') {
+        return;
+      }
 
       if (isOverTooltip) {
-        console.log("you're ON the tooltip")
+        console.log('you are ON the tooltip');
         // isOverTooltip(true)
       }
 
       setHover(true);
-    };
-
-
-    let triggerHoverEnd = (event, pointerType, didHover=true) => {
-
-      let target = event.target;
-      console.log("exit target", target)
-
-      setHover(false);
-
-      if (isOverTooltip && didHover) {
-        handleDelayedHide(isOverTooltip, event)
-      }
-
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -104,22 +83,13 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
         triggerHoverStart(e, e.pointerType);
       };
 
-      hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e, e.pointerType);
-      };
-
     } else {
 
       hoverProps.onMouseEnter = (e) => {
         triggerHoverStart(e, 'mouse');
       };
 
-      hoverProps.onMouseLeave = (e) => {
-        triggerHoverEnd(e, 'mouse');
-      };
-
     }
-
     return hoverProps;
   }, [isOverTooltip]);
 
@@ -127,11 +97,4 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
     isHovering: isHoveringProp || isHovering,
     hoverProps: mergeProps(domProps, hoverProps)
   };
-}
-
-function handleDelayedHide(isOverTooltip, e) {
-  hoverHideDelay = setTimeout(() => {
-    isOverTooltip(false)
-    console.log("you're OFF the tooltip")
-  }, 100);
 }

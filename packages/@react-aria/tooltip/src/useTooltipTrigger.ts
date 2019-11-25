@@ -62,7 +62,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     tooltipTriggerProps: {
       ...overlayProps,
-      // ref: triggerProps.ref, // I thought maybe I could get rid of this since it is already in overlayProps
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
@@ -70,9 +69,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
-    }//,
-    // triggerProps: {
-    //   ref: triggerProps.ref // it's trigger props that has the ref property so thought this would work .... return type of Aria doens't include triggerProps, change this?
-    // }
+    }
   };
 }

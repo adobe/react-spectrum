@@ -1,9 +1,9 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import {useTooltip} from '@react-aria/tooltip';
-import {mergeProps} from '@react-aria/utils';
-import {DOMProps} from '@react-types/shared';
 
 interface TooltipProps extends DOMProps {
   children: ReactNode,

@@ -100,14 +100,14 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        handleDelayedShow(onHover, event);
+        handleDelayedShow(onHover);
       }
 
       setHover(true);
     };
 
 
-    let triggerHoverEnd = (event, pointerType, didHover=true) => {
+    let triggerHoverEnd = (event, pointerType, didHover = true) => {
       if (isDisabled) {
         return;
       }
@@ -169,48 +169,32 @@ export function useHover(props: HoverHookProps): HoverResult {
 }
 
 // give the animation some extra time on the screen so that the related target can be picked up
-function handleDelayedShow(onHover, e) {
+function handleDelayedShow(onHover) {
 
-  if(hoverHideDelay != null) {
+  if (hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
     hoverHideDelay = null;
     console.log('block 1...this is never called right?');
   }
 
   hoverShowDelay = setTimeout(() => {
-    onHover(true)
+    onHover(true);
     console.log('handled dealyed show');
-  }, 500);
-}
-
-// give the user some time to hover over the tooltip before it disapears
-function handleDelayedHide(onHover, e) {
-
-  if(hoverShowDelay != null) {
-    clearTimeout(hoverShowDelay);
-    hoverShowDelay = null;
-    console.log('block 2...this is never called right?');
-  }
-
-  hoverHideDelay = setTimeout(() => {
-    onHover(false)
-  }, 500);
-
+  }, 400);
 }
 
 function handleMouseOverOut(onHover, e) {
-  const target = e.currentTarget;
   const related = e.relatedTarget || e.nativeEvent.toElement;
-  const parent = related.parentNode
-  if (parent.getAttribute('role') === "tooltip") {
+  const parent = related.parentNode;
+  if (parent.getAttribute('role') === 'tooltip') {
     console.log('you are on the tooltip');
-    return
+    clearTimeout(hoverShowDelay);
+    return;
   } else {
     console.log('does this ever even get reached??');
     hoverHideDelay = setTimeout(() => {
       onHover();
       console.log('handled dealyed hide');
-    }, 500);
+    }, 400);
   }
-
 }

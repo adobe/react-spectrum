@@ -9,9 +9,7 @@ function renderComponent(Component, props, message) {
   return render(<Component {...props} data-testid={testId}>{message}</Component>);
 }
 
-
-// don't test classNames anymore ...
-// get rid of classname tests
+// TODO: import v2 version of tooltip
 describe('Tooltip', function () {
 
   afterEach(() => {
