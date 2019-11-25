@@ -12,7 +12,7 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
     id,
     allowsMultipleSelection, // TODO: replace with selectionMode,
     isDisabled,
-    orientation,
+    orientation = 'horizontal' as 'horizontal',
     role
   } = props;
 
