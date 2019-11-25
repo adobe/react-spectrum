@@ -143,6 +143,15 @@ export function useHover(props: HoverHookProps): HoverResult {
         triggerHoverEnd(e, e.pointerType);
       };
 
+      // TODO: create a separate useFocus hook? Would be a lot of duplicate code.
+      hoverProps.onFocus = () => {
+        handleDelayedShow(onHover);
+      };
+
+      hoverProps.onBlur = () => {
+        handleDelayedHide(onHover);
+      };
+
     } else {
 
       hoverProps.onMouseEnter = (e) => {
@@ -152,6 +161,15 @@ export function useHover(props: HoverHookProps): HoverResult {
       hoverProps.onMouseLeave = (e) => {
         triggerHoverEnd(e, 'mouse');
       };
+
+      hoverProps.onFocus = () => {
+        handleDelayedShow(onHover);
+      };
+
+      hoverProps.onBlur = () => {
+        handleDelayedHide(onHover);
+      };
+
     }
     return hoverProps;
   }, [onHover, onHoverStart, onHoverEnd, isDisabled]);
@@ -174,6 +192,18 @@ function handleDelayedShow(onHover) {
   }, 400);
 }
 
+function handleDelayedHide(onHover) {
+
+  if (hoverShowDelay != null) {
+    clearTimeout(hoverShowDelay);
+    hoverShowDelay = null;
+  }
+
+  hoverHideDelay = setTimeout(() => {
+    onHover(false);
+  }, 400);
+}
+
 function handleMouseOverOut(onHover, e) {
   const related = e.relatedTarget || e.nativeEvent.toElement;
   const parent = related.parentNode;
@@ -181,8 +211,6 @@ function handleMouseOverOut(onHover, e) {
     clearTimeout(hoverShowDelay);
     return;
   } else {
-    hoverHideDelay = setTimeout(() => {
-      onHover();
-    }, 400);
+    handleDelayedHide(onHover);
   }
 }

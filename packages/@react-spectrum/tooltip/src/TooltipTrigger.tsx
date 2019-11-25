@@ -94,7 +94,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         {overlay}
       </Fragment>
     );
-  } else if (type === 'hover') {
+  } else if (type === 'hover') { // parse a ['hover', 'focus'] array if you change the story to check for either one 
     return (
       <Fragment>
         <HoverResponder

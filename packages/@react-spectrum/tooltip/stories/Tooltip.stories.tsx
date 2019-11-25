@@ -49,10 +49,10 @@ storiesOf('Tooltip', module)
     () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
   ).add(
     'triggered by hover, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'hover'})
+    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
   ).add(
     'triggered by hover, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'})
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'}) // // make it {trigger: ['hover', 'focus']}) ?
   );
 
 function render(content, props = {}) {
