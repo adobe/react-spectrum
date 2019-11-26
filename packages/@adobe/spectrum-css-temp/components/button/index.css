@@ -64,6 +64,7 @@ governing permissions and limitations under the License.
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none; /* prevent touch scrolling on buttons */
 
   &:focus {
     outline: none;

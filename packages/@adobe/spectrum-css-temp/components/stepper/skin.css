@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring {
+    &.focus-ring {
       box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
 
       + .spectrum-Stepper-buttons {
@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
         }
       }
 
-      &:focus-ring {
+      &.focus-ring {
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
 
         + .spectrum-Stepper-buttons {
@@ -120,7 +120,7 @@ governing permissions and limitations under the License.
         }
       }
 
-      &:focus-ring {
+      &.focus-ring {
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
 
         + .spectrum-Stepper-buttons {
@@ -172,7 +172,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring {
+    &.focus-ring {
       box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
 
       + .spectrum-Stepper-buttons {
@@ -230,7 +230,7 @@ governing permissions and limitations under the License.
         }
       }
 
-      &:focus-ring {
+      &.focus-ring {
         border-color: var(--spectrum-textfield-border-color-key-focus);
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-key-focus);
 
@@ -287,7 +287,7 @@ governing permissions and limitations under the License.
         }
       }
 
-      &:focus-ring {
+      &.focus-ring {
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-border-color-error);
 
         + .spectrum-Stepper-buttons {
