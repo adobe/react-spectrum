@@ -11,13 +11,9 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-basesize: var(--spectrum-global-dimension-size-200);
-
   --spectrum-padding: var(--spectrum-global-dimension-size-150);
   --spectrum-margin: var(--spectrum-padding);
   --spectrum-border-radius: var(--spectrum-global-dimension-size-50);
-
-  --spectrum-default-transition: var(--spectrum-global-animation-duration-100) ease-in-out;
 
   --spectrum-component-single-line-height: var(--spectrum-alias-single-line-height);
   --spectrum-component-single-line-width: var(--spectrum-alias-single-line-width);

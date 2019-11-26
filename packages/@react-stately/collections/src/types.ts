@@ -7,7 +7,8 @@ import {Transaction} from './Transaction';
 export interface ItemStates {
   isSelected?: boolean,
   isExpanded?: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  isFocused?: boolean
 }
 
 export interface Node<T> extends ItemStates {
@@ -26,7 +27,9 @@ export interface Collection<T> {
   getKeys(): Iterable<Key>,
   getItem(key: Key): T,
   getKeyBefore(key: Key): Key | null,
-  getKeyAfter(key: Key): Key | null
+  getKeyAfter(key: Key): Key | null,
+  getFirstKey(): Key | null,
+  getLastKey(): Key | null
 }
 
 export interface InvalidationContext<T, V> {
