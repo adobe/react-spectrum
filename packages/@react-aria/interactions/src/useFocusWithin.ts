@@ -1,4 +1,6 @@
-import {FocusEvent, HTMLAttributes, useRef} from 'react';
+import {createEventHandler} from './createEventHandler';
+import {FocusEvent} from '@react-types/shared';
+import {HTMLAttributes, useRef} from 'react';
 
 interface FocusWithinProps {
   isDisabled?: boolean,
@@ -25,7 +27,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onFocus, onBlur;
   if (props.onFocusWithin || props.onFocusWithinChange) {
-    onFocus = (e: FocusEvent) => {
+    onFocus = createEventHandler((e: FocusEvent) => {
       if (!state.isFocusWithin) {
         if (props.onFocusWithin) {
           props.onFocusWithin(e);
@@ -37,11 +39,11 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
         state.isFocusWithin = true;
       }
-    };
+    });
   }
 
   if (props.onBlurWithin || props.onFocusWithinChange) {
-    onBlur = (e: FocusEvent) => {
+    onBlur = createEventHandler((e: FocusEvent) => {
       // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
       // when moving focus inside the element. Only trigger if the currentTarget doesn't 
       // include the relatedTarget (where focus is moving).
@@ -56,13 +58,13 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
         state.isFocusWithin = false;
       }
-    };
+    });
   }
   
   return {
     focusWithinProps: {
-      onFocusCapture: onFocus,
-      onBlurCapture: onBlur
+      onFocus: onFocus,
+      onBlur: onBlur
     }
   };
 }

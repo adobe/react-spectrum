@@ -1,14 +1,13 @@
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import progressStyles from './index.css';
-import React, {CSSProperties, RefObject} from 'react';
+import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 import {useStyleProps} from '@react-spectrum/view';
 
-export const ProgressCircle = React.forwardRef((props: SpectrumProgressCircleProps, ref: RefObject<HTMLElement>) => {
+function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
     size = 'M',
@@ -17,6 +16,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
     isIndeterminate = false,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
   let min = 0;
@@ -45,7 +45,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...progressBarProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -86,4 +86,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
       </div>
     </div>
   );
-});
+}
+
+let _ProgressCircle = React.forwardRef(ProgressCircle);
+export {_ProgressCircle as ProgressCircle};

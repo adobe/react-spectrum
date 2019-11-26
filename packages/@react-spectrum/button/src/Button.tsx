@@ -1,9 +1,9 @@
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
+import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {HTMLElement} from 'react-dom';
 import {PressProps} from '@react-aria/interactions';
-import React, {JSXElementConstructor, ReactElement, ReactNode, RefObject, useRef} from 'react';
+import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
@@ -27,8 +27,7 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLElement>) => {
-  ref = ref || useRef();
+function Button(props: ButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -39,7 +38,8 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
     icon,
     ...otherProps
   } = props;
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let domRef = useFocusableRef(ref);
+  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -53,7 +53,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
         {...filterDOMProps(otherProps)}
         {...styleProps}
         {...buttonProps}
-        ref={ref}
+        ref={domRef}
         className={
           classNames(
             styles,
@@ -72,4 +72,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
       </ElementType>
     </FocusRing>
   );
-});
+}
+
+let _Button = React.forwardRef(Button);
+export {_Button as Button};

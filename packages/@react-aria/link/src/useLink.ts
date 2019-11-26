@@ -1,8 +1,8 @@
 import {AllHTMLAttributes, SyntheticEvent} from 'react';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, PressEvent} from '@react-types/shared';
 import {LinkProps} from '@react-types/link';
-import {PressEvent, usePress} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {usePress} from '@react-aria/interactions';
 
 export interface AriaLinkProps extends LinkProps, DOMProps {
   href?: string,
@@ -37,7 +37,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
     console.warn('href is deprecated, please use an anchor element as children');
   }
 
-  let {pressProps}  = usePress({onPress}); 
+  let {pressProps} = usePress({onPress}); 
 
   return {
     linkProps: {
