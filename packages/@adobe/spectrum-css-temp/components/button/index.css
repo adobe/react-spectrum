@@ -105,7 +105,8 @@ governing permissions and limitations under the License.
   border-style: solid;
   border-radius: var(--spectrum-button-primary-border-radius);
 
-  block-size: var(--spectrum-button-primary-height);
+  min-height: var(--spectrum-button-primary-height);
+  height: 0%;
   min-inline-size: var(--spectrum-button-primary-min-width);
 
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
