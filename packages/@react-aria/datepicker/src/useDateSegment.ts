@@ -79,6 +79,7 @@ export function useDateSegment(props: DatePickerProps, segment: DateSegment, sta
       case 'Tab':
         break;
       case 'Backspace': {
+        e.preventDefault();
         if (isNumeric(segment.text) && !props.isReadOnly) {
           let newValue = segment.text.slice(0, -1);
           state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parseNumber(newValue));
