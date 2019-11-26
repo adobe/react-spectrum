@@ -1,5 +1,5 @@
-import {InputHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
+import {InputHTMLAttributes, RefObject} from 'react';
 import intlMessages from '../intl/*.json';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
