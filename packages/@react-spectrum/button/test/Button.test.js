@@ -164,7 +164,7 @@ describe('Button', function () {
     ${'Button'}         | ${Button}
     ${'LogicButton'}    | ${LogicButton}
   `('$Name supports autoFocus', function ({Component}) {
-    let {getByRole, getByText} = render(<Component autoFocus>Click Me</Component>);
+    let {getByRole} = render(<Component autoFocus>Click Me</Component>);
 
     let button = getByRole('button');
     expect(document.activeElement).toBe(button);
