@@ -18,13 +18,13 @@ livefyre('''
       public/storybook: index.html
       public/storybook3: index.html
   deploy:
-    branch: "^(next)$"
+    branch: "^(master)$"
     git: true
     sshAgent: rspbot
     commands:
       - git reset --hard
-      - git checkout next
-      - git reset --hard origin/next
+      - git checkout master
+      - git reset --hard origin/master
       - make ci
     timeout: 30
 ''')

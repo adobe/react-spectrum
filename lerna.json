@@ -1,5 +1,4 @@
 {
-  "useWorkspaces": true,
   "packages": [
     "src"
   ],
@@ -9,7 +8,7 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "next"
+        "master"
       ]
     }
   },
