@@ -28,11 +28,11 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let onFocus, onBlur;
   if (props.onFocusWithin || props.onFocusWithinChange) {
     onFocus = createEventHandler((e: FocusEvent) => {
-      if (!state.isFocusWithin) {
-        if (props.onFocusWithin) {
-          props.onFocusWithin(e);
-        }
+      if (props.onFocusWithin) {
+        props.onFocusWithin(e);
+      }
 
+      if (!state.isFocusWithin) {
         if (props.onFocusWithinChange) {
           props.onFocusWithinChange(true);
         }
