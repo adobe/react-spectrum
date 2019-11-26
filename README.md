@@ -1,4 +1,4 @@
-# react-spectrum <img src='https://git.corp.adobe.com/pages/brownlee/stupid-stuff/spectrum-badge.svg' height=20 />
+# react-spectrum
 
 [Spectrum](http://spectrum.corp.adobe.com) UI components in React.
 
@@ -19,37 +19,36 @@ If you are manually managing your version of Node, then refer to `.nvmrc` for th
 Add the following to your `~/.npmrc`:
 
 ```
-registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-adobe-release/
+registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/
 
 _auth = [AUTH KEY]
 always-auth = true
 email = [ADOBE EMAIL]
 
-@spectrum:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/
-//artifactory.corp.adobe.com:443/artifactory/api/npm/npm-spectrum-release/:always-auth=true
-@react:registry=https://artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/
-//artifactory.corp.adobe.com:443/artifactory/api/npm/npm-react-release/:always-auth=false
+@react:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/
+//artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/:always-auth=false
 ```
 
 The auth key can be obtained by following the steps listed [here](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#npmRegistry-UsingBasicAuthentication). Sample cURL:
 ```
- curl -u <ARTIFACTORY USERNAME>:<API KEY> https://artifactory.corp.adobe.com/artifactory/api/npm/auth
+ curl -u <ARTIFACTORY USERNAME>:<API KEY> https://artifactory-uw2.adobeitc.com:443/artifactory/api/npm/auth
 ```
 
 Then you should be able to install with npm:
+Eventually we'll support a single package with all of them, but for now you must install individual ones
 
 ```
-npm install @react/react-spectrum --save
+npm install @react-spectrum/dialog --save
 ```
 
 ### Example
 
 ```javascript
 // Import root provider at the top level, it brings global page styles (CSS reset, fonts, icons, etc.)
-import Provider from '@react/react-spectrum/Provider';
+import Provider from '@react-spectrum/provider';
 
 // Import the component you want to use
-import Button from '@react/react-spectrum/Button';
+import Button from '@react-spectrum/button';
 
 // Render it!
 ReactDOM.render(<Provider theme='light'><Button>Hello World</Button></Provider>, dom);
