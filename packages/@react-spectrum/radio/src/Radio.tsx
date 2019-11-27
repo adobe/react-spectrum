@@ -1,14 +1,16 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {RadioProps} from '@react-types/radio';
 import React, {forwardRef, RefObject} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './RadioGroup';
 
+interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
 
-export const Radio = forwardRef((props: RadioProps, ref: RefObject<HTMLLabelElement>) => {
-
+export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLLabelElement>) => {
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
   }
@@ -16,10 +18,10 @@ export const Radio = forwardRef((props: RadioProps, ref: RefObject<HTMLLabelElem
   let {
     isDisabled,
     children,
-    className,
     value,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let radioGroupProps = useRadioProvider();
   let {
@@ -48,10 +50,10 @@ export const Radio = forwardRef((props: RadioProps, ref: RefObject<HTMLLabelElem
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false,
-          onChange: false
+          'aria-label': false
         }
       )}
+      {...styleProps}
       ref={ref}
       className={
         classNames(
@@ -63,7 +65,7 @@ export const Radio = forwardRef((props: RadioProps, ref: RefObject<HTMLLabelElem
             'is-disabled': isDisabled,
             'is-invalid': validationState === 'invalid'
           },
-          className
+          styleProps.className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

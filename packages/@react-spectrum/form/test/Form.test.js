@@ -47,17 +47,17 @@ describe('Form', () => {
     ${'v3 Form'} | ${Form}
     ${'v2 Form'} | ${V2Form}
   `('$Name should support additional DOM props', ({Component}) => {
-    let tree = render(<Component disabled />);
+    let tree = render(<Component data-testid="foo" />);
     let form = tree.getByRole('form');
-    expect(form).toHaveAttribute('disabled', '');
+    expect(form).toHaveAttribute('data-testid', 'foo');
   });
 
   it.each`
-    Name         | Component
-    ${'v3 Form'} | ${Form}
-    ${'v2 Form'} | ${V2Form}
-  `('$Name should support custom classnames', ({Component}) => {
-    let tree = render(<Component className="test-name" />);
+    Name         | Component  | props
+    ${'v3 Form'} | ${Form}    | ${{UNSAFE_className: 'test-name'}}
+    ${'v2 Form'} | ${V2Form}  | ${{className: 'test-name'}}
+  `('$Name should support UNSAFE_className', ({Component, props}) => {
+    let tree = render(<Component {...props} />);
     let form = tree.getByRole('form');
     expect(form).toHaveAttribute('class', expect.stringContaining('test-name'));
   });

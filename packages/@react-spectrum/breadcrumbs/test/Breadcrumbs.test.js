@@ -22,9 +22,9 @@ describe('Breadcrumbs', function () {
   });
 
   // v3 functionality, omitting v2 component
-  it('Handles custom class name', () => {
+  it('Handles UNSAFE_className', () => {
     let {getByRole} = render(
-      <Breadcrumbs className="test-class">
+      <Breadcrumbs UNSAFE_className="test-class">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );

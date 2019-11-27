@@ -12,7 +12,7 @@ interface DateFieldAria {
   segmentProps: DOMProps
 }
 
-export function useDateField(props: DatePickerProps): DateFieldAria {
+export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let fieldProps = useLabels(props, formatMessage('date'));
   let focusManager = useFocusManager();

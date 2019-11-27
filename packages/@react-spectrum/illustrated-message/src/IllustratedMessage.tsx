@@ -2,12 +2,12 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, ReactNode, RefObject} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useIllustratedMessage} from '@react-aria/illustrated-message';
-import {useProviderProps} from '@react-spectrum/provider';
 
-export interface IllustratedMessageProps extends DOMProps {
+export interface IllustratedMessageProps extends DOMProps, StyleProps {
   heading?: string,
   description?: ReactNode,
   illustration?: ReactElement,
@@ -15,24 +15,25 @@ export interface IllustratedMessageProps extends DOMProps {
 }
 
 export const IllustratedMessage = React.forwardRef((props: IllustratedMessageProps, ref: RefObject<HTMLElement>) => {
-  let completeProps = useProviderProps(props);
   let {
-    className,
     illustration,
     heading,
-    description
-  } = completeProps;
+    description,
+    ...otherProps
+  } = props;
+  let {styleProps} = useStyleProps(otherProps);
   let {
     illustrationProps,
     headingProps
-  } = useIllustratedMessage(completeProps);
+  } = useIllustratedMessage(props);
 
   // todo replace h2 with rsp heading when it exists
   return (
     <div
-      {...filterDOMProps(completeProps, {'aria-level': false})}
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
       ref={ref}
-      className={classNames(styles, 'spectrum-IllustratedMessage', className)}>
+      className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className)}>
       {illustration &&
         React.cloneElement(illustration, {
           ...illustrationProps,

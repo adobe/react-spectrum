@@ -4,8 +4,7 @@ export interface InputBase {
   isRequired?: boolean,
   validationState?: ValidationState,
   isReadOnly?: boolean,
-  autoFocus?: boolean,
-  type?: string
+  autoFocus?: boolean
 }
 
 export interface ValueBase<T> {

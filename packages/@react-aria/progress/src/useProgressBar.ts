@@ -1,4 +1,5 @@
 import {AllHTMLAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 
@@ -7,7 +8,11 @@ interface ProgressBarAria {
   labelProps: AllHTMLAttributes<HTMLDivElement>
 }
 
-export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
+interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
+  textValue?: string
+}
+
+export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
   let {
     id,
     value = 0,
@@ -15,7 +20,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
     max = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    'aria-valuetext': valueText,
+    textValue,
     isIndeterminate,
     children
   } = props;
@@ -30,7 +35,7 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
   let ariaValueText;
   if (!isIndeterminate) {
     ariaValueNow = value;
-    ariaValueText = valueText || `${value}%`;
+    ariaValueText = textValue || `${value}%`;
   }
 
   if (ariaLabelledby || children) {
