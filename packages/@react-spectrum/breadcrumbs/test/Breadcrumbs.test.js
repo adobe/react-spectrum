@@ -4,7 +4,7 @@ import React, {useRef} from 'react';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
 
-describe.only('Breadcrumbs', function () {
+describe('Breadcrumbs', function () {
 
   afterEach(() => {
     cleanup();

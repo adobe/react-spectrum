@@ -2,11 +2,10 @@ import {AllHTMLAttributes} from 'react';
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
-import {usePress} from '@react-aria/interactions';
+import {useLink} from '@react-aria/link';
 
 interface BreadcrumbItemAria {
-  breadcrumbItemProps: AllHTMLAttributes<HTMLDivElement>,
-  breadcrumbItemHeadingProps: AllHTMLAttributes<HTMLDivElement>
+  breadcrumbItemProps: AllHTMLAttributes<HTMLDivElement>
 }
 
 export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): BreadcrumbItemAria {
@@ -18,22 +17,14 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
     headingAriaLevel = 1,
     children = '',
     'aria-current': ariaCurrent,
-    onPress
+    ...otherProps
   } = props;
 
-  let {pressProps} = usePress({onPress, isDisabled});
+  let {linkProps} = useLink({children, isDisabled, ...otherProps});
 
   let itemProps: AllHTMLAttributes<HTMLDivElement> = isCurrent
-    ? {'aria-current': ariaCurrent || 'page'}
-    : {...pressProps};
-
-  let linkProps;
-  if (typeof children === 'string') {
-    linkProps = {
-      role: 'link',
-      tabIndex: isDisabled || isCurrent ? -1 : 0
-    };
-  }
+    ? {'aria-current': ariaCurrent || 'page', role: linkProps.role}
+    : {...linkProps};
 
   let breadcrumbItemHeadingProps;
   if (isHeading && isCurrent) {
@@ -48,8 +39,7 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
       id: useId(id),
       'aria-disabled': isDisabled,
       ...itemProps,
-      ...linkProps
-    },
-    breadcrumbItemHeadingProps
+      ...breadcrumbItemHeadingProps
+    }
   };
 }

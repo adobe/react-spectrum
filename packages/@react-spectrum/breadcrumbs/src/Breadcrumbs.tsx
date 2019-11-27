@@ -157,7 +157,8 @@ const Menu = React.forwardRef((props: MenuProps) => {
   return (
     <DialogTrigger type="popover">
       <ActionButton
-        icon={<FolderBreadcrumb alt="…" />}
+        aria-label="…"
+        icon={<FolderBreadcrumb />}
         isDisabled={isDisabled}
         isQuiet>
         {label && React.cloneElement(label, {isCurrent: undefined})}

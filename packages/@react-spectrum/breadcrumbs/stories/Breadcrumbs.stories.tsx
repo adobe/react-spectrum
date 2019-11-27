@@ -53,6 +53,10 @@ storiesOf('Breadcrumbs', module)
   .add(
     'isHeading: true',
     () => render({isHeading: true})
+  )
+  .add(
+    'isHeading: true, size: L',
+    () => render({isHeading: true, size: 'L'})
   );
 
 function render(props = {}) {

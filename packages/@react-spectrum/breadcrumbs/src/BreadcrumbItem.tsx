@@ -10,14 +10,13 @@ import {useLocale} from '@react-aria/i18n';
 export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref: RefObject<HTMLElement>) => {
   let {
     children,
-    isHeading,
     isCurrent,
     isDisabled,
   ...otherProps
   } = props;
 
   let {direction} = useLocale();
-  let {breadcrumbItemProps, breadcrumbItemHeadingProps} = useBreadcrumbItem(props);
+  let {breadcrumbItemProps} = useBreadcrumbItem(props);
 
   let element = React.cloneElement(
     getWrappedElement(children),
@@ -39,20 +38,7 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
   return (
     <Fragment>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        {
-          isHeading ?
-            <span
-              {...breadcrumbItemHeadingProps}
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Heading--pageTitle'
-                )
-              }>
-              {element}
-            </span>
-            : element
-        }
+        {element}
       </FocusRing>
       {isCurrent === false &&
         <ChevronRightSmall
