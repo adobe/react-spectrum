@@ -1,5 +1,3 @@
-// TODO: rename to useTooltipTriggerBase.ts
-
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
@@ -29,37 +27,21 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  tooltipTriggerProps: AllHTMLAttributes<HTMLElement>,
-  tooltipProps: AllHTMLAttributes<HTMLElement>
+  tooltipTriggerProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
+export function useTooltipClickTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let {
     tooltipProps,
     triggerProps,
     state
   } = props;
 
-  // let contextProps = useContext(TooltipHoverResponderContext); // can you use this to check if over the tooltip?
-
-  let tooltipTriggerId = useId();
-
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
     isOpen: state.open
   });
-
-  let onKeyDownTrigger = (e) => {
-    if (triggerProps.ref && triggerProps.ref.current) {
-      // dismiss tooltip on esc key press
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        state.setOpen(false);
-      }
-    }
-  };
 
   // Potential alternative solution to "single tooltip story":
     // You can close all tooltip before opening a new one using close method on open events?
@@ -70,13 +52,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   }
 
   let exit = (e) => {
-    let hoveringOverTooltip = false
-    const related = e.relatedTarget || e.nativeEvent.toElement;
-    const parent = related.parentNode;
-    if (parent.getAttribute('role') === 'tooltip') {
-      hoveringOverTooltip = true;
-    }
-    if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
+    if (VISIBLE_TOOLTIPS.length > 0) {
       state.setOpen(false);
     }
   }
@@ -84,15 +60,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     tooltipTriggerProps: {
       ...overlayProps,
-      id: tooltipTriggerId,
-      role: 'button',
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onMouseEnter: enter,
-      onMouseLeave: exit
-    },
-    tooltipProps: {
-      'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
-      role: tooltipProps.role || 'tooltip'
+      onMouseDown: enter,
+      onMouseUp: exit
     }
   };
 }
