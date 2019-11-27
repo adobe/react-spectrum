@@ -189,7 +189,7 @@ function handleDelayedShow(onHover) {
 
   hoverShowDelay = setTimeout(() => {
     onHover(true);
-  }, 400);
+  }, 300);
 }
 
 function handleDelayedHide(onHover) {
@@ -201,7 +201,7 @@ function handleDelayedHide(onHover) {
 
   hoverHideDelay = setTimeout(() => {
     onHover(false);
-  }, 400);
+  }, 300);
 }
 
 function handleMouseOverOut(onHover, e) {
