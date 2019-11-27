@@ -22,6 +22,10 @@ describe('FieldLabel', () => {
     return render(component);
   }
 
+  function findLabel() {
+    return document.querySelector('label');
+  }
+
   beforeAll(() => {
     useIdMock = jest.spyOn(useId, 'useId').mockImplementation(() => id);
     createIdMock = jest.spyOn(createId, 'default').mockImplementation(() => id);
@@ -46,8 +50,8 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
       ${'v2 FieldLabel multiple children'} | ${V2FieldLabel} | ${2}
     `('$Name should render a label if provided', ({Component, numChildren}) => {
-      let tree = renderFieldLabel(Component, {label, labelFor}, numChildren);
-      let fieldLabel = tree.getByTestId(datatestid);
+      renderFieldLabel(Component, {label, labelFor}, numChildren);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', id);
@@ -62,8 +66,8 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel one child'}         | ${FieldLabel}   | ${1}        | ${{isRequired: true, necessityIndicator: 'icon'}}
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}        | ${{isRequired: true, necessityIndicator: 'icon'}}
     `('$Name will show an asterix when required with icon indicator', ({Component, numChildren, props}) => {
-      let tree = renderFieldLabel(Component, {label, labelFor, ...props}, numChildren);
-      let fieldLabel = tree.getByTestId(datatestid);
+      renderFieldLabel(Component, {label, labelFor, ...props}, numChildren);
+      let fieldLabel = findLabel();
       expect(within(fieldLabel).getByRole('presentation')).toBeTruthy();
     });
 
@@ -71,9 +75,18 @@ describe('FieldLabel', () => {
     it.each`
       Name                                 | Component       | numChildren
       ${'v3 FieldLabel no children'}       | ${FieldLabel}   | ${0}
+    `('$Name should attach the user provided ref to the label', ({Component, numChildren}) => {
+      let ref = React.createRef();
+      renderFieldLabel(Component, {label, labelFor, ref}, numChildren);
+      let fieldLabel = findLabel();
+      expect(fieldLabel).toBe(ref.current);
+    });
+
+    it.each`
+      Name                                 | Component       | numChildren
       ${'v3 FieldLabel one child'}         | ${FieldLabel}   | ${1}
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
-    `('$Name should attach the user provided ref to the label', ({Component, numChildren}) => {
+    `('$Name should attach the user provided ref to the div', ({Component, numChildren}) => {
       let ref = React.createRef();
       let tree = renderFieldLabel(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
@@ -89,9 +102,9 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
       ${'v2 FieldLabel multiple children'} | ${V2FieldLabel} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFieldLabel(Component, {label, labelFor, disabled: true}, numChildren);
+      let tree = renderFieldLabel(Component, {label, labelFor, 'data-foo': 'bar'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-foo', 'bar');
     });
 
     it.each`
@@ -152,9 +165,9 @@ describe('FieldLabel', () => {
       ${'v3 FieldLabel multiple children'} | ${FieldLabel}   | ${2}
       ${'v2 FieldLabel multiple children'} | ${V2FieldLabel} | ${2}
     `('$Name should allow for additional dom props', ({Component, numChildren}) => {
-      let tree = renderFieldLabel(Component, {labelFor, disabled: true}, numChildren);
+      let tree = renderFieldLabel(Component, {labelFor, 'data-foo': 'foo'}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toHaveAttribute('disabled', '');
+      expect(fieldLabel).toHaveAttribute('data-foo', 'foo');
     });
   });
 
@@ -170,7 +183,7 @@ describe('FieldLabel', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFieldLabel(Component, {label}, 1);
-      let fieldLabel = tree.getByTestId(datatestid);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', 'second');
       expect(fieldLabel).toHaveAttribute('id', 'first');
@@ -203,7 +216,7 @@ describe('FieldLabel', () => {
       createIdMock.mockReturnValueOnce('second');
 
       let tree = renderFieldLabel(Component, {label, labelFor}, 2);
-      let fieldLabel = tree.getByTestId(datatestid);
+      let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', 'first');

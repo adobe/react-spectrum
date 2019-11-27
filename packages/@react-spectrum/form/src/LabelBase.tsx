@@ -3,10 +3,12 @@ import {classNames} from '@react-spectrum/utils';
 import {FieldLabelBase} from './types';
 import {filterDOMProps} from '@react-spectrum/utils';
 import intlMessages from '../intl/*.json';
+import {mergeProps} from '@react-aria/utils';
 import React, {forwardRef, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useStyleProps} from '@react-spectrum/view';
 
 interface SpectrumLabelBaseProps extends FieldLabelBase {
   labelClassName?: string,
@@ -38,7 +40,6 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
   let {
     label,
     children,
-    className,
     labelClassName,
     wrapperClassName,
     labelFor,
@@ -47,6 +48,7 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
     isRequired,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
@@ -79,16 +81,13 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
   }
   let fieldLabelClassName = classNames(
     styles,
-    labelClassName,
-    childArray.length === 0 ? className : null
+    labelClassName
   );
 
   let fieldLabel = label ? (
     <label
-      {...filterDOMProps(otherProps)}
       {...labelAriaProps}
-      className={fieldLabelClassName}
-      ref={ref}>
+      className={fieldLabelClassName}>
       <span className={classNames(styles, 'spectrum-FieldLabel-label')}>
         {label}
       </span>
@@ -97,10 +96,7 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
       {necessityIndicator === 'icon' && isRequired && icon}
     </label>
   ) : (
-    <div
-      {...filterDOMProps(otherProps)}
-      className={fieldLabelClassName}
-      ref={ref} />
+    <div className={fieldLabelClassName} />
   );
 
   if (childArray.length > 0) {
@@ -113,12 +109,21 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
     }
 
     return (
-      <div className={className}>
+      <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
         {fieldLabel}
         {wrapper || childArray}
       </div>
     );
   }
 
-  return fieldLabel;
+  return React.cloneElement(
+    fieldLabel,
+    {
+      ref,
+      ...mergeProps(
+        fieldLabel.props, 
+        {...filterDOMProps(otherProps), ...styleProps}
+      )
+    }
+  );
 });

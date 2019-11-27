@@ -4,7 +4,7 @@ import {LabelBase} from './LabelBase';
 import React, {forwardRef, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
-export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, className, children, ...otherProps}: FormItemProps, ref: RefObject<HTMLDivElement> & RefObject<HTMLLabelElement>) => {
+export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, children, ...otherProps}: FormItemProps, ref: RefObject<HTMLDivElement> & RefObject<HTMLLabelElement>) => {
   let labelClassNames = classNames(
     styles,
     'spectrum-Form-itemLabel',
@@ -20,11 +20,11 @@ export const FormItem = forwardRef(({label, labelAlign = 'start', labelFor, clas
     <LabelBase
       {...otherProps}
       label={label}
-      className={
+      UNSAFE_className={
         classNames(
           styles,
           'spectrum-Form-item',
-          className
+          otherProps.UNSAFE_className
         )
       }
       labelClassName={labelClassNames}

@@ -49,15 +49,15 @@ function Component(props) {
       <Tree items={items} itemKey="key">
         {({name}) => <Item>{name}</Item>}
       </Tree>
-      {isLoading && <ProgressCircle style={{position: 'absolute'}} isIndeterminate isCentered>Loading...</ProgressCircle>}
+      {isLoading && <ProgressCircle UNSAFE_style={{position: 'absolute'}} isIndeterminate isCentered>Loading...</ProgressCircle>}
       {!isLoading && props.loadMore &&
-        <ActionButton style={{position: 'absolute', bottom: '0', right: '-80px'}} onPress={onLoadMore}>
+        <ActionButton UNSAFE_style={{position: 'absolute', bottom: '0', right: '-80px'}} onPress={onLoadMore}>
           Load More
         </ActionButton>
       }
       {!isLoading && props.sort &&
         <ActionButton
-          style={{position: 'absolute', bottom: '0', right: '-80px'}}
+          UNSAFE_style={{position: 'absolute', bottom: '0', right: '-80px'}}
           onPress={() => onSortChange({direction: sortDescriptor.direction === 1 ? 0 : 1})}>
           {sortDescriptor.direction === 1 ? 'DESC' : 'ASC'}
         </ActionButton>

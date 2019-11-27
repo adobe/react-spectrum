@@ -68,9 +68,9 @@ describe('ProgressCircle', function () {
 
   it.each`
     Name                  | Component           | props
-    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{className: 'testClass'}}
+    ${'ProgressCircle'}   | ${ProgressCircle}   | ${{UNSAFE_className: 'testClass'}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
-  `('$Name supports custom class', function ({Component, props}) {
+  `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('class', expect.stringContaining('testClass'));

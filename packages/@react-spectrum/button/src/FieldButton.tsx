@@ -4,6 +4,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useStyleProps} from '@react-spectrum/view';
 
 interface FieldButtonProps extends ButtonBase {
   isQuiet?: boolean,
@@ -18,12 +19,12 @@ export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefOb
     isDisabled,
     validationState,
     icon,
-    className,
     children,
     ...otherProps
   } = props;
   ref = ref || useRef();
   let {buttonProps, isPressed} = useButton({...props, ref});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -41,7 +42,7 @@ export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefOb
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
-            className
+            styleProps.className
           )
         }>
         {cloneIcon(icon, {size: 'S'})}

@@ -6,6 +6,7 @@ import {SpectrumProgressBarProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useProgressBar} from '@react-aria/progress';
+import {useStyleProps} from '@react-spectrum/view';
 
 const DEFAULT_FORMAT_OPTION = 'percent';
 
@@ -24,9 +25,9 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
     formatOptions = {
       style: DEFAULT_FORMAT_OPTION
     },
-    className,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   value = clamp(value, min, max);
   let percentage = (value - min) / (max - min);
@@ -40,7 +41,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
   const {
     progressBarProps,
     labelProps
-  } = useProgressBar({...props, value, min, max, isIndeterminate, 'aria-valuetext': valueLabel});
+  } = useProgressBar({...props, value, min, max, isIndeterminate, textValue: valueLabel});
 
   let barStyle: CSSProperties = {};
   if (!isIndeterminate) {
@@ -50,6 +51,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
   return (
     <div
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       {...progressBarProps}
       ref={ref}
       className={
@@ -66,7 +68,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
             'is-warning': variant === 'warning',
             'is-critical': variant === 'critical'
           },
-          className
+          styleProps.className
         )
       } >
       {children &&
