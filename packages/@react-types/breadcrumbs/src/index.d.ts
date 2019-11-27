@@ -6,7 +6,7 @@ export interface BreadcrumbItemProps {
   isHeading?: boolean,
   isDisabled?: boolean,
   headingAriaLevel?: number,
-  href?: string,
+  'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
   onPress?: (e: PressEvent) => void,
   children: ReactNode
 }
