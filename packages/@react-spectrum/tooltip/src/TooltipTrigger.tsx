@@ -34,6 +34,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
     children,
     type,
+    delay,
     targetRef,
     isOpen,
     defaultOpen,
@@ -163,6 +164,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       </Fragment>
     );
   } else if (type === 'hover') { // parse a ['hover', 'focus'] array if you change the story to check for either one
+    // console.log(props)
     return (
       <Fragment>
         <HoverResponder
@@ -170,6 +172,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...tooltipHoverTriggerProps}
           ref={triggerRef}
           isHovering={isOpen}
+          delay={props.delay}
           onHover={onHoverInteraction}>
           {trigger}
         </HoverResponder>

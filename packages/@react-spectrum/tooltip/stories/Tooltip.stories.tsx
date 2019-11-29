@@ -54,6 +54,9 @@ storiesOf('Tooltip', module)
     'triggered by hover, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
   ).add(
+    'supports immediate appearance',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', delay: 'NoDelay'}) // increased appearance delay by a ton to make it obvious this works
+  ).add(
     'single tooltip proof of concept : temporary story : hover',
     () => renderWithThreeTriggers('This is a tooltip.', {placement: 'right', type: 'hover'})
   ).add(

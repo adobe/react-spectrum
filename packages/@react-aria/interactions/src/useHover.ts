@@ -12,6 +12,7 @@ export interface HoverEvent {
 export interface HoverProps {
   isHovering?: boolean,
   isDisabled?: boolean,
+  delay?: boolean,
   onHover?: (isHovering: boolean) => void,
   onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void
@@ -33,6 +34,12 @@ interface HoverResult {
 
 let hoverHideDelay = null;
 let hoverShowDelay = null;
+let baseDelay = 300;
+
+const WARMUP_PERIOD_LENGTH = 2000;
+const COOLDOWN_PERID_LENGTH = 160;
+let cooldownPeriodComplete = false;
+let warmupPeriodComplete = false;
 
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
@@ -62,6 +69,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHoverStart,
     onHoverEnd,
     isDisabled,
+    delay,
     isHovering: isHoveringProp,
     ...domProps
   } = useHoverResponderContext(props);
@@ -97,7 +105,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        handleDelayedShow(onHover);
+        handleDelayedShow(onHover, delay);
       }
 
       setHover(true);
@@ -143,7 +151,7 @@ export function useHover(props: HoverHookProps): HoverResult {
         triggerHoverEnd(e, e.pointerType);
       };
 
-      // TODO: create a separate useFocus hook? Would be a lot of duplicate code.
+      // Potential TODO: create a separate useFocus hook? Would be a lot of duplicate code.
       hoverProps.onFocus = () => {
         handleDelayedShow(onHover);
       };
@@ -180,7 +188,16 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-function handleDelayedShow(onHover) {
+function handleDelayedShow(onHover, delay) {
+
+  // immediate appearance
+  if(delay) {
+    onHover(true)
+  }
+
+  // let delay = cooldownPeriodComplete === true ? baseDelay : WARMUP_PERIOD_LENGTH;
+
+  // if cooldownPeriodComplete is false call a seperate function to start a timer, once the timer is done, set cooldownPeriodComplete to true
 
   if (hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
@@ -189,7 +206,7 @@ function handleDelayedShow(onHover) {
 
   hoverShowDelay = setTimeout(() => {
     onHover(true);
-  }, 300);
+  }, 800);
 }
 
 function handleDelayedHide(onHover) {
