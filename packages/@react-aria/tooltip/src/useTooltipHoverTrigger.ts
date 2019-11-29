@@ -27,7 +27,7 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  tooltipTriggerProps: AllHTMLAttributes<HTMLElement>
+  tooltipHoverTriggerProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -45,8 +45,6 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
     isOpen: state.open
   });
 
-  // Potential alternative solution to "single tooltip story":
-    // You can close all tooltip before opening a new one using close method on open events?
 
   let enter = () => {
     let tooltipBucketItem = triggerProps.ref.current.id;
@@ -66,7 +64,7 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
   }
 
   return {
-    tooltipTriggerProps: {
+    tooltipHoverTriggerProps: {
       ...overlayProps,
       onMouseEnter: enter,
       onMouseLeave: exit

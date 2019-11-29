@@ -6,7 +6,7 @@ import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
-const VISIBLE_TOOLTIPS = [];
+// const VISIBLE_TOOLTIPS = [];
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -61,34 +61,31 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
-  // Potential alternative solution to "single tooltip story":
-    // You can close all tooltip before opening a new one using close method on open events?
-
-  let enter = () => {
-    let tooltipBucketItem = triggerProps.ref.current.id;
-    VISIBLE_TOOLTIPS.push(tooltipBucketItem)
-  }
-
-  let exit = (e) => {
-    let hoveringOverTooltip = false
-    const related = e.relatedTarget || e.nativeEvent.toElement;
-    const parent = related.parentNode;
-    if (parent.getAttribute('role') === 'tooltip') {
-      hoveringOverTooltip = true;
-    }
-    if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
-      state.setOpen(false);
-    }
-  }
+  // let enter = () => {
+  //   let tooltipBucketItem = triggerProps.ref.current.id;
+  //   VISIBLE_TOOLTIPS.push(tooltipBucketItem)
+  // }
+  //
+  // let exit = (e) => {
+  //   let hoveringOverTooltip = false
+  //   const related = e.relatedTarget || e.nativeEvent.toElement;
+  //   const parent = related.parentNode;
+  //   if (parent.getAttribute('role') === 'tooltip') {
+  //     hoveringOverTooltip = true;
+  //   }
+  //   if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
+  //     state.setOpen(false);
+  //   }
+  // }
 
   return {
     tooltipTriggerProps: {
       ...overlayProps,
       id: tooltipTriggerId,
       role: 'button',
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onMouseEnter: enter,
-      onMouseLeave: exit
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)//,
+      // onMouseEnter: enter,
+      // onMouseLeave: exit
     },
     tooltipProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
