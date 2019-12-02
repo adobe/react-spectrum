@@ -1,7 +1,7 @@
-import {DOMProps, RangeValue, ValueBase} from '@react-types/shared';
+import {RangeValue, ValueBase} from '@react-types/shared';
 
 export type DateValue = string | number | Date;
-export interface CalendarPropsBase extends DOMProps {
+export interface CalendarPropsBase {
   minValue?: DateValue,
   maxValue?: DateValue,
   isDisabled?: boolean,

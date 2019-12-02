@@ -1,7 +1,5 @@
-import {DOMProps} from '@react-types/shared';
-import {ReactElement} from 'react';
+import {ReactNode} from 'react';
 
-export interface LinkProps extends DOMProps {
-  children: string | ReactElement,
-  className?: string
+export interface LinkProps {
+  children: ReactNode
 }

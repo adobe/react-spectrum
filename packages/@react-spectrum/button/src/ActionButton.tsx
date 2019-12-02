@@ -6,6 +6,7 @@ import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 export interface ActionButtonProps extends ButtonBase {
   isQuiet?: boolean,
@@ -22,17 +23,18 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
     isSelected,
     isDisabled,
     icon,
-    className,
     children,
     holdAffordance,
     ...otherProps
   } = props;
   let {buttonProps, isPressed} = useButton({...props, ref});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
         {...filterDOMProps(otherProps)}
+        {...styleProps}
         {...buttonProps}
         ref={ref}
         className={
@@ -45,7 +47,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
-            className
+            styleProps.className
           )
         }>
         {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
