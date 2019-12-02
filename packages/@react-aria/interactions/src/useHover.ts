@@ -34,12 +34,13 @@ interface HoverResult {
 
 let hoverHideDelay = null;
 let hoverShowDelay = null;
-let baseDelay = 300;
 
-const WARMUP_PERIOD_LENGTH = 2000;
-const COOLDOWN_PERID_LENGTH = 160;
-let cooldownPeriodComplete = false;
+// Potential TODOs: create state machine (enums with variables set to appropriate booleans) ... maybe adding a warmupPeriodReset variable
+const WARMUP_PERIOD_LENGTH = 2000; // TODO: use this variable in hoverShowDelay
+const COOLDOWN_PERID_LENGTH = 160; // // TODO: use this variable in hoverHideDelay
 let warmupPeriodComplete = false;
+let cooldownPeriodComplete = false;
+let cooldownPeriodTimer = null;
 
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
@@ -190,14 +191,21 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 function handleDelayedShow(onHover, delay) {
 
-  // immediate appearance
+  // immediate appearance via delay prop
   if(delay) {
     onHover(true)
   }
 
-  // let delay = cooldownPeriodComplete === true ? baseDelay : WARMUP_PERIOD_LENGTH;
+  // immediate appearance if warmup period complete
+  if(warmupPeriodComplete === true && cooldownPeriodComplete === false) {
+    onHover(true)
+  }
 
-  // if cooldownPeriodComplete is false call a seperate function to start a timer, once the timer is done, set cooldownPeriodComplete to true
+  if (cooldownPeriodTimer != null) {
+    console.log('stop the timer')
+    clearInterval(cooldownPeriodTimer)
+    cooldownPeriodTimer = null;
+  }
 
   if (hoverHideDelay != null) {
     clearTimeout(hoverHideDelay);
@@ -206,10 +214,13 @@ function handleDelayedShow(onHover, delay) {
 
   hoverShowDelay = setTimeout(() => {
     onHover(true);
+    warmupPeriodComplete = true;
   }, 800);
 }
 
 function handleDelayedHide(onHover) {
+
+  cooldownPeriodComplete = false
 
   if (hoverShowDelay != null) {
     clearTimeout(hoverShowDelay);
@@ -219,6 +230,13 @@ function handleDelayedHide(onHover) {
   hoverHideDelay = setTimeout(() => {
     onHover(false);
   }, 300);
+
+  cooldownPeriodTimer = setInterval(() => {
+    console.log('set cooldown period to true')
+    cooldownPeriodComplete = true
+    warmupPeriodComplete = false
+  }, 3000);
+
 }
 
 function handleMouseOverOut(onHover, e) {
