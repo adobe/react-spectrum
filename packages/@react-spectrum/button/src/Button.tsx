@@ -2,7 +2,6 @@ import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
-import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactElement, ReactNode, RefObject, useRef} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
@@ -47,7 +46,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
-
+  
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType

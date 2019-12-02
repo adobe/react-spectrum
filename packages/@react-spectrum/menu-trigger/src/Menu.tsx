@@ -10,6 +10,7 @@ import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
@@ -17,7 +18,7 @@ import {useSelectableItem} from '@react-aria/selection';
 
 export {Item, Section};
 
-interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
+interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
   onSelect?: (...args) => void, // user provided onSelect callback
   autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
   focusStrategy?: React.MutableRefObject<focusStrategy> // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
@@ -36,9 +37,11 @@ export function Menu<T>(props: MenuProps<T>) {
     ...mergeProps(contextProps, props),
     selectionMode: 'single' as SelectionMode
   };
+  
   let state = useTreeState(completeProps);
 
   let {menuProps} = useMenu(completeProps, state, layout);
+  let {styleProps} = useStyleProps(completeProps);
 
   let {
     onSelect,
@@ -80,9 +83,16 @@ export function Menu<T>(props: MenuProps<T>) {
   return (
     <CollectionView
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       {...menuProps}
       focusedKey={state.selectionManager.focusedKey}
-      className={classNames(styles, 'spectrum-Menu')}
+      className={
+        classNames(
+          styles, 
+          'spectrum-Menu',
+          styleProps.className
+        )
+      }
       layout={layout}
       collection={state.tree}
       elementType="ul">
