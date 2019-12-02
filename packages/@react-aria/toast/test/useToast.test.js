@@ -33,12 +33,6 @@ describe('useToast', () => {
   });
 
   it('variant sets icon alt property', function () {
-    let {toastProps} = renderToastHook({role: 'info'});
-
-    expect(toastProps.role).toBe('info');
-  });
-
-  it('variant sets icon alt property', function () {
     let {iconProps} = renderToastHook({variant: 'info'});
 
     expect(iconProps.alt).toBe('Info');

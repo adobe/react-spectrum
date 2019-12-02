@@ -1,5 +1,7 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '../style/index.css';
 import {TabList} from './TabList';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -8,16 +10,17 @@ import {useTabs} from '@react-aria/tabs';
 
 type Orientation = 'horizontal' | 'vertical';
 
-interface TabProps extends React.HTMLAttributes<HTMLElement> {
+interface TabProps extends DOMProps, StyleProps {
   icon?: ReactNode,
   label?: ReactNode,
   value: any,
   children?: ReactNode,
   isDisabled?: boolean,
   isSelected?: boolean, // Had to add this, TS complains in TabList in renderTabs
+  onSelect?: () => void
 }
 
-interface TabsProps extends React.HTMLAttributes<HTMLElement> {
+interface TabsProps extends DOMProps, StyleProps {
   orientation?: Orientation,
   isQuiet?: boolean,
   density?: 'compact',
@@ -35,13 +38,14 @@ export function Tabs(props: TabsProps) {
   props = useProviderProps(props);
   let state = useTabListState(props);
   let {
-    className,
     orientation = 'horizontal' as Orientation,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let {tabPanelProps, tabsPropsArray} = useTabs(props, state);
   let children = React.Children.map(props.children, (c, i) =>
+    // @ts-ignore - TODO fix
     typeof c === 'object' && c ? React.cloneElement(c, tabsPropsArray[i]) : c
   );
 
@@ -50,11 +54,14 @@ export function Tabs(props: TabsProps) {
 
   return (
     <div
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
       className={classNames(
         styles,
         'react-spectrum-TabPanel',
         `react-spectrum-TabPanel--${orientation}`,
-        className)}>
+        styleProps.className
+      )}>
       <TabList
         {...otherProps}
         orientation={orientation}
