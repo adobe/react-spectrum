@@ -80,11 +80,10 @@ storiesOf('MenuTrigger', module)
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
         <Button
-          onKeyDown={action('keydown 1')}
           onPress={action('press 1')}
           onPressStart={action('pressstart 1')}
           onPressEnd={action('pressend 1')}
-          className={classNames(
+          UNSAFE_className={classNames(
             styles,
             'spectrum-SplitButton-action'
           )}>
@@ -92,11 +91,10 @@ storiesOf('MenuTrigger', module)
         </Button>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
           <Button
-            onKeyDown={action('onKeyDown 2')}
             onPress={action('press 2')}
             onPressStart={action('pressstart 2')}
             onPressEnd={action('pressend 2')}
-            className={classNames(
+            UNSAFE_className={classNames(
               styles,
               'spectrum-SplitButton-trigger'
             )}>
