@@ -1,13 +1,9 @@
 import {chain, mergeProps} from '@react-aria/utils';
-import {JSXElementConstructor, SyntheticEvent} from 'react';
+import {JSXElementConstructor} from 'react';
 import {PressHookProps, usePress} from '@react-aria/interactions';
 
 interface AriaButtonProps extends PressHookProps {
   elementType?: string | JSXElementConstructor<any>,
-  /**
-   * for backwards compatibility
-   */
-  onClick?: (event: SyntheticEvent) => void,
   href?: string,
   tabIndex?: number,
   isSelected?: boolean | 'false' | 'true',

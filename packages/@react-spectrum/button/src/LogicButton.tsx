@@ -1,11 +1,11 @@
 import {ButtonBase} from './Button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 export interface LogicButtonProps extends ButtonBase {
   variant?: 'and' | 'or'
@@ -19,16 +19,18 @@ export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefOb
     children,
     isDisabled,
     icon,
-    className,
     ...otherProps
   } = props;
   ref = ref || useRef();
   let {buttonProps, isPressed} = useButton({...props, ref});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
+        {...buttonProps}
         ref={ref}
         className={
           classNames(
@@ -39,7 +41,7 @@ export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefOb
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            className
+            styleProps.className
           )
         }>
         {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}

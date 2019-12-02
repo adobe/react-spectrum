@@ -6,6 +6,7 @@ import React, {CSSProperties, RefObject} from 'react';
 import {SpectrumProgressCircleProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
+import {useStyleProps} from '@react-spectrum/view';
 
 export const ProgressCircle = React.forwardRef((props: SpectrumProgressCircleProps, ref: RefObject<HTMLElement>) => {
   let {
@@ -14,9 +15,9 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
     variant,
     isCentered = false,
     isIndeterminate = false,
-    className,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let min = 0;
   let max = 100;
@@ -42,6 +43,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
   return (
     <div
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       {...progressBarProps}
       ref={ref}
       className={
@@ -60,7 +62,7 @@ export const ProgressCircle = React.forwardRef((props: SpectrumProgressCirclePro
               'react-spectrum-ProgressCircle--centered': isCentered
             }
           ),
-          className
+          styleProps.className
         )
       } >
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />

@@ -54,7 +54,6 @@ storiesOf('MenuTrigger', module)
             <div>Scrolling here will close the Menu</div>
             <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
               <Button
-                onKeyDown={action('onKeyDown')}
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
@@ -118,7 +117,6 @@ function render(props = {}, menuProps = {}) {
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
         <Button
-          onKeyDown={action('onKeyDown')}
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>

@@ -1,7 +1,6 @@
 import {AllHTMLAttributes} from 'react';
-import {DOMProps} from '@react-types/shared';
 
-export interface SeparatorProps extends DOMProps {
+export interface SeparatorProps {
   orientation?: 'horizontal' | 'vertical'
 }
 
