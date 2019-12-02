@@ -143,7 +143,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   delete overlayProps.style.position;
 
-  // onEntered={entered} onExited={exited}
+  // onEntered={entered} onExited={exited} is an option to show when interactions with the overlay are happening 
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
@@ -164,7 +164,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       </Fragment>
     );
   } else if (type === 'hover') { // parse a ['hover', 'focus'] array if you change the story to check for either one
-    // console.log(props)
     return (
       <Fragment>
         <HoverResponder

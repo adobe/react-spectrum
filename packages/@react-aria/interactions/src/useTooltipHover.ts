@@ -50,7 +50,6 @@ function useTooltipHoverResponderContext(props: TooltipHoverHookProps): TooltipH
 }
 
 export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResult {
-
   let {
     isOverTooltip,
     isHovering: isHoveringProp,
@@ -60,34 +59,26 @@ export function useTooltipHover(props: TooltipHoverHookProps): TooltipHoverResul
   let [isHovering, setHover] = useState(false);
 
   let hoverProps = useMemo(() => {
-
     let triggerHoverStart = (event, pointerType) => {
-
       if (pointerType === 'touch') {
         return;
       }
-
       if (isOverTooltip) {
         isOverTooltip(true);
       }
-
       setHover(true);
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
     if (typeof PointerEvent !== 'undefined') {
-
       hoverProps.onPointerEnter = (e) => {
         triggerHoverStart(e, e.pointerType);
       };
-
     } else {
-
       hoverProps.onMouseEnter = (e) => {
         triggerHoverStart(e, 'mouse');
       };
-
     }
     return hoverProps;
   }, [isOverTooltip]);

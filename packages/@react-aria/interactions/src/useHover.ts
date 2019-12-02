@@ -37,7 +37,7 @@ let hoverShowDelay = null;
 
 // Potential TODOs: create state machine (enums with variables set to appropriate booleans) ... maybe adding a warmupPeriodReset variable
 const WARMUP_PERIOD_LENGTH = 2000; // TODO: use this variable in hoverShowDelay
-const COOLDOWN_PERID_LENGTH = 160; // // TODO: use this variable in hoverHideDelay
+const COOLDOWN_PERID_LENGTH = 160; // TODO: use this variable in hoverHideDelay
 let warmupPeriodComplete = false;
 let cooldownPeriodComplete = false;
 let cooldownPeriodTimer = null;
@@ -202,7 +202,6 @@ function handleDelayedShow(onHover, delay) {
   }
 
   if (cooldownPeriodTimer != null) {
-    console.log('stop the timer')
     clearInterval(cooldownPeriodTimer)
     cooldownPeriodTimer = null;
   }
@@ -232,7 +231,6 @@ function handleDelayedHide(onHover) {
   }, 300);
 
   cooldownPeriodTimer = setInterval(() => {
-    console.log('set cooldown period to true')
     cooldownPeriodComplete = true
     warmupPeriodComplete = false
   }, 3000);

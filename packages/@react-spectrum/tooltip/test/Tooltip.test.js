@@ -17,7 +17,7 @@ describe('Tooltip', function () {
   });
 
   it.each`
-    Name      | Component
+    Name           | Component
     ${'Tooltip'}   | ${Tooltip}
   `('$Name supports children', ({Component}) => {
     let {getByText} = render(<Component>This is a tooltip</Component>);
@@ -25,10 +25,10 @@ describe('Tooltip', function () {
   });
 
   it.each`
-    Name           | Component    | props                  | message
-    ${'Tooltip'}   | ${Tooltip}   | ${{className: 'foo'}}  | ${'This is a tooltip'}
-  `('$Name supports additional classNames', function ({Component, props, message}) {
-    let {getByTestId} = renderComponent(Component, props, message);
+    Name           | Component    | props                 
+    ${'Tooltip'}   | ${Tooltip}   | ${{className: 'foo'}}
+  `('$Name supports additional classNames', function ({Component, props}) {
+    let {getByTestId} = renderComponent(Component, props);
     let className = getByTestId(testId).className;
     expect(className.includes('spectrum-Tooltip')).toBeTruthy();
     expect(className.includes('foo')).toBeTruthy();

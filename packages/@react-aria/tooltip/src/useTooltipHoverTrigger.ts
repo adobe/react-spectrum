@@ -37,14 +37,13 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
     state
   } = props;
 
-  // let contextProps = useContext(TooltipHoverResponderContext); // can you use this to check if over the tooltip?
+  // let contextProps = useContext(TooltipHoverResponderContext); // maybe can you use this to check if over the tooltip?
 
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
     isOpen: state.open
   });
-
 
   let enter = () => {
     let tooltipBucketItem = triggerProps.ref.current.id;
