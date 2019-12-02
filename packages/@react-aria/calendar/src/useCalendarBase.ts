@@ -67,6 +67,11 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     if (document.activeElement === calendarBody.current) {
       calendarBody.current.blur();
       calendarBody.current.focus();
+
+      let cellNode =  calendarBody.current.querySelector(`#${getCellId(state.focusedDate, calendarId)}`);
+      if (cellNode && typeof cellNode.scrollIntoView === 'function') {
+        cellNode.scrollIntoView({block: 'end'});
+      }
     }
   }, [state.focusedDate]);
 

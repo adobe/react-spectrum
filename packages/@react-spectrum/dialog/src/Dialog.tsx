@@ -52,7 +52,8 @@ const BaseDialog = React.forwardRef(({children, ...otherProps}: HTMLAttributes<H
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(
           styles,
-          'spectrum-Dialog'
+          'spectrum-Dialog',
+          otherProps.className
         )}
         ref={ref}>
         {children}
