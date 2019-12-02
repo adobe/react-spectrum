@@ -1,8 +1,9 @@
 import {AllHTMLAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
 import {LabelProps} from '@react-types/label';
 import {useId} from '@react-aria/utils';
 
-export function useLabel(labelProps: LabelProps = {}, labelledComponentProps: AllHTMLAttributes<HTMLElement> = {}) {
+export function useLabel(labelProps: LabelProps & DOMProps = {}, labelledComponentProps: AllHTMLAttributes<HTMLElement> = {}) {
   let {
     id: labelId,
     labelFor, // RSP prop

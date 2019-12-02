@@ -1,7 +1,6 @@
-import {DOMProps} from '@react-types/shared';
-import React from 'react';
+import React, {HTMLAttributes} from 'react';
 
-interface DialogContextValue extends DOMProps {
+export interface DialogContextValue extends HTMLAttributes<HTMLElement> {
   type: 'modal' | 'popover' | 'tray',
   onClose?: () => void
 }

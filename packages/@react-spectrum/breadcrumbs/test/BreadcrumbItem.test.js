@@ -42,22 +42,15 @@ describe('Breadcrumbs', function () {
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('Handles custom class name', () => {
-    let {getByText} = render(<BreadcrumbItem className="test-class" >Breadcrumb item</BreadcrumbItem>);
-    let breadcrumbItem = getByText('Breadcrumb item');
-    expect(breadcrumbItem).toHaveAttribute('class', expect.stringContaining('test-class'));
-  });
-
   it('Handles custom element type', () => {
     let {getByText} = render(
-      <BreadcrumbItem className="test-class" >
+      <BreadcrumbItem>
         <a href="http://example.com/">Breadcrumb item </a>
       </BreadcrumbItem>
     );
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.id).toBeDefined();
     expect(breadcrumbItem.tabIndex).toBe(0);
-    expect(breadcrumbItem).toHaveAttribute('class', expect.stringContaining('test-class'));
     expect(breadcrumbItem.href).toBeDefined();
   });
 

@@ -5,17 +5,17 @@ import {HTMLElement} from 'react-dom';
 import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactElement, ReactNode, RefObject, useRef} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface ButtonBase extends DOMProps, PressProps {
+export interface ButtonBase extends DOMProps, StyleProps, PressProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   icon?: ReactElement,
   children?: ReactNode,
-  href?: string,
-  onKeyDown?: (e) => void
+  href?: string
 }
 
 export interface ButtonProps extends ButtonBase {
@@ -38,19 +38,22 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
     isQuiet,
     isDisabled,
     icon,
-    className,
     ...otherProps
   } = props;
   let {buttonProps, isPressed} = useButton({...props, ref});
+  let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
+        {...buttonProps}
         ref={ref}
         className={
           classNames(
@@ -62,7 +65,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            className
+            styleProps.className
           )
         }>
         {cloneIcon(icon, {size: 'S'})}
