@@ -1,6 +1,6 @@
 import {ActionButton, ButtonGroup} from '../';
 import {cleanup, render} from '@testing-library/react';
-import React, {useRef} from 'react';
+import React from 'react';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
 describe('ButtonGroup', function () {
@@ -13,32 +13,29 @@ describe('ButtonGroup', function () {
   ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{}}
   `('$Name handles defaults', function ({Component, props}) {
-    let {getByTestId} = render(
-      <Component {...props} data-testid="test-group">
-        <ActionButton data-testid="test-button" >Click me</ActionButton>
+    let {getByRole, getAllByRole} = render(
+      <Component {...props}>
+        <ActionButton >Click me</ActionButton>
       </Component>
     );
-    let group = getByTestId('test-group');
-    expect(group).toHaveAttribute('role', 'radiogroup');
-    let button = getByTestId('test-button');
-    expect(button).toHaveAttribute('role', 'radio');
+    expect(getByRole('radiogroup')).toBeTruthy();
+    expect(getAllByRole('radio')).toBeTruthy();
   });
 
   it.each`
   Name               | Component        | props
-  ${'ButtonGroup'}   | ${ButtonGroup}   | ${{allowsMultipleSelection: true}}
+  ${'ButtonGroup'}   | ${ButtonGroup}   | ${{selectionMode: 'multiple'}}
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{multiple: true, role: 'toolbar'}}
   `('$Name handles multiple selection', function ({Component, props}) {
-    let {getByTestId} = render(
-      <Component {...props} data-testid="test-group">
-        <ActionButton data-testid="test-button" >Click me</ActionButton>
+    let {getByRole, getAllByRole} = render(
+      <Component {...props} >
+        <ActionButton >Click me</ActionButton>
         <ActionButton >Click me</ActionButton>
       </Component>
     );
-    let group = getByTestId('test-group');
-    expect(group).toHaveAttribute('role', 'toolbar');
-    let button = getByTestId('test-button');
-    expect(button).toHaveAttribute('role', 'checkbox');
+    expect(getByRole('toolbar')).toBeTruthy();
+    let button = getAllByRole('checkbox');
+    expect(button.length).toBe(2);
   });
 
   it.each`
@@ -60,27 +57,12 @@ describe('ButtonGroup', function () {
     ${'ButtonGroup'}   | ${ButtonGroup}   | ${{isDisabled: true}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{disabled: true}}
   `('$Name handles disabeld', function ({Component, props}) {
-    let {getByTestId} = render(
-      <Component {...props} data-testid="test-group" >
+    let {getByRole} = render(
+      <Component {...props} >
         <ActionButton>Click me</ActionButton>
       </Component>
     );
-    let group = getByTestId('test-group');
+    let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-disabled', 'true');
-  });
-
-  // v3 functionality
-  it('v3 handles ref', function () {
-    let ref;
-    let Component = () => {
-      ref = useRef();
-      return (
-        <ButtonGroup ref={ref} data-testid="test-group" >
-          <ActionButton>Click me</ActionButton>
-        </ButtonGroup>
-      );
-    };
-    let {getByTestId} = render(<Component />);
-    expect(ref.current).toEqual(getByTestId('test-group'));
   });
 });

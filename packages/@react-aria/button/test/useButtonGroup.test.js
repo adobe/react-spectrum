@@ -22,7 +22,7 @@ describe('useButton tests', function () {
   });
 
   it('handles multiple selection', function () {
-    let {buttonGroupProps, buttonProps} = renderButtonGroupHook({allowsMultipleSelection: true});
+    let {buttonGroupProps, buttonProps} = renderButtonGroupHook({selectionMode: 'multiple'});
     expect(buttonGroupProps.role).toBe('toolbar');
     expect(buttonGroupProps.id).toBeDefined();
     expect(buttonProps.role).toBe('checkbox');

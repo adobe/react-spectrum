@@ -10,25 +10,27 @@ export interface ButtonGroupAria {
 export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
   let {
     id,
-    allowsMultipleSelection, // TODO: replace with selectionMode,
+    selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as 'horizontal',
-    role
+    role,
+    tabIndex = 0
   } = props;
 
   if (!role) {
-    role = allowsMultipleSelection ? 'toolbar' : 'radiogroup';
+    role = selectionMode === 'single' ? 'radiogroup' : 'toolbar';
   }
 
   return {
     buttonGroupProps: {
       id: useId(id),
       role,
+      tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled
     },
     buttonProps: {
-      role: allowsMultipleSelection ? 'checkbox' : 'radio'
+      role: selectionMode === 'single' ? 'radio' : 'checkbox'
     }
   };
 }

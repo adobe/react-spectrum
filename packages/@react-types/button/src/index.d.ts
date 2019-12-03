@@ -1,6 +1,6 @@
-import {DOMProps, MultipleSelectionBase} from '@react-types/shared';
+import {DOMProps, MultipleSelection} from '@react-types/shared';
 
-export interface ButtonGroupProps extends DOMProps, MultipleSelectionBase {
+export interface ButtonGroupProps extends DOMProps, MultipleSelection {
   orientation?: 'horizontal' | 'vertical',
   isDisabled?: boolean
 }

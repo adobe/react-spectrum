@@ -38,6 +38,10 @@ governing permissions and limitations under the License.
   .spectrum-Tool + .spectrum-Tool {
     margin-left: var(--spectrum-toolgroup-text-button-gap-x);
   }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 /* topdoc

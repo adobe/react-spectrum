@@ -42,6 +42,14 @@ storiesOf('ButtonGroup', module)
     )
   )
   .add(
+    'selectionMode: multiple',
+    () => render({selectionMode: 'multiple'})
+  )
+  .add(
+    'selectionMode: none',
+    () => render({selectionMode: 'none'})
+  )
+  .add(
     'orientation: vertical',
     () => render({orientation: 'vertical'})
   )
@@ -82,14 +90,10 @@ const toolIcons =
 
 function render(props = {}) {
   return (
-    <ButtonGroup {...props}>
+    <ButtonGroup onSelect={action('onSelect')} {...props}>
       {
         childrenProps.map(childProps => (
-          <ActionButton
-            onPress={action('press')}
-            onPressStart={action('pressstart')}
-            onPressEnd={action('pressend')}
-            {...childProps} />
+          <ActionButton {...childProps} />
         ))
       }
     </ButtonGroup>
@@ -101,11 +105,7 @@ function renderToolIcons(props = {}) {
     <ButtonGroup {...props}>
       {
         toolIcons.map(childProps => (
-          <ActionButton
-            onPress={action('press')}
-            onPressStart={action('pressstart')}
-            onPressEnd={action('pressend')}
-            {...childProps} />
+          <ActionButton {...childProps} />
         ))
       }
     </ButtonGroup>

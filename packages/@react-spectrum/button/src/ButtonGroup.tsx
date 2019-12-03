@@ -2,9 +2,13 @@ import {ActionButtonProps} from './';
 import {ButtonGroupProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import React, {ReactElement, RefObject, useContext} from 'react';
+import {CollectionBase, SelectionMode} from '@react-types/shared';
+import {GroupLayout, GroupNode, GroupState, useButtonGroupState} from '@react-stately/button';
+import {mergeProps} from '@react-aria/utils';
+import React, {ReactElement, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
+import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 type ButtonGroupButton = ReactElement<ActionButtonProps>;
 
@@ -18,13 +22,14 @@ interface ButtonGroupContext {
 }
 
 export interface SpectrumButtonGroupProps extends ButtonGroupProps {
+  children: ButtonGroupButton | ButtonGroupButton[],
+  orientation?: 'horizontal' | 'vertical',
   isEmphasized?: boolean,
   isConnected?: boolean
   isJustified?: boolean,
   isQuiet?: boolean,
   holdAffordance?: boolean,
-  children: ButtonGroupButton | ButtonGroupButton[],
-  orientation?: 'horizontal' | 'vertical'
+  onSelect?: (...args) => void
 }
 
 const ButtonContext = React.createContext<ButtonGroupContext | {}>({});
@@ -33,23 +38,36 @@ export function useButtonProvider(): ButtonGroupContext {
   return useContext(ButtonContext);
 }
 
-export const ButtonGroup = React.forwardRef((props: SpectrumButtonGroupProps, ref: RefObject<HTMLDivElement>) => {
+export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
     isJustified,
     isDisabled,
-    children,
+    selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     className,
+    onSelect,
     holdAffordance,
     isQuiet,
     ...otherProps
   } = props;
 
-  let {buttonGroupProps, buttonProps} = useButtonGroup(props);
-  let isVertical = orientation === 'vertical';
+  let state = useButtonGroupState({...props, selectionMode});
 
+  let layout = new GroupLayout(state.buttonCollection);
+
+  let {listProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate: layout
+  });
+
+  let {buttonGroupProps, buttonProps} = useButtonGroup({
+    ...props,
+    tabIndex: state.selectionManager.focusedKey ? -1 : 0
+  });
+
+  let isVertical = orientation === 'vertical';
   let itemClassName;
   if (isVertical) {
     itemClassName = 'spectrum-ButtonGroup-item--vertical';
@@ -63,8 +81,7 @@ export const ButtonGroup = React.forwardRef((props: SpectrumButtonGroupProps, re
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...buttonGroupProps}
-      ref={ref}
+      {...mergeProps(buttonGroupProps, listProps)}
       className={
         classNames(
           styles,
@@ -84,8 +101,45 @@ export const ButtonGroup = React.forwardRef((props: SpectrumButtonGroupProps, re
           holdAffordance,
           className: classNames(buttonStyles, itemClassName)
         }}>
-        {children}
+        {
+          [...state.buttonCollection].map((item) => (
+            <ButtonGroupItem
+              item={item}
+              state={state}
+              onSelect={onSelect} />
+          ))
+        }
       </ButtonContext.Provider>
     </div>
   );
-});
+}
+
+export interface ButtonGroupItemProps {
+  item: GroupNode,
+  state: GroupState,
+  onSelect?: (...args) => void
+}
+
+export function ButtonGroupItem({item, state, onSelect}: ButtonGroupItemProps) {
+  let ref = useRef<HTMLDivElement>();
+  let {itemProps} = useSelectableItem({
+    selectionManager: state && state.selectionManager,
+    itemKey: item && item.key,
+    itemRef: ref
+  });
+
+  let {
+    isDisabled,
+    value
+  } = item;
+
+  let onPress = () => {
+    if (!isDisabled) {
+      onSelect(item);
+    }
+  };
+
+  let buttonProps = mergeProps(item, itemProps);
+
+  return React.cloneElement(value, {...buttonProps, onPress, ref});
+}
