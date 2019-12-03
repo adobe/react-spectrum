@@ -1,6 +1,7 @@
 import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps, FocusableRef, mergeProps, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, cloneIcon, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
