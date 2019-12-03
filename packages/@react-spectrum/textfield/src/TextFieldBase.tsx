@@ -2,7 +2,7 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {classNames, cloneIcon, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef, ReactElement, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -11,6 +11,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperClassName?: string,
+  wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string
 }
 
@@ -26,6 +27,7 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
     defaultValue,
     wrapperClassName,
     inputClassName,
+    wrapperChildren,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -95,6 +97,7 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
       </FocusRing> 
       {icon}
       {validationState ? validation : null}
+      {wrapperChildren}
     </div>
   );
 

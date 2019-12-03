@@ -19,6 +19,6 @@ storiesOf('NumberField', module)
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} />
+    <NumberField {...props} UNSAFE_className="blah"/>
   );
 }

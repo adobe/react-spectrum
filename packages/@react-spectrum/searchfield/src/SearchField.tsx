@@ -25,11 +25,24 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
   let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
 
+  let clearButton = (
+    <ClearButton
+      {...clearButtonProps}
+      UNSAFE_className={
+        classNames(
+          styles,
+          'spectrum-ClearButton'
+        )
+      }
+      isDisabled={isDisabled} />
+  );
+
   // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
-    <div
-      {...styleProps}
-      className={
+    <TextFieldBase
+      {...otherProps}
+      {...searchFieldProps}
+      wrapperClassName={
         classNames(
           styles,
           'spectrum-Search',
@@ -39,33 +52,18 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
           },
           styleProps.className
         )
-      }>
-      <TextFieldBase
-        {...otherProps}
-        {...searchFieldProps}
-        inputClassName={
-          classNames(
-            styles,
-            'spectrum-Search-input'
-          )
-        }
-        ref={searchFieldRef}
-        isDisabled={isDisabled}
-        icon={icon}
-        onChange={state.setValue}
-        value={state.value} />
-      {
-        state.value !== '' &&
-          <ClearButton
-            {...clearButtonProps}
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-ClearButton'
-              )
-            }
-            isDisabled={isDisabled} />
       }
-    </div>
+      inputClassName={
+        classNames(
+          styles,
+          'spectrum-Search-input'
+        )
+      }
+      ref={searchFieldRef}
+      isDisabled={isDisabled}
+      icon={icon}
+      onChange={state.setValue}
+      value={state.value}
+      wrapperChildren={state.value !== '' && clearButton} />
   );
 });

@@ -77,6 +77,7 @@ function render(props = {}) {
       onChange={action('change')}
       onFocus={action('focus')}
       onBlur={action('blur')}
+      UNSAFE_className="blah"
       {...props} />
   );
 }
