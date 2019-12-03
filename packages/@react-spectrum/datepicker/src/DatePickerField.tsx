@@ -82,6 +82,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     <div className={textfieldClass} {...domProps} {...styleProps}>
       <FocusRing
         within
+        isTextInput
         focusClass={classNames(textfieldStyles, 'is-focused')}
         focusRingClass={classNames(textfieldStyles, 'focus-ring')}>
         <div className={inputClass}>

@@ -1,9 +1,9 @@
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, useState} from 'react';
 import {MultipleSelectionBase} from '@react-types/shared';
+import {useFocusWithin} from '@react-aria/interactions';
 
 interface AriaTagGroupProps extends MultipleSelectionBase {
   isDisabled?: boolean,
-  isFocused?: boolean,
   isReadOnly?: boolean, // removes close button
   validationState?: 'valid' | 'invalid'
 }
@@ -13,16 +13,21 @@ interface TagGroupAria {
 }
 
 export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
-  const {isDisabled, isFocused, validationState} = props;
+  const {isDisabled, validationState} = props;
+  let [isFocusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setFocusWithin
+  });
 
   return {
     tagGroupProps: {
       role: 'grid',
       'aria-atomic': false,
       'aria-relevant': 'additions',
-      'aria-live': isFocused ? 'polite' : 'off',
+      'aria-live': isFocusWithin ? 'polite' : 'off',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid'
+      'aria-invalid': validationState === 'invalid',
+      ...focusWithinProps
     }
   };
 }

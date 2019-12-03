@@ -11,9 +11,6 @@ import V2Dropdown from '@react/react-spectrum/Dropdown';
 import {Menu as V2Menu, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
 
 let triggerText = 'Menu Button';
-let buttonId = 'button-id';
-let menuId = 'menu-id';
-
 let theme = {
   light: themeLight,
   medium: scaleMedium
@@ -24,11 +21,10 @@ function renderComponent(Component, props) {
     return render(
       <Component {...props}>
         <V2Button
-          id={buttonId} 
           variant="cta">
           {triggerText}
         </V2Button>
-        <V2Menu id={menuId}>
+        <V2Menu>
           <V2MenuItem value="foo">Foo</V2MenuItem>
           <V2MenuItem value="bar">Bar</V2MenuItem>
           <V2MenuItem value="baz">Baz</V2MenuItem>
@@ -40,10 +36,10 @@ function renderComponent(Component, props) {
       <Provider theme={theme}>
         <div data-testid="scrollable">
           <Component {...props}>
-            <Button id={buttonId}>
+            <Button>
               {triggerText}
             </Button>
-            <Menu id={menuId}>
+            <Menu>
               <li>Foo</li>
               <li>Bar</li>
               <li>Baz</li>
@@ -81,10 +77,10 @@ describe('MenuTrigger', function () {
     }
 
     triggerEvent(triggerButton);
-  
+
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(menu).toHaveAttribute('aria-labelledby', buttonId);
+    expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
     
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
@@ -94,7 +90,7 @@ describe('MenuTrigger', function () {
     expect(menuItem3).toBeTruthy();
   
     expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
-    expect(triggerButton).toHaveAttribute('aria-controls', menuId);
+    expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
   
     if (Component === MenuTrigger) {
       expect(onOpenChange).toBeCalledTimes(1);
@@ -104,8 +100,7 @@ describe('MenuTrigger', function () {
     }
   
     triggerEvent(triggerButton);
-    menu = tree.queryByRole('menu');
-    expect(menu).toBeFalsy();    
+    expect(menu).not.toBeInTheDocument();  
     
     if (Component === MenuTrigger) {
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
@@ -213,8 +208,7 @@ describe('MenuTrigger', function () {
     triggerPress(triggerButton);
     await waitForDomChange();
 
-    menu = tree.queryByRole('menu');
-    expect(menu).toBeFalsy();
+    expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
   });
 
@@ -234,7 +228,40 @@ describe('MenuTrigger', function () {
     let scrollable = tree.getByTestId('scrollable');
     fireEvent.scroll(scrollable);
     await waitForDomChange();
-    menu = tree.queryByRole('menu');
-    expect(menu).toBeFalsy();
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  // Can't figure out why this isn't working for the v2 component
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
+    let tree = renderComponent(Component, props);
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    await waitForDomChange();
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
+    await waitForDomChange();
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  // Can't figure out why this isn't working for the v2 component
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name closes the menu upon clicking outside the menu', async function ({Component, props}) {
+    let tree = renderComponent(Component, props);
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    await waitForDomChange();
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    fireEvent.mouseUp(document.body);
+    await waitForDomChange();
+    expect(menu).not.toBeInTheDocument();
   });
 });
