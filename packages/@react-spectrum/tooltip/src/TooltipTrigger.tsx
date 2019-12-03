@@ -5,7 +5,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {TooltipHoverResponder} from '@react-aria/interactions';
 import {useControlledState} from '@react-stately/utils';
-import {useTooltipTrigger, useTooltipHoverTrigger} from '@react-aria/tooltip';
+import {useTooltipTrigger} from '@react-aria/tooltip';
 
 // const VISIBLE_TOOLTIPS = new Map;
 // const DEFAULT_BUCKET_KEY = 'x';
@@ -99,25 +99,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  // TODO: rename tooltipBaseTriggerProps
-  let {tooltipTriggerProps} = useTooltipTrigger(
-    {
-      tooltipProps: {
-        ...content.props,
-        onClose
-      },
-      triggerProps: {
-        ...trigger.props,
-        ref: triggerRef
-      },
-      state: {
-        open,
-        setOpen
-      }
-    }
-  );
-
-  let {tooltipHoverTriggerProps} = useTooltipHoverTrigger(
+  let {tooltipTriggerBaseProps, tooltipTriggerSingularityProps} = useTooltipTrigger(
     {
       tooltipProps: {
         ...content.props,
@@ -154,7 +136,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <PressResponder
-          {...tooltipTriggerProps}
+          {...tooltipTriggerBaseProps}
           ref={triggerRef}
           isPressed={isOpen}
           onPress={onPressInteraction}>
@@ -167,8 +149,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <HoverResponder
-          {...tooltipTriggerProps}
-          {...tooltipHoverTriggerProps}
+          {...tooltipTriggerBaseProps}
+          {...tooltipTriggerSingularityProps}
           ref={triggerRef}
           isHovering={isOpen}
           delay={props.delay}

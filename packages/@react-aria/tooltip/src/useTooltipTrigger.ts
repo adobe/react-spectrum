@@ -1,10 +1,10 @@
-// TODO: rename to useTooltipTriggerBase.ts only if you can't combine into one hook 
-
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
+
+const VISIBLE_TOOLTIPS = [];
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -27,8 +27,9 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  tooltipTriggerProps: AllHTMLAttributes<HTMLElement>,
-  tooltipProps: AllHTMLAttributes<HTMLElement>
+  tooltipTriggerBaseProps: AllHTMLAttributes<HTMLElement>,
+  tooltipAriaProps: AllHTMLAttributes<HTMLElement>,
+  tooltipTriggerSingularityProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -57,16 +58,38 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  let enter = () => {
+    let tooltipBucketItem = triggerProps.ref.current.id;
+    VISIBLE_TOOLTIPS.push(tooltipBucketItem);
+  };
+
+  let exit = (e) => {
+    let hoveringOverTooltip = false;
+    const related = e.relatedTarget || e.nativeEvent.toElement;
+    const parent = related.parentNode;
+    if (parent.getAttribute('role') === 'tooltip') {
+      hoveringOverTooltip = true;
+    }
+    if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
+      state.setOpen(false);
+    }
+  };
+
+  // investigate: spread tooltipProps as well?
   return {
-    tooltipTriggerProps: {
+    tooltipTriggerBaseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
-    tooltipProps: {
+    tooltipAriaProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
+    },
+    tooltipTriggerSingularityProps: {
+      onMouseEnter: enter,
+      onMouseLeave: exit
     }
   };
 }
