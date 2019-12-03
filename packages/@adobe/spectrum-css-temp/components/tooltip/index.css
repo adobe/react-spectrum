@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-@import '../commons/overlay.css';
+@import '../overlay/index.css';
 
 :root {
   --spectrum-tooltip-target-offset: 3px;
@@ -19,9 +19,6 @@ governing permissions and limitations under the License.
   --spectrum-tooltip-tip-width: var(--spectrum-tooltip-tip-height);
 }
 
-/* topdoc
-{{ tooltip/tooltip.yml }}
-*/
 .spectrum-Tooltip {
   @inherit: %spectrum-overlay;
 
@@ -57,6 +54,10 @@ governing permissions and limitations under the License.
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+  }
+
+  p {
+    margin: 0;
   }
 }
 
@@ -202,23 +203,38 @@ governing permissions and limitations under the License.
     transform: translate(-50%, var(--spectrum-tooltip-tip-margin));
   }
 
-  &:hover .spectrum-Tooltip {
+  &:hover .spectrum-Tooltip,
+  &:focus .spectrum-Tooltip,
+  &.is-focused .spectrum-Tooltip,
+  *:focus .spectrum-Tooltip {
     opacity: 1;
   }
 
-  &:hover .spectrum-Tooltip.spectrum-Tooltip--bottom {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--bottom,
+  &:focus .spectrum-Tooltip.spectrum-Tooltip--bottom,
+  &.is-focused .spectrum-Tooltip.spectrum-Tooltip--bottom,
+  *:focus .spectrum-Tooltip.spectrum-Tooltip--bottom {
     transform: translate(-50%, 0);
   }
 
-  &:hover .spectrum-Tooltip.spectrum-Tooltip--top {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--top,
+  &:focus .spectrum-Tooltip.spectrum-Tooltip--top,
+  &.is-focused .spectrum-Tooltip.spectrum-Tooltip--top,
+  *:focus .spectrum-Tooltip.spectrum-Tooltip--top {
     transform: translate(-50%, calc(-1 * var(--spectrum-tooltip-tip-margin)));
   }
 
-  &:hover .spectrum-Tooltip.spectrum-Tooltip--left {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--left,
+  &:focus .spectrum-Tooltip.spectrum-Tooltip--left,
+  &.is-focused .spectrum-Tooltip.spectrum-Tooltip--left,
+  *:focus .spectrum-Tooltip.spectrum-Tooltip--left {
     transform: translate(calc(-100% - var(--spectrum-tooltip-tip-margin)), -50%);
   }
 
-  &:hover .spectrum-Tooltip.spectrum-Tooltip--right {
+  &:hover .spectrum-Tooltip.spectrum-Tooltip--right,
+  &:focus .spectrum-Tooltip.spectrum-Tooltip--right,
+  &.is-focused .spectrum-Tooltip.spectrum-Tooltip--right,
+  *:focus .spectrum-Tooltip.spectrum-Tooltip--right {
     transform: translate(var(--spectrum-tooltip-tip-margin), -50%);
   }
 }

@@ -1,8 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
-import React, {ReactNode, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useOverlay} from '@react-aria/overlays';
 
@@ -11,23 +9,24 @@ type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'b
     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
     'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
 
-interface PopoverProps extends DOMProps {
+interface PopoverProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   placement?: Placement,
-  arrowProps?: DOMProps,
+  arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void
 }
 
 export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTMLDivElement>) => {
-  let {className, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
+  let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   ref = ref || useRef();
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
+      {...otherProps}
+      style={style}
       ref={ref}
       className={
         classNames(
@@ -42,8 +41,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
             overrideStyles,
             'spectrum-Popover',
             'react-spectrum-Popover'
-          ),
-          className
+          )
         )
       }
       role="presentation"

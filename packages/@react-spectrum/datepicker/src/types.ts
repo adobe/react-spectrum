@@ -1,6 +1,8 @@
 import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
+import {DOMProps} from '@react-types/shared';
+import {StyleProps} from '@react-spectrum/view';
 
-interface SpectrumDatePickerBase {
+interface SpectrumDatePickerBase extends DOMProps, StyleProps {
   isQuiet?: boolean
 }
 

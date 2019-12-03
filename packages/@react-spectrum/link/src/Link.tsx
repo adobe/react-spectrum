@@ -1,12 +1,14 @@
 import {classNames, filterDOMProps, getWrappedElement} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {HTMLElement} from 'react-dom';
 import {LinkProps} from '@react-types/link';
 import React, {RefObject} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useLink} from '@react-aria/link';
 
-export interface SpectrumLinkProps extends LinkProps {
+export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
   variant?: 'primary' | 'secondary' | 'overBackground',
   isQuiet?: boolean
 }
@@ -15,11 +17,10 @@ export const Link = React.forwardRef((props: SpectrumLinkProps, ref: RefObject<H
   let {
     variant = 'primary',
     isQuiet,
-    className,
     children,
     ...otherProps
   } = props;
-
+  let {styleProps} = useStyleProps(props);
   let {linkProps} = useLink(props);
 
   return (
@@ -28,6 +29,7 @@ export const Link = React.forwardRef((props: SpectrumLinkProps, ref: RefObject<H
         getWrappedElement(children),
         {
           ...filterDOMProps(otherProps),
+          ...styleProps,
           ...linkProps,
           ref,
           className: classNames(
@@ -37,7 +39,7 @@ export const Link = React.forwardRef((props: SpectrumLinkProps, ref: RefObject<H
               'spectrum-Link--quiet': isQuiet,
               [`spectrum-Link--${variant}`]: variant
             },
-            className
+            styleProps.className
           )
         }
       )}
