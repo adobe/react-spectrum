@@ -3,7 +3,7 @@ import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
-import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
+import {SpectrumTextFieldProps, TextFieldBase} from '@react-spectrum/textfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
@@ -40,10 +40,10 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
           styleProps.className
         )
       }>
-      <TextField
+      <TextFieldBase
         {...otherProps}
         {...searchFieldProps}
-        UNSAFE_className={
+        inputClassName={
           classNames(
             styles,
             'spectrum-Search-input'

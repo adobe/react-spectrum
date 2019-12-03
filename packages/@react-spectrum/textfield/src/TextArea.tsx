@@ -1,7 +1,7 @@
 import {chain} from '@react-aria/utils';
 import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
-import {TextField} from './TextField';
+import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
@@ -12,6 +12,7 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
     isReadOnly = false,
     isRequired = false,
     onChange,
+    UNSAFE_className,
     ...otherProps
   } = props;
 
@@ -23,8 +24,9 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
   };
 
   return (
-    <TextField
+    <TextFieldBase
       {...otherProps}
+      wrapperClassName={UNSAFE_className}
       ref={ref}
       multiLine
       isDisabled={isDisabled}

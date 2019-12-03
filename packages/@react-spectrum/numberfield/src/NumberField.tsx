@@ -9,7 +9,7 @@ import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/var
 import React, {RefObject} from 'react';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
-import {TextField} from '@react-spectrum/textfield';
+import {TextFieldBase} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -65,9 +65,9 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
         {...numberFieldProps}
         ref={ref}
         className={className}>
-        <TextField
+        <TextFieldBase
           isQuiet={isQuiet}
-          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           {...inputFieldProps}
           onChange={setValue} />
         {showStepper &&
