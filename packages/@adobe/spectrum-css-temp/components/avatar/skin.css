@@ -11,9 +11,9 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Avatar {
-  opacity: var(--spectrum-avatar-small-opacity);
+  opacity: percent(var(--spectrum-avatar-small-opacity));
 
   &.is-disabled {
-    opacity: var(--spectrum-avatar-small-opacity-disabled);
+    opacity: percent(var(--spectrum-avatar-small-opacity-disabled));
   }
 }

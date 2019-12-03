@@ -12,6 +12,9 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ decoratedtextfield/decoratedtextfield.yml }}
+*/
 .spectrum-DecoratedTextfield {
   display: inline-block;
   position: relative;
@@ -25,7 +28,7 @@ governing permissions and limitations under the License.
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-textfield-icon-size) / 2));
   right: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-textfield-icon-size) / 2));
 
-  pointer-events: all;
+  pointer-events: all
 }
 
 .spectrum-DecoratedTextfield-field {

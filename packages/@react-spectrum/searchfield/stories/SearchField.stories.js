@@ -51,6 +51,11 @@ storiesOf('SearchField', module)
     'onClear',
     () => renderSearchLandmark(render({onClear: action('clear')})),
     {info}
+  )
+  .add(
+    'using combobox role',
+    () => renderSearchLandmark(render({type: 'text', role: 'combobox', 'aria-expanded': 'false', 'aria-haspopup': 'listbox', 'aria-autocomplete': 'list'})),
+    {info: `This example demonstrates how to overide Search props for a custom implementation of the WAI-ARIA 1.0 ComboBox design pattern. ${info}`}
   );
 
 function renderSearchLandmark(child) {

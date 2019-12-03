@@ -42,9 +42,7 @@ export interface SingleSelection {
   onSelectionChange?: (key: Key) => any
 }
 
-export type SelectionMode = 'none' | 'single' | 'multiple';
 export interface MultipleSelection {
-  selectionMode?: SelectionMode,
   selectedKeys?: Iterable<Key>,
   defaultSelectedKeys?: Iterable<Key>,
   onSelectionChange?: (keys: Set<Key>) => any
@@ -72,31 +70,13 @@ export enum SortDirection {
   DESC
 }
 
-export interface KeyboardDelegate {
-  /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key): Key,
-
-  /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key): Key,
-
-  /** Returns the key visually to the left of the given one, or `null` for none. */
+interface FocusManagerDelegate {
   getKeyLeftOf?(key: Key): Key,
-
-  /** Returns the key visually to the right of the given one, or `null` for none. */
   getKeyRightOf?(key: Key): Key,
-
-  /** Returns the key visually one page below the given one, or `null` for none. */
-  getKeyPageBelow?(key: Key): Key,
-
-  /** Returns the key visually one page above the given one, or `null` for none. */
-  getKeyPageAbove?(key: Key): Key,
-  
-  /** Returns the first key, or `null` for none. */
-  getFirstKey?(): Key,
-
-  /** Returns the last key, or `null` for none. */
-  getLastKey?(): Key
+  getKeyAbove?(key: Key): Key,
+  getKeyBelow?(key: Key): Key
 }
+
 
 interface AsyncListOptions<T> {
   load: (state: ListState<T>) => Promise<ListState<T>>,
@@ -117,7 +97,6 @@ interface ListState<T> {
 interface AsyncListProps<T> {
   items: Iterable<T>,
   isLoading: boolean,
-  error?: Error,
   onLoadMore?: () => void,
   sortDescriptor?: SortDescriptor,
   onSortChange?: (desc: SortDescriptor) => void,

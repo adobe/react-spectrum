@@ -33,14 +33,15 @@ describe('Shared TextField behavior', () => {
 
   // Omitting v3 TextField and TextArea for now since we need https://jira.corp.adobe.com/browse/RSP-1182 to compensate
   it.each`
-    Name                | Component         | props
-    ${'v3 SearchField'} | ${SearchField}    | ${{UNSAFE_className: 'custom-class-name'}}
-    ${'v2 TextField'}   | ${V2TextField}    | ${{className: 'custom-class-name'}}
-    ${'v2 TextArea'}    | ${V2TextArea}     | ${{className: 'custom-class-name'}}
-    ${'v2 SearchField'} | ${V2SearchField}  | ${{className: 'custom-class-name'}}
-  `('$Name supports appending custom classnames onto the root element', ({Component, props}) => {
-    let tree = renderComponent(Component, props);
-    expect(tree.container.querySelector('body>div> .custom-class-name')).toBeTruthy();
+    Name                | Component
+    ${'v3 SearchField'} | ${SearchField}
+    ${'v2 TextField'}   | ${V2TextField}
+    ${'v2 TextArea'}    | ${V2TextArea}
+    ${'v2 SearchField'} | ${V2SearchField}
+  `('$Name supports appending custom classnames onto the root element', ({Component}) => {
+    let className = 'custom-class-name';
+    let tree = renderComponent(Component, {className});
+    expect(tree.container.querySelector(`body>div> .${className}`)).toBeTruthy();
   });  
 
   it.each`

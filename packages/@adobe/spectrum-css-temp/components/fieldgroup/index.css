@@ -12,6 +12,15 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  /* Field group */
+  --spectrum-fieldgroup-spacing: 15px;
+}
+
+/* topdoc
+{{ fieldgroup/fieldgroup-default.yml }}
+*/
+
 .spectrum-FieldGroup {
   display: flex;
   vertical-align: top;
@@ -25,7 +34,15 @@ governing permissions and limitations under the License.
   inline-size: 100%;
 }
 
+/* topdoc
+{{ fieldgroup/fieldgroup-vertical.yml }}
+*/
+
 .spectrum-FieldGroup--vertical {
   display: inline-flex;
   flex-direction: column;
 }
+
+/* topdoc
+{{ fieldgroup/fieldgroup-labelsbelow.yml }}
+*/

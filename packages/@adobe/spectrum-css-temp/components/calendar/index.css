@@ -12,17 +12,30 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ calendar/calendar.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-disabled.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-focused.yml }}
+*/
+
+/* topdoc
+{{ calendar/calendar-range.yml }}
+*/
+
 :root {
   --spectrum-calendar-border-radius-reset: 0;
   --spectrum-calendar-border-width-reset: 0;
   --spectrum-calendar-margin-y: 24px;
   --spectrum-calendar-margin-x: 32px;
-  --spectrum-calendar-width: calc((var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding) * 2) * 7);
-  --spectrum-calendar-button-gap: var(--spectrum-global-dimension-size-40);
 }
 
 .spectrum-Calendar {
-  width: var(--spectrum-calendar-width);
   display: inline-block;
 }
 
@@ -31,20 +44,25 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar-header {
-  display: flex;
+  position: relative;
+  box-sizing: border-box;
   width: 100%;
-  align-items: center;
+  height: var(--spectrum-calendar-title-height);
 }
 
 .spectrum-Calendar-title {
+  position: absolute;
+  left: 0;
+  top: 0;
+
   font-size: var(--spectrum-calendar-title-text-size);
   font-weight: bold;
 
+  box-sizing: border-box;
+  width: 100%;
   line-height: var(--spectrum-calendar-title-height);
   margin: 0;
-  order: 1;
-  flex-grow: 1;
-
+  padding: 0 var(--spectrum-calendar-title-height);
 
   text-align: center;
   overflow: hidden;
@@ -52,19 +70,17 @@ governing permissions and limitations under the License.
   text-overflow: ellipsis;
 }
 
-.spectrum-Calendar {
-  .spectrum-Calendar-prevMonth,
-  .spectrum-Calendar-nextMonth {
-    margin: 0 var(--spectrum-calendar-button-gap);
-  }
+.spectrum-Calendar-prevMonth,
+.spectrum-Calendar-nextMonth {
+  position: absolute;
 }
 
 .spectrum-Calendar-prevMonth {
-  order: 0;
+  inset-inline-start: 3px;
 }
 
 .spectrum-Calendar-nextMonth {
-  order: 2;
+  inset-inline-end: 3px;
 }
 
 .spectrum-Calendar-dayOfWeek {

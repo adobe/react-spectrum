@@ -32,7 +32,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     onDecrementToMin,
     onIncrementToMax
   } = props;
-
+  
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
       return;
@@ -96,11 +96,11 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       announce(textValue || `${value}`);
     }
   }, [textValue, value]);
-
+  
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': typeof value === 'number' ? value : null,
+      'aria-valuenow': value,
       'aria-valuetext': textValue || null,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,

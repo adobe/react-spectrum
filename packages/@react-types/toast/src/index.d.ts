@@ -1,3 +1,4 @@
+import {DOMProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface ToastOptions {
@@ -8,7 +9,6 @@ export interface ToastOptions {
   timeout?: number
 }
 
-interface ToastProps extends ToastOptions {
-  children?: ReactNode,
-  variant?: 'positive' | 'negative' | 'info' // TODO: move this into react-spectrum
+interface ToastProps extends ToastOptions, DOMProps {
+  variant?: 'positive' | 'negative' | 'info'
 }

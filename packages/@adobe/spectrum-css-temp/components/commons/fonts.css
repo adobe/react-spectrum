@@ -11,33 +11,29 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-font-fallbacks-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  /* Not used
+  --spectrum-font-fallbacks-sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --spectrum-font-fallbacks-serif: serif;
   --spectrum-font-fallbacks-mono: monospace;
-  --spectrum-font-family-article: adobe-clean-serif, 'Source Serif', var(--spectrum-font-fallbacks-serif);
+  --spectrum-font-family-ar: myriad-arabic, var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-article: adobe-clean-serif, "Source Serif", var(--spectrum-font-fallbacks-serif);
   --spectrum-font-family-article-ar: adobe-arabic, var(--spectrum-font-fallbacks-serif);
   --spectrum-font-family-article-he: adobe-hebrew, var(--spectrum-font-fallbacks-serif);
   --spectrum-font-family-article-ja: source-han-serif-japanese, var(--spectrum-font-fallbacks-serif);
   --spectrum-font-family-article-ko: source-han-serif-korean, var(--spectrum-font-fallbacks-serif);
   --spectrum-font-family-article-zh-hans: source-han-serif-sc, var(--spectrum-font-fallbacks-serif);
-  --spectrum-font-family-article-zh-hant: source-han-serif-tc, 'MingLiu', var(--spectrum-font-fallbacks-serif);
-  --spectrum-font-family-code: source-code-pro, 'Source Code Pro', var(--spectrum-font-fallbacks-mono);
+  --spectrum-font-family-article-zh-hant: source-han-serif-tc, var(--spectrum-font-fallbacks-serif);
+  --spectrum-font-family-base: adobe-clean, "Source Sans Pro", var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-code: source-code-pro, "Source Code Pro", var(--spectrum-font-fallbacks-mono);
+  --spectrum-font-family-han: adobe-clean-han-japanese, var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-he: var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-zh: var(--spectrum-font-family-han);
+  --spectrum-font-family-zhhans: var(--spectrum-font-family-han);
+  --spectrum-font-family-ko: var(--spectrum-font-family-han);
+  --spectrum-font-family-ja: var(--spectrum-font-family-han);
   --spectrum-font-family-condensed: adobe-clean-condensed, var(--spectrum-font-family-base);
-  */
-
-  --spectrum-font-family-base: 'adobe-clean-ux', 'adobe-clean', 'Source Sans Pro', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-han: 'adobe-clean-han-japanese', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ar: 'adobe-arabic', 'myriad-arabic', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-he: 'adobe-hebrew', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-zhhans: 'adobe-clean-han-simplified-c', 'SimSun', 'Heiti SC Light', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-zh: var(--spectrum-font-family-zhhans);
-  --spectrum-font-family-zhhant: 'adobe-clean-han-traditional', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ko: 'adobe-clean-han-korean', 'Malgun Gothic', 'Apple Gothic', var(--spectrum-font-fallbacks-sans);
-  --spectrum-font-family-ja: 'adobe-clean-han-japanese', 'Yu Gothic', '\30E1 \30A4 \30EA \30AA', '\30D2 \30E9 \30AE \30CE \89D2 \30B4  Pro W3', 'Hiragino Kaku Gothic Pro W3', 'Osaka', '\FF2D \FF33 \FF30 \30B4 \30B7 \30C3 \30AF', 'MS PGothic', var(--spectrum-font-fallbacks-sans);
   --spectrum-text-size: var(--spectrum-alias-font-size-default);
   --spectrum-text-body-line-height: var(--spectrum-alias-line-height-medium);
+
   --spectrum-text-size-text-label: var(--spectrum-label-text-size);
   --spectrum-line-height-text-label: var(--spectrum-label-text-line-height);
 }

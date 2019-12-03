@@ -1,3 +1,4 @@
+import {DOMProps} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
@@ -6,7 +7,7 @@ import React, {Fragment, ReactElement, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu-trigger';
 
-export interface MenuTriggerProps {
+export interface MenuTriggerProps extends DOMProps {
   children: ReactElement[],
   trigger?: 'press' | 'longPress',
   align?: 'start' | 'end',

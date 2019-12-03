@@ -1,14 +1,8 @@
+import {AriaSplitViewProps, SplitViewAriaProps, SplitViewState} from '@react-types/shared';
 import {chain} from '@react-aria/utils';
-import {HTMLAttributes, useEffect, useRef} from 'react';
-import {SplitViewAriaProps, SplitViewState} from '@react-types/shared';
 import {useDrag1D} from '@react-aria/utils';
+import {useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
-
-interface AriaSplitViewProps {
-  containerProps: HTMLAttributes<HTMLElement>,
-  handleProps: HTMLAttributes<HTMLElement>,
-  primaryPaneProps: HTMLAttributes<HTMLElement>
-}
 
 export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): AriaSplitViewProps {
   let {

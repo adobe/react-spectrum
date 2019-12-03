@@ -7,11 +7,10 @@ import {DOMProps} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject, useEffect, useRef, useState} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 
-export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
+export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps {
   size?: 'S' | 'M' | 'L',
   headingAriaLevel?: number,
   showRoot?: boolean,
@@ -21,6 +20,7 @@ export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, St
 
 export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, ref: RefObject<HTMLElement>) => {
   let {
+    className,
     size = 'M',
     children,
     headingAriaLevel,
@@ -29,7 +29,6 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
     maxVisibleItems = 4,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   let isCollapsible = maxVisibleItems === 'auto';
   let childArray = React.Children.toArray(children);
@@ -101,7 +100,6 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   return (
     <nav
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       {...breadcrumbProps}
       ref={ref} >
       {
@@ -129,7 +127,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
               'is-hidden': hidden,
               'is-disabled': isDisabled
             },
-            styleProps.className
+            className
           )
         }>
         {breadcrumbItems}

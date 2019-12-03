@@ -204,3 +204,7 @@ governing permissions and limitations under the License.
     left: calc(-1 * var(--spectrum-tabs-vertical-rule-width));
   }
 }
+
+/* topdoc
+{{ tabs/tabs-toomany.yml }}
+*/

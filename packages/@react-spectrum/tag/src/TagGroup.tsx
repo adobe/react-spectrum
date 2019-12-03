@@ -1,8 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps, Removable} from '@react-types/shared';
 import {Focus} from '@react-aria/focus';
 import React, {useContext, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {Removable} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {TagGroupProps} from '@react-types/tag';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -23,9 +22,7 @@ export function useTagGroupProvider(): TagGroupContext {
   return useContext(TagGroupContext);
 }
 
-interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}
-
-export const TagGroup = ((props: SpectrumTagGroupProps) => {
+export const TagGroup = ((props: TagGroupProps) => {
   let completeProps = useProviderProps(props);
 
   let {
@@ -34,16 +31,16 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     onRemove,
     validationState,
     children,
+    className,
     ...otherProps
   } = completeProps;
-  let {styleProps} = useStyleProps(otherProps);
   let isFocused = useRef(false);
 
   let handleFocusWithin = (focused) => {
     isFocused.current = focused;
   };
 
-  const {tagGroupProps} = useTagGroup({...completeProps, isFocused: isFocused.current});
+  const {tagGroupProps} = useTagGroup({...completeProps, isFocused});
 
   function removeAll(tags) {
     onRemove([tags]);
@@ -53,7 +50,6 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     <Focus onFocusWithinChange={handleFocusWithin}>
       <div
         {...filterDOMProps(otherProps)}
-        {...styleProps}
         className={
           classNames(
             styles,
@@ -61,7 +57,7 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
             {
               'is-disabled': isDisabled
             },
-            styleProps.className
+            className
           )
         }
         {...tagGroupProps}>

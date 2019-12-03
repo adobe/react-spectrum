@@ -5,7 +5,6 @@ import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
 export interface LogicButtonProps extends ButtonBase {
   variant?: 'and' | 'or'
@@ -19,17 +18,16 @@ export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefOb
     children,
     isDisabled,
     icon,
+    className,
     ...otherProps
   } = props;
   ref = ref || useRef();
   let {buttonProps, isPressed} = useButton({...props, ref});
-  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
         {...filterDOMProps(otherProps)}
-        {...styleProps}
         {...buttonProps}
         ref={ref}
         className={
@@ -41,10 +39,10 @@ export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefOb
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            styleProps.className
+            className
           )
         }>
-        {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
+        {cloneIcon(icon, {size: 'S'})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

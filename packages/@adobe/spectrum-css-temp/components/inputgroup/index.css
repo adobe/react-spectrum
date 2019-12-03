@@ -12,6 +12,25 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ inputgroup/combobox.yml }}
+*/
+/* topdoc
+{{ inputgroup/combobox-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-quiet.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range.yml }}
+*/
+/* topdoc
+{{ inputgroup/datepicker-range-quiet.yml }}
+*/
+
 :root {
   /* Todo: move to DNA */
   --spectrum-combobox-quiet-fieldbutton-border-radius: 0;

@@ -3,7 +3,6 @@ import {chain} from '@react-aria/utils';
 import intlMessages from '../intl/*.json';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
-import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
@@ -12,7 +11,7 @@ interface SearchFieldAria {
 }
 
 export function useSearchField(
-  props: SearchFieldProps & TextInputDOMProps,
+  props: SearchFieldProps,
   state: SearchFieldState,
   searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
 ): SearchFieldAria {
@@ -21,6 +20,7 @@ export function useSearchField(
     isDisabled,
     onSubmit = () => {},
     onClear,
+    role = undefined,
     type = 'search'
   } = props;
 
@@ -54,8 +54,9 @@ export function useSearchField(
 
   return {
     searchFieldProps: {
+      role,
       value: state.value,
-      onKeyDown,
+      onKeyDown: chain(props.onKeyDown, onKeyDown),
       type
     },
     clearButtonProps: {

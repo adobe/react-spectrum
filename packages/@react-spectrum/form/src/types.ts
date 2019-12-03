@@ -1,13 +1,12 @@
 import {DOMProps} from '@react-types/shared';
 import {LabelProps} from '@react-types/label';
 import {ReactElement, ReactNode} from 'react';
-import {StyleProps} from '@react-spectrum/view';
 
-export interface FormProps extends DOMProps, StyleProps {
+export interface FormProps extends DOMProps {
   children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[],
 }
 
-export interface FieldLabelBase extends LabelProps, DOMProps, StyleProps {
+export interface FieldLabelBase extends LabelProps {
   labelPosition?: 'top' | 'side',
   labelAlign?: 'start' | 'end',
   isRequired?: boolean,

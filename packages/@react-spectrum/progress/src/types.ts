@@ -1,15 +1,13 @@
-import {DOMProps} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import {ReactNode} from 'react';
-import {StyleProps} from '@react-spectrum/view';
 
-export interface SpectrumProgressCircleProps extends ProgressBarProps, DOMProps, StyleProps {
+export interface SpectrumProgressCircleProps extends ProgressBarProps {
   size?: 'S' | 'M' | 'L',
   variant?: 'overBackground',
   isCentered?: boolean
 }
 
-export interface SpectrumProgressBarProps extends ProgressBarProps, DOMProps, StyleProps {
+export interface SpectrumProgressBarProps extends ProgressBarProps {
   size?: 'S' | 'L',
   labelPosition?: 'top' | 'side',
   showValueLabel?: boolean, // true by default if label, false by default if not

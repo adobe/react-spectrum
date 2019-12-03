@@ -18,19 +18,15 @@ export function useControlledState<T>(
   ref.current = isControlled;
 
   let setValue = useCallback((value, ...args) => {
-    let v = typeof value === 'function'
-      ? value(stateRef.current)
-      : value;
-
     if (onChange) {
-      if (stateRef.current !== v) {
-        onChange(v, ...args);
+      if (stateRef.current !== value) { 
+        onChange(value, ...args);
       }
     }
     
     if (!isControlled) {
-      setStateValue(v);
-      stateRef.current = v;
+      setStateValue(value);
+      stateRef.current = value;
     }
     
   }, [isControlled, onChange]);

@@ -2,7 +2,6 @@ import {announce} from '@react-aria/live-announcer';
 import {CalendarAria} from './types';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarStateBase} from '@react-stately/calendar';
-import {DOMProps} from '@react-types/shared';
 import {format} from 'date-fns';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -20,7 +19,7 @@ export function getCalendarId(state: CalendarStateBase): string {
   return calendarIds.get(state);
 }
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
+export function useCalendarBase(props: CalendarPropsBase, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
   let {
     autoFocus = false,
     isReadOnly = false,

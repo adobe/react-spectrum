@@ -1,6 +1,5 @@
 import {DOMProps, Theme} from '@react-types/shared';
 import {ReactNode} from 'react';
-import {StyleProps} from '@react-spectrum/view';
 
 type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
   | 'bottom' | 'bottom left' | 'bottom center' | 'bottom right';
@@ -17,7 +16,7 @@ interface ContextProps {
   isReadOnly?: boolean
 }
 
-export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
+export interface ProviderProps extends ContextProps, DOMProps {
   children: ReactNode,
   theme?: Theme,
   colorScheme?: ColorScheme, // by default, chooses based on OS setting

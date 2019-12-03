@@ -1,23 +1,20 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTabList} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';
 
-interface TabProps extends DOMProps, StyleProps {
+interface TabProps extends React.HTMLAttributes<HTMLElement> {
   icon?: ReactNode,
   label?: ReactNode,
   value: any,
   children?: ReactNode,
   isDisabled?: boolean,
   isSelected?: boolean, // Had to add this, TS complains in TabList in renderTabs
-  onSelect?: () => void
 }
 
-interface TabListProps extends DOMProps, StyleProps {
+interface TabListProps extends React.HTMLAttributes<HTMLElement> {
   orientation?: 'horizontal' | 'vertical',
   isQuiet?: boolean,
   density?: 'compact',
@@ -51,10 +48,10 @@ export function TabList(props: TabListProps) {
     orientation = 'horizontal',
     isQuiet = false,
     density = '',
+    className,
     isDisabled,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   let renderTabs = () =>
     childArray.map((child) =>
@@ -70,7 +67,6 @@ export function TabList(props: TabListProps) {
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       ref={ref}
       className={classNames(
         styles,
@@ -78,7 +74,7 @@ export function TabList(props: TabListProps) {
         `spectrum-Tabs--${orientation}`,
         {'spectrum-Tabs--quiet': isQuiet},
         density ? `spectrum-Tabs--${density}` : '',
-        styleProps.className
+        className
       )}
       {...tabListProps}>
       {renderTabs()}

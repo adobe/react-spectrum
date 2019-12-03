@@ -3,14 +3,10 @@ import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useSt
 import {mergeProps} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 
-export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
 export interface PressEvent {
   type: 'pressstart' | 'pressend' | 'press',
-  pointerType: PointerType,
-  target: HTMLElement,
-  shiftKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean
+  pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard',
+  target: HTMLElement
 }
 
 export interface PressProps {
@@ -32,13 +28,6 @@ interface PressState {
   activePointerId: any,
   target: HTMLElement | null,
   isOverTarget: boolean
-}
-
-interface EventBase {
-  target: EventTarget,
-  shiftKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean
 }
 
 interface PressResult {
@@ -92,7 +81,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   let pressProps = useMemo(() => {
     let state = ref.current;
-    let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
+    let triggerPressStart = (target, pointerType) => {
       if (isDisabled) {
         return;
       }
@@ -100,11 +89,8 @@ export function usePress(props: PressHookProps): PressResult {
       if (onPressStart) {
         onPressStart({
           type: 'pressstart',
-          pointerType,
-          target: originalEvent.target as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          target,
+          pointerType
         });
       }
 
@@ -115,7 +101,7 @@ export function usePress(props: PressHookProps): PressResult {
       setPressed(true);
     };
 
-    let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+    let triggerPressEnd = (target, pointerType, wasPressed = true) => {
       if (isDisabled) {
         return;
       }
@@ -123,11 +109,8 @@ export function usePress(props: PressHookProps): PressResult {
       if (onPressEnd) {
         onPressEnd({
           type: 'pressend',
-          pointerType,
-          target: originalEvent.target as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          target,
+          pointerType
         });
       }
 
@@ -140,11 +123,8 @@ export function usePress(props: PressHookProps): PressResult {
       if (onPress && wasPressed) {
         onPress({
           type: 'press',
-          pointerType,
-          target: originalEvent.target as HTMLElement,
-          shiftKey: originalEvent.shiftKey,
-          metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          target,
+          pointerType
         });
       }
     };
@@ -152,16 +132,14 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (!state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
           state.isPressed = true;
-          triggerPressStart(e, 'keyboard');
+          triggerPressStart(e.target, 'keyboard');
         }
       },
       onKeyUp(e) {
         if (state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
           state.isPressed = false;
-          triggerPressEnd(e, 'keyboard');
+          triggerPressEnd(e.target, 'keyboard');
         }
       }
     };
@@ -170,68 +148,50 @@ export function usePress(props: PressHookProps): PressResult {
       pressProps.onPointerDown = (e) => {
         if (!state.isPressed) {
           state.isPressed = true;
-          state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
-          triggerPressStart(e, e.pointerType);
+          triggerPressStart(e.target, e.pointerType);
 
-          document.addEventListener('pointermove', onPointerMove, false);
           document.addEventListener('pointerup', onPointerUp, false);
           document.addEventListener('pointercancel', onPointerCancel, false);
         }
       };
 
       let unbindEvents = () => {
-        document.removeEventListener('pointermove', onPointerMove, false);
         document.removeEventListener('pointerup', onPointerUp, false);
         document.removeEventListener('pointercancel', onPointerCancel, false);
       };
 
-      // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
-      // Use pointer move events instead to implement our own hit testing.
-      // See https://bugs.webkit.org/show_bug.cgi?id=199803
-      let onPointerMove = (e: PointerEvent) => {
-        if (e.pointerId !== state.activePointerId) {
-          return;
-        }
-
-        let rect = state.target.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          if (!state.isOverTarget) {
-            state.isOverTarget = true;
-            triggerPressStart(createEvent(state.target, e), e.pointerType as PointerType);
-          }
-        } else if (state.isOverTarget) {
-          state.isOverTarget = false;
-          triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-        }
-      };
-
-      let onPointerUp = (e: PointerEvent) => {
+      pressProps.onPointerEnter = (e) => {
         if (e.pointerId === state.activePointerId && state.isPressed) {
-          let rect = state.target.getBoundingClientRect();
-          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
-          } else if (state.isOverTarget) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-          }
-
-          state.isPressed = false;
-          state.isOverTarget = false;
-          state.activePointerId = null;
-          unbindEvents();
+          triggerPressStart(e.target, e.pointerType);
         }
       };
 
-      let onPointerCancel = (e: PointerEvent) => {
-        if (state.isPressed) {
-          if (state.isOverTarget) {
-            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
-          }
+      pressProps.onPointerLeave = (e) => {
+        if (e.pointerId === state.activePointerId && state.isPressed) {
+          triggerPressEnd(e.target, e.pointerType, false);
+        }
+      };
+
+      let onPointerUp = (e) => {
+        if (e.pointerId === state.activePointerId && state.isPressed) {
           state.isPressed = false;
-          state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
+
+          if (state.target && state.target.contains(e.target)) {
+            triggerPressEnd(state.target, e.pointerType);
+          }
+        }
+      };
+
+      let onPointerCancel = (e) => {
+        if (state.isPressed) {
+          state.isPressed = false;
+          state.activePointerId = null;
+          unbindEvents();
+          triggerPressEnd(state.target, e.pointerType, false);
         }
       };
     } else {
@@ -243,33 +203,33 @@ export function usePress(props: PressHookProps): PressResult {
 
         state.isPressed = true;
         state.target = e.currentTarget;
-        triggerPressStart(e, 'mouse');
-        
+        triggerPressStart(e.target, 'mouse');
+
         document.addEventListener('mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
-          triggerPressStart(e, 'mouse');
+          triggerPressStart(e.target, 'mouse');
         }
       };
 
       pressProps.onMouseLeave = (e) => {
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
-          triggerPressEnd(e, 'mouse', false);
+          triggerPressEnd(e.target, 'mouse', false);
         }
       };
-    
-      let onMouseUp = (e: MouseEvent) => {
+
+      let onMouseUp = (e) => {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
-        if (state.ignoreEmulatedMouseEvents || !state.target || !state.target.contains(e.target as HTMLElement)) {
+        if (state.ignoreEmulatedMouseEvents || !state.target || !state.target.contains(e.target)) {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
-    
-        triggerPressEnd(createEvent(state.target, e), 'mouse');
+
+        triggerPressEnd(state.target, 'mouse');
       };
 
       pressProps.onTouchStart = (e) => {
@@ -281,7 +241,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
-        triggerPressStart(e, 'touch');
+        triggerPressStart(e.target, 'touch');
       };
 
       pressProps.onTouchMove = (e) => {
@@ -290,11 +250,11 @@ export function usePress(props: PressHookProps): PressResult {
         if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
           if (!state.isOverTarget) {
             state.isOverTarget = true;
-            triggerPressStart(e, 'touch');
+            triggerPressStart(e.target, 'touch');
           }
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
-          triggerPressEnd(e, 'touch', false);
+          triggerPressEnd(e.target, 'touch', false);
         }
       };
 
@@ -302,9 +262,9 @@ export function usePress(props: PressHookProps): PressResult {
         let rect = e.currentTarget.getBoundingClientRect();
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-          triggerPressEnd(e, 'touch');
+          triggerPressEnd(e.target, 'touch');
         } else if (state.isOverTarget) {
-          triggerPressEnd(e, 'touch', false);
+          triggerPressEnd(e.target, 'touch', false);
         }
 
         state.isPressed = false;
@@ -315,7 +275,7 @@ export function usePress(props: PressHookProps): PressResult {
       pressProps.onTouchCancel = (e) => {
         if (state.isPressed) {
           if (state.isOverTarget) {
-            triggerPressEnd(e, 'touch', false);
+            triggerPressEnd(e.target, 'touch', false);
           }
           state.isPressed = false;
           state.activePointerId = null;
@@ -373,13 +333,4 @@ function getTouchById(
     }
   }
   return null;
-}
-
-function createEvent(target: HTMLElement, e: EventBase): EventBase {
-  return {
-    target,
-    shiftKey: e.shiftKey,
-    ctrlKey: e.ctrlKey,
-    metaKey: e.metaKey
-  };
 }

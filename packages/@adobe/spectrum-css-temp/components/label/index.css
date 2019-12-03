@@ -12,6 +12,9 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ label/label-default.yml }}
+*/
 .spectrum-Label {
   display: inline-block;
   position: relative;
@@ -32,11 +35,17 @@ governing permissions and limitations under the License.
   font-smoothing: subpixel-antialiased;
 }
 
+/* topdoc
+{{ label/label-large.yml }}
+*/
 .spectrum-Label--large {
   font-size: var(--spectrum-global-dimension-size-175);
   padding: var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-150);
 }
 
+/* topdoc
+{{ label/label-small.yml }}
+*/
 .spectrum-Label--small {
   font-size: var(--spectrum-global-dimension-font-size-50);
   padding: var(--spectrum-global-dimension-size-40) var(--spectrum-global-dimension-size-85);

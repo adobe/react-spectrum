@@ -24,6 +24,21 @@ governing permissions and limitations under the License.
   font-weight: bold;
 }
 
+/* topdoc
+{{ banner/banner-info.yml }}
+*/
+
+/* topdoc
+{{ banner/banner-warning.yml }}
+*/
+
+/* topdoc
+{{ banner/banner-error.yml }}
+*/
+
+/* topdoc
+{{ banner/banner-corner.yml }}
+*/
 .spectrum-Banner--corner {
   position: absolute;
   top: -10px;

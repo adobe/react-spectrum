@@ -35,10 +35,10 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props                             | message
-    ${'Toast'}     | ${Toast}     | ${{UNSAFE_className: 'myClass'}}  | ${'Toast time!'}
+    Name           | Component    | props                      | message
+    ${'Toast'}     | ${Toast}     | ${{className: 'myClass'}}  | ${'Toast time!'}
     ${'V2Toast'}   | ${V2Toast}   | ${{className: 'myClass'}}  | ${'Toast time!'}
-  `('$Name supports UNSAFE_className', function ({Component, props, message}) {
+  `('$Name supports additional classNames', function ({Component, props, message}) {
     let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
 

@@ -1,25 +1,21 @@
 import Alert from '@spectrum-icons/workflow/Alert';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {TagProps} from '@react-types/tag';
 import {useTag} from '@react-aria/tag';
 import {useTagGroupProvider} from './TagGroup';
 
-interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
-
-export const Tag = ((props: SpectrumTagProps) => {
+export const Tag = ((props: TagProps) => {
   const {
+    className,
     isDisabled,
     isRemovable,
     validationState,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
@@ -46,7 +42,6 @@ export const Tag = ((props: SpectrumTagProps) => {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...filterDOMProps(otherProps)}
-        {...styleProps}
         {...tagProps}
         className={classNames(
           styles,
@@ -57,7 +52,7 @@ export const Tag = ((props: SpectrumTagProps) => {
             'spectrum-Tags-item--removable': removable,
             'is-invalid': isInvalid
           },
-          styleProps.className
+          className
         )}>
         {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span
@@ -70,7 +65,7 @@ export const Tag = ((props: SpectrumTagProps) => {
             <ClearButton
               tabIndex={tagProps.tabIndex}
               focusClassName={classNames(styles, 'is-focused')}
-              UNSAFE_className={classNames(styles, 'spectrum-Tags-itemClearButton')}
+              className={classNames(styles, 'spectrum-Tags-itemClearButton')}
               {...otherButtonProps} />
           </span>
         }

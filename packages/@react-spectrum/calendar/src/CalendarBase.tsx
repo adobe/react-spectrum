@@ -7,20 +7,19 @@ import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
+interface CalendarBaseProps extends CalendarPropsBase {
   state: CalendarState | RangeCalendarState,
   aria: CalendarAria
 }
 
 export function CalendarBase(props: CalendarBaseProps) {
   let {
+    className,
     state,
     aria,
     ...otherProps
@@ -35,17 +34,15 @@ export function CalendarBase(props: CalendarBaseProps) {
     captionProps
   } = aria;
   let {direction} = useLocale();
-  let {styleProps} = useStyleProps(otherProps);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       {...calendarProps}
       className={
         classNames(styles,
           'spectrum-Calendar',
-          styleProps.className
+          className
         )
       }>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
@@ -56,13 +53,13 @@ export function CalendarBase(props: CalendarBaseProps) {
         </h2>
         <ActionButton
           {...prevButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
+          className={classNames(styles, 'spectrum-Calendar-prevMonth')}
           isQuiet
           isDisabled={props.isDisabled}
           icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
         <ActionButton
           {...nextButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
+          className={classNames(styles, 'spectrum-Calendar-nextMonth')}
           isQuiet
           isDisabled={props.isDisabled}
           icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />

@@ -16,6 +16,9 @@ governing permissions and limitations under the License.
   --spectrum-miller-column-margin: 8px;
 }
 
+/* topdoc
+{{ miller/miller-column.yml }}
+*/
 .spectrum-MillerColumns {
   overflow-x: auto;
   white-space: nowrap;

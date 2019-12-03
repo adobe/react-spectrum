@@ -64,7 +64,6 @@ governing permissions and limitations under the License.
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none; /* prevent touch scrolling on buttons */
 
   &:focus {
     outline: none;
@@ -106,8 +105,8 @@ governing permissions and limitations under the License.
   border-style: solid;
   border-radius: var(--spectrum-button-primary-border-radius);
 
-  min-height: var(--spectrum-button-primary-height);
-  height: 0%;
+  min-block-size: var(--spectrum-button-primary-height);
+  block-size: auto;
   min-inline-size: var(--spectrum-button-primary-min-width);
 
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));

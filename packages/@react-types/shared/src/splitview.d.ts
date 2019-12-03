@@ -1,10 +1,13 @@
 import {
   Dispatch,
+  KeyboardEvent,
+  MouseEvent,
   MouseEventHandler,
   MutableRefObject,
   ReactElement,
   SetStateAction
 } from 'react';
+import {DOMProps} from './dom';
 
 export interface SplitViewStatelyProps {
   allowsCollapsing?: boolean,
@@ -55,7 +58,25 @@ export interface SplitViewAriaProps {
   containerRef?: MutableRefObject<HTMLDivElement>
 }
 
-export interface SplitViewProps {
+export interface SplitViewContainerProps extends DOMProps {
+  ref?: MutableRefObject<HTMLDivElement>
+}
+
+export interface SplitViewHandleProps extends DOMProps {
+  onMouseDown?: (event: MouseEvent<HTMLElement>) => void,
+  onMouseEnter?: (event: MouseEvent<HTMLElement>) => void,
+  onMouseOut?: (event: MouseEvent<HTMLElement>) => void,
+  onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void,
+  ref?: MutableRefObject<HTMLDivElement>
+}
+
+export interface AriaSplitViewProps {
+  containerProps: SplitViewContainerProps,
+  handleProps: SplitViewHandleProps,
+  primaryPaneProps: DOMProps
+}
+
+export interface SplitViewProps extends DOMProps {
   children: [ReactElement, ReactElement],
   orientation?: 'horizontal' | 'vertical',
   allowsResizing?: boolean,

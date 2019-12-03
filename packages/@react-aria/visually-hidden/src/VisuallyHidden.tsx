@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
+import {DOMProps} from '@react-types/shared';
+import React, {JSXElementConstructor, ReactNode} from 'react';
 import styles from './VisuallyHidden.css';
 
-interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
+interface VisuallyHiddenProps extends DOMProps {
   children: ReactNode,
   elementType?: string | JSXElementConstructor<any>,
   isFocusable?: boolean

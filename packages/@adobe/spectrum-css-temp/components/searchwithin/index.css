@@ -12,6 +12,10 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ searchwithin/searchwithin.yml }}
+*/
+
 :root {
   --spectrum-searchwithin-width: 250px;
 

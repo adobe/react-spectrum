@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import Info from '@spectrum-icons/workflow/Info';
+import Info from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';

@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-itemHeader {
   color: var(--spectrum-accordion-text-color);
 
+  &:focus,
   &:hover {
     color: var(--spectrum-accordion-text-color-hover);
 
@@ -52,7 +53,7 @@ governing permissions and limitations under the License.
   .spectrum-Accordion-itemHeader {
     &,
     &:hover,
-    &:focus-ring {
+    &:focus {
       color: var(--spectrum-accordion-text-color-disabled);
       background-color: transparent;
     }

@@ -22,14 +22,14 @@ describe('SplitView tests', function () {
   });
 
   it.each`
-    Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{UNSAFE_className: 'splitview'}}
-    ${'V2SplitView'} | ${V2SplitView} | ${{className: 'splitview'}}
-  `('$Name handles defaults', async function ({Component, props}) {
+    Name             | Component
+    ${'SplitView'}   | ${SplitView}
+    ${'V2SplitView'} | ${V2SplitView}
+  `('$Name handles defaults', async function ({Component}) {
     let onResizeSpy = jest.fn();
     let onResizeEndSpy = jest.fn();
     let {getByRole} = render(
-      <Component {...props} onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} style={{width: '100%'}}>
+      <Component className="splitview" onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -163,12 +163,12 @@ describe('SplitView tests', function () {
   });
 
   it.each`
-    Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{UNSAFE_className: 'splitview'}}
-    ${'V2SplitView'} | ${V2SplitView} | ${{className: 'splitview'}}
-  `('$Name handles primaryPane being second', function ({Component, props}) {
+    Component
+    ${SplitView}
+    ${V2SplitView}
+  `('handles primaryPane being second', function ({Component}) {
     let {getByRole} = render(
-      <Component {...props} primaryPane={1} style={{width: '100%'}}>
+      <Component className="splitview" primaryPane={1} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -248,12 +248,12 @@ describe('SplitView tests', function () {
 
 
   it.each`
-    Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{allowsCollapsing: true, UNSAFE_className: 'splitview'}}
-    ${'V2SplitView'} | ${V2SplitView} | ${{collapsible: true, className: 'splitview'}}
-  `('$Name handles allowsCollapsing', function ({Component, props}) {
+    Component     | props
+    ${SplitView}  | ${{allowsCollapsing: true}}
+    ${V2SplitView}| ${{collapsible: true}}
+  `('handles allowsCollapsing', function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} style={{width: '100%'}}>
+      <Component {...props} className="splitview" style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -380,12 +380,12 @@ describe('SplitView tests', function () {
   });
 
   it.each`
-    Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{UNSAFE_className: 'splitview'}}
-    ${'V2SplitView'} | ${V2SplitView} | ${{className: 'splitview'}}
-  `('$Name should render a vertical split view', function ({Component, props}) {
+    Name             | Component
+    ${'SplitView'}   | ${SplitView}
+    ${'V2SplitView'} | ${V2SplitView}
+  `('$Name should render a vertical split view', function ({Component}) {
     let {getByRole} = render(
-      <Component {...props} orientation="vertical">
+      <Component className="splitview" orientation="vertical">
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -439,11 +439,11 @@ describe('SplitView tests', function () {
 
   it.each`
     Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{allowsResizing: false, UNSAFE_className: 'splitview'}}
-    ${'V2SplitView'} | ${V2SplitView} | ${{resizable: false, className: 'splitview'}}
+    ${'SplitView'}   | ${SplitView}   | ${{allowsResizing: false}}
+    ${'V2SplitView'} | ${V2SplitView} | ${{resizable: false}}
   `('$Name can be non-resizable', async function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} style={{width: '100%'}}>
+      <Component {...props} className="splitview" style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -476,11 +476,11 @@ describe('SplitView tests', function () {
   // V2 version doesn't have this capability, firstly limited by onMouseDown `if (this.props.primarySize !== undefined) {`
   it.each`
     Name             | Component      | props
-    ${'SplitView'}   | ${SplitView}   | ${{primarySize: 500, UNSAFE_className: 'splitview'}}
+    ${'SplitView'}   | ${SplitView}   | ${{primarySize: 500}}
   `('$Name can have its size controlled', async function ({Component, props}) {
     let onResizeSpy = jest.fn();
     let {getByRole} = render(
-      <Component {...props} onResize={onResizeSpy} style={{width: '100%'}}>
+      <Component {...props} className="splitview" onResize={onResizeSpy} style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>

@@ -1,13 +1,12 @@
 import {AllHTMLAttributes, ChangeEvent} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
-import {TextInputDOMProps} from '@react-types/shared';
 
 interface TextFieldAria {
   textFieldProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTextField(
-  props: TextFieldProps & TextInputDOMProps
+  props: TextFieldProps
 ): TextFieldAria {
   let {
     isDisabled = false,

@@ -11,13 +11,11 @@ import {usePress} from '@react-aria/interactions';
 interface DatePickerAria {
   comboboxProps: HTMLAttributes<HTMLElement>,
   fieldProps: DOMProps,
-  buttonProps: HTMLAttributes<HTMLElement>,
+  buttonProps: DOMProps,
   dialogProps: DOMProps
 }
 
-type DatePickerAriaProps = (DatePickerProps | DateRangePickerProps) & DOMProps;
-
-export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState | DateRangePickerState): DatePickerAria {
+export function useDatePicker(props: DatePickerProps | DateRangePickerProps, state: DatePickerState | DateRangePickerState): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
   let formatMessage = useMessageFormatter(intlMessages);

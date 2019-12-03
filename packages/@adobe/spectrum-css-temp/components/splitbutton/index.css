@@ -19,6 +19,18 @@ governing permissions and limitations under the License.
   --spectrum-splitbutton-icon-gap: var(--spectrum-global-dimension-size-150);
 }
 
+/* topdoc
+{{ splitbutton/splitbutton-cta.yml }}
+*/
+
+/* topdoc
+{{ splitbutton/splitbutton-primary.yml }}
+*/
+
+/* topdoc
+{{ splitbutton/splitbutton-secondary.yml }}
+*/
+
 .spectrum-SplitButton {
   position: relative;
   display: inline-flex;

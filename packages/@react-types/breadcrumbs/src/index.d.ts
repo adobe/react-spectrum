@@ -1,7 +1,8 @@
+import {DOMProps} from '@react-types/shared';
 import {PressEvent} from '@react-aria/interactions';
 import {ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps {
+export interface BreadcrumbItemProps extends DOMProps {
   isCurrent?: boolean,
   isHeading?: boolean,
   isDisabled?: boolean,
@@ -10,6 +11,6 @@ export interface BreadcrumbItemProps {
   children: ReactNode
 }
 
-export interface BreadcrumbsProps {
+export interface BreadcrumbsProps extends DOMProps {
   children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[]
 }

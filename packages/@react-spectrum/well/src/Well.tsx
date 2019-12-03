@@ -1,31 +1,25 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import React, {forwardRef, ReactNode, RefObject} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 
-interface WellProps extends DOMProps, StyleProps {
+interface WellProps extends React.AllHTMLAttributes<HTMLElement> {
   children: ReactNode
 }
 
-export const Well = forwardRef((props: WellProps, ref: RefObject<HTMLDivElement>) => {
-  let {
-    children,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
-
-  return (
+export const Well = forwardRef(({
+  children,
+  className,
+  ...otherProps}: WellProps,
+  ref: RefObject<HTMLDivElement>) => (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       ref={ref}
       className={classNames(
         styles,
         'spectrum-Well',
-        styleProps.className
+        className
       )}>
       {children}
     </div>
-  );
-});
+  )
+);

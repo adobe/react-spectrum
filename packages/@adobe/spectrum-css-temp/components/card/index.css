@@ -12,6 +12,18 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ card/card.yml }}
+*/
+
+/*! topdoc
+{{ card/card-asset.yml }}
+*/
+
+/*! topdoc
+{{ card/card-small.yml }}
+*/
+
 .spectrum-Card {
   position: relative;
 
@@ -23,8 +35,6 @@ governing permissions and limitations under the License.
 
   border: var(--spectrum-card-border-size) solid transparent;
   border-radius: var(--spectrum-card-border-radius);
-
-  text-decoration: none;
 
   &:focus {
     outline: none;
@@ -153,11 +163,25 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
 }
 
-.spectrum-Card--quiet {
-  .spectrum-Card-preview {
-    min-height: var(--spectrum-card-quiet-min-size);
-  }
-}
+/* topdoc
+{{ card/card-quiet-large.yml }}
+*/
+
+/* topdoc
+{{ card/card-quiet-small.yml }}
+*/
+
+/* topdoc
+{{ card/card-quiet-folder.yml }}
+*/
+
+/* topdoc
+{{ card/card-quiet-file.yml }}
+*/
+
+/* topdoc
+{{ card/card-gallery.yml }}
+*/
 
 .spectrum-Card--quiet,
 .spectrum-Card--gallery {
@@ -171,6 +195,7 @@ governing permissions and limitations under the License.
   .spectrum-Card-preview {
     width: 100%;
     flex: 1;
+    min-height: var(--spectrum-card-quiet-min-size);
     padding: var(--spectrum-card-quiet-preview-padding);
     margin: 0 auto;
     box-sizing: border-box;
@@ -230,42 +255,6 @@ governing permissions and limitations under the License.
 
   .spectrum-Card-title {
     font-size: var(--spectrum-card-quiet-small-title-text-size);
-  }
-}
-
-.spectrum-Card--horizontal {
-  flex-direction: row;
-
-  .spectrum-Card-preview {
-    flex-shrink: 0;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: var(--spectrum-card-quiet-border-radius) 0 0 var(--spectrum-card-quiet-border-radius);
-    border-right: var(--spectrum-card-border-size) solid transparent;
-
-    padding: var(--spectrum-global-dimension-size-175);
-  }
-
-  .spectrum-Card-header,
-  .spectrum-Card-content {
-    margin-top: 0;
-    height: auto;
-  }
-
-  .spectrum-Card-title {
-    padding-right: 0;
-  }
-
-  .spectrum-Card-body {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-
-    padding: 0 var(--spectrum-global-dimension-size-200);
   }
 }
 

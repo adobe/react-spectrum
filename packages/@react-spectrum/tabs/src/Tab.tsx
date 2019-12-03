@@ -1,11 +1,9 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTab} from '@react-aria/tabs';
 
-interface TabProps extends DOMProps, StyleProps {
+interface TabProps extends React.HTMLAttributes<HTMLElement> {
   icon?: ReactNode,
   label?: ReactNode,
   value: any,
@@ -20,12 +18,10 @@ export function Tab(props: TabProps) {
   // v3 Always use classNames even when only one class because of modules and "turnonclassname" option
   // TODO: Add in icon in the render when cloneIcon/icon v3 becomes available. Make it so icon or label must be defined.
   let {label, isDisabled, ...otherProps} = props;
-  let {styleProps} = useStyleProps(otherProps);
   let {tabProps} = useTab(props);
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       {...tabProps}
       className={classNames(
         styles,
@@ -34,7 +30,7 @@ export function Tab(props: TabProps) {
           'is-selected': tabProps['aria-selected'],
           'is-disabled': isDisabled
         },
-        styleProps.className
+        otherProps.className
       )}>
       {label && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{label}</span>}
     </div>

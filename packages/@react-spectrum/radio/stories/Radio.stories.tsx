@@ -76,7 +76,7 @@ storiesOf('Radio', module)
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+    <RadioGroup {...props} onChange={action('onChange')} name="favorite-pet-group">
       <Radio value="dogs" {...radioProps[0]}>
         Dogs
       </Radio>
@@ -92,7 +92,7 @@ function render(props, radioProps = [{}, {}, {}]) {
 
 function renderNoLabel(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
+    <RadioGroup {...props} onChange={action('onChange')}>
       <Radio value="dogs" aria-label="Dogs" {...radioProps[0]} />
       <Radio value="cats" aria-label="Cats" {...radioProps[1]} />
       <Radio value="dragons" aria-label="Dragons" {...radioProps[2]} />
@@ -102,7 +102,7 @@ function renderNoLabel(props, radioProps = [{}, {}, {}]) {
 
 function renderLongLabel(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
+    <RadioGroup {...props} onChange={action('onChange')}>
       <Radio value="dogs" {...radioProps[0]}>
         Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
       </Radio>
@@ -122,7 +122,7 @@ function renderExternalLabel() {
       <label id="the-label" htmlFor="the-radiogroup">I'm an independent label</label>
       <RadioGroup id="the-radiogroup" aria-labelledby="the-label" onChange={action('onChange')}>
         <Radio value="dogs">
-          Dogs
+          Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
         </Radio>
         <Radio value="cats">
           Cats
@@ -138,7 +138,7 @@ function renderExternalLabel() {
 function renderFormControl() {
   return (
     <Provider isDisabled>
-      <RadioGroup aria-label="Favorite pet" onChange={action('onChangePet')} name="favorite-pet-group">
+      <RadioGroup onChange={action('onChangePet')} name="favorite-pet-group">
         <Radio value="dogs">
           Dogs
         </Radio>
@@ -149,7 +149,7 @@ function renderFormControl() {
           Dragons
         </Radio>
       </RadioGroup>
-      <RadioGroup aria-label="Favorite cereal" onChange={action('onChangeCereal')} name="favorite-cereal-group">
+      <RadioGroup onChange={action('onChangeCereal')} name="favorite-cereal-group">
         <Radio value="reeses">
           Reese's Peanut Butter Puffs
         </Radio>

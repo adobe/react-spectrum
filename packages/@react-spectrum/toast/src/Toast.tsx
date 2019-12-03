@@ -19,14 +19,13 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {DOMProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React, {RefObject} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {ToastProps} from '@react-types/toast';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -35,34 +34,32 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
-
-export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject<HTMLElement>) => {
+export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
+  let completeProps = useProviderProps(props);
   let {
     actionButtonProps,
     closeButtonProps,
     iconProps,
     toastProps
-  } = useToast(props);
+  } = useToast(completeProps);
   let {
     actionLabel,
     children,
+    className,
     variant,
     ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  } = completeProps;
   let Icon = ICONS[variant];
 
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       {...toastProps}
       ref={ref}
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
-        styleProps.className
+        className
       )}>
       {Icon &&
         <Icon
@@ -74,7 +71,7 @@ export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject
         {actionLabel &&
           <Button
             {...actionButtonProps}
-            UNSAFE_className={classNames(styles, 'spectrum-Button')}
+            className={classNames(styles, 'spectrum-Button')}
             isQuiet
             variant="overBackground">{actionLabel}</Button>
         }

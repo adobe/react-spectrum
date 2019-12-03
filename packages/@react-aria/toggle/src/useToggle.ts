@@ -1,11 +1,10 @@
-import {DOMProps} from '@react-types/shared';
 import React from 'react';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-types/toggle';
 
 export interface ToggleAriaProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState):ToggleAriaProps {
+export function useToggle(props: SwitchProps, state: ToggleState):ToggleAriaProps {
   let {
     autoFocus = false,
     isDisabled = false,

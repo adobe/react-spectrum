@@ -42,7 +42,7 @@ storiesOf('DialogTrigger', module)
     () => (
       <div style={{paddingTop: 100}}>
         <input />
-        <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
+        <Provider colorScheme="dark" style={{padding: 40, marginTop: 10}}>
           <DialogTrigger>
             <ActionButton>Trigger</ActionButton>
             <Dialog>

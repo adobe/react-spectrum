@@ -1,11 +1,10 @@
 import {classNames} from '@react-spectrum/utils';
-import {DOMProps, SplitViewProps} from '@react-types/shared';
 import React, {useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SplitViewProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';
-import './SplitView.css';
+import './SplitView.styl';
 
 
 const ORIENTATIONS = {
@@ -26,9 +25,7 @@ const CURSORS = {
   }
 };
 
-interface SpectrumSplitViewProps extends SplitViewProps, DOMProps, StyleProps {}
-
-export function SplitView(props: SpectrumSplitViewProps) {
+export function SplitView(props: SplitViewProps) {
   let {
     orientation = 'horizontal' as 'horizontal',
     allowsResizing = true,
@@ -39,7 +36,6 @@ export function SplitView(props: SpectrumSplitViewProps) {
     secondaryMaxSize = Infinity,
     ...remainingProps
   } = props;
-  let {styleProps} = useStyleProps(remainingProps);
   let containerRef = useRef(null);
 
   let children = React.Children.toArray(props.children);
@@ -106,9 +102,8 @@ export function SplitView(props: SpectrumSplitViewProps) {
   return (
     <div
       {...containerProps}
-      {...styleProps}
       ref={containerRef}
-      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, styleProps.className)}>
+      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}>
       {primaryPane === 0 ? primary : secondary}
       <div
         {...handleProps}

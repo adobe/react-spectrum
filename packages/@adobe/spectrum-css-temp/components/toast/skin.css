@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+.spectrum-Tooltip-label p {
+  margin: 0;
+}
+
 .spectrum-Toast {
   background-color: var(--spectrum-toast-background-color);
   color: var(--spectrum-toast-background-color);

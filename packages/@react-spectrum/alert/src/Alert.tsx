@@ -1,20 +1,23 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
 import React, {ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface AlertProps extends DOMProps, StyleProps {
+
+interface AlertProps {
+  /**
+   * Any renderable item.
+   */
   header?: ReactNode,
   children: ReactNode,
   variant: 'info' | 'help' | 'success' | 'error' | 'warning',
-  alt: string
+  className: string,
+  alt: string,
 }
 
 let ICONS = {
@@ -30,10 +33,10 @@ export function Alert(props: AlertProps) {
     header,
     children,
     variant = 'info', // info, help, success, error, warning
+    className,
     alt, // alt text for image icon, default is derived from variant
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   // let AlertIcon = ICONS[variant];
   let formatMessage = useMessageFormatter(intlMessages);
@@ -45,13 +48,12 @@ export function Alert(props: AlertProps) {
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       className={
         classNames(
           styles,
           'spectrum-Alert',
           `spectrum-Alert--${variant}`,
-          styleProps.className
+          className
         )
       }
       role="alert">

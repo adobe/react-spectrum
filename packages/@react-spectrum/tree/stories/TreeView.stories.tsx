@@ -2,12 +2,12 @@ import {Item, Section, Tree} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-interface Item {
-  name: string,
-  children?: Item[]
-}
+// let items = [];
+// for (let i = 0; i < 1000; i++) {
+//   items.push({name: 'Item ' + i});
+// }
 
-let items: Item[] = [
+let items = [
   {name: 'Animals', children: [
     {name: 'Aardvark'},
     {name: 'Kangaroo'},
@@ -22,16 +22,11 @@ let items: Item[] = [
   ]}
 ];
 
-let longList: Item[] = [];
-for (let i = 0; i < 1000; i++) {
-  longList.push({name: 'Item ' + i});
-}
-
 storiesOf('Tree', module)
   .add(
     'Default',
     () => (
-      <Tree items={items} itemKey="name" onSelectionChange={keys => console.log(keys)}>
+      <Tree items={items} itemKey="name">
         {item => <Item childItems={item.children}>{item.name}</Item>}
       </Tree>
     )
@@ -78,17 +73,5 @@ storiesOf('Tree', module)
           <Item>Three</Item>
         </Section>
       </Tree>
-    )
-  )
-  .add(
-    'Long list',
-    () => (
-      <div>
-        <input />
-        <Tree items={longList} itemKey="name">
-          {item => <Item>{item.name}</Item>}
-        </Tree>
-        <input />
-      </div>
     )
   );

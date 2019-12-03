@@ -1,8 +1,9 @@
+import {DOMProps} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/collections';
 
-interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
+interface ScrollViewProps extends DOMProps {
   contentSize: Size,
   visibleRect: Rect,
   onVisibleRectChange: (rect: Rect) => void,
@@ -10,10 +11,9 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   innerStyle: CSSProperties
 }
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+export function ScrollView(props: ScrollViewProps) {
   let {contentSize, visibleRect, onVisibleRectChange, children, innerStyle, ...otherProps} = props;
-  let defaultRef = useRef();
-  ref = ref || defaultRef;
+  let ref = useRef<HTMLDivElement>();
   let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
@@ -101,6 +101,3 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     </div>
   );
 }
-
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
-export {ScrollViewForwardRef as ScrollView};

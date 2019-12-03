@@ -12,7 +12,6 @@ import {SpectrumDatePickerProps} from './types';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
-import {useStyleProps} from '@react-spectrum/view';
 
 export function DatePickerField(props: SpectrumDatePickerProps) {
   let state = useDatePickerFieldState(props);
@@ -22,9 +21,10 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     isRequired,
     isQuiet,
     validationState,
+    className,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  delete otherProps.value;
   let {fieldProps, segmentProps} = useDateField(props);
   let domProps = mergeProps(
     filterDOMProps(otherProps),
@@ -41,7 +41,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
       'spectrum-Textfield--quiet': isQuiet
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
-    styleProps.className
+    className
   );
 
   let inputClass = classNames(
@@ -79,7 +79,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
   }
 
   return (
-    <div className={textfieldClass} {...domProps} {...styleProps}>
+    <div className={textfieldClass} {...domProps}>
       <FocusRing
         within
         focusClass={classNames(textfieldStyles, 'is-focused')}

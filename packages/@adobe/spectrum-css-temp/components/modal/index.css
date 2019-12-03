@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-@import '../overlay/index.css';
+@import '../commons/overlay.css';
 
 :root {
   --spectrum-dialog-vertical-offset: -2vh;

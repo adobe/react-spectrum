@@ -24,22 +24,22 @@ describe('Well', () => {
 
   it.each`
     Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
+    ${'v3'}   | ${Well}     | ${{className: 'myClass', 'data-testid': 'wellV3'}}
     ${'v2'}   | ${V2Well}   | ${{className: 'myClass', 'data-testid': 'wellV2'}}
-  `('$Name supports UNSAFE_className', ({Component, props}) => {
+  `('$Name supports additional classNames', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
     let className = getByTestId(props['data-testid']).className;
     expect(className.includes('spectrum-Well')).toBeTruthy();
-    expect(className.includes('myClass')).toBeTruthy();
+    expect(className.includes(props.className)).toBeTruthy();
   });
 
   it.each`
     Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{'data-testid': 'wellV3'}}
-    ${'v2'}   | ${V2Well}   | ${{'data-testid': 'wellV2'}}
+    ${'v3'}   | ${Well}     | ${{title: 'This is a title', 'data-testid': 'wellV3'}}
+    ${'v2'}   | ${V2Well}   | ${{title: 'This is a title', 'data-testid': 'wellV2'}}
   `('$Name supports additional properties', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
-    expect(getByTestId(props['data-testid'])).toHaveAttribute('data-testid', props['data-testid']);
+    expect(getByTestId(props['data-testid'])).toHaveAttribute('title', props.title);
   });
 
   it.each`

@@ -1,10 +1,9 @@
 import {AllHTMLAttributes, SyntheticEvent} from 'react';
-import {DOMProps} from '@react-types/shared';
 import {LinkProps} from '@react-types/link';
 import {PressEvent, usePress} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
-export interface AriaLinkProps extends LinkProps, DOMProps {
+export interface AriaLinkProps extends LinkProps {
   href?: string,
   tabIndex?: number,
   onPress?: (e: PressEvent) => void,

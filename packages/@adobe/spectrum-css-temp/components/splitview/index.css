@@ -12,6 +12,28 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ splitview/splitview-horizontal.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-horizontal-resizable.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-vertical-resizable.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-horizontal-collapsed-left.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-horizontal-collapsed-right.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-vertical-collapsed-top.yml }}
+*/
+/* topdoc
+{{ splitview/splitview-vertical-collapsed-bottom.yml }}
+*/
+
 :root {
   --spectrum-splitview-vertical-width: 100%;
   --spectrum-splitview-vertical-gripper-width: 50%;

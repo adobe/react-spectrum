@@ -1,6 +1,5 @@
 import {Collection, Node} from './types';
 import {Key} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 // import {Point} from './Point';
@@ -24,7 +23,7 @@ type ListLayoutOptions<T> = {
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
-export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
+export class ListLayout<T> extends Layout<Node<T>> {
   private rowHeight: number;
   private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
@@ -91,44 +90,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyBelow(key: Key) {
     return this.collectionManager.collection.getKeyAfter(key);
-  }
-
-  getKeyPageAbove(key: Key) {
-    let layoutInfo = this.getLayoutInfo('item', key);
-    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.collectionManager.visibleRect.height);
-    while (layoutInfo.rect.y > pageY && layoutInfo) {
-      let keyAbove = this.getKeyAbove(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo('item', keyAbove);
-    }
-
-    if (layoutInfo) {
-      return layoutInfo.key;
-    }
-
-    return this.getFirstKey();
-  }
-
-  getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo('item', key);
-    let pageY = Math.min(this.collectionManager.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.collectionManager.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y < pageY) {
-      let keyBelow = this.getKeyBelow(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo('item', keyBelow);
-    }
-
-    if (layoutInfo) {
-      return layoutInfo.key;
-    }
-
-    return this.getLastKey();
-  }
-
-  getFirstKey() {
-    return this.collectionManager.collection.getFirstKey();
-  }
-
-  getLastKey() {
-    return this.collectionManager.collection.getLastKey();
   }
 
   // getDragTarget(point: Point): DragTarget {

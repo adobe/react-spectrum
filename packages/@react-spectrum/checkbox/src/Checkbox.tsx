@@ -2,19 +2,13 @@ import {CheckboxProps} from '@react-types/checkbox';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
-import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, RefObject, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useToggleState} from '@react-stately/toggle';
 
-interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
-  isEmphasized?: boolean
-}
-
-export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject<HTMLLabelElement>) => {
+export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLabelElement>) => {
   let completeProps = Object.assign({}, {
     isIndeterminate: false,
     isDisabled: false,
@@ -28,9 +22,9 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
     isEmphasized,
     isDisabled,
     children,
+    className,
     ...otherProps
   } = completeProps;
-  let {styleProps} = useStyleProps(otherProps);
 
   let inputRef = useRef<HTMLInputElement>();
   let {
@@ -48,10 +42,10 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false
+          'aria-label': false,
+          onChange: false
         }
       )}
-      {...styleProps}
       ref={ref}
       className={
         classNames(
@@ -63,7 +57,7 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
             'is-invalid': inputProps['aria-invalid'],
             'is-disabled': isDisabled
           },
-          styleProps.className
+          className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

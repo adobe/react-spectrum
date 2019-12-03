@@ -1,8 +1,6 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
 import {LabelPosition, RadioGroupProps} from '@react-types/radio';
 import React, {forwardRef, RefObject, useContext} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
@@ -26,9 +24,7 @@ export function useRadioProvider(): RadioGroupContext {
   return useContext(RadioContext);
 }
 
-interface SpectrumRadioGroupProps extends RadioGroupProps, DOMProps, StyleProps {}
-
-export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: RefObject<HTMLDivElement>) => {
+export const RadioGroup = forwardRef((props: RadioGroupProps, ref: RefObject<HTMLDivElement>) => {
   let completeProps = useProviderProps(props);
 
   let {
@@ -39,18 +35,17 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: RefOb
     labelPosition,
     validationState,
     children,
+    className,
     orientation,
     ...otherProps
   } = completeProps;
-  let {styleProps} = useStyleProps(otherProps);
 
   let {selectedRadio, setSelectedRadio} = useRadioGroupState(completeProps);
   let {radioGroupProps, radioProps} = useRadioGroup(completeProps);
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
-      {...styleProps}
+      {...filterDOMProps(otherProps, {name: false})}
       ref={ref}
       className={
         classNames(
@@ -59,7 +54,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: RefOb
           {
             'spectrum-FieldGroup--vertical': orientation === 'vertical'
           },
-          styleProps.className
+          className
         )
       }
       {...radioGroupProps}>

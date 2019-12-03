@@ -12,6 +12,9 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ barloader/barloader-large.yml }}
+*/
 .spectrum-BarLoader {
   position: relative;
   display: inline-flex;
@@ -48,7 +51,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader-label {
-  flex: 1 0 auto;
+  flex: 1;
 }
 
 .spectrum-BarLoader-percentage {
@@ -74,7 +77,11 @@ governing permissions and limitations under the License.
   }
 }
 
+/* topdoc
+{{ barloader/barloader-small.yml }}
+*/
 .spectrum-BarLoader--small {
+  height: var(--spectrum-barloader-small-height);
   min-width: var(--spectrum-barloader-small-width);
 
   .spectrum-BarLoader-fill {
@@ -86,6 +93,21 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-barloader-small-border-radius);
   }
 }
+/* topdoc
+{{ barloader/barloader-large-over-background.yml }}
+*/
+/* topdoc
+{{ barloader/barloader-small-over-background.yml }}
+*/
+/* topdoc
+{{ barloader/barloader-meter.yml }}
+*/
+/* topdoc
+{{ barloader/barloader-large-indeterminate.yml }}
+*/
+/* topdoc
+{{ barloader/barloader-small-indeterminate.yml }}
+*/
 .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
   width: var(--spectrum-barloader-large-indeterminate-fill-width);
   position: relative;

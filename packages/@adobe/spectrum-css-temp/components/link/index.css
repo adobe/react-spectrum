@@ -12,6 +12,9 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* topdoc
+{{ link/link.yml }}
+*/
 .spectrum-Link {
   /* Remove the gray background on active links in IE 10. */
   background-color: transparent;

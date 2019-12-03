@@ -18,8 +18,7 @@
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
     "plop": "plop",
-    "chromatic": "CHROMATIC_APP_CODE=k5oflhpwx98 chromatic test --build-script-name build-storybook",
-    "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js"
+    "chromatic": "CHROMATIC_APP_CODE=k5oflhpwx98 chromatic test --build-script-name build-storybook"
   },
   "workspaces": [
     "packages/*/*"
@@ -49,7 +48,6 @@
     "@react/collection-view": "^4.1.5",
     "@react/react-spectrum": "^2.26.1",
     "@react/react-spectrum-icons": "^2.1.0",
-    "@spectrum-css/vars": "^2.0.0",
     "@storybook/addon-a11y": "^5.2.1",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-info": "^5.2.1",
@@ -133,8 +131,5 @@
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-middleware": "^2.24.3",
     "wsrun": "^5.0.0"
-  },
-  "dependencies": {
-    "@spectrum-css/component-builder": "^1.0.0"
   }
 }

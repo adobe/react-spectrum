@@ -60,9 +60,9 @@ describe('ProgressBar', function () {
 
   it.each`
     Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', UNSAFE_className: 'testClass'}}
+    ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', className: 'testClass'}}
     ${'V2ProgressBar'} | ${V2ProgressBar} | ${{size: 'S', className: 'testClass'}}
-  `('$Name supports UNSAFE_className', function ({Component, props}) {
+  `('$Name supports custom class', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('class', expect.stringContaining('testClass'));

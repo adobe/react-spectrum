@@ -1,12 +1,13 @@
 import {Collection} from './types';
 import {CollectionManager} from './CollectionManager';
+import {DOMProps} from '@react-types/shared';
 import {Key, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 
-interface CollectionProps<T extends object, V, W> {
+interface CollectionProps<T, V, W> extends DOMProps {
   renderView(type: string, content: T): V,
   renderWrapper(reusableView: ReusableView<T, V>): W,
   layout: Layout<T>,
@@ -14,7 +15,7 @@ interface CollectionProps<T extends object, V, W> {
   getScrollAnchor?(rect: Rect): Key
 }
 
-interface CollectionState<T extends object, V, W> {
+interface CollectionState<T, V, W> {
   visibleViews: Set<W>,
   visibleRect: Rect,
   setVisibleRect: (rect: Rect) => void,
@@ -23,7 +24,7 @@ interface CollectionState<T extends object, V, W> {
   collectionManager: CollectionManager<T, V, W>
 }
 
-export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
+export function useCollectionState<T, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
   let [visibleViews, setVisibleViews] = useState(new Set<W>());
   let [visibleRect, setVisibleRect] = useState(new Rect());
   let [contentSize, setContentSize] = useState(new Size());
