@@ -3,7 +3,6 @@ import React, {forwardRef, RefObject} from 'react';
 import {SpectrumTextFieldProps} from './types';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
 export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
   props = useProviderProps(props);
@@ -13,10 +12,9 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
     isReadOnly = false,
     isRequired = false,
     onChange,
+    UNSAFE_className,
     ...otherProps
   } = props;
-
-  let {styleProps} = useStyleProps(props);
 
   let onHeightChange = (value, e) => {
     if (isQuiet) {
@@ -28,7 +26,7 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
   return (
     <TextFieldBase
       {...otherProps}
-      wrapperClassName={styleProps.className}
+      wrapperClassName={UNSAFE_className}
       ref={ref}
       multiLine
       isDisabled={isDisabled}
