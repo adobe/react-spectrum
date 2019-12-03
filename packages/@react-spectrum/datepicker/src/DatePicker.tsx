@@ -47,6 +47,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
   return (
     <FocusRing 
       within
+      isTextInput
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
       <div
