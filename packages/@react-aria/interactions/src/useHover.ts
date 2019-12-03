@@ -12,7 +12,7 @@ export interface HoverEvent {
 export interface HoverProps {
   isHovering?: boolean,
   isDisabled?: boolean,
-  delay?: boolean,
+  immediateAppearance?: boolean,
   onHover?: (isHovering: boolean) => void,
   onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void
@@ -69,7 +69,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHoverStart,
     onHoverEnd,
     isDisabled,
-    delay,
+    immediateAppearance,
     isHovering: isHoveringProp,
     ...domProps
   } = useHoverResponderContext(props);
@@ -103,7 +103,8 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        handleDelayedShow(onHover, delay);
+        // TODO: add the internal method call with type, target and pointerType arguments, then resolve Milan's comments
+        handleDelayedShow(onHover, isDisabled, immediateAppearance);
       }
 
       setHover(true);
@@ -148,9 +149,8 @@ export function useHover(props: HoverHookProps): HoverResult {
         triggerHoverEnd(e, e.pointerType);
       };
 
-      // Potential TODO: create a separate useFocus hook? Would be a lot of duplicate code.
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, delay);
+        handleDelayedShow(onHover, isDisabled, immediateAppearance);
       };
 
       hoverProps.onBlur = () => {
@@ -168,7 +168,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, delay);
+        handleDelayedShow(onHover, isDisabled, immediateAppearance);
       };
 
       hoverProps.onBlur = () => {
@@ -177,7 +177,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, isDisabled, delay]);
+  }, [onHover, onHoverStart, onHoverEnd, isDisabled, immediateAppearance]);
 
   return {
     isHovering: isHoveringProp || isHovering,
@@ -185,14 +185,16 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-function handleDelayedShow(onHover, delay) {
+function handleDelayedShow(onHover, isDisabled, immediateAppearance) {
 
-  // immediate appearance if user provides delay prop
-  if (delay) {
+  if (isDisabled) {
+    return;
+  }
+  
+  if (immediateAppearance) {
     onHover(true);
   }
 
-  // immediate appearance if warmup period complete
   if (warmupPeriodComplete === true && cooldownPeriodComplete === false) {
     onHover(true);
   }

@@ -75,7 +75,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
-  // investigate: spread tooltipProps as well?
+  // investigate: spread tooltipAriaProps as well? 
   return {
     tooltipTriggerBaseProps: {
       ...overlayProps,

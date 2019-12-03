@@ -4,6 +4,8 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
 
+// make additional stories for start end ... this is what will do the flip ... should be handled automatically
+
 storiesOf('Tooltip', module)
   .add(
     'default',
@@ -54,8 +56,14 @@ storiesOf('Tooltip', module)
     'triggered by hover, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
   ).add(
+    'supports disable prop : hover',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
+  ).add(
+    'supports disable prop : click',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
+  ).add(
     'supports immediate appearance',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', delay: true}) // increased appearance delay by a ton to make it obvious this works
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', immediateAppearance: true}) // increased appearance delay by a ton to make it obvious this works
   ).add(
     'single tooltip proof of concept : temporary story : hover',
     () => renderWithThreeTriggers('This is a tooltip.', {placement: 'right', type: 'hover'})

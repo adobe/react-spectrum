@@ -16,7 +16,8 @@ interface TooltipTriggerProps extends PositionProps {
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   defaultOpen?: boolean,
-  delay?: boolean,
+  isDisabled?: boolean,
+  immediateAppearance?: boolean,
   onOpenChange?: (isOpen: boolean) => void
 }
 
@@ -35,7 +36,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
     children,
     type,
-    delay,
+    isDisabled,
+    immediateAppearance,
     targetRef,
     isOpen,
     defaultOpen,
@@ -60,7 +62,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(false);
   };
 
-  // This implementation is not in use & not complete. Can be used if you need to keep both responders //////////////////////
+  // Can be used to handle the case of handling both click and hover tooltips //////////////////////
 
   // let hide = () => {
   //   const visibleTooltips = VISIBLE_TOOLTIPS.get(determineBucketKey(overlay));
@@ -139,6 +141,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...tooltipTriggerBaseProps}
           ref={triggerRef}
           isPressed={isOpen}
+          isDisabled={props.isDisabled}
           onPress={onPressInteraction}>
           {trigger}
         </PressResponder>
@@ -153,7 +156,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...tooltipTriggerSingularityProps}
           ref={triggerRef}
           isHovering={isOpen}
-          delay={props.delay}
+          isDisabled={props.isDisabled}
+          immediateAppearance={props.immediateAppearance}
           onHover={onHoverInteraction}>
           {trigger}
         </HoverResponder>
