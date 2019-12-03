@@ -1,4 +1,4 @@
-import {ActionButtonProps} from '@react-spectrum/button';
+import {ActionButtonProps} from '@react-types/button';
 import {Key, ReactElement} from 'react';
 
 export interface ButtonGroupStateBase {

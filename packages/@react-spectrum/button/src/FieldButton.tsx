@@ -1,4 +1,4 @@
-import {ButtonBase} from './Button';
+import {ButtonBase} from '@react-types/button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {RefObject, useRef} from 'react';

@@ -1,21 +1,13 @@
-import {ButtonBase} from './Button';
+import {ActionButtonProps} from '@react-types/button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {Key, RefObject, useRef} from 'react';
+import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useButtonProvider} from './ButtonGroup';
 import {useLocale} from '@react-aria/i18n';
-
-export interface ActionButtonProps extends ButtonBase {
-  key?: Key,
-  isQuiet?: boolean,
-  isSelected?: boolean,
-  isEmphasized?: boolean,
-  holdAffordance?: boolean
-}
 
 export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: RefObject<HTMLElement>) => {
   ref = ref || useRef();

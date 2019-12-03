@@ -1,4 +1,4 @@
-import {ButtonBase} from './Button';
+import {ButtonBase} from '@react-types/button';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {FocusRing} from '@react-aria/focus';

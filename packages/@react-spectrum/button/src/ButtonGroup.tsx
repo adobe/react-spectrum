@@ -1,16 +1,13 @@
-import {ActionButtonProps} from './';
 import {ButtonGroupProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
 import {GroupLayout, GroupNode, GroupState, useButtonGroupState} from '@react-stately/button';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, useContext, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-
-type ButtonGroupButton = ReactElement<ActionButtonProps>;
 
 interface ButtonGroupContext {
   isDisabled?: boolean,
@@ -22,8 +19,6 @@ interface ButtonGroupContext {
 }
 
 export interface SpectrumButtonGroupProps extends ButtonGroupProps {
-  children: ButtonGroupButton | ButtonGroupButton[],
-  orientation?: 'horizontal' | 'vertical',
   isEmphasized?: boolean,
   isConnected?: boolean
   isJustified?: boolean,
