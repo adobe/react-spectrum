@@ -75,7 +75,7 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
           wrapperClassName
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
         <ElementType
           {...filterDOMProps(otherProps, TextInputDOMPropNames)}
           {...textFieldProps}
