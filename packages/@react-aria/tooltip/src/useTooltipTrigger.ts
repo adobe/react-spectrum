@@ -1,4 +1,4 @@
-// TODO: rename to useTooltipTriggerBase.ts
+// TODO: rename to useTooltipTriggerBase.ts only if you can't combine into one hook 
 
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
@@ -37,8 +37,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     triggerProps,
     state
   } = props;
-
-  // let contextProps = useContext(TooltipHoverResponderContext); // maybe can you use this to check if over the tooltip?
 
   let tooltipTriggerId = useId();
 

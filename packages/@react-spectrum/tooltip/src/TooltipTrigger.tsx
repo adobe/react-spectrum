@@ -16,6 +16,7 @@ interface TooltipTriggerProps extends PositionProps {
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   defaultOpen?: boolean,
+  delay?: boolean,
   onOpenChange?: (isOpen: boolean) => void
 }
 
@@ -43,10 +44,10 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
-  // Potential TODO: move this to react-statley in a tooltip trigger package similar to the Switch component?
+  // Next PR: move this to react-statley in a tooltip trigger package similar to the Switch component
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
-  // Potential TODO: move these three functions into useTooltipTrigger, as they are interactions?
+  // Next PR: move these three functions into useTooltipTrigger, as they are interactions?
   let onPressInteraction = () => {
     setOpen(!open);
   };
@@ -59,7 +60,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(false);
   };
 
-  // This implementation is not in use & not complete. Maybe it should be instead of the useTooltipTrigger approach? //////////////////////
+  // This implementation is not in use & not complete. Can be used if you need to keep both responders //////////////////////
 
   // let hide = () => {
   //   const visibleTooltips = VISIBLE_TOOLTIPS.get(determineBucketKey(overlay));
@@ -98,7 +99,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  // rename tooltipBaseTriggerProps
+  // TODO: rename tooltipBaseTriggerProps
   let {tooltipTriggerProps} = useTooltipTrigger(
     {
       tooltipProps: {
@@ -143,7 +144,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   delete overlayProps.style.position;
 
-  // onEntered={entered} onExited={exited} is an option to show when interactions with the overlay are happening 
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}

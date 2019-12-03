@@ -23,7 +23,6 @@ export interface HoverHookProps extends HoverProps, DOMProps {
 }
 
 interface HoverState {
-  ignoreEmulatedMouseEvents: boolean,
   target: HTMLElement | null
 }
 
@@ -35,7 +34,7 @@ interface HoverResult {
 let hoverHideDelay = null;
 let hoverShowDelay = null;
 
-// Potential TODOs: create state machine (enums with variables set to appropriate booleans) ... maybe adding a warmupPeriodReset variable
+// Next PR: refactor these variables to be in a state machine [using Enums or useReducer]
 const WARMUP_PERIOD_LENGTH = 2000; // TODO: use this variable in hoverShowDelay
 const COOLDOWN_PERID_LENGTH = 160; // TODO: use this variable in hoverHideDelay
 let warmupPeriodComplete = false;
@@ -78,7 +77,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   let [isHovering, setHover] = useState(false);
 
   let ref = useRef<HoverState>({
-    ignoreEmulatedMouseEvents: false,
     target: null
   });
 
@@ -91,7 +89,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (pointerType === 'touch') {
-        state.ignoreEmulatedMouseEvents = true;
         return;
       }
 
@@ -119,7 +116,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (pointerType === 'touch') {
-        state.ignoreEmulatedMouseEvents = true;
         return;
       }
 
@@ -154,7 +150,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       // Potential TODO: create a separate useFocus hook? Would be a lot of duplicate code.
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover);
+        handleDelayedShow(onHover, delay);
       };
 
       hoverProps.onBlur = () => {
@@ -172,7 +168,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover);
+        handleDelayedShow(onHover, delay);
       };
 
       hoverProps.onBlur = () => {
@@ -181,7 +177,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, isDisabled]);
+  }, [onHover, onHoverStart, onHoverEnd, isDisabled, delay]);
 
   return {
     isHovering: isHoveringProp || isHovering,
@@ -191,18 +187,18 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 function handleDelayedShow(onHover, delay) {
 
-  // immediate appearance via delay prop
-  if(delay) {
-    onHover(true)
+  // immediate appearance if user provides delay prop
+  if (delay) {
+    onHover(true);
   }
 
   // immediate appearance if warmup period complete
-  if(warmupPeriodComplete === true && cooldownPeriodComplete === false) {
-    onHover(true)
+  if (warmupPeriodComplete === true && cooldownPeriodComplete === false) {
+    onHover(true);
   }
 
   if (cooldownPeriodTimer != null) {
-    clearInterval(cooldownPeriodTimer)
+    clearInterval(cooldownPeriodTimer);
     cooldownPeriodTimer = null;
   }
 
@@ -219,7 +215,7 @@ function handleDelayedShow(onHover, delay) {
 
 function handleDelayedHide(onHover) {
 
-  cooldownPeriodComplete = false
+  cooldownPeriodComplete = false;
 
   if (hoverShowDelay != null) {
     clearTimeout(hoverShowDelay);
@@ -231,8 +227,8 @@ function handleDelayedHide(onHover) {
   }, 300);
 
   cooldownPeriodTimer = setInterval(() => {
-    cooldownPeriodComplete = true
-    warmupPeriodComplete = false
+    cooldownPeriodComplete = true;
+    warmupPeriodComplete = false;
   }, 3000);
 
 }

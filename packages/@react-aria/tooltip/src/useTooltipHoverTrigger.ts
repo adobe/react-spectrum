@@ -1,7 +1,5 @@
 import {AllHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
-import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
 const VISIBLE_TOOLTIPS = [];
@@ -37,8 +35,6 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
     state
   } = props;
 
-  // let contextProps = useContext(TooltipHoverResponderContext); // maybe can you use this to check if over the tooltip?
-
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
@@ -47,11 +43,11 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
 
   let enter = () => {
     let tooltipBucketItem = triggerProps.ref.current.id;
-    VISIBLE_TOOLTIPS.push(tooltipBucketItem)
-  }
+    VISIBLE_TOOLTIPS.push(tooltipBucketItem);
+  };
 
   let exit = (e) => {
-    let hoveringOverTooltip = false
+    let hoveringOverTooltip = false;
     const related = e.relatedTarget || e.nativeEvent.toElement;
     const parent = related.parentNode;
     if (parent.getAttribute('role') === 'tooltip') {
@@ -60,7 +56,7 @@ export function useTooltipHoverTrigger(props: TooltipTriggerProps): TooltipTrigg
     if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
       state.setOpen(false);
     }
-  }
+  };
 
   return {
     tooltipHoverTriggerProps: {

@@ -55,7 +55,7 @@ storiesOf('Tooltip', module)
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
   ).add(
     'supports immediate appearance',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', delay: 'NoDelay'}) // increased appearance delay by a ton to make it obvious this works
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', delay: true}) // increased appearance delay by a ton to make it obvious this works
   ).add(
     'single tooltip proof of concept : temporary story : hover',
     () => renderWithThreeTriggers('This is a tooltip.', {placement: 'right', type: 'hover'})
@@ -99,37 +99,37 @@ function renderWithThreeTriggers(content, props = {}) {
   return (
     <div>
       <div>
-      <TooltipTrigger {...props}>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          onHover={action('hover')}
-          onHoverStart={action('hoverstart')}
-          onHoverEnd={action('hoverend')}>
-            Tooltip Trigger
-        </ActionButton>
-        <Tooltip>
-          {content}
-        </Tooltip>
-      </TooltipTrigger>
+        <TooltipTrigger {...props}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            onHover={action('hover')}
+            onHoverStart={action('hoverstart')}
+            onHoverEnd={action('hoverend')}>
+              Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
       </div>
       <div style={{height: 10}}> </div>
       <div>
-      <TooltipTrigger {...props}>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          onHover={action('hover')}
-          onHoverStart={action('hoverstart')}
-          onHoverEnd={action('hoverend')}>
-            Tooltip Trigger
-        </ActionButton>
-        <Tooltip>
-          {content}
-        </Tooltip>
-      </TooltipTrigger>
+        <TooltipTrigger {...props}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            onHover={action('hover')}
+            onHoverStart={action('hoverstart')}
+            onHoverEnd={action('hoverend')}>
+              Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
       </div>
       <div style={{height: 10}}> </div>
       <div>

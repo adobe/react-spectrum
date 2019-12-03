@@ -9,7 +9,6 @@ function renderComponent(Component, props, message) {
   return render(<Component {...props} data-testid={testId}>{message}</Component>);
 }
 
-// TODO: import v2 version of tooltip
 describe('Tooltip', function () {
 
   afterEach(() => {
@@ -25,7 +24,7 @@ describe('Tooltip', function () {
   });
 
   it.each`
-    Name           | Component    | props                 
+    Name           | Component    | props
     ${'Tooltip'}   | ${Tooltip}   | ${{className: 'foo'}}
   `('$Name supports additional classNames', function ({Component, props}) {
     let {getByTestId} = renderComponent(Component, props);
