@@ -1,6 +1,6 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
-import React, {useRef} from 'react';
+import React from 'react';
 import V2Link from '@react/react-spectrum/Link';
 
 // Triggers a "press" event on an element.
@@ -74,15 +74,4 @@ describe('Link', function () {
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
-
-  it('v3 can forward ref', function () {
-    let ref;
-    let Component = () => {
-      ref = useRef();
-      return <Link ref={ref} >Click me</Link>;
-    };
-    let {getByRole} = render(<Component />);
-    expect(ref.current).toEqual(getByRole('link'));
-  });
-
 });

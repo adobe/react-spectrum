@@ -63,7 +63,7 @@ describe('Breadcrumbs', function () {
     };
     let {getByLabelText} = render(<Component />);
     let breadcrumb = getByLabelText('breadcrumbs-test');
-    expect(breadcrumb).toBe(ref.current);
+    expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
   it('Handles heading child and headingAriaLevel', () => {

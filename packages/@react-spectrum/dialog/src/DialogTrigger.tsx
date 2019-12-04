@@ -1,10 +1,10 @@
 import {DialogContext} from './context';
+import {DOMRefValue, unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useMediaQuery} from '@react-spectrum/utils';
 
 interface DialogTriggerProps extends PositionProps {
   children: ReactElement[],
@@ -87,11 +87,11 @@ export function DialogTrigger(props: DialogTriggerProps) {
 }
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
-  let containerRef = useRef<HTMLDivElement>();
+  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
-    containerRef,
+    containerRef: unwrapDOMRef(containerRef),
     targetRef: targetRef || triggerRef,
     overlayRef,
     placement: props.placement,

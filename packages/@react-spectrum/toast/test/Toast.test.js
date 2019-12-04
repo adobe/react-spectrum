@@ -124,6 +124,6 @@ describe('Toast', function () {
     let toast = renderComponent(Component, {ref});
     let input = toast.getByTestId(testId);
 
-    expect(ref.current).toEqual(input);
+    expect(ref.current.UNSAFE_getDOMNode()).toEqual(input);
   });
 });

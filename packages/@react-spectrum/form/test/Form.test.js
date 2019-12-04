@@ -39,7 +39,7 @@ describe('Form', () => {
     let ref = React.createRef();
     let tree = render(<Component ref={ref} />);
     let form = tree.getByRole('form');
-    expect(form).toBe(ref.current);
+    expect(form).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
   it.each`
