@@ -1,6 +1,6 @@
 import {DOMProps} from '@react-types/shared';
 import {HoverResponderContext} from './hoverContext';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 
 export interface HoverEvent {
@@ -76,12 +76,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let [isHovering, setHover] = useState(false);
 
-  let ref = useRef<HoverState>({
-    target: null
-  });
-
   let hoverProps = useMemo(() => {
-    let state = ref.current;
 
     let triggerHoverStart = (event, pointerType) => {
       if (isDisabled) {
@@ -103,7 +98,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        // TODO: add the internal method call with type, target and pointerType arguments, then resolve Milan's comments
         handleDelayedShow(onHover, isDisabled, immediateAppearance);
       }
 
@@ -190,7 +184,7 @@ function handleDelayedShow(onHover, isDisabled, immediateAppearance) {
   if (isDisabled) {
     return;
   }
-  
+
   if (immediateAppearance) {
     onHover(true);
   }

@@ -4,8 +4,6 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
 
-// make additional stories for start end ... this is what will do the flip ... should be handled automatically
-
 storiesOf('Tooltip', module)
   .add(
     'default',
@@ -56,23 +54,23 @@ storiesOf('Tooltip', module)
     'RTL exmaple: end',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
-    'triggered by hover, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
+    'triggered by hover and focus, placement: right',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: ['hover', 'focus']})
   ).add(
-    'triggered by hover, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'}) // make it {trigger: ['hover', 'focus']}) ?
+    'triggered by hover and focus, placement: left',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus']})
   ).add(
-    'supports disable prop : hover',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
+    'supports disable prop : hover and focus',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], isDisabled: true})
   ).add(
     'supports disable prop : click',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   ).add(
     'supports immediate appearance',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', immediateAppearance: true}) // increased appearance delay by a ton to make it obvious this works
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], immediateAppearance: true}) // increased appearance delay by a ton to make it obvious this works
   ).add(
-    'single tooltip proof of concept : temporary story : hover',
-    () => renderWithThreeTriggers('This is a tooltip.', {placement: 'right', type: 'hover'})
+    'single tooltip proof of concept : temporary story : hover and focus',
+    () => renderWithThreeTriggers('This is a tooltip.', {placement: 'right', type: ['hover', 'focus']})
   ).add(
     'single tooltip proof of concept : temporary story : click',
     () => renderWithThreeTriggers('This is a tooltip.', {placement: 'left', type: 'click'})
@@ -147,20 +145,20 @@ function renderWithThreeTriggers(content, props = {}) {
       </div>
       <div style={{height: 10}}> </div>
       <div>
-      <TooltipTrigger {...props}>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          onHover={action('hover')}
-          onHoverStart={action('hoverstart')}
-          onHoverEnd={action('hoverend')}>
-            Tooltip Trigger
-        </ActionButton>
-        <Tooltip>
-          {content}
-        </Tooltip>
-      </TooltipTrigger>
+        <TooltipTrigger {...props}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            onHover={action('hover')}
+            onHoverStart={action('hoverstart')}
+            onHoverEnd={action('hoverend')}>
+              Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
       </div>
     </div>
   );

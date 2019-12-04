@@ -12,7 +12,7 @@ let theme = {
   medium: scaleMedium
 };
 
-// Next PR: test hover events here + in the interactions folder 
+// Next PR: test hover events here + make tests for it in the interactions folder 
 
 describe('TooltipTrigger', function () {
   let onOpen = jest.fn();

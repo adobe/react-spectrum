@@ -3,14 +3,7 @@ import React from 'react';
 import {Tooltip} from '../';
 import V2Tooltip from '@react/react-spectrum/Tooltip';
 
-let testId = 'test-id';
-
-function renderComponent(Component, props, message) {
-  return render(<Component {...props} data-testid={testId}>{message}</Component>);
-}
-
 describe('Tooltip', function () {
-
   afterEach(() => {
     cleanup();
   });

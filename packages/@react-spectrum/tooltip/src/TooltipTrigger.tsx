@@ -32,6 +32,13 @@ interface TooltipTriggerProps extends PositionProps {
 //   return DEFAULT_BUCKET_KEY;
 // }
 
+function isOneOf(one, of) {
+  if (Array.isArray(of)) {
+    return of.indexOf(one) >= 0;
+  }
+  return one === of;
+}
+
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
     children,
@@ -62,7 +69,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(false);
   };
 
-  // Can be used to handle the case of handling both click and hover tooltips //////////////////////
+  // Can be used to handle the case of handling click and hover tooltip combo //////////////////////
 
   // let hide = () => {
   //   const visibleTooltips = VISIBLE_TOOLTIPS.get(determineBucketKey(overlay));
@@ -94,8 +101,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   //     visibleTooltips.splice(index, 1);
   //   }
   // }
-
-  //////////////////////
 
   let containerRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<HTMLElement>();
@@ -134,7 +139,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </Overlay>
   );
 
-  if (type === 'click') {
+  if (isOneOf('click', type)) {
     return (
       <Fragment>
         <PressResponder
@@ -148,7 +153,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         {overlay}
       </Fragment>
     );
-  } else if (type === 'hover') { // parse a ['hover', 'focus'] array if you change the story to check for either one
+  } else if (isOneOf('hover', type) || isOneOf('focus', type)) {
     return (
       <Fragment>
         <HoverResponder
