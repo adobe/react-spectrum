@@ -50,6 +50,6 @@ describe('Divider', function () {
     let {getByRole} = render(<Component {...props} aria-label="divides" ref={ref} />);
 
     let divider = getByRole('separator');
-    expect(divider).toBe(ref.current);
+    expect(divider).toBe(ref.current.UNSAFE_getDOMNode());
   });
 });

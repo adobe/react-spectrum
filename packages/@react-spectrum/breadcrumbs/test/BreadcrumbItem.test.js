@@ -1,7 +1,7 @@
 import {BreadcrumbItem} from '../';
 import {cleanup, render} from '@testing-library/react';
-import React, {useRef} from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import React from 'react';
+import {triggerPress} from '@react-spectrum/test-utils'; 
 
 // v3 component
 describe('Breadcrumbs', function () {
@@ -52,16 +52,5 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbItem.id).toBeDefined();
     expect(breadcrumbItem.tabIndex).toBe(0);
     expect(breadcrumbItem.href).toBeDefined();
-  });
-
-  it('Should handle forward ref', function () {
-    let ref;
-    let Component = () => {
-      ref = useRef();
-      return <BreadcrumbItem ref={ref}>Breadcrumb item</BreadcrumbItem>;
-    };
-    let {getByText} = render(<Component />);
-    let breadcrumbItem = getByText('Breadcrumb item');
-    expect(breadcrumbItem).toEqual(ref.current);
   });
 });

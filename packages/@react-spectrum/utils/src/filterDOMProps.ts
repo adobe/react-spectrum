@@ -13,22 +13,9 @@ const DOMPropNames = {
   'aria-hidden': 1
 };
 
-export const KeyboardEvents = {
-  onKeyDown: 1,
-  onKeyUp: 1
-};
-
-export const FocusEvents = {
-  ...KeyboardEvents,
-  onFocus: 1,
-  onBlur: 1
-};
-
 // Sync with TypeScript definition of TextInputDOMProps
 export const TextInputDOMPropNames = {
-  ...FocusEvents,
   autoComplete: 1,
-  autoFocus: 1,
   maxLength: 1,
   minLength: 1,
   name: 1,

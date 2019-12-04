@@ -1,5 +1,5 @@
-import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
+import {InputHTMLAttributes, RefObject} from 'react';
 import intlMessages from '../intl/*.json';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
@@ -7,7 +7,7 @@ import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SearchFieldAria {
-  searchFieldProps: AllHTMLAttributes<HTMLInputElement>,
+  searchFieldProps: InputHTMLAttributes<HTMLInputElement>,
   clearButtonProps: any // TODO: Replace any with AriaButtonProps from useButton when buttons is added to react-types
 }
 

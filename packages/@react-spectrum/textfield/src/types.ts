@@ -1,3 +1,4 @@
+import {FocusableRefValue} from '@react-spectrum/utils';
 import {ReactNode} from 'react';
 import {StyleProps} from '@react-spectrum/view';
 import {TextFieldProps} from '@react-types/textfield';
@@ -7,4 +8,9 @@ export interface SpectrumTextFieldProps extends TextFieldProps, TextInputDOMProp
   icon?: ReactNode,
   isQuiet?: boolean,
   multiLine?: boolean
+}
+
+export interface TextFieldRef extends FocusableRefValue<HTMLInputElement & HTMLTextAreaElement, HTMLDivElement> {
+  select(): void,
+  getInputElement(): HTMLInputElement & HTMLTextAreaElement
 }

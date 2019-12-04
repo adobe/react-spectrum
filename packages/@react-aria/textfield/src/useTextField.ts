@@ -1,6 +1,7 @@
 import {AllHTMLAttributes, ChangeEvent} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
 import {TextInputDOMProps} from '@react-types/shared';
+import {useFocusable} from '@react-aria/focus';
 
 interface TextFieldAria {
   textFieldProps: AllHTMLAttributes<HTMLElement>
@@ -18,6 +19,7 @@ export function useTextField(
     type = 'text',
     onChange = () => {}
   } = props;
+  let {focusableProps} = useFocusable(props);
 
   return {
     textFieldProps: {
@@ -27,7 +29,8 @@ export function useTextField(
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value, e),
-      autoFocus
+      autoFocus,
+      ...focusableProps
     }
   };
 }

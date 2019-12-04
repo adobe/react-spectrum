@@ -1,4 +1,4 @@
-import {PressEvent} from '@react-aria/interactions';
+import {PressEvent} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps {

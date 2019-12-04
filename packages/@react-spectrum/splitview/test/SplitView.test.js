@@ -29,7 +29,7 @@ describe('SplitView tests', function () {
     let onResizeSpy = jest.fn();
     let onResizeEndSpy = jest.fn();
     let {getByRole} = render(
-      <Component {...props} onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} style={{width: '100%'}}>
+      <Component {...props} onResize={onResizeSpy} onResizeEnd={onResizeEndSpy} UNSAFE_style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -168,7 +168,7 @@ describe('SplitView tests', function () {
     ${'V2SplitView'} | ${V2SplitView} | ${{className: 'splitview'}}
   `('$Name handles primaryPane being second', function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} primaryPane={1} style={{width: '100%'}}>
+      <Component {...props} primaryPane={1} UNSAFE_style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -253,7 +253,7 @@ describe('SplitView tests', function () {
     ${'V2SplitView'} | ${V2SplitView} | ${{collapsible: true, className: 'splitview'}}
   `('$Name handles allowsCollapsing', function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} style={{width: '100%'}}>
+      <Component {...props} UNSAFE_style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -443,7 +443,7 @@ describe('SplitView tests', function () {
     ${'V2SplitView'} | ${V2SplitView} | ${{resizable: false, className: 'splitview'}}
   `('$Name can be non-resizable', async function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} style={{width: '100%'}}>
+      <Component {...props} UNSAFE_style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
@@ -480,7 +480,7 @@ describe('SplitView tests', function () {
   `('$Name can have its size controlled', async function ({Component, props}) {
     let onResizeSpy = jest.fn();
     let {getByRole} = render(
-      <Component {...props} onResize={onResizeSpy} style={{width: '100%'}}>
+      <Component {...props} onResize={onResizeSpy} UNSAFE_style={{width: '100%'}}>
         <div>Left</div>
         <div>Right</div>
       </Component>
