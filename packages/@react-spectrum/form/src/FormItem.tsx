@@ -14,7 +14,7 @@ function FormItem(props: FormItemProps, ref: DOMRef<HTMLLabelElement & HTMLDivEl
 
   let wrapperClassName = classNames(
     styles,
-    'spectrum-Form-itemField',
+    'spectrum-Form-itemField'
   );
 
   return (

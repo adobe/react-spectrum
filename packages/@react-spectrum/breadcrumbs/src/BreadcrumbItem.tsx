@@ -10,11 +10,9 @@ import {useLocale} from '@react-aria/i18n';
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
   let {
     children,
-    isHeading,
     isCurrent,
     isDisabled,
-    headingAriaLevel,
-    ...otherProps
+  ...otherProps
   } = props;
 
   let {direction} = useLocale();
@@ -39,22 +37,9 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   return (
     <Fragment>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        {
-          isHeading ?
-            <h1 
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Heading--pageTitle'
-                )
-              }
-              aria-level={headingAriaLevel}>
-              {element}
-            </h1>
-            : element
-        }
+        {element}
       </FocusRing>
-      {!isCurrent &&
+      {isCurrent === false &&
         <ChevronRightSmall
           className={
             classNames(

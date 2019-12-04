@@ -66,9 +66,19 @@ describe('Breadcrumbs', function () {
     expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
-  it('Handles heading child and headingAriaLevel', () => {
+  it('Handles size="L"', () => {
     let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} size="L">
+      <Breadcrumbs size="L">
+        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--multiline'));
+  });
+
+  it('Handles isHeading and headingAriaLevel', () => {
+    let {getByRole} = render(
+      <Breadcrumbs headingAriaLevel={2} isHeading>
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );

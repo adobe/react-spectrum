@@ -360,7 +360,7 @@ function getTouchFromEvent(event: TouchEvent): Touch | null {
 
 function getTouchById(
   event: TouchEvent,
-  pointerId: null | number,
+  pointerId: null | number
 ): null | Touch {
   const changedTouches = event.changedTouches;
   for (let i = 0; i < changedTouches.length; i++) {

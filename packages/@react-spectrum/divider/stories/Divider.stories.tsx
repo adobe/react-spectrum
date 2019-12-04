@@ -34,7 +34,7 @@ storiesOf('Divider', module)
     )
   )
   .add('Vertical, Large (Default)',
-    () => renderVertical(),
+    () => renderVertical()
   )
   .add('Vertical, Medium',
     () => renderVertical({size: 'M'})
