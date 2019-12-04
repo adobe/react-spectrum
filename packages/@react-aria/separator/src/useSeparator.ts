@@ -24,9 +24,9 @@ export function useSeparator(props: SeparatorProps, elementType: string): Separa
       }
     };
   }
-  // Horizontal Divider is rendered using <hr> and therefore also implicitly has a role = separator
+  // Horizontal Divider is rendered using <hr> and therefore also implicitly has a role = separator, along with an implicit orientation
   if (props.orientation === 'horizontal') {
-    return {separatorProps: {'aria-orientation': ariaOrientation}};
+    return {separatorProps: null};
   }
   return {separatorProps: {'aria-orientation': ariaOrientation}};
 }
