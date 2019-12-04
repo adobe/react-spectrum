@@ -3,7 +3,6 @@ import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
-import {TooltipHoverResponder} from '@react-aria/interactions';
 import {useControlledState} from '@react-stately/utils';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 
@@ -163,13 +162,11 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           isHovering={isOpen}
           isDisabled={props.isDisabled}
           immediateAppearance={props.immediateAppearance}
-          onHover={onHoverInteraction}>
-          {trigger}
-        </HoverResponder>
-        <TooltipHoverResponder
+          onHover={onHoverInteraction}
           isOverTooltip={onHoverInteraction}>
+          {trigger}
           {overlay}
-        </TooltipHoverResponder>
+        </HoverResponder>
       </Fragment>
     );
   }

@@ -15,7 +15,8 @@ export interface HoverProps {
   immediateAppearance?: boolean,
   onHover?: (isHovering: boolean) => void,
   onHoverStart?: (e: HoverEvent) => void,
-  onHoverEnd?: (e: HoverEvent) => void
+  onHoverEnd?: (e: HoverEvent) => void,
+  isOverTooltip?: (isHovering: boolean) => void
 }
 
 export interface HoverHookProps extends HoverProps, DOMProps {
@@ -70,6 +71,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHoverEnd,
     isDisabled,
     immediateAppearance,
+    isOverTooltip,
     isHovering: isHoveringProp,
     ...domProps
   } = useHoverResponderContext(props);
@@ -98,7 +100,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance);
+        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
       }
 
       setHover(true);
@@ -144,7 +146,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance);
+        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
       };
 
       hoverProps.onBlur = () => {
@@ -162,7 +164,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance);
+        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
       };
 
       hoverProps.onBlur = () => {
@@ -171,7 +173,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, isDisabled, immediateAppearance]);
+  }, [onHover, onHoverStart, onHoverEnd, isDisabled, immediateAppearance, isOverTooltip]);
 
   return {
     isHovering: isHoveringProp || isHovering,
@@ -179,7 +181,7 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-function handleDelayedShow(onHover, isDisabled, immediateAppearance) {
+function handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip) {
 
   if (isDisabled) {
     return;
@@ -206,6 +208,9 @@ function handleDelayedShow(onHover, isDisabled, immediateAppearance) {
   hoverShowDelay = setTimeout(() => {
     onHover(true);
     warmupPeriodComplete = true;
+    if (isOverTooltip) {
+      isOverTooltip(true);
+    }
   }, 800);
 }
 
