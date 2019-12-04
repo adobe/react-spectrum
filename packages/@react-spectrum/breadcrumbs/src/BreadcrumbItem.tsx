@@ -10,7 +10,6 @@ import {useLocale} from '@react-aria/i18n';
 export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref: RefObject<HTMLElement>) => {
   let {
     children,
-    className,
     isHeading,
     isCurrent,
     isDisabled,
@@ -33,8 +32,7 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
           'spectrum-Breadcrumbs-itemLink',
           {
             'is-disabled': !isCurrent && isDisabled
-          },
-          className
+          }
         )
     }
   );

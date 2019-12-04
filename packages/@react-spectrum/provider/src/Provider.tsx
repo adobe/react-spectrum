@@ -8,6 +8,7 @@ import React, {RefObject, useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useColorScheme, useScale} from './mediaQueries';
+import {useStyleProps} from '@react-spectrum/view';
 // @ts-ignore
 import {version} from '../package.json';
 
@@ -60,7 +61,8 @@ export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<H
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;
   let domProps = filterDOMProps(otherProps);
-  if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0) {
+  let {styleProps} = useStyleProps(otherProps);
+  if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
         {contents}
@@ -79,20 +81,22 @@ export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<H
   );
 });
 
-const ProviderWrapper = React.forwardRef(({children, className, ...otherProps}: ProviderProps, ref: RefObject<HTMLDivElement>) => {
+const ProviderWrapper = React.forwardRef(({children, ...otherProps}: ProviderProps, ref: RefObject<HTMLDivElement>) => {
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
+  let {styleProps} = useStyleProps(otherProps);
 
   let themeKey = Object.keys(theme[colorScheme])[0];
   let scaleKey = Object.keys(theme[scale])[0];
 
-  className = classNames(
-    className,
+  let className = classNames(
+    styleProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
     theme[colorScheme][themeKey],
     theme[scale][scaleKey],
+    theme.global ? Object.values(theme.global) : null,
     {
       'react-spectrum-provider': shouldKeepSpectrumClassNames,
       spectrum: shouldKeepSpectrumClassNames,
@@ -102,7 +106,14 @@ const ProviderWrapper = React.forwardRef(({children, className, ...otherProps}: 
   );
 
   return (
-    <div className={className} lang={locale} dir={direction} {...modalProviderProps} {...filterDOMProps(otherProps)} ref={ref}>
+    <div 
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      {...modalProviderProps}
+      className={className}
+      lang={locale}
+      dir={direction}
+      ref={ref}>
       {children}
     </div>
   );
@@ -112,7 +123,7 @@ export function useProvider(): ProviderContext {
   return useContext(Context);
 }
 
-export function useProviderProps(props) {
+export function useProviderProps<T>(props: T) : T {
   let context = useProvider();
   if (!context) {
     return props;

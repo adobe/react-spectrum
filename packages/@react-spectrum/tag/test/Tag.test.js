@@ -17,12 +17,11 @@ describe('Tag', function () {
    ${'Tag'}      | ${Tag}            | ${{}}
    ${'V2Tag'}    | ${V2Tag}          | ${{}}
   `('$Name allows custom props to be passed through to the tag', function ({Component, props}) {
-    let {container} = render(<Component {...props} data-foo="bar" aria-hidden name="s">Cool Tag</Component>);
+    let {container} = render(<Component {...props} data-foo="bar" aria-hidden>Cool Tag</Component>);
 
     let tag = container.firstElementChild;
     expect(tag).toHaveAttribute('data-foo', 'bar');
     expect(tag).toHaveAttribute('aria-hidden', 'true');
-    expect(tag).toHaveAttribute('name', 's');
   });
 
   it.each`

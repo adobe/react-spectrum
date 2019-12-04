@@ -38,14 +38,6 @@ describe('useSearchField hook', () => {
       expect(typeof searchFieldProps.onKeyDown).toBe('function');
     });
 
-    it('with a user specified role if provided', () => {
-      let role = 'combobox';
-      let type = 'text';
-      let {searchFieldProps} = renderSearchHook({role, type});
-      expect(searchFieldProps.role).toBe(role);
-      expect(searchFieldProps.type).toBe(type);
-    });
-
     describe('with specific onKeyDown behavior', () => {
       let preventDefault = jest.fn();
       let onSubmit = jest.fn();
@@ -93,18 +85,6 @@ describe('useSearchField hook', () => {
         expect(onSubmit).toHaveBeenCalledTimes(0);
         expect(onClear).toHaveBeenCalledTimes(0);
         expect(preventDefault).toHaveBeenCalledTimes(2);
-      });
-
-      it('chain calls a user provided onKeyDown if provided', () => {
-        let onKeyDown = jest.fn();
-        let {searchFieldProps} = renderSearchHook({onKeyDown, onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
-        // Verify that props.onKeyDown triggers
-        expect(onKeyDown).toHaveBeenCalledTimes(1);
-        expect(onKeyDown).toHaveBeenCalledWith(event('Enter'));
-        // Verify that internal onKeyDown still triggers
-        expect(onSubmit).toHaveBeenCalledTimes(1);
-        expect(onSubmit).toHaveBeenCalledWith(state.value);
       });
     });
   });

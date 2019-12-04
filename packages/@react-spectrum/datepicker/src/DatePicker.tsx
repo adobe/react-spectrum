@@ -13,6 +13,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {useStyleProps} from '@react-spectrum/view';
 
 export function DatePicker(props: SpectrumDatePickerProps) {
   let {
@@ -23,16 +24,16 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     isReadOnly,
     isRequired,
     placeholderDate,
-    className,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
   let state = useDatePickerState(props);
   let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
   let targetRef = useRef<HTMLDivElement>();
   let {direction} = useLocale();
 
-  className = classNames(
+  let className = classNames(
     styles,
     'spectrum-InputGroup',
     {
@@ -40,16 +41,18 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       'is-invalid': state.validationState === 'invalid',
       'is-disabled': isDisabled
     },
-    className
+    styleProps.className
   );
 
   return (
     <FocusRing 
       within
+      isTextInput
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...filterDOMProps(otherProps)}
+        {...styleProps}
         {...comboboxProps}
         className={className}
         ref={targetRef}>
@@ -66,7 +69,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             isReadOnly={isReadOnly}
             isRequired={isRequired}
             formatOptions={formatOptions}
-            className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
+            UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
         </FocusScope>
         <DialogTrigger 
           type="popover"
@@ -78,12 +81,12 @@ export function DatePicker(props: SpectrumDatePickerProps) {
           onOpenChange={setOpen}>
           <FieldButton
             {...buttonProps}
-            className={classNames(styles, 'spectrum-FieldButton')}
+            UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}
             icon={<CalendarIcon />}
             isDisabled={isDisabled || isReadOnly} />
-          <Dialog className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
+          <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
             <Calendar
               autoFocus
               value={value}

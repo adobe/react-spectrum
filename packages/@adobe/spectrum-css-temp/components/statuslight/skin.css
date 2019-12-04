@@ -36,7 +36,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-StatusLight--info::before,
-/** @depreacted */.spectrum-StatusLight--active::before {
+/** @deprecated */.spectrum-StatusLight--active::before {
   background-color: var(--spectrum-statuslight-info-dot-color);
 }
 

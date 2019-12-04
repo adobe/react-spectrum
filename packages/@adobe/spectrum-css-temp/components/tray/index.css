@@ -1,5 +1,5 @@
 @import '../commons/index.css';
-@import '../commons/overlay.css';
+@import '../overlay/index.css';
 
 :root {
   /* Bug: this must be 0ms, not 0 */
@@ -8,6 +8,7 @@
 }
 
 .spectrum-Tray-wrapper {
+  inset-inline-start: 0;
   /* Positioned at the bottom of the window */
   position: fixed;
   bottom: 0;
@@ -17,7 +18,7 @@
   width: 100%;
 
   /* Appear above underlay */
-  z-index: 2;  
+  z-index: 2;
 }
 
 .spectrum-Tray {

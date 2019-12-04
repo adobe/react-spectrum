@@ -41,7 +41,7 @@ export const Overlay = React.forwardRef((props: OverlayProps, ref: RefObject<HTM
   }
 
   let contents = (
-    <Provider ref={ref} style={{position: 'absolute', zIndex: 100000, top: 0, left: 0}}>
+    <Provider ref={ref} UNSAFE_style={{position: 'absolute', zIndex: 100000, top: 0, left: 0}}>
       <OpenTransition
         in={isOpen}
         appear

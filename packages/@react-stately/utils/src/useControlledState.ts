@@ -1,8 +1,8 @@
 import {useCallback, useRef, useState} from 'react';
 
 export function useControlledState<T>(
-  value: T, 
-  defaultValue: T, 
+  value: T,
+  defaultValue: T,
   onChange: (value: T, ...args: any[]) => void
 ): [T, (value: T | ((prevState: T) => T), ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
@@ -18,17 +18,38 @@ export function useControlledState<T>(
   ref.current = isControlled;
 
   let setValue = useCallback((value, ...args) => {
-    if (onChange) {
-      if (stateRef.current !== value) { 
-        onChange(value, ...args);
+    let onChangeCaller = (value, ...onChangeArgs) => {
+      if (onChange) {
+        if (stateRef.current !== value) {
+          onChange(value, ...onChangeArgs);
+        }
       }
+      if (!isControlled) {
+        stateRef.current = value;
+      }
+    };
+
+    if (typeof value === 'function') {
+      // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
+      // when someone using useControlledState calls setControlledState(myFunc)
+      // this will call our useState setState with a function as well which invokes myFunc and calls onChange with the value from myFunc
+      // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
+      // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
+      let updateFunction = (oldValue, ...functionArgs) => {
+        let interceptedValue = value(oldValue, ...functionArgs);
+        onChangeCaller(interceptedValue, ...args);
+        if (!isControlled) {
+          return interceptedValue;
+        }
+        return oldValue;
+      };
+      setStateValue(updateFunction);
+    } else {
+      if (!isControlled) {
+        setStateValue(value);
+      }
+      onChangeCaller(value, ...args);
     }
-    
-    if (!isControlled) {
-      setStateValue(value);
-      stateRef.current = value;
-    }
-    
   }, [isControlled, onChange]);
 
   // If a controlled component's value prop changes, we need to update stateRef
@@ -37,6 +58,6 @@ export function useControlledState<T>(
   } else {
     value = stateValue;
   }
-  
+
   return [value, setValue];
 }

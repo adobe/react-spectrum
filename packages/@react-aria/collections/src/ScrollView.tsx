@@ -1,9 +1,8 @@
-import {DOMProps} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {CSSProperties, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/collections';
 
-interface ScrollViewProps extends DOMProps {
+interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
   visibleRect: Rect,
   onVisibleRectChange: (rect: Rect) => void,
@@ -11,9 +10,10 @@ interface ScrollViewProps extends DOMProps {
   innerStyle: CSSProperties
 }
 
-export function ScrollView(props: ScrollViewProps) {
+function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {contentSize, visibleRect, onVisibleRectChange, children, innerStyle, ...otherProps} = props;
-  let ref = useRef<HTMLDivElement>();
+  let defaultRef = useRef();
+  ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
@@ -49,7 +49,7 @@ export function ScrollView(props: ScrollViewProps) {
       }
     });
   }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
-  
+
   useEffect(() => {
     // TODO: resize observer
     // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
@@ -74,7 +74,7 @@ export function ScrollView(props: ScrollViewProps) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, state.height, state.scrollLeft, state.scrollTop, state.width]);
+  }, [onVisibleRectChange, state.height, state.scrollLeft, state.scrollTop, state.width, ref]);
 
   useLayoutEffect(() => {
     let dom = ref.current;
@@ -91,7 +91,7 @@ export function ScrollView(props: ScrollViewProps) {
       state.scrollTop = visibleRect.y;
       dom.scrollTop = visibleRect.y;
     }
-  }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
+  }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y, ref]);
 
   return (
     <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
@@ -101,3 +101,6 @@ export function ScrollView(props: ScrollViewProps) {
     </div>
   );
 }
+
+const ScrollViewForwardRef = React.forwardRef(ScrollView);
+export {ScrollViewForwardRef as ScrollView};

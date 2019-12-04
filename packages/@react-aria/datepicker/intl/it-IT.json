@@ -1,0 +1,14 @@
+{
+  "calendar": "Calendario",
+  "date": "Data",
+  "dateRange": "Intervallo date",
+  "day": "Giorno",
+  "dayPeriod": "Periodo di giorni",
+  "endDate": "Data finale",
+  "hour": "Ora",
+  "minute": "Minuti",
+  "month": "Mese",
+  "second": "Secondi",
+  "startDate": "Data iniziale",
+  "year": "Anno"
+}

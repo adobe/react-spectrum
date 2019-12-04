@@ -1,4 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
@@ -8,6 +8,7 @@ import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
+import {useStyleProps} from '@react-spectrum/view';
 
 interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
 
@@ -16,9 +17,9 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
   let {
     icon = <Magnifier data-testid="searchicon" />,
     isDisabled,
-    className,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let state = useSearchFieldState(props);
   let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
@@ -27,6 +28,7 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
   // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <div
+      {...styleProps}
       className={
         classNames(
           styles,
@@ -35,21 +37,13 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet
           },
-          className
+          styleProps.className
         )
       }>
       <TextField
-        {...filterDOMProps(otherProps, {
-          value: false,
-          defaultValue: false,
-          isQuiet: true,
-          onClear: true,
-          multiLine: true,
-          isRequired: true,
-          isReadOnly: true
-        })}
+        {...otherProps}
         {...searchFieldProps}
-        className={
+        UNSAFE_className={
           classNames(
             styles,
             'spectrum-Search-input'
@@ -64,11 +58,10 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
         state.value !== '' &&
           <ClearButton
             {...clearButtonProps}
-            className={
+            UNSAFE_className={
               classNames(
                 styles,
-                'spectrum-ClearButton',
-                className
+                'spectrum-ClearButton'
               )
             }
             isDisabled={isDisabled} />
