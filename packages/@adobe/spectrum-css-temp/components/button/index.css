@@ -328,7 +328,7 @@ a.spectrum-ActionButton {
 .spectrum-ButtonGroup-item--vertical {
   .spectrum-ActionButton-label {
     flex-grow: 1;
-    text-align: left;
+    text-align: start;
   }
 
   &.spectrum-Button + .spectrum-Button {
@@ -357,13 +357,13 @@ a.spectrum-ActionButton {
     border-radius: 0;
 
     &:first-child {
-      border-top-left-radius: var(--spectrum-actionbutton-border-radius);
-      border-bottom-left-radius: var(--spectrum-actionbutton-border-radius);
+      border-start-start-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-start-radius: var(--spectrum-actionbutton-border-radius);
     }
 
     &:last-child {
-      border-top-right-radius: var(--spectrum-actionbutton-border-radius);
-      border-bottom-right-radius: var(--spectrum-actionbutton-border-radius);
+      border-start-end-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-end-radius: var(--spectrum-actionbutton-border-radius);
     }
   }
 

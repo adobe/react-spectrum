@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-aria/button": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-aria/focus": "^3.0.0-alpha.1",
