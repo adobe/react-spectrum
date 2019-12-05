@@ -15,18 +15,13 @@ export function useSeparator(props: SeparatorProps, elementType: string): Separa
   if (props.orientation === 'vertical') {
     ariaOrientation = 'vertical';
   }
-  // hr elements implicitly have role = separator
-  if (elementType !== 'HR') {
-    return {
-      separatorProps: {
-        role: 'separator',
-        'aria-orientation': ariaOrientation
-      }
+  // hr elements implicitly have role = separator and a horizontal orientation
+  let separatorProps;
+  if (elementType.toLowerCase() !== 'hr') {
+    separatorProps = {
+      role: 'separator',
+      'aria-orientation': ariaOrientation
     };
   }
-  // Horizontal Divider is rendered using <hr> and therefore also implicitly has a role = separator, along with an implicit orientation
-  if (props.orientation === 'horizontal') {
-    return {separatorProps: null};
-  }
-  return {separatorProps: {'aria-orientation': ariaOrientation}};
+  return {separatorProps};
 }
