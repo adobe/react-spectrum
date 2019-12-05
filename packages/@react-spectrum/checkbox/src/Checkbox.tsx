@@ -27,6 +27,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     isIndeterminate,
     isEmphasized,
     isDisabled,
+    autoFocus,
     children,
     ...otherProps
   } = completeProps;
@@ -67,7 +68,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}

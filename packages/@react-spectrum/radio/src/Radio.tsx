@@ -18,7 +18,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {
     isDisabled,
     children,
-    value,
+    autoFocus,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -26,23 +26,17 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
-    isRequired,
-    isReadOnly,
     isDisabled: isGroupDisabled,
     validationState,
-    name,
     labelPosition,
     selectedRadio,
     setSelectedRadio
   } = radioGroupProps;
 
   let {inputProps} = useRadio({
-    value,
-    isEmphasized,
-    isRequired,
-    isReadOnly,
-    isDisabled: isDisabled || isGroupDisabled,
-    name
+    ...props,
+    ...radioGroupProps,
+    isDisabled: isDisabled || isGroupDisabled
   }, {selectedRadio, setSelectedRadio});
 
   let inputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +65,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}

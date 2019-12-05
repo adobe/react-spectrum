@@ -21,6 +21,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     validationState,
     icon,
     children,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -28,7 +29,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...mergeProps(filterDOMProps(otherProps), buttonProps)}
         ref={domRef}
