@@ -160,9 +160,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...tooltipTriggerSingularityProps}
           ref={triggerRef}
           isHovering={isOpen}
-          isDisabled={props.isDisabled}
-          immediateAppearance={props.immediateAppearance}
-          onHover={onHoverInteraction}
+          isDisabled={isDisabled}
+          immediateAppearance={immediateAppearance}
+          onHoverChange={onHoverInteraction}
           isOverTooltip={onHoverInteraction}>
           {trigger}
           {overlay}

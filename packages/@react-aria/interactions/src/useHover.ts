@@ -9,13 +9,15 @@ export interface HoverEvent {
   target: HTMLElement
 }
 
+// Next PR: Add tests for isDisabled
 export interface HoverProps {
   isHovering?: boolean,
   isDisabled?: boolean,
   immediateAppearance?: boolean,
-  onHover?: (isHovering: boolean) => void,
+  onHover?: (e: HoverEvent) => void,
   onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void,
+  onHoverChange?: (isHovering: boolean) => void,
   isOverTooltip?: (isHovering: boolean) => void
 }
 
@@ -36,8 +38,8 @@ let hoverHideDelay = null;
 let hoverShowDelay = null;
 
 // Next PR: refactor these variables to be in a state machine [using Enums or useReducer]
-const WARMUP_PERIOD_LENGTH = 2000; // TODO: use this variable in hoverShowDelay
-const COOLDOWN_PERID_LENGTH = 160; // TODO: use this variable in hoverHideDelay
+// const WARMUP_PERIOD_LENGTH = 2000; -> TODO this PR after review: use this variable in hoverShowDelay
+// const COOLDOWN_PERID_LENGTH = 160; -> TODO this PR after review: use this variable in hoverHideDelay
 let warmupPeriodComplete = false;
 let cooldownPeriodComplete = false;
 let cooldownPeriodTimer = null;
@@ -69,6 +71,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHover,
     onHoverStart,
     onHoverEnd,
+    onHoverChange,
     isDisabled,
     immediateAppearance,
     isOverTooltip,
@@ -100,7 +103,15 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       if (onHover) {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
+        onHover({
+          type: 'hover',
+          target,
+          pointerType
+        });
+      }
+
+      if (onHoverChange) {
+        handleDelayedShow(onHoverChange, isDisabled, immediateAppearance, isOverTooltip);
       }
 
       setHover(true);
@@ -128,8 +139,8 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
-      if (onHover && didHover) {
-        handleMouseOverOut(onHover, event);
+      if (onHoverChange && didHover) {
+        handleMouseOverOut(onHoverChange, event);
       }
     };
 
@@ -146,11 +157,11 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
+        handleDelayedShow(onHoverChange, isDisabled, immediateAppearance, isOverTooltip);
       };
 
       hoverProps.onBlur = () => {
-        handleDelayedHide(onHover);
+        handleDelayedHide(onHoverChange);
       };
 
     } else {
@@ -164,16 +175,16 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
 
       hoverProps.onFocus = () => {
-        handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip);
+        handleDelayedShow(onHoverChange, isDisabled, immediateAppearance, isOverTooltip);
       };
 
       hoverProps.onBlur = () => {
-        handleDelayedHide(onHover);
+        handleDelayedHide(onHoverChange);
       };
 
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, isDisabled, immediateAppearance, isOverTooltip]);
+  }, [onHover, onHoverStart, onHoverEnd, onHoverChange, isDisabled, immediateAppearance, isOverTooltip]);
 
   return {
     isHovering: isHoveringProp || isHovering,
@@ -181,18 +192,18 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-function handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverTooltip) {
+function handleDelayedShow(onHoverChange, isDisabled, immediateAppearance, isOverTooltip) {
 
   if (isDisabled) {
     return;
   }
 
   if (immediateAppearance) {
-    onHover(true);
+    onHoverChange(true);
   }
 
   if (warmupPeriodComplete === true && cooldownPeriodComplete === false) {
-    onHover(true);
+    onHoverChange(true);
   }
 
   if (cooldownPeriodTimer != null) {
@@ -206,7 +217,7 @@ function handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverToolt
   }
 
   hoverShowDelay = setTimeout(() => {
-    onHover(true);
+    onHoverChange(true);
     warmupPeriodComplete = true;
     if (isOverTooltip) {
       isOverTooltip(true);
@@ -214,7 +225,7 @@ function handleDelayedShow(onHover, isDisabled, immediateAppearance, isOverToolt
   }, 800);
 }
 
-function handleDelayedHide(onHover) {
+function handleDelayedHide(onHoverChange) {
 
   cooldownPeriodComplete = false;
 
@@ -224,7 +235,7 @@ function handleDelayedHide(onHover) {
   }
 
   hoverHideDelay = setTimeout(() => {
-    onHover(false);
+    onHoverChange(false);
   }, 300);
 
   cooldownPeriodTimer = setInterval(() => {
@@ -234,13 +245,13 @@ function handleDelayedHide(onHover) {
 
 }
 
-function handleMouseOverOut(onHover, e) {
+function handleMouseOverOut(onHoverChange, e) {
   const related = e.relatedTarget || e.nativeEvent.toElement;
   const parent = related.parentNode;
   if (parent.getAttribute('role') === 'tooltip') {
     clearTimeout(hoverShowDelay);
     return;
   } else {
-    handleDelayedHide(onHover);
+    handleDelayedHide(onHoverChange);
   }
 }

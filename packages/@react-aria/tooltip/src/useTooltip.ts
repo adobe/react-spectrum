@@ -11,13 +11,6 @@ interface TooltipAria {
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
-interface useTooltipProps {
-  'aria-describedby': string,
-  role: string,
-  id: string,
-  onMouseLeave?: (e) => void
-}
-
 export function useTooltip(props: TooltipProps): TooltipAria {
 
   let contextProps = useContext(HoverResponderContext);
@@ -28,11 +21,12 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  let tooltipProps = {
+  let tooltipProps;
+  tooltipProps = {
     'aria-describedby': tooltipId,
     role,
     id: tooltipId
-  } as useTooltipProps;
+  };
 
   if (contextProps) {
     let onMouseLeave = () => {
