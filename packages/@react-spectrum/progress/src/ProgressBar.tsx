@@ -1,7 +1,6 @@
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {CSSProperties, RefObject} from 'react';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import React, {CSSProperties} from 'react';
 import {SpectrumProgressBarProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
@@ -10,7 +9,7 @@ import {useStyleProps} from '@react-spectrum/view';
 
 const DEFAULT_FORMAT_OPTION = 'percent';
 
-export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, ref: RefObject<HTMLElement>) => {
+function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
     min = 0,
@@ -27,6 +26,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
     },
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
   value = clamp(value, min, max);
@@ -53,7 +53,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...progressBarProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -90,4 +90,7 @@ export const ProgressBar = React.forwardRef((props: SpectrumProgressBarProps, re
       </div>
     </div>
   );
-});
+}
+
+let _ProgressBar = React.forwardRef(ProgressBar);
+export {_ProgressBar as ProgressBar};

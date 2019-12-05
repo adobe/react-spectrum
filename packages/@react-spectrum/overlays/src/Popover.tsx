@@ -18,16 +18,17 @@ interface PopoverProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void
 }
 
-export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTMLDivElement>) => {
+function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
-  ref = ref || useRef();
-  let {overlayProps} = useOverlay({ref, onClose, isOpen});
+  let backupRef = useRef();
+  let domRef = ref || backupRef;
+  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen});
 
   return (
     <div
       {...otherProps}
       style={style}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -51,4 +52,7 @@ export const Popover = React.forwardRef((props: PopoverProps, ref: RefObject<HTM
       {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}
     </div>
   );
-});
+}
+
+let _Popover = React.forwardRef(Popover);
+export {_Popover as Popover};

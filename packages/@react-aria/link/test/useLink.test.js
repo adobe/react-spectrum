@@ -27,6 +27,16 @@ describe('useLink', function () {
     expect(linkProps.id).toBeDefined();
   });
 
+  it('handles isDisabled', function () {
+    let {linkProps} = renderLinkHook({children: 'Test Link', isDisabled: true});
+    expect(linkProps.role).toBe('link');
+    expect(linkProps['aria-disabled']).toBe(true);
+    expect(linkProps.tabIndex).toBeUndefined();
+    expect(linkProps.id).toBeDefined();
+    expect(typeof linkProps.onKeyDown).toBe('function');
+    expect(typeof linkProps.onKeyUp).toBe('function');
+  });
+
   it('handles href warning', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderLinkHook({children: 'Test Link', href: '#'});

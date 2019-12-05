@@ -68,7 +68,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
         <TextField
           isQuiet={isQuiet}
           UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps}
+          {...inputFieldProps as any}
           onChange={setValue} />
         {showStepper &&
         <span

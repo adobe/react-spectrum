@@ -1,10 +1,9 @@
-import {FocusEvent, HTMLAttributes} from 'react';
+import {createEventHandler} from './createEventHandler';
+import {FocusEvent, FocusEvents} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 
-interface FocusProps {
-  isDisabled?: boolean,
-  onFocus?: (e: FocusEvent) => void,
-  onBlur?: (e: FocusEvent) => void,
-  onFocusChange?: (isFocused: boolean) => void
+interface FocusProps extends FocusEvents {
+  isDisabled?: boolean
 }
 
 interface FocusResult {
@@ -21,7 +20,7 @@ export function useFocus(props: FocusProps): FocusResult {
 
   let onFocus, onBlur;
   if (props.onFocus || props.onFocusChange) {
-    onFocus = (e: FocusEvent) => {
+    onFocus = createEventHandler((e: FocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onFocus) {
           props.onFocus(e);
@@ -31,11 +30,11 @@ export function useFocus(props: FocusProps): FocusResult {
           props.onFocusChange(true);
         }
       }
-    };
+    });
   }
 
   if (props.onBlur || props.onFocusChange) {
-    onBlur = (e: FocusEvent) => {
+    onBlur = createEventHandler((e: FocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onBlur) {
           props.onBlur(e);
@@ -45,7 +44,7 @@ export function useFocus(props: FocusProps): FocusResult {
           props.onFocusChange(false);
         }
       }
-    };
+    });
   }
   
   return {

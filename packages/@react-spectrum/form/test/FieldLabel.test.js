@@ -79,7 +79,7 @@ describe('FieldLabel', () => {
       let ref = React.createRef();
       renderFieldLabel(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = findLabel();
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`
@@ -90,7 +90,7 @@ describe('FieldLabel', () => {
       let ref = React.createRef();
       let tree = renderFieldLabel(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`
@@ -153,7 +153,7 @@ describe('FieldLabel', () => {
       let ref = React.createRef();
       let tree = renderFieldLabel(Component, {labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`
