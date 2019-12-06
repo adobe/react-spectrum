@@ -38,8 +38,8 @@ let hoverHideDelay = null;
 let hoverShowDelay = null;
 
 // Next PR: refactor these variables to be in a state machine [using Enums or useReducer]
-// const WARMUP_PERIOD_LENGTH = 2000; -> TODO this PR after review: use this variable in hoverShowDelay
-// const COOLDOWN_PERID_LENGTH = 160; -> TODO this PR after review: use this variable in hoverHideDelay
+// const WARMUP_PERIOD_LENGTH = 2000; -> Next PR: use this variable in hoverShowDelay
+// const COOLDOWN_PERID_LENGTH = 160; -> Next PR: use this variable in hoverHideDelay
 let warmupPeriodComplete = false;
 let cooldownPeriodComplete = false;
 let cooldownPeriodTimer = null;
