@@ -77,7 +77,7 @@ describe('FormItem', () => {
       let ref = React.createRef();
       renderFormItem(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = findLabel();
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`
@@ -88,7 +88,7 @@ describe('FormItem', () => {
       let ref = React.createRef();
       let tree = renderFormItem(Component, {label, labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`
@@ -144,7 +144,7 @@ describe('FormItem', () => {
       let ref = React.createRef();
       let tree = renderFormItem(Component, {labelFor, ref}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel).toBe(ref.current);
+      expect(fieldLabel).toBe(ref.current.UNSAFE_getDOMNode());
     });
 
     it.each`

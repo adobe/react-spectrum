@@ -1,7 +1,6 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
@@ -17,12 +16,13 @@ let sizeMap = {
   L: 'large'
 };
 
-export const Divider = React.forwardRef((props: DividerProps, ref: RefObject<HTMLElement>) => {
+function Divider(props: DividerProps, ref: DOMRef) {
   let {
     size = 'L',
     orientation = 'horizontal',
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let weight = sizeMap[size];
 
@@ -45,7 +45,10 @@ export const Divider = React.forwardRef((props: DividerProps, ref: RefObject<HTM
           styleProps.className
         )
       }
-      ref={ref}
+      ref={domRef}
       {...separatorProps} />
   );
-});
+}
+
+let _Divider = React.forwardRef(Divider);
+export {_Divider as Divider};

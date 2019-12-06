@@ -1,4 +1,4 @@
-import {PressEvent} from '@react-aria/interactions';
+import {PressEvent} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps {
@@ -6,6 +6,7 @@ export interface BreadcrumbItemProps {
   isHeading?: boolean,
   isDisabled?: boolean,
   headingAriaLevel?: number,
+  'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
   onPress?: (e: PressEvent) => void,
   children: ReactNode
 }

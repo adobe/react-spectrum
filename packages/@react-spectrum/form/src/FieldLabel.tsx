@@ -1,10 +1,11 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, DOMRef} from '@react-spectrum/utils';
 import {FieldLabelProps} from './types';
 import {LabelBase} from './LabelBase';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
-export const FieldLabel = forwardRef(({label, labelAlign, labelFor, children, ...otherProps}: FieldLabelProps, ref: RefObject<HTMLDivElement> & RefObject<HTMLLabelElement>) => {
+function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
+  let {label, labelAlign, labelFor, children, ...otherProps} = props;
   let labelClassNames = classNames(
     styles,
     'spectrum-FieldLabel',
@@ -25,4 +26,7 @@ export const FieldLabel = forwardRef(({label, labelAlign, labelFor, children, ..
       {children}
     </LabelBase>
   );
-});
+}
+
+let _FieldLabel = forwardRef(FieldLabel);
+export {_FieldLabel as FieldLabel};

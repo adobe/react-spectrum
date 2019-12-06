@@ -94,14 +94,14 @@ governing permissions and limitations under the License.
 
   text-decoration: none;
 
-  &:hover,
-  &:focus-ring {
-    text-decoration: underline;
-  }
-
   &[href],
   &[tabindex="0"] {
     cursor: pointer;
+
+    &:hover,
+    &:focus-ring {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -160,7 +160,7 @@ governing permissions and limitations under the License.
         text-decoration: none;
       }
     }
-  
+
     .spectrum-Heading--pageTitle {
       margin: 0;
 

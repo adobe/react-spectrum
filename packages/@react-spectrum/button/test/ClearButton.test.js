@@ -60,6 +60,9 @@ describe('ClearButton', function () {
     let tree = render(<Component ref={ref} />);
 
     let button = tree.queryByRole('button');
-    expect(button).toBe(ref.current);
+    expect(button).toBe(ref.current.UNSAFE_getDOMNode());
+
+    ref.current.focus();
+    expect(document.activeElement).toBe(button);
   });
 });

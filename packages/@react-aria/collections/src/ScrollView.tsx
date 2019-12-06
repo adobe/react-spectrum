@@ -74,7 +74,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, state.height, state.scrollLeft, state.scrollTop, state.width, ref]);
+  }, [onVisibleRectChange, ref, state.height, state.scrollLeft, state.scrollTop, state.width]);
 
   useLayoutEffect(() => {
     let dom = ref.current;
@@ -91,7 +91,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       state.scrollTop = visibleRect.y;
       dom.scrollTop = visibleRect.y;
     }
-  }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y, ref]);
+  }, [ref, state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
   return (
     <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
