@@ -12,8 +12,7 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
   ref = ref || useRef();
   let {direction} = useLocale();
 
-  
-  let buttonGroupProps = useProviderProps(props);
+  props = useProviderProps(props);
 
   let {
     elementType: ElementType = 'button',
@@ -26,9 +25,9 @@ export const ActionButton = React.forwardRef((props: ActionButtonProps, ref: Ref
     children,
     holdAffordance,
     ...otherProps
-  } = buttonGroupProps;
+  } = props;
 
-  let {buttonProps, isPressed} = useButton({...buttonGroupProps, ref});
+  let {buttonProps, isPressed} = useButton({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
