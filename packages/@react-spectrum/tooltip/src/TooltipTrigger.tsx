@@ -1,3 +1,4 @@
+import {DOMRefValue, unwrapDOMRef} from '@react-spectrum/utils';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
@@ -31,13 +32,13 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     setOpen(!open);
   };
 
-  let containerRef = useRef<HTMLDivElement>();
+  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     placement: props.placement,
-    containerRef,
+    containerRef: unwrapDOMRef(containerRef),
     targetRef: targetRef || triggerRef,
     overlayRef,
     isOpen

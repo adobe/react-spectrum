@@ -1,7 +1,6 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
-import {HTMLElement} from 'react-dom';
-import React, {ReactElement, ReactNode, RefObject} from 'react';
+import React, {forwardRef, ReactElement, ReactNode} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -14,13 +13,14 @@ export interface IllustratedMessageProps extends DOMProps, StyleProps {
   ariaLevel?: number
 }
 
-export const IllustratedMessage = React.forwardRef((props: IllustratedMessageProps, ref: RefObject<HTMLElement>) => {
+function IllustratedMessage(props: IllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
     illustration,
     heading,
     description,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let {
     illustrationProps,
@@ -32,7 +32,7 @@ export const IllustratedMessage = React.forwardRef((props: IllustratedMessagePro
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className)}>
       {illustration &&
         React.cloneElement(illustration, {
@@ -57,4 +57,7 @@ export const IllustratedMessage = React.forwardRef((props: IllustratedMessagePro
       }
     </div>
   );
-});
+}
+
+let _IllustratedMessage = forwardRef(IllustratedMessage);
+export {_IllustratedMessage as IllustratedMessage};

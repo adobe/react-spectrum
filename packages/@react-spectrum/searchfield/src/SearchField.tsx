@@ -3,7 +3,7 @@ import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SearchFieldProps} from '@react-types/searchfield';
-import {SpectrumTextFieldProps, TextFieldBase} from '@react-spectrum/textfield';
+import {SpectrumTextFieldProps, TextFieldBase, TextFieldRef} from '@react-spectrum/textfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
@@ -11,7 +11,7 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 
 interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
 
-export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     icon = <Magnifier data-testid="searchicon" />,
@@ -21,8 +21,8 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
   } = props;
 
   let state = useSearchFieldState(props);
-  let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
+  let textfieldRef = useRef<TextFieldRef>();
+  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
 
   let clearButton = (
     <ClearButton
@@ -58,11 +58,22 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
           'spectrum-Search-input'
         )
       }
-      ref={searchFieldRef}
+      ref={textfieldRef}
       isDisabled={isDisabled}
       icon={icon}
       onChange={state.setValue}
       value={state.value}
       wrapperChildren={state.value !== '' && clearButton} />
   );
-});
+}
+
+let _SearchField = forwardRef(SearchField);
+export {_SearchField as SearchField};
+
+function unwrapInputRef(ref: RefObject<TextFieldRef>) {
+  return {
+    get current() {
+      return ref.current && ref.current.getInputElement();
+    }
+  };
+}

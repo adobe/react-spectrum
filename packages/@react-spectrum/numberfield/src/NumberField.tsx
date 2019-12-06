@@ -29,6 +29,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
     isQuiet,
     isDisabled,
     showStepper = true,
+    autoFocus,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
@@ -58,7 +59,8 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
     <FocusRing
       within
       focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
-      focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}>
+      focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
+      autoFocus={autoFocus}>
       <div
         {...filterDOMProps(props)}
         {...styleProps}
@@ -67,8 +69,9 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
         className={className}>
         <TextFieldBase
           isQuiet={isQuiet}
-          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps}
+          autoFocus={autoFocus}
+          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          {...inputFieldProps as any}
           onChange={setValue} />
         {showStepper &&
         <span
@@ -76,13 +79,13 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           role="presentation">
           <ActionButton
             UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUp')}
-            {...incrementButtonProps}
+            {...incrementButtonProps as any}
             isQuiet={isQuiet}>
             <ChevronUpSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
           </ActionButton>
           <ActionButton
             UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDown')}
-            {...decrementButtonProps}
+            {...decrementButtonProps as any}
             isQuiet={isQuiet}>
             <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
           </ActionButton>

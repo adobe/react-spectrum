@@ -15,6 +15,10 @@ storiesOf('NumberField', module)
   .add(
     'minValue = 0, maxValue = 20',
     () => render({minValue: 0, maxValue: 20})
+  )
+  .add(
+    'autoFocus',
+    () => render({autoFocus: true})
   );
 
 function render(props: any = {}) {

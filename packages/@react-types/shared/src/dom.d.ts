@@ -1,4 +1,4 @@
-import {ClipboardEventHandler, CompositionEventHandler, FocusEventHandler, FormEventHandler, KeyboardEventHandler, ReactEventHandler} from 'react';
+import {ClipboardEventHandler, CompositionEventHandler, FormEventHandler, ReactEventHandler} from 'react';
 
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
@@ -44,20 +44,9 @@ export interface DOMProps {
   'aria-hidden'?: boolean | 'false' | 'true'
 }
 
-export interface KeyboardEvents<T = HTMLElement> {
-  onKeyDown?: KeyboardEventHandler<T>,
-  onKeyUp?: KeyboardEventHandler<T>
-}
-
-export interface FocusableProps<T = HTMLElement> extends KeyboardEvents<T> {
-  autoFocus?: boolean,
-  onFocus?: FocusEventHandler<T>,
-  onBlur?: FocusEventHandler<T>
-}
-
 // DOM props that apply to all text inputs
 // Ensure this is synced with TextInputDOMPropNames in filterDOMProps
-export interface TextInputDOMProps extends DOMProps, FocusableProps<HTMLInputElement> {
+export interface TextInputDOMProps extends DOMProps {
   autoComplete?: string,
   maxLength?: number,
   minLength?: number,

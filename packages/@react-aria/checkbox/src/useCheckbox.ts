@@ -1,5 +1,5 @@
 import {CheckboxProps} from '@react-types/checkbox';
-import {MutableRefObject, useEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 import {ToggleAriaProps, useToggle} from '@react-aria/toggle';
 import {ToggleState} from '@react-types/toggle';
 
@@ -11,7 +11,7 @@ export interface CheckboxAriaProps {
   inputProps: CheckboxInputAriaProps
 }
 
-export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: MutableRefObject<HTMLInputElement>):CheckboxAriaProps {
+export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>):CheckboxAriaProps {
   let toggleAriaProps = useToggle(props, state);
   let {checked} = state;
 

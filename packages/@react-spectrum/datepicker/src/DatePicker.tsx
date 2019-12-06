@@ -49,7 +49,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}>
+      focusRingClass={classNames(styles, 'focus-ring')}
+      autoFocus={autoFocus}>
       <div
         {...filterDOMProps(otherProps)}
         {...styleProps}
@@ -80,7 +81,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
           isOpen={isOpen}
           onOpenChange={setOpen}>
           <FieldButton
-            {...buttonProps}
+            {...buttonProps as any}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}

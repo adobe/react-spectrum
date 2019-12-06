@@ -1,8 +1,8 @@
 import React, {forwardRef, RefObject} from 'react';
-import {SpectrumTextFieldProps} from './types';
+import {SpectrumTextFieldProps, TextFieldRef} from './types';
 import {TextFieldBase} from './TextFieldBase';
 
-export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+export const TextField = forwardRef((props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) => {
   let {
     UNSAFE_className,
     ...otherProps

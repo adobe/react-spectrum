@@ -1,9 +1,10 @@
 import Alert from '@spectrum-icons/workflow/Alert';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {classNames, cloneIcon, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
+import {classNames, cloneIcon, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, ReactElement, RefObject} from 'react';
-import {SpectrumTextFieldProps} from './types';
+import {mergeProps} from '@react-aria/utils';
+import React, {forwardRef, Ref, ReactElement, useImperativeHandle, useRef} from 'react';
+import {SpectrumTextFieldProps, TextFieldRef} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
@@ -15,7 +16,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   inputClassName?: string
 }
 
-export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     validationState,
@@ -25,13 +26,29 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
     isDisabled = false,
     value,
     defaultValue,
+    autoFocus,
     wrapperClassName,
     inputClassName,
     wrapperChildren,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let domRef = useRef<HTMLDivElement>(null);
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+
+  // Expose imperative interface for ref
+  useImperativeHandle(ref, () => ({
+    ...createFocusableRef(domRef, inputRef),
+    select() {
+      if (inputRef.current) {
+        inputRef.current.select();
+      }
+    },
+    getInputElement() {
+      return inputRef.current;
+    }
+  }));
   
+  let {styleProps} = useStyleProps(otherProps);
   let {textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
@@ -64,6 +81,7 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
   let component = (
     <div
       {...styleProps}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -77,11 +95,13 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
           wrapperClassName
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
-          {...filterDOMProps(otherProps, TextInputDOMPropNames)}
-          {...textFieldProps}
-          ref={ref}
+          {...mergeProps(
+            textFieldProps,
+            filterDOMProps(otherProps, TextInputDOMPropNames)
+          )}
+          ref={inputRef}
           value={value}
           defaultValue={defaultValue}
           className={
@@ -102,4 +122,7 @@ export const TextFieldBase = forwardRef((props: TextFieldBaseProps, ref: RefObje
   );
 
   return component;
-});
+}
+
+const _TextFieldBase = forwardRef(TextFieldBase);
+export {_TextFieldBase as TextFieldBase};

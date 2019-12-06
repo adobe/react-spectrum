@@ -13,22 +13,9 @@ const DOMPropNames = {
   'aria-hidden': 1
 };
 
-export const KeyboardEvents = {
-  onKeyDown: 1,
-  onKeyUp: 1
-};
-
-export const FocusEvents = {
-  ...KeyboardEvents,
-  onFocus: 1,
-  onBlur: 1
-};
-
 // Sync with TypeScript definition of TextInputDOMProps
 export const TextInputDOMPropNames = {
-  ...FocusEvents,
   autoComplete: 1,
-  autoFocus: 1,
   maxLength: 1,
   minLength: 1,
   name: 1,
@@ -66,7 +53,7 @@ export function filterDOMProps(props, override = {}): DOMProps {
   const propFilter = {...DOMPropNames, ...override};
 
   for (const prop in props) {
-    if (props.hasOwnProperty(prop) && (propFilter[prop] || propRe.test(prop))) {
+    if (Object.prototype.hasOwnProperty.call(props, prop) && (propFilter[prop] || propRe.test(prop))) {
       filterProps[prop] = props[prop];
     }
   }
