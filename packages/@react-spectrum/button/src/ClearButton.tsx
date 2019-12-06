@@ -17,6 +17,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     children = <CrossSmall />,
     focusClassName,
     variant,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -24,7 +25,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
       <button
         {...filterDOMProps(otherProps)}
         {...styleProps}

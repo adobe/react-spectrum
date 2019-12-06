@@ -51,6 +51,11 @@ storiesOf('SearchField', module)
     'onClear',
     () => renderSearchLandmark(render({onClear: action('clear')})),
     {info}
+  )
+  .add(
+    'autoFocus',
+    () => renderSearchLandmark(render({autoFocus: true})),
+    {info}
   );
 
 function renderSearchLandmark(child) {

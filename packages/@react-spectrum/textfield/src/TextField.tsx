@@ -20,6 +20,7 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
     isDisabled = false,
     value,
     defaultValue,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -84,7 +85,7 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(
             textFieldProps,
