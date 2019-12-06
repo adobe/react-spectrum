@@ -4,7 +4,8 @@ type Modality = 'keyboard' | 'pointer';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 interface FocusVisibleProps {
-  isTextInput?: boolean
+  isTextInput?: boolean,
+  autoFocus?: boolean
 }
 
 interface FocusVisibleResult {
@@ -76,10 +77,11 @@ function setupGlobalFocusEvents() {
 /**
  * Manages global focus visible state, and subscribes individual components for updates
  */
-export function useFocusVisible({isTextInput}: FocusVisibleProps): FocusVisibleResult {
+export function useFocusVisible(props: FocusVisibleProps): FocusVisibleResult {
   setupGlobalFocusEvents();
 
-  let [isFocusVisible, setFocusVisible] = useState(isGlobalFocusVisible);
+  let {isTextInput, autoFocus} = props;
+  let [isFocusVisible, setFocusVisible] = useState(autoFocus || isGlobalFocusVisible);
   useEffect(() => {
     let handler = (modality, e) => {
       // If this is a text input component, don't update the focus visible style when 

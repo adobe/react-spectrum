@@ -24,6 +24,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
     icon,
     children,
     holdAffordance,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -31,7 +32,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}  autoFocus={autoFocus}>
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
