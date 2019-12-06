@@ -1,5 +1,5 @@
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, FocusableProps} from '@react-types/shared';
 import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {PressProps} from '@react-aria/interactions';
@@ -9,7 +9,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface ButtonBase extends DOMProps, StyleProps, PressProps {
+export interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   icon?: ReactElement,
@@ -36,6 +36,7 @@ function Button(props: ButtonProps, ref: FocusableRef) {
     isQuiet,
     isDisabled,
     icon,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -48,7 +49,7 @@ function Button(props: ButtonProps, ref: FocusableRef) {
   }
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}

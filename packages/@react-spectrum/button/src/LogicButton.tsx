@@ -19,6 +19,7 @@ function LogicButton(props: LogicButtonProps, ref: FocusableRef) {
     children,
     isDisabled,
     icon,
+    autoFocus,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -26,7 +27,7 @@ function LogicButton(props: LogicButtonProps, ref: FocusableRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
