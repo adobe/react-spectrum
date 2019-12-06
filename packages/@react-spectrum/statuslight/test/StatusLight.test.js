@@ -61,6 +61,6 @@ describe('StatusLight', function () {
     let {getByText} = render(<Component {...props} ref={ref}>StatusLight of Love</Component>);
 
     let statuslight = getByText('StatusLight of Love');
-    expect(statuslight).toBe(ref.current);
+    expect(statuslight).toBe(ref.current.UNSAFE_getDOMNode());
   });
 });

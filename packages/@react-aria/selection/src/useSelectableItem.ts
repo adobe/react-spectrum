@@ -1,6 +1,7 @@
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressEvent, PressProps} from '@react-aria/interactions';
+import {PressEvent} from '@react-types/shared';
+import {PressProps} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
   selectionManager: MultipleSelectionManager,

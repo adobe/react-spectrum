@@ -194,19 +194,19 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(rootProviderRef.current).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
 
     let button = getByRole('button');
     triggerPress(button);
     await waitForDomChange(); // wait for animation
 
-    expect(rootProviderRef.current).toHaveAttribute('aria-hidden', 'true');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode()).toHaveAttribute('aria-hidden', 'true');
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
     await waitForDomChange(); // wait for animation
 
-    expect(rootProviderRef.current).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
   });
 
   it('can be controlled', async function () {
