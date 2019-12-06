@@ -60,7 +60,7 @@ function renderSearchLandmark(child) {
 function render(props = {}) {
   return (
     <SearchField
-      UNSAFE_className="blah"
+      UNSAFE_className="custom_classname"
       aria-label="Search"
       placeholder="Enter text"
       {...props}
