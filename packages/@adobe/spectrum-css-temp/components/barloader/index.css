@@ -94,6 +94,9 @@ governing permissions and limitations under the License.
   left: calc(-1 * var(--spectrum-barloader-large-indeterminate-fill-width));
   will-change: transform;
 }
+[dir="rtl"] .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
+  animation-direction: reverse;
+}
 @keyframes indeterminate-loop {
   0% {
     transform: translate(0);
