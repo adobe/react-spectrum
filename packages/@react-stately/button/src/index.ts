@@ -1,4 +1,4 @@
-export * from './GroupCollection';
-export * from './GroupLayout';
+export * from './ButtonGroupCollection';
+export * from './ButtonGroupKeyboardDelegate';
 export * from './types';
 export * from './useButtonGroupState';

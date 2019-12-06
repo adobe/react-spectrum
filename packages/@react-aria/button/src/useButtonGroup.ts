@@ -2,11 +2,22 @@ import {AllHTMLAttributes} from 'react';
 import {ButtonGroupProps} from '@react-types/button';
 import {useId} from '@react-aria/utils';
 
+const BUTTON_GROUP_ROLES = {
+  'none': 'toolbar',
+  'single': 'radiogroup',
+  'multiple': 'toolbar'
+};
+
+const BUTTON_ROLES = {
+  'none': null,
+  'single': 'radio',
+  'multiple': 'checkbox'
+};
+
 export interface ButtonGroupAria {
   buttonGroupProps: AllHTMLAttributes<HTMLElement>,
   buttonProps: AllHTMLAttributes<HTMLElement>,
 }
-
 export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
   let {
     id,
@@ -17,20 +28,16 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
     tabIndex = 0
   } = props;
 
-  if (!role) {
-    role = selectionMode === 'single' ? 'radiogroup' : 'toolbar';
-  }
-
   return {
     buttonGroupProps: {
       id: useId(id),
-      role,
+      role: role || BUTTON_GROUP_ROLES[selectionMode],
       tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled
     },
     buttonProps: {
-      role: selectionMode === 'single' ? 'radio' : 'checkbox'
+      role: BUTTON_ROLES[selectionMode]
     }
   };
 }

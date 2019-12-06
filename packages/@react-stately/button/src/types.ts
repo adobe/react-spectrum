@@ -1,17 +1,8 @@
-import {ActionButtonProps} from '@react-types/button';
-import {Key, ReactElement} from 'react';
+import {ButtonGroupButton} from '@react-types/button';
+import {Key} from 'react';
 
 export interface ButtonGroupStateBase {
-  children: ReactElement<ActionButtonProps> | ReactElement<ActionButtonProps>[],
+  children: ButtonGroupButton| ButtonGroupButton[],
   disabledKeys?: Iterable<Key>
 }
 
-export interface GroupNode {
-  key: Key,
-  prevKey?: Key,
-  nextKey?: Key,
-  isFocused?: boolean,
-  isSelected?: boolean,
-  isDisabled?: boolean,
-  value?: any,
-}

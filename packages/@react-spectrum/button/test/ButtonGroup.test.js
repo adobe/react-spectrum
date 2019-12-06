@@ -1,7 +1,15 @@
 import {ActionButton, ButtonGroup} from '../';
 import {cleanup, render} from '@testing-library/react';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
+
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('ButtonGroup', function () {
   afterEach(() => {
@@ -14,9 +22,11 @@ describe('ButtonGroup', function () {
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole, getAllByRole} = render(
-      <Component {...props}>
-        <ActionButton >Click me</ActionButton>
-      </Component>
+      <Provider theme={theme} locale="de-DE">
+        <Component {...props}>
+          <ActionButton >Click me</ActionButton>
+        </Component>
+      </Provider>
     );
     expect(getByRole('radiogroup')).toBeTruthy();
     expect(getAllByRole('radio')).toBeTruthy();
@@ -28,10 +38,12 @@ describe('ButtonGroup', function () {
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{multiple: true, role: 'toolbar'}}
   `('$Name handles multiple selection', function ({Component, props}) {
     let {getByRole, getAllByRole} = render(
-      <Component {...props} >
-        <ActionButton >Click me</ActionButton>
-        <ActionButton >Click me</ActionButton>
-      </Component>
+      <Provider theme={theme} locale="de-DE">
+        <Component {...props} >
+          <ActionButton >Click me</ActionButton>
+          <ActionButton >Click me</ActionButton>
+        </Component>
+      </Provider>
     );
     expect(getByRole('toolbar')).toBeTruthy();
     let button = getAllByRole('checkbox');
@@ -44,9 +56,11 @@ describe('ButtonGroup', function () {
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({Component, props}) {
     let {getByTestId} = render(
-      <Component {...props} data-testid="test-group" >
-        <ActionButton>Click me</ActionButton>
-      </Component>
+      <Provider theme={theme} locale="de-DE">
+        <Component {...props} data-testid="test-group" >
+          <ActionButton>Click me</ActionButton>
+        </Component>
+      </Provider>
     );
     let group = getByTestId('test-group');
     expect(group).toHaveAttribute('aria-orientation', 'vertical');
@@ -58,9 +72,11 @@ describe('ButtonGroup', function () {
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{disabled: true}}
   `('$Name handles disabeld', function ({Component, props}) {
     let {getByRole} = render(
-      <Component {...props} >
-        <ActionButton>Click me</ActionButton>
-      </Component>
+      <Provider theme={theme} locale="de-DE">
+        <Component {...props} >
+          <ActionButton>Click me</ActionButton>
+        </Component>
+      </Provider>
     );
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-disabled', 'true');

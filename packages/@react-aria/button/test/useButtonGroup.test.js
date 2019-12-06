@@ -21,9 +21,30 @@ describe('useButton tests', function () {
     expect(buttonGroupProps['aria-orientation']).toBe('vertical');
   });
 
-  it('handles multiple selection', function () {
+  it('handles selection mode none', function () {
+    let {buttonGroupProps, buttonProps} = renderButtonGroupHook({selectionMode: 'none'});
+    expect(buttonGroupProps.role).toBe('toolbar');
+    expect(buttonGroupProps.id).toBeDefined();
+    expect(buttonProps.role).toBeNull();
+  });
+
+  it('handles selection mode single', function () {
+    let {buttonGroupProps, buttonProps} = renderButtonGroupHook({selectionMode: 'single'});
+    expect(buttonGroupProps.role).toBe('radiogroup');
+    expect(buttonGroupProps.id).toBeDefined();
+    expect(buttonProps.role).toBe('radio');
+  });
+
+  it('handles selection mode multiple', function () {
     let {buttonGroupProps, buttonProps} = renderButtonGroupHook({selectionMode: 'multiple'});
     expect(buttonGroupProps.role).toBe('toolbar');
+    expect(buttonGroupProps.id).toBeDefined();
+    expect(buttonProps.role).toBe('checkbox');
+  });
+
+  it('handles custom role', function () {
+    let {buttonGroupProps, buttonProps} = renderButtonGroupHook({role: 'group', selectionMode: 'multiple'});
+    expect(buttonGroupProps.role).toBe('group');
     expect(buttonGroupProps.id).toBeDefined();
     expect(buttonProps.role).toBe('checkbox');
   });

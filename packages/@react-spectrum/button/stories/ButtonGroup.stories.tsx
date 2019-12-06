@@ -22,10 +22,6 @@ storiesOf('ButtonGroup', module)
     () => render({isQuiet: true})
   )
   .add(
-    'holdAffordance',
-    () => render({holdAffordance: true})
-  )
-  .add(
     'isDisabled',
     () => render({isDisabled: true})
   )
@@ -61,13 +57,13 @@ storiesOf('ButtonGroup', module)
     'icons only, isQuiet',
     () => renderToolIcons({isQuiet: true})
   )
-   .add(
-    'icons only, orientation: vertical, holdAffordance: true',
-    () => renderToolIcons({orientation: 'vertical', holdAffordance: true})
+  .add(
+    'icons only, orientation: vertical',
+    () => renderToolIcons({orientation: 'vertical'})
   )
   .add(
     'icons only, orientation: vertical, isQuiet',
-    () => renderToolIcons({orientation: 'vertical', holdAffordance: true, isQuiet: true})
+    () => renderToolIcons({orientation: 'vertical', isQuiet: true})
   );
 
 const childrenProps =
@@ -90,10 +86,10 @@ const toolIcons =
 
 function render(props = {}) {
   return (
-    <ButtonGroup onSelect={action('onSelect')} {...props}>
+    <ButtonGroup onSelectionChange={action('onSelect')} {...props}>
       {
-        childrenProps.map(childProps => (
-          <ActionButton {...childProps} />
+        childrenProps.map((childProps, index) => (
+          <ActionButton key={index} {...childProps} />
         ))
       }
     </ButtonGroup>
@@ -104,8 +100,8 @@ function renderToolIcons(props = {}) {
   return (
     <ButtonGroup {...props}>
       {
-        toolIcons.map(childProps => (
-          <ActionButton {...childProps} />
+        toolIcons.map((childProps, index) => (
+          <ActionButton key={index} {...childProps} />
         ))
       }
     </ButtonGroup>

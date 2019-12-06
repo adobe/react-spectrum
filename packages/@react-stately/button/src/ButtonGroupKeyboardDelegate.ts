@@ -2,7 +2,7 @@ import {Collection} from '@react-stately/collections';
 import {Key} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 
-export class GroupLayout<T> implements KeyboardDelegate {
+export class ButtonGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: any;
 
   constructor(collection: Collection<T>) {

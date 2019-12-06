@@ -1,29 +1,27 @@
-import {ButtonGroupStateBase, GroupNode} from './types';
-import {GroupCollection} from './';
+import {ButtonGroupButton} from '@react-types/button';
+import {ButtonGroupCollection} from './';
+import {ButtonGroupStateBase} from './types';
 import {MultipleSelection} from '@react-types/shared';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GroupState {
-  buttonCollection: GroupCollection,
+  buttonCollection: ButtonGroupCollection<ButtonGroupButton>,
   selectionManager: SelectionManager
 }
 
 export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): GroupState {
   let selectionState = useMultipleSelectionState(props);
 
-  let childrenaray = React.Children.toArray(props.children);
-  let nodes = childrenaray.map(child => {
-    let node: GroupNode = {
-      isSelected: selectionState.selectedKeys.has(child.key),
-      isFocused: child.key === selectionState.focusedKey,
-      key: child.key,
-      value: child
-    };
-    return node;
-  });
+  let buttonCollection = useMemo(() => {
+    let childrenArray = React.Children.toArray(props.children);
+    childrenArray = childrenArray.map(child => React.cloneElement(child, {
+      isSelected: selectionState.selectedKeys.has(child.key)
+    }));
 
-  let buttonCollection = new GroupCollection(nodes);
+    return new ButtonGroupCollection<ButtonGroupButton>(childrenArray);
+
+  }, [props, selectionState.selectedKeys]);
 
   return {
     buttonCollection,

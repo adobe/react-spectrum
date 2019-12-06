@@ -1,22 +1,14 @@
-import {ButtonGroupProps} from '@react-types/button';
+import {ButtonGroupButton, ButtonGroupProps} from '@react-types/button';
+import {ButtonGroupKeyboardDelegate, GroupState, useButtonGroupState} from '@react-stately/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
-import {GroupLayout, GroupNode, GroupState, useButtonGroupState} from '@react-stately/button';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useRef} from 'react';
+import {Provider} from '@react-spectrum/provider';
+import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-
-interface ButtonGroupContext {
-  isDisabled?: boolean,
-  isEmphasized?: boolean,
-  isQuiet?: boolean,
-  holdAffordance?: boolean,
-  className?: string,
-  role?: string
-}
 
 export interface SpectrumButtonGroupProps extends ButtonGroupProps {
   isEmphasized?: boolean,
@@ -24,13 +16,7 @@ export interface SpectrumButtonGroupProps extends ButtonGroupProps {
   isJustified?: boolean,
   isQuiet?: boolean,
   holdAffordance?: boolean,
-  onSelect?: (...args) => void
-}
-
-const ButtonContext = React.createContext<ButtonGroupContext | {}>({});
-
-export function useButtonProvider(): ButtonGroupContext {
-  return useContext(ButtonContext);
+  onSelectionChange?: (...args) => void
 }
 
 export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
@@ -42,15 +28,13 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     className,
-    onSelect,
-    holdAffordance,
     isQuiet,
     ...otherProps
   } = props;
 
   let state = useButtonGroupState({...props, selectionMode});
 
-  let layout = new GroupLayout(state.buttonCollection);
+  let layout = new ButtonGroupKeyboardDelegate(state.buttonCollection);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
@@ -73,6 +57,8 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     };
   }
 
+  let providerProps = {isEmphasized, isDisabled, isQuiet};
+
   return (
     <div
       {...filterDOMProps(otherProps)}
@@ -87,35 +73,30 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
           className
         )
       } >
-      <ButtonContext.Provider
-        value={{
-          ...buttonProps,
-          isEmphasized,
-          isDisabled,
-          isQuiet,
-          holdAffordance,
-          className: classNames(buttonStyles, itemClassName)
-        }}>
+      <Provider {...providerProps}>
         {
-          [...state.buttonCollection].map((item) => (
+          state.buttonCollection.items.map((item) => (
             <ButtonGroupItem
+              key={item.key}
+              {...buttonProps}
+              className={classNames(buttonStyles, itemClassName)}
               item={item}
-              state={state}
-              onSelect={onSelect} />
+              state={state} />
           ))
         }
-      </ButtonContext.Provider>
+      </Provider>
     </div>
   );
 }
 
 export interface ButtonGroupItemProps {
-  item: GroupNode,
-  state: GroupState,
-  onSelect?: (...args) => void
+  role?: string,
+  className?: string,
+  item: ButtonGroupButton,
+  state: GroupState
 }
 
-export function ButtonGroupItem({item, state, onSelect}: ButtonGroupItemProps) {
+export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemProps) {
   let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
@@ -123,18 +104,7 @@ export function ButtonGroupItem({item, state, onSelect}: ButtonGroupItemProps) {
     itemRef: ref
   });
 
-  let {
-    isDisabled,
-    value
-  } = item;
+  let buttonProps = mergeProps(item.props, {...itemProps, ...otherProps, ref});
 
-  let onPress = () => {
-    if (!isDisabled) {
-      onSelect(item);
-    }
-  };
-
-  let buttonProps = mergeProps(item, itemProps);
-
-  return React.cloneElement(value, {...buttonProps, onPress, ref});
+  return React.cloneElement(item, buttonProps);
 }
