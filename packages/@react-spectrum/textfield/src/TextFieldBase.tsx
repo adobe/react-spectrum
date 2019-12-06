@@ -3,7 +3,7 @@ import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {classNames, cloneIcon, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {forwardRef, Ref, ReactElement, useImperativeHandle, useRef} from 'react';
+import React, {forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';

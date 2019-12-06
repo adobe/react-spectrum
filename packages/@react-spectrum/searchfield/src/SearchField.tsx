@@ -22,6 +22,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 
   let state = useSearchFieldState(props);
   let textfieldRef = useRef<TextFieldRef>();
+  textfieldRef = ref || textfieldRef;
   let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
 
   let clearButton = (
@@ -40,7 +41,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      {...searchFieldProps}
+      {...searchFieldProps as any}
       wrapperClassName={
         classNames(
           styles,
