@@ -8,8 +8,6 @@ export interface SeparatorAria {
   separatorProps: AllHTMLAttributes<HTMLElement>
 }
 
-interface useSeparatorProps {}
-
 export function useSeparator(props: SeparatorProps, elementType: string): SeparatorAria {
   let ariaOrientation;
   // if orientation is horizontal, aria-orientation default is horizontal, so we leave it undefined
@@ -18,7 +16,7 @@ export function useSeparator(props: SeparatorProps, elementType: string): Separa
     ariaOrientation = 'vertical';
   }
   // hr elements implicitly have role = separator and a horizontal orientation
-  let separatorProps = {} as useSeparatorProps;
+  let separatorProps = {};
   if (elementType.toLowerCase() !== 'hr') {
     separatorProps = {
       role: 'separator',
