@@ -29,7 +29,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
     e.stopPropagation();
 
     let {checked} = e.target;
-    setChecked(checked, e);
+    setChecked(checked);
   };
 
   let hasChildren = children !== null;
