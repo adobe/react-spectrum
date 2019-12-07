@@ -9,7 +9,7 @@ export interface FormProps extends DOMProps, StyleProps {
 
 export interface FieldLabelBase extends LabelProps, DOMProps, StyleProps {
   labelPosition?: 'top' | 'side',
-  labelAlign?: 'start' | 'end',
+  labelAlign?: 'start' | 'end', // default start
   isRequired?: boolean,
   necessityIndicator?: 'icon' | 'label',
   children?: ReactElement | ReactElement[],
