@@ -109,8 +109,15 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
       );
     }
 
+    let fieldsetProps = label ? {
+      // The id for the containing element not be the same as that for the field label
+      id: undefined,
+      role: 'group',
+      'aria-labelledby': labelAriaProps.id
+    } : {};
+
     return (
-      <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+      <div {...filterDOMProps(otherProps)} {...fieldsetProps} {...styleProps} ref={domRef}>
         {fieldLabel}
         {wrapper || childArray}
       </div>
@@ -122,7 +129,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     {
       ref: domRef,
       ...mergeProps(
-        fieldLabel.props, 
+        fieldLabel.props,
         {...filterDOMProps(otherProps), ...styleProps}
       )
     }

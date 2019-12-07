@@ -12,14 +12,14 @@ describe('FieldLabel', () => {
   let datatestid = 'FieldLabel';
   let useIdMock, createIdMock;
 
-  function renderFieldLabel(FieldLabelComponent, props, numChildren) {
+  function renderFieldLabel(FieldLabelComponent, props, numChildren, rerender) {
     let component = (
       <FieldLabelComponent data-testid={datatestid} {...props} >
         {numChildren > 0 && <button data-testid="testbutton">test child</button>}
         {numChildren > 1 && <button data-testid="testbutton2">test child2</button>}
       </FieldLabelComponent>
     );
-    return render(component);
+    return rerender ? rerender(component) : render(component);
   }
 
   function findLabel() {
@@ -215,20 +215,41 @@ describe('FieldLabel', () => {
       createIdMock.mockReturnValueOnce('first');
       createIdMock.mockReturnValueOnce('second');
 
-      let tree = renderFieldLabel(Component, {label, labelFor}, 2);
+      let {getAllByRole, getByRole, getByTestId, rerender} = renderFieldLabel(Component, {label, labelFor}, 2);
       let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
       expect(fieldLabel).toHaveAttribute('id', 'first');
 
-      let firstButton = tree.getAllByRole('button')[0];
+      let fieldset;
+      if (Component === FieldLabel) {
+        fieldset = getByRole('group');
+        expect(fieldset).toBeTruthy();
+        expect(fieldset).not.toHaveAttribute('id');
+        expect(fieldset).toHaveAttribute('aria-labelledby', fieldLabel.id);
+      }
+
+      let firstButton = getAllByRole('button')[0];
       expect(firstButton).toBeTruthy();
       expect(firstButton).not.toHaveAttribute('id');
       expect(firstButton).not.toHaveAttribute('aria-labelledby');
 
-      let secondButton = tree.getAllByRole('button')[1];
+      let secondButton = getAllByRole('button')[1];
       expect(secondButton).not.toHaveAttribute('id');
       expect(secondButton).not.toHaveAttribute('aria-labelledby');
+
+      // with no label, render wrapping div with no role and no aria-labelledby
+      renderFieldLabel(Component, {labelFor}, 2, rerender);
+      if (Component === FieldLabel) {
+        fieldset = getByTestId(datatestid);
+        expect(fieldset).not.toHaveAttribute('role');
+        expect(fieldset).not.toHaveAttribute('aria-labelledby');
+
+        fieldLabel = fieldset.firstElementChild;
+        expect(fieldLabel.tagName.toLowerCase()).toBe('div');
+        expect(fieldLabel).not.toHaveAttribute('for');
+        expect(fieldLabel).not.toHaveAttribute('id');
+      }
     });
   });
 });
