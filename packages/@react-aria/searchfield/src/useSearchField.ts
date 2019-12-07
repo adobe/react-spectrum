@@ -40,15 +40,15 @@ export function useSearchField(
     }
 
     if (key === 'Escape') {
-      state.setValue('', e);
+      state.setValue('');
       if (onClear) {
-        onClear(e);
+        onClear();
       }
     }
   };
 
-  let onClearButtonClick = (e) => {
-    state.setValue('', e);
+  let onClearButtonClick = () => {
+    state.setValue('');
     searchFieldRef.current.focus();
   };
 

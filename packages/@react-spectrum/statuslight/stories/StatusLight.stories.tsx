@@ -4,9 +4,6 @@ import {storiesOf} from '@storybook/react';
 
 storiesOf('StatusLight', module)
   .add(
-    'Default',
-    () => render()
-  ).add(
     'variant: celery',
     () => render({variant: 'celery'})
   ).add(
@@ -47,7 +44,7 @@ storiesOf('StatusLight', module)
     () => render({variant: 'negative'})
   ).add(
     'isDisabled: true',
-    () => render({isDisabled: true})
+    () => render({variant: 'positive', isDisabled: true})
   );
 
 function render(props = {}) {
