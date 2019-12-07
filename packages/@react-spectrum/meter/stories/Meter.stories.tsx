@@ -44,6 +44,13 @@ storiesOf('Meter', module)
     }
   )
   .add(
+    'showValueLabel: false',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({showValueLabel: false, value});
+    }
+  )
+  .add(
     'valueLabel: 1 of 4',
     () => render({value: 25, valueLabel: '1 of 4'})
   )
@@ -59,24 +66,24 @@ storiesOf('Meter', module)
     }
   )
   .add(
-    'children: React',
+    'no visible label',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value});
+      return render({children: null, 'aria-label': 'Meter', value});
     }
   )
   .add(
     'labelPosition: side',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value, showValueLabel: true, labelPosition: 'side'});
+      return render({value, labelPosition: 'side'});
     }
   )
   .add(
     'labelPosition: top',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value, showValueLabel: true, labelPosition: 'top'});
+      return render({value, labelPosition: 'top'});
     }
   )
   .add(
@@ -101,31 +108,27 @@ storiesOf('Meter', module)
     }
   )
   .add(
-    'Using raw values for min, max, and value',
+    'Using raw values for minValue, maxValue, and value',
     () => render({
-      children: 'Loading…',
       showValueLabel: true,
       labelPosition: 'top',
-      max: 2147483648,
+      maxValue: 2147483648,
       value: 715827883
     })
   )
   .add(
     'Using raw values with number formatter',
     () => render({
-      children: 'Loading…',
       showValueLabel: true,
       labelPosition: 'top',
-      max: 2147483648,
+      maxValue: 2147483648,
       value: 715827883,
       formatOptions
     })
   );
 
-function render(props = {}) {
+function render(props: any = {}) {
   return (
-    <Meter
-      aria-label="Meter aria label"
-      {...props} />
+    <Meter {...props}>{props.children === null ? null : props.children || 'Meter'}</Meter>
   );
 }

@@ -1,5 +1,5 @@
 import {classNames, DOMRef} from '@react-spectrum/utils';
-import {ProgressBarBase, SpectrumProgressBarBaseProps, useProgressBarBase} from '@react-spectrum/progress';
+import {ProgressBarBase, SpectrumProgressBarBaseProps} from '@react-spectrum/progress';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from '@react-aria/meter';
@@ -9,7 +9,7 @@ export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
 }
 
 function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
-  let {variant = 'positive', ...otherProps} = useProgressBarBase(props);
+  let {variant = 'positive', ...otherProps} = props;
   const {
     meterProps,
     labelProps

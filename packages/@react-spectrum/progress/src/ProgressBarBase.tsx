@@ -4,10 +4,7 @@ import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
 import {SpectrumProgressBarBaseProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
-import {useNumberFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/view';
-
-const DEFAULT_FORMAT_OPTION = 'percent';
 
 interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
   barClassName?: string,
@@ -15,65 +12,46 @@ interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBar
   labelProps?: HTMLAttributes<HTMLDivElement>
 }
 
-// This is extracted as a hook so that Meter can reuse it but call a different aria hook with the results.
-export function useProgressBarBase<T extends ProgressBarBaseProps>(props: T): T {
-  let {
-    value = 0,
-    min = 0,
-    max = 100,
-    valueLabel,
-    formatOptions = {
-      style: DEFAULT_FORMAT_OPTION
-    }
-  } = props;
-
-  value = clamp(value, min, max);
-  let percentage = (value - min) / (max - min);
-  let formatter = useNumberFormatter(formatOptions);
-
-  if (!valueLabel) {
-    let valueToFormat = formatOptions.style === DEFAULT_FORMAT_OPTION ? percentage : value;
-    valueLabel = formatter.format(valueToFormat);
-  }
-
-  return {
-    ...props,
-    value,
-    valueLabel
-  };
-}
-
 // Base ProgressBar component shared with Meter.
 function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
-    min = 0,
-    max = 100,
+    minValue = 0,
+    maxValue = 100,
     size = 'L',
     children,
     barClassName,
-    valueLabel,
-    showValueLabel = !!valueLabel,
-    labelPosition = 'side',
+    showValueLabel = !!children,
+    labelPosition = 'top',
     isIndeterminate = false,
-    barProps: progressBarProps,
+    barProps,
     labelProps,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
+  value = clamp(value, minValue, maxValue);
+
   let barStyle: CSSProperties = {};
   if (!isIndeterminate) {
-    let percentage = (value - min) / (max - min);
+    let percentage = (value - minValue) / (maxValue - minValue);
     barStyle.width = `${Math.round(percentage * 100)}%`;
+  }
+
+  // Ideally this should be in useProgressBar, but children 
+  // are not supported in ProgressCircle which shares that hook...
+  if (!children && !ariaLabel && !ariaLabelledby) {
+    console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      {...progressBarProps}
+      {...barProps}
       ref={domRef}
       className={
         classNames(
@@ -92,16 +70,16 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
       {children &&
         <div
           {...labelProps}
-          className={classNames(styles, 'spectrum-BarLoader-label')} >
+          className={classNames(styles, 'spectrum-BarLoader-label')}>
             {children}
         </div>
       }
       {showValueLabel &&
-        <div className={classNames(styles, 'spectrum-BarLoader-percentage')} >
-          {valueLabel}
+        <div className={classNames(styles, 'spectrum-BarLoader-percentage')}>
+          {barProps['aria-valuetext']}
         </div>
       }
-      <div className={classNames(styles, 'spectrum-BarLoader-track')} >
+      <div className={classNames(styles, 'spectrum-BarLoader-track')}>
         <div
           className={classNames(styles, 'spectrum-BarLoader-fill')}
           style={barStyle} />

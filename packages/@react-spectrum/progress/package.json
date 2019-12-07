@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-aria/progress": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
