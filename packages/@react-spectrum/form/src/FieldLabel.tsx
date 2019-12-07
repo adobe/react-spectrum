@@ -5,7 +5,13 @@ import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
 function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
-  let {label, labelAlign, labelFor, children, ...otherProps} = props;
+  let {
+    label,
+    labelAlign = 'start',
+    labelFor,
+    children,
+    ...otherProps
+  } = props;
   let labelClassNames = classNames(
     styles,
     'spectrum-FieldLabel',
