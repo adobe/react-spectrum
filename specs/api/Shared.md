@@ -53,7 +53,10 @@ interface SingleSelectionBase {
   onSelectionChange?: (selectedItem: any) => void,
   typeToSelect?: boolean // or is it really typeToFocus?
 }
+
+TextInputDOMProps ... TODO
 ```
+
 
 ## Drag and Drop
 ```javascript
