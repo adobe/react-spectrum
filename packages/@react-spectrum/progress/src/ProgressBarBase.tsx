@@ -9,7 +9,7 @@ import {useStyleProps} from '@react-spectrum/view';
 interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
   barClassName?: string,
   barProps?: HTMLAttributes<HTMLDivElement>,
-  labelProps?: HTMLAttributes<HTMLDivElement>
+  labelProps?: HTMLAttributes<HTMLLabelElement>
 }
 
 // Base ProgressBar component shared with Meter.
@@ -68,11 +68,11 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
         )
       }>
       {children &&
-        <div
+        <label
           {...labelProps}
           className={classNames(styles, 'spectrum-BarLoader-label')}>
             {children}
-        </div>
+        </label>
       }
       {showValueLabel &&
         <div className={classNames(styles, 'spectrum-BarLoader-percentage')}>

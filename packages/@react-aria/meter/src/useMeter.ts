@@ -5,7 +5,7 @@ import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
   meterProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLDivElement>
+  labelProps: AllHTMLAttributes<HTMLLabelElement>
 }
 
 interface MeterAriaProps extends ProgressBarBaseProps, DOMProps {

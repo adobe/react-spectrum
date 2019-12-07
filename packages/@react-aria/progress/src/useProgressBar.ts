@@ -7,7 +7,7 @@ import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
   progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLDivElement>
+  labelProps: AllHTMLAttributes<HTMLLabelElement>
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
