@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
+NPM_REGISTRY=http://localhost:4873/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
