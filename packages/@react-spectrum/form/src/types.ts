@@ -1,6 +1,6 @@
 import {DOMProps} from '@react-types/shared';
 import {LabelProps} from '@react-types/label';
-import {ReactElement, ReactNode} from 'react';
+import {ReactElement} from 'react';
 import {StyleProps} from '@react-spectrum/view';
 
 export interface FormProps extends DOMProps, StyleProps {

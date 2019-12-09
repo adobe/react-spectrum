@@ -20,7 +20,7 @@ function render(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
-        {...props}>
+        {...props as any}>
         Default
       </LogicButton>
       <LogicButton
@@ -28,7 +28,7 @@ function render(props = {}) {
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
         isDisabled
-        {...props}>
+        {...props as any}>
         Disabled
       </LogicButton>
     </div>

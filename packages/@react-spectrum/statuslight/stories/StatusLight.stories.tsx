@@ -48,5 +48,5 @@ storiesOf('StatusLight', module)
   );
 
 function render(props = {}) {
-  return <StatusLight {...props}>Status light of love</StatusLight>;
+  return <StatusLight {...props as any}>Status light of love</StatusLight>;
 }
