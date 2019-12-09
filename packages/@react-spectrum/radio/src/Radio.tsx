@@ -14,6 +14,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
 
   let {
     isDisabled,
+    isRequired,
     children,
     autoFocus,
     ...otherProps
@@ -24,6 +25,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {
     isEmphasized,
     isDisabled: isGroupDisabled,
+    isRequired: isGroupRequired,
     validationState,
     labelPosition,
     selectedRadio,
@@ -33,7 +35,8 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {inputProps} = useRadio({
     ...props,
     ...radioGroupProps,
-    isDisabled: isDisabled || isGroupDisabled
+    isDisabled: isDisabled || isGroupDisabled,
+    isRequired: isRequired || isGroupRequired
   }, {selectedRadio, setSelectedRadio});
 
   let inputRef = useRef<HTMLInputElement>(null);

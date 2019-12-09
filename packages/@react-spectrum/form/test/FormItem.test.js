@@ -1,9 +1,17 @@
 import {cleanup, render, within} from '@testing-library/react';
 import * as createId from '@react/react-spectrum/utils/createId';
 import {FormItem} from '../';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import * as useId from '@react-aria/utils/src/useId';
 import {FormItem as V2FormItem} from '@react/react-spectrum/Form';
+
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('FormItem', () => {
   let label = 'hi';
@@ -14,10 +22,12 @@ describe('FormItem', () => {
 
   function renderFormItem(FormItemComponent, props, numChildren) {
     let component = (
-      <FormItemComponent data-testid={datatestid} {...props} >
-        {numChildren > 0 && <button data-testid="testbutton">test child</button>}
-        {numChildren > 1 && <button data-testid="testbutton2">test child2</button>}
-      </FormItemComponent>
+      <Provider theme={theme}>
+        <FormItemComponent data-testid={datatestid} {...props} >
+          {numChildren > 0 && <button data-testid="testbutton">test child</button>}
+          {numChildren > 1 && <button data-testid="testbutton2">test child2</button>}
+        </FormItemComponent>
+      </Provider>
     );
     return render(component);
   }

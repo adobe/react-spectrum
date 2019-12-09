@@ -11,12 +11,14 @@ interface RadioGroupAria {
 export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
   let defaultGroupId = `${useId()}-group`;
   let {
-    name = defaultGroupId
+    name = defaultGroupId,
+    isRequired
   } = props;
 
   return {
     radioGroupProps: {
-      role: 'radiogroup'
+      role: 'radiogroup',
+      'aria-required': isRequired
     },
     radioProps: {
       name

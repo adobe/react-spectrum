@@ -43,6 +43,7 @@ storiesOf('FieldLabel', module)
         {renderTextfield({label: 'Required label', isRequired: true, necessityIndicator: 'label'})}
         {renderTextfield({label: 'Optional label', isRequired: false, necessityIndicator: 'label'})}
         {renderTextfield({label: 'React', isRequired: true, necessityIndicator: 'icon'})}
+        {render({label: 'Checkbox Group', isRequired: true, necessityIndicator: 'icon'})}
         {renderTextfield({label: 'React', isRequired: false, necessityIndicator: 'icon'})}
       </div>
     )

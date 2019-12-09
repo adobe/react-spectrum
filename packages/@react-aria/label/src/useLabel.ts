@@ -21,8 +21,8 @@ export function useLabel(labelProps: LabelProps & DOMProps = {}, labelledCompone
   let labelAriaProps: AllHTMLAttributes<HTMLElement> = {
     id: labelId,
     // htmlFor attribute can only reference a single id hence no concat, prioritize user set htmlFor attribute
-    // htmlFor is a React way to specify the "for" attribute since "for" is a reserved word in JS 
-    htmlFor: htmlFor || labelFor || labelledComponentId 
+    // htmlFor is a React way to specify the "for" attribute since "for" is a reserved word in JS
+    htmlFor: htmlFor || labelFor || labelledComponentId
   };
 
   if (ariaLabelledby) {
@@ -40,7 +40,7 @@ export function useLabel(labelProps: LabelProps & DOMProps = {}, labelledCompone
   }
 
   let labelledComponentAriaProps: AllHTMLAttributes<HTMLElement> = {
-    id: labelledComponentId, 
+    id: labelledComponentId,
     'aria-labelledby': ariaLabelledby
   };
 

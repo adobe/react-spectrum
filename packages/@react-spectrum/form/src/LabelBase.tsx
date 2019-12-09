@@ -4,6 +4,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
+import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef} from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
@@ -53,15 +54,6 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let formatMessage = useMessageFormatter(intlMessages);
-  let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
-  let icon = (
-    <Asterisk
-      UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
-      size="S"
-      alt={formatMessage('(required)')} />
-    );
-
   let wrapper;
   let childArray = React.Children.toArray(children);
   let labelledComponentProps;
@@ -70,6 +62,19 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
   }
 
   let {labelAriaProps, labelledComponentAriaProps} = useLabel(props, labelledComponentProps);
+
+  let formatMessage = useMessageFormatter(intlMessages);
+  let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
+  let icon = (
+    <Asterisk
+      UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      size="S"
+      // With one child, the isRequired state will propagate to child using Provider,
+      // the wrapped control should then express the required state using the aria-required attribute,
+      // and the asterix icon will have aria-hidden to avoid double voicing of the state.
+      alt={formatMessage('(required)').replace(/[(（(](.+?)[)）)]/g, '$1')}
+      aria-hidden={childArray.length === 1} />
+  );
 
   // Only apply the generated aria props to child if there is a label
   if (childArray.length === 1 && label) {
@@ -87,15 +92,20 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
     labelClassName
   );
 
+  // With one child, the isRequired state will propagate to child using Provider,
+  // the wrapped control should then express the required state using the aria-required attribute,
+  // and the necessityLabel should have aria-hidden to avoid double voicing of the state.
+  if (isRequired && childArray.length === 1) {
+    necessityLabel = ['\u200B', <span aria-hidden={isRequired && childArray.length === 1}>{necessityLabel}</span>];
+  }
+
   let fieldLabel = label ? (
     <label
       {...labelAriaProps}
       className={fieldLabelClassName}>
-      <span className={classNames(styles, 'spectrum-FieldLabel-label')}>
-        {label}
-      </span>
-      {necessityIndicator && ' '}
-      {necessityIndicator === 'label' && <span>{necessityLabel}</span>}
+      {label}
+      {necessityIndicator === 'label' && ' '}
+      {necessityIndicator === 'label' && necessityLabel}
       {necessityIndicator === 'icon' && isRequired && icon}
     </label>
   ) : (
@@ -114,7 +124,9 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
     return (
       <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
         {fieldLabel}
-        {wrapper || childArray}
+        <Provider isRequired={isRequired}>
+          {wrapper || childArray}
+        </Provider>
       </div>
     );
   }
