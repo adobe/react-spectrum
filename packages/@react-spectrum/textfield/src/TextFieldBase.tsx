@@ -13,7 +13,8 @@ import {useTextField} from '@react-aria/textfield';
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperClassName?: string,
   wrapperChildren?: ReactElement | ReactElement[],
-  inputClassName?: string
+  inputClassName?: string,
+  multiLine?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
