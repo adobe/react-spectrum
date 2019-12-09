@@ -12,14 +12,14 @@ describe('FieldLabel', () => {
   let datatestid = 'FieldLabel';
   let useIdMock, createIdMock;
 
-  function renderFieldLabel(FieldLabelComponent, props, numChildren, rerender) {
+  function renderFieldLabel(FieldLabelComponent, props, numChildren) {
     let component = (
       <FieldLabelComponent data-testid={datatestid} {...props} >
         {numChildren > 0 && <button data-testid="testbutton">test child</button>}
         {numChildren > 1 && <button data-testid="testbutton2">test child2</button>}
       </FieldLabelComponent>
     );
-    return rerender ? rerender(component) : render(component);
+    return render(component);
   }
 
   function findLabel() {
@@ -215,7 +215,7 @@ describe('FieldLabel', () => {
       createIdMock.mockReturnValueOnce('first');
       createIdMock.mockReturnValueOnce('second');
 
-      let {getAllByRole, getByRole, getByTestId, rerender} = renderFieldLabel(Component, {label, labelFor}, 2);
+      let {getAllByRole, getByRole} = renderFieldLabel(Component, {label, labelFor}, 2);
       let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
       expect(fieldLabel).toHaveAttribute('for', labelFor);
@@ -237,19 +237,26 @@ describe('FieldLabel', () => {
       let secondButton = getAllByRole('button')[1];
       expect(secondButton).not.toHaveAttribute('id');
       expect(secondButton).not.toHaveAttribute('aria-labelledby');
+    });
 
-      // with no label, render wrapping div with no role and no aria-labelledby
-      renderFieldLabel(Component, {labelFor}, 2, rerender);
-      if (Component === FieldLabel) {
-        fieldset = getByTestId(datatestid);
-        expect(fieldset).not.toHaveAttribute('role');
-        expect(fieldset).not.toHaveAttribute('aria-labelledby');
+    it.each`
+      Name               | Component
+      ${'v3 FieldLabel'} | ${FieldLabel}
+    `('$Name should render with a wrapping div with no role and no aria-labelledby when there is no label', ({Component}) => {
+      useIdMock.mockReturnValueOnce('first');
+      useIdMock.mockReturnValueOnce('second');
+      createIdMock.mockReturnValueOnce('first');
+      createIdMock.mockReturnValueOnce('second');
 
-        fieldLabel = fieldset.firstElementChild;
-        expect(fieldLabel.tagName.toLowerCase()).toBe('div');
-        expect(fieldLabel).not.toHaveAttribute('for');
-        expect(fieldLabel).not.toHaveAttribute('id');
-      }
+      let {getByTestId} = renderFieldLabel(Component, {labelFor}, 2);
+      let fieldset = getByTestId(datatestid);
+      expect(fieldset).not.toHaveAttribute('role');
+      expect(fieldset).not.toHaveAttribute('aria-labelledby');
+
+      let fieldLabel = fieldset.firstElementChild;
+      expect(fieldLabel.tagName.toLowerCase()).toBe('div');
+      expect(fieldLabel).not.toHaveAttribute('for');
+      expect(fieldLabel).not.toHaveAttribute('id');
     });
   });
 });

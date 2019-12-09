@@ -110,7 +110,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     }
 
     let fieldsetProps = label ? {
-      // The id for the containing element not be the same as that for the field label
+      // The id for the containing element should not be the same as that for the field label.
       id: undefined,
       role: 'group',
       'aria-labelledby': labelAriaProps.id
