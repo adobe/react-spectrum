@@ -30,11 +30,11 @@ describe('Switch', function () {
     userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledWith(true);
 
     userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledWith(false);
 
     // would test space key, but then it's just testing the browser, no need
   });
@@ -53,7 +53,7 @@ describe('Switch', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledWith(false);
   });
 
   it.each`
@@ -70,7 +70,7 @@ describe('Switch', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledWith(false);
   });
 
   it.each`
@@ -87,7 +87,7 @@ describe('Switch', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledWith(true);
   });
 
   it.each`

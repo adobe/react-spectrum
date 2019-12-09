@@ -30,11 +30,18 @@ describe('Checkbox', function () {
     userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(true);
+    }
 
     userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(false);
+    }
 
     // would test space key, but then it's just testing the browser, no need
   });
@@ -53,7 +60,11 @@ describe('Checkbox', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(false);
+    }
   });
 
   it.each`
@@ -70,7 +81,10 @@ describe('Checkbox', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
-    expect(onChangeSpy).toHaveBeenCalledWith(false, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(false);
+    }
   });
 
   it.each`
@@ -87,7 +101,10 @@ describe('Checkbox', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(true);
+    }
   });
 
   it.each`
@@ -133,11 +150,14 @@ describe('Checkbox', function () {
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalled();
+    if (Component === Checkbox) {
+      expect(onChangeSpy).toHaveBeenCalledWith(true);
+    }
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledWith(true, expect.anything());
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it.each`
