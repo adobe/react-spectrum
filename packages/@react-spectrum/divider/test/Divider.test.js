@@ -3,7 +3,6 @@ import {Divider} from '../';
 import React from 'react';
 import Rule from '@react/react-spectrum/Rule';
 
-
 describe('Divider', function () {
 
   afterEach(() => {
@@ -40,6 +39,16 @@ describe('Divider', function () {
     expect(divider).toBeTruthy();
     expect(divider).toHaveAttribute('aria-orientation', 'vertical');
     expect(divider).toHaveAttribute('aria-label', 'divides');
+  });
+
+  it.each`
+    Name         | Component  | props
+    ${'Divider'} | ${Divider} | ${{}}
+  `('$Name should not include implicit attributes', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} aria-label="divides" />);
+
+    let divider = getByRole('separator');
+    expect(divider).not.toHaveAttribute('aria-orientation', 'horizontal');
   });
 
   it.each`
