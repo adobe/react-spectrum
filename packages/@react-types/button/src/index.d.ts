@@ -1,14 +1,14 @@
-import {DOMProps, MultipleSelection} from '@react-types/shared';
+import {DOMProps, FocusableProps, MultipleSelection} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 import {PressProps} from '@react-aria/interactions';
+import {StyleProps} from '@react-spectrum/view';
 
-export interface ButtonBase extends DOMProps, PressProps {
+export interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   icon?: ReactElement,
   children?: ReactNode,
-  href?: string,
-  onKeyDown?: (e) => void
+  href?: string
 }
 
 export interface ActionButtonProps extends ButtonBase {
@@ -20,7 +20,7 @@ export interface ActionButtonProps extends ButtonBase {
 
 export type ButtonGroupButton = ReactElement<ActionButtonProps>;
 
-export interface ButtonGroupProps extends DOMProps, MultipleSelection {
+export interface ButtonGroupProps extends DOMProps, StyleProps, MultipleSelection {
   orientation?: 'horizontal' | 'vertical',
   children: ButtonGroupButton | ButtonGroupButton[],
   isDisabled?: boolean

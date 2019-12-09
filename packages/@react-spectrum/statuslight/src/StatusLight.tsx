@@ -1,22 +1,25 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import React, {forwardRef, ReactNode, RefObject} from 'react';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
+import React, {forwardRef, ReactNode} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface StatusLightProps extends React.HTMLAttributes<HTMLElement> {
+interface StatusLightProps extends DOMProps, StyleProps {
   children: ReactNode,
   variant?: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
   isDisabled?: boolean
 }
 
-export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<HTMLDivElement>) => {
+function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   let {
     variant = 'positive',
     children,
     isDisabled,
-    className,
     ...otherProps
   } = useProviderProps(props);
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(otherProps);
 
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
@@ -25,6 +28,7 @@ export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<H
   return (
     <div
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       className={classNames(
         styles,
         'spectrum-StatusLight',
@@ -32,9 +36,13 @@ export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<H
         {
           'is-disabled': isDisabled
         },
-        className)}
-      ref={ref} >
+        styleProps.className
+      )}
+      ref={domRef} >
       {children}
     </div>
   );
-});
+}
+
+let _StatusLight = forwardRef(StatusLight);
+export {_StatusLight as StatusLight};

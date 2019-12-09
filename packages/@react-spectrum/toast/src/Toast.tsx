@@ -17,15 +17,15 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {HTMLElement} from 'react-dom';
+import {DOMProps} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
-import React, {RefObject} from 'react';
+import React from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {ToastProps} from '@react-types/toast';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -34,32 +34,35 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLElement>) => {
-  let completeProps = useProviderProps(props);
+interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
+
+function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     actionButtonProps,
     closeButtonProps,
     iconProps,
     toastProps
-  } = useToast(completeProps);
+  } = useToast(props);
   let {
     actionLabel,
     children,
-    className,
     variant,
     ...otherProps
-  } = completeProps;
+  } = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
 
   return (
     <div
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       {...toastProps}
-      ref={ref}
+      ref={domRef}
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
-        className
+        styleProps.className
       )}>
       {Icon &&
         <Icon
@@ -71,7 +74,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
         {actionLabel &&
           <Button
             {...actionButtonProps}
-            className={classNames(styles, 'spectrum-Button')}
+            UNSAFE_className={classNames(styles, 'spectrum-Button')}
             isQuiet
             variant="overBackground">{actionLabel}</Button>
         }
@@ -83,4 +86,7 @@ export const Toast = React.forwardRef((props: ToastProps, ref: RefObject<HTMLEle
       </div>
     </div>
   );
-});
+}
+
+let _Toast = React.forwardRef(Toast);
+export {_Toast as Toast};

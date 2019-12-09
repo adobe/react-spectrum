@@ -44,7 +44,7 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;
@@ -97,10 +97,9 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      // react listens for pointerout instead of pointerleave...
-      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerenter', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(document, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         {
@@ -131,10 +130,9 @@ describe('usePress', function () {
 
       events = [];
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
-      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(document, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         {
@@ -252,7 +250,7 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', shiftKey: true}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true, clientX: 0, clientY: 0}));
       
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;

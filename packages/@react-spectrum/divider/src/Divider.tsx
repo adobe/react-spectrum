@@ -1,11 +1,11 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
 
-export interface DividerProps extends DOMProps {
+export interface DividerProps extends DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
   orientation?: 'horizontal' | 'vertical'
 }
@@ -16,13 +16,14 @@ let sizeMap = {
   L: 'large'
 };
 
-export const Divider = React.forwardRef((props: DividerProps, ref: RefObject<HTMLElement>) => {
+function Divider(props: DividerProps, ref: DOMRef) {
   let {
     size = 'L',
     orientation = 'horizontal',
-    className,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(otherProps);
   let weight = sizeMap[size];
 
   let Element = 'hr';
@@ -34,16 +35,20 @@ export const Divider = React.forwardRef((props: DividerProps, ref: RefObject<HTM
     // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
     <Element
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       className={
         classNames(
           styles,
           'spectrum-Rule',
           `spectrum-Rule--${weight}`,
           {'spectrum-Rule--vertical': orientation === 'vertical'},
-          className
+          styleProps.className
         )
       }
-      ref={ref}
+      ref={domRef}
       {...separatorProps} />
   );
-});
+}
+
+let _Divider = React.forwardRef(Divider);
+export {_Divider as Divider};

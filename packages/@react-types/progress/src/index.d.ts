@@ -1,7 +1,6 @@
-import {DOMProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface ProgressBarBase extends DOMProps {
+export interface ProgressBarBase {
   value?: number,
   children?: ReactNode, // pass in children to render label
   min?: number,

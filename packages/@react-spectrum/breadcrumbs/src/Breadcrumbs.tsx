@@ -1,45 +1,47 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './';
 import {BreadcrumbsProps} from '@react-types/breadcrumbs';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 
-export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps {
+export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
+  isHeading?: boolean,
   headingAriaLevel?: number,
   showRoot?: boolean,
   isDisabled?: boolean,
   maxVisibleItems?: 'auto' | number
 }
 
-export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, ref: RefObject<HTMLElement>) => {
+function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let {
-    className,
     size = 'M',
     children,
+    isHeading,
     headingAriaLevel,
     showRoot,
     isDisabled,
     maxVisibleItems = 4,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let isCollapsible = maxVisibleItems === 'auto';
   let childArray = React.Children.toArray(children);
 
   const [hidden, setHidden] = useState(false);
-  ref = ref || useRef();
+  let domRef = useDOMRef(ref);
 
   useEffect(() => {
     let onResize = () => {
-      if (isCollapsible && ref.current) {
-        setHidden(ref.current.scrollWidth > ref.current.offsetWidth);
+      if (isCollapsible && domRef.current) {
+        setHidden(domRef.current.scrollWidth > domRef.current.offsetWidth);
       }
     };
 
@@ -48,7 +50,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, [ref, isCollapsible]);
+  }, [domRef, isCollapsible]);
 
   let {breadcrumbProps} = useBreadcrumbs(props);
 
@@ -87,7 +89,7 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
           child,
           {
             isCurrent,
-            isHeading: isCurrent && size === 'L',
+            isHeading: isCurrent && isHeading,
             headingAriaLevel,
             isDisabled
           }
@@ -100,8 +102,9 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
   return (
     <nav
       {...filterDOMProps(otherProps)}
+      {...styleProps}
       {...breadcrumbProps}
-      ref={ref} >
+      ref={domRef}>
       {
         hidden &&
         <div
@@ -127,14 +130,17 @@ export const Breadcrumbs = React.forwardRef((props: SpectrumBreadcrumbsProps, re
               'is-hidden': hidden,
               'is-disabled': isDisabled
             },
-            className
+            styleProps.className
           )
         }>
         {breadcrumbItems}
       </ul>
     </nav>
   );
-});
+}
+
+let _Breadcrumbs = React.forwardRef(Breadcrumbs);
+export {_Breadcrumbs as Breadcrumbs};
 
 // temporary replacement for menu and select component
 interface MenuProps extends DOMProps {
@@ -153,13 +159,14 @@ const Menu = React.forwardRef((props: MenuProps) => {
   return (
     <DialogTrigger type="popover">
       <ActionButton
+        aria-label="…"
         icon={<FolderBreadcrumb />}
         isDisabled={isDisabled}
-        isQuiet >
-        {label && React.cloneElement(label, {isCurrent: true})}
+        isQuiet>
+        {label && React.cloneElement(label, {isCurrent: undefined})}
       </ActionButton>
       <Dialog>
-        {children.map((child) => React.cloneElement(child, {isCurrent: true}))}
+        {children.map((child) => React.cloneElement(child, {isCurrent: undefined}))}
       </Dialog>
     </DialogTrigger>
   );

@@ -27,7 +27,6 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     isDisabled,
     selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
-    className,
     isQuiet,
     ...otherProps
   } = props;
@@ -70,7 +69,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
           {
             'spectrum-ButtonGroup--vertical': isVertical
           },
-          className
+          otherProps.UNSAFE_className
         )
       } >
       <Provider {...providerProps}>
@@ -79,7 +78,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
             <ButtonGroupItem
               key={item.key}
               {...buttonProps}
-              className={classNames(buttonStyles, itemClassName)}
+              UNSAFE_className={classNames(buttonStyles, itemClassName)}
               item={item}
               state={state} />
           ))
@@ -91,7 +90,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
 
 export interface ButtonGroupItemProps {
   role?: string,
-  className?: string,
+  UNSAFE_className?: string,
   item: ButtonGroupButton,
   state: GroupState
 }

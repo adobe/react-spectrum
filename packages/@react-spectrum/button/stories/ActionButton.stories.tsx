@@ -36,6 +36,10 @@ storiesOf('Button/ActionButton', module)
   .add(
     'quiet, isEmphasized',
     () => render({isQuiet: true, isEmphasized: true, isSelected: true})
+  )
+  .add(
+    'autoFocus',
+    () => render({autoFocus: true})
   );
 
 function render(props = {}) {

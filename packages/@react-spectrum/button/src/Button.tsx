@@ -1,11 +1,12 @@
 import {ButtonBase} from '@react-types/button';
 import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject, useRef} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 export interface ButtonProps extends ButtonBase {
   variant?: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
@@ -17,8 +18,7 @@ let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLElement>) => {
-  ref = ref || useRef();
+function Button(props: ButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -27,21 +27,25 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
     isQuiet,
     isDisabled,
     icon,
-    className,
+    autoFocus,
     ...otherProps
   } = props;
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let domRef = useFocusableRef(ref);
+  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
+  let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
+
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...filterDOMProps(otherProps)}
+        {...styleProps}
         {...buttonProps}
-        ref={ref}
+        ref={domRef}
         className={
           classNames(
             styles,
@@ -52,7 +56,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            className
+            styleProps.className
           )
         }>
         {cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon')})}
@@ -60,4 +64,7 @@ export const Button = React.forwardRef((props: ButtonProps, ref: RefObject<HTMLE
       </ElementType>
     </FocusRing>
   );
-});
+}
+
+let _Button = React.forwardRef(Button);
+export {_Button as Button};
