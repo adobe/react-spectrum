@@ -24,7 +24,9 @@
     "@babel/runtime": "^7.6.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
