@@ -40,10 +40,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     keyboardDelegate: layout
   });
 
-  let {buttonGroupProps, buttonProps} = useButtonGroup({
-    ...props,
-    tabIndex: state.selectionManager.focusedKey ? -1 : 0
-  });
+  let {buttonGroupProps, buttonProps} = useButtonGroup(props);
 
   let isVertical = orientation === 'vertical';
   let itemClassName;
