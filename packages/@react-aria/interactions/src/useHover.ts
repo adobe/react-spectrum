@@ -217,6 +217,7 @@ function handleDelayedShow(onHoverChange, isDisabled, immediateAppearance, isOve
   }
 
   hoverShowDelay = setTimeout(() => {
+    // console.log("hover show delay", onHoverChange) ... somehow being passed into click
     onHoverChange(true);
     warmupPeriodComplete = true;
     if (isOverTooltip) {
@@ -235,6 +236,7 @@ function handleDelayedHide(onHoverChange) {
   }
 
   hoverHideDelay = setTimeout(() => {
+    // console.log("hover hide delay", onHoverChange) ... somehow being passed into click
     onHoverChange(false);
   }, 300);
 

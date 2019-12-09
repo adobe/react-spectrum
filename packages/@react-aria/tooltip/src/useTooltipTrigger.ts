@@ -58,12 +58,17 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  // NEXT PR: move all of the single tooltip concept methods to tooltip trigger so you can apply hide delays and uniform warmup / cooldown ?
+
   let enter = () => {
+    console.log("enter", VISIBLE_TOOLTIPS.length)
     let tooltipBucketItem = triggerProps.ref.current.id;
     VISIBLE_TOOLTIPS.push(tooltipBucketItem);
+    console.log('list of tooltips in hover enter', VISIBLE_TOOLTIPS)
   };
 
   let exit = (e) => {
+    console.log("exit", VISIBLE_TOOLTIPS.length)
     let hoveringOverTooltip = false;
     const related = e.relatedTarget || e.nativeEvent.toElement;
     const parent = related.parentNode;
@@ -73,9 +78,29 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     if (VISIBLE_TOOLTIPS.length > 0 && hoveringOverTooltip === false) {
       state.setOpen(false);
     }
+    VISIBLE_TOOLTIPS.pop()
   };
 
-  // investigate: spread tooltipAriaProps as well? 
+  let enterClick = () => {
+    console.log('enter click', VISIBLE_TOOLTIPS.length)
+    let tooltipBucketItem = triggerProps.ref.current.id;
+    VISIBLE_TOOLTIPS.push(tooltipBucketItem);
+    document.addEventListener('mouseenter', testMethod(triggerProps.ref.current.id), true) // is the onHoverChange type error blocking this?
+  }
+
+  let testMethod = (currTooltip) => {
+    console.log('we are hovering over something!')
+    console.log('list of tooltips in test method', VISIBLE_TOOLTIPS)
+    console.log('current tooltip in test method', currTooltip)
+    if (VISIBLE_TOOLTIPS.length > 1) { // && last index of the visible tooltips array doesn't equal currTooltip
+      console.log('trying to close')
+      state.setOpen(false);
+    }
+    // VISIBLE_TOOLTIPS.pop()
+    // document.removeEventListener('mouseenter', testMethod, true)
+  }
+
+  // investigate: spread tooltipAriaProps as well?
   return {
     tooltipTriggerBaseProps: {
       ...overlayProps,
@@ -87,9 +112,12 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
     },
-    tooltipTriggerSingularityProps: {
+    tooltipHoverTriggerSingularityProps: {
       onMouseEnter: enter,
       onMouseLeave: exit
+    },
+    tooltipClickTriggerSingularityProps: {
+      onMouseDown: enterClick
     }
   };
 }
