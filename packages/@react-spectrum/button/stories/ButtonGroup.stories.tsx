@@ -22,6 +22,10 @@ storiesOf('ButtonGroup', module)
     () => render({isQuiet: true})
   )
   .add(
+    'isEmphasized',
+    () => render({isEmphasized: true})
+  )
+  .add(
     'isDisabled',
     () => render({isDisabled: true})
   )
