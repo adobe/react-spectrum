@@ -143,6 +143,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <PressResponder
           {...tooltipTriggerBaseProps}
+          {...tooltipTriggerSingularityProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={props.isDisabled}
