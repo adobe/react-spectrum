@@ -21,7 +21,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (

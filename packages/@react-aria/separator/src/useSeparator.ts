@@ -16,12 +16,13 @@ export function useSeparator(props: SeparatorProps, elementType: string): Separa
     ariaOrientation = 'vertical';
   }
   // hr elements implicitly have role = separator and a horizontal orientation
-  let separatorProps = {};
   if (elementType.toLowerCase() !== 'hr') {
-    separatorProps = {
-      role: 'separator',
-      'aria-orientation': ariaOrientation
+    return {
+      separatorProps: {
+        role: 'separator',
+        'aria-orientation': ariaOrientation
+      }
     };
   }
-  return {separatorProps};
+  return {separatorProps: {}};
 }
