@@ -55,6 +55,10 @@ governing permissions and limitations under the License.
     &::after {
       transform: translateX(calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size)));
     }
+    &::before {
+      /* Fix Firefox inconsistent scaling */
+      transform: translateX(0);
+    }
   }
 
   &:disabled,
