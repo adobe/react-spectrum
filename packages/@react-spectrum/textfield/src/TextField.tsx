@@ -1,5 +1,5 @@
-import Alert from '@spectrum-icons/workflow/Alert';
-import Checkmark from '@spectrum-icons/workflow/Checkmark';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, cloneIcon, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -57,7 +57,7 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
     });
   } 
 
-  let validationIcon = isInvalid ? <Alert /> : <Checkmark />;
+  let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
   let validation = cloneIcon(validationIcon, {
     className: classNames(
       styles,
