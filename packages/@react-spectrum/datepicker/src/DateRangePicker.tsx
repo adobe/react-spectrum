@@ -99,7 +99,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
           isOpen={isOpen}
           onOpenChange={setOpen}>
           <FieldButton
-            {...buttonProps as any}
+            {...buttonProps}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}

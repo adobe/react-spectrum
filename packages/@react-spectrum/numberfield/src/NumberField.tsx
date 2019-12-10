@@ -71,7 +71,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           isQuiet={isQuiet}
           autoFocus={autoFocus}
           UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps as any}
+          {...inputFieldProps}
           onChange={setValue} />
         {showStepper &&
         <span
@@ -79,13 +79,13 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           role="presentation">
           <ActionButton
             UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUp')}
-            {...incrementButtonProps as any}
+            {...incrementButtonProps}
             isQuiet={isQuiet}>
             <ChevronUpSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
           </ActionButton>
           <ActionButton
             UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDown')}
-            {...decrementButtonProps as any}
+            {...decrementButtonProps}
             isQuiet={isQuiet}>
             <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
           </ActionButton>

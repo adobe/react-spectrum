@@ -55,13 +55,13 @@ export function CalendarBase(props: CalendarBaseProps) {
           {monthDateFormatter.format(state.currentMonth)}
         </h2>
         <ActionButton
-          {...prevButtonProps as any}
+          {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
           isQuiet
           isDisabled={props.isDisabled}
           icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
         <ActionButton
-          {...nextButtonProps as any}
+          {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
           isQuiet
           isDisabled={props.isDisabled}

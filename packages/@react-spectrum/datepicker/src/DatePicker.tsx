@@ -81,7 +81,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
           isOpen={isOpen}
           onOpenChange={setOpen}>
           <FieldButton
-            {...buttonProps as any}
+            {...buttonProps}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}
