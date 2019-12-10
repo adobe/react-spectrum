@@ -42,13 +42,13 @@ describe('Divider', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{}}
-  `('$Name should not include implicit attributes', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} aria-label="divides" />);
+    Name         | Component
+    ${'Divider'} | ${Divider}
+  `('$Name should not include implicit attributes', function ({Component}) {
+    let {getByRole} = render(<Component aria-label="divides" />);
 
     let divider = getByRole('separator');
-    expect(divider).not.toHaveAttribute('aria-orientation', 'horizontal');
+    expect(divider).not.toHaveAttribute('aria-orientation');
   });
 
   it.each`
