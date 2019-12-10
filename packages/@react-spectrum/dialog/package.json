@@ -34,13 +34,14 @@
     "@react-aria/overlays": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-spectrum/overlays": "^3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/view": "^3.0.0-alpha.1",
     "@react-stately/utils": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0-alpha.1"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
