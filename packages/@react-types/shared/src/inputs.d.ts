@@ -11,7 +11,7 @@ export interface InputBase extends FocusableProps {
 export interface ValueBase<T> {
   value?: T,
   defaultValue?: T,
-  onChange?: (value: T) => void,
+  onChange?: (value: T, e?: React.ChangeEvent<HTMLInputElement>) => void,
 }
 
 export interface TextInputBase {

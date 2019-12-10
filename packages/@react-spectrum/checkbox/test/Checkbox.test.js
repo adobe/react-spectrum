@@ -31,17 +31,12 @@ describe('Checkbox', function () {
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(true);
-    }
+    expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
     userEvent.click(checkbox);
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).toHaveBeenCalled();
-
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(false);
-    }
+    expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
     // would test space key, but then it's just testing the browser, no need
   });
@@ -61,10 +56,7 @@ describe('Checkbox', function () {
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
-
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(false);
-    }
+    expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
 
   it.each`
@@ -82,9 +74,7 @@ describe('Checkbox', function () {
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(false);
-    }
+    expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
 
   it.each`
@@ -102,9 +92,7 @@ describe('Checkbox', function () {
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(true);
-    }
+    expect(onChangeSpy.mock.calls[0][0]).toBe(true);
   });
 
   it.each`
@@ -151,13 +139,12 @@ describe('Checkbox', function () {
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
-    if (Component === Checkbox) {
-      expect(onChangeSpy).toHaveBeenCalledWith(true);
-    }
+    expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy.mock.calls[1][0]).toBe(false);
+
   });
 
   it.each`
