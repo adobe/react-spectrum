@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
-import {filterDOMProps, shouldKeepSpectrumClassNames} from '@react-spectrum/utils';
+import {DOMRef, filterDOMProps, shouldKeepSpectrumClassNames, useDOMRef} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from './types';
-import React, {RefObject, useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useColorScheme, useScale} from './mediaQueries';
@@ -14,7 +14,7 @@ import {version} from '../package.json';
 
 const Context = React.createContext<ProviderContext | null>(null);
 
-export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<HTMLDivElement>) => {
+function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
   let {
     theme = prevContext && prevContext.theme,
@@ -79,13 +79,17 @@ export const Provider = React.forwardRef((props: ProviderProps, ref: RefObject<H
       </I18nProvider>
     </Context.Provider>
   );
-});
+}
 
-const ProviderWrapper = React.forwardRef(({children, ...otherProps}: ProviderProps, ref: RefObject<HTMLDivElement>) => {
+let _Provider = React.forwardRef(Provider);
+export {_Provider as Provider};
+
+const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   let themeKey = Object.keys(theme[colorScheme])[0];
   let scaleKey = Object.keys(theme[scale])[0];
@@ -113,7 +117,7 @@ const ProviderWrapper = React.forwardRef(({children, ...otherProps}: ProviderPro
       className={className}
       lang={locale}
       dir={direction}
-      ref={ref}>
+      ref={domRef}>
       {children}
     </div>
   );

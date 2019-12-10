@@ -1,10 +1,10 @@
 import Asterisk from '@spectrum-icons/ui/Asterisk';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, DOMRef, useDOMRef} from '@react-spectrum/utils';
 import {FieldLabelBase} from './types';
 import {filterDOMProps} from '@react-spectrum/utils';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -16,7 +16,7 @@ interface SpectrumLabelBaseProps extends FieldLabelBase {
   componentName?: string
 }
 
-export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObject<HTMLDivElement> & RefObject<HTMLLabelElement>) => {
+function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
   /*
   There are 3 cases:
   1. No children - only render the <label>, no wrapping div. `labelFor` required.
@@ -48,6 +48,7 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
     isRequired,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -109,7 +110,7 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
     }
 
     return (
-      <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+      <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
         {fieldLabel}
         {wrapper || childArray}
       </div>
@@ -119,11 +120,14 @@ export const LabelBase = forwardRef((props: SpectrumLabelBaseProps, ref: RefObje
   return React.cloneElement(
     fieldLabel,
     {
-      ref,
+      ref: domRef,
       ...mergeProps(
         fieldLabel.props, 
         {...filterDOMProps(otherProps), ...styleProps}
       )
     }
   );
-});
+}
+
+let _LabelBase = forwardRef(LabelBase);
+export {_LabelBase as LabelBase};

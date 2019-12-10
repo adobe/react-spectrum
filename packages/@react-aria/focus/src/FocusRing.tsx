@@ -8,7 +8,8 @@ interface FocusRingProps {
   focusClass?: string,
   focusRingClass?: string,
   within?: boolean,
-  isTextInput?: boolean
+  isTextInput?: boolean,
+  autoFocus?: boolean
 }
 
 export function FocusRing(props: FocusRingProps) {

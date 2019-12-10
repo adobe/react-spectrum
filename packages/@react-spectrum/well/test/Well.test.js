@@ -12,7 +12,7 @@ let refExists = (ComponentToCheck, children, props) => {
   };
 
   let {getByText, getByTestId} = render(<Component />);
-  expect(ref.current).toEqual(getByTestId(dataTestId));
+  expect(ref.current.UNSAFE_getDOMNode()).toEqual(getByTestId(dataTestId));
 
   return {getByText, ref};
 };
@@ -53,7 +53,7 @@ describe('Well', () => {
 
   it('v3 forward ref exists and supports children and props', function () {
     let {ref} = refExists(Well, 'Well Text', {'data-testid': 'wellForwardRef'});
-    expect(ref.current).toHaveAttribute('data-testid', 'wellForwardRef');
-    expect(ref.current.textContent.includes('Well Text')).toBeTruthy();
+    expect(ref.current.UNSAFE_getDOMNode()).toHaveAttribute('data-testid', 'wellForwardRef');
+    expect(ref.current.UNSAFE_getDOMNode().textContent.includes('Well Text')).toBeTruthy();
   });
 });

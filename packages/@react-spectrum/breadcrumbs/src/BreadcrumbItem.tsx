@@ -2,19 +2,17 @@ import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames, filterDOMProps, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {Fragment, RefObject} from 'react';
+import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useLocale} from '@react-aria/i18n';
 
-export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref: RefObject<HTMLElement>) => {
+export function BreadcrumbItem(props: BreadcrumbItemProps) {
   let {
     children,
-    isHeading,
     isCurrent,
     isDisabled,
-    headingAriaLevel,
-    ...otherProps
+  ...otherProps
   } = props;
 
   let {direction} = useLocale();
@@ -25,7 +23,6 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
     {
       ...filterDOMProps(otherProps),
       ...breadcrumbItemProps,
-      ref,
       className:
         classNames(
           styles,
@@ -40,22 +37,9 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
   return (
     <Fragment>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        {
-          isHeading ?
-            <h1 
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Heading--pageTitle'
-                )
-              }
-              aria-level={headingAriaLevel}>
-              {element}
-            </h1>
-            : element
-        }
+        {element}
       </FocusRing>
-      {!isCurrent &&
+      {isCurrent === false &&
         <ChevronRightSmall
           className={
             classNames(
@@ -69,4 +53,4 @@ export const BreadcrumbItem = React.forwardRef((props: BreadcrumbItemProps, ref:
       }
     </Fragment>
   );
-});
+}

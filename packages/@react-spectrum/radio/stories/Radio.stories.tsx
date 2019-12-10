@@ -72,6 +72,10 @@ storiesOf('Radio', module)
   .add(
     'provider control: isDisabled',
     () => renderFormControl()
+  )
+  .add(
+    'autoFocus on one radio',
+    () => render({}, [{}, {autoFocus: true}, {}])
   );
 
 function render(props, radioProps = [{}, {}, {}]) {

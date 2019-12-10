@@ -49,6 +49,14 @@ storiesOf('Breadcrumbs', module)
   .add(
     'isDisabled: true, size: L',
     () => render({isDisabled: true, size: 'L'})
+  )
+  .add(
+    'isHeading: true',
+    () => render({isHeading: true})
+  )
+  .add(
+    'isHeading: true, size: L',
+    () => render({isHeading: true, size: 'L'})
   );
 
 function render(props = {}) {

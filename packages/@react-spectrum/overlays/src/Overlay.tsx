@@ -1,6 +1,7 @@
+import {DOMRef} from '@react-spectrum/utils';
 import {OpenTransition} from './OpenTransition';
 import {Provider} from '@react-spectrum/provider';
-import React, {ReactNode, RefObject, useCallback, useState} from 'react';
+import React, {ReactNode, useCallback, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 interface OverlayProps {
@@ -15,7 +16,7 @@ interface OverlayProps {
   onExited?: () => void
 }
 
-export const Overlay = React.forwardRef((props: OverlayProps, ref: RefObject<HTMLDivElement>) => {
+function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited} = props;
   let [exited, setExited] = useState(!isOpen);
 
@@ -57,4 +58,7 @@ export const Overlay = React.forwardRef((props: OverlayProps, ref: RefObject<HTM
   );
 
   return ReactDOM.createPortal(contents, container || document.body);
-});
+}
+
+let _Overlay = React.forwardRef(Overlay);
+export {_Overlay as Overlay};

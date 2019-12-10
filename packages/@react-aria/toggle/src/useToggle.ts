@@ -2,10 +2,11 @@ import {DOMProps} from '@react-types/shared';
 import React from 'react';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-types/toggle';
+import {useFocusable} from '@react-aria/focus';
 
 export interface ToggleAriaProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState):ToggleAriaProps {
+export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): ToggleAriaProps {
   let {
     autoFocus = false,
     isDisabled = false,
@@ -38,6 +39,8 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState):Tog
   }
   let isInvalid = validationState === 'invalid';
 
+  let {focusableProps} = useFocusable(props);
+
   return {
     'aria-label': ariaLabel,
     'aria-invalid': isInvalid,
@@ -48,6 +51,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState):Tog
     value,
     name,
     type: 'checkbox',
-    autoFocus
+    autoFocus,
+    ...focusableProps
   };
 }
