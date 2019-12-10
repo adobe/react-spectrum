@@ -52,11 +52,11 @@ describe('Divider', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{}}
-  `('$Name forwards the ref', function ({Component, props}) {
+    Name         | Component
+    ${'Divider'} | ${Divider}
+  `('$Name forwards the ref', function ({Component}) {
     let ref = React.createRef();
-    let {getByRole} = render(<Component {...props} aria-label="divides" ref={ref} />);
+    let {getByRole} = render(<Component aria-label="divides" ref={ref} />);
 
     let divider = getByRole('separator');
     expect(divider).toBe(ref.current.UNSAFE_getDOMNode());
