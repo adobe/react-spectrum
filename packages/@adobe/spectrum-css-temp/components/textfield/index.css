@@ -146,7 +146,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield.is-invalid & {
-      padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
@@ -195,17 +195,22 @@ governing permissions and limitations under the License.
   width: var(--spectrum-icon-checkmark-medium-width);
   height: var(--spectrum-icon-checkmark-medium-height);
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-height) / 2));
-  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-width) / 2));
+  inset-inline-end: var(--spectrum-global-dimension-size-150);
 }
 
 /* styles the left icon for textfield */
 .spectrum-Textfield-icon {
   display: block;
   position: absolute;
-  height: var(--spectrum-icon-magnifier-height);
-  width: var(--spectrum-icon-magnifier-width);
-  inset-inline-start: 12px;
-  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2) - calc(var(--spectrum-textfield-padding-bottom) - var(--spectrum-textfield-padding-top)));
+  height: var(--spectrum-icon-info-medium-height);
+  width: var(--spectrum-icon-info-medium-width);
+  inset-inline-start: calc(calc(calc(var(--spectrum-search-padding-left) - var(--spectrum-icon-info-medium-width)) - var(--spectrum-global-dimension-size-100)) + 1px);
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-info-medium-height) / 2));
+
+  /* TODO: Clarify what a textarea with a icon should look like, no prior design or styles */
+  .spectrum-Textfield--multiline & {
+    top: calc(var(--spectrum-icon-info-medium-height) / 4);
+  }
 }
 
 /* styles the textfield properly if the left icon is provided */
