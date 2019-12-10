@@ -43,9 +43,6 @@ governing permissions and limitations under the License.
   text-indent: 0;
 
   /* remove rounded corners from iOS view */
-  
-  /*-webkit-border-radius: 0;*/
-  /*border-radius: 0;*/
   -webkit-appearance: none;
 
   /* Don't let long strings overlap the close icon */
