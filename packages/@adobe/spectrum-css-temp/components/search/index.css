@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
   padding-inline-start: var(--spectrum-search-padding-left);
   text-indent: 0;
 
-  /* remove rounded corners from iOS view */
+  /* Remove the extra rounding of corners from iOS view */
   -webkit-appearance: none;
 
   /* Don't let long strings overlap the close icon */
