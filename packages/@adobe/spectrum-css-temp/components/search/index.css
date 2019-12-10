@@ -42,6 +42,12 @@ governing permissions and limitations under the License.
   padding-inline-start: var(--spectrum-search-padding-left);
   text-indent: 0;
 
+  /* remove rounded corners from iOS view */
+  
+  /*-webkit-border-radius: 0;*/
+  /*border-radius: 0;*/
+  -webkit-appearance: none;
+
   /* Don't let long strings overlap the close icon */
   padding-inline-end: var(--spectrum-search-padding-right);
 
