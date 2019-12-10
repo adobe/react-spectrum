@@ -215,10 +215,10 @@ describe('FieldLabel', () => {
       createIdMock.mockReturnValueOnce('first');
       createIdMock.mockReturnValueOnce('second');
 
-      let {getAllByRole, getByRole} = renderFieldLabel(Component, {label, labelFor}, 2);
+      let {getAllByRole, getByRole} = renderFieldLabel(Component, {label}, 2);
       let fieldLabel = findLabel();
       expect(fieldLabel).toBeTruthy();
-      expect(fieldLabel).toHaveAttribute('for', labelFor);
+      expect(fieldLabel).not.toHaveAttribute('for');
       expect(fieldLabel).toHaveAttribute('id', 'first');
 
       let fieldset;

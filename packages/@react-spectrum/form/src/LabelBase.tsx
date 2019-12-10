@@ -43,6 +43,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     labelClassName,
     wrapperClassName,
     labelFor,
+    htmlFor,
     componentName,
     necessityIndicator,
     isRequired,
@@ -77,8 +78,11 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     );
   }
 
-  if (!labelFor && childArray.length !== 1) {
+  if (!htmlFor && !labelFor && childArray.length !== 1) {
     console.warn(`Missing labelFor attribute on ${componentName} with label "${label}"`);
+
+    // Don't add the htmlFor attribute when the reference doesn't exist.
+    labelAriaProps.htmlFor = null;
   }
   let fieldLabelClassName = classNames(
     styles,
@@ -110,14 +114,12 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     }
 
     let fieldsetProps = label ? {
-      // The id for the containing element should not be the same as that for the field label.
-      id: undefined,
       role: 'group',
       'aria-labelledby': labelAriaProps.id
     } : {};
 
     return (
-      <div {...filterDOMProps(otherProps)} {...fieldsetProps} {...styleProps} ref={domRef}>
+      <div {...filterDOMProps(otherProps, {id: null})} {...fieldsetProps} {...styleProps} ref={domRef}>
         {fieldLabel}
         {wrapper || childArray}
       </div>
