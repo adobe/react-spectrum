@@ -13,9 +13,11 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 export function DatePicker(props: SpectrumDatePickerProps) {
+  props = useProviderProps(props);
   let {
     autoFocus,
     formatOptions,

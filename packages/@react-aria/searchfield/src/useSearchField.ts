@@ -1,11 +1,11 @@
+import {ButtonHTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject, ButtonHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
+import {PressProps} from '@react-aria/interactions';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
-import { PressProps } from '@react-aria/interactions';
 
 interface SearchFieldAria {
   searchFieldProps: InputHTMLAttributes<HTMLInputElement>,
