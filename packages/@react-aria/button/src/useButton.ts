@@ -61,7 +61,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   let handlers = mergeProps(pressProps, focusableProps);
 
   return {
-    isPressed,
+    isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(handlers, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),

@@ -4,7 +4,6 @@ import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 
 interface RadioAriaProps extends RadioProps {
-  isDisabled?: boolean,
   isRequired?: boolean,
   isReadOnly?: boolean,
   isEmphasized?: boolean,
