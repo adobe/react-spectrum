@@ -6,10 +6,6 @@ import {storiesOf} from '@storybook/react';
 
 storiesOf('Button/ActionButton', module)
   .add(
-    'default',
-    () => render()
-  )
-  .add(
     'icon',
     () => render({icon: <Add />})
   )

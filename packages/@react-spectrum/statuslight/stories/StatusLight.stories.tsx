@@ -4,9 +4,6 @@ import {storiesOf} from '@storybook/react';
 
 storiesOf('StatusLight', module)
   .add(
-    'Default',
-    () => render()
-  ).add(
     'variant: celery',
     () => render({variant: 'celery'})
   ).add(
