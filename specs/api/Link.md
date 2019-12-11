@@ -1,7 +1,7 @@
 # Link
 
 ```typescript
-interface Link extends DOMProps, StyleProps, PressProps{
+interface Link extends DOMProps, StyleProps, PressProps {
   variant?: 'primary' | 'secondary' | 'overBackground', // default primary
   children: ReactNode,
   isQuiet?: boolean
