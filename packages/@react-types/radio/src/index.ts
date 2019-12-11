@@ -13,6 +13,5 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase {
 
 export interface RadioProps extends FocusableProps {
   value: string, // HTML form value. Not displayed.
-  children?: ReactNode, // pass in children to render label
-  isDisabled?: boolean
+  children?: ReactNode // pass in children to render label
 }

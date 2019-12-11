@@ -2,7 +2,6 @@ import {FocusableProps} from './events';
 
 export type ValidationState = 'valid' | 'invalid';
 export interface InputBase extends FocusableProps {
-  isDisabled?: boolean,
   isRequired?: boolean,
   validationState?: ValidationState,
   isReadOnly?: boolean

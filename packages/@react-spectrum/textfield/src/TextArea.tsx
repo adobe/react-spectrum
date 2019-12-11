@@ -1,5 +1,5 @@
 import {chain} from '@react-aria/utils';
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from './types';
 import {TextField} from './TextField';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -18,7 +18,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   let textfieldRef = useRef<TextFieldRef>(null);
   textfieldRef = ref || textfieldRef;
 
-  let onHeightChange = (value) => {
+  let onHeightChange = () => {
     if (isQuiet) {
       let input = textfieldRef.current.getInputElement();
       input.style.height = 'auto';
