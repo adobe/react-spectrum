@@ -59,7 +59,9 @@ governing permissions and limitations under the License.
   &.spectrum-Steplist--interactive {
     .spectrum-Steplist-item {
       /* Step Focused */
-      &:focus {
+      &:focus,
+      &.is-focused,
+      *:focus {
         .spectrum-Steplist-marker {
           background-color: var(--spectrum-steplist-current-marker-color-key-focus)
         }
