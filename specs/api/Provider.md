@@ -12,7 +12,7 @@ interface ContextProps {
   isQuiet?: boolean,
   isEmphasized?: boolean,
   isDisabled?: boolean,
-  isRequired?: boolean, // ???
+  isRequired?: boolean,
   isReadOnly?: boolean
 }
 
@@ -24,17 +24,5 @@ export interface ProviderProps extends ContextProps, DOMProps {
   scale?: Scale, // by default, chooses based on touch/mouse
   typekitId?: string,
   locale?: string
-}
-
-export interface ProviderContext extends ContextProps {
-  version: string,
-  theme: Theme,
-  colorScheme: ColorScheme,
-  scale: Scale
-}
-
-interface I18nContext {
-  locale: string,
-  direction: 'ltr' | 'rtl'
 }
 ```

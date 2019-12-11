@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@react-types/shared": "^3.0.0-alpha.1",
-    "react": "^16.8.0"
+    "@react-aria/interactions": "^3.0.0-alpha.1"
   },
-  "devDependencies": {}
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
 }

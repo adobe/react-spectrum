@@ -44,9 +44,9 @@ storiesOf('StatusLight', module)
     () => render({variant: 'negative'})
   ).add(
     'isDisabled: true',
-    () => render({isDisabled: true})
+    () => render({variant: 'positive', isDisabled: true})
   );
 
-function render(props = {}) {
+function render(props: any = {}) {
   return <StatusLight {...props}>Status light of love</StatusLight>;
 }

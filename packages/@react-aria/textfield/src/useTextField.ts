@@ -28,7 +28,7 @@ export function useTextField(
       readOnly: isReadOnly,
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value, e),
+      onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
       autoFocus,
       ...focusableProps
     }

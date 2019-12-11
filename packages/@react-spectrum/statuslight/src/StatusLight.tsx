@@ -7,13 +7,13 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 interface StatusLightProps extends DOMProps, StyleProps {
   children: ReactNode,
-  variant?: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
+  variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
   isDisabled?: boolean
 }
 
 function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   let {
-    variant = 'positive',
+    variant,
     children,
     isDisabled,
     ...otherProps
@@ -38,7 +38,7 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
         },
         styleProps.className
       )}
-      ref={domRef} >
+      ref={domRef}>
       {children}
     </div>
   );
