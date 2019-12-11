@@ -30,7 +30,12 @@ function Divider(props: DividerProps, ref: DOMRef) {
   if (orientation === 'vertical') {
     Element = 'div';
   }
-  let {separatorProps} = useSeparator(props, Element);
+  
+  let {separatorProps} = useSeparator({
+    ...props,
+    elementType: Element
+  });
+
   return (
     // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
     <Element

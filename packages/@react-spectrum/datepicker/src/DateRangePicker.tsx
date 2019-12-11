@@ -12,9 +12,11 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 export function DateRangePicker(props: SpectrumDateRangePickerProps) {
+  props = useProviderProps(props);
   let {
     isQuiet,
     isDisabled,
@@ -99,7 +101,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
           isOpen={isOpen}
           onOpenChange={setOpen}>
           <FieldButton
-            {...buttonProps as any}
+            {...buttonProps}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}

@@ -10,34 +10,40 @@ import {useStyleProps} from '@react-spectrum/view';
 function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
+    minValue = 0,
+    maxValue = 100,
     size = 'M',
     variant,
     isCentered = false,
     isIndeterminate = false,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let min = 0;
-  let max = 100;
-
-  value = clamp(value, min, max);
-  let {progressBarProps} = useProgressBar({...props, value, min, max, isIndeterminate});
+  value = clamp(value, minValue, maxValue);
+  let {progressBarProps} = useProgressBar({...props, value});
 
   let subMask1Style: CSSProperties = {};
   let subMask2Style: CSSProperties = {};
   if (!isIndeterminate) {
+    let percentage = (value - minValue) / (maxValue - minValue) * 100;
     let angle;
-    if (value > 0 && value <= 50) {
-      angle = -180 + (value / 50 * 180);
+    if (percentage > 0 && percentage <= 50) {
+      angle = -180 + (percentage / 50 * 180);
       subMask1Style.transform = `rotate(${angle}deg)`;
       subMask2Style.transform = 'rotate(-180deg)';
-    } else if (value > 50) {
-      angle = -180 + (value - 50) / 50 * 180;
+    } else if (percentage > 50) {
+      angle = -180 + (percentage - 50) / 50 * 180;
       subMask1Style.transform = 'rotate(0deg)';
       subMask2Style.transform = `rotate(${angle}deg)`;
     }
+  }
+
+  if (!ariaLabel && !ariaLabelledby) {
+    console.warn('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
   }
 
   return (
@@ -64,7 +70,7 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
           ),
           styleProps.className
         )
-      } >
+      }>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
       <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >

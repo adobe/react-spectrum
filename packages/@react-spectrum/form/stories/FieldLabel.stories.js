@@ -13,11 +13,11 @@ storiesOf('FieldLabel', module)
   )
   .add(
     'labelAlign: start',
-    () => render({label: 'Checkbox Group', labelAlign: 'start', style: {width: '200px'}})
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'start', width: '200px'})
   )
   .add(
     'labelAlign: end',
-    () => render({label: 'Checkbox Group', labelAlign: 'end', style: {width: '200px'}})
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', width: '200px'})
   )
   .add(
     'labelFor',
@@ -56,6 +56,19 @@ function render(props) {
         Dragons
       </Checkbox>
     </FieldLabel>
+  );
+}
+
+function renderAlign(props) {
+  return (
+    <div>
+      <FieldLabel {...props} />
+      <Checkbox
+        onChange={action('change')}
+        id="test">
+        Dogs
+      </Checkbox>
+    </div>
   );
 }
 

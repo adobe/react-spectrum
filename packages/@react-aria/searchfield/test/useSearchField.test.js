@@ -103,11 +103,6 @@ describe('useSearchField hook', () => {
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
-    it('with isDisabled if provided', () => {
-      let {clearButtonProps} = renderSearchHook({isDisabled: true});
-      expect(clearButtonProps.isDisabled).toBeTruthy();
-    });
-
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {
