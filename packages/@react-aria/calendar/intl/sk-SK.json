@@ -1,0 +1,11 @@
+{
+  "dateSelected": "Vybratý dátum {date, date, full}",
+  "finishRangeSelectionPrompt": "Kliknutím dokončíte výber rozsahu dátumov",
+  "next": "Nasledujúce",
+  "previous": "Predchádzajúce",
+  "selectedDateDescription": "Vybratý dátum: {date, date, full}",
+  "selectedRangeDescription": "Vybratý rozsah dátumov: {start, date, long} do {end, date, long}",
+  "startRangeSelectionPrompt": "Kliknutím spustíte výber rozsahu dátumov",
+  "todayDate": "Dnešný dátum, {date, date, full}",
+  "todayDateSelected": "Vybratý dnešný dátum, {date, date, full}"
+}
