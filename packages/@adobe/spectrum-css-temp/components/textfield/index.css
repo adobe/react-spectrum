@@ -199,7 +199,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the left icon for textfield, assumes usage of workflow icon sizing (18px by 18px) */
-.spectrum-Textfield-workflow-icon {
+.spectrum-Textfield-icon {
   display: block;
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);

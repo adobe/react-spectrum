@@ -53,7 +53,7 @@ governing permissions and limitations under the License.
 }
 
 /* Positions search magnifier UI icon */
-.spectrum-Search-magnifier {
+.spectrum-Search .spectrum-Search-icon {
   display: block;
   position: absolute;
   height: var(--spectrum-global-dimension-size-200);

@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
@@ -24,7 +24,8 @@ export function UIIcon(props: IconProps) {
   }
 
   return React.cloneElement(children, {
-    ...otherProps,
+    ...filterDOMProps(otherProps),
+    ...styleProps,
     scale,
     focusable: 'false',
     'aria-label': props['aria-label'] || alt,

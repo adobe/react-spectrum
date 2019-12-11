@@ -48,9 +48,7 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
     let UNSAFE_className = classNames(
       styles,
       {
-        'disabled': isDisabled,
-        // Assumption here is if icon has className it is the Magnifier from Search, TODO: fix when slots becomes a thing
-        'spectrum-Textfield-workflow-icon': icon.props && !icon.props.UNSAFE_className
+        'disabled': isDisabled
       },
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'

@@ -1,4 +1,4 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
@@ -37,9 +37,10 @@ export function Icon(props: IconProps) {
 
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
-  
+
   return React.cloneElement(children, {
-    ...otherProps,
+    ...filterDOMProps(otherProps),
+    ...styleProps,
     scale: 'M',
     color,
     focusable: 'false',
