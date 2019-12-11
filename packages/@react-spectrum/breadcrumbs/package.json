@@ -27,7 +27,9 @@
     "@react-aria/focus": "^3.0.0-alpha.1",
     "@react-aria/i18n": "^3.0.0-alpha.1",
     "@react-spectrum/button": "^3.0.0-alpha.1",
+    "@react-spectrum/dialog": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/view": "^3.0.0-alpha.1",
     "@react-types/breadcrumbs": "^3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },

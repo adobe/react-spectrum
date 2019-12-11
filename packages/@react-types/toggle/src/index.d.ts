@@ -1,6 +1,6 @@
 import {ChangeEvent} from 'react';
 
 export interface ToggleState {
-  checked: boolean,
+  isChecked: boolean,
   setChecked: (value:boolean, e:ChangeEvent<HTMLInputElement>) => void
 }
