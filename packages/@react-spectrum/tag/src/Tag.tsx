@@ -71,7 +71,7 @@ export const Tag = ((props: SpectrumTagProps) => {
               tabIndex={tagProps.tabIndex}
               focusClassName={classNames(styles, 'is-focused')}
               UNSAFE_className={classNames(styles, 'spectrum-Tags-itemClearButton')}
-              {...otherButtonProps as any} />
+              {...otherButtonProps} />
           </span>
         }
       </div>
