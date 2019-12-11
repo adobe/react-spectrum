@@ -20,6 +20,14 @@ storiesOf('FieldLabel', module)
     () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', width: '200px'})
   )
   .add(
+    'labelPosition: top',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'top'})
+  )
+  .add(
+    'labelPosition: top, labelAlign: end',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'top', labelAlign: 'end', width: '200px'})
+  )
+  .add(
     'labelFor',
     () => (
       <div>
@@ -34,7 +42,7 @@ storiesOf('FieldLabel', module)
       <div>
         {renderTextfield({label: 'Required label', isRequired: true, necessityIndicator: 'label'})}
         {renderTextfield({label: 'Optional label', isRequired: false, necessityIndicator: 'label'})}
-        {renderTextfield({label: 'React', isRequired: true, necessityIndicator: 'icon'})}
+        {renderTextfield({label: 'React', isRequired: true, necessityIndicator: 'icon', labelAlign: 'start'})}
         {renderTextfield({label: 'React', isRequired: false, necessityIndicator: 'icon'})}
       </div>
     )
