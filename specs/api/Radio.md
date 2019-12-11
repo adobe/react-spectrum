@@ -2,7 +2,7 @@
 
 ```typescript
 interface RadioGroup extends ValueBase<string>, InputBase {
-  orientation?: 'horizontal' | 'vertical', // default horizontal
+  orientation?: 'horizontal' | 'vertical', // default vertical
   labelPosition?: 'side' | 'bottom', // default side
   children: ReactElement<Radio> | ReactElement<Radio>[],
   name?: string, // HTML form name. Not displayed.

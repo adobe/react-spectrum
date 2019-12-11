@@ -54,9 +54,7 @@ interface SingleSelectionBase {
   typeToSelect?: boolean // or is it really typeToFocus?
 }
 
-TextInputDOMProps ... TODO
 ```
-
 
 ## Drag and Drop
 ```javascript
