@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
@@ -13,12 +14,12 @@ export function Icon(props: IconProps) {
   let {
     children,
     alt,
-    className,
     scale,
     color,
     size,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let provider = useProvider();
   let pscale = 'M';
@@ -36,7 +37,7 @@ export function Icon(props: IconProps) {
 
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
-
+  
   return React.cloneElement(children, {
     ...otherProps,
     scale: 'M',
@@ -50,6 +51,6 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      className)
+      styleProps.className)
   });
 }

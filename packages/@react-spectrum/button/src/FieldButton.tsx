@@ -1,8 +1,8 @@
 import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {cloneElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useStyleProps} from '@react-spectrum/view';
@@ -46,7 +46,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {cloneElement(icon, {size: 'S'})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

@@ -2,6 +2,7 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
@@ -11,11 +12,11 @@ interface IconProps extends SVGAttributes<SVGElement> {
 export function UIIcon(props: IconProps) {
   let {
     alt,
-    className,
     children,
     ...otherProps
   } = props;
 
+  let {styleProps} = useStyleProps(otherProps);
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {
@@ -36,6 +37,6 @@ export function UIIcon(props: IconProps) {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      className)
+      styleProps.className)
   });
 }
