@@ -198,8 +198,8 @@ governing permissions and limitations under the License.
   inset-inline-end: var(--spectrum-global-dimension-size-150);
 }
 
-/* styles the left icon for textfield */
-.spectrum-Textfield-icon {
+/* styles the left icon for textfield, assumes usage of workflow icon sizing (18px by 18px) */
+.spectrum-Textfield-workflow-icon {
   display: block;
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);

@@ -1,9 +1,9 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, cloneIcon, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
+import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {forwardRef, Ref, useImperativeHandle, useRef} from 'react';
+import React, {cloneElement, forwardRef, Ref, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from './types';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -45,21 +45,26 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   let isInvalid = validationState === 'invalid';
 
   if (icon) {
-    icon = cloneIcon(icon, {
-      className: classNames(
-        styles,
-        'spectrum-Textfield-icon',
-        {
-          'disabled': isDisabled
-        }
-      ),
+    let UNSAFE_className = classNames(
+      styles,
+      {
+        'disabled': isDisabled,
+        // Assumption here is if icon has className it is the Magnifier from Search, TODO: fix when slots becomes a thing
+        'spectrum-Textfield-workflow-icon': icon.props && !icon.props.UNSAFE_className
+      },
+      icon.props && icon.props.UNSAFE_className,
+      'spectrum-Textfield-icon'
+    );
+    
+    icon = cloneElement(icon, {
+      UNSAFE_className,
       size: 'S'
     });
   } 
 
   let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
-  let validation = cloneIcon(validationIcon, {
-    className: classNames(
+  let validation = cloneElement(validationIcon, {
+    UNSAFE_className: classNames(
       styles,
       'spectrum-Textfield-validationIcon',
       {

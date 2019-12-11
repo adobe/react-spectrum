@@ -203,7 +203,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('img');
+      let invalidIcon = tree.getByRole('presentation');
       expect(invalidIcon).toBeTruthy();
     }
   });
@@ -220,7 +220,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('img');
+      let validIcon = tree.getByRole('presentation');
       expect(validIcon).toBeTruthy();
     }
   });

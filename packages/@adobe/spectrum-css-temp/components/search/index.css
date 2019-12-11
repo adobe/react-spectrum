@@ -51,3 +51,13 @@ governing permissions and limitations under the License.
     -webkit-appearance: none;
   }
 }
+
+/* Positions search magnifier UI icon */
+.spectrum-Search-magnifier {
+  display: block;
+  position: absolute;
+  height: var(--spectrum-global-dimension-size-200);
+  width: var(--spectrum-global-dimension-size-200);
+  inset-inline-start: calc(calc(calc(var(--spectrum-search-padding-left) - var(--spectrum-global-dimension-size-200)) - var(--spectrum-global-dimension-size-100)) + 1px);
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
+}
