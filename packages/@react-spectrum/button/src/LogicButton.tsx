@@ -8,7 +8,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 export interface LogicButtonProps extends ButtonBase {
-  variant?: 'and' | 'or'
+  variant: 'and' | 'or'
 }
 
 function LogicButton(props: LogicButtonProps, ref: FocusableRef) {
