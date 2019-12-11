@@ -29,6 +29,14 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
     background-color: var(--spectrum-alias-highlight-selected);
   }
+
+  .spectrum-Card-title {
+    color: var(--spectrum-alias-text-color);
+  }
+
+  .spectrum-Card-subtitle {
+    color: var(--spectrum-card-description-text-color);
+  }
 }
 
 .spectrum-Card-description {
@@ -105,5 +113,19 @@ governing permissions and limitations under the License.
 
   .spectrum-Card-subtitle {
     color: var(--spectrum-card-quiet-subtitle-text-color);
+  }
+}
+
+.spectrum-Card--horizontal {
+  &:hover {
+    .spectrum-Card-preview {
+      border-color: var(--spectrum-card-border-color-hover);
+    }
+  }
+
+  .spectrum-Card-preview {
+    background-color: var(--spectrum-card-quiet-preview-background-color);
+
+    border-color: var(--spectrum-card-border-color);
   }
 }

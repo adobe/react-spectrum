@@ -60,8 +60,8 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'valueLabel: 1 of 4',
-    () => render({value: 25, valueLabel: '1 of 4'})
+    'valueLabel: Loading 1 of 4',
+    () => render({value: 25, valueLabel: 'Loading 1 of 4'})
   )
   .add(
     'Using number formatOptions with currency style',

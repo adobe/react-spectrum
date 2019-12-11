@@ -12,9 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ dropzone/dropzone.yml }}
-*/
 .spectrum-Dropzone {
   text-align: center;
   border-width: var(--spectrum-dropzone-border-width);

@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 
   /* Correct the odd appearance of input[type="search"] in Chrome and Safari.*/
   /* This gets overridden by .spectrum-Textfield */
-  -webkit-appearance: textfield;
+  -webkit-appearance: none;
 
   /* Correct the outline for input[type="search"] style in Safari. */
   outline-offset: -2px;
