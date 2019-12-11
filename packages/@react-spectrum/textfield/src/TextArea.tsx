@@ -12,7 +12,6 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
     isReadOnly = false,
     isRequired = false,
     onChange,
-    UNSAFE_className,
     ...otherProps
   } = props;
 
@@ -26,7 +25,6 @@ export const TextArea = forwardRef((props: SpectrumTextFieldProps, ref: RefObjec
   return (
     <TextFieldBase
       {...otherProps}
-      wrapperClassName={UNSAFE_className}
       ref={ref}
       multiLine
       isDisabled={isDisabled}

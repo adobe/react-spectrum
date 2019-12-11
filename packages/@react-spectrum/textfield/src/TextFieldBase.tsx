@@ -11,7 +11,6 @@ import {useStyleProps} from '@react-spectrum/view';
 import {useTextField} from '@react-aria/textfield';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
-  wrapperClassName?: string,
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   multiLine?: boolean
@@ -28,7 +27,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     value,
     defaultValue,
     autoFocus,
-    wrapperClassName,
     inputClassName,
     wrapperChildren,
     ...otherProps
@@ -93,7 +91,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
           },
-          wrapperClassName
+          styleProps.className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>

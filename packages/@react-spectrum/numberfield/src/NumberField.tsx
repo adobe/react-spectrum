@@ -95,8 +95,8 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
                 stepperStyle, 
                 'spectrum-Stepper-stepDown',
                 'spectrum-ActionButton'
-                )
-              }
+              )
+            }
             {...decrementButtonProps}
             isQuiet={isQuiet}>
             <ChevronDownSmall className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
