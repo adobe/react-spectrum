@@ -8,6 +8,7 @@ import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 interface SpectrumLabelBaseProps extends FieldLabelBase {
@@ -37,6 +38,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     </div>
   */
 
+  props = useProviderProps(props);
   let {
     label,
     children,
@@ -44,8 +46,8 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     wrapperClassName,
     labelFor,
     componentName,
-    necessityIndicator,
     isRequired,
+    necessityIndicator = isRequired != null ? 'icon' : null,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);

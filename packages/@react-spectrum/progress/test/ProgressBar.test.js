@@ -15,7 +15,7 @@ describe('ProgressBar', function () {
     ${'ProgressBar'}   | ${ProgressBar}
     ${'V2ProgressBar'} | ${V2ProgressBar}
   `('$Name handles defaults', function ({Component}) {
-    let {getByRole} = render(<Component>foo</Component>);
+    let {getByRole} = render(<Component>Progress Bar</Component>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');
     expect(progressBar).toHaveAttribute('aria-valuemax', '100');
@@ -28,7 +28,7 @@ describe('ProgressBar', function () {
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 30}}
     ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: 30}}
   `('$Name update all fileds by value', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>foo</Component>);
+    let {getByRole} = render(<Component {...props}>Progress Bar</Component>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');
     expect(progressBar).toHaveAttribute('aria-valuemax', '100');
@@ -41,7 +41,7 @@ describe('ProgressBar', function () {
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: -1}}
     ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: -1}}
   `('$Name clamps values to 0', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>foo</Component>);
+    let {getByRole} = render(<Component {...props}>Progress Bar</Component>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '0%');
@@ -52,7 +52,7 @@ describe('ProgressBar', function () {
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 1000}}
     ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: 1000}}
   `('$Name clamps values to 100', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>foo</Component>);
+    let {getByRole} = render(<Component {...props}>Progress Bar</Component>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuenow', '100');
     expect(progressBar).toHaveAttribute('aria-valuetext', '100%');
@@ -63,16 +63,21 @@ describe('ProgressBar', function () {
     ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', UNSAFE_className: 'testClass'}}
     ${'V2ProgressBar'} | ${V2ProgressBar} | ${{size: 'S', className: 'testClass'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>foo</Component>);
+    let {getByRole} = render(<Component {...props}>Progress Bar</Component>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 
   it('Can handle negative values', () => {
-    let {getByRole} = render(<ProgressBar value={0} min={-5} max={5}>foo</ProgressBar>);
+    let {getByRole} = render(<ProgressBar value={0} minValue={-5} maxValue={5}>Progress Bar</ProgressBar>);
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
   });
 
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<ProgressBar value={25} />);
+    expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  });
 });
