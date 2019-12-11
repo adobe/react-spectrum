@@ -91,6 +91,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </Overlay>
   );
 
+  // adding the tooltipClickTriggerSingularityProps here messes up the warm up / cooldown logic & hide / show delays 
   if (isOneOf('click', type)) {
     return (
       <Fragment>

@@ -1,10 +1,13 @@
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AllHTMLAttributes, RefObject, useEffect} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
+// Refactor into an array of arrays that holds both of these?
+  // can add an extra check to make sure currId != lastIndexId
 const VISIBLE_TOOLTIPS = [];
+const stateArrayTest = [];
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -59,12 +62,20 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   // NEXT PR: move all of the single tooltip concept methods to tooltip trigger so you can apply hide delays and uniform warmup / cooldown ?
+    // or should that be here since that is likely over for tooltip? vs. how isPressed for example can be used for multiple components
+
+  useEffect(() => {
+    console.log(stateArrayTest)
+  });
 
   let enter = () => {
     console.log("enter", VISIBLE_TOOLTIPS.length)
     let tooltipBucketItem = triggerProps.ref.current.id;
     VISIBLE_TOOLTIPS.push(tooltipBucketItem);
     console.log('list of tooltips in hover enter', VISIBLE_TOOLTIPS)
+
+    stateArrayTest.forEach(tooltip => tooltip.setOpen(false));
+    // stateArrayTest.pop()  ... need to pop for the number of tooltips you closed. put this in the for loop?
   };
 
   let exit = (e) => {
@@ -85,19 +96,20 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     console.log('enter click', VISIBLE_TOOLTIPS.length)
     let tooltipBucketItem = triggerProps.ref.current.id;
     VISIBLE_TOOLTIPS.push(tooltipBucketItem);
-    document.addEventListener('mouseenter', testMethod(triggerProps.ref.current.id), true) // is the onHoverChange type error blocking this?
+
+    testMethod(triggerProps.ref.current.id)
+
+    stateArrayTest.push(state)
   }
 
   let testMethod = (currTooltip) => {
-    console.log('we are hovering over something!')
     console.log('list of tooltips in test method', VISIBLE_TOOLTIPS)
     console.log('current tooltip in test method', currTooltip)
     if (VISIBLE_TOOLTIPS.length > 1) { // && last index of the visible tooltips array doesn't equal currTooltip
       console.log('trying to close')
       state.setOpen(false);
     }
-    // VISIBLE_TOOLTIPS.pop()
-    // document.removeEventListener('mouseenter', testMethod, true)
+    // VISIBLE_TOOLTIPS.pop() ... need a toggle method to decide when to pop
   }
 
   // investigate: spread tooltipAriaProps as well?

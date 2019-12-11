@@ -185,7 +185,7 @@ function renderWithDifferentTriggerTypes(content) {
             onHover={action('hover')}
             onHoverStart={action('hoverstart')}
             onHoverEnd={action('hoverend')}>
-              Tooltip Trigger
+              Hover Trigger
           </ActionButton>
           <Tooltip>
             {content}
@@ -202,7 +202,7 @@ function renderWithDifferentTriggerTypes(content) {
             onHover={action('hover')}
             onHoverStart={action('hoverstart')}
             onHoverEnd={action('hoverend')}>
-              Tooltip Trigger
+              Click Trigger
           </ActionButton>
           <Tooltip>
             {content}
@@ -219,7 +219,41 @@ function renderWithDifferentTriggerTypes(content) {
             onHover={action('hover')}
             onHoverStart={action('hoverstart')}
             onHoverEnd={action('hoverend')}>
-              Tooltip Trigger
+              Hover Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...clickProps}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            onHover={action('hover')}
+            onHoverStart={action('hoverstart')}
+            onHoverEnd={action('hoverend')}>
+              Click Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...clickProps}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}
+            onHover={action('hover')}
+            onHoverStart={action('hoverstart')}
+            onHoverEnd={action('hoverend')}>
+              Click Trigger
           </ActionButton>
           <Tooltip>
             {content}
