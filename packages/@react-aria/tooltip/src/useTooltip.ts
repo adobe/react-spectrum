@@ -1,6 +1,6 @@
 import {AllHTMLAttributes, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {TooltipHoverResponderContext} from '@react-aria/interactions';
+import {HoverResponderContext} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 interface TooltipProps extends DOMProps {
@@ -11,16 +11,9 @@ interface TooltipAria {
   tooltipProps: AllHTMLAttributes<HTMLElement>
 }
 
-interface useTooltipProps {
-  'aria-describedby': string,
-  role: string,
-  id: string,
-  onMouseLeave?: (e) => void
-}
-
 export function useTooltip(props: TooltipProps): TooltipAria {
 
-  let contextProps = useContext(TooltipHoverResponderContext);
+  let contextProps = useContext(HoverResponderContext);
 
   let tooltipId = useId(props.id);
 
@@ -28,11 +21,12 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  let tooltipProps = {
+  let tooltipProps;
+  tooltipProps = {
     'aria-describedby': tooltipId,
     role,
     id: tooltipId
-  } as useTooltipProps;
+  };
 
   if (contextProps) {
     let onMouseLeave = () => {

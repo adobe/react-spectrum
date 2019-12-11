@@ -28,7 +28,8 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
 
   return (
     <div
-      {...mergeProps(filterDOMProps(otherProps), tooltipProps)}
+    {...filterDOMProps(otherProps)}
+    {...tooltipProps}
       className={classNames(
         styles,
         'spectrum-Tooltip',
