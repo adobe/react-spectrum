@@ -175,8 +175,12 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton-hold {
   position: absolute;
-  right: var(--spectrum-actionbutton-hold-icon-padding-right);
-  bottom: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+  inset-inline-end: var(--spectrum-actionbutton-hold-icon-padding-right);
+  inset-block-end: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+}
+
+[dir='rtl'] .spectrum-ActionButton-hold {
+  transform: rotate(90deg); 
 }
 
 .spectrum-ActionButton-label,
@@ -315,10 +319,6 @@ a.spectrum-ActionButton {
   position: absolute;
   inset-block-end: var(--spectrum-tool-hold-icon-padding-bottom);
   inset-inline-end: var(--spectrum-tool-hold-icon-padding-right);
-
-  &.is-reversed {
-    transform: rotate(90deg);
-  }
 } 
 
 .spectrum-ButtonGroup-item--vertical {

@@ -5,12 +5,10 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
-  let {direction} = useLocale();
 
   props = useProviderProps(props);
   let {
@@ -58,10 +56,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
             className={
               classNames(
                 styles,
-                'spectrum-ActionButton-hold',
-                {
-                  'is-reversed': direction === 'rtl'
-                }
+                'spectrum-ActionButton-hold'
               )
             } />
         }
