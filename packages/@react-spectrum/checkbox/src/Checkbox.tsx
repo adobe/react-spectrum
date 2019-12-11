@@ -1,43 +1,36 @@
 import {CheckboxProps} from '@react-types/checkbox';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {forwardRef, useRef} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
 interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
   isEmphasized?: boolean
 }
 
-export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject<HTMLLabelElement>) => {
-  let completeProps = Object.assign({}, {
-    isIndeterminate: false,
-    isDisabled: false,
-    isEmphasized: false,
-    validationState: 'valid',
-    defaultSelected: false
-  }, props);
-
+function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+  props = useProviderProps(props);
   let {
-    isIndeterminate,
-    isEmphasized,
-    isDisabled,
+    isIndeterminate = false,
+    isEmphasized = false,
+    isDisabled = false,
+    autoFocus,
     children,
     ...otherProps
-  } = completeProps;
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  let inputRef = useRef<HTMLInputElement>();
-  let {
-    checked,
-    setChecked
-  } = useToggleState(completeProps);
-  let {inputProps} = useCheckbox(completeProps, {checked, setChecked}, inputRef);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, inputRef);
 
   let markIcon = isIndeterminate
     ? <DashSmall className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
@@ -52,7 +45,7 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
         }
       )}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -66,7 +59,7 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
@@ -80,4 +73,7 @@ export const Checkbox = forwardRef((props: SpectrumCheckboxProps, ref: RefObject
       )}
     </label>
   );
-});
+}
+
+let _Checkbox = forwardRef(Checkbox);
+export {_Checkbox as Checkbox};

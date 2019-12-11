@@ -4,7 +4,6 @@ import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {filterDOMProps} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -80,23 +79,18 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
 
   return (
     <div className={textfieldClass} {...domProps} {...styleProps}>
-      <FocusRing
-        within
-        focusClass={classNames(textfieldStyles, 'is-focused')}
-        focusRingClass={classNames(textfieldStyles, 'focus-ring')}>
-        <div className={inputClass}>
-          {state.segments.map((segment, i) =>
-            (<DatePickerSegment
-              {...segmentProps}
-              key={i}
-              segment={segment}
-              state={state}
-              isDisabled={isDisabled}
-              isReadOnly={isReadOnly}
-              isRequired={isRequired} />)
-          )}
-        </div>
-      </FocusRing>
+      <div className={inputClass}>
+        {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            {...segmentProps}
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )}
+      </div>
       {validationIcon}
     </div>
   );

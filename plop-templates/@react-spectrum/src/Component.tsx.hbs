@@ -1,23 +1,32 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {mergeProps} from '@react-aria/utils';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
 import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/view';
 
 export interface {{componentName}}Props {
 }
 
-export const {{componentName}} = React.forwardRef((props: {{componentName}}Props, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
-  let completeProps = Object.assign({}, defaults, useProviderProps(props));
-  let state = use{{componentName}}State(completeProps);
-  let ariaProps = use{{componentName}}(completeProps, state);
+function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
+  props = useProviderProps(props);
+  let {styleProps} = useStyleProps(props);
+  let state = use{{componentName}}State(props);
+  let ariaProps = use{{componentName}}(props, state);
+  let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(completeProps)} {...ariaProps} ref={ref} className={classNames(styles, '')}>
+    <div
+      {...mergeProps(ariaProps, filterDOMProps(props))}
+      {...styleProps}
+      ref={domRef}
+      className={classNames(styles, '', styleProps.className)}>
 
     </div>
   );
-});
+}
+
+const _{{componentName}} = React.forwardRef({{componentName}});
+export {_{{componentName}} as {{componentName~}} };

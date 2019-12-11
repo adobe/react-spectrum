@@ -1,6 +1,7 @@
 import {chain, mergeProps} from '@react-aria/utils';
-import {JSXElementConstructor} from 'react';
+import {JSXElementConstructor, RefObject} from 'react';
 import {PressHookProps, usePress} from '@react-aria/interactions';
+import {useFocusable} from '@react-aria/focus';
 
 interface AriaButtonProps extends PressHookProps {
   elementType?: string | JSXElementConstructor<any>,
@@ -10,7 +11,7 @@ interface AriaButtonProps extends PressHookProps {
   validationState?: 'valid' | 'invalid',
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  [others: string]: any
+  type?: 'button' | 'submit'
 }
 
 interface ButtonAria {
@@ -18,7 +19,7 @@ interface ButtonAria {
   isPressed: boolean
 }
 
-export function useButton(props: AriaButtonProps): ButtonAria {
+export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
     elementType = 'button',
     isDisabled,
@@ -26,6 +27,7 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     onPressStart,
     onPressEnd,
     onPressChange,
+    // @ts-ignore
     onClick: deprecatedOnClick,
     href,
     tabIndex,
@@ -33,7 +35,6 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
-    ref,
     type = 'button'
   } = props;
   let additionalProps;
@@ -56,9 +57,12 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     ref
   });
 
+  let {focusableProps} = useFocusable(props, ref);
+  let handlers = mergeProps(pressProps, focusableProps);
+
   return {
     isPressed,
-    buttonProps: mergeProps(pressProps, {
+    buttonProps: mergeProps(handlers, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,

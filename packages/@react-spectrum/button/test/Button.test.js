@@ -157,4 +157,16 @@ describe('Button', function () {
     let icon = getByRole('status');
     expect(icon).not.toBeNull();
   });
+
+  it.each`
+    Name                | Component
+    ${'ActionButton'}   | ${ActionButton}
+    ${'Button'}         | ${Button}
+    ${'LogicButton'}    | ${LogicButton}
+  `('$Name supports autoFocus', function ({Component}) {
+    let {getByRole} = render(<Component autoFocus>Click Me</Component>);
+
+    let button = getByRole('button');
+    expect(document.activeElement).toBe(button);
+  });
 });

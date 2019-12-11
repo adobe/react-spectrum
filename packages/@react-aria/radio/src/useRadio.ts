@@ -1,6 +1,7 @@
 import {AllHTMLAttributes} from 'react';
 import {LabelPosition, RadioProps} from '@react-types/radio';
 import {RadioGroupState} from '@react-stately/radio';
+import {useFocusable} from '@react-aria/focus';
 
 interface RadioAriaProps extends RadioProps {
   isDisabled?: boolean,
@@ -24,7 +25,8 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     isRequired,
     isReadOnly,
     isDisabled,
-    name
+    name,
+    autoFocus
   } = props;
   let {
     selectedRadio,
@@ -39,6 +41,8 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
+  let {focusableProps} = useFocusable(props);
+
   return {
     inputProps: {
       type: 'radio',
@@ -48,7 +52,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
       required: isRequired,
       checked,
       'aria-checked': checked,
-      onChange
+      onChange,
+      autoFocus,
+      ...focusableProps
     }
   };
 }

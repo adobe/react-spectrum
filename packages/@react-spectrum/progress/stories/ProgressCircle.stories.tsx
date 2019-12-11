@@ -84,6 +84,14 @@ storiesOf('Progress/ProgressCircle', module)
     }
   )
   .add(
+    'Using raw values for minValue, maxValue, and value',
+    () => render({
+      labelPosition: 'top',
+      maxValue: 2147483648,
+      value: 715827883
+    })
+  )
+  .add(
     'isIndeterminate: true',
     () => render({isIndeterminate: true})
   )
@@ -114,6 +122,6 @@ storiesOf('Progress/ProgressCircle', module)
 
 function render(props = {}) {
   return (
-    <ProgressCircle {...props} />
+    <ProgressCircle aria-label="Loading…" {...props} />
   );
 }
