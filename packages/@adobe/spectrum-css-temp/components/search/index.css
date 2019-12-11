@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 
   /* Correct the odd appearance of input[type="search"] in Chrome and Safari.*/
   /* This gets overridden by .spectrum-Textfield */
-  -webkit-appearance: textfield;
+  -webkit-appearance: none;
 
   /* Correct the outline for input[type="search"] style in Safari. */
   outline-offset: -2px;
@@ -41,9 +41,6 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   padding-inline-start: var(--spectrum-search-padding-left);
   text-indent: 0;
-
-  /* Remove the extra rounding of corners from iOS view */
-  -webkit-appearance: none;
 
   /* Don't let long strings overlap the close icon */
   padding-inline-end: var(--spectrum-search-padding-right);
