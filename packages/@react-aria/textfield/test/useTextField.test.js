@@ -77,7 +77,7 @@ describe('useTextField hook', () => {
 
       props.onChange(mockEvent);
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange.mock).toHaveBeenCalledWith(mockEvent.target.value, mockEvent);
+      expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
       onChange.mockClear();
     });
   });
