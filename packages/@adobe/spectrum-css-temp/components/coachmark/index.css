@@ -13,9 +13,6 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 @import 'animation.css';
 
-/* topdoc
-{{ coachmark/coachmark.yml }}
-*/
 .spectrum-CoachMarkPopover {
   position: relative;
 
@@ -137,4 +134,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-

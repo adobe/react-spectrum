@@ -74,7 +74,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       }>
       <TextField
         {...otherProps}
-        {...searchFieldProps as any}
+        {...searchFieldProps}
         UNSAFE_className={
           classNames(
             styles,

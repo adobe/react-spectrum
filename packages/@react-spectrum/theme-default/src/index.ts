@@ -5,7 +5,7 @@ import light from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import medium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {Theme} from '@react-types/shared';
 
-export let defaultTheme: Theme = {
+export let theme: Theme = {
   global,
   light,
   dark,

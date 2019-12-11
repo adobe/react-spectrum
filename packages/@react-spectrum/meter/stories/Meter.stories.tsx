@@ -1,6 +1,6 @@
+import {Meter} from '../';
 import {number, withKnobs} from '@storybook/addon-knobs';
-import {ProgressBar} from '../';
-import React, {CSSProperties} from 'react';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 const sliderOptions = {
@@ -15,16 +15,7 @@ const formatOptions = {
   currency: 'JPY'
 };
 
-const grayedBoxStyle: CSSProperties = {
-  width: '250px',
-  height: '60px',
-  backgroundColor: 'rgba(0,0,0,0.4)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-};
-
-storiesOf('Progress/ProgressBar', module)
+storiesOf('Meter', module)
   .addDecorator(withKnobs)
   .add(
     'Default',
@@ -60,8 +51,8 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'valueLabel: Loading 1 of 4',
-    () => render({value: 25, valueLabel: 'Loading 1 of 4'})
+    'valueLabel: 1 of 4',
+    () => render({value: 25, valueLabel: '1 of 4'})
   )
   .add(
     'Using number formatOptions with currency style',
@@ -78,7 +69,7 @@ storiesOf('Progress/ProgressBar', module)
     'no visible label',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: null, 'aria-label': 'Loading…', value});
+      return render({children: null, 'aria-label': 'Meter', value});
     }
   )
   .add(
@@ -96,25 +87,24 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'isIndeterminate: true',
+    'variant: positive',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({isIndeterminate: true, value});
+      return render({variant: 'positive', value});
     }
   )
   .add(
-    'isIndeterminate: true, size: S',
-    () => render({isIndeterminate: true, size: 'S'})
-  )
-  .add(
-    'variant: overBackground',
+    'variant: critical',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={grayedBoxStyle}>
-          {render({variant: 'overBackground', value})}
-        </div>
-      );
+      return render({variant: 'critical', value});
+    }
+  )
+  .add(
+    'variant: warning',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({variant: 'warning', value});
     }
   )
   .add(
@@ -139,6 +129,6 @@ storiesOf('Progress/ProgressBar', module)
 
 function render(props: any = {}) {
   return (
-    <ProgressBar {...props}>{props.children === null ? null : props.children || 'Loading…'}</ProgressBar>
+    <Meter {...props}>{props.children === null ? null : props.children || 'Meter'}</Meter>
   );
 }
