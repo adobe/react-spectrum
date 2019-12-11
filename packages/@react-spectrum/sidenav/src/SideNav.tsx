@@ -94,7 +94,11 @@ function SideNavItem<T>({item, state, ...otherProps}: SideNavItemProps<T>) {
   );
 }
 
-function SideNavHeading({item, ...otherProps}) {
+interface SideNavHeadingProps<T> {
+  item: Node<T>
+}
+
+function SideNavHeading<T>({item, ...otherProps}: SideNavHeadingProps<T>) {
   return (
     <h2 className={classNames(styles, 'spectrum-SideNav-heading')} {...otherProps}>
       {item.rendered}
