@@ -24,6 +24,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/meter": "^3.0.0-alpha.1",
+    "@react-spectrum/progress": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-spectrum/view": "^3.0.0-alpha.1"
   },
