@@ -13,14 +13,14 @@ storiesOf('Button/LogicButton', module)
     () => render({variant: 'or', label: 'or'})
   );
 
-function render(props = {}) {
+function render(props: any = {}) {
   return (
     <div>
       <LogicButton
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
-        {...props as any}>
+        {...props}>
         Default
       </LogicButton>
       <LogicButton
@@ -28,7 +28,7 @@ function render(props = {}) {
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
         isDisabled
-        {...props as any}>
+        {...props}>
         Disabled
       </LogicButton>
     </div>

@@ -47,6 +47,6 @@ storiesOf('StatusLight', module)
     () => render({variant: 'positive', isDisabled: true})
   );
 
-function render(props = {}) {
-  return <StatusLight {...props as any}>Status light of love</StatusLight>;
+function render(props: any = {}) {
+  return <StatusLight {...props}>Status light of love</StatusLight>;
 }
