@@ -6,7 +6,7 @@ export interface SearchFieldState {
   setValue: (val: string, ...args: any) => void
 }
 
-export function useSearchFieldState(props: ValueBase<string>): SearchFieldState {
+export function useSearchFieldState(props: ValueBase<string | number | string[]>): SearchFieldState {
   let [value, setValue] = useControlledState(toString(props.value), toString(props.defaultValue) || '', props.onChange);
 
   return {
