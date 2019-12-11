@@ -51,7 +51,17 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {icon && cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Icon', icon.props.UNSAFE_className)})}
+        {icon && cloneElement(
+          icon, 
+          {
+            size: 'S',
+            UNSAFE_className: classNames(
+              styles,
+              'spectrum-Icon', 
+              icon.props.UNSAFE_className
+            )
+          }
+        )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
         {holdAffordance &&
           <CornerTriangle className={classNames(styles, 'spectrum-ActionButton-hold')} />
