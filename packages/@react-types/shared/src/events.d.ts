@@ -6,12 +6,14 @@ import {
 
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
-export type BaseEvent<T extends SyntheticEvent> = Omit<T, 'stopPropagation' | 'isPropagationStopped' | 'persist'> & {
+export type BaseEvent<T extends SyntheticEvent> = T & {
+  /** @deprecated use continuePropagation */
+  stopPropagation(): void,
   continuePropagation(): void
 }
 
-export type KeyboardEvent = BaseEvent<ReactKeyboardEvent>;
-export type FocusEvent = BaseEvent<ReactFocusEvent>;
+export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
+export type FocusEvent = BaseEvent<ReactFocusEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
 export interface PressEvent {

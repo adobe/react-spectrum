@@ -9,6 +9,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
+import {useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
@@ -20,6 +21,7 @@ export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, St
 }
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
+  props = useProviderProps(props);
   let {
     size = 'M',
     children,

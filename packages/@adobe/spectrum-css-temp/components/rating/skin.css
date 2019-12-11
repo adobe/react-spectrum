@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ rating/rating.yml }}
-*/
-
 .spectrum-Rating {
   &.is-focused {
     box-shadow: 0 0 0 var(--spectrum-global-dimension-static-size-25) var(--spectrum-rating-focus-ring-color);

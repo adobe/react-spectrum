@@ -4,7 +4,7 @@ import fs from 'fs';
 
 let existingComponents = fg.sync('packages/@react-spectrum/*', {onlyFiles: false}).map(componentPath => componentPath.split('/')[componentPath.split('/').length - 1]);
 let components = fg.sync('packages/\@adobe/spectrum-css-temp/components/*', {onlyFiles: false}).map(componentPath => componentPath.split('/')[componentPath.split('/').length - 1]);
-let ignoreComponents = ['icon', 'README.md', 'utils', 'commons']; // complicated
+let ignoreComponents = ['README.md']; // complicated
 
 function promiseFromChildProcess(child) {
   return new Promise(function (resolve, reject) {

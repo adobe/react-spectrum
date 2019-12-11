@@ -41,7 +41,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      {...searchFieldProps as any}
+      {...searchFieldProps}
       wrapperClassName={
         classNames(
           styles,

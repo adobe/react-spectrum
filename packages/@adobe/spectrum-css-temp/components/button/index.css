@@ -184,6 +184,9 @@ a.spectrum-ActionButton {
   align-self: center;
   justify-self: center;
 
+  /* Fixes horizontal alignment of text in anchor buttons */
+  text-align: center;
+
   /* @safari10 Workaround for https://bugs.webkit.org/show_bug.cgi?id=169700 */
   inline-size: 100%;
 
