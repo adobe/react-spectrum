@@ -1,7 +1,7 @@
 # Well
 
 ```typescript
-interface Well {
+interface Well extends DOMProps, StyleProps {
   children: ReactNode
 }
 ```

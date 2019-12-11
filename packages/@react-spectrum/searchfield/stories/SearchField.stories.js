@@ -4,7 +4,7 @@ import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
-const info = 'A containing element with  `role="search"` has been added to define a **search** landmark region.';
+const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 
 storiesOf('SearchField', module)
   .add(

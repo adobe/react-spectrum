@@ -13,7 +13,7 @@ storiesOf('Button/LogicButton', module)
     () => render({variant: 'or', label: 'or'})
   );
 
-function render(props = {}) {
+function render(props: any = {}) {
   return (
     <div>
       <LogicButton

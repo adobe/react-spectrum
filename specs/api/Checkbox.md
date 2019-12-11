@@ -7,7 +7,7 @@ interface CheckboxBase extends InputBase {
 
   defaultSelected?: boolean,
   isSelected?: boolean,
-  onChange?: (isSelected: boolean, e: Event) => void,
+  onChange?: (isSelected: boolean) => void, //Possibly add native event as arg?
 
   /* Cannot use InputProps because value is a
   valid dom prop for input as well as checked */
