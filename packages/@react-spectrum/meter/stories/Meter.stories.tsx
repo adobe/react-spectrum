@@ -18,10 +18,6 @@ const formatOptions = {
 storiesOf('Meter', module)
   .addDecorator(withKnobs)
   .add(
-    'Default',
-    () => render()
-  )
-  .add(
     'value: 50',
     () => render({value: 50})
   )
