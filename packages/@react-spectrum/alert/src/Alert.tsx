@@ -21,7 +21,7 @@ export function Alert(props: SpectrumAlertProps) {
   let {
     title,
     children,
-    variant = 'info', // info, help, success, error, warning
+    variant, // info, help, success, error, warning
     iconAlt, // alt text for image icon, default is derived from variant
     ...otherProps
   } = props;

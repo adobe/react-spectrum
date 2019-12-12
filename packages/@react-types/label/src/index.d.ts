@@ -9,7 +9,7 @@ export interface LabelProps {
 }
 
 export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps {
-  labelPosition?: 'top' | 'side', // default ?
+  labelPosition?: 'top' | 'side', // default top
   labelAlign?: 'start' | 'end', // default start
   isRequired?: boolean,
   necessityIndicator?: 'icon' | 'label'

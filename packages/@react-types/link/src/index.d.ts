@@ -9,8 +9,3 @@ export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
   variant?: 'primary' | 'secondary' | 'overBackground',
   isQuiet?: boolean
 }
-
-export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
-  variant?: 'primary' | 'secondary' | 'overBackground',
-  isQuiet?: boolean
-}

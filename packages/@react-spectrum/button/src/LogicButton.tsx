@@ -1,4 +1,4 @@
-import {classNames, cloneIcon, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -14,7 +14,6 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
     variant,
     children,
     isDisabled,
-    icon,
     autoFocus,
     ...otherProps
   } = props;
@@ -41,7 +40,6 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

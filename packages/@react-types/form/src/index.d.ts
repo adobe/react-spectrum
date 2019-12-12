@@ -6,4 +6,3 @@ export type SpectrumFormItemProps = SpectrumLabelProps;
 export interface SpectrumFormProps extends DOMProps, StyleProps {
   children: ReactElement<SpectrumFormItemProps> | ReactElement<SpectrumFormItemProps>[],
 }
-

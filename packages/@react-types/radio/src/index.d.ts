@@ -1,7 +1,7 @@
 import {DOMProps, FocusableProps, InputBase, StyleProps, ValueBase} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export type LabelPosition = 'side' | 'bottom'
+export type LabelPosition = 'side' | 'bottom';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase {
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],

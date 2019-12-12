@@ -10,7 +10,7 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, Focusabl
 
 export interface SpectrumButtonProps extends ButtonProps {
   icon?: ReactElement,
-  variant?: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
+  variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   isQuiet?: boolean
 }
 
@@ -22,6 +22,5 @@ export interface SpectrumActionButtonProps extends ButtonProps {
 }
 
 export interface SpectrumLogicButtonProps extends ButtonProps {
-  icon?: ReactElement, // ??????
-  variant?: 'and' | 'or'
+  variant: 'and' | 'or'
 }

@@ -24,7 +24,7 @@ interface ContextProps {
   isQuiet?: boolean,
   isEmphasized?: boolean,
   isDisabled?: boolean,
-  isRequired?: boolean, // ???
+  isRequired?: boolean,
   isReadOnly?: boolean
 }
 

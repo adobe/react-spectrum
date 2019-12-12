@@ -18,7 +18,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   let {
     elementType: ElementType = 'button',
     children,
-    variant = 'secondary',
+    variant,
     isQuiet,
     isDisabled,
     icon,

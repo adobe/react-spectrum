@@ -7,7 +7,7 @@ import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from '@react-aria/meter';
 
 function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
-  let {variant = 'positive', ...otherProps} = props;
+  let {variant, ...otherProps} = props;
   const {
     meterProps,
     labelProps

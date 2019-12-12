@@ -1,6 +1,6 @@
 import {CheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
-import {ToggleState} from '@react-types/toggle';
+import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria {

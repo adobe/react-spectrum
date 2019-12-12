@@ -2,5 +2,5 @@ import {ProgressBarBaseProps, SpectrumProgressBarBaseProps} from '@react-types/p
 
 export type MeterProps = ProgressBarBaseProps;
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
-  variant?: 'positive' | 'warning' | 'critical'
+  variant: 'positive' | 'warning' | 'critical'
 }
