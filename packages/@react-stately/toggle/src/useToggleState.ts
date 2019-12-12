@@ -9,10 +9,10 @@ export function useToggleState(props: CheckboxBase): ToggleState {
   // can't use useControlledState's prop calling because we need the event object from the change
   let [isChecked, setChecked] = useControlledState(isSelected, defaultSelected || false, () => {});
 
-  function updateChecked(value, e) {
+  function updateChecked(value) {
     setChecked(value);
     if (onChange && !isReadOnly) {
-      onChange(value, e);
+      onChange(value);
     }
   }
 

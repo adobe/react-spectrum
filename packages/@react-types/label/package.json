@@ -8,8 +8,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.0-alpha.1",
-    "react": "^16.8.0"
+    "@react-types/shared": "^3.0.0-alpha.1"
   },
-  "devDependencies": {}
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
 }

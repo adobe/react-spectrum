@@ -6,10 +6,6 @@ import {storiesOf} from '@storybook/react';
 
 storiesOf('Alert', module)
   .add(
-    'Default',
-    () => render()
-  )
-  .add(
     'header',
     () => render({header: 'info'})
   )
