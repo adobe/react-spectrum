@@ -1,7 +1,7 @@
 import {chain} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from './types';
-import {TextField} from './TextField';
+import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
@@ -27,7 +27,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   };
 
   return (
-    <TextField
+    <TextFieldBase
       {...otherProps}
       ref={textfieldRef}
       multiLine
