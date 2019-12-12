@@ -2,14 +2,14 @@
 
 ```typescript
 interface RadioGroup extends ValueBase<string>, InputBase {
-  orientation?: 'horizontal' | 'vertical',
-  labelPosition?: 'side' | 'bottom',
+  orientation?: 'horizontal' | 'vertical', // default vertical
+  labelPosition?: 'side' | 'bottom', // default side
   children: ReactElement<Radio> | ReactElement<Radio>[],
   name?: string, // HTML form name. Not displayed.
   isEmphasized?: boolean
 }
 
-interface Radio {
+interface Radio extends FocusableProps, DOMProps, StyleProps {
   value: string, // HTML form value. Not displayed.
   children?: ReactNode, // pass in children to render label
   'aria-label'?: string, // if no children, aria-label is required
