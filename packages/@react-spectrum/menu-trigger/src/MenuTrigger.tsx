@@ -1,9 +1,10 @@
-import {DOMRefValue, unwrapDOMRef} from '@react-spectrum/utils';
+import {DOMRefValue} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
+import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu-trigger';
 

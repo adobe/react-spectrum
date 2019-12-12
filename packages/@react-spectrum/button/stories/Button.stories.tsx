@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button, ButtonProps} from '../';
+import {Button} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -38,7 +38,7 @@ storiesOf('Button', module)
     () => render({elementType: 'a', href: 'http://example.com'})
   );
 
-function render(props:ButtonProps = {}) {
+function render(props: any = {}) {
   return (
     <div>
       <Button

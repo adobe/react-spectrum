@@ -1,4 +1,4 @@
-import {InputBase} from '@react-types/shared';
+import {DOMProps, InputBase, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface CheckboxBase extends InputBase {
@@ -16,4 +16,8 @@ export interface CheckboxBase extends InputBase {
 
 export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
+}
+
+export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
+  isEmphasized?: boolean
 }

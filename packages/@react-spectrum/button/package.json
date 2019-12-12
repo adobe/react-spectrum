@@ -34,8 +34,7 @@
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-spectrum/provider": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-spectrum/view": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1",
+    "@react-types/button": "^3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import {DOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {OpenTransition} from './OpenTransition';
 import {Provider} from '@react-spectrum/provider';
 import React, {ReactNode, useCallback, useState} from 'react';

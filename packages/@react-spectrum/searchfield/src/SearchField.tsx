@@ -1,16 +1,14 @@
-import {classNames, createDOMRef} from '@react-spectrum/utils';
+import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useImperativeHandle, useRef} from 'react';
-import {SearchFieldProps} from '@react-types/searchfield';
-import {SpectrumTextFieldProps, TextField, TextFieldRef} from '@react-spectrum/textfield';
+import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import {TextField} from '@react-spectrum/textfield';
+import {TextFieldRef} from '@react-types/textfield';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
-import {useStyleProps} from '@react-spectrum/view';
-
-interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);

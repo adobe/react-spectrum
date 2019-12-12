@@ -1,14 +1,11 @@
-import {FocusableProps, InputBase, ValueBase} from '@react-types/shared';
+import {DOMProps, FocusableProps, InputBase, StyleProps, ValueBase} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export type LabelPosition = 'side' | 'bottom'
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase {
-  orientation?: 'horizontal' | 'vertical',
-  labelPosition?: LabelPosition,
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
-  name?: string, // HTML form name. Not displayed.
-  isEmphasized?: boolean
+  name?: string // HTML form name. Not displayed.
 }
 
 export interface RadioProps extends FocusableProps {
@@ -16,3 +13,11 @@ export interface RadioProps extends FocusableProps {
   children?: ReactNode, // pass in children to render label
   isDisabled?: boolean
 }
+
+export interface SpectrumRadioGroupProps extends RadioGroupProps, DOMProps, StyleProps {
+  orientation?: 'horizontal' | 'vertical',
+  labelPosition?: LabelPosition,
+  isEmphasized?: boolean
+}
+
+export interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}

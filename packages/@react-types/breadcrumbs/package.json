@@ -8,7 +8,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0-alpha.1"
   },
   "peerDependencies": {

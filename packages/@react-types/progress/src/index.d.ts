@@ -1,3 +1,4 @@
+import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface ProgressBaseProps {
@@ -19,4 +20,19 @@ export interface ProgressBarProps extends ProgressBarBaseProps {
 
 export interface ProgressCircleProps extends ProgressBaseProps {
   isIndeterminate?: boolean
+}
+
+export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMProps, StyleProps {
+  size?: 'S' | 'M' | 'L',
+  variant?: 'overBackground',
+  isCentered?: boolean
+}
+
+export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {
+  size?: 'S' | 'L',
+  labelPosition?: 'top' | 'side'
+}
+
+export interface SpectrumProgressBarProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
+  variant?: 'overBackground'
 }

@@ -3,15 +3,14 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
-import {filterDOMProps} from '@react-spectrum/utils';
+import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {SpectrumDatePickerProps} from './types';
+import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
-import {useStyleProps} from '@react-spectrum/view';
 
 export function DatePickerField(props: SpectrumDatePickerProps) {
   let state = useDatePickerFieldState(props);

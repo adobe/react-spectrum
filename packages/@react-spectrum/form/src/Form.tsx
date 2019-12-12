@@ -1,10 +1,10 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import {FormProps} from './types';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
+import {SpectrumFormProps} from '@react-types/form';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {useStyleProps} from '@react-spectrum/view';
 
-function Form({children, ...otherProps}: FormProps, ref: DOMRef<HTMLFormElement>) {
+function Form({children, ...otherProps}: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 

@@ -1,13 +1,9 @@
 import {classNames} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
+import {Placement} from '@react-types/overlays';
 import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useOverlay} from '@react-aria/overlays';
-
-type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
-    'top' | 'top left' | 'top right' | 'top start' | 'top end' |
-    'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
-    'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
 
 interface PopoverProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
