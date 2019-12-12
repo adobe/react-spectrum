@@ -11,7 +11,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement & HTMLD
     'spectrum-FieldLabel',
     {
       'spectrum-FieldLabel--alignEnd': labelAlign === 'end',
-      'spectrum-FieldLabel--positionTop': labelPosition === 'top'
+      'spectrum-FieldLabel--positionSide': labelPosition === 'side'
     }
   );
 

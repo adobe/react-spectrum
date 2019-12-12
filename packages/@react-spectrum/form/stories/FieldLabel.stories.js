@@ -12,20 +12,20 @@ storiesOf('FieldLabel', module)
     () => render({label: 'Checkbox Group'})
   )
   .add(
-    'labelAlign: start',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'start', width: '200px'})
-  )
-  .add(
     'labelAlign: end',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', width: '200px'})
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end'})
   )
   .add(
-    'labelPosition: top',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'top'})
+    'labelPosition: side',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', width: '200px'})
   )
   .add(
-    'labelPosition: top, labelAlign: end',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'top', labelAlign: 'end', width: '200px'})
+    'labelPosition: side, labelAlign: end',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', labelAlign: 'end', width: '200px'})
+  )
+  .add(
+    'labelPosition: side, labelAlign: end, isRequired: true, necessityIndicator: icon',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', labelAlign: 'end', width: '200px', isRequired: true, necessityIndicator: 'icon'})
   )
   .add(
     'labelFor',
@@ -42,7 +42,7 @@ storiesOf('FieldLabel', module)
       <div>
         {renderTextfield({label: 'Required label', isRequired: true, necessityIndicator: 'label'})}
         {renderTextfield({label: 'Optional label', isRequired: false, necessityIndicator: 'label'})}
-        {renderTextfield({label: 'React', isRequired: true, necessityIndicator: 'icon', labelAlign: 'start'})}
+        {renderTextfield({label: 'React', isRequired: true, necessityIndicator: 'icon'})}
         {renderTextfield({label: 'React', isRequired: false, necessityIndicator: 'icon'})}
       </div>
     )
@@ -75,6 +75,14 @@ function renderAlign(props) {
         onChange={action('change')}
         id="test">
         Dogs
+      </Checkbox>
+      <Checkbox
+        onChange={action('change')}>
+        Cats
+      </Checkbox>
+      <Checkbox
+        onChange={action('change')}>
+        Dragons
       </Checkbox>
     </div>
   );
