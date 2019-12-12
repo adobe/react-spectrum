@@ -124,7 +124,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     {
       ref: domRef,
       ...mergeProps(
-        fieldLabel.props, 
+        fieldLabel.props,
         {...filterDOMProps(otherProps), ...styleProps}
       )
     }

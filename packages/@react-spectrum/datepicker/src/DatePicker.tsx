@@ -45,9 +45,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     },
     styleProps.className
   );
-
   return (
-    <FocusRing 
+    <FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -74,7 +73,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             formatOptions={formatOptions}
             UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}
