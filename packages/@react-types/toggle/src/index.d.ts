@@ -1,4 +1,4 @@
 export interface ToggleState {
-  isChecked: boolean,
-  setChecked: (value:boolean) => void
+  isSelected: boolean,
+  setSelected: (value:boolean) => void
 }

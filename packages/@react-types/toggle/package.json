@@ -1,6 +1,6 @@
 {
   "name": "@react-types/toggle",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "types": "src/index.d.ts",
   "repository": {

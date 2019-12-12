@@ -1,19 +1,25 @@
 {
   "name": "@react-spectrum/view",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
@@ -24,9 +30,9 @@
     "@babel/runtime": "^7.6.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
+    "@react-aria/i18n": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",

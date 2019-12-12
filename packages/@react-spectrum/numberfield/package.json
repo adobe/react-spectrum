@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/numberfield",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -28,19 +28,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/numberfield": "^3.0.0-alpha.1",
-    "@react-aria/focus": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-spectrum/button": "^3.0.0-alpha.1",
-    "@react-spectrum/textfield": "^3.0.0-alpha.1",
-    "@react-spectrum/provider": "^3.0.0-alpha.1",
-    "@react-stately/numberfield": "^3.0.0-alpha.1",
-    "@react-types/numberfield": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+    "@react-aria/focus": "^3.0.0-alpha.2",
+    "@react-aria/numberfield": "^3.0.0-alpha.2",
+    "@react-spectrum/button": "^3.0.0-alpha.2",
+    "@react-spectrum/provider": "^3.0.0-alpha.2",
+    "@react-spectrum/textfield": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-stately/numberfield": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-alpha.2",
+    "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",
