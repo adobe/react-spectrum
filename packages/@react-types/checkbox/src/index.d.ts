@@ -12,5 +12,5 @@ export interface CheckboxBase extends InputBase {
 }
 
 export interface CheckboxProps extends CheckboxBase {
-  isIndeterminate?: boolean // spectrum?
+  isIndeterminate?: boolean
 }
