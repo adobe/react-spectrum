@@ -65,7 +65,9 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
           classNames(
             progressStyles,
             {
-              'react-spectrum-ProgressCircle--centered': isCentered
+              'react-spectrum-ProgressCircle--centered': isCentered,
+              'react-spectrum-ProgressCircle--small': size === 'S',
+              'react-spectrum-ProgressCircle--large': size === 'L'
             }
           ),
           styleProps.className
@@ -76,7 +78,7 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
-            data-testid="fillSubMask1" 
+            data-testid="fillSubMask1"
             style={subMask1Style}>
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>

@@ -13,9 +13,10 @@ const sliderOptions = {
 const centeredBoxStyle: CSSProperties = {
   width: '100px',
   height: '100px',
-  position: 'relative',
   borderColor: 'black',
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  display: 'flex',
+  justifyContent: 'center'
 };
 
 const grayedBoxStyle: CSSProperties = {
