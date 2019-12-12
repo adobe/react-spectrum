@@ -71,7 +71,7 @@ export const NumberField = React.forwardRef((props: NumberField, ref: RefObject<
           isQuiet={isQuiet}
           autoFocus={autoFocus}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps}
+          {...inputFieldProps as any}
           onChange={setValue} />
         {showStepper &&
         <span
