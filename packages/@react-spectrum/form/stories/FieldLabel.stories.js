@@ -13,11 +13,11 @@ storiesOf('FieldLabel', module)
   )
   .add(
     'labelAlign: start',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'start', width: '200px'})
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'start', UNSAFE_style: {width: '200px'}})
   )
   .add(
     'labelAlign: end',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', width: '200px'})
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', UNSAFE_style: {width: '200px'}})
   )
   .add(
     'labelFor',

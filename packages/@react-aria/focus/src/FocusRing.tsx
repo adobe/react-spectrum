@@ -23,7 +23,7 @@ export function FocusRing(props: FocusRingProps) {
 
   return React.cloneElement(child, mergeProps(child.props, {
     ...(within ? focusWithinProps : focusProps),
-    className: classNames(children.props.className, {
+    className: classNames({
       [focusClass || '']: (within ? isFocusWithin : isFocused),
       [focusRingClass || '']: (within ? isFocusWithin : isFocused) && isFocusVisible
     })
