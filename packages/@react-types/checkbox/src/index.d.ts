@@ -7,13 +7,10 @@ export interface CheckboxBase extends InputBase {
   defaultSelected?: boolean,
   isSelected?: boolean,
   onChange?: (isSelected: boolean) => void,
-
-  /* Cannot use InputProps because value is a
-  valid dom prop for input as well as checked */
   value?: string, // dom prop for input element
   name?: string
 }
 
 export interface CheckboxProps extends CheckboxBase {
-  isIndeterminate?: boolean
+  isIndeterminate?: boolean // spectrum?
 }

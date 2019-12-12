@@ -9,7 +9,7 @@ export interface CheckboxAria {
 
 export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
   let {inputProps} = useToggle(props, state);
-  let {isChecked} = state;
+  let {isSelected} = state;
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -23,8 +23,8 @@ export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: 
   return {
     inputProps: {
       ...inputProps,
-      checked: isChecked,
-      'aria-checked': isIndeterminate ? 'mixed' : isChecked
+      checked: isSelected,
+      'aria-checked': isIndeterminate ? 'mixed' : isSelected
     }
   };
 }
