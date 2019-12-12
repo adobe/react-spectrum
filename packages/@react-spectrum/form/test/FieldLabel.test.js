@@ -231,36 +231,4 @@ describe('FieldLabel', () => {
       expect(secondButton).not.toHaveAttribute('aria-labelledby');
     });
   });
-
-  describe('with position and align', () => {
-    it.each`
-      Name               | Component
-      ${'v3 FieldLabel'} | ${FieldLabel}
-      ${'v2 FieldLabel'} | ${V2FieldLabel}
-    `('$Name by default no classes', ({Component}) => {
-      let tree = renderFieldLabel(Component);
-      let fieldLabel = tree.getByTestId(datatestid);
-      expect(fieldLabel.className.includes('spectrum-FieldLabel--alignEnd')).toBeFalsy();
-      expect(fieldLabel.className.includes('spectrum-FieldLabel--positionTop')).toBeFalsy();
-    });
-
-    it.each`
-      Name               | Component
-      ${'v3 FieldLabel'} | ${FieldLabel}
-      ${'v2 FieldLabel'} | ${V2FieldLabel}
-    `('$Name has align end/right and position top classes', ({Component}) => {
-      let positionProps = Component === FieldLabel ?
-        {labelAlign: 'end', labelPosition: 'top'} :
-        {position: 'right'};
-      let tree = renderFieldLabel(Component, positionProps);
-      let fieldLabel = tree.getByTestId(datatestid);
-      if (Component === FieldLabel) {
-        expect(fieldLabel.className.includes('spectrum-FieldLabel--alignEnd')).toBeTruthy();
-        expect(fieldLabel.className.includes('spectrum-FieldLabel--positionTop')).toBeTruthy();
-      } else if (Component === V2FieldLabel) {
-        console.log('fieldLabel.className', fieldLabel.className);
-        expect(fieldLabel.className.includes('spectrum-FieldLabel--right')).toBeTruthy();
-      }
-    });
-  });
 });
