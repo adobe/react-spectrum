@@ -3,8 +3,9 @@ import React from 'react';
 import {usePress} from '../';
 
 function Example(props) {
+  let {elementType: ElementType = 'div', ...otherProps} = props;
   let {pressProps} = usePress(props);
-  return <div {...pressProps}>test</div>;
+  return <ElementType {...otherProps} {...pressProps}>test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -35,7 +36,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -45,7 +46,7 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      
+
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;
       expect(events).toEqual([
@@ -88,7 +89,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -198,7 +199,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -241,7 +242,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -251,7 +252,7 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', shiftKey: true}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true, clientX: 0, clientY: 0}));
-      
+
       // How else to get the DOM node it renders the hook to?
       // let el = events[0].target;
       expect(events).toEqual([
@@ -296,7 +297,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -348,7 +349,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -459,7 +460,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -513,7 +514,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -564,7 +565,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -673,7 +674,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -755,7 +756,7 @@ describe('usePress', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
@@ -799,15 +800,15 @@ describe('usePress', function () {
     it('should fire press events based on keyboard events', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
-      let res = render(
-        <Example 
+      let {getByText, rerender} = render(
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent} />
       );
 
-      let el = res.getByText('test');
+      let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
@@ -845,13 +846,70 @@ describe('usePress', function () {
           shiftKey: false
         }
       ]);
+
+      // clear the events
+      events.length = 0;
+
+      // Test that click gets triggered when using a hyperlink
+      rerender(
+        <Example
+          elementType="a"
+          href="#"
+          onClick={e => {e.preventDefault(); addEvent({type: 'click'});}}
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      el = getByText('test');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'click'
+        }
+      ]);
     });
 
     it('should handle modifier keys', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
-        <Example 
+        <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}

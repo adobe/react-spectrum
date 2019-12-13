@@ -5,7 +5,8 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, Focusabl
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   children?: ReactNode,
-  href?: string
+  href?: string,
+  target?: string
 }
 
 export interface SpectrumButtonProps extends ButtonProps {

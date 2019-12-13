@@ -52,7 +52,7 @@ function render(props = {}) {
 function renderWithChildren(props = {}) {
   return (
     <Link {...props}>
-      <a href="http://example.com">This is a React Spectrum Link</a>
+      <a href="//example.com" target="_self">This is a React Spectrum Link</a>
     </Link>
   );
 }

@@ -133,15 +133,24 @@ export function usePress(props: PressHookProps): PressResult {
           ctrlKey: originalEvent.ctrlKey
         });
       }
+
+      // If the target is a link, trigger the click method so that the link will load.
+      if (pointerType === 'keyboard' &&
+        originalEvent.target instanceof HTMLAnchorElement &&
+        originalEvent.target.hasAttribute('href')) {
+        originalEvent.target.click();
+      }
     };
 
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
-        if (!state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
+        if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          state.isPressed = true;
-          triggerPressStart(e, 'keyboard');
+          if (!state.isPressed) {
+            state.isPressed = true;
+            triggerPressStart(e, 'keyboard');
+          }
         }
       },
       onKeyUp(e) {
@@ -234,7 +243,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = true;
         state.target = e.currentTarget;
         triggerPressStart(e, 'mouse');
-        
+
         document.addEventListener('mouseup', onMouseUp, false);
       };
 
@@ -251,7 +260,7 @@ export function usePress(props: PressHookProps): PressResult {
           triggerPressEnd(e, 'mouse', false);
         }
       };
-    
+
       let onMouseUp = (e: MouseEvent) => {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
@@ -260,7 +269,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
-    
+
         triggerPressEnd(createEvent(state.target, e), 'mouse');
       };
 
