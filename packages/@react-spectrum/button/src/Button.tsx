@@ -2,6 +2,7 @@ import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableProps} from '@react-types/shared';
 import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {HoverProps} from '@react-aria/interactions';
 import {PressProps} from '@react-aria/interactions';
 import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 import {StyleProps, useStyleProps} from '@react-spectrum/view';
@@ -9,7 +10,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps {
+export interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps, HoverProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   icon?: ReactElement,

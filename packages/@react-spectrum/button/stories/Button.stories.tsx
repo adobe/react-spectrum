@@ -45,6 +45,9 @@ function render(props:ButtonProps = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         {...props}>
         Default
       </Button>
@@ -52,6 +55,9 @@ function render(props:ButtonProps = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isDisabled
         {...props}>
         Disabled
@@ -61,6 +67,9 @@ function render(props:ButtonProps = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isQuiet
         {...props}>
         Quiet

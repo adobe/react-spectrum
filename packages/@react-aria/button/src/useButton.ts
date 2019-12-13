@@ -1,9 +1,9 @@
 import {chain, mergeProps} from '@react-aria/utils';
+import {HoverHookProps, PressHookProps, useHover, usePress} from '@react-aria/interactions';
 import {JSXElementConstructor, RefObject} from 'react';
-import {PressHookProps, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
 
-interface AriaButtonProps extends PressHookProps {
+interface AriaButtonProps extends PressHookProps, HoverHookProps {
   elementType?: string | JSXElementConstructor<any>,
   href?: string,
   tabIndex?: number,
@@ -16,7 +16,8 @@ interface AriaButtonProps extends PressHookProps {
 
 interface ButtonAria {
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
-  isPressed: boolean
+  isPressed: boolean,
+  isHovering: boolean
 }
 
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
@@ -27,6 +28,10 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressStart,
     onPressEnd,
     onPressChange,
+    onHover,
+    onHoverStart,
+    onHoverEnd,
+    onHoverChange,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -57,12 +62,23 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
+  let {hoverProps, isHovering} = useHover({
+    onHoverStart,
+    onHoverEnd,
+    onHoverChange,
+    onHover,
+    isDisabled,
+    ref
+  });
+
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
+  let interactions = mergeProps(hoverProps, handlers);
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(handlers, {
+    isHovering,
+    buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,
