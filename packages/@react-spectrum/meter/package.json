@@ -32,7 +32,7 @@
     "@react-aria/meter": "^3.0.0-alpha.2",
     "@react-spectrum/progress": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-spectrum/view": "^3.0.0-alpha.2"
+    "@react-types/meter": "^3.0.0-alpha.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"

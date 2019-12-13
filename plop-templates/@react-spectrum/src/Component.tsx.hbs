@@ -1,14 +1,11 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
+import { {{~componentName}}Props} from '@react-types/${{packageName}}';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/{{componentCSS}}/vars.css';
 import {use {{~componentName~}} } from '@react-aria/{{packageName}}';
 import {use {{~componentName~}} State} from '@react-stately/{{packageName}}';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
-
-export interface {{componentName}}Props {
-}
 
 function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
   props = useProviderProps(props);
@@ -19,7 +16,8 @@ function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
 
   return (
     <div
-      {...mergeProps(ariaProps, filterDOMProps(props))}
+      {...filterDOMProps(props)}
+      {...ariaProps}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, '', styleProps.className)}>

@@ -1,8 +1,7 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import {LabelPosition, RadioGroupProps} from '@react-types/radio';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {LabelPosition, SpectrumRadioGroupProps} from '@react-types/radio';
 import React, {forwardRef, useContext} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
@@ -25,8 +24,6 @@ const RadioContext = React.createContext<RadioGroupContext | null>(null);
 export function useRadioProvider(): RadioGroupContext {
   return useContext(RadioContext);
 }
-
-interface SpectrumRadioGroupProps extends RadioGroupProps, DOMProps, StyleProps {}
 
 export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) => {
   let completeProps = useProviderProps(props);

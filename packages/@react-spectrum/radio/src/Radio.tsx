@@ -1,14 +1,11 @@
-import {classNames, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {RadioProps} from '@react-types/radio';
 import React, {forwardRef, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './RadioGroup';
-
-interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
 
 function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   if (!props.children && !props['aria-label']) {
