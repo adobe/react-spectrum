@@ -31,7 +31,6 @@
     "@react-aria/tabs": "^3.0.0-alpha.2",
     "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-spectrum/view": "^3.0.0-alpha.2",
     "@react-stately/tabs": "^3.0.0-alpha.2",
     "classnames": "^2.2.5"
   },

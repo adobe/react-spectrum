@@ -1,6 +1,5 @@
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue} from './dna';
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
-import {StyleProps, ViewStyleProps} from './types';
 import {useLocale} from '@react-aria/i18n';
 
 type Direction = 'ltr' | 'rtl';
