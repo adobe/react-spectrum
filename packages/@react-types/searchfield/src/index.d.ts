@@ -1,7 +1,8 @@
-import {TextFieldProps} from '@react-types/textfield';
+import {SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
 
 export interface SearchFieldProps extends TextFieldProps {
-  isDisabled?: boolean,
-  onSubmit?: (value: string, e?: Event) => void,
-  onClear?: (e: Event) => void
+  onSubmit?: (value: string) => void,
+  onClear?: () => void
 }
+
+interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}

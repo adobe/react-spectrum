@@ -1,7 +1,6 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '../style/index.css';
 import {TabList} from './TabList';
 import {useProviderProps} from '@react-spectrum/provider';

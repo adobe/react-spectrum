@@ -1,38 +1,28 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, RefObject, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React, {forwardRef, useRef} from 'react';
+import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
-import {SwitchProps} from '@react-types/switch';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
 
-interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
-  isEmphasized?: boolean
-}
-
-export const Switch = forwardRef((props: SpectrumSwitchProps, ref: RefObject<HTMLLabelElement>) => {
-  let completeProps = Object.assign({}, {
-    isDisabled: false,
-    isEmphasized: false,
-    defaultSelected: false
-  }, props);
-
+function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+  props = useProviderProps(props);
   let {
-    isEmphasized,
-    isDisabled,
+    isEmphasized = false,
+    isDisabled = false,
+    autoFocus,
     children,
     ...otherProps
-  } = completeProps;
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  let inputRef = useRef<HTMLInputElement>();
-  let {
-    checked,
-    setChecked
-  } = useToggleState(completeProps);
-  let {inputProps} = useSwitch(completeProps, {checked, setChecked});
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
 
   return (
     <label
@@ -43,7 +33,7 @@ export const Switch = forwardRef((props: SpectrumSwitchProps, ref: RefObject<HTM
         }
       )}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -55,7 +45,7 @@ export const Switch = forwardRef((props: SpectrumSwitchProps, ref: RefObject<HTM
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
@@ -69,4 +59,7 @@ export const Switch = forwardRef((props: SpectrumSwitchProps, ref: RefObject<HTM
       )}
     </label>
   );
-});
+}
+
+const _Switch = forwardRef(Switch);
+export {_Switch as Switch};

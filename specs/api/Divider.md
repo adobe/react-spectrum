@@ -2,8 +2,8 @@
 
 ```typescript
 interface Divider {
-  size?: 'S' | 'M' | 'L',
-  orientation?: 'horizontal' | 'vertical'
+  size?: 'S' | 'M' | 'L', // Default L
+  orientation?: 'horizontal' | 'vertical' // Default horizontal
 }
 ```
 

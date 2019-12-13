@@ -1,23 +1,23 @@
 import {AllHTMLAttributes} from 'react';
 
 export interface SeparatorProps {
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: 'horizontal' | 'vertical',
+  elementType?: string
 }
 
 export interface SeparatorAria {
   separatorProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useSeparator(props: SeparatorProps, elementType: string): SeparatorAria {
+export function useSeparator(props: SeparatorProps): SeparatorAria {
   let ariaOrientation;
   // if orientation is horizontal, aria-orientation default is horizontal, so we leave it undefined
   // if it's vertical, we need to specify it
   if (props.orientation === 'vertical') {
     ariaOrientation = 'vertical';
   }
-
-  // hr elements implicitly have role = separator
-  if (elementType !== 'HR') {
+  // hr elements implicitly have role = separator and a horizontal orientation
+  if (props.elementType !== 'hr') {
     return {
       separatorProps: {
         role: 'separator',
@@ -25,5 +25,5 @@ export function useSeparator(props: SeparatorProps, elementType: string): Separa
       }
     };
   }
-  return {separatorProps: {'aria-orientation': ariaOrientation}};
+  return {separatorProps: {}};
 }

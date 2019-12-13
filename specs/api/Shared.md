@@ -53,6 +53,7 @@ interface SingleSelectionBase {
   onSelectionChange?: (selectedItem: any) => void,
   typeToSelect?: boolean // or is it really typeToFocus?
 }
+
 ```
 
 ## Drag and Drop

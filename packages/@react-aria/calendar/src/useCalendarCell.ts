@@ -48,7 +48,7 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
   }
 
   let {pressProps} = usePress({
-    onPressStart: () => {
+    onPress: () => {
       if (!props.isDisabled) {
         state.selectDate(props.cellDate);
         state.setFocusedDate(props.cellDate);

@@ -1,23 +1,14 @@
 import {DialogContext} from './context';
+import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
+import React, {Fragment, useRef} from 'react';
+import {SpectrumDialogTriggerProps} from '@react-types/dialog';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMediaQuery} from '@react-spectrum/utils';
+import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
-interface DialogTriggerProps extends PositionProps {
-  children: ReactElement[],
-  type?: 'modal' | 'popover' | 'tray',
-  mobileType?: 'modal' | 'tray',
-  hideArrow?: boolean,
-  targetRef?: RefObject<HTMLElement>,
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
-}
-
-export function DialogTrigger(props: DialogTriggerProps) {
+export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
     children,
     type = 'modal',
@@ -87,11 +78,11 @@ export function DialogTrigger(props: DialogTriggerProps) {
 }
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
-  let containerRef = useRef<HTMLDivElement>();
+  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
-    containerRef,
+    containerRef: unwrapDOMRef(containerRef),
     targetRef: targetRef || triggerRef,
     overlayRef,
     placement: props.placement,

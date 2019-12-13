@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/build-tools",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Unpublished build tools to help our monorepo",
   "main": "generateIcons.js",
   "private": true,

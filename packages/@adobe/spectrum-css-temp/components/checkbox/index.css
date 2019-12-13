@@ -125,6 +125,7 @@ governing permissions and limitations under the License.
 .spectrum-Checkbox-partialCheckmark {
   position: absolute;
   top: 50%;
+  left: 50%;
 
   margin-block-start: calc(var(--spectrum-icon-checkmark-small-height) / -2);
   margin-inline-start: calc(var(--spectrum-icon-checkmark-small-width) / -2);

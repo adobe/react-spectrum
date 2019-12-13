@@ -6,12 +6,12 @@ import {CalendarTableBody} from './CalendarTableBody';
 import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
@@ -20,6 +20,7 @@ interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
 }
 
 export function CalendarBase(props: CalendarBaseProps) {
+  props = useProviderProps(props);
   let {
     state,
     aria,

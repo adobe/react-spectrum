@@ -1,0 +1,14 @@
+{
+  "calendar": "Kalenteri",
+  "date": "Päivämäärä",
+  "dateRange": "Päivämääräalue",
+  "day": "Päivä",
+  "dayPeriod": "Päiväalue",
+  "endDate": "Päättymispäivä",
+  "hour": "Tunti",
+  "minute": "Minuutti",
+  "month": "Kuukausi",
+  "second": "Sekunti",
+  "startDate": "Alkamispäivä",
+  "year": "Vuosi"
+}

@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import React from 'react';
-import {SpectrumDatePickerProps} from './types';
+import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';

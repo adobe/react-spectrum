@@ -1,16 +1,13 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {RadioProps} from '@react-types/radio';
-import React, {forwardRef, RefObject} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React, {forwardRef, useRef} from 'react';
+import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './RadioGroup';
 
-interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
-
-export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLLabelElement>) => {
+function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
   }
@@ -18,7 +15,7 @@ export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLL
   let {
     isDisabled,
     children,
-    value,
+    autoFocus,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -26,24 +23,21 @@ export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLL
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
-    isRequired,
-    isReadOnly,
     isDisabled: isGroupDisabled,
     validationState,
-    name,
     labelPosition,
     selectedRadio,
     setSelectedRadio
   } = radioGroupProps;
 
   let {inputProps} = useRadio({
-    value,
-    isEmphasized,
-    isRequired,
-    isReadOnly,
-    isDisabled: isDisabled || isGroupDisabled,
-    name
+    ...props,
+    ...radioGroupProps,
+    isDisabled: isDisabled || isGroupDisabled
   }, {selectedRadio, setSelectedRadio});
+
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
 
   return (
     <label
@@ -54,7 +48,7 @@ export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLL
         }
       )}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -68,9 +62,10 @@ export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLL
           styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
+          ref={inputRef}
           className={classNames(styles, 'spectrum-Radio-input')} />
       </FocusRing>
       <span className={classNames(styles, 'spectrum-Radio-button')} />
@@ -81,4 +76,7 @@ export const Radio = forwardRef((props: SpectrumRadioProps, ref: RefObject<HTMLL
       )}
     </label>
   );
-});
+}
+
+const _Radio = forwardRef(Radio);
+export {_Radio as Radio};

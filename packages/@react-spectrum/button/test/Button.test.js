@@ -149,12 +149,23 @@ describe('Button', function () {
     Component      | props
     ${ActionButton}| ${{icon: <FakeIcon role="status" />}}
     ${Button}      | ${{icon: <FakeIcon role="status" />}}
-    ${LogicButton} | ${{icon: <FakeIcon role="status" />}}
     ${V2Button}    | ${{icon: <FakeIcon role="status" />}}
   `('v2/3 parity accepts an icon as a prop', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
 
     let icon = getByRole('status');
     expect(icon).not.toBeNull();
+  });
+
+  it.each`
+    Name                | Component
+    ${'ActionButton'}   | ${ActionButton}
+    ${'Button'}         | ${Button}
+    ${'LogicButton'}    | ${LogicButton}
+  `('$Name supports autoFocus', function ({Component}) {
+    let {getByRole} = render(<Component autoFocus>Click Me</Component>);
+
+    let button = getByRole('button');
+    expect(document.activeElement).toBe(button);
   });
 });

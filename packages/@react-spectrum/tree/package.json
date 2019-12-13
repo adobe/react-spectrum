@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/tree",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -28,14 +28,21 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/tree": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+    "@react-aria/collections": "^3.0.0-alpha.2",
+    "@react-aria/focus": "^3.0.0-alpha.2",
+    "@react-aria/interactions": "^3.0.0-alpha.2",
+    "@react-aria/selection": "^3.0.0-alpha.2",
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-stately/collections": "^3.0.0-alpha.2",
+    "@react-stately/tree": "^3.0.0-alpha.2",
+    "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
     "react": "^16.8.0"
   },
   "publishConfig": {

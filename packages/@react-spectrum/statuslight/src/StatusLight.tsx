@@ -1,23 +1,18 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import React, {forwardRef, ReactNode, RefObject} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import React, {forwardRef} from 'react';
+import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface StatusLightProps extends DOMProps, StyleProps {
-  children: ReactNode,
-  variant?: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
-  isDisabled?: boolean
-}
-
-export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<HTMLDivElement>) => {
+function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
   let {
-    variant = 'positive',
+    variant,
     children,
     isDisabled,
     ...otherProps
   } = useProviderProps(props);
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
   if (!props.children && !props['aria-label']) {
@@ -37,8 +32,11 @@ export const StatusLight = forwardRef((props: StatusLightProps, ref: RefObject<H
         },
         styleProps.className
       )}
-      ref={ref} >
+      ref={domRef}>
       {children}
     </div>
   );
-});
+}
+
+let _StatusLight = forwardRef(StatusLight);
+export {_StatusLight as StatusLight};

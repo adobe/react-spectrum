@@ -17,16 +17,14 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {DOMProps} from '@react-types/shared';
-import {HTMLElement} from 'react-dom';
+import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
-import React, {RefObject} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React from 'react';
+import {SpectrumToastProps} from '@react-types/toast';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
-import {ToastProps} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -35,9 +33,7 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
-
-export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject<HTMLElement>) => {
+function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     actionButtonProps,
     closeButtonProps,
@@ -50,6 +46,7 @@ export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject
     variant,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
 
@@ -58,7 +55,7 @@ export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...toastProps}
-      ref={ref}
+      ref={domRef}
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
@@ -86,4 +83,7 @@ export const Toast = React.forwardRef((props: SpectrumToastProps, ref: RefObject
       </div>
     </div>
   );
-});
+}
+
+let _Toast = React.forwardRef(Toast);
+export {_Toast as Toast};

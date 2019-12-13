@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/dialog",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -28,19 +28,20 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/dialog": "^3.0.0-alpha.1",
-    "@react-aria/focus": "^3.0.0-alpha.1",
-    "@react-aria/interactions": "^3.0.0-alpha.1",
-    "@react-aria/overlays": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-alpha.1",
-    "@react-spectrum/overlays": "^3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1"
+    "@react-aria/dialog": "^3.0.0-alpha.2",
+    "@react-aria/focus": "^3.0.0-alpha.2",
+    "@react-aria/interactions": "^3.0.0-alpha.2",
+    "@react-aria/overlays": "^3.0.0-alpha.2",
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/overlays": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-stately/utils": "^3.0.0-alpha.2",
+    "@react-types/dialog": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-alpha.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",
