@@ -16,8 +16,7 @@ interface AriaButtonProps extends PressHookProps, HoverHookProps {
 
 interface ButtonAria {
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
-  isPressed: boolean,
-  isHovering: boolean
+  isPressed: boolean
 }
 
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
@@ -62,7 +61,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  let {hoverProps, isHovering} = useHover({
+  let {hoverProps} = useHover({
     onHoverStart,
     onHoverEnd,
     onHoverChange,
@@ -77,7 +76,6 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   return {
     isPressed, // Used to indicate press state for visual
-    isHovering,
     buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
