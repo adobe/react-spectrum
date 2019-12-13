@@ -1,0 +1,11 @@
+{
+  "dateSelected": "התאריך {date, date, full} שנבחר",
+  "finishRangeSelectionPrompt": "חץ כדי לסיים את בחירת טווח התאריכים",
+  "next": "הבא",
+  "previous": "הקודם",
+  "selectedDateDescription": "התאריך שנבחר: {date, date, full}",
+  "selectedRangeDescription": "הטווח שנבחר: מ-{start, date, long} ועד {end, date, long}",
+  "startRangeSelectionPrompt": "לחץ כדי להתחיל בבחירת טווח התאריכים",
+  "todayDate": "היום, {date, date, full}",
+  "todayDateSelected": "היום, התאריך {date, date, full} שנבחר"
+}

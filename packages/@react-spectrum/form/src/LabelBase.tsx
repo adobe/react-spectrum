@@ -124,7 +124,7 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
     {
       ref: domRef,
       ...mergeProps(
-        fieldLabel.props, 
+        fieldLabel.props,
         {...filterDOMProps(otherProps), ...styleProps}
       )
     }

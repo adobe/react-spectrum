@@ -7,7 +7,7 @@ import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/font.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
