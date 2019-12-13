@@ -68,6 +68,12 @@ storiesOf('TextArea', module)
   .add(
     'icon: Info, validationState: invalid, isQuiet',
     () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
+  )
+  .add('custom width',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}})
+  )
+  .add('custom width, quiet',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}, isQuiet: true})
   );
 
 function render(props = {}) {
