@@ -1,6 +1,10 @@
 import {CheckboxBase} from '@react-types/checkbox';
-import {ToggleState} from '@react-types/toggle';
 import {useControlledState} from '@react-stately/utils';
+
+export interface ToggleState {
+  isSelected: boolean,
+  setSelected: (value:boolean) => void
+}
 
 export function useToggleState(props: CheckboxBase): ToggleState {
   let {isReadOnly, onChange} = props;

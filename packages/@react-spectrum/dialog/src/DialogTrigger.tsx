@@ -1,23 +1,14 @@
 import {DialogContext} from './context';
-import {DOMRefValue, unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {PositionProps, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
+import React, {Fragment, useRef} from 'react';
+import {SpectrumDialogTriggerProps} from '@react-types/dialog';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
+import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
-interface DialogTriggerProps extends PositionProps {
-  children: ReactElement[],
-  type?: 'modal' | 'popover' | 'tray',
-  mobileType?: 'modal' | 'tray',
-  hideArrow?: boolean,
-  targetRef?: RefObject<HTMLElement>,
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
-}
-
-export function DialogTrigger(props: DialogTriggerProps) {
+export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
     children,
     type = 'modal',

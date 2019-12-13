@@ -1,7 +1,7 @@
 import {DOMProps} from '@react-types/shared';
 import {InputHTMLAttributes} from 'react';
 import {SwitchProps} from '@react-types/switch';
-import {ToggleState} from '@react-types/toggle';
+import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 
 export interface ToggleAria {

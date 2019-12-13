@@ -1,13 +1,12 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames} from '@react-spectrum/utils';
+import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from './types';
+import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 import {useTextField} from '@react-aria/textfield';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {

@@ -1,0 +1,11 @@
+{
+  "dateSelected": "izbrano: {date, date, full}",
+  "finishRangeSelectionPrompt": "Kliknite za dokončanje izbire datumskega obsega",
+  "next": "Naprej",
+  "previous": "Nazaj",
+  "selectedDateDescription": "Izbrani datum: {date, date, full}",
+  "selectedRangeDescription": "Izbrani razpon: {start, date, long} do {end, date, long}",
+  "startRangeSelectionPrompt": "Kliknite za začetek izbire datumskega obsega",
+  "todayDate": "Danes, {date, date, full}",
+  "todayDateSelected": "Danes, izbrano: {date, date, full}"
+}

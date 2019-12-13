@@ -1,0 +1,11 @@
+{
+  "dateSelected": "Επιλέχτηκε {date, date, full}",
+  "finishRangeSelectionPrompt": "Κάντε κλικ για να ολοκληρώσετε την επιλογή εύρους ημερομηνιών",
+  "next": "Επόμενο",
+  "previous": "Προηγούμενο",
+  "selectedDateDescription": "Επιλεγμένη ημερομηνία: {date, date, full}",
+  "selectedRangeDescription": "Επιλεγμένο εύρος: {start, date, long} έως {end, date, long}",
+  "startRangeSelectionPrompt": "Κάντε κλικ για να ξεκινήσετε την επιλογή εύρους ημερομηνιών",
+  "todayDate": "Σήμερα, {date, date, full}",
+  "todayDateSelected": "Σήμερα, επιλέχτηκε {date, date, full}"
+}

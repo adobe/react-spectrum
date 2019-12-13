@@ -1,19 +1,12 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import React, {forwardRef, ReactElement, ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import React, {forwardRef} from 'react';
+import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useIllustratedMessage} from '@react-aria/illustrated-message';
 
-export interface IllustratedMessageProps extends DOMProps, StyleProps {
-  heading?: string,
-  description?: ReactNode,
-  illustration?: ReactElement,
-  ariaLevel?: number
-}
-
-function IllustratedMessage(props: IllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
     illustration,
     heading,

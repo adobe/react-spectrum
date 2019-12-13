@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-types/shared": "^3.0.0-alpha.2"
+    "@react-types/provider": "^3.0.0-alpha.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
