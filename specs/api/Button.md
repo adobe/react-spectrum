@@ -1,15 +1,12 @@
 # Button
 
 ```typescript
-interface ButtonBase {
+interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps {
   isDisabled?: boolean,
-  icon?: ReactNode,
+  icon?: ReactElement,
   children?: ReactNode,
   elementType?: string | JSXElementConstructor<any>,
-  autoFocus?: boolean,
-  onPress?: (event: Event) => void,
-  href?: string,
-  value?: string // for use in ButtonGroup. no effect on Button itself.
+  href?: string
 }
 
 interface Button extends ButtonBase {
@@ -21,6 +18,7 @@ interface ActionButton extends ButtonBase {
   isQuiet?: boolean,
   isSelected?: boolean,
   holdAffordance?: boolean,
+  isEmphasized?: boolean
 }
 
 interface LogicButton extends ButtonBase {

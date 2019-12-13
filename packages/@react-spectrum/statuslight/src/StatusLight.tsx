@@ -1,19 +1,13 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import React, {forwardRef, ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import React, {forwardRef} from 'react';
+import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
-interface StatusLightProps extends DOMProps, StyleProps {
-  children: ReactNode,
-  variant?: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
-  isDisabled?: boolean
-}
-
-function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
   let {
-    variant = 'positive',
+    variant,
     children,
     isDisabled,
     ...otherProps
@@ -38,7 +32,7 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
         },
         styleProps.className
       )}
-      ref={domRef} >
+      ref={domRef}>
       {children}
     </div>
   );

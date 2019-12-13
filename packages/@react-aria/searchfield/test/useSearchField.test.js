@@ -70,9 +70,8 @@ describe('useSearchField hook', () => {
         let {searchFieldProps} = renderSearchHook({onClear});
         searchFieldProps.onKeyDown(event('Escape'));
         expect(state.setValue).toHaveBeenCalledTimes(1);
-        expect(state.setValue).toHaveBeenCalledWith('', event('Escape'));
+        expect(state.setValue).toHaveBeenCalledWith('');
         expect(onClear).toHaveBeenCalledTimes(1);
-        expect(onClear).toHaveBeenCalledWith(event('Escape'));
       });
 
       it('onSubmit and onClear aren\'t called if isDisabled is true', () => {
@@ -103,18 +102,13 @@ describe('useSearchField hook', () => {
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
-    it('with isDisabled if provided', () => {
-      let {clearButtonProps} = renderSearchHook({isDisabled: true});
-      expect(clearButtonProps.isDisabled).toBeTruthy();
-    });
-
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {
         let {clearButtonProps} = renderSearchHook({});
         clearButtonProps.onPress(mockEvent);
         expect(state.setValue).toHaveBeenCalledTimes(1);
-        expect(state.setValue).toHaveBeenCalledWith('', mockEvent);
+        expect(state.setValue).toHaveBeenCalledWith('');
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
       });
 
@@ -123,11 +117,10 @@ describe('useSearchField hook', () => {
         clearButtonProps.onPress(mockEvent);
         // Verify that onClearButtonClick stuff still triggers
         expect(state.setValue).toHaveBeenCalledTimes(1);
-        expect(state.setValue).toHaveBeenCalledWith('', mockEvent);
+        expect(state.setValue).toHaveBeenCalledWith('');
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
-        expect(onClear).toHaveBeenCalledWith(mockEvent);
       });
     });
   });

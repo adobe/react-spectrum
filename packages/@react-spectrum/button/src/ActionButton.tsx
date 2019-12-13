@@ -1,20 +1,14 @@
-import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, cloneIcon, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
+import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-export interface ActionButtonProps extends ButtonBase {
-  isQuiet?: boolean,
-  isSelected?: boolean,
-  holdAffordance?: boolean
-}
-
-function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
+function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -28,7 +22,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (

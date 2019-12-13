@@ -1,17 +1,15 @@
+import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
-import {JSXElementConstructor} from 'react';
-import {PressHookProps, usePress} from '@react-aria/interactions';
+import {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
-interface AriaButtonProps extends PressHookProps {
-  elementType?: string | JSXElementConstructor<any>,
-  href?: string,
-  tabIndex?: number,
-  isSelected?: boolean | 'false' | 'true',
-  validationState?: 'valid' | 'invalid',
+interface AriaButtonProps extends ButtonProps {
+  isSelected?: boolean,
+  validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  [others: string]: any
+  type?: 'button' | 'submit'
 }
 
 interface ButtonAria {
@@ -19,7 +17,7 @@ interface ButtonAria {
   isPressed: boolean
 }
 
-export function useButton(props: AriaButtonProps): ButtonAria {
+export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
     elementType = 'button',
     isDisabled,
@@ -27,6 +25,7 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     onPressStart,
     onPressEnd,
     onPressChange,
+    // @ts-ignore
     onClick: deprecatedOnClick,
     href,
     tabIndex,
@@ -34,7 +33,6 @@ export function useButton(props: AriaButtonProps): ButtonAria {
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
-    ref,
     type = 'button'
   } = props;
   let additionalProps;
@@ -61,7 +59,7 @@ export function useButton(props: AriaButtonProps): ButtonAria {
   let handlers = mergeProps(pressProps, focusableProps);
 
   return {
-    isPressed,
+    isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(handlers, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),

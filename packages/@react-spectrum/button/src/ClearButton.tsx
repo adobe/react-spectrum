@@ -1,13 +1,13 @@
-import {ButtonBase} from './Button';
-import {classNames, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {ButtonProps} from '@react-types/button';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface ClearButtonProps extends ButtonBase {
+interface ClearButtonProps extends ButtonProps {
   focusClassName?: string,
   variant?: 'overBackground'
 }
@@ -21,7 +21,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (

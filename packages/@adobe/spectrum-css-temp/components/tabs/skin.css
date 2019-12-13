@@ -10,24 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ tabs/tabs.yml }}
-*/
-/* topdoc
-{{ tabs/tabs-quiet.yml }}
-*/
-/* topdoc
-{{ tabs/tabs-compact.yml }}
-*/
-/* topdoc
-{{ tabs/tabs-quiet-compact.yml }}
-*/
-/* topdoc
-{{ tabs/tabs-vertical.yml }}
-*/
-/* topdoc
-{{ tabs/tabs-compact-vertical.yml }}
-*/
 .spectrum-Tabs {
   border-bottom-color: var(--spectrum-tabs-rule-color);
 }

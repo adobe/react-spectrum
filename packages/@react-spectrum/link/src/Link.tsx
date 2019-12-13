@@ -1,18 +1,13 @@
-import {classNames, filterDOMProps, getWrappedElement} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {LinkProps} from '@react-types/link';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useLink} from '@react-aria/link';
-
-export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
-  variant?: 'primary' | 'secondary' | 'overBackground',
-  isQuiet?: boolean
-}
+import {useProviderProps} from '@react-spectrum/provider';
 
 export function Link(props: SpectrumLinkProps) {
+  props = useProviderProps(props);
   let {
     variant = 'primary',
     isQuiet,

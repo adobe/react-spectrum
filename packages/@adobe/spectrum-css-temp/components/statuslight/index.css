@@ -16,9 +16,6 @@ governing permissions and limitations under the License.
   --spectrum-statuslight-padding-y: var(--spectrum-global-dimension-size-75);
 }
 
-/* topdoc
-{{ statuslight/statuslight-semantic.yml }}
-*/
 .spectrum-StatusLight {
   min-block-size: var(--spectrum-statuslight-height);
   display: flex;
@@ -46,7 +43,3 @@ governing permissions and limitations under the License.
 .spectrum-StatusLight--neutral {
   font-style: italic;
 }
-
-/* topdoc
-{{ statuslight/statuslight-label.yml }}
-*/

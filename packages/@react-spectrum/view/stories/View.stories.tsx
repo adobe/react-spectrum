@@ -20,7 +20,7 @@ storiesOf('View', module)
           marginStart="size-250"
           borderColor="default"
           borderWidth="thin" />
-        <Button marginStart="size-250">Test</Button>
+        <Button variant="primary" marginStart="size-250">Test</Button>
       </div>
     )
   );
