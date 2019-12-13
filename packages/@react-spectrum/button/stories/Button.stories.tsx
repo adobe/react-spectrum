@@ -11,7 +11,7 @@ storiesOf('Button', module)
   )
   .add(
     'with icon',
-    () => render({icon: <Bell />})
+    () => render({icon: <Bell />, variant: 'primary'})
   )
   .add(
     'variant: overBackground',
@@ -35,7 +35,7 @@ storiesOf('Button', module)
   )
   .add(
     'element: a',
-    () => render({elementType: 'a', href: 'http://example.com'})
+    () => render({elementType: 'a', href: 'http://example.com', variant: 'primary'})
   );
 
 function render(props: any = {}) {
