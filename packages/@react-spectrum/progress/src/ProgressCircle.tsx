@@ -14,7 +14,6 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
     maxValue = 100,
     size = 'M',
     variant,
-    isCentered = false,
     isIndeterminate = false,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -62,12 +61,6 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
             'spectrum-CircleLoader--large': size === 'L',
             'spectrum-CircleLoader--overBackground': variant === 'overBackground'
           },
-          classNames(
-            progressStyles,
-            {
-              'react-spectrum-ProgressCircle--centered': isCentered
-            }
-          ),
           styleProps.className
         )
       }>
@@ -76,7 +69,7 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
         <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
-            data-testid="fillSubMask1" 
+            data-testid="fillSubMask1"
             style={subMask1Style}>
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
