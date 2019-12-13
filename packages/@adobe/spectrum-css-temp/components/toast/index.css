@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-
 :root {
   --spectrum-toast-icon-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-toast-content-padding-top: var(--spectrum-global-dimension-size-65);
@@ -20,9 +18,6 @@ governing permissions and limitations under the License.
   --spectrum-toast-button-margin-right: var(--spectrum-global-dimension-size-130);
 }
 
-/* topdoc
-{{ toast/toast.yml }}
-*/
 .spectrum-Toast {
   box-sizing: border-box;
   display: inline-flex;

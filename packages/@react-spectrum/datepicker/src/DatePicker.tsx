@@ -13,9 +13,11 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useStyleProps} from '@react-spectrum/view';
 
 export function DatePicker(props: SpectrumDatePickerProps) {
+  props = useProviderProps(props);
   let {
     autoFocus,
     formatOptions,
@@ -43,9 +45,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     },
     styleProps.className
   );
-
   return (
-    <FocusRing 
+    <FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -72,7 +73,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             formatOptions={formatOptions}
             UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}
@@ -81,7 +82,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
           isOpen={isOpen}
           onOpenChange={setOpen}>
           <FieldButton
-            {...buttonProps as any}
+            {...buttonProps}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}

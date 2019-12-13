@@ -1,0 +1,11 @@
+{
+  "dateSelected": "{date, date, full} valitud",
+  "finishRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimise lõpetamiseks",
+  "next": "Järgmine",
+  "previous": "Eelmine",
+  "selectedDateDescription": "Valitud kuupäev: {date, date, full}",
+  "selectedRangeDescription": "Valitud vahemik: {start, date, long} kuni {end, date, long}",
+  "startRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimiseks",
+  "todayDate": "Täna {date, date, full}",
+  "todayDateSelected": "Täna {date, date, full} valitud"
+}

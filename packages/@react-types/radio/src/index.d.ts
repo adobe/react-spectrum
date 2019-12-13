@@ -8,8 +8,7 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase {
   labelPosition?: LabelPosition,
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   name?: string, // HTML form name. Not displayed.
-  isEmphasized?: boolean,
-  label?: string,
+  isEmphasized?: boolean
 }
 
 export interface RadioProps extends FocusableProps {
