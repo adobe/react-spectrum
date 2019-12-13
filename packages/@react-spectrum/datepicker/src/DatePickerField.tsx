@@ -77,7 +77,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
   }
 
   return (
-    <div className={textfieldClass} {...domProps} {...styleProps}>
+    <div {...domProps} {...styleProps} className={textfieldClass}>
       <div className={inputClass}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment

@@ -10,14 +10,6 @@ const sliderOptions = {
   step: 1
 };
 
-const centeredBoxStyle: CSSProperties = {
-  width: '100px',
-  height: '100px',
-  position: 'relative',
-  borderColor: 'black',
-  borderStyle: 'solid'
-};
-
 const grayedBoxStyle: CSSProperties = {
   width: '100px',
   height: '100px',
@@ -73,17 +65,6 @@ storiesOf('Progress/ProgressCircle', module)
     }
   )
   .add(
-    'isCentered: true',
-    () =>  {
-      const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={centeredBoxStyle}>
-          {render({value, isCentered: true})}
-        </div>
-      );
-    }
-  )
-  .add(
     'Using raw values for minValue, maxValue, and value',
     () => render({
       labelPosition: 'top',
@@ -108,14 +89,6 @@ storiesOf('Progress/ProgressCircle', module)
     () => (
       <div style={grayedBoxStyle}>
         {render({isIndeterminate: true, variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'isIndeterminate: true, isCentered: true',
-    () => (
-      <div style={centeredBoxStyle}>
-        {render({isIndeterminate: true, isCentered: true})}
       </div>
     )
   );
