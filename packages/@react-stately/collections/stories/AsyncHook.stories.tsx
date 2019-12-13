@@ -2,9 +2,11 @@ import {ActionButton} from '@react-spectrum/button';
 import {Item, useAsyncList} from '../src';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {useEffect} from 'react';
-import {storiesOf} from '@storybook/react';
+// import {storiesOf} from '@storybook/react';
 import {Tree} from '@react-spectrum/tree';
 
+/*
+ these are broken, commenting out for now
 storiesOf('useAsyncList', module)
   .add(
     'loadMore support',
@@ -27,6 +29,7 @@ storiesOf('useAsyncList', module)
         })} />
     )
   );
+  */
 
 interface IItem {
   name: string,
