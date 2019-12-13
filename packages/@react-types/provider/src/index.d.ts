@@ -1,6 +1,5 @@
-import {DOMProps, Theme} from '@react-types/shared';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
-import {StyleProps} from '@react-spectrum/view';
 
 type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
   | 'bottom' | 'bottom left' | 'bottom center' | 'bottom right';
@@ -8,12 +7,24 @@ type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
 export type ColorScheme = 'light' | 'dark';
 export type Scale = 'medium' | 'large';
 
+export interface CSSModule {
+  [className: string]: string
+}
+
+export interface Theme {
+  global?: CSSModule,
+  light?: CSSModule,
+  dark?: CSSModule,
+  medium?: CSSModule,
+  large?: CSSModule
+}
+
 interface ContextProps {
   toastPlacement?: ToastPlacement,
   isQuiet?: boolean,
   isEmphasized?: boolean,
   isDisabled?: boolean,
-  isRequired?: boolean, // ???
+  isRequired?: boolean,
   isReadOnly?: boolean
 }
 

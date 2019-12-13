@@ -20,7 +20,7 @@ module.exports = function (plop) {
       type: 'checkbox',
       name: 'scopes',
       message: 'scope name(s)',
-      choices: ['@react-aria', '@react-spectrum', '@react-stately'],
+      choices: ['@react-aria', '@react-spectrum', '@react-stately', '@react-types'],
       validate: (answer) => answer.length > 0,
       when: ({projectType}) => projectType === rspProject
     }, {
@@ -92,6 +92,21 @@ module.exports = function (plop) {
           actions.push({
             type: 'renameMany',
             templateFiles: `packages/@react-stately/${packageName}/**`,
+            renamer: name => `${name.replace('Component', componentName)}`
+          });
+        }
+
+        if (scopes.includes('@react-types')) {
+          actions.push({
+            type: 'addMany',
+            templateFiles: 'plop-templates/@react-types/**',
+            base: 'plop-templates/@react-types/',
+            destination: `packages/@react-types/${packageName}`,
+            data: {packageName, componentName}
+          });
+          actions.push({
+            type: 'renameMany',
+            templateFiles: `packages/@react-types/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }

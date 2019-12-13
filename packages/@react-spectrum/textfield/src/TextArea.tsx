@@ -1,6 +1,6 @@
 import {chain} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from './types';
+import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
 
