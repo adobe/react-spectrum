@@ -797,10 +797,10 @@ describe('usePress', function () {
   });
 
   describe('keyboard events', function () {
-    it('should fire press events based on keyboard events', function () {
+    it('should fire press events when the element is not a link', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
-      let {getByText, rerender} = render(
+      let {getByText} = render(
         <Example
           onPressStart={addEvent}
           onPressEnd={addEvent}
@@ -846,12 +846,12 @@ describe('usePress', function () {
           shiftKey: false
         }
       ]);
+    });
 
-      // clear the events
-      events.length = 0;
-
-      // Test that click gets triggered when using a hyperlink
-      rerender(
+    it('should not fire press events when the element is a link', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
         <Example
           elementType="a"
           href="#"
@@ -862,47 +862,53 @@ describe('usePress', function () {
           onPress={addEvent} />
       );
 
-      el = getByText('test');
+      let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
-      expect(events).toEqual([
-        {
-          type: 'pressstart',
-          target: el,
-          pointerType: 'keyboard',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false
-        },
-        {
-          type: 'presschange',
-          pressed: true
-        },
-        {
-          type: 'pressend',
-          target: el,
-          pointerType: 'keyboard',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false
-        },
-        {
-          type: 'presschange',
-          pressed: false
-        },
-        {
-          type: 'press',
-          target: el,
-          pointerType: 'keyboard',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false
-        },
-        {
-          type: 'click'
-        }
-      ]);
+      // Space key handled should do nothing on a link
+      expect(events).toEqual([]);
+
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent.keyUp(el, {key: 'Enter'});
+
+      // Enter key should handled natively
+      expect(events).toEqual([]);
+
+      fireEvent.click(el);
+
+      // Click event, which is called when Enter key on a link is handled natively, should trigger a click.
+      expect(events).toEqual([{type: 'click'}]);
+    });
+
+    it('should explicitly call click method, but not fire press events, when Space key is triggered on a link with href and role="button"', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          elementType="a"
+          role="button"
+          href="#"
+          onClick={e => {e.preventDefault(); addEvent({type: 'click'});}}
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = getByText('test');
+
+      // Enter key should handled natively
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent.keyUp(el, {key: 'Enter'});
+
+      expect(events).toEqual([]);
+
+      // Space key handled by explicitly calling click
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+
+      expect(events).toEqual([{type: 'click'}]);
     });
 
     it('should handle modifier keys', function () {

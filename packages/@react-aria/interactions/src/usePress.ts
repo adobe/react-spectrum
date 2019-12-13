@@ -133,13 +133,6 @@ export function usePress(props: PressHookProps): PressResult {
           ctrlKey: originalEvent.ctrlKey
         });
       }
-
-      // If the target is a link, trigger the click method so that the link will load.
-      if (pointerType === 'keyboard' &&
-        originalEvent.target instanceof HTMLAnchorElement &&
-        originalEvent.target.hasAttribute('href')) {
-        originalEvent.target.click();
-      }
     };
 
     let pressProps: HTMLAttributes<HTMLElement> = {
@@ -149,6 +142,11 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
           if (!state.isPressed) {
             state.isPressed = true;
+
+            // If the target is a link, don't trigger the pressstart event.
+            if (isHTMLAnchorLink(e.target as HTMLElement)) {
+              return;
+            }
             triggerPressStart(e, 'keyboard');
           }
         }
@@ -158,6 +156,12 @@ export function usePress(props: PressHookProps): PressResult {
           e.preventDefault();
           e.stopPropagation();
           state.isPressed = false;
+
+          // If the target is a link, trigger the click method to open the URL, without triggering the pressend event.
+          if (isHTMLAnchorLink(e.target as HTMLElement)) {
+            (e.target as HTMLElement).click();
+            return;
+          }
           triggerPressEnd(e, 'keyboard');
         }
       }
@@ -346,16 +350,26 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
+function isHTMLAnchorLink(target: HTMLElement): boolean {
+  return target.tagName === 'A' && target.hasAttribute('href');
+}
+
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   const {key, target} = event;
-  const {tagName, isContentEditable} = target as HTMLElement;
+  const element = target as HTMLElement;
+  const {tagName, isContentEditable} = element;
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar') &&
     (tagName !== 'INPUT' &&
       tagName !== 'TEXTAREA' &&
-      isContentEditable !== true)
+      isContentEditable !== true) &&
+    // A link with a valid href should be handled natively,
+    // unless it also has role='button' and was triggered using Space.
+    (!isHTMLAnchorLink(element) ||
+      (element.getAttribute('role') === 'button' &&
+        key !== 'Enter'))
   );
 }
 
