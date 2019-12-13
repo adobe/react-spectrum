@@ -1,7 +1,6 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTab} from '@react-aria/tabs';
 

@@ -1,8 +1,9 @@
-import {DOMRefValue, unwrapDOMRef} from '@react-spectrum/utils';
+import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
+import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 
 interface TooltipTriggerProps extends PositionProps {

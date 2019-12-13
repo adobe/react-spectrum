@@ -1,9 +1,8 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps, Removable} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import React, {useContext} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {Removable} from '@react-types/shared';
+import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {TagGroupProps} from '@react-types/tag';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroup} from '@react-aria/tag';
 
@@ -21,8 +20,6 @@ const TagGroupContext = React.createContext<TagGroupContext | {}>({});
 export function useTagGroupProvider(): TagGroupContext {
   return useContext(TagGroupContext);
 }
-
-interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}
 
 export const TagGroup = ((props: SpectrumTagGroupProps) => {
   let completeProps = useProviderProps(props);
