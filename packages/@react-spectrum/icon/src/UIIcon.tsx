@@ -1,10 +1,11 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import React, {ReactElement, SVGAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
+import React, {ReactElement} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface IconProps extends SVGAttributes<SVGElement> {
+interface IconProps extends DOMProps, StyleProps {
   alt?: string,
   children: ReactElement
 }

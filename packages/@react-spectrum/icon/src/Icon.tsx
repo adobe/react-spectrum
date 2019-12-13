@@ -1,13 +1,18 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import React, {ReactElement, SVGAttributes} from 'react';
+import {DOMProps} from '@react-types/shared';
+import React, {ReactElement} from 'react';
+import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface IconProps extends SVGAttributes<SVGElement> {
+type Scale = 'M' | 'L'
+
+interface IconProps extends DOMProps, StyleProps {
   alt?: string,
   children: ReactElement,
-  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL'
+  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  scale?: Scale,
+  color?: string
 }
 
 export function Icon(props: IconProps) {
@@ -29,7 +34,7 @@ export function Icon(props: IconProps) {
     pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
   }
   if (scale === undefined) {
-    scale = pscale;
+    scale = pscale as Scale;
   }
   if (color === undefined) {
     color = pcolor;
