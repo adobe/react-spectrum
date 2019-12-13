@@ -1,0 +1,45 @@
+import {AllHTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-stately/collections';
+import {TreeState} from '@react-stately/tree';
+import {usePress} from '@react-aria/interactions';
+import {useSelectableItem} from '@react-aria/selection';
+
+interface SideNavItemAriaProps<T> extends AllHTMLAttributes<HTMLElement>{
+  item: Node<T>,
+  state: TreeState<T>,
+  ref: RefObject<HTMLAnchorElement | null>,
+}
+
+interface SideNavItemAria {
+  listItemProps: AllHTMLAttributes<HTMLDivElement>,
+  listItemLinkProps: AllHTMLAttributes<HTMLElement>
+}
+
+export function useSideNavItem<T>(props: SideNavItemAriaProps<T>): SideNavItemAria {
+  let {
+    hidden,
+    item,
+    state
+  } = props;
+
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    itemKey: item.key,
+    itemRef: props.ref
+  });
+
+  let {pressProps} = usePress(itemProps);
+
+  return {
+    listItemProps: {
+      hidden,
+      role: 'listitem'
+    },
+    listItemLinkProps: {
+      role: 'link',
+      target: '_self',
+      ...mergeProps(itemProps, pressProps)
+    }
+  };
+}

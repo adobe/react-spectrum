@@ -3,26 +3,19 @@ import {CollectionBase, Expandable, SingleSelectionBase} from '@react-types/shar
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {ListLayout, Node} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
 import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
-import {useNav} from '@react-aria/sidenav';
-import {usePress} from '@react-aria/interactions';
-import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
 
 export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
-  let {navProps, listProps, listItemProps} = useNav(props);
   let state = useTreeState({...props, selectionMode: 'single'});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
 
-  let {listProps: selectionProps} = useSelectableCollection({
-    selectionManager: state.selectionManager,
-    keyboardDelegate: layout
-  });
+  let {navProps, listProps} = useSideNav(props, state, layout);
 
   return (
     <nav
@@ -30,7 +23,6 @@ export function SideNav<T>(props: SideNavProps<T>) {
       {...navProps}
       className={classNames(styles, 'react-spectrum-SideNav')}>
       <CollectionView
-        {...selectionProps}
         {...listProps}
         focusedKey={state.selectionManager.focusedKey}
         className={classNames(styles, 'spectrum-SideNav')}
@@ -43,7 +35,6 @@ export function SideNav<T>(props: SideNavProps<T>) {
 
           return (
             <SideNavItem
-              {...listItemProps}
               state={state}
               item={item} />
           );
@@ -58,8 +49,10 @@ interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
   state: TreeState<T>
 }
 
-function SideNavItem<T>({item, state, ...otherProps}: SideNavItemProps<T>) {
-  let {isSelected, isDisabled, rendered} = item;
+function SideNavItem<T>(props: SideNavItemProps<T>) {
+  let ref = useRef<HTMLAnchorElement>();
+  let {isSelected, isDisabled, rendered} = props.item;
+
   let className = classNames(
     styles,
     'spectrum-SideNav-item',
@@ -69,24 +62,17 @@ function SideNavItem<T>({item, state, ...otherProps}: SideNavItemProps<T>) {
     }
   );
 
-  let ref = useRef<HTMLAnchorElement>();
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    itemKey: item.key,
-    itemRef: ref
-  });
-
-  let {pressProps} = usePress(itemProps);
+  let {listItemProps, listItemLinkProps} = useSideNavItem({...props, ref});
 
   return (
-    <div className={className}>
+    <div
+      {...listItemProps}
+      className={className} >
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <a
+          {...listItemLinkProps}
           ref={ref}
-          {...mergeProps(pressProps, filterDOMProps(itemProps))}
-          className={classNames(styles, 'spectrum-SideNav-itemLink')}
-          role="presentation"
-          {...otherProps}>
+          className={classNames(styles, 'spectrum-SideNav-itemLink')} >
           {rendered}
         </a>
       </FocusRing>
