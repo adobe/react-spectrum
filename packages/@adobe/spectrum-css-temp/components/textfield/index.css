@@ -46,7 +46,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-textfield-border-radius);
 
   /* Apply padding by default to center text, giving consistency between input and textfield */
-  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) var(--spectrum-textfield-padding-x);
+  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) calc(var(--spectrum-textfield-padding-x) - 1px);
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
@@ -153,7 +153,7 @@ governing permissions and limitations under the License.
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
-    padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) var(--spectrum-textfield-multiline-padding-x);
+    padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
 
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
@@ -205,22 +205,17 @@ governing permissions and limitations under the License.
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);
   width: var(--spectrum-icon-info-medium-width);
-  inset-inline-start: calc(calc(calc(var(--spectrum-search-padding-left) - var(--spectrum-icon-info-medium-width)) - var(--spectrum-global-dimension-size-100)) + 1px);
-  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-info-medium-height) / 2));
-
-  /* TODO: Clarify what a textarea with a icon should look like, no prior design or styles */
-  .spectrum-Textfield--multiline & {
-    top: calc(var(--spectrum-icon-info-medium-height) / 4);
-  }
+  inset-inline-start: var(--spectrum-global-dimension-size-100);
+  top: var(--spectrum-global-dimension-size-85);
 }
 
 /* styles the textfield properly if the left icon is provided */
 .spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left);
+  padding-inline-start: calc(calc(var(--spectrum-global-dimension-size-200) + var(--spectrum-icon-info-medium-width)) - 1px);
 
   .spectrum-Textfield--quiet & {
-    padding-inline-start: var(--spectrum-search-quiet-padding-left);
+    padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width));
 
     /* Since quiet button has no left padding, push the icon all the way to the left */
     & ~ .spectrum-Textfield-icon {
