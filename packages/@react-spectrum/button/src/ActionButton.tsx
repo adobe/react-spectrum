@@ -58,7 +58,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
         )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
         {holdAffordance &&
-          <CornerTriangle className={classNames(styles, 'spectrum-ActionButton-hold')} />
+          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
       </ElementType>
     </FocusRing>

@@ -64,7 +64,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       {Icon &&
         <Icon
           {...iconProps}
-          className={classNames(styles, 'spectrum-Toast-typeIcon')} />
+          UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
       }
       <div className={classNames(styles, 'spectrum-Toast-body')}>
         <div className={classNames(styles, 'spectrum-Toast-content')}>{children}</div>
