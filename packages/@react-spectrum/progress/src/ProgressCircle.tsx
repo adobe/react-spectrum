@@ -1,6 +1,5 @@
 import {clamp} from '@react-aria/utils';
 import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import progressStyles from './index.css';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
