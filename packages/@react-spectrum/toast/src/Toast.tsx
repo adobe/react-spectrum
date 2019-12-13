@@ -17,15 +17,14 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {DOMProps} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumToastProps} from '@react-types/toast';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
-import {ToastProps} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -33,8 +32,6 @@ export const ICONS = {
   negative: AlertMedium,
   positive: SuccessMedium
 };
-
-interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
 
 function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {

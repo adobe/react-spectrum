@@ -1,14 +1,15 @@
-import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {ButtonProps} from '@react-types/button';
+import {classNames, cloneIcon, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface FieldButtonProps extends ButtonBase {
+interface FieldButtonProps extends ButtonProps {
   isQuiet?: boolean,
+  icon?: ReactElement,
   validationState?: 'valid' | 'invalid'
 }
 

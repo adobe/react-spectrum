@@ -125,6 +125,6 @@ storiesOf('Meter', module)
 
 function render(props: any = {}) {
   return (
-    <Meter {...props}>{props.children === null ? null : props.children || 'Meter'}</Meter>
+    <Meter {...props} variant={props.variant || 'positive'}>{props.children === null ? null : props.children || 'Meter'}</Meter>
   );
 }
