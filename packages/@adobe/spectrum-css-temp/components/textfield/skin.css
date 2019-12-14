@@ -154,6 +154,6 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield.is-invalid & {
-    color: var(--spectrum-alert-error-border-color);
+    color: var(--spectrum-alert-error-icon-color);
   }
 }

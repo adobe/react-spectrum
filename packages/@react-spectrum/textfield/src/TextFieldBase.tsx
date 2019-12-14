@@ -1,9 +1,9 @@
-import Alert from '@spectrum-icons/workflow/Alert';
-import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {classNames, cloneIcon, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
+import React, {cloneElement, forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -52,21 +52,24 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let isInvalid = validationState === 'invalid';
 
   if (icon) {
-    icon = cloneIcon(icon, {
-      className: classNames(
-        styles,
-        'spectrum-Textfield-icon',
-        {
-          'disabled': isDisabled
-        }
-      ),
+    let UNSAFE_className = classNames(
+      styles,
+      {
+        'disabled': isDisabled
+      },
+      icon.props && icon.props.UNSAFE_className,
+      'spectrum-Textfield-icon'
+    );
+    
+    icon = cloneElement(icon, {
+      UNSAFE_className,
       size: 'S'
     });
   } 
 
-  let validationIcon = isInvalid ? <Alert /> : <Checkmark />;
-  let validation = cloneIcon(validationIcon, {
-    className: classNames(
+  let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
+  let validation = cloneElement(validationIcon, {
+    UNSAFE_className: classNames(
       styles,
       'spectrum-Textfield-validationIcon',
       {

@@ -41,7 +41,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
       </FocusRing>
       {isCurrent === false &&
         <ChevronRightSmall
-          className={
+          UNSAFE_className={
             classNames(
               styles,
               'spectrum-Breadcrumbs-itemSeparator',
