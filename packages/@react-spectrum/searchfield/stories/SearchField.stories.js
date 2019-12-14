@@ -56,6 +56,16 @@ storiesOf('SearchField', module)
     'autoFocus',
     () => renderSearchLandmark(render({autoFocus: true})),
     {info}
+  )
+  .add(
+    'custom width',
+    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}})),
+    {info}
+  )
+  .add(
+    'custom width, quiet',
+    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}, isQuiet: true})),
+    {info}
   );
 
 function renderSearchLandmark(child) {
