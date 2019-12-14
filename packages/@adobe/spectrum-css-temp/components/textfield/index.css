@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
   text-indent: 0;
 
   width: 100%;
-  height: var(--spectrum-textfield-height);  
+  height: var(--spectrum-textfield-height);
 
   vertical-align: top; /* used to align them correctly in forms. */
 

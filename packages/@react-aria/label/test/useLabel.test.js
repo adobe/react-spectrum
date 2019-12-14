@@ -2,7 +2,7 @@ import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useLabel} from '../';
 
-describe('useLabel hook', () => {
+describe.skip('useLabel hook', () => {
   let renderLabelHook = (labelProps, labelledComponentProps) => {
     let {result} = renderHook(() => useLabel(labelProps, labelledComponentProps));
     return result.current;

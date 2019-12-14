@@ -1,51 +1,41 @@
-import {AllHTMLAttributes} from 'react';
-import {DOMProps} from '@react-types/shared';
-import {LabelProps} from '@react-types/label';
-import {useId} from '@react-aria/utils';
+import {DOMProps, LabelableProps} from '@react-types/shared';
+import {HTMLAttributes, LabelHTMLAttributes} from 'react';
+import {useId, useLabels} from '@react-aria/utils';
 
-export function useLabel(labelProps: LabelProps & DOMProps = {}, labelledComponentProps: AllHTMLAttributes<HTMLElement> = {}) {
-  let {
-    id: labelId,
-    labelFor, // RSP prop
-    htmlFor
-  } = labelProps;
+interface LabelAria {
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  fieldProps: HTMLAttributes<HTMLElement>
+}
 
+export function useLabel(props: LabelableProps & DOMProps): LabelAria {
   let {
-    id: labelledComponentId,
+    id,
+    label,
     'aria-labelledby': ariaLabelledby,
     'aria-label': ariaLabel
-  } = labelledComponentProps;
+  } = props;
 
-  labelId = useId(labelId);
-  labelledComponentId = useId(labelledComponentId);
-  let labelAriaProps: AllHTMLAttributes<HTMLElement> = {
+  id = useId(id);
+  let labelId = useId();
+  if (label) {
+    ariaLabelledby = ariaLabelledby ? `${ariaLabelledby} ${labelId}` : labelId;
+  } else if (!ariaLabelledby && !ariaLabel) {
+    console.warn('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  }
+
+  let labelProps = label ? {
     id: labelId,
-    // htmlFor attribute can only reference a single id hence no concat, prioritize user set htmlFor attribute
-    // htmlFor is a React way to specify the "for" attribute since "for" is a reserved word in JS 
-    htmlFor: htmlFor || labelFor || labelledComponentId 
-  };
+    htmlFor: id
+  } : {};
 
-  if (ariaLabelledby) {
-    // If a element is labelled by multiple elements, we need to concat each of the ids separated by a space
-    if (ariaLabelledby !== labelId) {
-      ariaLabelledby = `${ariaLabelledby} ${labelId}`;
-    }
-  } else {
-    ariaLabelledby = labelId;
-  }
-
-  if (ariaLabel) {
-    // If a element has a aria-label and an aria-labelledby, it needs to have it's own id added to the aria-labelledby
-    ariaLabelledby = `${ariaLabelledby} ${labelledComponentId}`;
-  }
-
-  let labelledComponentAriaProps: AllHTMLAttributes<HTMLElement> = {
-    id: labelledComponentId, 
+  let fieldProps = useLabels({
+    id,
+    'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
-  };
+  });
 
   return {
-    labelAriaProps,
-    labelledComponentAriaProps
+    labelProps,
+    fieldProps
   };
 }
