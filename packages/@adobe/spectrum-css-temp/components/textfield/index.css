@@ -25,7 +25,7 @@ governing permissions and limitations under the License.
   --spectrum-textfield-multiline-min-height: var(--spectrum-global-dimension-size-700);
 
   --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
-  --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
+  --spectrum-textfield-multiline-padding-top: 4px;
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
 
   /* Todo: DNA uses incorrect font family "Adobe Clean" */;
