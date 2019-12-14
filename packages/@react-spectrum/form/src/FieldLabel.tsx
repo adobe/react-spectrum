@@ -9,6 +9,7 @@ function FieldLabel(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement & HT
   let {
     label,
     labelAlign = 'start',
+    labelPosition = 'top',
     labelFor,
     children,
     ...otherProps
@@ -17,8 +18,8 @@ function FieldLabel(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement & HT
     styles,
     'spectrum-FieldLabel',
     {
-      'spectrum-FieldLabel--alignStart': labelAlign === 'start',
-      'spectrum-FieldLabel--alignEnd': labelAlign === 'end'
+      'spectrum-FieldLabel--alignEnd': labelAlign === 'end',
+      'spectrum-FieldLabel--positionSide': labelPosition === 'side'
     }
   );
 
