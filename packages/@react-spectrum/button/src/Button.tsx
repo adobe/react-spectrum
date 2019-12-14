@@ -60,7 +60,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             UNSAFE_className: classNames(
               styles,
               'spectrum-Icon',
-              icon.props && icon.props.UNSAFE_classNames
+              icon.props && icon.props.UNSAFE_className
             )
           }
         )}
