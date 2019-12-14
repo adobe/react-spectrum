@@ -42,6 +42,10 @@ storiesOf('TextField', module)
     () => render({isReadOnly: true})
   )
   .add(
+    'isReadOnly: true, value: read only value (controlled)',
+    () => render({value: 'read only value', isReadOnly: true})
+  )  
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
   )
