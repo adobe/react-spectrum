@@ -57,7 +57,7 @@ function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDiv
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
   let icon = (
     <Asterisk
-      className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
       size="S"
       alt={formatMessage('(required)')} />
     );

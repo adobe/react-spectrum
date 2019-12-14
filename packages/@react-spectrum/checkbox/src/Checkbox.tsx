@@ -28,8 +28,8 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   let {inputProps} = useCheckbox(props, state, inputRef);
 
   let markIcon = isIndeterminate
-    ? <DashSmall className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
-    : <CheckmarkSmall className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
+    ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
+    : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
 
   return (
     <label
