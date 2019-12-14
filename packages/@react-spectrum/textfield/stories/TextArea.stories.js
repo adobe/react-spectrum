@@ -42,7 +42,7 @@ storiesOf('TextArea', module)
     () => render({isReadOnly: true})
   )
   .add(
-    'isReadOnly: true, value: read only value (controlled)',
+    'isReadOnly: true, value: read only value',
     () => render({value: 'Read only value', isReadOnly: true})
   )  
   .add(
