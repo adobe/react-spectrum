@@ -6,9 +6,7 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface SideNavItemAriaProps<T> extends AllHTMLAttributes<HTMLElement>{
-  item: Node<T>,
-  state: TreeState<T>,
-  ref: RefObject<HTMLAnchorElement | null>,
+  item: Node<T>
 }
 
 interface SideNavItemAria {
@@ -16,17 +14,16 @@ interface SideNavItemAria {
   listItemLinkProps: AllHTMLAttributes<HTMLElement>
 }
 
-export function useSideNavItem<T>(props: SideNavItemAriaProps<T>): SideNavItemAria {
+export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {
   let {
     hidden,
-    item,
-    state
+    item
   } = props;
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     itemKey: item.key,
-    itemRef: props.ref
+    itemRef: ref
   });
 
   let {pressProps} = usePress(itemProps);

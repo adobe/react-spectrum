@@ -62,7 +62,7 @@ function SideNavItem<T>(props: SideNavItemProps<T>) {
     }
   );
 
-  let {listItemProps, listItemLinkProps} = useSideNavItem({...props, ref});
+  let {listItemProps, listItemLinkProps} = useSideNavItem(props, props.state, ref);
 
   return (
     <div
