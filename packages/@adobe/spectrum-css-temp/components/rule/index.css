@@ -22,35 +22,40 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Rule--large {
-  height: var(--spectrum-rule-large-height);
+  block-size: var(--spectrum-rule-large-height);
 
   border-radius: var(--spectrum-rule-large-border-radius);
 }
 
 .spectrum-Rule--medium {
-  height: var(--spectrum-rule-medium-height);
+  block-size: var(--spectrum-rule-medium-height);
 
   border-radius: var(--spectrum-rule-medium-border-radius);
 }
 
 .spectrum-Rule--small {
-  height: var(--spectrum-rule-small-height);
+  block-size: var(--spectrum-rule-small-height);
 
   border-radius: var(--spectrum-rule-small-border-radius);
 }
 
 .spectrum-Rule--vertical {
-  height: 100%;
-
+  /* expected usage, people need to set height 100% if they aren't using flex on the container
+   * if they *ARE* using flex, then they need to either have align-items stretch OR align-self stretch
+   */
   &.spectrum-Rule--large {
-    width: var(--spectrum-rule-large-height);
+    /* must override the height defined in the horizontal case */
+    block-size: auto;
+    inline-size: var(--spectrum-rule-large-height);
   }
 
   &.spectrum-Rule--medium {
-    width: var(--spectrum-rule-medium-height);
+    block-size: auto;
+    inline-size: var(--spectrum-rule-medium-height);
   }
 
   &.spectrum-Rule--small {
-    width: var(--spectrum-rule-small-height);
+    block-size: auto;
+    inline-size: var(--spectrum-rule-small-height);
   }
 }

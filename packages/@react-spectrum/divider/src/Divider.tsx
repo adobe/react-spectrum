@@ -25,7 +25,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   if (orientation === 'vertical') {
     Element = 'div';
   }
-  
+
   let {separatorProps} = useSeparator({
     ...props,
     elementType: Element
