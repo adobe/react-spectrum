@@ -65,7 +65,7 @@ governing permissions and limitations under the License.
 
 /* A FieldContainer is a wrapper for a FieldLabel and a field component (e.g. textfield).
  * By default, labels are placed above the field. Fields have a default width, and the
- * label will wrap within this width. The width of the whole field can be ovverridden by the user,
+ * label will wrap within this width. The width of the whole field can be overridden by the user,
  * and this causes both the label and inner field to resize as well. */
 .spectrum-FieldContainer--positionTop {
   display: inline-block;
