@@ -66,7 +66,7 @@ describe('FormItem', () => {
     `('$Name will show an asterix when required with icon indicator', ({Component, numChildren, props}) => {
       let tree = renderFormItem(Component, {label, labelFor, ...props}, numChildren);
       let fieldLabel = tree.getByTestId(datatestid);
-      expect(within(fieldLabel).getByRole('presentation')).toBeTruthy();
+      expect(within(fieldLabel).getByRole('img')).toBeTruthy();
     });
 
     // Forwarding ref is v3 specific

@@ -68,7 +68,7 @@ describe('FieldLabel', () => {
     `('$Name will show an asterix when required with icon indicator', ({Component, numChildren, props}) => {
       renderFieldLabel(Component, {label, labelFor, ...props}, numChildren);
       let fieldLabel = findLabel();
-      expect(within(fieldLabel).getByRole('presentation')).toBeTruthy();
+      expect(within(fieldLabel).getByRole('img')).toBeTruthy();
     });
 
     // Forwarding ref is v3 specific
