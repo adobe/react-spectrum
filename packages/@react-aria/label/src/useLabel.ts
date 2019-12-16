@@ -17,16 +17,16 @@ export function useLabel(props: LabelableProps & DOMProps): LabelAria {
 
   id = useId(id);
   let labelId = useId();
+  let labelProps = {};
   if (label) {
     ariaLabelledby = ariaLabelledby ? `${ariaLabelledby} ${labelId}` : labelId;
+    labelProps = {
+      id: labelId,
+      htmlFor: id
+    };
   } else if (!ariaLabelledby && !ariaLabel) {
     console.warn('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
-
-  let labelProps = label ? {
-    id: labelId,
-    htmlFor: id
-  } : {};
 
   let fieldProps = useLabels({
     id,
