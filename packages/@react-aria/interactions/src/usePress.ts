@@ -140,13 +140,12 @@ export function usePress(props: PressHookProps): PressResult {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
+          // If the target is a link, don't trigger the pressstart event.
+          if (isHTMLAnchorLink(e.target as HTMLElement)) {
+            return;
+          }
           if (!state.isPressed) {
             state.isPressed = true;
-
-            // If the target is a link, don't trigger the pressstart event.
-            if (isHTMLAnchorLink(e.target as HTMLElement)) {
-              return;
-            }
             triggerPressStart(e, 'keyboard');
           }
         }
@@ -155,14 +154,13 @@ export function usePress(props: PressHookProps): PressResult {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
+          // If the target is a link, trigger the click method to open the URL, without triggering the pressend event.
+          if (isHTMLAnchorLink(e.target as HTMLElement)) {
+            (e.target as HTMLElement).click();
+            return;
+          }
           if (state.isPressed) {
             state.isPressed = false;
-
-            // If the target is a link, trigger the click method to open the URL, without triggering the pressend event.
-            if (isHTMLAnchorLink(e.target as HTMLElement)) {
-              (e.target as HTMLElement).click();
-              return;
-            }
             triggerPressEnd(e, 'keyboard');
           }
         }
