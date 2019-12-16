@@ -1,5 +1,5 @@
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -7,13 +7,12 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope, useFocusManager} from '@react-aria/focus';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
-import {SpectrumDateRangePickerProps} from './types';
+import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
 export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   props = useProviderProps(props);

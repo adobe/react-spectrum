@@ -12,12 +12,20 @@ storiesOf('FieldLabel', module)
     () => render({label: 'Checkbox Group'})
   )
   .add(
-    'labelAlign: start',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'start', width: '200px'})
+    'labelAlign: end',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end'})
   )
   .add(
-    'labelAlign: end',
-    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelAlign: 'end', width: '200px'})
+    'labelPosition: side',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', width: '200px'})
+  )
+  .add(
+    'labelPosition: side, labelAlign: end',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', labelAlign: 'end', width: '200px'})
+  )
+  .add(
+    'labelPosition: side, labelAlign: end, isRequired: true, necessityIndicator: icon',
+    () => renderAlign({label: 'Checkbox Group', labelFor: 'test', labelPosition: 'side', labelAlign: 'end', width: '200px', isRequired: true, necessityIndicator: 'icon'})
   )
   .add(
     'labelFor',
@@ -67,6 +75,14 @@ function renderAlign(props) {
         onChange={action('change')}
         id="test">
         Dogs
+      </Checkbox>
+      <Checkbox
+        onChange={action('change')}>
+        Cats
+      </Checkbox>
+      <Checkbox
+        onChange={action('change')}>
+        Dragons
       </Checkbox>
     </div>
   );

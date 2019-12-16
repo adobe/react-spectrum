@@ -139,14 +139,14 @@ describe('Search', () => {
     expect(input.value).toBe(inputText);
     fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
-    expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
+    expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe('');
     expect(document.activeElement).toBe(document.body);
 
     // onClear was added in v3
     if (Component === SearchField) {
       expect(onClear).toBeCalledTimes(1);
-      expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
+      expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   });
 
@@ -161,13 +161,13 @@ describe('Search', () => {
     expect(input.value).toBe(inputText);
     fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
     expect(onChange).toBeCalledTimes(1);
-    expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
+    expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe(inputText);
     expect(document.activeElement).toBe(document.body);
 
     // onClear was added in v3
     expect(onClear).toBeCalledTimes(1);
-    expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
+    expect(onChange).toHaveBeenLastCalledWith(expect.anything());
   });
 
   // Omitting v2 searchfield because fireEvent.keyDown seems bugged, doesn't actually propagate the key code
@@ -200,7 +200,7 @@ describe('Search', () => {
     expect(onChange).toBeCalledTimes(1);
 
     if (Component === SearchField) {
-      expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
+      expect(onChange).toHaveBeenLastCalledWith('');
     } else {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything(), {'from': 'clearButton'});
     }
@@ -211,7 +211,7 @@ describe('Search', () => {
     // onClear was added in v3
     if (Component === SearchField) {
       expect(onClear).toBeCalledTimes(1);
-      expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
+      expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   });
 
@@ -228,7 +228,7 @@ describe('Search', () => {
     expect(onChange).toBeCalledTimes(1);
 
     if (Component === SearchField) {
-      expect(onChange).toHaveBeenLastCalledWith('', expect.anything());
+      expect(onChange).toHaveBeenLastCalledWith('');
     } else {
       expect(onChange).toHaveBeenLastCalledWith('', expect.anything(), {'from': 'clearButton'});
     }
@@ -239,7 +239,7 @@ describe('Search', () => {
     // onClear was added in v3
     if (Component === SearchField) {
       expect(onClear).toBeCalledTimes(1);
-      expect(onChange).toHaveBeenLastCalledWith(expect.anything(), expect.anything());
+      expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   });
 

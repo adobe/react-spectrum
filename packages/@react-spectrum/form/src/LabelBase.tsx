@@ -1,23 +1,23 @@
 import Asterisk from '@spectrum-icons/ui/Asterisk';
-import {classNames, DOMRef, useDOMRef} from '@react-spectrum/utils';
-import {FieldLabelBase} from './types';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-spectrum/utils';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
+import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface SpectrumLabelBaseProps extends FieldLabelBase {
+interface LabelBaseProps extends SpectrumLabelProps {
   labelClassName?: string,
   wrapperClassName?: string,
   componentName?: string
 }
 
-function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
+function LabelBase(props: LabelBaseProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
   /*
   There are 3 cases:
   1. No children - only render the <label>, no wrapping div. `labelFor` required.
@@ -57,7 +57,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
   let icon = (
     <Asterisk
-      className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
       size="S"
       alt={formatMessage('(required)')} />
     );
@@ -124,7 +124,7 @@ function LabelBase(props: SpectrumLabelBaseProps, ref: DOMRef<HTMLLabelElement &
     {
       ref: domRef,
       ...mergeProps(
-        fieldLabel.props, 
+        fieldLabel.props,
         {...filterDOMProps(otherProps), ...styleProps}
       )
     }

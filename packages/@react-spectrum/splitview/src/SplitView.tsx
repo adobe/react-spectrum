@@ -1,7 +1,6 @@
-import {classNames} from '@react-spectrum/utils';
-import {DOMProps, SplitViewProps} from '@react-types/shared';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, SplitViewProps, StyleProps} from '@react-types/shared';
 import React, {useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/splitview/vars.css';
 import {useSplitView} from '@react-aria/splitview';
 import {useSplitViewState} from '@react-stately/splitview';

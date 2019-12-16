@@ -1,20 +1,26 @@
 {
   "name": "@react-spectrum/breadcrumbs",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "private": true,
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
@@ -23,19 +29,18 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/breadcrumbs": "^3.0.0-alpha.1",
-    "@react-aria/focus": "^3.0.0-alpha.1",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
-    "@react-spectrum/button": "^3.0.0-alpha.1",
-    "@react-spectrum/dialog": "^3.0.0-alpha.1",
-    "@react-spectrum/provider": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-spectrum/view": "^3.0.0-alpha.1",
-    "@react-types/breadcrumbs": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+    "@react-aria/breadcrumbs": "^3.0.0-alpha.2",
+    "@react-aria/focus": "^3.0.0-alpha.2",
+    "@react-aria/i18n": "^3.0.0-alpha.2",
+    "@react-spectrum/button": "^3.0.0-alpha.2",
+    "@react-spectrum/dialog": "^3.0.0-alpha.2",
+    "@react-spectrum/provider": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-types/breadcrumbs": "^3.0.0-alpha.2",
+    "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",

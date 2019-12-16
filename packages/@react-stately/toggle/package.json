@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/toggle",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -16,10 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-alpha.1",
-    "@react-types/checkbox": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1",
-    "@react-types/toggle": "^3.0.0-alpha.1"
+    "@react-stately/utils": "^3.0.0-alpha.2",
+    "@react-types/checkbox": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

@@ -1,10 +1,11 @@
-import {classNames, DOMRef} from '@react-spectrum/utils';
-import {FormItemProps} from './types';
+import {classNames} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {LabelBase} from './LabelBase';
 import React, {forwardRef} from 'react';
+import {SpectrumFormItemProps} from '@react-types/form';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
-function FormItem(props: FormItemProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
+function FormItem(props: SpectrumFormItemProps, ref: DOMRef<HTMLLabelElement & HTMLDivElement>) {
   let {label, labelAlign = 'start', labelFor, children, ...otherProps} = props;
   let labelClassNames = classNames(
     styles,

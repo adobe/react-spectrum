@@ -1,20 +1,14 @@
-import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {cloneElement} from 'react';
+import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-export interface ActionButtonProps extends ButtonBase {
-  isQuiet?: boolean,
-  isSelected?: boolean,
-  holdAffordance?: boolean
-}
-
-function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
+function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
@@ -51,10 +45,20 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
+        {icon && cloneElement(
+          icon, 
+          {
+            size: 'S',
+            UNSAFE_className: classNames(
+              styles,
+              'spectrum-Icon', 
+              icon.props.UNSAFE_className
+            )
+          }
+        )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
         {holdAffordance &&
-          <CornerTriangle className={classNames(styles, 'spectrum-ActionButton-hold')} />
+          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
       </ElementType>
     </FocusRing>

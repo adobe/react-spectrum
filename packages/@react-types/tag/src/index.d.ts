@@ -1,4 +1,4 @@
-import {MultipleSelectionBase, Removable} from '@react-types/shared';
+import {DOMProps, MultipleSelectionBase, Removable, StyleProps} from '@react-types/shared';
 import {ReactChild, ReactElement, ReactNode} from 'react';
 
 export interface TagProps extends Removable<ReactChild, void> {
@@ -15,3 +15,6 @@ export interface TagGroupProps extends MultipleSelectionBase {
   onRemove?: (items: any[]) => void,
   validationState?: 'invalid' | 'valid'
 }
+
+interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
+interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}

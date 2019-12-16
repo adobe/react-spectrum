@@ -42,6 +42,10 @@ storiesOf('TextArea', module)
     () => render({isReadOnly: true})
   )
   .add(
+    'isReadOnly: true, value: read only value',
+    () => render({value: 'Read only value', isReadOnly: true})
+  )  
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
   )
@@ -68,6 +72,12 @@ storiesOf('TextArea', module)
   .add(
     'icon: Info, validationState: invalid, isQuiet',
     () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
+  )
+  .add('custom width',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}})
+  )
+  .add('custom width, quiet',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}, isQuiet: true})
   );
 
 function render(props = {}) {
@@ -77,6 +87,7 @@ function render(props = {}) {
       onChange={action('change')}
       onFocus={action('focus')}
       onBlur={action('blur')}
+      UNSAFE_className="custom_classname"
       {...props} />
   );
 }

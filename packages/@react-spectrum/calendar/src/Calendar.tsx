@@ -1,12 +1,8 @@
 import {CalendarBase} from './CalendarBase';
-import {CalendarProps} from '@react-types/calendar';
-import {DOMProps} from '@react-types/shared';
 import React from 'react';
-import {StyleProps} from '@react-spectrum/view';
+import {SpectrumCalendarProps} from '@react-types/calendar';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
-
-interface SpectrumCalendarProps extends CalendarProps, DOMProps, StyleProps {}
 
 export function Calendar(props: SpectrumCalendarProps) {
   let state = useCalendarState(props);

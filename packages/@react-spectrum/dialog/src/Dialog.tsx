@@ -1,18 +1,13 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DialogContext, DialogContextValue} from './context';
-import {DOMProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactNode, useContext, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React, {HTMLAttributes, useContext, useRef} from 'react';
+import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
-interface DialogProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
-
-export function Dialog(props: DialogProps) {
+export function Dialog(props: SpectrumDialogProps) {
   let {
     type = 'popover',
     ...contextProps
