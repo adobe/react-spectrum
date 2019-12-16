@@ -152,17 +152,19 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onKeyUp(e) {
-        if (state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
+        if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          state.isPressed = false;
+          if (state.isPressed) {
+            state.isPressed = false;
 
-          // If the target is a link, trigger the click method to open the URL, without triggering the pressend event.
-          if (isHTMLAnchorLink(e.target as HTMLElement)) {
-            (e.target as HTMLElement).click();
-            return;
+            // If the target is a link, trigger the click method to open the URL, without triggering the pressend event.
+            if (isHTMLAnchorLink(e.target as HTMLElement)) {
+              (e.target as HTMLElement).click();
+              return;
+            }
+            triggerPressEnd(e, 'keyboard');
           }
-          triggerPressEnd(e, 'keyboard');
         }
       }
     };
@@ -358,6 +360,7 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   const {key, target} = event;
   const element = target as HTMLElement;
   const {tagName, isContentEditable} = element;
+  const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
@@ -367,9 +370,9 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
       isContentEditable !== true) &&
     // A link with a valid href should be handled natively,
     // unless it also has role='button' and was triggered using Space.
-    (!isHTMLAnchorLink(element) ||
-      (element.getAttribute('role') === 'button' &&
-        key !== 'Enter'))
+    (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
+    // An element with role='link' should only trigger with Enter key
+    !(role === 'link' && key !== 'Enter')
   );
 }
 

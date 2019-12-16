@@ -881,6 +881,66 @@ describe('usePress', function () {
       expect(events).toEqual([{type: 'click'}]);
     });
 
+    it('should fire press events on Enter when the element role is link', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          role="link"
+          onClick={e => {e.preventDefault(); addEvent({type: 'click'});}}
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = getByText('test');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+
+      // Space key should do nothing on an element with role="link"
+      expect(events).toEqual([]);
+
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent.keyUp(el, {key: 'Enter'});
+
+      // Enter key should trigger press events on element with role="link"
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
+    });
+
     it('should explicitly call click method, but not fire press events, when Space key is triggered on a link with href and role="button"', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
