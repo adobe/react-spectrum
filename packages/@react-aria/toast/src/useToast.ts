@@ -1,12 +1,12 @@
 import {DOMProps} from '@react-types/shared';
-import {ImgHTMLAttributes} from 'react';
+import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps} from '@react-types/toast';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface ToastAria {
-  toastProps: DOMProps,
+  toastProps: HTMLAttributes<HTMLElement>,
   iconProps: ImgHTMLAttributes<HTMLElement>,
   actionButtonProps: PressProps,
   closeButtonProps: DOMProps & PressProps
@@ -16,7 +16,6 @@ export function useToast(props: ToastProps): ToastAria {
   let {
     onAction,
     onClose,
-    role = 'alert',
     shouldCloseOnAction,
     variant
   } = props;
@@ -36,7 +35,7 @@ export function useToast(props: ToastProps): ToastAria {
 
   return {
     toastProps: {
-      role
+      role: 'alert'
     },
     iconProps,
     actionButtonProps: {

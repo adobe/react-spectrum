@@ -1,6 +1,6 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
-import React, {useRef} from 'react';
+import React from 'react';
 import V2Link from '@react/react-spectrum/Link';
 
 // Triggers a "press" event on an element.
@@ -35,9 +35,9 @@ describe('Link', function () {
 
   it.each`
     Name        | Component | props
-    ${'Link'}   | ${Link}   | ${{className: 'test-class'}}
+    ${'Link'}   | ${Link}   | ${{UNSAFE_className: 'test-class'}}
     ${'V2Link'} | ${V2Link} | ${{className: 'test-class'}}
-  `('$Name handles custom class name', function ({Component, props}) {
+  `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);
     let link = getByText('Click me');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
@@ -54,7 +54,7 @@ describe('Link', function () {
 
   it('Wraps custom child element', () => {
     let {getByRole} = render(
-      <Link className="test-class" onPress={onPressSpy} >
+      <Link UNSAFE_className="test-class" onPress={onPressSpy} >
         <a href="http://example.com" >Click me </a>
       </Link>
     );
@@ -74,15 +74,4 @@ describe('Link', function () {
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
-
-  it('v3 can forward ref', function () {
-    let ref;
-    let Component = () => {
-      ref = useRef();
-      return <Link ref={ref} >Click me</Link>;
-    };
-    let {getByRole} = render(<Component />);
-    expect(ref.current).toEqual(getByRole('link'));
-  });
-
 });

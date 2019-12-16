@@ -25,12 +25,6 @@ describe('useProgressBar', function () {
     expect(labelProps.htmlFor).toBeDefined();
   });
 
-  it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    renderProgressBarHook({value: 25});
-    expect(spyWarn).toHaveBeenCalledWith('If you do not provide children, you must specify an aria-label for accessibility');
-  });
-
   it('with value of 25%', () => {
     let {progressBarProps} = renderProgressBarHook({value: 25});
     expect(progressBarProps['aria-valuenow']).toBe(25);
@@ -46,7 +40,7 @@ describe('useProgressBar', function () {
   });
 
   it('with custom text value', () => {
-    let props = {value: 25, 'aria-valuetext': '¥25'};
+    let props = {value: 25, textValue: '¥25'};
     let {progressBarProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('¥25');

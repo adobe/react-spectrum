@@ -22,9 +22,9 @@ describe('Breadcrumbs', function () {
   });
 
   // v3 functionality, omitting v2 component
-  it('Handles custom class name', () => {
+  it('Handles UNSAFE_className', () => {
     let {getByRole} = render(
-      <Breadcrumbs className="test-class">
+      <Breadcrumbs UNSAFE_className="test-class">
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );
@@ -63,12 +63,22 @@ describe('Breadcrumbs', function () {
     };
     let {getByLabelText} = render(<Component />);
     let breadcrumb = getByLabelText('breadcrumbs-test');
-    expect(breadcrumb).toBe(ref.current);
+    expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
-  it('Handles heading child and headingAriaLevel', () => {
+  it('Handles size="L"', () => {
     let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} size="L">
+      <Breadcrumbs size="L">
+        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--multiline'));
+  });
+
+  it('Handles isHeading and headingAriaLevel', () => {
+    let {getByRole} = render(
+      <Breadcrumbs headingAriaLevel={2} isHeading>
         <BreadcrumbItem>Folder 1</BreadcrumbItem>
       </Breadcrumbs>
     );

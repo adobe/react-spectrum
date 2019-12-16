@@ -44,23 +44,22 @@ describe('Button', function () {
     ${LogicButton}
     ${V2Button}
   `('v2/3 parity allows custom props to be passed through to the button', function ({Component}) {
-    let {getByRole} = render(<Component data-foo="bar" aria-hidden name="s">Click Me</Component>);
+    let {getByRole} = render(<Component data-foo="bar" aria-hidden>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
     expect(button).toHaveAttribute('aria-hidden', 'true');
-    expect(button).toHaveAttribute('name', 's');
   });
 
   it.each`
-    Component
-    ${ActionButton}
-    ${Button}
-    ${ClearButton}
-    ${LogicButton}
-    ${V2Button}
-  `('v2/3 parity allows a custom classname on the button', function ({Component}) {
-    let {getByRole} = render(<Component className="x-men-first-class">Click Me</Component>);
+    Component         | props
+    ${ActionButton}   | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${Button}         | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${ClearButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${LogicButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${V2Button}       | ${{className: 'x-men-first-class'}}
+  `('v2/3 parity allows a custom classname on the button', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button.getAttribute('class')).toEqual(expect.stringContaining('x-men-first-class'));
@@ -150,12 +149,23 @@ describe('Button', function () {
     Component      | props
     ${ActionButton}| ${{icon: <FakeIcon role="status" />}}
     ${Button}      | ${{icon: <FakeIcon role="status" />}}
-    ${LogicButton} | ${{icon: <FakeIcon role="status" />}}
     ${V2Button}    | ${{icon: <FakeIcon role="status" />}}
   `('v2/3 parity accepts an icon as a prop', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
 
     let icon = getByRole('status');
     expect(icon).not.toBeNull();
+  });
+
+  it.each`
+    Name                | Component
+    ${'ActionButton'}   | ${ActionButton}
+    ${'Button'}         | ${Button}
+    ${'LogicButton'}    | ${LogicButton}
+  `('$Name supports autoFocus', function ({Component}) {
+    let {getByRole} = render(<Component autoFocus>Click Me</Component>);
+
+    let button = getByRole('button');
+    expect(document.activeElement).toBe(button);
   });
 });

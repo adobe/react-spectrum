@@ -1,38 +1,32 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
-import {HTMLElement} from 'react-dom';
-import React, {ReactElement, ReactNode, RefObject} from 'react';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import React, {forwardRef} from 'react';
+import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {useIllustratedMessage} from '@react-aria/illustrated-message';
-import {useProviderProps} from '@react-spectrum/provider';
 
-export interface IllustratedMessageProps extends DOMProps {
-  heading?: string,
-  description?: ReactNode,
-  illustration?: ReactElement,
-  ariaLevel?: number
-}
-
-export const IllustratedMessage = React.forwardRef((props: IllustratedMessageProps, ref: RefObject<HTMLElement>) => {
-  let completeProps = useProviderProps(props);
+function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
-    className,
     illustration,
     heading,
-    description
-  } = completeProps;
+    description,
+    ...otherProps
+  } = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(otherProps);
   let {
     illustrationProps,
     headingProps
-  } = useIllustratedMessage(completeProps);
+  } = useIllustratedMessage(props);
 
   // todo replace h2 with rsp heading when it exists
   return (
     <div
-      {...filterDOMProps(completeProps, {'aria-level': false})}
-      ref={ref}
-      className={classNames(styles, 'spectrum-IllustratedMessage', className)}>
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      ref={domRef}
+      className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className)}>
       {illustration &&
         React.cloneElement(illustration, {
           ...illustrationProps,
@@ -56,4 +50,7 @@ export const IllustratedMessage = React.forwardRef((props: IllustratedMessagePro
       }
     </div>
   );
-});
+}
+
+let _IllustratedMessage = forwardRef(IllustratedMessage);
+export {_IllustratedMessage as IllustratedMessage};

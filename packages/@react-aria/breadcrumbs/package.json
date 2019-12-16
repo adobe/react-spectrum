@@ -1,13 +1,15 @@
 {
   "name": "@react-aria/breadcrumbs",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "private": true,
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -15,9 +17,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
-    "@react-aria/interactions": "^3.0.0-alpha.1",
-    "@react-types/breadcrumbs": "^3.0.0-alpha.1"
+    "@react-aria/i18n": "^3.0.0-alpha.2",
+    "@react-aria/interactions": "^3.0.0-alpha.2",
+    "@react-aria/link": "^3.0.0-alpha.2",
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-types/breadcrumbs": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

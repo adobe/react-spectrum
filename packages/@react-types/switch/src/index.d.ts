@@ -1,4 +1,7 @@
 import {CheckboxBase} from '@react-types/checkbox';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, StyleProps} from '@react-types/shared';
 
-export interface SwitchProps extends DOMProps, CheckboxBase {}
+export type SwitchProps = CheckboxBase;
+export interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
+  isEmphasized?: boolean
+}

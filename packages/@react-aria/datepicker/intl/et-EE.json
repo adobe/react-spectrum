@@ -1,0 +1,14 @@
+{
+  "calendar": "Kalender",
+  "date": "Kuupäev",
+  "dateRange": "Kuupäevavahemik",
+  "day": "Päev",
+  "dayPeriod": "Päeva periood",
+  "endDate": "Lõppkuupäev",
+  "hour": "Tund",
+  "minute": "Minut",
+  "month": "Kuu",
+  "second": "Sekund",
+  "startDate": "Alguskuupäev",
+  "year": "Aasta"
+}

@@ -17,7 +17,7 @@ function renderComponent(Component, props) {
 
 // Note: Running this test suite will result in some warnings of the following class:
 // 1. "Textfield contains an input of type search with both value and defaultValue props.  This is a v2 SearchField issue
-// 2. Various warnings about componentWillReceiveProps and componentDidUpdate. Prob a TODO to update v2 components so we don't use these renamed/deprecated lifecycle methods 
+// 2. Various warnings about componentWillReceiveProps and componentDidUpdate. Prob a TODO to update v2 components so we don't use these renamed/deprecated lifecycle methods
 
 describe('Shared TextField behavior', () => {
   let onBlur = jest.fn();
@@ -29,20 +29,19 @@ describe('Shared TextField behavior', () => {
     onBlur.mockClear();
     onFocus.mockClear();
     cleanup();
-  }); 
+  });
 
   // Omitting v3 TextField and TextArea for now since we need https://jira.corp.adobe.com/browse/RSP-1182 to compensate
   it.each`
-    Name                | Component
-    ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name supports appending custom classnames onto the root element', ({Component}) => {
-    let className = 'custom-class-name';
-    let tree = renderComponent(Component, {className});
-    expect(tree.container.querySelector(`body>div> .${className}`)).toBeTruthy();
-  });  
+    Name                | Component         | props
+    ${'v3 SearchField'} | ${SearchField}    | ${{UNSAFE_className: 'custom-class-name'}}
+    ${'v2 TextField'}   | ${V2TextField}    | ${{className: 'custom-class-name'}}
+    ${'v2 TextArea'}    | ${V2TextArea}     | ${{className: 'custom-class-name'}}
+    ${'v2 SearchField'} | ${V2SearchField}  | ${{className: 'custom-class-name'}}
+  `('$Name supports appending custom classnames onto the root element', ({Component, props}) => {
+    let tree = renderComponent(Component, props);
+    expect(tree.container.querySelector('body>div> .custom-class-name')).toBeTruthy();
+  });
 
   it.each`
     Name                | Component        | expectedType | expectedTagName
@@ -70,12 +69,12 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextField'}   | ${V2TextField}
     ${'v2 TextArea'}    | ${V2TextArea}
     ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name allow custom naming', ({Component}) => {  
+  `('$Name allow custom naming', ({Component}) => {
     let name = 'blah';
     let tree = renderComponent(Component, {name});
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('name', name);
-  });  
+  });
 
   it.each`
     Name                | Component
@@ -108,17 +107,14 @@ describe('Shared TextField behavior', () => {
 
     if (Component === V2SearchField) {
       expect(onChange).toHaveBeenLastCalledWith(
-        inputText, 
+        inputText,
         expect.anything(),
         {
           'from': 'input'
         }
       );
     } else {
-      expect(onChange).toHaveBeenLastCalledWith(
-        inputText,
-        expect.anything()
-      );
+      expect(onChange.mock.calls[0][0]).toBe(inputText);
     }
   });
 
@@ -204,7 +200,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('img');
+      let invalidIcon = tree.getByRole('presentation');
       expect(invalidIcon).toBeTruthy();
     }
   });
@@ -221,7 +217,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('img');
+      let validIcon = tree.getByRole('presentation');
       expect(validIcon).toBeTruthy();
     }
   });
@@ -268,7 +264,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextField'}   | ${V2TextField}   | ${{readOnly: true}}
     ${'v2 TextArea'}    | ${V2TextArea}    | ${{readOnly: true}}
     ${'v2 SearchField'} | ${V2SearchField} | ${{readOnly: true}}
-  `('$Name should support isReadOnly', ({Component, props}) => { 
+  `('$Name should support isReadOnly', ({Component, props}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('readonly');
@@ -287,7 +283,7 @@ describe('Shared TextField behavior', () => {
     ${'v2 TextField'}   | ${V2TextField}   | ${{disabled: true}}
     ${'v2 TextArea'}    | ${V2TextArea}    | ${{disabled: true}}
     ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
-  `('$Name should disable the input field if isDisabled=true', ({Component, props}) => { 
+  `('$Name should disable the input field if isDisabled=true', ({Component, props}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('disabled');
@@ -302,7 +298,7 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-  `('$Name allow the user to render a custom icon', ({Component}) => { 
+  `('$Name allow the user to render a custom icon', ({Component}) => {
     let iconId = 'icon-yo';
     let tree = renderComponent(Component, {icon: <Checkmark data-testid={iconId} />});
     let icon = tree.getByTestId(iconId);
@@ -319,6 +315,6 @@ describe('Shared TextField behavior', () => {
     let ref = React.createRef();
     let tree = renderComponent(Component, {ref});
     let input = tree.getByTestId(testId);
-    expect(ref.current).toEqual(input);
+    expect(ref.current.getInputElement()).toEqual(input);
   });
 });

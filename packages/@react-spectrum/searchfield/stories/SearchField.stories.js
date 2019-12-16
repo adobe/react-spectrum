@@ -4,7 +4,7 @@ import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
-const info = 'A containing element with  `role="search"` has been added to define a **search** landmark region.';
+const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 
 storiesOf('SearchField', module)
   .add(
@@ -53,9 +53,19 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
-    'using combobox role',
-    () => renderSearchLandmark(render({type: 'text', role: 'combobox', 'aria-expanded': 'false', 'aria-haspopup': 'listbox', 'aria-autocomplete': 'list'})),
-    {info: `This example demonstrates how to overide Search props for a custom implementation of the WAI-ARIA 1.0 ComboBox design pattern. ${info}`}
+    'autoFocus',
+    () => renderSearchLandmark(render({autoFocus: true})),
+    {info}
+  )
+  .add(
+    'custom width',
+    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}})),
+    {info}
+  )
+  .add(
+    'custom width, quiet',
+    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}, isQuiet: true})),
+    {info}
   );
 
 function renderSearchLandmark(child) {
@@ -65,6 +75,7 @@ function renderSearchLandmark(child) {
 function render(props = {}) {
   return (
     <SearchField
+      UNSAFE_className="custom_classname"
       aria-label="Search"
       placeholder="Enter text"
       {...props}

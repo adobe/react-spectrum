@@ -22,9 +22,6 @@ governing permissions and limitations under the License.
   --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
 }
 
-/* topdoc
-{{ popover/popover.yml }}
-*/
 .spectrum-Popover {
   @inherit: %spectrum-overlay;
 
@@ -51,7 +48,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Popover-tip {
   position: absolute;
-  /* This hides half of the tooltip, but it also crops the shadow slightly, which is undesireable */
+  /* This hides half of the tooltip, but it also crops the shadow slightly, which is undesirable */
   overflow: hidden;
   width: calc(var(--spectrum-popover-tip-width) + 1px);
   height: calc((var(--spectrum-popover-tip-width)/2)+(var(--spectrum-popover-border-size)));
@@ -74,9 +71,6 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-popover-dialog-padding);
 }
 
-/* topdoc
-{{ popover/popover-dialog.yml }}
-*/
 .spectrum-Popover--left {
   &.spectrum-Popover--withTip {
     margin-right: var(--spectrum-popover-target-offset);

@@ -1,36 +1,44 @@
 import {AllHTMLAttributes} from 'react';
+import {clamp} from '@react-aria/utils';
+import {DOMProps} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
+import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
   progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLDivElement>
+  labelProps: AllHTMLAttributes<HTMLLabelElement>
 }
 
-export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
+interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
+  textValue?: string
+}
+
+export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
   let {
     id,
     value = 0,
-    min = 0,
-    max = 100,
+    minValue = 0,
+    maxValue = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    'aria-valuetext': valueText,
+    textValue,
     isIndeterminate,
-    children
+    children,
+    formatOptions = {
+      style: 'percent'
+    }
   } = props;
-
-  if (!children && !ariaLabel) {
-    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
-  }
 
   const {labelAriaProps, labelledComponentAriaProps} = useLabel({id}, {'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
-  let ariaValueNow;
-  let ariaValueText;
-  if (!isIndeterminate) {
-    ariaValueNow = value;
-    ariaValueText = valueText || `${value}%`;
+  value = clamp(value, minValue, maxValue);
+  let percentage = (value - minValue) / (maxValue - minValue);
+  let formatter = useNumberFormatter(formatOptions);
+
+  if (!isIndeterminate && !textValue) {
+    let valueToFormat = formatOptions.style === 'percent' ? percentage : value;
+    textValue = formatter.format(valueToFormat);
   }
 
   if (ariaLabelledby || children) {
@@ -40,10 +48,10 @@ export function useProgressBar(props: ProgressBarProps): ProgressBarAria {
   return {
     progressBarProps: {
       ...labelledComponentAriaProps,
-      'aria-valuenow': ariaValueNow,
-      'aria-valuemin': min,
-      'aria-valuemax': max,
-      'aria-valuetext': ariaValueText,
+      'aria-valuenow': isIndeterminate ? undefined : value,
+      'aria-valuemin': minValue,
+      'aria-valuemax': maxValue,
+      'aria-valuetext': isIndeterminate ? undefined : textValue,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
       role: 'progressbar'

@@ -32,12 +32,11 @@ describe('ClearButton', function () {
     ${'v3 ClearButton'} | ${ClearButton} | ${{}}
     ${'v2 ClearButton'} | ${V2Button}    | ${{variant: 'clear'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden name="s">Click Me</Component>);
+    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
     expect(button).toHaveAttribute('aria-hidden', 'true');
-    expect(button).toHaveAttribute('name', 's');
   });
 
   // Current v3 implementation that diverges from v2
@@ -61,6 +60,9 @@ describe('ClearButton', function () {
     let tree = render(<Component ref={ref} />);
 
     let button = tree.queryByRole('button');
-    expect(button).toBe(ref.current);
+    expect(button).toBe(ref.current.UNSAFE_getDOMNode());
+
+    ref.current.focus();
+    expect(document.activeElement).toBe(button);
   });
 });

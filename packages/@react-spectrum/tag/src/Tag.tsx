@@ -1,21 +1,21 @@
 import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
+import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {TagProps} from '@react-types/tag';
 import {useTag} from '@react-aria/tag';
 import {useTagGroupProvider} from './TagGroup';
 
-export const Tag = ((props: TagProps) => {
+export const Tag = ((props: SpectrumTagProps) => {
   const {
-    className,
     isDisabled,
     isRemovable,
     validationState,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
@@ -42,6 +42,7 @@ export const Tag = ((props: TagProps) => {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...filterDOMProps(otherProps)}
+        {...styleProps}
         {...tagProps}
         className={classNames(
           styles,
@@ -52,9 +53,9 @@ export const Tag = ((props: TagProps) => {
             'spectrum-Tags-item--removable': removable,
             'is-invalid': isInvalid
           },
-          className
+          styleProps.className
         )}>
-        {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-Tags-itemIcon')})}
+        {icon && React.cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span
           {...labelProps}
           className={classNames(styles, 'spectrum-Tags-itemLabel')}>
@@ -65,7 +66,7 @@ export const Tag = ((props: TagProps) => {
             <ClearButton
               tabIndex={tagProps.tabIndex}
               focusClassName={classNames(styles, 'is-focused')}
-              className={classNames(styles, 'spectrum-Tags-itemClearButton')}
+              UNSAFE_className={classNames(styles, 'spectrum-Tags-itemClearButton')}
               {...otherButtonProps} />
           </span>
         }
