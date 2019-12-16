@@ -1,3 +1,8 @@
+.react-spectrum-Datepicker-field {
+  /* omg... someone please kill me */
+  width: auto !important;
+}
+
 .react-spectrum-Datepicker-endField {
   flex: 1;
 }
