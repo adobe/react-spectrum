@@ -101,10 +101,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <HoverResponder
           {...tooltipTriggerBaseProps}
           ref={triggerRef}
-          isHovering={isOpen}
           isDisabled={isDisabled}
-          onHoverChange={onHoverInteraction}
-          isOverTooltip={onHoverInteraction}>
+          onShow={onHoverInteraction}
+          onHoverTooltip={onHoverInteraction}>
           {trigger}
           {overlay}
         </HoverResponder>

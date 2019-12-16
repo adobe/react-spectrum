@@ -10,13 +10,13 @@ export interface HoverEvent {
 }
 
 export interface HoverProps {
- isHovering?: boolean,
+ isHovering?: boolean,  // can be used to indicate a potential hover state for visual effects
  isDisabled?: boolean,
  onHover?: (e: HoverEvent) => void,
  onHoverStart?: (e: HoverEvent) => void,
  onHoverEnd?: (e: HoverEvent) => void,
- onHoverChange?: (isHovering: boolean) => void,
- isOverTooltip?: (isHovering: boolean) => void
+ onShow?: (isHovering: boolean) => void,
+ onHoverTooltip?: (isHovering: boolean) => void
 }
 
 export interface HoverHookProps extends HoverProps, DOMProps {
@@ -32,8 +32,8 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
-let hoverHideDelay = null;
-let hoverShowDelay = null;
+let hoverHideTimeout = null;
+let hoverShowTimeout = null;
 
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
@@ -62,9 +62,9 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHover,
     onHoverStart,
     onHoverEnd,
-    onHoverChange,
+    onShow,
     isDisabled,
-    isOverTooltip,
+    onHoverTooltip,
     isHovering: isHoveringProp,
     ...domProps
   } = useHoverResponderContext(props);
@@ -101,15 +101,15 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-      if (onHoverChange) {
-        handleDelayedShow(onHoverChange, isOverTooltip);
+      if (onShow) {
+        handleDelayedShow(onShow, onHoverTooltip);
       }
 
       setHover(true);
     };
 
 
-    let triggerHoverEnd = (event, pointerType, didHover = true) => {
+    let triggerHoverEnd = (event, pointerType) => {
 
       if (isDisabled) {
         return;
@@ -131,8 +131,8 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
-      if (onHoverChange && didHover) {
-        handleMouseOverOut(onHoverChange, event);
+      if (onShow) {
+        handleMouseOverOut(onShow, event);
       }
     };
 
@@ -157,7 +157,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, onHoverChange, isDisabled, isOverTooltip]);
+  }, [onHover, onHoverStart, onHoverEnd, onShow, isDisabled, onHoverTooltip]);
 
   return {
     isHovering: isHoveringProp || isHovering,
@@ -165,38 +165,40 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-function handleDelayedShow(onHoverChange, isOverTooltip) {
-  if (hoverHideDelay != null) {
-    clearTimeout(hoverHideDelay);
-    hoverHideDelay = null;
+// TODO: move tooltip specific functions to another file
+
+function handleDelayedShow(onShow, onHoverTooltip) {
+  if (hoverHideTimeout != null) {
+    clearTimeout(hoverHideTimeout);
+    hoverHideTimeout = null;
   }
 
-  hoverShowDelay = setTimeout(() => {
-    onHoverChange(true);
-    if (isOverTooltip) {
-      isOverTooltip(true);
+  hoverShowTimeout = setTimeout(() => {
+    onShow(true);
+    if (onHoverTooltip) {
+      onHoverTooltip(true);
     }
   }, 300);
 }
 
-function handleDelayedHide(onHoverChange) {
-  if (hoverShowDelay != null) {
-    clearTimeout(hoverShowDelay);
-    hoverShowDelay = null;
+function handleDelayedHide(onShow) {
+  if (hoverShowTimeout != null) {
+    clearTimeout(hoverShowTimeout);
+    hoverShowTimeout = null;
   }
 
-  hoverHideDelay = setTimeout(() => {
-    onHoverChange(false);
+  hoverHideTimeout = setTimeout(() => {
+    onShow(false);
   }, 300);
 }
 
-function handleMouseOverOut(onHoverChange, e) {
+function handleMouseOverOut(onShow, e) {
   const related = e.relatedTarget || e.nativeEvent.toElement;
   const parent = related.parentNode;
   if (parent.getAttribute('role') === 'tooltip') {
-    clearTimeout(hoverShowDelay);
+    clearTimeout(hoverShowTimeout);
     return;
   } else {
-    handleDelayedHide(onHoverChange);
+    handleDelayedHide(onShow);
   }
 }

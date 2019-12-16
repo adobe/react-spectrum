@@ -28,8 +28,8 @@ export function useTooltip(props: TooltipProps): TooltipAria {
 
   if (contextProps) {
     let onMouseLeave = () => {
-      if (contextProps.isOverTooltip) {
-        contextProps.isOverTooltip(false);
+      if (contextProps.onHoverTooltip) {
+        contextProps.onHoverTooltip(false);
       }
     };
     tooltipProps.onMouseLeave = onMouseLeave;
