@@ -13,8 +13,13 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  /* Hardcoded for wrapping study */
-  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-75);
+  /* Hardcoded for wrapping study.
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
+  */
+  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-85);
+  /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
+  /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
+  --spectrum-switch-label-line-height: 1.49;
 }
 
 .spectrum-ToggleSwitch {
@@ -65,7 +70,9 @@ governing permissions and limitations under the License.
 
 .spectrum-ToggleSwitch-label {
   margin: 0 var(--spectrum-switch-text-gap);
+  margin-top: var(--spectrum-switch-label-margin-top);
   font-size: var(--spectrum-switch-text-size);
+  line-height: var(--spectrum-switch-label-line-height);  
   transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
 
   margin-block-start: var(--spectrum-switch-label-margin-top);

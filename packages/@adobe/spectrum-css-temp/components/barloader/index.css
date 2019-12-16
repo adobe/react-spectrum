@@ -48,7 +48,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader-label {
-  flex: 1 0 auto;
+  flex: 1 1 0%;
 }
 
 .spectrum-BarLoader-percentage {

@@ -120,6 +120,9 @@ governing permissions and limitations under the License.
   }
 
   &:disabled {
+    /* Disable the resize functionality when disabled */
+    resize: none;
+
     /* The opacity must be set to 1 */
     opacity: 1;
     &::placeholder {
@@ -226,5 +229,10 @@ governing permissions and limitations under the License.
     & ~ .spectrum-Textfield-icon {
       inset-inline-start: 0;
     }
+  }
+
+  &.spectrum-Textfield--multiline {
+    height: var(--spectrum-textfield-height);
+    min-height: var(--spectrum-textfield-height);
   }
 }

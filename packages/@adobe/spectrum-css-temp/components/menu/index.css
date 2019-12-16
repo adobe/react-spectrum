@@ -115,6 +115,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-itemLabel {
   flex: 1 1 auto;
   line-height: var(--spectrum-selectlist-option-label-line-height);
+  word-break: break-all;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
