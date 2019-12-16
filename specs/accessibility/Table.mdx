@@ -73,7 +73,12 @@ If a grid supports selection of rows, Spectrum does not currently support column
   - `Shift + ArrowUp` extends selection one row up.
   - `Shift + PageDown` extends selection one page down.
   - `Shift + PageUp` extends selection one page up.
-  - `Control + A` selects all rows.
+  - `Control/Command + A`
+    - selects all rows in the dataset.
+    - (optional) depending on the size of the dataset, displays a dialog offering the user the option to select only visible rows, or all rows in the dataset.
+  - `Escape` (optional) deselects all selected rows.
+  - `Control/Command + C` (optional) depending on context, copies selected rows to the clipboard.
+  - `Control/Command + V` (optional) depending on context, pastes rows from the clipboard into the table.
 
 #### Keyboard Interaction - Setting Focus and Navigating Inside Cells
 
