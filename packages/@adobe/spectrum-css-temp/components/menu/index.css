@@ -84,6 +84,7 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
   font-style: normal;
+  text-decoration: none;
 
   &:focus {
     outline: none;
@@ -98,13 +99,15 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Icon {
+  .spectrum-Icon,
+  .spectrum-Menu-itemIcon {
     /* Don't get smaller, you're an icon! */
     flex-shrink: 0;
     align-self: flex-start;
   }
 
-  .spectrum-Icon + .spectrum-Menu-itemLabel {
+  .spectrum-Icon + .spectrum-Menu-itemLabel,
+  .spectrum-Menu-itemIcon  + .spectrum-Menu-itemLabel {
     margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
@@ -123,13 +126,13 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   display: none;
   align-self: flex-start;
-  margin-top: var(--spectrum-selectlist-option-icon-margin-top);
 }
 
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
   flex-grow: 0;
   margin-left: var(--spectrum-selectlist-option-icon-padding-x);
+  margin-top: var(--spectrum-selectlist-option-icon-margin-top);
 }
 
 .spectrum-Menu-divider {

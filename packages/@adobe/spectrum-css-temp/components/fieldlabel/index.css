@@ -17,13 +17,6 @@ governing permissions and limitations under the License.
   --spectrum-tableform-margin: calc(var(--spectrum-global-dimension-size-250) * -1) 0;
 }
 
-/* topdoc
-{{ fieldlabel/fieldlabel.yml }}
-*/
-
-/* topdoc
-{{ fieldlabel/fieldlabel-required.yml }}
-*/
 .spectrum-FieldLabel {
   display: flex;
 
@@ -60,16 +53,10 @@ governing permissions and limitations under the License.
   margin-inline-start: var(--spectrum-fieldlabel-asterisk-gap);
 }
 
-/* topdoc
-{{ fieldlabel/fieldlabel-right.yml }}
-*/
 .spectrum-FieldLabel--alignEnd {
   justify-content: flex-end;
 }
 
-/* topdoc
-{{ form/index.yml }}
-*/
 .spectrum-Form {
   display: table;
   border-collapse: separate;
