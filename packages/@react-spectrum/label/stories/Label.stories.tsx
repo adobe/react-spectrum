@@ -46,7 +46,7 @@ function render(props: SpectrumLabelProps = {}) {
   return (
     <Fragment>
       <Label {...props} for="test">Test</Label>
-      <TextField placeholder="React" id="test" />
+      <TextField placeholder="React" id="test" isRequired={props.isRequired} />
     </Fragment>
   );
 }
