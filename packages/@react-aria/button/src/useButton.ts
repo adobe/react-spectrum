@@ -43,9 +43,9 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       tabIndex: isDisabled ? undefined : (tabIndex || 0),
       href: elementType === 'a' && isDisabled ? undefined : href,
       target: elementType === 'a' ? target : undefined,
-      type: undefined,
-      disabled: undefined,
-      'aria-disabled': isDisabled || undefined
+      type: elementType === 'input' ? type : undefined,
+      disabled: elementType === 'input' ? isDisabled : undefined,
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
     };
   }
 
