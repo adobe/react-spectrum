@@ -1,7 +1,8 @@
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {LabelPosition, SpectrumRadioGroupProps} from '@react-types/radio';
+import {Label} from '@react-spectrum/label';
 import React, {forwardRef, useContext} from 'react';
+import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
@@ -12,7 +13,6 @@ interface RadioGroupContext {
   isRequired?: boolean,
   isReadOnly?: boolean,
   isEmphasized?: boolean,
-  labelPosition?: LabelPosition,
   name?: string,
   validationState?: 'valid' | 'invalid',
   selectedRadio?: string,
@@ -26,55 +26,68 @@ export function useRadioProvider(): RadioGroupContext {
 }
 
 export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) => {
-  let completeProps = useProviderProps(props);
-
+  props = useProviderProps(props);
   let {
     isEmphasized,
     isRequired,
+    necessityIndicator,
     isReadOnly,
     isDisabled,
+    label,
     labelPosition,
+    labelAlign,
     validationState,
     children,
-    orientation,
+    orientation = 'vertical',
     ...otherProps
-  } = completeProps;
+  } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let {selectedRadio, setSelectedRadio} = useRadioGroupState(completeProps);
-  let {radioGroupProps, radioProps} = useRadioGroup(completeProps);
+  let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
+  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--vertical': orientation === 'vertical'
-          },
-          styleProps.className
-        )
+      {...radioGroupProps}
+      ref={domRef}>
+      {label && 
+        <Label
+          {...labelProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          isRequired={isRequired}
+          necessityIndicator={necessityIndicator}>
+          {label}
+        </Label>
       }
-      {...radioGroupProps}>
-      <RadioContext.Provider
-        value={{
-          isEmphasized,
-          isRequired,
-          isReadOnly,
-          isDisabled,
-          validationState,
-          name: radioProps.name,
-          labelPosition,
-          selectedRadio,
-          setSelectedRadio
-        }}>
-        {children}
-      </RadioContext.Provider>
+      <div
+        className={
+          classNames(
+            styles,
+            'spectrum-FieldGroup',
+            {
+              'spectrum-FieldGroup--vertical': orientation === 'vertical'
+            },
+            styleProps.className
+          )
+        }>
+        <RadioContext.Provider
+          value={{
+            isEmphasized,
+            isRequired,
+            isReadOnly,
+            isDisabled,
+            validationState,
+            name: radioProps.name,
+            selectedRadio,
+            setSelectedRadio
+          }}>
+          {children}
+        </RadioContext.Provider>
+      </div>
     </div>
   );
 });

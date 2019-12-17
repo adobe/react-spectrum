@@ -13,15 +13,9 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-FieldGroup {
-  display: flex;
+  display: inline-flex;
   vertical-align: top;
   flex-wrap: wrap;
-}
-
-.spectrum-FieldGroup-label {
-  display: flex;
-  align-items: flex-start;
-  inline-size: 100%;
 }
 
 .spectrum-FieldGroup--vertical {
