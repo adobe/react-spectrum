@@ -57,8 +57,11 @@ governing permissions and limitations under the License.
   cursor: pointer;
 
   &:checked + .spectrum-ToggleSwitch-switch {
-    &::after {
+    [dir='ltr'] &::after {
       transform: translateX(calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size)));
+    }
+    [dir='ltr'] &::after {
+      transform: translateX(calc(-1 * calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size))));
     }
   }
 
