@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/tabs",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -28,15 +28,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/tabs": "^3.0.0-alpha.1",
-    "@react-spectrum/provider": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-spectrum/view": "^3.0.0-alpha.1",
-    "@react-stately/tabs": "^3.0.0-alpha.1",
+    "@react-aria/tabs": "^3.0.0-alpha.2",
+    "@react-spectrum/provider": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-stately/tabs": "^3.0.0-alpha.2",
     "classnames": "^2.2.5"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

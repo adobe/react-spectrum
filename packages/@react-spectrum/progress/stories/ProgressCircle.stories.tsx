@@ -10,14 +10,6 @@ const sliderOptions = {
   step: 1
 };
 
-const centeredBoxStyle: CSSProperties = {
-  width: '100px',
-  height: '100px',
-  position: 'relative',
-  borderColor: 'black',
-  borderStyle: 'solid'
-};
-
 const grayedBoxStyle: CSSProperties = {
   width: '100px',
   height: '100px',
@@ -73,15 +65,12 @@ storiesOf('Progress/ProgressCircle', module)
     }
   )
   .add(
-    'isCentered: true',
-    () =>  {
-      const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={centeredBoxStyle}>
-          {render({value, isCentered: true})}
-        </div>
-      );
-    }
+    'Using raw values for minValue, maxValue, and value',
+    () => render({
+      labelPosition: 'top',
+      maxValue: 2147483648,
+      value: 715827883
+    })
   )
   .add(
     'isIndeterminate: true',
@@ -102,18 +91,10 @@ storiesOf('Progress/ProgressCircle', module)
         {render({isIndeterminate: true, variant: 'overBackground'})}
       </div>
     )
-  )
-  .add(
-    'isIndeterminate: true, isCentered: true',
-    () => (
-      <div style={centeredBoxStyle}>
-        {render({isIndeterminate: true, isCentered: true})}
-      </div>
-    )
   );
 
 function render(props = {}) {
   return (
-    <ProgressCircle {...props} />
+    <ProgressCircle aria-label="Loading…" {...props} />
   );
 }

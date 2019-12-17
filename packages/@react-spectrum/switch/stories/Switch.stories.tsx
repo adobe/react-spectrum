@@ -45,6 +45,15 @@ storiesOf('Switch', module)
     () => renderCustomLabel()
   )
   .add(
+    'long label',
+    () => (
+      <Switch
+        onChange={action('change')}>
+        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
+      </Switch>
+    )
+  )
+  .add(
     'no label',
     () => renderNoLabel({'aria-label': 'This switch has no visible label'})
   );

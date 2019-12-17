@@ -3,7 +3,6 @@ import {Divider} from '../';
 import React from 'react';
 import Rule from '@react/react-spectrum/Rule';
 
-
 describe('Divider', function () {
 
   afterEach(() => {
@@ -43,11 +42,21 @@ describe('Divider', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Divider'} | ${Divider} | ${{}}
-  `('$Name forwards the ref', function ({Component, props}) {
+    Name         | Component
+    ${'Divider'} | ${Divider}
+  `('$Name should not include implicit attributes', function ({Component}) {
+    let {getByRole} = render(<Component aria-label="divides" />);
+
+    let divider = getByRole('separator');
+    expect(divider).not.toHaveAttribute('aria-orientation');
+  });
+
+  it.each`
+    Name         | Component
+    ${'Divider'} | ${Divider}
+  `('$Name forwards the ref', function ({Component}) {
     let ref = React.createRef();
-    let {getByRole} = render(<Component {...props} aria-label="divides" ref={ref} />);
+    let {getByRole} = render(<Component aria-label="divides" ref={ref} />);
 
     let divider = getByRole('separator');
     expect(divider).toBe(ref.current.UNSAFE_getDOMNode());

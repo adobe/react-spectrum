@@ -1,0 +1,11 @@
+{
+  "dateSelected": "Atlasīts {date, date, full}",
+  "finishRangeSelectionPrompt": "Noklikšķiniet, lai pabeigtu datumu diapazona atlasi",
+  "next": "Tālāk",
+  "previous": "Atpakaļ",
+  "selectedDateDescription": "Atlasītais datums: {date, date, full}",
+  "selectedRangeDescription": "Atlasītais diapazons: {start, date, long} līdz {end, date, long}",
+  "startRangeSelectionPrompt": "Noklikšķiniet, lai sāktu datumu diapazona atlasi",
+  "todayDate": "Šodiena, {date, date, full}",
+  "todayDateSelected": "Atlasīta šodiena, {date, date, full}"
+}

@@ -6,15 +6,15 @@ interface Form {
 }
 
 export interface LabelProps extends DOMProps {
-  children?: ReactNode,
+  children?: ReactElement | ReactElement[],
   labelFor?: string,
   label?: ReactNode,
   htmlFor?: string
 }
 
-interface FieldLabelBase extends LabelProps {
-  labelPosition?: 'top' | 'side',
-  labelAlign?: 'start' | 'end',
+interface FieldLabelBase extends LabelProps, DOMProps, StyleProps {
+  labelPosition?: 'top' | 'side', // default ?
+  labelAlign?: 'start' | 'end', // Default start
   isRequired?: boolean,
   necessityIndicator?: 'icon' | 'label'
 }

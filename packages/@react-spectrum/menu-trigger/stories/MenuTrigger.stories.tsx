@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '@react-spectrum/utils';
 import {Menu} from '../';
@@ -53,12 +53,12 @@ storiesOf('MenuTrigger', module)
           <div style={{height: 200}}>
             <div>Scrolling here will close the Menu</div>
             <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
-              <Button
+              <ActionButton
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
                   Menu Button
-              </Button>
+              </ActionButton>
               <Menu>
                 <li>MenuItem1111111111111111</li>
                 <li>MenuItem22222222222222222</li>
@@ -80,6 +80,7 @@ storiesOf('MenuTrigger', module)
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
         <Button
+          variant="primary"
           onPress={action('press 1')}
           onPressStart={action('pressstart 1')}
           onPressEnd={action('pressend 1')}
@@ -91,6 +92,7 @@ storiesOf('MenuTrigger', module)
         </Button>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
           <Button
+            variant="primary"
             onPress={action('press 2')}
             onPressStart={action('pressstart 2')}
             onPressEnd={action('pressend 2')}
@@ -109,17 +111,17 @@ storiesOf('MenuTrigger', module)
       </div>
     )
   );
-  
+
 function render(props = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
-        <Button
+        <ActionButton
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
             Menu Button
-        </Button>
+        </ActionButton>
         <Menu {...menuProps}>
           <li>MenuItem1111111111111111</li>
           <li>MenuItem22222222222222222</li>

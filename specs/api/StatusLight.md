@@ -1,7 +1,7 @@
 # StatusLight
 
 ```typescript
-interface StatusLight {
+interface StatusLight extends StyleProps, DOMProps{
   children: ReactNode,
   variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
   isDisabled?: boolean

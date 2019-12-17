@@ -1,25 +1,17 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './';
-import {BreadcrumbsProps} from '@react-types/breadcrumbs';
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import React, {useEffect, useState} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-
-export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
-  size?: 'S' | 'M' | 'L',
-  isHeading?: boolean,
-  headingAriaLevel?: number,
-  showRoot?: boolean,
-  isDisabled?: boolean,
-  maxVisibleItems?: 'auto' | number
-}
+import {useProviderProps} from '@react-spectrum/provider';
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
+  props = useProviderProps(props);
   let {
     size = 'M',
     children,

@@ -9,10 +9,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+@import '../commons/index.css';
 
 .spectrum {
   font-family: var(--spectrum-font-family-base);
   font-size: var(--spectrum-text-size);
+  color: var(--spectrum-body-text-color, var(--spectrum-global-color-gray-800));
 
   &:lang(ar) {
     font-family: var(--spectrum-font-family-ar);

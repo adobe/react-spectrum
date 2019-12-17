@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ avatar/avatar-small.yml }}
-*/
-
 .spectrum-Avatar {
   width: var(--spectrum-avatar-small-width);
   height: var(--spectrum-avatar-small-height);
