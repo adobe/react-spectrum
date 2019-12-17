@@ -96,6 +96,10 @@ governing permissions and limitations under the License.
 
   vertical-align: middle;
 
+  /* Forms stacking context for Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1510479
+  Fix for scaling all elemetns with transform property equally on browser zoom */
+  will-change: transform;
+
   &::before,
   &::after {
     display: block;
