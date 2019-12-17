@@ -3,7 +3,7 @@ import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useSideNavItem} from '../';
 
-describe('useSideNav', function () {
+describe('useSideNavItem', function () {
   afterEach(cleanup);
 
   let item = {
