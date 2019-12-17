@@ -1,17 +1,12 @@
-import {classNames, filterDOMProps, FocusableRef, useFocusableRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
-import {SwitchProps} from '@react-types/switch';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
-
-interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
-  isEmphasized?: boolean
-}
 
 function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);

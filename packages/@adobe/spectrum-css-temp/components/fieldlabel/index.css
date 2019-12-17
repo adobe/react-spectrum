@@ -43,36 +43,28 @@ governing permissions and limitations under the License.
   text-align: start;
 }
 
+.spectrum-FieldLabel--positionSide {
+  display: inline-flex;
+  padding-top: var(--spectrum-fieldlabel-side-padding-top);
+  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
+}
+
 .spectrum-FieldLabel-label {
   margin-inline-end: 5px;
 }
 
 .spectrum-FieldLabel-requiredIcon {
-  margin: var(--spectrum-fieldlabel-asterisk-margin-y) 0 0 var(--spectrum-fieldlabel-asterisk-gap);
-}
-
-/* topdoc
-{{ fieldlabel/fieldlabel-left.yml }}
-*/
-.spectrum-FieldLabel--alignStart {
-  display: inline-block;
-  text-align: start;
-  padding-top: var(--spectrum-fieldlabel-side-padding-top);
-  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
-
-  & .spectrum-FieldLabel-requiredIcon {
-    margin: var(--spectrum-fieldlabel-side-asterisk-margin-y) 0 0 var(--spectrum-fieldlabel-asterisk-gap);
-  }
+  margin-top: var(--spectrum-fieldlabel-asterisk-margin-y);
+  margin-inline-end: 0;
+  margin-bottom: 0;
+  margin-inline-start: var(--spectrum-fieldlabel-asterisk-gap);
 }
 
 /* topdoc
 {{ fieldlabel/fieldlabel-right.yml }}
 */
 .spectrum-FieldLabel--alignEnd {
-  display: inline-block;
-  text-align: end;
-  padding-top: var(--spectrum-fieldlabel-side-padding-top);
-  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
+  justify-content: flex-end;
 }
 
 /* topdoc

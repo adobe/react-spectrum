@@ -1,8 +1,7 @@
-import {filterDOMProps} from '@react-spectrum/utils';
+import {filterDOMProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode, RefObject} from 'react';
-import {useStyleProps, viewStyleProps} from './styleProps';
-import {ViewStyleProps} from './types';
+import {ViewStyleProps} from '@react-types/shared';
 
 export interface ViewProps extends ViewStyleProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style'> {
   elementType?: string | JSXElementConstructor<any>,

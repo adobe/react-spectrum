@@ -1,39 +1,23 @@
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
-import {DOMProps, FocusableProps} from '@react-types/shared';
-import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {HoverProps} from '@react-aria/interactions';
-import {PressProps} from '@react-aria/interactions';
-import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React, {cloneElement} from 'react';
+import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-
-export interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps, HoverProps {
-  isDisabled?: boolean,
-  elementType?: string | JSXElementConstructor<any>,
-  icon?: ReactElement,
-  children?: ReactNode,
-  href?: string
-}
-
-export interface ButtonProps extends ButtonBase {
-  variant?: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
-  isQuiet?: boolean
-}
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-function Button(props: ButtonProps, ref: FocusableRef) {
+function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
     children,
-    variant = 'secondary',
+    variant,
     isQuiet,
     isDisabled,
     icon,
@@ -69,7 +53,17 @@ function Button(props: ButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {icon && cloneElement(
+          icon,
+          {
+            size: 'S',
+            UNSAFE_className: classNames(
+              styles,
+              'spectrum-Icon',
+              icon.props && icon.props.UNSAFE_className
+            )
+          }
+        )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

@@ -1,6 +1,6 @@
 import {CheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
-import {ToggleState} from '@react-types/toggle';
+import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria {
@@ -9,7 +9,7 @@ export interface CheckboxAria {
 
 export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
   let {inputProps} = useToggle(props, state);
-  let {isChecked} = state;
+  let {isSelected} = state;
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -23,8 +23,8 @@ export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: 
   return {
     inputProps: {
       ...inputProps,
-      checked: isChecked,
-      'aria-checked': isIndeterminate ? 'mixed' : isChecked
+      checked: isSelected,
+      'aria-checked': isIndeterminate ? 'mixed' : isSelected
     }
   };
 }

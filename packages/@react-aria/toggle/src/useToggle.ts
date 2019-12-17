@@ -1,7 +1,7 @@
 import {DOMProps} from '@react-types/shared';
 import {InputHTMLAttributes} from 'react';
 import {SwitchProps} from '@react-types/switch';
-import {ToggleState} from '@react-types/toggle';
+import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 
 export interface ToggleAria {
@@ -25,7 +25,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
     // since we spread props on label, onChange will end up there as well as in here.
     // so we have to stop propagation at the lowest level that we care about
     e.stopPropagation();
-    state.setChecked(e.target.checked);
+    state.setSelected(e.target.checked);
   };
 
   let hasChildren = children !== null;

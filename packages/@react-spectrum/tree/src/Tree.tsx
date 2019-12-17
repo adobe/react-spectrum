@@ -91,7 +91,7 @@ function TreeItem<T>(props: TreeItemProps<T>) {
           className={linkClassName}>
           {hasChildNodes &&
             <ChevronRightMedium
-              className={classNames(styles, 'spectrum-TreeView-indicator')}
+              UNSAFE_className={classNames(styles, 'spectrum-TreeView-indicator')}
               onMouseDown={e => e.stopPropagation()}
               onClick={() => state.toggleKey(item.key)} />
           }

@@ -1,14 +1,12 @@
+import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
-import {HoverHookProps, PressHookProps, useHover, usePress} from '@react-aria/interactions';
-import {JSXElementConstructor, RefObject} from 'react';
+import {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
-interface AriaButtonProps extends PressHookProps, HoverHookProps {
-  elementType?: string | JSXElementConstructor<any>,
-  href?: string,
-  tabIndex?: number,
-  isSelected?: boolean | 'false' | 'true',
-  validationState?: 'valid' | 'invalid',
+interface AriaButtonProps extends ButtonProps {
+  isSelected?: boolean,
+  validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
   type?: 'button' | 'submit'

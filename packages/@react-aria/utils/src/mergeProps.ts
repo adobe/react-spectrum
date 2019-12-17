@@ -13,8 +13,8 @@ export function mergeProps<T extends Props, U extends Props>(a: T, b: U): T & U 
     if (/^on[A-Z]/.test(key) && typeof a[key] === 'function' && typeof b[key] === 'function') {
       res[key] = chain(a[key], b[key]);
 
-    // Merge classnames
-    } else if (key === 'className' && a.className && b.className) {
+    // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
+    } else if (key === 'className' && typeof a.className === 'string' && typeof b.className === 'string') {
       res[key] = classNames(a.className, b.className);
 
     } else if (key === 'id' && a.id && b.id) {
