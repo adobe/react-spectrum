@@ -12,13 +12,20 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-well-padding: var(--spectrum-global-dimension-size-200);
+  --spectrum-well-border-width: var(--spectrum-alias-border-size-thin);
+  --spectrum-well-margin-top: var(--spectrum-global-dimension-size-50);
+  --spectrum-well-min-width: var(--spectrum-global-dimension-size-3000);
+}
+
 .spectrum-Well {
   text-align: start;
   display: block;
-  min-inline-size: 248px;
-  padding: 16px;
-  margin-block-start: 4px;
-  border-width: 1px;
+  min-inline-size: var(--spectrum-well-min-width);
+  padding: var(--spectrum-well-padding);
+  margin-top: var( --spectrum-well-margin-top);
+  border-width: var(--spectrum-well-border-width);
   border-style: solid;
   border-radius: var(--spectrum-border-radius);
 }

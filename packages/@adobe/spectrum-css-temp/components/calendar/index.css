@@ -149,8 +149,8 @@ governing permissions and limitations under the License.
   cursor: pointer;
 
   transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
-        color var(--spectrum-global-animation-duration-100) ease-in-out,
-        border-color var(--spectrum-global-animation-duration-100) ease-in-out;
+      color var(--spectrum-global-animation-duration-100) ease-in-out,
+      border-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
   &:lang(ja), &:lang(zh), &:lang(ko) {
     font-size: var(--spectrum-calendar-day-text-size-han);
