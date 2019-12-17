@@ -50,6 +50,14 @@ storiesOf('TextArea', module)
     () => render({isRequired: true})
   )
   .add(
+    'isRequired: true, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'isRequired: false, necessityIndicator: label',
+    () => render({isRequired: false, necessityIndicator: 'label'})
+  )
+  .add(
     'autoFocus: true',
     () => render({autoFocus: true})
   )
@@ -73,6 +81,18 @@ storiesOf('TextArea', module)
     'icon: Info, validationState: invalid, isQuiet',
     () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
   )
+  .add(
+    'labelAlign: end',
+    () => render({labelAlign: 'end'})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => render({label: null, 'aria-label': 'Street address'})
+  )
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}})
   )
@@ -83,6 +103,7 @@ storiesOf('TextArea', module)
 function render(props = {}) {
   return (
     <TextArea
+      label="Comments"
       placeholder="React"
       onChange={action('change')}
       onFocus={action('focus')}

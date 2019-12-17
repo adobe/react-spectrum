@@ -42,10 +42,6 @@ governing permissions and limitations under the License.
   padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
 }
 
-.spectrum-FieldLabel-label {
-  margin-inline-end: 5px;
-}
-
 .spectrum-FieldLabel-requiredIcon {
   margin-top: var(--spectrum-fieldlabel-asterisk-margin-y);
   margin-inline-end: 0;
