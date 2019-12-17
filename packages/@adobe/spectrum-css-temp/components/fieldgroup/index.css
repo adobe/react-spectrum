@@ -14,17 +14,9 @@ governing permissions and limitations under the License.
 
 .spectrum-FieldGroup {
   display: flex;
-  vertical-align: top;
-  flex-wrap: wrap;
-}
-
-.spectrum-FieldGroup-label {
-  display: flex;
-  align-items: flex-start;
-  inline-size: 100%;
-}
-
-.spectrum-FieldGroup--vertical {
-  display: inline-flex;
   flex-direction: column;
+}
+
+.spectrum-FieldGroup--horizontal {
+  flex-direction: row;
 }
