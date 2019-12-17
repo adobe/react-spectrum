@@ -47,10 +47,10 @@ governing permissions and limitations under the License.
   padding: 0;
 
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   opacity: .0001;
   z-index: 1;
 
@@ -70,12 +70,10 @@ governing permissions and limitations under the License.
 
 .spectrum-ToggleSwitch-label {
   margin: 0 var(--spectrum-switch-text-gap);
-  margin-top: var(--spectrum-switch-label-margin-top);
-  font-size: var(--spectrum-switch-text-size);
-  line-height: var(--spectrum-switch-label-line-height);  
-  transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
-
   margin-block-start: var(--spectrum-switch-label-margin-top);
+  font-size: var(--spectrum-switch-text-size);
+  line-height: var(--spectrum-switch-label-line-height);
+  transition: color var(--spectrum-global-animation-duration-200) ease-in-out;
 }
 
 .spectrum-ToggleSwitch-switch {
@@ -106,10 +104,10 @@ governing permissions and limitations under the License.
   &::before {
     transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out;
 
-    height: var(--spectrum-switch-track-height);
+    block-size: var(--spectrum-switch-track-height);
 
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
 
     border-radius: calc(var(--spectrum-switch-track-height) / 2);
   }
@@ -121,8 +119,8 @@ governing permissions and limitations under the License.
     inline-size: var(--spectrum-switch-handle-size);
     block-size: var(--spectrum-switch-handle-size);
 
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
 
     border-width: var(--spectrum-switch-handle-border-size);
     border-radius: var(--spectrum-switch-handle-border-radius);

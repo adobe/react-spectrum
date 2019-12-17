@@ -63,10 +63,8 @@ governing permissions and limitations under the License.
 
   /* Hit area */
   position: absolute;
-  top: 0;
-  left: calc(var(--spectrum-radio-cursor-hit-x) * -1);
-  /* right wins in rtl because inline-size is specified */
-  right: calc(var(--spectrum-radio-cursor-hit-x) * -1);
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--spectrum-radio-cursor-hit-x) * -1);
   inline-size: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
   block-size: 100%;
 
@@ -86,12 +84,11 @@ governing permissions and limitations under the License.
 
 .spectrum-Radio-label {
   margin-inline-start: var(--spectrum-radio-text-gap);
+  /* Hardcoded as no good way to calculate this */
+  margin-block-start: var(--spectrum-radio-label-margin-top);
   font-size: var(--spectrum-radio-text-size);
   line-height: var(--spectrum-radio-label-line-height);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-
-  /* Hardcoded as no good way to calculate this */
-  margin-block-start: var(--spectrum-radio-label-margin-top);
 }
 
 .spectrum-Radio-button {
