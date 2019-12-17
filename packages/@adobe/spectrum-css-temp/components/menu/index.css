@@ -45,16 +45,16 @@ governing permissions and limitations under the License.
 
   > .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
-    margin-top: var(--spectrum-menu-margin-x);
-    margin-bottom: var(--spectrum-menu-margin-x);
+    margin-block-start: var(--spectrum-menu-margin-x);
+    margin-block-end: var(--spectrum-menu-margin-x);
   }
 
   &.is-selectable {
     .spectrum-Menu-item {
-      padding-right: var(--spectrum-selectlist-option-selectable-padding-right);
+      padding-inline-end: var(--spectrum-selectlist-option-selectable-padding-right);
 
       &.is-selected {
-        padding-right: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
+        padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
       }
     }
   }
@@ -79,11 +79,12 @@ governing permissions and limitations under the License.
 
   border-left: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
-  min-height: var(--spectrum-selectlist-option-height);
+  min-block-size: var(--spectrum-selectlist-option-height);
 
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
   font-style: normal;
+  text-decoration: none;
 
   &:focus {
     outline: none;
@@ -91,27 +92,30 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     /* Redundant, but included for backwards compatibility */
-    padding-right: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
+    padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
 
     .spectrum-Menu-checkmark {
       display: block;
     }
   }
 
-  .spectrum-Icon {
+  .spectrum-Icon,
+  .spectrum-Menu-itemIcon {
     /* Don't get smaller, you're an icon! */
     flex-shrink: 0;
     align-self: flex-start;
   }
 
-  .spectrum-Icon + .spectrum-Menu-itemLabel {
-    margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x);
+  .spectrum-Icon + .spectrum-Menu-itemLabel,
+  .spectrum-Menu-itemIcon  + .spectrum-Menu-itemLabel {
+    margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
 
 .spectrum-Menu-itemLabel {
   flex: 1 1 auto;
   line-height: var(--spectrum-selectlist-option-label-line-height);
+  word-break: break-all;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -123,13 +127,13 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   display: none;
   align-self: flex-start;
-  margin-top: var(--spectrum-selectlist-option-icon-margin-top);
 }
 
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
   flex-grow: 0;
-  margin-left: var(--spectrum-selectlist-option-icon-padding-x);
+  margin-inline-start: var(--spectrum-selectlist-option-icon-padding-x);
+  margin-block-start: var(--spectrum-selectlist-option-icon-margin-top);
 }
 
 .spectrum-Menu-divider {
@@ -139,7 +143,7 @@ governing permissions and limitations under the License.
   /* Show the overflow for hr in Edge and IE. */
   overflow: visible;
 
-  height: var(--spectrum-selectlist-divider-size);
+  block-size: var(--spectrum-selectlist-divider-size);
   margin: calc(var(--spectrum-selectlist-divider-padding) / 2) var(--spectrum-selectlist-option-padding);
   padding: 0 0;
   border: none;

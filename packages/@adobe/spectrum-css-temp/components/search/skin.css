@@ -20,4 +20,23 @@ governing permissions and limitations under the License.
       color: var(--spectrum-textfield-text-color-disabled);
     }
   }
+
+  /* The value of color is identical for hover/active/focus-ring, but we repeat it here in case one is changed in the future */
+  &:hover {
+    & ~ .spectrum-Search-icon {
+      color: var(--spectrum-search-icon-color-hover);
+    }
+  }
+
+  &:active {
+    & ~ .spectrum-Search-icon {
+      color: var(--spectrum-search-icon-color-down);
+    }
+  }
+
+  &:focus-ring {
+    & ~ .spectrum-Search-icon {
+      color: var(--spectrum-search-icon-color-key-focus);
+    }
+  }
 }
