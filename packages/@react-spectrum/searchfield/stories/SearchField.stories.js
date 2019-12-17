@@ -38,6 +38,18 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'isRequired: true',
+    () => render({isRequired: true})
+  )
+  .add(
+    'isRequired: true, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'isRequired: false, necessityIndicator: label',
+    () => render({isRequired: false, necessityIndicator: 'label'})
+  )
+  .add(
     'icon: refresh',
     () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
     {info}
@@ -58,14 +70,25 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
-    'custom width',
-    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}})),
-    {info}
+    'labelAlign: end',
+    () => render({labelAlign: 'end'})
   )
   .add(
-    'custom width, quiet',
-    () => renderSearchLandmark(render({UNSAFE_style: {width: 300}, isQuiet: true})),
-    {info}
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => render({label: null, 'aria-label': 'Street address'})
+  )
+  .add('custom width',
+    () => render({width: 300})
+  )
+  .add('custom width, quiet',
+    () => render({width: 300, isQuiet: true})
+  )
+  .add('custom width, labelPosition: side',
+    () => render({width: 300, labelPosition: 'side'})
   );
 
 function renderSearchLandmark(child) {
@@ -76,7 +99,7 @@ function render(props = {}) {
   return (
     <SearchField
       UNSAFE_className="custom_classname"
-      aria-label="Search"
+      label="Search"
       placeholder="Enter text"
       {...props}
       onChange={action('change')}
