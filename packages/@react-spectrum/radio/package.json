@@ -30,6 +30,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.0.0-alpha.2",
     "@react-aria/radio": "^3.0.0-alpha.2",
+    "@react-spectrum/label": "^3.0.0-alpha.2",
     "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-stately/radio": "^3.0.0-alpha.2",
