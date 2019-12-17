@@ -21,23 +21,29 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-rule-medium-height);
 }
 
+.spectrum-Rule--large {
+  border-radius: var(--spectrum-rule-large-border-radius);
+}
+
+.spectrum-Rule--medium {
+  border-radius: var(--spectrum-rule-medium-border-radius);
+}
+
+.spectrum-Rule--small {
+  border-radius: var(--spectrum-rule-small-border-radius);
+}
+
 .spectrum-Rule--horizontal {
   &.spectrum-Rule--large {
     block-size: var(--spectrum-rule-large-height);
-
-    border-radius: var(--spectrum-rule-large-border-radius);
   }
 
   &.spectrum-Rule--medium {
     block-size: var(--spectrum-rule-medium-height);
-
-    border-radius: var(--spectrum-rule-medium-border-radius);
   }
 
   &.spectrum-Rule--small {
     block-size: var(--spectrum-rule-small-height);
-
-    border-radius: var(--spectrum-rule-small-border-radius);
   }
 }
 
