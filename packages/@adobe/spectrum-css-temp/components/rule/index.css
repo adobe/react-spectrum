@@ -21,22 +21,24 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-rule-medium-height);
 }
 
-.spectrum-Rule--large {
-  block-size: var(--spectrum-rule-large-height);
+.spectrum-Rule--horizontal {
+  .spectrum-Rule--large {
+    block-size: var(--spectrum-rule-large-height);
 
-  border-radius: var(--spectrum-rule-large-border-radius);
-}
+    border-radius: var(--spectrum-rule-large-border-radius);
+  }
 
-.spectrum-Rule--medium {
-  block-size: var(--spectrum-rule-medium-height);
+  .spectrum-Rule--medium {
+    block-size: var(--spectrum-rule-medium-height);
 
-  border-radius: var(--spectrum-rule-medium-border-radius);
-}
+    border-radius: var(--spectrum-rule-medium-border-radius);
+  }
 
-.spectrum-Rule--small {
-  block-size: var(--spectrum-rule-small-height);
+  .spectrum-Rule--small {
+    block-size: var(--spectrum-rule-small-height);
 
-  border-radius: var(--spectrum-rule-small-border-radius);
+    border-radius: var(--spectrum-rule-small-border-radius);
+  }
 }
 
 .spectrum-Rule--vertical {
@@ -44,18 +46,14 @@ governing permissions and limitations under the License.
    * if they *ARE* using flex, then they need to either have align-items stretch OR align-self stretch
    */
   &.spectrum-Rule--large {
-    /* must override the height defined in the horizontal case */
-    block-size: auto;
     inline-size: var(--spectrum-rule-large-height);
   }
 
   &.spectrum-Rule--medium {
-    block-size: auto;
     inline-size: var(--spectrum-rule-medium-height);
   }
 
   &.spectrum-Rule--small {
-    block-size: auto;
     inline-size: var(--spectrum-rule-small-height);
   }
 }
