@@ -317,4 +317,22 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(ref.current.getInputElement()).toEqual(input);
   });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports labeling', ({Component}) => {
+    let ref = React.createRef();
+    let tree = renderComponent(Component, {ref, label: 'Textfield label'});
+    let input = tree.getByTestId(testId);
+    expect(ref.current.getInputElement()).toEqual(input);
+
+    let labelId = input.getAttribute('aria-labelledby');
+    expect(labelId).toBeDefined();
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('Textfield label');
+    expect(label).toHaveAttribute('for', input.id);
+  });
 });

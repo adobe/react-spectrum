@@ -60,8 +60,8 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'valueLabel: Loading 1 of 4',
-    () => render({value: 25, valueLabel: 'Loading 1 of 4'})
+    'valueLabel: 1 of 4',
+    () => render({value: 25, valueLabel: '1 of 4'})
   )
   .add(
     'Using number formatOptions with currency style',
@@ -78,7 +78,7 @@ storiesOf('Progress/ProgressBar', module)
     'no visible label',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: null, 'aria-label': 'Loading…', value});
+      return render({label: null, 'aria-label': 'Loading…', value});
     }
   )
   .add(
@@ -139,6 +139,6 @@ storiesOf('Progress/ProgressBar', module)
 
 function render(props: any = {}) {
   return (
-    <ProgressBar {...props}>{props.children === null ? null : props.children || 'Loading…'}</ProgressBar>
+    <ProgressBar label="Loading…" {...props} />
   );
 }

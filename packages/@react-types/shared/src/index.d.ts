@@ -9,3 +9,4 @@ export * from './events';
 export * from './dna';
 export * from './style';
 export * from './refs';
+export * from './labelable';
