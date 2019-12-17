@@ -43,6 +43,14 @@ export interface PressEvents {
   onPressChange?: (isPressed: boolean) => void
 }
 
+export interface HoverEvents {
+  onHover?: (e: HoverEvent) => void,
+  onHoverStart?: (e: HoverEvent) => void,
+  onHoverEnd?: (e: HoverEvent) => void,
+  onShow?: (isHovering: boolean) => void,
+  onHoverTooltip?: (isHovering: boolean) => void
+}
+
 export interface FocusableProps extends FocusEvents, KeyboardEvents {
   autoFocus?: boolean
 }

@@ -9,14 +9,14 @@ export interface HoverEvent {
  target: HTMLElement
 }
 
-export interface HoverProps {
+export interface HoverProps extends HoverEvents, DOMProps {
  isHovering?: boolean,  // can be used to indicate a potential hover state for visual effects
- isDisabled?: boolean,
- onHover?: (e: HoverEvent) => void,
- onHoverStart?: (e: HoverEvent) => void,
- onHoverEnd?: (e: HoverEvent) => void,
- onShow?: (isHovering: boolean) => void,
- onHoverTooltip?: (isHovering: boolean) => void
+ isDisabled?: boolean//,
+ // onHover?: (e: HoverEvent) => void,
+ // onHoverStart?: (e: HoverEvent) => void,
+ // onHoverEnd?: (e: HoverEvent) => void,
+ // onShow?: (isHovering: boolean) => void,
+ // onHoverTooltip?: (isHovering: boolean) => void
 }
 
 export interface HoverHookProps extends HoverProps, DOMProps {
