@@ -1,4 +1,4 @@
-import {DOMProps, FocusableProps, PressEvents, HoverEvents, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
 export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {

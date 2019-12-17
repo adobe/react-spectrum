@@ -1,22 +1,11 @@
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, HoverEvents} from '@react-types/shared';
 import {HoverResponderContext} from './hoverContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 
-export interface HoverEvent {
- type: 'hoverstart' | 'hoverend' | 'hover',
- pointerType: 'mouse' | 'touch' | 'pen',
- target: HTMLElement
-}
-
 export interface HoverProps extends HoverEvents, DOMProps {
- isHovering?: boolean,  // can be used to indicate a potential hover state for visual effects
- isDisabled?: boolean//,
- // onHover?: (e: HoverEvent) => void,
- // onHoverStart?: (e: HoverEvent) => void,
- // onHoverEnd?: (e: HoverEvent) => void,
- // onShow?: (isHovering: boolean) => void,
- // onHoverTooltip?: (isHovering: boolean) => void
+ isHovering?: boolean,      // can be used to indicate a potential hover state for visual effects
+ isDisabled?: boolean
 }
 
 export interface HoverHookProps extends HoverProps, DOMProps {
