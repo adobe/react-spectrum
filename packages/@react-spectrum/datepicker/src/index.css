@@ -1,6 +1,6 @@
-.react-spectrum-Datepicker-field {
-  /* omg... someone please kill me */
-  width: auto !important;
+.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
+  /* needs to override the style from Textfield */
+  width: auto;
 }
 
 .react-spectrum-Datepicker-endField {
