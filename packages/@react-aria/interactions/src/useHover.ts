@@ -42,7 +42,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
       if (context && context.ref) {
         context.ref.current = null;
       }
-    }
+    };
   }, [context, props.ref]);
 
   return props;
