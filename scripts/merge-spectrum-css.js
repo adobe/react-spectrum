@@ -56,6 +56,19 @@ if (!fs.existsSync(`${__dirname}/temp`)) {
   console.log('skipping creation of diff directory');
 }
 
+function runCommand(cmd, count = 0) {
+  try {
+    execSync(cmd);
+  } catch (error) {
+    if (count > 3) {
+      console.log(error, cmd, 'try', count);
+      return;
+    }
+    runCommand(cmd, count + 1);
+  }
+  console.log('success', cmd, 'try', count);
+}
+
 Promise.all(promises).then(() => {
   components.forEach(componentName => {
     if (ignoreComponents.includes(componentName)) {
@@ -68,14 +81,10 @@ Promise.all(promises).then(() => {
         && fs.existsSync(`${rootDir}/index-remotefile`)
         && fs.existsSync(`${rootDir}/index-localfile`)) {
 
-        try {
-          execSync(`cd ${rootDir}; p4merge-cli index-basefile index-remotefile index-localfile index.css`);
-        } catch (error) {
-          console.log(componentName, 'index.css');
-        }
+        runCommand(`cd ${rootDir}; p4merge-cli index-basefile index-remotefile index-localfile index.css`);
       }
       if (getFilesizeInBytes(`${rootDir}/index.css`) > 0) {
-        exec(`cp ${rootDir}/index.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/index.css`);
+        runCommand(`cp ${rootDir}/index.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/index.css`);
       }
     }
 
@@ -85,14 +94,10 @@ Promise.all(promises).then(() => {
         && fs.existsSync(`${rootDir}/skin-remotefile`)
         && fs.existsSync(`${rootDir}/skin-localfile`)) {
 
-        try {
-          execSync(`cd ${rootDir}; p4merge-cli skin-basefile skin-remotefile skin-localfile skin.css`);
-        } catch (error) {
-          console.log(componentName, 'skin.css');
-        }
+        runCommand(`cd ${rootDir}; p4merge-cli skin-basefile skin-remotefile skin-localfile skin.css`);
       }
       if (getFilesizeInBytes(`${rootDir}/skin.css`) > 0) {
-        exec(`cp ${rootDir}/skin.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/skin.css`);
+        runCommand(`cp ${rootDir}/skin.css ${__dirname}/../packages/@adobe/spectrum-css-temp/components/${componentName}/skin.css`);
       }
     }
   });

@@ -1,4 +1,4 @@
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface ProgressBaseProps {
@@ -8,7 +8,7 @@ interface ProgressBaseProps {
 }
 
 export interface ProgressBarBaseProps extends ProgressBaseProps {
-  children?: ReactNode, // pass in children to render label
+  label?: ReactNode,
   showValueLabel?: boolean, // true by default if label, false by default if not
   formatOptions?: Intl.NumberFormatOptions, // defaults to formatting as a percentage.
   valueLabel?: ReactNode // custom value label (e.g. 1 of 4)
@@ -30,7 +30,7 @@ export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMPro
 
 export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {
   size?: 'S' | 'L',
-  labelPosition?: 'top' | 'side'
+  labelPosition?: LabelPosition
 }
 
 export interface SpectrumProgressBarProps extends SpectrumProgressBarBaseProps, ProgressBarProps {

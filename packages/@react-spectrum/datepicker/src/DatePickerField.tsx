@@ -71,9 +71,9 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
 
   let validationIcon = null;
   if (validationState === 'invalid') {
-    validationIcon = <Alert data-testid="invalid-icon" className={iconClass} />;
+    validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
   } else if (validationState === 'valid') {
-    validationIcon = <Checkmark data-testid="valid-icon" className={iconClass} />;
+    validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 
   return (

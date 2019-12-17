@@ -16,6 +16,8 @@ governing permissions and limitations under the License.
 :root {
   /* Bug: this must be 0ms, not 0 */
   --spectrum-dialog-background-entry-animation-delay: 0ms;
+  --spectrum-dialog-background-exit-animation-ease: cubic-bezier(0.5, 0, 1, 1); /* wrong in DNA */
+  --spectrum-dialog-background-entry-animation-ease: cubic-bezier(0, 0, 0.40, 1); /* wrong in DNA */
 }
 
 .spectrum-Underlay {
@@ -33,7 +35,7 @@ governing permissions and limitations under the License.
   overflow: hidden;
 
   /* Exit animations */
-  transition: opacity var(--spectrum-dialog-background-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-background-exit-animation-delay),
+  transition: opacity var(--spectrum-dialog-background-exit-animation-duration) var(--spectrum-dialog-background-exit-animation-ease) var(--spectrum-dialog-background-exit-animation-delay),
               visibility 0ms linear calc(var(--spectrum-dialog-background-exit-animation-delay) + var(--spectrum-dialog-background-exit-animation-duration));
 }
 
@@ -41,5 +43,5 @@ governing permissions and limitations under the License.
   @inherit: %spectrum-overlay--open;
 
   /* Entry animations */
-  transition: opacity var(--spectrum-dialog-background-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-background-entry-animation-delay);
+  transition: opacity var(--spectrum-dialog-background-entry-animation-duration) var(--spectrum-dialog-background-entry-animation-ease) var(--spectrum-dialog-background-entry-animation-delay);
 }

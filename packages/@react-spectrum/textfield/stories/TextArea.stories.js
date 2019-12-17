@@ -42,8 +42,20 @@ storiesOf('TextArea', module)
     () => render({isReadOnly: true})
   )
   .add(
+    'isReadOnly: true, value: read only value',
+    () => render({value: 'Read only value', isReadOnly: true})
+  )  
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
+  )
+  .add(
+    'isRequired: true, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'isRequired: false, necessityIndicator: label',
+    () => render({isRequired: false, necessityIndicator: 'label'})
   )
   .add(
     'autoFocus: true',
@@ -68,11 +80,30 @@ storiesOf('TextArea', module)
   .add(
     'icon: Info, validationState: invalid, isQuiet',
     () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelAlign: 'end'})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => render({label: null, 'aria-label': 'Street address'})
+  )
+  .add('custom width',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}})
+  )
+  .add('custom width, quiet',
+    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}, isQuiet: true})
   );
 
 function render(props = {}) {
   return (
     <TextArea
+      label="Comments"
       placeholder="React"
       onChange={action('change')}
       onFocus={action('focus')}
