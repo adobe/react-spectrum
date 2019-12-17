@@ -37,9 +37,11 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   useEffect(() => {
     if (context && context.ref) {
       context.ref.current = props.ref.current;
-      return () => {
+    }
+    return () => {
+      if (context && context.ref) {
         context.ref.current = null;
-      };
+      }
     }
   }, [context, props.ref]);
 
