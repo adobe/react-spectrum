@@ -79,6 +79,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-radio-text-gap);
   font-size: var(--spectrum-radio-text-size);
 

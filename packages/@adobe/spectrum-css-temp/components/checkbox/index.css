@@ -94,6 +94,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-checkbox-text-gap);
   font-size: var(--spectrum-checkbox-text-size);
   font-weight: var(--spectrum-checkbox-text-font-weight);
