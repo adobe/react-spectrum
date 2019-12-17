@@ -72,6 +72,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ToggleSwitch-label {
+  text-align: start;
   margin: 0 var(--spectrum-switch-text-gap);
   margin-block-start: var(--spectrum-switch-label-margin-top);
   font-size: var(--spectrum-switch-text-size);

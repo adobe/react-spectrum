@@ -100,6 +100,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-checkbox-text-gap);
   margin-block-start: var(--spectrum-checkbox-label-margin-top);
   font-size: var(--spectrum-checkbox-text-size);

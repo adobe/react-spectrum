@@ -83,6 +83,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-radio-text-gap);
   /* Hardcoded as no good way to calculate this */
   margin-block-start: var(--spectrum-radio-label-margin-top);
