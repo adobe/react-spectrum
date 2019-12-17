@@ -53,6 +53,35 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
 }
 
+/* A FieldContainer is a wrapper for a FieldLabel and a field component (e.g. textfield).
+ * By default, labels are placed above the field. Fields have a default width, and the
+ * label will wrap within this width. The width of the whole field can be overridden by the user,
+ * and this causes both the label and inner field to resize as well. */
+.spectrum-FieldContainer--positionTop {
+  display: inline-block;
+  width: var(--spectrum-component-single-line-width);
+
+  .spectrum-FieldContainer-field {
+    /* If the user overrides the width of the field, propagate to the inner component */
+    width: 100%;
+  }
+}
+
+/* The side label variant of FieldContainer is inline, and fills as much space as needed
+ * by default. If an explicit width is set, then the field flexes to fill available space. */
+.spectrum-FieldContainer--positionSide {
+  display: inline-flex !important; /* important to override .spectrum-Search */
+  align-items: flex-start;
+
+  .spectrum-FieldContainer-field {
+    flex: 1;
+  }
+}
+
+/* topdoc
+{{ form/index.yml }}
+*/
+
 .spectrum-Form {
   display: table;
   border-collapse: separate;
