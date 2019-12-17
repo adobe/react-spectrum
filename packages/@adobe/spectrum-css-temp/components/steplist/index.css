@@ -39,9 +39,6 @@ governing permissions and limitations under the License.
   --spectrum-steplist-label-text-size: 12px;
 }
 
-/* topdoc
-{{ steplist/steplist-default.yml }}
-*/
 .spectrum-Steplist {
   /* Contain child elements with positive z-index */
   z-index: 0;
@@ -129,7 +126,9 @@ governing permissions and limitations under the License.
   /* Selected state */
   &.is-selected {
     /* Focus */
-    &:focus {
+    &:focus,
+    &.is-focused,
+    *:focus {
       outline: none;
     }
     .spectrum-Steplist-marker {
@@ -138,9 +137,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ steplist/steplist-label.yml }}
-*/
 .spectrum-Steplist-label {
   position: absolute;
   left: 50%;
@@ -269,7 +265,3 @@ governing permissions and limitations under the License.
     margin-left: calc(-1 * calc(var(--spectrum-steplist-marker-hitArea) / 2));
   }
 }
-
-/* topdoc
-{{ steplist/steplist-tooltip.yml }}
-*/

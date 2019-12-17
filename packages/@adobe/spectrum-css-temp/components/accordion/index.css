@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-
 /* https://git.corp.adobe.com/Spectrum/spectrum-origins/pull/60 */
 :root {
   --spectrum-accordion-icon-width: 6px;
@@ -25,9 +23,6 @@ governing permissions and limitations under the License.
   --spectrum-accordion-item-line-height: 1.3;
 }
 
-/* topdoc
-{{ accordion/accordion.yml }}
-*/
 .spectrum-Accordion {
   display: block;
   list-style: none;

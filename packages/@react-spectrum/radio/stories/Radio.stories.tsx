@@ -66,10 +66,6 @@ storiesOf('Radio', module)
     () => renderLongLabel({})
   )
   .add(
-    'independent label',
-    () => renderExternalLabel()
-  )
-  .add(
     'provider control: isDisabled',
     () => renderFormControl()
   )
@@ -117,25 +113,6 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
         Dragons
       </Radio>
     </RadioGroup>
-  );
-}
-
-function renderExternalLabel() {
-  return (
-    <div style={{display: 'flex', flexDirection: 'row'}}>
-      <label id="the-label" htmlFor="the-radiogroup">I'm an independent label</label>
-      <RadioGroup id="the-radiogroup" aria-labelledby="the-label" onChange={action('onChange')}>
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
-      </RadioGroup>
-    </div>
   );
 }
 
