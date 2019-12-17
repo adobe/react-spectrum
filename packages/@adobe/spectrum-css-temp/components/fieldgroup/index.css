@@ -17,6 +17,6 @@ governing permissions and limitations under the License.
   flex-direction: column;
 }
 
-.spectum-FieldGroup--horizontal {
+.spectrum-FieldGroup--horizontal {
   flex-direction: row;
 }

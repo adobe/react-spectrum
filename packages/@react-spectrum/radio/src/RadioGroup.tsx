@@ -57,7 +57,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
           styles,
           'spectrum-FieldGroup',
           {
-            'spectum-FieldGroup--horizontal': labelPosition === 'side'
+            'spectrum-FieldGroup--horizontal': labelPosition === 'side'
           },
           styleProps.className
         )
@@ -79,7 +79,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
             styles,
             'spectrum-FieldGroup',
             {
-              'spectum-FieldGroup--horizontal': orientation === 'horizontal'
+              'spectrum-FieldGroup--horizontal': orientation === 'horizontal'
             }
           )
         }>
