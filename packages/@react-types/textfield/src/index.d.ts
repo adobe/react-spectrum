@@ -1,9 +1,9 @@
-import {FocusableRefValue, InputBase, StyleProps, TextInputBase, TextInputDOMProps, ValueBase} from '@react-types/shared';
+import {FocusableRefValue, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase} from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, TextInputBase, ValueBase<string> {}
+export interface TextFieldProps extends InputBase, TextInputBase, ValueBase<string>, LabelableProps {}
 
-export interface SpectrumTextFieldProps extends TextFieldProps, TextInputDOMProps, StyleProps {
+export interface SpectrumTextFieldProps extends TextFieldProps, SpectrumLabelableProps, TextInputDOMProps, StyleProps {
   icon?: ReactElement,
   isQuiet?: boolean
 }

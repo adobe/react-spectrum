@@ -1,25 +1,20 @@
 {
-  "name": "@react-spectrum/form",
+  "name": "@react-spectrum/label",
   "version": "3.0.0-alpha.2",
+  "private": true,
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
     },
     "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
     }
   },
   "repository": {
@@ -33,16 +28,14 @@
     "@react-aria/utils": "^3.0.0-alpha.2",
     "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-types/form": "^3.0.0-alpha.2",
-    "@react-types/label": "^3.0.0-alpha.2",
-    "@react-types/shared": "^3.0.0-alpha.2",
     "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "publishConfig": {
     "access": "public"
