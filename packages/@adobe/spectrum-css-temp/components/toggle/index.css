@@ -60,7 +60,7 @@ governing permissions and limitations under the License.
     [dir='ltr'] &::after {
       transform: translateX(calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size)));
     }
-    [dir='ltr'] &::after {
+    [dir='rtl'] &::after {
       transform: translateX(calc(-1 * calc(var(--spectrum-switch-track-width) - var(--spectrum-switch-handle-size))));
     }
   }
