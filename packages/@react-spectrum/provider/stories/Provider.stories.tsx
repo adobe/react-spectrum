@@ -71,7 +71,9 @@ function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
       <Form>
-        <Button variant="primary">I am a button</Button>
+        <div> {/* Extra div so that the button does not expand to 100% width */}
+          <Button variant="primary">I am a button</Button>
+        </div>
         <TextField label="A text field" placeholder="Something" marginTop="size-100" />
         <Checkbox>Cats!</Checkbox>
         <Switch>Dogs!</Switch>
