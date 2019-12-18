@@ -82,7 +82,7 @@ function render(props: any = {}) {
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
       <TextField label="Zip code" placeholder="12345" />
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+      <RadioGroup label="Favorite pet" defaultValue="dogs">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>

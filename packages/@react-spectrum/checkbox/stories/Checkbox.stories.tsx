@@ -4,6 +4,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Checkbox', module)
+  .addParameters({chromaticProvider: {rtl: true}})
   .add(
     'Default',
     () => render()
@@ -34,7 +35,7 @@ storiesOf('Checkbox', module)
   )
   .add(
     'isEmphasized: true',
-    () => render({isEmphasized: true})
+    () => render({isEmphasized: true, defaultSelected: true})
   )
   .add(
     'isEmphasized: true, isIndeterminate: true',
@@ -58,7 +59,8 @@ storiesOf('Checkbox', module)
   )
   .add(
     'autoFocus: true',
-    () => render({autoFocus: true})
+    () => render({autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   )
   .add(
     'custom label',

@@ -5,6 +5,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('RadioGroup', module)
+  .addParameters({chromaticProvider: {rtl: true}})
   .add(
     'default',
     () => render({})
@@ -55,7 +56,7 @@ storiesOf('RadioGroup', module)
   )
   .add(
     'isEmphasized',
-    () => render({isEmphasized: true})
+    () => render({isEmphasized: true, defaultValue: 'dragons'})
   )
   .add(
     'validationState: "invalid"',
@@ -75,12 +76,13 @@ storiesOf('RadioGroup', module)
   )
   .add(
     'autoFocus on one radio',
-    () => render({}, [{}, {autoFocus: true}, {}])
+    () => render({}, [{}, {autoFocus: true}, {}]),
+    {chromaticProvider: {isAutoFocus: true}}
   );
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')}>
       <Radio value="dogs" {...radioProps[0]}>
         Dogs
       </Radio>
@@ -113,7 +115,7 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
 function renderFormControl() {
   return (
     <Provider isDisabled>
-      <RadioGroup aria-label="Favorite pet" onChange={action('onChangePet')} name="favorite-pet-group">
+      <RadioGroup label="Favorite pet" onChange={action('onChangePet')}>
         <Radio value="dogs">
           Dogs
         </Radio>
@@ -124,7 +126,7 @@ function renderFormControl() {
           Dragons
         </Radio>
       </RadioGroup>
-      <RadioGroup aria-label="Favorite cereal" onChange={action('onChangeCereal')} name="favorite-cereal-group">
+      <RadioGroup label="Favorite cereal" onChange={action('onChangeCereal')}>
         <Radio value="reeses">
           Reese's Peanut Butter Puffs
         </Radio>

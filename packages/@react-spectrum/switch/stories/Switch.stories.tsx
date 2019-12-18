@@ -4,6 +4,7 @@ import {storiesOf} from '@storybook/react';
 import {Switch} from '../';
 
 storiesOf('Switch', module)
+  .addParameters({chromaticProvider: {rtl: true}})
   .add(
     'Default',
     () => render()
@@ -38,7 +39,8 @@ storiesOf('Switch', module)
   )
   .add(
     'autoFocus: true',
-    () => render({autoFocus: true})
+    () => render({autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   )
   .add(
     'custom label',
