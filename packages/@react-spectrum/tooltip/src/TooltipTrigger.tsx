@@ -5,6 +5,7 @@ import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
+import {useTooltipState} from '@react-stately/tooltip';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 
 interface TooltipTriggerProps extends PositionProps {
@@ -33,7 +34,12 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   // TODO: move this to react-statley in a tooltipTrigger package
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
-  // TODO: move these three functions into useTooltipTrigger
+
+  let state = useTooltipState(props);
+
+  console.log('sate', state)
+
+  // TODO: move these these also into react stately 
   let onPressInteraction = () => {
     setOpen(!open);
   };
