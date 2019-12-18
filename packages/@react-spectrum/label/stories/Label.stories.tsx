@@ -11,11 +11,11 @@ storiesOf('Label', module)
   )
   .add(
     'labelAlign: start',
-    () => render({labelAlign: 'start', width: 80})
+    () => render({labelAlign: 'start', width: '100%'})
   )
   .add(
     'labelAlign: end',
-    () => render({labelAlign: 'end', width: 192})
+    () => render({labelAlign: 'end', width: '100%'})
   )
   .add(
     'labelPosition: side, labelAlign: start',
