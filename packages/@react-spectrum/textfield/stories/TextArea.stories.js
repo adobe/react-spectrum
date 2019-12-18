@@ -44,7 +44,7 @@ storiesOf('TextArea', module)
   .add(
     'isReadOnly: true, value: read only value',
     () => render({value: 'Read only value', isReadOnly: true})
-  )  
+  )
   .add(
     'isRequired: true',
     () => render({isRequired: true})
@@ -59,7 +59,8 @@ storiesOf('TextArea', module)
   )
   .add(
     'autoFocus: true',
-    () => render({autoFocus: true})
+    () => render({autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   )
   .add(
     'icon: Info',

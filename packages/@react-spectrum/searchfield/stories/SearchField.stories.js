@@ -67,7 +67,7 @@ storiesOf('SearchField', module)
   .add(
     'autoFocus',
     () => renderSearchLandmark(render({autoFocus: true})),
-    {info}
+    {info, chromaticProvider: {isAutoFocus: true}}
   )
   .add(
     'labelAlign: end',

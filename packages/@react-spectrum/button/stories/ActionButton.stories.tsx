@@ -31,7 +31,8 @@ storiesOf('Button/ActionButton', module)
   )
   .add(
     'autoFocus',
-    () => render({autoFocus: true})
+    () => render({autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   );
 
 function render(props = {}) {

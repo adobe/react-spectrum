@@ -38,7 +38,8 @@ storiesOf('RangeCalendar', module)
   )
   .add(
     'autoFocus',
-    () => render({defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}, autoFocus: true})
+    () => render({defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}, autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   );
 
 function render(props = {}) {

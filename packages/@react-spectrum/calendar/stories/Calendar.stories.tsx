@@ -38,7 +38,8 @@ storiesOf('Calendar', module)
   )
   .add(
     'autoFocus',
-    () => render({defaultValue: new Date(2019, 5, 5), autoFocus: true})
+    () => render({defaultValue: new Date(2019, 5, 5), autoFocus: true}),
+    {chromaticProvider: {isAutoFocus: true}}
   );
 
 function render(props = {}) {
