@@ -44,9 +44,9 @@ storiesOf('Label', module)
 
 function render(props: SpectrumLabelProps = {}) {
   return (
-    <Fragment>
+    <div style={{whiteSpace: 'nowrap'}}>
       <Label {...props} for="test">Test</Label>
       <TextField placeholder="React" id="test" isRequired={props.isRequired} />
-    </Fragment>
+    </div>
   );
 }
