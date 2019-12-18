@@ -37,6 +37,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isDisabled,
     isRequired,
     isReadOnly,
+    validationState,
     ...otherProps
   } = props;
 
@@ -51,7 +52,8 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isEmphasized,
     isDisabled,
     isRequired,
-    isReadOnly
+    isReadOnly,
+    validationState
   });
 
   useEffect(() => {
@@ -137,6 +139,7 @@ export function useProviderProps<T>(props: T) : T {
     isEmphasized: context.isEmphasized,
     isDisabled: context.isDisabled,
     isRequired: context.isRequired,
-    isReadOnly: context.isReadOnly
+    isReadOnly: context.isReadOnly,
+    validationState: context.validationState
   }, props);
 }

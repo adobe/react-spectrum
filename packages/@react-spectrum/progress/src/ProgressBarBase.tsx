@@ -19,9 +19,9 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
     minValue = 0,
     maxValue = 100,
     size = 'L',
-    children,
+    label,
     barClassName,
-    showValueLabel = !!children,
+    showValueLabel = !!label,
     labelPosition = 'top',
     isIndeterminate = false,
     barProps,
@@ -43,7 +43,7 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
 
   // Ideally this should be in useProgressBar, but children 
   // are not supported in ProgressCircle which shares that hook...
-  if (!children && !ariaLabel && !ariaLabelledby) {
+  if (!label && !ariaLabel && !ariaLabelledby) {
     console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
 
@@ -67,11 +67,11 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
           styleProps.className
         )
       }>
-      {children &&
+      {label &&
         <label
           {...labelProps}
           className={classNames(styles, 'spectrum-BarLoader-label')}>
-            {children}
+            {label}
         </label>
       }
       {showValueLabel &&
