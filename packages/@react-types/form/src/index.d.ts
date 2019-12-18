@@ -1,8 +1,12 @@
-import {DOMProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {ReactElement} from 'react';
-import {SpectrumLabelProps} from '@react-types/label';
 
-export type SpectrumFormItemProps = SpectrumLabelProps;
 export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelableProps {
-  children: ReactElement<SpectrumFormItemProps> | ReactElement<SpectrumFormItemProps>[],
+  children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
+  isQuiet?: boolean,
+  isEmphasized?: boolean,
+  isDisabled?: boolean,
+  isRequired?: boolean,
+  isReadOnly?: boolean,
+  validationState?: ValidationState
 }
