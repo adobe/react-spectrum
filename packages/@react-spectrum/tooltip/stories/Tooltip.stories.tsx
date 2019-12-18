@@ -41,17 +41,29 @@ storiesOf('Tooltip', module)
     () => render(longMarkup)
   )
   .add(
-    'triggered by click, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'click'})
-  ).add(
-    'triggered by click, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click'})
-  ).add(
     'triggered by click, placement: top',
     () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'click'})
   ).add(
     'triggered by click, placement: bottom',
     () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
+  ).add(
+    'RTL example: start',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
+  ).add(
+    'RTL exmaple: end',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
+  ).add(
+    'triggered by hover, placement: right',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'right', type: 'hover'})
+  ).add(
+    'triggered by hover, placement: left',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover'})
+  ).add(
+    'supports disable prop : hover',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
+  ).add(
+    'supports disable prop : click',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   );
 
 function render(content, props = {}) {
@@ -69,7 +81,7 @@ function render(content, props = {}) {
 function renderWithTrigger(content, props = {}) {
   return (
     <TooltipTrigger {...props}>
-      <ActionButton>Click Me</ActionButton>
+      <ActionButton>Tooltip Trigger</ActionButton>
       <Tooltip>
         {content}
       </Tooltip>

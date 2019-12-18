@@ -16,6 +16,7 @@ export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 export type FocusEvent = BaseEvent<ReactFocusEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
+
 export interface PressEvent {
   type: 'pressstart' | 'pressend' | 'press',
   pointerType: PointerType,
@@ -23,6 +24,12 @@ export interface PressEvent {
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean
+}
+
+export interface HoverEvent {
+ type: 'hoverstart' | 'hoverend' | 'hover',
+ pointerType: 'mouse' | 'touch' | 'pen',
+ target: HTMLElement
 }
 
 export interface KeyboardEvents {
@@ -41,6 +48,14 @@ export interface PressEvents {
   onPressStart?: (e: PressEvent) => void,
   onPressEnd?: (e: PressEvent) => void,
   onPressChange?: (isPressed: boolean) => void
+}
+
+export interface HoverEvents {
+  onHover?: (e: HoverEvent) => void,
+  onHoverStart?: (e: HoverEvent) => void,
+  onHoverEnd?: (e: HoverEvent) => void,
+  onShow?: (isHovering: boolean) => void,
+  onHoverTooltip?: (isHovering: boolean) => void
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {

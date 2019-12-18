@@ -4,7 +4,7 @@ import {Radio, RadioGroup} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-storiesOf('Radio', module)
+storiesOf('RadioGroup', module)
   .add(
     'default',
     () => render({})
@@ -18,16 +18,24 @@ storiesOf('Radio', module)
     () => render({value: 'dragons'})
   )
   .add(
-    'labelPosition: bottom',
-    () => render({labelPosition: 'bottom'})
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
   )
   .add(
-    'vertical',
-    () => render({orientation: 'vertical'})
+    'labelAlign: end',
+    () => render({labelAlign: 'end'})
   )
   .add(
-    'vertical, labelPosition: bottom',
-    () => render({orientation: 'vertical', labelPosition: 'bottom'})
+    'horizontal',
+    () => render({orientation: 'horizontal'})
+  )
+  .add(
+    'horizontal, labelPosition: side',
+    () => render({orientation: 'horizontal', labelPosition: 'side'})
+  )
+  .add(
+    'horizontal, labelAlign: end',
+    () => render({orientation: 'horizontal', labelAlign: 'end'})
   )
   .add(
     'isDisabled',
@@ -54,15 +62,11 @@ storiesOf('Radio', module)
     () => render({validationState: 'invalid'})
   )
   .add(
-    'no label',
-    () => renderNoLabel({})
+    'no visible label',
+    () => render({label: null, 'aria-label': 'Favorite pet'})
   )
   .add(
-    'no label, isEmphasized',
-    () => renderNoLabel({isEmphasized: true})
-  )
-  .add(
-    'long label',
+    'long radio label',
     () => renderLongLabel({})
   )
   .add(
@@ -76,7 +80,7 @@ storiesOf('Radio', module)
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
       <Radio value="dogs" {...radioProps[0]}>
         Dogs
       </Radio>
@@ -86,16 +90,6 @@ function render(props, radioProps = [{}, {}, {}]) {
       <Radio value="dragons" {...radioProps[2]}>
         Dragons
       </Radio>
-    </RadioGroup>
-  );
-}
-
-function renderNoLabel(props, radioProps = [{}, {}, {}]) {
-  return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
-      <Radio value="dogs" aria-label="Dogs" {...radioProps[0]} />
-      <Radio value="cats" aria-label="Cats" {...radioProps[1]} />
-      <Radio value="dragons" aria-label="Dragons" {...radioProps[2]} />
     </RadioGroup>
   );
 }

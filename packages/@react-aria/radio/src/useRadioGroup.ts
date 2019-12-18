@@ -1,11 +1,12 @@
-import {AllHTMLAttributes} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {RadioGroupProps} from '@react-types/radio';
 import {useId} from '@react-aria/utils';
-
+import {useLabel} from '@react-aria/label';
 
 interface RadioGroupAria {
-  radioGroupProps: AllHTMLAttributes<HTMLElement>,
-  radioProps: AllHTMLAttributes<HTMLInputElement>
+  radioGroupProps: HTMLAttributes<HTMLElement>,
+  labelProps: LabelHTMLAttributes<HTMLElement>,
+  radioProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
@@ -13,11 +14,14 @@ export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
   let {
     name = defaultGroupId
   } = props;
+  let {labelProps, fieldProps} = useLabel(props);
 
   return {
     radioGroupProps: {
-      role: 'radiogroup'
+      role: 'radiogroup',
+      ...fieldProps
     },
+    labelProps,
     radioProps: {
       name
     }
