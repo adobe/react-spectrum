@@ -30,7 +30,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let state = useTooltipState(props);
 
-  // README: move these three functions to useTooltipTrigger b/c interactions, stately package b/c they mutate state, or keep here?
+  // move these three functions to useTooltipTrigger b/c interactions, stately package b/c they mutate state, or keep here?
   let onPressInteraction = () => {
     state.setOpen(!state.open);
   };
@@ -47,7 +47,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {tooltipTriggerBaseProps, tooltipInteractionProps} = useTooltipTrigger({
+  let {tooltipTriggerBaseProps, tooltipInteractionProps, tooltipClickTriggerSingularityProps, tooltipHoverTriggerSingularityProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props,
       onClose
@@ -81,6 +81,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <PressResponder
           {...tooltipTriggerBaseProps}
           {...tooltipInteractionProps}
+          {...tooltipClickTriggerSingularityProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}
@@ -96,6 +97,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <HoverResponder
           {...tooltipTriggerBaseProps}
           {...tooltipInteractionProps}
+          {...tooltipHoverTriggerSingularityProps}
           ref={triggerRef}
           isDisabled={isDisabled}
           onShow={onHoverInteraction}

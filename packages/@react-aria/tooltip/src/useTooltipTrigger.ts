@@ -23,8 +23,13 @@ interface TooltipTriggerProps {
 interface TooltipTriggerAria {
   tooltipTriggerBaseProps: AllHTMLAttributes<HTMLElement>,
   tooltipAriaProps: AllHTMLAttributes<HTMLElement>,
-  tooltipInteractionProps: AllHTMLAttributes<HTMLElement>
+  tooltipInteractionProps: AllHTMLAttributes<HTMLElement>,
+  tooltipHoverTriggerSingularityProps: AllHTMLAttributes<HTMLElement>,
+  tooltipClickTriggerSingularityProps: AllHTMLAttributes<HTMLElement>
 }
+
+let visibleTooltips = [];
+let tooltipStates = [];
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let {
@@ -52,6 +57,33 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  let enter = () => {
+    let tooltipBucketItem = triggerProps.ref.current.id;
+    visibleTooltips.push(tooltipBucketItem);
+    tooltipStates.forEach(tooltip => tooltip.setOpen(false));
+  };
+
+  let exit = (e) => {
+    let hoveringOverTooltip = false;
+    const related = e.relatedTarget || e.nativeEvent.toElement;
+    const parent = related.parentNode;
+    if (parent.getAttribute('role') === 'tooltip') {
+      hoveringOverTooltip = true;
+    }
+    if (visibleTooltips.length > 0 && hoveringOverTooltip === false) {
+      state.setOpen(false);
+    }
+    visibleTooltips.pop()
+  };
+
+  // TODO: create a toggle method that takes triggerProps.ref.current.id as an argument and decide when to perform visibleTooltips.pop()
+    // handle edge case via ... visibleTooltips.length > 1 && last index of the visible tooltips array != currTooltip
+  let enterClick = () => {
+    let tooltipBucketItem = triggerProps.ref.current.id;
+    visibleTooltips.push(tooltipBucketItem);
+    tooltipStates.push(state)
+  }
+
   return {
     tooltipTriggerBaseProps: {
       ...overlayProps,
@@ -64,6 +96,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     },
     tooltipInteractionProps: {
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
+    },
+    tooltipHoverTriggerSingularityProps: {
+      onMouseEnter: enter,
+      onMouseLeave: exit
+    },
+    tooltipClickTriggerSingularityProps: {
+      onMouseDown: enterClick
     }
   };
 }
