@@ -9,7 +9,7 @@ import {useTooltipTrigger} from '@react-aria/tooltip';
 
 interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
-  type?: 'click',
+  type?: 'click' | 'hover',
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   defaultOpen?: boolean,
@@ -47,7 +47,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {tooltipTriggerBaseProps, tooltipInteractionProps, clickTriggerSingularityProps, hoverTriggerSingularityProps} = useTooltipTrigger({
+  let {tooltipTriggerBaseProps, clickTriggerSingularityProps, hoverTriggerSingularityProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props,
       onClose
@@ -80,7 +80,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <PressResponder
           {...tooltipTriggerBaseProps}
-          {...tooltipInteractionProps}
           {...clickTriggerSingularityProps}
           ref={triggerRef}
           isPressed={isOpen}
@@ -96,7 +95,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <HoverResponder
           {...tooltipTriggerBaseProps}
-          {...tooltipInteractionProps}
           {...hoverTriggerSingularityProps}
           ref={triggerRef}
           isDisabled={isDisabled}

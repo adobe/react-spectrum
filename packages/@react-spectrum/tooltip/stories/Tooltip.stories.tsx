@@ -140,8 +140,8 @@ function renderMultipleTriggers(content, props = {}) {
 }
 
 function renderWithDifferentTriggerTypes(content) {
-  const hoverProps = {placement: 'right', type: 'hover'};
-  const clickProps = {placement: 'right', type: 'click'};
+  const hoverProps = {placement: 'right' as const, type: 'hover' as const};
+  const clickProps = {placement: 'right' as const, type: 'click' as const};
 
   return (
     <div>
