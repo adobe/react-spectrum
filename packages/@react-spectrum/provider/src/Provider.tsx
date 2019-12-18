@@ -7,7 +7,7 @@ import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import {ToastContainer} from '@react-spectrum/toast';
+import {ToastProvider} from '@react-spectrum/toast';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
