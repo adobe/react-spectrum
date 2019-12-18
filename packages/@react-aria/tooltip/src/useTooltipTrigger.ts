@@ -73,7 +73,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     if (visibleTooltips.length > 0 && hoveringOverTooltip === false) {
       state.setOpen(false);
     }
-    visibleTooltips.pop()
+    visibleTooltips.pop();
   };
 
   // TODO: create a toggle method that takes triggerProps.ref.current.id as an argument and decide when to perform visibleTooltips.pop()
@@ -81,8 +81,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let enterClick = () => {
     let tooltipBucketItem = triggerProps.ref.current.id;
     visibleTooltips.push(tooltipBucketItem);
-    tooltipStates.push(state)
-  }
+    tooltipStates.push(state);
+  };
 
   return {
     tooltipTriggerBaseProps: {
