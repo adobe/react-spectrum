@@ -33,13 +33,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   // TODO: move this to react-statley in a tooltipTrigger package
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
+  // let state = useTooltipState(props);
 
-
-  let state = useTooltipState(props);
-
-  console.log('sate', state)
-
-  // TODO: move these these also into react stately 
+  // TODO: move to useTooltipTrigger because they are interactions
   let onPressInteraction = () => {
     setOpen(!open);
   };
