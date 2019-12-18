@@ -1,5 +1,5 @@
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {forwardRef, useContext} from 'react';
@@ -37,7 +37,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
     isReadOnly,
     isDisabled,
     label,
-    labelPosition,
+    labelPosition = 'top' as LabelPosition,
     labelAlign,
     validationState,
     children,
@@ -60,12 +60,12 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
           styles,
           'spectrum-FieldGroup',
           {
-            'spectrum-FieldGroup--horizontal': labelPosition === 'side'
+            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
           },
           // This is so radio works inside a <Form>
           classNames(
             labelStyles,
-            'spectrum-Field'
+            'spectrum-Field',
           ),
           styleProps.className
         )
@@ -85,9 +85,9 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
         className={
           classNames(
             styles,
-            'spectrum-FieldGroup',
+            'spectrum-FieldGroup-group',
             {
-              'spectrum-FieldGroup--horizontal': orientation === 'horizontal'
+              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
             }
           )
         }>
