@@ -33,7 +33,8 @@
     "@react-aria/tooltip": "^3.0.0-alpha.2",
     "@react-spectrum/overlays": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-stately/utils": "^3.0.0-alpha.2"
+    "@react-stately/utils": "^3.0.0-alpha.2",
+    "@react-stately/tooltip": "^3.0.0-alpha.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"

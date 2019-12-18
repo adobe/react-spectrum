@@ -1,9 +1,9 @@
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
-import {TooltipState} from '@react-stately/tooltip';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -14,15 +14,10 @@ interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
   ref: RefObject<HTMLElement | null>,
 }
 
-interface TooltipTriggerState {
-  open: boolean,
-  setOpen(value: boolean): void
-}
-
 interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
   triggerProps: TriggerProps,
-  state: TooltipTriggerState
+  state: TooltipState
 }
 
 interface TooltipTriggerAria {
@@ -43,7 +38,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
-    isOpen: open
+    isOpen: state.open
   });
 
   let onKeyDownTrigger = (e) => {

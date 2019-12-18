@@ -12,7 +12,7 @@ let theme = {
   medium: scaleMedium
 };
 
-// TODO: test hover trigger as well 
+// TODO: test hover trigger as well
 describe('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
@@ -26,10 +26,10 @@ describe('TooltipTrigger', function () {
   it('triggered by click event', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
-      <TooltipTrigger type="click">
-      <ActionButton>Trigger</ActionButton>
-      <Tooltip>content</Tooltip>
-      </TooltipTrigger>
+        <TooltipTrigger type="click">
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip>content</Tooltip>
+        </TooltipTrigger>
       </Provider>
     );
 
@@ -48,10 +48,10 @@ describe('TooltipTrigger', function () {
   it('pressing esc should close the tooltip after a click event', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
-      <TooltipTrigger type="click">
-      <ActionButton>Trigger</ActionButton>
-      <Tooltip>content</Tooltip>
-      </TooltipTrigger>
+        <TooltipTrigger type="click">
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip>content</Tooltip>
+        </TooltipTrigger>
       </Provider>
     );
 

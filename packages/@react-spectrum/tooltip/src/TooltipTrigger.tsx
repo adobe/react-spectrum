@@ -4,7 +4,6 @@ import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
-import {useControlledState} from '@react-stately/utils';
 import {useTooltipState} from '@react-stately/tooltip';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 
@@ -24,16 +23,14 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     type,
     targetRef,
     isOpen,
-    defaultOpen,
-    isDisabled,
-    onOpenChange
+    isDisabled
   } = props;
 
   let [trigger, content] = React.Children.toArray(children);
 
   let state = useTooltipState(props);
 
-  // TODO: move to useTooltipTrigger because they are interactions
+  // README: move these three functions to useTooltipTrigger b/c interactions, stately package b/c they mutate state, or keep here?
   let onPressInteraction = () => {
     state.setOpen(!state.open);
   };
