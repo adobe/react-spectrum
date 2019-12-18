@@ -146,7 +146,6 @@ function renderWithDifferentTriggerTypes(content) {
   return (
     <div>
       <div>
-        // @ts-ignore
         <TooltipTrigger {...hoverProps}>
           <ActionButton>
             Hover Trigger
@@ -158,7 +157,6 @@ function renderWithDifferentTriggerTypes(content) {
       </div>
       <div style={{height: 10}}> </div>
       <div>
-        // @ts-ignore
         <TooltipTrigger {...clickProps}>
           <ActionButton>
             Click Trigger
@@ -170,7 +168,6 @@ function renderWithDifferentTriggerTypes(content) {
       </div>
       <div style={{height: 10}}> </div>
       <div>
-        // @ts-ignore
         <TooltipTrigger {...hoverProps}>
           <ActionButton>
             Hover Trigger
@@ -182,7 +179,6 @@ function renderWithDifferentTriggerTypes(content) {
       </div>
       <div style={{height: 10}}> </div>
       <div>
-        // @ts-ignore
         <TooltipTrigger {...clickProps}>
           <ActionButton>
             Click Trigger
@@ -194,7 +190,6 @@ function renderWithDifferentTriggerTypes(content) {
       </div>
       <div style={{height: 10}}> </div>
       <div>
-        // @ts-ignore
         <TooltipTrigger {...clickProps}>
           <ActionButton>
             Click Trigger
