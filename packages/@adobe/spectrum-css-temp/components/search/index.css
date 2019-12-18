@@ -23,8 +23,8 @@ governing permissions and limitations under the License.
   }
 
   &.is-quiet .spectrum-Search-input {
-    padding-inline-start: var(--spectrum-search-quiet-padding-left);
-    padding-inline-end: var(--spectrum-search-quiet-padding-right);
+    padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-global-dimension-size-200));
+    padding-inline-end: var(--spectrum-global-dimension-size-350);
   }
 }
 
@@ -39,7 +39,7 @@ governing permissions and limitations under the License.
   outline-offset: -2px;
 
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left);
+  padding-inline-start: calc(var(--spectrum-global-dimension-size-400) - 1px);
   text-indent: 0;
 
   /* Don't let long strings overlap the close icon */
@@ -58,8 +58,8 @@ governing permissions and limitations under the License.
   position: absolute;
   height: var(--spectrum-global-dimension-size-200);
   width: var(--spectrum-global-dimension-size-200);
-  inset-inline-start: 12px;
-  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
+  inset-inline-start: var(--spectrum-global-dimension-size-100);
+  top: var(--spectrum-global-dimension-size-85);
 
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 
