@@ -31,21 +31,19 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
-  // TODO: move this to react-statley in a tooltipTrigger package
-  let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
-  // let state = useTooltipState(props);
+  let state = useTooltipState(props);
 
   // TODO: move to useTooltipTrigger because they are interactions
   let onPressInteraction = () => {
-    setOpen(!open);
+    state.setOpen(!state.open);
   };
 
   let onHoverInteraction = (isHovering) => {
-    setOpen(isHovering);
+    state.setOpen(isHovering);
   };
 
   let onClose = () => {
-    setOpen(false);
+    state.setOpen(false);
   };
 
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -62,8 +60,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       ref: triggerRef
     },
     state: {
-      open,
-      setOpen
+      // open,
+      // setOpen
+      state
     }
   });
 
@@ -78,7 +77,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   delete overlayProps.style.position;
 
   let overlay = (
-    <Overlay isOpen={open} ref={containerRef}>
+    <Overlay isOpen={state.open} ref={containerRef}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: {...overlayProps.style}, isOpen: open})}
     </Overlay>
   );

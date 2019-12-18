@@ -50,7 +50,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
-        state.setOpen(false);
+        state.state.setOpen(false);
       }
     }
   };
