@@ -24,7 +24,7 @@ describe('useTextField hook', () => {
       let type = 'search';
       let props = renderTextFieldHook({type});
       expect(props.type).toBe(type);
-    }); 
+    });
 
     it('with appropriate props if isDisabled is defined', () => {
       let props = renderTextFieldHook({isDisabled: true});
@@ -74,10 +74,10 @@ describe('useTextField hook', () => {
           value: 1
         }
       };
-      
+
       props.onChange(mockEvent);
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith(mockEvent.target.value, mockEvent);
+      expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
       onChange.mockClear();
     });
   });

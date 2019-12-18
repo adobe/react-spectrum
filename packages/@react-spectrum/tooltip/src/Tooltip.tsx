@@ -1,13 +1,15 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
+import {useTooltip} from '@react-aria/tooltip';
 
-interface TooltipProps {
+interface TooltipProps extends DOMProps, StyleProps {
   children: ReactNode,
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   placement?: 'right' | 'left' | 'top' | 'bottom',
   isOpen?: boolean,
-  className?: string
+  role?: 'tooltip'
 }
 
 export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTMLDivElement>) => {
@@ -16,13 +18,16 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
     variant = 'neutral',
     placement = 'right',
     isOpen,
-    className,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
+  let {tooltipProps} = useTooltip(props);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
+      {...styleProps}
+      {...tooltipProps}
       className={classNames(
         styles,
         'spectrum-Tooltip',
@@ -31,7 +36,7 @@ export const Tooltip = React.forwardRef((props: TooltipProps, ref: RefObject<HTM
         {
           'is-open': isOpen
         },
-        className
+        styleProps.className
       )}
       ref={ref}>
       {props.children && (

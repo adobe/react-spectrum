@@ -1,16 +1,24 @@
-import {DOMProps} from '@react-types/shared';
-import {PressEvent} from '@react-aria/interactions';
+import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps extends DOMProps {
+export interface BreadcrumbItemProps extends PressEvents {
   isCurrent?: boolean,
   isHeading?: boolean,
   isDisabled?: boolean,
   headingAriaLevel?: number,
-  onPress?: (e: PressEvent) => void,
+  'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
   children: ReactNode
 }
 
-export interface BreadcrumbsProps extends DOMProps {
+export interface BreadcrumbsProps {
   children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[]
+}
+
+export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
+  size?: 'S' | 'M' | 'L',
+  isHeading?: boolean,
+  headingAriaLevel?: number,
+  showRoot?: boolean,
+  isDisabled?: boolean,
+  maxVisibleItems?: 'auto' | number
 }

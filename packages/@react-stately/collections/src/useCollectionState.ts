@@ -1,13 +1,12 @@
 import {Collection} from './types';
 import {CollectionManager} from './CollectionManager';
-import {DOMProps} from '@react-types/shared';
 import {Key, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 
-interface CollectionProps<T extends object, V, W> extends DOMProps {
+interface CollectionProps<T extends object, V, W> {
   renderView(type: string, content: T): V,
   renderWrapper(reusableView: ReusableView<T, V>): W,
   layout: Layout<T>,

@@ -24,7 +24,7 @@ function renderIconSizes(Component, props) {
   return (
     <div>
       {sizes.map(size => {
-        return <Component size={size} {...props} />
+        return <Component UNSAFE_style={{padding: '15px'}} size={size} {...props} />
       })}
     </div>
   )

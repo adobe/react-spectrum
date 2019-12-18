@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button, ButtonProps} from '../';
+import {Button} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -11,7 +11,7 @@ storiesOf('Button', module)
   )
   .add(
     'with icon',
-    () => render({icon: <Bell />})
+    () => render({icon: <Bell />, variant: 'primary'})
   )
   .add(
     'variant: overBackground',
@@ -35,16 +35,19 @@ storiesOf('Button', module)
   )
   .add(
     'element: a',
-    () => render({elementType: 'a', href: 'http://example.com'})
+    () => render({elementType: 'a', href: 'http://example.com', variant: 'primary'})
   );
 
-function render(props:ButtonProps = {}) {
+function render(props: any = {}) {
   return (
     <div>
       <Button
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         {...props}>
         Default
       </Button>
@@ -52,6 +55,9 @@ function render(props:ButtonProps = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isDisabled
         {...props}>
         Disabled
@@ -61,6 +67,9 @@ function render(props:ButtonProps = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isQuiet
         {...props}>
         Quiet

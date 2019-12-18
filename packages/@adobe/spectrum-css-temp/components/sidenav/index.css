@@ -77,9 +77,6 @@ governing permissions and limitations under the License.
 }
 
 
-/* topdoc
-{{ sidenav/sidenav-heading.yml }}
-*/
 .spectrum-SideNav-heading {
   height: var(--spectrum-sidenav-header-height);
   line-height: var(--spectrum-sidenav-header-height);

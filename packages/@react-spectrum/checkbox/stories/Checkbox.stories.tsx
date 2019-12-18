@@ -65,6 +65,15 @@ storiesOf('Checkbox', module)
     () => renderCustomLabel()
   )
   .add(
+    'long label',
+    () => (
+      <Checkbox
+        onChange={action('change')}>
+        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
+      </Checkbox>
+    )
+  )
+  .add(
     'no label',
     () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
   );

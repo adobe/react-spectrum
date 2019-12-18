@@ -1,0 +1,11 @@
+{
+  "dateSelected": "{date, date, full} selectată",
+  "finishRangeSelectionPrompt": "Apăsaţi pentru a finaliza selecţia razei pentru dată",
+  "next": "Următorul",
+  "previous": "Înainte",
+  "selectedDateDescription": "Dată selectată: {date, date, full}",
+  "selectedRangeDescription": "Selectaţi raza: {start, date, long} la {end, date, long}",
+  "startRangeSelectionPrompt": "Apăsaţi pentru a începe selecţia razei pentru dată",
+  "todayDate": "Astăzi, {date, date, full}",
+  "todayDateSelected": "Dată, {date, date, full} selectată"
+}

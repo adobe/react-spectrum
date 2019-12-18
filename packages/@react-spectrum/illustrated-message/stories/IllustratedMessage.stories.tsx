@@ -1,4 +1,4 @@
-import {IllustratedMessage, IllustratedMessageProps} from '../';
+import {IllustratedMessage} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -20,7 +20,7 @@ storiesOf('IllustratedMessage', module)
     () => render({heading: 'No Results', description: 'Try another search', illustration: noResultsImg(), ariaLevel: 3})
   );
 
-function render(props:IllustratedMessageProps = {}) {
+function render(props: any = {}) {
   return (
     <IllustratedMessage {...props} />
   );

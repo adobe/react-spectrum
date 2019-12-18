@@ -1,33 +1,36 @@
-import {ButtonBase} from './Button';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {ButtonProps} from '@react-types/button';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {RefObject, useRef} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
-interface ClearButtonProps extends ButtonBase {
+interface ClearButtonProps extends ButtonProps {
   focusClassName?: string,
   variant?: 'overBackground'
 }
 
-export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefObject<HTMLButtonElement>) => {
+function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     children = <CrossSmall />,
-    className,
     focusClassName,
     variant,
+    autoFocus,
     ...otherProps
   } = props;
-  ref = ref || useRef();
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let domRef = useFocusableRef(ref);
+  let {buttonProps, isPressed} = useButton(props, domRef);
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
       <button
-        {...filterDOMProps(otherProps, {icon: false})}
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
         {...buttonProps}
-        ref={ref}
+        ref={domRef}
         className={
           classNames(
             styles,
@@ -36,11 +39,14 @@ export const ClearButton = React.forwardRef((props: ClearButtonProps, ref: RefOb
               [`spectrum-ClearButton--${variant}`]: variant,
               'is-active': isPressed
             },
-            className
+            styleProps.className
           )
         }>
         {children}
       </button>
     </FocusRing>
   );
-});
+}
+
+let _ClearButton = React.forwardRef(ClearButton);
+export {_ClearButton as ClearButton};

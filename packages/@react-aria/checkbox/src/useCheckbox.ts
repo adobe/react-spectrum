@@ -1,19 +1,15 @@
 import {CheckboxProps} from '@react-types/checkbox';
-import {MutableRefObject, useEffect} from 'react';
-import {ToggleAriaProps, useToggle} from '@react-aria/toggle';
-import {ToggleState} from '@react-types/toggle';
+import {InputHTMLAttributes, RefObject, useEffect} from 'react';
+import {ToggleState} from '@react-stately/toggle';
+import {useToggle} from '@react-aria/toggle';
 
-interface CheckboxInputAriaProps extends ToggleAriaProps {
-  'aria-checked': boolean | 'mixed'
+export interface CheckboxAria {
+  inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export interface CheckboxAriaProps {
-  inputProps: CheckboxInputAriaProps
-}
-
-export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: MutableRefObject<HTMLInputElement>):CheckboxAriaProps {
-  let toggleAriaProps = useToggle(props, state);
-  let {checked} = state;
+export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+  let {inputProps} = useToggle(props, state);
+  let {isSelected} = state;
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -26,9 +22,9 @@ export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: 
 
   return {
     inputProps: {
-      ...toggleAriaProps,
-      checked,
-      'aria-checked': isIndeterminate ? 'mixed' : checked
+      ...inputProps,
+      checked: isSelected,
+      'aria-checked': isIndeterminate ? 'mixed' : isSelected
     }
   };
 }

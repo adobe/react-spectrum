@@ -13,8 +13,14 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  /* Hardcoded for wrapping study */
-  --spectrum-checkbox-label-margin-top: var(--spectrum-global-dimension-size-75);
+  /* Hardcoded for wrapping study.
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
+  */
+  --spectrum-checkbox-label-margin-top: var(--spectrum-global-dimension-size-85);
+
+  /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
+  /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
+  --spectrum-checkbox-label-line-height: 1.49;
 }
 
 .spectrum-Checkbox {
@@ -51,9 +57,9 @@ governing permissions and limitations under the License.
 
   /* Hit area */
   position: absolute;
-  top: 0;
-  left: calc(var(--spectrum-checkbox-cursor-hit-x) * -1);
-  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 2);;
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--spectrum-checkbox-cursor-hit-x) * -1);
+  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 2);
   block-size: 100%;
 
   opacity: .0001;
@@ -94,12 +100,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-checkbox-text-gap);
+  margin-block-start: var(--spectrum-checkbox-label-margin-top);
   font-size: var(--spectrum-checkbox-text-size);
   font-weight: var(--spectrum-checkbox-text-font-weight);
+  line-height: var(--spectrum-checkbox-label-line-height);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-
-  margin-block-start: var(--spectrum-checkbox-label-margin-top);
 }
 
 .spectrum-Checkbox-box {
@@ -124,7 +131,8 @@ governing permissions and limitations under the License.
 .spectrum-Checkbox-checkmark,
 .spectrum-Checkbox-partialCheckmark {
   position: absolute;
-  top: 50%;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
 
   margin-block-start: calc(var(--spectrum-icon-checkmark-small-height) / -2);
   margin-inline-start: calc(var(--spectrum-icon-checkmark-small-width) / -2);

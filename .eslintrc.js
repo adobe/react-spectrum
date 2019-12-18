@@ -50,6 +50,13 @@ module.exports = {
     'jest': true,
     'expect': true
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+      }
+    }
+  },
   rules: {
     'comma-dangle': ERROR,
     'indent': OFF,

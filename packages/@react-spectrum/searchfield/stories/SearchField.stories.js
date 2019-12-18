@@ -4,7 +4,7 @@ import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 
-const info = 'A containing element with  `role="search"` has been added to define a **search** landmark region.';
+const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 
 storiesOf('SearchField', module)
   .add(
@@ -38,6 +38,18 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'isRequired: true',
+    () => render({isRequired: true})
+  )
+  .add(
+    'isRequired: true, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'isRequired: false, necessityIndicator: label',
+    () => render({isRequired: false, necessityIndicator: 'label'})
+  )
+  .add(
     'icon: refresh',
     () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
     {info}
@@ -53,9 +65,30 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
-    'using combobox role',
-    () => renderSearchLandmark(render({type: 'text', role: 'combobox', 'aria-expanded': 'false', 'aria-haspopup': 'listbox', 'aria-autocomplete': 'list'})),
-    {info: `This example demonstrates how to overide Search props for a custom implementation of the WAI-ARIA 1.0 ComboBox design pattern. ${info}`}
+    'autoFocus',
+    () => renderSearchLandmark(render({autoFocus: true})),
+    {info}
+  )
+  .add(
+    'labelAlign: end',
+    () => render({labelAlign: 'end'})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'no visible label',
+    () => render({label: null, 'aria-label': 'Street address'})
+  )
+  .add('custom width',
+    () => render({width: 300})
+  )
+  .add('custom width, quiet',
+    () => render({width: 300, isQuiet: true})
+  )
+  .add('custom width, labelPosition: side',
+    () => render({width: 300, labelPosition: 'side'})
   );
 
 function renderSearchLandmark(child) {
@@ -65,7 +98,8 @@ function renderSearchLandmark(child) {
 function render(props = {}) {
   return (
     <SearchField
-      aria-label="Search"
+      UNSAFE_className="custom_classname"
+      label="Search"
       placeholder="Enter text"
       {...props}
       onChange={action('change')}
