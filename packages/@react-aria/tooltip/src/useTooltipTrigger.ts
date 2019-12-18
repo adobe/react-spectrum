@@ -3,6 +3,7 @@ import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
+import {TooltipState} from '@react-stately/tooltip';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -26,7 +27,8 @@ interface TooltipTriggerProps {
 
 interface TooltipTriggerAria {
   tooltipTriggerBaseProps: AllHTMLAttributes<HTMLElement>,
-  tooltipAriaProps: AllHTMLAttributes<HTMLElement>
+  tooltipAriaProps: AllHTMLAttributes<HTMLElement>,
+  tooltipInteractionProps: AllHTMLAttributes<HTMLElement>
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -41,16 +43,16 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {overlayProps} = useOverlay({
     ref: triggerProps.ref,
     onClose: tooltipProps.onClose,
-    isOpen: state.open
+    isOpen: open
   });
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' || e.altKey && e.key === 'ArrowDown') {
         e.preventDefault();
         e.stopPropagation();
-        state.state.setOpen(false);
+        state.setOpen(false);
       }
     }
   };
@@ -59,12 +61,14 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipTriggerBaseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
-      role: 'button',
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
+      role: 'button'
     },
     tooltipAriaProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
+    },
+    tooltipInteractionProps: {
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     }
   };
 }
