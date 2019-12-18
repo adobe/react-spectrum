@@ -23,11 +23,11 @@ storiesOf('Form', module)
   )
   .add(
     'labelAlign: end',
-    () => render({width: 400, labelAlign: 'end'})
+    () => render({labelAlign: 'end'})
   )
   .add(
     'labelPosition: side, labelAlign: end',
-    () => render({width: 400, labelPosition: 'side', labelAlign: 'end'})
+    () => render({labelPosition: 'side', labelAlign: 'end'})
   )
   .add(
     'fields next to each other',
