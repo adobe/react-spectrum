@@ -4,7 +4,7 @@ import {storiesOf} from '@storybook/react';
 import {Switch} from '../';
 
 storiesOf('Switch', module)
-  .addParameters({chromaticProvider: {rtl: true}})
+  .addParameters({chromaticProvider: {rtl: true}, chromatic: {viewports: [350]}})
   .add(
     'Default',
     () => render()
