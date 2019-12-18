@@ -2,7 +2,7 @@ import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -25,6 +25,10 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressStart,
     onPressEnd,
     onPressChange,
+    onHover,
+    onHoverStart,
+    onHoverEnd,
+    onShow,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -59,12 +63,22 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
+  let {hoverProps} = useHover({
+    onHoverStart,
+    onHoverEnd,
+    onShow,
+    onHover,
+    isDisabled,
+    ref
+  });
+
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
+  let interactions = mergeProps(hoverProps, handlers);
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(handlers, {
+    buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,

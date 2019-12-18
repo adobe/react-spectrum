@@ -54,7 +54,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
           )
         }>
         {icon && cloneElement(
-          icon, 
+          icon,
           {
             size: 'S',
             UNSAFE_className: classNames(

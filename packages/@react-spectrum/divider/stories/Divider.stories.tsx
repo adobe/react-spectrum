@@ -45,7 +45,7 @@ storiesOf('Divider', module)
 
 function renderVertical(props = {}) {
   return (
-    <section style={{display: 'flex', flexDirection: 'row', height: '32px'}}>
+    <section style={{display: 'flex'}}>
       <ActionButton icon={<Properties />} aria-label="Properties" isQuiet />
       <Divider orientation="vertical" {...props} />
       <ActionButton icon={<Select />} aria-label="Select" isQuiet />
