@@ -1,24 +1,29 @@
-import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement, SVGAttributes} from 'react';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
+import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
-interface IconProps extends SVGAttributes<SVGElement> {
+type Scale = 'M' | 'L'
+
+interface IconProps extends DOMProps, StyleProps {
   alt?: string,
   children: ReactElement,
-  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL'
+  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  scale?: Scale,
+  color?: string
 }
 
 export function Icon(props: IconProps) {
   let {
     children,
     alt,
-    className,
     scale,
     color,
     size,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let provider = useProvider();
   let pscale = 'M';
@@ -28,7 +33,7 @@ export function Icon(props: IconProps) {
     pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
   }
   if (scale === undefined) {
-    scale = pscale;
+    scale = pscale as Scale;
   }
   if (color === undefined) {
     color = pcolor;
@@ -38,7 +43,8 @@ export function Icon(props: IconProps) {
   let iconSize = size ? size : scale;
 
   return React.cloneElement(children, {
-    ...otherProps,
+    ...filterDOMProps(otherProps),
+    ...styleProps,
     scale: 'M',
     color,
     focusable: 'false',
@@ -50,6 +56,6 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      className)
+      styleProps.className)
   });
 }

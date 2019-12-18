@@ -32,13 +32,16 @@
     "@react-aria/i18n": "^3.0.0-alpha.2",
     "@react-aria/textfield": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/form": "^3.0.0-alpha.2",
+    "@react-spectrum/label": "^3.0.0-alpha.2",
     "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-types/textfield": "^3.0.0-alpha.2",
-    "@spectrum-icons/workflow": "^3.0.0-alpha.2"
+    "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
+    "@spectrum-icons/workflow": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

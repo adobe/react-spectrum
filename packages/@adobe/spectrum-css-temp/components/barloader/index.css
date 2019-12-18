@@ -48,7 +48,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BarLoader-label {
-  flex: 1 0 auto;
+  flex: 1 1 0%;
 }
 
 .spectrum-BarLoader-percentage {
@@ -86,7 +86,6 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-barloader-small-border-radius);
   }
 }
-
 .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
   width: var(--spectrum-barloader-large-indeterminate-fill-width);
   position: relative;

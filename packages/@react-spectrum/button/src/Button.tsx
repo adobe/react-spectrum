@@ -1,11 +1,10 @@
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {cloneElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // todo: CSS hasn't caught up yet, map
@@ -54,7 +53,17 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {icon && cloneElement(
+          icon,
+          {
+            size: 'S',
+            UNSAFE_className: classNames(
+              styles,
+              'spectrum-Icon',
+              icon.props && icon.props.UNSAFE_className
+            )
+          }
+        )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

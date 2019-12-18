@@ -18,9 +18,6 @@ governing permissions and limitations under the License.
   --spectrum-miller-column-checkbox-margin: 0;
 }
 
-/* topdoc
-{{ assetlist/assetlist.yml }}
-*/
 .spectrum-AssetList {
   margin-top: 0;
   margin-bottom: 0;

@@ -10,16 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ sidenav/sidenav.yml }}
-*/
-/* topdoc
-{{ sidenav/sidenav-multilevel.yml }}
-*/
-/* topdoc
-{{ sidenav/sidenav-icon.yml }}
-*/
-
 .spectrum-SideNav-item {
   &.is-selected {
     > .spectrum-SideNav-itemLink {

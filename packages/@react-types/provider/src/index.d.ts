@@ -1,4 +1,4 @@
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, StyleProps, ValidationState} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
@@ -25,7 +25,8 @@ interface ContextProps {
   isEmphasized?: boolean,
   isDisabled?: boolean,
   isRequired?: boolean,
-  isReadOnly?: boolean
+  isReadOnly?: boolean,
+  validationState?: ValidationState
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {

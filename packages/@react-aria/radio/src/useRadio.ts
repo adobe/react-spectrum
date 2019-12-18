@@ -1,17 +1,12 @@
 import {AllHTMLAttributes} from 'react';
-import {LabelPosition, RadioProps} from '@react-types/radio';
 import {RadioGroupState} from '@react-stately/radio';
+import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
   isReadOnly?: boolean,
-  isEmphasized?: boolean,
-  labelPosition?: LabelPosition,
-  name?: string,
-  validationState?: 'valid' | 'invalid',
-  selectedRadio?: string,
-  setSelectedRadio?: (value: string) => void
+  name?: string
 }
 
 interface RadioAria {

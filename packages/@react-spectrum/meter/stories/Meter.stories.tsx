@@ -65,7 +65,7 @@ storiesOf('Meter', module)
     'no visible label',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: null, 'aria-label': 'Meter', value});
+      return render({label: null, 'aria-label': 'Meter', value});
     }
   )
   .add(
@@ -125,6 +125,6 @@ storiesOf('Meter', module)
 
 function render(props: any = {}) {
   return (
-    <Meter {...props} variant={props.variant || 'positive'}>{props.children === null ? null : props.children || 'Meter'}</Meter>
+    <Meter label="Meter" variant="positive" {...props} />
   );
 }

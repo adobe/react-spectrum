@@ -25,7 +25,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   if (orientation === 'vertical') {
     Element = 'div';
   }
-  
+
   let {separatorProps} = useSeparator({
     ...props,
     elementType: Element
@@ -41,7 +41,10 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
           styles,
           'spectrum-Rule',
           `spectrum-Rule--${weight}`,
-          {'spectrum-Rule--vertical': orientation === 'vertical'},
+          {
+            'spectrum-Rule--vertical': orientation === 'vertical',
+            'spectrum-Rule--horizontal': orientation === 'horizontal'
+          },
           styleProps.className
         )
       }
