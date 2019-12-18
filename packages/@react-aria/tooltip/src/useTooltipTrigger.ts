@@ -23,9 +23,8 @@ interface TooltipTriggerProps {
 interface TooltipTriggerAria {
   tooltipTriggerBaseProps: AllHTMLAttributes<HTMLElement>,
   tooltipAriaProps: AllHTMLAttributes<HTMLElement>,
-  tooltipInteractionProps: AllHTMLAttributes<HTMLElement>,
-  tooltipHoverTriggerSingularityProps: AllHTMLAttributes<HTMLElement>,
-  tooltipClickTriggerSingularityProps: AllHTMLAttributes<HTMLElement>
+  hoverTriggerSingularityProps: AllHTMLAttributes<HTMLElement>,
+  clickTriggerSingularityProps: AllHTMLAttributes<HTMLElement>
 }
 
 let visibleTooltips = [];
@@ -88,20 +87,18 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipTriggerBaseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
-      role: 'button'
+      role: 'button',
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
     tooltipAriaProps: {
       'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
       role: tooltipProps.role || 'tooltip'
     },
-    tooltipInteractionProps: {
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
-    },
-    tooltipHoverTriggerSingularityProps: {
+    hoverTriggerSingularityProps: {
       onMouseEnter: enter,
       onMouseLeave: exit
     },
-    tooltipClickTriggerSingularityProps: {
+    clickTriggerSingularityProps: {
       onMouseDown: enterClick
     }
   };

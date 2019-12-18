@@ -47,7 +47,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {tooltipTriggerBaseProps, tooltipInteractionProps, tooltipClickTriggerSingularityProps, tooltipHoverTriggerSingularityProps} = useTooltipTrigger({
+  let {tooltipTriggerBaseProps, tooltipInteractionProps, clickTriggerSingularityProps, hoverTriggerSingularityProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props,
       onClose
@@ -81,7 +81,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <PressResponder
           {...tooltipTriggerBaseProps}
           {...tooltipInteractionProps}
-          {...tooltipClickTriggerSingularityProps}
+          {...clickTriggerSingularityProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}
@@ -97,7 +97,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <HoverResponder
           {...tooltipTriggerBaseProps}
           {...tooltipInteractionProps}
-          {...tooltipHoverTriggerSingularityProps}
+          {...hoverTriggerSingularityProps}
           ref={triggerRef}
           isDisabled={isDisabled}
           onShow={onHoverInteraction}
