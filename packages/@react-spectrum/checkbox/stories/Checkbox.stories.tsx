@@ -4,7 +4,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Checkbox', module)
-  .addParameters({chromaticProvider: {rtl: true}, chromatic: {viewports: [350]}})
+  .addParameters({chromatic: {viewports: [350]}})
   .add(
     'Default',
     () => render()

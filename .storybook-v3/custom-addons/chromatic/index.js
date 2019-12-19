@@ -9,10 +9,7 @@ export const withChromaticProvider = makeDecorator({
   parameterName: 'chromaticProvider',
   wrapper: (getStory, context, {options, parameters}) => {
     options = {...options, ...parameters};
-    let selectedLocales = ['en-US'];
-    if (options.rtl) {
-      selectedLocales = ['en-US', 'he-IL'];
-    }
+    let selectedLocales = ['en-US', 'he-IL'];
     if (options.locales) {
       selectedLocales = locales.map(l => l.value).slice(1);
     }

@@ -5,7 +5,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('RadioGroup', module)
-  .addParameters({chromaticProvider: {rtl: true}, chromatic: {viewports: [350]}})
+  .addParameters({chromatic: {viewports: [350]}})
   .add(
     'default',
     () => render({})
