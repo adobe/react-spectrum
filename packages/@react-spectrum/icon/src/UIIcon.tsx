@@ -15,6 +15,7 @@ export function UIIcon(props: IconProps) {
     children,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
+    role = 'img',
     ...otherProps
   } = props;
 
@@ -36,7 +37,7 @@ export function UIIcon(props: IconProps) {
     focusable: 'false',
     'aria-label': ariaLabel || alt,
     'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role: 'img',
+    role,
     className: classNames(
       styles,
       children.props.className,
