@@ -2,6 +2,7 @@ const exec = require('child_process').execSync;
 const fs = require('fs');
 
 // Version to bump to
+// TODO: get this from the command line, and possibly support semver bumping rules
 let version = '3.0.0-rc.1';
 
 // Packages to release
