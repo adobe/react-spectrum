@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.0-alpha.2",
-    "@react-aria/label": "^3.0.0-alpha.2",
-    "@react-types/textfield": "^3.0.0-alpha.2"
+    "@react-aria/focus": "^3.0.0-rc.1",
+    "@react-aria/label": "^3.0.0-rc.1",
+    "@react-types/textfield": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

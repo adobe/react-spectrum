@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.0.0-alpha.2",
-    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-aria/interactions": "^3.0.0-rc.1",
+    "@react-aria/utils": "^3.0.0-rc.1",
     "classnames": "^2.2.5"
   },
   "peerDependencies": {

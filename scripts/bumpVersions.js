@@ -28,7 +28,10 @@ let publicPackages = [
 let blackList = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/test-utils',
-  '@spectrum-icons/build-tools'
+  '@spectrum-icons/build-tools',
+
+  // Keep as alpha for now even though it's a dep of provider
+  '@react-aria/dialog'
 ]);
 
 // Get dependency tree from yarn workspaces, and build full list of packages to release
@@ -63,6 +66,12 @@ for (let [name, location] of releasedPackages) {
   if (pkg.private) {
     console.warn(`${name} changed from private to public`);
     delete pkg.private;
+  }
+
+  for (let dep in pkg.dependencies) {
+    if (releasedPackages.has(dep)) {
+      pkg.dependencies[dep] = '^' + version;
+    }
   }
 
   fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');

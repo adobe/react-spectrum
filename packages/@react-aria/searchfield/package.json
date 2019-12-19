@@ -16,11 +16,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0-alpha.2",
-    "@react-aria/interactions": "^3.0.0-alpha.2",
-    "@react-aria/utils": "^3.0.0-alpha.2",
-    "@react-stately/searchfield": "^3.0.0-alpha.2",
-    "@react-types/searchfield": "^3.0.0-alpha.2"
+    "@react-aria/i18n": "^3.0.0-rc.1",
+    "@react-aria/interactions": "^3.0.0-rc.1",
+    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-stately/searchfield": "^3.0.0-rc.1",
+    "@react-types/searchfield": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
