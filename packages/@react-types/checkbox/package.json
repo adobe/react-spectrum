@@ -1,6 +1,6 @@
 {
   "name": "@react-types/checkbox",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
   "types": "src/index.d.ts",
   "repository": {
