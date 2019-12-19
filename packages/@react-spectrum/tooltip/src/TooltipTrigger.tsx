@@ -30,11 +30,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let state = useTooltipState(props);
 
-  // TODO: move to useTooltipTrigger 
-  let onClose = () => {
-    state.setOpen(false);
-  };
-
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
@@ -42,7 +37,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let {baseProps, interactionProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props,
-      onClose
     },
     triggerProps: {
       ...trigger.props,

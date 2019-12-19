@@ -39,12 +39,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let tooltipTriggerId = useId();
 
-  let {overlayProps} = useOverlay({
-    ref: triggerProps.ref,
-    onClose: tooltipProps.onClose,
-    isOpen: state.open
-  });
-
   let onPressInteraction = () => {
     state.setOpen(!state.open);
   };
@@ -52,6 +46,16 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let onHoverInteraction = (isHovering) => {
     state.setOpen(isHovering);
   };
+
+  let onClose = () => {
+    state.setOpen(false);
+  };
+
+  let {overlayProps} = useOverlay({
+    ref: triggerProps.ref,
+    onClose: onClose,
+    isOpen: state.open
+  });
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
