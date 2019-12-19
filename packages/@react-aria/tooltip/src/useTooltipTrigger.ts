@@ -21,10 +21,10 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  tooltipTriggerBaseProps: AllHTMLAttributes<HTMLElement>,
-  tooltipAriaProps: AllHTMLAttributes<HTMLElement>,
-  hoverTriggerSingularityProps: AllHTMLAttributes<HTMLElement>,
-  clickTriggerSingularityProps: AllHTMLAttributes<HTMLElement>
+  baseProps: AllHTMLAttributes<HTMLElement>,
+  interactionProps: AllHTMLAttributes<HTMLElement>,
+  hoverTriggerProps: AllHTMLAttributes<HTMLElement>,
+  clickTriggerProps: AllHTMLAttributes<HTMLElement>
 }
 
 let visibleTooltips = [];
@@ -44,6 +44,14 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     onClose: tooltipProps.onClose,
     isOpen: state.open
   });
+
+  let onPressInteraction = () => {
+    state.setOpen(!state.open);
+  };
+
+  let onHoverInteraction = (isHovering) => {
+    state.setOpen(isHovering);
+  };
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
@@ -84,21 +92,21 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   return {
-    tooltipTriggerBaseProps: {
+    baseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
-    tooltipAriaProps: {
-      'aria-describedby': tooltipProps['aria-describedby'] || tooltipTriggerId,
-      role: tooltipProps.role || 'tooltip'
+    interactionProps: {
+      onPressInteraction,
+      onHoverInteraction,
     },
-    hoverTriggerSingularityProps: {
+    hoverTriggerProps: {
       onMouseEnter: enter,
       onMouseLeave: exit
     },
-    clickTriggerSingularityProps: {
+    clickTriggerProps: {
       onMouseDown: enterClick
     }
   };

@@ -30,15 +30,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let state = useTooltipState(props);
 
-  // move these three functions to useTooltipTrigger b/c interactions, stately package b/c they mutate state, or keep here?
-  let onPressInteraction = () => {
-    state.setOpen(!state.open);
-  };
-
-  let onHoverInteraction = (isHovering) => {
-    state.setOpen(isHovering);
-  };
-
+  // TODO: move to useTooltipTrigger 
   let onClose = () => {
     state.setOpen(false);
   };
@@ -47,7 +39,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {tooltipTriggerBaseProps, clickTriggerSingularityProps, hoverTriggerSingularityProps} = useTooltipTrigger({
+  let {baseProps, interactionProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props,
       onClose
@@ -79,12 +71,12 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <PressResponder
-          {...tooltipTriggerBaseProps}
-          {...clickTriggerSingularityProps}
+          {...baseProps}
+          {...clickTriggerProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}
-          onPress={onPressInteraction}>
+          onPress={interactionProps.onPressInteraction}>
           {trigger}
         </PressResponder>
         {overlay}
@@ -94,12 +86,12 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <HoverResponder
-          {...tooltipTriggerBaseProps}
-          {...hoverTriggerSingularityProps}
+          {...baseProps}
+          {...hoverTriggerProps}
           ref={triggerRef}
           isDisabled={isDisabled}
-          onShow={onHoverInteraction}
-          onHoverTooltip={onHoverInteraction}>
+          onShow={interactionProps.onHoverInteraction}
+          onHoverTooltip={interactionProps.onHoverInteraction}>
           {trigger}
           {overlay}
         </HoverResponder>
