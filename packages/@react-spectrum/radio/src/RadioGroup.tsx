@@ -65,7 +65,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
           // This is so radio works inside a <Form>
           classNames(
             labelStyles,
-            'spectrum-Field',
+            'spectrum-Field'
           ),
           styleProps.className
         )
