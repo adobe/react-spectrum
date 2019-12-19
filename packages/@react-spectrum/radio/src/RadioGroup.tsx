@@ -74,6 +74,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
       {label && 
         <Label
           {...labelProps}
+          elementType="span"
           labelPosition={labelPosition}
           labelAlign={labelAlign}
           isRequired={isRequired}

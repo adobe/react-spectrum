@@ -264,6 +264,5 @@ describe('Radios', function () {
     expect(labelId).toBeDefined();
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('Favorite Pet');
-    expect(label).toHaveAttribute('for', radioGroup.id);
   });
 });
