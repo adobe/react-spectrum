@@ -12,14 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-:root {
-  --spectrum-magnifier-text-inbetween-padding: var(--spectrum-global-dimension-size-100); 
-  --spectrum-search-icon-height: var(--spectrum-global-dimension-size-200);
-  --spectrum-search-icon-width: var(--spectrum-global-dimension-size-200);
-  --spectrum-search-quiet-padding-right: var(--spectrum-global-dimension-size-350);
-  --spectrum-search-icon-top-padding: var(--spectrum-global-dimension-size-85);
-}
-
 .spectrum-Search {
   display: inline-block;
   position: relative;
@@ -31,7 +23,7 @@ governing permissions and limitations under the License.
   }
 
   &.is-quiet .spectrum-Search-input {
-    padding-inline-start: calc(var(--spectrum-magnifier-text-inbetween-padding) + var(--spectrum-search-icon-width));
+    padding-inline-start: var(--spectrum-search-quiet-padding-left);
     padding-inline-end: var(--spectrum-search-quiet-padding-right);
   }
 }
@@ -47,7 +39,7 @@ governing permissions and limitations under the License.
   outline-offset: -2px;
 
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: calc(calc(calc(var(--spectrum-magnifier-text-inbetween-padding) * 2) + var(--spectrum-search-icon-width)) - 1px);
+  padding-inline-start: var(--spectrum-search-padding-left);
   text-indent: 0;
 
   /* Don't let long strings overlap the close icon */
@@ -64,10 +56,10 @@ governing permissions and limitations under the License.
 .spectrum-Search .spectrum-Search-icon {
   display: block;
   position: absolute;
-  height: var(--spectrum-search-icon-height);
-  width: var(--spectrum-search-icon-width);
-  inset-inline-start: var(--spectrum-magnifier-text-inbetween-padding);
-  top: var(--spectrum-search-icon-top-padding);
+  height: var(--spectrum-global-dimension-size-200);
+  width: var(--spectrum-global-dimension-size-200);
+  inset-inline-start: 12px;
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
 
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 
