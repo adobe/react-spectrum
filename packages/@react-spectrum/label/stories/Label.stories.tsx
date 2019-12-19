@@ -1,5 +1,5 @@
 import {Label} from '../';
-import React, {Fragment} from 'react';
+import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
