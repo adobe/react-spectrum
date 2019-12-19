@@ -17,6 +17,17 @@ governing permissions and limitations under the License.
   flex-direction: column;
 }
 
-.spectrum-FieldGroup--horizontal {
+.spectrum-FieldGroup--positionSide {
   flex-direction: row;
+}
+
+.spectrum-FieldGroup-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.spectrum-FieldGroup-group--horizontal {
+  /* horizontal radio groups should wrap if there isn't enough space */
+  flex-direction: row;
+  flex-wrap: wrap;
 }
