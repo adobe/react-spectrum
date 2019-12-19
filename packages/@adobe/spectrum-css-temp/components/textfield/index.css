@@ -72,6 +72,7 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;
   -ms-text-overflow: ellipsis;
+  white-space: nowrap;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
