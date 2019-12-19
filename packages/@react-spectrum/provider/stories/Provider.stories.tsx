@@ -2,6 +2,7 @@ import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import customTheme from './custom-theme.css';
 import {DatePicker} from '@react-spectrum/datepicker';
+import {Form} from '@react-spectrum/form';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -69,16 +70,20 @@ storiesOf('Provider', module)
 function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
-      <Button variant="primary">I am a button</Button>
-      <TextField label="A text field" placeholder="Something" marginTop="size-100" />
-      <Checkbox>Cats!</Checkbox>
-      <Switch>Dogs!</Switch>
-      <RadioGroup>
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="horses">Horses</Radio>
-      </RadioGroup>
-      <DatePicker label="A date picker" marginTop="size-100" />
+      <Form>
+        <div> {/* Extra div so that the button does not expand to 100% width */}
+          <Button variant="primary">I am a button</Button>
+        </div>
+        <TextField label="A text field" placeholder="Something" marginTop="size-100" />
+        <Checkbox>Cats!</Checkbox>
+        <Switch>Dogs!</Switch>
+        <RadioGroup label="A radio group">
+          <Radio value="dogs">Dogs</Radio>
+          <Radio value="cats">Cats</Radio>
+          <Radio value="horses">Horses</Radio>
+        </RadioGroup>
+        <DatePicker label="A date picker" marginTop="size-100" />
+      </Form>
     </Provider>
   );
 }

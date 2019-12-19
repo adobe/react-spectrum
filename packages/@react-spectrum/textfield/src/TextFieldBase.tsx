@@ -112,6 +112,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           ref={inputRef}
           value={value}
           defaultValue={defaultValue}
+          rows={multiLine ? 1 : undefined}
           className={
             classNames(
               styles,
