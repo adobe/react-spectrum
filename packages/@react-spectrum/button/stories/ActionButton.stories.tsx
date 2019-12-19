@@ -49,6 +49,9 @@ function render(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         {...props}>
         Default
       </ActionButton>
@@ -56,6 +59,9 @@ function render(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isDisabled
         {...props}>
         Disabled
@@ -71,11 +77,17 @@ function renderNoText(props = {}) {
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         {...props} />
       <ActionButton
         onPress={action('press')}
         onPressStart={action('pressstart')}
         onPressEnd={action('pressend')}
+        onHover={action('hover')}
+        onHoverStart={action('hoverstart')}
+        onHoverEnd={action('hoverend')}
         isDisabled
         {...props} />
     </div>

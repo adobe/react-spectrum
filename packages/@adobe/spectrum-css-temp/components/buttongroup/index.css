@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ buttongroup/buttongroup.yml }}
-*/
-
 :root {
   --spectrum-buttongroup-button-gap-reset: 0;
 }
@@ -44,9 +40,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ buttongroup/buttongroup-vertical.yml }}
-*/
 .spectrum-ButtonGroup--vertical {
   display: inline-flex;
   flex-direction: column;

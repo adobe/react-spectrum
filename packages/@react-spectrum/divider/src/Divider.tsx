@@ -1,14 +1,9 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
-import {DOMProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
-
-export interface DividerProps extends DOMProps, StyleProps {
-  size?: 'S' | 'M' | 'L',
-  orientation?: 'horizontal' | 'vertical'
-}
 
 let sizeMap = {
   S: 'small',
@@ -16,7 +11,7 @@ let sizeMap = {
   L: 'large'
 };
 
-function Divider(props: DividerProps, ref: DOMRef) {
+function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   let {
     size = 'L',
     orientation = 'horizontal',
@@ -30,7 +25,12 @@ function Divider(props: DividerProps, ref: DOMRef) {
   if (orientation === 'vertical') {
     Element = 'div';
   }
-  let {separatorProps} = useSeparator(props, Element);
+
+  let {separatorProps} = useSeparator({
+    ...props,
+    elementType: Element
+  });
+
   return (
     // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
     <Element
@@ -41,7 +41,10 @@ function Divider(props: DividerProps, ref: DOMRef) {
           styles,
           'spectrum-Rule',
           `spectrum-Rule--${weight}`,
-          {'spectrum-Rule--vertical': orientation === 'vertical'},
+          {
+            'spectrum-Rule--vertical': orientation === 'vertical',
+            'spectrum-Rule--horizontal': orientation === 'horizontal'
+          },
           styleProps.className
         )
       }

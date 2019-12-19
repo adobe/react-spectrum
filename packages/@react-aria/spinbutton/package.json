@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/spinbutton",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/live-announcer": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1",
+    "@react-aria/live-announcer": "^3.0.0-alpha.2",
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-alpha.2",
     "react": "^16.8.0"
   },
   "publishConfig": {

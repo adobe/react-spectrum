@@ -15,7 +15,7 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{indeterminate: false}}
   `('$Name handles defaults', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
     expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
@@ -27,7 +27,7 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{isIndeterminate: true}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{}}
   `('$Name handles indeterminate', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
     expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
@@ -39,7 +39,7 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 30}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 30, indeterminate: false}}
   `('$Name handles defaults', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuemin', '0');
     expect(progressCircle).toHaveAttribute('aria-valuemax', '100');
@@ -51,7 +51,7 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: -1}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: -1, indeterminate: false}}
   `('$Name clamps values to 0', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuenow', '0');
   });
@@ -61,7 +61,7 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{value: 1000}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{value: 1000, indeterminate: false}}
   `('$Name clamps values to 100', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuenow', '100');
   });
@@ -71,14 +71,14 @@ describe('ProgressCircle', function () {
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{UNSAFE_className: 'testClass'}}
     ${'V2ProgressCircle'} | ${V2ProgressCircle} | ${{className: 'testClass'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
+    let {getByRole} = render(<Component aria-label="Progress" {...props}>Progress Circle</Component>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 
   // These tests only work against v3 for data-testid
   it('handles submask defaults', () => {
-    let {getByRole, getByTestId} = render(<ProgressCircle value={0} />);
+    let {getByRole, getByTestId} = render(<ProgressCircle aria-label="Progress" value={0}>Progress Bar</ProgressCircle>);
     let progressCircle = getByRole('progressbar');
     expect(progressCircle).toHaveAttribute('aria-valuenow', '0');
     expect(progressCircle).toHaveAttribute('aria-valuetext', '0%');
@@ -89,13 +89,13 @@ describe('ProgressCircle', function () {
   });
 
   it('shows none of the circle for 0%', () => {
-    let {getByTestId} = render(<ProgressCircle value={0} />);
+    let {getByTestId} = render(<ProgressCircle aria-label="Progress" value={0} />);
     expect(getByTestId('fillSubMask1')).not.toHaveAttribute('style');
     expect(getByTestId('fillSubMask2')).not.toHaveAttribute('style');
   });
 
   it('shows quarter of the circle for 25%', () => {
-    let {getByTestId} = render(<ProgressCircle value={25} />);
+    let {getByTestId} = render(<ProgressCircle aria-label="Progress" value={25} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(-90deg);'
@@ -107,7 +107,7 @@ describe('ProgressCircle', function () {
   });
 
   it('shows half the circle for 50%', () => {
-    let {getByTestId} = render(<ProgressCircle value={50} />);
+    let {getByTestId} = render(<ProgressCircle aria-label="Progress" value={50} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
@@ -119,7 +119,7 @@ describe('ProgressCircle', function () {
   });
 
   it('shows quarter of the circle for 75%', () => {
-    let {getByTestId} = render(<ProgressCircle value={75} />);
+    let {getByTestId} = render(<ProgressCircle aria-label="Progress" value={75} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
@@ -131,7 +131,7 @@ describe('ProgressCircle', function () {
   });
 
   it('shows all of the circle for 100%', () => {
-    let {getByTestId} = render(<ProgressCircle value={100} />);
+    let {getByTestId} = render(<ProgressCircle aria-label="Progress" value={100} />);
     expect(getByTestId('fillSubMask1')).toHaveAttribute(
       'style',
       'transform: rotate(0deg);'
@@ -140,5 +140,18 @@ describe('ProgressCircle', function () {
       'style',
       'transform: rotate(0deg);'
     );
+  });
+
+  it('can handle negative values with minValue and maxValue', () => {
+    let {getByRole} = render(<ProgressCircle aria-label="Progress" value={0} minValue={-5} maxValue={5} />);
+    let progressBar = getByRole('progressbar');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '0');
+    expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<ProgressCircle value={25} />);
+    expect(spyWarn).toHaveBeenCalledWith('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
   });
 });

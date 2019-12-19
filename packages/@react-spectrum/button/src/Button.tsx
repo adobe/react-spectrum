@@ -1,29 +1,23 @@
-import {ButtonBase} from '@react-types/button';
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
-import {FocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {cloneElement} from 'react';
+import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
-
-export interface ButtonProps extends ButtonBase {
-  variant?: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
-  isQuiet?: boolean
-}
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
   negative: 'warning'
 };
 
-function Button(props: ButtonProps, ref: FocusableRef) {
+function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
     children,
-    variant = 'secondary',
+    variant,
     isQuiet,
     isDisabled,
     icon,
@@ -31,7 +25,7 @@ function Button(props: ButtonProps, ref: FocusableRef) {
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton({...props, ref: domRef});
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -59,7 +53,17 @@ function Button(props: ButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon')})}
+        {icon && cloneElement(
+          icon,
+          {
+            size: 'S',
+            UNSAFE_className: classNames(
+              styles,
+              'spectrum-Icon',
+              icon.props && icon.props.UNSAFE_className
+            )
+          }
+        )}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

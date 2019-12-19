@@ -63,8 +63,7 @@ export function useNumberFieldState(props) {
     }
   };
 
-  let setValue = (value: string, e) => {
-    e.stopPropagation();
+  let setValue = (value: string) => {
 
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);

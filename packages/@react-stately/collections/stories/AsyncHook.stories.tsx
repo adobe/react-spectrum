@@ -2,9 +2,11 @@ import {ActionButton} from '@react-spectrum/button';
 import {Item, useAsyncList} from '../src';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {useEffect} from 'react';
-import {storiesOf} from '@storybook/react';
+// import {storiesOf} from '@storybook/react';
 import {Tree} from '@react-spectrum/tree';
 
+/*
+ these are broken, commenting out for now
 storiesOf('useAsyncList', module)
   .add(
     'loadMore support',
@@ -27,6 +29,7 @@ storiesOf('useAsyncList', module)
         })} />
     )
   );
+  */
 
 interface IItem {
   name: string,
@@ -34,6 +37,7 @@ interface IItem {
 }
 let counter = 1;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Component(props) {
   let {isLoading, items, onLoadMore, onSortChange, sortDescriptor} = useAsyncList<IItem>({
     load: async () => {
@@ -49,7 +53,7 @@ function Component(props) {
       <Tree items={items} itemKey="key">
         {({name}) => <Item>{name}</Item>}
       </Tree>
-      {isLoading && <ProgressCircle UNSAFE_style={{position: 'absolute'}} isIndeterminate isCentered>Loading...</ProgressCircle>}
+      {isLoading && <ProgressCircle aria-label="Loading..." UNSAFE_style={{position: 'absolute'}} isIndeterminate isCentered />}
       {!isLoading && props.loadMore &&
         <ActionButton UNSAFE_style={{position: 'absolute', bottom: '0', right: '-80px'}} onPress={onLoadMore}>
           Load More
@@ -78,6 +82,7 @@ async function retrieve() {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function retrieveMore() {
   return new Promise<IItem[]>((resolve) => {
     setTimeout(() => {
