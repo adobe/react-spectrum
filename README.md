@@ -28,12 +28,6 @@ Add the following to your `~/.npmrc`:
 //artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:username=YOUR_USERNAME_HERE
 //artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:email=YOUR_USERNAME_HERE@adobe.com
 //artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:always-auth=true
-
-```
-
-The auth key can be obtained by following the steps listed [here](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#npmRegistry-UsingBasicAuthentication). Sample cURL:
-```
- curl -u <ARTIFACTORY USERNAME>:<API KEY> https://artifactory-uw2.adobeitc.com:443/artifactory/api/npm/auth
 ```
 
 Then you should be able to install with npm:
