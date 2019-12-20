@@ -1,7 +1,7 @@
 # Text Fields
 
 ```typescript
-interface TextField extends InputBase, TextInputBase, TextInputDOM, ValueBase<string> {
+interface TextField extends InputBase, TextInputBase, TextInputDOM, ValueBase<string>, Labelable, TextInputDOMProps, StyleProps {
   icon?: ReactNode,
   isQuiet?: boolean,
   validationTooltip?: ReactNode
@@ -14,7 +14,7 @@ interface SearchField extends TextField {
   onClear?: () => void
 }
 
-interface NumberField extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+interface NumberField extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number>, Labelable, DOMProps, StyleProps {
   isQuiet?: boolean,
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
@@ -22,7 +22,7 @@ interface NumberField extends InputBase, TextInputBase, ValueBase<number>, Range
   formatOptions?: Intl.NumberFormatOptions
 }
 
-interface SearchWithin extends InputBase, TextInputBase {
+interface SearchWithin extends InputBase, TextInputBase, Labelable, DOMProps, StyleProps {
   // not extending from ValueBase because we want onValueChange instead of onChange
   value?: string,
   defaultValue?: string,
@@ -54,6 +54,10 @@ interface InlineEditor extends TextField {
 | `readOnly`    | `isReadOnly`                |           |
 | -             | `icon`                      | added     |
 | -             | `validationTooltip`         | added     |
+| -             | `label`                     | added     |
+| -             | `labelPosition`             | added     |
+| -             | `labelAlign`                | added     |
+| -             | `necessityIndicator`        | added     |
 
 ## SearchField Changes
 | **v2**                                     | **v3**                  | **Notes**                                        |
