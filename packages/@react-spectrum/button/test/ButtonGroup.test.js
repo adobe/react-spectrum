@@ -4,6 +4,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
 let theme = {
@@ -17,15 +18,15 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-  Name               | Component        | props
-  ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
+  Name               | ComponentGroup   | Component
+  ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton}
+  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}
+  `('$Name handles defaults', function ({ComponentGroup, Component}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <Component {...props}>
-          <ActionButton >Click me</ActionButton>
-        </Component>
+        <ComponentGroup>
+          <Component >Click me</Component>
+        </ComponentGroup>
       </Provider>
     );
     expect(getByRole('radiogroup')).toBeTruthy();
@@ -33,16 +34,16 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-  Name               | Component        | props
-  ${'ButtonGroup'}   | ${ButtonGroup}   | ${{selectionMode: 'multiple'}}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{multiple: true, role: 'toolbar'}}
-  `('$Name handles multiple selection', function ({Component, props}) {
+  Name               | ComponentGroup   | Component       | props
+  ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{selectionMode: 'multiple'}}
+  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{multiple: true, role: 'toolbar'}}
+  `('$Name handles multiple selection', function ({ComponentGroup, Component, props}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <Component {...props} >
-          <ActionButton >Click me</ActionButton>
-          <ActionButton >Click me</ActionButton>
-        </Component>
+        <ComponentGroup {...props} >
+          <Component >Click me</Component>
+          <Component >Click me</Component>
+        </ComponentGroup>
       </Provider>
     );
     expect(getByRole('toolbar')).toBeTruthy();
@@ -51,15 +52,15 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{orientation: 'vertical'}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{orientation: 'vertical', role: 'toolbar'}}
-  `('$Name handles vertical', function ({Component, props}) {
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{orientation: 'vertical', role: 'toolbar'}}
+  `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
-        <Component {...props} data-testid="test-group" >
-          <ActionButton>Click me</ActionButton>
-        </Component>
+        <ComponentGroup {...props} data-testid="test-group" >
+          <Component>Click me</Component>
+        </ComponentGroup>
       </Provider>
     );
     let group = getByTestId('test-group');
@@ -67,15 +68,15 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{isDisabled: true}}
-    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${{disabled: true}}
-  `('$Name handles disabeld', function ({Component, props}) {
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{isDisabled: true}}
+    ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{disabled: true}}
+  `('$Name handles disabeld', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <Component {...props} >
-          <ActionButton>Click me</ActionButton>
-        </Component>
+        <ComponentGroup {...props} >
+          <Component>Click me</Component>
+        </ComponentGroup>
       </Provider>
     );
     let group = getByRole('radiogroup');

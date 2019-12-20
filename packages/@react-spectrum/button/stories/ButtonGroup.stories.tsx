@@ -15,6 +15,10 @@ import Undo from '@spectrum-icons/workflow/Undo';
 storiesOf('ButtonGroup', module)
   .add(
     'default',
+    () => render(null, items)
+  )
+  .add(
+    'icons',
     () => render()
   )
   .add(
@@ -55,22 +59,36 @@ storiesOf('ButtonGroup', module)
   )
   .add(
     'icons only',
-    () => renderToolIcons({})
+    () => render({}, toolIcons)
   )
   .add(
     'icons only, isQuiet',
-    () => renderToolIcons({isQuiet: true})
+    () => render({isQuiet: true}, toolIcons)
+  )
+  .add(
+    'icons only, holdAffordance',
+    () => render({}, toolIconsAffordance)
   )
   .add(
     'icons only, orientation: vertical',
-    () => renderToolIcons({orientation: 'vertical'})
+    () => render({orientation: 'vertical'}, toolIcons)
   )
   .add(
     'icons only, orientation: vertical, isQuiet',
-    () => renderToolIcons({orientation: 'vertical', isQuiet: true})
+    () => render({orientation: 'vertical', isQuiet: true}, toolIcons)
   );
 
-const childrenProps =
+const items =
+  [
+    {children: 'React'},
+    {children: 'Add'},
+    {children: 'Delete'},
+    {children: 'Bell'},
+    {children: 'Camera'},
+    {children: 'Undo'}
+  ];
+
+const itemsWithIcons =
   [
     {children: 'React', icon: <CheckmarkCircle />},
     {children: 'Add', icon: <Add />},
@@ -87,25 +105,19 @@ const toolIcons =
     {icon: <RegionSelect />}
   ];
 
+const toolIconsAffordance =
+  [
+    {icon: <Brush />},
+    {icon: <Select />, holdAffordance: true},
+    {icon: <RegionSelect />, holdAffordance: true}
+  ];
 
-function render(props = {}) {
+function render(props = {}, items: any = itemsWithIcons) {
   return (
     <ButtonGroup onSelectionChange={action('onSelect')} {...props}>
       {
-        childrenProps.map((childProps, index) => (
-          <ActionButton key={index} {...childProps} />
-        ))
-      }
-    </ButtonGroup>
-  );
-}
-
-function renderToolIcons(props = {}) {
-  return (
-    <ButtonGroup {...props}>
-      {
-        toolIcons.map((childProps, index) => (
-          <ActionButton key={index} {...childProps} />
+        items.map((itemProps, index) => (
+          <ActionButton key={index} {...itemProps} />
         ))
       }
     </ButtonGroup>
