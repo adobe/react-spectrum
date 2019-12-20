@@ -1,7 +1,6 @@
 {
   "name": "@react-spectrum/meter",
-  "version": "3.0.0-alpha.2",
-  "private": true,
+  "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -29,10 +28,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/meter": "^3.0.0-alpha.2",
-    "@react-spectrum/progress": "^3.0.0-alpha.2",
-    "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-types/meter": "^3.0.0-alpha.2"
+    "@react-aria/meter": "^3.0.0-rc.1",
+    "@react-spectrum/progress": "^3.0.0-rc.1",
+    "@react-spectrum/utils": "^3.0.0-rc.1",
+    "@react-types/meter": "^3.0.0-rc.1",
+    "@react-types/shared": "^3.0.0-rc.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
