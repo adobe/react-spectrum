@@ -8,20 +8,20 @@ interface ButtonBase extends DOMProps, StyleProps, PressEvents, FocusableProps {
   href?: string
 }
 
-interface ButtonProps extends ButtonProps {
+interface Button extends ButtonBase {
   icon?: ReactElement,
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   isQuiet?: boolean
 }
 
-interface ActionButtonProps extends ButtonProps {
+interface ActionButton extends ButtonBase {
   icon?: ReactElement,
   isQuiet?: boolean,
   isSelected?: boolean,
   holdAffordance?: boolean
 }
 
-interface LogicButtonProps extends ButtonProps {
+interface LogicButton extends ButtonBase {
   variant: 'and' | 'or'
 }
 ```

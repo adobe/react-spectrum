@@ -16,11 +16,11 @@ interface CheckboxBase {
   isEmphasized?: boolean
 }
 
-interface CheckboxProps {
+interface Checkbox {
   isIndeterminate?: boolean
 }
 
-interface SwitchProps extends CheckboxBase {}
+interface Switch extends CheckboxBase {}
 ```
 
 ## Changes
