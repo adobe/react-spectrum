@@ -81,9 +81,6 @@ No additional configuration is needed to use react-spectrum with Parcel. 😇
 
 ## Development
 
-### Contributing
-Please read the [CONTRIBUTING](CONTRIBUTING.md) guide for an overview of how to contribute.
-
 ### Local Development
 
 #### General
