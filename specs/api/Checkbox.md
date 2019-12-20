@@ -1,7 +1,7 @@
 # Checkbox and Switch
 
 ```typescript
-interface CheckboxBase {
+interface CheckboxBase extends InputBase {
   children?: ReactNode, // pass in children to render label
   'aria-label'?: string, // if no children, aria-label is required
 
@@ -16,7 +16,7 @@ interface CheckboxBase {
   isEmphasized?: boolean
 }
 
-interface Checkbox {
+interface Checkbox extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
