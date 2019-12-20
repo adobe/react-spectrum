@@ -34,6 +34,7 @@
     "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/toggle": "^3.0.0-rc.1",
+    "@react-types/shared": "^3.0.0-rc.1",
     "@react-types/switch": "^3.0.0-rc.1",
     "@spectrum-icons/ui": "^3.0.0-rc.1"
   },

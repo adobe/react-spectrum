@@ -30,6 +30,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/separator": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
+    "@react-types/divider": "^3.0.0-rc.1",
     "@react-types/shared": "^3.0.0-rc.1"
   },
   "devDependencies": {
