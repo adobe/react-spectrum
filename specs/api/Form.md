@@ -42,3 +42,5 @@ interface Label extends DOMProps, StyleProps {
 | -                          | `isRequired`               | added                 |
 | -                          | `isReadOnly`               | added                 |
 | -                          | `validationState`          | added                 |
+| -                          | `necessityIndicator`       | added                 |
+| -                          | `labelPosition`            | added                 |

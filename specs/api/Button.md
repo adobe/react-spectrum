@@ -18,7 +18,8 @@ interface ActionButton extends ButtonBase {
   icon?: ReactElement,
   isQuiet?: boolean,
   isSelected?: boolean,
-  holdAffordance?: boolean
+  holdAffordance?: boolean,
+  isEmphasized?: boolean
 }
 
 interface LogicButton extends ButtonBase {
