@@ -5,12 +5,12 @@ import {MultipleSelection} from '@react-types/shared';
 import React, {useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export interface GroupState {
+export interface ButtonGroupState {
   buttonCollection: ButtonGroupCollection<ButtonGroupButton>,
   selectionManager: SelectionManager
 }
 
-export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): GroupState {
+export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): ButtonGroupState {
   let selectionState = useMultipleSelectionState(props);
 
   let buttonCollection = useMemo(() => {

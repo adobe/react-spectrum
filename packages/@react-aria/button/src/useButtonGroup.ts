@@ -14,6 +14,8 @@ const BUTTON_ROLES = {
   'multiple': 'checkbox'
 };
 
+type Orientation = 'horizontal' | 'vertical';
+
 export interface ButtonGroupAria {
   buttonGroupProps: AllHTMLAttributes<HTMLElement>,
   buttonProps: AllHTMLAttributes<HTMLElement>,
@@ -23,7 +25,7 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
     id,
     selectionMode = 'single',
     isDisabled,
-    orientation = 'horizontal' as 'horizontal',
+    orientation = 'horizontal' as Orientation,
     role,
     tabIndex = 0
   } = props;

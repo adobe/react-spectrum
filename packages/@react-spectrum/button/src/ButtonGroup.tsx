@@ -1,5 +1,5 @@
 import {ButtonGroupButton, ButtonGroupProps} from '@react-types/button';
-import {ButtonGroupKeyboardDelegate, GroupState, useButtonGroupState} from '@react-stately/button';
+import {ButtonGroupKeyboardDelegate, ButtonGroupState, useButtonGroupState} from '@react-stately/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
@@ -40,7 +40,10 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     keyboardDelegate: layout
   });
 
-  let {buttonGroupProps, buttonProps} = useButtonGroup(props);
+  let {buttonGroupProps, buttonProps} = useButtonGroup({
+    ...props,
+    tabIndex: state.selectionManager.focusedKey ? -1 : 0
+  });
 
   let isVertical = orientation === 'vertical';
   let itemClassName;
@@ -89,7 +92,7 @@ export interface ButtonGroupItemProps {
   role?: string,
   UNSAFE_className?: string,
   item: ButtonGroupButton,
-  state: GroupState
+  state: ButtonGroupState
 }
 
 export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemProps) {
@@ -100,7 +103,21 @@ export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemPro
     itemRef: ref
   });
 
-  let buttonProps = mergeProps(item.props, {...itemProps, ...otherProps, ref});
+  let buttonProps = mergeProps(item.props, otherProps);
+  let buttonAriaProps = mergeProps(
+    itemProps,
+    {
+      onFocus: e => e.continuePropagation()
+    }
+  );
 
-  return React.cloneElement(item, buttonProps);
+  return React.cloneElement(
+    item,
+    {
+    // @ts-ignore
+      ref,
+      ...buttonProps,
+      ...buttonAriaProps
+    }
+  );
 }
