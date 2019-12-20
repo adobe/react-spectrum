@@ -21,7 +21,8 @@ let publicPackages = [
   '@react-spectrum/well',
   '@react-spectrum/form',
   '@react-spectrum/searchfield',
-  '@react-spectrum/meter'
+  '@react-spectrum/meter',
+  '@react-spectrum/theme-default'
 ];
 
 // Packages never to release
