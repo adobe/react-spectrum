@@ -20,9 +20,14 @@ interface TooltipTriggerProps {
   state: TooltipState
 }
 
+interface InteractionProps extends DOMProps {
+  onPressInteraction: () => void,
+  onHoverInteraction: (value: boolean) => void,
+}
+
 interface TooltipTriggerAria {
   baseProps: AllHTMLAttributes<HTMLElement>,
-  interactionProps: AllHTMLAttributes<HTMLElement>,
+  interactionProps: InteractionProps,
   hoverTriggerProps: AllHTMLAttributes<HTMLElement>,
   clickTriggerProps: AllHTMLAttributes<HTMLElement>
 }
@@ -32,7 +37,6 @@ let tooltipStates = [];
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let {
-    tooltipProps,
     triggerProps,
     state
   } = props;
@@ -87,12 +91,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     visibleTooltips.pop();
   };
 
-  // TODO: create a toggle method that takes triggerProps.ref.current.id as an argument and decide when to perform visibleTooltips.pop()
-    // handle edge case via ... visibleTooltips.length > 1 && last index of the visible tooltips array != currTooltip
   let enterClick = () => {
     let tooltipBucketItem = triggerProps.ref.current.id;
     visibleTooltips.push(tooltipBucketItem);
     tooltipStates.push(state);
+    if (visibleTooltips.length > 1) {
+      visibleTooltips.shift();
+    }
   };
 
   return {
@@ -104,7 +109,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     },
     interactionProps: {
       onPressInteraction,
-      onHoverInteraction,
+      onHoverInteraction
     },
     hoverTriggerProps: {
       onMouseEnter: enter,

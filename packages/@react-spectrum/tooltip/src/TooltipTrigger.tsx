@@ -36,7 +36,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let {baseProps, interactionProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
     tooltipProps: {
-      ...content.props,
+      ...content.props
     },
     triggerProps: {
       ...trigger.props,
