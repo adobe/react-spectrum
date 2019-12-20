@@ -1,7 +1,7 @@
 # Radio
 
 ```typescript
-interface RadioGroup extends ValueBase<string>, InputBase {
+interface RadioGroup extends ValueBase<string>, InputBase, Labelable, DOMProps, StyleProps {
   orientation?: 'horizontal' | 'vertical', // default vertical
   labelPosition?: 'side' | 'bottom', // default side
   children: ReactElement<Radio> | ReactElement<Radio>[],
@@ -29,6 +29,10 @@ interface Radio extends FocusableProps, DOMProps, StyleProps {
 | -                      | `isReadOnly`                   | added     |
 | -                      | `validationState`              | added     |
 | -                      | `isEmphasized`                 | added     |
+| -                      | `label`                        | added     |
+| -                      | `labelPosition`                | added     |
+| -                      | `labelAlign`                   | added     |
+| -                      | `necessityIndicator`           | added     |
 
 ## Radio Changes
 | **v2**        | **v3**       | **Notes**                                                                                                            |
