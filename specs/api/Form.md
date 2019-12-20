@@ -38,7 +38,7 @@ interface Label extends DOMProps, StyleProps {
 | `FieldLabel`               | `Label`                    | component name change |
 | `labelAlign="left"`        | `labelAlign="start"`       | rtl support           |
 | `labelAlign="right"`       | `labelAlign="end"`         | rtl support           |
-| `labelFor`                 | -                          | internal              |
+| `labelFor`                 | `for`                      | internal              |
 | -                          | `isRequired`               | added                 |
 | -                          | `isReadOnly`               | added                 |
 | -                          | `validationState`          | added                 |
