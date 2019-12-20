@@ -18,7 +18,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.0.0-rc.1",
     "@react-aria/interactions": "^3.0.0-rc.1",
-    "@react-aria/utils": "^3.0.0-rc.1"
+    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-types/button": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-types/shared": "^3.0.0-alpha.2",
     "classnames": "^2.2.5"
   },
   "peerDependencies": {
