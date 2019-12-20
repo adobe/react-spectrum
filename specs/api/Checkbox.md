@@ -3,26 +3,24 @@
 ```typescript
 interface CheckboxBase extends InputBase {
   children?: ReactNode, // pass in children to render label
+  'aria-label'?: string, // if no children, aria-label is required
 
   defaultSelected?: boolean,
   isSelected?: boolean,
-  onChange?: (isSelected: boolean) => void,
+  onChange?: (isSelected: boolean) => void, //Possibly add native event as arg?
+
+  /* Cannot use InputProps because value is a
+  valid dom prop for input as well as checked */
   value?: string, // dom prop for input element
-  name?: string
+  name?: string,
+  isEmphasized?: boolean
 }
 
-interface CheckboxProps extends CheckboxBase {
+interface Checkbox extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
-  isEmphasized?: boolean
-}
-
-type SwitchProps = CheckboxBase
-interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
-  isEmphasized?: boolean
-}
+interface Switch extends CheckboxBase {}
 ```
 
 ## Changes

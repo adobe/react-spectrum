@@ -1,27 +1,27 @@
 # Button
 
 ```typescript
-interface ButtonBase extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
+interface ButtonBase extends DOMProps, StyleProps, PressEvents, FocusableProps {
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   children?: ReactNode,
   href?: string
 }
 
-interface SpectrumButtonProps extends ButtonProps {
+interface Button extends ButtonBase {
   icon?: ReactElement,
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   isQuiet?: boolean
 }
 
-interface SpectrumActionButtonProps extends ButtonProps {
+interface ActionButton extends ButtonBase {
   icon?: ReactElement,
   isQuiet?: boolean,
   isSelected?: boolean,
   holdAffordance?: boolean
 }
 
-interface SpectrumLogicButtonProps extends ButtonProps {
+interface LogicButton extends ButtonBase {
   variant: 'and' | 'or'
 }
 ```
@@ -32,7 +32,7 @@ interface SpectrumLogicButtonProps extends ButtonProps {
 | `variant="toggle"`     | `<ActionButton isQuiet>`         |                                                |
 | `variant="quiet"`      | `variant="primary" isQuiet`      |                                                |
 | `variant="minimal"`    | `variant="secondary" isQuiet`    |                                                |
-| `variant="icon"`       | `icon`                           | `icon` only in Button and ActionButton         |
+| `variant="icon"`       | `<ActionButton isQuiet>`         |                                                |
 | `variant="dropdown"`   | -                                | unsupported                                    |
 | `variant="clear"`      | -                                | internal                                       |
 | `variant="field"`      | -                                | internal                                       |
