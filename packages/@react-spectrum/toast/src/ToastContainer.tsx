@@ -17,7 +17,7 @@
 
 import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement, ReactNode, useContext, useState} from 'react';
+import React, {ReactElement, ReactNode, useContext, useMemo, useState} from 'react';
 // import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import {Toast, ToastContext} from './';
 import toastContainerStyles from './toastContainer.css';
@@ -37,7 +37,7 @@ export function ToastContainer(props: ToastOptions): ReactElement {
     setToasts,
   } = useContext(ToastContext);
 
-  let removeToast = (toastRef, e) => {
+  /* let removeToast = (toastRef, e) => {
     console.log('toastRef', toastRef);
     console.log('toasts before', toasts.length);
     let filtered = toasts.filter(t => {
@@ -47,8 +47,9 @@ export function ToastContainer(props: ToastOptions): ReactElement {
     });
 
     console.log('toasts after', toasts.length);
-    setToasts(toasts);
-  }
+    console.log('filtered after', filtered.length);
+    setToasts(filtered);
+  };*/
 
 
   let renderToasts = () => {
@@ -58,7 +59,9 @@ export function ToastContainer(props: ToastOptions): ReactElement {
         onClose,
         ...otherProps
       } = toast.props;
-      return (<Toast {...otherProps} onClose={chain(onClose, (e) => removeToast(toast.ref, e))} ref={toast.ref}>{toast.content}</Toast>)
+      console.log('toast.ref', toast.ref);
+      return (<Toast {...otherProps} onClose={onClose} ref={toast.ref}>{toast.content}</Toast>)
+      // return (<Toast {...otherProps} onClose={chain(onClose, (e) => removeToast(toast.ref, e))} ref={toast.ref}>{toast.content}</Toast>)
     });
   };
 
