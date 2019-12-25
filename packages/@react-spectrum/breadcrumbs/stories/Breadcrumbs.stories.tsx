@@ -4,7 +4,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 let styles = {
-  width: '100%'
+  width: '50vw'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
@@ -37,6 +37,10 @@ storiesOf('Breadcrumbs', module)
   .add(
     'maxVisibleItems: auto',
     () => renderPress({maxVisibleItems: 'auto'})
+  )
+  .add(
+    'maxVisibleItems: auto, showRoot: true',
+    () => renderPress({maxVisibleItems: 'auto', showRoot: true})
   )
   .add(
     'maxVisibleItems: auto, size: L',

@@ -4,11 +4,14 @@ import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spect
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 import {useProviderProps} from '@react-spectrum/provider';
+
+const MIN_VISIBLE_ITEMS = 2;
+const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   props = useProviderProps(props);
@@ -19,7 +22,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
     headingAriaLevel,
     showRoot,
     isDisabled,
-    maxVisibleItems = 4,
+    maxVisibleItems = MAX_VISIBLE_ITEMS,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -27,13 +30,31 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let isCollapsible = maxVisibleItems === 'auto';
   let childArray = React.Children.toArray(children);
 
-  const [hidden, setHidden] = useState(false);
+  const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
+
   let domRef = useDOMRef(ref);
+  let lsitRef = useRef(null);
 
   useEffect(() => {
+    let childrenRect = [...lsitRef.current.children].map(child => child.getBoundingClientRect());
+
     let onResize = () => {
-      if (isCollapsible && domRef.current) {
-        setHidden(domRef.current.scrollWidth > domRef.current.offsetWidth);
+      if (isCollapsible && lsitRef.current) {
+        let containterRect = lsitRef.current.getBoundingClientRect();
+        let index = childrenRect.findIndex(childRect => childRect.right > containterRect.right);
+
+        let visibleItemsCount;
+        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
+
+        if (index ===  -1) {
+          visibleItemsCount = childArray.length;
+        } else if (index < minVisibleItems) {
+          visibleItemsCount = minVisibleItems;
+        } else {
+          visibleItemsCount = index;
+        }
+
+        setVisibleItems(visibleItemsCount);
       }
     };
 
@@ -42,26 +63,26 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, [domRef, isCollapsible]);
+  }, [isCollapsible, showRoot, childArray.length, lsitRef]);
 
   let {breadcrumbProps} = useBreadcrumbs(props);
 
-  if (!isCollapsible && childArray.length > maxVisibleItems) {
+  if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
 
     // TODO: replace with menu component
     let menuItem = (
-      <BreadcrumbItem>
+      <BreadcrumbItem key="menu">
         <Menu isDisabled={isDisabled}>{childArray}</Menu>
       </BreadcrumbItem>
     );
     rootItems.push(menuItem);
-
-    let visibleItems = childArray.slice(-maxVisibleItems + rootItems.length);
+  
+    let restItems = childArray.slice(-visibleItems + rootItems.length);
 
     childArray = [
       ...rootItems,
-      ...visibleItems
+      ...restItems
     ];
   }
 
@@ -97,21 +118,8 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
       {...styleProps}
       {...breadcrumbProps}
       ref={domRef}>
-      {
-        hidden &&
-        <div
-          className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs-dropdown'
-            )
-          }>
-          <Menu label={childArray[lastIndex]} isDisabled={isDisabled}>
-            {childArray}
-          </Menu>
-        </div>
-      }
       <ul
+        ref={lsitRef}
         className={
           classNames(
             styles,
@@ -119,7 +127,6 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
             {
               'spectrum-Breadcrumbs--compact': size === 'S',
               'spectrum-Breadcrumbs--multiline': size === 'L',
-              'is-hidden': hidden,
               'is-disabled': isDisabled
             },
             styleProps.className
