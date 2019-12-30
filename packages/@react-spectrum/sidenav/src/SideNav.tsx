@@ -51,7 +51,11 @@ interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
 
 function SideNavItem<T>(props: SideNavItemProps<T>) {
   let ref = useRef<HTMLAnchorElement>();
-  let {isSelected, isDisabled, rendered} = props.item;
+  let {
+    isSelected,
+    isDisabled,
+    rendered
+  } = props.item;
 
   let className = classNames(
     styles,

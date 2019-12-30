@@ -8,7 +8,7 @@ interface SideNavAriaProps extends AllHTMLAttributes<HTMLElement>{
 }
 
 interface SideNavAria {
-  navProps: AllHTMLAttributes<HTMLElement>,
+  navProps: AllHTMLAttributes<HTMLDivElement>,
   listProps: AllHTMLAttributes<HTMLUListElement>
 }
 

@@ -11,7 +11,7 @@ interface SideNavItemAriaProps<T> extends AllHTMLAttributes<HTMLElement>{
 
 interface SideNavItemAria {
   listItemProps: AllHTMLAttributes<HTMLDivElement>,
-  listItemLinkProps: AllHTMLAttributes<HTMLElement>
+  listItemLinkProps: AllHTMLAttributes<HTMLAnchorElement>
 }
 
 export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {
