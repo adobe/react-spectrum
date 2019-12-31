@@ -26,7 +26,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (manager.selectionMode === 'single') {
-      if (manager.selectedKeys.has(itemKey)) {
+      if (manager.selectedKeys.has(itemKey) && !manager.disableEmptySelection) {
         manager.toggleSelection(itemKey);
       } else {
         manager.replaceSelection(itemKey);

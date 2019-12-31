@@ -14,7 +14,8 @@ export interface SingleSelectionState extends FocusState {
 }
 
 export interface MultipleSelectionState extends FocusState {
-  selectionMode: SelectionMode
+  selectionMode: SelectionMode,
+  disableEmptySelection?: boolean,
   selectedKeys: Set<Key>,
   setSelectedKeys(keys: Set<Key> | ((v: Set<Key>) => Set<Key>)): void
 }

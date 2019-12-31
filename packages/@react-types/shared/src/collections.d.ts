@@ -45,6 +45,7 @@ export interface SingleSelection {
 export type SelectionMode = 'none' | 'single' | 'multiple';
 export interface MultipleSelection {
   selectionMode?: SelectionMode,
+  disableEmptySelection?: boolean,
   selectedKeys?: Iterable<Key>,
   defaultSelectedKeys?: Iterable<Key>,
   onSelectionChange?: (keys: Set<Key>) => any
