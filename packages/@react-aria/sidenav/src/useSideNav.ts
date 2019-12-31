@@ -13,8 +13,14 @@ interface SideNavAria {
 }
 
 export function useSideNav<T>(props: SideNavAriaProps, state: TreeState<T>, layout: ListLayout<T>): SideNavAria {
-  let {hidden} = props;
-  let id = useId();
+  let {
+    id,
+    hidden,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabeldBy
+  } = props;
+
+  id = useId(id);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
@@ -24,14 +30,15 @@ export function useSideNav<T>(props: SideNavAriaProps, state: TreeState<T>, layo
   return {
     navProps: {
       'aria-hidden': hidden,
-      'aria-label': props['aria-label'],
-      'aria-labelledby': props['aria-labelledby'],
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabeldBy,
       hidden,
       role: 'navigation',
       id
     },
     listProps: {
       id: `${id}-list`,
+      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
       role: 'list',
       ...listProps
     }

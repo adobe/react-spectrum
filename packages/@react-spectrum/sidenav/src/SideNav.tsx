@@ -30,13 +30,18 @@ export function SideNav<T>(props: SideNavProps<T>) {
         collection={state.tree}>
         {(type, item) => {
           if (type === 'section') {
-            return <SideNavHeading item={item} />;
+            return (
+              <SideNavHeading
+                item={item}
+                id={`${navProps.id}-heading${item.key}`} />
+            );
           }
 
           return (
             <SideNavItem
               state={state}
-              item={item} />
+              item={item}
+              id={`${navProps.id}-listitem${item.key}`} />
           );
         }}
       </CollectionView>
@@ -84,13 +89,18 @@ function SideNavItem<T>(props: SideNavItemProps<T>) {
   );
 }
 
-interface SideNavHeadingProps<T> {
+interface SideNavHeadingProps<T> extends AllHTMLAttributes<HTMLElement> {
   item: Node<T>
 }
 
 function SideNavHeading<T>({item, ...otherProps}: SideNavHeadingProps<T>) {
+  let ref = useRef<HTMLHeadingElement>();
+
   return (
-    <h2 className={classNames(styles, 'spectrum-SideNav-heading')} {...otherProps}>
+    <h2
+      {...otherProps}
+      ref={ref}
+      className={classNames(styles, 'spectrum-SideNav-heading')} >
       {item.rendered}
     </h2>
   );
