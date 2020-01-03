@@ -703,8 +703,6 @@ describe('DatePicker', function () {
         testBackspace('Second', new Date(2019, 1, 3, 5, 5, 59), new Date(2019, 1, 3, 5, 5, 5));
       });
 
-      /* This is randomly failing for some reason ...
-
       it('should support backspace with arabic digits', function () {
         let onChange = jest.fn();
         let {getByLabelText} = render(
@@ -721,7 +719,6 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledWith(new Date(201, 1, 3));
         expect(segment).toHaveTextContent('٢٠١');
       });
-      */
     });
   });
 

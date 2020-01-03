@@ -1,5 +1,5 @@
 import {Label} from '../';
-import React, {Fragment} from 'react';
+import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
@@ -11,11 +11,11 @@ storiesOf('Label', module)
   )
   .add(
     'labelAlign: start',
-    () => render({labelAlign: 'start', width: 80})
+    () => render({labelAlign: 'start', width: '100%'})
   )
   .add(
     'labelAlign: end',
-    () => render({labelAlign: 'end', width: 192})
+    () => render({labelAlign: 'end', width: '100%'})
   )
   .add(
     'labelPosition: side, labelAlign: start',
@@ -44,9 +44,9 @@ storiesOf('Label', module)
 
 function render(props: SpectrumLabelProps = {}) {
   return (
-    <Fragment>
+    <div style={{whiteSpace: 'nowrap'}}>
       <Label {...props} for="test">Test</Label>
       <TextField placeholder="React" id="test" isRequired={props.isRequired} />
-    </Fragment>
+    </div>
   );
 }
