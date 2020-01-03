@@ -1,39 +1,46 @@
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, useRef} from 'react';
-import {SpectrumSwitchProps} from '@react-types/switch';
+import React, {forwardRef, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
-import {useProviderProps} from '@react-spectrum/provider';
+import {SwitchProps} from '@react-types/switch';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
+import {useSlotProvider} from "@react-spectrum/layout";
 
-function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
-  props = useProviderProps(props);
+export const Switch = forwardRef((props: SwitchProps, ref: RefObject<HTMLLabelElement>) => {
+  let completeProps = Object.assign({}, {
+    isDisabled: false,
+    isEmphasized: false,
+    defaultSelected: false
+  }, props);
+
   let {
-    isEmphasized = false,
-    isDisabled = false,
-    autoFocus,
+    isEmphasized,
+    isDisabled,
     children,
+    className,
+    slot,
     ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  } = completeProps;
+  let {[slot ? slot : 'switch']: slotClassName} = useSlotProvider();
 
-  let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
+  let inputRef = useRef<HTMLInputElement>();
+  let {
+    checked,
+    setChecked
+  } = useToggleState(completeProps);
+  let {inputProps} = useSwitch(completeProps, {checked, setChecked});
 
   return (
     <label
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false
+          'aria-label': false,
+          onChange: false
         }
       )}
-      {...styleProps}
-      ref={domRef}
+      ref={ref}
       className={
         classNames(
           styles,
@@ -42,10 +49,11 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
             'is-disabled': isDisabled
           },
-          styleProps.className
+          slotClassName,
+          className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <input
           {...inputProps}
           ref={inputRef}
@@ -59,7 +67,4 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
       )}
     </label>
   );
-}
-
-const _Switch = forwardRef(Switch);
-export {_Switch as Switch};
+});

@@ -1,10 +1,10 @@
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {ReactElement} from 'react';
+import {classNames} from '@react-spectrum/utils';
+import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
+import {useSlotProvider} from "@react-spectrum/layout";
 
-interface IconProps extends DOMProps, StyleProps {
+interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
   children: ReactElement
 }
@@ -12,32 +12,26 @@ interface IconProps extends DOMProps, StyleProps {
 export function UIIcon(props: IconProps) {
   let {
     alt,
+    className,
     children,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    role = 'img',
+    slot = 'uiIcon',
     ...otherProps
   } = props;
+  let {[slot]: slotClassName} = useSlotProvider();
 
-  let {styleProps} = useStyleProps(otherProps);
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {
     scale = provider.scale === 'large' ? 'L' : 'M';
   }
 
-  if (!ariaHidden || ariaHidden === 'false') {
-    ariaHidden = undefined;
-  }
-
   return React.cloneElement(children, {
-    ...filterDOMProps(otherProps),
-    ...styleProps,
+    ...otherProps,
     scale,
     focusable: 'false',
-    'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role,
+    'aria-label': props['aria-label'] || alt,
+    'aria-hidden': (props['aria-label'] || alt ? null : true),
+    role: 'presentation',
     className: classNames(
       styles,
       children.props.className,
@@ -45,6 +39,7 @@ export function UIIcon(props: IconProps) {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      styleProps.className)
+      slotClassName,
+      className)
   });
 }
