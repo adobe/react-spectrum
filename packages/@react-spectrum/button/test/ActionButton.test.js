@@ -43,8 +43,16 @@ describe('ActionButton', function () {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    let holdAffordance = getByRole('presentation');
-    expect(holdAffordance).not.toBeNull();
+    let holdAffordance;
+    if (Component === V2Button) {
+      holdAffordance = getByRole('presentation');
+      expect(holdAffordance).toBeTruthy();
+      expect(holdAffordance).not.toHaveAttribute('aria-hidden');
+    } else {
+      holdAffordance = getByRole('img');
+      expect(holdAffordance).toBeTruthy();
+      expect(holdAffordance).toHaveAttribute('aria-hidden');
+    }
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
