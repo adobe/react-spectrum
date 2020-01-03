@@ -24,8 +24,8 @@ describe('useProgressBar', function () {
 
   it('supports labeling', () => {
     let {progressBarProps, labelProps} = renderProgressBarHook({label: 'Test'});
-    expect(progressBarProps.id).toBeDefined();
-    expect(labelProps.htmlFor).toBe(progressBarProps.id);
+    expect(labelProps.id).toBeDefined();
+    expect(progressBarProps['aria-labelledby']).toBe(labelProps.id);
   });
 
   it('with value of 25%', () => {

@@ -1,20 +1,21 @@
 # Button
 
 ```typescript
-interface ButtonBase extends DOMProps, StyleProps, PressProps, FocusableProps {
+interface ButtonBase extends DOMProps, StyleProps, PressEvents, FocusableProps {
   isDisabled?: boolean,
-  icon?: ReactElement,
-  children?: ReactNode,
   elementType?: string | JSXElementConstructor<any>,
+  children?: ReactNode,
   href?: string
 }
 
 interface Button extends ButtonBase {
-  variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
+  icon?: ReactElement,
+  variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative', // no default, must choose
   isQuiet?: boolean
 }
 
 interface ActionButton extends ButtonBase {
+  icon?: ReactElement,
   isQuiet?: boolean,
   isSelected?: boolean,
   holdAffordance?: boolean,
