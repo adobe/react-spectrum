@@ -19,7 +19,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/interactions": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-alpha.2",
-    "@react-types/link": "^3.0.0-alpha.2"
+    "@react-types/link": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

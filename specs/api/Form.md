@@ -1,42 +1,46 @@
-# Form and FieldLabel
+# Form and Label
 
 ```typescript
-interface Form {
+interface Form extends DOMProps, StyleProps, LabelableProps {
   children: ReactElement<FormItem> | ReactElement<FormItem>[]
-}
-
-export interface LabelProps extends DOMProps {
-  children?: ReactElement | ReactElement[],
-  labelFor?: string,
-  label?: ReactNode,
-  htmlFor?: string
-}
-
-interface FieldLabelBase extends LabelProps, DOMProps, StyleProps {
-  labelPosition?: 'top' | 'side', // default ?
-  labelAlign?: 'start' | 'end', // Default start
+  isQuiet?: boolean,
+  isEmphasized?: boolean,
+  isDisabled?: boolean,
   isRequired?: boolean,
-  necessityIndicator?: 'icon' | 'label'
+  isReadOnly?: boolean,
+  validationState?: ValidationState
 }
 
-interface FormItem extends FieldLabelBase {}
-interface FieldLabel extends FieldLabelBase {}
+interface Label extends DOMProps, StyleProps {
+  children?: ReactNode,
+  htmlFor?: string, // for compatibility with React
+  for?: string,
+  labelPosition?: LabelPosition, // default top
+  labelAlign?: Alignment, // default start
+  isRequired?: boolean,
+  necessityIndicator?: NecessityIndicator // default icon
+}
 ```
 
-## FormItem Changes
+## Form Changes
 | **v2**                     | **v3**                     | **Notes**   |
 | -------------------------- | -------------------------- | ----------- |
-| `labelAlign="left"`        | `labelAlign="start"`       | rtl support |
-| `labelAlign="right"`       | `labelAlign="end"`         | rtl support |
-| `labelFor`                 | -                          | internal    |
+| -                          | `isQuiet`                  | added       |
+| -                          | `isEmphasized`             | added       |
+| -                          | `isDisabled`               | added       |
 | -                          | `isRequired`               | added       |
-| -                          | `necessityIndicator`       | added       |
-| -                          | `labelPosition`            | added       |
+| -                          | `isReadOnly`               | added       |
+| -                          | `validationState`          | added       |
 
 ## FieldLabel Changes
-| **v2**             | **v3**                   | **Notes**   |
-| ------------------ | ------------------------ | ----------- |
-| `position="left"`  | `labelAlign="start"`     | rtl support |
-| `position="right"` | `labelAlign="end"`       | rtl support |
-| `necessity`        | `isRequired`             |             |
-| -                  | `labelPosition`          | added       |
+| **v2**                     | **v3**                     | **Notes**             |
+| -------------------------- | -------------------------- | --------------------- |
+| `FieldLabel`               | `Label`                    | component name change |
+| `labelAlign="left"`        | `labelAlign="start"`       | rtl support           |
+| `labelAlign="right"`       | `labelAlign="end"`         | rtl support           |
+| `labelFor`                 | `for`                      | internal              |
+| -                          | `isRequired`               | added                 |
+| -                          | `isReadOnly`               | added                 |
+| -                          | `validationState`          | added                 |
+| -                          | `necessityIndicator`       | added                 |
+| -                          | `labelPosition`            | added                 |

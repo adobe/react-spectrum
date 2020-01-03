@@ -60,4 +60,12 @@ describe('useLabel hook', () => {
     renderLabelHook({});
     expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   });
+
+  it('should not return a `for` attribute when the label element type is not <label>', () => {
+    let {labelProps, fieldProps} = renderLabelHook({label: 'Test', labelElementType: 'span'});
+    expect(labelProps.id).toBeDefined();
+    expect(fieldProps.id).toBeDefined();
+    expect(labelProps.id).toBe(fieldProps['aria-labelledby']);
+    expect(labelProps.htmlFor).toBeUndefined();
+  });
 });

@@ -26,7 +26,12 @@ export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
     }
   } = props;
 
-  let {labelProps, fieldProps} = useLabel(props);
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    // Progress bar is not an HTML input element so it 
+    // shouldn't be labeled by a <label> element.
+    labelElementType: 'span'
+  });
 
   value = clamp(value, minValue, maxValue);
   let percentage = (value - minValue) / (maxValue - minValue);

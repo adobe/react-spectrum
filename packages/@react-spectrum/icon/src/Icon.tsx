@@ -21,6 +21,9 @@ export function Icon(props: IconProps) {
     scale,
     color,
     size,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    role = 'img',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -38,6 +41,9 @@ export function Icon(props: IconProps) {
   if (color === undefined) {
     color = pcolor;
   }
+  if (!ariaHidden || ariaHidden === 'false') {
+    ariaHidden = undefined;
+  }
 
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
@@ -48,9 +54,9 @@ export function Icon(props: IconProps) {
     scale: 'M',
     color,
     focusable: 'false',
-    'aria-label': props['aria-label'] || alt,
-    'aria-hidden': (props['aria-label'] || alt ? null : true),
-    role: 'img',
+    'aria-label': ariaLabel || alt,
+    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
+    role,
     className: classNames(
       styles,
       children.props.className,
