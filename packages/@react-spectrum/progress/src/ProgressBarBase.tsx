@@ -68,11 +68,11 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
         )
       }>
       {label &&
-        <label
+        <span
           {...labelProps}
           className={classNames(styles, 'spectrum-BarLoader-label')}>
             {label}
-        </label>
+        </span>
       }
       {showValueLabel &&
         <div className={classNames(styles, 'spectrum-BarLoader-percentage')}>

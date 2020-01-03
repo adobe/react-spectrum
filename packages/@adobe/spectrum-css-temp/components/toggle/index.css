@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   /* Hardcoded for wrapping study.
   Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
   */
-  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-85);
+  --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-65);
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-switch-label-line-height: 1.49;

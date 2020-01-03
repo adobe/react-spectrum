@@ -30,7 +30,7 @@ describe('Toast', function () {
     expect(getByRole('alert')).toBeTruthy();
     expect(getByText(message)).toBeTruthy();
     if (name === 'Toast') {
-      expect(getAllByRole('presentation').length).toBe(1);
+      expect(getAllByRole('img').length).toBe(1);
     }
   });
 
@@ -51,7 +51,7 @@ describe('Toast', function () {
   `('$Name supports variant info', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, props, message);
 
-    expect(getAllByRole('presentation').length).toBe(2);
+    expect(getAllByRole('img').length).toBe(2);
   });
 
   it.each`
