@@ -161,7 +161,6 @@ function handleDelayedShow(onShow, onHoverTooltip) {
     clearTimeout(hoverHideTimeout);
     hoverHideTimeout = null;
   }
-
   hoverShowTimeout = setTimeout(() => {
     onShow(true);
     if (onHoverTooltip) {
@@ -175,7 +174,6 @@ function handleDelayedHide(onShow) {
     clearTimeout(hoverShowTimeout);
     hoverShowTimeout = null;
   }
-
   hoverHideTimeout = setTimeout(() => {
     onShow(false);
   }, 300);
