@@ -1,7 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
-import {useSlotProvider} from '../Slots';
+import {useSlotProvider} from '@react-spectrum/utils';
 
 export interface FooterProps {
   children: ReactElement,

@@ -2,7 +2,7 @@ import {baseStyleProps, classNames, filterDOMProps, useStyleProps} from '@react-
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 import styles from './layout.css';
-import {useSlotProvider} from './Slots';
+import {useSlotProvider} from '@react-spectrum/utils';
 
 export interface FlexProps {
   children: ReactElement | ReactElement[],

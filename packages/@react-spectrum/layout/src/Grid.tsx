@@ -1,7 +1,7 @@
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
-import {SlotContext} from './Slots';
+import {SlotContext} from '@react-spectrum/utils';
 import styles from './layout.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
