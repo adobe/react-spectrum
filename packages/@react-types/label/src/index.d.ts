@@ -12,5 +12,6 @@ export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps {
   labelPosition?: LabelPosition, // default top
   labelAlign?: Alignment, // default start
   isRequired?: boolean,
-  necessityIndicator?: NecessityIndicator // default icon
+  necessityIndicator?: NecessityIndicator, // default icon
+  slot?: string
 }

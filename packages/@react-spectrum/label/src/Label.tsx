@@ -7,6 +7,7 @@ import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useSlotProvider} from '@react-spectrum/layout';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
@@ -19,8 +20,10 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     htmlFor,
     for: labelFor,
     elementType: ElementType = 'label',
+    slot = 'label',
     ...otherProps
   } = props;
+  let {[slot]: slotClassName} = useSlotProvider();
 
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
@@ -40,6 +43,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
       'spectrum-FieldLabel--positionSide': labelPosition === 'side',
       'spectrum-FieldLabel--alignEnd': labelAlign === 'end'
     },
+    slotClassName,
     styleProps.className
   );
 
@@ -52,7 +56,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
       htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
       {children}
       {necessityIndicator && ' \u200b'}
-      {/* necessityLabel is hidden to screen readers if the field is required because 
+      {/* necessityLabel is hidden to screen readers if the field is required because
         * aria-required is set on the field in that case. That will already be announced,
         * so no need to duplicate it here. If optional, we do want it to be announced here. */}
       {necessityIndicator === 'label' && <span aria-hidden={isRequired}>{necessityLabel}</span>}

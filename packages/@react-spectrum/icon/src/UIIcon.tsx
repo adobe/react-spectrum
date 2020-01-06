@@ -2,11 +2,12 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, SVGAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-import {useSlotProvider} from "@react-spectrum/layout";
+import {useSlotProvider} from '@react-spectrum/layout';
 
 interface IconProps extends SVGAttributes<SVGElement> {
   alt?: string,
-  children: ReactElement
+  children: ReactElement,
+  slot?: string
 }
 
 export function UIIcon(props: IconProps) {

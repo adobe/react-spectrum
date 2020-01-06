@@ -1,4 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {baseStyleProps, classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 import styles from './layout.css';
@@ -10,7 +10,6 @@ export interface FlexProps {
   slot?: string
 }
 
-// TODO: needs devons style stuff
 export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};
   let completeProps = Object.assign({}, defaults, props);
@@ -21,10 +20,11 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
     ...otherProps
   } = completeProps;
   let {[slot]: slotClassName} = useSlotProvider();
+  // TODO: pull out into official handling
+  let {styleProps} = useStyleProps(otherProps, {...baseStyleProps, justifyContent: ['justify-content', value => value], alignItems: ['align-items', value => value]});
 
-  console.log(slot, slotClassName);
   return (
-    <div {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'flex', slotClassName, className)}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames(styles, 'flex', slotClassName, className)}>
       {children}
     </div>
   );

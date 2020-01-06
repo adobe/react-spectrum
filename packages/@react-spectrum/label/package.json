@@ -31,6 +31,7 @@
     "@react-aria/i18n": "^3.0.0-rc.1",
     "@react-aria/label": "^3.0.0-rc.1",
     "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-spectrum/layout": "^3.0.0-rc.1",
     "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-types/label": "^3.0.0-rc.1",

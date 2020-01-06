@@ -4,6 +4,7 @@ import React from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
+import {useSlotProvider} from '@react-spectrum/layout';
 
 let sizeMap = {
   S: 'small',
@@ -15,8 +16,10 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   let {
     size = 'L',
     orientation = 'horizontal',
+    slot = 'divider',
     ...otherProps
   } = props;
+  let {[slot]: slotClassName} = useSlotProvider();
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let weight = sizeMap[size];
@@ -45,7 +48,8 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
             'spectrum-Rule--vertical': orientation === 'vertical',
             'spectrum-Rule--horizontal': orientation === 'horizontal'
           },
-          styleProps.className
+          styleProps.className,
+          slotClassName
         )
       }
       ref={domRef}

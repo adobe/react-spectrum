@@ -21,9 +21,10 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
     slots,
     ...otherProps
   } = completeProps;
+  // TODO: add useStyleProps for grids
 
   return (
-    <div {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'grid', className)}>
+    <div {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'grid', className, slots && slots.container)}>
       <SlotContext.Provider value={slots}>
         {children}
       </SlotContext.Provider>
