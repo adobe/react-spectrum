@@ -164,23 +164,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
 /*
 
-// this doesn't work either ...
-export function handleDelayedShow2() {
-  let contextProps = useContext(HoverResponderContext);
-  if (hoverHideTimeout != null) {
-    clearTimeout(hoverHideTimeout);
-    hoverHideTimeout = null;
-  }
-  hoverShowTimeout = setTimeout(() => {
-    if(contextProps.onShow) {
-      contextProps.onShow(true);
-    }
-    if (contextProps.onHoverTooltip) {
-      contextProps.onHoverTooltip(true);
-    }
-  }, 300);
-}
-
 function handleDelayedShow(onShow, onHoverTooltip) {
   if (hoverHideTimeout != null) {
     clearTimeout(hoverHideTimeout);
@@ -213,6 +196,23 @@ function handleMouseOverOut(onShow, e) {
   } else {
     handleDelayedHide(onShow);
   }
+}
+
+// this doesn't work either ...
+export function handleDelayedShow2() {
+  let contextProps = useContext(HoverResponderContext);
+  if (hoverHideTimeout != null) {
+    clearTimeout(hoverHideTimeout);
+    hoverHideTimeout = null;
+  }
+  hoverShowTimeout = setTimeout(() => {
+    if(contextProps.onShow) {
+      contextProps.onShow(true);
+    }
+    if (contextProps.onHoverTooltip) {
+      contextProps.onHoverTooltip(true);
+    }
+  }, 300);
 }
 
 */

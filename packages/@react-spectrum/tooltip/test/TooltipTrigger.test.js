@@ -12,7 +12,8 @@ let theme = {
   medium: scaleMedium
 };
 
-// TODO: test hover trigger as well
+// TODO: test hover trigger
+// TODO: test single tooltip concept
 describe('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
