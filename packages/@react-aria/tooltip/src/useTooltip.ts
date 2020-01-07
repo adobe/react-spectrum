@@ -26,6 +26,8 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     id: tooltipId
   };
 
+  console.log('useTooltip', contextProps)
+
   if (contextProps) {
     let onMouseLeave = () => {
       if (contextProps.onHoverTooltip) {

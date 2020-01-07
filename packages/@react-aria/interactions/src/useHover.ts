@@ -90,7 +90,7 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-      if (onShow) {
+      if (onShow && onHoverTooltip) {
         handleDelayedShow(onShow, onHoverTooltip);
       }
 
