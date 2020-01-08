@@ -1,13 +1,17 @@
-import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement, SVGAttributes} from 'react';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
+import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-import {useSlotProvider} from '@react-spectrum/layout';
 
-interface IconProps extends SVGAttributes<SVGElement> {
+type Scale = 'M' | 'L'
+
+interface IconProps extends DOMProps, StyleProps {
   alt?: string,
   children: ReactElement,
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  scale?: Scale,
+  color?: string,
   slot?: string
 }
 
@@ -15,13 +19,16 @@ export function Icon(props: IconProps) {
   let {
     children,
     alt,
-    className,
     scale,
     color,
     size,
     slot = 'icon',
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    role = 'img',
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
   let {[slot]: slotClassName} = useSlotProvider();
 
   let provider = useProvider();
@@ -32,30 +39,33 @@ export function Icon(props: IconProps) {
     pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
   }
   if (scale === undefined) {
-    scale = pscale;
+    scale = pscale as Scale;
   }
   if (color === undefined) {
     color = pcolor;
+  }
+  if (!ariaHidden || ariaHidden === 'false') {
+    ariaHidden = undefined;
   }
 
   // Use user specified size, falling back to provider scale if size is undef
   let iconSize = size ? size : scale;
 
   return React.cloneElement(children, {
-    ...otherProps,
+    ...filterDOMProps(otherProps),
+    ...styleProps,
     scale: 'M',
     color,
     focusable: 'false',
-    'aria-label': props['aria-label'] || alt,
-    'aria-hidden': (props['aria-label'] || alt ? null : true),
-    role: 'img',
+    'aria-label': ariaLabel || alt,
+    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
+    role,
     className: classNames(
       styles,
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      slotClassName,
-      className
-    )
+      styleProps.className,
+      slotClassName)
   });
 }

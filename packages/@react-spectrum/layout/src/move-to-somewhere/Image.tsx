@@ -8,7 +8,7 @@ export interface ImageProps {
   slot?: string,
   alt: string,
   src: string
-  objectFit: string
+  objectFit?: string
 }
 // TODO: rename? Picture?
 export const Image = React.forwardRef((props: ImageProps, ref: RefObject<HTMLElement>) => {
@@ -27,6 +27,8 @@ export const Image = React.forwardRef((props: ImageProps, ref: RefObject<HTMLEle
   // better to have it be wrapped by a div i think, but i haven't given it enough thought
   return (
     <div {...filterDOMProps(otherProps)} {...styleProps} style={{overflow: 'hidden'}} className={classNames({}, className, slotClassName)} ref={ref}>
+      {/*
+        // @ts-ignore */}
       <img src={src} alt={alt} style={{'object-fit': objectFit, height: '100%', width: '100%'}} />
     </div>
   );

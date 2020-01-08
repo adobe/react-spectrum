@@ -10,14 +10,12 @@ export interface TextProps {
 }
 
 export const Text = React.forwardRef((props: TextProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'label'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'label', // unsure about this name
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

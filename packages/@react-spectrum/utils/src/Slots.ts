@@ -4,4 +4,4 @@ export let SlotContext = React.createContext(null);
 
 export function useSlotProvider() {
   return useContext(SlotContext) || {};
-};
+}

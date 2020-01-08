@@ -1,4 +1,4 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 import {SlotContext} from '@react-spectrum/utils';
@@ -11,7 +11,6 @@ export interface GridProps {
   slots: {[key: string]: string}
 }
 
-// TODO: needs Devon's style stuff
 export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLElement>) => {
   let defaults = {};
   let completeProps = Object.assign({}, defaults, useProviderProps(props));
@@ -21,10 +20,10 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
     slots,
     ...otherProps
   } = completeProps;
-  // TODO: add useStyleProps for grids
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <div {...filterDOMProps(otherProps)} ref={ref} className={classNames(styles, 'grid', className, slots && slots.container)}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames(styles, 'grid', className, slots && slots.container)}>
       <SlotContext.Provider value={slots}>
         {children}
       </SlotContext.Provider>

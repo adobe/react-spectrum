@@ -10,14 +10,12 @@ export interface FooterProps {
 }
 
 export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'footer'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'footer',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

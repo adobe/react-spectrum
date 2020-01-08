@@ -4,20 +4,18 @@ import React, {ReactElement, RefObject} from 'react';
 import {useSlotProvider} from '@react-spectrum/utils';
 
 export interface ContentProps {
-  children: ReactElement,
+  children: ReactElement | string,
   className?: string,
   slot?: string
 }
 
 export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'content'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'content',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

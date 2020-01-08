@@ -10,14 +10,12 @@ export interface HeaderProps {
 }
 
 export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'header'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'header',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

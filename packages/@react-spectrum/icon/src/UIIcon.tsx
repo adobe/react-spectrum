@@ -1,10 +1,10 @@
-import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement, SVGAttributes} from 'react';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
+import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
-import {useSlotProvider} from '@react-spectrum/layout';
 
-interface IconProps extends SVGAttributes<SVGElement> {
+interface IconProps extends DOMProps, StyleProps {
   alt?: string,
   children: ReactElement,
   slot?: string
@@ -13,26 +13,34 @@ interface IconProps extends SVGAttributes<SVGElement> {
 export function UIIcon(props: IconProps) {
   let {
     alt,
-    className,
     children,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    role = 'img',
     slot = 'uiIcon',
     ...otherProps
   } = props;
-  let {[slot]: slotClassName} = useSlotProvider();
 
+  let {styleProps} = useStyleProps(otherProps);
+  let {[slot]: slotClassName} = useSlotProvider();
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {
     scale = provider.scale === 'large' ? 'L' : 'M';
   }
 
+  if (!ariaHidden || ariaHidden === 'false') {
+    ariaHidden = undefined;
+  }
+
   return React.cloneElement(children, {
-    ...otherProps,
+    ...filterDOMProps(otherProps),
+    ...styleProps,
     scale,
     focusable: 'false',
-    'aria-label': props['aria-label'] || alt,
-    'aria-hidden': (props['aria-label'] || alt ? null : true),
-    role: 'presentation',
+    'aria-label': ariaLabel || alt,
+    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
+    role,
     className: classNames(
       styles,
       children.props.className,
@@ -40,7 +48,7 @@ export function UIIcon(props: IconProps) {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      slotClassName,
-      className)
+      styleProps.className,
+      slotClassName)
   });
 }

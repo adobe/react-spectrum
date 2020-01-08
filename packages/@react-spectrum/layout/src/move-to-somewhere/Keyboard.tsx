@@ -10,14 +10,12 @@ export interface KeyboardProps {
 }
 
 export const Keyboard = React.forwardRef((props: KeyboardProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'keyboard'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'keyboard',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

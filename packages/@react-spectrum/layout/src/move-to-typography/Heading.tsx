@@ -4,20 +4,18 @@ import React, {ReactElement, RefObject} from 'react';
 import {useSlotProvider} from '@react-spectrum/utils';
 
 export interface HeadingProps {
-  children: ReactElement,
+  children: ReactElement | string,
   className?: string,
   slot?: string
 }
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'heading'};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = 'heading',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
 
   return (

@@ -5,20 +5,20 @@ import styles from './layout.css';
 import {useSlotProvider} from '@react-spectrum/utils';
 
 export interface FlexProps {
-  children: ReactElement | ReactElement[],
+  children?: ReactElement | ReactElement[],
   className?: string,
-  slot?: string
+  slot?: string,
+  justifyItems?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch' | 'space-between',
+  alignItems?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch'
 }
 
 export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {};
-  let completeProps = Object.assign({}, defaults, props);
   let {
     children,
     className,
-    slot,
+    slot = '',
     ...otherProps
-  } = completeProps;
+  } = props;
   let {[slot]: slotClassName} = useSlotProvider();
   // TODO: pull out into official handling
   let {styleProps} = useStyleProps(otherProps, {...baseStyleProps, justifyContent: ['justify-content', value => value], alignItems: ['align-items', value => value]});
