@@ -1,8 +1,10 @@
+import {DOMRefValue} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
+import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu-trigger';
 
@@ -19,7 +21,7 @@ export interface MenuTriggerProps {
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
-  let containerRef = useRef<HTMLDivElement>();
+  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuPopoverRef = useRef<HTMLDivElement>();
   let menuTriggerRef = useRef<HTMLElement>();
   let {
@@ -52,7 +54,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    containerRef,
+    containerRef: unwrapDOMRef(containerRef),
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
     placement: `${direction} ${align}` as Placement,

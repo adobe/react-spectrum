@@ -1,64 +1,53 @@
-import {cleanup, render, within} from '@testing-library/react';
+import {cleanup, render} from '@testing-library/react';
 import {Form} from '../';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {Form as V2Form} from '@react/react-spectrum/Form';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
-describe('Form', () => {
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
+
+describe('Form', function () {
   afterEach(() => {
     cleanup();
-  }); 
+  });
 
-  it.each`
-    Name         | Component
-    ${'v3 Form'} | ${Form}
-    ${'v2 Form'} | ${V2Form}
-  `('$Name should render a form', ({Component}) => {
-    let tree = render(<Component />);
-    let form = tree.getByRole('form');
+  it('should render a form', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Form />
+      </Provider>
+    );
+    
+    let form = getByRole('form');
     expect(form).toBeTruthy();
   });
 
-  it.each`
-    Name         | Component
-    ${'v3 Form'} | ${Form}
-    ${'v2 Form'} | ${V2Form}
-  `('$Name should render children inside the form', ({Component}) => {
-    let tree = render(
-      <Component>
-        <button>Hi</button>
-      </Component>
+  it('should render children inside the form', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Form>
+          <button>Test</button>
+        </Form>
+      </Provider>
     );
-    let form = tree.getByRole('form');
-    expect(within(form).getByRole('button')).toBeTruthy();
+
+    let button = getByRole('button');
+    expect(button).toBeTruthy();
   });
 
-  it.each`
-    Name         | Component
-    ${'v3 Form'} | ${Form}
-  `('$Name should attach a optional user provided ref to the form', ({Component}) => {
+  it('should attach a optional user provided ref to the form', () => {
     let ref = React.createRef();
-    let tree = render(<Component ref={ref} />);
-    let form = tree.getByRole('form');
-    expect(form).toBe(ref.current);
-  });
-
-  it.each`
-    Name         | Component
-    ${'v3 Form'} | ${Form}
-    ${'v2 Form'} | ${V2Form}
-  `('$Name should support additional DOM props', ({Component}) => {
-    let tree = render(<Component data-testid="foo" />);
-    let form = tree.getByRole('form');
-    expect(form).toHaveAttribute('data-testid', 'foo');
-  });
-
-  it.each`
-    Name         | Component  | props
-    ${'v3 Form'} | ${Form}    | ${{UNSAFE_className: 'test-name'}}
-    ${'v2 Form'} | ${V2Form}  | ${{className: 'test-name'}}
-  `('$Name should support UNSAFE_className', ({Component, props}) => {
-    let tree = render(<Component {...props} />);
-    let form = tree.getByRole('form');
-    expect(form).toHaveAttribute('class', expect.stringContaining('test-name'));
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Form ref={ref} />
+      </Provider>
+    );
+    
+    let form = getByRole('form');
+    expect(form).toBe(ref.current.UNSAFE_getDOMNode());
   });
 });

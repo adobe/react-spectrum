@@ -1,16 +1,12 @@
 import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {TagProps} from '@react-types/tag';
 import {useTag} from '@react-aria/tag';
 import {useTagGroupProvider} from './TagGroup';
-
-interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
 
 export const Tag = ((props: SpectrumTagProps) => {
   const {
@@ -59,7 +55,7 @@ export const Tag = ((props: SpectrumTagProps) => {
           },
           styleProps.className
         )}>
-        {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-Tags-itemIcon')})}
+        {icon && React.cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span
           {...labelProps}
           className={classNames(styles, 'spectrum-Tags-itemLabel')}>

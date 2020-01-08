@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '@react-spectrum/utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
@@ -65,15 +65,16 @@ storiesOf('MenuTrigger', module)
     'menu closes on scroll',
     () => (
       <div style={{height: 100, display: 'flex'}}>
-        <div style={{paddingTop: 100, height: 100, overflow: 'auto'}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
           <div style={{height: 200}}>
+            <div>Scrolling here will close the Menu</div>
             <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} defaultOpen>
-              <Button
+              <ActionButton
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
                   Menu Button
-              </Button>
+              </ActionButton>
               <Menu items={withSection} itemKey="name">
                 {item => (
                   <Section items={item.children} title={item.name}>
@@ -84,9 +85,9 @@ storiesOf('MenuTrigger', module)
             </MenuTrigger>
           </div>
         </div>
-        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1, background: 'grey'}}>
           <div style={{height: 200}}>
-            other
+            Scrolling here won't close the Menu
           </div>
         </div>
       </div>
@@ -97,6 +98,7 @@ storiesOf('MenuTrigger', module)
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
         <Button
+          variant="primary"
           onPress={action('press 1')}
           onPressStart={action('pressstart 1')}
           onPressEnd={action('pressend 1')}
@@ -108,6 +110,7 @@ storiesOf('MenuTrigger', module)
         </Button>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
           <Button
+            variant="primary"
             onPress={action('press 2')}
             onPressStart={action('pressstart 2')}
             onPressEnd={action('pressend 2')}
@@ -128,17 +131,17 @@ storiesOf('MenuTrigger', module)
       </div>
     )
   );
-  
+
 function render(props = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} {...props}>
-        <Button
+        <ActionButton
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
             Menu Button
-        </Button>
+        </ActionButton>
         <Menu autoFocus items={withSection} itemKey="name" selectedKeys={['Kangaroo']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>

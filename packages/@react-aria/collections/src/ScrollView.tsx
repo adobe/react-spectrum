@@ -59,7 +59,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       }
     });
   }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
-  
+
   useEffect(() => {
     // TODO: resize observer
     // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
@@ -84,7 +84,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, state.height, state.scrollLeft, state.scrollTop, state.width]);
+  }, [onVisibleRectChange, ref, state.height, state.scrollLeft, state.scrollTop, state.width]);
 
   useLayoutEffect(() => {
     let dom = ref.current;
@@ -101,7 +101,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       state.scrollTop = visibleRect.y;
       dom.scrollTop = visibleRect.y;
     }
-  }, [state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
+  }, [ref, state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
   return (
     <ElementType {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>

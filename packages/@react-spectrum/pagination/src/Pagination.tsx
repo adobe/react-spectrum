@@ -39,7 +39,7 @@ export function PaginationInput(props: PaginationBase) {
         {...textProps}
         value={state.value}
         onChange={state.onChange}
-        className={classNames(styles, 'spectrum-Pagination-input')} />
+        UNSAFE_className={classNames(styles, 'spectrum-Pagination-input')} />
       <span
         className={classNames(typographyStyles, 'spectrum-Body--secondary', classNames(styles, 'spectrum-Pagination-counter'))}>
         {formatMessage('page_count', {n: maxValue})}

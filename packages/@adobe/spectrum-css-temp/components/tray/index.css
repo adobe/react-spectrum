@@ -8,6 +8,7 @@
 }
 
 .spectrum-Tray-wrapper {
+  inset-inline-start: 0;
   /* Positioned at the bottom of the window */
   position: fixed;
   bottom: 0;

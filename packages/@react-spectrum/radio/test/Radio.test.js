@@ -255,4 +255,14 @@ describe('Radios', function () {
 
   // don't need to test keyboard interactions, the above tests ensure that all the right things are in place
   // for the browser to handle it for us
+
+  it('v3 RadioGroup supports labeling', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, {});
+    let radioGroup = getByRole('radiogroup');
+
+    let labelId = radioGroup.getAttribute('aria-labelledby');
+    expect(labelId).toBeDefined();
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('Favorite Pet');
+  });
 });

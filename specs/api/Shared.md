@@ -30,7 +30,20 @@ interface RangeInputBase<T> {
   maxValue?: T,
   step?: T // ??
 }
+
+type LabelPosition = 'top' | 'side';
+type Alignment = 'start' | 'end';
+type NecessityIndicator = 'icon' | 'label';
+
+interface Labelable {
+  label?: ReactNode,
+  isRequired?: boolean,
+  labelPosition?: LabelPosition,
+  labelAlign?: Alignment,
+  necessityIndicator?: NecessityIndicator
+}
 ```
+
 ## Selection
 
 ```javascript
@@ -53,6 +66,7 @@ interface SingleSelectionBase {
   onSelectionChange?: (selectedItem: any) => void,
   typeToSelect?: boolean // or is it really typeToFocus?
 }
+
 ```
 
 ## Drag and Drop

@@ -1,19 +1,20 @@
-import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {ButtonProps} from '@react-types/button';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {cloneElement, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface FieldButtonProps extends ButtonBase {
+interface FieldButtonProps extends ButtonProps {
   isQuiet?: boolean,
+  icon?: ReactElement,
   validationState?: 'valid' | 'invalid'
 }
 
 // @private
-export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefObject<HTMLElement>) => {
+function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {
     elementType: ElementType = 'button',
     isQuiet,
@@ -21,17 +22,18 @@ export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefOb
     validationState,
     icon,
     children,
+    autoFocus,
     ...otherProps
   } = props;
-  ref = ref || useRef();
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let domRef = useFocusableRef(ref);
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...mergeProps(filterDOMProps(otherProps), buttonProps)}
-        ref={ref}
+        ref={domRef}
         className={
           classNames(
             styles,
@@ -45,9 +47,12 @@ export const FieldButton = React.forwardRef((props: FieldButtonProps, ref: RefOb
             styleProps.className
           )
         }>
-        {cloneIcon(icon, {size: 'S'})}
+        {cloneElement(icon, {size: 'S'})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>
   );
-});
+}
+
+let _FieldButton = React.forwardRef(FieldButton);
+export {_FieldButton as FieldButton};

@@ -86,7 +86,7 @@ governing permissions and limitations under the License.
 
     .spectrum-Avatar {
       /* Duplicated so state is on the tag */
-      opacity: percent(var(--spectrum-avatar-small-opacity-disabled));
+      opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
   }
 }

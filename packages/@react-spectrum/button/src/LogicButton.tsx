@@ -1,37 +1,33 @@
-import {ButtonBase} from './Button';
-import {classNames, cloneIcon, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {RefObject, useRef} from 'react';
+import React from 'react';
+import {SpectrumLogicButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStyleProps} from '@react-spectrum/view';
 
-export interface LogicButtonProps extends ButtonBase {
-  variant?: 'and' | 'or'
-}
-
-export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefObject<HTMLElement>) => {
+function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
     elementType: ElementType = 'button',
     variant,
     children,
     isDisabled,
-    icon,
+    autoFocus,
     ...otherProps
   } = props;
-  ref = ref || useRef();
-  let {buttonProps, isPressed} = useButton({...props, ref});
+  let domRef = useFocusableRef(ref);
+  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
         {...buttonProps}
-        ref={ref}
+        ref={domRef}
         className={
           classNames(
             styles,
@@ -44,9 +40,11 @@ export const LogicButton = React.forwardRef((props: LogicButtonProps, ref: RefOb
             styleProps.className
           )
         }>
-        {icon && cloneIcon(icon, {size: 'S', className: classNames(styles, 'spectrum-Icon', icon.props.className)})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>
   );
-});
+}
+
+let _LogicButton = React.forwardRef(LogicButton);
+export {_LogicButton as LogicButton};

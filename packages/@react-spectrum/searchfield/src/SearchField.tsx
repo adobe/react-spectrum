@@ -2,34 +2,57 @@ import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
-import {SearchFieldProps} from '@react-types/searchfield';
-import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
+import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import {TextFieldBase} from '@react-spectrum/textfield';
+import {TextFieldRef} from '@react-types/textfield';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
-import {useStyleProps} from '@react-spectrum/view';
 
-interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
-
-export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: RefObject<HTMLInputElement & HTMLTextAreaElement>) => {
+function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
+  let defaultIcon = (
+    <Magnifier 
+      data-testid="searchicon" 
+      UNSAFE_className={
+        classNames(
+          styles,
+          'spectrum-Search-icon'
+        )
+      } />
+  );
+
   let {
-    icon = <Magnifier data-testid="searchicon" />,
+    icon = defaultIcon,
     isDisabled,
+    UNSAFE_className,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   let state = useSearchFieldState(props);
-  let searchFieldRef = ref || useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, searchFieldRef);
+  let textfieldRef = useRef<TextFieldRef>();
+  textfieldRef = ref || textfieldRef;
+  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
+
+  let clearButton = (
+    <ClearButton
+      {...clearButtonProps}
+      UNSAFE_className={
+        classNames(
+          styles,
+          'spectrum-ClearButton'
+        )
+      }
+      isDisabled={isDisabled} />
+  );
 
   // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
-    <div
-      {...styleProps}
-      className={
+    <TextFieldBase
+      {...otherProps}
+      {...searchFieldProps as any}
+      UNSAFE_className={
         classNames(
           styles,
           'spectrum-Search',
@@ -37,35 +60,31 @@ export const SearchField = forwardRef((props: SpectrumSearchFieldProps, ref: Ref
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet
           },
-          styleProps.className
+          UNSAFE_className
         )
-      }>
-      <TextField
-        {...otherProps}
-        {...searchFieldProps}
-        UNSAFE_className={
-          classNames(
-            styles,
-            'spectrum-Search-input'
-          )
-        }
-        ref={searchFieldRef}
-        isDisabled={isDisabled}
-        icon={icon}
-        onChange={state.setValue}
-        value={state.value} />
-      {
-        state.value !== '' &&
-          <ClearButton
-            {...clearButtonProps}
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-ClearButton'
-              )
-            }
-            isDisabled={isDisabled} />
       }
-    </div>
+      inputClassName={
+        classNames(
+          styles,
+          'spectrum-Search-input'
+        )
+      }
+      ref={textfieldRef}
+      isDisabled={isDisabled}
+      icon={icon}
+      onChange={state.setValue}
+      value={state.value}
+      wrapperChildren={state.value !== '' && clearButton} />
   );
-});
+}
+
+let _SearchField = forwardRef(SearchField);
+export {_SearchField as SearchField};
+
+function unwrapInputRef(ref: RefObject<TextFieldRef>) {
+  return {
+    get current() {
+      return ref.current && ref.current.getInputElement();
+    }
+  };
+}

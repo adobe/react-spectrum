@@ -1,3 +1,3 @@
-export * from './Focus';
 export * from './FocusScope';
 export * from './FocusRing';
+export * from './useFocusable';

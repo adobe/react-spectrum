@@ -12,29 +12,15 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ tags/tags.yml }}
-*/
-/* topdoc
-{{ tags/tags-deletable.yml }}
-*/
-
 .spectrum-Tags {
   display: inline-block;
 
   margin: 0;
   padding: 0;
   list-style: none;
-
-  &:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
 }
 
 .spectrum-Tags-item {
-  float: inline-start;
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;

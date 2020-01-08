@@ -1,18 +1,13 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DialogContext, DialogContextValue} from './context';
-import {DOMProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactNode, RefObject, useContext, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
+import React, {HTMLAttributes, useContext, useRef} from 'react';
+import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
-interface DialogProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
-
-export const Dialog = React.forwardRef((props: DialogProps, ref: RefObject<HTMLDivElement>) => {
+export function Dialog(props: SpectrumDialogProps) {
   let {
     type = 'popover',
     ...contextProps
@@ -31,19 +26,19 @@ export const Dialog = React.forwardRef((props: DialogProps, ref: RefObject<HTMLD
   );
 
   if (type === 'popover') {
-    return <BaseDialog {...allProps} ref={ref}>{children}</BaseDialog>;
+    return <BaseDialog {...allProps}>{children}</BaseDialog>;
   } else {
-    return <ModalDialog {...allProps} ref={ref}>{children}</ModalDialog>;
+    return <ModalDialog {...allProps}>{children}</ModalDialog>;
   }
-});
+}
 
-const ModalDialog = React.forwardRef((props: HTMLAttributes<HTMLElement>, ref: RefObject<HTMLDivElement>) => {
+function ModalDialog(props: HTMLAttributes<HTMLElement>) {
   let {modalProps} = useModalDialog();
-  return <BaseDialog {...mergeProps(props, modalProps)} ref={ref} />;
-});
+  return <BaseDialog {...mergeProps(props, modalProps)} />;
+}
 
-const BaseDialog = React.forwardRef(({children, ...otherProps}: HTMLAttributes<HTMLElement>, ref: RefObject<HTMLDivElement>) => {
-  ref = ref || useRef();
+function BaseDialog({children, ...otherProps}: HTMLAttributes<HTMLElement>) {
+  let ref = useRef();
   let {dialogProps} = useDialog({ref});
 
   return (
@@ -59,4 +54,4 @@ const BaseDialog = React.forwardRef(({children, ...otherProps}: HTMLAttributes<H
       </div>
     </FocusScope>
   );
-});
+}
