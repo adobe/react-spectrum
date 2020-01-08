@@ -154,12 +154,15 @@ export function useHover(props: HoverHookProps): HoverResult {
   };
 }
 
-// TODO: move tooltip specific functions to another file
+// TODO: move tooltip specific functions to useTooltipTrigger
 
+
+// show overides the hide
 function handleDelayedShow(onShow, onHoverTooltip) {
   if (hoverHideTimeout != null) {
     clearTimeout(hoverHideTimeout);
     hoverHideTimeout = null;
+    // maybe add a return here?
   }
   hoverShowTimeout = setTimeout(() => {
     onShow(true);
@@ -170,19 +173,22 @@ function handleDelayedShow(onShow, onHoverTooltip) {
 }
 
 function handleDelayedHide(onShow) {
+  console.log('delay hide')
   if (hoverShowTimeout != null) {
     clearTimeout(hoverShowTimeout);
     hoverShowTimeout = null;
   }
   hoverHideTimeout = setTimeout(() => {
+    console.log('hiding')
     onShow(false);
-  }, 300);
+  }, 700);
 }
 
+//
 function handleMouseOverOut(onShow, e) {
   const related = e.relatedTarget || e.nativeEvent.toElement;
   const parent = related.parentNode;
-  if (parent.getAttribute('role') === 'tooltip') {
+  if (parent.getAttribute('role') === 'tooltip') { // maybe this operation is too slow?
     clearTimeout(hoverShowTimeout);
     return;
   } else {

@@ -5,8 +5,8 @@ import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
-import {HoverProps, useHover} from '@react-aria/interactions';
-import {HoverResponderContext} from '@react-aria/interactions';
+//import {HoverProps, useHover} from '@react-aria/interactions';
+//import {HoverResponderContext} from '@react-aria/interactions';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -113,20 +113,23 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let enter = () => {
+    console.log('enter')
     let tooltipBucketItem = triggerProps.ref.current.id;
     visibleTooltips.push(tooltipBucketItem);
     tooltipStates.forEach(tooltip => tooltip.setOpen(false));
   };
 
   let exit = (e) => {
+    console.log('exit')
     let hoveringOverTooltip = false;
     const related = e.relatedTarget || e.nativeEvent.toElement;
     const parent = related.parentNode;
     if (parent.getAttribute('role') === 'tooltip') {
       hoveringOverTooltip = true;
     }
-    if (visibleTooltips.length > 0 && hoveringOverTooltip === false) {
-      state.setOpen(false);
+    if (visibleTooltips.length > 0 && hoveringOverTooltip === false) {  // made 1 instead of 0
+      console.log('exit is closing')
+      // state.setOpen(false);
     }
     visibleTooltips.pop();
   };
@@ -140,6 +143,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  // pass props into useTooltip
   return {
     baseProps: {
       ...overlayProps,
@@ -162,42 +166,42 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 }
 
+
+// function handleDelayedShow(onShow, onHoverTooltip) {
+//   if (hoverHideTimeout != null) {
+//     clearTimeout(hoverHideTimeout);
+//     hoverHideTimeout = null;
+//   }
+//   hoverShowTimeout = setTimeout(() => {
+//     onShow(true);
+//     if (onHoverTooltip) {
+//       onHoverTooltip(true);
+//     }
+//   }, 300);
+// }
+//
+// function handleDelayedHide(onShow) {
+//   if (hoverShowTimeout != null) {
+//     clearTimeout(hoverShowTimeout);
+//     hoverShowTimeout = null;
+//   }
+//   hoverHideTimeout = setTimeout(() => {
+//     onShow(false);
+//   }, 300);
+// }
+//
+// function handleMouseOverOut(onShow, e) {
+//   const related = e.relatedTarget || e.nativeEvent.toElement;
+//   const parent = related.parentNode;
+//   if (parent.getAttribute('role') === 'tooltip') {
+//     clearTimeout(hoverShowTimeout);
+//     return;
+//   } else {
+//     handleDelayedHide(onShow);
+//   }
+// }
+
 /*
-
-function handleDelayedShow(onShow, onHoverTooltip) {
-  if (hoverHideTimeout != null) {
-    clearTimeout(hoverHideTimeout);
-    hoverHideTimeout = null;
-  }
-  hoverShowTimeout = setTimeout(() => {
-    onShow(true);
-    if (onHoverTooltip) {
-      onHoverTooltip(true);
-    }
-  }, 300);
-}
-
-function handleDelayedHide(onShow) {
-  if (hoverShowTimeout != null) {
-    clearTimeout(hoverShowTimeout);
-    hoverShowTimeout = null;
-  }
-  hoverHideTimeout = setTimeout(() => {
-    onShow(false);
-  }, 300);
-}
-
-function handleMouseOverOut(onShow, e) {
-  const related = e.relatedTarget || e.nativeEvent.toElement;
-  const parent = related.parentNode;
-  if (parent.getAttribute('role') === 'tooltip') {
-    clearTimeout(hoverShowTimeout);
-    return;
-  } else {
-    handleDelayedHide(onShow);
-  }
-}
-
 // this doesn't work either ...
 export function handleDelayedShow2() {
   let contextProps = useContext(HoverResponderContext);

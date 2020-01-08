@@ -26,16 +26,23 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     id: tooltipId
   };
 
-  console.log('useTooltip', contextProps)
-
+  // could maybe add a delay as a second argument here
   if (contextProps) {
+    console.log('context props', contextProps)
     let onMouseLeave = () => {
       if (contextProps.onHoverTooltip) {
         contextProps.onHoverTooltip(false);
       }
     };
+    let onMouseEnter = () => {
+      console.log('fawefaweg')
+      // this is faster than theDelayHide .... you need to block it right here 
+    }
     tooltipProps.onMouseLeave = onMouseLeave;
+    tooltipProps.onMouseEnter = onMouseEnter;
   }
+
+  // onMouseEnter to override the delayHide?
 
   return {
     tooltipProps
