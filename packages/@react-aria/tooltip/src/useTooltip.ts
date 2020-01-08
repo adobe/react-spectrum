@@ -28,15 +28,26 @@ export function useTooltip(props: TooltipProps): TooltipAria {
 
   // could maybe add a delay as a second argument here
   if (contextProps) {
-    console.log('context props', contextProps)
+    // If mouse leaves the tooltip, hide it
     let onMouseLeave = () => {
-      if (contextProps.onHoverTooltip) {
-        contextProps.onHoverTooltip(false);
+      // if (contextProps.tooltipState) {
+      //   contextProps.tooltipState.setOpen(false);
+      // }
+
+
+      
+      if (contextProps.handleDelayedHide) {
+        contextProps.handleDelayedHide();
       }
     };
+
+    // If mouse enters tooltip, call handleDelayedShow so that the hide call 
+    // triggered by the mouse leaving the toolip trigger button is canceled
+    // Potentially replace with a cancel function to simplify handleDelayShow
     let onMouseEnter = () => {
-      console.log('fawefaweg')
-      // this is faster than theDelayHide .... you need to block it right here 
+      if (contextProps.handleDelayedShow) {
+        contextProps.handleDelayedShow();
+      }
     }
     tooltipProps.onMouseLeave = onMouseLeave;
     tooltipProps.onMouseEnter = onMouseEnter;

@@ -24,7 +24,7 @@ interface TooltipTriggerProps {
 }
 
 interface InteractionProps extends DOMProps {
-  onPressInteraction: () => void,
+  toggleTooltipState: () => void,
   onHoverInteraction: (value: boolean) => void,
 }
 
@@ -35,10 +35,10 @@ interface TooltipTriggerAria {
   clickTriggerProps: AllHTMLAttributes<HTMLElement>
 }
 
-let visibleTooltips = [];
+let visibleTooltips;
 let tooltipStates = [];
-//let hoverHideTimeout = null;
-//let hoverShowTimeout = null;
+let hoverHideTimeout = null;
+let hoverShowTimeout = null;
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   // let contextProps = useContext(HoverResponderContext);
@@ -49,13 +49,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     state
   } = props;
 
-  let onPressInteraction = () => {
+  let toggleTooltipState = () => {
     state.setOpen(!state.open);
   };
 
-  let onHoverInteraction = (isHovering) => {
-    state.setOpen(isHovering);
-  };
+  // let onHoverInteraction = (isHovering) => {
+  //   state.setOpen(isHovering);
+  // };
 
   let onClose = () => {
     state.setOpen(false);
@@ -112,35 +112,68 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  let handleDelayedShow = () => {
+    let triggerId = triggerProps.ref.current.id;
+    // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
+    // a.k.a if user is moving back and forth between trigger and tooltip
+    if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
+      console.log('clearing hidetimeout')
+      clearTimeout(hoverHideTimeout);
+      hoverHideTimeout = null;
+      return;
+    }
+
+    hoverShowTimeout = setTimeout(() => {
+      hoverShowTimeout = null;
+      state.setOpen(true);
+      
+      // Close previously open tooltip (deals with tooltip opened via click operation)
+      if (visibleTooltips) {
+        console.log('visible tooltips', visibleTooltips);
+        visibleTooltips.state.setOpen(false);
+      }
+
+      visibleTooltips = {triggerId, state};
+      console.log('visibletooltips after show', visibleTooltips);
+    }, 300);
+  }
+  
+  let handleDelayedHide = () => {
+    if (hoverShowTimeout != null) {
+      console.log('clearing showtimeout')
+      clearTimeout(hoverShowTimeout);
+      hoverShowTimeout = null;
+      return;
+    }
+
+    hoverHideTimeout = setTimeout(() => {
+      hoverHideTimeout = null;
+      state.setOpen(false);
+      console.log('removing a visible tooltip')
+      visibleTooltips = null;
+    }, 300);
+  }
+
+  // Just use handleDelayedShow since enter just calls it
   let enter = () => {
-    console.log('enter')
-    let tooltipBucketItem = triggerProps.ref.current.id;
-    visibleTooltips.push(tooltipBucketItem);
-    tooltipStates.forEach(tooltip => tooltip.setOpen(false));
+    console.log('enter');
+    handleDelayedShow();
+    
   };
-
-  let exit = (e) => {
+  // Just use handleDelayExit since exit just calls it
+  let exit = () => {
     console.log('exit')
-    let hoveringOverTooltip = false;
-    const related = e.relatedTarget || e.nativeEvent.toElement;
-    const parent = related.parentNode;
-    if (parent.getAttribute('role') === 'tooltip') {
-      hoveringOverTooltip = true;
-    }
-    if (visibleTooltips.length > 0 && hoveringOverTooltip === false) {  // made 1 instead of 0
-      console.log('exit is closing')
-      // state.setOpen(false);
-    }
-    visibleTooltips.pop();
+    handleDelayedHide();
   };
 
+  // Perhaps rename this to just be onPress?
   let enterClick = () => {
-    let tooltipBucketItem = triggerProps.ref.current.id;
-    visibleTooltips.push(tooltipBucketItem);
-    tooltipStates.push(state);
-    if (visibleTooltips.length > 1) {
-      visibleTooltips.shift();
-    }
+    let triggerId = triggerProps.ref.current.id;
+    // Perhaps remove the toggleTooltipState function and just paste code here
+    toggleTooltipState();
+    // if (state.open) {
+      visibleTooltips = {triggerId, state};
+    // }
   };
 
   // pass props into useTooltip
@@ -151,72 +184,18 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
-    interactionProps: {
-      onPressInteraction,
-      onHoverInteraction
-    },
+    // interactionProps: {
+    //   toggleTooltipState
+    // },
     hoverTriggerProps: {
       //...hoverProps,
       onMouseEnter: enter,
-      onMouseLeave: exit
+      onMouseLeave: exit,
+      handleDelayedShow: handleDelayedShow,
+      handleDelayedHide: handleDelayedHide
     },
     clickTriggerProps: {
-      onMouseDown: enterClick
+      onPress: enterClick
     }
   };
 }
-
-
-// function handleDelayedShow(onShow, onHoverTooltip) {
-//   if (hoverHideTimeout != null) {
-//     clearTimeout(hoverHideTimeout);
-//     hoverHideTimeout = null;
-//   }
-//   hoverShowTimeout = setTimeout(() => {
-//     onShow(true);
-//     if (onHoverTooltip) {
-//       onHoverTooltip(true);
-//     }
-//   }, 300);
-// }
-//
-// function handleDelayedHide(onShow) {
-//   if (hoverShowTimeout != null) {
-//     clearTimeout(hoverShowTimeout);
-//     hoverShowTimeout = null;
-//   }
-//   hoverHideTimeout = setTimeout(() => {
-//     onShow(false);
-//   }, 300);
-// }
-//
-// function handleMouseOverOut(onShow, e) {
-//   const related = e.relatedTarget || e.nativeEvent.toElement;
-//   const parent = related.parentNode;
-//   if (parent.getAttribute('role') === 'tooltip') {
-//     clearTimeout(hoverShowTimeout);
-//     return;
-//   } else {
-//     handleDelayedHide(onShow);
-//   }
-// }
-
-/*
-// this doesn't work either ...
-export function handleDelayedShow2() {
-  let contextProps = useContext(HoverResponderContext);
-  if (hoverHideTimeout != null) {
-    clearTimeout(hoverHideTimeout);
-    hoverHideTimeout = null;
-  }
-  hoverShowTimeout = setTimeout(() => {
-    if(contextProps.onShow) {
-      contextProps.onShow(true);
-    }
-    if (contextProps.onHoverTooltip) {
-      contextProps.onHoverTooltip(true);
-    }
-  }, 300);
-}
-
-*/

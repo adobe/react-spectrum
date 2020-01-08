@@ -34,7 +34,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {baseProps, interactionProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
+  let {baseProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
     tooltipProps: {
       ...content.props
     },
@@ -69,8 +69,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...clickTriggerProps}
           ref={triggerRef}
           isPressed={isOpen}
-          isDisabled={isDisabled}
-          onPress={interactionProps.onPressInteraction}>
+          isDisabled={isDisabled}>
           {trigger}
         </PressResponder>
         {overlay}
@@ -84,8 +83,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...hoverTriggerProps}
           ref={triggerRef}
           isDisabled={isDisabled}
-          onShow={interactionProps.onHoverInteraction}
-          onHoverTooltip={interactionProps.onHoverInteraction}>
+          tooltipState={state}>
           {trigger}
           {overlay}
         </HoverResponder>

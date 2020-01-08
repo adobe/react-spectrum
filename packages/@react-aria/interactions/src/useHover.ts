@@ -90,9 +90,10 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
-      if (onShow && onHoverTooltip) {
-        handleDelayedShow(onShow, onHoverTooltip);
-      }
+      // Moving to useTooltipTrigger
+      // if (onShow && onHoverTooltip) {
+      //   handleDelayedShow(onShow, onHoverTooltip);
+      // }
 
       setHover(true);
     };
@@ -120,9 +121,10 @@ export function useHover(props: HoverHookProps): HoverResult {
 
       setHover(false);
 
-      if (onShow) {
-        handleMouseOverOut(onShow, event);
-      }
+      // Moving to useTooltipTrigger
+      // if (onShow) {
+      //   handleMouseOverOut(onShow, event);
+      // }
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -158,40 +160,40 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 
 // show overides the hide
-function handleDelayedShow(onShow, onHoverTooltip) {
-  if (hoverHideTimeout != null) {
-    clearTimeout(hoverHideTimeout);
-    hoverHideTimeout = null;
-    // maybe add a return here?
-  }
-  hoverShowTimeout = setTimeout(() => {
-    onShow(true);
-    if (onHoverTooltip) {
-      onHoverTooltip(true);
-    }
-  }, 300);
-}
+// function handleDelayedShow(onShow, onHoverTooltip) {
+//   if (hoverHideTimeout != null) {
+//     clearTimeout(hoverHideTimeout);
+//     hoverHideTimeout = null;
+//     // maybe add a return here?
+//   }
+//   hoverShowTimeout = setTimeout(() => {
+//     onShow(true);
+//     if (onHoverTooltip) {
+//       onHoverTooltip(true);
+//     }
+//   }, 300);
+// }
 
-function handleDelayedHide(onShow) {
-  console.log('delay hide')
-  if (hoverShowTimeout != null) {
-    clearTimeout(hoverShowTimeout);
-    hoverShowTimeout = null;
-  }
-  hoverHideTimeout = setTimeout(() => {
-    console.log('hiding')
-    onShow(false);
-  }, 700);
-}
+// function handleDelayedHide(onShow) {
+//   console.log('delay hide')
+//   if (hoverShowTimeout != null) {
+//     clearTimeout(hoverShowTimeout);
+//     hoverShowTimeout = null;
+//   }
+//   hoverHideTimeout = setTimeout(() => {
+//     console.log('hiding')
+//     onShow(false);
+//   }, 700);
+// }
 
 //
-function handleMouseOverOut(onShow, e) {
-  const related = e.relatedTarget || e.nativeEvent.toElement;
-  const parent = related.parentNode;
-  if (parent.getAttribute('role') === 'tooltip') { // maybe this operation is too slow?
-    clearTimeout(hoverShowTimeout);
-    return;
-  } else {
-    handleDelayedHide(onShow);
-  }
-}
+// function handleMouseOverOut(onShow, e) {
+//   const related = e.relatedTarget || e.nativeEvent.toElement;
+//   const parent = related.parentNode;
+//   if (parent.getAttribute('role') === 'tooltip') { // maybe this operation is too slow?
+//     clearTimeout(hoverShowTimeout);
+//     return;
+//   } else {
+//     handleDelayedHide(onShow);
+//   }
+// }
