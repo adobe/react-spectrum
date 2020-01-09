@@ -51,7 +51,7 @@ The GridView should manage keyboard navigation between Cards in a manner similar
     - the `Card` container element should have `aria-labelledby` attribute referencing the element containing the title by `id`.
     - If the `CardBody` also has either `subtitle` or `description` props, the `Card` container should have `aria-describedby` attribute referencing the elements containing the subtitle and/or description by `id`.
   - If the `CardBody` does not have a `title` prop, but does have either `subtitle` or `description` props, the `Card` container should have `aria-labelledby` attribute referencing the elements containing the subtitle and/or description by `id`.
-- When the `Card` is allows selection,
+- When the `Card` allows selection,
   - the `checkbox` should have a `title` prop with localized string for `Select`.
   - To better express the selected or not selected state of the `Card`, the `aria-label` prop for the checkbox may be set to a localized string for `(Not selected)` or `(Selected)`.
   - The `aria-labelledby` prop for the checkbox should then concatenate the `aria-labelledby` prop for the `Card` container element with the `id` prop for the checkbox, so that the checkbox will be labelledby the `CardBody` `title` and a localized string for the current selected state.
@@ -77,7 +77,7 @@ The GridView should manage keyboard navigation between Cards in a manner similar
     - the `Card` container element should have `aria-labelledby` attribute referencing the element containing the title by `id`.
     - If the `CardBody` also has either `subtitle` or `description` props, the `Card` container should have `aria-describedby` attribute referencing the elements containing the subtitle and/or description by `id`.
   - If the `CardBody` does not have a `title` prop, but does have either `subtitle` or `description` props, the `Card` container should have `aria-labelledby` attribute referencing the elements containing the subtitle and/or description by `id`.
-- When the `Card` is allows selection,
+- When the `Card` allows selection,
   - the `checkbox` should have a `title` prop with localized string for `Select`.
   - To better express the selected or not selected state of the `Card`, the `aria-label` prop for the checkbox may be set to a localized string for `(Not selected)` or `(Selected)`.
   - The `aria-labelledby` prop for the checkbox should then concatenate the `aria-labelledby` prop for the `Card` container element with the `id` prop for the checkbox, so that the checkbox will be labelledby the `CardBody` `title` and a localized string for the current selected state.
