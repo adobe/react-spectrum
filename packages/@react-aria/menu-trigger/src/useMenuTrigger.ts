@@ -38,25 +38,21 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
   });
 
   let onPress = (e) => {
-    if (e.pointerType !== 'keyboard') {
-      state.setOpen(!state.isOpen);
-    }
+    state.setOpen(!state.isOpen);
   };
 
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
     }
-
+    // Fallback to focusing the first item in menu if no menu item is currently selected
+    focusStrategy.current = 'first';
     if (ref && ref.current) {
       switch (e.key) {
-        case 'Enter': 
         case 'ArrowDown':
-        case ' ':
           e.preventDefault();
           e.stopPropagation();
           onPress(e);
-          focusStrategy.current = 'first';
           break;
         case 'ArrowUp':
           e.preventDefault();

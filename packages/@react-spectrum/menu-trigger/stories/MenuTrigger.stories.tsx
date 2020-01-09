@@ -30,6 +30,10 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
+    'single selected key',
+    () => render({}, {selectedKeys: ['Kangaroo']})
+  )
+  .add(
     'align="end"',
     () => render({align: 'end'})
   )
@@ -142,7 +146,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu autoFocus items={withSection} itemKey="name" selectedKeys={['Kangaroo']} {...menuProps}>
+        <Menu items={withSection} itemKey="name" {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

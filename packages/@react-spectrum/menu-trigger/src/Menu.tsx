@@ -36,7 +36,7 @@ export function Menu<T>(props: MenuProps<T>) {
     ...mergeProps(contextProps, props),
     selectionMode: 'single' as SelectionMode
   };
-  
+
   let state = useTreeState(completeProps);
 
   let {menuProps} = useMenu(completeProps, state, layout);
@@ -45,24 +45,15 @@ export function Menu<T>(props: MenuProps<T>) {
   let {
     onSelect,
     focusStrategy,
-    autoFocus,
+    autoFocus = true,
     ...otherProps
   } = completeProps;
 
   useEffect(() => {
     let focusedKey;
     let selectionManager = state.selectionManager;
+    let selectedKeys = selectionManager.selectedKeys;
     selectionManager.setFocused(true);
-    // Perhaps the below block goes into useSelectableCollection
-    if (autoFocus) {
-      // TODO: add other default focus behaviors
-
-      // Default behavior, focus the first selected key (if any)
-      let selectedKeys = selectionManager.selectedKeys;
-      if (selectedKeys.size) {
-        focusedKey = selectedKeys.values().next().value;
-      }
-    }
 
     // Override focus strategy if focusStrategy is defined (e.g. if menu opened via key press)
     if (focusStrategy) {
@@ -75,9 +66,18 @@ export function Menu<T>(props: MenuProps<T>) {
       focusStrategy.current = null;
     }
 
+    // Perhaps the below block goes into useSelectableCollection
+    // Should autoFocus always be true so that Menu attempts to focus the first selected item? Maybe remove the prop entirely
+    if (autoFocus) {
+      // TODO: add other default focus behaviors
+      // Default behavior, focus the first selected key (if any)
+      if (selectedKeys.size) {
+        focusedKey = selectedKeys.values().next().value;
+      }
+    }
+    
     selectionManager.setFocusedKey(focusedKey);
   }, []);
-
 
   return (
     <CollectionView
