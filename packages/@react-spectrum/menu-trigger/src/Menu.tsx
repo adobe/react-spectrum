@@ -1,6 +1,6 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection, SelectionMode} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {CollectionBase, Expandable, MultipleSelection, SelectionMode, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -10,7 +10,6 @@ import {MenuContext} from './context';
 import {MenuTrigger} from './';
 import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
-import {StyleProps, useStyleProps} from '@react-spectrum/view';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
@@ -53,7 +52,7 @@ export function Menu<T>(props: MenuProps<T>) {
   useEffect(() => {
     let focusedKey;
     let selectionManager = state.selectionManager;
-    state.selectionManager.setFocused(true);
+    selectionManager.setFocused(true);
     // Perhaps the below block goes into useSelectableCollection
     if (autoFocus) {
       // TODO: add other default focus behaviors
@@ -106,26 +105,26 @@ export function Menu<T>(props: MenuProps<T>) {
           );
         }
 
-        if (item.hasChildNodes) {
-          return (
-            <MenuTrigger>
-              <MenuItem
-                item={item}
-                state={state}
-                onSelect={onSelect} />
-              <Menu items={item.childNodes} onSelect={onSelect}>
-                {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
-              </Menu>
-            </MenuTrigger>
-          );
-        } else {
+        // if (item.hasChildNodes) {
+        //   return (
+        //     <MenuTrigger>
+        //       <MenuItem
+        //         item={item}
+        //         state={state}
+        //         onSelect={onSelect} />
+        //       <Menu items={item.childNodes} onSelect={onSelect}>
+        //         {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
+        //       </Menu>
+        //     </MenuTrigger>
+        //   );
+        // } else {
           return (
             <MenuItem
               item={item}
               state={state}
               onSelect={onSelect} />
           );
-        }
+        // }
       }}
     </CollectionView>
   );
@@ -157,13 +156,15 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
 
   // Prob should be in a useMenuItem aria hook
   // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
-  let onPressStart = () => {
-    if (!isDisabled && !hasChildNodes) {
-      onSelect(item);
-    }
-  }; 
+  // let onPressStart = () => {
+  //   if (!isDisabled && !hasChildNodes) {
+  //     onSelect(item);
+  //   }
+  // }; 
 
-  let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
+  // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
+  let {pressProps} = usePress(itemProps);
+
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
@@ -191,7 +192,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
           {rendered}
           {hasChildNodes &&
             <ChevronRightMedium
-              className={classNames(styles, 'spectrum-Menu-chevron')}
+              UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')}
               onMouseDown={e => e.stopPropagation()} />
           }
         </span>
