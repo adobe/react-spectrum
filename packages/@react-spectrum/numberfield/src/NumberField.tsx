@@ -24,10 +24,10 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
-  let {setValue, ...numberFieldState} = useNumberFieldState(otherProps);
+  let state = useNumberFieldState(otherProps);
   let {numberFieldProps, inputFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
     ...props,
-    ...numberFieldState as any // TODO
+    ...state
   });
 
   let className = classNames(
@@ -35,7 +35,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': numberFieldState.validationState === 'invalid',
+      'is-invalid': state.validationState === 'invalid',
       'is-disabled': isDisabled
     },
     classNames(
@@ -63,7 +63,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           autoFocus={autoFocus}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           {...inputFieldProps as any}
-          onChange={setValue} />
+          onChange={state.setValue} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
@@ -71,8 +71,8 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           <ActionButton
             UNSAFE_className={
               classNames(
-                stepperStyle, 
-                'spectrum-Stepper-stepUp', 
+                stepperStyle,
+                'spectrum-Stepper-stepUp',
                 'spectrum-ActionButton'
               )
             }
@@ -83,7 +83,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           <ActionButton
             UNSAFE_className={
               classNames(
-                stepperStyle, 
+                stepperStyle,
                 'spectrum-Stepper-stepDown',
                 'spectrum-ActionButton'
               )
