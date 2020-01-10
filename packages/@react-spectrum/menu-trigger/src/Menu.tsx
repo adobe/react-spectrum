@@ -34,14 +34,13 @@ export function Menu<T>(props: MenuProps<T>) {
   let contextProps = useContext(MenuContext) || {};
   let completeProps = {
     ...mergeProps(contextProps, props),
+    // TODO: make this configurable
     selectionMode: 'single' as SelectionMode
   };
 
   let state = useTreeState(completeProps);
-
   let {menuProps} = useMenu(completeProps, state, layout);
   let {styleProps} = useStyleProps(completeProps);
-
   let {
     onSelect,
     focusStrategy,
@@ -50,19 +49,17 @@ export function Menu<T>(props: MenuProps<T>) {
   } = completeProps;
 
   useEffect(() => {
-    let focusedKey;
+    // By default, attempt to focus first item upon opening menu
+    let focusedKey = layout.getFirstKey();
     let selectionManager = state.selectionManager;
     let selectedKeys = selectionManager.selectedKeys;
     selectionManager.setFocused(true);
+    
+    // Focus last item if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
+    if (focusStrategy && focusStrategy.current === 'last') {
+      focusedKey = layout.getLastKey();
 
-    // Override focus strategy if focusStrategy is defined (e.g. if menu opened via key press)
-    if (focusStrategy) {
-      if (focusStrategy.current === 'first') {
-        focusedKey = layout.getFirstKey();
-      } else if (focusStrategy.current === 'last') {
-        focusedKey = layout.getLastKey();
-      }
-      // Reset focus strategy so it doesn't get permanently applied
+      // Reset focus strategy so it doesn't get applied to future menu openings
       focusStrategy.current = null;
     }
 
@@ -70,7 +67,7 @@ export function Menu<T>(props: MenuProps<T>) {
     // Should autoFocus always be true so that Menu attempts to focus the first selected item? Maybe remove the prop entirely
     if (autoFocus) {
       // TODO: add other default focus behaviors
-      // Default behavior, focus the first selected key (if any)
+      // Focus the first selected key (if any)
       if (selectedKeys.size) {
         focusedKey = selectedKeys.values().next().value;
       }
@@ -105,26 +102,26 @@ export function Menu<T>(props: MenuProps<T>) {
           );
         }
 
-        // if (item.hasChildNodes) {
-        //   return (
-        //     <MenuTrigger>
-        //       <MenuItem
-        //         item={item}
-        //         state={state}
-        //         onSelect={onSelect} />
-        //       <Menu items={item.childNodes} onSelect={onSelect}>
-        //         {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
-        //       </Menu>
-        //     </MenuTrigger>
-        //   );
-        // } else {
+        if (item.hasChildNodes) {
+          return (
+            <MenuTrigger>
+              <MenuItem
+                item={item}
+                state={state}
+                onSelect={onSelect} />
+              <Menu items={item.childNodes} onSelect={onSelect}>
+                {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
+              </Menu>
+            </MenuTrigger>
+          );
+        } else {
           return (
             <MenuItem
               item={item}
               state={state}
               onSelect={onSelect} />
           );
-        // }
+        }
       }}
     </CollectionView>
   );
@@ -154,29 +151,25 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     itemRef: ref
   });
 
-  // Prob should be in a useMenuItem aria hook
+  // TODO: should be in a useMenuItem aria hook
   // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
-  // let onPressStart = () => {
-  //   if (!isDisabled && !hasChildNodes) {
-  //     onSelect(item);
-  //   }
-  // }; 
+  let onPressStart = () => {
+    if (!isDisabled && !hasChildNodes) {
+      onSelect(item);
+    }
+  }; 
 
-  // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
-  let {pressProps} = usePress(itemProps);
-
+  let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
-    <FocusRing 
-      focusClass={classNames(styles, 'is-focused')}
+    <FocusRing
       focusRingClass={classNames(styles, 'focus-ring')}>
       <li
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
         ref={ref}
         aria-disabled={isDisabled}
         role="menuitem"
-        tabIndex={isDisabled ? null : 0}
         className={classNames(
           styles,
           'spectrum-Menu-item',

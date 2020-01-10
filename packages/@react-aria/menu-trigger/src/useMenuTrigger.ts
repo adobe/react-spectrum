@@ -45,8 +45,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
     }
-    // Fallback to focusing the first item in menu if no menu item is currently selected
-    focusStrategy.current = 'first';
+
     if (ref && ref.current) {
       switch (e.key) {
         case 'ArrowDown':
@@ -58,6 +57,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
           e.preventDefault();
           e.stopPropagation();
           onPress(e);
+          // If no menu item is selected, focus last item when opening menu with ArrowDown
           focusStrategy.current = 'last';
           break;
       }
