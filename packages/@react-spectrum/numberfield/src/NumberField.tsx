@@ -27,7 +27,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   let state = useNumberFieldState(otherProps);
   let {numberFieldProps, inputFieldProps, incrementButtonProps, decrementButtonProps} = useNumberField({
     ...props,
-    ...state
+    ...state as any 
   });
 
   let className = classNames(
