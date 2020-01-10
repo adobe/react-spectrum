@@ -24,57 +24,42 @@ governing permissions and limitations under the License.
   color: var(--spectrum-alert-text-color);
 }
 
-/* topdoc
-{{ alert/alert-info.yml }}
-*/
 .spectrum-Alert--info {
   border-color: var(--spectrum-alert-info-border-color);
 
   .spectrum-Alert-icon {
-    color: var(--spectrum-alert-info-border-color);
+    color: var(--spectrum-alert-info-icon-color);
   }
 }
 
-/* topdoc
-{{ alert/alert-help.yml }}
-*/
 .spectrum-Alert--help {
   border-color: var(--spectrum-alert-info-border-color);
 
   .spectrum-Alert-icon {
-    color: var(--spectrum-alert-info-border-color);
+    color: var(--spectrum-alert-info-icon-color);
   }
 }
 
-/* topdoc
-{{ alert/alert-error.yml }}
-*/
 .spectrum-Alert--error {
   border-color: var(--spectrum-alert-error-border-color);
 
   .spectrum-Alert-icon {
-    color: var(--spectrum-alert-error-border-color);
+    color: var(--spectrum-alert-error-icon-color);
   }
 }
 
-/* topdoc
-{{ alert/alert-success.yml }}
-*/
 .spectrum-Alert--success {
   border-color: var(--spectrum-alert-success-border-color);
 
   .spectrum-Alert-icon {
-    color: var(--spectrum-alert-success-border-color);
+    color: var(--spectrum-alert-success-icon-color);
   }
 }
 
-/* topdoc
-{{ alert/alert-warning.yml }}
-*/
 .spectrum-Alert--warning {
   border-color: var(--spectrum-alert-warning-border-color);
 
   .spectrum-Alert-icon {
-    color: var(--spectrum-alert-warning-border-color);
+    color: var(--spectrum-alert-warning-icon-color);
   }
 }

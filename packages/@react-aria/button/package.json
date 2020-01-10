@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/button",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -16,8 +16,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-alpha.1"
+    "@react-aria/focus": "^3.0.0-rc.1",
+    "@react-aria/interactions": "^3.0.0-rc.1",
+    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-types/button": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

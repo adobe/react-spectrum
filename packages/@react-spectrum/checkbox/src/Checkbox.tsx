@@ -1,52 +1,46 @@
-import {CheckboxProps} from '@react-types/checkbox';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {forwardRef, useRef} from 'react';
+import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
-export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLabelElement>) => {
-  let completeProps = Object.assign({}, {
-    isIndeterminate: false,
-    isDisabled: false,
-    isEmphasized: false,
-    validationState: 'valid',
-    defaultSelected: false
-  }, props);
-
+function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+  props = useProviderProps(props);
   let {
-    isIndeterminate,
-    isEmphasized,
-    isDisabled,
+    isIndeterminate = false,
+    isEmphasized = false,
+    isDisabled = false,
+    autoFocus,
     children,
-    className,
     ...otherProps
-  } = completeProps;
+  } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
-  let inputRef = useRef<HTMLInputElement>();
-  let {
-    checked,
-    setChecked
-  } = useToggleState(completeProps);
-  let {inputProps} = useCheckbox(completeProps, {checked, setChecked}, inputRef);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, inputRef);
 
   let markIcon = isIndeterminate
-    ? <DashSmall className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
-    : <CheckmarkSmall className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
+    ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
+    : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
 
   return (
     <label
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false,
-          onChange: false
+          'aria-label': false
         }
       )}
-      ref={ref}
+      {...styleProps}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -57,10 +51,10 @@ export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLab
             'is-invalid': inputProps['aria-invalid'],
             'is-disabled': isDisabled
           },
-          className
+          styleProps.className
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
@@ -74,4 +68,7 @@ export const Checkbox = forwardRef((props: CheckboxProps, ref: RefObject<HTMLLab
       )}
     </label>
   );
-});
+}
+
+let _Checkbox = forwardRef(Checkbox);
+export {_Checkbox as Checkbox};

@@ -19,8 +19,14 @@ governing permissions and limitations under the License.
   --spectrum-radio-labelbelow-label-margin: var(--spectrum-global-dimension-size-40) 0 0 0;
   --spectrum-radio-labelbelow-height: auto;
 
-  /* Hardcoded for wrapping study */
-  --spectrum-radio-label-margin-top: var(--spectrum-global-dimension-size-75);
+  /* Hardcoded for wrapping study.
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
+  */
+  --spectrum-radio-label-margin-top: var(--spectrum-global-dimension-size-65);
+
+  /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
+  /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
+  --spectrum-radio-label-line-height: 1.49;
 }
 
 .spectrum-Radio {
@@ -57,10 +63,8 @@ governing permissions and limitations under the License.
 
   /* Hit area */
   position: absolute;
-  top: 0;
-  left: calc(var(--spectrum-radio-cursor-hit-x) * -1);
-  /* right wins in rtl because inline-size is specified */
-  right: calc(var(--spectrum-radio-cursor-hit-x) * -1);
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--spectrum-radio-cursor-hit-x) * -1);
   inline-size: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
   block-size: 100%;
 
@@ -79,13 +83,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio-label {
+  text-align: start;
   margin-inline-start: var(--spectrum-radio-text-gap);
-  font-size: var(--spectrum-radio-text-size);
-
-  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-
   /* Hardcoded as no good way to calculate this */
   margin-block-start: var(--spectrum-radio-label-margin-top);
+  font-size: var(--spectrum-radio-text-size);
+  line-height: var(--spectrum-radio-label-line-height);
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Radio-button {
@@ -115,6 +119,8 @@ governing permissions and limitations under the License.
 
   .spectrum-Radio-button {
     flex-shrink: 0;
+
+    margin: 0;
   }
 
   .spectrum-Radio-label {

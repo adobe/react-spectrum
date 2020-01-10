@@ -53,6 +53,13 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
+    'showValueLabel: false',
+    () => {
+      const value = number('Value', 32, sliderOptions);
+      return render({showValueLabel: false, value});
+    }
+  )
+  .add(
     'valueLabel: 1 of 4',
     () => render({value: 25, valueLabel: '1 of 4'})
   )
@@ -68,24 +75,24 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'children: React',
+    'no visible label',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value});
+      return render({label: null, 'aria-label': 'Loading…', value});
     }
   )
   .add(
     'labelPosition: side',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value, showValueLabel: true, labelPosition: 'side'});
+      return render({value, labelPosition: 'side'});
     }
   )
   .add(
     'labelPosition: top',
     () => {
       const value = number('Value', 32, sliderOptions);
-      return render({children: 'React', value, showValueLabel: true, labelPosition: 'top'});
+      return render({value, labelPosition: 'top'});
     }
   )
   .add(
@@ -100,27 +107,6 @@ storiesOf('Progress/ProgressBar', module)
     () => render({isIndeterminate: true, size: 'S'})
   )
   .add(
-    'variant: positive',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'positive', value});
-    }
-  )
-  .add(
-    'variant: critical',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'critical', value});
-    }
-  )
-  .add(
-    'variant: warning',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'warning', value});
-    }
-  )
-  .add(
     'variant: overBackground',
     () => {
       const value = number('Value', 32, sliderOptions);
@@ -132,31 +118,27 @@ storiesOf('Progress/ProgressBar', module)
     }
   )
   .add(
-    'Using raw values for min, max, and value',
+    'Using raw values for minValue, maxValue, and value',
     () => render({
-      children: 'Loading…',
       showValueLabel: true,
       labelPosition: 'top',
-      max: 2147483648,
+      maxValue: 2147483648,
       value: 715827883
     })
   )
   .add(
     'Using raw values with number formatter',
     () => render({
-      children: 'Loading…',
       showValueLabel: true,
       labelPosition: 'top',
-      max: 2147483648,
+      maxValue: 2147483648,
       value: 715827883,
       formatOptions
     })
   );
 
-function render(props = {}) {
+function render(props: any = {}) {
   return (
-    <ProgressBar
-      aria-label="Progress bar aria label"
-      {...props} />
+    <ProgressBar label="Loading…" {...props} />
   );
 }

@@ -12,12 +12,13 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ search/search.yml }}
-*/
-/* topdoc
-{{ search/search-quiet.yml }}
-*/
+/* override DNA variables to use ones that change in large scale instead of staying static */
+:root {
+  --spectrum-search-padding-left: var(--spectrum-global-dimension-size-450);
+  --spectrum-search-padding-right: var(--spectrum-global-dimension-size-350);
+  --spectrum-search-quiet-padding-left: var(--spectrum-global-dimension-size-300);
+  --spectrum-search-quiet-padding-right: var(--spectrum-global-dimension-size-350);
+}
 
 .spectrum-Search {
   display: inline-block;
@@ -40,7 +41,7 @@ governing permissions and limitations under the License.
 
   /* Correct the odd appearance of input[type="search"] in Chrome and Safari.*/
   /* This gets overridden by .spectrum-Textfield */
-  -webkit-appearance: textfield;
+  -webkit-appearance: none;
 
   /* Correct the outline for input[type="search"] style in Safari. */
   outline-offset: -2px;
@@ -57,4 +58,18 @@ governing permissions and limitations under the License.
   &::-webkit-search-decoration {
     -webkit-appearance: none;
   }
+}
+
+/* Positions search magnifier UI icon */
+.spectrum-Search .spectrum-Search-icon {
+  display: block;
+  position: absolute;
+  height: var(--spectrum-global-dimension-size-200);
+  width: var(--spectrum-global-dimension-size-200);
+  inset-inline-start: 12px;
+  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
+
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  pointer-events: none;
 }

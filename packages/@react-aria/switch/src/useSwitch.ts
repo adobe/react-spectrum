@@ -1,21 +1,22 @@
+import {InputHTMLAttributes} from 'react';
 import {SwitchProps} from '@react-types/switch';
-import {ToggleAriaProps, useToggle} from '@react-aria/toggle';
-import {ToggleState} from '@react-types/toggle';
+import {ToggleState} from '@react-stately/toggle';
+import {useToggle} from '@react-aria/toggle';
 
-export interface SwitchAriaProps {
-  inputProps: ToggleAriaProps
+export interface SwitchAria {
+  inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useSwitch(props: SwitchProps, state: ToggleState):SwitchAriaProps {
-  let toggleAriaProps = useToggle(props, state);
-  let {checked} = state;
+export function useSwitch(props: SwitchProps, state: ToggleState): SwitchAria {
+  let {inputProps} = useToggle(props, state);
+  let {isSelected} = state;
 
   return {
     inputProps: {
-      ...toggleAriaProps,
+      ...inputProps,
       role: 'switch',
-      checked,
-      'aria-checked': checked
+      checked: isSelected,
+      'aria-checked': isSelected
     }
   };
 }

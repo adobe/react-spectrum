@@ -10,17 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* topdoc
-{{ textfield/textarea.yml }}
-*/
-
-/* topdoc
-{{ textfield/textarea-quiet.yml }}
-*/
-
-/* topdoc
-{{ textfield/textfield.yml }}
-*/
 .spectrum-Textfield-input {
   background-color: var(--spectrum-textfield-background-color);
   border-color: var(--spectrum-textfield-border-color);
@@ -77,9 +66,6 @@ governing permissions and limitations under the License.
     }
   }
 
-  /* topdoc
-  {{ textfield/textfield-quiet.yml }}
-  */
   .spectrum-Textfield--quiet & {
     background-color: var(--spectrum-textfield-quiet-background-color);
     border-color: var(--spectrum-textfield-quiet-border-color);
@@ -144,7 +130,7 @@ governing permissions and limitations under the License.
     &.is-focused {
       box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
     }
-  
+
     &:focus-ring { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
         box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
@@ -166,8 +152,8 @@ governing permissions and limitations under the License.
   .spectrum-Textfield.is-valid & {
     color: var(--spectrum-alert-success-icon-color);
   }
- 
+
   .spectrum-Textfield.is-invalid & {
-    color: var(--spectrum-alert-error-border-color);
+    color: var(--spectrum-alert-error-icon-color);
   }
 }

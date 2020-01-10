@@ -30,15 +30,15 @@ describe('Toast', function () {
     expect(getByRole('alert')).toBeTruthy();
     expect(getByText(message)).toBeTruthy();
     if (name === 'Toast') {
-      expect(getAllByRole('presentation').length).toBe(1);
+      expect(getAllByRole('img').length).toBe(1);
     }
   });
 
   it.each`
-    Name           | Component    | props                      | message
-    ${'Toast'}     | ${Toast}     | ${{className: 'myClass'}}  | ${'Toast time!'}
+    Name           | Component    | props                             | message
+    ${'Toast'}     | ${Toast}     | ${{UNSAFE_className: 'myClass'}}  | ${'Toast time!'}
     ${'V2Toast'}   | ${V2Toast}   | ${{className: 'myClass'}}  | ${'Toast time!'}
-  `('$Name supports additional classNames', function ({Component, props, message}) {
+  `('$Name supports UNSAFE_className', function ({Component, props, message}) {
     let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
 
@@ -51,7 +51,7 @@ describe('Toast', function () {
   `('$Name supports variant info', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, props, message);
 
-    expect(getAllByRole('presentation').length).toBe(2);
+    expect(getAllByRole('img').length).toBe(2);
   });
 
   it.each`
@@ -124,6 +124,6 @@ describe('Toast', function () {
     let toast = renderComponent(Component, {ref});
     let input = toast.getByTestId(testId);
 
-    expect(ref.current).toEqual(input);
+    expect(ref.current.UNSAFE_getDOMNode()).toEqual(input);
   });
 });

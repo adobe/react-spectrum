@@ -12,25 +12,6 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-/* topdoc
-{{ inputgroup/combobox.yml }}
-*/
-/* topdoc
-{{ inputgroup/combobox-quiet.yml }}
-*/
-/* topdoc
-{{ inputgroup/datepicker.yml }}
-*/
-/* topdoc
-{{ inputgroup/datepicker-quiet.yml }}
-*/
-/* topdoc
-{{ inputgroup/datepicker-range.yml }}
-*/
-/* topdoc
-{{ inputgroup/datepicker-range-quiet.yml }}
-*/
-
 :root {
   /* Todo: move to DNA */
   --spectrum-combobox-quiet-fieldbutton-border-radius: 0;
@@ -41,6 +22,8 @@ governing permissions and limitations under the License.
   --spectrum-datepicker-range-dash-margin-left: calc(-0.5 * var(--spectrum-global-dimension-static-font-size-100));
   --spectrum-datepicker-range-dash-padding-top: 0;
   --spectrum-datepicker-range-dash-line-height: calc(var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100));
+
+  --spectrum-combobox-button-width: calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25));
 }
 
 .spectrum-InputGroup {
@@ -52,7 +35,8 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-border-radius);
 
   .spectrum-FieldButton {
-    padding: 0 var(--spectrum-dropdown-padding-x);
+    padding: 0;
+    inline-size: var(--spectrum-combobox-button-width);
     border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
     border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
     border-width: 1px;
@@ -74,26 +58,29 @@ governing permissions and limitations under the License.
 
 .spectrum-InputGroup--quiet {
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
-  .spectrum-FieldButton {
-    border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
 
+  .spectrum-FieldButton {
+    inline-size: auto;
     position: relative;
+
+    padding-inline-start: var(--spectrum-dropdown-padding-x);
     padding-inline-end: var(--spectrum-combobox-quiet-fieldbutton-padding-right);
     border-width: 0;
     border-bottom: var(--spectrum-textfield-quiet-affixed-border-size) solid;
+    border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
 
     /* More hitarea */
     &:after {
       content: '';
       position: absolute;
-      height: 100%;
-      width: 10px;
-      right: -10px;
+      block-size: 100%;
+      inline-size: 10px;
+      inset-inline-end: -10px;
     }
   }
 
   .spectrum-InputGroup-icon {
-    right: 0;
+    inset-inline-end: 0;
   }
 
   &.is-disabled {
@@ -131,7 +118,7 @@ governing permissions and limitations under the License.
       border-inline-end: 0;
       padding-inline-end: var(--spectrum-padding);
     }
-    
+
     svg {
       display: none;
     }
@@ -152,7 +139,7 @@ governing permissions and limitations under the License.
     width: 0;
     z-index: 1;
     &:before {
-      content: '—';
+      content: '–';
       display: inline-block;
       margin: 0 var(--spectrum-datepicker-range-dash-margin-left);
       overflow: hidden;

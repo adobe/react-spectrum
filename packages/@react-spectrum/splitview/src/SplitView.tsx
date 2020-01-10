@@ -1,4 +1,5 @@
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import rspStyles from './SplitView.css';
@@ -27,7 +28,9 @@ const CURSORS = {
   }
 };
 
-export function SplitView(props: SplitViewProps) {
+interface SpectrumSplitViewProps extends SplitViewProps, DOMProps, StyleProps {}
+
+export function SplitView(props: SpectrumSplitViewProps) {
   let {direction} = useLocale();
   let completeProps = Object.assign(
     {},
@@ -46,8 +49,10 @@ export function SplitView(props: SplitViewProps) {
   let {
     orientation,
     allowsResizing,
-    primaryPane
+    primaryPane,
+    ...remainingProps
   } = completeProps;
+  let {styleProps} = useStyleProps(remainingProps);
   let containerRef = useRef(null);
 
   let children = React.Children.toArray(props.children);
@@ -108,8 +113,9 @@ export function SplitView(props: SplitViewProps) {
 
   return (
     <div
+      {...styleProps}
       ref={containerRef}
-      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, props.className)}>
+      className={classNames(styles, 'spectrum-SplitView', `spectrum-SplitView--${orientation}`, styleProps.className)}>
       {primaryPane === 0 ? primary : secondary}
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <div

@@ -1,10 +1,9 @@
 # Link
 
 ```typescript
-interface Link {
-  variant?: 'primary' | 'secondary' | 'overBackground',
+interface Link extends DOMProps, StyleProps, PressEvents {
+  variant?: 'primary' | 'secondary' | 'overBackground', // default primary
   children: ReactNode,
-  onPress?: (e: MouseEvent) => void,
   isQuiet?: boolean
 }
 ```

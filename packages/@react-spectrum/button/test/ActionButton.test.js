@@ -28,12 +28,11 @@ describe('ActionButton', function () {
     ${ActionButton}  | ${{}}
     ${V2Button}      | ${{variant: 'action'}}
   `('v2/3 parity allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden name="s">Click Me</Component>);
+    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
     expect(button).toHaveAttribute('aria-hidden', 'true');
-    expect(button).toHaveAttribute('name', 's');
   });
 
   it.each`
@@ -44,8 +43,16 @@ describe('ActionButton', function () {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    let holdAffordance = getByRole('presentation');
-    expect(holdAffordance).not.toBeNull();
+    let holdAffordance;
+    if (Component === V2Button) {
+      holdAffordance = getByRole('presentation');
+      expect(holdAffordance).toBeTruthy();
+      expect(holdAffordance).not.toHaveAttribute('aria-hidden');
+    } else {
+      holdAffordance = getByRole('img');
+      expect(holdAffordance).toBeTruthy();
+      expect(holdAffordance).toHaveAttribute('aria-hidden');
+    }
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });

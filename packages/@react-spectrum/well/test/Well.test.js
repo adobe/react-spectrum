@@ -12,7 +12,7 @@ let refExists = (ComponentToCheck, children, props) => {
   };
 
   let {getByText, getByTestId} = render(<Component />);
-  expect(ref.current).toEqual(getByTestId(dataTestId));
+  expect(ref.current.UNSAFE_getDOMNode()).toEqual(getByTestId(dataTestId));
 
   return {getByText, ref};
 };
@@ -24,22 +24,22 @@ describe('Well', () => {
 
   it.each`
     Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{className: 'myClass', 'data-testid': 'wellV3'}}
+    ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
     ${'v2'}   | ${V2Well}   | ${{className: 'myClass', 'data-testid': 'wellV2'}}
-  `('$Name supports additional classNames', ({Component, props}) => {
+  `('$Name supports UNSAFE_className', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
     let className = getByTestId(props['data-testid']).className;
     expect(className.includes('spectrum-Well')).toBeTruthy();
-    expect(className.includes(props.className)).toBeTruthy();
+    expect(className.includes('myClass')).toBeTruthy();
   });
 
   it.each`
     Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{title: 'This is a title', 'data-testid': 'wellV3'}}
-    ${'v2'}   | ${V2Well}   | ${{title: 'This is a title', 'data-testid': 'wellV2'}}
+    ${'v3'}   | ${Well}     | ${{'data-testid': 'wellV3'}}
+    ${'v2'}   | ${V2Well}   | ${{'data-testid': 'wellV2'}}
   `('$Name supports additional properties', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
-    expect(getByTestId(props['data-testid'])).toHaveAttribute('title', props.title);
+    expect(getByTestId(props['data-testid'])).toHaveAttribute('data-testid', props['data-testid']);
   });
 
   it.each`
@@ -53,7 +53,7 @@ describe('Well', () => {
 
   it('v3 forward ref exists and supports children and props', function () {
     let {ref} = refExists(Well, 'Well Text', {'data-testid': 'wellForwardRef'});
-    expect(ref.current).toHaveAttribute('data-testid', 'wellForwardRef');
-    expect(ref.current.textContent.includes('Well Text')).toBeTruthy();
+    expect(ref.current.UNSAFE_getDOMNode()).toHaveAttribute('data-testid', 'wellForwardRef');
+    expect(ref.current.UNSAFE_getDOMNode().textContent.includes('Well Text')).toBeTruthy();
   });
 });

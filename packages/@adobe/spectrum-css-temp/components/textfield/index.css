@@ -22,33 +22,41 @@ governing permissions and limitations under the License.
   --spectrum-textfield-quiet-invalid-background-position: 100% 50%;
 
   --spectrum-textfield-multiline-height: auto;
+  --spectrum-textfield-multiline-min-height: var(--spectrum-global-dimension-size-700);
 
-  --spectrum-textfield-multiline-padding-y: 4px;
-  --spectrum-textfield-multiline-padding-x: 8px;
+  --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
+  --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
+  --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
 
   /* Todo: DNA uses incorrect font family "Adobe Clean" */;
   --spectrum-textfield-text-font-family-fixed: adobe-clean, Helvetica, Arial, sans-serif;
 }
 
 .spectrum-Textfield {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
+  min-width: var(--spectrum-textfield-min-width);
+  width: var(--spectrum-component-single-line-width);
+
+  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
+    height: var(--spectrum-textfield-height);
+    min-height: var(--spectrum-textfield-height);
+  }
 }
 
 .spectrum-Textfield-input {
   /* box */
   box-sizing: border-box;
   border: var(--spectrum-textfield-border-size) solid;
-  border-radius: var(--spectrum-border-radius);
+  border-radius: var(--spectrum-textfield-border-radius);
 
   /* Apply padding by default to center text, giving consistency between input and textfield */
-  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) var(--spectrum-textfield-padding-x);
+  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) calc(var(--spectrum-textfield-padding-x) - 1px);
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  min-width: var(--spectrum-textfield-min-width);
+  width: 100%;
   height: var(--spectrum-textfield-height);
-  width: var(--spectrum-component-single-line-width);
 
   vertical-align: top; /* used to align them correctly in forms. */
 
@@ -61,22 +69,29 @@ governing permissions and limitations under the License.
   /* Change the input font styles in all browsers */
   font-family: var(--spectrum-textfield-text-font-family-fixed);
   font-size: var(--spectrum-textfield-text-size);
-  line-height: var(--spectrum-text-body-line-height);
+  line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
   outline: none;
 
-  /* removes the native spin buttons in firefox. -mox-appearance: none has no effect */
-  /* http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29 */
-  -moz-appearance: textfield;
   -webkit-appearance: none;
+  /*
+    Removes the native spin buttons in Firefox; -moz-appearance: none results in spinners.
+    This has to come after -webkit-appearance or it gets overridden (#214)
+    Details: http://stackoverflow.com/questions/23372903/hide-spinner-in-input-number-firefox-29
+
+    Sets the opacity to 1 as normalize.css sets an opacity to placeholders
+    Details: https://github.com/csstools/normalize.css/blob/master/normalize.css#L297
+  */
+  -moz-appearance: textfield;
 
   &::placeholder {
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+    opacity: 1;
   }
 
   /* added to work with Edge, note, it needs double ::
@@ -86,6 +101,7 @@ governing permissions and limitations under the License.
     font-weight: var(--spectrum-textfield-placeholder-text-font-weight);
     font-style: var(--spectrum-textfield-placeholder-text-font-style);
     transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+    opacity: 1;
   }
 
   &:lang(ja), &:lang(zh), &:lang(ko) {
@@ -104,6 +120,9 @@ governing permissions and limitations under the License.
   }
 
   &:disabled {
+    /* Disable the resize functionality when disabled */
+    resize: none;
+
     /* The opacity must be set to 1 */
     opacity: 1;
     &::placeholder {
@@ -135,14 +154,15 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.is-invalid & { 
+  .spectrum-Textfield.is-invalid & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
-    padding: var(--spectrum-textfield-multiline-padding-y) var(--spectrum-textfield-multiline-padding-x);
-  
+    min-height: var(--spectrum-textfield-multiline-min-height);
+    padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
+
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
   }
@@ -161,12 +181,11 @@ governing permissions and limitations under the License.
   }
 }
 
-/* copied from .spectrum-DecoratedTextfield-icon */
-/* styles the valid/invalid state icons on the right of the textfield 
-   replaces valid/invalid background icon */
 .spectrum-Textfield-validationIcon {
+  /* TODO: Confirm if this is ok for the validation icon sizing
+    Note that the sizes are a bit different when compared with old background icons(more noticable for checkmark)
+  */
   position: absolute;
-
   padding-inline-end: calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2);
   pointer-events: all;
 
@@ -181,33 +200,39 @@ governing permissions and limitations under the License.
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-height) / 2));
   inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2));
 }
-
 .spectrum-Textfield.is-valid .spectrum-Textfield-validationIcon {
   width: var(--spectrum-icon-checkmark-medium-width);
   height: var(--spectrum-icon-checkmark-medium-height);
   bottom: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-height) / 2));
-  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-width) / 2));
+  inset-inline-end: var(--spectrum-global-dimension-size-150);
 }
 
-/* styles the left icon for textfield */
+/* styles the left icon for textfield, assumes usage of workflow icon sizing (18px by 18px) */
 .spectrum-Textfield-icon {
   display: block;
   position: absolute;
-  inset-inline-start: 12px;
-  top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-icon-magnifier-width) / 2) - calc(var(--spectrum-textfield-padding-bottom) - var(--spectrum-textfield-padding-top)));
+  height: var(--spectrum-icon-info-medium-height);
+  width: var(--spectrum-icon-info-medium-width);
+  inset-inline-start: var(--spectrum-global-dimension-size-100);
+  top: var(--spectrum-global-dimension-size-85);
 }
 
 /* styles the textfield properly if the left icon is provided */
 .spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
-  padding-inline-start: var(--spectrum-search-padding-left); 
+  padding-inline-start: calc(calc(var(--spectrum-global-dimension-size-200) + var(--spectrum-icon-info-medium-width)) - 1px);
 
   .spectrum-Textfield--quiet & {
-    padding-inline-start: var(--spectrum-search-quiet-padding-left);
+    padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width));
 
     /* Since quiet button has no left padding, push the icon all the way to the left */
     & ~ .spectrum-Textfield-icon {
       inset-inline-start: 0;
     }
+  }
+
+  &.spectrum-Textfield--multiline {
+    height: var(--spectrum-textfield-height);
+    min-height: var(--spectrum-textfield-height);
   }
 }

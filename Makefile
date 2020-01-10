@@ -60,7 +60,8 @@ lint:
 test:
 	yarn jest
 
-ci-test: lint test
+ci-test: lint
+	yarn jest --maxWorkers=2
 
 storybook:
 	NODE_ENV=storybook yarn build-storybook

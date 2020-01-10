@@ -710,7 +710,7 @@ describe('DatePicker', function () {
             <DatePicker defaultValue={new Date(2019, 1, 3)} onChange={onChange} />
           </Provider>
         );
-        let segment = getByLabelText('Year');
+        let segment = getByLabelText('العام');
         expect(segment).toHaveTextContent('٢٠١٩');
         segment.focus();
 

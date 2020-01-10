@@ -1,8 +1,8 @@
 import {useCallback, useRef, useState} from 'react';
 
 export function useControlledState<T>(
-  value: T, 
-  defaultValue: T, 
+  value: T,
+  defaultValue: T,
   onChange: (value: T, ...args: any[]) => void
 ): [T, (value: T | ((prevState: T) => T), ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
@@ -18,10 +18,10 @@ export function useControlledState<T>(
   ref.current = isControlled;
 
   let setValue = useCallback((value, ...args) => {
-    let onChangeCaller = (value, ...args) => {
+    let onChangeCaller = (value, ...onChangeArgs) => {
       if (onChange) {
         if (stateRef.current !== value) {
-          onChange(value, ...args);
+          onChange(value, ...onChangeArgs);
         }
       }
       if (!isControlled) {
@@ -30,15 +30,20 @@ export function useControlledState<T>(
     };
 
     if (typeof value === 'function') {
-      let wrapFunc = (oldValue, ...rest) => {
-        let interceptedValue = value(oldValue, ...rest);
+      // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
+      // when someone using useControlledState calls setControlledState(myFunc)
+      // this will call our useState setState with a function as well which invokes myFunc and calls onChange with the value from myFunc
+      // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
+      // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
+      let updateFunction = (oldValue, ...functionArgs) => {
+        let interceptedValue = value(oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;
         }
         return oldValue;
       };
-      setStateValue(wrapFunc);
+      setStateValue(updateFunction);
     } else {
       if (!isControlled) {
         setStateValue(value);

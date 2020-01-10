@@ -1,9 +1,8 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {Focus} from '@react-aria/focus';
-import React, {useContext, useRef} from 'react';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import React, {useContext} from 'react';
 import {Removable} from '@react-types/shared';
+import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {TagGroupProps} from '@react-types/tag';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroup} from '@react-aria/tag';
 
@@ -22,7 +21,7 @@ export function useTagGroupProvider(): TagGroupContext {
   return useContext(TagGroupContext);
 }
 
-export const TagGroup = ((props: TagGroupProps) => {
+export const TagGroup = ((props: SpectrumTagGroupProps) => {
   let completeProps = useProviderProps(props);
 
   let {
@@ -31,47 +30,40 @@ export const TagGroup = ((props: TagGroupProps) => {
     onRemove,
     validationState,
     children,
-    className,
     ...otherProps
   } = completeProps;
-  let isFocused = useRef(false);
-
-  let handleFocusWithin = (focused) => {
-    isFocused.current = focused;
-  };
-
-  const {tagGroupProps} = useTagGroup({...completeProps, isFocused});
+  let {styleProps} = useStyleProps(otherProps);
+  const {tagGroupProps} = useTagGroup(completeProps);
 
   function removeAll(tags) {
     onRemove([tags]);
   }
 
   return (
-    <Focus onFocusWithinChange={handleFocusWithin}>
-      <div
-        {...filterDOMProps(otherProps)}
-        className={
-          classNames(
-            styles,
-            'spectrum-Tags',
-            {
-              'is-disabled': isDisabled
-            },
-            className
-          )
-        }
-        {...tagGroupProps}>
-        <TagGroupContext.Provider
-          value={{
-            isRemovable: isReadOnly ? false : isReadOnly,
-            isDisabled,
-            onRemove: isReadOnly ? null : removeAll,
-            validationState,
-            role: 'gridcell'
-          }}>
-          {children}
-        </TagGroupContext.Provider>
-      </div>
-    </Focus>
+    <div
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      className={
+        classNames(
+          styles,
+          'spectrum-Tags',
+          {
+            'is-disabled': isDisabled
+          },
+          styleProps.className
+        )
+      }
+      {...tagGroupProps}>
+      <TagGroupContext.Provider
+        value={{
+          isRemovable: isReadOnly ? false : isReadOnly,
+          isDisabled,
+          onRemove: isReadOnly ? null : removeAll,
+          validationState,
+          role: 'gridcell'
+        }}>
+        {children}
+      </TagGroupContext.Provider>
+    </div>
   );
 });
