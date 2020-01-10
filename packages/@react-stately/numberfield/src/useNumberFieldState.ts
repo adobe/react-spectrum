@@ -20,7 +20,7 @@ export function useNumberFieldState(props) {
     }
   };
 
-  let onIncrement = () => {
+  let increment = () => {
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -35,14 +35,14 @@ export function useNumberFieldState(props) {
     });
   };
 
-  let onIncrementToMax = () => {
+  let incrementToMax = () => {
     if (maxValue != null) {
       triggerChange(maxValue);
       setNumValue(maxValue);
     }
   };
 
-  let onDecrement = () => {
+  let decrement = () => {
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -57,7 +57,7 @@ export function useNumberFieldState(props) {
     });
   };
 
-  let onDecrementToMin = () => {
+  let decrementToMin = () => {
     if (minValue != null) {
       setNumValue(minValue);
     }
@@ -81,10 +81,10 @@ export function useNumberFieldState(props) {
 
   return {
     setValue,
-    onIncrement: useCallback(onIncrement, [maxValue, minValue, step]),
-    onIncrementToMax,
-    onDecrement: useCallback(onDecrement, [maxValue, minValue, step]),
-    onDecrementToMin,
+    onIncrement: useCallback(increment, [maxValue, minValue, step]),
+    incrementToMax,
+    onDecrement: useCallback(decrement, [maxValue, minValue, step]),
+    decrementToMin,
     value: numValue,
     validationState: !isValid.current && 'invalid'
   };
