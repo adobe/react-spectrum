@@ -76,7 +76,7 @@ describe('Menu', function () {
     ${'V2Menu'} | ${V2Menu} | ${{}}
   `('$Name has default behavior', async function ({Component}) {
     let tree = renderComponent(Component);
-    let heading = tree.getByText('Heading 1');
-    expect(heading).toBeTruthy();
+    let item1 = tree.getByText('Foo');
+    expect(item1).toBeTruthy();
   });
 });

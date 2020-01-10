@@ -37,7 +37,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     isOpen: state.isOpen
   });
 
-  let onPress = (e) => {
+  let onPress = () => {
     state.setOpen(!state.isOpen);
   };
 
@@ -51,12 +51,12 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
         case 'ArrowDown':
           e.preventDefault();
           e.stopPropagation();
-          onPress(e);
+          onPress();
           break;
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
-          onPress(e);
+          onPress();
           // If no menu item is selected, focus last item when opening menu with ArrowDown
           focusStrategy.current = 'last';
           break;

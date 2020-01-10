@@ -76,9 +76,7 @@ describe('useMenuTrigger', function () {
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
     expect(typeof menuTriggerProps.onPress).toBe('function');
-    menuTriggerProps.onPress({pointerType: 'keyboard'});
-    expect(setOpen).toHaveBeenCalledTimes(0);
-    menuTriggerProps.onPress({pointerType: 'not keyboard'});
+    menuTriggerProps.onPress();
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
   });
@@ -101,7 +99,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       isDefaultPrevented: () => true,
-      key: 'Enter'
+      key: 'ArrowDown'
     });
     expect(setOpen).toHaveBeenCalledTimes(0);
 
@@ -109,7 +107,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       defaultPrevented: true,
-      key: 'Enter'
+      key: 'ArrowDown'
     });
     expect(setOpen).toHaveBeenCalledTimes(0);
 
@@ -117,7 +115,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       defaultPrevented: false,
-      key: 'Enter',
+      key: 'ArrowDown',
       preventDefault,
       stopPropagation
     });
