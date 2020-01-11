@@ -151,6 +151,12 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     itemRef: ref
   });
 
+  // The below is just a visual bandaid, but we'll need to figure out how to have useSelectableCollection skip over disabled items
+  // when pressing arrowUp or arrowDown
+  if (isDisabled) {
+    itemProps.tabIndex = null;
+  }
+
   // TODO: should be in a useMenuItem aria hook
   // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
   let onPressStart = () => {
@@ -163,8 +169,8 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
-  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus)
-  let {pressProps} = usePress(mergeProps({onPressStart}, itemProps));
+  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus). isDisabled suppresses submenutrigger
+  let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, isDisabled: isDisabled}));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (

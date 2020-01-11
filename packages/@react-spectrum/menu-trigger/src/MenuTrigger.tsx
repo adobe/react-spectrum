@@ -8,6 +8,8 @@ import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu-trigger';
 
+import {Provider, useProviderProps} from '@react-spectrum/provider';
+
 export interface MenuTriggerProps {
   children: ReactElement[],
   trigger?: 'press' | 'longPress',
@@ -17,7 +19,8 @@ export interface MenuTriggerProps {
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
   shouldFlip?: boolean,
-  onSelect?: (...args) => void
+  onSelect?: (...args) => void,
+  isDisabled?: boolean
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -30,7 +33,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     align = 'start',
     shouldFlip = false,
     direction = 'bottom',
-    onSelect
+    onSelect,
+    isDisabled
   } = props;
   let focusStrategy = useRef(null);
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -70,7 +74,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let triggerProps = {
     ...menuTriggerProps,
     ref: menuTriggerRef,
-    isPressed: isOpen
+    isPressed: isOpen,
   };
 
   let popoverProps = {
@@ -83,9 +87,11 @@ export function MenuTrigger(props: MenuTriggerProps) {
    
   return (
     <Fragment>
-      <PressResponder {...triggerProps}>
-        {menuTrigger}
-      </PressResponder>
+      <Provider isDisabled={isDisabled}>
+        <PressResponder {...triggerProps}>
+          {menuTrigger}
+        </PressResponder>
+      </Provider>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
           <Popover {...popoverProps}>

@@ -54,6 +54,10 @@ storiesOf('MenuTrigger', module)
     () => render({defaultOpen: true})
   )
   .add(
+    'isDisabled',
+    () => render({isDisabled: true})
+  )
+  .add(
     'trigger="longPress" TODO out of scope',
     () => render()
   )
