@@ -38,6 +38,8 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+          } else {
+            manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
@@ -51,6 +53,8 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+          } else {
+            manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
