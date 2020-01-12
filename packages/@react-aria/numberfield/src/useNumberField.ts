@@ -17,7 +17,6 @@ interface NumberFieldAria {
   decrementButtonProps: AllHTMLAttributes<HTMLButtonElement>
 }
 
-// TODO: remove the props that are actually coming from state
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
   let {
     decrementAriaLabel,
@@ -32,16 +31,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     onDecrement,
     onDecrementToMin,
     step,
-    value,
-    validationState
+    value
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
   const inputId = useId();
 
-  console.log('state in the normal hook', state); // need to utilize this variable in this hook for it to work in the root component when pulled out of the object and not spread
-
-  // TODO: use state.blahBlah for the proper arguments like how useDateSegment does
-      // onIncrement should become state.increment ?
   const {spinButtonProps} = useSpinButton({
     isDisabled,
     isReadOnly,
@@ -106,7 +100,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, onDecrement, onIncrement]);
+  }, [inputId, isReadOnly, isDisabled, state.onDecrement, state.onIncrement]);
 
   return {
     numberFieldProps: {
@@ -130,7 +124,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       type: 'number',
       step,
       value: state.value,
-      validationState: state.validationState  
+      validationState: state.validationState
     }),
     incrementButtonProps,
     decrementButtonProps

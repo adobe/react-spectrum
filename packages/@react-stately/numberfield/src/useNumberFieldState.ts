@@ -31,7 +31,6 @@ export function useNumberFieldState(props) : NumberFieldState {
   };
 
   let increment = () => {
-    console.log('increment')
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -54,7 +53,6 @@ export function useNumberFieldState(props) : NumberFieldState {
   };
 
   let decrement = () => {
-    console.log('decrement')
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -76,7 +74,6 @@ export function useNumberFieldState(props) : NumberFieldState {
   };
 
   let setValue = (value: string) => {
-    console.log('setValue')
 
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
@@ -104,7 +101,6 @@ export function useNumberFieldState(props) : NumberFieldState {
 }
 
 function isInputValueInvalid(value, max, min):boolean {
-  console.log(value !== '' && isNaN(+value) || (max !== null && value > max || min !== null && value < min));
   return value !== '' && isNaN(+value)
     || (max !== null && value > max || min !== null && value < min);
 }
