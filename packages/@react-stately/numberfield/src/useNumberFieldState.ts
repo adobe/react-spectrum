@@ -1,7 +1,17 @@
 import {clamp} from '@react-aria/utils';
 import {useCallback, useRef, useState} from 'react';
 
-export function useNumberFieldState(props) {
+export interface NumberFieldState {
+  setValue: (val: string, ...args: any) => void,
+  onIncrement: (...args: any) => void,
+  onDecrement: (...args: any) => void,
+  incrementToMax: (...args: any) => void,
+  decrementToMin: (...args: any) => void,
+  value: number,
+  validationState: string
+}
+
+export function useNumberFieldState(props) : NumberFieldState {
   let {
     minValue,
     maxValue,
@@ -21,6 +31,7 @@ export function useNumberFieldState(props) {
   };
 
   let increment = () => {
+    console.log('increment')
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -43,6 +54,7 @@ export function useNumberFieldState(props) {
   };
 
   let decrement = () => {
+    console.log('decrement')
     setNumValue(previousValue => {
       let newValue = +previousValue;
       if (isNaN(newValue)) {
@@ -64,6 +76,7 @@ export function useNumberFieldState(props) {
   };
 
   let setValue = (value: string) => {
+    console.log('setValue')
 
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
@@ -91,6 +104,7 @@ export function useNumberFieldState(props) {
 }
 
 function isInputValueInvalid(value, max, min):boolean {
+  console.log(value !== '' && isNaN(+value) || (max !== null && value > max || min !== null && value < min));
   return value !== '' && isNaN(+value)
     || (max !== null && value > max || min !== null && value < min);
 }
