@@ -61,7 +61,7 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
     info: (content: ReactNode, options: ToastOptions = {}) => {
       onAdd(content, {...options, variant: 'info'});
     }
-  }
+  };
 
   return (
     <ToastContext.Provider value={contextValue}>

@@ -6,6 +6,10 @@ import {ToastProps} from '@react-types/toast';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
+interface AriaToastProps extends ToastProps {
+  id?: string
+}
+
 interface ToastAria {
   toastProps: HTMLAttributes<HTMLElement>,
   iconProps: ImgHTMLAttributes<HTMLElement>,
@@ -13,7 +17,7 @@ interface ToastAria {
   closeButtonProps: DOMProps & PressProps
 }
 
-export function useToast(props: ToastProps): ToastAria {
+export function useToast(props: AriaToastProps): ToastAria {
   let {
     id,
     onAction,

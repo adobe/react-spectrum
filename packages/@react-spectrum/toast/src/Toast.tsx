@@ -47,7 +47,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     variant,
     ...otherProps
   } = props;
-  ref = useDOMRef(ref);
+  let domRef = useDOMRef(ref);
   // console.log('domRef', domRef);
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
@@ -59,7 +59,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...toastProps}
-      ref={ref}
+      ref={domRef}
       className={classNames(styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},

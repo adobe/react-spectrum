@@ -25,15 +25,13 @@ export function ToastContainer(): ReactElement {
     toasts
   } = useContext(ToastContext);
 
-  let renderToasts = () => {
-    return toasts.map((toast) => {
-      let {
-        onClose,
-        ...otherProps
-      } = toast.props;
-      return (<Toast {...otherProps} onClose={onClose} ref={toast.ref}>{toast.content}</Toast>)
-    });
-  };
+  let renderToasts = () => toasts.map((toast) => {
+    let {
+      onClose,
+      ...otherProps
+    } = toast.props;
+    return (<Toast {...otherProps} onClose={onClose} ref={toast.ref}>{toast.content}</Toast>);
+  });
 
   return (
     <div className={classNames(toastContainerStyles, 'spectrum-ToastContainer')}>

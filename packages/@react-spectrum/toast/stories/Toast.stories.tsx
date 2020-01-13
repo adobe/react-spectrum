@@ -1,10 +1,10 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import React, {useContext, useRef, useState} from 'react';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Toast} from '../';
-import {ToastContainer, useToastProvider} from '../';
 import {ToastProps} from '@react-types/toast';
+import {useToastProvider} from '../';
 
 storiesOf('Toast', module)
   .add(
@@ -37,11 +37,7 @@ storiesOf('Toast', module)
   )
   .add(
     'add via provider',
-    () => {
-      return (
-          <RenderProvider />
-      );
-    }
+    () => <RenderProvider />
   );
 
 function render(props:ToastProps = {}, message:String) {
@@ -52,33 +48,31 @@ function render(props:ToastProps = {}, message:String) {
   );
 }
 
-
-
 function RenderProvider() {
   let toastContext = useToastProvider();
 
   return (
     <div>
-        <Button
-          onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}>
-            Show Default Toast
-        </Button>
-        <Button
-          onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
-          variant="primary">
-            Show Primary Toast
-        </Button>
-        <Button
-          onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
-          variant="negative">
-            Show Negative Toast
-        </Button>
-        <Button
-          onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
-          variant="secondary">
-            Show info Toast
-        </Button>
+      <Button
+        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
+        variant="cta">
+          Show Default Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
+        variant="primary">
+          Show Primary Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+        variant="negative">
+          Show Negative Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
+        variant="secondary">
+          Show info Toast
+      </Button>
     </div>
   );
-
 }
