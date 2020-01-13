@@ -1,7 +1,15 @@
 import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
 
-export function usePaginationState(props) {
+export interface PaginationState {
+  onChange?: (val: string | number) => void,
+  onDecrement?: () => void,
+  onIncrement?: () => void,
+  ref?: {current: string | number},
+  value?: string | number
+}
+
+export function usePaginationState(props): PaginationState {
   const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onChange);
   let ref = useRef(value);
 
