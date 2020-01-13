@@ -44,9 +44,7 @@ export function Menu<T>(props: MenuProps<T>) {
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, layout);
   let {styleProps} = useStyleProps(completeProps);
-  let menuContext = {
-    ...mergeProps(menuProps, completeProps),
-  };
+  let menuContext = mergeProps(menuProps, completeProps);
 
   let {
     focusStrategy,
@@ -190,8 +188,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     'aria-disabled': isDisabled,
     ref,
     id: useId(),     
-    role: "menuitem",
-
+    role: 'menuitem'
   };
 
   if (menuProps.role === 'listbox') {
@@ -215,8 +212,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
-    <FocusRing
-      focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
         {...menuItemProps}

@@ -1,6 +1,6 @@
 import {chain} from '@react-aria/utils';
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
-import React, {CSSProperties, FocusEvent, HTMLAttributes, JSXElementConstructor, Key, useCallback, useEffect, useRef} from 'react';
+import React, {CSSProperties, FocusEvent, HTMLAttributes, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 

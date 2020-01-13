@@ -3,12 +3,11 @@ import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
+import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu-trigger';
-
-import {Provider, useProviderProps} from '@react-spectrum/provider';
 
 export interface MenuTriggerProps {
   children: ReactElement[],
@@ -74,7 +73,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let triggerProps = {
     ...menuTriggerProps,
     ref: menuTriggerRef,
-    isPressed: isOpen,
+    isPressed: isOpen
   };
 
   let popoverProps = {

@@ -248,4 +248,4 @@ storiesOf('Menu', module)
         </Section>
       </Menu>
     )
-  )
+  );
