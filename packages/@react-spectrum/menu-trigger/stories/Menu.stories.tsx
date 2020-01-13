@@ -161,4 +161,91 @@ storiesOf('Menu', module)
         </Section>
       </Menu>
     )
-  );
+  )
+  .add(
+    'Multiselect menu',
+    () => (
+      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} selectionMode="multiple">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item childItems={item.children}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'Multiselect menu, static',
+    () => (
+      <Menu onSelect={action('onSelect')} selectionMode="multiple">
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'No selection allowed menu',
+    () => (
+      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} selectionMode="none">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item childItems={item.children}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'No selection allowed menu, static',
+    () => (
+      <Menu onSelect={action('onSelect')} selectionMode="none">
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'Menu with role="listbox"',
+    () => (
+      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} role="listbox">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item childItems={item.children}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'Menu with role="listbox", static',
+    () => (
+      <Menu onSelect={action('onSelect')} role="listbox">
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </Menu>
+    )
+  )

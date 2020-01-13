@@ -1,3 +1,5 @@
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection, SelectionMode, StyleProps} from '@react-types/shared';
@@ -8,10 +10,11 @@ import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuTrigger} from './';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
+import {useLocale} from '@react-aria/i18n'; 
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -20,7 +23,8 @@ export {Item, Section};
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
   onSelect?: (...args) => void, // user provided onSelect callback
   autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
-  focusStrategy?: React.MutableRefObject<focusStrategy> // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
+  focusStrategy?: React.MutableRefObject<focusStrategy>, // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
+  selectionMode?: SelectionMode
 }
 
 export function Menu<T>(props: MenuProps<T>) {
@@ -34,15 +38,17 @@ export function Menu<T>(props: MenuProps<T>) {
   let contextProps = useContext(MenuContext) || {};
   let completeProps = {
     ...mergeProps(contextProps, props),
-    // TODO: make this configurable
-    selectionMode: 'single' as SelectionMode
+    selectionMode: props.selectionMode || 'single'
   };
 
   let state = useTreeState(completeProps);
   let {menuProps} = useMenu(completeProps, state, layout);
   let {styleProps} = useStyleProps(completeProps);
+  let menuContext = {
+    ...mergeProps(menuProps, completeProps),
+  };
+
   let {
-    onSelect,
     focusStrategy,
     autoFocus = true,
     ...otherProps
@@ -77,66 +83,81 @@ export function Menu<T>(props: MenuProps<T>) {
   }, []);
 
   return (
-    <CollectionView
-      {...filterDOMProps(otherProps)}
-      {...styleProps}
-      {...menuProps}
-      focusedKey={state.selectionManager.focusedKey}
-      className={
-        classNames(
-          styles, 
-          'spectrum-Menu',
-          styleProps.className
-        )
-      }
-      layout={layout}
-      collection={state.tree}
-      elementType="ul">
-      {(type, item: Node<T>) => {
-        if (type === 'section') {
-          return (
-            <Fragment>
-              <MenuHeading item={item} />
-              <MenuDivider />
-            </Fragment>
-          );
+    <MenuContext.Provider value={menuContext}>
+      <CollectionView
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
+        {...menuProps}
+        focusedKey={state.selectionManager.focusedKey}
+        className={
+          classNames(
+            styles, 
+            'spectrum-Menu',
+            styleProps.className
+          )
         }
+        layout={layout}
+        collection={state.tree}>
+        {(type, item: Node<T>) => {
+          if (type === 'section') {
+            return (
+              <Fragment>
+                <MenuHeading item={item} />
+                <MenuDivider />
+              </Fragment>
+            );
+          }
 
-        if (item.hasChildNodes) {
-          return (
-            <MenuTrigger>
+          if (item.hasChildNodes) {
+            return (
+              <MenuTrigger>
+                <MenuItem
+                  item={item}
+                  state={state} />
+                <Menu items={item.childNodes}>
+                  {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
+                </Menu>
+              </MenuTrigger>
+            );
+          } else {
+            return (
               <MenuItem
                 item={item}
-                state={state}
-                onSelect={onSelect} />
-              <Menu items={item.childNodes} onSelect={onSelect}>
-                {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
-              </Menu>
-            </MenuTrigger>
-          );
-        } else {
-          return (
-            <MenuItem
-              item={item}
-              state={state}
-              onSelect={onSelect} />
-          );
-        }
-      }}
-    </CollectionView>
+                state={state} />
+            );
+          }
+        }}
+      </CollectionView>
+    </MenuContext.Provider>
   );
 }
 
 interface MenuItemProps<T> {
   item: Node<T>,
-  state: TreeState<T>,
-  onSelect?: (...args) => void
+  state: TreeState<T>
 }
 
 // For now export just to see what it looks like, remove after
 // Placeholder for now, Rob's pull will make the real menuItem
 // How would we get MenuItem user specified props in?
-function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
+function MenuItem<T>({item, state}: MenuItemProps<T>) {
+  let menuProps = useContext(MenuContext) || {};
+  let {direction} = useLocale();
+  let chevron;
+  if (direction === 'ltr') {
+    chevron = (
+      <ChevronRightMedium 
+        UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')} 
+        onMouseDown={e => e.stopPropagation()} />
+    );
+  } else {
+    chevron = (
+      <ChevronLeftMedium 
+        UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')} 
+        onMouseDown={e => e.stopPropagation()} />
+    );
+  }
+  
   let {
     rendered,
     isSelected,
@@ -144,6 +165,8 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     hasChildNodes
   } = item;
 
+  // TODO: All of the below should be in a useMenuItem aria hook, to be handled in MenuItem pull
+  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
   let ref = useRef<HTMLLIElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
@@ -157,19 +180,37 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
     itemProps.tabIndex = null;
   }
 
-  // TODO: should be in a useMenuItem aria hook
-  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
   let onPressStart = () => {
     if (!isDisabled && !hasChildNodes) {
-      onSelect(item);
+      menuProps.onSelect(item);
     }
   }; 
+
+  let menuItemProps = {
+    'aria-disabled': isDisabled,
+    ref,
+    id: useId(),     
+    role: "menuitem",
+
+  };
+
+  if (menuProps.role === 'listbox') {
+    menuItemProps.role = 'option';
+    menuItemProps['aria-selected'] = isSelected ? 'true' : 'false';
+  } else if (menuProps.selectionMode === 'single') {
+    menuItemProps.role = 'menuitemradio';
+    menuItemProps['aria-checked'] = isSelected ? 'true' : 'false';
+  } else if (menuProps.selectionMode === 'multiple') {
+    menuItemProps.role = 'menuitemcheckbox';
+    menuItemProps['aria-checked'] = isSelected ? 'true' : 'false';
+  }
 
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
-  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus). isDisabled suppresses submenutrigger
+  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref). 
+  // isDisabled suppresses sub menu triggers from firing
   let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, isDisabled: isDisabled}));
 
   // Will need additional aria-owns and stuff when submenus are finalized
@@ -178,9 +219,7 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
       focusRingClass={classNames(styles, 'focus-ring')}>
       <li
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
-        ref={ref}
-        aria-disabled={isDisabled}
-        role="menuitem"
+        {...menuItemProps}
         className={classNames(
           styles,
           'spectrum-Menu-item',
@@ -194,12 +233,9 @@ function MenuItem<T>({item, state, onSelect}: MenuItemProps<T>) {
             styles,
             'spectrum-Menu-itemLabel')}>
           {rendered}
-          {hasChildNodes &&
-            <ChevronRightMedium
-              UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')}
-              onMouseDown={e => e.stopPropagation()} />
-          }
         </span>
+        {isSelected && <CheckmarkMedium  UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
+        {hasChildNodes && chevron}
       </li>
     </FocusRing>
   );
@@ -223,15 +259,14 @@ interface MenuHeadingProps<T> {
 
 function MenuHeading<T>({item}: MenuHeadingProps<T>) {
   return (
-    <li role="presentation">
+    <div role="presentation">
       <span 
-        role="heading" 
-        aria-hidden="true"
+        role="heading"
         className={classNames(
           styles,
           'spectrum-Menu-sectionHeading')}>
         {item.rendered}
       </span>
-    </li>
+    </div>
   );
 }

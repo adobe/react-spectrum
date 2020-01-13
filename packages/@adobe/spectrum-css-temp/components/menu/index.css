@@ -64,6 +64,10 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .spectrum-Menu-checkmark {

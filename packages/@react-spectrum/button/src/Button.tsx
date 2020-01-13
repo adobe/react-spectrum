@@ -32,7 +32,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
-  
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType

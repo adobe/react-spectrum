@@ -8,7 +8,6 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   children: (type: string, content: T) => V,
   layout: Layout<T>,
   collection: Collection<T>,
-  elementType?: string | JSXElementConstructor<any>,
   focusedKey?: Key
 }
 
