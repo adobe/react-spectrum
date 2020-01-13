@@ -15,8 +15,7 @@
 * from Adobe.
 **************************************************************************/
 
-import {chain} from '@react-aria/utils';
-import React, {createRef, ReactElement, ReactNode, useContext} from 'react';
+import React, {ReactElement, ReactNode, useContext} from 'react';
 import {ToastContainer} from './';
 import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -42,52 +41,25 @@ export function useToastProvider() {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, onRemove, toasts, setToasts} = useToastState([]);
+  let {onAdd, toasts, setToasts} = useToastState([]);
   let {
     children
   } = useProviderProps(props);
 
-  // useMemo(() => fn, deps)
-  // let removeToast = useMemo((toastRef, e) => {
-  /* let removeToast = (toastRef) => {
-    remove(toastRef);
-  };
-
-  let remove = (toastRef) => {
-    console.log('toastRef', toastRef);
-    console.log('toasts before', toasts.length);
-    let filtered = toasts.filter(t => t.ref.current.id !== toastRef.current);
-
-    console.log('filtered after', filtered.length);
-    console.log('toasts after', toasts.length);
-    setToasts(filtered);
-  };*/
-
   let contextValue = {
     toasts,
     setToasts,
-    positive: (content: ReactNode, options: ToastOptions = {}) => {
+    neutral: (content: ReactNode, options: ToastOptions = {}) => {
       onAdd(content, options);
-      /* let tempToasts = [...toasts];
-      let {
-        timeout,
-        ...otherProps
-      } = options;
-      let toastRef = createRef();
-      console.log('toastRef', toastRef);
-
-      otherProps.onClose = chain(otherProps.onClose, () => onRemove(toastRef));
-
-      tempToasts.push({
-        content,
-        props: {
-          variant: 'positive',
-          ...otherProps
-        },
-        ref: toastRef
-      });
-      console.log('tempToasts', tempToasts);
-      setToasts(tempToasts);*/
+    },
+    positive: (content: ReactNode, options: ToastOptions = {}) => {
+      onAdd(content, {...options, variant: 'positive'});
+    },
+    negative: (content: ReactNode, options: ToastOptions = {}) => {
+      onAdd(content, {...options, variant: 'negative'});
+    },
+    info: (content: ReactNode, options: ToastOptions = {}) => {
+      onAdd(content, {...options, variant: 'info'});
     }
   }
 

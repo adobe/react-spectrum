@@ -36,10 +36,10 @@ storiesOf('Toast', module)
     () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
   )
   .add(
-    'add positive',
+    'add via provider',
     () => {
       return (
-          <RenderPositive />
+          <RenderProvider />
       );
     }
   );
@@ -54,15 +54,29 @@ function render(props:ToastProps = {}, message:String) {
 
 
 
-function RenderPositive() {
+function RenderProvider() {
   let toastContext = useToastProvider();
 
   return (
     <div>
         <Button
+          onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}>
+            Show Default Toast
+        </Button>
+        <Button
           onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
           variant="primary">
-            Show Toast
+            Show Primary Toast
+        </Button>
+        <Button
+          onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+          variant="negative">
+            Show Negative Toast
+        </Button>
+        <Button
+          onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
+          variant="secondary">
+            Show info Toast
         </Button>
     </div>
   );
