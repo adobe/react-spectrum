@@ -65,6 +65,8 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           autoFocus={autoFocus}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           {...inputFieldProps as any}
+          value={state.value}
+          validationState={state.validationState}
           onChange={state.setValue} />
         {showStepper &&
         <span

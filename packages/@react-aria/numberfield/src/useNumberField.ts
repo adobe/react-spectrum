@@ -122,9 +122,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       max: maxValue,
       placeholder: formatMessage('Enter a number'),
       type: 'number',
-      step,
-      value: state.value,
-      validationState: state.validationState
+      step
     }),
     incrementButtonProps,
     decrementButtonProps
