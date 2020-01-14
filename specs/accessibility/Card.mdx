@@ -1,0 +1,100 @@
+# Card Accessibility Specification
+
+## Overview
+
+A [`Card`](https://react-spectrum.corp.adobe.com/components/Card) is a pattern that is commonly used for browsing content as part of a [GridView](https://react-spectrum.corp.adobe.com/components/GridView).
+Cards display custom content, which are generally items a user can buy, own, read, or that a user has saved or created.
+Cards can be completely custom, or built using some of the components provided out of the box.
+Typically, cards have a cover photo or preview image at the top, a body with some information about the content, and an optional footer.
+
+## WAI-ARIA Design Pattern
+
+There is no `<card>` element in HTML nor a WAI-ARIA "Card" design pattern to follow. The [Inclusive Components project](https://inclusive-components.design) provides a [useful example using Cards](https://inclusive-components.design/cards/) for a list of blog articles that is worth checking out.
+
+In React Spectrum, Card accessibility depends on the context in which it is used.
+
+On its own, a Card behaves as a generic region, however when rendered as an item in a [GridView](GridView),
+which implements the [WAI-ARIA 1.1 Layout Grid](https://www.w3.org/TR/wai-aria-practices/#grid) design pattern,
+a Card behaves as a row header contained within the item view row.
+
+### Keyboard (standalone/static)
+
+- With a standalone or static Card, that is not rendered within a GridView, interactive descendants of a Card, like the checkbox to select or the action menu button, should be included in the keyboard navigation order for the page.
+- Any elements that fade in on hover, like the checkbox to select or the action menu button, should also fade in when focus enters the Card and fade out when focus leaves the Card.
+- In order for elements that fade in on hover, like the selection checkbox or action menu button in "small" variants, to be navigable using the keyboard, they must have CSS `visibility: visible` so that they are visible in the DOM.
+- In order to distinguish between the selected state and the selected state when the Card has focus, add the focus visible className `.focus-ring` to the checkbox, when a Card is both selected and focused.
+
+### Keyboard (within a GridView)
+
+When the Card is rendered within a GridView, interactive descendants of a Card, like the checkbox to select or the action menu button, should be included in the keyboard navigation order only for the currently focused item view.
+In item views that are not focused, interactive descendants of a Card should be excluded from the keyboard navigation order by setting their `tabIndex` props to `-1`.
+The GridView should manage keyboard navigation between Cards in a manner similar to the [WAI-ARIA 1.1 Layout Grid](https://www.w3.org/TR/wai-aria-practices/#grid) design pattern. Each Card behaves as a row header contained within the item view row.
+- `ArrowRight`: Moves focus to the next enabled item view within the grid, regardless of layout. This ensures that a keyboard or screen reader user can navigate to each item in the collection.
+- `ArrowLeft`: Moves focus to the previous enabled item view within the grid, regardless of layout. This ensures that a keyboard or screen reader user can navigate to each item in the collection.
+- `ArrowDown`: Moves focus to the adjacent item view in the row after the currently focused item view that has the largest overlap with the currently focused item view.
+- `ArrowUp`: Moves focus to the adjacent item view in the row before the currently focused item view that has the largest overlap with the currently focused item view.
+- `PageDown` (optional): Moves focus down an author-determined number of rows, typically scrolling so the bottom row in the currently visible set of rows becomes one of the first visible rows. If focus is in the last row of the grid layout, focus does not move.
+- `PageUp` (optional): Moves focus up an author-determined number of rows, typically scrolling so the top row in the currently visible set of rows becomes one of the last visible rows. If focus is in the first row of the grid layout, focus does not move.
+- `Home`: Moves focus to the first item view in the collection.
+- `End`: Moves focus to the last item view in the collection.
+- `Tab`/`Shift + Tab`: Moves focus through the interactive descendants of the currently focused item view.
+- `Space`: Toggles selection of the currently focused item view or with focus on an interactive descendant, activates the control, stopping propagation so that triggering the descendant does not also toggle selection.
+
+### Roles, States, and Properties
+
+#### Standalone/static
+
+- By default, the element that serves as the `Card` container has `role` of [`region`](https://www.w3.org/TR/wai-aria-1.1/#region).
+- The `Card` container itself should not be focusable and should not have a `tabIndex`.
+- By default, when the `Card` includes a `CardBody`,
+  - if the `CardBody` has a `title` prop,
+    - the `Card` container element should have `aria-labelledby` attribute referencing the element containing the title by `id`.
+    - If the `CardBody` also has either `subtitle` or `description` props, the `Card` container should have `aria-describedby` attribute referencing the elements containing the subtitle and/or description by `id`.
+  - If the `CardBody` does not have a `title` prop, but does have either `subtitle` or `description` props, the `Card` container should have `aria-labelledby` attribute referencing the elements containing the subtitle and/or description by `id`.
+- When the `Card` allows selection,
+  - the `checkbox` should have a `title` prop with localized string for `Select`.
+  - To better express the selected or not selected state of the `Card`, the `aria-label` prop for the checkbox may be set to a localized string for `(Not selected)` or `(Selected)`.
+  - The `aria-labelledby` prop for the checkbox should then concatenate the `aria-labelledby` prop for the `Card` container element with the `id` prop for the checkbox, so that the checkbox will be labelledby the `CardBody` `title` and a localized string for the current selected state.
+- By default, `CardCoverPhoto` is presumed to be decorative, however, the `alt` prop can be used to specify a localized string to serve as alternative text for the image.
+- When `alt` text is provided, the `CardCoverPhoto` element will have the `role` of `img` and the `alt` prop should be assigned to its `aria-label` attribute.
+- In variants where the `CardCoverPhoto` element has children as well as an `alt` prop, the `CardCoverPhoto` element should have the `role` of `group`, so that the children will be accessible to assistive technology.
+
+#### Within a GridView
+
+- The GridView itself should have `role` of [`grid`](https://www.w3.org/TR/wai-aria-1.1/#grid).
+  - The GridView should communicate the total number of items in the collection using the [`aria-rowcount`](https://www.w3.org/TR/wai-aria-1.1/#aria-rowcount) prop.
+  - The GridView should communicate the total number of columns in each item using the [`aria-colcount`](https://www.w3.org/TR/wai-aria-1.1/#aria-colcount) prop with the value set to `1`.
+- Each `Card` container should have be contained within an element with `role` of [`row`](https://www.w3.org/TR/wai-aria-1.1/#row).
+  - Each row within the GridView should indicate its index position within the collection using the [`aria-rowindex`](https://www.w3.org/TR/wai-aria-1.1/#aria-rowindex) prop.
+- The element that serves as the `Card` container has `role` of [`rowheader`](https://www.w3.org/TR/wai-aria-1.1/#rowheader).
+  - Since each item in the GridView has only one cell, the rowheader, the `Card` container should indicate the column index using the [`aria-colindex`](https://www.w3.org/TR/wai-aria-1.1/#aria-colindex) prop with the value set to `1`.
+- Each `Card` container and the containing row within the GridView should have `aria-selected` prop of `true` or `false` depending on the selected state.
+- A `Card` container within a GridView should be focusable and should have a `tabIndex` of `0` when focused or `-1` when not focused. If no item in the GridView has focus, all Cards should have a `tabIndex` of `0`.
+- When a row or one of its descendants has focus, interactive descendants should be made tabbable by setting `tabIndex` to `0` or `undefined`.
+- When a row or one of its descendants does not have focus, interactive descendants should have `tabIndex` of `-1` so that they are not included in the keyboard navigation order for the document.
+- By default, when the `Card` includes a `CardBody`,
+  - if the `CardBody` has a `title` prop,
+    - the `Card` container element should have `aria-labelledby` attribute referencing the element containing the title by `id`.
+    - If the `CardBody` also has either `subtitle` or `description` props, the `Card` container should have `aria-describedby` attribute referencing the elements containing the subtitle and/or description by `id`.
+  - If the `CardBody` does not have a `title` prop, but does have either `subtitle` or `description` props, the `Card` container should have `aria-labelledby` attribute referencing the elements containing the subtitle and/or description by `id`.
+- When the `Card` allows selection,
+  - the `checkbox` should have a `title` prop with localized string for `Select`.
+  - To better express the selected or not selected state of the `Card`, the `aria-label` prop for the checkbox may be set to a localized string for `(Not selected)` or `(Selected)`.
+  - The `aria-labelledby` prop for the checkbox should then concatenate the `aria-labelledby` prop for the `Card` container element with the `id` prop for the checkbox, so that the checkbox will be labelledby the `CardBody` `title` and a localized string for the current selected state.
+- By default, `CardCoverPhoto` is presumed to be decorative, however, the `alt` prop can be used to specify a localized string to serve as alternative text for the image.
+- When `alt` text is provided, the `CardCoverPhoto` element will have the `role` of `img` and the `alt` prop should be assigned to its `aria-label` attribute.
+- In variants where the `CardCoverPhoto` element has children as well as an `alt` prop, the `CardCoverPhoto` element should have the `role` of `group`, so that the children will be accessible to assistive technology.
+
+## v2 Implementation details
+
+The current v2 Card implementation does not completely conform to this spec: see (PR #691)[https://github.com/adobe/react-spectrum/pull/691] for a more complete implementation.
+
+Keyboard navigation between Cards in a GridView, is managed by the GridView. The Card component needs to manage `focused` and `selected` state based on the props that CollectionView passes through to the item view.
+
+### Dependencies
+
+- `CardBody`
+- `CardCoverPhoto`
+- `CardPreview`
+- `CardFooter`
+- `GridView`
