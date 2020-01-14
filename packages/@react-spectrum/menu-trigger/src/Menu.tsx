@@ -172,13 +172,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     itemRef: ref
   });
 
-  // The below is just a visual bandaid, but we'll need to figure out how to have useSelectableCollection skip over disabled items
-  // when pressing arrowUp or arrowDown
-  if (isDisabled) {
-    itemProps.tabIndex = null;
-  }
-
-
   let menuItemProps = {
     'aria-disabled': isDisabled,
     ref,
@@ -202,20 +195,25 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
     switch (e.key) {
       case ' ':
-        if (!isDisabled && !hasChildNodes) {
-          menuProps.onSelect(item);
-        }
-    
-        if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
-          menuProps.setOpen(false);
+        if (!isDisabled) {
+          if (!hasChildNodes) {
+            menuProps.onSelect(item);
+          }
+
+          if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
+            menuProps.setOpen && menuProps.setOpen(false);
+          }
         }
         break;
       case 'Enter':
-        if (!isDisabled && !hasChildNodes) {
-          menuProps.onSelect(item);
-        }
+        if (!isDisabled) {
+          if (!hasChildNodes) {
+            menuProps.onSelect(item);
+          }
 
-        menuProps.setOpen(false);
+          menuProps.setOpen && menuProps.setOpen(false);
+        }
+        break;
     }
   }; 
 
