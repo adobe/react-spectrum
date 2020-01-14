@@ -30,7 +30,6 @@ describe('useMenuTrigger', function () {
     expect(menuTriggerProps['aria-haspopup']).toBeFalsy();
     expect(menuProps['aria-labelledby']).toBe(menuTriggerProps.id);
     expect(menuProps.id).toBeTruthy();
-    expect(typeof menuProps.onSelect).toBe('function');
   });
 
   it('should return proper aria props for menu and menu trigger if menu is open', function () {
@@ -51,20 +50,6 @@ describe('useMenuTrigger', function () {
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
     expect(menuTriggerProps['aria-haspopup']).toBeTruthy();
-  });
-
-  it('returns a onSelect for the menu', function () {
-    let props = {
-      type: 'menu',
-      focusStrategy,
-      onSelect
-    };
-
-    let {menuProps} = renderMenuTriggerHook(props, state);
-    menuProps.onSelect('blah');
-    expect(onSelect).toHaveBeenCalledWith('blah');
-    expect(setOpen).toHaveBeenCalledTimes(1);
-    expect(setOpen).toHaveBeenCalledWith(false);
   });
 
   // Comprehensive onPress functionality is tested in MenuTrigger test

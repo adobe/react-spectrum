@@ -11,7 +11,6 @@ interface MenuTriggerState {
 }
 
 interface MenuTriggerProps {
-  onSelect?: (...args) => void
   ref: RefObject<HTMLElement | null>,
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
   focusStrategy: React.MutableRefObject<focusStrategy>
@@ -64,14 +63,6 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     }
   };
 
-  let onSelect = (...args) => {
-    if (props.onSelect) {
-      props.onSelect(...args);
-    }
-
-    state.setOpen(false);
-  };
-
   return {
     menuTriggerProps: {
       ...triggerAriaProps,
@@ -81,8 +72,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     },
     menuProps: {
       ...overlayAriaProps,
-      'aria-labelledby': menuTriggerId,
-      onSelect
+      'aria-labelledby': menuTriggerId
     }
   };
 }

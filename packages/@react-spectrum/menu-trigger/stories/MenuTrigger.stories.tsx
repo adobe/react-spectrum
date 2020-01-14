@@ -66,8 +66,16 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'popup with role=listbox',
+    'menu with role=listbox',
     () => render({}, {role: 'listbox'})
+  )
+  .add(
+    'multiselect menu',
+    () => render({}, {selectionMode: 'multiple'})
+  )
+  .add(
+    'no selection allowed menu',
+    () => render({}, {selectionMode: 'none'})
   )
   .add(
     'menu closes on scroll',
@@ -76,14 +84,14 @@ storiesOf('MenuTrigger', module)
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
           <div style={{height: 200}}>
             <div>Scrolling here will close the Menu</div>
-            <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} defaultOpen>
+            <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
               <ActionButton
                 onPress={action('press')}
                 onPressStart={action('pressstart')}
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name">
+              <Menu items={withSection} itemKey="name"  onSelect={action('onSelect')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -128,7 +136,7 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu items={withSection} itemKey="name">
+          <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
             {item => (
               <Section items={item.children} title={item.name}>
                 {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -143,14 +151,14 @@ storiesOf('MenuTrigger', module)
 function render(props = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-      <MenuTrigger onSelect={action('onSelect')} onOpenChange={action('onOpenChange')} {...props}>
+      <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
         <ActionButton
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" {...menuProps}>
+        <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

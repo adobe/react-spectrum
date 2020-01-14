@@ -18,7 +18,6 @@ export interface MenuTriggerProps {
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
   shouldFlip?: boolean,
-  onSelect?: (...args) => void,
   isDisabled?: boolean
 }
 
@@ -32,7 +31,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
     align = 'start',
     shouldFlip = false,
     direction = 'bottom',
-    onSelect,
     isDisabled
   } = props;
   let focusStrategy = useRef(null);
@@ -47,7 +45,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
     {
       ref: menuTriggerRef,
       type: 'menu',
-      onSelect,
       focusStrategy
     },
     {
@@ -67,7 +64,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let menuContext = {
     ...menuProps,
-    focusStrategy
+    focusStrategy,
+    setOpen: setOpen
   };
 
   let triggerProps = {

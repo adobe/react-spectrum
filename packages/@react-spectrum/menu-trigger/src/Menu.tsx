@@ -178,11 +178,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     itemProps.tabIndex = null;
   }
 
-  let onPressStart = () => {
-    if (!isDisabled && !hasChildNodes) {
-      menuProps.onSelect(item);
-    }
-  }; 
 
   let menuItemProps = {
     'aria-disabled': isDisabled,
@@ -202,13 +197,35 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     menuItemProps['aria-checked'] = isSelected ? 'true' : 'false';
   }
 
+  let onKeyDown = (e) => {
+    let role = menuItemProps.role;
+
+    switch (e.key) {
+      case ' ':
+        if (!isDisabled && !hasChildNodes) {
+          menuProps.onSelect(item);
+        }
+    
+        if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
+          menuProps.setOpen(false);
+        }
+        break;
+      case 'Enter':
+        if (!isDisabled && !hasChildNodes) {
+          menuProps.onSelect(item);
+        }
+
+        menuProps.setOpen(false);
+    }
+  }; 
+
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
   // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref). 
   // isDisabled suppresses sub menu triggers from firing
-  let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, isDisabled: isDisabled}));
+  let {pressProps} = usePress(mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled}));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
