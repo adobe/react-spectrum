@@ -3,6 +3,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import intlMessages from '../intl';
+import {PaginationBase} from '@react-types/pagination';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/pagination/vars.css';
 import {TextField} from '@react-spectrum/textfield';
@@ -11,7 +12,6 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';
 import {usePaginationState} from '@react-stately/pagination';
 import {useProviderProps} from '@react-spectrum/provider';
-import {PaginationBase} from '@react-types/pagination';
 
 export function PaginationInput(props: PaginationBase) {
   props = Object.assign({}, {defaultValue: 1}, props);

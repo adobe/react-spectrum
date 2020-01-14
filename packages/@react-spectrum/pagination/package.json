@@ -35,6 +35,7 @@
     "@react-spectrum/textfield": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-stately/pagination": "^3.0.0-alpha.2",
+    "@react-types/pagination": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2",
     "@spectrum-icons/ui": "^3.0.0-alpha.2"
   },
