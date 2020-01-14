@@ -11,13 +11,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';
 import {usePaginationState} from '@react-stately/pagination';
 import {useProviderProps} from '@react-spectrum/provider';
-import {ValueBase} from '@react-types/shared';
-
-export interface PaginationBase extends ValueBase<Number>   {
-  maxValue?: number,
-  onPrevious?: (value: number, e: Event) => void,
-  onNext?: (value: number, e: Event) => void
-}
+import {PaginationBase} from '@react-types/pagination';
 
 export function PaginationInput(props: PaginationBase) {
   props = Object.assign({}, {defaultValue: 1}, props);
