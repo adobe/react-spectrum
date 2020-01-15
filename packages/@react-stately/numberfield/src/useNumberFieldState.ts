@@ -3,8 +3,8 @@ import {useCallback, useRef, useState} from 'react';
 
 export interface NumberFieldState {
   setValue: (val: string, ...args: any) => void,
-  onIncrement: (...args: any) => void,
-  onDecrement: (...args: any) => void,
+  increment: (...args: any) => void,
+  decrement: (...args: any) => void,
   incrementToMax: (...args: any) => void,
   decrementToMin: (...args: any) => void,
   value: number,
@@ -91,9 +91,9 @@ export function useNumberFieldState(props) : NumberFieldState {
 
   return {
     setValue,
-    onIncrement: useCallback(increment, [maxValue, minValue, step]),
+    increment: useCallback(increment, [maxValue, minValue, step]),
     incrementToMax,
-    onDecrement: useCallback(decrement, [maxValue, minValue, step]),
+    decrement: useCallback(decrement, [maxValue, minValue, step]),
     decrementToMin,
     value: numValue,
     validationState: !isValid.current && 'invalid'

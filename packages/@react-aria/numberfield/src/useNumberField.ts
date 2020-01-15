@@ -26,10 +26,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     minValue,
     maxValue,
-    onIncrement,
-    onIncrementToMax,
-    onDecrement,
-    onDecrementToMin,
+    increment,
+    incrementToMax,
+    decrement,
+    decrementToMin,
     step,
     value
   } = props;
@@ -42,10 +42,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     maxValue,
     minValue,
-    onIncrement,
-    onIncrementToMax,
-    onDecrement,
-    onDecrementToMin,
+    increment,
+    increment,
+    decrement,
+    decrementToMin,
     value
   });
 
@@ -58,7 +58,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     tabIndex: -1,
     title: incrementAriaLabel,
     isDisabled: isDisabled || (state.value >= maxValue) || isReadOnly,
-    onPress: state.onIncrement,
+    onPress: state.increment,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -68,7 +68,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     tabIndex: -1,
     title: decrementAriaLabel,
     isDisabled: isDisabled || (state.value <= minValue || isReadOnly),
-    onPress: state.onDecrement,
+    onPress: state.decrement,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -83,9 +83,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
       e.preventDefault();
       if (e.deltaY < 0) {
-        state.onIncrement();
+        state.increment();
       } else {
-        state.onDecrement();
+        state.decrement();
       }
     };
 
@@ -100,7 +100,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, state.onDecrement, state.onIncrement]);
+  }, [inputId, isReadOnly, isDisabled, state.decrement, state.increment]);
 
   return {
     numberFieldProps: {
