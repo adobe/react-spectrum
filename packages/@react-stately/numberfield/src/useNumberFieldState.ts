@@ -91,9 +91,9 @@ export function useNumberFieldState(props) : NumberFieldState {
 
   return {
     setValue,
-    increment: useCallback(increment, [maxValue, minValue, step]),
+    increment,
     incrementToMax,
-    decrement: useCallback(decrement, [maxValue, minValue, step]),
+    decrement,
     decrementToMin,
     value: numValue,
     validationState: !isValid.current && 'invalid'
