@@ -2,9 +2,6 @@ import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-import {Node} from '@react-stately/collections';
-import {Key} from 'react';
-
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
     ? /^Mac/.test(window.navigator.platform)
@@ -45,18 +42,16 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
       string = string.normalize(normalizationForm);
     }
     return string;
-  }
+  };
   
-  let removeDiacritics = (string = '', normalizationForm = 'NFD') => {
-    return normalize(string, normalizationForm.replace('C', 'D')).replace(/[\u0300-\u036f]/g, '');
-  }
+  let removeDiacritics = (string = '', normalizationForm = 'NFD') => normalize(string, normalizationForm.replace('C', 'D')).replace(/[\u0300-\u036f]/g, '');
 
   let clearKeysSoFarAfterDelay = () => {
     if (keyClearTimeout) {
       clearTimeout(keyClearTimeout);
     }
     keyClearTimeout = setTimeout(() => keysSoFar = '', 500);
-  }
+  };
 
   let findMatchInRange = (items, startIndex, endIndex) => {
     // Find the first item starting with the keysSoFar substring, searching in the specified range of items
@@ -71,7 +66,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
       }
     }
     return null;
-  }
+  };
 
   let findItemToFocus = (e) => {
     const {
@@ -86,7 +81,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
       if (item.type === 'item') {
         results.push(item);
       }
-      return results
+      return results;
     }, []) as Array<any>;
 
     let targetLabel = target.innerText || target.textContent;
@@ -119,16 +114,16 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     }
 
     if (itemKey) {
-      manager.setFocusedKey(itemKey)
+      manager.setFocusedKey(itemKey);
     }
-  }
+  };
 
   let onKeyPress = (e) => {
     if (e.isPropagationStopped()) {
       return;
     }
     findItemToFocus(e);
-  }
+  };
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
