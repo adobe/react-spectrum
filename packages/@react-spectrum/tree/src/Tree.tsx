@@ -27,7 +27,8 @@ export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelectio
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    tree: state.tree
   });
 
   return (

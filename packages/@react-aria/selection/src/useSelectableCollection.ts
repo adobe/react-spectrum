@@ -2,6 +2,9 @@ import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
+import {Node} from '@react-stately/collections';
+import {Key} from 'react';
+
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
     ? /^Mac/.test(window.navigator.platform)
@@ -17,18 +20,115 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 
 interface SelectableListOptions {
   selectionManager: MultipleSelectionManager,
-  keyboardDelegate: KeyboardDelegate
+  keyboardDelegate: KeyboardDelegate,
+  tree: any
 }
 
 interface SelectableListAria {
   listProps: HTMLAttributes<HTMLElement>
 }
 
+let keysSoFar = '';
+let keyClearTimeout = null;
+let searchIndex;
+const WHITESPACE_REGEXP = /[\n\r]+|[\s]{1,}/g;
+
 export function useSelectableCollection(options: SelectableListOptions): SelectableListAria {
   let {
     selectionManager: manager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    tree
   } = options;
+
+  let normalize = (string = '', normalizationForm = 'NFC') => {
+    if ('normalize' in String.prototype) {
+      string = string.normalize(normalizationForm);
+    }
+    return string;
+  }
+  
+  let removeDiacritics = (string = '', normalizationForm = 'NFD') => {
+    return normalize(string, normalizationForm.replace('C', 'D')).replace(/[\u0300-\u036f]/g, '');
+  }
+
+  let clearKeysSoFarAfterDelay = () => {
+    if (keyClearTimeout) {
+      clearTimeout(keyClearTimeout);
+    }
+    keyClearTimeout = setTimeout(() => keysSoFar = '', 500);
+  }
+
+  let findMatchInRange = (items, startIndex, endIndex) => {
+    // Find the first item starting with the keysSoFar substring, searching in the specified range of items
+    for (let i = startIndex; i < endIndex; i++) {
+      const label = items[i].rendered;
+      if (label &&
+          removeDiacritics(label)
+          .replace(WHITESPACE_REGEXP, '')
+          .toUpperCase()
+          .indexOf(keysSoFar) === 0) {
+        return items[i].key;
+      }
+    }
+    return null;
+  }
+
+  let findItemToFocus = (e) => {
+    const {
+      target,
+      shiftKey,
+      charCode
+    } = e;
+
+    const character = removeDiacritics(String.fromCharCode(charCode)).toUpperCase();
+    let itemMap = tree.keyMap;
+    let items = Array.from(itemMap.values()).reduce((results: Array<any>, item: any) => {
+      if (item.type === 'item') {
+        results.push(item);
+      }
+      return results
+    }, []) as Array<any>;
+
+    let targetLabel = target.innerText || target.textContent;
+    if (keysSoFar === '' || character === keysSoFar || shiftKey) {
+      // reverse order if shiftKey is pressed
+      if (shiftKey) {
+        items = items.reverse();
+      }
+      searchIndex = items.findIndex((item) => item.rendered === targetLabel);
+    }
+
+    if (character !== keysSoFar) {
+      keysSoFar += character;
+    }
+
+    clearKeysSoFarAfterDelay();
+
+    let itemKey = findMatchInRange(
+      items,
+      searchIndex + 1,
+      items.length
+    );
+
+    if (!itemKey) {
+      itemKey = findMatchInRange(
+        items,
+        0,
+        searchIndex
+      );
+    }
+
+    if (itemKey) {
+      manager.setFocusedKey(itemKey)
+    }
+  }
+
+  let onKeyPress = (e) => {
+    if (e.isPropagationStopped()) {
+      return;
+    }
+    findItemToFocus(e);
+  }
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -163,6 +263,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
 
   return {
     listProps: {
+      onKeyPress,
       onKeyDown,
       onFocus,
       onBlur
