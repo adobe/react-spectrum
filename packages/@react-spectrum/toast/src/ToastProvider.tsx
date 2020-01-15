@@ -41,14 +41,13 @@ export function useToastProvider() {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, toasts, setToasts} = useToastState([]);
+  let {onAdd, toasts} = useToastState([]);
   let {
     children
   } = useProviderProps(props);
 
   let contextValue = {
     toasts,
-    setToasts,
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
       onAdd(content, options);
     },

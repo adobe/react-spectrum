@@ -1,8 +1,8 @@
 .spectrum-ToastContainer {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   z-index: 100050; /* above modals */
   display: flex;
   flex-direction: column;
