@@ -165,7 +165,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
   // TODO: All of the below should be in a useMenuItem aria hook, to be handled in MenuItem pull
   // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
-  let ref = useRef<HTMLLIElement>();
+  let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     itemKey: item.key,
