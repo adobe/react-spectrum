@@ -9,6 +9,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
@@ -20,6 +21,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -110,6 +112,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           ref={inputRef}
           value={value}
           defaultValue={defaultValue}
+          rows={multiLine ? 1 : undefined}
           className={
             classNames(
               styles,
@@ -130,15 +133,16 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   if (label) {
     let labelWrapperClass = classNames(
       labelStyles,
+      'spectrum-Field',
       {
-        'spectrum-FieldContainer--positionTop': labelPosition === 'top',
-        'spectrum-FieldContainer--positionSide': labelPosition === 'side'
+        'spectrum-Field--positionTop': labelPosition === 'top',
+        'spectrum-Field--positionSide': labelPosition === 'side'
       },
       styleProps.className
     );
 
     textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: classNames(labelStyles, 'spectrum-FieldContainer-field')
+      className: classNames(labelStyles, 'spectrum-Field-field')
     }));
 
     return (
