@@ -25,16 +25,11 @@ function renderComponent(contents) {
 }
 
 describe('Toast', function () {
-  let onClose = jest.fn();
-  let onAction = jest.fn();
-
   afterEach(() => {
-    onClose.mockClear();
-    onAction.mockClear();
     cleanup();
   });
 
-  it('$name handles defaults', function () {
+  it('Renders a button that triggers a toast via the provider', function () {
     let {queryAllByRole, getByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 

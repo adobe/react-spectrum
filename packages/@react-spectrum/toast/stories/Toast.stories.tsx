@@ -32,10 +32,6 @@ storiesOf('Toast', module)
     () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
   )
   .add(
-    'action triggers close',
-    () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
-  )
-  .add(
     'add via provider',
     () => <RenderProvider />
   );
