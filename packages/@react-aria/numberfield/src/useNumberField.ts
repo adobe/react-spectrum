@@ -26,13 +26,18 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     minValue,
     maxValue,
+    step
+  } = props;
+
+  let {
     increment,
     incrementToMax,
     decrement,
     decrementToMin,
-    step,
-    value
-  } = props;
+    value,
+    validationState
+  } = state;
+
   const formatMessage = useMessageFormatter(intlMessages);
   const inputId = useId();
 
@@ -57,8 +62,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     'aria-controls': inputId,
     tabIndex: -1,
     title: incrementAriaLabel,
-    isDisabled: isDisabled || (state.value >= maxValue) || isReadOnly,
-    onPress: state.increment,
+    isDisabled: isDisabled || (value >= maxValue) || isReadOnly,
+    onPress: increment,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -67,8 +72,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     'aria-controls': inputId,
     tabIndex: -1,
     title: decrementAriaLabel,
-    isDisabled: isDisabled || (state.value <= minValue || isReadOnly),
-    onPress: state.decrement,
+    isDisabled: isDisabled || (value <= minValue || isReadOnly),
+    onPress: decrement,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -83,9 +88,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
 
       e.preventDefault();
       if (e.deltaY < 0) {
-        state.increment();
+        increment();
       } else {
-        state.decrement();
+        decrement();
       }
     };
 
@@ -100,7 +105,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, state.decrement, state.increment]);
+  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
   return {
     numberFieldProps: {
@@ -108,7 +113,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       'aria-disabled': isDisabled,
-      'aria-invalid': state.validationState === 'invalid'
+      'aria-invalid': validationState === 'invalid'
     },
     inputFieldProps: mergeProps(spinButtonProps, {
       autoComplete: 'off',
