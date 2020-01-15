@@ -51,8 +51,6 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];
 
-  console.log('ref', ref);
-
   return (
     <div
       {...filterDOMProps(otherProps)}
