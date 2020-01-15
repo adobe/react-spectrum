@@ -1,5 +1,6 @@
 import {clamp} from '@react-aria/utils';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useRef} from 'react';
+import {useControlledState} from '@react-stately/utils';
 
 export interface NumberFieldState {
   setValue: (val: string, ...args: any) => void,
@@ -22,13 +23,7 @@ export function useNumberFieldState(props) : NumberFieldState {
   } = props;
 
   let isValid = useRef(true);
-  let [numValue, setNumValue] = useState(value || defaultValue || '');
-
-  let triggerChange = (value) => {
-    if (onChange) {
-      onChange(value);
-    }
-  };
+  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
 
   let increment = () => {
     setNumValue(previousValue => {
@@ -38,16 +33,12 @@ export function useNumberFieldState(props) : NumberFieldState {
       } else {
         newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
       }
-      if (previousValue !== newValue) {
-        triggerChange(newValue);
-      }
       return newValue;
     });
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
-      triggerChange(maxValue);
       setNumValue(maxValue);
     }
   };
@@ -59,9 +50,6 @@ export function useNumberFieldState(props) : NumberFieldState {
         newValue = minValue != null ? Math.max(-step, minValue) : -step;
       } else {
         newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
-      }
-      if (previousValue !== newValue) {
-        triggerChange(newValue);
       }
       return newValue;
     });
@@ -84,7 +72,6 @@ export function useNumberFieldState(props) : NumberFieldState {
 
     isValid.current = !isInputValueInvalid(value, maxValue, minValue);
     if (resemblesNumber) {
-      triggerChange(valueAsNumber);
       setNumValue(valueAsNumber);
     }
   };
