@@ -228,7 +228,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
+      <div
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
         {...menuItemProps}
         className={classNames(
@@ -247,14 +247,14 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
         </span>
         {isSelected && <CheckmarkMedium  UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
         {hasChildNodes && chevron}
-      </li>
+      </div>
     </FocusRing>
   );
 }
 
 function MenuDivider() {
   return (
-    <li 
+    <div 
       aria-orientation="horizontal"
       className={classNames(
         styles,
