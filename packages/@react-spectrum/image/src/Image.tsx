@@ -1,11 +1,12 @@
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // incomplete component for show right now
 
-function Image(props: SpectrumImageProps, ref: DOMRef) {
+function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   let defaults = {slot: 'image'};
   props = {...defaults, ...props};
   let {
@@ -17,7 +18,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef) {
     alt,
     ...otherProps
   } = useProviderProps(props);
-  let {styleProps} = useStyleProps(props);
+  let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   if (decorative) {
@@ -45,7 +46,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef) {
         })}
         src={src}
         alt={alt}
-        style={{'object-fit': objectFit, height: '100%', width: '100%'}} />
+        style={{objectFit, height: '100%', width: '100%'}} />
     </div>
   );
 }

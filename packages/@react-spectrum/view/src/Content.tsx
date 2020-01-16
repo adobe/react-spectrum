@@ -1,9 +1,9 @@
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, ViewStyleProps} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
-export interface ContentProps extends DOMProps, StyleProps {
+export interface ContentProps extends DOMProps, ViewStyleProps {
   children: ReactElement | string | ReactElement[]
 }
 

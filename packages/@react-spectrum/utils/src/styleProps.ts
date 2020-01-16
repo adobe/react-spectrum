@@ -223,7 +223,7 @@ const boxAlignmentStyleProps: StyleHandlers = {
   placeContent: ['place-content', placementStyle],
   rowGap: ['row-gap', dimensionValue],
   columnGap: ['row-gap', dimensionValue]
-}
+};
 
 export const flexStyleProps: StyleHandlers = {
   flexDirection: ['flex-direction', passthroughStyle],
