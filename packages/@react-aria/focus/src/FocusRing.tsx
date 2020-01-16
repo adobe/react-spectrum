@@ -17,8 +17,18 @@ export function FocusRing(props: FocusRingProps) {
   let [isFocused, setFocused] = useState(false);
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {isFocusVisible} = useFocusVisible(props);
-  let {focusProps} = useFocus({isDisabled: within, onFocusChange: setFocused});
-  let {focusWithinProps} = useFocusWithin({isDisabled: !within, onFocusWithinChange: setFocusWithin});
+  let {focusProps} = useFocus({
+    isDisabled: within,
+    onFocusChange: setFocused,
+    onFocus: e => e.continuePropagation(),
+    onBlur: e => e.continuePropagation()
+  });
+  let {focusWithinProps} = useFocusWithin({
+    isDisabled: !within,
+    onFocusWithinChange: setFocusWithin,
+    onFocusWithin: e => e.continuePropagation(),
+    onBlurWithin: e => e.continuePropagation()
+  });
   let child = React.Children.only(children);
 
   return React.cloneElement(child, mergeProps(child.props, {
