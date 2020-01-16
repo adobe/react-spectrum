@@ -2,7 +2,7 @@ import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Toast} from '../';
+import {Toast} from '@react-spectrum/toast';
 import {ToastProps} from '@react-types/toast';
 import {useToastProvider} from '@react-spectrum/toast-provider';
 
