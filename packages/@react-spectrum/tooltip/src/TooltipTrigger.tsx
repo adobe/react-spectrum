@@ -53,7 +53,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
+      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: {...overlayProps.style}, isOpen: open})}
     </Overlay>
   );
 

@@ -52,6 +52,15 @@ storiesOf('Tooltip', module)
   ).add(
     'triggered by click, placement: bottom',
     () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
+  ).add(
+    'RTL example: start',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
+  ).add(
+    'RTL exmaple: end',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
+  ).add(
+    'supports disable prop : click',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   );
 
 function render(content, props = {}) {
@@ -69,7 +78,7 @@ function render(content, props = {}) {
 function renderWithTrigger(content, props = {}) {
   return (
     <TooltipTrigger {...props}>
-      <ActionButton>Click Me</ActionButton>
+      <ActionButton>Tooltip Trigger</ActionButton>
       <Tooltip>
         {content}
       </Tooltip>
