@@ -55,8 +55,6 @@ clean_docs_node_modules:
 lint:
 	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
-
-nodelint:
 	node lint-packages.js
 
 test:

@@ -1,13 +1,13 @@
 import {Collection} from '@react-stately/collections';
-import {Key} from 'react';
+import {Key, ReactElement} from 'react';
 
-export class ButtonGroupCollection<T extends {key: Key}> implements Collection<T> {
+export class ButtonGroupCollection<T extends ReactElement> implements Collection<T> {
   public items: T[];
   private keys: Key[];
 
   constructor(items: T[]) {
     this.items = items;
-    this.keys = items.map(child => child.key);
+    this.keys = items.filter(item => !item.props.isDisabled).map(child => child.key);
   }
 
   getKeys() {

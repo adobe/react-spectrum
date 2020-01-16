@@ -1,12 +1,11 @@
-import {ButtonGroupButton} from '@react-types/button';
 import {ButtonGroupCollection} from './';
 import {ButtonGroupStateBase} from './types';
 import {MultipleSelection} from '@react-types/shared';
-import React, {useMemo} from 'react';
+import React, {ReactElement, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface ButtonGroupState {
-  buttonCollection: ButtonGroupCollection<ButtonGroupButton>,
+  buttonCollection: ButtonGroupCollection<ReactElement>,
   selectionManager: SelectionManager
 }
 
@@ -19,7 +18,7 @@ export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelect
       isSelected: selectionState.selectedKeys.has(child.key)
     }));
 
-    return new ButtonGroupCollection<ButtonGroupButton>(childrenArray);
+    return new ButtonGroupCollection(childrenArray);
 
   }, [props, selectionState.selectedKeys]);
 
