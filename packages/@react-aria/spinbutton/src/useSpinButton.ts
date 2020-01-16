@@ -4,11 +4,15 @@ import {InputBase, RangeInputBase, ValueBase} from '@react-types/shared';
 
 export interface SpinButtonProps extends InputBase, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
+  increment?: () => void,
   onIncrement?: () => void,
   onIncrementPage?: () => void,
+  decrement?: () => void,
   onDecrement?: () => void,
   onDecrementPage?: () => void,
+  decrementToMin?: () => void,
   onDecrementToMin?: () => void,
+  incrementToMax?: () => void,
   onIncrementToMax?: () => void
 }
 
@@ -25,11 +29,15 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     isDisabled,
     isReadOnly,
     isRequired,
+    increment,
     onIncrement,
     onIncrementPage,
+    decrement,
     onDecrement,
     onDecrementPage,
+    decrementToMin,
     onDecrementToMin,
+    incrementToMax,
     onIncrementToMax
   } = props;
 
@@ -52,6 +60,10 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
           e.preventDefault();
           onIncrement();
         }
+        if (increment) {
+          e.preventDefault();
+          increment();
+        }
         break;
       case 'PageDown':
         if (onDecrementPage) {
@@ -66,17 +78,29 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
           e.preventDefault();
           onDecrement();
         }
+        if (decrement) {
+          e.preventDefault();
+          decrement();
+        }
         break;
       case 'Home':
         if (minValue != null && onDecrementToMin) {
           e.preventDefault();
           onDecrementToMin();
         }
+        if (minValue != null && decrementToMin) {
+          e.preventDefault();
+          decrementToMin();
+        }
         break;
       case 'End':
         if (maxValue != null && onIncrementToMax) {
           e.preventDefault();
           onIncrementToMax();
+        }
+        if (maxValue != null && incrementToMax) {
+          e.preventDefault();
+          incrementToMax();
         }
         break;
     }

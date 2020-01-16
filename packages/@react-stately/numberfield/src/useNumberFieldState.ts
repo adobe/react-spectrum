@@ -1,6 +1,6 @@
 import {clamp} from '@react-aria/utils';
-import {useCallback, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useRef} from 'react';
 
 export interface NumberFieldState {
   setValue: (val: string, ...args: any) => void,

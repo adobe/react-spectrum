@@ -48,7 +48,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     maxValue,
     minValue,
     increment,
-    increment,
+    incrementToMax,
     decrement,
     decrementToMin,
     value
