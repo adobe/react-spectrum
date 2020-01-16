@@ -1,5 +1,7 @@
-import {AllHTMLAttributes} from 'react';
+import {AllHTMLAttributes, useState} from 'react';
 import {ButtonGroupProps} from '@react-types/button';
+import {FocusEvent} from '@react-types/shared';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 const BUTTON_GROUP_ROLES = {
@@ -26,9 +28,15 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
     selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as Orientation,
-    role,
-    tabIndex = 0
+    role
   } = props;
+
+  let [isFocusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setFocusWithin
+  });
+
+  let tabIndex = isFocusWithin ? -1 : 0;
 
   return {
     buttonGroupProps: {
@@ -36,10 +44,12 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
       role: role || BUTTON_GROUP_ROLES[selectionMode],
       tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
-      'aria-disabled': isDisabled
+      'aria-disabled': isDisabled,
+      ...focusWithinProps
     },
     buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
+      role: BUTTON_ROLES[selectionMode],
+      onFocus: (e: FocusEvent) => {e.continuePropagation();}
     }
   };
 }

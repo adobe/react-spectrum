@@ -5,7 +5,7 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Provider} from '@react-spectrum/provider';
-import React, {useRef} from 'react';
+import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -40,10 +40,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     keyboardDelegate: layout
   });
 
-  let {buttonGroupProps, buttonProps} = useButtonGroup({
-    ...props,
-    tabIndex: state.selectionManager.focusedKey ? -1 : 0
-  });
+  let {buttonGroupProps, buttonProps} = useButtonGroup(props);
 
   let isVertical = orientation === 'vertical';
   let itemClassName;
@@ -88,8 +85,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
   );
 }
 
-export interface ButtonGroupItemProps {
-  role?: string,
+export interface ButtonGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
   UNSAFE_className?: string,
   item: ButtonGroupButton,
   state: ButtonGroupState
@@ -103,12 +99,8 @@ export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemPro
     itemRef: ref
   });
 
-  let buttonProps = mergeProps(item.props, otherProps);
-  let buttonAriaProps = mergeProps(
-    itemProps,
-    {
-      onFocus: e => e.continuePropagation()
-    }
+  let buttonProps = mergeProps(
+    itemProps, otherProps
   );
 
   return React.cloneElement(
@@ -116,8 +108,7 @@ export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemPro
     {
     // @ts-ignore
       ref,
-      ...buttonProps,
-      ...buttonAriaProps
+      ...mergeProps(item.props, buttonProps)
     }
   );
 }
