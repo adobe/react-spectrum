@@ -7,6 +7,8 @@ export interface StyleProps {
   UNSAFE_className?: string,
   UNSAFE_style?: CSSProperties,
 
+  slot?: string,
+
   margin?: DimensionValue,
   marginStart?: DimensionValue,
   marginEnd?: DimensionValue,
@@ -25,8 +27,6 @@ export interface StyleProps {
   flex?: string | number | boolean,
   flexGrow?: number,
   flexShrink?: number,
-  justifyItems?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch' | 'space-between', // ...
-  alignItems?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch', // ...
   justifySelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch', // ...
   alignSelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch', // ...
   flexOrder?: number,
@@ -87,4 +87,44 @@ export interface ViewStyleProps extends StyleProps {
   // ...
   // shadows?
   // transforms?
+}
+
+type globalVals = 'initial' | 'inherit' | 'unset';
+type justifyContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'left' | 'right' | 'normal' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | globalVals;
+type justifyItemsType = 'auto' | 'normal' | 'stretch' | 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | 'legacy right' | 'legacy left' | 'legacy center' | globalVals;
+type alignContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'normal' | 'baseline' | 'first baseline' | 'last baseline' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | globalVals;
+type alignItemsType = 'normal'| 'stretch'| 'center'| 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | globalVals;
+
+export interface FlexStyleProps extends StyleProps {
+  justifyContent?: justifyContentType,
+  justifyItems?: justifyItemsType,
+  alignContent?: alignContentType,
+  alignItems?: alignItemsType,
+  placeContent?: {
+    align: alignContentType
+    justify?: justifyContentType
+  },
+  placeItems?: {
+    align: alignItemsType | 'auto'
+    justify?: justifyItemsType
+  },
+  rowGap?: DimensionValue // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
+}
+
+export interface GridStyleProps extends StyleProps {
+  justifyContent?: justifyContentType,
+  justifyItems?: justifyItemsType,
+  alignContent?: alignContentType,
+  alignItems?: alignItemsType,
+  placeContent?: {
+    align: alignContentType
+    justify?: justifyContentType
+  },
+  placeItems?: {
+    align: alignItemsType | 'auto'
+    justify?: justifyItemsType
+  },
+  rowGap?: DimensionValue, // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
+  columnGap?: DimensionValue // dimension value correct?
+  // gap?: how do i type this one????
 }

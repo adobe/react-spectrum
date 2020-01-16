@@ -1,6 +1,8 @@
 import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
+import classNames from 'classnames';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useSlotProvider} from './Slots';
 
 type Direction = 'ltr' | 'rtl';
 type StyleName = string | string[] | ((dir: Direction) => string);
@@ -83,7 +85,7 @@ function rtl(ltr: string, rtl: string) {
   );
 }
 
-function dimensionValue(value: DimensionValue) {
+export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
   }
@@ -161,8 +163,10 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
   let {
     UNSAFE_className,
     UNSAFE_style,
+    slot,
     ...otherProps
   } = props;
+  let {[slot]: slotClassName} = useSlotProvider();
   let {direction} = useLocale();
   let styles = convertStyleProps(props, handlers, direction);
   let style = {...UNSAFE_style, ...styles};
@@ -187,7 +191,7 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
 
   let styleProps: HTMLAttributes<HTMLElement> = {
     style,
-    className: UNSAFE_className
+    className: classNames(UNSAFE_className, slotClassName)
   };
 
   if (props.isHidden) {
@@ -198,3 +202,52 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
     styleProps
   };
 }
+
+export function passthroughStyle(value) {
+  return value;
+}
+
+export function placementStyle(value) {
+  if (!value.justify) {
+    return value.align;
+  }
+  return `${value.align} ${value.justify}`;
+}
+
+const boxAlignmentStyleProps: StyleHandlers = {
+  justifyItems: ['justify-items', passthroughStyle],
+  justifyContent: ['justify-content', passthroughStyle],
+  alignItems: ['align-items', passthroughStyle],
+  alignContent: ['align-content', passthroughStyle],
+  placeItems: ['place-items', placementStyle],
+  placeContent: ['place-content', placementStyle],
+  rowGap: ['row-gap', dimensionValue],
+  columnGap: ['row-gap', dimensionValue]
+}
+
+export const flexStyleProps: StyleHandlers = {
+  flexDirection: ['flex-direction', passthroughStyle],
+  flexWrap: ['flex-wrap', passthroughStyle],
+  flexFlow: ['flex-flow', passthroughStyle],
+  ...boxAlignmentStyleProps
+};
+
+export const gridStyleProps: StyleHandlers = {
+  grid: ['grid', passthroughStyle],
+  gridArea: ['grid-area', passthroughStyle],
+  gridAutoColumns: ['grid-auto-columns', passthroughStyle],
+  gridAutoFlow: ['grid-auto-flow', passthroughStyle],
+  gridAutoRows: ['grid-auto-rows', passthroughStyle],
+  gridColumn: ['grid-column', passthroughStyle],
+  gridColumnEnd: ['grid-column-end', passthroughStyle],
+  gridColumnStart: ['grid-column-start', passthroughStyle],
+  gridRow: ['grid-row', passthroughStyle],
+  gridRowEnd: ['grid-row-end', passthroughStyle],
+  gridRowStart: ['grid-row-start', passthroughStyle],
+  gridTemplate: ['grid-template', passthroughStyle],
+  gridTemplateAreas: ['grid-template-areas', passthroughStyle],
+  gridTemplateColumns: ['grid-template-columns', passthroughStyle],
+  gridTemplateRows: ['grid-template-rows', passthroughStyle],
+  ...boxAlignmentStyleProps
+};
+

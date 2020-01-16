@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/layout",
+  "name": "@react-spectrum/typography",
   "version": "3.0.0-rc.1",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -26,13 +26,10 @@
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
-    "@react-types/layout": "^3.0.0-rc.1"
+    "@react-types/typography": "^3.0.0-alpha.1"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
-    "@react-spectrum/image": "^3.0.0-rc.1",
-    "@react-spectrum/typography": "^3.0.0-rc.1",
-    "@react-spectrum/view": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

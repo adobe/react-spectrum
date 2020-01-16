@@ -1,4 +1,4 @@
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -16,20 +16,20 @@ interface IconProps extends DOMProps, StyleProps {
 }
 
 export function Icon(props: IconProps) {
+  let defaults = {slot: 'icon'};
+  props = {...defaults, ...props};
   let {
     children,
     alt,
     scale,
     color,
     size,
-    slot = 'icon',
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
     role = 'img',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {[slot]: slotClassName} = useSlotProvider();
 
   let provider = useProvider();
   let pscale = 'M';
@@ -65,7 +65,6 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      styleProps.className,
-      slotClassName)
+      styleProps.className)
   });
 }
