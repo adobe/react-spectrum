@@ -17,7 +17,6 @@ import {useSelectableItem} from '@react-aria/selection';
 export {Item, Section};
 
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
-  onSelect?: (...args) => void, // user provided onSelect callback
   autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
   focusStrategy?: React.MutableRefObject<focusStrategy>, // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
   selectionMode?: SelectionMode
@@ -123,12 +122,10 @@ interface MenuItemProps<T> {
 // How would we get MenuItem user specified props in?
 function MenuItem<T>({item, state}: MenuItemProps<T>) {
   let menuProps = useContext(MenuContext) || {};
- 
   let {
     rendered,
     isSelected,
-    isDisabled,
-    hasChildNodes
+    isDisabled
   } = item;
 
   // TODO: All of the below should be in a useMenuItem aria hook, to be handled in MenuItem pull
@@ -164,10 +161,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     switch (e.key) {
       case ' ':
         if (!isDisabled) {
-          if (!hasChildNodes) {
-            menuProps.onSelect(item);
-          }
-
           if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
             menuProps.setOpen && menuProps.setOpen(false);
           }
@@ -175,10 +168,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
         break;
       case 'Enter':
         if (!isDisabled) {
-          if (!hasChildNodes) {
-            menuProps.onSelect(item);
-          }
-
           menuProps.setOpen && menuProps.setOpen(false);
         }
         break;
@@ -186,7 +175,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
   }; 
 
   let onMouseOver = () => state.selectionManager.setFocusedKey(item.key);
-
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
@@ -202,6 +190,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
         {...menuItemProps}
         onMouseOver={onMouseOver}
+        onFocus={() => {}}
         className={classNames(
           styles,
           'spectrum-Menu-item',

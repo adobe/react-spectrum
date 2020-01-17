@@ -59,13 +59,11 @@ describe('MenuTrigger', function () {
   let onOpenChange = jest.fn();
   let onOpen = jest.fn();
   let onClose = jest.fn();
-  let onSelect = jest.fn();
 
   afterEach(() => {
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();
-    onSelect.mockClear();
     cleanup();
   });
 

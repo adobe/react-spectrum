@@ -91,7 +91,7 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name"  onSelect={action('onSelect')}>
+              <Menu items={withSection} itemKey="name"  onSelectionChange={action('onSelectionChange')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -136,7 +136,7 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
+          <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
             {item => (
               <Section items={item.children} title={item.name}>
                 {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -158,7 +158,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} {...menuProps}>
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Kangaroo', 'Ross']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

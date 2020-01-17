@@ -34,11 +34,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     } else if (e.shiftKey) {
       manager.extendSelection(itemKey);
     } else if (manager) {
-      // How do we handle user provided onSelect callbacks here?
-      // Should we call it here or have the user provide a onPress that they merge with itemProps?
-      // Or is this something SelectionManager should handle?
-      // How do we handle custom selection strategies? Like if we don't want to be able to select an item
-      // if it has child nodes?
       manager.toggleSelection(itemKey);
     }
   };

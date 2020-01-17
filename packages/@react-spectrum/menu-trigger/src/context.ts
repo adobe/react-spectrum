@@ -3,7 +3,6 @@ import React from 'react';
 
 interface MenuContextValue extends DOMProps {
   onClose?: () => void,
-  onSelect?: (...args) => void,
   selectionMode?: SelectionMode,
   setOpen?: (boolean) => void
 }

@@ -28,7 +28,7 @@ storiesOf('Menu', module)
   .add(
     'Default Menu',
     () => (
-      <Menu onSelect={action('onSelect')} items={flatMenu} itemKey="name">
+      <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
         {item => <Item>{item.name}</Item>}
       </Menu>
     )
@@ -36,7 +36,7 @@ storiesOf('Menu', module)
   .add(
     'Menu w/ sections',
     () => (
-      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')}>
+      <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -48,7 +48,7 @@ storiesOf('Menu', module)
   .add(
     'Static',
     () => (
-      <Menu onSelect={action('onSelect')}>
+      <Menu onSelectionChange={action('onSelectionChange')}>
         <Item>One</Item>
         <Item>Two</Item>
         <Item>Three</Item>
@@ -58,7 +58,7 @@ storiesOf('Menu', module)
   .add(
     'Static with sections',
     () => (
-      <Menu onSelect={action('onSelect')}>
+      <Menu onSelectionChange={action('onSelectionChange')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -75,7 +75,7 @@ storiesOf('Menu', module)
   .add(
     'with default selected menu items',
     () => (
-      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+      <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -87,7 +87,7 @@ storiesOf('Menu', module)
   .add(
     'static with default selected menu items',
     () => (
-      <Menu onSelect={action('onSelect')}>
+      <Menu onSelectionChange={action('onSelectionChange')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -107,7 +107,7 @@ storiesOf('Menu', module)
   .add(
     'with selected menu items (controlled)',
     () => (
-      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+      <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -119,7 +119,7 @@ storiesOf('Menu', module)
   .add(
     'static with selected menu items (controlled)',
     () => (
-      <Menu onSelect={action('onSelect')}>
+      <Menu onSelectionChange={action('onSelectionChange')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -136,7 +136,7 @@ storiesOf('Menu', module)
   .add(
     'with disabled menu items',
     () => (
-      <Menu onSelect={action('onSelect')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+      <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -148,7 +148,7 @@ storiesOf('Menu', module)
   .add(
     'static with disabled menu items',
     () => (
-      <Menu onSelect={action('onSelect')}>
+      <Menu onSelectionChange={action('onSelectionChange')}>
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -165,7 +165,7 @@ storiesOf('Menu', module)
   .add(
     'Multiselect menu',
     () => (
-      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} selectionMode="multiple">
+      <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -177,7 +177,7 @@ storiesOf('Menu', module)
   .add(
     'Multiselect menu, static',
     () => (
-      <Menu onSelect={action('onSelect')} selectionMode="multiple">
+      <Menu onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -194,7 +194,7 @@ storiesOf('Menu', module)
   .add(
     'No selection allowed menu',
     () => (
-      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} selectionMode="none">
+      <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -206,7 +206,7 @@ storiesOf('Menu', module)
   .add(
     'No selection allowed menu, static',
     () => (
-      <Menu onSelect={action('onSelect')} selectionMode="none">
+      <Menu onSelectionChange={action('onSelectionChange')} selectionMode="none">
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -223,7 +223,7 @@ storiesOf('Menu', module)
   .add(
     'Menu with role="listbox"',
     () => (
-      <Menu items={withSection} itemKey="name" onSelect={action('onSelect')} role="listbox">
+      <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} role="listbox">
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -235,7 +235,7 @@ storiesOf('Menu', module)
   .add(
     'Menu with role="listbox", static',
     () => (
-      <Menu onSelect={action('onSelect')} role="listbox">
+      <Menu onSelectionChange={action('onSelectionChange')} role="listbox">
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>

@@ -5,7 +5,6 @@ import {useMenuTrigger} from '../';
 describe('useMenuTrigger', function () {
   let state = {};
   let setOpen = jest.fn();
-  let onSelect = jest.fn();
   let focusStrategy = createRef();
 
   let renderMenuTriggerHook = (menuProps, menuTriggerProps, isOpen) => {
@@ -20,7 +19,6 @@ describe('useMenuTrigger', function () {
 
   afterEach(() => {
     setOpen.mockClear();
-    onSelect.mockClear();
   });
 
   it('should return default props for menu and menu trigger', function () {

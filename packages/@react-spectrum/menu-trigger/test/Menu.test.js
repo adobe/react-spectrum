@@ -59,13 +59,13 @@ function renderComponent(Component, contextProps, props) {
 }
 
 describe('Menu', function () {
-  let onSelect = jest.fn();
+  let onSelectionChange = jest.fn();
 
   beforeEach(() => {
   });
   
   afterEach(() => {
-    onSelect.mockClear();
+    onSelectionChange.mockClear();
     cleanup();
   });
   
