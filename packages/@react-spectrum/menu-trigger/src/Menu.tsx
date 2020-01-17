@@ -185,6 +185,8 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     }
   }; 
 
+  let onMouseOver = () => state.selectionManager.setFocusedKey(item.key);
+
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
@@ -199,6 +201,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
       <div
         {...mergeProps(pressProps, filterDOMProps(itemProps))}
         {...menuItemProps}
+        onMouseOver={onMouseOver}
         className={classNames(
           styles,
           'spectrum-Menu-item',
