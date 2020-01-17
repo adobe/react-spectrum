@@ -12,9 +12,7 @@ interface TooltipTriggerProps extends PositionProps {
   type?: 'click',
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
-  //defaultOpen?: boolean,
-  isDisabled?: boolean//,
-  //onOpenChange?: (isOpen: boolean) => void
+  isDisabled?: boolean
 }
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
@@ -23,7 +21,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     type,
     targetRef,
     isOpen,
-    isDisabled,
+    isDisabled
   } = props;
 
   let [trigger, content] = React.Children.toArray(children);

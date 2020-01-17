@@ -1,5 +1,5 @@
 import {ActionButton} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, wait, waitForDomChange, within} from '@testing-library/react';
+import {cleanup, fireEvent, render, wait, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -27,10 +27,10 @@ describe('TooltipTrigger', function () {
     it('triggered by click event', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-        <TooltipTrigger type="click">
-        <ActionButton>Trigger</ActionButton>
-        <Tooltip>content</Tooltip>
-        </TooltipTrigger>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
         </Provider>
       );
 
@@ -49,10 +49,10 @@ describe('TooltipTrigger', function () {
     it('pressing esc should close the tooltip after a click event', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-        <TooltipTrigger type="click">
-        <ActionButton>Trigger</ActionButton>
-        <Tooltip>content</Tooltip>
-        </TooltipTrigger>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
         </Provider>
       );
 
@@ -75,10 +75,10 @@ describe('TooltipTrigger', function () {
     it('pressing keydown + altKey should close the tooltip after a click event', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-        <TooltipTrigger type="click">
-        <ActionButton>Trigger</ActionButton>
-        <Tooltip>content</Tooltip>
-        </TooltipTrigger>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
         </Provider>
       );
 

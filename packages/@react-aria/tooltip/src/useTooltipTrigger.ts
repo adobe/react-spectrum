@@ -1,13 +1,15 @@
 import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {PressProps} from '@react-aria/interactions';
 import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
-  role?: 'tooltip'
+  role?: 'tooltip',
+  ref: RefObject<HTMLElement | null>
 }
 
 interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
@@ -20,14 +22,9 @@ interface TooltipTriggerProps {
   state: TooltipState
 }
 
-interface InteractionProps { // extends DOMProps {
-  toggleTooltipState: () => void,
-}
-
 interface TooltipTriggerAria {
   baseProps: AllHTMLAttributes<HTMLElement>,
-  interactionProps: InteractionProps,
-  clickTriggerProps: AllHTMLAttributes<HTMLElement>
+  clickTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -37,10 +34,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     triggerProps,
     state
   } = props;
-
-  let toggleTooltipState = () => {
-    state.setOpen(!state.open);
-  };
 
   let onClose = () => {
     state.setOpen(false);
@@ -63,20 +56,20 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
-  let handlePress = () => {
-    let triggerId = triggerProps.ref.current.id;
-    toggleTooltipState();
+  let onPress = () => {
+    state.setOpen(!state.open);
   };
 
   return {
     baseProps: {
+      ...tooltipProps,
       ...overlayProps,
       id: tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
     clickTriggerProps: {
-      onPress: handlePress
+      onPress
     }
   };
 }
