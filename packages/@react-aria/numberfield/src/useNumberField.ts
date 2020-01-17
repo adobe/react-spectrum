@@ -47,10 +47,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     maxValue,
     minValue,
-    increment,
-    incrementToMax,
-    decrement,
-    decrementToMin,
+    onIncrement: increment,
+    onIncrementToMax: incrementToMax,
+    onDecrement: decrement,
+    onDecrementToMin: decrementToMin,
     value
   });
 
