@@ -59,7 +59,7 @@ storiesOf('Tooltip', module)
     'RTL exmaple: end',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
-    'supports disable prop : click',
+    'isDisabled: true',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   );
 
