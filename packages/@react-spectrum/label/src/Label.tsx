@@ -8,7 +8,6 @@ import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-// TODO: should this take a slot?
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let defaults = {slot: 'label'};
   props = useProviderProps({...defaults, ...props});

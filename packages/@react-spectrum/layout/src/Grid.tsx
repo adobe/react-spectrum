@@ -1,8 +1,7 @@
-import {baseStyleProps, classNames, filterDOMProps, gridStyleProps, SlotContext, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, gridStyleProps, SlotContext, useStyleProps} from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
-import styles from './layout.css';
 
 
 export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLElement>) => {
@@ -11,10 +10,11 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
     slots,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, {...baseStyleProps, ...gridStyleProps});
+  let {styleProps} = useStyleProps(otherProps, {...gridStyleProps});
+  styleProps.style.display = 'grid'; // inline-grid?
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames(styles, 'grid', slots && slots.container, styleProps.className)}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames({}, slots && slots.container, styleProps.className)}>
       <SlotContext.Provider value={slots}>
         {children}
       </SlotContext.Provider>

@@ -29,6 +29,7 @@ export interface StyleProps {
   flexShrink?: number,
   justifySelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch', // ...
   alignSelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch', // ...
+  placeSelf?: any, // don't know how to type
   flexOrder?: number,
   // TODO: grid
   position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky',
@@ -40,7 +41,16 @@ export interface StyleProps {
   left?: DimensionValue,
   right?: DimensionValue,
 
-  isHidden?: boolean
+  isHidden?: boolean,
+
+  // don't know how to type these https://css-tricks.com/snippets/css/complete-guide-grid/
+  gridColumnStart?: string,
+  gridColumnEnd?: string,
+  gridRowStart?: string,
+  gridRowEnd?: string,
+  gridColumn?: string,
+  gridRow?: string,
+  gridArea?: string
 }
 
 // These support more properties than specific Spectrum components
@@ -89,42 +99,53 @@ export interface ViewStyleProps extends StyleProps {
   // transforms?
 }
 
-type globalVals = 'initial' | 'inherit' | 'unset';
-type justifyContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'left' | 'right' | 'normal' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | globalVals;
-type justifyItemsType = 'auto' | 'normal' | 'stretch' | 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | 'legacy right' | 'legacy left' | 'legacy center' | globalVals;
-type alignContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'normal' | 'baseline' | 'first baseline' | 'last baseline' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | globalVals;
-type alignItemsType = 'normal'| 'stretch'| 'center'| 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | globalVals;
+type GlobalVals = 'initial' | 'inherit' | 'unset';
+type JustifyContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'left' | 'right' | 'normal' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | GlobalVals;
+type JustifyItemsType = 'auto' | 'normal' | 'stretch' | 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | 'legacy right' | 'legacy left' | 'legacy center' | GlobalVals;
+type AlignContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'normal' | 'baseline' | 'first baseline' | 'last baseline' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | GlobalVals;
+type AlignItemsType = 'normal'| 'stretch'| 'center'| 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | GlobalVals;
 
 export interface FlexStyleProps extends StyleProps {
-  justifyContent?: justifyContentType,
-  justifyItems?: justifyItemsType,
-  alignContent?: alignContentType,
-  alignItems?: alignItemsType,
+  justifyContent?: JustifyContentType,
+  justifyItems?: JustifyItemsType,
+  alignContent?: AlignContentType,
+  alignItems?: AlignItemsType,
   placeContent?: {
-    align: alignContentType
-    justify?: justifyContentType
+    align: AlignContentType
+    justify?: JustifyContentType
   },
   placeItems?: {
-    align: alignItemsType | 'auto'
-    justify?: justifyItemsType
-  },
-  rowGap?: DimensionValue // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
+    align: AlignItemsType | 'auto'
+    justify?: JustifyItemsType
+  }
 }
 
 export interface GridStyleProps extends StyleProps {
-  justifyContent?: justifyContentType,
-  justifyItems?: justifyItemsType,
-  alignContent?: alignContentType,
-  alignItems?: alignItemsType,
+  justifyContent?: JustifyContentType,
+  justifyItems?: JustifyItemsType,
+  alignContent?: AlignContentType,
+  alignItems?: AlignItemsType,
   placeContent?: {
-    align: alignContentType
-    justify?: justifyContentType
+    align: AlignContentType
+    justify?: JustifyContentType
   },
   placeItems?: {
-    align: alignItemsType | 'auto'
-    justify?: justifyItemsType
+    align: AlignItemsType | 'auto'
+    justify?: JustifyItemsType
   },
+  // naming existing properties but don't know how to type many of them
   rowGap?: DimensionValue, // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
-  columnGap?: DimensionValue // dimension value correct?
+  columnGap?: DimensionValue, // dimension value correct?
+  gridTemplateAreas?: string,
+  gridTemplateRows?: string,
+  gridTemplateColumns?: string,
+  gridTemplate?: string,
+  gridColumnGap?: string,
+  gridRowGap?: string,
+  gridGap?: string,
+  gridAutoColumns?: string,
+  gridAutoRows?: string,
+  gridAutoFlow?: 'row' | 'column' | 'row dense' | 'column dense',
+  grid?: string,
   // gap?: how do i type this one????
 }

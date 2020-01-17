@@ -167,9 +167,13 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
     ...otherProps
   } = props;
   let {[slot]: slotClassName} = useSlotProvider();
+  let slotGridArea = {};
+  if (!slotClassName && slot) {
+    slotGridArea = {gridArea: slot};
+  }
   let {direction} = useLocale();
   let styles = convertStyleProps(props, handlers, direction);
-  let style = {...UNSAFE_style, ...styles};
+  let style = {...UNSAFE_style, ...styles, ...slotGridArea};
 
   // @ts-ignore
   if (otherProps.className) {
@@ -222,7 +226,8 @@ const boxAlignmentStyleProps: StyleHandlers = {
   placeItems: ['place-items', placementStyle],
   placeContent: ['place-content', placementStyle],
   rowGap: ['row-gap', dimensionValue],
-  columnGap: ['row-gap', dimensionValue]
+  columnGap: ['row-gap', dimensionValue],
+  ...baseStyleProps
 };
 
 export const flexStyleProps: StyleHandlers = {
