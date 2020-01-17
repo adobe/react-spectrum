@@ -1,19 +1,12 @@
 import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
+import React, {Fragment, useRef} from 'react';
+import {TooltipTriggerProps} from '@react-types/tooltip';
 import {unwrapDOMRef} from '@react-spectrum/utils';
+import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipState} from '@react-stately/tooltip';
 import {useTooltipTrigger} from '@react-aria/tooltip';
-
-interface TooltipTriggerProps extends PositionProps {
-  children: ReactElement[],
-  type?: 'click',
-  targetRef?: RefObject<HTMLElement>,
-  isOpen?: boolean,
-  isDisabled?: boolean
-}
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
