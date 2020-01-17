@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/breadcrumbs",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "private": true,
   "main": "dist/main.js",
