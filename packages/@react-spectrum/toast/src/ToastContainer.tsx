@@ -17,8 +17,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, useContext} from 'react';
-import {Toast} from '@react-spectrum/toast';
-import {ToastContext} from './';
+import {Toast, ToastContext} from './';
 import toastContainerStyles from './toastContainer.css';
 
 export function ToastContainer(): ReactElement {

@@ -29,12 +29,12 @@ describe('Toast', function () {
     cleanup();
   });
 
-  it('Renders a button that triggers a toast via the provider', function () {
-    let {queryAllByRole, getByRole} = renderComponent(<RenderToastButton />);
+  it('Renders a button that triggers a toast via the provider', async function () {
+    let {getByRole, queryAllByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    expect(queryAllByRole('presentation').length).toBe(0);
+    expect(queryAllByRole('alert').length).toBe(0);
     triggerPress(button);
-    expect(queryAllByRole('presentation').length).toBe(1);
+    expect(queryAllByRole('alert').length).toBe(1);
   });
 });

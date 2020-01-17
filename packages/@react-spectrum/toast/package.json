@@ -32,6 +32,7 @@
     "@react-aria/toast": "^3.0.0-alpha.2",
     "@react-spectrum/button": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-stately/toast": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-rc.1",
     "@react-types/toast": "^3.0.0-alpha.2",
     "@spectrum-icons/ui": "^3.0.0-alpha.2"
@@ -42,7 +43,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
