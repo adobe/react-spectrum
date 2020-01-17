@@ -1,6 +1,4 @@
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection, SelectionMode, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
@@ -9,12 +7,10 @@ import {FocusRing} from '@react-aria/focus';
 import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
-import {MenuTrigger} from './';
 import {mergeProps, useId} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
-import {useLocale} from '@react-aria/i18n'; 
+import {TreeState, useTreeState} from '@react-stately/tree'; 
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -106,24 +102,11 @@ export function Menu<T>(props: MenuProps<T>) {
             );
           }
 
-          if (item.hasChildNodes) {
-            return (
-              <MenuTrigger>
-                <MenuItem
-                  item={item}
-                  state={state} />
-                <Menu items={item.childNodes}>
-                  {item => <Item childItems={item.childNodes}>{item.rendered}</Item>}
-                </Menu>
-              </MenuTrigger>
-            );
-          } else {
-            return (
-              <MenuItem
-                item={item}
-                state={state} />
-            );
-          }
+          return (   
+            <MenuItem
+              item={item}
+              state={state} />
+          );
         }}
       </CollectionView>
     </MenuContext.Provider>
@@ -140,22 +123,7 @@ interface MenuItemProps<T> {
 // How would we get MenuItem user specified props in?
 function MenuItem<T>({item, state}: MenuItemProps<T>) {
   let menuProps = useContext(MenuContext) || {};
-  let {direction} = useLocale();
-  let chevron;
-  if (direction === 'ltr') {
-    chevron = (
-      <ChevronRightMedium 
-        UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')} 
-        onMouseDown={e => e.stopPropagation()} />
-    );
-  } else {
-    chevron = (
-      <ChevronLeftMedium 
-        UNSAFE_className={classNames(styles, 'spectrum-Menu-chevron')} 
-        onMouseDown={e => e.stopPropagation()} />
-    );
-  }
-  
+ 
   let {
     rendered,
     isSelected,
@@ -246,7 +214,6 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
           {rendered}
         </span>
         {isSelected && <CheckmarkMedium  UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
-        {hasChildNodes && chevron}
       </div>
     </FocusRing>
   );
