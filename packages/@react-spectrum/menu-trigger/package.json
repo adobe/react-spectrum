@@ -38,7 +38,6 @@
     "@react-aria/selection": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-spectrum/overlays": "^3.0.0-alpha.2",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/collections": "^3.0.0-alpha.2",
     "@react-stately/tree": "^3.0.0-alpha.2",
@@ -50,6 +49,7 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
+    "@react-spectrum/provider": "^3.0.0-rc.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },

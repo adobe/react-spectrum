@@ -144,24 +144,8 @@ describe('MenuTrigger', function () {
     verifyMenuToggle(Component, props, (button) => triggerPress(button));
   });
 
-  // The below tests no longer work since useMenuTrigger doesn't have space and enter cases in it's key down
+  // Enter and Space keypress tests are ommitted since useMenuTrigger doesn't have space and enter cases in it's key down
   // since usePress handles those cases
-
-  // it.each`
-  //   Name             | Component      | props
-  //   ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  //   ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
-  // `('$Name can toggle the menu display via Enter key', function ({Component, props}) {
-  //   verifyMenuToggle(Component, props, (button) => fireEvent.keyDown(button, {key: 'Enter', code: 13, charCode: 13}));
-  // });
-
-  // it.each`
-  //   Name             | Component      | props
-  //   ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  //   ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
-  // `('$Name can toggle the menu display via Space key', function ({Component, props}) {
-  //   verifyMenuToggle(Component, props, (button) => fireEvent.keyDown(button, {key: ' ', code: 32, charCode: 32}));
-  // });
 
   it.each`
     Name             | Component      | props

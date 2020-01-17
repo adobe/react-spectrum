@@ -26,7 +26,7 @@ export function Menu<T>(props: MenuProps<T>) {
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
-      headingHeight: 26 // Same as above
+      headingHeight: 31 // Same as above
     })
   , []);
 
