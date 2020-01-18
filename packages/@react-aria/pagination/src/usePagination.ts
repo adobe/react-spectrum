@@ -1,7 +1,8 @@
 import intlMessages from '../intl';
+import {PaginationState} from '@react-stately/pagination';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-export function usePagination(props, state) {
+export function usePagination(props, state: PaginationState) {
   let formatMessage = useMessageFormatter(intlMessages);
 
   let onPrevious = () => {
