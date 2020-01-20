@@ -22,8 +22,7 @@ governing permissions and limitations under the License.
   padding: 0;
   outline: none;
 
-  height: 400px;
-  width: 200px;
+  height: 100%;
 }
 
 .spectrum-SideNav-item {

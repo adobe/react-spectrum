@@ -4,6 +4,7 @@ import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {ListLayout, Node} from '@react-stately/collections';
 import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
+import sideNavStyles from './index.css';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
@@ -21,7 +22,7 @@ export function SideNav<T>(props: SideNavProps<T>) {
     <nav
       {...filterDOMProps(props)}
       {...navProps}
-      className={classNames(styles, 'react-spectrum-SideNav')}>
+      className={classNames(sideNavStyles, 'react-spectrum-SideNav')}>
       <CollectionView
         {...listProps}
         focusedKey={state.selectionManager.focusedKey}
