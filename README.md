@@ -90,7 +90,6 @@ We use Yarn, please run `yarn install` instead of `npm install` to get started. 
 We use [Storybooks](https://storybooks.js.org) for local development. Run `yarn start` and open [http://localhost:9003](http://localhost:9003) in your browser to play around with the components and test your changes.
 
 ### File Layout
-
 React Spectrum v3 is organized into many npm packages in a monorepo, managed by [Lerna](http://lerna.js.org). Our architecture splits each component into three parts: @react-stately (state management), @react-aria (behavior + accessibility), and @react-spectrum (spectrum themed components).
 
 ### Testing
