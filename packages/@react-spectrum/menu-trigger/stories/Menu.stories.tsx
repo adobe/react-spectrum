@@ -99,19 +99,31 @@ storiesOf('Menu', module)
     'static with default selected menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>One</Item>
-            <Item title="blah">
-              <Item>gawegkawe</Item>
-              <Item>fwaegawkjgbakw</Item>
+        <Menu onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+          <Section key="section1" title="Section 1">
+            <Item key="1">
+              One
             </Item>
-            <Item>Three</Item>
+            <Item key="2">
+              Two
+            </Item>
+            <Item key="3">
+              Three
+            </Item>
+          </Section>
+          <Section key="section2" title="Section 2">
+            <Item key="4">
+              Four
+            </Item>
+            <Item key="5">
+              Five
+            </Item>
+            <Item key="6">
+              Six
+            </Item>
+            <Item key="7">
+              Seven
+            </Item>
           </Section>
         </Menu>
       </Popover>
@@ -135,16 +147,31 @@ storiesOf('Menu', module)
     'static with selected menu items (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+        <Menu onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+          <Section key="sec1" title="Section 1">
+            <Item key="1">
+              One
+            </Item>
+            <Item key="2">
+              Two
+            </Item>
+            <Item key="3">
+              Three
+            </Item>
           </Section>
-          <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+          <Section key="sec2" title="Section 2">
+            <Item key="4">
+              Four
+            </Item>
+            <Item key="5">
+              Five
+            </Item>
+            <Item key="6">
+              Six
+            </Item>
+            <Item key="7">
+              Seven
+            </Item>
           </Section>
         </Menu>
       </Popover>
@@ -168,16 +195,31 @@ storiesOf('Menu', module)
     'static with disabled menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+        <Menu onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+          <Section key="sec1" title="Section 1">
+            <Item key="1">
+              One
+            </Item>
+            <Item key="2">
+              Two
+            </Item>
+            <Item key="3">
+              Three
+            </Item>
           </Section>
-          <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+          <Section key="sec2" title="Section 2">
+            <Item key="4">
+              Four
+            </Item>
+            <Item key="5">
+              Five
+            </Item>
+            <Item key="6">
+              Six
+            </Item>
+            <Item key="7">
+              Seven
+            </Item>
           </Section>
         </Menu>
       </Popover>
@@ -208,9 +250,9 @@ storiesOf('Menu', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item>Four</Item>
+            <Item>Five</Item>
+            <Item>Six</Item>
           </Section>
         </Menu>
       </Popover>
@@ -241,9 +283,9 @@ storiesOf('Menu', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item>Four</Item>
+            <Item>Five</Item>
+            <Item>Six</Item>
           </Section>
         </Menu>
       </Popover>
@@ -274,9 +316,9 @@ storiesOf('Menu', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item>Four</Item>
+            <Item>Five</Item>
+            <Item>Six</Item>
           </Section>
         </Menu>
       </Popover>
