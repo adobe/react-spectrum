@@ -33,8 +33,13 @@ describe('Toast', function () {
     let {getByRole, queryAllByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    expect(queryAllByRole('alert').length).toBe(0);
+    expect(() => {
+      getByRole('alert');
+    }).toThrow();
+
     triggerPress(button);
+
     expect(queryAllByRole('alert').length).toBe(1);
+    expect(getByRole('alert')).toBeVisible();
   });
 });

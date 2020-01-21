@@ -11,7 +11,7 @@ export interface ToastOptions {
 
 interface ToastProps extends ToastOptions {
   children?: ReactNode,
-  variant?: 'positive' | 'negative' | 'info' // TODO: move this into react-spectrum
+  variant?: 'positive' | 'negative' | 'info'
 }
 
 export interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
