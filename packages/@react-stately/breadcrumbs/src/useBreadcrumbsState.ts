@@ -1,6 +1,5 @@
 import React, {RefObject, useEffect, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
-import {useLocale} from '@react-aria/i18n';
 
 const MIN_VISIBLE_ITEMS = 2;
 const MAX_VISIBLE_ITEMS = 4;
@@ -17,7 +16,6 @@ export function useBreadcrumbsState(props: SpectrumBreadcrumbsProps, ref: RefObj
     children
   } = props;
 
-  let {direction} = useLocale();
   let isCollapsible = maxVisibleItems === 'auto';
   let childArray = React.Children.toArray(children);
 
@@ -25,14 +23,14 @@ export function useBreadcrumbsState(props: SpectrumBreadcrumbsProps, ref: RefObj
 
   useEffect(() => {
     let listItems = Array.from(ref.current.children);
-    let childrenRect = listItems.map(child => child.getBoundingClientRect());
+    let itemsWidthTotals = listItems.reduce((acc, item, index) => (
+      [...acc, acc[index] + item.getBoundingClientRect().width]
+    ), [0]);
 
     let onResize = () => {
       if (isCollapsible && ref.current) {
-        let containerRect = ref.current.getBoundingClientRect();
-        let index = childrenRect.findIndex(childRect => 
-          direction === 'rtl' ? childRect.left < containerRect.left : childRect.right > containerRect.right
-        );
+        let containerWidth = ref.current.getBoundingClientRect().width;
+        let index = itemsWidthTotals.findIndex(childRect => childRect > containerWidth);
 
         let visibleItemsCount;
         let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
@@ -54,7 +52,7 @@ export function useBreadcrumbsState(props: SpectrumBreadcrumbsProps, ref: RefObj
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, [isCollapsible, showRoot, direction, childArray.length, ref]);
+  }, [isCollapsible, childArray.length, ref, showRoot]);
 
   return {
     visibleItems,
