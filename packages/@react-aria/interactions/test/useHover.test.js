@@ -39,8 +39,7 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerenter'));
       fireEvent(el, pointerEvent('pointerleave'));
 
-      console.log('events array from pointer ->', events); // still empty, maybe you need to set something defined to get past the if
-      // check what you have in useHover hook itself
+      console.log('events array from pointer ->', events); // empty for some reason ...
 
       expect(events).toEqual([
         {
