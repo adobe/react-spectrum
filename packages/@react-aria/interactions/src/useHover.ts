@@ -145,7 +145,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
     }
     return hoverProps;
-  }, [onHover, onHoverStart, onHoverEnd, isDisabled]);
+  }, [onHover, onHoverStart, onHoverEnd, onHoverChange, isDisabled]);
 
   return {
     isHovering: isHoveringProp || isHovering,

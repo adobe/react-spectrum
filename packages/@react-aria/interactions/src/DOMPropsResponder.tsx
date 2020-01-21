@@ -1,5 +1,5 @@
-import {HoverProps} from './useHover';
 import {DOMPropsResponderContext} from './DOMPropsContext';
+import {HoverProps} from './useHover';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface DOMPropsResponderProps extends HoverProps {
@@ -27,7 +27,7 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMProp
 
   return (
     <DOMPropsResponderContext.Provider value={context}>
-    {children}
+      {children}
     </DOMPropsResponderContext.Provider>
   );
 });
