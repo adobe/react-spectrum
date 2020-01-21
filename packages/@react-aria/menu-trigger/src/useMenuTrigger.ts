@@ -3,17 +3,18 @@ import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
-export type focusStrategy = 'first' | 'last';
+export type FocusStrategy = 'first' | 'last';
 
 interface MenuTriggerState {
   isOpen: boolean,
-  setOpen(value: boolean): void
+  setOpen: (value: boolean) => void,
+  focusStrategy: FocusStrategy,
+  setFocusStrategy: (value: FocusStrategy) => void
 }
 
 interface MenuTriggerProps {
   ref: RefObject<HTMLElement | null>,
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-  focusStrategy: React.MutableRefObject<focusStrategy>
 } 
 
 interface MenuTriggerAria {
@@ -24,8 +25,7 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type,
-    focusStrategy
+    type
   } = props;
 
   let menuTriggerId = useId();
@@ -57,7 +57,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
           e.stopPropagation();
           onPress();
           // If no menu item is selected, focus last item when opening menu with ArrowDown
-          focusStrategy.current = 'last';
+          state.setFocusStrategy('last');
           break;
       }
     }

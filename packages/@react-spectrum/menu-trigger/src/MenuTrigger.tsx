@@ -1,13 +1,13 @@
 import {DOMRefValue} from '@react-types/shared';
+import {FocusStrategy, useMenuTrigger} from '@react-aria/menu-trigger';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {Fragment, ReactElement, useRef} from 'react';
+import React, {Fragment, ReactElement, useRef, useState} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMenuTrigger} from '@react-aria/menu-trigger';
 
 export interface MenuTriggerProps {
   children: ReactElement[],
@@ -33,9 +33,10 @@ export function MenuTrigger(props: MenuTriggerProps) {
     direction = 'bottom',
     isDisabled
   } = props;
-  let focusStrategy = useRef(null);
+
   let [menuTrigger, menu] = React.Children.toArray(children);
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
+  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
 
   let onClose = () => {
     setOpen(false);
@@ -44,12 +45,13 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
-      type: 'menu',
-      focusStrategy
+      type: 'menu'
     },
     {
       isOpen, 
-      setOpen
+      setOpen,
+      focusStrategy,
+      setFocusStrategy
     }
   );
 
@@ -65,7 +67,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let menuContext = {
     ...menuProps,
     focusStrategy,
-    setOpen: setOpen
+    setFocusStrategy,
+    setOpen
   };
 
   let triggerProps = {

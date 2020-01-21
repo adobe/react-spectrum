@@ -4,13 +4,13 @@ import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {focusStrategy, useMenu} from '@react-aria/menu-trigger';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {mergeProps, useId} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree'; 
+import {useMenu} from '@react-aria/menu-trigger';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -18,7 +18,6 @@ export {Item, Section};
 
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
   autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
-  focusStrategy?: React.MutableRefObject<focusStrategy>, // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
 }
 
 export function Menu<T>(props: MenuProps<T>) {
@@ -29,7 +28,7 @@ export function Menu<T>(props: MenuProps<T>) {
     })
   , []);
 
-  let contextProps = useContext(MenuContext) || {};
+  let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
     selectionMode: props.selectionMode || 'single'
@@ -42,6 +41,7 @@ export function Menu<T>(props: MenuProps<T>) {
 
   let {
     focusStrategy,
+    setFocusStrategy,
     autoFocus = true,
     ...otherProps
   } = completeProps;
@@ -54,11 +54,11 @@ export function Menu<T>(props: MenuProps<T>) {
     selectionManager.setFocused(true);
     
     // Focus last item if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
-    if (focusStrategy && focusStrategy.current === 'last') {
+    if (focusStrategy && focusStrategy === 'last') {
       focusedKey = layout.getLastKey();
 
       // Reset focus strategy so it doesn't get applied to future menu openings
-      focusStrategy.current = null;
+      setFocusStrategy('first');
     }
 
     // Perhaps the below block goes into useSelectableCollection
@@ -175,9 +175,9 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
-      menuProps.setOpen(false);
+      menuProps.setOpen && menuProps.setOpen(false);
     }
-  }
+  };
 
   let onMouseOver = () => state.selectionManager.setFocusedKey(item.key);
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly

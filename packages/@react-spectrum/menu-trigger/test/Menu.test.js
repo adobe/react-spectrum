@@ -22,7 +22,7 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, contextProps, props) {
+function renderComponent(Component, contextProps = {}, props) {
   if (Component === V2Menu) {
     return render(
       <V2Menu id={menuId} {...props}>
