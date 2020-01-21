@@ -29,7 +29,6 @@ export interface StyleProps {
   flexShrink?: number,
   justifySelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch', // ...
   alignSelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch', // ...
-  placeSelf?: any, // don't know how to type
   flexOrder?: number,
   // TODO: grid
   position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky',
@@ -109,15 +108,7 @@ export interface FlexStyleProps extends StyleProps {
   justifyContent?: JustifyContentType,
   justifyItems?: JustifyItemsType,
   alignContent?: AlignContentType,
-  alignItems?: AlignItemsType,
-  placeContent?: {
-    align: AlignContentType
-    justify?: JustifyContentType
-  },
-  placeItems?: {
-    align: AlignItemsType | 'auto'
-    justify?: JustifyItemsType
-  }
+  alignItems?: AlignItemsType
 }
 
 export interface GridStyleProps extends StyleProps {
@@ -125,14 +116,6 @@ export interface GridStyleProps extends StyleProps {
   justifyItems?: JustifyItemsType,
   alignContent?: AlignContentType,
   alignItems?: AlignItemsType,
-  placeContent?: {
-    align: AlignContentType
-    justify?: JustifyContentType
-  },
-  placeItems?: {
-    align: AlignItemsType | 'auto'
-    justify?: JustifyItemsType
-  },
   // naming existing properties but don't know how to type many of them
   rowGap?: DimensionValue, // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
   columnGap?: DimensionValue, // dimension value correct?

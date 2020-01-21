@@ -10,7 +10,7 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
     slots,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, {...gridStyleProps});
+  let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   styleProps.style.display = 'grid'; // inline-grid?
 
   return (

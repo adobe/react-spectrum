@@ -8,7 +8,7 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, {...flexStyleProps});
+  let {styleProps} = useStyleProps(otherProps, flexStyleProps);
   styleProps.style.display = 'flex'; // inline-flex?
 
   return (
