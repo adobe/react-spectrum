@@ -24,7 +24,7 @@ describe('TooltipTrigger', function () {
 
   describe('click related tests', function () {
 
-    it('triggered by click event', function () {
+    it('triggered by click event', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <TooltipTrigger type="click">
@@ -42,8 +42,11 @@ describe('TooltipTrigger', function () {
       triggerPress(button);
 
       let tooltip = getByRole('tooltip');
-      expect(tooltip).toBeVisible();
 
+      // wait for appearance
+      await wait(() => {
+        expect(tooltip).toBeVisible();
+      });
     });
 
     it('pressing esc should close the tooltip after a click event', async function () {
