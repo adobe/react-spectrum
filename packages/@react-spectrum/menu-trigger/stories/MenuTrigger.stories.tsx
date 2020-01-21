@@ -91,7 +91,7 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name"  onSelectionChange={action('onSelectionChange')}>
+              <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}

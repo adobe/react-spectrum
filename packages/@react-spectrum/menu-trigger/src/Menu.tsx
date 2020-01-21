@@ -1,6 +1,6 @@
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection, SelectionMode, StyleProps} from '@react-types/shared';
+import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {DOMProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -19,7 +19,6 @@ export {Item, Section};
 interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
   autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
   focusStrategy?: React.MutableRefObject<focusStrategy>, // internal prop to override autoFocus behavior, mainly for when user pressed up/down arrow
-  selectionMode?: SelectionMode
 }
 
 export function Menu<T>(props: MenuProps<T>) {
@@ -174,6 +173,12 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     }
   }; 
 
+  let onPress = (e) => {
+    if (e.pointerType !== 'keyboard') {
+      menuProps.setOpen(false);
+    }
+  }
+
   let onMouseOver = () => state.selectionManager.setFocusedKey(item.key);
   // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
@@ -181,7 +186,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
   // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref). 
   // isDisabled suppresses sub menu triggers from firing
-  let {pressProps} = usePress(mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled}));
+  let {pressProps} = usePress(mergeProps({onPress}, mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled})));
 
   // Will need additional aria-owns and stuff when submenus are finalized
   return (
