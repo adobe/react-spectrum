@@ -57,6 +57,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
+  // Here is where the props from DOMPropsContext will be added in via mergeProps
+      // same thing in all other component aria hooks that can be hovered over, pressed or focused for a tooltip. So pretty much all of them!
 
   return {
     isPressed, // Used to indicate press state for visual
