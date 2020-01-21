@@ -1,5 +1,5 @@
 import {HoverProps} from './useHover';
-import {DOMPropsResponderContext} from './hoverContext';
+import {DOMPropsResponderContext} from './DOMPropsContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface DOMPropsResponderProps extends HoverProps {
@@ -16,7 +16,7 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMProp
     }
   };
 
-  // TODO: change to a more generic warning when we are using this for things other than hover 
+  // TODO: change to a more generic warning when we are using this for things other than hover
   useEffect(() => {
     if (!isRegistered.current) {
       console.warn(

@@ -23,7 +23,7 @@ interface HoverResult {
 
 function useDOMPropsResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <HoverResponder> and merge with props.
-  let context = useContext(HoverResponderContext);
+  let context = useContext(DOMPropsResponderContext);
   if (context) {
     let {register, ...contextProps} = context;
     props = mergeProps(contextProps, props) as HoverHookProps;
@@ -54,7 +54,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     isDisabled,
     isHovering: isHoveringProp,
     ...domProps
-  } = useHoverResponderContext(props);
+  } = useDOMPropsResponderContext(props);
 
   let [isHovering, setHover] = useState(false);
 
