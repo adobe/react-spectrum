@@ -30,8 +30,24 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'single selected key',
+    'single selected key (controlled)',
     () => render({}, {selectedKeys: ['Kangaroo']})
+  )
+  .add(
+    'single default selected key (uncontrolled)',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo']})
+  )
+  .add(
+    'multiple selected key (controlled)',
+    () => render({}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+  )
+  .add(
+    'multiple default selected key (uncontrolled)',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+  )
+  .add(
+    'autofocus=false',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple', autoFocus: false})
   )
   .add(
     'align="end"',
@@ -158,7 +174,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Kangaroo', 'Ross']} {...menuProps}>
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
