@@ -13,7 +13,7 @@ async function run() {
 
   let pr = process.env.CIRCLE_PULL_REQUEST.split('/').pop();
   await octokit.issues.createComment({
-    owner: 'adobe',
+    owner: 'adobe-private',
     repo: 'react-spectrum-v3',
     issue_number: pr,
     body: `Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/index.html)`
