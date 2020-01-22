@@ -18,8 +18,7 @@ governing permissions and limitations under the License.
   display: flex;
 
   .spectrum-Button,
-  .spectrum-ActionButton,
-  .spectrum-Tool {
+  .spectrum-ActionButton {
     flex-shrink: 0;
   }
 
@@ -29,10 +28,6 @@ governing permissions and limitations under the License.
 
   .spectrum-ActionButton + .spectrum-ActionButton {
     margin-left: var(--spectrum-actionbuttongroup-text-button-gap-x);
-  }
-
-  .spectrum-Tool + .spectrum-Tool {
-    margin-left: var(--spectrum-toolgroup-text-button-gap-x);
   }
 
   &:focus {
@@ -56,11 +51,6 @@ governing permissions and limitations under the License.
 
   .spectrum-ActionButton + .spectrum-ActionButton {
     margin-top: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-left: var(--spectrum-buttongroup-button-gap-reset);
-  }
-
-  .spectrum-Tool + .spectrum-Tool {
-    margin-top: var(--spectrum-toolgroup-text-button-gap-y);
     margin-left: var(--spectrum-buttongroup-button-gap-reset);
   }
 }

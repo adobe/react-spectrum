@@ -328,11 +328,6 @@ a.spectrum-ActionButton {
     margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
-
-  &.spectrum-Tool + .spectrum-Tool {
-    margin-block-start: var(--spectrum-toolgroup-text-button-gap-y);
-    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
-  }
 }
 
 .spectrum-ButtonGroup-item--connected {
