@@ -25,7 +25,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     onOpenChange
   } = props;
 
-  let [trigger, content] = React.Children.toArray(children);
+  let [trigger, content] = React.Children.toArray(children) as [ReactElement, ReactElement];
 
   let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
 
@@ -53,7 +53,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let overlay = (
     <Overlay isOpen={open} ref={containerRef}>
-      {React.isValidElement(content) && React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
+      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
     </Overlay>
   );
 
