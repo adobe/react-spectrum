@@ -6,7 +6,7 @@ export interface RadioGroupState {
   setSelectedRadio: (value: string) => void
 }
 
-export function useRadioGroupState(props: RadioGroupProps):RadioGroupState  {
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   let [selectedRadio, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
 
   let setSelectedRadio = (value) => {

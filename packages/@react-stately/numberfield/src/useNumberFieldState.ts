@@ -1,4 +1,5 @@
 import {clamp} from '@react-aria/utils';
+import {NumberFieldProps} from '@react-types/numberfield';
 import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
 
@@ -8,11 +9,11 @@ export interface NumberFieldState {
   decrement: (...args: any) => void,
   incrementToMax: (...args: any) => void,
   decrementToMin: (...args: any) => void,
-  value: number,
+  value: any,
   validationState: string
 }
 
-export function useNumberFieldState(props) : NumberFieldState {
+export function useNumberFieldState(props: NumberFieldProps): NumberFieldState {
   let {
     minValue,
     maxValue,
