@@ -18,7 +18,7 @@ jobs:
             cp .circleci/.npmrc .npmrc
 
       - run:
-          name: yarn install --frozen-lockfile
+          name: yarn install --pure-lockfile
           command: |
             make clean_node_modules
             make install_no_postinstall
