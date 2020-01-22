@@ -65,6 +65,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       ...tooltipProps,
       ...overlayProps,
       id: tooltipTriggerId,
+      'aria-describedby': tooltipTriggerId,
       role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },

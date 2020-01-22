@@ -19,7 +19,6 @@ export function useTooltip(props: TooltipProps): TooltipAria {
 
   let tooltipProps;
   tooltipProps = {
-    'aria-describedby': tooltipId,
     role,
     id: tooltipId
   };

@@ -14,10 +14,6 @@ describe('useTooltip', function () {
   it('handles defaults', function () {
     let {tooltipProps} = renderTooltipHook({children: 'Test Tooltip'});
     expect(tooltipProps.role).toBe('tooltip');
-  });
-
-  it('should have an id', function () {
-    let {tooltipProps} = renderTooltipHook({children: 'Test Tooltip'});
     expect(tooltipProps.id).toBeTruthy();
   });
 });
