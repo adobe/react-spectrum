@@ -21,7 +21,7 @@ interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection,
 }
 
 export function Menu<T>(props: MenuProps<T>) {
-  let [firstHeading, setFirstHeading] = useState(false);
+  let [firstHeading, setFirstHeading] = useState(null);
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
@@ -93,9 +93,9 @@ export function Menu<T>(props: MenuProps<T>) {
         collection={state.tree}>
         {(type, item: Node<T>) => {
           if (type === 'section') {
-            // Only render the Divider if it isn't the first Heading
-            if (!firstHeading) {
-              setFirstHeading(true);
+            // Only render the Divider if it isn't the first Heading (extra equality check to guard against rerenders)
+            if (firstHeading == null || (item.key === firstHeading)) {
+              setFirstHeading(item.key);
               return (
                 <MenuHeading item={item} />
               );
