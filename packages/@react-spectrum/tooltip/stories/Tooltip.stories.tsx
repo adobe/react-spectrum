@@ -41,10 +41,10 @@ storiesOf('Tooltip', module)
     () => render(longMarkup)
   )
   .add(
-    'triggered by click, placement: right',
+    'triggered by click, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
   ).add(
-    'triggered by click, placement: left',
+    'triggered by click, placement: right',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
     'triggered by click, placement: top',
