@@ -89,7 +89,10 @@ export function useTabs(props: AriaTabsProps, state: any): TabsAria {
   });
 
   if (selectedTabId == null) {
-    selectedTabId = React.Children.toArray(props.children)[0].props.id;
+    let selectedTab = React.Children.toArray(props.children)[0];
+    if (React.isValidElement(selectedTab)) {
+      selectedTabId = selectedTab.props.id;
+    }
   }
 
   return {

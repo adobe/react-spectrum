@@ -2,7 +2,7 @@ import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef} from 'react';
+import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
@@ -17,7 +17,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     targetRef,
     ...positionProps
   } = props;
-  let [trigger, content] = React.Children.toArray(children);
+  let [trigger, content] = React.Children.toArray(children) as [ReactElement, ReactElement];
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
@@ -92,7 +92,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     shouldFlip: props.shouldFlip,
     isOpen
   });
-  
+
   let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',

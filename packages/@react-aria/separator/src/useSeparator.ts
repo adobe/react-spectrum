@@ -1,8 +1,8 @@
-import {AllHTMLAttributes} from 'react';
+import {AllHTMLAttributes, ElementType} from 'react';
 
 export interface SeparatorProps {
   orientation?: 'horizontal' | 'vertical',
-  elementType?: string
+  elementType?: ElementType
 }
 
 export interface SeparatorAria {

@@ -45,17 +45,17 @@ export class CollectionBuilder<T> {
     if (item.key) {
       return parentKey ? `${parentKey}${item.key}` : item.key;
     }
-    
+
     if (this.itemKey && value[this.itemKey]) {
       return value[this.itemKey];
     }
-  
+
     let v = value as any;
     let key = v.key || v.id;
     if (key == null) {
       throw new Error('No key found for item');
     }
-    
+
     return key;
   }
 
@@ -95,20 +95,20 @@ export class CollectionBuilder<T> {
       return node;
     }
   }
-  
+
   *iterateCollection(props: CollectionBase<T>) {
     if (typeof props.children === 'function') {
       if (!props.items) {
         throw new Error('props.children was a function but props.items is missing');
       }
-  
+
       for (let item of props.items) {
         let node = this.getCached(item);
         if (node) {
           yield node;
           continue;
         }
-  
+
         let rendered = props.children(item);
         let childItems: Iterable<Node<T>>;
         if (rendered.type === Section) {
@@ -119,23 +119,25 @@ export class CollectionBuilder<T> {
           let name = typeof rendered.type === 'function' ? rendered.type.name : rendered.type;
           throw new Error(`Unknown type <${name}> returned by item renderer. Only <Section> or <Item> are supported.`);
         }
-  
+
         yield this.getNode(rendered, 0, item, childItems);
       }
     } else {
       let items = React.Children.toArray(props.children);
       for (let item of items) {
         let childItems: Iterable<Node<T>>;
-        if (item.type === Section) {
-          childItems = iterable(() => this.iterateSection(item as SectionElement<T>));
-        } else if (item.type === Item) {
-          childItems = iterable(() => this.iterateItem(item as SectionElement<T>, 1, null));
-        } else {
-          let name = typeof item.type === 'function' ? item.type.name : item.type;
-          throw new Error(`Unsupported item type <${name}>`);
+        if (React.isValidElement(item)) { // cannot type a 'for ... of' https://github.com/typescript-eslint/typescript-eslint/issues/783
+          if (item.type === Section) {
+            childItems = iterable(() => this.iterateSection(item as SectionElement<T>));
+          } else if (item.type === Item) {
+            childItems = iterable(() => this.iterateItem(item as SectionElement<T>, 1, null));
+          } else {
+            let name = typeof item.type === 'function' ? item.type.name : item.type;
+            throw new Error(`Unsupported item type <${name}>`);
+          }
+
+          yield this.getNode(item, 0, null, childItems);
         }
-  
-        yield this.getNode(item, 0, null, childItems);
       }
     }
   }
@@ -146,41 +148,43 @@ export class CollectionBuilder<T> {
       if (!items) {
         throw new Error('props.children was a function but props.items is missing');
       }
-  
+
       for (let item of items) {
         let node = this.getCached(item);
         if (node) {
           yield node;
           continue;
         }
-  
+
         let rendered = children(item);
         if (rendered.type === Section) {
           throw new Error('Nested sections are not supported');
         }
-  
+
         if (rendered.type !== Item) {
           let name = typeof rendered.type === 'function' ? rendered.type.name : rendered.type;
           throw new Error(`Unknown type <${name}> returned by section item renderer. Only <Item> is supported.`);
         }
-  
+
         let childNodes = iterable(() => this.iterateItem(rendered, 1, children as ItemRenderer<T>));
         yield this.getNode(rendered, 0, item, childNodes);
       }
     } else {
       let items = React.Children.toArray(children);
       for (let item of items) {
-        if (item.type === Section) {
-          throw new Error('Nested sections are not supported');
+        if (React.isValidElement(item)) {
+          if (item.type === Section) {
+            throw new Error('Nested sections are not supported');
+          }
+
+          if (item.type !== Item) {
+            let name = typeof item.type === 'function' ? item.type.name : item.type;
+            throw new Error(`Unknown child of type <${name}> in section. Only <Item> is supported.`);
+          }
+
+          let childNodes = iterable(() => this.iterateItem(item as ItemElement<T>, 1, null, key));
+          yield this.getNode(item, 0, null, childNodes, key);
         }
-  
-        if (item.type !== Item) {
-          let name = typeof item.type === 'function' ? item.type.name : item.type;
-          throw new Error(`Unknown child of type <${name}> in section. Only <Item> is supported.`);
-        }
-  
-        let childNodes = iterable(() => this.iterateItem(item, 1, null, key));
-        yield this.getNode(item, 0, null, childNodes, key);
       }
     }
   }
@@ -216,7 +220,7 @@ export class CollectionBuilder<T> {
           let name = typeof child.type === 'function' ? child.type.name : child.type;
           throw new Error(`Unknown child of type <${name}> in item. Only <Item> is supported.`);
         }
-  
+
         let childNodes = iterable(() => this.iterateItem(child, level + 1, null, parentKey ? `${parentKey}${key}` : key));
         yield this.getNode(child, level, null, childNodes, parentKey ? `${parentKey}${key}` : key);
       }

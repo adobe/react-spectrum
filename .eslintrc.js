@@ -51,6 +51,9 @@ module.exports = {
     'expect': true
   },
   settings: {
+    react: {
+      version: "detect"
+    },
     'import/resolver': {
       node: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']

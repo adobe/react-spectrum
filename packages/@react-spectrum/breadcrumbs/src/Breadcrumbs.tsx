@@ -68,26 +68,28 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let lastIndex = childArray.length - 1;
   let breadcrumbItems = childArray.map((child, index) => {
     let isCurrent = index === lastIndex;
-    return (
-      <li
-        key={child.key}
-        className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs-item'
-          )
-        }>
-        {React.cloneElement(
-          child,
-          {
-            isCurrent,
-            isHeading: isCurrent && isHeading,
-            headingAriaLevel,
-            isDisabled
-          }
-        )}
-      </li>
-    );
+    if (React.isValidElement(child)) {
+      return (
+        <li
+          key={child.key}
+          className={
+            classNames(
+              styles,
+              'spectrum-Breadcrumbs-item'
+            )
+          }>
+          {React.cloneElement(
+            child,
+            {
+              isCurrent,
+              isHeading: isCurrent && isHeading,
+              headingAriaLevel,
+              isDisabled
+            }
+          )}
+        </li>
+      );
+    }
   });
 
   // TODO: replace menu with select

@@ -56,12 +56,16 @@ export function TabList(props: TabListProps) {
   let {styleProps} = useStyleProps(otherProps);
 
   let renderTabs = () =>
-    childArray.map((child) =>
-      child ? React.cloneElement(child, {
-        isSelected: state.selectedItem === child.props.value,
-        onSelect: () => state.setSelectedItem(child.props.value),
-        isDisabled
-      }) : null
+    childArray.map((child) => {
+      if (React.isValidElement(child)) {
+        return child ? React.cloneElement(child, {
+          isSelected: state.selectedItem === child.props.value,
+          onSelect: () => state.setSelectedItem(child.props.value),
+          isDisabled
+        }) : null;
+      }
+      return null;
+    }
   );
 
   let selectedTab = tabsArray[selectedIndex];
