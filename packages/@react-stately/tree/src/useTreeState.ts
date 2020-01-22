@@ -27,7 +27,7 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let tree = useMemo(() => {
-    let nodes = builder.build(props, (key, item) => ({
+    let nodes = builder.build(props, (key) => ({
       isExpanded: expandedKeys.has(key),
       isSelected: selectionState.selectedKeys.has(key),
       isDisabled: disabledKeys.has(key),
