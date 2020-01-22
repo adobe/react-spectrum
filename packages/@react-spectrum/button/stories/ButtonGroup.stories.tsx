@@ -38,7 +38,7 @@ storiesOf('ButtonGroup', module)
     () => render({isConnected: true})
   )
   .add(
-    'isJustefied, isConected',
+    'isConected, isJustefied',
     () => (
       <div style={{width: '600px'}}>
         {render({isConnected: true, isJustified: true})}
@@ -46,12 +46,20 @@ storiesOf('ButtonGroup', module)
     )
   )
   .add(
-    'selectionMode: multiple',
-    () => render({selectionMode: 'multiple'})
+    'isConnected, isEmphasized',
+    () => render({isConnected: true, isEmphasized: true})
   )
   .add(
     'selectionMode: none',
     () => render({selectionMode: 'none'})
+  )
+  .add(
+    'selectionMode: multiple',
+    () => render({selectionMode: 'multiple'})
+  )
+  .add(
+    'selectionMode: multiple, isConnected, isEmphasized',
+    () => render({isConnected: true, isEmphasized: true, selectionMode: 'multiple'})
   )
   .add(
     'orientation: vertical',

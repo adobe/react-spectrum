@@ -30,6 +30,15 @@ export interface ButtonGroupProps extends DOMProps, StyleProps, MultipleSelectio
   isDisabled?: boolean
 }
 
+export interface SpectrumButtonGroupProps extends ButtonGroupProps {
+  isEmphasized?: boolean,
+  isConnected?: boolean
+  isJustified?: boolean,
+  isQuiet?: boolean,
+  holdAffordance?: boolean,
+  onSelectionChange?: (...args) => void
+}
+
 export interface SpectrumLogicButtonProps extends ButtonProps {
   variant: 'and' | 'or'
 }

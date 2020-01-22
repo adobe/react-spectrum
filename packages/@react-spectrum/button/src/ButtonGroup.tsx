@@ -1,5 +1,5 @@
-import {ButtonGroupButton, ButtonGroupProps} from '@react-types/button';
-import {ButtonGroupKeyboardDelegate, ButtonGroupState, useButtonGroupState} from '@react-stately/button';
+import {ButtonGroupButton, SpectrumButtonGroupProps} from '@react-types/button';
+import {ButtonGroupState, useButtonGroupState} from '@react-stately/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
@@ -8,16 +8,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
-import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-
-export interface SpectrumButtonGroupProps extends ButtonGroupProps {
-  isEmphasized?: boolean,
-  isConnected?: boolean
-  isJustified?: boolean,
-  isQuiet?: boolean,
-  holdAffordance?: boolean,
-  onSelectionChange?: (...args) => void
-}
+import {useSelectableItem} from '@react-aria/selection';
 
 export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
   let {
@@ -33,14 +24,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
 
   let state = useButtonGroupState({...props, selectionMode});
 
-  let layout = new ButtonGroupKeyboardDelegate(state.buttonCollection);
-
-  let {listProps} = useSelectableCollection({
-    selectionManager: state.selectionManager,
-    keyboardDelegate: layout
-  });
-
-  let {buttonGroupProps, buttonProps} = useButtonGroup(props);
+  let {buttonGroupProps, buttonProps} = useButtonGroup(props, state);
 
   let isVertical = orientation === 'vertical';
   let itemClassName;
@@ -58,7 +42,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...mergeProps(buttonGroupProps, listProps)}
+      {...buttonGroupProps}
       className={
         classNames(
           styles,

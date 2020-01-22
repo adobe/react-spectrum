@@ -1,8 +1,11 @@
 import {AllHTMLAttributes, useState} from 'react';
+import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
 import {ButtonGroupProps} from '@react-types/button';
 import {FocusEvent} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useSelectableCollection} from '@react-aria/selection';
 
 const BUTTON_GROUP_ROLES = {
   'none': 'toolbar',
@@ -22,7 +25,7 @@ export interface ButtonGroupAria {
   buttonGroupProps: AllHTMLAttributes<HTMLElement>,
   buttonProps: AllHTMLAttributes<HTMLElement>,
 }
-export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
+export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState): ButtonGroupAria {
   let {
     id,
     selectionMode = 'single',
@@ -30,6 +33,13 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
     orientation = 'horizontal' as Orientation,
     role
   } = props;
+
+  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection);
+
+  let {listProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate
+  });
 
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
@@ -45,7 +55,7 @@ export function useButtonGroup(props: ButtonGroupProps): ButtonGroupAria {
       tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled,
-      ...focusWithinProps
+      ...mergeProps(focusWithinProps, listProps)
     },
     buttonProps: {
       role: BUTTON_ROLES[selectionMode],

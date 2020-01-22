@@ -3,8 +3,9 @@ import {renderHook} from 'react-hooks-testing-library';
 import {useButtonGroup} from '../';
 
 describe('useButton tests', function () {
+  let state = {};
   let renderButtonGroupHook = (props) => {
-    let {result} = renderHook(() => useButtonGroup(props));
+    let {result} = renderHook(() => useButtonGroup(props, state));
     return result.current;
   };
 
