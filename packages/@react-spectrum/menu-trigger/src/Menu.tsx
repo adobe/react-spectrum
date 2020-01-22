@@ -105,7 +105,7 @@ export function Menu<T>(props: MenuProps<T>) {
                   <MenuDivider />
                   <MenuHeading item={item} />
                 </Fragment>
-              )
+              );
             }
           }
 
@@ -135,7 +135,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     isSelected,
     isDisabled
   } = item;
-
+  
   // TODO: All of the below should be in a useMenuItem aria hook, to be handled in MenuItem pull
   // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
   let ref = useRef<HTMLDivElement>();
