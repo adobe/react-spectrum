@@ -55,7 +55,7 @@ export const Tag = ((props: SpectrumTagProps) => {
           },
           styleProps.className
         )}>
-        {icon && React.cloneElement(icon, {size: 'S', className: classNames(styles, 'spectrum-Tags-itemIcon')})}
+        {icon && React.cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span
           {...labelProps}
           className={classNames(styles, 'spectrum-Tags-itemLabel')}>

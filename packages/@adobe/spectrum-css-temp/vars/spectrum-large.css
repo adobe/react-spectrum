@@ -288,6 +288,8 @@
   --spectrum-switch-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-150);
   --spectrum-switch-track-width: var(--spectrum-global-dimension-static-size-450);
   --spectrum-switch-handle-border-radius: 9px;
+  --spectrum-switch-handle-transform-x-ltr: 18px;
+  --spectrum-switch-handle-transform-x-rtl: -18px;
   --spectrum-switch-touch-hit-y: var(--spectrum-global-dimension-static-size-50);
   --spectrum-switch-emphasized-text-gap-key-focus: var(--spectrum-global-dimension-static-size-150);
   --spectrum-switch-emphasized-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-150);

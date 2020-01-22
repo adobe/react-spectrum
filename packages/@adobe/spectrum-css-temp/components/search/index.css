@@ -12,6 +12,14 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+/* override DNA variables to use ones that change in large scale instead of staying static */
+:root {
+  --spectrum-search-padding-left: var(--spectrum-global-dimension-size-450);
+  --spectrum-search-padding-right: var(--spectrum-global-dimension-size-350);
+  --spectrum-search-quiet-padding-left: var(--spectrum-global-dimension-size-300);
+  --spectrum-search-quiet-padding-right: var(--spectrum-global-dimension-size-350);
+}
+
 .spectrum-Search {
   display: inline-block;
   position: relative;
@@ -60,4 +68,8 @@ governing permissions and limitations under the License.
   width: var(--spectrum-global-dimension-size-200);
   inset-inline-start: 12px;
   top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
+
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  pointer-events: none;
 }

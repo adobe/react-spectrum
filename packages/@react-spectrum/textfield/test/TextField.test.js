@@ -200,7 +200,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('presentation');
+      let invalidIcon = tree.getByRole('img');
       expect(invalidIcon).toBeTruthy();
     }
   });
@@ -217,7 +217,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('presentation');
+      let validIcon = tree.getByRole('img');
       expect(validIcon).toBeTruthy();
     }
   });
@@ -316,5 +316,23 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, {ref});
     let input = tree.getByTestId(testId);
     expect(ref.current.getInputElement()).toEqual(input);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports labeling', ({Component}) => {
+    let ref = React.createRef();
+    let tree = renderComponent(Component, {ref, label: 'Textfield label'});
+    let input = tree.getByTestId(testId);
+    expect(ref.current.getInputElement()).toEqual(input);
+
+    let labelId = input.getAttribute('aria-labelledby');
+    expect(labelId).toBeDefined();
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('Textfield label');
+    expect(label).toHaveAttribute('for', input.id);
   });
 });

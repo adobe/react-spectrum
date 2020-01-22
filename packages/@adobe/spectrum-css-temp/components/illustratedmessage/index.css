@@ -27,22 +27,22 @@ governing permissions and limitations under the License.
   justify-content: center;
 
   text-align: center;
-}
 
-.spectrum-IllustratedMessage-illustration {
-  margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
-}
+  .spectrum-IllustratedMessage-illustration {
+    margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
+  }
 
-.spectrum-IllustratedMessage-heading {
-  max-width: var(--spectrum-illustrated-message-heading-max-width);
-  margin: var(--spectrum-illustrated-message-heading-margin);
-}
+  .spectrum-IllustratedMessage-heading {
+    max-width: var(--spectrum-illustrated-message-heading-max-width);
+    margin: var(--spectrum-illustrated-message-heading-margin);
+  }
 
-.spectrum-IllustratedMessage-description {
-  max-width: var(--spectrum-illustrated-message-description-max-width);
-  margin: var(--spectrum-illustrated-message-description-margin);
+  .spectrum-IllustratedMessage-description {
+    max-width: var(--spectrum-illustrated-message-description-max-width);
+    margin: var(--spectrum-illustrated-message-description-margin);
 
-  font-style: italic;
+    font-style: italic;
+  }
 }
 
 .spectrum-IllustratedMessage--cta {

@@ -1,16 +1,16 @@
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {Alignment, DOMProps, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
+import {ElementType, ReactNode} from 'react';
 
 export interface LabelProps {
-  children?: ReactElement | ReactElement[],
-  labelFor?: string,
-  label?: ReactNode,
-  htmlFor?: string
+  children?: ReactNode,
+  htmlFor?: string, // for compatibility with React
+  for?: string,
+  elementType?: ElementType
 }
 
 export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps {
-  labelPosition?: 'top' | 'side', // default top
-  labelAlign?: 'start' | 'end', // default start
+  labelPosition?: LabelPosition, // default top
+  labelAlign?: Alignment, // default start
   isRequired?: boolean,
-  necessityIndicator?: 'icon' | 'label'
+  necessityIndicator?: NecessityIndicator // default icon
 }

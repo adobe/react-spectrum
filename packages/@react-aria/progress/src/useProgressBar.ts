@@ -16,21 +16,22 @@ interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
 
 export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
   let {
-    id,
     value = 0,
     minValue = 0,
     maxValue = 100,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
     textValue,
     isIndeterminate,
-    children,
     formatOptions = {
       style: 'percent'
     }
   } = props;
 
-  const {labelAriaProps, labelledComponentAriaProps} = useLabel({id}, {'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    // Progress bar is not an HTML input element so it 
+    // shouldn't be labeled by a <label> element.
+    labelElementType: 'span'
+  });
 
   value = clamp(value, minValue, maxValue);
   let percentage = (value - minValue) / (maxValue - minValue);
@@ -41,21 +42,15 @@ export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
     textValue = formatter.format(valueToFormat);
   }
 
-  if (ariaLabelledby || children) {
-    ariaLabelledby = labelledComponentAriaProps['aria-labelledby'];
-  }
-
   return {
     progressBarProps: {
-      ...labelledComponentAriaProps,
+      ...fieldProps,
       'aria-valuenow': isIndeterminate ? undefined : value,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
       'aria-valuetext': isIndeterminate ? undefined : textValue,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledby,
       role: 'progressbar'
     },
-    labelProps: labelAriaProps
+    labelProps
   };
 }

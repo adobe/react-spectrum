@@ -12,7 +12,7 @@ describe('useProgressBar', function () {
   };
 
   it('with default props if no props are provided', () => {
-    let {progressBarProps, labelProps} = renderProgressBarHook({});
+    let {progressBarProps} = renderProgressBarHook({});
     expect(progressBarProps.role).toBe('progressbar');
     expect(progressBarProps['aria-valuemin']).toBe(0);
     expect(progressBarProps['aria-valuemax']).toBe(100);
@@ -20,9 +20,12 @@ describe('useProgressBar', function () {
     expect(progressBarProps['aria-valuetext']).toBe('0%');
     expect(progressBarProps['aria-label']).toBeUndefined();
     expect(progressBarProps['aria-labelledby']).toBeUndefined();
-    expect(progressBarProps.id).toBeDefined();
+  });
+
+  it('supports labeling', () => {
+    let {progressBarProps, labelProps} = renderProgressBarHook({label: 'Test'});
     expect(labelProps.id).toBeDefined();
-    expect(labelProps.htmlFor).toBeDefined();
+    expect(progressBarProps['aria-labelledby']).toBe(labelProps.id);
   });
 
   it('with value of 25%', () => {
@@ -46,8 +49,8 @@ describe('useProgressBar', function () {
     expect(progressBarProps['aria-valuetext']).toBe('¥25');
   });
 
-  it('with custom children label', () => {
-    let props = {children: 'React test', value: 25};
+  it('with custom label', () => {
+    let props = {label: 'React test', value: 25};
     let {progressBarProps, labelProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-labelledby']).toBe(labelProps.id);
   });
