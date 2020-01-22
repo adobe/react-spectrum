@@ -18,7 +18,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.0.0-alpha.2",
     "@react-aria/spinbutton": "^3.0.0-alpha.2",
-    "@react-aria/utils": "^3.0.0-alpha.2"
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-stately/numberfield": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
