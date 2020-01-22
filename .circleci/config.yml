@@ -9,8 +9,6 @@ jobs:
     working_directory: ~/react-spectrum-v3
     steps:
       - checkout
-      - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
 
       - run:
           name: Write npmrc
