@@ -1,3 +1,4 @@
+import {PaginationProps} from '@react-types/pagination';
 import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
 
@@ -9,7 +10,7 @@ export interface PaginationState {
   value?: string | number
 }
 
-export function usePaginationState(props): PaginationState {
+export function usePaginationState(props: PaginationProps): PaginationState {
   const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onChange);
   let ref = useRef(value);
 
