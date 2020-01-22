@@ -9,6 +9,8 @@ jobs:
     working_directory: ~/react-spectrum-v3
     steps:
       - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
 
       - run:
           name: Write npmrc
@@ -16,7 +18,7 @@ jobs:
             cp .circleci/.npmrc .npmrc
 
       - run:
-          name: yarn install
+          name: yarn install --frozen-lockfile
           command: |
             make clean_node_modules
             make install_no_postinstall
