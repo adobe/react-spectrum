@@ -9,8 +9,6 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
-  let defaults = {slot: 'label'};
-  props = useProviderProps({...defaults, ...props});
   let {
     children,
     labelPosition = 'top',
@@ -24,7 +22,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'label', ...otherProps});
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');

@@ -8,13 +8,11 @@ export interface ContentProps extends DOMProps, ViewStyleProps {
 }
 
 export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'content'};
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'content', ...otherProps});
 
   return (
     <section {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>

@@ -16,8 +16,6 @@ interface IconProps extends DOMProps, StyleProps {
 }
 
 export function Icon(props: IconProps) {
-  let defaults = {slot: 'icon'};
-  props = {...defaults, ...props};
   let {
     children,
     alt,
@@ -29,7 +27,7 @@ export function Icon(props: IconProps) {
     role = 'img',
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'icon', ...otherProps});
 
   let provider = useProvider();
   let pscale = 'M';

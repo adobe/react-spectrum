@@ -7,8 +7,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 // incomplete component for show right now
 
 function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
-  let defaults = {slot: 'image'};
-  props = {...defaults, ...props};
   let {
     loaded,
     isPlaceholder,
@@ -18,7 +16,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     alt,
     ...otherProps
   } = useProviderProps(props);
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'image', ...otherProps});
   let domRef = useDOMRef(ref);
 
   if (decorative) {

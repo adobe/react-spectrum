@@ -11,8 +11,6 @@ interface IconProps extends DOMProps, StyleProps {
 }
 
 export function UIIcon(props: IconProps) {
-  let defaults = {slot: 'uiIcon'};
-  props = {...defaults, ...props};
   let {
     alt,
     children,
@@ -22,7 +20,7 @@ export function UIIcon(props: IconProps) {
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'uiIcon', ...otherProps});
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {

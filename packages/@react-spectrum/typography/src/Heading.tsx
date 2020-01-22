@@ -8,13 +8,11 @@ export interface HeadingProps extends DOMProps, StyleProps {
 }
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'heading'};
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'heading', ...otherProps});
 
   // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (

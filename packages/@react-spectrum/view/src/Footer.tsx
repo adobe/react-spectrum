@@ -8,13 +8,11 @@ export interface FooterProps extends DOMProps, ViewStyleProps {
 }
 
 export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'footer'};
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'footer', ...otherProps});
 
   return (
     <footer {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>

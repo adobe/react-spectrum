@@ -9,13 +9,11 @@ export interface HeaderProps extends DOMProps, ViewStyleProps {
 
 
 export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'header'};
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'header', ...otherProps});
 
   return (
     <header {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>

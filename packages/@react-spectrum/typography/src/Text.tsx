@@ -5,13 +5,11 @@ import {TextProps} from '@react-types/typography';
 
 
 export const Text = React.forwardRef((props: TextProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'text'}; // still unsure about name
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'text', ...otherProps});
 
   return (
     <span {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>

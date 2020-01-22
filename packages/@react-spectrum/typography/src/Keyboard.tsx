@@ -5,13 +5,11 @@ import React, {RefObject} from 'react';
 
 
 export const Keyboard = React.forwardRef((props: KeyboardProps, ref: RefObject<HTMLElement>) => {
-  let defaults = {slot: 'keyboard'};
-  props = {...defaults, ...props};
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'keyboard', ...otherProps});
 
   return (
     <kbd {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
