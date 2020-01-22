@@ -318,21 +318,10 @@ a.spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
 }
 
-.spectrum-Tool-hold {
-  position: absolute;
-  inset-block-end: var(--spectrum-tool-hold-icon-padding-bottom);
-  inset-inline-end: var(--spectrum-tool-hold-icon-padding-right);
-} 
-
 .spectrum-ButtonGroup-item--vertical {
   .spectrum-ActionButton-label {
     flex-grow: 1;
     text-align: start;
-  }
-
-  &.spectrum-Button + .spectrum-Button {
-    margin-block-start: var(--spectrum-buttongroup-button-gap-y);
-    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
 
   &.spectrum-ActionButton + .spectrum-ActionButton {
@@ -345,7 +334,6 @@ a.spectrum-ActionButton {
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
 }
-
 
 .spectrum-ButtonGroup-item--connected {
   &:focus-ring {
