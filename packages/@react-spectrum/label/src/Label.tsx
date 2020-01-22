@@ -9,6 +9,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
+  props = useProviderProps(props);
   let {
     children,
     labelPosition = 'top',
