@@ -13,7 +13,7 @@ node_modules: package.json
 
 # using this won't generate icons and definitions, but will allow us to run things like cleaning beforehand
 install_no_postinstall:
-	NOYARNPOSTINSTALL=1 yarn install
+	NOYARNPOSTINSTALL=1 yarn install --pure-lockfile
 
 # --ci keeps it from opening the browser tab automatically
 run:
