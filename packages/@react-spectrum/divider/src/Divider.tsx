@@ -18,7 +18,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef<HTMLElement>) {
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'divider', ...otherProps});
   let weight = sizeMap[size];
 
   let Element = 'hr' as ElementType;

@@ -27,7 +27,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'form', ...otherProps});
   let domRef = useDOMRef(ref);
 
   let ctx = {
@@ -53,7 +53,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
         )
       }>
       <FormContext.Provider value={ctx}>
-        <Provider 
+        <Provider
           isQuiet={isQuiet}
           isEmphasized={isEmphasized}
           isDisabled={isDisabled}
