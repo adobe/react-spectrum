@@ -242,7 +242,8 @@ interface MenuHeadingProps<T> {
 function MenuHeading<T>({item}: MenuHeadingProps<T>) {
   return (
     <div role="presentation">
-      <span 
+      <span
+        aria-level={3}
         role="heading"
         className={classNames(
           styles,
