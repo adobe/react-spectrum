@@ -211,22 +211,11 @@ export function passthroughStyle(value) {
   return value;
 }
 
-export function placementStyle(value) {
-  if (!value.justify) {
-    return value.align;
-  }
-  return `${value.align} ${value.justify}`;
-}
-
 const boxAlignmentStyleProps: StyleHandlers = {
   justifyItems: ['justify-items', passthroughStyle],
   justifyContent: ['justify-content', passthroughStyle],
   alignItems: ['align-items', passthroughStyle],
   alignContent: ['align-content', passthroughStyle],
-  placeItems: ['place-items', placementStyle],
-  placeContent: ['place-content', placementStyle],
-  rowGap: ['row-gap', dimensionValue],
-  columnGap: ['row-gap', dimensionValue],
   ...baseStyleProps
 };
 
@@ -253,6 +242,8 @@ export const gridStyleProps: StyleHandlers = {
   gridTemplateAreas: ['grid-template-areas', passthroughStyle],
   gridTemplateColumns: ['grid-template-columns', passthroughStyle],
   gridTemplateRows: ['grid-template-rows', passthroughStyle],
+  rowGap: ['row-gap', dimensionValue],
+  columnGap: ['row-gap', dimensionValue],
   ...boxAlignmentStyleProps
 };
 
