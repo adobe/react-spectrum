@@ -17,8 +17,7 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  let tooltipProps;
-  tooltipProps = {
+  let tooltipProps = {
     role,
     id: tooltipId
   };

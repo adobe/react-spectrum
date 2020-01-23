@@ -1,12 +1,12 @@
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useControlledState} from '@react-stately/utils';
 
-export interface TooltipState {
+export interface TooltipTriggerState {
   open: boolean,
   setOpen: (value: boolean) => void,
 }
 
-export function useTooltipState(props: TooltipTriggerProps): TooltipState {
+export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
   let [open, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   return {

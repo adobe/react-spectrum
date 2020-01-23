@@ -5,8 +5,8 @@ import React, {Fragment, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
-import {useTooltipState} from '@react-stately/tooltip';
 import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
@@ -19,21 +19,20 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
-  let state = useTooltipState(props);
+  let state = useTooltipTriggerState(props);
 
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {baseProps, clickTriggerProps} = useTooltipTrigger({
-    tooltipProps: {
-      ...content.props
-    },
+  let {baseProps} = useTooltipTrigger({
+    tooltipProps: content.props,
     triggerProps: {
       ...trigger.props,
       ref: triggerRef
     },
-    state
+    state,
+    type
   });
 
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
@@ -48,7 +47,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let overlay = (
     <Overlay isOpen={state.open} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: {...overlayProps.style}, isOpen: open})}
+      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: overlayProps.style, isOpen: open})}
     </Overlay>
   );
 
@@ -57,7 +56,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <PressResponder
           {...baseProps}
-          {...clickTriggerProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}>

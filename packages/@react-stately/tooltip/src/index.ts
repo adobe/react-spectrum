@@ -1,1 +1,1 @@
-export * from './useTooltipState';
+export * from './useTooltipTriggerState';

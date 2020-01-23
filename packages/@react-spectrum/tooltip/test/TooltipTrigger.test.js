@@ -74,31 +74,5 @@ describe('TooltipTrigger', function () {
 
       expect(tooltip).not.toBeInTheDocument();
     });
-
-    it('pressing keydown + altKey should close the tooltip after a click event', async function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>content</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let button = getByRole('button');
-      triggerPress(button);
-
-      let tooltip = getByRole('tooltip');
-
-      // wait for appearance
-      await wait(() => {
-        expect(tooltip).toBeInTheDocument();
-      });
-
-      fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
-      await waitForDomChange();
-
-      expect(tooltip).not.toBeInTheDocument();
-    });
   });
 });

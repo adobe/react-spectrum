@@ -1,30 +1,25 @@
-import {AllHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes, RefObject} from 'react';
 import {PressProps} from '@react-aria/interactions';
-import {TooltipState} from '@react-stately/tooltip';
+import {TooltipProps} from '@react-types/tooltip';
+import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
-interface TooltipProps extends DOMProps {
-  onClose?: () => void,
-  role?: 'tooltip',
-  ref: RefObject<HTMLElement | null>
-}
-
-interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
+interface TriggerProps extends DOMProps, HTMLAttributes<HTMLElement> {
   ref: RefObject<HTMLElement | null>,
 }
 
 interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
   triggerProps: TriggerProps,
-  state: TooltipState
+  state: TooltipTriggerState,
+  type: string
 }
 
 interface TooltipTriggerAria {
-  baseProps: AllHTMLAttributes<HTMLElement>,
-  clickTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps
+  baseProps: HTMLAttributes<HTMLElement> & PressProps
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -32,7 +27,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {
     tooltipProps,
     triggerProps,
-    state
+    state,
+    type
   } = props;
 
   let onClose = () => {
@@ -48,7 +44,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
-      if (e.key === 'Escape' || e.altKey && e.key === 'ArrowDown') {
+      if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
         state.setOpen(false);
@@ -60,17 +56,16 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     state.setOpen(!state.open);
   };
 
+  let triggerType = type;
+
   return {
     baseProps: {
       ...tooltipProps,
       ...overlayProps,
       id: tooltipTriggerId,
       'aria-describedby': tooltipTriggerId,
-      role: 'button',
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
-    },
-    clickTriggerProps: {
-      onPress
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
+      onPress: triggerType === 'click' ? onPress : undefined
     }
   };
 }

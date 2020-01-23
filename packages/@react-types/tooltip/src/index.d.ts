@@ -12,6 +12,12 @@ export interface TooltipTriggerProps extends PositionProps {
   onOpenChange?: (isOpen: boolean) => void
 }
 
+export interface TooltipProps extends DOMProps {
+  onClose?: () => void,
+  role?: 'tooltip',
+  ref: RefObject<HTMLElement | null>
+}
+
 export interface SpectrumTooltipProps extends DOMProps, StyleProps {
   children: ReactNode,
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
