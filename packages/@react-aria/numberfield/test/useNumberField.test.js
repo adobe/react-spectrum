@@ -28,6 +28,7 @@ describe('useNumberField tests', function () {
     state.onChange = setValue;
     state.increment = increment;
     state.decrement = decrement;
+    state.validationState = false;
   });
 
   afterEach(() => {
@@ -36,20 +37,38 @@ describe('useNumberField tests', function () {
     increment.mockClear();
     decrement.mockClear();
     state.value = 1;
+    state.validationState = false
     state.ref = {};
   });
 
   it('handles defaults', () => {
+    const elementMock = { addEventListener: jest.fn() };
+    jest.spyOn(document, 'getElementById').mockImplementation(() => elementMock);
     let numberFieldProps = renderNumberFieldHook({defaultValue: 1});
-    //expect(typeof paginationProps.prevButtonProps.onPress).toBe('function');
-    //expect(typeof paginationProps.nextButtonProps.onPress).toBe('function');
+    expect(typeof numberFieldProps.incrementButtonProps.onPress).toBe('function');
+    expect(typeof numberFieldProps.decrementButtonProps.onPress).toBe('function');
   });
 
   it('increment button can toggle valid state', function () {
-
+    const elementMock = { addEventListener: jest.fn() };
+    jest.spyOn(document, 'getElementById').mockImplementation(() => elementMock);
+    let numberFieldProps = renderNumberFieldHook({defaultValue: 1, maxValue: maxValue, minValue: minValue, validationState: false});
+    let mockEvent = {
+      target: {
+        value: 45
+      }
+    };
+    props.onChange(mockEvent);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
+    expect(state.validationState).toBe('invalid');
   });
 
   it('decrement button can toggle valid state', function () {
+
+  });
+
+  it('scrolling can toggle valid state', function () {
 
   });
 });
