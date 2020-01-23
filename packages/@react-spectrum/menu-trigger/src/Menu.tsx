@@ -7,7 +7,7 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {Fragment, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree'; 
 import {useMenu} from '@react-aria/menu-trigger';
@@ -21,7 +21,6 @@ interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection,
 }
 
 export function Menu<T>(props: MenuProps<T>) {
-  let [firstHeading, setFirstHeading] = useState(null);
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
@@ -94,8 +93,7 @@ export function Menu<T>(props: MenuProps<T>) {
         {(type, item: Node<T>) => {
           if (type === 'section') {
             // Only render the Divider if it isn't the first Heading (extra equality check to guard against rerenders)
-            if (firstHeading == null || (item.key === firstHeading)) {
-              setFirstHeading(item.key);
+            if (item.key === state.tree.getKeys().next().value) {
               return (
                 <MenuHeading item={item} />
               );
