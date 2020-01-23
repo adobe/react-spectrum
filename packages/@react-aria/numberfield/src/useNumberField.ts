@@ -38,6 +38,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     validationState
   } = state;
 
+  console.log('props from aria hook', props)
+  console.log('state from aria hook', state)
+
   const formatMessage = useMessageFormatter(intlMessages);
   const inputId = useId();
 

@@ -144,6 +144,18 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
+    ${'v2 NumberField'} | ${NumberInput}
+  `('$Name scrolling can toggle validation state', ({Component}) => {
+    let {textField, container} = renderNumberField(Component, {onChange: onChangeSpy, validationState: 'invalid'});
+    container.setAttribute('aria-invalid', 'true')
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+    // scroll ...
+    //expect(container).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
   `('$Name can hide step buttons', ({Component}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: false});
 
