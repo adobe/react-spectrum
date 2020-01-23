@@ -25,9 +25,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {baseProps} = useTooltipTrigger({
+  let {triggerProps} = useTooltipTrigger({
     tooltipProps: content.props,
-    triggerProps: {
+    triggerPropsWithRef: {
       ...trigger.props,
       ref: triggerRef
     },
@@ -55,7 +55,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <PressResponder
-          {...baseProps}
+          {...triggerProps}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}>

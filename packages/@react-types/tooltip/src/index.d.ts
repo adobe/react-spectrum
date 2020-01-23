@@ -13,15 +13,13 @@ export interface TooltipTriggerProps extends PositionProps {
 }
 
 export interface TooltipProps extends DOMProps {
-  onClose?: () => void,
+  children: ReactNode,
+  isOpen?: boolean,
   role?: 'tooltip',
   ref: RefObject<HTMLElement | null>
 }
 
-export interface SpectrumTooltipProps extends DOMProps, StyleProps {
-  children: ReactNode,
+export interface SpectrumTooltipProps extends TooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
-  placement?: 'right' | 'left' | 'top' | 'bottom',
-  isOpen?: boolean,
-  role?: 'tooltip'
+  placement?: 'right' | 'left' | 'top' | 'bottom'
 }

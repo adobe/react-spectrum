@@ -7,26 +7,26 @@ import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
-interface TriggerProps extends DOMProps, HTMLAttributes<HTMLElement> {
+interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
   ref: RefObject<HTMLElement | null>,
 }
 
 interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
-  triggerProps: TriggerProps,
+  triggerPropsWithRef: TriggerRefProps,
   state: TooltipTriggerState,
   type: string
 }
 
 interface TooltipTriggerAria {
-  baseProps: HTMLAttributes<HTMLElement> & PressProps
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let tooltipTriggerId = useId();
   let {
     tooltipProps,
-    triggerProps,
+    triggerPropsWithRef,
     state,
     type
   } = props;
@@ -36,13 +36,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let {overlayProps} = useOverlay({
-    ref: triggerProps.ref,
+    ref: triggerPropsWithRef.ref,
     onClose: onClose,
     isOpen: state.open
   });
 
   let onKeyDownTrigger = (e) => {
-    if (triggerProps.ref && triggerProps.ref.current) {
+    if (triggerPropsWithRef.ref && triggerPropsWithRef.ref.current) {
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -59,12 +59,12 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let triggerType = type;
 
   return {
-    baseProps: {
+    triggerProps: {
       ...tooltipProps,
       ...overlayProps,
       id: tooltipTriggerId,
       'aria-describedby': tooltipTriggerId,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
+      onKeyDown: chain(triggerPropsWithRef.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined
     }
   };
