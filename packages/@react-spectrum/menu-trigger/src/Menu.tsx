@@ -32,7 +32,7 @@ export function Menu<T>(props: MenuProps<T>) {
   };
 
   let state = useTreeState(completeProps);
-  let {menuProps} = useMenu(completeProps, state, layout);
+  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout);
   let {styleProps} = useStyleProps(completeProps);
   let menuContext = mergeProps(menuProps, completeProps);
 
@@ -106,6 +106,7 @@ export function Menu<T>(props: MenuProps<T>) {
 
           return (   
             <MenuItem
+              {...menuItemProps}
               item={item}
               state={state} />
           );
