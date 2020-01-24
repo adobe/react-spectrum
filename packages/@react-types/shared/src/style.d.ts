@@ -7,6 +7,8 @@ export interface StyleProps {
   UNSAFE_className?: string,
   UNSAFE_style?: CSSProperties,
 
+  slot?: string,
+
   margin?: DimensionValue,
   marginStart?: DimensionValue,
   marginEnd?: DimensionValue,
@@ -38,7 +40,16 @@ export interface StyleProps {
   left?: DimensionValue,
   right?: DimensionValue,
 
-  isHidden?: boolean
+  isHidden?: boolean,
+
+  // don't know how to type these https://css-tricks.com/snippets/css/complete-guide-grid/
+  gridColumnStart?: string,
+  gridColumnEnd?: string,
+  gridRowStart?: string,
+  gridRowEnd?: string,
+  gridColumn?: string,
+  gridRow?: string,
+  gridArea?: string
 }
 
 // These support more properties than specific Spectrum components
@@ -85,4 +96,39 @@ export interface ViewStyleProps extends StyleProps {
   // ...
   // shadows?
   // transforms?
+}
+
+type GlobalVals = 'initial' | 'inherit' | 'unset';
+type JustifyContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'left' | 'right' | 'normal' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | GlobalVals;
+type JustifyItemsType = 'auto' | 'normal' | 'stretch' | 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | 'legacy right' | 'legacy left' | 'legacy center' | GlobalVals;
+type AlignContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'normal' | 'baseline' | 'first baseline' | 'last baseline' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'safe center' | 'unsafe center' | GlobalVals;
+type AlignItemsType = 'normal'| 'stretch'| 'center'| 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | GlobalVals;
+
+export interface FlexStyleProps extends StyleProps {
+  justifyContent?: JustifyContentType,
+  justifyItems?: JustifyItemsType,
+  alignContent?: AlignContentType,
+  alignItems?: AlignItemsType
+}
+
+export interface GridStyleProps extends StyleProps {
+  justifyContent?: JustifyContentType,
+  justifyItems?: JustifyItemsType,
+  alignContent?: AlignContentType,
+  alignItems?: AlignItemsType,
+  // naming existing properties but don't know how to type many of them
+  rowGap?: DimensionValue, // not well supported in Flex, but is well supported in Grid, also, should this really be dimension value??
+  columnGap?: DimensionValue, // dimension value correct?
+  gridTemplateAreas?: string,
+  gridTemplateRows?: string,
+  gridTemplateColumns?: string,
+  gridTemplate?: string,
+  gridColumnGap?: string,
+  gridRowGap?: string,
+  gridGap?: string,
+  gridAutoColumns?: string,
+  gridAutoRows?: string,
+  gridAutoFlow?: 'row' | 'column' | 'row dense' | 'column dense',
+  grid?: string,
+  // gap?: how do i type this one????
 }

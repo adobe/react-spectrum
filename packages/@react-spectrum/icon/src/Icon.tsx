@@ -11,7 +11,8 @@ interface IconProps extends DOMProps, StyleProps {
   children: ReactElement,
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
   scale?: Scale,
-  color?: string
+  color?: string,
+  slot?: string
 }
 
 export function Icon(props: IconProps) {
@@ -26,7 +27,7 @@ export function Icon(props: IconProps) {
     role = 'img',
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'icon', ...otherProps});
 
   let provider = useProvider();
   let pscale = 'M';
