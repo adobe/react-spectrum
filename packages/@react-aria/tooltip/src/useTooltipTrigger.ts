@@ -13,7 +13,7 @@ interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
 
 interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
-  triggerPropsWithRef: TriggerRefProps,
+  triggerProps: TriggerRefProps,
   state: TooltipTriggerState,
   type: string
 }
@@ -26,7 +26,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let tooltipTriggerId = useId();
   let {
     tooltipProps,
-    triggerPropsWithRef,
+    triggerProps,
     state,
     type
   } = props;
@@ -36,13 +36,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let {overlayProps} = useOverlay({
-    ref: triggerPropsWithRef.ref,
+    ref: triggerProps.ref,
     onClose: onClose,
     isOpen: state.open
   });
 
   let onKeyDownTrigger = (e) => {
-    if (triggerPropsWithRef.ref && triggerPropsWithRef.ref.current) {
+    if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -64,7 +64,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       ...overlayProps,
       id: tooltipTriggerId,
       'aria-describedby': tooltipTriggerId,
-      onKeyDown: chain(triggerPropsWithRef.onKeyDown, onKeyDownTrigger),
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined
     }
   };
