@@ -1,4 +1,4 @@
-import {cleanup, render, waitForElement} from '@testing-library/react';
+import {cleanup, render, waitForDomChange} from '@testing-library/react';
 import {Item} from '@react-spectrum/tree';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -41,18 +41,27 @@ describe('SideNav', function () {
     cleanup();
   });
 
+  let stub1, stub2;
+  beforeAll(function () {
+    stub1 = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 200);
+    stub2 = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 400);
+  });
+  afterAll(function () {
+    stub1.mockReset();
+    stub2.mockReset();
+  });
+
   it.each`
     Name           | Component    | props
     ${'SideNav'}   | ${SideNav}   | ${{}}
     ${'V2SideNav'} | ${V2SideNav} | ${{}}
   `('$Name has default behavior', async function ({Component}) {
-    let {getByText} = renderComponent(Component);
-    let item = await waitForElement(() => getByText('Foo'));
-    expect(item).toBeTruthy();
-  });
+    let {getByRole, getAllByRole, getByText} = renderComponent(Component);
 
-  it('SideNav has default aria props', async function () {
-    let {getByRole} = renderComponent(SideNav);
+    if (Component === SideNav) {
+      // wait for v3 components
+      await waitForDomChange();
+    }
 
     let sideNav = getByRole('navigation');
     expect(sideNav).toBeTruthy();
@@ -62,11 +71,23 @@ describe('SideNav', function () {
     expect(sideNavList).toBeTruthy();
     expect(sideNav.getAttribute('id')).toBeDefined();
 
-    let sideNavListItem = await waitForElement(() => getByRole('listitem'));
-    expect(sideNavListItem).toBeTruthy();
+    let [foo, bar, bob, alice] = [
+      getByText('Foo'),
+      getByText('Bar'),
+      getByText('Bob'),
+      getByText('Alice')
+    ];
 
-    let sideNavListItemLink = await waitForElement(() => getByRole('link'));
-    expect(sideNavListItemLink).toBeTruthy();
-    expect(sideNavListItemLink.getAttribute('target')).toBe('_self');
+    expect(foo).toBeTruthy();
+    expect(bar).toBeTruthy();
+    expect(bob).toBeTruthy();
+    expect(alice).toBeTruthy();
+
+    let sideNavListItems = getAllByRole('listitem');
+    expect(sideNavListItems.length).toBe(4);
+
+    let sideNavListItemLinks = getAllByRole('link');
+    expect(sideNavListItemLinks.length).toBe(4);
+    expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
   });
 });
