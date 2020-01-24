@@ -22,6 +22,37 @@ describe('TooltipTrigger', function () {
     cleanup();
   });
 
+  describe('check defaults', function () {
+
+    it('triggered by click event', async function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      expect(() => {
+        getByRole('tooltip');
+      }).toThrow();
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let tooltip = getByRole('tooltip');
+
+      // wait for appearance
+      await wait(() => {
+        expect(tooltip).toBeVisible();
+      });
+
+      expect(tooltip.id).toBeTruthy();
+      expect(button).toHaveAttribute('aria-describedby', tooltip.id);
+    });
+  });
+
   describe('click related tests', function () {
 
     it('triggered by click event', async function () {

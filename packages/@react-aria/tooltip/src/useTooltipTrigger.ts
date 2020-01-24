@@ -20,10 +20,11 @@ interface TooltipTriggerProps {
 
 interface TooltipTriggerAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps
+  tooltipProps: HTMLAttributes<HTMLElement>
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
-  let tooltipTriggerId = useId();
+  let tooltipId = useId();
   let {
     tooltipProps,
     triggerProps,
@@ -62,10 +63,12 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     triggerProps: {
       ...tooltipProps,
       ...overlayProps,
-      id: tooltipTriggerId,
-      'aria-describedby': tooltipTriggerId,
+      'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined
+    },
+    tooltipProps: {
+      id: tooltipId
     }
   };
 }

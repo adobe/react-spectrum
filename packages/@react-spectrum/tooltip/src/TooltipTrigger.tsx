@@ -25,7 +25,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {triggerProps} = useTooltipTrigger({
+  let {triggerProps, tooltipProps} = useTooltipTrigger({
     tooltipProps: content.props,
     triggerProps: {
       ...trigger.props,
@@ -47,7 +47,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let overlay = (
     <Overlay isOpen={state.open} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: overlayProps.style, isOpen: open})}
+      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: overlayProps.style, isOpen: open, ...tooltipProps})}
     </Overlay>
   );
 
