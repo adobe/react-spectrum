@@ -1,6 +1,6 @@
 import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, DOMPropsResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {unwrapDOMRef} from '@react-spectrum/utils';
@@ -61,6 +61,19 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           isDisabled={isDisabled}>
           {trigger}
         </PressResponder>
+        {overlay}
+      </Fragment>
+    );
+  } else if (type === 'hover') {
+    return (
+      <Fragment>
+        <DOMPropsResponder
+          {...triggerProps}
+          ref={triggerRef}
+          isHovering={isOpen}
+          isDisabled={isDisabled}>
+          {trigger}
+        </DOMPropsResponder>
         {overlay}
       </Fragment>
     );

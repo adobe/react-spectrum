@@ -7,3 +7,4 @@ interface DOMPropsResponderContext extends HoverProps {
 }
 
 export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);
+DOMPropsResponderContext.displayName = 'DOMPropsResponderContext';

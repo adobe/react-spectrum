@@ -1,10 +1,10 @@
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, RefObject} from 'react';
-import {PressProps} from '@react-aria/interactions';
+import {PressProps, useHover} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
-import {useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
 interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
@@ -57,6 +57,19 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     state.setOpen(!state.open);
   };
 
+  let {hoverProps} = useHover({
+    onHover: (e) => {
+      if (e.pointerType !== 'touch')  {
+        state.setOpen(!state.open);
+      }
+    },
+    onHoverEnd: (e) => {
+      if (e.pointerType !== 'touch')  {
+        state.setOpen(!state.open);
+      }
+    }
+  });
+
   let triggerType = type;
 
   return {
@@ -65,7 +78,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       ...overlayProps,
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onPress: triggerType === 'click' ? onPress : undefined
+      onPress: triggerType === 'click' ? onPress : undefined,
+      ...hoverProps
+      //...(triggerType === 'hover' ? hoverProps : {})
     },
     tooltipProps: {
       id: tooltipId

@@ -37,7 +37,7 @@ export interface KeyboardEvents {
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
-export interface FocusEvents {
+export interface FocusEvents { // where is this used?
   onFocus?: (e: FocusEvent) => void,
   onBlur?: (e: FocusEvent) => void,
   onFocusChange?: (isFocused: boolean) => void
@@ -54,9 +54,9 @@ export interface HoverEvents {
   onHover?: (e: HoverEvent) => void,
   onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void,
-  onHoverChange?: (isHovering: boolean) => void 
+  onHoverChange?: (isHovering: boolean) => void
 }
 
-export interface FocusableProps extends FocusEvents, KeyboardEvents {
+export interface FocusableProps extends FocusEvents, KeyboardEvents { // where is this used? 
   autoFocus?: boolean
 }

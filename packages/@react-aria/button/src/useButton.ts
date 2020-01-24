@@ -60,6 +60,12 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   // Here is where the props from DOMPropsContext will be added in via mergeProps
       // same thing in all other component aria hooks that can be hovered over, pressed or focused for a tooltip. So pretty much all of them!
 
+  // useHoverable props and see if that makes the warning go away?
+  // or
+  // useDOMPropsResponderContext ?
+
+  // what is the goal? The goal is -> you need the hover props right here 
+
   return {
     isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(handlers, {
