@@ -1,6 +1,7 @@
 import {AllHTMLAttributes, useEffect} from 'react';
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
+import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useMessageFormatter} from '@react-aria/i18n';
 
@@ -16,7 +17,7 @@ interface NumberFieldAria {
   decrementButtonProps: AllHTMLAttributes<HTMLButtonElement>
 }
 
-export function useNumberField(props: NumberFieldProps): NumberFieldAria {
+export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
   let {
     decrementAriaLabel,
     incrementAriaLabel,
@@ -25,14 +26,18 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     isRequired,
     minValue,
     maxValue,
-    onIncrement,
-    onIncrementToMax,
-    onDecrement,
-    onDecrementToMin,
-    step,
+    step
+  } = props;
+
+  let {
+    increment,
+    incrementToMax,
+    decrement,
+    decrementToMin,
     value,
     validationState
-  } = props;
+  } = state;
+
   const formatMessage = useMessageFormatter(intlMessages);
   const inputId = useId();
 
@@ -42,10 +47,10 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     isRequired,
     maxValue,
     minValue,
-    onIncrement,
-    onIncrementToMax,
-    onDecrement,
-    onDecrementToMin,
+    onIncrement: increment,
+    onIncrementToMax: incrementToMax,
+    onDecrement: decrement,
+    onDecrementToMin: decrementToMin,
     value
   });
 
@@ -58,7 +63,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     tabIndex: -1,
     title: incrementAriaLabel,
     isDisabled: isDisabled || (value >= maxValue) || isReadOnly,
-    onPress: onIncrement,
+    onPress: increment,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -68,7 +73,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
     tabIndex: -1,
     title: decrementAriaLabel,
     isDisabled: isDisabled || (value <= minValue || isReadOnly),
-    onPress: onDecrement,
+    onPress: decrement,
     onMouseDown: e => e.preventDefault(),
     onMouseUp: e => e.preventDefault()
   };
@@ -83,9 +88,9 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
 
       e.preventDefault();
       if (e.deltaY < 0) {
-        onIncrement();
+        increment();
       } else {
-        onDecrement();
+        decrement();
       }
     };
 
@@ -100,7 +105,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, onDecrement, onIncrement]);
+  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
   return {
     numberFieldProps: {
@@ -122,9 +127,7 @@ export function useNumberField(props: NumberFieldProps): NumberFieldAria {
       max: maxValue,
       placeholder: formatMessage('Enter a number'),
       type: 'number',
-      step,
-      value,
-      validationState
+      step
     }),
     incrementButtonProps,
     decrementButtonProps
