@@ -51,6 +51,15 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
     menuItemRole = 'menuitemcheckbox';
   }
 
+  let menuItemRole = 'menuitem';
+  if (role === 'listbox') {
+    menuItemRole = 'option';
+  } else if (selectionMode === 'single') {
+    menuItemRole = 'menuitemradio';
+  } else if (selectionMode === 'multiple') {
+    menuItemRole = 'menuitemcheckbox';
+  }
+
   return {
     menuProps: {
       ...listProps,
