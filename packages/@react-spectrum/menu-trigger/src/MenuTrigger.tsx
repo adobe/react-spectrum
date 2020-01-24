@@ -1,12 +1,13 @@
 import {DOMRefValue} from '@react-types/shared';
+import {FocusStrategy, useMenuTrigger} from '@react-aria/menu-trigger';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useRef} from 'react';
+import {Provider} from '@react-spectrum/provider';
+import React, {Fragment, ReactElement, useRef, useState} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMenuTrigger} from '@react-aria/menu-trigger';
 
 export interface MenuTriggerProps {
   children: ReactElement[],
@@ -16,7 +17,8 @@ export interface MenuTriggerProps {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  isDisabled?: boolean
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -28,11 +30,13 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onOpenChange,
     align = 'start',
     shouldFlip = false,
-    direction = 'bottom'
+    direction = 'bottom',
+    isDisabled
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
+  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
 
   let onClose = () => {
     setOpen(false);
@@ -45,7 +49,9 @@ export function MenuTrigger(props: MenuTriggerProps) {
     },
     {
       isOpen, 
-      setOpen
+      setOpen,
+      focusStrategy,
+      setFocusStrategy
     }
   );
 
@@ -60,7 +66,9 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
   let menuContext = {
     ...menuProps,
-    onClose
+    focusStrategy,
+    setFocusStrategy,
+    setOpen
   };
 
   let triggerProps = {
@@ -76,12 +84,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
     hideArrow: true,
     onClose
   };
-
+   
   return (
     <Fragment>
-      <PressResponder {...triggerProps}>
-        {menuTrigger}
-      </PressResponder>
+      <Provider isDisabled={isDisabled}>
+        <PressResponder {...triggerProps}>
+          {menuTrigger}
+        </PressResponder>
+      </Provider>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
           <Popover {...popoverProps}>

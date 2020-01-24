@@ -11,7 +11,15 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
-  let {contentSize, visibleRect, onVisibleRectChange, children, innerStyle, ...otherProps} = props;
+  let {
+    contentSize, 
+    visibleRect, 
+    onVisibleRectChange, 
+    children, 
+    innerStyle,
+    ...otherProps
+  } = props;
+
   let defaultRef = useRef();
   ref = ref || defaultRef;
   let state = useRef({

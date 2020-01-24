@@ -35,7 +35,6 @@
     "@react-spectrum/button": "^3.0.0-alpha.2",
     "@react-spectrum/calendar": "^3.0.0-alpha.2",
     "@react-spectrum/dialog": "^3.0.0-alpha.2",
-    "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-stately/datepicker": "^3.0.0-alpha.2",
     "@react-types/datepicker": "^3.0.0-alpha.2",
@@ -48,7 +47,8 @@
     "@react-spectrum/test-utils": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

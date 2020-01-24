@@ -44,7 +44,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
       itemRef.current.focus({preventScroll: true});
     }
-  }, [itemRef, isFocused, manager]);
+  }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);
 
   return {
     itemProps: {
