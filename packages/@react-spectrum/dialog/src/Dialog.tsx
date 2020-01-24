@@ -41,9 +41,22 @@ function ModalDialog(props: HTMLAttributes<HTMLElement>) {
   return <BaseDialog {...mergeProps(props, modalProps)} />;
 }
 
-function BaseDialog({children, ...otherProps}: HTMLAttributes<HTMLElement>) {
+function BaseDialog({children, slots, ...otherProps}: HTMLAttributes<HTMLElement>) {
   let ref = useRef();
   let {dialogProps} = useDialog({ref});
+  if (!slots) {
+    slots = {
+      container: styles['spectrum-Dialog-grid'],
+      hero: styles['spectrum-Dialog-hero'],
+      header: styles['spectrum-Dialog-header'],
+      title: styles['spectrum-Dialog-title'],
+      typeIcon: styles['spectrum-Dialog-typeIcon'],
+      divider: styles['spectrum-Dialog-divider'],
+      content: styles['spectrum-Dialog-content'],
+      footer: styles['spectrum-Dialog-footer'],
+      closeButton: styles['spectrum-Dialog-closeButton']
+    };
+  }
 
   return (
     <FocusScope contain restoreFocus autoFocus>
@@ -55,16 +68,7 @@ function BaseDialog({children, ...otherProps}: HTMLAttributes<HTMLElement>) {
           otherProps.className
         )}
         ref={ref}>
-        <Grid slots={{
-          container: styles['spectrum-Dialog-grid'],
-          hero: styles['spectrum-Dialog-hero'],
-          header: styles['spectrum-Dialog-header'],
-          title: styles['spectrum-Dialog-title'],
-          divider: styles['spectrum-Dialog-divider'],
-          content: styles['spectrum-Dialog-content'],
-          footer: styles['spectrum-Dialog-footer'],
-          closeButton: styles['spectrum-Dialog-closeButton']
-        }}>
+        <Grid slots={slots}>
           {children}
         </Grid>
       </div>

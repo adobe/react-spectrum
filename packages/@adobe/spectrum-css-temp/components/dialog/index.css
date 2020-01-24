@@ -94,6 +94,7 @@ governing permissions and limitations under the License.
   display: flex;
   /* Without this, buttons will be stretched */
   align-items: center;
+  justify-content: space-between;
 
   box-sizing: border-box;
 
@@ -181,7 +182,7 @@ governing permissions and limitations under the License.
 }
 
 /* Alert Dialog is a specific type of Dialog */
-.spectrum-Dialog--alert {
+.spectrum-Dialog--error {
   width: var(--spectrum-dialog-alert-width);
 }
 
