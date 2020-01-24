@@ -11,9 +11,9 @@ import {storiesOf} from '@storybook/react';
 import styles from './styles.css';
 
 // TODO: make some stories, live a little
-storiesOf('Grid', module)
+storiesOf('Layout', module)
   .add(
-    'name me',
+    'Grid: card',
     () => render({
       slots: styles,
       children: null

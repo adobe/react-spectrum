@@ -10,7 +10,8 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  isDismissable?: boolean
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {

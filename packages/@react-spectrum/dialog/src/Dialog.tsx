@@ -1,6 +1,7 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
+import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, useContext, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
@@ -19,11 +20,14 @@ export function Dialog(props: SpectrumDialogProps) {
   let {styleProps} = useStyleProps(otherProps);
   let allProps = mergeProps(
     mergeProps(
-      filterDOMProps(otherProps),
-      contextProps
+      mergeProps(
+        filterDOMProps(otherProps),
+        contextProps
+      ),
+      styleProps
     ),
-    styleProps
-  );
+    {className: classNames(styles, {'spectrum-Dialog--dismissable': otherProps.isDismissable})}
+    );
 
   if (type === 'popover') {
     return <BaseDialog {...allProps}>{children}</BaseDialog>;
@@ -47,10 +51,22 @@ function BaseDialog({children, ...otherProps}: HTMLAttributes<HTMLElement>) {
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(
           styles,
-          'spectrum-Dialog'
+          'spectrum-Dialog',
+          otherProps.className
         )}
         ref={ref}>
-        {children}
+        <Grid slots={{
+          container: styles['spectrum-Dialog-grid'],
+          hero: styles['spectrum-Dialog-hero'],
+          header: styles['spectrum-Dialog-header'],
+          title: styles['spectrum-Dialog-title'],
+          divider: styles['spectrum-Dialog-divider'],
+          content: styles['spectrum-Dialog-content'],
+          footer: styles['spectrum-Dialog-footer'],
+          closeButton: styles['spectrum-Dialog-closeButton']
+        }}>
+          {children}
+        </Grid>
       </div>
     </FocusScope>
   );

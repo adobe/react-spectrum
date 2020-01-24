@@ -43,12 +43,11 @@ governing permissions and limitations under the License.
 
   /* Allow 100% width, taking into account padding */
   box-sizing: border-box;
-  
+
   /* Be no bigger than max-width, but also be 90% if the viewport is smaller than max-width */
   width: fit-content;
   min-width: var(--spectrum-dialog-min-width);
 
-  padding: var(--spectrum-dialog-padding);
   outline: none;
 }
 
@@ -65,90 +64,62 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog-hero {
+  grid-area: hero;
   height: var(--spectrum-dialog-hero-height);
-
-  margin-left: calc(-1 * var(--spectrum-dialog-padding));
-  margin-right: calc(-1 * var(--spectrum-dialog-padding));
-  margin-top: calc(-1 * var(--spectrum-dialog-padding));
-  margin-bottom: var(--spectrum-dialog-padding);
 
   border-top-left-radius: var(--spectrum-dialog-border-radius);
   border-top-right-radius: var(--spectrum-dialog-border-radius);
 
   background-size: cover;
   background-position: center center;
+  overflow: hidden;
+}
+
+.spectrum-Dialog .spectrum-Dialog-grid {
+  display: grid;
+  grid-template-columns: var(--spectrum-dialog-padding) auto var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto auto auto var(--spectrum-dialog-padding);
+  grid-template-areas:
+    "hero hero    hero"
+    ".    .       closeButton"
+    ".    header  ."
+    ".    divider ."
+    ".    content ."
+    ".    footer  ."
+    ".    .       .";
 }
 
 .spectrum-Dialog-header {
+  grid-area: header;
   display: flex;
   /* Without this, buttons will be stretched */
   align-items: center;
 
-  position: relative;
   box-sizing: border-box;
-  width: 100%;
-
-  /* Don't get small when the dialog does */
-  flex-shrink: 0;
 
   border-radius: var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius) 0 0;
   outline: none; /* Hide focus outline around header */
+}
 
-  padding-bottom: calc(var(--spectrum-dialog-rule-margin-top) + var(--spectrum-dialog-rule-margin-bottom) + var(--spectrum-dialog-rule-height));
-
-  /* The rule element */
-  &::after {
-    position: absolute;
-    bottom: var(--spectrum-dialog-rule-margin-bottom);
-    left: 0;
-    right: 0;
-    content: '';
-
-    height: var(--spectrum-dialog-rule-height);
-  }
+.spectrum-Dialog-divider {
+  grid-area: divider;
+  width: 100%;
+  margin-top: var(--spectrum-dialog-rule-margin-top);
+  margin-bottom: var(--spectrum-dialog-rule-margin-bottom);
 }
 
 .spectrum-Dialog--noDivider {
-  .spectrum-Dialog-header {
-    &::after {
-      display: none;
-    }
-  }
-}
-
-.spectrum-Dialog-closeButton {
-  display: none;
-}
-
-.spectrum-Dialog--dismissible {
-  .spectrum-Dialog-footer {
-    /* You cannot have buttons in a dismissible dialog */
+  .spectrum-Dialog-divider {
     display: none;
   }
-
-  .spectrum-Dialog-closeButton {
-    display: initial;
-  }
-}
-
-.spectrum-Dialog-closeButton {
-  position: absolute;
-  top: calc(-1 * var(--spectrum-global-dimension-size-350));
-  right: calc(-1 * var(--spectrum-global-dimension-size-350));
-}
-
-.spectrum-Dialog-typeIcon {
-  display: block;
 }
 
 .spectrum-Dialog-content {
-  display: block;
+  grid-area: content;
   box-sizing: border-box;
 
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-
-  flex: 1 1 auto;
 
   outline: none; /* Hide focus outline */
 
@@ -157,19 +128,11 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-dialog-content-text-line-height);
 }
 
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .spectrum-Dialog-content {
-    /* Temporary IE 11 fix */
-    max-height: 70vh;
-  }
-}
 
 .spectrum-Dialog-footer {
+  grid-area: footer;
   border-radius: 0 0 var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius);
   padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
-
-  flex: 0 1 auto;
-  flex-wrap: wrap;
 
   display: flex;
   justify-content: flex-end;
@@ -186,6 +149,12 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Dialog--dismissable {
+  .spectrum-Dialog-footer {
+    display: none;
+  }
+}
+
 .spectrum-Dialog-title {
   flex: 1 1 auto;
 
@@ -196,6 +165,19 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-dialog-title-text-line-height);
 
   outline: none; /* Hide focus outline */
+}
+
+.spectrum-Dialog-closeButton {
+  display: none;
+  grid-area: closeButton;
+  /* made up a margin value */
+  margin: var(--spectrum-dialog-button-margin) var(--spectrum-dialog-button-margin) 0 0;
+}
+
+.spectrum-Dialog--dismissable {
+  .spectrum-Dialog-closeButton {
+    display: block;
+  }
 }
 
 /* Alert Dialog is a specific type of Dialog */
