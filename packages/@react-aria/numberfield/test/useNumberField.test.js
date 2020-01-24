@@ -23,22 +23,22 @@ describe('useNumberField tests', function () {
   };
 
   beforeEach(() => {
-    state.value = 1;
-    state.ref = {current: 1};
-    state.onChange = setValue;
+    state.value =7;
+    state.ref = {current: 7};
+    //state.onChange = setValue;
     state.increment = increment;
     state.decrement = decrement;
-    state.validationState = false;
+    //state.validationState = false;
   });
 
   afterEach(() => {
-    preventDefault.mockClear();
-    setValue.mockClear();
+    //preventDefault.mockClear();
+    //setValue.mockClear();
     increment.mockClear();
     decrement.mockClear();
-    state.value = 1;
-    state.validationState = false
-    state.ref = {};
+    //state.value = 1;
+    //state.validationState = false
+    //state.ref = {};
   });
 
   it('handles defaults', () => {
@@ -52,16 +52,28 @@ describe('useNumberField tests', function () {
   it('increment button can toggle valid state', function () {
     const elementMock = { addEventListener: jest.fn() };
     jest.spyOn(document, 'getElementById').mockImplementation(() => elementMock);
-    let numberFieldProps = renderNumberFieldHook({defaultValue: 1, maxValue: maxValue, minValue: minValue, validationState: false});
-    let mockEvent = {
-      target: {
-        value: 45
-      }
-    };
-    props.onChange(mockEvent);
-    expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
+    let numberFieldProps = renderNumberFieldHook({minValue: 1, maxValue: 5});
+    // let mockEvent = {
+    //   target: {
+    //     value: 21
+    //   }
+    // };
+    // state.value = 6
+    // state.onChange(mockEvent)
+    console.log('laskjdfalks;jfkals;', state.value) // 7
+    //expect(state.onChange).toHaveBeenCalledTimes(1);
+    //expect(state.onChange).toHaveBeenCalledWith(mockEvent.target.value);
+    // expect(state.validationState).toBe('invalid');
+    expect(state.validationState).toBe(undefined);
+    numberFieldProps.decrementButtonProps.onPress(event('click'));
+    numberFieldProps.decrementButtonProps.onPress();
+    console.log('laskjdfalks;jfkals;', state.value) // .... should be 6 ... but its still 7
     expect(state.validationState).toBe('invalid');
+    numberFieldProps.decrementButtonProps.onPress(event('click'));
+    console.log('laskjdfalks;jfkals;', state.value) // should be 5 ... but its still 7
+    numberFieldProps.decrementButtonProps.onPress(event('click'));
+    expect(state.validationState).toBe(false);
+
   });
 
   it('decrement button can toggle valid state', function () {
