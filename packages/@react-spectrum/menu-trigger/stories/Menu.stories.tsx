@@ -25,6 +25,35 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
+
+let iconMap = {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Blower,
+  Book,
+  Copy,
+  Cut,
+  Paste
+};
+
+let hardModeProgrammatic = [
+  {name: 'Section 1', children: [
+    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+  ]},
+  {name: 'Section 2', children: [
+    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
+    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
+    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
+    {name: 'hasChildren', children: [
+      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+    ]}
+  ]}
+];
 
 let iconMap = {
   AlignCenter,
