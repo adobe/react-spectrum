@@ -1,8 +1,47 @@
 import {action} from '@storybook/addon-actions';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import Blower from '@spectrum-icons/workflow/Blower';
+import Book from '@spectrum-icons/workflow/Book';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Menu, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
+import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
+
+let iconMap = {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Blower,
+  Book,
+  Copy,
+  Cut,
+  Paste
+};
+
+let hardModeProgrammatic = [
+  {name: 'Section 1', children: [
+    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+  ]},
+  {name: 'Section 2', children: [
+    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
+    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
+    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
+    {name: 'hasChildren', children: [
+      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+    ]}
+  ]}
+];
 
 let flatMenu = [
   {name: 'Aardvark'},
@@ -323,4 +362,111 @@ storiesOf('Menu', module)
         </Menu>
       </Popover>
     )
+  )
+  .add(
+    'with semantic elements and grid css positioning (static)',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')}>
+          <Section title="Section 1">
+            <Item>
+              <Copy size="S" />
+              <Text slot="label">Copy</Text>
+              <Flex slot="tools">
+                <Switch />
+                <Keyboard slot="detail">⌘C</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              <Cut size="S" />
+              <Text slot="label">Cut</Text>
+              <Flex slot="tools">
+                <Switch />
+                <Keyboard slot="detail">⌘X</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              <Paste size="S" />
+              <Text slot="label">Paste</Text>
+              <Flex slot="tools">
+                <Switch />
+                <Keyboard slot="detail">⌘V</Keyboard>
+              </Flex>
+            </Item>
+          </Section>
+          <Section title="Section 2">
+            <Item>
+              <AlignLeft size="S" />
+              <Text slot="label">Puppy</Text>
+              <Flex slot="tools">
+                <Keyboard slot="detail">⌘P</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              <AlignCenter size="S" />
+              <Text slot="label">Doggo</Text>
+              <Flex slot="tools">
+                <Keyboard slot="detail">⌘D</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              <AlignRight size="S" />
+              <Text slot="label">Floof</Text>
+              <Flex slot="tools">
+                <Keyboard slot="detail">⌘F</Keyboard>
+              </Flex>
+            </Item>
+            <Item>
+              blah
+            </Item>
+            {/* TODO: Add this back in when submenus become a thing again
+            <Item title="hasChildren">
+              <Item>
+                <Blower size="S" />
+                <Text slot="label">Thailand</Text>
+                <Flex slot="tools">
+                  <Switch />
+                  <Keyboard slot="detail">⌘T</Keyboard>
+                </Flex>
+              </Item>
+              <Item>
+                <Book size="S" />
+                <Text slot="label">Germany</Text>
+                <Flex slot="tools">
+                  <Switch />
+                  <Keyboard slot="detail">⌘G</Keyboard>
+                </Flex>
+              </Item>
+            </Item> */}
+          </Section>
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'with semantic elements and grid css positioning (generative)',
+    () => (
+      <Popover isOpen hideArrow> 
+        <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => customMenuItem(item)}
+            </Section>
+          )}
+        </Menu>
+      </Popover>
+    )
   );
+  
+let customMenuItem = (item) => {
+  let Icon = iconMap[item.icon];
+  return (
+    <Item childItems={item.children}>
+      {item.icon && <Icon size="S" />}
+      <Text slot="label">{item.name}</Text>
+      <Flex slot="tools">
+        <Keyboard slot="detail">{item.shortcut}</Keyboard>
+      </Flex>
+    </Item>
+  );	
+};
