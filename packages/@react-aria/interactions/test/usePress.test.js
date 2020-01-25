@@ -848,7 +848,7 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events when the element is a link', function () {
+    it.only('should fire press events when the element is a link', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let {getByText} = render(
@@ -878,7 +878,43 @@ describe('usePress', function () {
       fireEvent.click(el);
 
       // Click event, which is called when Enter key on a link is handled natively, should trigger a click.
-      expect(events).toEqual([{type: 'click'}]);
+      expect(events).toEqual([
+        {
+          type: 'click'
+        },
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
     });
 
     it('should fire press events on Enter when the element role is link', function () {
