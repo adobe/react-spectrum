@@ -49,7 +49,7 @@ governing permissions and limitations under the License.
   height: 255px;
   width: 200px;
 
-  > .spectrum-Menu-sectionHeading {
+  & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
     margin-block-start: var(--spectrum-menu-margin-x);
     margin-block-end: var(--spectrum-menu-margin-x);
@@ -78,21 +78,15 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: pointer;
   position: relative;
-  display: flex;
-  align-items: center;
 
   box-sizing: border-box;
-  
-  padding-top: var(--spectrum-selectlist-option-padding-y);
-  padding-bottom: var(--spectrum-selectlist-option-padding-y);
-  padding-inline-end: var(--spectrum-selectlist-option-padding);
-  padding-inline-start: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
 
   margin: 0;
 
   border-inline-start: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
   min-block-size: var(--spectrum-selectlist-option-height);
+  height: 1px; /* lol css, hacking for the moment https://stackoverflow.com/questions/14752188/nested-div-does-not-fill-parent-div-with-min-height-100/14752346 */
 
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
@@ -104,19 +98,9 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    /* Redundant, but included for backwards compatibility */
-    padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
-
     .spectrum-Menu-checkmark {
       display: block;
     }
-  }
-
-  .spectrum-Icon,
-  .spectrum-Menu-itemIcon {
-    /* Don't get smaller, you're an icon! */
-    flex-shrink: 0;
-    align-self: flex-start;
   }
 
   .spectrum-Icon + .spectrum-Menu-itemLabel,
@@ -126,7 +110,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-itemLabel {
-  flex: 1 1 auto;
+  grid-area: label;
+  align-self: center;
   line-height: var(--spectrum-selectlist-option-label-line-height);
   word-break: break-all;
 }
@@ -144,9 +129,9 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron {
-  flex-grow: 0;
-  margin-inline-start: var(--spectrum-selectlist-option-icon-padding-x);
-  margin-block-start: var(--spectrum-selectlist-option-icon-margin-top);
+  grid-area: end;
+  justify-self: end;
+  align-self: center;
 }
 
 .spectrum-Menu-divider {
@@ -180,4 +165,31 @@ governing permissions and limitations under the License.
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
+}
+
+.spectrum-Menu-itemGrid {
+  /* hard coded height to match row height in Menu.tsx */
+  height: 32px;
+  display: grid;
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto var(--spectrum-global-dimension-size-250) var(--spectrum-selectlist-option-padding);
+  grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
+  grid-template-areas:
+    ". .    .           .     .   ."
+    ". icon label       tools end ."
+    ". icon description tools end ."
+    ". .    .           .     .   .";
+}
+
+.spectrum-Menu-tools {
+  grid-area: tools;
+  align-self: center;
+}
+.spectrum-Menu-icon {
+  grid-area: icon;
+  align-self: center;
+  padding-inline-end: 5px;
+}
+.spectrum-Menu-detail {
+  font-family: monospace;
+  align-self: center;
 }

@@ -1,10 +1,12 @@
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {Grid} from '@react-spectrum/layout';
 import {MenuContext} from './context';
 import {Node} from '@react-stately/collections';
 import React, {AllHTMLAttributes, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {Text} from '@react-spectrum/typography';
 import {TreeState} from '@react-stately/tree'; 
 import {useMenuItem} from '@react-aria/menu-trigger';
 
@@ -52,13 +54,21 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-selected': isSelected
           }
         )}>
-        <span
-          className={classNames(
-            styles,
-            'spectrum-Menu-itemLabel')}>
-          {rendered}
-        </span>
-        {isSelected && <CheckmarkMedium  UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
+        <Grid
+          UNSAFE_className={classNames(styles, 'spectrum-Menu-itemGrid')}
+          slots={{
+            label: styles['spectrum-Menu-itemLabel'],
+            tools: styles['spectrum-Menu-tools'],
+            icon: styles['spectrum-Menu-icon'],
+            detail: styles['spectrum-Menu-detail']}}>
+          {!Array.isArray(rendered) && (
+            <Text slot="label">
+              {rendered}
+            </Text>
+          )}
+          {Array.isArray(rendered) && rendered}
+          {isSelected && <CheckmarkMedium slot="end" UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
+        </Grid>  
       </div>
     </FocusRing>
   );

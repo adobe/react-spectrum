@@ -1,10 +1,10 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
-import React, {ReactElement, RefObject} from 'react';
+import React, {ReactNode, RefObject} from 'react';
 
 export interface HeadingProps extends DOMProps, StyleProps {
-  children: ReactElement | string
+  children: ReactNode | string
 }
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
