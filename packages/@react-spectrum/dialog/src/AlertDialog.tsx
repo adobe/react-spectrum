@@ -1,13 +1,13 @@
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import {Button} from '@react-spectrum/button';
+import {classNames} from '@react-spectrum/utils';
+import {Content, Footer, Header} from '@react-spectrum/view';
+import {Dialog} from './Dialog';
+import {Divider} from '@react-spectrum/divider';
 import React from 'react';
 import {SpectrumAlertDialog} from '@react-types/dialog';
-import {Content, Footer, Header} from '@react-spectrum/view';
-import {Text} from '@react-spectrum/typography';
-import {Divider} from '@react-spectrum/divider';
-import {Button} from '@react-spectrum/button';
-import {Dialog} from './Dialog';
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames} from '@react-spectrum/utils';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import {Text} from '@react-spectrum/typography';
 
 export function AlertDialog(props: SpectrumAlertDialog) {
 
