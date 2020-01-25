@@ -23,6 +23,8 @@ export function useLink(props: AriaLinkProps): LinkAria {
     tabIndex = 0,
     children,
     onPress,
+    onPressStart,
+    onPressEnd,
     onClick: deprecatedOnClick,
     isDisabled
   } = props;
@@ -40,7 +42,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
     console.warn('href is deprecated, please use an anchor element as children');
   }
 
-  let {pressProps} = usePress({onPress, isDisabled});
+  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled});
 
   return {
     linkProps: {
@@ -48,6 +50,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
       ...linkProps,
       id: useId(id),
       onClick: (e) => {
+        pressProps.onClick(e);
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');
