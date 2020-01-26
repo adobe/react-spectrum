@@ -79,11 +79,14 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
-      ...hoverProps
+      //...hoverProps
       //...(triggerType === 'hover' ? hoverProps : {})
     },
     tooltipProps: {
       id: tooltipId
+    },
+    hoverTriggerProps: {
+      ...hoverProps
     }
   };
 }

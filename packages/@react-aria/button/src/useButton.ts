@@ -1,8 +1,10 @@
 import {ButtonProps} from '@react-types/button';
-import {chain, mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {chain, mergeProps, filterDOMProps} from '@react-aria/utils';
+import {RefObject, useContext} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
+
+import {DOMPropsResponderContext} from '@react-aria/interactions';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -56,7 +58,9 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   let {focusableProps} = useFocusable(props, ref);
+  console.log('focus from button', focusableProps)
   let handlers = mergeProps(pressProps, focusableProps);
+  console.log('handlers', handlers)
   // Here is where the props from DOMPropsContext will be added in via mergeProps
       // same thing in all other component aria hooks that can be hovered over, pressed or focused for a tooltip. So pretty much all of them!
 
@@ -64,11 +68,17 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   // or
   // useDOMPropsResponderContext ?
 
-  // what is the goal? The goal is -> you need the hover props right here 
+  // what is the goal? The goal is -> you need the hover props right here
+
+  let hoverContextProps = useContext(DOMPropsResponderContext);
+  console.log('from context', hoverContextProps)
+
+  let interactions = mergeProps(hoverContextProps, handlers);
+  console.log('interactions', interactions)
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(handlers, {
+    buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,

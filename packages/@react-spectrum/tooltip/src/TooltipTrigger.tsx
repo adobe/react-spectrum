@@ -25,7 +25,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {triggerProps, tooltipProps} = useTooltipTrigger({
+  let {triggerProps, tooltipProps, hoverTriggerProps} = useTooltipTrigger({
     tooltipProps: content.props,
     triggerProps: {
       ...trigger.props,
@@ -65,13 +65,13 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       </Fragment>
     );
   } else if (type === 'hover') {
+    console.log("in ttt", hoverTriggerProps)
     return (
       <Fragment>
         <DOMPropsResponder
           {...triggerProps}
-          ref={triggerRef}
-          isHovering={isOpen}
-          isDisabled={isDisabled}>
+          {...hoverTriggerProps}
+          ref={triggerRef}>
           {trigger}
         </DOMPropsResponder>
         {overlay}
