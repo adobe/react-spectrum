@@ -70,15 +70,15 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   // what is the goal? The goal is -> you need the hover props right here
 
-  let hoverContextProps = useContext(DOMPropsResponderContext);
-  console.log('from context', hoverContextProps)
-
-  let interactions = mergeProps(hoverContextProps, handlers);
-  console.log('interactions', interactions)
+  // let hoverContextProps = useContext(DOMPropsResponderContext);
+  // console.log('from context', hoverContextProps)
+  //
+  // let interactions = mergeProps(hoverContextProps, handlers);
+  // console.log('interactions', interactions)
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(interactions, {
+    buttonProps: mergeProps(handlers, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,

@@ -71,7 +71,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <DOMPropsResponder
           {...triggerProps}
           {...hoverTriggerProps}
-          ref={triggerRef}>
+          ref={triggerRef}
+          isHovering={isOpen}
+          isDisabled={isDisabled}>
           {trigger}
         </DOMPropsResponder>
         {overlay}
