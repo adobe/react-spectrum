@@ -1,5 +1,5 @@
-import {DOMRefValue} from '@react-types/shared';
 import {DOMPropsResponder, PressResponder} from '@react-aria/interactions';
+import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';

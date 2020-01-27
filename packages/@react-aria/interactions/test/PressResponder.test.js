@@ -65,7 +65,7 @@ describe('PressResponder', function () {
     warn.mockRestore();
   });
 
-  it('should should merge with existing props, not overwrite', function () {
+  it('should merge with existing props, not overwrite', function () {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let {getByRole} = render(

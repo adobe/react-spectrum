@@ -46,7 +46,7 @@ export function useTooltip(props: TooltipProps): TooltipAria {
         // @ts-ignore
         contextProps.handleDelayedShow();
       }
-    }
+    };
     tooltipProps.onMouseLeave = onMouseLeave;
     tooltipProps.onMouseEnter = onMouseEnter;
   }

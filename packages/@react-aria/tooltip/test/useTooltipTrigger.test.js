@@ -1,5 +1,5 @@
 import React from 'react';
-import {renderHook, fireEvent, waitForDomChange} from 'react-hooks-testing-library';
+import {fireEvent, renderHook, waitForDomChange} from 'react-hooks-testing-library';
 import {useTooltipTrigger} from '../';
 
 describe('useTooltipTrigger', function () {

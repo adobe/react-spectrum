@@ -1,10 +1,9 @@
-import {AllHTMLAttributes, RefObject, useContext, useRef} from 'react';
-import {chain} from '@react-aria/utils';
+import {AllHTMLAttributes, RefObject} from 'react';
+import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
-import {TooltipState} from '@react-stately/tooltip';
-import {useId} from '@react-aria/utils';
-import {useOverlay} from '@react-aria/overlays';
 import {PressProps, useHover} from '@react-aria/interactions';
+import {TooltipState} from '@react-stately/tooltip';
+import {useOverlay} from '@react-aria/overlays';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -31,7 +30,6 @@ interface TooltipTriggerAria {
 }
 
 let visibleTooltips;
-let tooltipStates = [];
 let hoverHideTimeout = null;
 let hoverShowTimeout = null;
 
@@ -73,7 +71,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let handleDelayedShow = () => {
 
-    if(isDisabled) {
+    if (isDisabled) {
       return;
     }
 
@@ -81,7 +79,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
     // a.k.a if user is moving back and forth between trigger and tooltip
     if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
-      console.log('clearing hidetimeout')
+      console.log('clearing hidetimeout');
       clearTimeout(hoverHideTimeout);
       hoverHideTimeout = null;
       return;
@@ -100,11 +98,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       visibleTooltips = {triggerId, state};
       console.log('visibletooltips after show', visibleTooltips);
     }, 300);
-  }
+  };
 
   let handleDelayedHide = () => {
     if (hoverShowTimeout != null) {
-      console.log('clearing showtimeout')
+      console.log('clearing showtimeout');
       clearTimeout(hoverShowTimeout);
       hoverShowTimeout = null;
       return;
@@ -113,10 +111,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     hoverHideTimeout = setTimeout(() => {
       hoverHideTimeout = null;
       state.setOpen(false);
-      console.log('removing a visible tooltip')
+      console.log('removing a visible tooltip');
       visibleTooltips = null;
     }, 300);
-  }
+  };
 
   // Just use handleDelayedShow since enter just calls it
   let enter = () => {
@@ -126,7 +124,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
   // Just use handleDelayExit since exit just calls it
   let exit = () => {
-    console.log('exit')
+    console.log('exit');
     handleDelayedHide();
   };
 

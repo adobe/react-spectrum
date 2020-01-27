@@ -1,9 +1,9 @@
 import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
+import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {useHoverResponderContext, useHover, usePress} from '@react-aria/interactions';
-import {DOMPropsResponderContext} from '@react-aria/interactions';
+import {useHoverResponderContext, usePress} from '@react-aria/interactions';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -62,7 +62,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
-  let interactions = mergeProps(contextProps, handlers)
+  let interactions = mergeProps(contextProps, handlers);
 
   return {
     isPressed, // Used to indicate press state for visual
