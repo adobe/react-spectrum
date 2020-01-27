@@ -4,6 +4,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -81,5 +82,59 @@ describe('ButtonGroup', function () {
     );
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('SideNav handles single selection', function () {
+    let {getByTestId} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ButtonGroup >
+          <ActionButton data-testid="button-1">Click me</ActionButton>
+          <ActionButton data-testid="button-2">Click me</ActionButton>
+        </ButtonGroup>
+      </Provider>
+    );
+
+    let button1 = getByTestId('button-1');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+
+    let button2 = getByTestId('button-2');
+    triggerPress(button2);
+    expect(button1).toHaveAttribute('aria-checked', 'false');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('SideNav handles multiple selection', function () {
+    let {getByTestId} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ButtonGroup selectionMode="multiple">
+          <ActionButton data-testid="button-1">Click me</ActionButton>
+          <ActionButton data-testid="button-2">Click me</ActionButton>
+        </ButtonGroup>
+      </Provider>
+    );
+
+    let button1 = getByTestId('button-1');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+
+    let button2 = getByTestId('button-2');
+    triggerPress(button2);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('SideNav handles none selection', function () {
+    let {getByTestId} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ButtonGroup selectionMode="none">
+          <ActionButton data-testid="button-1">Click me</ActionButton>
+        </ButtonGroup>
+      </Provider>
+    );
+
+    let button1 = getByTestId('button-1');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'false');
   });
 });
