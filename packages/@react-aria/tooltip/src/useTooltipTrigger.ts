@@ -5,9 +5,6 @@ import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
-//import {HoverProps, useHover} from '@react-aria/interactions';
-//import {HoverResponderContext} from '@react-aria/interactions';
-
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
   role?: 'tooltip'
@@ -41,7 +38,6 @@ let hoverHideTimeout = null;
 let hoverShowTimeout = null;
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
-  // let contextProps = useContext(HoverResponderContext);
   let tooltipTriggerId = useId();
 
   let {
@@ -54,10 +50,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     state.setOpen(!state.open);
   };
 
-  // let onHoverInteraction = (isHovering) => {
-  //   state.setOpen(isHovering);
-  // };
-
   let onClose = () => {
     state.setOpen(false);
   };
@@ -67,40 +59,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     onClose: onClose,
     isOpen: state.open
   });
-
-  // console.log('useTooltipTrigger', contextProps)
-  //
-  // let {hoverProps} = useHover({
-  //   onHover: () => {
-  //     console.log('I am hovering');
-  //
-  //     // handleDelayedShow2()
-  //     testFunction()
-  //
-  //     if (contextProps) {
-  //       console.log('entry context props here') // not called
-  //       if (contextProps.onShow && contextProps.onHoverTooltip) {
-  //         handleDelayedShow(contextProps.onShow, contextProps.onHoverTooltip);
-  //       }
-  //     }
-  //
-  //   },
-  //   onHoverEnd: () => {
-  //     console.log('I am going to stop hovering')
-  //
-  //     if (contextProps) {
-  //       console.log('exit context props here') // not called
-  //       if (contextProps.onShow) {
-  //         handleMouseOverOut(contextProps.onShow, event);
-  //       }
-  //     }
-  //
-  //   }
-  // });
-  //
-  // let testFunction = () => {
-  //   console.log('test', contextProps)
-  // }
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
@@ -177,24 +135,18 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     let triggerId = triggerProps.ref.current.id;
     // Perhaps remove the toggleTooltipState function and just paste code here
     toggleTooltipState();
-    // if (state.open) {
-      visibleTooltips = {triggerId, state};
-    // }
+    visibleTooltips = {triggerId, state};
   };
 
   // pass props into useTooltip
+    // 1TODO: refactor enter and exit stuff to not mess up the functions passed via context to useTooltip
   return {
     baseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
-      role: 'button',
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
     },
-    // interactionProps: {
-    //   toggleTooltipState
-    // },
     hoverTriggerProps: {
-      //...hoverProps,
       onMouseEnter: enter,
       onMouseLeave: exit,
       handleDelayedShow: handleDelayedShow,

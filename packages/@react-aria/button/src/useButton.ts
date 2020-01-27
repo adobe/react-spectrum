@@ -25,10 +25,6 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressStart,
     onPressEnd,
     onPressChange,
-    onHover,
-    onHoverStart,
-    onHoverEnd,
-    // onShow,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -59,11 +55,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
+  // 1TODO: do the same thing as useFocusable
   let {hoverProps} = useHover({
-    onHoverStart,
-    onHoverEnd,
-    // onShow,
-    onHover,
     isDisabled,
     ref
   });
