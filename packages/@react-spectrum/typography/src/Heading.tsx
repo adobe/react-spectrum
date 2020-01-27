@@ -16,7 +16,7 @@ export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTM
 
   // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <h1 {...filterDOMProps(otherProps, {'aria-level': 1})} {...styleProps} ref={ref}>
       {children}
     </h1>
   );

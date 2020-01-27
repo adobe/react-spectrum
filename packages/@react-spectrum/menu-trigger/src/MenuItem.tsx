@@ -3,19 +3,13 @@ import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {MenuContext} from './context';
-import {Node} from '@react-stately/collections';
-import React, {AllHTMLAttributes, useContext, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
+import {SpectrumMenuItemProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
-import {TreeState} from '@react-stately/tree'; 
 import {useMenuItem} from '@react-aria/menu-trigger';
 
-interface MenuItemProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>,
-  state: TreeState<T>
-}
-
-export function MenuItem<T>(props: MenuItemProps<T>) {
+export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
   let {
     item,
     state,
@@ -26,13 +20,16 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     rendered,
     isSelected,
-    isDisabled
+    isDisabled,
+    key
   } = item;
 
   let ref = useRef<HTMLDivElement>();
   let {menuItemProps} = useMenuItem(
     {
-      item,
+      isSelected,
+      isDisabled,
+      key,
       ...otherProps
     }, 
     ref, 

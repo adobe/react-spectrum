@@ -1,5 +1,5 @@
 import {DOMProps} from '@react-types/shared';
-import {FocusStrategy} from '@react-aria/menu-trigger';
+import {FocusStrategy} from '@react-types/menu';
 import React from 'react';
 
 export interface MenuContextValue extends DOMProps {

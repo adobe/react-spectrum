@@ -1,23 +1,18 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
-import {DOMProps} from '@react-types/shared';
 import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuDivider, MenuHeading, MenuItem} from './';
 import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo} from 'react';
+import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu-trigger';
 import {useTreeState} from '@react-stately/tree'; 
 
 export {Item, Section};
 
-interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
-  autoFocus?: boolean, // whether or not to autoFocus on Menu opening (default behavior TODO)
-}
-
-export function Menu<T>(props: MenuProps<T>) {
+export function Menu<T>(props: SpectrumMenuProps<T>) {
   let layout = useMemo(() => 
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling

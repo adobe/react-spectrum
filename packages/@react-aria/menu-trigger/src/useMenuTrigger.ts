@@ -1,21 +1,8 @@
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AllHTMLAttributes} from 'react';
+import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
 import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
-
-export type FocusStrategy = 'first' | 'last';
-
-interface MenuTriggerState {
-  isOpen: boolean,
-  setOpen: (value: boolean) => void,
-  focusStrategy: FocusStrategy,
-  setFocusStrategy: (value: FocusStrategy) => void
-}
-
-interface MenuTriggerProps {
-  ref: RefObject<HTMLElement | null>,
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-} 
 
 interface MenuTriggerAria {
   menuTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps,
