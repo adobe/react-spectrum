@@ -1,4 +1,4 @@
-import {HoverProps} from './useHover'; // 1TODO: also import PressProps
+import {HoverProps} from './useHover'; 
 import {DOMPropsResponderContext} from './DOMPropsContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
