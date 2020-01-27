@@ -47,10 +47,10 @@ storiesOf('Tooltip', module)
     'triggered by click, placement: bottom',
     () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'click'})
   ).add(
-    'RTL example: start',
+    'triggered by click, placement: left',
     () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
   ).add(
-    'RTL exmaple: end',
+    'triggered by click, placement: right',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
     'triggered by hover, placement: right',
