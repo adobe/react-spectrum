@@ -46,7 +46,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let {
     triggerProps,
-    state
+    state,
+    isDisabled
   } = props;
 
   let toggleTooltipState = () => {
@@ -113,6 +114,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let handleDelayedShow = () => {
+
+    if(isDisabled) {
+      return;
+    }
+
     let triggerId = triggerProps.ref.current.id;
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
     // a.k.a if user is moving back and forth between trigger and tooltip
@@ -126,7 +132,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     hoverShowTimeout = setTimeout(() => {
       hoverShowTimeout = null;
       state.setOpen(true);
-      
+
       // Close previously open tooltip (deals with tooltip opened via click operation)
       if (visibleTooltips) {
         console.log('visible tooltips', visibleTooltips);
@@ -137,7 +143,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       console.log('visibletooltips after show', visibleTooltips);
     }, 300);
   }
-  
+
   let handleDelayedHide = () => {
     if (hoverShowTimeout != null) {
       console.log('clearing showtimeout')
@@ -158,7 +164,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let enter = () => {
     console.log('enter');
     handleDelayedShow();
-    
+
   };
   // Just use handleDelayExit since exit just calls it
   let exit = () => {

@@ -42,7 +42,8 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       ...trigger.props,
       ref: triggerRef
     },
-    state
+    state,
+    isDisabled
   });
 
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
