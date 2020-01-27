@@ -1,9 +1,9 @@
 import {HoverProps} from './useHover';
 import React, {MutableRefObject} from 'react';
 
-interface HoverResponderContext extends HoverProps {
+interface DOMPropsResponderContext extends HoverProps {
   register(): void,
   ref?: MutableRefObject<HTMLElement>
 }
 
-export const HoverResponderContext = React.createContext<HoverResponderContext>(null);
+export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);

@@ -1,12 +1,12 @@
-import {HoverProps} from './useHover';
-import {HoverResponderContext} from './DOMPropsContext';
+import {HoverProps} from './useHover'; // 1TODO: also import PressProps
+import {DOMPropsResponderContext} from './DOMPropsContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
-interface HoverResponderProps extends HoverProps {
+interface DOMPropsResponderProps extends HoverProps { // 1TODO: also extend PressProps
   children: ReactNode
 }
 
-export const DOMPropsResponder = React.forwardRef(({children, ...props}: HoverResponderProps, ref: RefObject<HTMLElement>) => {
+export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMPropsResponderProps, ref: RefObject<HTMLElement>) => {
   let isRegistered = useRef(false);
   let context = {
     ...props,
@@ -25,8 +25,8 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: HoverRe
   }, []);
 
   return (
-    <HoverResponderContext.Provider value={context}>
+    <DOMPropsResponderContext.Provider value={context}>
       {children}
-    </HoverResponderContext.Provider>
+    </DOMPropsResponderContext.Provider>
   );
 });

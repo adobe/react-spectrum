@@ -62,8 +62,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </Overlay>
   );
 
-
-  // 1TODO: move {overlay} out of the responder 
   if (type === 'click') {
     return (
       <Fragment>

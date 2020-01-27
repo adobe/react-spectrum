@@ -1,6 +1,6 @@
 import {AllHTMLAttributes, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {HoverResponderContext} from '@react-aria/interactions';
+import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 
 interface TooltipProps extends DOMProps {
@@ -12,7 +12,7 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: TooltipProps): TooltipAria {
-  let contextProps = useContext(HoverResponderContext);
+  let contextProps = useContext(DOMPropsResponderContext);
   let tooltipId = useId(props.id);
 
   let {
