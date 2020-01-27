@@ -318,25 +318,34 @@ a.spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
 }
 
-.spectrum-ButtonGroup-item--vertical {
-  .spectrum-ActionButton-label {
-    flex-grow: 1;
-    text-align: start;
-  }
+.spectrum-ButtonGroup--vertical {
+  display: inline-flex;
+  flex-direction: column;
 
-  &.spectrum-ActionButton + .spectrum-ActionButton {
-    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  .spectrum-ButtonGroup-item {
+    .spectrum-ActionButton-label {
+      flex-grow: 1;
+      text-align: start;
+    }
+
+    &.spectrum-ActionButton + .spectrum-ActionButton {
+      margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+      margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+    }
   }
 }
 
-.spectrum-ButtonGroup-item--connected {
+.spectrum-ButtonGroup--connected .spectrum-ButtonGroup-item {
   &:hover {
     z-index: 1;
   }
 
   /* Appear above hovered border */
   &:focus-ring {
+    z-index: 2;
+  }
+
+  &.spectrum-ActionButton--emphasized.is-selected {
     z-index: 2;
   }
 
@@ -365,9 +374,8 @@ a.spectrum-ActionButton {
   .spectrum-ActionButton-label {
     inline-size: auto;
   }
-
 }
 
-.spectrum-ButtonGroup-item--justified {
+.spectrum-ButtonGroup--justified .spectrum-ButtonGroup-item{
   flex: 1;
 }

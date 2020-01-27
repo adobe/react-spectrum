@@ -27,15 +27,6 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
   let {buttonGroupProps, buttonProps} = useButtonGroup(props, state);
 
   let isVertical = orientation === 'vertical';
-  let itemClassName;
-  if (isVertical) {
-    itemClassName = 'spectrum-ButtonGroup-item--vertical';
-  } else {
-    itemClassName = {
-      'spectrum-ButtonGroup-item--connected': isConnected && !isQuiet,
-      'spectrum-ButtonGroup-item--justified': isJustified
-    };
-  }
 
   let providerProps = {isEmphasized, isDisabled, isQuiet};
 
@@ -47,9 +38,11 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
         classNames(
           styles,
           'spectrum-ButtonGroup',
-          {
-            'spectrum-ButtonGroup--vertical': isVertical
-          },
+          classNames(buttonStyles, {
+            'spectrum-ButtonGroup--vertical': isVertical,
+            'spectrum-ButtonGroup--connected': isConnected && !isQuiet,
+            'spectrum-ButtonGroup--justified': isJustified
+          }),
           otherProps.UNSAFE_className
         )
       } >
@@ -59,7 +52,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
             <ButtonGroupItem
               key={item.key}
               {...buttonProps}
-              UNSAFE_className={classNames(buttonStyles, itemClassName)}
+              UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
               item={item}
               state={state} />
           ))
