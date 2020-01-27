@@ -115,7 +115,7 @@ const toolIcons =
 
 const toolIconsAffordance =
   [
-    {icon: <Brush />},
+    {icon: <Brush />, holdAffordance: true},
     {icon: <Select />, holdAffordance: true},
     {icon: <RegionSelect />, holdAffordance: true}
   ];
