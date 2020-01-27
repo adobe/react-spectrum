@@ -49,6 +49,7 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-dialog-min-width);
 
   outline: none;
+  border-radius: var(--spectrum-dialog-border-radius);
 }
 
 .spectrum-Dialog--small {
@@ -98,7 +99,6 @@ governing permissions and limitations under the License.
 
   box-sizing: border-box;
 
-  border-radius: var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius) 0 0;
   outline: none; /* Hide focus outline around header */
 }
 
@@ -132,7 +132,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog-footer {
   grid-area: footer;
-  border-radius: 0 0 var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius);
   padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
 
   display: flex;
@@ -140,13 +139,12 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
 
-  margin: calc(-1 * var(--spectrum-dialog-button-margin) / 2);
-  margin-top: 0;
-
   /* Both selectors are required to override the button + button rule */
   > *,
   > .spectrum-Button + .spectrum-Button {
-    margin: calc(var(--spectrum-dialog-button-margin) / 2);
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: calc(var(--spectrum-dialog-button-margin) / 2);
   }
 }
 
@@ -171,8 +169,12 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-closeButton {
   display: none;
   grid-area: closeButton;
-  /* made up a margin value */
-  margin: var(--spectrum-dialog-button-margin) var(--spectrum-dialog-button-margin) 0 0;
+  /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
+  align-self: start;
+  justify-self: start;
+  /* made up a positioning values */
+  top: var(--spectrum-dialog-button-margin);
+  right: var(--spectrum-dialog-button-margin);
 }
 
 .spectrum-Dialog--dismissable {
@@ -186,17 +188,34 @@ governing permissions and limitations under the License.
   width: var(--spectrum-dialog-alert-width);
 }
 
+.spectrum-Dialog--fullscreen {
+  width: calc(100vw - 32px);
+  height: calc(100vh - 32px);
+}
+.spectrum-Dialog--fullscreenTakeover {
+  width: 100vw;
+  height: 100vh;
+
+  border-radius: 0;
+}
 /** @unofficial */
 .spectrum-Dialog--fullscreen,
 .spectrum-Dialog--fullscreenTakeover {
-  width: auto;
   max-height: none;
   max-width: none;
 
   padding-top: var(--spectrum-dialog-fullscreen-padding-top);
 
-  .spectrum-Dialog-header {
-    flex-shrink: 0;
+  &.spectrum-Dialog .spectrum-Dialog-grid {
+    display: grid;
+    grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
+    grid-template-rows: var(--spectrum-dialog-padding) auto auto auto var(--spectrum-dialog-padding);
+    grid-template-areas:
+      ".    .       .       ."
+      ".    header  footer  ."
+      ".    divider divider ."
+      ".    content content ."
+      ".    .       .       .";
   }
 
   .spectrum-Dialog-title {
@@ -206,5 +225,9 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-content {
     max-height: none;
+  }
+
+  .spectrum-Dialog-footer {
+    padding-top: 0px;
   }
 }

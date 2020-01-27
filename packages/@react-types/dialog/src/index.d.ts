@@ -16,8 +16,10 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
-  children: ReactNode
-  slots?: Slots
+  children: ReactNode,
+  slots?: Slots,
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  isDismissible?: boolean // adds close button and enables clicking on background
 }
 
 

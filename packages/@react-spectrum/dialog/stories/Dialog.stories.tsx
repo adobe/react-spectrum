@@ -27,6 +27,26 @@ storiesOf('Dialog', module)
   .add(
     'with hero, isDimissable',
     () => renderHero({isDismissable: true})
+  )
+  .add(
+    'small',
+    () => render({size: 'S'})
+  )
+  .add(
+    'medium',
+    () => render({size: 'M'})
+  )
+  .add(
+    'large',
+    () => render({size: 'L'})
+  )
+  .add(
+    'fullscreen',
+    () => render({size: 'fullscreen'})
+  )
+  .add(
+    'fullscreenTakeover',
+    () => render({size: 'fullscreenTakeover'})
   );
 
 storiesOf('Dialog/Alert', module)

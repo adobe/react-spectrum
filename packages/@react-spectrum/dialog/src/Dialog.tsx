@@ -30,9 +30,9 @@ export function Dialog(props: SpectrumDialogProps) {
     );
 
   if (type === 'popover') {
-    return <BaseDialog {...allProps}>{children}</BaseDialog>;
+    return <BaseDialog {...allProps} size={otherProps.size}>{children}</BaseDialog>;
   } else {
-    return <ModalDialog {...allProps}>{children}</ModalDialog>;
+    return <ModalDialog {...allProps} size={otherProps.size}>{children}</ModalDialog>;
   }
 }
 
@@ -41,7 +41,16 @@ function ModalDialog(props: HTMLAttributes<HTMLElement>) {
   return <BaseDialog {...mergeProps(props, modalProps)} />;
 }
 
-function BaseDialog({children, slots, ...otherProps}: HTMLAttributes<HTMLElement>) {
+let sizeMap = {
+  S: 'small',
+  M: 'medium',
+  L: 'large',
+  fullscreen: 'fullscreen',
+  fullscreenTakeover: 'fullscreenTakeover'
+};
+
+function BaseDialog({children, slots, size = 'L', ...otherProps}: HTMLAttributes<HTMLElement>) {
+  console.log(size);
   let ref = useRef();
   let {dialogProps} = useDialog({ref});
   if (!slots) {
@@ -65,6 +74,7 @@ function BaseDialog({children, slots, ...otherProps}: HTMLAttributes<HTMLElement
         className={classNames(
           styles,
           'spectrum-Dialog',
+          {[`spectrum-Dialog--${sizeMap[size]}`]: size},
           otherProps.className
         )}
         ref={ref}>
