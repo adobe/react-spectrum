@@ -6,6 +6,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {Divider} from '@react-spectrum/divider';
 
 storiesOf('DialogTrigger', module)
   // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
@@ -183,6 +184,7 @@ function render({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
           <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
         </Dialog>

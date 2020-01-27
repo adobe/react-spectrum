@@ -47,6 +47,7 @@ governing permissions and limitations under the License.
   /* Be no bigger than max-width, but also be 90% if the viewport is smaller than max-width */
   width: fit-content;
   min-width: var(--spectrum-dialog-min-width);
+  max-width: 100%;
 
   outline: none;
   border-radius: var(--spectrum-dialog-border-radius);

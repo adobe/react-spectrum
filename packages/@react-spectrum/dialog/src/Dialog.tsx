@@ -50,7 +50,6 @@ let sizeMap = {
 };
 
 function BaseDialog({children, slots, size = 'L', ...otherProps}: HTMLAttributes<HTMLElement>) {
-  console.log(size);
   let ref = useRef();
   let {dialogProps} = useDialog({ref});
   if (!slots) {
