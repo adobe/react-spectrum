@@ -34,7 +34,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {baseProps, clickTriggerProps, hoverTriggerProps} = useTooltipTrigger({
+  let {baseProps, clickTriggerProps, hoverTriggerProps, hoverHook} = useTooltipTrigger({
     tooltipProps: {
       ...content.props
     },
@@ -82,6 +82,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <DOMPropsResponder
           {...baseProps}
           {...hoverTriggerProps}
+          {...hoverHook}
           ref={triggerRef}
           isDisabled={isDisabled}
           tooltipState={state}>

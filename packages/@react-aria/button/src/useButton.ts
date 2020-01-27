@@ -1,8 +1,10 @@
 import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {RefObject, useContext} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {useHover, usePress} from '@react-aria/interactions';
+import {useHoverable} from '@react-aria/hover';
+import {useHoverResponderContext, useHover, usePress} from '@react-aria/interactions';
+import {DOMPropsResponderContext} from '@react-aria/interactions';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -55,15 +57,28 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  // 1TODO: do the same thing as useFocusable
-  let {hoverProps} = useHover({
-    isDisabled,
-    ref
-  });
+  // let {hoverProps} = useHover({
+  //   isDisabled,
+  //   ref
+  // });
+
+  useHoverResponderContext({ref});
+
+  let contextProps = useContext(DOMPropsResponderContext) || {};
+  console.log("context in button", contextProps)
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
-  let interactions = mergeProps(hoverProps, handlers);
+  // let {hoverableProps} = useHoverable(props, ref)
+  // console.log("hover stuff", hoverableProps)
+  // console.log("handlers", handlers)
+  // let interactions = mergeProps(hoverableProps, handlers);
+  // console.log("interactions", interactions)
+
+
+  console.log('contextProps, handler', contextProps, handlers)
+  //console.log("hover props", hoverProps)
+  let interactions = mergeProps(contextProps, handlers)
 
   return {
     isPressed, // Used to indicate press state for visual

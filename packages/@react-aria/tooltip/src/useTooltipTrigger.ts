@@ -1,9 +1,11 @@
-import {AllHTMLAttributes, RefObject, useContext} from 'react';
+import {AllHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
+
+import {useHover} from '@react-aria/interactions';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -60,6 +62,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     isOpen: state.open
   });
 
+  let {hoverProps} = useHover({
+    isDisabled,
+    ref: triggerProps.ref
+  });
+
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
@@ -76,6 +83,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     if(isDisabled) {
       return;
     }
+
+    console.log("handle delayed show", triggerProps.ref)
 
     let triggerId = triggerProps.ref.current.id;
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
@@ -154,6 +163,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     },
     clickTriggerProps: {
       onPress: enterClick
+    },
+    hoverHook: {
+      hoverH: hoverProps
     }
   };
 }

@@ -21,7 +21,7 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
-function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
+export function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);
   if (context) {
@@ -33,6 +33,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Sync ref from <DOMPropsResponder> with ref passed to useHover.
   useEffect(() => {
     if (context && context.ref) {
+      console.log('context ref', context.ref);
       context.ref.current = props.ref.current;
       return () => {
         context.ref.current = null;

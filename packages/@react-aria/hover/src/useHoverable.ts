@@ -2,6 +2,7 @@ import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useHover} from '@react-aria/interactions';
+import {filterDOMProps} from '@react-spectrum/utils';
 
 interface HoverableProps extends HoverEvents {
   isDisabled?: boolean
@@ -11,6 +12,6 @@ export function useHoverable(props?: HoverableProps, domRef?: RefObject<HTMLElem
   let {hoverProps} = useHover(props, domRef);
 
   return {
-    {hoverProps}
+    ...filterDOMProps(hoverProps)
   };
 }
