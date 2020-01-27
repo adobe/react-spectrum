@@ -26,7 +26,6 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     id: tooltipId
   };
 
-  // could maybe add a delay as a second argument here
   if (contextProps) {
     // If mouse leaves the tooltip, hide it
     let onMouseLeave = () => {

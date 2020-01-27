@@ -21,9 +21,6 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
-let hoverHideTimeout = null;
-let hoverShowTimeout = null;
-
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);
@@ -50,6 +47,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
 export function useHover(props: HoverHookProps): HoverResult {
   let {
     onHover,
+    onHoverChange,
     onHoverStart,
     onHoverEnd,
     isDisabled,
@@ -89,6 +87,10 @@ export function useHover(props: HoverHookProps): HoverResult {
         });
       }
 
+      if (onHoverChange) {
+        onHoverChange(true);
+      }
+
       setHover(true);
     };
 
@@ -111,6 +113,10 @@ export function useHover(props: HoverHookProps): HoverResult {
           target,
           pointerType
         });
+      }
+
+      if (onHoverChange) {
+        onHoverChange(false);
       }
 
       setHover(false);
