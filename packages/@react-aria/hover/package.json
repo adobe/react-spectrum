@@ -1,0 +1,30 @@
+{
+  "name": "@react-aria/hover",
+  "version": "3.0.0-alpha.2",
+  "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "^3.0.0-alpha.2",
+    "@react-aria/utils": "^3.0.0-alpha.2",
+    "classnames": "^2.2.5"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

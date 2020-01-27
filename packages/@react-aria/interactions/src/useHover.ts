@@ -1,4 +1,4 @@
-import {DOMProps, HoverEvents} from '@react-types/shared';
+import {DOMProps, PointerType, HoverEvents} from '@react-types/shared';
 import {DOMPropsResponderContext} from './DOMPropsContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
@@ -43,7 +43,6 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   return props;
 }
 
-// 1TODO: typscript pointerType like usePress
 export function useHover(props: HoverHookProps): HoverResult {
   let {
     onHover,
@@ -59,7 +58,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let hoverProps = useMemo(() => {
 
-    let triggerHoverStart = (event, pointerType) => {
+    let triggerHoverStart = (event, pointerType: PointerType) => {
 
       if (isDisabled) {
         return;
@@ -95,7 +94,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     };
 
 
-    let triggerHoverEnd = (event, pointerType) => {
+    let triggerHoverEnd = (event, pointerType: PointerType) => {
 
       if (isDisabled) {
         return;
