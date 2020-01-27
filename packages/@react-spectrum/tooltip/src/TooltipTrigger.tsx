@@ -62,7 +62,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </Overlay>
   );
 
-  if (type === 'click') {
+  if (type === 'click') {     
     return (
       <Fragment>
         <PressResponder
