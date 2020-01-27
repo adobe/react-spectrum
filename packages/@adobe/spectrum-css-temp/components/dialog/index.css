@@ -119,6 +119,10 @@ governing permissions and limitations under the License.
   grid-area: content;
   box-sizing: border-box;
 
+  /*
+  v2 is currently worse, inputs that get focus rings get a slight clipping unless overflow: visible replaces this line
+  we should think of a better way to handle this
+  */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 

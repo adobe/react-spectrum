@@ -1,6 +1,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {Divider} from '@react-spectrum/divider';
@@ -8,6 +9,9 @@ import {Image} from '@react-spectrum/image';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {TextField} from '@react-spectrum/textfield';
+import {Form} from '@react-spectrum/form';
+import {Radio, RadioGroup} from '@react-spectrum/radio';
 
 storiesOf('Dialog', module)
 // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
@@ -47,6 +51,14 @@ storiesOf('Dialog', module)
   .add(
     'fullscreenTakeover',
     () => render({size: 'fullscreenTakeover'})
+  )
+  .add(
+    'form',
+    () => renderWithForm({})
+  )
+  .add(
+    'fullscreenTakeover form',
+    () => renderWithForm({size: 'fullscreenTakeover'})
   );
 
 storiesOf('Dialog/Alert', module)
@@ -104,7 +116,7 @@ storiesOf('Dialog/Alert', module)
 function render({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
+      <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Text slot="title">The Title</Text></Header>
@@ -122,7 +134,7 @@ function render({width = 'auto', ...props}) {
 function renderHero({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
+      <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Image slot="hero" src="https://git.corp.adobe.com/pages/rsnow/assets/photos/25percent/IMG_0721.png" objectFit="cover" />
@@ -141,9 +153,39 @@ function renderHero({width = 'auto', ...props}) {
 function renderAlert({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
+      <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <AlertDialog {...props} />
+      </DialogTrigger>
+    </div>
+  );
+}
+
+
+function renderWithForm({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isOpen>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog {...props}>
+          <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
+          <Content>
+            <Form>
+              <TextField label="Last Words" />
+              <Checkbox>Acknowledge robot overlords</Checkbox>
+              <RadioGroup label="Preferred Job">
+                <Radio value="battery">Battery</Radio>
+                <Radio value="storage">Information Storage</Radio>
+                <Radio value="processor">Processor</Radio>
+                <Radio value="zoo">Zoo stock</Radio>
+                <Radio value="translator">Emotional Translator</Radio>
+              </RadioGroup>
+            </Form>
+          </Content>
+          <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
+          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
+        </Dialog>
       </DialogTrigger>
     </div>
   );
