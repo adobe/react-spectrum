@@ -1,7 +1,7 @@
-import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared'; // 1TODO: change to HoverableProps ?
+import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps { // 1TODO: change to HoverableProps ?
+export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps { 
   isDisabled?: boolean,
   elementType?: string | JSXElementConstructor<any>,
   children?: ReactNode,

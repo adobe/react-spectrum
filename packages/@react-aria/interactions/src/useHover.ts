@@ -1,4 +1,4 @@
-import {DOMProps, PointerType, HoverEvents} from '@react-types/shared';
+import {DOMProps, HoverEvents} from '@react-types/shared';
 import {DOMPropsResponderContext} from './DOMPropsContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
@@ -21,6 +21,7 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
+// 1TODO: useDOMPropsResponder --> pull out into a seperate function 
 export function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);
@@ -59,7 +60,7 @@ export function useHover(props: HoverHookProps): HoverResult {
 
   let hoverProps = useMemo(() => {
 
-    let triggerHoverStart = (event, pointerType: PointerType) => {
+    let triggerHoverStart = (event, pointerType) => {
 
       if (isDisabled) {
         return;
@@ -95,7 +96,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     };
 
 
-    let triggerHoverEnd = (event, pointerType: PointerType) => {
+    let triggerHoverEnd = (event, pointerType) => {
 
       if (isDisabled) {
         return;

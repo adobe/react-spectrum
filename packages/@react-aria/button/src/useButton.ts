@@ -2,7 +2,6 @@ import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
 import {RefObject, useContext} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {useHoverable} from '@react-aria/hover';
 import {useHoverResponderContext, useHover, usePress} from '@react-aria/interactions';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 
@@ -57,27 +56,12 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  // let {hoverProps} = useHover({
-  //   isDisabled,
-  //   ref
-  // });
-
+  // 1TODO: pull the two following lines out into a seperate file called useDOMPropsResponder
   useHoverResponderContext({ref});
-
   let contextProps = useContext(DOMPropsResponderContext) || {};
-  console.log("context in button", contextProps)
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
-  // let {hoverableProps} = useHoverable(props, ref)
-  // console.log("hover stuff", hoverableProps)
-  // console.log("handlers", handlers)
-  // let interactions = mergeProps(hoverableProps, handlers);
-  // console.log("interactions", interactions)
-
-
-  console.log('contextProps, handler', contextProps, handlers)
-  //console.log("hover props", hoverProps)
   let interactions = mergeProps(contextProps, handlers)
 
   return {

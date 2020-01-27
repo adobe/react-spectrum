@@ -4,8 +4,7 @@ import {DOMProps} from '@react-types/shared';
 import {TooltipState} from '@react-stately/tooltip';
 import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
-
-import {useHover} from '@react-aria/interactions';
+import {PressProps, useHover} from '@react-aria/interactions';
 
 interface TooltipProps extends DOMProps {
   onClose?: () => void,
@@ -19,19 +18,16 @@ interface TriggerProps extends DOMProps, AllHTMLAttributes<HTMLElement> {
 interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
   triggerProps: TriggerProps,
-  state: TooltipState
+  state: TooltipState,
+  isDisabled: boolean,
+  type: string
 }
 
-interface InteractionProps extends DOMProps {
-  toggleTooltipState: () => void,
-  onHoverInteraction: (value: boolean) => void,
-}
-
+// @ts-ignore
 interface TooltipTriggerAria {
-  baseProps: AllHTMLAttributes<HTMLElement>,
-  interactionProps: InteractionProps,
+  baseProps: AllHTMLAttributes<HTMLElement> & PressProps,
+  // @ts-ignore
   hoverTriggerProps: AllHTMLAttributes<HTMLElement>,
-  clickTriggerProps: AllHTMLAttributes<HTMLElement>
 }
 
 let visibleTooltips;
@@ -45,12 +41,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let {
     triggerProps,
     state,
-    isDisabled
+    isDisabled,
+    type
   } = props;
-
-  let toggleTooltipState = () => {
-    state.setOpen(!state.open);
-  };
 
   let onClose = () => {
     state.setOpen(false);
@@ -70,7 +63,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
-      if (e.key === 'Escape' || e.altKey && e.key === 'ArrowDown') {
+      if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
         state.setOpen(false);
@@ -83,8 +76,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     if(isDisabled) {
       return;
     }
-
-    console.log("handle delayed show", triggerProps.ref)
 
     let triggerId = triggerProps.ref.current.id;
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
@@ -139,13 +130,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     handleDelayedHide();
   };
 
-  // Perhaps rename this to just be onPress?
-  let enterClick = () => {
+  let onPress = () => {
     let triggerId = triggerProps.ref.current.id;
-    // Perhaps remove the toggleTooltipState function and just paste code here
-    toggleTooltipState();
+    state.setOpen(!state.open);
     visibleTooltips = {triggerId, state};
   };
+
+  let triggerType = type;
 
   // pass props into useTooltip
     // 1TODO: refactor enter and exit stuff to not mess up the functions passed via context to useTooltip
@@ -153,16 +144,15 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     baseProps: {
       ...overlayProps,
       id: tooltipTriggerId,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger)
+      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
+      onPress: triggerType === 'click' ? onPress : undefined
     },
     hoverTriggerProps: {
       onMouseEnter: enter,
       onMouseLeave: exit,
+      // @ts-ignore
       handleDelayedShow: handleDelayedShow,
       handleDelayedHide: handleDelayedHide
-    },
-    clickTriggerProps: {
-      onPress: enterClick
     },
     hoverHook: {
       hoverH: hoverProps
