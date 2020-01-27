@@ -1,4 +1,3 @@
-
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
