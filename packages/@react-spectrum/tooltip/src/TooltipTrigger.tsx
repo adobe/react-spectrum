@@ -1,5 +1,5 @@
 import {DOMRefValue} from '@react-types/shared';
-import {HoverResponder, PressResponder} from '@react-aria/interactions';
+import {DOMPropsResponder, PressResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
@@ -62,7 +62,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </Overlay>
   );
 
-  if (type === 'click') {     
+
+  // 1TODO: move {overlay} out of the responder 
+  if (type === 'click') {
     return (
       <Fragment>
         <PressResponder
@@ -79,7 +81,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   } else if (type === 'hover') {
     return (
       <Fragment>
-        <HoverResponder
+        <DOMPropsResponder
           {...baseProps}
           {...hoverTriggerProps}
           ref={triggerRef}
@@ -87,7 +89,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           tooltipState={state}>
           {trigger}
           {overlay}
-        </HoverResponder>
+        </DOMPropsResponder>
       </Fragment>
     );
   }

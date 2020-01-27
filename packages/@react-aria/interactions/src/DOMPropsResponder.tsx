@@ -1,12 +1,12 @@
 import {HoverProps} from './useHover';
-import {HoverResponderContext} from './hoverContext';
+import {HoverResponderContext} from './DOMPropsContext';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface HoverResponderProps extends HoverProps {
   children: ReactNode
 }
 
-export const HoverResponder = React.forwardRef(({children, ...props}: HoverResponderProps, ref: RefObject<HTMLElement>) => {
+export const DOMPropsResponder = React.forwardRef(({children, ...props}: HoverResponderProps, ref: RefObject<HTMLElement>) => {
   let isRegistered = useRef(false);
   let context = {
     ...props,
@@ -19,7 +19,7 @@ export const HoverResponder = React.forwardRef(({children, ...props}: HoverRespo
   useEffect(() => {
     if (!isRegistered.current) {
       console.warn(
-        'A HoverResponder was ultilized without a hoverable DOM node.'
+        'A DOMPropsResponder was ultilized without a hoverable DOM node.'
       );
     }
   }, []);

@@ -1,5 +1,5 @@
 import {DOMProps, HoverEvents} from '@react-types/shared';
-import {HoverResponderContext} from './hoverContext';
+import {HoverResponderContext} from './DOMPropsContext';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 
@@ -25,7 +25,7 @@ let hoverHideTimeout = null;
 let hoverShowTimeout = null;
 
 function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
-  // Consume context from <HoverResponder> and merge with props.
+  // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(HoverResponderContext);
   if (context) {
     let {register, ...contextProps} = context;
@@ -33,7 +33,7 @@ function useHoverResponderContext(props: HoverHookProps): HoverHookProps {
     register();
   }
 
-  // Sync ref from <HoverResponder> with ref passed to useHover.
+  // Sync ref from <DOMPropsResponder> with ref passed to useHover.
   useEffect(() => {
     if (context && context.ref) {
       context.ref.current = props.ref.current;
