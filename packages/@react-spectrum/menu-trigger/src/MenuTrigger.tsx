@@ -40,8 +40,11 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
   let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
 
-  let onClose = () => {
-    setOpen(false);
+  let onClose = (e) => {
+    // e is comes from useInteractOutside and is only undef if user clicks outside the popover
+    if (closeOnSelect || e) {
+      setOpen(false);
+    }
   };
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
