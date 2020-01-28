@@ -83,8 +83,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {...baseProps}
           {...hoverTriggerProps}
           ref={triggerRef}
-          isDisabled={isDisabled}
-          tooltipState={state}>
+          isDisabled={isDisabled}>
           {trigger}
           {overlay}
         </DOMPropsResponder>

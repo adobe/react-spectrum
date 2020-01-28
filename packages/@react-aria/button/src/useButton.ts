@@ -57,6 +57,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   // 1TODO: pull the two following lines out into a seperate file called useDOMPropsResponder
+    // accepts a ref as an argument
+    // returns contextProps
   useDOMPropsResponderContext({ref});
   let contextProps = useContext(DOMPropsResponderContext) || {};
 

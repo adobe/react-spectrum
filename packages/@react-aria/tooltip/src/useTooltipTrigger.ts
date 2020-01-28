@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AllHTMLAttributes, HTMLAttributes, RefObject} from 'react';
 import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {PressProps, useHover} from '@react-aria/interactions';
@@ -22,9 +22,15 @@ interface TooltipTriggerProps {
   type: string
 }
 
+interface TooltipHoverTriggerProps {
+  onMouseEnter?: () => void,
+  onMouseLeave?: () => void,
+  hoverHookProps?: HTMLAttributes<HTMLElement>
+}
+
 interface TooltipTriggerAria {
   baseProps: AllHTMLAttributes<HTMLElement> & PressProps,
-  hoverTriggerProps: AllHTMLAttributes<HTMLElement>,
+  hoverTriggerProps: TooltipHoverTriggerProps
 }
 
 let visibleTooltips;
