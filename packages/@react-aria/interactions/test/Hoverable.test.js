@@ -9,13 +9,12 @@ describe('Hoverable', function () {
     let onHover = jest.fn();
     let {getByRole} = render(
       <Hoverable onHover={onHover}>
-      <button>Button</button>
+        <button>Button</button>
       </Hoverable>
     );
 
     let button = getByRole('button');
     fireEvent.mouseOver(button);
-    fireEvent.mouseEnter(button);
 
     expect(onHover).toHaveBeenCalledTimes(1);
   });
@@ -25,14 +24,13 @@ describe('Hoverable', function () {
     let onMouseEnter = jest.fn();
     let {getByRole} = render(
       <Hoverable onHover={onHover}>
-      <button onMouseEnter={onMouseEnter}>Button</button>
+        <button onMouseEnter={onMouseEnter}>Button</button>
       </Hoverable>
     );
 
     let button = getByRole('button');
     fireEvent.mouseOver(button);
-    fireEvent.mouseEnter(button);
-    
+
     expect(onHover).toHaveBeenCalledTimes(1);
     expect(onMouseEnter).toHaveBeenCalledTimes(1);
   });

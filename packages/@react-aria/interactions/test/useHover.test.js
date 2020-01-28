@@ -7,59 +7,10 @@ function Example(props) {
   return <div {...hoverProps}>test</div>;
 }
 
-function pointerEvent(type, opts) {
-  let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, opts);
-  return evt;
-}
-
 describe('useHover', function () {
   afterEach(cleanup);
 
-  describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
-    });
-
-    afterEach(() => {
-      delete global.PointerEvent;
-    });
-
-    it('should fire hover events based on pointer events', function () {
-      let events = [];
-      let addEvent = (e) => events.push(e);
-      let res = render(
-        <Example
-        onHoverStart={addEvent}
-        onHoverEnd={addEvent}
-        onHover={addEvent} />
-      );
-
-      let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerenter'));
-      fireEvent(el, pointerEvent('pointerleave'));
-
-      console.log('events array from pointer ->', events); // empty for some reason ...
-
-      // expect(events).toEqual([
-      //   {
-      //     type: 'hoverstart',
-      //     target: el,
-      //     pointerType: 'mouse'
-      //   },
-      //   {
-      //     type: 'hover',
-      //     target: el,
-      //     pointerType: 'mouse'
-      //   },
-      //   {
-      //     type: 'hoverend',
-      //     target: el,
-      //     pointerType: 'mouse'
-      //   }
-      // ]);
-    });
-  });
+  // TODO: test pointer events
 
   describe('mouse events', function () {
     it('should fire hover events based on mouse events', function () {
@@ -67,9 +18,10 @@ describe('useHover', function () {
       let addEvent = (e) => events.push(e);
       let res = render(
         <Example
-        onHoverStart={addEvent}
-        onHoverEnd={addEvent}
-        onHover={addEvent} />
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+          onHover={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -88,9 +40,17 @@ describe('useHover', function () {
           pointerType: 'mouse'
         },
         {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
           type: 'hoverend',
           target: el,
           pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
         }
       ]);
     });
@@ -102,9 +62,10 @@ describe('useHover', function () {
       let addEvent = (e) => events.push(e);
       let res = render(
         <Example
-        onHoverStart={addEvent}
-        onHoverEnd={addEvent}
-        onHover={addEvent} />
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+          onHover={addEvent} />
       );
 
       let el = res.getByText('test');

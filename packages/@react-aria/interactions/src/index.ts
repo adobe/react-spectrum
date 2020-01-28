@@ -1,6 +1,7 @@
 export * from './usePress';
 export * from './useInteractOutside';
 export * from './Pressable';
+export * from './Hoverable';
 export * from './PressResponder';
 export * from './useKeyboard';
 export * from './useFocus';
