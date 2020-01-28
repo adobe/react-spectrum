@@ -37,6 +37,7 @@
     "@react-aria/overlays": "^3.0.0-alpha.2",
     "@react-aria/selection": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-spectrum/checkbox": "^3.0.0-rc.1",
     "@react-spectrum/divider": "^3.0.0-rc.1",
     "@react-spectrum/layout": "^3.0.0-alpha.1",
     "@react-spectrum/overlays": "^3.0.0-alpha.2",

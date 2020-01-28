@@ -86,7 +86,6 @@ governing permissions and limitations under the License.
   border-inline-start: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
   min-block-size: var(--spectrum-selectlist-option-height);
-  height: 1px; /* lol css, hacking for the moment https://stackoverflow.com/questions/14752188/nested-div-does-not-fill-parent-div-with-min-height-100/14752346 */
 
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
@@ -128,10 +127,12 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-checkmark,
-.spectrum-Menu-chevron {
-  grid-area: end;
+.spectrum-Menu-chevron,
+.spectrum-Menu-multiselect-checkbox {
+  grid-area: tools;
   justify-self: end;
   align-self: center;
+  margin-inline-end: 0px;
 }
 
 .spectrum-Menu-divider {
@@ -171,12 +172,12 @@ governing permissions and limitations under the License.
   /* hard coded height to match row height in Menu.tsx */
   height: 32px;
   display: grid;
-  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto var(--spectrum-global-dimension-size-250) var(--spectrum-selectlist-option-padding);
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr 1fr auto var(--spectrum-selectlist-option-padding);
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
     ". .    .           .     .   ."
-    ". icon label       tools end ."
-    ". icon description tools end ."
+    ". icon label       tools keyboardIcon ."
+    ". icon description tools keyboardIcon ."
     ". .    .           .     .   .";
 }
 
@@ -189,7 +190,13 @@ governing permissions and limitations under the License.
   align-self: center;
   padding-inline-end: 5px;
 }
+/* delete this? */
 .spectrum-Menu-detail {
   font-family: monospace;
   align-self: center;
+}
+.spectrum-Menu-keyboard {
+  grid-area: keyboardIcon;
+  align-self: center;
+  padding-inline-start: var(--spectrum-global-dimension-size-125);
 }

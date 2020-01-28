@@ -268,7 +268,7 @@ storiesOf('Menu', module)
     'Multiselect menu',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Kangaroo']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -372,18 +372,19 @@ storiesOf('Menu', module)
             <Item>
               <Copy size="S" />
               <Text slot="label">Copy</Text>
-              <Flex slot="tools">
+              <Keyboard slot="keyboardIcon">⌘C</Keyboard>
+              {/* <Flex slot="tools">
                 <Switch />
                 <Keyboard slot="detail">⌘C</Keyboard>
-              </Flex>
+              </Flex> */}
             </Item>
             <Item>
               <Cut size="S" />
               <Text slot="label">Cut</Text>
-              <Flex slot="tools">
+              {/* <Flex slot="tools">
                 <Switch />
                 <Keyboard slot="detail">⌘X</Keyboard>
-              </Flex>
+              </Flex> */}
             </Item>
             <Item>
               <Paste size="S" />
@@ -398,23 +399,24 @@ storiesOf('Menu', module)
             <Item>
               <AlignLeft size="S" />
               <Text slot="label">Puppy</Text>
-              <Flex slot="tools">
+              <Text slot="description">awea</Text>
+              {/* <Flex slot="tools">
                 <Keyboard slot="detail">⌘P</Keyboard>
-              </Flex>
+              </Flex> */}
             </Item>
             <Item>
               <AlignCenter size="S" />
               <Text slot="label">Doggo</Text>
-              <Flex slot="tools">
+              {/* <Flex slot="tools">
                 <Keyboard slot="detail">⌘D</Keyboard>
-              </Flex>
+              </Flex> */}
             </Item>
             <Item>
               <AlignRight size="S" />
               <Text slot="label">Floof</Text>
-              <Flex slot="tools">
+              {/* <Flex slot="tools">
                 <Keyboard slot="detail">⌘F</Keyboard>
-              </Flex>
+              </Flex> */}
             </Item>
             <Item>
               blah
@@ -447,7 +449,7 @@ storiesOf('Menu', module)
     'with semantic elements and grid css positioning (generative)',
     () => (
       <Popover isOpen hideArrow> 
-        <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => customMenuItem(item)}
@@ -464,9 +466,7 @@ let customMenuItem = (item) => {
     <Item childItems={item.children}>
       {item.icon && <Icon size="S" />}
       <Text slot="label">{item.name}</Text>
-      <Flex slot="tools">
-        <Keyboard slot="detail">{item.shortcut}</Keyboard>
-      </Flex>
+      {/* {item.shortcut && <Keyboard slot="keyboardIcon">{item.shortcut}</Keyboard>} */}
     </Item>
   );	
 };

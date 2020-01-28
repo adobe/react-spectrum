@@ -1,3 +1,4 @@
+import {Checkbox} from '@react-spectrum/checkbox';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -17,6 +18,12 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
   } = props;
 
   let menuProps = useContext(MenuContext) || {};
+
+  let {
+    selectionMode,
+    setOpen
+  } = menuProps;
+
   let {
     rendered,
     isSelected,
@@ -34,7 +41,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     }, 
     ref, 
     state,
-    menuProps.setOpen
+    setOpen
   );
 
   return (
@@ -48,7 +55,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected && selectionMode === 'single'
           }
         )}>
         <Grid
@@ -57,14 +64,35 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
             label: styles['spectrum-Menu-itemLabel'],
             tools: styles['spectrum-Menu-tools'],
             icon: styles['spectrum-Menu-icon'],
-            detail: styles['spectrum-Menu-detail']}}>
+            detail: styles['spectrum-Menu-detail'],
+            keyboardIcon: styles['spectrum-Menu-keyboard']}}>
           {!Array.isArray(rendered) && (
             <Text slot="label">
               {rendered}
             </Text>
           )}
           {Array.isArray(rendered) && rendered}
-          {isSelected && <CheckmarkMedium slot="end" UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')} />}
+          {isSelected && selectionMode === 'single' && 
+            <CheckmarkMedium 
+              slot="tools" 
+              UNSAFE_className={
+                classNames(
+                  styles, 
+                  'spectrum-Menu-checkmark'
+                )
+              } />}
+          {selectionMode === 'multiple' && 
+            <Checkbox
+              tabIndex={-1} // TODO: Should tabindex propagate to the <input> of checkbox?
+              isEmphasized
+              isSelected={isSelected} 
+              isDisabled={isDisabled} 
+              UNSAFE_className={
+                classNames(
+                  styles,
+                  'spectrum-Menu-multiselect-checkbox'
+                )
+              } />}
         </Grid>  
       </div>
     </FocusRing>
