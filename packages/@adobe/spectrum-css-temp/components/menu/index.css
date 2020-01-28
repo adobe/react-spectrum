@@ -126,13 +126,14 @@ governing permissions and limitations under the License.
   align-self: flex-start;
 }
 
+/* Should I do the grid positioning for checkmark/chev/switch/checkbox like this or */
 .spectrum-Menu-checkmark,
 .spectrum-Menu-chevron,
 .spectrum-Menu-multiselect-checkbox {
-  grid-area: tools;
+  /* grid-area: tools;
   justify-self: end;
   align-self: center;
-  margin-inline-end: 0px;
+  margin-inline-end: 0px; */
 }
 
 .spectrum-Menu-divider {
@@ -172,7 +173,7 @@ governing permissions and limitations under the License.
   /* hard coded height to match row height in Menu.tsx */
   height: 32px;
   display: grid;
-  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr 1fr auto var(--spectrum-selectlist-option-padding);
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto var(--spectrum-selectlist-option-padding);
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
     ". .    .           .     .   ."
@@ -181,9 +182,15 @@ governing permissions and limitations under the License.
     ". .    .           .     .   .";
 }
 
-.spectrum-Menu-tools {
+/* should the below be !important? Had to add a .spectrum-Menu to increase the specificity */
+.spectrum-Menu .spectrum-Menu-tools {
+  /* grid-area: tools;
+  align-self: center; */
   grid-area: tools;
+  justify-self: end;
   align-self: center;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
 }
 .spectrum-Menu-icon {
   grid-area: icon;

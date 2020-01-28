@@ -59,7 +59,12 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           }
         )}>
         <Grid
-          UNSAFE_className={classNames(styles, 'spectrum-Menu-itemGrid')}
+          UNSAFE_className={
+            classNames(
+              styles,
+              'spectrum-Menu-itemGrid'
+            )
+          }  
           slots={{
             label: styles['spectrum-Menu-itemLabel'],
             tools: styles['spectrum-Menu-tools'],
@@ -83,8 +88,16 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
               } />}
           {selectionMode === 'multiple' && 
             <Checkbox
+              slot="tools"
               tabIndex={-1} // TODO: Should tabindex propagate to the <input> of checkbox?
               isEmphasized
+              // onClick={(e) => {
+              //   e.preventDefault();
+              //   e.stopPropagation();
+              // }}
+              onChange={() => {
+                state.selectionManager.toggleSelection(item.key);
+              }}
               isSelected={isSelected} 
               isDisabled={isDisabled} 
               UNSAFE_className={
