@@ -56,11 +56,13 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  // 1TODO: pull the two following lines out into a seperate file called useDOMPropsResponder
-    // accepts a ref as an argument
-    // returns contextProps
+  // figure why event though contextProps and contextProps2 are the exact same thing an error is occuring
   useDOMPropsResponderContext({ref});
   let contextProps = useContext(DOMPropsResponderContext) || {};
+  // console.log("contextProps", contextProps)
+
+  // let contextProps2 = useDOMPropsResponder(ref);
+  // console.log("xyz", contextProps2)
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);

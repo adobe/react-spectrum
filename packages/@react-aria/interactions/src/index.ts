@@ -10,3 +10,4 @@ export * from './useFocusVisible';
 export * from './useHover';
 export * from './DOMPropsResponder';
 export * from './DOMPropsContext';
+export * from './useDOMPropsResponder';

@@ -33,7 +33,6 @@ export function useDOMPropsResponderContext(props: HoverHookProps): HoverHookPro
   // Sync ref from <DOMPropsResponder> with ref passed to useHover.
   useEffect(() => {
     if (context && context.ref) {
-      console.log('context ref', context.ref);
       context.ref.current = props.ref.current;
       return () => {
         context.ref.current = null;
