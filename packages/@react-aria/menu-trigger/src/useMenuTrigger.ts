@@ -12,7 +12,8 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type
+    type,
+    isDisabled
   } = props;
 
   let menuTriggerId = useId();
@@ -24,11 +25,13 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
   });
 
   let onPress = () => {
-    state.setOpen(!state.isOpen);
+    if (!isDisabled) {
+      state.setOpen(!state.isOpen);
+    }
   };
 
   let onKeyDown = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
+    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || isDisabled) {
       return;
     }
 

@@ -11,9 +11,7 @@ interface MenuItemAria {
 
 interface MenuState<T> extends TreeState<T> {}
 
-type SetMenuTriggerState = (value: boolean) => void
-
-export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLElement>, state: MenuState<T>, setOpen?: SetMenuTriggerState): MenuItemAria {
+export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLElement>, state: MenuState<T>, onClose?: () => void): MenuItemAria {
   let {
     isSelected,
     isDisabled,
@@ -44,13 +42,13 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
       case ' ':
         if (!isDisabled) {
           if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
-            setOpen && setOpen(false);
+            onClose && onClose();
           }
         }
         break;
       case 'Enter':
         if (!isDisabled) {
-          setOpen && setOpen(false);
+          onClose && onClose();
         }
         break;
     }
@@ -58,7 +56,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
 
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
-      setOpen && setOpen(false);
+      onClose && onClose();
     }
   };
 

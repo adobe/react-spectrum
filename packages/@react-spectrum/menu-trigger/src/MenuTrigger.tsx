@@ -20,21 +20,26 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     align = 'start',
     shouldFlip = false,
     direction = 'bottom',
-    isDisabled
+    isDisabled,
+    closeOnSelect = true
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
   let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
 
-  let onClose = () => {
-    setOpen(false);
+  let onClose = (e) => {
+    // e is comes from useInteractOutside and is only undef if user clicks outside the popover
+    if (closeOnSelect || e) {
+      setOpen(false);
+    }
   };
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
-      type: 'menu'
+      type: 'menu',
+      isDisabled
     },
     {
       isOpen, 
@@ -57,7 +62,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     ...menuProps,
     focusStrategy,
     setFocusStrategy,
-    setOpen
+    onClose
   };
 
   let triggerProps = {

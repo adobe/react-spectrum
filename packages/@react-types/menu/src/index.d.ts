@@ -17,6 +17,7 @@ export interface MenuTriggerState {
 export interface MenuTriggerProps {
   ref?: RefObject<HTMLElement | null>,
   type?: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
+  isDisabled?: boolean
 } 
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
@@ -28,7 +29,7 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
   shouldFlip?: boolean,
-  isDisabled?: boolean
+  closeOnSelect?: boolean
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {

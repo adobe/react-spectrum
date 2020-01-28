@@ -102,6 +102,10 @@ storiesOf('MenuTrigger', module)
     () => render({}, {selectionMode: 'none'})
   )
   .add(
+    'closeOnSelect=false',
+    () => render({closeOnSelect: false}, {})
+  )
+  .add(
     'menu with semantic elements',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
