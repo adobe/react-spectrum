@@ -31,9 +31,9 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   }, [isOpen, ref]);
 
   // Only hide the overlay when it is the topmost visible overlay in the stack.
-  let onHide = (e) => {
+  let onHide = () => {
     if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
-      onClose(e);
+      onClose();
     }
   };
 
@@ -41,7 +41,7 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   let onKeyDown = (e) => {
     if (e.key === 'Escape') {
       e.preventDefault();
-      onHide(e);
+      onHide();
     }
   };
 

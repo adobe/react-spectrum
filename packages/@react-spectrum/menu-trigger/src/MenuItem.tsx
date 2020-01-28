@@ -21,7 +21,8 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
 
   let {
     selectionMode,
-    onClose
+    onClose,
+    closeOnSelect
   } = menuProps;
 
   let {
@@ -41,7 +42,8 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     }, 
     ref, 
     state,
-    onClose
+    onClose,
+    closeOnSelect
   );
 
   return (

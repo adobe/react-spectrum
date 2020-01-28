@@ -388,47 +388,19 @@ storiesOf('Menu', module)
             <Item>
               <AlignLeft size="S" />
               <Text slot="label">Puppy</Text>
-              <Text slot="description">awea</Text>
-              {/* <Flex slot="tools">
-                <Keyboard slot="detail">⌘P</Keyboard>
-              </Flex> */}
+              <Text slot="description">Puppy description</Text>
             </Item>
             <Item>
               <AlignCenter size="S" />
               <Text slot="label">Doggo</Text>
-              {/* <Flex slot="tools">
-                <Keyboard slot="detail">⌘D</Keyboard>
-              </Flex> */}
             </Item>
             <Item>
               <AlignRight size="S" />
               <Text slot="label">Floof</Text>
-              {/* <Flex slot="tools">
-                <Keyboard slot="detail">⌘F</Keyboard>
-              </Flex> */}
             </Item>
             <Item>
-              blah
+              Basic Item
             </Item>
-            {/* TODO: Add this back in when submenus become a thing again
-            <Item title="hasChildren">
-              <Item>
-                <Blower size="S" />
-                <Text slot="label">Thailand</Text>
-                <Flex slot="tools">
-                  <Switch />
-                  <Keyboard slot="detail">⌘T</Keyboard>
-                </Flex>
-              </Item>
-              <Item>
-                <Book size="S" />
-                <Text slot="label">Germany</Text>
-                <Flex slot="tools">
-                  <Switch />
-                  <Keyboard slot="detail">⌘G</Keyboard>
-                </Flex>
-              </Item>
-            </Item> */}
           </Section>
         </Menu>
       </Popover>

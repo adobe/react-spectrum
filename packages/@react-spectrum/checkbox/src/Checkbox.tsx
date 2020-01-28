@@ -7,11 +7,9 @@ import React, {forwardRef, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
+import {usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
-
-import {usePress} from '@react-aria/interactions';
-import {mergeProps, useId} from '@react-aria/utils';
 
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
