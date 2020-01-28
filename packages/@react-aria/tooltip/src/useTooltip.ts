@@ -27,21 +27,8 @@ export function useTooltip(props: TooltipProps): TooltipAria {
   };
 
   if (contextProps) {
-    // If mouse leaves the tooltip, hide it
-    let onMouseLeave = () => {
-      if (contextProps.handleDelayedHide) {
-        contextProps.handleDelayedHide();
-      }
-    };
-    // If mouse enters tooltip, call handleDelayedShow so that the hide call
-    // triggered by the mouse leaving the toolip trigger button is canceled
-    let onMouseEnter = () => {
-      if (contextProps.handleDelayedShow) {
-        contextProps.handleDelayedShow();
-      }
-    };
-    tooltipProps.onMouseLeave = onMouseLeave;
-    tooltipProps.onMouseEnter = onMouseEnter;
+    tooltipProps.onMouseLeave = contextProps.onMouseLeave;
+    tooltipProps.onMouseEnter = contextProps.onMouseEnter;
   }
 
   return {

@@ -114,18 +114,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }, 300);
   };
 
-  // Just use handleDelayedShow since enter just calls it
-  let enter = () => {
-    console.log('enter');
-    handleDelayedShow();
-
-  };
-  // Just use handleDelayExit since exit just calls it
-  let exit = () => {
-    console.log('exit');
-    handleDelayedHide();
-  };
-
   let onPress = () => {
     let triggerId = triggerProps.ref.current.id;
     state.setOpen(!state.open);
@@ -134,8 +122,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let triggerType = type;
 
-  // pass props into useTooltip
-    // 1TODO: refactor enter and exit stuff to not mess up the functions passed via context to useTooltip
   return {
     baseProps: {
       ...overlayProps,
@@ -144,10 +130,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       onPress: triggerType === 'click' ? onPress : undefined
     },
     hoverTriggerProps: {
-      onMouseEnter: enter,
-      onMouseLeave: exit,
-      handleDelayedShow: handleDelayedShow,
-      handleDelayedHide: handleDelayedHide,
+      onMouseEnter: handleDelayedShow,
+      onMouseLeave: handleDelayedHide,
       hoverHookProps: hoverProps
     }
   };
