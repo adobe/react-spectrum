@@ -1,11 +1,19 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '@react-spectrum/utils';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
+import {Switch} from '@react-spectrum/switch';
 
 let withSection = [
   {name: 'Animals', children: [
@@ -92,6 +100,57 @@ storiesOf('MenuTrigger', module)
   .add(
     'no selection allowed menu',
     () => render({}, {selectionMode: 'none'})
+  )
+  .add(
+    'menu with semantic elements',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}>
+              Menu Button
+          </ActionButton>
+          <Menu onSelectionChange={action('onSelectionChange')}>
+            <Section title="Section 1">
+              <Item>
+                <Copy size="S" />
+                <Text slot="label">Copy</Text>
+                <Keyboard slot="keyboardIcon">⌘C</Keyboard>
+              </Item>
+              <Item>
+                <Cut size="S" />
+                <Text slot="label">Cut</Text>
+              </Item>
+              <Item>
+                <Paste size="S" />
+                <Text slot="label">Paste</Text>
+                <Switch slot="tools" isEmphasized />
+              </Item>
+            </Section>
+            <Section title="Section 2">
+              <Item>
+                <AlignLeft size="S" />
+                <Text slot="label">Puppy</Text>
+                <Text slot="description">awea</Text>
+              </Item>
+              <Item>
+                <AlignCenter size="S" />
+                <Text slot="label">Doggo</Text>
+              </Item>
+              <Item>
+                <AlignRight size="S" />
+                <Text slot="label">Floof</Text>
+              </Item>
+              <Item>
+                blah
+              </Item>
+            </Section>
+          </Menu>
+        </MenuTrigger>
+      </div>
+    )
   )
   .add(
     'menu closes on scroll',

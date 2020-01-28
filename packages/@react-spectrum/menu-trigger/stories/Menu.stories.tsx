@@ -268,7 +268,7 @@ storiesOf('Menu', module)
     'Multiselect menu',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Kangaroo']} disabledKeys={['Kangaroo', 'Ross']}>
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Kangaroo', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -373,26 +373,15 @@ storiesOf('Menu', module)
               <Copy size="S" />
               <Text slot="label">Copy</Text>
               <Keyboard slot="keyboardIcon">⌘C</Keyboard>
-              {/* <Flex slot="tools">
-                <Switch />
-                <Keyboard slot="detail">⌘C</Keyboard>
-              </Flex> */}
             </Item>
             <Item>
               <Cut size="S" />
               <Text slot="label">Cut</Text>
-              {/* <Flex slot="tools">
-                <Switch />
-                <Keyboard slot="detail">⌘X</Keyboard>
-              </Flex> */}
             </Item>
             <Item>
               <Paste size="S" />
               <Text slot="label">Paste</Text>
-              <Flex slot="tools">
-                <Switch />
-                <Keyboard slot="detail">⌘V</Keyboard>
-              </Flex>
+              <Switch slot="tools" isEmphasized />
             </Item>
           </Section>
           <Section title="Section 2">

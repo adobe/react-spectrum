@@ -63,14 +63,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
   };
 
   let onMouseOver = () => state.selectionManager.setFocusedKey(key);
-  // Note: the ref below is needed so that a menuItem with children serves as a MenuTrigger properly
-  // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
-  // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
-
-  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref). 
-  // isDisabled suppresses sub menu triggers from firing
   let {pressProps} = usePress(mergeProps({onPress}, mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled})));
-  // let handlers = mergeProps(pressProps, )
 
   return {
     menuItemProps: {
