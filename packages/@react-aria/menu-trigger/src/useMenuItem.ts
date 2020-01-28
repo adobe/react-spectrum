@@ -49,7 +49,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
         }
         break;
       case 'Enter':
-        if (!isDisabled) {
+        if (!isDisabled && closeOnSelect) {
           onClose && onClose();
         }
         break;

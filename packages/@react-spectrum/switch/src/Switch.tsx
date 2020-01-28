@@ -16,11 +16,10 @@ import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
+import {usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
-
-import {usePress} from '@react-aria/interactions';
 
 function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
