@@ -86,7 +86,6 @@ governing permissions and limitations under the License.
   border-inline-start: var(--spectrum-selectlist-border-size-key-focus) solid transparent;
 
   min-block-size: var(--spectrum-selectlist-option-height);
-  height: 1px; /* lol css, hacking for the moment https://stackoverflow.com/questions/14752188/nested-div-does-not-fill-parent-div-with-min-height-100/14752346 */
 
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
@@ -205,6 +204,11 @@ governing permissions and limitations under the License.
 }
 .spectrum-Menu-keyboard {
   grid-area: keyboard;
+  align-self: center;
+  padding-inline-start: var(--spectrum-global-dimension-size-125);
+}
+.spectrum-Menu-keyboard {
+  grid-area: keyboardIcon;
   align-self: center;
   padding-inline-start: var(--spectrum-global-dimension-size-125);
 }
