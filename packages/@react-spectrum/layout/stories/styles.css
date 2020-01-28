@@ -1,0 +1,55 @@
+.spectrum-Card {
+  border: 1px solid rgb(25, 25, 25);
+  border-radius: 4px;
+  background: rgb(50, 50, 50);
+  max-width: 300px;
+}
+
+.heading {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 14px 48px 1fr 1fr 14px;
+  grid-template-rows: minmax(auto, 168px) 32px 16px auto auto auto;
+  grid-template-areas:
+    "preview preview    preview  preview   preview"
+    ".       avatar     .        .         ."
+    ".       avatar     .        .         ."
+    ".       title      title    title     ."
+    ".       body       body     body      ."
+    ".       divider    divider  divider   ."
+    ".       footer     footer   footer    .";
+}
+
+.preview {
+  grid-area: preview-start / preview-start / span 2 /preview-end;
+}
+
+.avatar {
+  grid-area: avatar;
+  z-index: 1;
+  height: 48px;
+  width: 48px;
+}
+
+.title {
+  grid-area: title;
+  margin: 5px 0;
+}
+
+.body {
+  grid-area: body;
+}
+
+.divider {
+  grid-area: divider;
+  width: 100%;
+}
+
+.footer {
+  grid-area: footer;
+  margin-bottom: 5px;
+}
