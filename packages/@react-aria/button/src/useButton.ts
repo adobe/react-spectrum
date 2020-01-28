@@ -3,7 +3,7 @@ import {chain, mergeProps} from '@react-aria/utils';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {useHoverResponderContext, usePress} from '@react-aria/interactions';
+import {useDOMPropsResponderContext, usePress} from '@react-aria/interactions';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -57,7 +57,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   // 1TODO: pull the two following lines out into a seperate file called useDOMPropsResponder
-  useHoverResponderContext({ref});
+  useDOMPropsResponderContext({ref});
   let contextProps = useContext(DOMPropsResponderContext) || {};
 
   let {focusableProps} = useFocusable(props, ref);
