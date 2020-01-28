@@ -10,23 +10,35 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {Text} from '@react-spectrum/typography';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
+  let {
+    variant,
+    children,
+    secondaryLabel,
+    cancelLabel,
+    primaryLabel,
+    autoFocusButton,
+    title,
+    isConfirmDisabled,
+    onCancel,
+    onConfirm,
+  } = props;
 
   let confirmVariant = 'negative' as 'negative' | 'primary' | 'cta';
-  if (props.variant && (props.variant === 'information' || props.variant === 'error')) {
+  if (variant && (variant === 'information' || variant === 'error')) {
     confirmVariant = 'primary';
-  } else if (props.variant && props.variant === 'confirmation') {
+  } else if (variant && variant === 'confirmation') {
     confirmVariant = 'cta';
   }
 
   return (
-    <Dialog UNSAFE_className={classNames(styles, `spectrum-Dialog--${props.variant}`)}>
-      <Header><Text slot="title">{props.title}</Text>{props.variant === 'error' && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+    <Dialog UNSAFE_className={classNames(styles, `spectrum-Dialog--${variant}`)}>
+      <Header><Text slot="title">{title}</Text>{variant === 'error' && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
-      <Content>{props.children}</Content>
+      <Content>{children}</Content>
       <Footer>
-        {props.secondaryLabel && <Button variant="secondary" onPress={() => props.onConfirm('secondary')} autoFocus={props.autoFocusButton === 'secondary'}>{props.secondaryLabel}</Button>}
-        <Button variant="secondary" onPress={props.onCancel} autoFocus={props.autoFocusButton === 'cancel'}>{props.cancelLabel}</Button>
-        <Button variant={confirmVariant} onPress={() => props.onConfirm('primary')} isDisabled={props.isConfirmDisabled} autoFocus={props.autoFocusButton === 'primary'}>{props.primaryLabel}</Button>
+        {secondaryLabel && <Button variant="secondary" onPress={() => onConfirm('secondary')} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
+        {cancelLabel && <Button variant="secondary" onPress={onCancel} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
+        <Button variant={confirmVariant} onPress={() => onConfirm('primary')} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
       </Footer>
     </Dialog>
   );

@@ -120,6 +120,61 @@ storiesOf('Dialog/Alert', module)
       onConfirm: action('confirm'),
       onCancel: action('cancel')
     })
+  )
+  .add(
+    'primary disabled',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      isConfirmDisabled: true
+    })
+  )
+  .add(
+    'autoFocus primary',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      secondaryLabel: 'Secondary button',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      autoFocusButton: 'primary'
+    })
+  )
+  .add(
+    'autoFocus secondary',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      secondaryLabel: 'Secondary button',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      autoFocusButton: 'secondary'
+    })
+  )
+  .add(
+    'autoFocus cancel',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      secondaryLabel: 'Secondary button',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      autoFocusButton: 'cancel'
+    })
   );
 
 function render({width = 'auto', ...props}) {
