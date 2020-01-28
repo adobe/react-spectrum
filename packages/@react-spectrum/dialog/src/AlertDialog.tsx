@@ -20,7 +20,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     title,
     isConfirmDisabled,
     onCancel,
-    onConfirm,
+    onConfirm
   } = props;
 
   let confirmVariant = 'negative' as 'negative' | 'primary' | 'cta';

@@ -1,13 +1,13 @@
+import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {Content, Footer, Header} from '@react-spectrum/view';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
-import {action} from '@storybook/addon-actions';
 
 storiesOf('DialogTrigger', module)
   // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
