@@ -7,7 +7,7 @@ export interface PaginationBase extends ValueBase<Number> {
 }
 
 export interface PaginationProps {
-  value?: any, // not sure why typescript doesn't like string, number, combo of both or any of the above from a ValueBase extension
+  value?: any,
   maxValue?: number,
   defaultValue?: number | Number,
   onChange?: (val: Number) => void
