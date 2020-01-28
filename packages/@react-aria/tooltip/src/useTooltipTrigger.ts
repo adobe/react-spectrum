@@ -22,10 +22,8 @@ interface TooltipTriggerProps {
   type: string
 }
 
-// @ts-ignore
 interface TooltipTriggerAria {
   baseProps: AllHTMLAttributes<HTMLElement> & PressProps,
-  // @ts-ignore
   hoverTriggerProps: AllHTMLAttributes<HTMLElement>,
 }
 
@@ -148,12 +146,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     hoverTriggerProps: {
       onMouseEnter: enter,
       onMouseLeave: exit,
-      // @ts-ignore
       handleDelayedShow: handleDelayedShow,
-      handleDelayedHide: handleDelayedHide
-    },
-    hoverHook: {
-      hoverH: hoverProps
+      handleDelayedHide: handleDelayedHide,
+      hoverHookProps: hoverProps
     }
   };
 }
