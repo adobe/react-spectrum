@@ -5,11 +5,11 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
 import React from 'react';
-import {SpectrumAlertDialog} from '@react-types/dialog';
+import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {Text} from '@react-spectrum/typography';
 
-export function AlertDialog(props: SpectrumAlertDialog) {
+export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   let confirmVariant = 'negative' as 'negative' | 'primary' | 'cta';
   if (props.variant && (props.variant === 'information' || props.variant === 'error')) {

@@ -39,7 +39,6 @@ governing permissions and limitations under the License.
 .spectrum-Dialog {
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: flex;
-  flex-direction: column;
 
   /* Allow 100% width, taking into account padding */
   box-sizing: border-box;
@@ -48,6 +47,11 @@ governing permissions and limitations under the License.
   width: fit-content;
   min-width: var(--spectrum-dialog-min-width);
   max-width: 100%;
+
+  /* made up value */
+  max-height: 90vh;
+
+  overflow: hidden;
 
   outline: none;
   border-radius: var(--spectrum-dialog-border-radius);
@@ -80,7 +84,7 @@ governing permissions and limitations under the License.
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
   grid-template-columns: var(--spectrum-dialog-padding) auto var(--spectrum-dialog-padding);
-  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto auto auto var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
     "hero hero    hero"
     ".    .       closeButton"
@@ -89,6 +93,7 @@ governing permissions and limitations under the License.
     ".    content ."
     ".    footer  ."
     ".    .       .";
+  width: 100%;
 }
 
 .spectrum-Dialog-header {
@@ -122,7 +127,7 @@ governing permissions and limitations under the License.
 
   /*
   v2 is currently worse, inputs that get focus rings get a slight clipping unless overflow: visible replaces this line
-  we should think of a better way to handle this
+  we should think of a better way to handle this, see padding/margin below for fix
   */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -132,24 +137,31 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-dialog-content-text-size);
   font-weight: var(--spectrum-dialog-content-text-font-weight);
   line-height: var(--spectrum-dialog-content-text-line-height);
+
+  /* this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped. is there a better way to treat this */
+  padding: 0 2px;
+  margin: 0 -2px;
 }
 
 
 .spectrum-Dialog-footer {
   grid-area: footer;
+  /* this padding isn't built into the grid because it disappears with this footer */
   padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
 
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
 
   outline: none; /* Hide focus outline */
 
+  margin-top: calc(-1 * var(--spectrum-dialog-button-margin));
+
   /* Both selectors are required to override the button + button rule */
   > *,
   > .spectrum-Button + .spectrum-Button {
-    margin-top: 0;
+    margin-top: var(--spectrum-dialog-button-margin);
     margin-bottom: 0;
-    margin-left: calc(var(--spectrum-dialog-button-margin) / 2);
   }
 }
 
@@ -178,8 +190,8 @@ governing permissions and limitations under the License.
   align-self: start;
   justify-self: start;
   /* made up a positioning values */
-  top: var(--spectrum-dialog-button-margin);
-  right: var(--spectrum-dialog-button-margin);
+  inset-block-start: var(--spectrum-dialog-button-margin);
+  inset-inline-end: var(--spectrum-dialog-button-margin);
 }
 
 .spectrum-Dialog--dismissable {
@@ -209,12 +221,10 @@ governing permissions and limitations under the License.
   max-height: none;
   max-width: none;
 
-  padding-top: var(--spectrum-dialog-fullscreen-padding-top);
-
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
     grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
-    grid-template-rows: var(--spectrum-dialog-padding) auto auto auto var(--spectrum-dialog-padding);
+    grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr var(--spectrum-dialog-padding);
     grid-template-areas:
       ".    .       .       ."
       ".    header  footer  ."

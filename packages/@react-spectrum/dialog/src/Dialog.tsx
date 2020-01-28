@@ -3,8 +3,8 @@ import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, useContext, useRef} from 'react';
-import {SpectrumDialogProps} from '@react-types/dialog';
+import React, {useContext, useRef} from 'react';
+import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
@@ -15,6 +15,7 @@ export function Dialog(props: SpectrumDialogProps) {
   } = useContext(DialogContext) || {} as DialogContextValue;
   let {
     children,
+    isDismissable,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -26,7 +27,7 @@ export function Dialog(props: SpectrumDialogProps) {
       ),
       styleProps
     ),
-    {className: classNames(styles, {'spectrum-Dialog--dismissable': otherProps.isDismissable})}
+    {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
     );
 
   if (type === 'popover') {
@@ -36,7 +37,7 @@ export function Dialog(props: SpectrumDialogProps) {
   }
 }
 
-function ModalDialog(props: HTMLAttributes<HTMLElement>) {
+function ModalDialog(props: SpectrumBaseDialogProps) {
   let {modalProps} = useModalDialog();
   return <BaseDialog {...mergeProps(props, modalProps)} />;
 }
@@ -49,7 +50,7 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-function BaseDialog({children, slots, size = 'L', ...otherProps}: HTMLAttributes<HTMLElement>) {
+function BaseDialog({children, slots, size = 'L', ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
   let {dialogProps} = useDialog({ref});
   if (!slots) {
@@ -66,6 +67,7 @@ function BaseDialog({children, slots, size = 'L', ...otherProps}: HTMLAttributes
     };
   }
 
+  /* possible weird bug where radio group isn't a single tab stop, FocusScope? */
   return (
     <FocusScope contain restoreFocus autoFocus>
       <div
