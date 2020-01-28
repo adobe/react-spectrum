@@ -2,8 +2,8 @@ import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
-import {useFocusable} from '@react-aria/focus';
 import {useDOMPropsResponderContext, usePress} from '@react-aria/interactions';
+import {useFocusable} from '@react-aria/focus';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
