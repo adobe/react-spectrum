@@ -1,10 +1,9 @@
-import {chain} from '@react-aria/utils';
+import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, RefObject} from 'react';
-import {PressProps} from '@react-aria/interactions';
+import {HTMLAttributes, HTMLAttributes, RefObject} from 'react';
+import {PressProps, useHover} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
-import {useId} from '@react-aria/utils';
 import {useOverlay} from '@react-aria/overlays';
 
 interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
@@ -15,13 +14,25 @@ interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
   triggerProps: TriggerRefProps,
   state: TooltipTriggerState,
+  isDisabled: boolean,
   type: string
+}
+
+interface TooltipHoverTriggerProps {
+  onMouseEnter?: () => void,
+  onMouseLeave?: () => void,
+  hoverHookProps?: HTMLAttributes<HTMLElement>
 }
 
 interface TooltipTriggerAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps
-  tooltipProps: HTMLAttributes<HTMLElement>
+  tooltipProps: HTMLAttributes<HTMLElement>,
+  hoverTriggerProps: TooltipHoverTriggerProps
 }
+
+let visibleTooltips;
+let hoverHideTimeout = null;
+let hoverShowTimeout = null;
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let tooltipId = useId();
@@ -29,6 +40,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipProps,
     triggerProps,
     state,
+    isDisabled,
     type
   } = props;
 
@@ -42,6 +54,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     isOpen: state.open
   });
 
+  let {hoverProps} = useHover({
+    isDisabled,
+    ref: triggerProps.ref
+  });
+
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
       // dismiss tooltip on esc key press
@@ -53,8 +70,52 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  let handleDelayedShow = () => {
+
+    if (isDisabled) {
+      return;
+    }
+
+    let triggerId = triggerProps.ref.current.id;
+    // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
+    // a.k.a if user is moving back and forth between trigger and tooltip
+    if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
+      clearTimeout(hoverHideTimeout);
+      hoverHideTimeout = null;
+      return;
+    }
+
+    hoverShowTimeout = setTimeout(() => {
+      hoverShowTimeout = null;
+      state.setOpen(true);
+
+      // Close previously open tooltip (deals with tooltip opened via click operation)
+      if (visibleTooltips) {
+        visibleTooltips.state.setOpen(false);
+      }
+
+      visibleTooltips = {triggerId, state};
+    }, 300);
+  };
+
+  let handleDelayedHide = () => {
+    if (hoverShowTimeout != null) {
+      clearTimeout(hoverShowTimeout);
+      hoverShowTimeout = null;
+      return;
+    }
+
+    hoverHideTimeout = setTimeout(() => {
+      hoverHideTimeout = null;
+      state.setOpen(false);
+      visibleTooltips = null;
+    }, 300);
+  };
+
   let onPress = () => {
+    let triggerId = triggerProps.ref.current.id;
     state.setOpen(!state.open);
+    visibleTooltips = {triggerId, state};
   };
 
   let triggerType = type;
@@ -69,6 +130,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     },
     tooltipProps: {
       id: tooltipId
+    },
+    hoverTriggerProps: {
+      onMouseEnter: handleDelayedShow,
+      onMouseLeave: handleDelayedHide,
+      hoverHookProps: hoverProps
     }
   };
 }
