@@ -4,9 +4,9 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Flex} from '@react-spectrum/layout';
 import {Item, Menu, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -393,6 +393,8 @@ storiesOf('Menu', module)
             <Item>
               <AlignCenter size="S" />
               <Text slot="label">Doggo</Text>
+              <Text slot="tools">Value</Text>
+              <ChevronRightMedium slot="keyboardIcon" />
             </Item>
             <Item>
               <AlignRight size="S" />

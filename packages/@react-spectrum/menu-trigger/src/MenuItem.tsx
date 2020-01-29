@@ -71,7 +71,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
             label: styles['spectrum-Menu-itemLabel'],
             tools: styles['spectrum-Menu-tools'],
             icon: styles['spectrum-Menu-icon'],
-            detail: styles['spectrum-Menu-detail'],
+            description: styles['spectrum-Menu-description'],
             keyboardIcon: styles['spectrum-Menu-keyboard']}}>
           {!Array.isArray(rendered) && (
             <Text slot="label">
