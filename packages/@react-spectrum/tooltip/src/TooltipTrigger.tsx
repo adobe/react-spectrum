@@ -1,7 +1,7 @@
 import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef} from 'react';
+import React, {Fragment, ReactElement, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
