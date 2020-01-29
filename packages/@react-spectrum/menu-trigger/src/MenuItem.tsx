@@ -1,4 +1,3 @@
-import {Checkbox} from '@react-spectrum/checkbox';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -56,7 +55,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected && selectionMode === 'single'
+            'is-selected': isSelected
           }
         )}>
         <Grid
