@@ -1,6 +1,6 @@
 import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 import {PressProps, useHover} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';

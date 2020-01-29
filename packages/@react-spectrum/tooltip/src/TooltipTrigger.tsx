@@ -69,12 +69,12 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <Fragment>
         <DOMPropsResponder
-        {...triggerProps}
-        {...hoverTriggerProps}
-        ref={triggerRef}
-        isDisabled={isDisabled}>
-        {trigger}
-        {overlay}
+          {...triggerProps}
+          {...hoverTriggerProps}
+          ref={triggerRef}
+          isDisabled={isDisabled}>
+          {trigger}
+          {overlay}
         </DOMPropsResponder>
       </Fragment>
     );
