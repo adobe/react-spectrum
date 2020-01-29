@@ -1,13 +1,9 @@
 import {Button} from '@react-spectrum/button';
-import {classNames} from '@react-spectrum/utils';
 import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
-import {MenuContext} from '../src/context';
-import {MenuTrigger} from '../';
-import {mergeProps} from '@react-aria/utils';
+import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React, {useContext} from 'react';
+import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
@@ -44,9 +40,11 @@ function renderComponent(Component, props) {
               {triggerText}
             </Button>
             <Menu>
-              <li>Foo</li>
-              <li>Bar</li>
-              <li>Baz</li>
+              <Section>
+                <Item>Foo</Item>
+                <Item>Bar</Item>
+              </Section>
+              <Item>Baz</Item>
             </Menu>
           </Component>
         </div>
@@ -56,15 +54,26 @@ function renderComponent(Component, props) {
 }
 
 describe('MenuTrigger', function () {
+  let offsetWidth, offsetHeight;
   let onOpenChange = jest.fn();
   let onOpen = jest.fn();
   let onClose = jest.fn();
+
+  beforeAll(function () {
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+  });
 
   afterEach(() => {
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();
     cleanup();
+  });
+
+  afterAll(function () {
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
   });
 
   function verifyMenuToggle(Component, props, triggerEvent) {
@@ -254,43 +263,3 @@ describe('MenuTrigger', function () {
     expect(menu).not.toBeInTheDocument();
   });
 });
-
-
-// This is a filler Menu component, the new Menu component doesn't seem to play well with the testing framework
-// since it only renders the first Item in the Menu. Will need to investigate further since it works in storybook
-// so for now use this mock Menu
-
-function Menu(props) {
-  let contextProps = useContext(MenuContext) || {};
-  let {
-    id,
-    role = 'menu',
-    'aria-labelledby': labelledBy,
-    children
-  } = mergeProps(contextProps, props);
-
-  let menuProps = {
-    id,
-    role,
-    'aria-labelledby': labelledBy
-  };
-
-  children = React.Children.map(children, (c) => 
-    React.cloneElement(c, {
-      className: classNames(
-        styles,
-        'spectrum-Menu-item'
-      )
-    })
-  );
-
-  return (
-    <ul
-      {...menuProps}
-      className={classNames(
-        styles,
-        'spectrum-Menu')}>
-      {children}
-    </ul>
-  );
-}
