@@ -10,8 +10,8 @@ describe('useNumberField tests', function () {
   let preventDefault = jest.fn();
   let increment = jest.fn();
   let decrement = jest.fn();
-  let minValue = 0;
-  let maxValue = 20;
+  // let minValue = 0;
+  // let maxValue = 20;
   let event = (key) => ({
     key,
     preventDefault
@@ -23,22 +23,22 @@ describe('useNumberField tests', function () {
   };
 
   beforeEach(() => {
-    state.value =7;
+    state.value = 7;
     state.ref = {current: 7};
-    //state.onChange = setValue;
+    state.onChange = setValue;
     state.increment = increment;
     state.decrement = decrement;
-    //state.validationState = false;
+    state.validationState = false;
   });
 
   afterEach(() => {
-    //preventDefault.mockClear();
-    //setValue.mockClear();
+    preventDefault.mockClear();
+    setValue.mockClear();
     increment.mockClear();
     decrement.mockClear();
-    //state.value = 1;
-    //state.validationState = false
-    //state.ref = {};
+    state.value = 1;
+    state.validationState = false
+    state.ref = {};
   });
 
   it('handles defaults', () => {
@@ -60,17 +60,17 @@ describe('useNumberField tests', function () {
     // };
     // state.value = 6
     // state.onChange(mockEvent)
-    console.log('laskjdfalks;jfkals;', state.value) // 7
+    console.log('xyz', state.value) // 7
     //expect(state.onChange).toHaveBeenCalledTimes(1);
     //expect(state.onChange).toHaveBeenCalledWith(mockEvent.target.value);
     // expect(state.validationState).toBe('invalid');
-    expect(state.validationState).toBe(undefined);
+    // expect(state.validationState).toBe(undefined);
     numberFieldProps.decrementButtonProps.onPress(event('click'));
     numberFieldProps.decrementButtonProps.onPress();
-    console.log('laskjdfalks;jfkals;', state.value) // .... should be 6 ... but its still 7
-    expect(state.validationState).toBe('invalid');
+    console.log('xyz', state.value) // .... should be 6 ... but its still 7
+    expect(state.validationState).toBe('invalid'); // getting glase here instead
     numberFieldProps.decrementButtonProps.onPress(event('click'));
-    console.log('laskjdfalks;jfkals;', state.value) // should be 5 ... but its still 7
+    console.log('xyz', state.value) // should be 5 ... but its still 7
     numberFieldProps.decrementButtonProps.onPress(event('click'));
     expect(state.validationState).toBe(false);
 

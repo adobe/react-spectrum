@@ -144,6 +144,42 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
+  `('$Name failed attempt 1', ({Component}) => {
+    let {
+      container,
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, value: 3});
+
+    expect(container).toBeTruthy();
+    expect(container).toHaveAttribute('role', 'group');
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+    triggerPress(decrementButton);
+    expect(onChangeSpy).toHaveBeenCalledWith(2); // doesn't get called because the testing framework won't let it go below min
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name failed attempt 2', ({Component}) => {
+    let {
+      container,
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, value: 2});
+
+    expect(container).toBeTruthy();
+    expect(container).toHaveAttribute('role', 'group');
+    expect(container).toHaveAttribute('aria-invalid', 'true'); // the framework thinks this should be false for some reason ...
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
   `('$Name can hide step buttons', ({Component}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: false});
 
