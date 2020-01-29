@@ -56,16 +56,18 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  // TODO: pull out the following two lines into a separate function
+  // TODO: pull out the following two lines into a separate function called useDOMPropsResponder
+  // call filterDOMProps to remove console warnings?
   useDOMPropsResponderContext({ref});
   let contextProps = useContext(DOMPropsResponderContext) || {};
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
+  let interactions = mergeProps(contextProps, handlers);
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(contextProps, {
+    buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-invalid': validationState === 'invalid' ? true : null,
