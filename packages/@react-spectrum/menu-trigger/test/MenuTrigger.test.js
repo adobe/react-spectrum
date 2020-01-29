@@ -16,15 +16,23 @@ let theme = {
   medium: scaleMedium
 };
 
-function renderComponent(Component, props) {
+let withSection = [
+  {name: 'Heading 1', children: [
+    {name: 'Foo'},
+    {name: 'Bar'},
+    {name: 'Baz'}
+  ]}
+];
+
+function renderComponent(Component, triggerProps = {}, menuProps = {}) {
   if (Component === V2Dropdown) {
     return render(
-      <Component {...props}>
+      <Component {...triggerProps}>
         <V2Button
           variant="cta">
           {triggerText}
         </V2Button>
-        <V2Menu>
+        <V2Menu {...menuProps}>
           <V2MenuItem value="foo">Foo</V2MenuItem>
           <V2MenuItem value="bar">Bar</V2MenuItem>
           <V2MenuItem value="baz">Baz</V2MenuItem>
@@ -35,16 +43,23 @@ function renderComponent(Component, props) {
     return render(
       <Provider theme={theme}>
         <div data-testid="scrollable">
-          <Component {...props}>
+          <Component {...triggerProps}>
             <Button>
               {triggerText}
             </Button>
-            <Menu>
+            {/* <Menu {...menuProps}>
               <Section>
                 <Item>Foo</Item>
                 <Item>Bar</Item>
               </Section>
               <Item>Baz</Item>
+            </Menu> */}
+            <Menu items={withSection} itemKey="name" {...menuProps}>
+              {item => (
+                <Section items={item.children} title={item.name}>
+                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
             </Menu>
           </Component>
         </div>
@@ -58,6 +73,8 @@ describe('MenuTrigger', function () {
   let onOpenChange = jest.fn();
   let onOpen = jest.fn();
   let onClose = jest.fn();
+  let onSelect = jest.fn();
+  let onSelectionChange = jest.fn();
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
@@ -68,6 +85,8 @@ describe('MenuTrigger', function () {
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();
+    onSelect.mockClear();
+    onSelectionChange.mockClear();
     cleanup();
   });
 
@@ -76,8 +95,8 @@ describe('MenuTrigger', function () {
     offsetHeight.mockReset();
   });
 
-  function verifyMenuToggle(Component, props, triggerEvent) {
-    let tree = renderComponent(Component, props);
+  function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
+    let tree = renderComponent(Component, triggerProps, menuProps);
     let triggerButton = tree.getByRole('button');
 
     if (Component === MenuTrigger) {
@@ -150,7 +169,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
   `('$Name toggles the menu display on button click', function ({Component, props}) {
-    verifyMenuToggle(Component, props, (button) => triggerPress(button));
+    verifyMenuToggle(Component, props, {}, (button) => triggerPress(button));
   });
 
   // Enter and Space keypress tests are ommitted since useMenuTrigger doesn't have space and enter cases in it's key down
@@ -160,7 +179,7 @@ describe('MenuTrigger', function () {
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name can toggle the menu display via ArrowUp key', function ({Component, props}) {
-    verifyMenuToggle(Component, props, (button) => fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38}));
+    verifyMenuToggle(Component, props, {}, (button) => fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38}));
   });
 
   it.each`
@@ -168,7 +187,51 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
   `('$Name can toggle the menu display via ArrowDown key', function ({Component, props}) {
-    verifyMenuToggle(Component, props, (button) => fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40}));
+    verifyMenuToggle(Component, props, {}, (button) => fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40}));
+  });
+
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
+    ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
+  `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
+    let tree = renderComponent(Component, props, {onSelectionChange});
+    expect(onOpenChange).toBeCalledTimes(0);
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    await waitForDomChange();
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    if (Component === MenuTrigger) {
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toBeCalledTimes(0);
+    } else {
+      expect(onOpen).toBeCalledTimes(1);
+      expect(onClose).toBeCalledTimes(0);
+      expect(onSelect).toBeCalledTimes(0);
+    }
+
+    let menuItem1 = within(menu).getByText('Foo');
+    expect(menuItem1).toBeTruthy();
+    triggerPress(menuItem1);
+    
+    if (Component === MenuTrigger) {
+      expect(onSelectionChange).toBeCalledTimes(1);
+    } else {
+      expect(onSelect).toBeCalledTimes(1);
+    }
+
+    expect(menu).toBeInTheDocument();  
+    
+    if (Component === MenuTrigger) {
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(onOpenChange).toBeCalledTimes(1);
+    } else {
+      expect(button).toHaveAttribute('aria-expanded');
+      expect(onOpen).toBeCalledTimes(1);
+      expect(onClose).toBeCalledTimes(0);
+    }
   });
 
   // New functionality in v3
@@ -261,5 +324,85 @@ describe('MenuTrigger', function () {
     fireEvent.mouseUp(document.body);
     await waitForDomChange();
     expect(menu).not.toBeInTheDocument();
+  });
+
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
+  `('$Name can be disabled', async function ({Component, props}) {
+    let tree = renderComponent(Component, props);
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    let menu = tree.queryByRole('menu');
+    expect(menu).toBeNull();
+    expect(onOpenChange).toBeCalledTimes(0);
+  });
+
+  describe('default focus behavior', function () {
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name autofocuses the selected item on menu open', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+      triggerPress(button);
+
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via down arrow still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      await waitForDomChange();
+      menu = tree.getByRole('menu');
+      menuItems = within(menu).getAllByRole('menuitemradio');
+      selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+      triggerPress(button);
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via up arrow still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      await waitForDomChange();
+      menu = tree.getByRole('menu');
+      menuItems = within(menu).getAllByRole('menuitemradio');
+      selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name focuses the last item on ArrowUp if there isn\'t a selected item', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[menuItems.length - 1];
+      expect(selectedItem).toBe(document.activeElement);
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name focuses the first item on ArrowDown if there isn\'t a selected item', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[0];
+      expect(selectedItem).toBe(document.activeElement);
+    });
   });
 });
