@@ -703,7 +703,7 @@ describe('DatePicker', function () {
         testBackspace('Second', new Date(2019, 1, 3, 5, 5, 59), new Date(2019, 1, 3, 5, 5, 5));
       });
 
-      it('should support backspace with arabic digits', function () {
+      it.skip('should support backspace with arabic digits', function () {
         let onChange = jest.fn();
         let {getByLabelText} = render(
           <Provider theme={theme} locale="ar-EG">
