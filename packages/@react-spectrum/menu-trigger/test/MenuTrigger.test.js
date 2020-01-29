@@ -522,4 +522,84 @@ describe('MenuTrigger', function () {
     });
 
   });
+
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
+  `('$Name can be disabled', async function ({Component, props}) {
+    let tree = renderComponent(Component, props);
+    let button = tree.getByRole('button');
+    triggerPress(button);
+    let menu = tree.queryByRole('menu');
+    expect(menu).toBeNull();
+    expect(onOpenChange).toBeCalledTimes(0);
+  });
+
+  describe('default focus behavior', function () {
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name autofocuses the selected item on menu open', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+      triggerPress(button);
+
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via down arrow still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      await waitForDomChange();
+      menu = tree.getByRole('menu');
+      menuItems = within(menu).getAllByRole('menuitemradio');
+      selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+      triggerPress(button);
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via up arrow still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      await waitForDomChange();
+      menu = tree.getByRole('menu');
+      menuItems = within(menu).getAllByRole('menuitemradio');
+      selectedItem = menuItems[1];
+      expect(selectedItem).toBe(document.activeElement);
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name focuses the last item on ArrowUp if there isn\'t a selected item', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[menuItems.length - 1];
+      expect(selectedItem).toBe(document.activeElement);
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name focuses the first item on ArrowDown if there isn\'t a selected item', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      await waitForDomChange();
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let selectedItem = menuItems[0];
+      expect(selectedItem).toBe(document.activeElement);
+    });
+  });
 });
