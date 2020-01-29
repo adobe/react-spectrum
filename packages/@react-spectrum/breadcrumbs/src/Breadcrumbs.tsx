@@ -29,9 +29,9 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let listRef = useRef(null);
 
-  let {visibleItems} = useBreadcrumbsState(props, listRef);
+  let {visibleItems, setVisibleItems} = useBreadcrumbsState(props);
 
-  let {breadcrumbProps} = useBreadcrumbs(props);
+  let {breadcrumbProps} = useBreadcrumbs(props, {visibleItems, setVisibleItems}, listRef);
 
   if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
