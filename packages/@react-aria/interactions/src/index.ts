@@ -6,5 +6,6 @@ export * from './useKeyboard';
 export * from './useFocus';
 export * from './useFocusWithin';
 export * from './useFocusVisible';
+export * from './useHover';
 export * from './DOMPropsResponder';
 export * from './DOMPropsContext';
