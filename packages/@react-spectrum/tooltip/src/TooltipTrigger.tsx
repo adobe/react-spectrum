@@ -4,7 +4,7 @@ import {Overlay} from '@react-spectrum/overlays';
 import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
 import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
-import {useTooltipState} from '@react-stately/tooltip';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 
 interface TooltipTriggerProps extends PositionProps {
@@ -28,7 +28,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let [trigger, content] = React.Children.toArray(children);
 
-  let state = useTooltipState(props);
+  let state = useTooltipTriggerState(props);
 
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();

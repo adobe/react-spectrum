@@ -7,7 +7,7 @@ export interface TooltipState {
 
 // TODO: add tooltip to react-types and import TooltipTriggerProps from it to get rid of this typescript error
 // @ts-ignore
-export function useTooltipState(props: TooltipTriggerProps): TooltipState {
+export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipState {
   let [open, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   return {
