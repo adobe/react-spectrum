@@ -126,11 +126,12 @@ storiesOf('MenuTrigger', module)
               <Item>
                 <Cut size="S" />
                 <Text slot="label">Cut</Text>
+                <Keyboard slot="keyboardIcon">⌘X</Keyboard>
               </Item>
               <Item>
                 <Paste size="S" />
                 <Text slot="label">Paste</Text>
-                <Switch slot="tools" isEmphasized />
+                <Keyboard slot="keyboardIcon">⌘V</Keyboard>
               </Item>
             </Section>
             <Section title="Section 2">

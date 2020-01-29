@@ -7,7 +7,6 @@ import React, {forwardRef, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
-import {usePress} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
@@ -31,8 +30,6 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   let markIcon = isIndeterminate
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
     : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
-
-  let {pressProps} = usePress({ref: inputRef});
 
   return (
     <label
@@ -60,7 +57,6 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
-          {...pressProps}
           ref={inputRef}
           className={classNames(styles, 'spectrum-Checkbox-input')} />
       </FocusRing>

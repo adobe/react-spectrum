@@ -30,7 +30,6 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/checkbox": "^3.0.0-rc.1",
     "@react-aria/focus": "^3.0.0-rc.1",
-    "@react-aria/interactions": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/toggle": "^3.0.0-rc.1",
     "@react-types/checkbox": "^3.0.0-rc.1",

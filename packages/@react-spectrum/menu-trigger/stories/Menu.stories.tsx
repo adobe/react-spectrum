@@ -268,7 +268,7 @@ storiesOf('Menu', module)
     'Multiselect menu',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Kangaroo', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -377,11 +377,12 @@ storiesOf('Menu', module)
             <Item>
               <Cut size="S" />
               <Text slot="label">Cut</Text>
+              <Keyboard slot="keyboardIcon">⌘X</Keyboard>
             </Item>
             <Item>
               <Paste size="S" />
               <Text slot="label">Paste</Text>
-              <Switch slot="tools" isEmphasized />
+              <Keyboard slot="keyboardIcon">⌘V</Keyboard>
             </Item>
           </Section>
           <Section title="Section 2">
@@ -429,7 +430,7 @@ let customMenuItem = (item) => {
     <Item childItems={item.children}>
       {item.icon && <Icon size="S" />}
       <Text slot="label">{item.name}</Text>
-      {/* {item.shortcut && <Keyboard slot="keyboardIcon">{item.shortcut}</Keyboard>} */}
+      {item.shortcut && <Keyboard slot="keyboardIcon">{item.shortcut}</Keyboard>}
     </Item>
   );	
 };
