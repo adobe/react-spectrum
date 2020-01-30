@@ -1,13 +1,11 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode} from 'react';
 import styles from '../style/index.css';
 import {TabList} from './TabList';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTabListState} from '@react-stately/tabs';
 import {useTabs} from '@react-aria/tabs';
-
-type Orientation = 'horizontal' | 'vertical';
 
 interface TabProps extends DOMProps, StyleProps {
   icon?: ReactNode,
