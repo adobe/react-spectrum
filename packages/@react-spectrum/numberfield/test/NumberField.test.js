@@ -141,10 +141,6 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
-
-
-  // clone this test -> use value instad of default value
-  // textfield should be undefined
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
@@ -181,6 +177,34 @@ describe('NumberField', function () {
 
     triggerPress(decrementButton);
     expect(container).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name scrolling upwards can toggle aria label', ({Component}) => {
+    let {
+      textField
+    } = renderNumberField(Component, {minValue: 3, defaultValue: 2});
+
+    expect(textField).toHaveAttribute('aria-invalid', 'true');
+    fireEvent.focus(textField);
+    fireEvent.wheel(textField, {deltaY: -10});
+    expect(textField).not.toHaveAttribute('aria-invalid');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name scrolling downwards can toggle aria label', ({Component}) => {
+    let {
+      textField
+    } = renderNumberField(Component, {maxValue: 3, defaultValue: 4});
+
+    expect(textField).toHaveAttribute('aria-invalid', 'true');
+    fireEvent.focus(textField);
+    fireEvent.wheel(textField, {deltaY: 10});
+    expect(textField).not.toHaveAttribute('aria-invalid');
   });
 
   it.each`
