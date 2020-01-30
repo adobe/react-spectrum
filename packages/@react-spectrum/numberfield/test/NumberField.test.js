@@ -82,6 +82,40 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
+  `('$Name handles decrementing input change from valid default to invalid and adds aria-invalid', ({Component}) => {
+    let {
+      container,
+      textField
+    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 0, defaultValue: 0});
+
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+
+    userEvent.type(textField, '-1');
+    expect(onChangeSpy).toHaveBeenCalledWith(-1);
+
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name handles incrementing input change from valid default to invalid and adds aria-invalid', ({Component}) => {
+    let {
+      container,
+      textField
+    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 0, defaultValue: 0});
+
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+
+    userEvent.type(textField, '1');
+    expect(onChangeSpy).toHaveBeenCalledWith(1);
+
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
     ${'v2 NumberField'} | ${NumberInput}
   `('$Name increment value by one when increment button is pressed', ({Component}) => {
     let {incrementButton} = renderNumberField(Component, {onChange: onChangeSpy});
@@ -216,6 +250,22 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('role', 'group');
     expect(container).toHaveAttribute('aria-invalid', 'false');
     triggerPress(decrementButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name onChange is not called when controlled at maxValue and increment is pressed', ({Component}) => {
+    let {
+      container,
+      incrementButton
+    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 3, value: 3});
+
+    expect(container).toBeTruthy();
+    expect(container).toHaveAttribute('role', 'group');
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
