@@ -21,7 +21,6 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
-// props = {ref: domRef}
 export function useDOMPropsResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);

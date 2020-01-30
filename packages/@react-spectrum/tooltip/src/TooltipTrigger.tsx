@@ -7,7 +7,6 @@ import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
-import {useId} from '@react-aria/utils';
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
@@ -58,7 +57,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <Fragment>
         <PressResponder
           {...triggerProps}
-          id={useId()}
           ref={triggerRef}
           isPressed={isOpen}
           isDisabled={isDisabled}>
@@ -73,7 +71,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         <DOMPropsResponder
           {...triggerProps}
           {...hoverTriggerProps}
-          id={useId()}
           ref={triggerRef}
           isDisabled={isDisabled}>
           {trigger}
