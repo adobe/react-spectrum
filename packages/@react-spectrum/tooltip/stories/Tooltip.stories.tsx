@@ -106,41 +106,41 @@ const longMarkup = (
 
 function renderMultipleTriggers(content, props = {}) {
   return (
-   <div>
-     <div>
-       <TooltipTrigger {...props}>
-         <ActionButton>
-           Trigger Tooltip
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...props}>
-         <ActionButton>
-           Trigger Tooltip
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...props}>
-         <ActionButton>
-           Trigger Tooltip
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-   </div>
- );
+    <div>
+      <div>
+        <TooltipTrigger {...props}>
+          <ActionButton>
+            Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...props}>
+          <ActionButton>
+            Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...props}>
+          <ActionButton>
+            Tooltip Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+    </div>
+  );
 }
 
 function renderWithDifferentTriggerTypes(content) {
@@ -149,60 +149,60 @@ function renderWithDifferentTriggerTypes(content) {
 
   return (
     <div>
-     <div>
-       <TooltipTrigger {...hoverProps}>
-         <ActionButton>
-           Hover Trigger
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...clickProps}>
-         <ActionButton>
-           Click Trigger
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...hoverProps}>
-         <ActionButton>
-           Hover Trigger
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...clickProps}>
-         <ActionButton>
-           Click Trigger
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-     <div style={{height: 10}}> </div>
-     <div>
-       <TooltipTrigger {...clickProps}>
-         <ActionButton>
-           Click Trigger
-         </ActionButton>
-         <Tooltip>
-           {content}
-         </Tooltip>
-       </TooltipTrigger>
-     </div>
-   </div>
+      <div>
+        <TooltipTrigger {...hoverProps}>
+          <ActionButton>
+            Hover Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...clickProps}>
+          <ActionButton>
+            Click Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...hoverProps}>
+          <ActionButton>
+            Hover Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...clickProps}>
+          <ActionButton>
+            Click Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+      <div style={{height: 10}}> </div>
+      <div>
+        <TooltipTrigger {...clickProps}>
+          <ActionButton>
+            Click Trigger
+          </ActionButton>
+          <Tooltip>
+            {content}
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+    </div>
   );
 }
