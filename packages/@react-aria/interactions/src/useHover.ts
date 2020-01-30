@@ -21,6 +21,7 @@ interface HoverResult {
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
+// props = {ref: domRef}
 export function useDOMPropsResponderContext(props: HoverHookProps): HoverHookProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);
@@ -119,7 +120,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       setHover(false);
-
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};

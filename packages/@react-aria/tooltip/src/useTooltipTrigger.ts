@@ -36,6 +36,7 @@ let hoverShowTimeout = null;
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let tooltipId = useId();
+  // create your own trigger id 
   let {
     tooltipProps,
     triggerProps,
@@ -43,6 +44,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     isDisabled,
     type
   } = props;
+
+  console.log("triggerProps", triggerProps)
 
   let onClose = () => {
     state.setOpen(false);
@@ -76,7 +79,12 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       return;
     }
 
-    let triggerId = triggerProps.ref.current.id;
+
+
+    let triggerId = triggerProps.ref.current;
+    console.log("xyz")
+    console.log(triggerId)
+    console.log("show id", triggerId)
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
     // a.k.a if user is moving back and forth between trigger and tooltip
     if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
@@ -85,15 +93,18 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       return;
     }
 
+
+    console.log("visible Tooltips", visibleTooltips)
+
+
     hoverShowTimeout = setTimeout(() => {
       hoverShowTimeout = null;
       state.setOpen(true);
-
       // Close previously open tooltip (deals with tooltip opened via click operation)
       if (visibleTooltips) {
         visibleTooltips.state.setOpen(false);
+        console.log("close previously open tooltip")
       }
-
       visibleTooltips = {triggerId, state};
     }, 300);
   };
@@ -108,6 +119,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     hoverHideTimeout = setTimeout(() => {
       hoverHideTimeout = null;
       state.setOpen(false);
+      console.log("close via hide")
       visibleTooltips = null;
     }, 300);
   };
