@@ -45,8 +45,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     type
   } = props;
 
-  console.log("triggerProps", triggerProps)
-
   let onClose = () => {
     state.setOpen(false);
   };
@@ -74,13 +72,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let handleDelayedShow = () => {
-
     if (isDisabled) {
       return;
     }
-
     let triggerId = triggerProps.ref.current.id;
-
     // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
     // a.k.a if user is moving back and forth between trigger and tooltip
     if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {

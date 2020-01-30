@@ -105,7 +105,7 @@ const longMarkup = (
 // These are sample functions for proof of concept in this PR. Can be removed at in the next tooltip related pull request.
 
 function renderMultipleTriggers(content, props = {}) {
- return (
+  return (
    <div>
      <div>
        <TooltipTrigger {...props}>
@@ -144,11 +144,11 @@ function renderMultipleTriggers(content, props = {}) {
 }
 
 function renderWithDifferentTriggerTypes(content) {
- const hoverProps = {placement: 'right' as const, type: 'hover' as const};
- const clickProps = {placement: 'right' as const, type: 'click' as const};
+  const hoverProps = {placement: 'right' as const, type: 'hover' as const};
+  const clickProps = {placement: 'right' as const, type: 'click' as const};
 
   return (
-   <div>
+    <div>
      <div>
        <TooltipTrigger {...hoverProps}>
          <ActionButton>
@@ -204,5 +204,5 @@ function renderWithDifferentTriggerTypes(content) {
        </TooltipTrigger>
      </div>
    </div>
- );
+  );
 }

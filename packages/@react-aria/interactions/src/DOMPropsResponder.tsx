@@ -28,7 +28,7 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMProp
 
   return (
     <DOMPropsResponderContext.Provider value={context}>
-    {children}
+      {children}
     </DOMPropsResponderContext.Provider>
   );
 });
