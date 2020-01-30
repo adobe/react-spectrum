@@ -126,16 +126,6 @@ governing permissions and limitations under the License.
   align-self: flex-start;
 }
 
-/* Should I do the grid positioning for checkmark/chev/switch/checkbox like this or */
-.spectrum-Menu-checkmark,
-.spectrum-Menu-chevron,
-.spectrum-Menu-multiselect-checkbox {
-  /* grid-area: tools;
-  justify-self: end;
-  align-self: center;
-  margin-inline-end: 0px; */
-}
-
 .spectrum-Menu-divider {
   /* Add the correct box sizing for hr in Firefox. */
   box-sizing: content-box;
@@ -182,10 +172,8 @@ governing permissions and limitations under the License.
     ". .    .           .     .   .";
 }
 
-/* should the below be !important? Had to add a .spectrum-Menu to increase the specificity */
+/* Added .spectrum-Menu so paddings from component styles are overriden */
 .spectrum-Menu .spectrum-Menu-tools {
-  /* grid-area: tools;
-  align-self: center; */
   grid-area: tools;
   justify-self: end;
   align-self: center;
