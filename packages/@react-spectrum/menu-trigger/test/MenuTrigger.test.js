@@ -190,50 +190,6 @@ describe('MenuTrigger', function () {
     verifyMenuToggle(Component, props, {}, (button) => fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40}));
   });
 
-  it.each`
-    Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
-  `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
-    let tree = renderComponent(Component, props, {onSelectionChange});
-    expect(onOpenChange).toBeCalledTimes(0);
-    let button = tree.getByRole('button');
-    triggerPress(button);
-    await waitForDomChange();
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-    if (Component === MenuTrigger) {
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onSelectionChange).toBeCalledTimes(0);
-    } else {
-      expect(onOpen).toBeCalledTimes(1);
-      expect(onClose).toBeCalledTimes(0);
-      expect(onSelect).toBeCalledTimes(0);
-    }
-
-    let menuItem1 = within(menu).getByText('Foo');
-    expect(menuItem1).toBeTruthy();
-    triggerPress(menuItem1);
-    
-    if (Component === MenuTrigger) {
-      expect(onSelectionChange).toBeCalledTimes(1);
-    } else {
-      expect(onSelect).toBeCalledTimes(1);
-    }
-
-    expect(menu).toBeInTheDocument();  
-    
-    if (Component === MenuTrigger) {
-      expect(button).toHaveAttribute('aria-expanded', 'true');
-      expect(onOpenChange).toBeCalledTimes(1);
-    } else {
-      expect(button).toHaveAttribute('aria-expanded');
-      expect(onOpen).toBeCalledTimes(1);
-      expect(onClose).toBeCalledTimes(0);
-    }
-  });
-
   // New functionality in v3
   it.each`
     Name             | Component      | props
@@ -271,59 +227,6 @@ describe('MenuTrigger', function () {
 
     expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
-  });
-
-  // New functionality in v3
-  it.each`
-    Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  `('$Name closes the menu upon trigger body scroll', async function ({Component, props}) {
-    let tree = renderComponent(Component, props);
-    let button = tree.getByRole('button');
-    triggerPress(button);
-    await waitForDomChange();
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-
-    let scrollable = tree.getByTestId('scrollable');
-    fireEvent.scroll(scrollable);
-    await waitForDomChange();
-    expect(menu).not.toBeInTheDocument();
-  });
-
-  // Can't figure out why this isn't working for the v2 component
-  it.each`
-    Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
-    let tree = renderComponent(Component, props);
-    let button = tree.getByRole('button');
-    triggerPress(button);
-    await waitForDomChange();
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-    fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
-    await waitForDomChange();
-    expect(menu).not.toBeInTheDocument();
-  });
-
-  // Can't figure out why this isn't working for the v2 component
-  it.each`
-    Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-  `('$Name closes the menu upon clicking outside the menu', async function ({Component, props}) {
-    let tree = renderComponent(Component, props);
-    let button = tree.getByRole('button');
-    triggerPress(button);
-    await waitForDomChange();
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-    fireEvent.mouseUp(document.body);
-    await waitForDomChange();
-    expect(menu).not.toBeInTheDocument();
   });
 
   it.each`
@@ -404,5 +307,183 @@ describe('MenuTrigger', function () {
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
     });
+  });
+
+  describe('menu popover closing behavior', function () {
+    function triggerMenuItem(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
+      let tree = renderComponent(Component, triggerProps, menuProps);
+      let triggerButton = tree.getByRole('button');
+      triggerPress(triggerButton);
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      
+      let menuItemRole = 'menuitem';
+      if (Component === MenuTrigger) {
+        if (menuProps.role === 'listbox') {
+          menuItemRole = 'option';
+        } else if (menuProps.selectionMode === 'single') {
+          menuItemRole = 'menuitemradio';
+        } else if (menuProps.selectionMode === 'multiple') {
+          menuItemRole = 'menuitemcheckbox';
+        }
+      }
+      
+      let menuItems = within(menu).getAllByRole(menuItemRole);
+      let itemToAction = menuItems[1];
+      triggerEvent(itemToAction);
+
+      return tree;
+    }
+    
+    // New functionality in v3
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `('$Name closes the menu upon trigger body scroll', async function ({Component, props}) {
+      let tree = renderComponent(Component, props);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+
+      let scrollable = tree.getByTestId('scrollable');
+      fireEvent.scroll(scrollable);
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+    });
+
+    // Can't figure out why this isn't working for the v2 component
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
+      let tree = renderComponent(Component, props);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+    });
+
+    // Can't figure out why this isn't working for the v2 component
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `('$Name closes the menu upon clicking outside the menu', async function ({Component, props}) {
+      let tree = renderComponent(Component, props);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      fireEvent.mouseUp(document.body);
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
+      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
+    `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {onSelectionChange});
+      expect(onOpenChange).toBeCalledTimes(0);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      if (Component === MenuTrigger) {
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onSelectionChange).toBeCalledTimes(0);
+      } else {
+        expect(onOpen).toBeCalledTimes(1);
+        expect(onClose).toBeCalledTimes(0);
+        expect(onSelect).toBeCalledTimes(0);
+      }
+
+      let menuItem1 = within(menu).getByText('Foo');
+      expect(menuItem1).toBeTruthy();
+      triggerPress(menuItem1);
+      
+      if (Component === MenuTrigger) {
+        expect(onSelectionChange).toBeCalledTimes(1);
+      } else {
+        expect(onSelect).toBeCalledTimes(1);
+      }
+
+      expect(menu).toBeInTheDocument();  
+      
+      if (Component === MenuTrigger) {
+        expect(button).toHaveAttribute('aria-expanded', 'true');
+        expect(onOpenChange).toBeCalledTimes(1);
+      } else {
+        expect(button).toHaveAttribute('aria-expanded');
+        expect(onOpen).toBeCalledTimes(1);
+        expect(onClose).toBeCalledTimes(0);
+      }
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
+    `('$Name closes on menu item selection if toggled by mouse click', async function ({Component, props}) {
+      let selectionModes = ['single', 'multiple', 'none'];
+      for (let mode of selectionModes) {
+        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => triggerPress(item));
+        let menu = tree.queryByRole('menu');
+        expect(menu).toBeNull();
+        cleanup();
+      }
+    });
+
+    it.each`
+    Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
+    `('$Name closes on menu item selection if toggled by ENTER key', async function ({Component, props}) {
+      let selectionModes = ['single', 'multiple', 'none'];
+      for (let mode of selectionModes) {
+        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
+        let menu = tree.queryByRole('menu');
+        expect(menu).toBeNull();
+        cleanup();
+      }
+    });
+
+    // V3 exclusive
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', async function ({Component, props}) {
+      let selectionModes = ['single', 'multiple'];
+      for (let mode of selectionModes) {
+        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+        let menu = tree.queryByRole('menu');
+        expect(menu).toBeTruthy();
+        cleanup();
+      }
+    });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
+    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', async function ({Component, props}) {
+      let tree = triggerMenuItem(Component, {}, props, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+    });
+
   });
 });
