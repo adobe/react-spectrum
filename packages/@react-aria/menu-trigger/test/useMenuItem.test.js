@@ -26,7 +26,7 @@ describe('useMenuItem', function () {
     expect(menuItemProps['aria-disabled']).toBeUndefined();
     expect(menuItemProps.role).toBe('menuitem');
     expect(menuItemProps.id).toBeTruthy();
-    expect(menuItemProps.tabIndex).toBe(0)
+    expect(menuItemProps.tabIndex).toBe(0);
     expect(menuItemProps.onKeyDown).toBeTruthy();
     expect(menuItemProps.onKeyUp).toBeTruthy();
     expect(menuItemProps.onFocus).toBeTruthy();
