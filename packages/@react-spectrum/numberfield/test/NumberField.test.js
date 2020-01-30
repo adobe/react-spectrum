@@ -147,9 +147,7 @@ describe('NumberField', function () {
   `('$Name increment button can toggle aria label', ({Component}) => {
     let {
       container,
-      textField,
-      incrementButton,
-      decrementButton
+      incrementButton
     } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, defaultValue: 2});
 
     expect(container).toBeTruthy();
@@ -166,8 +164,6 @@ describe('NumberField', function () {
   `('$Name decrement button can toggle aria label', ({Component}) => {
     let {
       container,
-      textField,
-      incrementButton,
       decrementButton
     } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 3, defaultValue: 4});
 
@@ -213,8 +209,6 @@ describe('NumberField', function () {
   `('$Name controlled input', ({Component}) => {
     let {
       container,
-      textField,
-      incrementButton,
       decrementButton
     } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, value: 3});
 

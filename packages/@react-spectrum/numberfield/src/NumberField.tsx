@@ -23,7 +23,6 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     autoFocus,
     ...otherProps
   } = props;
-  //console.log('props from base', props); 
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
   let {
