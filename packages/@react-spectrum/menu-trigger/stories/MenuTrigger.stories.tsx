@@ -26,7 +26,6 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
-import {Switch} from '@react-spectrum/switch';
 
 let withSection = [
   {name: 'Animals', children: [

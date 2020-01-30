@@ -25,7 +25,6 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Switch} from '@react-spectrum/switch';
 
 let iconMap = {
   AlignCenter,
