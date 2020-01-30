@@ -141,10 +141,52 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
+
+
+  // clone this test -> use value instad of default value
+  // textfield should be undefined
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name failed attempt 1', ({Component}) => {
+  `('$Name increment button can toggle aria label', ({Component}) => {
+    let {
+      container,
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, defaultValue: 2});
+
+    expect(container).toBeTruthy();
+    expect(container).toHaveAttribute('role', 'group');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+
+    triggerPress(incrementButton);
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name decrement button can toggle aria label', ({Component}) => {
+    let {
+      container,
+      textField,
+      incrementButton,
+      decrementButton
+    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 3, defaultValue: 4});
+
+    expect(container).toBeTruthy();
+    expect(container).toHaveAttribute('role', 'group');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+
+    triggerPress(decrementButton);
+    expect(container).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name controlled input', ({Component}) => {
     let {
       container,
       textField,
@@ -156,25 +198,7 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('role', 'group');
     expect(container).toHaveAttribute('aria-invalid', 'false');
     triggerPress(decrementButton);
-    expect(onChangeSpy).toHaveBeenCalledWith(2); // doesn't get called because the testing framework won't let it go below min
-    expect(container).toHaveAttribute('aria-invalid', 'true');
-
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name failed attempt 2', ({Component}) => {
-    let {
-      container,
-      textField,
-      incrementButton,
-      decrementButton
-    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, value: 2});
-
-    expect(container).toBeTruthy();
-    expect(container).toHaveAttribute('role', 'group');
-    expect(container).toHaveAttribute('aria-invalid', 'true'); // the framework thinks this should be false for some reason ...
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it.each`

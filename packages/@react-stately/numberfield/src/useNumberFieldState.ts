@@ -22,8 +22,8 @@ export function useNumberFieldState(props) : NumberFieldState {
     onChange
   } = props;
 
-  let isValid = useRef(true);
   let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
+  let isValid = useRef(!isInputValueInvalid(numValue, maxValue, minValue));
 
   let increment = () => {
     setNumValue(previousValue => {
