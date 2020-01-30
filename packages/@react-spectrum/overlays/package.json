@@ -29,7 +29,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/overlays": "^3.0.0-alpha.2",
-    "@react-spectrum/provider": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-types/overlays": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2",
@@ -40,7 +39,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
