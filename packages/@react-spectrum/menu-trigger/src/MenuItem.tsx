@@ -19,7 +19,6 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
   let menuProps = useContext(MenuContext) || {};
 
   let {
-    selectionMode,
     onClose,
     closeOnSelect
   } = menuProps;

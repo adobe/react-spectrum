@@ -1,4 +1,4 @@
-import {DOMProps, SelectionMode} from '@react-types/shared';
+import {DOMProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 import React from 'react';
 
@@ -7,7 +7,6 @@ export interface MenuContextValue extends DOMProps {
   closeOnSelect?: boolean,
   focusStrategy?: FocusStrategy,
   setFocusStrategy?: (value: FocusStrategy) => void,
-  selectionMode?: SelectionMode
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
