@@ -47,13 +47,6 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}) {
             <Button>
               {triggerText}
             </Button>
-            {/* <Menu {...menuProps}>
-              <Section>
-                <Item>Foo</Item>
-                <Item>Bar</Item>
-              </Section>
-              <Item>Baz</Item>
-            </Menu> */}
             <Menu items={withSection} itemKey="name" {...menuProps}>
               {item => (
                 <Section items={item.children} title={item.name}>
