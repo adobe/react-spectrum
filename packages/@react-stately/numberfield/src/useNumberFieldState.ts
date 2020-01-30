@@ -33,7 +33,7 @@ export function useNumberFieldState(props) : NumberFieldState {
       } else {
         newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
       }
-      handleButtonClick(newValue);
+      updateValidation(newValue);
       return newValue;
     });
   };
@@ -52,7 +52,7 @@ export function useNumberFieldState(props) : NumberFieldState {
       } else {
         newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
       }
-      handleButtonClick(newValue);
+      updateValidation(newValue);
       return newValue;
     });
   };
@@ -77,8 +77,8 @@ export function useNumberFieldState(props) : NumberFieldState {
     }
   };
 
-  let handleButtonClick = (currentValue) => {
-    isValid.current = !isInputValueInvalid(currentValue, maxValue, minValue);
+  let updateValidation = (value) => {
+    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
   };
 
   return {

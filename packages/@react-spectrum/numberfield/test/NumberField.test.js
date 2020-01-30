@@ -144,7 +144,7 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name increment button can toggle aria label', ({Component}) => {
+  `('$Name incrementing from invalid default to valid value removes aria-invalid', ({Component}) => {
     let {
       container,
       incrementButton
@@ -161,7 +161,7 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name decrement button can toggle aria label', ({Component}) => {
+  `('$Name decrementing from invalid default to valid value removes aria-invalid', ({Component}) => {
     let {
       container,
       decrementButton
@@ -178,7 +178,7 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name scrolling upwards can toggle aria label', ({Component}) => {
+  `('$Name scrolling up from an invalid default value to a valid value removes aria-invalid', ({Component}) => {
     let {
       textField
     } = renderNumberField(Component, {minValue: 3, defaultValue: 2});
@@ -192,7 +192,7 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name scrolling downwards can toggle aria label', ({Component}) => {
+  `('$Name scrolling down from an invalid default value to a valid value removes aria-invalid', ({Component}) => {
     let {
       textField
     } = renderNumberField(Component, {maxValue: 3, defaultValue: 4});
@@ -206,7 +206,7 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name controlled input', ({Component}) => {
+  `('$Name onChange is not called when controlled at minValue and decrement is pressed', ({Component}) => {
     let {
       container,
       decrementButton
