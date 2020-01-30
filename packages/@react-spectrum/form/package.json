@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-types/form": "^3.0.0-rc.1",
     "@react-types/shared": "^3.0.0-rc.1"
@@ -38,7 +37,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

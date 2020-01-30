@@ -32,7 +32,6 @@
     "@react-aria/radio": "^3.0.0-rc.1",
     "@react-spectrum/form": "^3.0.0-rc.1",
     "@react-spectrum/label": "^3.0.0-rc.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/radio": "^3.0.0-rc.1",
     "@react-types/radio": "^3.0.0-rc.1",
@@ -42,7 +41,8 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

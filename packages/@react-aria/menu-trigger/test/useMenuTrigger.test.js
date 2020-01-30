@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useMenuTrigger} from '../';
 
 describe('useMenuTrigger', function () {
   let state = {};
   let setOpen = jest.fn();
+  let focusStrategy = createRef();
 
   let renderMenuTriggerHook = (menuProps, menuTriggerProps, isOpen) => {
     let {result} = renderHook(() => useMenuTrigger(menuProps, menuTriggerProps, isOpen));
@@ -21,7 +22,7 @@ describe('useMenuTrigger', function () {
   });
 
   it('should return default props for menu and menu trigger', function () {
-    let {menuTriggerProps, menuProps} = renderMenuTriggerHook({}, state);
+    let {menuTriggerProps, menuProps} = renderMenuTriggerHook({focusStrategy}, state);
     expect(menuTriggerProps['aria-controls']).toBeFalsy();
     expect(menuTriggerProps['aria-expanded']).toBeFalsy();
     expect(menuTriggerProps['aria-haspopup']).toBeFalsy();
@@ -32,7 +33,7 @@ describe('useMenuTrigger', function () {
   it('should return proper aria props for menu and menu trigger if menu is open', function () {
     state.isOpen = true;
 
-    let {menuTriggerProps, menuProps} = renderMenuTriggerHook({}, state);
+    let {menuTriggerProps, menuProps} = renderMenuTriggerHook({focusStrategy}, state);
     expect(menuTriggerProps['aria-controls']).toBe(menuProps.id);
     expect(menuTriggerProps['aria-expanded']).toBeTruthy();
     expect(menuProps['aria-labelledby']).toBe(menuTriggerProps.id);
@@ -41,7 +42,8 @@ describe('useMenuTrigger', function () {
 
   it('returns the proper aria-haspopup based on the menu\'s type', function () {
     let props = {
-      type: 'menu'
+      type: 'menu',
+      focusStrategy
     };
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
@@ -51,14 +53,13 @@ describe('useMenuTrigger', function () {
   // Comprehensive onPress functionality is tested in MenuTrigger test
   it('returns a onPress for the menuTrigger', function () {
     let props = {
-      type: 'menu'
+      type: 'menu',
+      focusStrategy
     };
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
     expect(typeof menuTriggerProps.onPress).toBe('function');
-    menuTriggerProps.onPress({pointerType: 'keyboard'});
-    expect(setOpen).toHaveBeenCalledTimes(0);
-    menuTriggerProps.onPress({pointerType: 'not keyboard'});
+    menuTriggerProps.onPress();
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
   });
@@ -67,7 +68,8 @@ describe('useMenuTrigger', function () {
   it('returns a onKeyDown that toggles the menu open state for specific key strokes', function () {
     let props = {
       type: 'menu',
-      ref: {current: true}
+      ref: {current: true},
+      focusStrategy
     };
 
     let preventDefault = jest.fn();
@@ -80,7 +82,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       isDefaultPrevented: () => true,
-      key: 'Enter'
+      key: 'ArrowDown'
     });
     expect(setOpen).toHaveBeenCalledTimes(0);
 
@@ -88,7 +90,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       defaultPrevented: true,
-      key: 'Enter'
+      key: 'ArrowDown'
     });
     expect(setOpen).toHaveBeenCalledTimes(0);
 
@@ -96,7 +98,7 @@ describe('useMenuTrigger', function () {
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard', 
       defaultPrevented: false,
-      key: 'Enter',
+      key: 'ArrowDown',
       preventDefault,
       stopPropagation
     });

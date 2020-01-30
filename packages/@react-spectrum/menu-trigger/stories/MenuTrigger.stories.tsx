@@ -2,16 +2,52 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '@react-spectrum/utils';
-import {Menu} from '../';
-import {MenuTrigger} from '../';
+import {Item, Menu, MenuTrigger, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
+
+let withSection = [
+  {name: 'Animals', children: [
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ]},
+  {name: 'People', children: [
+    {name: 'Danni'},
+    {name: 'Devon'},
+    {name: 'Ross', children: [
+      {name: 'Tests', children: [
+        {name: 'blah'}
+      ]}
+    ]}
+  ]}
+];
 
 storiesOf('MenuTrigger', module)
   .add(
     'default',
     () => render()
+  )
+  .add(
+    'single selected key (controlled)',
+    () => render({}, {selectedKeys: ['Kangaroo']})
+  )
+  .add(
+    'single default selected key (uncontrolled)',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo']})
+  )
+  .add(
+    'multiple selected key (controlled)',
+    () => render({}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+  )
+  .add(
+    'multiple default selected key (uncontrolled)',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+  )
+  .add(
+    'autofocus=false',
+    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple', autoFocus: false})
   )
   .add(
     'align="end"',
@@ -34,6 +70,10 @@ storiesOf('MenuTrigger', module)
     () => render({defaultOpen: true})
   )
   .add(
+    'isDisabled',
+    () => render({isDisabled: true})
+  )
+  .add(
     'trigger="longPress" TODO out of scope',
     () => render()
   )
@@ -42,8 +82,16 @@ storiesOf('MenuTrigger', module)
     () => render()
   )
   .add(
-    'popup with role=listbox',
+    'menu with role=listbox',
     () => render({}, {role: 'listbox'})
+  )
+  .add(
+    'multiselect menu',
+    () => render({}, {selectionMode: 'multiple'})
+  )
+  .add(
+    'no selection allowed menu',
+    () => render({}, {selectionMode: 'none'})
   )
   .add(
     'menu closes on scroll',
@@ -59,10 +107,12 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu>
-                <li>MenuItem1111111111111111</li>
-                <li>MenuItem22222222222222222</li>
-                <li>MenuItem33333333333333333</li>
+              <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+                {item => (
+                  <Section items={item.children} title={item.name}>
+                    {item => <Item childItems={item.children}>{item.name}</Item>}
+                  </Section>
+                )}
               </Menu>
             </MenuTrigger>
           </div>
@@ -102,10 +152,12 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu>
-            <li>MenuItem1111111111111111</li>
-            <li>MenuItem22222222222222222</li>
-            <li>MenuItem33333333333333333</li>
+          <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+            {item => (
+              <Section items={item.children} title={item.name}>
+                {item => <Item childItems={item.children}>{item.name}</Item>}
+              </Section>
+            )}
           </Menu>
         </MenuTrigger>
       </div>
@@ -114,7 +166,7 @@ storiesOf('MenuTrigger', module)
 
 function render(props = {}, menuProps = {}) {
   return (
-    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+    <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
         <ActionButton
           onPress={action('press')}
@@ -122,10 +174,12 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu {...menuProps}>
-          <li>MenuItem1111111111111111</li>
-          <li>MenuItem22222222222222222</li>
-          <li>MenuItem33333333333333333</li>
+        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => <Item childItems={item.children}>{item.name}</Item>}
+            </Section>
+          )}
         </Menu>
       </MenuTrigger>
     </div>
