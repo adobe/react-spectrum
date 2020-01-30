@@ -183,13 +183,19 @@ describe('Menu', function () {
 
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{role: 'listbox'}}
+    ${'Menu'}   | ${Menu}   | ${{role: 'listbox', defaultSelectedKeys: ['Blah']}}
   `('$Name renders with the right aria props if menu role is listbox', async function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     await waitForDomChange();
     let menu = tree.getByRole('listbox');
     let menuItems = within(menu).getAllByRole('option');
     expect(menuItems.length).toBe(5);
+
+    let selectedItem = menuItems[3];
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    let nonSelectedItem = menuItems[1];
+    expect(nonSelectedItem).toHaveAttribute('aria-selected', 'false');
   });
   
   describe('supports single selection', function () {
