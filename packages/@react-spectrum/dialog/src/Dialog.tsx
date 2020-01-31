@@ -35,7 +35,12 @@ export function Dialog(props: SpectrumDialogProps) {
   if (type === 'popover') {
     return <BaseDialog {...allProps} size={otherProps.size}>{children}</BaseDialog>;
   } else {
-    return <ModalDialog {...allProps} size={otherProps.size}>{children}</ModalDialog>;
+    return (
+      <ModalDialog {...allProps} size={otherProps.size}>
+        {children}
+        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />}
+      </ModalDialog>
+    );
   }
 }
 
@@ -83,7 +88,6 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
         ref={ref}>
         <Grid slots={slots}>
           {children}
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Grid>
       </div>
     </FocusScope>
