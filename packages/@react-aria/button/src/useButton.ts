@@ -1,5 +1,5 @@
 import {ButtonProps} from '@react-types/button';
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain, mergeProps, useDOMPropsResponder} from '@react-aria/utils';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
 import {useDOMPropsResponderContext, usePress} from '@react-aria/interactions';
@@ -56,10 +56,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  // TODO: pull out the following two lines into a separate function called useDOMPropsResponder
-  // call filterDOMProps to remove console warnings?
-  useDOMPropsResponderContext({ref});
-  let contextProps = useContext(DOMPropsResponderContext) || {};
+  // TODO: add the following line to every component that needs hover functionality
+  let contextProps = useDOMPropsResponder(ref);
 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
