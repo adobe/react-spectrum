@@ -1,6 +1,7 @@
 import {AllHTMLAttributes} from 'react';
 import {ListLayout} from '@react-stately/collections';
-import {MenuProps, Orientation} from '@react-types/menu';
+import {MenuProps} from '@react-types/menu';
+import {Orientation} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
@@ -27,7 +28,7 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout
-  });  
+  });
 
   let menuItemRole = 'menuitem';
   if (role === 'listbox') {

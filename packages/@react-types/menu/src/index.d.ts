@@ -1,9 +1,7 @@
 import {AllHTMLAttributes, Key, ReactElement, RefObject} from 'react';
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, Expandable, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
 import {Node} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
-
-export type Orientation = 'vertical' | 'horizontal'
 
 export type FocusStrategy = 'first' | 'last';
 
