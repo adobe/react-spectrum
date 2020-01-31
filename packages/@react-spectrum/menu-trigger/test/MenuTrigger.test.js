@@ -428,6 +428,32 @@ describe('MenuTrigger', function () {
 
     it.each`
       Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
+    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', async function ({Component, props}) {
+      let tree = renderComponent(Component, props, {onSelectionChange});
+      expect(onOpenChange).toBeCalledTimes(0);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      await waitForDomChange();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+
+      let menuItem1 = within(menu).getByText('Foo');
+      expect(menuItem1).toBeTruthy();
+      fireEvent.keyDown(menuItem1, {key: 'Enter', code: 13, charCode: 13});
+      expect(onSelectionChange).toBeCalledTimes(1);
+      await waitForDomChange();
+      expect(menu).not.toBeInTheDocument();  
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it.each`
+      Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
     `('$Name closes on menu item selection if toggled by mouse click', async function ({Component, props}) {
