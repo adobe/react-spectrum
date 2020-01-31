@@ -1,5 +1,5 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -17,7 +17,7 @@ interface TabProps extends DOMProps, StyleProps {
 }
 
 interface TabListProps extends DOMProps, StyleProps {
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   isQuiet?: boolean,
   density?: 'compact',
   isDisabled?: boolean,
