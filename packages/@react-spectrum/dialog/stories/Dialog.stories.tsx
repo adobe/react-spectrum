@@ -3,7 +3,6 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
-import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {Divider} from '@react-spectrum/divider';
 import {Form} from '@react-spectrum/form';
 import {Image} from '@react-spectrum/image';
@@ -188,9 +187,8 @@ function render({width = 'auto', ...props}) {
           <Content>{singleParagraph()}</Content>
           <Footer>
             <Button variant="secondary">Cancel</Button>
-            <Button variant="cta" autoFocus>Confirm</Button>
+            <Button variant="cta">Confirm</Button>
           </Footer>
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Dialog>
       </DialogTrigger>
     </div>
@@ -212,13 +210,11 @@ function renderHero({width = 'auto', ...props}) {
             <Button variant="secondary">Cancel</Button>
             <Button variant="cta" autoFocus>Confirm</Button>
           </Footer>
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Dialog>
       </DialogTrigger>
     </div>
   );
 }
-
 
 function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
   return (
@@ -261,7 +257,6 @@ function renderWithForm({width = 'auto', ...props}) {
             <Button variant="secondary">Cancel</Button>
             <Button variant="cta">Confirm</Button>
           </Footer>
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Dialog>
       </DialogTrigger>
     </div>
@@ -291,7 +286,6 @@ function renderLongContent({width = 'auto', ...props}) {
             <Button variant="secondary">Cancel</Button>
             <Button variant="cta" autoFocus>Confirm</Button>
           </Footer>
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Dialog>
       </DialogTrigger>
     </div>
@@ -312,7 +306,6 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
             <Button variant="primary">Cancel and forget about forever</Button>
             <Button variant="cta" autoFocus>Confirm Starscream is the worst</Button>
           </Footer>
-          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Dialog>
       </DialogTrigger>
     </div>

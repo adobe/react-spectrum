@@ -1,4 +1,6 @@
+import {ActionButton} from '@react-spectrum/button';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -19,7 +21,7 @@ export function Dialog(props: SpectrumDialogProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let allProps = mergeProps(
+  let allProps: SpectrumBaseDialogProps = mergeProps(
     mergeProps(
       mergeProps(
         filterDOMProps(otherProps),
@@ -50,9 +52,9 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-function BaseDialog({children, slots, size = 'L', ...otherProps}: SpectrumBaseDialogProps) {
+function BaseDialog({children, slots, size = 'L', role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
-  let {dialogProps} = useDialog({ref});
+  let {dialogProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
       container: styles['spectrum-Dialog-grid'],
@@ -81,6 +83,7 @@ function BaseDialog({children, slots, size = 'L', ...otherProps}: SpectrumBaseDi
         ref={ref}>
         <Grid slots={slots}>
           {children}
+          <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />
         </Grid>
       </div>
     </FocusScope>

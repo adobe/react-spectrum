@@ -18,18 +18,20 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
   slots?: Slots,
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  role?: 'dialog' | 'alertdialog'
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
   children: ReactNode,
   slots?: Slots,
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean // adds close button and enables clicking on background
+  isDismissable?: boolean, // adds close button and enables clicking on background
+  role?: 'dialog' | 'alertdialog'
 }
 
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
-  variant?: 'confirmation' | 'information' | 'destructive' | 'error', // warning?
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
   title: ReactNode,
   children: ReactNode,
   cancelLabel?: string,

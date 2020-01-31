@@ -51,10 +51,7 @@ governing permissions and limitations under the License.
   /* made up value */
   max-height: 90vh;
 
-  overflow: hidden;
-
   outline: none;
-  border-radius: var(--spectrum-dialog-border-radius);
 }
 
 .spectrum-Dialog--small {
@@ -139,15 +136,15 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-dialog-content-text-line-height);
 
   /* this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped. is there a better way to treat this */
-  padding: 0 2px;
-  margin: 0 -2px;
+  padding: 0 var(--spectrum-global-dimension-size-25);
+  margin: 0 calc(-1 * var(--spectrum-global-dimension-size-25));
 }
 
 
 .spectrum-Dialog-footer {
   grid-area: footer;
   /* this padding isn't built into the grid because it disappears with this footer */
-  padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
+  padding-top: var(--spectrum-global-dimension-static-size-500);
 
   display: flex;
   flex-wrap: wrap;
@@ -155,12 +152,9 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
 
-  margin-top: calc(-1 * var(--spectrum-dialog-button-margin));
-
   /* Both selectors are required to override the button + button rule */
   > *,
   > .spectrum-Button + .spectrum-Button {
-    margin-top: var(--spectrum-dialog-button-margin);
     margin-bottom: 0;
   }
 }
@@ -189,9 +183,9 @@ governing permissions and limitations under the License.
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
   align-self: start;
   justify-self: start;
-  /* made up a positioning values */
-  inset-block-start: var(--spectrum-dialog-button-margin);
-  inset-inline-end: var(--spectrum-dialog-button-margin);
+
+  inset-block-start: var(--spectrum-global-dimension-size-150);
+  inset-inline-end: var(--spectrum-global-dimension-size-150);
 }
 
 .spectrum-Dialog--dismissable {

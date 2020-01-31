@@ -1,11 +1,12 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
+import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {Text} from '@react-spectrum/typography';
 
@@ -20,19 +21,23 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     title,
     isConfirmDisabled,
     onCancel,
-    onConfirm
+    onConfirm,
+    ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
-  let confirmVariant = 'negative' as 'negative' | 'primary' | 'cta';
-  if (variant && (variant === 'information' || variant === 'error')) {
-    confirmVariant = 'primary';
-  } else if (variant && variant === 'confirmation') {
-    confirmVariant = 'cta';
+  let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
+  if (variant) {
+    if (variant === 'confirmation') {
+      confirmVariant = 'cta';
+    } else if (variant === 'destructive') {
+      confirmVariant = 'negative';
+    }
   }
 
   return (
-    <Dialog UNSAFE_className={classNames(styles, `spectrum-Dialog--${variant}`)}>
-      <Header><Text slot="title">{title}</Text>{variant === 'error' && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+    <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
+      <Header><Text slot="title">{title}</Text>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
       <Content>{children}</Content>
       <Footer>

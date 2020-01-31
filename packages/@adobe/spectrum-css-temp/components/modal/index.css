@@ -66,6 +66,7 @@ governing permissions and limitations under the License.
   max-height: var(--spectrum-dialog-max-height);
 
   border-radius: var(--spectrum-dialog-border-radius);
+  overflow: hidden;
   outline: none; /* Firefox shows outline */
   pointer-events: auto;
 
