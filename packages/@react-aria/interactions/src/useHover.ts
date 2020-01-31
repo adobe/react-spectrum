@@ -47,7 +47,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   let {
     onHover,
     onHoverChange,
-    onHoverStart,
     onHoverEnd,
     isDisabled,
     isHovering: isHoveringProp,
@@ -69,14 +68,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       }
 
       let target = event.target;
-
-      if (onHoverStart) {
-        onHoverStart({
-          type: 'hoverstart',
-          target,
-          pointerType
-        });
-      }
 
       if (onHover) {
         onHover({
@@ -142,7 +133,7 @@ export function useHover(props: HoverHookProps): HoverResult {
       };
     }
     return hoverProps;
-  }, [onHover, onHoverChange, onHoverStart, onHoverEnd, isDisabled]);
+  }, [onHover, onHoverChange, onHoverEnd, isDisabled]);
 
   return {
     isHovering: isHoveringProp || isHovering,

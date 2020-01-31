@@ -45,7 +45,6 @@ export interface FocusEvents {
 
 export interface HoverEvents {
   onHover?: (e: HoverEvent) => void,
-  onHoverStart?: (e: HoverEvent) => void,
   onHoverEnd?: (e: HoverEvent) => void,
   onHoverChange?: (isHovering: boolean) => void
 }
