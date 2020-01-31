@@ -22,17 +22,18 @@ export function useNumberFieldState(props) : NumberFieldState {
     onChange
   } = props;
 
-  let isValid = useRef(true);
   let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
+  let isValid = useRef(!isInputValueInvalid(numValue, maxValue, minValue));
 
   let increment = () => {
     setNumValue(previousValue => {
-      let newValue = +previousValue;
+      let newValue = parseFloat(previousValue);
       if (isNaN(newValue)) {
         newValue = maxValue != null ? Math.min(step, maxValue) : step;
       } else {
         newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
       }
+      updateValidation(newValue);
       return newValue;
     });
   };
@@ -45,12 +46,13 @@ export function useNumberFieldState(props) : NumberFieldState {
 
   let decrement = () => {
     setNumValue(previousValue => {
-      let newValue = +previousValue;
+      let newValue = parseFloat(previousValue);
       if (isNaN(newValue)) {
         newValue = minValue != null ? Math.max(-step, minValue) : -step;
       } else {
         newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
       }
+      updateValidation(newValue);
       return newValue;
     });
   };
@@ -62,7 +64,6 @@ export function useNumberFieldState(props) : NumberFieldState {
   };
 
   let setValue = (value: string) => {
-
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
 
@@ -74,6 +75,10 @@ export function useNumberFieldState(props) : NumberFieldState {
     if (resemblesNumber) {
       setNumValue(valueAsNumber);
     }
+  };
+
+  let updateValidation = (value) => {
+    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
   };
 
   return {
