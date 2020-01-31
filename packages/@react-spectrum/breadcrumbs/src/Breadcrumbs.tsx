@@ -4,12 +4,14 @@ import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spect
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useBreadcrumbsState} from '@react-stately/breadcrumbs';
 import {useProviderProps} from '@react-spectrum/provider';
+
+const MIN_VISIBLE_ITEMS = 2;
+const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   props = useProviderProps(props);
@@ -20,18 +22,53 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
     headingAriaLevel,
     showRoot,
     isDisabled,
+    maxVisibleItems = MAX_VISIBLE_ITEMS,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   let childArray = React.Children.toArray(children);
+  let isCollapsible = maxVisibleItems === 'auto';
 
   let domRef = useDOMRef(ref);
   let listRef = useRef(null);
 
-  let {visibleItems, setVisibleItems} = useBreadcrumbsState(props);
+  const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
+  
+  let {breadcrumbProps} = useBreadcrumbs(props);
+  let {styleProps} = useStyleProps(otherProps);
 
-  let {breadcrumbProps} = useBreadcrumbs(props, {visibleItems, setVisibleItems}, listRef);
+  useEffect(() => {
+    let listItems = [...listRef.current.children];
+    let childrenWidthTotals = listItems.reduce((acc, item, index) => (
+      [...acc, acc[index] + item.getBoundingClientRect().width]
+    ), [0]);
+
+    let onResize = () => {
+      if (isCollapsible && listRef.current) {
+        let containerWidth = listRef.current.getBoundingClientRect().width;
+        let index = childrenWidthTotals.findIndex(totalWidth => totalWidth > containerWidth);
+
+        let visibleItemsCount;
+        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
+
+        if (index ===  -1) {
+          visibleItemsCount = childArray.length;
+        } else if (index < minVisibleItems) {
+          visibleItemsCount = minVisibleItems;
+        } else {
+          visibleItemsCount = index;
+        }
+
+        setVisibleItems(visibleItemsCount);
+      }
+    };
+
+    window.addEventListener('resize', onResize);
+    onResize();
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, [isCollapsible, childArray.length, listRef, showRoot]);
 
   if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
