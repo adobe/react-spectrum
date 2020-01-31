@@ -943,6 +943,9 @@ describe('usePress', function () {
       // Enter key should trigger press events on element with role="link"
       expect(events).toEqual([
         {
+          type: 'click'
+        },
+        {
           type: 'pressstart',
           target: el,
           pointerType: 'keyboard',
@@ -1004,7 +1007,43 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
 
-      expect(events).toEqual([{type: 'click'}]);
+      expect(events).toEqual([
+        {
+          type: 'click'
+        },
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
     });
 
     it('should handle modifier keys', function () {
