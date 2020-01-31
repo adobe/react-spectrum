@@ -848,7 +848,7 @@ describe('usePress', function () {
       ]);
     });
 
-    it.only('should fire press events when the element is a link', function () {
+    it('should fire press events when the element is a link', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let {getByText} = render(
