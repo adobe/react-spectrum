@@ -2,11 +2,11 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {MenuContext} from './context';
-import React, {useContext, useRef} from 'react';
+import React, {useRef} from 'react';
 import {SpectrumMenuItemProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
+import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu-trigger';
 
 export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
@@ -16,7 +16,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     ...otherProps
   } = props;
 
-  let menuProps = useContext(MenuContext) || {};
+  let menuProps = useMenuContext();
 
   let {
     onClose,
@@ -67,7 +67,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           }  
           slots={{
             label: styles['spectrum-Menu-itemLabel'],
-            tools: styles['spectrum-Menu-tools'],
+            end: styles['spectrum-Menu-end'],
             icon: styles['spectrum-Menu-icon'],
             description: styles['spectrum-Menu-description'],
             keyboardIcon: styles['spectrum-Menu-keyboard']}}>
@@ -79,7 +79,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           {Array.isArray(rendered) && rendered}
           {isSelected && 
             <CheckmarkMedium 
-              slot="tools" 
+              slot="end" 
               UNSAFE_className={
                 classNames(
                   styles, 

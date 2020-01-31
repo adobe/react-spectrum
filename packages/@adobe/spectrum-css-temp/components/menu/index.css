@@ -112,7 +112,9 @@ governing permissions and limitations under the License.
   grid-area: label;
   align-self: center;
   line-height: var(--spectrum-selectlist-option-label-line-height);
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -166,15 +168,15 @@ governing permissions and limitations under the License.
   grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto var(--spectrum-selectlist-option-padding);
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
-    ". .    .           .     .   ."
-    ". icon label       tools keyboardIcon ."
-    ". icon description tools keyboardIcon ."
-    ". .    .           .     .   .";
+    ". .    .           .     .            ."
+    ". icon label       end keyboardIcon ."
+    ". icon description end keyboardIcon ."
+    ". .    .           .     .            .";
 }
 
 /* Added .spectrum-Menu so paddings from component styles are overriden */
-.spectrum-Menu .spectrum-Menu-tools {
-  grid-area: tools;
+.spectrum-Menu .spectrum-Menu-end {
+  grid-area: end;
   justify-self: end;
   align-self: center;
   margin-inline-end: 0px;
@@ -190,7 +192,9 @@ governing permissions and limitations under the License.
   align-self: center;
   line-height: 1.3;
   font-size: var(--spectrum-global-dimension-size-150);
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .spectrum-Menu-keyboard {
   grid-area: keyboardIcon;

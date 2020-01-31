@@ -1,6 +1,6 @@
 import {DOMProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
-import React from 'react';
+import React, {useContext} from 'react';
 
 export interface MenuContextValue extends DOMProps {
   onClose?: () => void,
@@ -10,3 +10,7 @@ export interface MenuContextValue extends DOMProps {
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
+
+export function useMenuContext(): MenuContextValue {
+  return useContext(MenuContext);
+}

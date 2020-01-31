@@ -363,7 +363,7 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'with semantic elements and grid css positioning (static)',
+    'with semantic elements (static)',
     () => (
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')}>
@@ -388,12 +388,12 @@ storiesOf('Menu', module)
             <Item>
               <AlignLeft size="S" />
               <Text slot="label">Puppy</Text>
-              <Text slot="description">Puppy description</Text>
+              <Text slot="description">Puppy description super long as well geez</Text>
             </Item>
             <Item>
               <AlignCenter size="S" />
-              <Text slot="label">Doggo</Text>
-              <Text slot="tools">Value</Text>
+              <Text slot="label">Doggo with really really really long long long text</Text>
+              <Text slot="end">Value</Text>
               <ChevronRightMedium slot="keyboardIcon" />
             </Item>
             <Item>
@@ -409,7 +409,7 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'with semantic elements and grid css positioning (generative)',
+    'with semantic elements (generative)',
     () => (
       <Popover isOpen hideArrow> 
         <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
