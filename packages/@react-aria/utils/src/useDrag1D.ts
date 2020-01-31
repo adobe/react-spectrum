@@ -1,10 +1,11 @@
 import {AllHTMLAttributes, MutableRefObject, useRef} from 'react';
 import {getOffset} from './getOffset';
+import {Orientation} from '@react-types/shared';
 
 interface UseDrag1DProps {
   containerRef: MutableRefObject<HTMLElement>,
   reverse?: boolean,
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   onHover?: (hovered: boolean) => void,
   onDrag?: (dragging: boolean) => void,
   onPositionChange?: (position: number) => void,
