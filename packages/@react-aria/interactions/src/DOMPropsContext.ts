@@ -1,5 +1,6 @@
-import {HoverProps} from './useHover';
-import React, {MutableRefObject} from 'react';
+import {HoverProps, HoverHookProps} from './useHover';
+import React, {MutableRefObject, useContext, useEffect} from 'react';
+import {mergeProps} from '@react-aria/utils';
 
 interface DOMPropsResponderContext extends HoverProps {
   register(): void,
@@ -9,3 +10,25 @@ interface DOMPropsResponderContext extends HoverProps {
 }
 
 export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);
+
+export function useDOMPropsResponderContext(props: HoverHookProps): HoverHookProps {
+  // Consume context from <DOMPropsResponder> and merge with props.
+  let context = useContext(DOMPropsResponderContext);
+  if (context) {
+    let {register, ...contextProps} = context;
+    props = mergeProps(contextProps, props) as HoverHookProps;
+    register();
+  }
+
+  // Sync ref from <DOMPropsResponder> with ref passed to the useHover hook.
+  useEffect(() => {
+    if (context && context.ref) {
+      context.ref.current = props.ref.current;
+      return () => {
+        context.ref.current = null;
+      };
+    }
+  }, [context, props.ref]);
+
+  return props;
+}
