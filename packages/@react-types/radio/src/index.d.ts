@@ -1,4 +1,13 @@
-import {DOMProps, FocusableProps, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, ValueBase} from '@react-types/shared';
+import {
+  DOMProps,
+  FocusableProps,
+  InputBase,
+  LabelableProps,
+  Orientation,
+  SpectrumLabelableProps,
+  StyleProps,
+  ValueBase
+} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, LabelableProps {
@@ -13,7 +22,7 @@ export interface RadioProps extends FocusableProps {
 }
 
 export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabelableProps, DOMProps, StyleProps {
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   isEmphasized?: boolean
 }
 
