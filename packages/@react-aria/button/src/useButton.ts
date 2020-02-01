@@ -28,6 +28,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
+    target,
     tabIndex,
     isSelected,
     validationState,
@@ -40,8 +41,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : (tabIndex || 0),
-      'aria-disabled': isDisabled || undefined,
-      href: elementType === 'a' && isDisabled ? undefined : href
+      href: elementType === 'a' && isDisabled ? undefined : href,
+      target: elementType === 'a' ? target : undefined,
+      type: elementType === 'input' ? type : undefined,
+      disabled: elementType === 'input' ? isDisabled : undefined,
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
     };
   }
 

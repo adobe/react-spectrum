@@ -12,7 +12,9 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, Focusabl
   /** The content to display in the button */
   children?: ReactNode,
   /** A URL to link to if elementType="a" */
-  href?: string
+  href?: string,
+  /** The target window for the link */
+  target?: string
 }
 
 export interface SpectrumButtonProps extends ButtonProps {
