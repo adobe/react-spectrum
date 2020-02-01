@@ -23,7 +23,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'label', ...otherProps});
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
@@ -52,7 +52,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
       htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
       {children}
       {necessityIndicator && ' \u200b'}
-      {/* necessityLabel is hidden to screen readers if the field is required because 
+      {/* necessityLabel is hidden to screen readers if the field is required because
         * aria-required is set on the field in that case. That will already be announced,
         * so no need to duplicate it here. If optional, we do want it to be announced here. */}
       {necessityIndicator === 'label' && <span aria-hidden={isRequired}>{necessityLabel}</span>}

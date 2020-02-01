@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-menu-selected-color: var(--spectrum-global-color-blue-600);
+}
+
+
 .spectrum-Menu {
   background-color: var(--spectrum-selectlist-background-color);
 }
@@ -22,7 +27,7 @@ governing permissions and limitations under the License.
   &.is-focused {
     background-color: var(--spectrum-selectlist-option-background-color-key-focus);
     color: var(--spectrum-selectlist-option-text-color-key-focus);
-    border-left-color: var(--spectrum-selectlist-option-focus-indicator-color);
+    border-inline-start-color: var(--spectrum-selectlist-option-focus-indicator-color);
   }
 
   &:hover,
@@ -34,7 +39,7 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    color: var(--spectrum-selectlist-option-text-color-selected);
+    color: var(--spectrum-menu-selected-color);
 
     .spectrum-Menu-checkmark {
       color: var(--spectrum-selectlist-option-icon-color-selected);

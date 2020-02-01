@@ -38,6 +38,8 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+          } else {
+            manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
@@ -51,6 +53,8 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+          } else {
+            manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
@@ -143,7 +147,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
 
   let onFocus = (e: FocusEvent) => {
     manager.setFocused(true);
-
+    
     if (manager.focusedKey == null && e.target === e.currentTarget) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
