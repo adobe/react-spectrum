@@ -1,7 +1,7 @@
 import {DOMProps, HoverEvents} from '@react-types/shared';
-import {DOMPropsResponderContext, useDOMPropsResponderContext} from './DOMPropsContext';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {useDOMPropsResponderContext} from './DOMPropsContext';
 
 export interface HoverProps extends HoverEvents, DOMProps {
  isHovering?: boolean,      // can be used to indicate a potential hover state for visual effects

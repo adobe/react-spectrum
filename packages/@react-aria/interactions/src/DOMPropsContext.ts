@@ -1,6 +1,6 @@
-import {HoverProps, HoverHookProps} from './useHover';
-import React, {MutableRefObject, useContext, useEffect} from 'react';
+import {HoverHookProps, HoverProps} from './useHover';
 import {mergeProps} from '@react-aria/utils';
+import React, {MutableRefObject, useContext, useEffect} from 'react';
 
 interface DOMPropsResponderContext extends HoverProps {
   register(): void,
