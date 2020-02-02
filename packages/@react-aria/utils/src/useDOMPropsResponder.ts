@@ -1,4 +1,3 @@
-// should this be in aria or util folder?
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
 import {useDOMPropsResponderContext} from '@react-aria/interactions';
@@ -6,7 +5,6 @@ import {useDOMPropsResponderContext} from '@react-aria/interactions';
 // import {filterDOMProps} from '@react-spectrum/utils';
 
 export function useDOMPropsResponder(domRef: RefObject<HTMLElement>) {
-  // @ts-ignore
   useDOMPropsResponderContext({ref: domRef});
   let domProps = useContext(DOMPropsResponderContext) || {};
 
