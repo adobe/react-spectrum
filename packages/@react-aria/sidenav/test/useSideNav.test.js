@@ -29,4 +29,29 @@ describe('useSideNav', function () {
     expect(typeof listProps.onFocus).toBe('function');
     expect(typeof listProps.onBlur).toBe('function');
   });
+
+  it('handles aria props', function () {
+    let props = {
+      hidden: true,
+      'aria-label': 'test-aria-label',
+      'aria-labelledby': 'test-aria-labelledby',
+      id: 'test-id'
+    };
+
+    let {navProps, listProps} = renderSideNavHook(props);
+    expect(navProps).toBeDefined();
+    expect(navProps.id).toBe('test-id');
+    expect(navProps.role).toBe('navigation');
+    expect(navProps.role).toBe('navigation');
+    expect(navProps['aria-hidden']).toBeTruthy();
+    expect(navProps['aria-label']).toBe('test-aria-label');
+    expect(navProps['aria-labelledby']).toBe('test-aria-labelledby');
+    expect(listProps).toBeDefined();
+    expect(listProps.id).toBe('test-id-list');
+    expect(listProps.role).toBe('list');
+    expect(listProps['aria-labelledby']).toBe('test-aria-labelledby');
+    expect(typeof listProps.onKeyDown).toBe('function');
+    expect(typeof listProps.onFocus).toBe('function');
+    expect(typeof listProps.onBlur).toBe('function');
+  });
 });

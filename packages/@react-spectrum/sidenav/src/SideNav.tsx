@@ -93,12 +93,10 @@ interface SideNavHeadingProps<T> extends AllHTMLAttributes<HTMLElement> {
 }
 
 function SideNavHeading<T>({item, ...otherProps}: SideNavHeadingProps<T>) {
-  let ref = useRef<HTMLHeadingElement>();
 
   return (
     <h2
       {...otherProps}
-      ref={ref}
       className={classNames(styles, 'spectrum-SideNav-heading')} >
       {item.rendered}
     </h2>
