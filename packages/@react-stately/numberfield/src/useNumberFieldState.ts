@@ -1,7 +1,18 @@
 import {clamp} from '@react-aria/utils';
-import {useCallback, useRef, useState} from 'react';
+import {useControlledState} from '@react-stately/utils';
+import {useRef} from 'react';
 
-export function useNumberFieldState(props) {
+export interface NumberFieldState {
+  setValue: (val: string, ...args: any) => void,
+  increment: (...args: any) => void,
+  decrement: (...args: any) => void,
+  incrementToMax: (...args: any) => void,
+  decrementToMin: (...args: any) => void,
+  value: number,
+  validationState: string
+}
+
+export function useNumberFieldState(props) : NumberFieldState {
   let {
     minValue,
     maxValue,
@@ -11,60 +22,48 @@ export function useNumberFieldState(props) {
     onChange
   } = props;
 
-  let isValid = useRef(true);
-  let [numValue, setNumValue] = useState(value || defaultValue || '');
+  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
+  let isValid = useRef(!isInputValueInvalid(numValue, maxValue, minValue));
 
-  let triggerChange = (value) => {
-    if (onChange) {
-      onChange(value);
-    }
-  };
-
-  let onIncrement = () => {
+  let increment = () => {
     setNumValue(previousValue => {
-      let newValue = +previousValue;
+      let newValue = parseFloat(previousValue);
       if (isNaN(newValue)) {
         newValue = maxValue != null ? Math.min(step, maxValue) : step;
       } else {
         newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
       }
-      if (previousValue !== newValue) {
-        triggerChange(newValue);
-      }
+      updateValidation(newValue);
       return newValue;
     });
   };
 
-  let onIncrementToMax = () => {
+  let incrementToMax = () => {
     if (maxValue != null) {
-      triggerChange(maxValue);
       setNumValue(maxValue);
     }
   };
 
-  let onDecrement = () => {
+  let decrement = () => {
     setNumValue(previousValue => {
-      let newValue = +previousValue;
+      let newValue = parseFloat(previousValue);
       if (isNaN(newValue)) {
         newValue = minValue != null ? Math.max(-step, minValue) : -step;
       } else {
         newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
       }
-      if (previousValue !== newValue) {
-        triggerChange(newValue);
-      }
+      updateValidation(newValue);
       return newValue;
     });
   };
 
-  let onDecrementToMin = () => {
+  let decrementToMin = () => {
     if (minValue != null) {
       setNumValue(minValue);
     }
   };
 
   let setValue = (value: string) => {
-
     const valueAsNumber = value === '' ? null : +value;
     const numeric = !isNaN(valueAsNumber);
 
@@ -74,17 +73,20 @@ export function useNumberFieldState(props) {
 
     isValid.current = !isInputValueInvalid(value, maxValue, minValue);
     if (resemblesNumber) {
-      triggerChange(valueAsNumber);
       setNumValue(valueAsNumber);
     }
   };
 
+  let updateValidation = (value) => {
+    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
+  };
+
   return {
     setValue,
-    onIncrement: useCallback(onIncrement, [maxValue, minValue, step]),
-    onIncrementToMax,
-    onDecrement: useCallback(onDecrement, [maxValue, minValue, step]),
-    onDecrementToMin,
+    increment,
+    incrementToMax,
+    decrement,
+    decrementToMin,
     value: numValue,
     validationState: !isValid.current && 'invalid'
   };

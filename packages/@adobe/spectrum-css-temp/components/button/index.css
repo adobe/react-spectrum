@@ -175,8 +175,12 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton-hold {
   position: absolute;
-  right: var(--spectrum-actionbutton-hold-icon-padding-right);
-  bottom: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+  inset-inline-end: var(--spectrum-actionbutton-hold-icon-padding-right);
+  inset-block-end: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+}
+
+[dir='rtl'] .spectrum-ActionButton-hold {
+  transform: rotate(90deg); 
 }
 
 .spectrum-ActionButton-label,
@@ -312,4 +316,66 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton + .spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
+}
+
+.spectrum-ButtonGroup--vertical {
+  display: inline-flex;
+  flex-direction: column;
+
+  .spectrum-ButtonGroup-item {
+    .spectrum-ActionButton-label {
+      flex-grow: 1;
+      text-align: start;
+    }
+
+    &.spectrum-ActionButton + .spectrum-ActionButton {
+      margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+      margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+    }
+  }
+}
+
+.spectrum-ButtonGroup--connected .spectrum-ButtonGroup-item {
+  &:hover {
+    z-index: 1;
+  }
+
+  /* Appear above hovered border */
+  &:focus-ring {
+    z-index: 2;
+  }
+
+  &.spectrum-ActionButton--emphasized.is-selected {
+    z-index: 2;
+  }
+
+  &.spectrum-ActionButton + .spectrum-ActionButton {
+    margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+    margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+  }
+
+  &.spectrum-ActionButton {
+    border-radius: 0;
+
+    &:first-child {
+      border-start-start-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-start-radius: var(--spectrum-actionbutton-border-radius);
+      margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+    }
+
+    &:last-child {
+      border-start-end-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+      margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      margin-inline-end: 0;
+    }
+  }
+
+  .spectrum-ActionButton-label {
+    inline-size: auto;
+  }
+}
+
+.spectrum-ButtonGroup--justified .spectrum-ButtonGroup-item{
+  flex: 1;
 }
