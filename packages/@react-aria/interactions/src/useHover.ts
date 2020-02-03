@@ -32,8 +32,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   //} = useDOMPropsResponderContext(props);
   } = props;
 
-  console.log("domProps", domProps)
-
   let [isHovering, setHover] = useState(false);
 
   let hoverProps = useMemo(() => {

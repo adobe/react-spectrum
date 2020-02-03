@@ -46,7 +46,7 @@ export class TooltipManager {
   hideTooltip(testString) {
     // set this.visibleTooltip state to false
     // set this.visibleTooltip to null
-    console.log("hiding!", testString)
+    console.log('hiding!', testString);
   }
 
 }
