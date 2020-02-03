@@ -56,9 +56,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   // TODO: add the following line to every component that needs hover functionality
-  let contextProps = useDOMPropsResponder(ref); // pull the erroring props out of this? Don't merge in contextProps with them in there?
-                                                        // use the delte mehthod? contextProps.isDisabled
-
+  let {contextProps} = useDOMPropsResponder(ref);
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
   let interactions = mergeProps(contextProps, handlers);

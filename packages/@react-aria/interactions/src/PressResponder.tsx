@@ -12,6 +12,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
     ...props,
     ref,
     register() {
+      console.log("P")
       isRegistered.current = true;
     }
   };

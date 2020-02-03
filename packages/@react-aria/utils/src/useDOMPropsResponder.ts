@@ -2,16 +2,23 @@ import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {RefObject, useContext} from 'react';
 import {useDOMPropsResponderContext} from '@react-aria/interactions';
 
+import {useHover} from '@react-aria/interactions';
+import {mergeProps} from '@react-aria/utils';
+
 export function useDOMPropsResponder(domRef: RefObject<HTMLElement>) {
   useDOMPropsResponderContext({ref: domRef});
   let domProps = useContext(DOMPropsResponderContext) || {};
 
-  console.log("domProps", domProps)
+  let {hoverProps} = useHover({
+    isDisabled: undefined ? false : true,
+  });
 
   delete domProps.onPress;
-  delete domProps.isDisabled;
-  //delete domProps.register;
 
-  return domProps;
+  const {register, isDisabled, ...partialDomProps} = domProps;
+
+  return {
+    contextProps: mergeProps(partialDomProps, hoverProps)
+  };
 
 }

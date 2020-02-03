@@ -29,8 +29,8 @@ export function useHover(props: HoverHookProps): HoverResult {
     isDisabled,
     isHovering: isHoveringProp,
     ...domProps
-  } = useDOMPropsResponderContext(props);
-  //} = props; -> this works as well
+  //} = useDOMPropsResponderContext(props);
+  } = props;
 
   console.log("domProps", domProps)
 
