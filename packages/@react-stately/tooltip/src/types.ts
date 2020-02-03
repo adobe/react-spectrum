@@ -1,4 +1,4 @@
 export interface TooltipManagerDelegate {
-  closeTooltip(): void,
-  openTooltip(): void
+  closeTooltip(value: boolean): void,
+  openTooltip(value: boolean): void
 }

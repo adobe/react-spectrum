@@ -72,8 +72,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let tooltipManager = state.tooltipManager;
-  //console.log(tooltipManager);
-  //tooltipManager.hideTooltip("check if working") // this console logged
+  // console.log(tooltipManager);
+  // tooltipManager.hideTooltip("check if working") // this console logged
 
   let handleDelayedShow = () => {
     if (isDisabled) {

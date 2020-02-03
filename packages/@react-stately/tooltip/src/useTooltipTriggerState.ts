@@ -1,11 +1,12 @@
+import {TooltipManager} from './TooltipManager';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
-import {TooltipManager} from './TooltipManager';
 
 export interface TooltipTriggerState {
   open: boolean,
   setOpen: (value: boolean) => void,
+  tooltipManager: TooltipManager
 }
 
 export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
@@ -13,9 +14,9 @@ export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTrigg
   let tooltipManager = useMemo(() => new TooltipManager(), []);
 
   tooltipManager.delegate = {
-    openTooltip: () => setOpeng(true),
-    closeTooltip: () => setOpen(false),
-  }
+    openTooltip: () => setOpen(true),
+    closeTooltip: () => setOpen(false)
+  };
 
   return {
     open,

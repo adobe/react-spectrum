@@ -29,7 +29,7 @@ export function useHover(props: HoverHookProps): HoverResult {
     isDisabled,
     isHovering: isHoveringProp,
     ...domProps
-  //} = useDOMPropsResponderContext(props);
+  // } = useDOMPropsResponderContext(props);
   } = props;
 
   let [isHovering, setHover] = useState(false);
