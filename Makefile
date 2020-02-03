@@ -15,6 +15,9 @@ node_modules: package.json
 install_no_postinstall:
 	NOYARNPOSTINSTALL=1 yarn install
 
+install_no_postinstall_ci:
+	NOYARNPOSTINSTALL=1 yarn install --pure-lockfile
+
 # --ci keeps it from opening the browser tab automatically
 run:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"

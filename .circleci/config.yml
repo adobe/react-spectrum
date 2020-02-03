@@ -21,7 +21,7 @@ jobs:
           name: yarn install
           command: |
             make clean_node_modules
-            make install_no_postinstall
+            make install_no_postinstall_ci
 
       - save_cache:
           paths:
