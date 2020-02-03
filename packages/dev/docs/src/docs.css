@@ -1,0 +1,16 @@
+html, body {
+  margin: 0;
+  color: red;
+}
+
+.provider {
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+}
+
+.nav {
+  flex-shrink: 0;
+  min-width: 150px;
+  padding: 0 8px;
+}

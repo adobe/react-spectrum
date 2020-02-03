@@ -1,0 +1,17 @@
+{
+  "name": "parcel-packager-docs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "DocsPackager.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.8.3",
+    "@babel/traverse": "^7.8.3",
+    "@parcel/plugin": "nightly",
+    "babylon-walk": "^1.0.2",
+    "documentation": "^12.1.4",
+    "react-docgen": "^5.1.0"
+  }
+}

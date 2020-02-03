@@ -1,0 +1,15 @@
+{
+  "name": "parcel-packager-ssg",
+  "version": "1.0.0",
+  "private": true,
+  "main": "SSGPackager.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@parcel/plugin": "nightly",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "require-from-string": "^2.0.2"
+  }
+}
