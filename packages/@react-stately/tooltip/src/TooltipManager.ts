@@ -1,52 +1,86 @@
-import {TooltipManagerDelegate} from './types';
-
 export class TooltipManager {
 
-  delegate: TooltipManagerDelegate;
-  visibleTooltip?: any; // TODO: figure out a type for this
+  // TODO: figure out a type for visibleTooltips ... undefined at first then becomes an object
+  visibleTooltips?: any;
   hoverHideTimeout?: () => void;
   hoverShowTimeout?: () => void;
 
+  // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
+    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/master/data/elements/tooltip/TooltipBase.mjs
+    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/aab3963cebeb16df0081a805a1394fbc2d46a851/data/globals/GlobalAnimation.mjs
   constructor() {
-    this.visibleTooltip = null;
+    this.visibleTooltips = null;
     this.hoverHideTimeout = null;
     this.hoverShowTimeout = null;
   }
 
-  _closeTooltip(toggleOption: boolean) {
-    this.delegate.closeTooltip(toggleOption);
+  isSameTarget(currentTriggerId) {
+    return currentTriggerId === visibleTooltips.triggerId;
   }
 
-  _openTooltip(toggleOption: boolean) {
-    this.delegate.openTooltip(toggleOption);
-  }
-
-  isSameTarget(currentTriggerId, nextTriggertId) {
-    return currentTriggerId === nextTriggertId;
-  }
-
-  showTooltipDelayed(isDisabled, delay) {
-    // do timing checks
-    // this.showTooltip(tooltip)
-    console.log('show tooltip delayed');
+  updateTooltipState(state, triggerId)  {
+    state.setOpen(!state.open);
+    visibleTooltips = {triggerId, state};
   }
 
   showTooltip(tooltip) {
-    // if this.visibleTooltip then this.hideTooltip
-    // set this.visibleTooltip
-    // set state to show
+    state.setOpen(true);
+    // Close previously open tooltip
+    if (visibleTooltips) {
+      visibleTooltips.state.setOpen(false);
+    }
   }
 
-  hideTooltipDelayed(isDisabled, delay) {
-    // do timing checks
-    // hideCurrentTooltip
-    console.log('hide tooltip delayed');
+  hideTooltip() {
+    state.setOpen(false);
+    visibleTooltips = null;
   }
 
-  hideTooltip(testString) {
-    // set this.visibleTooltip state to false
-    // set this.visibleTooltip to null
-    console.log('hiding!', testString);
+
+
+
+
+
+
+
+  showTooltipDelayed(isDisabled, triggerId, state) {
+    if (isDisabled) {
+      return;
+    }
+
+    if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
+      clearTimeout(hoverHideTimeout);
+      hoverHideTimeout = null;
+      return;
+    }
+
+    hoverShowTimeout = setTimeout(() => {
+      hoverShowTimeout = null;
+      state.setOpen(true);
+      // Close previously open tooltip
+      if (visibleTooltips) {
+        visibleTooltips.state.setOpen(false);
+      }
+      visibleTooltips = {triggerId, state};
+    }, 300);
+
   }
+
+
+  hideTooltipDelayed(state) {
+    if (hoverShowTimeout != null) {
+      clearTimeout(hoverShowTimeout);
+      hoverShowTimeout = null;
+      return;
+    }
+
+    hoverHideTimeout = setTimeout(() => {
+      hoverHideTimeout = null;
+      state.setOpen(false);
+      visibleTooltips = null;
+    }, 300);
+
+  }
+
 
 }

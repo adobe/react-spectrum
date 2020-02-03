@@ -55,6 +55,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     isOpen: state.open
   });
 
+  // Last design review meeting had useHover hook here but if this is needed for other components
+  // I believe it should be in useDomPropsResponder
+
   // let {hoverProps} = useHover({
   //   isDisabled,
   //   ref: triggerProps.ref
@@ -71,9 +74,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  // abstract away knowledge of timing transitions from aria hook 
   let tooltipManager = state.tooltipManager;
-  // console.log(tooltipManager);
-  // tooltipManager.hideTooltip("check if working") // this console logged
+  console.log(tooltipManager);
+
 
   let handleDelayedShow = () => {
     if (isDisabled) {
