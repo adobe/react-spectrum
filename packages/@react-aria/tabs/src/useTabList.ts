@@ -1,10 +1,9 @@
+import {Orientation} from '@react-types/shared';
 import React, {AllHTMLAttributes, HTMLAttributes, ReactElement} from 'react';
 import {useId} from '@react-aria/utils';
 
-type Orientation = 'horizontal' | 'vertical';
-
 interface AriaTabListProps {
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 interface AriaTabProps {

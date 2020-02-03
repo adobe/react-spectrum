@@ -53,5 +53,9 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef<HTMLElement>) {
   );
 }
 
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
 let _Divider = React.forwardRef(Divider);
 export {_Divider as Divider};

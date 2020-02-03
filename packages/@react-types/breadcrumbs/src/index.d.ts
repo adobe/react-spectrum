@@ -11,7 +11,8 @@ export interface BreadcrumbItemProps extends PressEvents {
 }
 
 export interface BreadcrumbsProps {
-  children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[]
+  children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[],
+  maxVisibleItems?: 'auto' | number
 }
 
 export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
@@ -19,6 +20,5 @@ export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, St
   isHeading?: boolean,
   headingAriaLevel?: number,
   showRoot?: boolean,
-  isDisabled?: boolean,
-  maxVisibleItems?: 'auto' | number
+  isDisabled?: boolean
 }
