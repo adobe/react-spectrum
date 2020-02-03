@@ -12,7 +12,7 @@ import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
 export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single', disableEmptySelection: true});
+  let state = useTreeState({...props, selectionMode: 'single'});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
 
@@ -33,16 +33,14 @@ export function SideNav<T>(props: SideNavProps<T>) {
           if (type === 'section') {
             return (
               <SideNavHeading
-                item={item}
-                id={`${navProps.id}-heading${item.key}`} />
+                item={item} />
             );
           }
 
           return (
             <SideNavItem
               state={state}
-              item={item}
-              id={`${navProps.id}-listitem${item.key}`} />
+              item={item} />
           );
         }}
       </CollectionView>
