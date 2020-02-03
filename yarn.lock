@@ -2837,7 +2837,7 @@
     once "^1.4.0"
     universal-user-agent "^4.0.0"
 
-"@parcel/babel-preset-env@2.0.0-nightly.79+287ac639", "@parcel/babel-preset-env@^2.0.0-nightly.79":
+"@parcel/babel-preset-env@2.0.0-nightly.79+287ac639", "@parcel/babel-preset-env@nightly":
   version "2.0.0-nightly.79"
   resolved "https://registry.yarnpkg.com/@parcel/babel-preset-env/-/babel-preset-env-2.0.0-nightly.79.tgz#7ff621f1ee6984e17c1b7d2a02f36678b2ce9556"
   integrity sha512-0iQy6HV1IWPiqjyNEummrDKoES96qzLvN8sAdduUiN27reeap5eUA06IG8tZl58apv9S5t4LHEjfCyyw72dH5g==
@@ -3109,13 +3109,6 @@
   dependencies:
     "@parcel/types" "2.0.0-nightly.79+287ac639"
 
-"@parcel/plugin@^2.0.0-alpha.3":
-  version "2.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.0.0-alpha.3.tgz#ff9215d0c522ff60692aca7ef6abaa95243f564a"
-  integrity sha512-2nfjd7ujL042gP7ssJ4JRyxEirp5Fuz+Vf4sk4aky3oWVuY9YmUqce0UNUMaIlh911xERo5uagy1jYOSa7gp6g==
-  dependencies:
-    "@parcel/types" "^2.0.0-alpha.3"
-
 "@parcel/plugin@nightly":
   version "2.0.0-nightly.72"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.0.0-nightly.72.tgz#ad907bc74994430416bde7dc59bb7184bf4355e6"
@@ -3286,12 +3279,12 @@
   dependencies:
     "@parcel/plugin" "2.0.0-nightly.79+287ac639"
 
-"@parcel/transformer-inline@^2.0.0-alpha.3":
-  version "2.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@parcel/transformer-inline/-/transformer-inline-2.0.0-alpha.3.tgz#8f5d45a71d5a39478fa378a170d639e8575305d2"
-  integrity sha512-W9fjdVyGA2XK4jVVnxlk0z4B5q2MVXY4HoW90tWT+xDzE3X/qiBYcveq2stzqADnPUO2VTVhE6m4Vsfm/aQy9w==
+"@parcel/transformer-inline@nightly":
+  version "2.0.0-nightly.79"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-inline/-/transformer-inline-2.0.0-nightly.79.tgz#1a374b06fc8de3bf49928dbb101f07ae81511b18"
+  integrity sha512-K5JGl2OgMlmeB4wBzA+K4uLtyEpVzDVkVMgH01JbUBbMITG+KjnxS7eO1cqBF46twyQnSw73YJlSOJNns/gzRQ==
   dependencies:
-    "@parcel/plugin" "^2.0.0-alpha.3"
+    "@parcel/plugin" "2.0.0-nightly.79+287ac639"
 
 "@parcel/transformer-js@2.0.0-nightly.79+287ac639":
   version "2.0.0-nightly.79"
@@ -3464,11 +3457,6 @@
   version "2.0.0-nightly.79"
   resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.0.0-nightly.79.tgz#c3f35b34d6c679a098602c71cf161380759a4640"
   integrity sha512-TSQ1r5lvJZ0wcBM3HZKneP74QrAzWChgKTBz6hliKWIkzpaycEB4rZgYNFH0vapSAUEQoY87Z3teh4q8h4FZtg==
-
-"@parcel/types@^2.0.0-alpha.3":
-  version "2.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.0.0-alpha.3.tgz#b2911c0e3b7756b70cbfc79a432b464b41d214c1"
-  integrity sha512-n4c346lpwhEUFJ3Xv4DUAATLnAqdKkNfEqFW+bfnS8WFBl3bUlaJW4JqHYQ63enoEvMKoD5Rs9/WrhqZ71X8Dg==
 
 "@parcel/utils@2.0.0-nightly.79+287ac639":
   version "2.0.0-nightly.79"
@@ -10476,13 +10464,6 @@ graceful-fs@~1.2.0:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-1.2.3.tgz#15a4806a57547cb2d2dbf27f42e89a8c3451b364"
   integrity sha1-FaSAaldUfLLS2/J/QuiajDRRs2Q=
-
-graphviz@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/graphviz/-/graphviz-0.0.9.tgz#0bbf1df588c6a92259282da35323622528c4bbc4"
-  integrity sha512-SmoY2pOtcikmMCqCSy2NO1YsRfu9OO0wpTlOYW++giGjfX1a6gax/m1Fo8IdUd0/3H15cTOfR1SMKwohj4LKsg==
-  dependencies:
-    temp "~0.4.0"
 
 growly@^1.3.0:
   version "1.3.0"
@@ -19710,20 +19691,6 @@ temp-write@^3.4.0:
     temp-dir "^1.0.0"
     uuid "^3.0.1"
 
-temp@~0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/temp/-/temp-0.4.0.tgz#671ad63d57be0fe9d7294664b3fc400636678a60"
-  integrity sha1-ZxrWPVe+D+nXKUZks/xABjZnimA=
-
-tempy@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/tempy/-/tempy-0.3.0.tgz#6f6c5b295695a16130996ad5ab01a8bd726e8bf8"
-  integrity sha512-WrH/pui8YCwmeiAoxV+lpRH9HpRtgBhSR2ViBPgpGb/wnYDzp21R4MN45fsCGvLROvY67o3byhJRYRONJyImVQ==
-  dependencies:
-    temp-dir "^1.0.0"
-    type-fest "^0.3.1"
-    unique-string "^1.0.0"
-
 term-size@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-1.2.0.tgz#458b83887f288fc56d6fffbfad262e26638efa69"
@@ -20169,7 +20136,7 @@ type-detect@4.0.8:
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
 
-type-fest@^0.3.0, type-fest@^0.3.1:
+type-fest@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.3.1.tgz#63d00d204e059474fe5e1b7c011112bbd1dc29e1"
   integrity sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ==
