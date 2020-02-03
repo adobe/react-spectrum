@@ -55,10 +55,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     isOpen: state.open
   });
 
+  // look at other usePress examples. You can prabably get rid of the ref?
   let {hoverProps} = useHover({
     isDisabled,
     ref: triggerProps.ref
   });
+
+  console.log("hoverProps", hoverProps)
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
@@ -72,8 +75,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   };
 
   let tooltipManager = state.tooltipManager;
-  console.log(tooltipManager);
-  tooltipManager.hideCurrentTooltip() // this console logged!
+  //console.log(tooltipManager);
+  //tooltipManager.hideTooltip("check if working") // this console logged
 
   let handleDelayedShow = () => {
     if (isDisabled) {
@@ -137,6 +140,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       onMouseEnter: handleDelayedShow,
       onMouseLeave: handleDelayedHide,
       hoverHookProps: hoverProps
+      //...hoverProps //-> this causes the ref or styles to be temporarily lost for some reason ... the styles aren't getting applied anyway?
     }
   };
 }

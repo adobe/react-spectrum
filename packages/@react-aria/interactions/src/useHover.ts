@@ -30,6 +30,9 @@ export function useHover(props: HoverHookProps): HoverResult {
     isHovering: isHoveringProp,
     ...domProps
   } = useDOMPropsResponderContext(props);
+  //} = props; -> this works as well
+
+  console.log("domProps", domProps)
 
   let [isHovering, setHover] = useState(false);
 

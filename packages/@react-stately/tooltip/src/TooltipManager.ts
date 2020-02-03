@@ -25,7 +25,7 @@ export class TooltipManager {
     return currentTriggerId === nextTriggertId;
   }
 
-  showTooltipDelayed(tooltip, delay) {
+  showTooltipDelayed(isDisabled, delay) {
     // do timing checks
     // this.showTooltip(tooltip)
     console.log('show tooltip delayed');
@@ -37,16 +37,16 @@ export class TooltipManager {
     // set state to show
   }
 
-  hideTooltipDelayed(delay) {
+  hideTooltipDelayed(isDisabled, delay) {
     // do timing checks
     // hideCurrentTooltip
     console.log('hide tooltip delayed');
   }
 
-  hideCurrentTooltip() {
+  hideTooltip(testString) {
     // set this.visibleTooltip state to false
     // set this.visibleTooltip to null
-    console.log("hiding!!!!")
+    console.log("hiding!", testString)
   }
 
 }
