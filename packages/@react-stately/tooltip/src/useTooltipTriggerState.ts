@@ -1,7 +1,6 @@
 import {TooltipManager} from './TooltipManager';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useControlledState} from '@react-stately/utils';
-import {useCallback, useMemo} from 'react';
 
 export interface TooltipTriggerState {
   open: boolean,

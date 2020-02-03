@@ -1,9 +1,11 @@
 export class TooltipManager {
 
-  // TODO: figure out a type for visibleTooltips ... undefined at first then becomes an object
+  // TODO: figure out proper types
+  // visibleTooltips ...  undefined at first then becomes an object
+  // hoverHide & Show ... Type 'Timeout' is not assignable to type 'number'. -> Cannot find name 'Timeout'
   visibleTooltips?: any;
-  hoverHideTimeout?: () => void;
-  hoverShowTimeout?: () => void;
+  hoverHideTimeout?: any;
+  hoverShowTimeout?: any;
 
   // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
     // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/master/data/elements/tooltip/TooltipBase.mjs
@@ -36,9 +38,7 @@ export class TooltipManager {
     this.visibleTooltips = null;
   }
 
-
   showTooltipDelayed(state, triggerId) {
-
     if (this.hoverHideTimeout != null && this.isSameTarget(triggerId)) {
       clearTimeout(this.hoverHideTimeout);
       this.hoverHideTimeout = null;
@@ -50,9 +50,7 @@ export class TooltipManager {
       this.showTooltip(state);
       this.visibleTooltips = {triggerId, state};
     }, 200);
-
   }
-
 
   hideTooltipDelayed(state) {
     if (this.hoverShowTimeout != null) {
@@ -65,8 +63,5 @@ export class TooltipManager {
       this.hoverHideTimeout = null;
       this.hideTooltip(state);
     }, 200);
-
   }
-
-
 }

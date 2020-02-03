@@ -1,7 +1,6 @@
 import {DOMProps, HoverEvents} from '@react-types/shared';
 import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import {useDOMPropsResponderContext} from './DOMPropsContext';
 
 export interface HoverProps extends HoverEvents, DOMProps {
  isHovering?: boolean,      // can be used to indicate a potential hover state for visual effects
@@ -29,7 +28,6 @@ export function useHover(props: HoverHookProps): HoverResult {
     isDisabled,
     isHovering: isHoveringProp,
     ...domProps
-  // } = useDOMPropsResponderContext(props);
   } = props;
 
   let [isHovering, setHover] = useState(false);

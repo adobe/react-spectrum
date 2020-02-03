@@ -1,7 +1,7 @@
 import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, RefObject} from 'react';
-import {PressProps, useHover} from '@react-aria/interactions';
+import {PressProps} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useOverlay} from '@react-aria/overlays';
@@ -29,10 +29,6 @@ interface TooltipTriggerAria {
   tooltipProps: HTMLAttributes<HTMLElement>,
   hoverTriggerProps: TooltipHoverTriggerProps
 }
-
-let visibleTooltips;
-let hoverHideTimeout = null;
-let hoverShowTimeout = null;
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let tooltipId = useId();
@@ -83,56 +79,15 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
     let triggerId = triggerProps.ref.current.id;
     tooltipManager.showTooltipDelayed(state, triggerId);
-  }
+  };
 
   let handleDelayedHide = () => {
     tooltipManager.hideTooltipDelayed(state);
-  }
-
-
-  // let handleDelayedShow = () => {
-  //   if (isDisabled) {
-  //     return;
-  //   }
-  //   let triggerId = triggerProps.ref.current.id;
-  //   // Only cancel a prior tooltip hide operation if the current tooltip trigger is the same as the previous tooltip trigger
-  //   // a.k.a if user is moving back and forth between trigger and tooltip
-  //   if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
-  //     clearTimeout(hoverHideTimeout);
-  //     hoverHideTimeout = null;
-  //     return;
-  //   }
-  //
-  //   hoverShowTimeout = setTimeout(() => {
-  //     hoverShowTimeout = null;
-  //     state.setOpen(true);
-  //     // Close previously open tooltip (deals with tooltip opened via click operation)
-  //     if (visibleTooltips) {
-  //       visibleTooltips.state.setOpen(false);
-  //     }
-  //     visibleTooltips = {triggerId, state};
-  //   }, 300);
-  // };
-  //
-  // let handleDelayedHide = () => {
-  //   if (hoverShowTimeout != null) {
-  //     clearTimeout(hoverShowTimeout);
-  //     hoverShowTimeout = null;
-  //     return;
-  //   }
-  //
-  //   hoverHideTimeout = setTimeout(() => {
-  //     hoverHideTimeout = null;
-  //     state.setOpen(false);
-  //     visibleTooltips = null;
-  //   }, 300);
-  // };
+  };
 
   let onPress = () => {
     let triggerId = triggerProps.ref.current.id;
-    //state.setOpen(!state.open);
-    //visibleTooltips = {triggerId, state};
-    tooltipManager.updateTooltipState(state, triggerId)
+    tooltipManager.updateTooltipState(state, triggerId);
   };
 
   let triggerType = type;
@@ -151,8 +106,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     },
     hoverTriggerProps: {
       onMouseEnter: handleDelayedShow,
-      onMouseLeave: handleDelayedHide,
-      //...hoverProps //-> this causes the ref or styles to be temporarily lost for some reason?
+      onMouseLeave: handleDelayedHide
+      // ...hoverProps //-> this causes the ref or styles to be temporarily lost for some reason?
     }
   };
 }
