@@ -18,6 +18,7 @@ export function Dialog(props: SpectrumDialogProps) {
   let {
     children,
     isDismissable,
+    onDismiss,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -38,7 +39,7 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={otherProps.size}>
         {children}
-        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} />}
+        {isDismissable && <ActionButton slot="closeButton" autoFocus isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
       </ModalDialog>
     );
   }
@@ -74,7 +75,6 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
     };
   }
 
-  /* possible weird bug where radio group isn't a single tab stop, FocusScope? */
   return (
     <FocusScope contain restoreFocus autoFocus>
       <div

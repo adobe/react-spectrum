@@ -22,7 +22,7 @@ storiesOf('Dialog', module)
   )
   .add(
   'isDismissable',
-  () => render({isDismissable: true})
+  () => render({isDismissable: true, onDismiss: action('dismissed')})
   )
   .add(
     'long content',
@@ -34,7 +34,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'with hero, isDimissable',
-    () => renderHero({isDismissable: true})
+    () => renderHero({isDismissable: true, onDismiss: action('dismissed')})
   )
   .add(
     'small',
@@ -113,6 +113,18 @@ storiesOf('Dialog/Alert', module)
     () => renderAlert({
       variant: 'error',
       title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel')
+    })
+  )
+  .add(
+    'warning',
+    () => renderAlert({
+      variant: 'warning',
+      title: 'This is a warning',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
