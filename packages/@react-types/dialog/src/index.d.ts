@@ -26,6 +26,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   slots?: Slots,
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   isDismissable?: boolean, // adds close button and enables clicking on background
+  onDismiss?: () => void
   role?: 'dialog' | 'alertdialog'
 }
 
