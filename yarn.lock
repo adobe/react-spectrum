@@ -3102,19 +3102,12 @@
   dependencies:
     "@parcel/plugin" "2.0.0-nightly.79+287ac639"
 
-"@parcel/plugin@2.0.0-nightly.79+287ac639":
+"@parcel/plugin@2.0.0-nightly.79+287ac639", "@parcel/plugin@nightly":
   version "2.0.0-nightly.79"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.0.0-nightly.79.tgz#49a9c06dd37a5579bc23169a161577f7d4046fdc"
   integrity sha512-dIZls64F5Cge5kndhLrp2fOC664zUzlOQcZ9iiZCdi9Mk8TQhmzIhO1jnXgIz2O3WI+IBHDN9LYDWWBsrcMcQw==
   dependencies:
     "@parcel/types" "2.0.0-nightly.79+287ac639"
-
-"@parcel/plugin@nightly":
-  version "2.0.0-nightly.72"
-  resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.0.0-nightly.72.tgz#ad907bc74994430416bde7dc59bb7184bf4355e6"
-  integrity sha512-R1COpRwbinYmOotrE9bpWqeDhdpT6tZT3VBjlqeq/snaQydfC1No4GYHsZYANCg6/U+QJIfRZz12dLDQfL4i4w==
-  dependencies:
-    "@parcel/types" "2.0.0-nightly.72+a0d19756"
 
 "@parcel/reporter-bundle-analyzer@2.0.0-nightly.1701+287ac639":
   version "2.0.0-nightly.1701"
@@ -3447,11 +3440,6 @@
   integrity sha512-oktkHKcLKGJ0OuTRmVzLRepARfA5vaGO7emPFL8+UbCIu5l0jEZaam1vUTb54EFiQgBwsLs5ap79ShzITA8rng==
   dependencies:
     nullthrows "^1.1.1"
-
-"@parcel/types@2.0.0-nightly.72+a0d19756":
-  version "2.0.0-nightly.72"
-  resolved "https://registry.yarnpkg.com/@parcel/types/-/types-2.0.0-nightly.72.tgz#bc7612f3eb2194a89bef95d42ff598727f7c01d4"
-  integrity sha512-NJfVFyUVUjZf3NrFb0CRQk5MPAyr/zpfYZw81eW9JwjFMhBumqW5kN/Qy75UXNznOBhl28q4ZGYQUbucnJxTrw==
 
 "@parcel/types@2.0.0-nightly.79+287ac639":
   version "2.0.0-nightly.79"

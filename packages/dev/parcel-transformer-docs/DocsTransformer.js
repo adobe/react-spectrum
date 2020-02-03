@@ -287,7 +287,7 @@ module.exports = new Transformer({
           type: 'function',
           parameters: path.get('parameters').map(p => ({
             name: p.node.name,
-            type: processExport(p.get('typeAnnotation.typeAnnotation'))
+            type: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'}
           })),
           return: path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
           typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
