@@ -20,7 +20,7 @@ export class TooltipManager {
 
   updateTooltipState(state, triggerId)  {
     state.setOpen(!state.open);
-    visibleTooltips = {triggerId, state};
+    this.visibleTooltips = {triggerId, state};
   }
 
   showTooltip(tooltip) {
@@ -41,44 +41,39 @@ export class TooltipManager {
 
 
 
+  showTooltipDelayed(state, triggerId) {
 
-
-  showTooltipDelayed(isDisabled, triggerId, state) {
-    if (isDisabled) {
+    if (this.hoverHideTimeout != null && this.visibleTooltips.triggerId === triggerId) {
+      clearTimeout(this.hoverHideTimeout);
+      this.hoverHideTimeout = null;
       return;
     }
 
-    if (hoverHideTimeout != null && visibleTooltips.triggerId === triggerId) {
-      clearTimeout(hoverHideTimeout);
-      hoverHideTimeout = null;
-      return;
-    }
-
-    hoverShowTimeout = setTimeout(() => {
-      hoverShowTimeout = null;
+    this.hoverShowTimeout = setTimeout(() => {
+      this.hoverShowTimeout = null;
       state.setOpen(true);
       // Close previously open tooltip
-      if (visibleTooltips) {
-        visibleTooltips.state.setOpen(false);
+      if (this.visibleTooltips) {
+        this.visibleTooltips.state.setOpen(false);
       }
-      visibleTooltips = {triggerId, state};
-    }, 300);
+      this.visibleTooltips = {triggerId, state};
+    }, 200);
 
   }
 
 
   hideTooltipDelayed(state) {
-    if (hoverShowTimeout != null) {
-      clearTimeout(hoverShowTimeout);
-      hoverShowTimeout = null;
+    if (this.hoverShowTimeout != null) {
+      clearTimeout(this.hoverShowTimeout);
+      this.hoverShowTimeout = null;
       return;
     }
 
-    hoverHideTimeout = setTimeout(() => {
-      hoverHideTimeout = null;
+    this.hoverHideTimeout = setTimeout(() => {
+      this.hoverHideTimeout = null;
       state.setOpen(false);
-      visibleTooltips = null;
-    }, 300);
+      this.visibleTooltips = null;
+    }, 200);
 
   }
 
