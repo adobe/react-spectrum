@@ -5,9 +5,23 @@ import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
 
 describe('Breadcrumbs', function () {
-
   afterEach(() => {
     cleanup();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.className === 'spectrum-Breadcrumbs-item') {
+        return {width: 100};
+      }
+      if (this.className === 'spectrum-Breadcrumbs') {
+        return {width: 250};
+      }
+    });
+  });
+
+  afterEach(() => {
+    HTMLElement.prototype.getBoundingClientRect.mockRestore();
   });
 
   it.each`
@@ -138,4 +152,44 @@ describe('Breadcrumbs', function () {
     expect(item2).toHaveAttribute('aria-disabled', 'true');
   });
 
+
+  it('Handles max visible items auto', () => {
+    let {getByText, getByRole} = render(
+      <Breadcrumbs maxVisibleItems="auto" >
+        <BreadcrumbItem >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem >Folder 2</BreadcrumbItem>
+        <BreadcrumbItem >Folder 3</BreadcrumbItem>
+        <BreadcrumbItem >Folder 4</BreadcrumbItem>
+        <BreadcrumbItem >Folder 5</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+
+    let {children} = getByRole('list');
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('Handles max visible items auto with showRoot', () => {
+    let {getByText, getByRole} = render(
+      <Breadcrumbs maxVisibleItems="auto" showRoot>
+        <BreadcrumbItem >Folder 1</BreadcrumbItem>
+        <BreadcrumbItem >Folder 2</BreadcrumbItem>
+        <BreadcrumbItem >Folder 3</BreadcrumbItem>
+        <BreadcrumbItem >Folder 4</BreadcrumbItem>
+        <BreadcrumbItem >Folder 5</BreadcrumbItem>
+      </Breadcrumbs>
+    );
+
+    let {children} = getByRole('list');
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
 });
