@@ -36,7 +36,7 @@ export class TooltipManager {
   }
 
   showTooltipDelayed(state, triggerId) {
-    if (this.hoverHideTimeout != null && this.isSameTarget(triggerId)) {
+    if (this.hoverHideTimeout && this.isSameTarget(triggerId)) {
       clearTimeout(this.hoverHideTimeout);
       this.hoverHideTimeout = null;
       return;
@@ -50,7 +50,7 @@ export class TooltipManager {
   }
 
   hideTooltipDelayed(state) {
-    if (this.hoverShowTimeout != null) {
+    if (this.hoverShowTimeout) {
       clearTimeout(this.hoverShowTimeout);
       this.hoverShowTimeout = null;
       return;

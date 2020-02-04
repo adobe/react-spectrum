@@ -11,7 +11,7 @@ export interface HoverHookProps extends HoverProps, DOMProps {
 }
 
 interface HoverState {
- target: HTMLElement | null
+ target?: HTMLElement
 }
 
 interface HoverResult {
