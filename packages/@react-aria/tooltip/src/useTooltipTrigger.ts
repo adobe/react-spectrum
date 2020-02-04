@@ -92,6 +92,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let triggerType = type;
 
+  // same syntax of triggerType === 'hover'
   return {
     triggerProps: {
       id: triggerId,
