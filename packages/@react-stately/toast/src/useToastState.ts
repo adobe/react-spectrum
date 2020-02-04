@@ -1,7 +1,13 @@
+import {ToastStateBase} from '@react-types/toast';
 import {useState} from 'react';
 
-export function useToastState(value) {
-  const [toasts, setToasts] = useState(value);
+
+interface ToastStateProps extends React.HTMLAttributes<HTMLElement> {
+  value?: ToastStateBase[]
+}
+
+export function useToastState(props: ToastStateProps) {
+  const [toasts, setToasts] = useState(props.value);
 
   const onAdd = (content, options) => {
     let tempToasts = [...toasts];

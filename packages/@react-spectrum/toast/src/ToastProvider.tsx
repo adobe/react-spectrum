@@ -1,12 +1,12 @@
 import React, {ReactElement, ReactNode, useContext} from 'react';
 import {ToastContainer} from './';
-import {ToastOptions} from '@react-types/toast';
+import {ToastOptions, ToastStateBase} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToastState} from '@react-stately/toast';
 
 interface ToastContextProps {
   setToasts?: (any) => void,
-  toasts?: {content: ReactNode, props: ToastOptions, ref: any}[],
+  toasts?: ToastStateBase[],
   positive?: (content: ReactNode, options: ToastOptions) => void,
   negative?: (content: ReactNode, options: ToastOptions) => void,
   neutral?: (content: ReactNode, options: ToastOptions) => void,
@@ -24,13 +24,12 @@ export function useToastProvider() {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, toasts} = useToastState([]);
+  let {onAdd, toasts} = useToastState({value: []});
   let {
     children
   } = useProviderProps(props);
 
   let contextValue = {
-    toasts,
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
       onAdd(content, options);
     },
@@ -47,7 +46,7 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
 
   return (
     <ToastContext.Provider value={contextValue}>
-      <ToastContainer />
+      <ToastContainer toasts={toasts} />
       {children}
     </ToastContext.Provider>
   );
