@@ -1,9 +1,8 @@
 import {DOMProps, HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {mergeProps} from '@react-aria/utils';
 
 export interface HoverProps extends HoverEvents, DOMProps {
- isHovering?: boolean,      // can be used to indicate a potential hover state for visual effects
  isDisabled?: boolean
 }
 
@@ -16,7 +15,6 @@ interface HoverState {
 }
 
 interface HoverResult {
- isHovering: boolean,
  hoverProps: HTMLAttributes<HTMLElement>
 }
 
@@ -26,11 +24,8 @@ export function useHover(props: HoverHookProps): HoverResult {
     onHoverChange,
     onHoverEnd,
     isDisabled,
-    isHovering: isHoveringProp,
     ...domProps
   } = props;
-
-  let [isHovering, setHover] = useState(false);
 
   let hoverProps = useMemo(() => {
 
@@ -57,8 +52,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHoverChange) {
         onHoverChange(true);
       }
-
-      setHover(true);
     };
 
 
@@ -85,8 +78,6 @@ export function useHover(props: HoverHookProps): HoverResult {
       if (onHoverChange) {
         onHoverChange(false);
       }
-
-      setHover(false);
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -113,7 +104,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   }, [onHover, onHoverChange, onHoverEnd, isDisabled]);
 
   return {
-    isHovering: isHoveringProp || isHovering,
     hoverProps: mergeProps(domProps, hoverProps)
   };
 }

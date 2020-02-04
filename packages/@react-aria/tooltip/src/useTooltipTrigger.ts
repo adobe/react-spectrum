@@ -4,6 +4,7 @@ import {HTMLAttributes, RefObject} from 'react';
 import {PressProps} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useHover} from '@react-aria/interactions';
 import {useOverlay} from '@react-aria/overlays';
 
 interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
@@ -25,9 +26,8 @@ interface TooltipHoverTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps
-  tooltipProps: HTMLAttributes<HTMLElement>,
-  hoverTriggerProps: TooltipHoverTriggerProps
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps & TooltipHoverTriggerProps,
+  tooltipProps: HTMLAttributes<HTMLElement>
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
@@ -50,14 +50,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     onClose: onClose,
     isOpen: state.open
   });
-
-  // Last design review meeting had useHover hook here but if this is needed for other components
-  // ... I believe it should be in useDomPropsResponder
-
-  // let {hoverProps} = useHover({
-  //   isDisabled,
-  //   ref: triggerProps.ref
-  // });
 
   let onKeyDownTrigger = (e) => {
     if (triggerProps.ref && triggerProps.ref.current) {
@@ -92,7 +84,11 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let triggerType = type;
 
-  // same syntax of triggerType === 'hover'
+  let {hoverProps} = useHover({
+    isDisabled,
+    ref: triggerProps.ref
+  });
+
   return {
     triggerProps: {
       id: triggerId,
@@ -100,15 +96,15 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       ...overlayProps,
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onPress: triggerType === 'click' ? onPress : undefined
+      onPress: triggerType === 'click' ? onPress : undefined,
+      // @ts-ignore
+      onMouseEnter: triggerType === 'hover' ? handleDelayedShow : undefined,
+      // @ts-ignore
+      onMouseLeave: triggerType === 'hover' ? handleDelayedHide : undefined,
+      ...(triggerType === 'hover' && hoverProps)
     },
     tooltipProps: {
       id: tooltipId
-    },
-    hoverTriggerProps: {
-      onMouseEnter: handleDelayedShow,
-      onMouseLeave: handleDelayedHide
-      // ...hoverProps //-> this causes the ref or styles to be temporarily lost for some reason?
     }
   };
 }
