@@ -59,13 +59,13 @@ storiesOf('Tooltip', module)
     'supports disable prop: hover',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
   ).add(
-     'single tooltip proof of concept: hover',
+     'single tooltip: hover',
      () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'hover'})
    ).add(
-     'single tooltip proof of concept: click',
+     'single tooltip: click',
      () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'click'})
    ).add(
-     'single tooltip proof of concept: hover & click',
+     'single tooltip: hover & click',
      () => renderWithDifferentTriggerTypes('This is a tooltip.')
    );
 
