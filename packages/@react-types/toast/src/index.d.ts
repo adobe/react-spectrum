@@ -18,6 +18,5 @@ export interface SpectrumToastProps extends ToastProps, DOMProps, StyleProps {}
 
 export interface ToastStateBase {
   content: ReactNode,
-  props: ToastOptions/*,
-  ref: any*/
+  props: ToastOptions
 }

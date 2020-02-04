@@ -24,7 +24,7 @@ export function useToastProvider() {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, toasts} = useToastState({value: []});
+  let {onAdd, toasts} = useToastState();
   let {
     children
   } = useProviderProps(props);

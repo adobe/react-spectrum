@@ -30,7 +30,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/dialog": "^3.0.0-alpha.2",
     "@react-aria/i18n": "^3.0.0-rc.1",
-    "@react-spectrum/toast": "^3.0.0-alpha.2",
+    "@react-spectrum/toast": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-types/provider": "^3.0.0-rc.1",
     "@react-types/shared": "^3.0.0-rc.1",

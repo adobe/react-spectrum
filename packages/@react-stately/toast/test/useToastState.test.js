@@ -8,29 +8,26 @@ describe('useToastState', () => {
   }];
 
   it('should be able to update via setToasts', () => {
-    let value = [];
-    let {result} = renderHook(() => useToastState(value));
-    expect(result.current.toasts).toBe(value);
+    let {result} = renderHook(() => useToastState());
+    expect(result.current.toasts).toStrictEqual([]);
     act(() => result.current.setToasts(newValue));
     expect(result.current.toasts).toStrictEqual(newValue);
   });
 
   it('should add a new toast via onAdd', () => {
-    let value = [];
-    let {result} = renderHook(() => useToastState(value));
-    expect(result.current.toasts).toBe(value);
+    let {result} = renderHook(() => useToastState());
+    expect(result.current.toasts).toStrictEqual([]);
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
     expect(result.current.toasts).toStrictEqual(newValue);
   });
 
   it('should be able to add multiple toasts', () => {
-    let value = [];
     let secondToast = {
       content: 'Second Toast',
       props: {variant: 'info'}
     };
-    let {result} = renderHook(() => useToastState(value));
-    expect(result.current.toasts).toBe(value);
+    let {result} = renderHook(() => useToastState());
+    expect(result.current.toasts).toStrictEqual([]);
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
     expect(result.current.toasts).toStrictEqual(newValue);
     act(() => result.current.onAdd(secondToast.content, secondToast.props));

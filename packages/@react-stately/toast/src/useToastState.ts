@@ -6,8 +6,8 @@ interface ToastStateProps extends React.HTMLAttributes<HTMLElement> {
   value?: ToastStateBase[]
 }
 
-export function useToastState(props: ToastStateProps) {
-  const [toasts, setToasts] = useState(props.value);
+export function useToastState(props?: ToastStateProps) {
+  const [toasts, setToasts] = useState(props && props.value || []);
 
   const onAdd = (content, options) => {
     let tempToasts = [...toasts];
