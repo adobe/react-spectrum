@@ -185,11 +185,11 @@ function walk(obj, fn, k = null) {
 function mergeInterface(obj) {
   let properties = {};
   if (obj.type === 'interface') {
+    merge(properties, obj.properties);  
+
     for (let ext of obj.extends) {
-      Object.assign(properties, mergeInterface(ext).properties);
+      merge(properties, mergeInterface(ext).properties);
     }
-  
-    Object.assign(properties, obj.properties);  
   }
 
   return {
@@ -200,4 +200,12 @@ function mergeInterface(obj) {
     typeParameters: obj.typeParameters,
     extends: []
   };
+}
+
+function merge(a, b) {
+  for (let key in b) {
+    if (!(key in a)) {
+      a[key] = b[key];
+    }
+  }
 }

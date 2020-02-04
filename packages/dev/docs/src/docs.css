@@ -14,3 +14,7 @@ html, body {
   min-width: 150px;
   padding: 0 8px;
 }
+
+.propTable {
+  width: 100%;
+}

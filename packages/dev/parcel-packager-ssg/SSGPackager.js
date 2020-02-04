@@ -37,7 +37,6 @@ module.exports = new Packager({
       }
     });
 
-    console.log(Component)
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
         scripts: bundles.filter(b => b.type === 'js').map(b => ({
