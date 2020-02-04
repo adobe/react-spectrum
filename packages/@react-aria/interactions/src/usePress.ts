@@ -15,6 +15,7 @@ export interface PressHookProps extends PressProps, DOMProps {
 interface PressState {
   isPressed: boolean,
   ignoreEmulatedMouseEvents: boolean,
+  ignoreClickAfterPress: boolean,
   activePointerId: any,
   target: HTMLElement | null,
   isOverTarget: boolean
@@ -71,6 +72,7 @@ export function usePress(props: PressHookProps): PressResult {
   let ref = useRef<PressState>({
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
+    ignoreClickAfterPress: false,
     activePointerId: null,
     target: null,
     isOverTarget: false
@@ -106,6 +108,8 @@ export function usePress(props: PressHookProps): PressResult {
         return;
       }
 
+      state.ignoreClickAfterPress = true;
+
       if (onPressEnd) {
         onPressEnd({
           type: 'pressend',
@@ -137,19 +141,54 @@ export function usePress(props: PressHookProps): PressResult {
 
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
-        if (!state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
+        if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          state.isPressed = true;
-          triggerPressStart(e, 'keyboard');
+          // If the target is a link,
+          // defer triggering pressStart until onClick event handler.
+          if (isHTMLAnchorLink(e.target as HTMLElement) ||
+            (e.target as HTMLElement).getAttribute('role') === 'link') {
+            return;
+          }
+          if (!state.isPressed) {
+            state.isPressed = true;
+            triggerPressStart(e, 'keyboard');
+          }
         }
       },
       onKeyUp(e) {
-        if (state.isPressed && isValidKeyboardEvent(e.nativeEvent)) {
+        if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          state.isPressed = false;
-          triggerPressEnd(e, 'keyboard');
+          // If the target is a link, trigger the click method to open the URL,
+          // but defer triggering pressEnd until onClick event handler.
+          if (isHTMLAnchorLink(e.target as HTMLElement) ||
+            (e.target as HTMLElement).getAttribute('role') === 'link') {
+            (e.target as HTMLElement).click();
+            return;
+          }
+          if (state.isPressed) {
+            state.isPressed = false;
+            triggerPressEnd(e, 'keyboard');
+          }
+        }
+      },
+      onClick(e) {
+        if (e) {
+          e.stopPropagation();
+          if (isDisabled) {
+            e.preventDefault();
+          }
+
+          // If triggered from a screen reader or by using element.click(),
+          // trigger as if it were a keyboard click.
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
+            triggerPressStart(e, 'keyboard');
+            triggerPressEnd(e, 'keyboard');
+          }
+
+          state.ignoreEmulatedMouseEvents = false;
+          state.ignoreClickAfterPress = false;
         }
       }
     };
@@ -234,7 +273,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = true;
         state.target = e.currentTarget;
         triggerPressStart(e, 'mouse');
-        
+
         document.addEventListener('mouseup', onMouseUp, false);
       };
 
@@ -251,7 +290,7 @@ export function usePress(props: PressHookProps): PressResult {
           triggerPressEnd(e, 'mouse', false);
         }
       };
-    
+
       let onMouseUp = (e: MouseEvent) => {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
@@ -260,7 +299,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
-    
+
         triggerPressEnd(createEvent(state.target, e), 'mouse');
       };
 
@@ -318,14 +357,6 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
         }
       };
-
-      pressProps.onClick = (e) => {
-        e.stopPropagation();
-        state.ignoreEmulatedMouseEvents = false;
-        if (isDisabled) {
-          e.preventDefault();
-        }
-      };
     }
 
     return pressProps;
@@ -337,17 +368,44 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
+function isHTMLAnchorLink(target: HTMLElement): boolean {
+  return target.tagName === 'A' && target.hasAttribute('href');
+}
+
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   const {key, target} = event;
-  const {tagName, isContentEditable} = target as HTMLElement;
+  const element = target as HTMLElement;
+  const {tagName, isContentEditable} = element;
+  const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar') &&
     (tagName !== 'INPUT' &&
       tagName !== 'TEXTAREA' &&
-      isContentEditable !== true)
+      isContentEditable !== true) &&
+    // A link with a valid href should be handled natively,
+    // unless it also has role='button' and was triggered using Space.
+    (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
+    // An element with role='link' should only trigger with Enter key
+    !(role === 'link' && key !== 'Enter')
   );
+}
+
+// Per: https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+// Keyboards, Assitive Technologies, and element.click() all produce a "virtual"
+// click event. This is a method of inferring such clicks. Every browser except
+// IE 11 only sets a zero value of "detail" for click events that are "virtual".
+// However, IE 11 uses a zero value for all click events. For IE 11 we rely on
+// the quirk that it produces click events that are of type PointerEvent, and
+// where only the "virtual" click lacks a pointerType field.
+function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
+  // JAWS/NVDA with Firefox.
+  if ((event as any).mozInputSource === 0 && event.isTrusted) {
+    return true;
+  }
+
+  return event.detail === 0 && !(event as PointerEvent).pointerType;
 }
 
 function getTouchFromEvent(event: TouchEvent): Touch | null {

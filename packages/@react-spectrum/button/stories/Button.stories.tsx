@@ -35,7 +35,11 @@ storiesOf('Button', module)
   )
   .add(
     'element: a',
-    () => render({elementType: 'a', href: 'http://example.com', variant: 'primary'})
+    () => render({elementType: 'a', variant: 'primary'})
+  )
+  .add(
+    'element: a, href: \'//example.com\', target: \'_self\'',
+    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
   );
 
 function render(props: any = {}) {

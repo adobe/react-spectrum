@@ -5,6 +5,7 @@ import {
   ReactElement,
   SetStateAction
 } from 'react';
+import {Orientation} from './orientation';
 
 export interface SplitViewStatelyProps {
   allowsCollapsing?: boolean,
@@ -44,7 +45,7 @@ export interface SplitViewAriaProps {
   id?: string,
   onMouseDown?: MouseEventHandler,
   allowsResizing?: boolean,
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   primaryPane?: 0 | 1,
   primaryMinSize?: number,
   primaryMaxSize?: number,
@@ -57,7 +58,7 @@ export interface SplitViewAriaProps {
 
 export interface SplitViewProps {
   children: [ReactElement, ReactElement],
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   allowsResizing?: boolean,
   allowsCollapsing?: boolean,
   onResize?: (primarySize: number) => void,
