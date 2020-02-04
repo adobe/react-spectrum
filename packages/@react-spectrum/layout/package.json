@@ -24,7 +24,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/utils": "^3.0.0-rc.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-types/layout": "^3.0.0-alpha.1"
   },
@@ -35,6 +34,7 @@
     "@react-spectrum/view": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
+    "@react-spectrum/provider": "^3.0.0-rc.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },

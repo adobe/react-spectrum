@@ -39,16 +39,18 @@ governing permissions and limitations under the License.
 .spectrum-Dialog {
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: flex;
-  flex-direction: column;
 
   /* Allow 100% width, taking into account padding */
   box-sizing: border-box;
-  
+
   /* Be no bigger than max-width, but also be 90% if the viewport is smaller than max-width */
   width: fit-content;
   min-width: var(--spectrum-dialog-min-width);
+  max-width: 100%;
 
-  padding: var(--spectrum-dialog-padding);
+  /* made up value */
+  max-height: 90vh;
+
   outline: none;
 }
 
@@ -65,124 +67,101 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog-hero {
+  grid-area: hero;
   height: var(--spectrum-dialog-hero-height);
-
-  margin-left: calc(-1 * var(--spectrum-dialog-padding));
-  margin-right: calc(-1 * var(--spectrum-dialog-padding));
-  margin-top: calc(-1 * var(--spectrum-dialog-padding));
-  margin-bottom: var(--spectrum-dialog-padding);
 
   border-top-left-radius: var(--spectrum-dialog-border-radius);
   border-top-right-radius: var(--spectrum-dialog-border-radius);
 
   background-size: cover;
   background-position: center center;
+  overflow: hidden;
+}
+
+.spectrum-Dialog .spectrum-Dialog-grid {
+  display: grid;
+  grid-template-columns: var(--spectrum-dialog-padding) auto var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-areas:
+    "hero hero    hero"
+    ".    .       closeButton"
+    ".    header  ."
+    ".    divider ."
+    ".    content ."
+    ".    footer  ."
+    ".    .       .";
+  width: 100%;
 }
 
 .spectrum-Dialog-header {
+  grid-area: header;
   display: flex;
   /* Without this, buttons will be stretched */
   align-items: center;
+  justify-content: space-between;
 
-  position: relative;
   box-sizing: border-box;
-  width: 100%;
 
-  /* Don't get small when the dialog does */
-  flex-shrink: 0;
-
-  border-radius: var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius) 0 0;
   outline: none; /* Hide focus outline around header */
+}
 
-  padding-bottom: calc(var(--spectrum-dialog-rule-margin-top) + var(--spectrum-dialog-rule-margin-bottom) + var(--spectrum-dialog-rule-height));
-
-  /* The rule element */
-  &::after {
-    position: absolute;
-    bottom: var(--spectrum-dialog-rule-margin-bottom);
-    left: 0;
-    right: 0;
-    content: '';
-
-    height: var(--spectrum-dialog-rule-height);
-  }
+.spectrum-Dialog-divider {
+  grid-area: divider;
+  width: 100%;
+  margin-top: var(--spectrum-dialog-rule-margin-top);
+  margin-bottom: var(--spectrum-dialog-rule-margin-bottom);
 }
 
 .spectrum-Dialog--noDivider {
-  .spectrum-Dialog-header {
-    &::after {
-      display: none;
-    }
-  }
-}
-
-.spectrum-Dialog-closeButton {
-  display: none;
-}
-
-.spectrum-Dialog--dismissible {
-  .spectrum-Dialog-footer {
-    /* You cannot have buttons in a dismissible dialog */
+  .spectrum-Dialog-divider {
     display: none;
   }
-
-  .spectrum-Dialog-closeButton {
-    display: initial;
-  }
-}
-
-.spectrum-Dialog-closeButton {
-  position: absolute;
-  top: calc(-1 * var(--spectrum-global-dimension-size-350));
-  right: calc(-1 * var(--spectrum-global-dimension-size-350));
-}
-
-.spectrum-Dialog-typeIcon {
-  display: block;
 }
 
 .spectrum-Dialog-content {
-  display: block;
+  grid-area: content;
   box-sizing: border-box;
 
+  /*
+  v2 is currently worse, inputs that get focus rings get a slight clipping unless overflow: visible replaces this line
+  we should think of a better way to handle this, see padding/margin below for fix
+  */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-
-  flex: 1 1 auto;
 
   outline: none; /* Hide focus outline */
 
   font-size: var(--spectrum-dialog-content-text-size);
   font-weight: var(--spectrum-dialog-content-text-font-weight);
   line-height: var(--spectrum-dialog-content-text-line-height);
+
+  /* this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped. is there a better way to treat this */
+  padding: 0 var(--spectrum-global-dimension-size-25);
+  margin: 0 calc(-1 * var(--spectrum-global-dimension-size-25));
 }
 
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .spectrum-Dialog-content {
-    /* Temporary IE 11 fix */
-    max-height: 70vh;
-  }
-}
 
 .spectrum-Dialog-footer {
-  border-radius: 0 0 var(--spectrum-dialog-border-radius) var(--spectrum-dialog-border-radius);
-  padding-top: calc(var(--spectrum-dialog-content-margin-bottom) - var(--spectrum-dialog-button-margin) / 2);
-
-  flex: 0 1 auto;
-  flex-wrap: wrap;
+  grid-area: footer;
+  /* this padding isn't built into the grid because it disappears with this footer */
+  padding-top: var(--spectrum-global-dimension-static-size-500);
 
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
 
   outline: none; /* Hide focus outline */
 
-  margin: calc(-1 * var(--spectrum-dialog-button-margin) / 2);
-  margin-top: 0;
-
   /* Both selectors are required to override the button + button rule */
   > *,
   > .spectrum-Button + .spectrum-Button {
-    margin: calc(var(--spectrum-dialog-button-margin) / 2);
+    margin-bottom: 0;
+  }
+}
+
+.spectrum-Dialog--dismissable {
+  .spectrum-Dialog-footer {
+    display: none;
   }
 }
 
@@ -198,22 +177,54 @@ governing permissions and limitations under the License.
   outline: none; /* Hide focus outline */
 }
 
+.spectrum-Dialog-closeButton {
+  display: none;
+  grid-area: closeButton;
+  /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
+  align-self: start;
+  justify-self: start;
+
+  inset-block-start: var(--spectrum-global-dimension-size-150);
+  inset-inline-end: var(--spectrum-global-dimension-size-150);
+}
+
+.spectrum-Dialog--dismissable {
+  .spectrum-Dialog-closeButton {
+    display: block;
+  }
+}
+
 /* Alert Dialog is a specific type of Dialog */
-.spectrum-Dialog--alert {
+.spectrum-Dialog--error {
   width: var(--spectrum-dialog-alert-width);
 }
 
+.spectrum-Dialog--fullscreen {
+  width: calc(100vw - 32px);
+  height: calc(100vh - 32px);
+}
+.spectrum-Dialog--fullscreenTakeover {
+  width: 100vw;
+  height: 100vh;
+
+  border-radius: 0;
+}
 /** @unofficial */
 .spectrum-Dialog--fullscreen,
 .spectrum-Dialog--fullscreenTakeover {
-  width: auto;
   max-height: none;
   max-width: none;
 
-  padding-top: var(--spectrum-dialog-fullscreen-padding-top);
-
-  .spectrum-Dialog-header {
-    flex-shrink: 0;
+  &.spectrum-Dialog .spectrum-Dialog-grid {
+    display: grid;
+    grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
+    grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr var(--spectrum-dialog-padding);
+    grid-template-areas:
+      ".    .       .       ."
+      ".    header  footer  ."
+      ".    divider divider ."
+      ".    content content ."
+      ".    .       .       .";
   }
 
   .spectrum-Dialog-title {
@@ -223,5 +234,9 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-content {
     max-height: none;
+  }
+
+  .spectrum-Dialog-footer {
+    padding-top: 0px;
   }
 }
