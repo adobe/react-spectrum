@@ -1,9 +1,13 @@
-import {ActionButton} from '@react-spectrum/button';
-import {Dialog, DialogTrigger} from '../';
+import {action} from '@storybook/addon-actions';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {Content, Footer, Header} from '@react-spectrum/view';
+import {Divider} from '@react-spectrum/divider';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 
 storiesOf('DialogTrigger', module)
   // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
@@ -172,6 +176,10 @@ storiesOf('DialogTrigger', module)
   .add(
     'containerPadding',
     () => render({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+  )
+  .add(
+    'alert dialog',
+    () => renderAlert({})
   );
 
 function render({width = 'auto', ...props}) {
@@ -180,8 +188,24 @@ function render({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          Contents
+          <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+          <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
         </Dialog>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderAlert({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger {...props} defaultOpen={isChromatic()}>
+        <ActionButton>Trigger</ActionButton>
+        <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={action('cancel')} onConfirm={action('confirm')}>
+          Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.
+        </AlertDialog>
       </DialogTrigger>
     </div>
   );

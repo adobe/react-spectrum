@@ -1,0 +1,41 @@
+{
+  "name": "@react-spectrum/typography",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "description": "Spectrum UI components in React",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": ["dist"],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    },
+    "module": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-spectrum/utils": "^3.0.0-rc.1",
+    "@react-types/typography": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "@react-spectrum/provider": "^3.0.0-rc.1",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

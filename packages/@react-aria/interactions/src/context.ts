@@ -7,3 +7,4 @@ interface PressResponderContext extends PressProps {
 }
 
 export const PressResponderContext = React.createContext<PressResponderContext>(null);
+PressResponderContext.displayName = 'PressResponderContext';

@@ -3,14 +3,18 @@ import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
+export type FocusStrategy = 'first' | 'last';
+
 interface MenuTriggerState {
   isOpen: boolean,
-  setOpen(value: boolean): void
+  setOpen: (value: boolean) => void,
+  focusStrategy: FocusStrategy,
+  setFocusStrategy: (value: FocusStrategy) => void
 }
 
 interface MenuTriggerProps {
   ref: RefObject<HTMLElement | null>,
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
+  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
 } 
 
 interface MenuTriggerAria {
@@ -32,10 +36,8 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     isOpen: state.isOpen
   });
 
-  let onPress = (e) => {
-    if (e.pointerType !== 'keyboard') {
-      state.setOpen(!state.isOpen);
-    }
+  let onPress = () => {
+    state.setOpen(!state.isOpen);
   };
 
   let onKeyDown = (e) => {
@@ -45,13 +47,17 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
 
     if (ref && ref.current) {
       switch (e.key) {
-        case 'Enter': 
         case 'ArrowDown':
-        case 'ArrowUp':
-        case ' ':
           e.preventDefault();
           e.stopPropagation();
-          onPress(e);
+          onPress();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          e.stopPropagation();
+          onPress();
+          // If no menu item is selected, focus last item when opening menu with ArrowDown
+          state.setFocusStrategy('last');
           break;
       }
     }

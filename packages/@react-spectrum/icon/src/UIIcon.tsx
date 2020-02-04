@@ -6,7 +6,8 @@ import {useProvider} from '@react-spectrum/provider';
 
 interface IconProps extends DOMProps, StyleProps {
   alt?: string,
-  children: ReactElement
+  children: ReactElement,
+  slot?: string
 }
 
 export function UIIcon(props: IconProps) {
@@ -19,7 +20,7 @@ export function UIIcon(props: IconProps) {
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'uiIcon', ...otherProps});
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {

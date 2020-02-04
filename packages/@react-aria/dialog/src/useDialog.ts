@@ -1,6 +1,6 @@
 import {AllHTMLAttributes, RefObject, useEffect} from 'react';
 
-interface DialogProps {
+export interface DialogProps {
   ref: RefObject<HTMLElement | null>,
   role?: 'dialog' | 'alertdialog'
 }
@@ -11,7 +11,7 @@ interface DialogAria {
 
 export function useDialog(props: DialogProps): DialogAria {
   let {ref, role = 'dialog'} = props;
-  
+
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {

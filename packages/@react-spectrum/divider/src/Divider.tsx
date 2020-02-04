@@ -18,7 +18,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps({slot: 'divider', ...otherProps});
   let weight = sizeMap[size];
 
   let Element = 'hr';
@@ -53,5 +53,9 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
 let _Divider = React.forwardRef(Divider);
 export {_Divider as Divider};
