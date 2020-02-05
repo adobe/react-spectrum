@@ -115,6 +115,9 @@ governing permissions and limitations under the License.
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Override user agentstyle sheet for <p> */
+  margin-block-start: 0px;
+  margin-block-end: 0px;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -195,6 +198,9 @@ governing permissions and limitations under the License.
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Override user agentstyle sheet for <p> */
+  margin-block-start: 0px;
+  margin-block-end: 0px;
 }
 .spectrum-Menu-keyboard {
   grid-area: keyboard;
