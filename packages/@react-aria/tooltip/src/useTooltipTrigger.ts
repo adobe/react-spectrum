@@ -86,7 +86,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
 
   let {hoverProps} = useHover({
     isDisabled,
-    ref: triggerProps.ref
+    ref: triggerProps.ref,
+    onHover: handleDelayedShow,
+    onHoverEnd: handleDelayedHide
   });
 
   return {
@@ -98,10 +100,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
       // @ts-ignore
-      onMouseEnter: triggerType === 'hover' ? handleDelayedShow : undefined,
+      onMouseEnter: triggerType === 'hover' ? chain(handleDelayedShow, hoverProps.onHover) : undefined,
       // @ts-ignore
-      onMouseLeave: triggerType === 'hover' ? handleDelayedHide : undefined,
-      ...(triggerType === 'hover' && hoverProps)
+      onMouseLeave: triggerType === 'hover' ? chain(handleDelayedHide, hoverProps.onHoverEnd) : undefined
     },
     tooltipProps: {
       id: tooltipId
