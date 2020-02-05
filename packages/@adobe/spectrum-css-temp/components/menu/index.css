@@ -109,7 +109,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-itemLabel {
-  grid-area: label;
+  grid-area: text;
   align-self: center;
   line-height: var(--spectrum-selectlist-option-label-line-height);
   overflow: hidden;
@@ -169,8 +169,8 @@ governing permissions and limitations under the License.
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
     ". .    .           .     .            ."
-    ". icon label       end keyboardIcon ."
-    ". icon description end keyboardIcon ."
+    ". icon text        end   keyboard     ."
+    ". icon description end   keyboard     ."
     ". .    .           .     .            .";
 }
 
@@ -197,7 +197,7 @@ governing permissions and limitations under the License.
   white-space: nowrap;
 }
 .spectrum-Menu-keyboard {
-  grid-area: keyboardIcon;
+  grid-area: keyboard;
   align-self: center;
   padding-inline-start: var(--spectrum-global-dimension-size-125);
 }

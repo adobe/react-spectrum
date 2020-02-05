@@ -66,13 +66,13 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
             )
           }  
           slots={{
-            label: styles['spectrum-Menu-itemLabel'],
+            text: styles['spectrum-Menu-itemLabel'],
             end: styles['spectrum-Menu-end'],
             icon: styles['spectrum-Menu-icon'],
             description: styles['spectrum-Menu-description'],
-            keyboardIcon: styles['spectrum-Menu-keyboard']}}>
+            keyboard: styles['spectrum-Menu-keyboard']}}>
           {!Array.isArray(rendered) && (
-            <Text slot="label">
+            <Text>
               {rendered}
             </Text>
           )}

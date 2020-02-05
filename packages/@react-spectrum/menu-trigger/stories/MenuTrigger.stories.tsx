@@ -4,6 +4,7 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
@@ -119,36 +120,38 @@ storiesOf('MenuTrigger', module)
             <Section title="Section 1">
               <Item>
                 <Copy size="S" />
-                <Text slot="label">Copy</Text>
-                <Keyboard slot="keyboardIcon">⌘C</Keyboard>
+                <Text>Copy</Text>
+                <Keyboard>⌘C</Keyboard>
               </Item>
               <Item>
                 <Cut size="S" />
-                <Text slot="label">Cut</Text>
-                <Keyboard slot="keyboardIcon">⌘X</Keyboard>
+                <Text>Cut</Text>
+                <Keyboard>⌘X</Keyboard>
               </Item>
               <Item>
                 <Paste size="S" />
-                <Text slot="label">Paste</Text>
-                <Keyboard slot="keyboardIcon">⌘V</Keyboard>
+                <Text>Paste</Text>
+                <Keyboard>⌘V</Keyboard>
               </Item>
             </Section>
             <Section title="Section 2">
               <Item>
                 <AlignLeft size="S" />
-                <Text slot="label">Puppy</Text>
-                <Text slot="description">awea</Text>
+                <Text>Puppy</Text>
+                <Text slot="description">Puppy description super long as well geez</Text>
               </Item>
               <Item>
                 <AlignCenter size="S" />
-                <Text slot="label">Doggo</Text>
+                <Text>Doggo with really really really long long long text</Text>
+                <Text slot="end">Value</Text>
+                <ChevronRightMedium slot="keyboard" />
               </Item>
               <Item>
                 <AlignRight size="S" />
-                <Text slot="label">Floof</Text>
+                <Text>Floof</Text>
               </Item>
               <Item>
-                blah
+                Basic Item
               </Item>
             </Section>
           </Menu>
