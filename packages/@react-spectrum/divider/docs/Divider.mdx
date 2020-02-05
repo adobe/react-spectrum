@@ -1,0 +1,56 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/divider';
+import {PropTable} from '@react-spectrum/docs';
+
+# Divider
+```jsx import
+import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
+```
+
+```jsx example
+function Horizontal () {
+  return (
+    <div style={{width: '50%'}}>
+        Content above
+        <Divider marginTop="10px" marginBottom="10px" />
+        Content below
+    </div>
+  );
+}
+```
+
+
+```jsx example
+function Vertical () {
+  return (
+    <div style={{width: '50%', display: 'flex', height: '100px'}}>
+        Content left
+        <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
+        Content right
+    </div>
+  );
+}
+```
+
+
+### Frequently encountered issues
+When using a Flexed container that does anything other than align items stretch. You must set the Divider to align itself as stretch so it takes up the full cross axis size. Otherwise it will look as though it hasn't rendered.
+```jsx example
+function VerticalCentered () {
+  return (
+    <div style={{width: '50%', display: 'flex', height: '100px', alignItems: 'center'}}>
+        Content left
+        <Divider orientation="vertical" alignSelf="stretch" marginLeft="10px" marginRight="10px" />
+        Content right
+    </div>
+  );
+}
+```
+
+
+## Props
+
+<PropTable component={docs.exports.Divider} links={docs.links} />

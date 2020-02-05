@@ -19,6 +19,11 @@ governing permissions and limitations under the License.
   border: none;
   border-width: var(--spectrum-rule-medium-height);
   border-radius: var(--spectrum-rule-medium-height);
+
+  /* hr elements are given a default margin, reset it so that flex can work */
+  margin: 0px;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
 }
 
 .spectrum-Rule--large {

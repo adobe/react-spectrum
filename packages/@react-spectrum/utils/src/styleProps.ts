@@ -27,7 +27,9 @@ export const baseStyleProps: StyleHandlers = {
   minHeight: ['minHeight', dimensionValue],
   maxWidth: ['maxWidth', dimensionValue],
   maxHeight: ['maxHeight', dimensionValue],
-  isHidden: ['display', hiddenValue]
+  isHidden: ['display', hiddenValue],
+  alignSelf: ['alignSelf', passthroughStyle],
+  justifySelf: ['justifySelf', passthroughStyle]
 };
 
 export const viewStyleProps: StyleHandlers = {
