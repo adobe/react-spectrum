@@ -58,16 +58,15 @@ governing permissions and limitations under the License.
 
   /* Start offset by the animation distance */
   transform: translateY(var(--spectrum-dialog-entry-animation-distance));
-  margin-top: var(--spectrum-dialog-vertical-offset);
 
   /* Appear above underlay */
   z-index: 2;
 
   /* Don't be bigger than the screen */
-  max-width: var(--spectrum-dialog-max-width);
   max-height: var(--spectrum-dialog-max-height);
 
   border-radius: var(--spectrum-dialog-border-radius);
+  overflow: hidden;
   outline: none; /* Firefox shows outline */
   pointer-events: auto;
 

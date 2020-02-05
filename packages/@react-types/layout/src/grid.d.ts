@@ -1,7 +1,9 @@
 import {DOMProps, GridStyleProps} from '@react-types/shared';
-import {ReactElement, ReactNodeArray} from 'react';
+import {ReactNode} from 'react';
+
+export type Slots = {[key: string]: string};
 
 export interface GridProps extends DOMProps, GridStyleProps {
-  children: ReactElement | ReactElement[] | ReactNodeArray,
-  slots: {[key: string]: string}
+  children: ReactNode,
+  slots: Slots
 }

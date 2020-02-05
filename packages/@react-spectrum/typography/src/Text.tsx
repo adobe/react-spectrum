@@ -12,8 +12,8 @@ export const Text = React.forwardRef((props: TextProps, ref: RefObject<HTMLEleme
   let {styleProps} = useStyleProps({slot: 'text', ...otherProps});
 
   return (
-    <span {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <p {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
       {children}
-    </span>
+    </p>
   );
 });
