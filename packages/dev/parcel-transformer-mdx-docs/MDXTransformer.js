@@ -1,6 +1,7 @@
 const {Transformer} = require('@parcel/plugin');
 const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
+const highlight = require('remark-highlight.js')
 
 module.exports = new Transformer({
   async transform({asset}) {
@@ -44,13 +45,13 @@ module.exports = new Transformer({
         return [node];
       });
     };
-    
+
     const compiled = await mdx(await asset.getCode(), {
-      remarkPlugins: [extractExamples]
+      remarkPlugins: [extractExamples, highlight]
     });
 
-    let exampleBundle = exampleCode.length === 0 
-      ?  '' 
+    let exampleBundle = exampleCode.length === 0
+      ?  ''
       : `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from '@react-spectrum/provider';
