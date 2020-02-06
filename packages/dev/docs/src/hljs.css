@@ -28,7 +28,7 @@
 :global(.hljs-doctag),
 :global(.hljs-formula),
 :global(.hljs-keyword) {
-  color: var(--hljs-keyword-color);
+  color: var(--hljs-keyword-color) !important;
 }
 
 :global(.hljs-deletion),
@@ -36,11 +36,11 @@
 :global(.hljs-section),
 :global(.hljs-selector-tag),
 :global(.hljs-subst) {
-  color: var(--hljs-section-color);
+  color: var(--hljs-section-color) !important;
 }
 
 :global(.hljs-literal) {
-  color: var(--hljs-literal-color);
+  color: var(--hljs-literal-color) !important;
 }
 
 :global(.hljs-addition),
@@ -48,12 +48,12 @@
 :global(.hljs-meta-string),
 :global(.hljs-regexp),
 :global(.hljs-string) {
-  color: var(--hljs-attribute-color);
+  color: var(--hljs-attribute-color) !important;
 }
 
 :global(.hljs-built_in),
 :global(.hljs-class) :global(.hljs-title) {
-  color: var(--hljs-class-color);
+  color: var(--hljs-class-color) !important;
 }
 
 :global(.hljs-attr),
@@ -64,7 +64,7 @@
 :global(.hljs-template-variable),
 :global(.hljs-type),
 :global(.hljs-variable) {
-  color: var(--hljs-variable-color);
+  color: var(--hljs-variable-color) !important;
 }
 
 :global(.hljs-bullet),
@@ -73,7 +73,7 @@
 :global(.hljs-selector-id),
 :global(.hljs-symbol),
 :global(.hljs-title) {
-  color: var(--hljs-title-color);
+  color: var(--hljs-title-color) !important;
 }
 
 :global(.hljs-emphasis) {

@@ -23,10 +23,10 @@ module.exports = new Transformer({
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<${name} />, document.getElementById("${id}"));
+                ReactDOM.render(<Provider theme={theme} UNSAFE_className="example"><${name} /></Provider>, document.getElementById("${id}"));
               })();`;
             } else {
-              code = `ReactDOM.render(<Provider theme={theme}>${code}</Provider>, document.getElementById("${id}"));`;
+              code = `ReactDOM.render(<Provider theme={theme} UNSAFE_className="example">${code}</Provider>, document.getElementById("${id}"));`;
             }
 
             exampleCode.push(code);

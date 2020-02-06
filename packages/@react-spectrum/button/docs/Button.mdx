@@ -5,7 +5,17 @@ import docs from 'docs:@react-spectrum/button';
 import {PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 import {HeaderInfo} from '@react-spectrum/docs';
+import {Alert} from '@react-spectrum/alert';
 
+```jsx import
+import '@react-spectrum/docs/src/client';
+import {Button} from '@react-spectrum/button';
+import Bell from '@spectrum-icons/workflow/Bell';
+```
+
+# Button
+
+<p>{docs.exports.Button.description}</p>
 
 <HeaderInfo
   headerData={packageData}
@@ -16,13 +26,35 @@ import {HeaderInfo} from '@react-spectrum/docs';
     {type: 'NPM', url: '#'}
   ]} />
 
-```jsx import
-import {Button} from '@react-spectrum/button';
-```
+## Example
 
 ```jsx example
 <Button variant="cta">Test</Button>
 ```
+
+## Content
+
+Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop. 
+A visible label can be provided by passing children.
+
+```jsx example
+<Button variant="primary">Label only</Button>
+<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
+<Button variant="primary" icon={<Bell />} aria-label="Icon only" />
+```
+
+<Alert title="Important" variant="warning">
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using 
+the `aria-label` prop.
+</Alert>
+
+## Events
+
+Buttons support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress`
+prop.
+
+The following example uses an `onPress` handler to update a counter stored in React state.
 
 ```jsx example
 function Example() {
@@ -34,14 +66,44 @@ function Example() {
 }
 ```
 
-```jsx example
-function Example() {
-  let [count, setCount] = React.useState(0);
+## Props
 
-  return (
-    <Button variant="primary" onPress={() => setCount(c => c + 1)}>{count} Cats</Button>
-  );
-}
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+## Visual Options
+
+### Call To Action
+
+```jsx example
+<Button variant="cta">Test</Button>
 ```
 
+### Primary
 
+```jsx example
+<Button variant="primary">Test</Button>
+<Button variant="primary" isQuiet>Test</Button>
+```
+
+### Secondary
+
+```jsx example
+<Button variant="secondary">Test</Button>
+<Button variant="secondary" isQuiet>Test</Button>
+```
+
+### Over Background
+
+```jsx example
+<div style={{backgroundColor: 'rgb(15, 121, 125)', padding: '15px 20px'}}>
+  <Button variant="overBackground">Test</Button>
+  <Button variant="overBackground" isQuiet>Test</Button>
+</div>
+```
+
+### Negative
+
+```jsx example
+<Button variant="negative">Test</Button>
+<Button variant="negative" isQuiet>Test</Button>
+```

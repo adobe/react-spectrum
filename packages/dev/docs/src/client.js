@@ -8,6 +8,10 @@ import {theme} from '@react-spectrum/theme-default';
 import {Text} from '@react-spectrum/typography';
 import {Divider} from '@react-spectrum/divider';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import configureTypekit from '@react-spectrum/provider/src/configureTypekit';
+import highlightCss from './hljs.css';
+
+configureTypekit('pbi5ojv');
 
 let headers = document.querySelectorAll('th[colspan]');
 for (let header of headers) {
@@ -36,7 +40,7 @@ for (let link of links) {
   ReactDOM.render(
     <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none'}}>
       <DialogTrigger type="popover">
-        <Link isQuiet data-link={link.dataset.link}>{link.textContent}</Link>
+        <Link isQuiet data-link={link.dataset.link} UNSAFE_className={link.className}>{link.textContent}</Link>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
     </Provider>
@@ -60,7 +64,7 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog>
+    <Dialog UNSAFE_className={highlightCss.spectrum}>
       <Header>
         <Breadcrumbs isHeading headingAriaLevel={3}>
           {breadcrumbs.map((b, i) => 

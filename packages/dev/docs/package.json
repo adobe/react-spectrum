@@ -9,6 +9,7 @@
     "@react-spectrum/theme-default": "^3.0.0-rc.1",
     "classnames": "^2.2.6",
     "globals-docs": "^2.4.1",
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "react-lowlight": "^2.0.0"
   }
 }
