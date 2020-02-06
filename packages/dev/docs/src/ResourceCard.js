@@ -1,7 +1,7 @@
-import bodyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import classNames from 'classnames';
 import React from 'react';
-import styles from './docs.css';
+import styles from './resourceCard.css';
 
 
 export function ResourceCard(props){
@@ -38,7 +38,7 @@ export function ResourceCard(props){
       <div>
         {cardContent.svg}
       </div>
-      <div className={classNames(bodyStyles['spectrum-Body4'], styles['cardContent'])}>
+      <div className={classNames(typographyStyles['spectrum-Body4'], styles['cardContent'])}>
         <div className={styles['cardTitle']}>
           {cardContent.title}
         </div>

@@ -1,0 +1,54 @@
+.resourceCard {
+  width: 224px;
+  margin: 2px 16px 2px 2px;
+  box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
+  transition: 125ms ease-in-out;
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
+    transition: 125ms ease-in-out;
+  }
+  @media screen and (max-width: 960px) {
+    margin-bottom: 16px;
+  }
+
+  .npmImage {
+    background: rgba(203, 56, 55, 0.1);
+  }
+
+  .gitImage, .spectrumImage {
+    background-color: var(--spectrum-global-color-gray-200);
+    fill: black;
+  }
+
+  .cardContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 16px;
+    margin-bottom: 0 !important;
+  }
+
+  .cardTitle {
+    font-weight: 700;
+  }
+
+  .cardType {
+    color: var(--spectrum-global-color-gray-700);
+    font-size: 12px;
+
+  }
+}
+
+.resourceCard img, svg {
+  width: 64px;
+  height: 64px;
+}
