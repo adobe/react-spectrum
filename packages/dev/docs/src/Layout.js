@@ -42,7 +42,7 @@ export function Layout({scripts, styles, pages, currentPage, children}) {
               </a>
             </header>
             <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pages.map(p => (
+              {pages.filter(p => p.url !== '/index.html').map(p => (
                 <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
                   <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
                 </li>
