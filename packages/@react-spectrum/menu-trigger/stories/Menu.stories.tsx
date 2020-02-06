@@ -45,7 +45,13 @@ let hardModeProgrammatic = [
 let flatMenu = [
   {name: 'Aardvark'},
   {name: 'Kangaroo'},
-  {name: 'Snake'}
+  {name: 'Snake'},
+  {name: 'Danni'},
+  {name: 'Devon'},
+  {name: 'Ross'},
+  {name: 'Puppy'},
+  {name: 'Doggo'},
+  {name: 'Floof'}
 ];
 
 let withSection = [
