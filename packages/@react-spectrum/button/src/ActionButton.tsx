@@ -25,6 +25,10 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {
+    UNSAFE_className: groupClassName,
+    ...otherButtonProps
+  } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -32,7 +36,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...buttonProps}
+        {...otherButtonProps}
         ref={domRef}
         className={
           classNames(
@@ -45,7 +49,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
-            styleProps.className
+            styleProps.className,
+            groupClassName
           )
         }>
         {icon && cloneElement(

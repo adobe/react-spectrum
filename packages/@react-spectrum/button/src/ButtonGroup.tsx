@@ -4,6 +4,7 @@ import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
+import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
@@ -76,16 +77,13 @@ export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemPro
     itemRef: ref
   });
 
-  let buttonProps = mergeProps(
-    itemProps, otherProps
+  let buttonProps = mergeProps(itemProps, otherProps);
+  let allProps = mergeProps(item.props, buttonProps);
+
+  return (
+    <PressResponder ref={ref} {...allProps} >
+      {item}
+    </PressResponder>
   );
 
-  return React.cloneElement(
-    item,
-    {
-    // @ts-ignore
-      ref,
-      ...mergeProps(item.props, buttonProps)
-    }
-  );
 }

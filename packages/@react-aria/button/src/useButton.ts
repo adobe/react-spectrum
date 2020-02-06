@@ -1,6 +1,7 @@
 import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
+import {StyleProps} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
@@ -13,7 +14,7 @@ interface AriaButtonProps extends ButtonProps {
 }
 
 interface ButtonAria {
-  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement> & StyleProps,
   isPressed: boolean
 }
 
