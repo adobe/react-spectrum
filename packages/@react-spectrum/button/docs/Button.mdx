@@ -18,12 +18,10 @@ import Bell from '@spectrum-icons/workflow/Bell';
 <p>{docs.exports.Button.description}</p>
 
 <HeaderInfo
-  headerData={packageData}
+  packageData={packageData}
   componentNames={['Button']}
   sourceData={[
-    {type: 'Spectrum', url: '#'},
-    {type: 'GitHub', url: '#'},
-    {type: 'NPM', url: '#'}
+    {type: 'Spectrum', url: 'https://spectrum.corp.adobe.com/page/button/'}
   ]} />
 
 ## Example
@@ -34,7 +32,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 
 ## Content
 
-Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop. 
+Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
 A visible label can be provided by passing children.
 
 ```jsx example
@@ -45,7 +43,7 @@ A visible label can be provided by passing children.
 
 <Alert title="Important" variant="warning">
 If no visible label is provided (e.g. an icon only button),
-an alternative text label must be provided to identify the control for accessibility. This should be added using 
+an alternative text label must be provided to identify the control for accessibility. This should be added using
 the `aria-label` prop.
 </Alert>
 
