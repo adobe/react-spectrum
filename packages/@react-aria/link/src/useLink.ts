@@ -26,7 +26,8 @@ export function useLink(props: AriaLinkProps): LinkAria {
     onPressStart,
     onPressEnd,
     onClick: deprecatedOnClick,
-    isDisabled
+    isDisabled,
+    ref
   } = props;
 
   let linkProps: AllHTMLAttributes<HTMLDivElement>;
@@ -42,7 +43,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
     console.warn('href is deprecated, please use an anchor element as children');
   }
 
-  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled});
+  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
 
   return {
     linkProps: {
