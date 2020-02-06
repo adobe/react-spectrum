@@ -53,6 +53,13 @@ article {
   width: 100%;
 }
 
+.colorLink {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 article h1 {
   margin-top: 0 !important;
   font-size: 58px !important;
@@ -74,6 +81,7 @@ article h2 + hr {
 :global(.example) {
   padding: 40px;
   border-radius: 0 0 4px 4px;
+  margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
 article pre {
@@ -82,10 +90,6 @@ article pre {
   padding: 18px;
   border-radius: 4px 4px 0 0;
   overflow-x: scroll;
-}
-
-article p {
-  margin-top: var(--spectrum-global-dimension-size-150) !important;
 }
 
 .header {

@@ -10,6 +10,7 @@ import {Divider} from '@react-spectrum/divider';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import configureTypekit from '@react-spectrum/provider/src/configureTypekit';
 import highlightCss from './hljs.css';
+import {Pressable} from '@react-aria/interactions';
 
 configureTypekit('pbi5ojv');
 
@@ -40,7 +41,9 @@ for (let link of links) {
   ReactDOM.render(
     <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none'}}>
       <DialogTrigger type="popover">
-        <Link isQuiet data-link={link.dataset.link} UNSAFE_className={link.className}>{link.textContent}</Link>
+        <Pressable>
+          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+        </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
     </Provider>

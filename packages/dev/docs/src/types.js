@@ -93,7 +93,7 @@ function BooleanLiteral({value}) {
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']} ${typographyStyles['spectrum-Code4']} token hljs-keyword`} target="_blank">{type}</a>;
+    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-keyword`} target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -102,7 +102,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']} ${typographyStyles['spectrum-Code4']} token hljs-name`} target="_blank">{name}</a>;
+    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`} target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -188,7 +188,7 @@ function LinkType({id}) {
     return null;
   }
 
-  return <a href={'#' + id} data-link={id} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']} ${typographyStyles['spectrum-Code4']} token hljs-name`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
 function InterfaceType({properties}) {
