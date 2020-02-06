@@ -7,6 +7,7 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
     "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/theme-default": "^3.0.0-rc.1",
+    "classnames": "^2.2.6",
     "react": "^16.8.0"
   }
 }

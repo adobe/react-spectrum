@@ -1,4 +1,6 @@
+import classNames from 'classnames';
 import docStyles from './docs.css';
+import highlightCss from './hljs.css';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -14,7 +16,7 @@ export function Layout({scripts, styles, pages, children}) {
         {scripts.map(s => <link rel="preload" as="script" href={s.url} />)}
       </head>
       <body>
-        <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={docStyles.provider}>
+        <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
           <nav className={docStyles.nav}>
             <ul className={sideNavStyles['spectrum-SideNav']}>
               {pages.map(p => (
@@ -25,7 +27,9 @@ export function Layout({scripts, styles, pages, children}) {
             </ul>
           </nav>
           <main>
-            <article>{children}</article>
+            <article>
+              {children}
+            </article>
           </main>
         </Provider>
         {scripts.map(s => <script type={s.type} src={s.url} />)}
