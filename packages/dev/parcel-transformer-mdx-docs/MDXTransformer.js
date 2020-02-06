@@ -1,7 +1,7 @@
 const {Transformer} = require('@parcel/plugin');
 const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
-const highlight = require('remark-highlight.js')
+const highlight = require('remark-highlight.js');
 
 module.exports = new Transformer({
   async transform({asset}) {
@@ -59,10 +59,12 @@ import {theme} from '@react-spectrum/theme-default';
 ${exampleCode.join('\n')}
 `;
 
+    // Ensure that the HTML asset always changes so that the packager runs
+    let random = Math.random().toString(36).slice(4);
     let assets = [
       {
         type: 'html',
-        code: exampleBundle ? '<script src="example"></script>' : ''
+        code: exampleBundle ? `${random}<script src="example"></script>` : random
       },
       {
         type: 'jsx',
