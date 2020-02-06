@@ -1,16 +1,25 @@
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/button';
+import docs from 'docs:@react-spectrum/COMPONENT_NAME';
 import {PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+import {HeaderInfo} from '@react-spectrum/docs';
 
 ```jsx import
-import {Button} from '@react-spectrum/button';
+import {Component} from '@react-spectrum/COMPONENT_NAME';
 ```
 
-# Button
+# Component Name
 
-<p>{docs.exports.Button.description}</p>
+<p>{docs.exports.Component.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Component']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button/'}
+  ]} />
 
 ## Example
 
@@ -40,7 +49,7 @@ import {Button} from '@react-spectrum/button';
 
 ## Props
 
-<PropTable component={docs.exports.Button} links={docs.links} />
+<PropTable component={docs.exports.Component} links={docs.links} />
 
 ## Visual Options
 
