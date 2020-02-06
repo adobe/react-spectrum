@@ -7,10 +7,14 @@ import packageData from '../package.json';
 import {HeaderInfo} from '@react-spectrum/docs';
 
 
-
-# Hello, world!!!
-
-<HeaderInfo headerData={packageData} componentNames={['Button']} />
+<HeaderInfo
+  headerData={packageData}
+  componentNames={['Button']}
+  sourceData={[
+    {type: 'Spectrum', url: '#'},
+    {type: 'GitHub', url: '#'},
+    {type: 'NPM', url: '#'}
+  ]} />
 
 ```jsx import
 import {Button} from '@react-spectrum/button';
@@ -41,7 +45,3 @@ function Example() {
 ```
 
 
-
-## Props
-
-<PropTable component={docs.exports.Button} links={docs.links} />
