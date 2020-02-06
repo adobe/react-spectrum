@@ -27,7 +27,7 @@ export function useRadioProvider(): RadioGroupContext {
   return useContext(RadioContext);
 }
 
-export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) => {
+function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -108,4 +108,7 @@ export const RadioGroup = forwardRef((props: SpectrumRadioGroupProps, ref: DOMRe
       </div>
     </div>
   );
-});
+}
+
+const _RadioGroup = React.forwardRef(RadioGroup);
+export {_RadioGroup as RadioGroup};
