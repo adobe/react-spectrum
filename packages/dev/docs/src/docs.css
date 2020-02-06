@@ -15,6 +15,39 @@ html, body {
   padding: 0 8px;
 }
 
+main {
+  flex: 1;
+}
+
 .propTable {
   width: 100%;
+}
+
+:global(.token) {
+  font-family: monospace;
+}
+
+.header {
+  text-align: left;
+  color: black;
+  cursor: pointer;
+  border-bottom: 1px solid var(--spectrum-global-color-gray-300);
+  padding: 0;
+}
+
+.header > div {
+  padding-left: 8px;
+}
+
+.header > div > span {
+  padding: 0;
+  min-height: 0;
+}
+
+.header[data-expanded] {
+  border-bottom: none;
+}
+
+.header[data-expanded] svg {
+  transform: rotate(90deg);
 }

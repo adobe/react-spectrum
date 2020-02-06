@@ -147,7 +147,11 @@ module.exports = new Transformer({
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
-          properties[property.name] = property;
+          if (property) {
+            properties[property.name] = property;
+          } else {
+            console.log('UNKNOWN PROPERTY', propertyPath.node)
+          }
         }
 
         let exts = path.node.extends ? path.get('extends').map(e => processExport(e)) : [];
@@ -167,7 +171,11 @@ module.exports = new Transformer({
         let properties = {};
         for (let member of path.get('members')) {
           let property = processExport(member);
-          properties[property.name] = property;
+          if (property) {
+            properties[property.name] = property;
+          } else {
+            console.log("UNKNOWN PROPERTY", member.node)
+          }
         }
 
         return {
@@ -196,8 +204,9 @@ module.exports = new Transformer({
           value: {
             type: 'function',
             parameters: path.get('parameters').map(p => ({
+              type: 'parameter',
               name: p.node.name,
-              type: processExport(p.get('typeAnnotation.typeAnnotation'))
+              value: processExport(p.get('typeAnnotation.typeAnnotation'))
             })),
             return: path.node.typeAnnotation 
               ? processExport(path.get('typeAnnotation.typeAnnotation'))
@@ -286,8 +295,9 @@ module.exports = new Transformer({
         return {
           type: 'function',
           parameters: path.get('parameters').map(p => ({
+            type: 'parameter',
             name: p.node.name,
-            type: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'}
+            value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'}
           })),
           return: path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
           typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
@@ -303,6 +313,7 @@ module.exports = new Transformer({
 
       if (path.isTSTypeParameter()) {
         return {
+          type: 'typeParameter',
           name: path.node.name,
           default: path.node.default ? processExport(path.get('default')) : null
         };
