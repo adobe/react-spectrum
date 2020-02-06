@@ -1,6 +1,5 @@
 html, body {
   margin: 0;
-  color: red;
 }
 
 .provider {
@@ -50,4 +49,17 @@ main {
 
 .header[data-expanded] svg {
   transform: rotate(90deg);
+}
+
+.detailsTable {
+  border-spacing: 0;
+  margin-bottom: var(--spectrum-global-dimension-size-450);
+  margin-top: var(--spectrum-global-dimension-size-500);
+}
+
+.detailsTable th {
+  font-weight: var(--spectrum-global-font-weight-regular);
+  height: var(--spectrum-global-dimension-size-350);
+  padding-right: var(--spectrum-global-dimension-size-300);
+  text-align: left;
 }
