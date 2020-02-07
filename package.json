@@ -143,6 +143,7 @@
     "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
+    "@babel/core": "7.8.4",
     "@babel/runtime": "7.6.3"
   }
 }
