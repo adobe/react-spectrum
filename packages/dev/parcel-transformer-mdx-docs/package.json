@@ -10,6 +10,7 @@
     "@parcel/plugin": "nightly",
     "@mdx-js/mdx": "^1.5.5",
     "@mdx-js/react": "^1.5.5",
-    "unist-util-flatmap": "^1.0.0"
+    "unist-util-flatmap": "^1.0.0",
+    "remark-highlight.js": "^5.2.0"
   }
 }

@@ -1,20 +1,118 @@
 html, body {
   margin: 0;
-  color: red;
+  font-family: 'Source Sans Pro';
 }
 
 .provider {
   min-width: 100vw;
   min-height: 100vh;
-  display: flex;
+  background: var(--spectrum-global-color-gray-50) !important;
 }
 
 .nav {
-  flex-shrink: 0;
-  min-width: 150px;
-  padding: 0 8px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 256px;
+  padding: 0 24px;
+  background: var(--spectrum-global-color-gray-75);
+  box-sizing: border-box;
+}
+
+.nav header {
+  padding: 30px 0 24px 0;
+}
+
+.nav header a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav header img {
+  width: 36px;
+  height: 32px;
+  display: block;
+  margin-right: 16px;
+  padding-top: 1px;
+}
+
+main {
+  margin-left: 256px;
+  padding: 40px 52px;
+  box-sizing: border-box;
+}
+
+article {
+  max-width: 967px;
+  margin: 0 auto;
 }
 
 .propTable {
   width: 100%;
+}
+
+.colorLink {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+article h1 {
+  margin-top: 0 !important;
+  font-size: 58px !important;
+}
+
+article h1 + p {
+  font-size: 18px !important;
+  max-width: 75%;
+}
+
+article h2 {
+  margin-top: 80px !important;
+}
+
+article h2 + hr {
+  margin-bottom: 33px;
+}
+
+:global(.example) {
+  padding: 40px;
+  border-radius: 0 0 4px 4px;
+  margin-bottom: var(--spectrum-global-dimension-size-150);
+}
+
+article pre {
+  margin-bottom: 0;
+  background: var(--spectrum-global-color-gray-75);
+  padding: 18px;
+  border-radius: 4px 4px 0 0;
+  overflow-x: scroll;
+}
+
+.header {
+  text-align: left;
+  color: black;
+  cursor: pointer;
+  border-bottom: 1px solid var(--spectrum-global-color-gray-300);
+  padding: 0;
+}
+
+.header > div {
+  padding-left: 8px;
+}
+
+.header > div > span {
+  padding: 0;
+  min-height: 0;
+}
+
+.header[data-expanded] {
+  border-bottom: none;
+}
+
+.header[data-expanded] svg {
+  transform: rotate(90deg);
 }

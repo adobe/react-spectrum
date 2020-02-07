@@ -6468,7 +6468,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5:
+classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -9100,7 +9100,7 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.0"
 
-fault@^1.0.2:
+fault@^1.0.0, fault@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/fault/-/fault-1.0.4.tgz#eafcfc0a6d214fc94601e170df29954a4f842f13"
   integrity sha512-CJ0HCB5tL5fYTEA7ToAq5+kTwd++Borf1/bifxd9iT70QcXr4MRrO3Llf8Ifs70q+SJcGHFtnIE/Nw6giCtECA==
@@ -9998,6 +9998,11 @@ global@^4.3.2, global@^4.4.0:
     min-document "^2.19.0"
     process "^0.11.10"
 
+globals-docs@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/globals-docs/-/globals-docs-2.4.1.tgz#d16887709f4a15eb22d97e96343591f87a2ee3db"
+  integrity sha512-qpPnUKkWnz8NESjrCvnlGklsgiQzlq+rcCxoG5uNQ+dNA7cFMCmn231slLAwS2N/PlkzZ3COL8CcS10jXmLHqg==
+
 globals@^11.1.0, globals@^11.7.0:
   version "11.12.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-11.12.0.tgz#ab8795338868a0babd8525758018c2a7eb95c42e"
@@ -10560,6 +10565,11 @@ highlight.js@~9.12.0:
   version "9.12.0"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.12.0.tgz#e6d9dbe57cbefe60751f02af336195870c90c01e"
   integrity sha1-5tnb5Xy+/mB1HwKvM2GVhwyQwB4=
+
+highlight.js@~9.16.0:
+  version "9.16.2"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.16.2.tgz#68368d039ffe1c6211bcc07e483daf95de3e403e"
+  integrity sha512-feMUrVLZvjy0oC7FVJQcSQRqbBq9kwqnYE4+Kj9ZjbHh3g+BisiPgF49NyQbVLNdrL/qqZr3Ca9yOKwgn2i/tw==
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
@@ -13115,6 +13125,14 @@ lowercase-keys@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-1.0.1.tgz#6f9e30b47084d971a7c820ff15a6c5167b74c26f"
   integrity sha512-G2Lj61tXDnVFFOi8VZds+SoQjtQC3dgokKdDG2mTm1tx4m50NUHBOZSBwQQHyy0V12A0JTG4icfZQH+xPyh8VA==
+
+lowlight@^1.2.0, lowlight@^1.9.1:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/lowlight/-/lowlight-1.13.1.tgz#c4f0e03906ebd23fedf2d258f6ab2f6324cf90eb"
+  integrity sha512-kQ71/T6RksEVz9AlPq07/2m+SU/1kGvt9k39UtvHX760u4SaWakaYH7hYgH5n6sTsCWk4MVYzUzLU59aN5CSmQ==
+  dependencies:
+    fault "^1.0.0"
+    highlight.js "~9.16.0"
 
 lowlight@~1.9.0, lowlight@~1.9.1:
   version "1.9.2"
@@ -16615,6 +16633,14 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-lowlight@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-lowlight/-/react-lowlight-2.0.0.tgz#3c9fa072c6516add8552f9470287e24e13d38eff"
+  integrity sha512-Zi31GNcqB20TFby8bX88edxB396rKsmOvwM6yTx3urUPzS5A5iQH1R7r2aZn1HeQscUSuIrvaZZBHOtGNqqoww==
+  dependencies:
+    lowlight "^1.9.1"
+    prop-types "^15.6.0"
+
 react-overlays@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.8.3.tgz#fad65eea5b24301cca192a169f5dddb0b20d3ac5"
@@ -17161,6 +17187,14 @@ relateurl@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
+
+remark-highlight.js@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/remark-highlight.js/-/remark-highlight.js-5.2.0.tgz#6d8d22085e0c76573744b7e3706fc232269f5b02"
+  integrity sha512-5tCr1CfdXDYzR8HCAnohlr1rK8DjUTFxEZdr+QEul5o13+EOEt5RrO8U6Znf8Faj5rVLcMJtxLPq6hHrZFo33A==
+  dependencies:
+    lowlight "^1.2.0"
+    unist-util-visit "^1.0.0"
 
 remark-mdx@^1.5.5:
   version "1.5.5"

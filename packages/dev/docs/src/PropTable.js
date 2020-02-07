@@ -1,6 +1,7 @@
 import React from 'react';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import styles from './docs.css';
+import {Type, TypeContext, InterfaceTable, InterfaceBody} from './types';
 
 const GROUPS = {
   Events: [
@@ -63,49 +64,38 @@ const GROUPS = {
 export function PropTable({component, links}) {
   let [ungrouped, groups] = groupProps(component.props.properties);
 
+  let usedLinks = {};
+  walkLinks(component.props.properties);
+
+  function walkLinks(obj) {
+    walk(obj, (t, k, recurse) => {
+      if (t && t.type === 'link') {
+        usedLinks[t.id] = links[t.id];
+        walkLinks(links[t.id]);
+      }
+
+      return recurse(t);
+    });
+  }
+
   return (
     <>
-      <PropGroup props={ungrouped} links={links} />
-      {Object.keys(groups).map(group => (
-        <>
-          <h2>{group}</h2>
-          <PropGroup props={groups[group]} links={links} />
-        </>
-      ))}
+      <TypeContext.Provider value={links}>
+        <InterfaceTable>
+          <InterfaceBody properties={ungrouped} />
+          {Object.keys(groups).map(group => (
+            <>
+              <InterfaceBody header={group} properties={groups[group]} />
+            </>
+          ))}
+        </InterfaceTable>
+        {Object.values(usedLinks).map(link => (
+          <section id={link.id} data-title={link.name} hidden>
+            <Type type={link} />
+          </section>
+        ))}
+      </TypeContext.Provider>
     </>
-  );
-}
-
-function PropGroup({props, links}) {
-  return (
-    <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
-      <thead>
-        <tr>
-          <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Default</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Required</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
-        </tr>
-      </thead>
-      <tbody className={tableStyles['spectrum-Table-body']}>
-        {props.map((prop, index) => {
-          let type = prop.value.type.toString();
-          if (type === 'link') {
-            type = links[prop.value.id].name;
-          }
-          return (
-            <tr key={index} className={tableStyles['spectrum-Table-row']}>
-              <td className={tableStyles['spectrum-Table-cell']}>{prop.name}</td>
-              <td className={tableStyles['spectrum-Table-cell']}>{type}</td>
-              <td className={tableStyles['spectrum-Table-cell']}>{prop.default || '-'}</td>
-              <td className={tableStyles['spectrum-Table-cell']}>{!prop.optional ? 'true' : null}</td>
-              <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
   );
 }
 
@@ -115,12 +105,12 @@ function groupProps(props) {
 
   // Default groups
   for (let group in GROUPS) {
-    let groupProps = [];
+    let groupProps = {};
     for (let propName of GROUPS[group]) {
       if (propName instanceof RegExp) {
         for (let key in props) {
           if (propName.test(key)) {
-            groupProps.push(props[key]);
+            groupProps[key] = props[key];
             delete props[key];
           }
         }
@@ -129,16 +119,33 @@ function groupProps(props) {
       }
 
       if (props[propName]) {
-        groupProps.push(props[propName]);
+        groupProps[propName] = props[propName];
         delete props[propName];
       }
     }
 
-    if (groupProps.length) {
+    if (Object.keys(groupProps).length) {
       groups[group] = groupProps;
     }
   }
 
-  let ungrouped = Object.values(props);
-  return [ungrouped, groups];
+  return [props, groups];
+}
+
+function walk(obj, fn, k = null) {
+  let recurse = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map((item, i) => walk(item, fn, k));
+    } else if (obj && typeof obj === 'object') {
+      let res = {};
+      for (let key in obj) {
+        res[key] = walk(obj[key], fn, key);
+      }
+      return res;
+    } else {
+      return obj;
+    }
+  };
+
+  return fn(obj, k, recurse);
 }

@@ -1,6 +1,6 @@
 import {classNames, filterDOMProps, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useLink} from '@react-aria/link';
@@ -15,7 +15,8 @@ export function Link(props: SpectrumLinkProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
-  let {linkProps} = useLink(props);
+  let ref = useRef();
+  let {linkProps} = useLink({...props, ref});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -25,6 +26,7 @@ export function Link(props: SpectrumLinkProps) {
           ...filterDOMProps(otherProps),
           ...styleProps,
           ...linkProps,
+          ref,
           className: classNames(
             styles,
             'spectrum-Link',

@@ -76,7 +76,7 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
   }
 
   return (
-    <FocusScope contain restoreFocus autoFocus>
+    <FocusScope contain restoreFocus>
       <div
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(
