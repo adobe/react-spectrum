@@ -2,7 +2,7 @@
   "previous": "Précédent",
   "next": "Suivant",
   "selectedDateDescription": "Date sélectionnée: {date, date, full}",
-  "selectedRangeDescription": "Plage de dates sélectionnée: {start, date, long} to {end, date, long}",
+  "selectedRangeDescription": "Plage de dates sélectionnée: {start, date, long} au {end, date, long}",
   "todayDate": "Aujourd’hui, {date, date, full}",
   "todayDateSelected": "Aujourd’hui, sélection de {date, date, full}",
   "dateSelected": "Sélection de {date, date, full}",

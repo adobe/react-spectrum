@@ -216,7 +216,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.filter(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
+      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
 
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
       triggerPress(getByLabelText('Sunday, February 17, 2019'));

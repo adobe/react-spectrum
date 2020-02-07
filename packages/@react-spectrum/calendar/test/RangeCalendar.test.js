@@ -39,6 +39,7 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name should render a calendar with a defaultValue', ({RangeCalendar, props}) => {
+      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -60,8 +61,8 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(cell).toHaveAttribute('role', 'gridcell');
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
@@ -71,6 +72,7 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name should render a calendar with a value', ({RangeCalendar, props}) => {
+      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -92,8 +94,8 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(cell).toHaveAttribute('role', 'gridcell');
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
@@ -106,12 +108,19 @@ describe('RangeCalendar', () => {
       let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let cells = getAllByLabelText('selected', {exact: false});
-      expect(cells[0]).toHaveAttribute('role', 'gridcell');
-      expect(cells[0]).toHaveAttribute('aria-selected', 'true');
-
       let grid = getByRole('grid');
-      expect(grid).toHaveFocus();
-      expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
+
+      if (RangeCalendar === V2Calendar) {
+        expect(cells[0]).toHaveAttribute('role', 'gridcell');
+        expect(cells[0]).toHaveAttribute('aria-selected', 'true');
+        expect(grid).toHaveFocus();
+        expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
+      } else {
+        expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
+        expect(cells[0]).toHaveFocus();
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
     });
 
     // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
@@ -142,7 +151,7 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
@@ -166,7 +175,7 @@ describe('RangeCalendar', () => {
 
       i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', julyLabels[i++]);
       }
 
@@ -187,7 +196,7 @@ describe('RangeCalendar', () => {
       expect(selected.length).toBe(11);
       i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
@@ -201,17 +210,26 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range'}}
     `('$Name adds a range selection prompt to the focused cell', ({RangeCalendar, props}) => {
+      const isV2 = RangeCalendar === V2Calendar;
       let {getByRole, getByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} (Click to start selecting date range)`);
 
       // enter selection mode
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
-      expect(cell).toHaveAttribute('aria-selected');
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
+      expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected (Click to finish selecting date range)`);
     });
 
@@ -221,28 +239,29 @@ describe('RangeCalendar', () => {
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name can select a range with the keyboard (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText} = render(
+      let {getAllByLabelText, getByRole} = render(
         <RangeCalendar
           {...props}
           autoFocus
           onChange={onChange} />
       );
 
+      let grid = getByRole('grid');
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
 
       // Select a new date
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
 
       // Begin selecting
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
 
       // Move focus
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4');
@@ -250,7 +269,7 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // End selection
-      fireEvent.keyDown(document.activeElement, {key: ' ', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes.Enter});
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4'); // uncontrolled
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('8');
@@ -274,28 +293,29 @@ describe('RangeCalendar', () => {
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name can select a range with the keyboard (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText} = render(
+      let {getAllByLabelText, getByRole} = render(
         <RangeCalendar
           {...props}
           autoFocus
           onChange={onChange} />
       );
 
+      let grid = getByRole('grid');
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
 
       // Select a new date
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
 
       // Begin selecting
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
 
       // Move focus
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
+      fireEvent.keyDown(grid, {key: 'ArrowRight', keyCode: keyCodes.ArrowRight});
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4');
@@ -303,7 +323,7 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // End selection
-      fireEvent.keyDown(document.activeElement, {key: ' ', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes.Enter});
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5'); // controlled
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
@@ -327,14 +347,16 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
-      expect(cell).not.toHaveAttribute('aria-selected');
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(document.activeElement).toBe(cell);
     });
 
     it.each`
@@ -435,13 +457,15 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
+      expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      cell = getByText('17').parentNode;
+      cell = getByText('17');
       triggerPress(cell);
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
-      expect(cell).not.toHaveAttribute('aria-selected');
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
+      expect(document.activeElement).toBe(cell);
     });
 
     it.each`
@@ -564,25 +588,20 @@ describe('RangeCalendar', () => {
       triggerPress(getByText('10'));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019');
+      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 4000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {
-      let {getByRole} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} autoFocus />);
+      let {getByRole, getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}} autoFocus />);
 
       let grid = getByRole('grid');
-      let onBlur = jest.fn();
-      let onFocus = jest.fn();
 
-      grid.addEventListener('blur', onBlur);
-      grid.addEventListener('focus', onFocus);
+      let selectedDates = getAllByLabelText('selected', {exact: false});
 
-      expect(grid).toHaveFocus();
+      expect(selectedDates[0]).toHaveFocus();
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
 
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onFocus).toHaveBeenCalledTimes(1);
-      expect(grid).toHaveFocus();
+      expect(selectedDates[1]).toHaveFocus();
     });
 
     it('renders a caption with the selected date range', () => {

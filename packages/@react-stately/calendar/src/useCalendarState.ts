@@ -45,6 +45,8 @@ export function useCalendarState(props: CalendarProps): CalendarState {
 
     if (!isSameMonth(date, currentMonth)) {
       setCurrentMonth(startOfMonth(date));
+      setFocusedDate(date);
+      return;
     }
 
     setFocusedDate(date);
@@ -115,7 +117,8 @@ export function useCalendarState(props: CalendarProps): CalendarState {
         isDisabled: props.isDisabled || !isCurrentMonth || isInvalid(cellDate, minDate, maxDate),
         isSelected: isSameDay(cellDate, value),
         isFocused: isFocused && focusedDate && isSameDay(cellDate, focusedDate),
-        isReadOnly: props.isReadOnly
+        isReadOnly: props.isReadOnly,
+        colIndex: dayIndex + 1
       };
     }
   };

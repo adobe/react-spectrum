@@ -14,6 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import {setDay} from 'date-fns'; // pull these out individually
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import {useCalendarTableHeader} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
 
 interface CalendarTableHeaderProps {
@@ -21,19 +22,26 @@ interface CalendarTableHeaderProps {
 }
 
 export function CalendarTableHeader({weekStart}: CalendarTableHeaderProps) {
+  const {
+    columnHeaderProps
+  } = useCalendarTableHeader();
   let dayFormatter = useDateFormatter({weekday: 'short'});
-
+  let dayFormatterLong = useDateFormatter({weekday: 'long'});
   return (
     <thead>
-      <tr>
+      <tr aria-rowindex={1}>
         {
           [...new Array(7).keys()].map(index => {
-            let day = dayFormatter.format(setDay(Date.now(), (index + weekStart) % 7));
+            let dateDay = setDay(Date.now(), (index + weekStart) % 7);
+            let day = dayFormatter.format(dateDay);
+            let dayLong = dayFormatterLong.format(dateDay);
             return (
               <th
                 key={index}
+                aria-colindex={index + 1}
+                {...columnHeaderProps}
                 className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-                <abbr className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
+                <abbr className={classNames(styles, 'spectrum-Calendar-dayOfWeek')} title={dayLong}>
                   {day}
                 </abbr>
               </th>

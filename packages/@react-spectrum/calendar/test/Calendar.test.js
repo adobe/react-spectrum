@@ -37,6 +37,7 @@ describe('Calendar', () => {
       ${'v3'}   | ${Calendar}
       ${'v2'}   | ${V2Calendar}
     `('$Name should render a calendar with a defaultValue', ({Calendar}) => {
+      let isV2 = Calendar === V2Calendar;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar defaultValue={new Date(2019, 5, 5)} />);
 
       let heading = getByRole('heading');
@@ -46,8 +47,8 @@ describe('Calendar', () => {
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
-      expect(selectedDate).toHaveAttribute('role', 'gridcell');
-      expect(selectedDate).toHaveAttribute('aria-selected', 'true');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(selectedDate).toHaveAttribute('aria-label', 'Wednesday, June 5, 2019 selected');
     });
 
@@ -56,6 +57,7 @@ describe('Calendar', () => {
       ${'v3'}   | ${Calendar}
       ${'v2'}   | ${V2Calendar}
     `('$Name should render a calendar with a value', ({Calendar}) => {
+      let isV2 = Calendar === V2Calendar;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar value={new Date(2019, 5, 5)} />);
 
       let heading = getByRole('heading');
@@ -65,8 +67,8 @@ describe('Calendar', () => {
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
-      expect(selectedDate).toHaveAttribute('role', 'gridcell');
-      expect(selectedDate).toHaveAttribute('aria-selected', 'true');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(selectedDate).toHaveAttribute('aria-label', 'Wednesday, June 5, 2019 selected');
     });
 
@@ -78,12 +80,19 @@ describe('Calendar', () => {
       let {getByRole, getByLabelText} = render(<Calendar value={new Date(2019, 1, 3)} autoFocus />);
 
       let cell = getByLabelText('selected', {exact: false});
-      expect(cell).toHaveAttribute('role', 'gridcell');
-      expect(cell).toHaveAttribute('aria-selected', 'true');
 
       let grid = getByRole('grid');
-      expect(grid).toHaveFocus();
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (Calendar === V2Calendar) {
+        expect(cell).toHaveAttribute('role', 'gridcell');
+        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(grid).toHaveFocus();
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+        expect(cell).toHaveFocus();
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
     });
   });
 
@@ -94,26 +103,27 @@ describe('Calendar', () => {
       ${'v2'}   | ${V2Calendar}
     `('$Name selects a date on keyDown Enter/Space (uncontrolled)', ({Calendar}) => {
       let onChange = jest.fn();
-      let {getByLabelText} = render(
+      let {getByLabelText, getByRole} = render(
         <Calendar
           defaultValue={new Date(2019, 5, 5)}
           autoFocus
           onChange={onChange} />
       );
 
+      let grid = getByRole('grid');
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
 
       // Select a new date
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('4');
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange.mock.calls[0][0].valueOf()).toBe(new Date(2019, 5, 4).valueOf()); // v2 returns a moment object
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: ' ', keyCode: keyCodes[' ']});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes[' ']});
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('3');
       expect(onChange).toHaveBeenCalledTimes(2);
@@ -126,26 +136,27 @@ describe('Calendar', () => {
       ${'v2'}   | ${V2Calendar}
     `('$Name selects a date on keyDown Enter/Space (controlled)', ({Calendar}) => {
       let onChange = jest.fn();
-      let {getByLabelText} = render(
+      let {getByLabelText, getByRole} = render(
         <Calendar
           value={new Date(2019, 5, 5)}
           autoFocus
           onChange={onChange} />
       );
 
+      let grid = getByRole('grid');
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
 
       // Select a new date
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange.mock.calls[0][0].valueOf()).toBe(new Date(2019, 5, 4).valueOf()); // v2 returns a moment object
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: ' ', keyCode: keyCodes[' ']});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
+      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes[' ']});
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5'); // controlled
       expect(onChange).toHaveBeenCalledTimes(2);
@@ -335,25 +346,18 @@ describe('Calendar', () => {
       triggerPress(newDate);
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019');
+      expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019', 'polite', 4000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {
-      let {getByRole} = render(<Calendar defaultValue={new Date(2019, 5, 5)} autoFocus />);
+      let {getByRole, getByLabelText} = render(<Calendar defaultValue={new Date(2019, 5, 5)} autoFocus />);
 
       let grid = getByRole('grid');
-      let onBlur = jest.fn();
-      let onFocus = jest.fn();
+      let selectedDate = getByLabelText('selected', {exact: false});
+      expect(selectedDate).toHaveFocus();
 
-      grid.addEventListener('blur', onBlur);
-      grid.addEventListener('focus', onFocus);
-
-      expect(grid).toHaveFocus();
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
-
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onFocus).toHaveBeenCalledTimes(1);
-      expect(grid).toHaveFocus();
+      expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
     it('renders a caption with the selected date', () => {
