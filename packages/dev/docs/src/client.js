@@ -2,7 +2,7 @@ import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import highlightCss from './hljs.css';
+import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useRef, useState} from 'react';
