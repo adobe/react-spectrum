@@ -32,7 +32,6 @@ export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeSta
 
   return {
     listItemProps: {
-      id: useId(id),
       hidden,
       role: 'listitem'
     },

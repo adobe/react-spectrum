@@ -23,7 +23,6 @@ describe('useSideNav', function () {
     expect(navProps.id).toBeDefined();
     expect(navProps.role).toBe('navigation');
     expect(listProps).toBeDefined();
-    expect(listProps.id).toBeDefined();
     expect(listProps.role).toBe('list');
     expect(typeof listProps.onKeyDown).toBe('function');
     expect(typeof listProps.onFocus).toBe('function');
@@ -47,7 +46,6 @@ describe('useSideNav', function () {
     expect(navProps['aria-label']).toBe('test-aria-label');
     expect(navProps['aria-labelledby']).toBe('test-aria-labelledby');
     expect(listProps).toBeDefined();
-    expect(listProps.id).toBe('test-id-list');
     expect(listProps.role).toBe('list');
     expect(listProps['aria-labelledby']).toBe('test-aria-labelledby');
     expect(typeof listProps.onKeyDown).toBe('function');

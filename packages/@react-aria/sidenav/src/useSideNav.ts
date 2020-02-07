@@ -37,7 +37,6 @@ export function useSideNav<T>(props: SideNavAriaProps, state: TreeState<T>, layo
       id
     },
     listProps: {
-      id: `${id}-list`,
       'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
       role: 'list',
       ...listProps
