@@ -31,7 +31,6 @@ describe('useSideNav', function () {
 
   it('handles aria props', function () {
     let props = {
-      hidden: true,
       'aria-label': 'test-aria-label',
       'aria-labelledby': 'test-aria-labelledby',
       id: 'test-id'
@@ -42,7 +41,6 @@ describe('useSideNav', function () {
     expect(navProps.id).toBe('test-id');
     expect(navProps.role).toBe('navigation');
     expect(navProps.role).toBe('navigation');
-    expect(navProps['aria-hidden']).toBeTruthy();
     expect(navProps['aria-label']).toBe('test-aria-label');
     expect(navProps['aria-labelledby']).toBe('test-aria-labelledby');
     expect(listProps).toBeDefined();

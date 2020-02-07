@@ -1,15 +1,14 @@
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, SingleSelectionBase} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {CollectionBase, Expandable, SingleSelectionBase, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {ListLayout, Node} from '@react-stately/collections';
 import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
-import sideNavStyles from './index.css';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
 
-export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable {}
+export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable, StyleProps {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single'});
@@ -18,11 +17,13 @@ export function SideNav<T>(props: SideNavProps<T>) {
 
   let {navProps, listProps} = useSideNav(props, state, layout);
 
+  let {styleProps} = useStyleProps(props);
+
   return (
     <nav
       {...filterDOMProps(props)}
       {...navProps}
-      className={classNames(sideNavStyles, 'react-spectrum-SideNav')}>
+      {...styleProps} >
       <CollectionView
         {...listProps}
         focusedKey={state.selectionManager.focusedKey}

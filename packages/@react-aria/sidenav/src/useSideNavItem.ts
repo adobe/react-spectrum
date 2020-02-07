@@ -16,7 +16,6 @@ interface SideNavItemAria {
 
 export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {
   let {
-    hidden,
     item,
     'aria-current': ariaCurrent
   } = props;
@@ -31,7 +30,6 @@ export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeSta
 
   return {
     listItemProps: {
-      hidden,
       role: 'listitem'
     },
     listItemLinkProps: {
