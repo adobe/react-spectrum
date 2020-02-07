@@ -1,10 +1,8 @@
-import React, {useContext} from 'react';
-import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import styles from './docs.css';
-import linkStyles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {getDoc} from 'globals-docs';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import accordionStyles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
+import React, {useContext} from 'react';
+import styles from './docs.css';
+import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const DOC_LINKS = {
   'React.Component': 'https://reactjs.org/docs/react-component.html',
@@ -23,7 +21,7 @@ export function Type({type}) {
   if (!type) {
     return null;
   }
-  
+
   switch (type.type) {
     case 'any':
     case 'null':
@@ -70,41 +68,41 @@ export function Type({type}) {
 
       return <Keyword {...type} />;
     case 'alias':
-      return <Type type={type.value} />;
+      return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
     default:
-      console.log("UNKNOWN TYPE", type);
+      console.log('UNKNOWN TYPE', type);
       return null;
   }
 }
 
 function StringLiteral({value}) {
-  return <span className="token string">{`'${value.replace(/'/, '\\\'')}'`}</span>;
+  return <span className="token hljs-string">{`'${value.replace(/'/, '\\\'')}'`}</span>;
 }
 
 function NumberLiteral({value}) {
-  return <span className="token number">{'' + value}</span>;
+  return <span className="token hljs-number">{'' + value}</span>;
 }
 
 function BooleanLiteral({value}) {
-  return <span className="token boolean">{'' + value}</span>;
+  return <span className="token hljs-literal">{'' + value}</span>;
 }
 
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']}`} target="_blank">{type}</a>;
+    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-keyword`} target="_blank">{type}</a>;
   }
 
-  return <span className="token keyword">{type}</span>;
+  return <span className="token hljs-keyword">{type}</span>;
 }
 
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']}`} target="_blank">{name}</a>;
+    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`} target="_blank">{name}</a>;
   }
 
-  return <span className="token identifier">{name}</span>;
+  return <span className="token hljs-name">{name}</span>;
 }
 
 function JoinList({elements, joiner}) {
@@ -117,7 +115,7 @@ function JoinList({elements, joiner}) {
 }
 
 function UnionType({elements}) {
-  return <JoinList elements={elements} joiner={elements.length > 5 ? '\n  | ' : ' | '} />;
+  return <JoinList elements={elements} joiner={elements.length > 3 ? '\n  | ' : ' |\u00a0'} />;
 }
 
 function IntersectionType({types}) {
@@ -163,7 +161,7 @@ function FunctionType({parameters, return: returnType, typeParameters}) {
 function Parameter({name, value, default: defaultValue}) {
   return (
     <>
-      <span className="token property">{name}</span>
+      <span className="token hljs-attr">{name}</span>
       {value &&
         <>
           <span className="token punctuation">: </span>
@@ -187,18 +185,10 @@ function LinkType({id}) {
     return null;
   }
 
-  return <a href={'#' + id} data-link={id} className={`${linkStyles['spectrum-Link']} ${linkStyles['spectrum-Link--quiet']}`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-function InterfaceType({properties}) {
-  return (
-    <InterfaceTable>
-      <InterfaceBody properties={properties} />
-    </InterfaceTable>
-  );
-}
-
-export function InterfaceTable({children}) {
+export function InterfaceType({properties}) {
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
@@ -210,36 +200,18 @@ export function InterfaceTable({children}) {
           <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
         </tr>
       </thead>
-      {children}
-    </table>
-  );
-}
-
-export function InterfaceBody({header, properties}) {
-  return (
-    <tbody className={tableStyles['spectrum-Table-body']}>
-      {header && 
-        <tr>
-          <th colSpan={5} className={styles.header}>
-            <div className={accordionStyles['spectrum-Accordion-itemHeader']}>
-              <ChevronRight size="XS" />
-              {header}
-            </div>
-          </th>
-        </tr>
-      }
-      {Object.values(properties).map((prop, index) => {
-        return (
-          <tr key={index} className={tableStyles['spectrum-Table-row']} hidden={!!header}>
-            <td className={tableStyles['spectrum-Table-cell']}>{prop.name}</td>
-            <td className={tableStyles['spectrum-Table-cell']}><Type type={prop.value} /></td>
-            <td className={tableStyles['spectrum-Table-cell']}>{prop.default || '-'}</td>
+      <tbody className={tableStyles['spectrum-Table-body']}>
+        {Object.values(properties).map((prop, index) => (
+          <tr key={index} className={tableStyles['spectrum-Table-row']}>
+            <td className={tableStyles['spectrum-Table-cell']}><code className={`${typographyStyles['spectrum-Code4']} token hljs-attr`}>{prop.name}</code></td>
+            <td className={tableStyles['spectrum-Table-cell']}><code className={typographyStyles['spectrum-Code4']}><Type type={prop.value} /></code></td>
+            <td className={tableStyles['spectrum-Table-cell']} style={{textAlign: prop.default ? undefined : 'center'}}>{prop.default || '–'}</td>
             <td className={tableStyles['spectrum-Table-cell']}>{!prop.optional ? 'true' : null}</td>
             <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
           </tr>
-        );
-      })}
-    </tbody>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -250,12 +222,12 @@ function ObjectType({properties, exact}) {
     <>
       {startObject}
       {Object.values(properties).map((property, i, arr) => {
-        let token = 'property';
+        let token = 'hljs-attr';
         let k = property.name;
         // https://mathiasbynens.be/notes/javascript-identifiers-es6
         if (!/^[$_\p{ID_Start}][$_\u{200C}\u{200D}\p{ID_Continue}]+$/u.test(property.key)) {
           k = `'${property.name}'`;
-          token = 'string';
+          token = 'hljs-string';
         }
 
         let optional = property.optional;
@@ -265,7 +237,7 @@ function ObjectType({properties, exact}) {
         if (value && value.type === 'function' && !optional && token === 'property') {
           return (
             <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token property">{k}</span>
+              <span className="token hljs-attr">{k}</span>
               <span className="token punctuation">(</span>
               <JoinList elements={value.parameters} joiner=", " />
               <span className="token punctuation">)</span>

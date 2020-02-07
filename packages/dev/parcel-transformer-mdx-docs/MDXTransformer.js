@@ -1,13 +1,13 @@
 const {Transformer} = require('@parcel/plugin');
 const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
-const highlight = require('remark-highlight.js')
+const highlight = require('remark-highlight.js');
 
 module.exports = new Transformer({
   async transform({asset}) {
     let exampleCode = [];
-    const extractExamples = () => (tree, file) => {
-      return flatMap(tree, node => {
+    const extractExamples = () => (tree, file) => (
+      flatMap(tree, node => {
         if (node.type === 'code') {
           if (node.meta === 'import') {
             exampleCode.push(node.value);
@@ -23,10 +23,10 @@ module.exports = new Transformer({
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<${name} />, document.getElementById("${id}"));
+                ReactDOM.render(<Provider theme={theme} UNSAFE_className="example"><${name} /></Provider>, document.getElementById("${id}"));
               })();`;
             } else {
-              code = `ReactDOM.render(<Provider theme={theme}>${code}</Provider>, document.getElementById("${id}"));`;
+              code = `ReactDOM.render(<Provider theme={theme} UNSAFE_className="example">${code}</Provider>, document.getElementById("${id}"));`;
             }
 
             exampleCode.push(code);
@@ -43,8 +43,8 @@ module.exports = new Transformer({
         }
 
         return [node];
-      });
-    };
+      })
+    );
 
     const compiled = await mdx(await asset.getCode(), {
       remarkPlugins: [extractExamples, highlight]
@@ -59,10 +59,12 @@ import {theme} from '@react-spectrum/theme-default';
 ${exampleCode.join('\n')}
 `;
 
+    // Ensure that the HTML asset always changes so that the packager runs
+    let random = Math.random().toString(36).slice(4);
     let assets = [
       {
         type: 'html',
-        code: exampleBundle ? '<script src="example"></script>' : ''
+        code: exampleBundle ? `${random}<script src="example"></script>` : random
       },
       {
         type: 'jsx',

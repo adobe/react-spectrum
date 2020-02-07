@@ -46,7 +46,8 @@ module.exports = new Packager({
         styles: bundles.filter(b => b.type === 'css').map(b => ({
           url: '/' + b.name
         })),
-        pages
+        pages,
+        currentPage: bundle.name
       })
     );
 
