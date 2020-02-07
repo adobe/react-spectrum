@@ -8,7 +8,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {Divider} from '@react-spectrum/divider';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import configureTypekit from '@react-spectrum/provider/src/configureTypekit';
-import highlightCss from './hljs.css';
+import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 
 configureTypekit('pbi5ojv');
@@ -21,7 +21,7 @@ for (let header of headers) {
     } else {
       header.dataset.expanded = true;
     }
-    
+
     let node = header.parentNode.nextSibling;
     while (node) {
       node.hidden = !node.hidden;
@@ -69,8 +69,8 @@ function LinkPopover({id}) {
     <Dialog UNSAFE_className={highlightCss.spectrum}>
       <Header>
         <Breadcrumbs isHeading headingAriaLevel={3}>
-          {breadcrumbs.map((b, i) => 
-            <BreadcrumbItem 
+          {breadcrumbs.map((b, i) =>
+            <BreadcrumbItem
               onPress={() => setBreadcrumbs(breadcrumbs.slice(0, i + 1))}>
               {b.dataset.title}
             </BreadcrumbItem>

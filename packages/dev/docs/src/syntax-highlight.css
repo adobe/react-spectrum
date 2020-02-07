@@ -7,9 +7,15 @@
   --hljs-literal-color: var(--spectrum-global-color-blue-600);
   --hljs-attribute-color: var(--spectrum-global-color-celery-600);
   --hljs-class-color: var(--spectrum-global-color-yellow-600);
+  --hljs-function-color: var(--spectrum-global-color-yellow-600);
   --hljs-variable-color: var(--spectrum-global-color-orange-600);
   --hljs-title-color: var(--spectrum-global-color-indigo-600);
 }
+
+/** for now keep syntax highlighting different from prop table. we can join them later if need be,
+ *  though since they don't really represent the same things,
+ *  i think the prop table should get renames and new classes
+ */
 
 :global(.hljs) {
   display: block;
@@ -86,4 +92,80 @@
 
 :global(.hljs-link) {
   text-decoration: underline;
+}
+
+:global(.source) {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: var(--hljs-color);
+  background: var(--hljs-background);
+
+  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
+
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+:global(.embedded.source) {
+  display: inline;
+  padding: 0;
+}
+
+:global(.storage.type) {
+  color: var(--hljs-keyword-color);
+}
+
+:global(.entity.function) {
+  color: var(--hljs-function-color);
+}
+
+:global(.keyword.control) {
+  color: var(--hljs-keyword-color);
+}
+
+:global(.class-name) {
+  color: var(--hljs-section-color);
+}
+
+:global(.entity.attribute-name) {
+  color: var(--hljs-attribute-color);
+}
+:global(.keyword.operator.js),
+:global(.entity.name.tag),
+:global(.support.type) {
+  color: var(--hljs-section-color);
+}
+
+:global(.punctuation.section) {
+  color: var(--hljs-title-color);
+}
+
+:global(.constant.numeric) {
+  color: var(--hljs-literal-color);
+}
+
+:global(.variable.other.object.property) {
+  color: var(--hljs-section-color);
+}
+
+:global(.string.quoted) {
+  color: var(--hljs-literal-color);
+}
+
+:global(.comment) {
+  color: #a0a1a7;
+  font-style: italic;
 }

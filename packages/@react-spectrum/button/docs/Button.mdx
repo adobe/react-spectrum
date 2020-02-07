@@ -26,7 +26,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 
 ## Example
 
-```jsx example
+```tsx example
 <Button variant="cta">Test</Button>
 ```
 
@@ -35,10 +35,12 @@ import Bell from '@spectrum-icons/workflow/Bell';
 Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
 A visible label can be provided by passing children.
 
-```jsx example
-<Button variant="primary">Label only</Button>
-<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
-<Button variant="primary" icon={<Bell />} aria-label="Icon only" />
+```tsx example
+<React.Fragment>
+  <Button variant="primary">Label only</Button>
+  <Button variant="primary" icon={<Bell />}>Icon + Label</Button>
+  <Button variant="primary" icon={<Bell />} aria-label="Icon only" />
+</React.Fragment>
 ```
 
 ### Accessibility
@@ -58,12 +60,20 @@ prop.
 
 The following example uses an `onPress` handler to update a counter stored in React state.
 
-```jsx example
-function Example() {
+```tsx example
+function Example(demo) {
   let [count, setCount] = React.useState(0);
+  let arr = [1, 2, 3];
+  let nextArr = [...arr];
+  let obj = {one: 1, two: 2};
+  let {one, two} = obj;
+  let nextObj = {...obj, three: 3};
+  let theString = "a string";
+  let theLiteral = `a string ${theString}`;
 
+  // comment!
   return (
-    <Button variant="primary" onPress={() => setCount(c => c + 1)}>{count} Dogs</Button>
+    <Button {...nextObj} variant="primary" onPress={(something) => setCount(c => c + 1)}>{count} Dogs</Button>
   );
 }
 ```
@@ -76,27 +86,31 @@ function Example() {
 
 ### Call To Action
 
-```jsx example
+```tsx example
 <Button variant="cta">Test</Button>
 ```
 
 ### Primary
 
-```jsx example
-<Button variant="primary">Test</Button>
-<Button variant="primary" isQuiet>Test</Button>
+```tsx example
+<React.Fragment>
+  <Button variant="primary">Test</Button>
+  <Button variant="primary" isQuiet>Test</Button>
+</React.Fragment>
 ```
 
 ### Secondary
 
-```jsx example
-<Button variant="secondary">Test</Button>
-<Button variant="secondary" isQuiet>Test</Button>
+```tsx example
+<React.Fragment>
+  <Button variant="secondary">Test</Button>
+  <Button variant="secondary" isQuiet>Test</Button>
+</React.Fragment>
 ```
 
 ### Over Background
 
-```jsx example
+```tsx example
 <div style={{backgroundColor: 'rgb(15, 121, 125)', padding: '15px 20px'}}>
   <Button variant="overBackground">Test</Button>
   <Button variant="overBackground" isQuiet>Test</Button>
@@ -105,7 +119,9 @@ function Example() {
 
 ### Negative
 
-```jsx example
-<Button variant="negative">Test</Button>
-<Button variant="negative" isQuiet>Test</Button>
+```tsx example
+<React.Fragment>
+  <Button variant="negative">Test</Button>
+  <Button variant="negative" isQuiet>Test</Button>
+</React.Fragment>
 ```

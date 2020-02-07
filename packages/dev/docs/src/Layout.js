@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import docStyles from './docs.css';
-import highlightCss from './hljs.css';
+import highlightCss from './syntax-highlight.css';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
