@@ -1,5 +1,5 @@
 import {AllHTMLAttributes, RefObject} from 'react';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
@@ -16,7 +16,6 @@ interface SideNavItemAria {
 
 export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {
   let {
-    id,
     hidden,
     item,
     'aria-current': ariaCurrent
