@@ -1,0 +1,136 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/Radio';
+import {PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+import {HeaderInfo} from '@react-spectrum/docs';
+
+```jsx import
+import {Radio} from '@react-spectrum/Radio';
+```
+
+# Radio
+
+<p>{docs.exports.Component.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Radio']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/radio-button/'}
+  ]} />
+
+## Example
+
+<RadioGroup label="Favorite pet">
+  <Radio value="dogs">
+    Dogs
+  </Radio>
+  <Radio value="cats">
+    Cats
+  </Radio>
+</RadioGroup>
+
+## Content
+
+Radio Buttons can have a visible label, although they are not required to have one.
+All radio components, even if there is only one, cannot be rendered outside of a Radio Group.
+
+## Labeling
+
+A Radio must have a label to be properly identified to users of assistive technology.
+The easiest way to satisfy this requirement is by adding a label prop to the Radio Group.
+If the label prop is null and therefore no visible label will be shown, then include the label as a prop of type string to the Radio Group.
+
+// Props
+{label: null, 'aria-label': 'Favorite food'}
+
+<RadioGroup {...props}>
+  <Radio value="wizard">
+    Wizard
+  </Radio>
+  <Radio value="dragon">
+    Dragon
+  </Radio>
+</RadioGroup>
+
+## Events
+
+Events handlers for change can be registered as shown below.
+
+<RadioGroup aria-label="Favorite avatar" onChange={e => alert('Radio Button clicked!')}>
+  <Radio value="wizard">
+    Wizard
+  </Radio>
+  <Radio value="dragon">
+    Dragon
+  </Radio>
+</RadioGroup>
+
+### Accessibility
+
+Radios are accessible by default, rendered in HTML using the <input type="radio"> element.
+When the radio is checked, the appropriate ARIA state attribute will automatically be applied.
+
+### Internationalization
+
+To internationalize a radio button, a localized string should be passed to the label prop of the radio button.
+
+*make a note about rtl
+
+## Props
+
+<PropTable component={docs.exports.Radio} links={docs.links} />
+
+## Visual Options
+
+Radio Buttons have a number of props for controlling their visual/checked state.
+
+## Orientation
+
+{orientation: 'horizontal'}
+
+Default is vertical
+
+## Label Position
+
+{labelPosition: 'side'}
+
+// top is also an option
+
+## Label Align
+
+{labelAlign: 'end'}
+
+// start is also an option
+
+## Disabled
+
+{isDisabled: true}
+
+The disabled prop applies a disabled style to the Radio Button, and also prevents clicks from activating it
+
+## Ready Only
+
+{isReadOnly: true}
+
+## Emphasized
+
+{isEmphasized: true}
+
+## InValid
+
+{validationState: 'invalid'}
+
+*describe how to trigger this (if you can trigger this??)
+
+## Auto Focus
+
+{autoFocus: true}
+
+## Default Checked
+
+{defaultValue: 'dragons'}
+
+has to match the value prop passed to the Radio button 
