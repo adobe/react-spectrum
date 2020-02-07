@@ -61,19 +61,11 @@ prop.
 The following example uses an `onPress` handler to update a counter stored in React state.
 
 ```tsx example
-function Example(demo) {
+function Example() {
   let [count, setCount] = React.useState(0);
-  let arr = [1, 2, 3];
-  let nextArr = [...arr];
-  let obj = {one: 1, two: 2};
-  let {one, two} = obj;
-  let nextObj = {...obj, three: 3};
-  let theString = "a string";
-  let theLiteral = `a string ${theString}`;
 
-  // comment!
   return (
-    <Button {...nextObj} variant="primary" onPress={(something) => setCount(c => c + 1)}>{count} Dogs</Button>
+    <Button variant="primary" onPress={() => setCount(c => c + 1)}>{count} Dogs</Button>
   );
 }
 ```
