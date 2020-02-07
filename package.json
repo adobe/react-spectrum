@@ -22,6 +22,10 @@
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "start:docs": "parcel 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'"
   },
+  "resolutions": {
+    "**/@babel/core": "7.8.4",
+    "**/tree-sitter-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2"
+  },
   "workspaces": [
     "packages/*/*"
   ],
