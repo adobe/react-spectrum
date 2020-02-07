@@ -35,11 +35,9 @@ Buttons can have a label, and icon, or both. An icon is provided by passing an i
 A visible label can be provided by passing children.
 
 ```tsx example
-<React.Fragment>
-  <Button variant="primary">Label only</Button>
-  <Button variant="primary" icon={<Bell />}>Icon + Label</Button>
-  <Button variant="primary" icon={<Bell />} aria-label="Icon only" />
-</React.Fragment>
+<Button variant="primary">Label only</Button>
+<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
+<Button variant="primary" icon={<Bell />} aria-label="Icon only" />
 ```
 
 ### Accessibility
@@ -84,35 +82,27 @@ function Example() {
 ### Primary
 
 ```tsx example
-<React.Fragment>
-  <Button variant="primary">Test</Button>
-  <Button variant="primary" isQuiet>Test</Button>
-</React.Fragment>
+<Button variant="primary">Test</Button>
+<Button variant="primary" isQuiet>Test</Button>
 ```
 
 ### Secondary
 
 ```tsx example
-<React.Fragment>
-  <Button variant="secondary">Test</Button>
-  <Button variant="secondary" isQuiet>Test</Button>
-</React.Fragment>
+<Button variant="secondary">Test</Button>
+<Button variant="secondary" isQuiet>Test</Button>
 ```
 
 ### Over Background
 
 ```tsx example
-<div style={{backgroundColor: 'rgb(15, 121, 125)', padding: '15px 20px'}}>
-  <Button variant="overBackground">Test</Button>
-  <Button variant="overBackground" isQuiet>Test</Button>
-</div>
+<Button variant="overBackground">Test</Button>
+<Button variant="overBackground" isQuiet>Test</Button>
 ```
 
 ### Negative
 
 ```tsx example
-<React.Fragment>
-  <Button variant="negative">Test</Button>
-  <Button variant="negative" isQuiet>Test</Button>
-</React.Fragment>
+<Button variant="negative">Test</Button>
+<Button variant="negative" isQuiet>Test</Button>
 ```
