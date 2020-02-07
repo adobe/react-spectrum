@@ -6,7 +6,9 @@ interface DOMPropsResponderContext extends HoverProps {
   register(): void,
   ref?: MutableRefObject<HTMLElement>,
   onMouseEnter?: () => void,
-  onMouseLeave?: () => void
+  onMouseLeave?: () => void,
+  onPointerEnter?: () => void,
+  onPointerLeave?: () => void
 }
 
 export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);

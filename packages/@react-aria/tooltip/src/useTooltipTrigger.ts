@@ -1,7 +1,7 @@
 import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
-import {PressProps} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useHover} from '@react-aria/interactions';
@@ -19,14 +19,8 @@ interface TooltipTriggerProps {
   type: string
 }
 
-interface TooltipHoverTriggerProps {
-  onMouseEnter?: () => void,
-  onMouseLeave?: () => void,
-  hoverHookProps?: HTMLAttributes<HTMLElement>
-}
-
 interface TooltipTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps & TooltipHoverTriggerProps,
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps,
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 

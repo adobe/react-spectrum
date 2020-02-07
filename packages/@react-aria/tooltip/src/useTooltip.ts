@@ -26,11 +26,11 @@ export function useTooltip(props: TooltipProps): TooltipAria {
   };
 
   if (contextProps) {
-    if(contextProps.onPointerLeave && contextProps.onPointerEnter) {
+    if (contextProps.onPointerLeave && contextProps.onPointerEnter) {
       tooltipProps.onMouseLeave = contextProps.onPointerLeave;
       tooltipProps.onMouseEnter = contextProps.onPointerEnter;
     }
-    if(contextProps.onMouseLeave && contextProps.onMouseEnter) {
+    if (contextProps.onMouseLeave && contextProps.onMouseEnter) {
       tooltipProps.onMouseLeave = contextProps.onMouseLeave;
       tooltipProps.onMouseEnter = contextProps.onMouseEnter;
     }
