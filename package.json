@@ -22,10 +22,6 @@
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "start:docs": "parcel 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'"
   },
-  "resolutions": {
-    "**/@babel/core": "7.8.4",
-    "**/tree-sitter-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2"
-  },
   "workspaces": [
     "packages/*/*"
   ],
@@ -49,7 +45,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.6.2",
     "@octokit/rest": "*",
     "@parcel/babel-preset-env": "nightly",
     "@parcel/transformer-inline": "nightly",
@@ -145,5 +141,9 @@
   },
   "dependencies": {
     "@spectrum-css/component-builder": "^1.0.0"
+  },
+  "resolutions": {
+    "@babel/core": "7.8.4",
+    "@babel/runtime": "7.6.3"
   }
 }

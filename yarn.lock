@@ -35,12 +35,11 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-1.0.1.tgz#32537652fb52a6ebf8746ad58268520a04b7f553"
   integrity sha512-5BM+oJyP4vjmqAV/HSJYLJzR3wDDbEOMUZEEVeKJ81cKyq0aJ6qF9A9tmsW6jb/73cE7PpLr6vb+xqBqTOYsTw==
 
-"@atom-languages/language-typescript@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@atom-languages/language-typescript/-/language-typescript-0.5.0.tgz#44b069edc0f177db6313e131c9883dde66ec7744"
-  integrity sha512-jeADntQOXv6mAqv4QpmHtqil1bJJDE4HOPvpwMKvs9u5CQOCvZfqa9a7Wyp9ytBP8T25DxX3R8IJ0TEbpZiWYg==
+"@atom-languages/language-typescript@git+ssh://git@github.com:atom/language-typescript.git#v0.6.2":
+  version "0.6.2"
+  resolved "git+ssh://git@github.com:atom/language-typescript.git#020b1e3f7623e9bad89204772e98d4ed8bf83b05"
   dependencies:
-    tree-sitter-typescript "^0.14.0"
+    tree-sitter-typescript "^0.16.1"
 
 "@babel/cli@^7.0.0":
   version "7.8.3"
@@ -1359,14 +1358,7 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime@7.6.0":
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.0.tgz#4fc1d642a9fd0299754e8b5de62c631cf5568205"
-  integrity sha512-89eSBLJsxNxOERC0Op4vd+0Bqm6wRMqMbFtV3i0/fbaWw/mJ8Q3eBvgX0G4SyrOOLCtbu98HspF8o09MRT+KzQ==
-  dependencies:
-    regenerator-runtime "^0.13.2"
-
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.6.3":
+"@babel/runtime@7.6.0", "@babel/runtime@7.6.3", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.6.3":
   version "7.6.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.3.tgz#935122c74c73d2240cafd32ddb5fc2a6cd35cf1f"
   integrity sha512-kq6anf9JGjW8Nt5rYfEuGRaEAaH1mkv3Bbu6rYvLOpPh/RusSJXuKPEAoZ7L7gybZkchE8+NV5g9vKF4AGAtsA==
@@ -10496,6 +10488,11 @@ highlight-tree-sitter@^1.0.0:
   dependencies:
     postcss-selector-parser "^5.0.0-rc.4"
 
+highlight.js@9.18.1:
+  version "9.18.1"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.18.1.tgz#ed21aa001fe6252bb10a3d76d47573c6539fe13c"
+  integrity sha512-OrVKYz70LHsnCgmbXctv/bfuvntIKDz177h0Co37DQ5jamGZLVmoCVMtjMtNZY3X9DrCcKfklHPNeA0uPZhSJg==
+
 highlight.js@~9.12.0:
   version "9.12.0"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.12.0.tgz#e6d9dbe57cbefe60751f02af336195870c90c01e"
@@ -19332,11 +19329,12 @@ tree-sitter-hast@^1.1.1:
     season "^6.0.2"
     tree-sitter "^0.15.5"
 
-tree-sitter-typescript@^0.14.0, tree-sitter-typescript@^0.16.1, "tree-sitter-typescript@git+ssh://git@github.com:atom/language-typescript.git#v0.6.2":
-  version "0.6.2"
-  resolved "git+ssh://git@github.com:atom/language-typescript.git#020b1e3f7623e9bad89204772e98d4ed8bf83b05"
+tree-sitter-typescript@^0.16.1:
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/tree-sitter-typescript/-/tree-sitter-typescript-0.16.1.tgz#3066e1b5f15aea4b789eab3505c656a002c6ed1f"
+  integrity sha512-jyU5yl4W6JPn66v2YbzaO1ClDcdDnj+7YQNZz3STgEiUooSjpWI1Ucgw+S/qEGbf0fMXsC0fucpP+/M1uc9ubw==
   dependencies:
-    tree-sitter-typescript "^0.16.1"
+    nan "^2.14.0"
 
 tree-sitter@^0.15.5:
   version "0.15.15"

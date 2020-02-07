@@ -29,7 +29,7 @@ module.exports = new Transformer({
             symbols.set(specifier.exported.name, specifier.local.name);
             asset.symbols.set(specifier.exported.name, specifier.local.name);
           }
-          
+
           asset.addDependency({
             moduleSpecifier: path.node.source.value,
             symbols,
@@ -43,7 +43,7 @@ module.exports = new Transformer({
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let id of Object.keys(identifiers)) {
-              console.log('ID', id)
+              console.log('ID', id);
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }
@@ -57,7 +57,7 @@ module.exports = new Transformer({
           }
         }
       },
-    
+
       ExportAllDeclaration(path) {
         asset.addDependency({
           moduleSpecifier: path.node.source.value,
@@ -65,9 +65,9 @@ module.exports = new Transformer({
           pipeline: 'docs-json'
         });
       },
-    
+
       ExportDefaultDeclaration(path) {
-        
+
       }
     });
 
@@ -93,8 +93,8 @@ module.exports = new Transformer({
           let docs = getJSDocs(path);
           return {
             type: 'component',
-            props: props && props.typeAnnotation 
-              ? processExport(path.get('params.0.typeAnnotation.typeAnnotation')) 
+            props: props && props.typeAnnotation
+              ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
             description: docs.description || null
           };
@@ -150,7 +150,7 @@ module.exports = new Transformer({
           if (property) {
             properties[property.name] = property;
           } else {
-            console.log('UNKNOWN PROPERTY', propertyPath.node)
+            console.log('UNKNOWN PROPERTY', propertyPath.node);
           }
         }
 
@@ -163,7 +163,7 @@ module.exports = new Transformer({
           name: path.node.id.name,
           extends: exts,
           properties,
-          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : [],
+          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
         }, docs);
       }
 
@@ -174,7 +174,7 @@ module.exports = new Transformer({
           if (property) {
             properties[property.name] = property;
           } else {
-            console.log("UNKNOWN PROPERTY", member.node)
+            console.log('UNKNOWN PROPERTY', member.node);
           }
         }
 
@@ -208,11 +208,11 @@ module.exports = new Transformer({
               name: p.node.name,
               value: processExport(p.get('typeAnnotation.typeAnnotation'))
             })),
-            return: path.node.typeAnnotation 
+            return: path.node.typeAnnotation
               ? processExport(path.get('typeAnnotation.typeAnnotation'))
               : {type: 'any'},
-            typeParameters: path.node.typeParameters 
-              ? path.get('typeParameters.params').map(p => processExport(p)) 
+            typeParameters: path.node.typeParameters
+              ? path.get('typeParameters.params').map(p => processExport(p))
               : []
           }
         }, docs);
@@ -319,7 +319,7 @@ module.exports = new Transformer({
         };
       }
 
-      console.log("UNKNOWN TYPE", path.node.type)
+      console.log('UNKNOWN TYPE', path.node.type);
     }
 
     function isReactForwardRef(path) {

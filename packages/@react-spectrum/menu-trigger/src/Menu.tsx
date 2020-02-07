@@ -9,7 +9,7 @@ import {MenuContext} from './context';
 import {mergeProps, useId} from '@react-aria/utils';
 import React, {Fragment, useContext, useEffect, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree'; 
+import {TreeState, useTreeState} from '@react-stately/tree';
 import {useMenu} from '@react-aria/menu-trigger';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
@@ -21,7 +21,7 @@ interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection,
 }
 
 export function Menu<T>(props: MenuProps<T>) {
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 32, // Feel like we should eventually calculate this number (based on the css)? It should probably get a multiplier in order to gracefully handle scaling
       headingHeight: 31 // Same as above
@@ -52,7 +52,7 @@ export function Menu<T>(props: MenuProps<T>) {
     let selectionManager = state.selectionManager;
     let selectedKeys = selectionManager.selectedKeys;
     selectionManager.setFocused(true);
-    
+
     // Focus last item if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
     if (focusStrategy && focusStrategy === 'last') {
       focusedKey = layout.getLastKey();
@@ -70,7 +70,7 @@ export function Menu<T>(props: MenuProps<T>) {
         focusedKey = selectedKeys.values().next().value;
       }
     }
-    
+
     selectionManager.setFocusedKey(focusedKey);
   }, []);
 
@@ -83,7 +83,7 @@ export function Menu<T>(props: MenuProps<T>) {
         focusedKey={state.selectionManager.focusedKey}
         className={
           classNames(
-            styles, 
+            styles,
             'spectrum-Menu',
             styleProps.className
           )
@@ -107,7 +107,7 @@ export function Menu<T>(props: MenuProps<T>) {
             }
           }
 
-          return (   
+          return (
             <MenuItem
               item={item}
               state={state} />
@@ -133,9 +133,9 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
     isSelected,
     isDisabled
   } = item;
-  
+
   // TODO: All of the below should be in a useMenuItem aria hook, to be handled in MenuItem pull
-  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem  
+  // The hook should also setup behavior on Enter/Space etc, overriding/merging with the above itemProps returned by useSelectableItem
   let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
@@ -146,7 +146,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
   let menuItemProps = {
     'aria-disabled': isDisabled,
     ref,
-    id: useId(),     
+    id: useId(),
     role: 'menuitem'
   };
 
@@ -178,7 +178,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
         }
         break;
     }
-  }; 
+  };
 
   let onPress = (e) => {
     if (e.pointerType !== 'keyboard') {
@@ -191,7 +191,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
   // Add it if we like that behavior but remove if/when we make a subMenu item/trigger component
   // let {pressProps} = usePress(mergeProps({onPressStart}, {...itemProps, ref}));
 
-  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref). 
+  // The below allows the user to properly cycle through all choices via up/down arrow (suppresses up and down from triggering submenus by not including the ref).
   // isDisabled suppresses sub menu triggers from firing
   let {pressProps} = usePress(mergeProps({onPress}, mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled})));
 
@@ -225,7 +225,7 @@ function MenuItem<T>({item, state}: MenuItemProps<T>) {
 
 function MenuDivider() {
   return (
-    <div 
+    <div
       aria-orientation="horizontal"
       className={classNames(
         styles,

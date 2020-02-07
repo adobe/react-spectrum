@@ -1,10 +1,7 @@
-import React, {useContext} from 'react';
-import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import styles from './docs.css';
-import linkStyles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {getDoc} from 'globals-docs';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import accordionStyles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
+import React, {useContext} from 'react';
+import styles from './docs.css';
+import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const DOC_LINKS = {
@@ -73,7 +70,7 @@ export function Type({type}) {
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
     default:
-      console.log("UNKNOWN TYPE", type);
+      console.log('UNKNOWN TYPE', type);
       return null;
   }
 }
@@ -191,15 +188,7 @@ function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-function InterfaceType({properties}) {
-  return (
-    <InterfaceTable>
-      <InterfaceBody properties={properties} />
-    </InterfaceTable>
-  );
-}
-
-export function InterfaceTable({children}) {
+export function InterfaceType({properties}) {
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
@@ -211,36 +200,18 @@ export function InterfaceTable({children}) {
           <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
         </tr>
       </thead>
-      {children}
-    </table>
-  );
-}
-
-export function InterfaceBody({header, properties}) {
-  return (
-    <tbody className={tableStyles['spectrum-Table-body']}>
-      {header && 
-        <tr>
-          <th colSpan={5} className={styles.header}>
-            <div className={accordionStyles['spectrum-Accordion-itemHeader']}>
-              <ChevronRight size="XS" />
-              {header}
-            </div>
-          </th>
-        </tr>
-      }
-      {Object.values(properties).map((prop, index) => {
-        return (
-          <tr key={index} className={tableStyles['spectrum-Table-row']} hidden={!!header}>
+      <tbody className={tableStyles['spectrum-Table-body']}>
+        {Object.values(properties).map((prop, index) => (
+          <tr key={index} className={tableStyles['spectrum-Table-row']}>
             <td className={tableStyles['spectrum-Table-cell']}><code className={`${typographyStyles['spectrum-Code4']} token hljs-attr`}>{prop.name}</code></td>
             <td className={tableStyles['spectrum-Table-cell']}><code className={typographyStyles['spectrum-Code4']}><Type type={prop.value} /></code></td>
             <td className={tableStyles['spectrum-Table-cell']} style={{textAlign: prop.default ? undefined : 'center'}}>{prop.default || '–'}</td>
             <td className={tableStyles['spectrum-Table-cell']}>{!prop.optional ? 'true' : null}</td>
             <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
           </tr>
-        );
-      })}
-    </tbody>
+        ))}
+      </tbody>
+    </table>
   );
 }
 

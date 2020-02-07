@@ -13,16 +13,15 @@ module.exports = new Packager({
     let cache = new Map();
     try {
       var result = processAsset(bundle.getMainEntry());
-      // console.log("RESULT", result)
     } catch (err) {
-      console.log(err.stack)
+      console.log(err.stack);
     }
 
     function processAsset(asset) {
       if (cache.has(asset.id)) {
         return cache.get(asset.id);
       }
-      
+
       let res = {};
       cache.set(asset.id, res);
       _processAsset(asset, res);
@@ -32,7 +31,7 @@ module.exports = new Packager({
     function _processAsset(asset, res) {
       let obj = processCode(asset, code.get(asset.id));
       for (let [exported] of asset.symbols) {
-        let {asset: resolvedAsset, exportSymbol, symbol} = bundleGraph.resolveSymbol(asset, exported);
+        let {asset: resolvedAsset, exportSymbol} = bundleGraph.resolveSymbol(asset, exported);
         let processed = resolvedAsset.id === asset.id ? obj : processAsset(resolvedAsset);
         if (exportSymbol === '*') {
           Object.assign(res, processed);
@@ -85,7 +84,7 @@ module.exports = new Packager({
             paramStack.push(params);
             hasParams = true;
           }
-  
+
           t = recurse(t);
 
           if (hasParams) {
@@ -103,7 +102,7 @@ module.exports = new Packager({
           if (t && t.type === 'identifier' && params && params[t.name]) {
             return params[t.name];
           }
-  
+
           if (t && t.type === 'interface') {
             let merged = mergeInterface(t);
             if (!nodes[t.id]) {
@@ -113,7 +112,7 @@ module.exports = new Packager({
             if (!k || k === 'props' || k === 'extends' || k === 'base') {
               return merged;
             }
-  
+
             return {
               type: 'link',
               id: t.id
@@ -134,7 +133,7 @@ module.exports = new Packager({
               id: t.id
             };
           }
-  
+
           return t;
         });
       }
@@ -185,7 +184,7 @@ function walk(obj, fn, k = null) {
 function mergeInterface(obj) {
   let properties = {};
   if (obj.type === 'interface') {
-    merge(properties, obj.properties);  
+    merge(properties, obj.properties);
 
     for (let ext of obj.extends) {
       merge(properties, mergeInterface(ext).properties);

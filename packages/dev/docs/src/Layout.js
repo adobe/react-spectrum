@@ -1,14 +1,14 @@
 import classNames from 'classnames';
+import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
-import {MDXProvider} from '@mdx-js/react'
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {Divider} from '@react-spectrum/divider';
 
 const mdxComponents = {
   h1: ({children}) => <h1 className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'])}>{children}</h1>,
@@ -21,7 +21,7 @@ const mdxComponents = {
   h3: ({children}) => <h3 className={typographyStyles['spectrum-Heading4']}>{children}</h3>,
   p: ({children}) => <p className={typographyStyles['spectrum-Body3']}>{children}</p>,
   code: ({children}) => <code className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  inlineCode: ({children}) => <code className={typographyStyles['spectrum-Code4']}>{children}</code>,
+  inlineCode: ({children}) => <code className={typographyStyles['spectrum-Code4']}>{children}</code>
 };
 
 export function Layout({scripts, styles, pages, currentPage, children}) {
@@ -29,6 +29,7 @@ export function Layout({scripts, styles, pages, currentPage, children}) {
     <html lang="en-US">
       <head>
         <meta charset="utf-8" />
+        <script src="https://use.typekit.net/pbi5ojv.js" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <link rel="preload" as="script" href={s.url} />)}
       </head>
