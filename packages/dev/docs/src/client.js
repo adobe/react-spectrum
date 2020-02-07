@@ -9,7 +9,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 
-let links = document.querySelectorAll('article > table a[data-link]');
+let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
 for (let link of links) {
   let container = document.createElement('span');
 

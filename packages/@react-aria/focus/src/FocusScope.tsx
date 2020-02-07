@@ -216,7 +216,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function focusElement(element: HTMLElement | null) {
   if (element != null) {
     try {
-      element.focus();
+      element.focus({preventScroll: true});
     } catch (err) {
       // ignore
     }
