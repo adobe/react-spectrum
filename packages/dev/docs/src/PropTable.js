@@ -1,7 +1,5 @@
+import {InterfaceBody, InterfaceTable, Type, TypeContext} from './types';
 import React from 'react';
-import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import styles from './docs.css';
-import {Type, TypeContext, InterfaceTable, InterfaceBody} from './types';
 
 const GROUPS = {
   Events: [

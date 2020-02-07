@@ -6,8 +6,8 @@ const highlight = require('remark-highlight.js');
 module.exports = new Transformer({
   async transform({asset}) {
     let exampleCode = [];
-    const extractExamples = () => (tree, file) => {
-      return flatMap(tree, node => {
+    const extractExamples = () => (tree, file) => (
+      flatMap(tree, node => {
         if (node.type === 'code') {
           if (node.meta === 'import') {
             exampleCode.push(node.value);
@@ -43,8 +43,8 @@ module.exports = new Transformer({
         }
 
         return [node];
-      });
-    };
+      })
+    );
 
     const compiled = await mdx(await asset.getCode(), {
       remarkPlugins: [extractExamples, highlight]

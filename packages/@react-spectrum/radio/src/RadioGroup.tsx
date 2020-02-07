@@ -2,7 +2,7 @@ import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spect
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {forwardRef, useContext} from 'react';
+import React, {useContext} from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -71,7 +71,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
         )
       }
       ref={domRef}>
-      {label && 
+      {label &&
         <Label
           {...labelProps}
           elementType="span"
