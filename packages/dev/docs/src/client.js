@@ -9,24 +9,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 
-let headers = document.querySelectorAll('th[colspan]');
-for (let header of headers) {
-  header.addEventListener('click', () => {
-    if (header.dataset.expanded) {
-      delete header.dataset.expanded;
-    } else {
-      header.dataset.expanded = true;
-    }
-
-    let node = header.parentNode.nextSibling;
-    while (node) {
-      node.hidden = !node.hidden;
-
-      node = node.nextSibling;
-    }
-  });
-}
-
 let links = document.querySelectorAll('article > table a[data-link]');
 for (let link of links) {
   let container = document.createElement('span');
@@ -64,7 +46,7 @@ function LinkPopover({id}) {
       <Header>
         <Breadcrumbs isHeading headingAriaLevel={3}>
           {breadcrumbs.map((b, i) => (
-            <BreadcrumbItem
+            <BreadcrumbItem 
               onPress={() => setBreadcrumbs(breadcrumbs.slice(0, i + 1))}>
               {b.dataset.title}
             </BreadcrumbItem>

@@ -116,3 +116,22 @@ article pre {
 .header[data-expanded] svg {
   transform: rotate(90deg);
 }
+
+summary {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+summary:focus {
+  outline: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] summary svg {
+  transform: rotate(90deg);
+}

@@ -29,6 +29,7 @@ export function Layout({scripts, styles, pages, currentPage, children}) {
     <html lang="en-US">
       <head>
         <meta charset="utf-8" />
+        <script src="https://use.typekit.net/pbi5ojv.js" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <link rel="preload" as="script" href={s.url} />)}
       </head>

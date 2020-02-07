@@ -45,7 +45,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.6.2",
     "@octokit/rest": "*",
     "@parcel/babel-preset-env": "nightly",
     "@parcel/transformer-inline": "nightly",
@@ -141,5 +141,8 @@
   },
   "dependencies": {
     "@spectrum-css/component-builder": "^1.0.0"
+  },
+  "resolutions": {
+    "@babel/runtime": "7.6.3"
   }
 }
