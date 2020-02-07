@@ -94,17 +94,14 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     triggerProps: {
       id: triggerId,
-      ...tooltipProps,
-      ...overlayProps,
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
-      // @ts-ignore
-      onMouseEnter: triggerType === 'hover' ? chain(handleDelayedShow, hoverProps.onHover) : undefined,
-      // @ts-ignore
-      onMouseLeave: triggerType === 'hover' ? chain(handleDelayedHide, hoverProps.onHoverEnd) : undefined
+      ...(triggerType === 'hover' && hoverProps)
     },
     tooltipProps: {
+      ...overlayProps,
+      ...tooltipProps,
       id: tooltipId
     }
   };

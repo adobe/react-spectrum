@@ -25,10 +25,15 @@ export function useTooltip(props: TooltipProps): TooltipAria {
     id: tooltipId
   };
 
-  // TODO: investigate if tooltip and trigger mouse events conflict, specifically user provided ones 
   if (contextProps) {
-    tooltipProps.onMouseLeave = contextProps.onMouseLeave;
-    tooltipProps.onMouseEnter = contextProps.onMouseEnter;
+    if(contextProps.onPointerLeave && contextProps.onPointerEnter) {
+      tooltipProps.onMouseLeave = contextProps.onPointerLeave;
+      tooltipProps.onMouseEnter = contextProps.onPointerEnter;
+    }
+    if(contextProps.onMouseLeave && contextProps.onMouseEnter) {
+      tooltipProps.onMouseLeave = contextProps.onMouseLeave;
+      tooltipProps.onMouseEnter = contextProps.onMouseEnter;
+    }
   }
 
   return {
