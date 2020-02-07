@@ -3,11 +3,12 @@ import {getCalendarId, getCellId} from './useCalendarBase';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps, usePress} from '@react-aria/interactions';
+import {PressProps, useFocus, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 interface CalendarCellAria {
-  cellProps: PressProps & HTMLAttributes<HTMLElement>
+  cellProps: PressProps & HTMLAttributes<HTMLElement>,
+  textProps: HTMLAttributes<HTMLElement>
 }
 
 export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
@@ -56,21 +57,42 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
     }
   });
 
+  let {focusProps} = useFocus({
+    onFocus: (event) => {
+      if (!props.isDisabled) {
+        state.setFocusedDate(props.cellDate);
+        event.continuePropagation();
+      }
+    }
+  });
+
   let onMouseEnter = () => {
     if ('highlightDate' in state) {
       state.highlightDate(props.cellDate);
     }
   };
 
+  let tabIndex =  null;
+  if (!props.isDisabled) {
+    const focusedDate = state.focusedDate;
+    focusedDate.setHours(0, 0, 0, 0);
+    tabIndex = props.isFocused || props.cellDate.valueOf() === focusedDate.valueOf() ? 0 : -1;
+  }
+
   return {
     cellProps: {
       ...pressProps,
+      ...focusProps,
+      tabIndex,
       onMouseEnter: props.isDisabled ? null : onMouseEnter,
       id: getCellId(props.cellDate, getCalendarId(state)),
       role: 'gridcell',
       'aria-disabled': props.isDisabled || null,
-      'aria-selected': props.isSelected || null,
+      'aria-selected': props.isSelected,
       'aria-label': label
+    },
+    textProps: {
+      role: 'presentation'
     }
   };
 }

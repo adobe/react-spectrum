@@ -6,7 +6,7 @@ import {DOMProps} from '@react-types/shared';
 import {format} from 'date-fns';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, useEffect, useRef} from 'react';
+import {KeyboardEvent, useCallback, useEffect, useRef} from 'react';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 
@@ -39,6 +39,15 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   // Kinda hacky, but it's the easiest way to get the id from the cell.
   calendarIds.set(state, calendarId);
 
+  let focusFocusedDateCell = useCallback(() => {
+    if (state.isFocused) {
+      const focusedCell = calendarBody.current.querySelector(`#${getCellId(state.focusedDate, calendarId)}`);
+      if (focusedCell !== document.activeElement) {
+        (focusedCell || calendarBody.current).focus();
+      }
+    }
+  }, [state.focusedDate, state.isFocused, calendarId]);
+
   useEffect(() => {
     // focus the calendar body when mounting
     if (autoFocus) {
@@ -48,7 +57,12 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
 
   // Announce when the current month changes
   useUpdateEffect(() => {
-    announce(monthFormatter.format(state.currentMonth));
+    if (state.isFocused
+      || document.activeElement === document.body) {
+      calendarBody.current.focus();
+    } else {
+      announce(monthFormatter.format(state.currentMonth));
+    }
   }, [state.currentMonth]);
 
   // Announce when the selected value changes
@@ -58,17 +72,10 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     }
   }, [selectedDateDescription]);
 
-  // Ensure that the focused date is announced when it changes.
-  // VoiceOver does not announce changes to aria-activedescendant or move the VoiceOver cursor,
-  // so we blur and re-focus the calendar body to force it to do so.
-  // This will cause the focused date, along with the selected date (part of the table caption)
-  // to be announced as you move around the calendar.
+  // Ensure that the focused date moves focus to the focused date cell within the calendar.
   useUpdateEffect(() => {
-    if (document.activeElement === calendarBody.current) {
-      calendarBody.current.blur();
-      calendarBody.current.focus();
-    }
-  }, [state.focusedDate]);
+    focusFocusedDateCell();
+  }, [state.focusedDate, state.isFocused, focusFocusedDateCell]);
 
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -155,7 +162,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     calendarBodyProps: {
       ref: calendarBody,
       role: 'grid',
-      tabIndex: isDisabled ? null : 0,
+      tabIndex: isDisabled ? null : -1,
       'aria-readonly': isReadOnly,
       'aria-disabled': isDisabled,
       'aria-activedescendant': getCellId(state.focusedDate, calendarId),
@@ -164,6 +171,9 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
+    },
+    calendarTableProps: {
+      role: 'presentation'
     },
     captionProps: {
       id: captionId,

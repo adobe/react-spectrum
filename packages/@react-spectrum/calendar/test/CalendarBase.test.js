@@ -35,7 +35,8 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name shows the current month by default', ({Calendar, props}) => {
+    `('$Name shows the current month by default', ({Calendar, Name, props}) => {
+      const isV2 = Name.indexOf('v2') === 0;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar {...props} />);
 
       let calendar = getByRole('group');
@@ -45,11 +46,12 @@ describe('CalendarBase', () => {
       expect(heading).toHaveTextContent(headingFormatter.format(new Date()));
 
       let grid = getByRole('grid');
-      expect(grid).toHaveAttribute('tabIndex', '0');
+      expect(grid).toHaveAttribute('tabIndex', isV2 ? '0' : '-1');
 
       let today = getByLabelText('today', {exact: false});
       expect(today).toHaveAttribute('role', 'gridcell');
       expect(today).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(today).toHaveAttribute('tabIndex', !isV2 ? '0' : '-1');
 
       expect(getByLabelText('Previous')).toBeVisible();
       expect(getByLabelText('Next')).toBeVisible();
@@ -89,11 +91,12 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{isReadOnly: true}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{readOnly: true}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range', readOnly: true}}
-    `('$Name should set aria-readonly when isReadOnly', ({Calendar, props}) => {
+    `('$Name should set aria-readonly when isReadOnly', ({Calendar, Name, props}) => {
+      const isV2 = Name.indexOf('v2') === 0;
       let {getByRole} = render(<Calendar {...props} />);
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-readonly', 'true');
-      expect(grid).toHaveAttribute('tabIndex', '0');
+      expect(grid).toHaveAttribute('tabIndex', isV2 ? '0' : '-1');
     });
 
     it.each`
@@ -102,14 +105,15 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar}) => {
+    `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar, Name}) => {
+      const isV2 = Name.indexOf('v2') === 0;
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
 
       let cell = getByLabelText('today', {exact: false});
       expect(cell).toHaveAttribute('role', 'gridcell');
 
       let grid = getByRole('grid');
-      expect(grid).toHaveFocus();
+      expect(isV2 ? grid : cell).toHaveFocus();
       expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
     });
 
@@ -266,7 +270,7 @@ describe('CalendarBase', () => {
       let cell = getByLabelText('selected', {exact: false});
       expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
 
-      fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
+      fireEvent.keyDown(grid, {key, keyCode: keyCodes[key], ...opts});
       cell = getByLabelText(value, {exact: false});
       expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
 
@@ -401,13 +405,13 @@ describe('CalendarBase', () => {
       );
 
       let grid = getByRole('grid');
-      let selected = getAllByRole('gridcell').find(cell => cell.hasAttribute('aria-selected'));
+      let selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
       expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft'});
       expect(grid).toHaveAttribute('aria-activedescendant', selected.previousSibling.id);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyDown(grid, {key: 'ArrowRight'});
       expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
 
       // RTL
@@ -417,13 +421,13 @@ describe('CalendarBase', () => {
         </Provider>
       );
 
-      selected = getAllByRole('gridcell').find(cell => cell.hasAttribute('aria-selected'));
+      selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
       expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+      fireEvent.keyDown(grid, {key: 'ArrowLeft'});
       expect(grid).toHaveAttribute('aria-activedescendant', selected.nextSibling.id);
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyDown(grid, {key: 'ArrowRight'});
       expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
     });
   });

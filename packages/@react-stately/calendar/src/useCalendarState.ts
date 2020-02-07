@@ -33,6 +33,8 @@ export function useCalendarState(props: CalendarProps): CalendarState {
 
     if (!isSameMonth(date, currentMonth)) {
       setCurrentMonth(startOfMonth(date));
+      requestAnimationFrame(() => setFocusedDate(date));
+      return;
     }
 
     setFocusedDate(date);
