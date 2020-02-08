@@ -99,7 +99,7 @@
     "md5": "^2.2.1",
     "nyc": "^10.2.0",
     "p-queue": "^6.2.1",
-    "parcel": "^2.0.0-nightly.77",
+    "parcel": "nightly",
     "patch-package": "^6.2.0",
     "plop": "^2.4.0",
     "postcss-calc": "^6.0.0",
