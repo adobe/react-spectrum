@@ -1,0 +1,120 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/textfield';
+import {PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+import {HeaderInfo} from '@react-spectrum/docs';
+
+```jsx import
+import Info from '@spectrum-icons/workflow/Info';
+import {TextField} from '@react-spectrum/textfield';
+```
+
+# TextField
+
+<p>{docs.exports.TextField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TextField']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/text-field/'}
+  ]} />
+
+## Example
+
+```jsx example
+<TextField aria-label="textfield" />
+```
+
+## Content
+
+Text fields can render a icon inside itself, useful for visualizing the field's purpose.
+
+```jsx example
+<TextField icon={<Info />} aria-label="Info field" />
+```
+
+## Value
+
+Text fields, while empty by default, can have initial text supplied instead.
+Placeholder text that only appears when the text field is empty can also be provided, 
+useful for describing the field's expected value to the end user.
+
+```jsx example
+<TextField defaultValue="Sample Text" aria-label="textfield" />
+<TextField placeholder="abc@adobe.com" aria-label="email" />
+```
+
+## Labeling
+
+A visual label can be attached to text field via the label prop. If the field's required state should be displayed,
+the `isRequired` and `necessityIndicator` can be provided to the text field as well.
+
+```jsx example
+<TextField label="Street address" />
+<TextField label="Street address" isRequired necessityIndicator="icon" />
+<TextField label="Street address" necessityIndicator="label" />
+```
+
+### Accessibility
+
+If a visible label isn't specified, a `aria-label` should be provided to the text field for 
+accessibility. If the field is labeled by a separate element instead, a `aria-labelledby`
+matching the labeling element's id should be provided instead
+
+### Internationalization
+
+In order to internationalize a text field, a localized string should be passed to the `label` or `aria-label` prop.
+The necessity indicator is already handled by default.
+
+## Events
+
+Text fields accept a user defined `onChange` event, triggered whenever the contents of the text field
+is altered. Other events such as onBlur and onFocus are also accepted, see the `Props`
+list at the bottom for a list of all supported events.
+
+The example below uses `onChange` to validate if the user has entered a number larger than 15 into the 
+textfield. 
+
+```jsx example
+function Example() {
+  let [isValid, setValid] = React.useState(true);
+
+  let validate = (value) => {
+    setValid(Number(value) > 15)
+  }
+
+  return (
+    <TextField
+      validationState={isValid ? 'valid' : 'invalid'}
+      placeholder="Enter a number"
+      onChange={validate}
+      aria-label="number field"
+    />
+  );
+}
+```
+
+## Validation
+
+Visually displaying a text field's `valid` and `invalid` state is supported via the `validationState` prop.
+Note that determining if a text field's contents are `valid` or `invalid` is up to the end user.
+
+```jsx example
+<TextField defaultValue="This is invalid" aria-label="textfield" validationState="invalid" />
+<TextField defaultValue="This is valid" aria-label="textfield" validationState="valid" />
+```
+
+## Props
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
+
+## Visual Options
+
+*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+
+TODO:
+quiet, readonly, controlled/uncontrolled?, disabled, all combinations of isRequired and necessityIndicator
+icon (take storybook example), labelAlign+labelPosition
