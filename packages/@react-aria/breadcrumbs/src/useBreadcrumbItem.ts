@@ -1,4 +1,4 @@
-import {AllHTMLAttributes} from 'react';
+import {AllHTMLAttributes, useRef} from 'react';
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
@@ -20,7 +20,9 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
     ...otherProps
   } = props;
 
-  let {linkProps} = useLink({children, isDisabled, ...otherProps});
+  let ref = useRef();
+
+  let {linkProps} = useLink({children, isDisabled, ...otherProps, ref});
 
   let itemProps: AllHTMLAttributes<HTMLDivElement> = isCurrent
     ? {'aria-current': ariaCurrent || 'page', role: linkProps.role}
