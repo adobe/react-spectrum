@@ -36,7 +36,7 @@ const fragmentWrap = () => (tree, file) => (
 const fragmentUnWrap = () => (tree, file) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
-      if (node.meta === 'example' && node.data.hChildren) {
+      if (node.meta === 'example' && node.data && node.data.hChildren) {
         if (get(['data', 'hChildren', 0, 'children', 1, 'children', 0, 'value'])(node) === '>') {
           // unshift the children that make up `<>\n`
           node.data.hChildren[0].children.shift();

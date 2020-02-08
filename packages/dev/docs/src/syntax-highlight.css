@@ -4,11 +4,12 @@
   --hljs-background: var(--spectrum-global-color-gray-75);
   --hljs-keyword-color: var(--spectrum-global-color-fuchsia-600);
   --hljs-section-color: var(--spectrum-global-color-red-600);
-  --hljs-literal-color: var(--spectrum-global-color-blue-600);
-  --hljs-attribute-color: var(--spectrum-global-color-celery-600);
+  --hljs-string-color: var(--spectrum-global-color-celery-600);
+  --hljs-literal-color: var(--spectrum-global-color-orange-600);
+  --hljs-attribute-color: var(--spectrum-global-color-orange-600);
   --hljs-class-color: var(--spectrum-global-color-yellow-600);
-  --hljs-function-color: var(--spectrum-global-color-yellow-600);
-  --hljs-variable-color: var(--spectrum-global-color-orange-600);
+  --hljs-function-color: var(--spectrum-global-color-blue-600);
+  --hljs-variable-color: var(--spectrum-global-color-yellow-600);
   --hljs-title-color: var(--spectrum-global-color-indigo-600);
 }
 
@@ -45,15 +46,20 @@
   color: var(--hljs-section-color);
 }
 
-:global(.hljs-literal) {
+:global(.hljs-literal),
+:global(.hljs-number) {
   color: var(--hljs-literal-color);
 }
 
+:global(.hljs-string) {
+  color: var(--hljs-string-color);
+}
+
+:global(.hljs-attr),
 :global(.hljs-addition),
 :global(.hljs-attribute),
 :global(.hljs-meta-string),
-:global(.hljs-regexp),
-:global(.hljs-string) {
+:global(.hljs-regexp) {
   color: var(--hljs-attribute-color);
 }
 
@@ -62,8 +68,6 @@
   color: var(--hljs-class-color);
 }
 
-:global(.hljs-attr),
-:global(.hljs-number),
 :global(.hljs-selector-attr),
 :global(.hljs-selector-class),
 :global(.hljs-selector-pseudo),
@@ -100,8 +104,6 @@
   padding: 0.5em;
   color: var(--hljs-color);
   background: var(--hljs-background);
-
-  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
 
   text-align: left;
   white-space: pre;
@@ -143,7 +145,6 @@
 :global(.entity.attribute-name) {
   color: var(--hljs-attribute-color);
 }
-:global(.keyword.operator.js),
 :global(.entity.name.tag),
 :global(.support.type) {
   color: var(--hljs-section-color);
@@ -158,11 +159,11 @@
 }
 
 :global(.variable.other.object.property) {
-  color: var(--hljs-section-color);
+  color: var(--hljs-variable-color);
 }
 
 :global(.string.quoted) {
-  color: var(--hljs-literal-color);
+  color: var(--hljs-string-color);
 }
 
 :global(.comment) {
