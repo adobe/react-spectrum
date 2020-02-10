@@ -50,6 +50,7 @@ module.exports = new Packager({
           url: '/' + b.name
         })),
         pages,
+        toc: mainAsset.meta.toc,
         currentPage: bundle.name
       })
     );
