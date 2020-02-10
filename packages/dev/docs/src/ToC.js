@@ -1,7 +1,7 @@
-import React from 'react';
-import styles from './toc.css';
 import classNames from 'classnames';
+import React from 'react';
 import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import styles from './toc.css';
 
 
 export function ToC(props) {

@@ -2,14 +2,13 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
-import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {theme} from '@react-spectrum/theme-default';
-import tocstyles from './toc.css';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
