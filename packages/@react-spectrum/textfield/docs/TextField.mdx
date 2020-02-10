@@ -24,7 +24,7 @@ import {TextField} from '@react-spectrum/textfield';
 
 ## Example
 
-```jsx example
+```tsx example
 <TextField aria-label="textfield" />
 ```
 
@@ -33,7 +33,7 @@ import {TextField} from '@react-spectrum/textfield';
 
 Text fields can render an icon inside itself, useful for visualizing the field's purpose.
 
-```jsx example
+```tsx example
 <TextField icon={<Info />} aria-label="Info field" />
 ```
 
@@ -42,15 +42,15 @@ Text fields can render an icon inside itself, useful for visualizing the field's
 A text field's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
 Alternatively, providing a `value` prop creates a textfield with a controlled value. 
 
-```jsx example
-<TextField defaultValue="Uncontrolled Text" aria-label="uncontrolled textfield" />
+```tsx example
+<TextField defaultValue="Uncontrolled Text" aria-label="uncontrolled textfield" UNSAFE_style={{'margin-right': '20px'}} />
 <TextField value="Controlled Text" aria-label="controlled textfield" />
 ```
 
 Placeholder text that describes the expected value or formatting for the field can be provided using the `placeholder` prop. 
 Placeholder text will only appear when the text field is empty, and should not be used as a substitute for labelling the control with a visible label.
 
-```jsx example
+```tsx example
 <TextField placeholder="abc@adobe.com" aria-label="email" />
 ```
 
@@ -59,9 +59,9 @@ Placeholder text will only appear when the text field is empty, and should not b
 A visual label should be provided for the text field using the `label` prop. If the field's required state should be displayed,
 the `isRequired` and `necessityIndicator` props can be provided to the text field as well.
 
-```jsx example
-<TextField label="Street address" />
-<TextField label="Street address" isRequired necessityIndicator="icon" />
+```tsx example
+<TextField label="Street address" UNSAFE_style={{'margin-right': '20px'}} />
+<TextField label="Street address" isRequired necessityIndicator="icon" UNSAFE_style={{'margin-right': '20px'}} />
 <TextField label="Street address" necessityIndicator="label" />
 ```
 
@@ -85,7 +85,7 @@ list at the bottom for a list of all supported events.
 The example below uses `onChange` to validate if the user has entered a number larger than 15 into the 
 textfield. 
 
-```jsx example
+```tsx example
 function Example() {
   let [isValid, setValid] = React.useState(true);
 
@@ -109,8 +109,8 @@ function Example() {
 Visually displaying a text field's `valid` and `invalid` state is supported via the `validationState` prop.
 Note that the logic to determine what inputs are `valid` or `invalid` must be implemented by the user.
 
-```jsx example
-<TextField defaultValue="This is invalid" aria-label="textfield" validationState="invalid" />
+```tsx example
+<TextField defaultValue="This is invalid" aria-label="textfield" validationState="invalid" UNSAFE_style={{'margin-right': '20px'}} />
 <TextField defaultValue="This is valid" aria-label="textfield" validationState="valid" />
 ```
 
@@ -120,8 +120,48 @@ Note that the logic to determine what inputs are `valid` or `invalid` must be im
 
 ## Visual Options
 
-*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+### Quiet 
 
-TODO:
-quiet, readonly, controlled/uncontrolled?, disabled, all combinations of isRequired and necessityIndicator
-icon (take storybook example), labelAlign+labelPosition
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
+
+```tsx example
+<TextField placeholder="Email Address" isQuiet />
+```
+
+### Disabled
+
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
+
+```tsx example
+<TextField placeholder="Email Address" isDisabled />
+```
+
+### Read Only
+
+```tsx example
+<TextField defaultValue="read only" isReadOnly />
+```
+
+### Label Alignment
+
+```tsx example
+<TextField label="Email" labelAlign="start" UNSAFE_style={{'margin-right': '20px'}} />
+<TextField label="Email" labelAlign="end" />
+```
+
+### Label Position
+
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+```tsx example
+<TextField label="Email" labelPosition="top" UNSAFE_style={{'margin-right': '20px'}} />
+<TextField label="Email" labelPosition="side" />
+```
+
+### Custom Width
+
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<TextField label="Email" UNSAFE_style={{width: '400px'}} />
+```
