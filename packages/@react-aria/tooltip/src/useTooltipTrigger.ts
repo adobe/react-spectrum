@@ -1,10 +1,10 @@
-import {chain} from '@react-aria/utils';
+import {chain, useId} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
-import {PressProps} from '@react-aria/interactions';
 import {TooltipProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
-import {useId} from '@react-aria/utils';
+import {useHover} from '@react-aria/interactions';
 import {useOverlay} from '@react-aria/overlays';
 
 interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
@@ -15,20 +15,23 @@ interface TooltipTriggerProps {
   tooltipProps: TooltipProps,
   triggerProps: TriggerRefProps,
   state: TooltipTriggerState,
+  isDisabled: boolean,
   type: string
 }
 
 interface TooltipTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps,
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
 export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
   let tooltipId = useId();
+  let triggerId = useId();
   let {
     tooltipProps,
     triggerProps,
     state,
+    isDisabled,
     type
   } = props;
 
@@ -53,21 +56,46 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     }
   };
 
+  // abstract away knowledge of timing transitions from aria hook
+  let tooltipManager = state.tooltipManager;
+
+  let handleDelayedShow = () => {
+    if (isDisabled) {
+      return;
+    }
+    let triggerId = triggerProps.ref.current.id;
+    tooltipManager.showTooltipDelayed(state, triggerId);
+  };
+
+  let handleDelayedHide = () => {
+    tooltipManager.hideTooltipDelayed(state);
+  };
+
   let onPress = () => {
-    state.setOpen(!state.open);
+    let triggerId = triggerProps.ref.current.id;
+    tooltipManager.updateTooltipState(state, triggerId);
   };
 
   let triggerType = type;
 
+  let {hoverProps} = useHover({
+    isDisabled,
+    ref: triggerProps.ref,
+    onHover: handleDelayedShow,
+    onHoverEnd: handleDelayedHide
+  });
+
   return {
     triggerProps: {
-      ...tooltipProps,
-      ...overlayProps,
+      id: triggerId,
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onPress: triggerType === 'click' ? onPress : undefined
+      onPress: triggerType === 'click' ? onPress : undefined,
+      ...(triggerType === 'hover' && hoverProps)
     },
     tooltipProps: {
+      ...overlayProps,
+      ...tooltipProps,
       id: tooltipId
     }
   };
