@@ -53,17 +53,15 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       setFocusStrategy('first');
     }
 
-    // Perhaps the below block goes into useSelectableCollection
-    // Should autoFocus always be true so that Menu attempts to focus the first selected item? Maybe remove the prop entirely
-    if (autoFocus) {
-      // TODO: add other default focus behaviors
-      // Focus the first selected key (if any)
-      if (selectedKeys.size) {
-        focusedKey = selectedKeys.values().next().value;
-      }
+    // TODO: add other default focus behaviors
+    // Focus the first selected key (if any)
+    if (selectedKeys.size) {
+      focusedKey = selectedKeys.values().next().value;
     }
     
-    selectionManager.setFocusedKey(focusedKey);
+    if (autoFocus) {
+      selectionManager.setFocusedKey(focusedKey);
+    }
   }, []);
 
   return (
