@@ -33,7 +33,6 @@
     "@react-aria/interactions": "^3.0.0-rc.1",
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-aria/selection": "^3.0.0-alpha.2",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/button": "^3.0.0-alpha.2",
     "@react-types/button": "^3.0.0-rc.1",
@@ -46,7 +45,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

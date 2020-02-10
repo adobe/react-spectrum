@@ -1,8 +1,10 @@
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Toast} from '../';
 import {ToastProps} from '@react-types/toast';
+import {useToastProvider} from '../';
 
 storiesOf('Toast', module)
   .add(
@@ -28,6 +30,9 @@ storiesOf('Toast', module)
   .add(
     'action triggers close',
     () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
+  ).add(
+    'add via provider',
+    () => <RenderProvider />
   );
 
 function render(props:ToastProps = {}, message:String) {
@@ -35,5 +40,34 @@ function render(props:ToastProps = {}, message:String) {
     <Toast {...props}>
       {message}
     </Toast>
+  );
+}
+
+function RenderProvider() {
+  let toastContext = useToastProvider();
+
+  return (
+    <div>
+      <Button
+        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
+        variant="secondary">
+          Show Default Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
+        variant="primary">
+          Show Primary Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+        variant="negative">
+          Show Negative Toast
+      </Button>
+      <Button
+        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
+        variant="cta">
+          Show info Toast
+      </Button>
+    </div>
   );
 }
