@@ -61,6 +61,7 @@ export function useSearchField(
     },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
+      tabIndex: -1,
       onPress: chain(onClearButtonClick, props.onClear)
     }
   };

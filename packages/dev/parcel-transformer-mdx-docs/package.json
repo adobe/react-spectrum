@@ -11,6 +11,7 @@
     "@mdx-js/mdx": "^1.5.5",
     "@mdx-js/react": "^1.5.5",
     "unist-util-flatmap": "^1.0.0",
-    "remark-highlight.js": "^5.2.0"
+    "remark-tree-sitter": "^1.0.3",
+    "@atom-languages/language-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2"
   }
 }

@@ -1,7 +1,8 @@
 const {Transformer} = require('@parcel/plugin');
 const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
-const highlight = require('remark-highlight.js');
+const treeSitter = require('remark-tree-sitter');
+const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 
 module.exports = new Transformer({
   async transform({asset}) {
@@ -30,7 +31,6 @@ module.exports = new Transformer({
             }
 
             exampleCode.push(code);
-            node.meta = null;
 
             return [
               node,
@@ -47,7 +47,7 @@ module.exports = new Transformer({
     );
 
     const compiled = await mdx(await asset.getCode(), {
-      remarkPlugins: [extractExamples, highlight]
+      remarkPlugins: [extractExamples, fragmentWrap, [treeSitter, {grammarPackages: ['@atom-languages/language-typescript']}], fragmentUnWrap]
     });
 
     let exampleBundle = exampleCode.length === 0
