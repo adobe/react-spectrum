@@ -1,0 +1,88 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/checkbox';
+import {PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+import {HeaderInfo} from '@react-spectrum/docs'
+
+```jsx import
+import {Checkbox} from '@react-spectrum/Checkbox';
+```
+
+# Checkbox
+
+<p>{docs.exports.Component.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Checkbox']}
+  sourceData={[
+  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
+  ]} />
+
+## Example
+
+```jsx example
+<Checkbox />
+```
+
+## Content
+
+Checkboxes can have a visual label. The Checkbox is placed on the left side of the text.
+
+```jsx example
+<Checkbox><span>Checkbox Label</span></Checkbox>
+```
+
+### Accessibility
+
+Checkboxes are accessible by default, rendered in HTML using the <input type="checkbox"> element.
+
+### Internationalization
+
+To internationalize a Checkbox, a localized string should be passed to the label prop of the Radio Button.
+For languages that are read right to left, Hebrew and Arabic for example, the radio is placed on the right side of the text.
+
+## Events
+
+Checkboxes accept a user defined `onChange` event, triggered whenever the Checkbox is clicked.
+The example below uses `onChange` to log how the user is interacting with the component.
+
+```jsx example
+function Example() {
+
+ let toggle = (value) => {
+   if (value) {
+    console.log('The Checkbox is checked');
+   } else {
+    console.log('The Checkbox is unchecked');
+   }
+ }
+
+ return (
+   <Checkbox
+     onChange={toggle}
+     aria-label="This checkbox has no visible label"
+   />
+ );
+}
+```
+
+## Validation
+
+Visually displaying a Checkbox's `valid` and `invalid` state is supported via the `validationState` prop.
+Note that determining if a Checkbox is `valid` or `invalid` is up to the end user.
+
+```jsx example
+<Checkbox validationState="invalid" />
+<Checkbox validationState="valid" />
+```
+
+## Props
+
+<PropTable component={docs.exports.Checkbox} links={docs.links} />
+
+## Visual Options
+
+... Pending
