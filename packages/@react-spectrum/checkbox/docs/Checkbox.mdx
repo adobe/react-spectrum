@@ -4,22 +4,22 @@ export default Layout;
 import docs from 'docs:@react-spectrum/checkbox';
 import {PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
-import {HeaderInfo} from '@react-spectrum/docs'
+import {HeaderInfo} from '@react-spectrum/docs';
 
 ```jsx import
-import {Checkbox} from '@react-spectrum/Checkbox';
-```
+ import {Checkbox} from '@react-spectrum/Checkbox';
+ ```
 
 # Checkbox
 
-<p>{docs.exports.Component.description}</p>
+<p>{docs.exports.Checkbox.description}</p>
 
 <HeaderInfo
-  packageData={packageData}
-  componentNames={['Checkbox']}
-  sourceData={[
-  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
-  ]} />
+ packageData={packageData}
+ componentNames={['Checkbox']}
+ sourceData={[
+ {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
+ ]} />
 
 ## Example
 
@@ -37,12 +37,13 @@ Checkboxes can have a visual label. The Checkbox is placed on the left side of t
 
 ### Accessibility
 
-Checkboxes are accessible by default, rendered in HTML using the <input type="checkbox"> element.
+If Checkboxes have a label then they are accessible by default.
+If a visible label isn't specified, an `aria-label` should be provided to the Checkbox.
 
 ### Internationalization
 
-To internationalize a Checkbox, a localized string should be passed to the label prop of the Radio Button.
-For languages that are read right to left, Hebrew and Arabic for example, the radio is placed on the right side of the text.
+To internationalize a Checkbox, a localized string should be passed to the label prop of the Checkbox.
+For languages that are read right to left, Hebrew and Arabic for example, the Checkbox is placed on the right side of the text.
 
 ## Events
 
@@ -52,21 +53,21 @@ The example below uses `onChange` to log how the user is interacting with the co
 ```jsx example
 function Example() {
 
- let toggle = (value) => {
-   if (value) {
-    console.log('The Checkbox is checked');
-   } else {
-    console.log('The Checkbox is unchecked');
-   }
- }
+  let toggle = (value) => {
+    if (value) {
+     alert('The Checkbox is checked');
+    } else {
+     alert('The Checkbox is unchecked');
+    }
+  }
 
- return (
-   <Checkbox
-     onChange={toggle}
-     aria-label="This checkbox has no visible label"
-   />
- );
-}
+  return (
+    <Checkbox
+      onChange={toggle}
+      aria-label="This checkbox has no visible label"
+    />
+  );
+ }
 ```
 
 ## Validation
@@ -76,13 +77,38 @@ Note that determining if a Checkbox is `valid` or `invalid` is up to the end use
 
 ```jsx example
 <Checkbox validationState="invalid" />
+```
+
+```jsx example
 <Checkbox validationState="valid" />
+```
+
+## Visual Options
+
+isIndeterminate
+
+```jsx example
+<Checkbox isIndeterminate="true" />
+```
+
+defaultSelected
+
+```jsx example
+<Checkbox defaultSelected="true" />
+```
+
+isDisabled
+
+```jsx example
+<Checkbox isDisabled="true" />
+```
+
+isEmphasized
+
+```jsx example
+<Checkbox isEmphasized="true" />
 ```
 
 ## Props
 
 <PropTable component={docs.exports.Checkbox} links={docs.links} />
-
-## Visual Options
-
-... Pending
