@@ -30,7 +30,7 @@ import {TextField} from '@react-spectrum/textfield';
 
 ## Content
 
-Text fields can render a icon inside itself, useful for visualizing the field's purpose.
+Text fields can render an icon inside itself, useful for visualizing the field's purpose.
 
 ```jsx example
 <TextField icon={<Info />} aria-label="Info field" />
@@ -38,9 +38,9 @@ Text fields can render a icon inside itself, useful for visualizing the field's 
 
 ## Value
 
-Text fields, while empty by default, can have initial text supplied instead.
-Placeholder text that only appears when the text field is empty can also be provided, 
-useful for describing the field's expected value to the end user.
+A text field's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Placeholder text that describes the expected value or formatting for the field can be provided using the `placeholder` prop. 
+Placeholder text will only appear when the text field is empty, and should not be used as a substitute for labelling the control with a visible label.
 
 ```jsx example
 <TextField defaultValue="Sample Text" aria-label="textfield" />
@@ -49,7 +49,7 @@ useful for describing the field's expected value to the end user.
 
 ## Labeling
 
-A visual label can be attached to text field via the label prop. If the field's required state should be displayed,
+A visual label should be provided for the text field using the `label` prop. If the field's required state should be displayed,
 the `isRequired` and `necessityIndicator` can be provided to the text field as well.
 
 ```jsx example
@@ -60,19 +60,19 @@ the `isRequired` and `necessityIndicator` can be provided to the text field as w
 
 ### Accessibility
 
-If a visible label isn't specified, a `aria-label` should be provided to the text field for 
-accessibility. If the field is labeled by a separate element instead, a `aria-labelledby`
-matching the labeling element's id should be provided instead
+If a visible label isn't specified, an `aria-label` should be provided to the text field for 
+accessibility. If the field is labeled by a separate element instead, an `aria-labelledby`
+matching the labeling element's `id` should be provided instead.
 
 ### Internationalization
 
 In order to internationalize a text field, a localized string should be passed to the `label` or `aria-label` prop.
-The necessity indicator is already handled by default.
+A localized text string or alternative text is provided for the necessity indicator by default.
 
 ## Events
 
 Text fields accept a user defined `onChange` event, triggered whenever the contents of the text field
-is altered. Other events such as onBlur and onFocus are also accepted, see the `Props`
+is altered. Other events such as `onBlur` and `onFocus` are also accepted, see the `Props`
 list at the bottom for a list of all supported events.
 
 The example below uses `onChange` to validate if the user has entered a number larger than 15 into the 
