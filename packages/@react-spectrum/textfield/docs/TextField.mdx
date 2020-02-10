@@ -28,6 +28,7 @@ import {TextField} from '@react-spectrum/textfield';
 <TextField aria-label="textfield" />
 ```
 
+
 ## Content
 
 Text fields can render an icon inside itself, useful for visualizing the field's purpose.
@@ -39,18 +40,24 @@ Text fields can render an icon inside itself, useful for visualizing the field's
 ## Value
 
 A text field's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, providing a `value` prop creates a textfield with a controlled value. 
+
+```jsx example
+<TextField defaultValue="Uncontrolled Text" aria-label="uncontrolled textfield" />
+<TextField value="Controlled Text" aria-label="controlled textfield" />
+```
+
 Placeholder text that describes the expected value or formatting for the field can be provided using the `placeholder` prop. 
 Placeholder text will only appear when the text field is empty, and should not be used as a substitute for labelling the control with a visible label.
 
 ```jsx example
-<TextField defaultValue="Sample Text" aria-label="textfield" />
 <TextField placeholder="abc@adobe.com" aria-label="email" />
 ```
 
 ## Labeling
 
 A visual label should be provided for the text field using the `label` prop. If the field's required state should be displayed,
-the `isRequired` and `necessityIndicator` can be provided to the text field as well.
+the `isRequired` and `necessityIndicator` props can be provided to the text field as well.
 
 ```jsx example
 <TextField label="Street address" />
@@ -100,7 +107,7 @@ function Example() {
 ## Validation
 
 Visually displaying a text field's `valid` and `invalid` state is supported via the `validationState` prop.
-Note that determining if a text field's contents are `valid` or `invalid` is up to the end user.
+Note that the logic to determine what inputs are `valid` or `invalid` must be implemented by the user.
 
 ```jsx example
 <TextField defaultValue="This is invalid" aria-label="textfield" validationState="invalid" />
