@@ -57,7 +57,7 @@ If the label prop is null and therefore no visible label will be shown, then inc
 
 ## Events
 
-Events handlers for change can be registered as shown below.
+Event handlers for change can be registered as shown below.
 
 <RadioGroup aria-label="Favorite avatar" onChange={e => alert('Radio Button clicked!')}>
   <Radio value="wizard">
@@ -75,9 +75,8 @@ When the radio is checked, the appropriate ARIA state attribute will automatical
 
 ### Internationalization
 
-To internationalize a radio button, a localized string should be passed to the label prop of the radio button.
-
-*make a note about rtl
+To internationalize a radio button, a localized string should be passed to the label prop of the Radio Button.
+For languages that are read right to left, Hebrew and Arabic for example, the radio is placed on the right side of the text.
 
 ## Props
 
@@ -85,52 +84,66 @@ To internationalize a radio button, a localized string should be passed to the l
 
 ## Visual Options
 
-Radio Buttons have a number of props for controlling their visual/checked state.
+Radio Buttons have a number of props for controlling their visual / checked state.
 
 ## Orientation
 
 {orientation: 'horizontal'}
 
-Default is vertical
+The default orientation is to be aligned vertically.
+An optional prop can be passed to the Radio Group to position the Radio Buttons inline
 
 ## Label Position
 
 {labelPosition: 'side'}
 
-// top is also an option
+The default position of a label is on top of the Radio Buttons.
+An optional prop can be passed to the Radio Group that will position the label to the left on the topmost Radio Button.
+If the position is set to horizontal as well then the label will be directly to the left of the leftmost Radio Button.
 
 ## Label Align
 
 {labelAlign: 'end'}
 
-// start is also an option
+The default top position for a label is left aligned.
+A label can be right aligned via an optional prop to the Radio Group.
 
 ## Disabled
 
 {isDisabled: true}
 
-The disabled prop applies a disabled style to the Radio Button, and also prevents clicks from activating it
+The disabled prop applies a disabled style to the Radio Button, and also prevents clicks from selecting it as an option.
 
 ## Ready Only
 
 {isReadOnly: true}
 
+In this mode no visual indication is given to the user that any option within the Radio Group has been selected.
+
 ## Emphasized
 
 {isEmphasized: true}
+
+By default, radio buttons are not emphasized (gray filling).
+The emphasized version is a blue filling that provides a visual prominence.
 
 ## InValid
 
 {validationState: 'invalid'}
 
-*describe how to trigger this (if you can trigger this??)
+The label text and the Radio circle itself are both red.
 
 ## Auto Focus
 
 {autoFocus: true}
 
+A visual blue ring can be put around a specific option within the radio group.
+
 ## Default Checked
 
 {defaultValue: 'dragons'}
 
-has to match the value prop passed to the Radio button 
+A group of Radio Buttons can be rendered with an option already selected.
+The Radio option that is checked by default can be picked by passing in this prop where the string value
+matches the value prop passed to the Radio Button.
+This does not impact any other behavior for the user.
