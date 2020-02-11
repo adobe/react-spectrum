@@ -38,10 +38,10 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
   );
 }
 
-/*
-/ Status lights are used to color code categories and labels commonly found in data visualization.
-/ When status lights have a semantic meaning, they should use semantic variant colors.
-*/
+/**
+ * Status lights are used to color code categories and labels commonly found in data visualization.
+ * When status lights have a semantic meaning, they should use semantic variant colors.
+ */
 
 let _StatusLight = forwardRef(StatusLight);
 export {_StatusLight as StatusLight};
