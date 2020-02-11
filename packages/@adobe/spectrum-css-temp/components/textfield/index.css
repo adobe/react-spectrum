@@ -230,14 +230,15 @@ governing permissions and limitations under the License.
       inset-inline-start: 0;
     }
 
-  &.is-invalid,
-  &:invalid,
-  &.is-valid {
-    background-position: var(--spectrum-textfield-quiet-invalid-background-position);
-  }
+    &.is-invalid,
+    &:invalid,
+    &.is-valid {
+      background-position: var(--spectrum-textfield-quiet-invalid-background-position);
+    }
 
-  &.spectrum-Textfield--multiline {
-    height: var(--spectrum-textfield-height);
-    min-height: var(--spectrum-textfield-height);
+    &.spectrum-Textfield--multiline {
+      height: var(--spectrum-textfield-height);
+      min-height: var(--spectrum-textfield-height);
+    }
   }
 }
