@@ -7,6 +7,7 @@ export * from './useFocus';
 export * from './useFocusWithin';
 export * from './useFocusVisible';
 export * from './useHover';
+export * from './Hoverable';
 export * from './DOMPropsResponder';
 export * from './DOMPropsContext';
 export * from './useDOMPropsResponder';
