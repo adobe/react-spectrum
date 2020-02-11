@@ -2,9 +2,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/checkbox';
-import {PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
-import {HeaderInfo} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 
 ```jsx import
  import {Checkbox} from '@react-spectrum/Checkbox';
@@ -23,32 +22,49 @@ import {HeaderInfo} from '@react-spectrum/docs';
 
 ## Example
 
-```jsx example
-<Checkbox />
+```tsx example
+<Checkbox>Checkbox Label</Checkbox>
 ```
 
 ## Content
 
-Checkboxes can have a visual label. The Checkbox is placed on the left side of the text.
-
-```jsx example
-<Checkbox><span>Checkbox Label</span></Checkbox>
-```
+Checkboxes can have a visual label, provided by passing a renderable child to the Checkbox.
 
 ### Accessibility
 
-If Checkboxes have a label then they are accessible by default.
-If a visible label isn't specified, an `aria-label` should be provided to the Checkbox.
+In certain cases a visible label isn't needed. For example, a checkbox within a cell to select a row within a table should
+use the aria-label prop to explicitly set the accessibility name for the checkbox,
+or use aria-labelledby to provide a space-delimited list of id references for elements that label checkbox.
 
 ### Internationalization
 
-To internationalize a Checkbox, a localized string should be passed to the label prop of the Checkbox.
-For languages that are read right to left, Hebrew and Arabic for example, the Checkbox is placed on the right side of the text.
+To internationalize a Checkbox, a localized string should be set as the child content of the Checkbox.
+For languages that are read right to left (e.g. Hebrew and Arabic), the Checkbox is placed on the right side of the text.
+
+## Value
+
+### isIndeterminate
+
+```tsx example
+<Checkbox isIndeterminate="true"> Checkbox Label </Checkbox>
+```
+
+### defaultSelected
+
+```tsx example
+<Checkbox defaultSelected="true"> Checkbox Label </Checkbox>
+```
+
+### isSelected
+
+```tsx example
+<Checkbox isSelected="true"> Checkbox Label </Checkbox>
+```
 
 ## Events
 
-Checkboxes accept a user defined `onChange` event, triggered whenever the Checkbox is clicked.
-The example below uses `onChange` to log how the user is interacting with the component.
+Checkboxes accept a user defined `onChange` prop, triggered whenever the Checkbox is clicked.
+The example below uses `onChange` to alert the user to changes in the checkbox's state.
 
 ```jsx example
 function Example() {
@@ -72,41 +88,31 @@ function Example() {
 
 ## Validation
 
-Visually displaying a Checkbox's `valid` and `invalid` state is supported via the `validationState` prop.
-Note that determining if a Checkbox is `valid` or `invalid` is up to the end user.
+Checkboxes can display a validation state to communicate to the user whether the current value is valid or invalid.
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the Checkbox via the `validationState` prop.
 
-```jsx example
-<Checkbox validationState="invalid" />
+```tsx example
+<Checkbox validationState="invalid"> Checkbox Label </Checkbox>
 ```
 
-```jsx example
-<Checkbox validationState="valid" />
+```tsx example
+<Checkbox validationState="valid"> Checkbox Label </Checkbox>
 ```
 
 ## Visual Options
 
-isIndeterminate
+### isDisabled
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
 
-```jsx example
-<Checkbox isIndeterminate="true" />
+```tsx example
+<Checkbox isDisabled="true"> Checkbox Label </Checkbox>
 ```
 
-defaultSelected
+### isEmphasized
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/checkbox/#Emphasized-or-not?)
 
-```jsx example
-<Checkbox defaultSelected="true" />
-```
-
-isDisabled
-
-```jsx example
-<Checkbox isDisabled="true" />
-```
-
-isEmphasized
-
-```jsx example
-<Checkbox isEmphasized="true" />
+```tsx example
+<Checkbox isEmphasized="true"> Checkbox Label </Checkbox>
 ```
 
 ## Props
