@@ -26,13 +26,33 @@ export interface PressEvent {
 }
 
 export interface KeyboardEvents {
+  /** 
+   * A user defined callback function triggered upon keypress.
+   * Passes the keyboard event as an input to the callback.
+   */
   onKeyDown?: (e: KeyboardEvent) => void,
+  /** 
+   * A user defined callback function triggered when a key is released.
+   * Passes the keyboard event as an input to the callback.
+   */
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
 export interface FocusEvents {
+  /** 
+   * A user defined callback function triggered when the element receives focus.
+   * Passes the focus event as an input to the callback.
+   */
   onFocus?: (e: FocusEvent) => void,
+  /** 
+   * A user defined callback function triggered when the element loses focus.
+   * Passes the focus event as an input to the callback.
+   */
   onBlur?: (e: FocusEvent) => void,
+  /** 
+   * A user defined callback function triggered when the element's focus status changes.
+   * Passes a boolean reflecting the element's new focus status as an input to the callback.
+   */
   onFocusChange?: (isFocused: boolean) => void
 }
 
@@ -44,5 +64,6 @@ export interface PressEvents {
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {
+  /** Whether or not the element should receive focus on render */
   autoFocus?: boolean
 }
