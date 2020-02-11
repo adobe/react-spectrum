@@ -22,6 +22,11 @@ governing permissions and limitations under the License.
     flex-shrink: 0;
   }
 
+  > .spectrum-Rule--vertical {
+    height: auto;
+    align-self: stretch;
+  }
+
   .spectrum-Button + .spectrum-Button {
     margin-left: var(--spectrum-buttongroup-button-gap-x);
   }

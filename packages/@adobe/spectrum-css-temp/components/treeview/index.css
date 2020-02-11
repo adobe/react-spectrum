@@ -87,6 +87,7 @@ governing permissions and limitations under the License.
 
 .spectrum-TreeView-indicator {
   display: block;
+  box-sizing: content-box;
 
   float: left;
   position: relative;

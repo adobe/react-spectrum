@@ -15,6 +15,9 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-dropdown-popover-max-width: var(--spectrum-global-dimension-size-3000);
   --spectrum-dropdown-width: var(--spectrum-global-dimension-size-2400);
+
+  /* This needs to be a variable so it overrides when using multiStops */
+  --spectrum-dropdown-quiet-width: auto;
 }
 
 .spectrum-Dropdown {
@@ -123,7 +126,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dropdown--quiet {
-  width: auto;
+  width: var(--spectrum-dropdown-quiet-width);
   min-width: var(--spectrum-dropdown-quiet-min-width);
 }
 

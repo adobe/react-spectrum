@@ -82,9 +82,6 @@ governing permissions and limitations under the License.
   }
 }
 
-/* topdoc
-{{ form/index.yml }}
-*/
 
 .spectrum-Form {
   /* With labelPosition=side, we override field layout to use a CSS table 

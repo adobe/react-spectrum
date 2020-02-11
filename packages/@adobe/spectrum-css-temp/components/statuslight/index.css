@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
+  /* Hardcoded for wrapping study.
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
   --spectrum-statuslight-padding-y: var(--spectrum-global-dimension-size-65);
 
   /* Override line-height to fix Firefox */
@@ -35,18 +37,22 @@ governing permissions and limitations under the License.
   font-weight: var(--spectrum-statuslight-text-font-weight);
   line-height: var(--spectrum-statuslight-text-line-height);
 
-&::before {
-   content: '';
-   flex-grow: 0;
-   flex-shrink: 0;
-   display: inline-block;
-   inline-size: var(--spectrum-statuslight-dot-size);
-   block-size: var(--spectrum-statuslight-dot-size);
-   border-radius: 50%;
+  &::before {
+    content: '';
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: inline-block;
+    inline-size: var(--spectrum-statuslight-dot-size);
+    block-size: var(--spectrum-statuslight-dot-size);
+    border-radius: 50%;
 
-   /* margin on the dog is the opposite of the padding in order to align the dot as if the padding hack was not present */
-   margin: var(--spectrum-statuslight-padding-bottom) var(--spectrum-statuslight-text-gap) var(--spectrum-statuslight-padding-top) var(--spectrum-statuslight-text-gap);
- }
+    /* margin on the dog is the opposite of the padding in order to align the dot as if the padding hack was not present */
+    margin: var(--spectrum-statuslight-padding-bottom) var(--spectrum-statuslight-text-gap) var(--spectrum-statuslight-padding-top) var(--spectrum-statuslight-text-gap);
+
+    /* support high contrast/forced-color-adjust mode for dot */
+    -ms-high-contrast-adjust: none;
+    forced-color-adjust: none;
+  }
 }
 
 .spectrum-StatusLight--neutral {

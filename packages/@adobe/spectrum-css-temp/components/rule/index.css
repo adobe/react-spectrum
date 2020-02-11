@@ -12,54 +12,54 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-divider-vertical-height: 100%;
+
+  /* Work around DNA misspelling */
+  --spectrum-divider-small-vertical-width: var(--spectrum-divider-small-vertical-width, var(--spectrum-divider-small-veritcal-width));
+}
+
 .spectrum-Rule {
+  inline-size: 100%;
+
   /* Show the overflow for hr in Edge and IE. */
   overflow: visible;
 
   border: none;
-  border-width: var(--spectrum-rule-medium-height);
-  border-radius: var(--spectrum-rule-medium-height);
+  border-width: var(--spectrum-divider-medium-height);
+  border-radius: var(--spectrum-divider-medium-height);
 }
 
 .spectrum-Rule--large {
-  border-radius: var(--spectrum-rule-large-border-radius);
+  block-size: var(--spectrum-divider-large-height);
+
+  border-radius: var(--spectrum-divider-large-border-radius);
 }
 
 .spectrum-Rule--medium {
-  border-radius: var(--spectrum-rule-medium-border-radius);
+  block-size: var(--spectrum-divider-medium-height);
+
+  border-radius: var(--spectrum-divider-medium-border-radius);
 }
 
 .spectrum-Rule--small {
-  border-radius: var(--spectrum-rule-small-border-radius);
-}
+  block-size: var(--spectrum-divider-small-height);
 
-.spectrum-Rule--horizontal {
-  &.spectrum-Rule--large {
-    block-size: var(--spectrum-rule-large-height);
-  }
-
-  &.spectrum-Rule--medium {
-    block-size: var(--spectrum-rule-medium-height);
-  }
-
-  &.spectrum-Rule--small {
-    block-size: var(--spectrum-rule-small-height);
-  }
+  border-radius: var(--spectrum-divider-small-border-radius);
 }
 
 .spectrum-Rule--vertical {
-  /* expected usage, people need to set height 100% if they aren't using flex on the container
-   * if they *ARE* using flex, then they need to either have align-items stretch OR align-self stretch
-   */
+  block-size: var(--spectrum-divider-vertical-height);
+
   &.spectrum-Rule--large {
-    inline-size: var(--spectrum-rule-large-height);
+    inline-size: var(--spectrum-divider-large-vertical-width);
   }
 
   &.spectrum-Rule--medium {
-    inline-size: var(--spectrum-rule-medium-height);
+    inline-size: var(--spectrum-divider-medium-vertical-width);
   }
 
   &.spectrum-Rule--small {
-    inline-size: var(--spectrum-rule-small-height);
+    inline-size: var(--spectrum-divider-small-vertical-width);
   }
 }

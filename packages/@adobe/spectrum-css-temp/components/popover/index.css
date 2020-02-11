@@ -17,6 +17,7 @@ governing permissions and limitations under the License.
   --spectrum-popover-target-offset: 13px;
   --spectrum-popover-dialog-padding: 30px 29px;
   --spectrum-popover-dialog-min-width: 270px;
+  --spectrum-popover-dialog-icon-margin-left: var(--spectrum-global-dimension-size-200);
 
   --spectrum-popover-min-width: var(--spectrum-global-dimension-size-400);
   --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
@@ -141,5 +142,13 @@ governing permissions and limitations under the License.
   .spectrum-Popover-tip {
     left: 50%;
     margin-left: -12px;
+  }
+}
+
+.spectrum-Popover {
+  &.spectrum-Popover--dialog {
+    .spectrum-Dialog-typeIcon {
+      margin-left: var(--spectrum-popover-dialog-icon-margin-left);
+    }
   }
 }

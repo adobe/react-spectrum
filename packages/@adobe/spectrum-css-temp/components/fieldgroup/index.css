@@ -25,7 +25,6 @@ governing permissions and limitations under the License.
   display: flex;
   flex-direction: column;
 }
-
 .spectrum-FieldGroup-group--horizontal {
   /* horizontal radio groups should wrap if there isn't enough space */
   flex-direction: row;

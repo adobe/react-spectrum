@@ -173,10 +173,6 @@ governing permissions and limitations under the License.
   @extend .spectrum-Heading4;
 }
 
-.spectrum-Heading--subtitle2 {
-  @extend .spectrum-Heading6;
 }
 
-.spectrum-Heading--subtitle3 {
-  @extend .spectrum-Subheading;
 }*/

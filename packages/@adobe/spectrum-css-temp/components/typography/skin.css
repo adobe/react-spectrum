@@ -10,6 +10,114 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/**
+ * Spectrum CSS Typography V3 (numeric) & V4 (t-shirt)
+ *
+ * Adds typography colors to be processed by
+ * mixins that are auto-generated in tools/component-builder/css/processor.js
+ *
+ */
+
+
+/* t-shirt size-based typography */
+
+@mixin typographyTShirtColor .spectrum-Heading--XXXL {}
+@mixin typographyTShirtColor .spectrum-Heading--XXL {}
+@mixin typographyTShirtColor .spectrum-Heading--XL {}
+@mixin typographyTShirtColor .spectrum-Heading--L {}
+@mixin typographyTShirtColor .spectrum-Heading--M {}
+@mixin typographyTShirtColor .spectrum-Heading--S {}
+@mixin typographyTShirtColor .spectrum-Heading--XS {}
+@mixin typographyTShirtColor .spectrum-Heading--XXS {}
+
+@mixin typographyTShirtColor .spectrum-Heading-XXXL--light, heading-light-XXXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XXL--light, heading-light-XXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XL--light, heading-light-XL {}
+@mixin typographyTShirtColor .spectrum-Heading-L--light, heading-light-L {}
+
+@mixin typographyTShirtColor .spectrum-Heading-XXXL--heavy, heading-heavy-XXXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XXL--heavy, heading-heavy-XXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XL--heavy, heading-heavy-XL {}
+@mixin typographyTShirtColor .spectrum-Heading-L--heavy, heading-heavy-L {}
+
+@mixin typographyTShirtColor .spectrum-Heading-XXXL--heading, heading-XXXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XXL--heading, heading-XXL {}
+@mixin typographyTShirtColor .spectrum-Heading-XL--heading, heading-XL {}
+@mixin typographyTShirtColor .spectrum-Heading-L--heading, heading-L {}
+
+@mixin typographyTShirtColor .spectrum-Body--XXXL {}
+@mixin typographyTShirtColor .spectrum-Body--XXL {}
+@mixin typographyTShirtColor .spectrum-Body--XL {}
+@mixin typographyTShirtColor .spectrum-Body--L {}
+@mixin typographyTShirtColor .spectrum-Body--M {}
+@mixin typographyTShirtColor .spectrum-Body--S {}
+@mixin typographyTShirtColor .spectrum-Body--XS {}
+
+
+@mixin typographyTShirtColor .spectrum-Detail--XL {}
+@mixin typographyTShirtColor .spectrum-Detail--L {}
+@mixin typographyTShirtColor .spectrum-Detail--M {}
+@mixin typographyTShirtColor .spectrum-Detail--S {}
+
+@mixin typographyTShirtColor .spectrum-Code--XL, code-XL {}
+@mixin typographyTShirtColor .spectrum-Code--L, code-L {}
+@mixin typographyTShirtColor .spectrum-Code--M, code-M {}
+@mixin typographyTShirtColor .spectrum-Code--S, code-S {}
+@mixin typographyTShirtColor .spectrum-Code--XS, code-XS {}
+
+.spectrum {
+  &:lang(ja),
+  &:lang(ko),
+  &:lang(zh) {
+    @mixin typographyTShirtColor .spectrum-Body--XXXL, body-han-XXXL {}
+    @mixin typographyTShirtColor .spectrum-Body--XXL, body-han-XXL {}
+    @mixin typographyTShirtColor .spectrum-Body--XL, body-han-XL {}
+    @mixin typographyTShirtColor .spectrum-Body--L, body-han-L {}
+    @mixin typographyTShirtColor .spectrum-Body--M, body-han-M {}
+    @mixin typographyTShirtColor .spectrum-Body--S, body-han-S {}
+    @mixin typographyTShirtColor .spectrum-Body--XS, body-han-XS {}
+
+    @mixin typographyTShirtColor .spectrum-Heading--XXXL {}
+    @mixin typographyTShirtColor .spectrum-Heading--XXL {}
+    @mixin typographyTShirtColor .spectrum-Heading--XL {}
+    @mixin typographyTShirtColor .spectrum-Heading--L {}
+    @mixin typographyTShirtColor .spectrum-Heading--M {}
+    @mixin typographyTShirtColor .spectrum-Heading--S {}
+    @mixin typographyTShirtColor .spectrum-Heading--XS {}
+    @mixin typographyTShirtColor .spectrum-Heading--XXS {}
+
+    @mixin typographyTShirtColor .spectrum-Heading-XXXL--light, heading-light-XXXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XXL--light, heading-light-XXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XL--light, heading-light-XL {}
+    @mixin typographyTShirtColor .spectrum-Heading-L--light, heading-light-L {}
+
+    @mixin typographyTShirtColor .spectrum-Heading-XXXL--heavy, heading-heavy-XXXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XXL--heavy, heading-heavy-XXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XL--heavy, heading-heavy-XL {}
+    @mixin typographyTShirtColor .spectrum-Heading-L--heavy, heading-heavy-L {}
+
+    @mixin typographyTShirtColor .spectrum-Heading-XXXL--heading, heading-XXXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XXL--heading, heading-XXL {}
+    @mixin typographyTShirtColor .spectrum-Heading-XL--heading, heading-XL {}
+    @mixin typographyTShirtColor .spectrum-Heading-L--heading, heading-L {}
+
+    @mixin typographyTShirtColor .spectrum-Detail--XL {}
+    @mixin typographyTShirtColor .spectrum-Detail--L {}
+    @mixin typographyTShirtColor .spectrum-Detail--M {}
+    @mixin typographyTShirtColor .spectrum-Detail--S {}
+
+    @mixin typographyTShirtColor .spectrum-Code--XL, code-XL {}
+    @mixin typographyTShirtColor .spectrum-Code--L, code-L {}
+    @mixin typographyTShirtColor .spectrum-Code--M, code-M {}
+    @mixin typographyTShirtColor .spectrum-Code--S, code-S {}
+    @mixin typographyTShirtColor .spectrum-Code--XS, code-XS {}
+  }
+}
+
+
+/**
+* Legacy numeric-based typography (depreciated)
+*/
 @mixin typographyColor .spectrum-Body1 {}
 @mixin typographyColor .spectrum-Body2 {}
 @mixin typographyColor .spectrum-Body3 {}

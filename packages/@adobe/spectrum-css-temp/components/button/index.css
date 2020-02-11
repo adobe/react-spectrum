@@ -108,8 +108,8 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
 
   /* @hack: fix button text vertical alignment at 14px */
-  padding-block-end: calc(var(--spectrum-button-padding-y) + 0.5px);
-  padding-block-end: calc(var(--spectrum-button-padding-y) - 0.5px);
+  padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+  padding-block-end: calc(var(--spectrum-button-padding-y) - 1px);
 
   font-size: var(--spectrum-button-primary-text-size);
   font-weight: var(--spectrum-button-primary-text-font-weight);

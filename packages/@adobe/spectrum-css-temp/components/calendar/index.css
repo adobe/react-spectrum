@@ -19,6 +19,7 @@ governing permissions and limitations under the License.
   --spectrum-calendar-margin-x: 32px;
   --spectrum-calendar-width: calc((var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding) * 2) * 7);
   --spectrum-calendar-button-gap: var(--spectrum-global-dimension-size-40);
+  --spectrum-calendar-title-text-letter-spacing: var(--spectrum-detail-text-letter-spacing);
 }
 
 .spectrum-Calendar {
@@ -92,6 +93,9 @@ governing permissions and limitations under the License.
     /* Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari. */
     text-decoration: underline;
     text-decoration: underline dotted;
+
+    /* Add letter spacing of 0.66px from Typography > Detail  issue #407 */
+    letter-spacing: var(--spectrum-calendar-title-text-letter-spacing);
   }
 }
 

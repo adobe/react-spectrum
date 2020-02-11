@@ -115,6 +115,9 @@ governing permissions and limitations under the License.
   .spectrum-Dialog-divider {
     display: none;
   }
+  margin-left: var(--spectrum-dialog-icon-margin-left);
+  flex-shrink: 0;
+  align-self: flex-start;
 }
 
 .spectrum-Dialog-content {
