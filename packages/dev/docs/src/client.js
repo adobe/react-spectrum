@@ -14,7 +14,7 @@ for (let link of links) {
   let container = document.createElement('span');
 
   ReactDOM.render(
-    <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none'}}>
+    <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none', fontFamily: 'inherit'}}>
       <DialogTrigger type="popover">
         <Pressable>
           <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>

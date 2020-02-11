@@ -90,7 +90,7 @@ function BooleanLiteral({value}) {
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-keyword`} target="_blank">{type}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -99,7 +99,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`} target="_blank">{name}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-name`} target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -185,7 +185,7 @@ function LinkType({id}) {
     return null;
   }
 
-  return <a href={'#' + id} data-link={id} className={`${typographyStyles['spectrum-Code4']} ${styles.colorLink} token hljs-name`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
 export function InterfaceType({properties}) {
@@ -203,7 +203,7 @@ export function InterfaceType({properties}) {
       <tbody className={tableStyles['spectrum-Table-body']}>
         {Object.values(properties).map((prop, index) => (
           <tr key={index} className={tableStyles['spectrum-Table-row']}>
-            <td className={tableStyles['spectrum-Table-cell']}><code className={`${typographyStyles['spectrum-Code4']} token hljs-attr`}>{prop.name}</code></td>
+            <td className={tableStyles['spectrum-Table-cell']}><code className={`${typographyStyles['spectrum-Code4']}`}><span className="token hljs-attr">{prop.name}</span></code></td>
             <td className={tableStyles['spectrum-Table-cell']}><code className={typographyStyles['spectrum-Code4']}><Type type={prop.value} /></code></td>
             <td className={tableStyles['spectrum-Table-cell']} style={{textAlign: prop.default ? undefined : 'center'}}>{prop.default || '–'}</td>
             <td className={tableStyles['spectrum-Table-cell']}>{!prop.optional ? 'true' : null}</td>
