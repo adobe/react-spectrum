@@ -10,5 +10,8 @@
   "packagers": {
     "*.json": "parcel-packager-docs",
     "*.html": "parcel-packager-ssg"
+  },
+  "optimizers": {
+    "*.html": []
   }
 }
