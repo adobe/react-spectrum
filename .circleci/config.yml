@@ -44,7 +44,7 @@ jobs:
 
       - run:
           name: build docs
-          command: yarn build:docs
+          command: make website
 
       - persist_to_workspace:
           root: dist
