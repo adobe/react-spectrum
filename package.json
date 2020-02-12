@@ -146,10 +146,5 @@
   "resolutions": {
     "@babel/core": "7.8.4",
     "@babel/runtime": "7.6.3"
-  },
-  "targets": {
-    "v3": {
-      "publicUrl": "/v3"
-    }
   }
 }

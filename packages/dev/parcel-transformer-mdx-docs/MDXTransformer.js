@@ -128,7 +128,9 @@ ${compiled}
           outputFormat: 'commonjs',
           includeNodeModules: {
             react: false
-          }
+          },
+          scopeHoist: false,
+          minify: false
         }
       }
     ];
