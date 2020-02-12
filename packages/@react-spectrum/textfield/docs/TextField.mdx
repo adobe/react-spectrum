@@ -32,15 +32,15 @@ A TextFields's `value` is empty by default, but an initial, uncontrolled, value 
 Alternatively, providing a `value` prop creates a TextField with a controlled value. 
 
 ```tsx example
-<TextField defaultValue="Uncontrolled Text" aria-label="uncontrolled textfield" marginEnd="20px" />
-<TextField value="Controlled Text" aria-label="controlled textfield" />
+<TextField defaultValue="Default text" label="Uncontrolled TextField" marginEnd="20px" />
+<TextField value="Default text" label="Controlled TextField" />
 ```
 
 Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop. 
 Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the control with a visible label.
 
 ```tsx example
-<TextField placeholder="abc@adobe.com" aria-label="email" />
+<TextField placeholder="abc@adobe.com" label="Email" />
 ```
 
 ## Labeling
@@ -58,8 +58,8 @@ A visual label should be provided for the TextField using the `label` prop. If t
 ### Accessibility
 
 If a visible label isn't specified, an `aria-label` must be provided to the TextField for 
-accessibility. If the TextField is labeled by a separate element instead, an `aria-labelledby`
-matching the labeling element's `id` must be provided instead.
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+the `id` of the labeling element instead.
 
 ```tsx example
 <label id="label-1">Name</label>
@@ -136,7 +136,7 @@ function Example() {
 
 ### Quiet 
 
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
 
 ```tsx example
 <TextField label="Email" placeholder="Email Address" isQuiet />
@@ -144,7 +144,7 @@ function Example() {
 
 ### Disabled
 
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
 
 ```tsx example
 <TextField label="Email" placeholder="Email Address" isDisabled />
@@ -152,11 +152,17 @@ function Example() {
 
 ### Read Only
 
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled` the TextField remains focusable 
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
 ```tsx example
-<TextField label="Email" defaultValue="read only" isReadOnly />
+<TextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
 ### Label Alignment
+
+Labels can be aligned to the "start" or the "end" of the TextField. For left-to-right (LTR) languages, "start" refers to the left most edge
+of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages this is flipped.
 
 ```tsx example
 <TextField label="Email" labelAlign="start" marginEnd="20px" />
@@ -165,7 +171,7 @@ function Example() {
 
 ### Label Position
 
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
 ```tsx example
 <TextField label="Email" labelPosition="top" marginEnd="20px" />
@@ -174,7 +180,7 @@ function Example() {
 
 ### Custom Width
 
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
 <TextField label="Email" width={'400px'} />
