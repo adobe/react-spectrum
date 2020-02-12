@@ -145,57 +145,8 @@ describe('TooltipTrigger', function () {
 
       expect(tooltip).not.toBeInTheDocument();
     });
-
-    // TODO: mouseOut should close the tooltip ... look at SplitView tests as an example 
-    // TODO: mousing into tooltip should stop it from closing
-
+    // Pending: mouseOut should close the tooltip ... look at SplitView tests as an example
+    // Pending: mousing into tooltip should stop it from closing
   });
-
-  describe('only one tooltip should appear on the screen at a time', function () {
-
-    it('click triggers only', async function () {
-
-      let {getByText} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>TriggerOne</ActionButton>
-            <Tooltip>contentOne</Tooltip>
-          </TooltipTrigger>
-
-          <TooltipTrigger type="click">
-            <ActionButton>TriggerTwo</ActionButton>
-            <Tooltip>contentTwo</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let buttonOne = getByText('TriggerOne');
-      triggerPress(buttonOne);
-
-      let tooltipOne = getByText('contentOne');
-
-      // wait for appearance
-      await wait(() => {
-        expect(tooltipOne).toBeVisible();
-      });
-
-      let buttonTwo = getByText('TriggerTwo');
-      triggerPress(buttonTwo);
-
-      let tooltipTwo = getByText('contentTwo');
-
-      // wait for appearance
-      await wait(() => {
-        expect(tooltipTwo).toBeVisible();
-      });
-
-      // This fails...
-      // expect(tooltipOne).not.toBeVisible();
-
-    });
-  });
-
-  // TODO: 'hover triggers only'
-  // TODO: 'both hover and click triggers'
-
+  // only one tooltip should appear on the screen at a time covered by tooltip manager tests
 });
