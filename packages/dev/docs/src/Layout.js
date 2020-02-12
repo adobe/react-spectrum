@@ -68,15 +68,13 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
               ))}
             </ul>
           </nav>
-          <main style={{display: 'flex'}}>
+          <main>
             <article className={typographyStyles['spectrum-Typography']}>
               <MDXProvider components={mdxComponents}>
                 {children}
               </MDXProvider>
             </article>
-            <section className={typographyStyles['spectrum-Typography']}>
-              <ToC toc={toc} />
-            </section>
+            <ToC toc={toc} />
           </main>
         </Provider>
         {scripts.map(s => <script type={s.type} src={s.url} />)}

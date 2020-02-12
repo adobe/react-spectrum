@@ -144,32 +144,41 @@ details[open] summary svg {
     text-decoration: none;
   }
 }
+
 .sectionHeader .headingAnchor {
-  margin-left: 6px; }
+  margin-left: 6px;
+}
 
 .subHeader {
-  margin-bottom: 16px !important; }
+  margin-bottom: 16px !important;
+}
 
 .headerContainer {
-  margin-bottom: 33px; }
+  margin-bottom: 33px;
+}
 
 .sectionHeaderF {
-  padding-left: 0; }
+  padding-left: 0;
+}
 
 h2.sectionHeader {
   margin-top: 8px;
-  margin-bottom: 8px; }
+  margin-bottom: 8px;
+}
 
 .anchor {
   opacity: 0;
   transition: all 125ms ease-in-out;
 }
+
 .anchor:focus {
   opacity: 1;
-  transition: all 125ms ease-in-out; }
+  transition: all 125ms ease-in-out;
+}
 
 .editLink {
-  opacity: 0; }
+  opacity: 0;
+}
 
 .docsHeader:hover .editLink, .docsHeader:hover .anchor {
   opacity: 1;

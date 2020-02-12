@@ -35,7 +35,7 @@ function SideNav(props) {
         </ul>
       </li>
     );
-  } else  {
+  } else {
     return (
       <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
         <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'])} href={`#${node.id}`}>{node.textContent}</a>
