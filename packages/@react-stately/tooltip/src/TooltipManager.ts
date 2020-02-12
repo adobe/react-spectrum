@@ -22,6 +22,7 @@ export class TooltipManager {
     return currentTriggerId === this.visibleTooltips.triggerId;
   }
 
+  // lgtm 
   showTooltip(state) {
     state.setOpen(true);
     // Close previously open tooltip

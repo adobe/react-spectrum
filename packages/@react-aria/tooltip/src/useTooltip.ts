@@ -13,6 +13,7 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: TooltipProps): TooltipAria {
+  // lgtm 
   let contextProps = useContext(DOMPropsResponderContext);
   let tooltipId = useId(props.id);
 
