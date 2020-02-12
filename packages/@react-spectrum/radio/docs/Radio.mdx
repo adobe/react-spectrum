@@ -2,9 +2,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/Radio';
-import {PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
-import {HeaderInfo} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 
 ```jsx import
 import {Radio} from '@react-spectrum/Radio';
@@ -24,7 +23,7 @@ import {RadioGroup} from '@react-spectrum/Radio';
 
 ## Example
 
-```jsx example
+```tsx example
 <RadioGroup label="Favorite pet">
  <Radio value="dogs">
    Dogs
@@ -37,16 +36,42 @@ import {RadioGroup} from '@react-spectrum/Radio';
 
 ## Content
 
-Radio Buttons can have a visible label, although they are not required to have one.
+Radio buttons can have a visible label, although they are not required to have one.
 All radio components, even if there is only one, cannot be rendered outside of a Radio Group.
+
+## Value
+
+Only one radio button per Radio Group can be selected at a time.
+
+### Accessibility
+
+When the radio is checked, the appropriate ARIA state attribute will automatically be applied.
+When a visible label isn't being used an `aria-label` prop is needed to explicitly set the accessibility name for the radio button.
+
+### Default Checked
+
+A group of radio buttons can be rendered with an option already selected.
+The Radio option that is checked by default can be picked by passing in this prop where the string value
+matches the value prop passed to the radio button.
+
+```tsx example
+<RadioGroup label="Example Options" defaultValue="dragon">
+ <Radio value="wizard">
+   Wizard
+ </Radio>
+ <Radio value="dragon">
+   Dragon
+ </Radio>
+</RadioGroup>
+```
 
 ## Labeling
 
-A Radio must have a label to be properly identified to users of assistive technology.
+A radio button must have a label to be properly identified to users of assistive technology.
 The easiest way to satisfy this requirement is by adding a label prop to the Radio Group.
-If the label prop is null and therefore no visible label will be shown, then include the label as a prop of type string to the Radio Group.
+If the label prop is null and therefore no visible label will be shown, then include the `aria-label` as a prop of type string to the Radio Group.
 
-```jsx example
+```tsx example
 <RadioGroup aria-label='Favorite Avatar'>
  <Radio value="wizard">
    Wizard
@@ -57,13 +82,18 @@ If the label prop is null and therefore no visible label will be shown, then inc
 </RadioGroup>
 ```
 
+### Internationalization
+
+To internationalize a radio button, a localized string should be set as the child content of the Checkbox.
+For languages that are read right to left (e.g. Hebrew and Arabic), the radio button is placed on the right side of the text.
+
 ## Events
 
-Radio Buttons accept a user defined `onChange` event, triggered whenever the Radio Button is clicked.
+Radio buttons accept a user defined `onChange` prop, triggered whenever the radio button is clicked.
 The example below uses `onChange` to log how the user is interacting with the component.
 
-```jsx example
-<RadioGroup aria-label="Favorite Avatar" onChange={e => alert('Radio Button clicked!')}>
+```tsx example
+<RadioGroup aria-label="Favorite Avatar" onChange={e => alert('radio button clicked!')}>
  <Radio value="wizard">
    Wizard
  </Radio>
@@ -73,26 +103,32 @@ The example below uses `onChange` to log how the user is interacting with the co
 </RadioGroup>
 ```
 
-### Accessibility
+## Validation
 
-Radios are accessible by default.
-When the radio is checked, the appropriate ARIA state attribute will automatically be applied.
+### Invalid
 
-### Internationalization
+Visually displaying a radio button's `valid` and `invalid` state is supported via the `validationState` prop.
+Note that the logic to determine what inputs are `valid` or `invalid` must be implemented by the user.
 
-To internationalize a Radio Button, a localized string should be passed to the label prop of the Radio Button.
-For languages that are read right to left, Hebrew and Arabic for example, the radio is placed on the right side of the text.
+```tsx example
+<RadioGroup label="Example Options" validationState='invalid'>
+ <Radio value="wizard">
+   Wizard
+ </Radio>
+ <Radio value="dragon">
+   Dragon
+ </Radio>
+</RadioGroup>
+```
 
 ## Visual Options
-
-Radio Buttons have a number of props for controlling their visual / checked state.
 
 ### Orientation
 
 The default orientation is to be aligned vertically.
-An optional prop can be passed to the Radio Group to position the Radio Buttons inline.
+An optional prop can be passed to the Radio Group to position the radio buttons inline.
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" orientation='horizontal'>
  <Radio value="wizard">
    Wizard
@@ -105,11 +141,10 @@ An optional prop can be passed to the Radio Group to position the Radio Buttons 
 
 ### Label Position
 
-The default position of a label is on top of the Radio Buttons.
-An optional prop can be passed to the Radio Group that will position the label to the left on the topmost Radio Button.
-If the position is set to horizontal as well then the label will be directly to the left of the leftmost Radio Button.
+The default position of a label is on top of the Radio Group.
+An optional prop can be passed to the Radio Group that will position the label at the start of the topmost radio button.
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" labelPosition='side'>
  <Radio value="wizard">
    Wizard
@@ -122,10 +157,10 @@ If the position is set to horizontal as well then the label will be directly to 
 
 ### Label Align
 
-The default top position for a label is left aligned.
-A label can be right aligned via an optional prop to the Radio Group.
+The default top position for a label is left aligned (right in rtl languages).
+A label can be right aligned (left in rtl languages) via an optional prop to the Radio Group.
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" labelAlign='end'>
  <Radio value="wizard">
    Wizard
@@ -138,9 +173,12 @@ A label can be right aligned via an optional prop to the Radio Group.
 
 ### Disabled
 
-The disabled prop applies a disabled style to the Radio Button, and also prevents clicks from selecting it as an option.
+The disabled prop applies a disabled style as well as preventing click events and
+keyboard navigation from performing selection.
+This prop can be passed to the entire Radio Group or individual radio buttons.
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/radio-button/#Disabled)
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" isDisabled>
  <Radio value="wizard">
    Wizard
@@ -151,11 +189,23 @@ The disabled prop applies a disabled style to the Radio Button, and also prevent
 </RadioGroup>
 ```
 
-### Ready Only
+```tsx example
+<RadioGroup label="Example Options">
+ <Radio value="wizard">
+   Wizard
+ </Radio>
+ <Radio value="dragon" isDisabled>
+   Dragon
+ </Radio>
+</RadioGroup>
+```
+
+### Read Only
 
 In this mode no visual indication is given to the user that any option within the Radio Group has been selected.
+This prop can be passed to the entire Radio Group but not to individual radio buttons.
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" isReadOnly>
  <Radio value="wizard">
    Wizard
@@ -169,26 +219,11 @@ In this mode no visual indication is given to the user that any option within th
 ### Emphasized
 
 By default, radio buttons are not emphasized (gray filling).
-The emphasized version is a blue filling that provides a visual prominence.
+The emphasized style provides a blue filling for visual prominence.
+[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/radio-button/#Emphasis)
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options" isEmphasized>
- <Radio value="wizard">
-   Wizard
- </Radio>
- <Radio value="dragon">
-   Dragon
- </Radio>
-</RadioGroup>
-```
-
-### InValid
-
-Visually displaying a Radio Button's `valid` and `invalid` state is supported via the `validationState` prop.
-Note that the logic to determine what inputs are `valid` or `invalid` must be implemented by the user.
-
-```jsx example
-<RadioGroup label="Example Options" validationState='invalid'>
  <Radio value="wizard">
    Wizard
  </Radio>
@@ -202,26 +237,9 @@ Note that the logic to determine what inputs are `valid` or `invalid` must be im
 
 A visual blue ring can be put around a specific option within the radio group.
 
-```jsx example
+```tsx example
 <RadioGroup label="Example Options">
  <Radio value="wizard" autoFocus>
-   Wizard
- </Radio>
- <Radio value="dragon">
-   Dragon
- </Radio>
-</RadioGroup>
-```
-
-### Default Checked
-
-A group of Radio Buttons can be rendered with an option already selected.
-The Radio option that is checked by default can be picked by passing in this prop where the string value
-matches the value prop passed to the Radio Button. This does not impact any other behavior for the user.
-
-```jsx example
-<RadioGroup label="Example Options" defaultValue="dragon">
- <Radio value="wizard">
    Wizard
  </Radio>
  <Radio value="dragon">
