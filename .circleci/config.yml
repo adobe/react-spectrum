@@ -28,6 +28,12 @@ jobs:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
 
+      - run:
+          name: build
+          command: |
+            make clean
+            make -B
+
       - save_cache:
           paths:
             - ~/react-spectrum-v3
@@ -129,9 +135,6 @@ workflows:
   test:
     jobs:
       - build-image
-      - build:
-          requires:
-            - build-image
       - test:
           requires:
             - build-image
@@ -143,7 +146,6 @@ workflows:
             - build-image
       - deploy:
           requires:
-            - build
             - test
             - storybook
             - docs
