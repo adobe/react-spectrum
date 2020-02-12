@@ -10,16 +10,18 @@
   "scripts": {
     "check-types": "tsc",
     "start": "make run",
-    "build-storybook": "build-storybook -c .storybook-v3 -o storybook-static/$(git rev-parse HEAD)",
+    "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
     "test": "make test",
     "lint": "make lint",
     "jest": "NODE_ICU_DATA=node_modules/full-icu jest",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
-    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build )",
+    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build ) && patch-package",
     "plop": "plop",
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
-    "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js"
+    "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
+    "start:docs": "parcel 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'",
+    "build:docs": "parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'"
   },
   "workspaces": [
     "packages/*/*"
@@ -44,8 +46,10 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
-    "@parcel/babel-preset-env": "^2.0.0-alpha.3.1",
+    "@babel/runtime": "^7.6.2",
+    "@octokit/rest": "*",
+    "@parcel/babel-preset-env": "^2.0.0-nightly.92",
+    "@parcel/transformer-inline": "^2.0.0-nightly.92",
     "@react/collection-view": "^4.1.5",
     "@react/react-spectrum": "^2.26.1",
     "@react/react-spectrum-icons": "^2.1.0",
@@ -95,7 +99,9 @@
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",
     "nyc": "^10.2.0",
-    "parcel": "^2.0.0-alpha.3.2",
+    "p-queue": "^6.2.1",
+    "parcel": "^2.0.0-nightly.90",
+    "patch-package": "^6.2.0",
     "plop": "^2.4.0",
     "postcss-calc": "^6.0.0",
     "postcss-custom-properties": "6.3.1",
@@ -136,5 +142,14 @@
   },
   "dependencies": {
     "@spectrum-css/component-builder": "^1.0.0"
+  },
+  "resolutions": {
+    "@babel/core": "7.8.4",
+    "@babel/runtime": "7.6.3"
+  },
+  "targets": {
+    "v3": {
+      "publicUrl": "/v3"
+    }
   }
 }
