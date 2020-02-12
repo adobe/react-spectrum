@@ -149,17 +149,17 @@ workflows:
     jobs:
       - build-image
       - build:
-          - requires:
-              - build-image
+          requires:
+            - build-image
       - test:
-          - requires:
-              - build-image
+          requires:
+            - build-image
       - storybook:
-          - requires:
-              - build-image
+          requires:
+            - build-image
       - docs:
-          - requires:
-              - build-image
+          requires:
+            - build-image
       - deploy:
           requires:
             - build
