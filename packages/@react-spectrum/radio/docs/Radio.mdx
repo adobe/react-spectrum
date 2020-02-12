@@ -36,17 +36,16 @@ import {RadioGroup} from '@react-spectrum/Radio';
 
 ## Content
 
-Radio buttons can have a visible label, although they are not required to have one.
-All radio components, even if there is only one, cannot be rendered outside of a Radio Group.
+Radio buttons can have a visible `label`, although they are not required to have one.
+All radio components, even if there is only one, cannot be rendered outside of a radio button group.
 
 ## Value
 
-Only one radio button per Radio Group can be selected at a time.
+Only one radio button per radio button group can be selected at a time.
 
 ### Accessibility
 
 When the radio is checked, the appropriate ARIA state attribute will automatically be applied.
-When a visible label isn't being used an `aria-label` prop is needed to explicitly set the accessibility name for the radio button.
 
 ### Default Checked
 
@@ -65,11 +64,25 @@ matches the value prop passed to the radio button.
 </RadioGroup>
 ```
 
+### Controlled
+
+Prevent users from toggling between different options.
+
+```tsx example
+<RadioGroup label="Example Options" value="dragon">
+ <Radio value="wizard">
+   Wizard
+ </Radio>
+ <Radio value="dragon">
+   Dragon
+ </Radio>
+</RadioGroup>
+```
+
 ## Labeling
 
-A radio button must have a label to be properly identified to users of assistive technology.
-The easiest way to satisfy this requirement is by adding a label prop to the Radio Group.
-If the label prop is null and therefore no visible label will be shown, then include the `aria-label` as a prop of type string to the Radio Group.
+When a visible label isn't being used an `aria-label` prop is needed to explicitly set the accessibility name for the radio button group.
+An `aria-label` prop should not be used for an individual radio button as it is they should always have a visible value.
 
 ```tsx example
 <RadioGroup aria-label='Favorite Avatar'>
@@ -93,14 +106,23 @@ Radio buttons accept a user defined `onChange` prop, triggered whenever the radi
 The example below uses `onChange` to log how the user is interacting with the component.
 
 ```tsx example
-<RadioGroup aria-label="Favorite Avatar" onChange={e => alert('radio button clicked!')}>
- <Radio value="wizard">
-   Wizard
- </Radio>
- <Radio value="dragon">
-   Dragon
- </Radio>
-</RadioGroup>
+function Example() {
+  let [selected, setSelection] = React.useState('none');
+
+  return (
+    <div>
+      <div>You have selected: {selected}</div>
+      <RadioGroup aria-label="Favorite Avatar" onChange={value => setSelection(value)}>
+       <Radio value="wizard">
+         Wizard
+       </Radio>
+       <Radio value="dragon">
+         Dragon
+       </Radio>
+      </RadioGroup>
+    </div>
+  );
+}
 ```
 
 ## Validation
@@ -121,12 +143,16 @@ Note that the logic to determine what inputs are `valid` or `invalid` must be im
 </RadioGroup>
 ```
 
+## Props
+
+<PropTable component={docs.exports.Radio} links={docs.links} />
+
 ## Visual Options
 
 ### Orientation
 
 The default orientation is to be aligned vertically.
-An optional prop can be passed to the Radio Group to position the radio buttons inline.
+An optional prop can be passed to the radio button group to position the radio buttons inline.
 
 ```tsx example
 <RadioGroup label="Example Options" orientation='horizontal'>
@@ -141,8 +167,8 @@ An optional prop can be passed to the Radio Group to position the radio buttons 
 
 ### Label Position
 
-The default position of a label is on top of the Radio Group.
-An optional prop can be passed to the Radio Group that will position the label at the start of the topmost radio button.
+The default position of a label is on top of the radio button group.
+An optional prop can be passed to the radio button group that will position the label at the start of the topmost radio button.
 
 ```tsx example
 <RadioGroup label="Example Options" labelPosition='side'>
@@ -158,7 +184,7 @@ An optional prop can be passed to the Radio Group that will position the label a
 ### Label Align
 
 The default top position for a label is left aligned (right in rtl languages).
-A label can be right aligned (left in rtl languages) via an optional prop to the Radio Group.
+A label can be right aligned (left in rtl languages) via an optional prop to the radio button group.
 
 ```tsx example
 <RadioGroup label="Example Options" labelAlign='end'>
@@ -175,8 +201,8 @@ A label can be right aligned (left in rtl languages) via an optional prop to the
 
 The disabled prop applies a disabled style as well as preventing click events and
 keyboard navigation from performing selection.
-This prop can be passed to the entire Radio Group or individual radio buttons.
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/radio-button/#Disabled)
+This prop can be passed to the entire radio button group or individual radio buttons.
+[View Guidelines](https://spectrum.adobe.com/page/radio-button/#Disabled)
 
 ```tsx example
 <RadioGroup label="Example Options" isDisabled>
@@ -202,8 +228,8 @@ This prop can be passed to the entire Radio Group or individual radio buttons.
 
 ### Read Only
 
-In this mode no visual indication is given to the user that any option within the Radio Group has been selected.
-This prop can be passed to the entire Radio Group but not to individual radio buttons.
+In this mode no visual indication is given to the user that any option within the radio button group has been selected.
+This prop can be passed to the entire radio button group but not to individual radio buttons.
 
 ```tsx example
 <RadioGroup label="Example Options" isReadOnly>
@@ -220,7 +246,7 @@ This prop can be passed to the entire Radio Group but not to individual radio bu
 
 By default, radio buttons are not emphasized (gray filling).
 The emphasized style provides a blue filling for visual prominence.
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/radio-button/#Emphasis)
+[View Guidelines](https://spectrum.adobe.com/page/radio-button/#Emphasis)
 
 ```tsx example
 <RadioGroup label="Example Options" isEmphasized>
@@ -232,22 +258,3 @@ The emphasized style provides a blue filling for visual prominence.
  </Radio>
 </RadioGroup>
 ```
-
-### Auto Focus
-
-A visual blue ring can be put around a specific option within the radio group.
-
-```tsx example
-<RadioGroup label="Example Options">
- <Radio value="wizard" autoFocus>
-   Wizard
- </Radio>
- <Radio value="dragon">
-   Dragon
- </Radio>
-</RadioGroup>
-```
-
-## Props
-
-<PropTable component={docs.exports.Radio} links={docs.links} />
