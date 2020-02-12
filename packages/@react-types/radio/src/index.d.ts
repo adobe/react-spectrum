@@ -17,6 +17,9 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Labelable
 
 export interface RadioProps extends FocusableProps {
   value: string, // HTML form value. Not displayed.
+  /**
+   * The label for the Radio. Accepts any renderable node.
+   */
   children?: ReactNode, // pass in children to render label
   /**
    * Whether the radio button is disabled or not.
