@@ -7,7 +7,7 @@ const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 
 module.exports = new Transformer({
-  async transform({asset}) {
+  async transform({asset, options}) {
     let exampleCode = [];
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
@@ -103,16 +103,16 @@ import ReactDOM from 'react-dom';
 import {Provider} from '@react-spectrum/provider';
 import {theme} from '@react-spectrum/theme-default';
 ${exampleCode.join('\n')}
+export default {};
 `;
 
     // Ensure that the HTML asset always changes so that the packager runs
-    let random = Math.random().toString(36).slice(4);
+    asset.type = 'html';
+    asset.setCode(Math.random().toString(36).slice(4));
+    asset.meta.toc = toc;
+
     let assets = [
-      {
-        type: 'html',
-        code: exampleBundle ? `${random}<script src="example"></script>` : random,
-        meta: {toc: toc}
-      },
+      asset,
       {
         type: 'jsx',
         code: `/* @jsx mdx */
@@ -121,6 +121,7 @@ import { mdx } from '@mdx-js/react'
 ${compiled}
 `,
         isInline: true,
+        isSplittable: false,
         uniqueKey: 'page',
         env: {
           context: 'node',
@@ -132,11 +133,23 @@ ${compiled}
       }
     ];
 
+    asset.addDependency({
+      moduleSpecifier: 'page'
+    });
+
     if (exampleBundle) {
       assets.push({
         type: 'jsx',
         code: exampleBundle,
-        uniqueKey: 'example'
+        uniqueKey: 'example',
+        env: {
+          outputFormat: options.scopeHoist ? 'esmodule' : 'global'
+        }
+      });
+
+      asset.addDependency({
+        moduleSpecifier: 'example',
+        isAsync: true
       });
     }
 

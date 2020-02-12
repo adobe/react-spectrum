@@ -42,26 +42,26 @@ const mdxComponents = {
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>
 };
 
-export function Layout({scripts, styles, pages, currentPage, children, toc}) {
+export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
     <html lang="en-US">
       <head>
         <meta charset="utf-8" />
         <script src="https://use.typekit.net/pbi5ojv.js" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <link rel="preload" as="script" href={s.url} />)}
+        {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
       </head>
       <body>
         <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
           <nav className={docStyles.nav}>
             <header>
-              <a href="/">
+              <a href={publicUrl}>
                 <img src="https://spectrum.adobe.com/static/adobe_logo-2.svg" alt="Adobe Logo" />
                 <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
               </a>
             </header>
             <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pages.filter(p => p.url !== '/index.html').map(p => (
+              {pages.filter(p => p.name !== 'index.html').map(p => (
                 <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
                   <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
                 </li>

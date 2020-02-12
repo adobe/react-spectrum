@@ -80,3 +80,8 @@ publish: build
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
+
+website:
+	yarn build:docs
+	mkdir -p dist/$$(git rev-parse HEAD)
+	mv dist/v3 dist/$$(git rev-parse HEAD)/docs

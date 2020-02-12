@@ -89,7 +89,7 @@ article pre {
   background: var(--spectrum-global-color-gray-75);
   padding: 18px;
   border-radius: 4px 4px 0 0;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .header {
