@@ -1,5 +1,16 @@
 .toc {
-  position: fixed;
-  top: 0;
-  right: 0;
+  position: sticky;
+  top: 40px;
+  height: calc(100vh - 40px);
+  overflow: auto;
+  flex: 0 0 auto;
+  padding: 0 24px;
+
+  .toc-Title {
+    font-weight: var(--spectrum-global-font-weight-regular, 700);
+  }
+
+  .toc-Item .toc-Link {
+    font-weight: var(--spectrum-global-font-weight-regular, 400);
+  }
 }

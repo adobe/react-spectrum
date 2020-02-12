@@ -1,5 +1,26 @@
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 
+const throttle = (func, limit) => {
+  let lastFunc;
+  let lastRan;
+  return function () {
+    const context = this;
+    const args = arguments;
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function () {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
+};
+
 export function attachToToC() {
   let tocLinks = document.querySelectorAll('#toc a');
   let headers = [];
@@ -26,7 +47,5 @@ export function attachToToC() {
 
   updateToc();
 
-  document.addEventListener('scroll', () => {
-    updateToc();
-  });
+  document.addEventListener('scroll', throttle(updateToc, 100));
 }

@@ -19,7 +19,7 @@ const mdxComponents = {
     </h1>
   ),
   h2: ({children, ...props}) => (
-    <>
+    <div className={docStyles['headerContainer']}>
       <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
         {children}
         <span className={classNames(docStyles['headingAnchor'])}>
@@ -27,15 +27,17 @@ const mdxComponents = {
         </span>
       </h2>
       <Divider />
-    </>
+    </div>
   ),
   h3: ({children, ...props}) => (
-    <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
-      {children}
-      <span className={docStyles['headingAnchor']}>
-        <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`} aria-label="§">#</a>
-      </span>
-    </h3>
+    <div className={docStyles['subHeaderContainer']}>
+      <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+        {children}
+        <span className={docStyles['headingAnchor']}>
+          <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`} aria-label="§">#</a>
+        </span>
+      </h3>
+    </div>
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
@@ -68,14 +70,14 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
               ))}
             </ul>
           </nav>
-          <main>
-            <article className={typographyStyles['spectrum-Typography']}>
+          <main className={docStyles.main}>
+            <article className={typographyStyles['spectrum-Typography']} style={{flex: '1 1 auto'}}>
               <MDXProvider components={mdxComponents}>
                 {children}
               </MDXProvider>
             </article>
-            <ToC toc={toc} />
           </main>
+          <ToC toc={toc} />
         </Provider>
         {scripts.map(s => <script type={s.type} src={s.url} />)}
       </body>

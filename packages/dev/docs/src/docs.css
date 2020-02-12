@@ -7,13 +7,15 @@ html, body {
   min-width: 100vw;
   min-height: 100vh;
   background: var(--spectrum-global-color-gray-50) !important;
+  display: flex;
 }
 
 .nav {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  height: 100%;
+  overflow: auto;
+  flex: 0 0 auto;
+  height: 100vh;
   width: 256px;
   padding: 0 24px;
   background: var(--spectrum-global-color-gray-75);
@@ -38,8 +40,8 @@ html, body {
   padding-top: 1px;
 }
 
-main {
-  margin-left: 256px;
+.main {
+  flex: 1 1 auto;
   padding: 40px 52px;
   box-sizing: border-box;
 }
@@ -68,14 +70,6 @@ article h1 {
 article h1 + p {
   font-size: 18px !important;
   max-width: 75%;
-}
-
-article h2 {
-  margin-top: 80px !important;
-}
-
-article h2 + hr {
-  margin-bottom: 33px;
 }
 
 :global(.example) {
@@ -180,7 +174,7 @@ h2.sectionHeader {
   opacity: 0;
 }
 
-.docsHeader:hover .editLink, .docsHeader:hover .anchor {
+.docsHeader:hover .anchor {
   opacity: 1;
   transition: all 125ms ease-in-out;
 }
@@ -188,5 +182,3 @@ h2.sectionHeader {
 .docsHeader .anchor:hover {
   text-decoration: underline;
 }
-
-

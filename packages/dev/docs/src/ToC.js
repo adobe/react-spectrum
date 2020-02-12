@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import styles from './toc.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 
 export function ToC(props) {
@@ -11,7 +12,7 @@ export function ToC(props) {
 
   return (
     <nav className={styles['toc']} id="toc">
-      <div>Contents</div>
+      <h3 className={classNames(typographyStyles['spectrum-Heading4'], styles['toc-Title'])}>Contents</h3>
       <SideNav node={toc} />
     </nav>
   );
@@ -28,8 +29,8 @@ function SideNav(props) {
   }
   if (node.children.length > 0) {
     return (
-      <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'])} href={`#${node.id}`}>{node.textContent}</a>
+      <li className={classNames(sidenavstyles['spectrum-SideNav-item'], styles['toc-Item'])}>
+        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], styles['toc-Link'])} href={`#${node.id}`}>{node.textContent}</a>
         <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])}>
           {node.children.map(child => <SideNav key={child.id} node={child} />)}
         </ul>
@@ -37,8 +38,8 @@ function SideNav(props) {
     );
   } else {
     return (
-      <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'])} href={`#${node.id}`}>{node.textContent}</a>
+      <li className={classNames(sidenavstyles['spectrum-SideNav-item'], styles['toc-Item'])}>
+        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], styles['toc-Link'])} href={`#${node.id}`}>{node.textContent}</a>
       </li>
     );
   }
