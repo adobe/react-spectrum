@@ -192,12 +192,12 @@ export function InterfaceType({properties}) {
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
-        <tr>
-          <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Default</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Required</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+        <tr className={styles['rsp-docs-table-header-row']}>
+          <th className={`${tableStyles['spectrum-Table-headCell']} ${styles['rsp-docs-table-header']}`}>Name</th>
+          <th className={`${tableStyles['spectrum-Table-headCell']} ${styles['rsp-docs-table-header']}`}>Type</th>
+          <th className={`${tableStyles['spectrum-Table-headCell']} ${styles['rsp-docs-table-header']}`}>Default</th>
+          <th className={`${tableStyles['spectrum-Table-headCell']} ${styles['rsp-docs-table-header']}`}>Required</th>
+          <th className={`${tableStyles['spectrum-Table-headCell']} ${styles['rsp-docs-table-header']}`}>Description</th>
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>

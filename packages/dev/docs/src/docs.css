@@ -135,3 +135,9 @@ summary::-webkit-details-marker {
 details[open] summary svg {
   transform: rotate(90deg);
 }
+
+.rsp-docs-table-header {
+  position: sticky !important;
+  top: 0;
+  background-color: rgba(225, 225, 225, 1) !important;
+}
