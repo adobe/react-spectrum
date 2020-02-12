@@ -8,6 +8,5 @@ export interface CalendarAria {
   nextButtonProps: DOMProps & PressProps,
   prevButtonProps: DOMProps & PressProps,
   calendarBodyProps: DOMProps & {ref: RefObject<HTMLTableElement>},
-  calendarTableProps: DOMProps,
   captionProps: DOMProps & {children: string}
 }

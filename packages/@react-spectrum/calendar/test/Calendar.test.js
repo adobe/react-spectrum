@@ -62,8 +62,7 @@ describe('Calendar', () => {
       Name      | Calendar
       ${'v3'}   | ${Calendar}
       ${'v2'}   | ${V2Calendar}
-    `('$Name should focus the selected date if autoFocus is set', ({Calendar, Name}) => {
-      const isV2 = Name.indexOf('v2') === 0;
+    `('$Name should focus the selected date if autoFocus is set', ({Calendar}) => {
       let {getByRole, getByLabelText} = render(<Calendar value={new Date(2019, 1, 3)} autoFocus />);
 
       let cell = getByLabelText('selected', {exact: false});
@@ -71,8 +70,13 @@ describe('Calendar', () => {
       expect(cell).toHaveAttribute('aria-selected', 'true');
 
       let grid = getByRole('grid');
-      expect(isV2 ? grid : cell).toHaveFocus();
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (Calendar === V2Calendar) {
+        expect(grid).toHaveFocus();
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(cell).toHaveFocus();
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
     });
   });
 

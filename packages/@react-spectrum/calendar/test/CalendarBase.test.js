@@ -35,8 +35,8 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name shows the current month by default', ({Calendar, Name, props}) => {
-      const isV2 = Name.indexOf('v2') === 0;
+    `('$Name shows the current month by default', ({Calendar, props}) => {
+      const isV2 = Calendar === V2Calendar;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar {...props} />);
 
       let calendar = getByRole('group');
@@ -46,7 +46,12 @@ describe('CalendarBase', () => {
       expect(heading).toHaveTextContent(headingFormatter.format(new Date()));
 
       let grid = getByRole('grid');
-      expect(grid).toHaveAttribute('tabIndex', isV2 ? '0' : '-1');
+
+      if (isV2) {
+        expect(grid).toHaveAttribute('tabIndex', '0');
+      } else {
+        expect(grid).not.toHaveAttribute('tabIndex');
+      }
 
       let today = getByLabelText('today', {exact: false});
       expect(today).toHaveAttribute('role', 'gridcell');
@@ -91,12 +96,16 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{isReadOnly: true}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{readOnly: true}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range', readOnly: true}}
-    `('$Name should set aria-readonly when isReadOnly', ({Calendar, Name, props}) => {
-      const isV2 = Name.indexOf('v2') === 0;
+    `('$Name should set aria-readonly when isReadOnly', ({Calendar, props}) => {
+      const isV2 = Calendar === V2Calendar;
       let {getByRole} = render(<Calendar {...props} />);
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-readonly', 'true');
-      expect(grid).toHaveAttribute('tabIndex', isV2 ? '0' : '-1');
+      if (isV2) {
+        expect(grid).toHaveAttribute('tabIndex', '0');
+      } else {
+        expect(grid).not.toHaveAttribute('tabIndex');
+      }
     });
 
     it.each`
@@ -106,7 +115,7 @@ describe('CalendarBase', () => {
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
     `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar, Name}) => {
-      const isV2 = Name.indexOf('v2') === 0;
+      const isV2 = Calendar === V2Calendar;
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
 
       let cell = getByLabelText('today', {exact: false});
@@ -114,7 +123,9 @@ describe('CalendarBase', () => {
 
       let grid = getByRole('grid');
       expect(isV2 ? grid : cell).toHaveFocus();
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      }
     });
 
     it.each`
@@ -257,10 +268,11 @@ describe('CalendarBase', () => {
 
   describe('keyboard navigation', () => {
     function testKeyboard(Calendar, defaultValue, key, value, month, props, opts) {
+      let isV2 = Calendar === V2Calendar;
       // For range calendars, convert the value to a range of one day
       if (Calendar === RangeCalendar) {
         defaultValue = {start: defaultValue, end: defaultValue};
-      } else if (Calendar === V2Calendar && props && props.selectionType === 'range') {
+      } else if (isV2 && props && props.selectionType === 'range') {
         defaultValue = [defaultValue, defaultValue];
       }
 
@@ -268,11 +280,21 @@ describe('CalendarBase', () => {
       let grid = getByRole('grid');
 
       let cell = getByLabelText('selected', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+        expect(document.activeElement).toBe(cell);
+      }
 
       fireEvent.keyDown(grid, {key, keyCode: keyCodes[key], ...opts});
       cell = getByLabelText(value, {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+        expect(document.activeElement).toBe(cell);
+      }
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent(month);
@@ -406,13 +428,13 @@ describe('CalendarBase', () => {
 
       let grid = getByRole('grid');
       let selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
+      expect(document.activeElement).toBe(selected);
 
       fireEvent.keyDown(grid, {key: 'ArrowLeft'});
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.previousSibling.id);
+      expect(document.activeElement).toBe(selected.previousSibling);
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
+      expect(document.activeElement).toBe(selected);
 
       // RTL
       rerender(
@@ -421,14 +443,19 @@ describe('CalendarBase', () => {
         </Provider>
       );
 
+      // make sure focused cell gets updated after rerender
+      fireEvent.blur(grid);
+      fireEvent.focus(grid);
+
       selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
+      expect(document.activeElement).toBe(selected);
 
       fireEvent.keyDown(grid, {key: 'ArrowLeft'});
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.nextSibling.id);
+      expect(document.activeElement).toBe(selected.nextSibling);
+
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
-      expect(grid).toHaveAttribute('aria-activedescendant', selected.id);
+      expect(document.activeElement).toBe(selected);
     });
   });
 });

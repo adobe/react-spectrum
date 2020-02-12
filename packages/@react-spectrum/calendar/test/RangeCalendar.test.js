@@ -90,8 +90,7 @@ describe('RangeCalendar', () => {
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 1, 3), end: new Date(2019, 1, 18)}}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 1, 3), new Date(2019, 1, 18)]}}
-    `('$Name should focus the first selected date if autoFocus is set', ({Name, RangeCalendar, props}) => {
-      const isV2 = Name.indexOf('v2') === 0;
+    `('$Name should focus the first selected date if autoFocus is set', ({RangeCalendar, props}) => {
       let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let cells = getAllByLabelText('selected', {exact: false});
@@ -99,8 +98,13 @@ describe('RangeCalendar', () => {
       expect(cells[0]).toHaveAttribute('aria-selected', 'true');
 
       let grid = getByRole('grid');
-      expect(isV2 ? grid : cells[0]).toHaveFocus();
-      expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
+      if (RangeCalendar === V2Calendar) {
+        expect(grid).toHaveFocus();
+        expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
+      } else {
+        expect(cells[0]).toHaveFocus();
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
     });
 
     // v2 doesn't pass this test - it starts by showing the end date instead of the start date.
@@ -190,16 +194,25 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range'}}
     `('$Name adds a range selection prompt to the focused cell', ({RangeCalendar, props}) => {
+      const isV2 = RangeCalendar === V2Calendar;
       let {getByRole, getByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} (Click to start selecting date range)`);
 
       // enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      if (isV2) {
+        expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      } else {
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
       expect(cell).toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected (Click to finish selecting date range)`);
     });
@@ -318,14 +331,16 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).not.toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(document.activeElement).toBe(cell);
     });
 
     it.each`
@@ -426,13 +441,15 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
+      expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
       cell = getByText('17').parentNode;
       triggerPress(cell);
-      expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
+      expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).not.toHaveAttribute('aria-selected');
+      expect(document.activeElement).toBe(cell);
     });
 
     it.each`

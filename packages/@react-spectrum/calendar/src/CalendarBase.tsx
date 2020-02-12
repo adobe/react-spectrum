@@ -33,7 +33,6 @@ export function CalendarBase(props: CalendarBaseProps) {
     nextButtonProps,
     prevButtonProps,
     calendarBodyProps,
-    calendarTableProps,
     captionProps
   } = aria;
   let {direction} = useLocale();
@@ -69,17 +68,13 @@ export function CalendarBase(props: CalendarBaseProps) {
           isDisabled={props.isDisabled}
           icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />
       </div>
-      <div
+      <table
         {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body')}>
-        <table
-          {...calendarTableProps}
-          className={classNames(styles, 'spectrum-Calendar-table')}>
-          <VisuallyHidden elementType="caption" {...captionProps} />
-          <CalendarTableHeader weekStart={state.weekStart} />
-          <CalendarTableBody state={state} />
-        </table>
-      </div>
+        className={classNames(styles, ['spectrum-Calendar-body', 'spectrum-Calendar-table'])}>
+        <VisuallyHidden elementType="caption" {...captionProps} />
+        <CalendarTableHeader weekStart={state.weekStart} />
+        <CalendarTableBody state={state} />
+      </table>
     </div>
   );
 }

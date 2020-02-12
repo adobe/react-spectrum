@@ -40,26 +40,23 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   calendarIds.set(state, calendarId);
 
   let focusFocusedDateCell = useCallback(() => {
-    if (state.isFocused) {
-      const focusedCell = calendarBody.current.querySelector(`#${getCellId(state.focusedDate, calendarId)}`);
-      if (focusedCell !== document.activeElement) {
-        (focusedCell || calendarBody.current).focus();
-      }
+    const focusedCell = calendarBody.current.querySelector(`#${getCellId(state.focusedDate, calendarId)}`);
+    if (focusedCell && focusedCell !== document.activeElement) {
+      focusedCell.focus();
     }
-  }, [state.focusedDate, state.isFocused, calendarId]);
+  }, [state.focusedDate, calendarId]);
 
   useEffect(() => {
     // focus the calendar body when mounting
     if (autoFocus) {
-      calendarBody.current.focus();
+      focusFocusedDateCell();
     }
   }, [autoFocus]);
 
   // Announce when the current month changes
   useUpdateEffect(() => {
-    if (state.isFocused
-      || document.activeElement === document.body) {
-      calendarBody.current.focus();
+    if (state.isFocused) {
+      focusFocusedDateCell();
     } else {
       announce(monthFormatter.format(state.currentMonth));
     }
@@ -74,7 +71,9 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
 
   // Ensure that the focused date moves focus to the focused date cell within the calendar.
   useUpdateEffect(() => {
-    focusFocusedDateCell();
+    if (state.isFocused) {
+      focusFocusedDateCell();
+    }
   }, [state.focusedDate, state.isFocused, focusFocusedDateCell]);
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -162,18 +161,13 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     calendarBodyProps: {
       ref: calendarBody,
       role: 'grid',
-      tabIndex: isDisabled ? null : -1,
       'aria-readonly': isReadOnly,
       'aria-disabled': isDisabled,
-      'aria-activedescendant': getCellId(state.focusedDate, calendarId),
       'aria-labelledby': labelProps['aria-labelledby'],
       'aria-describedby': selectedDateDescription ? captionId : null,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
-    },
-    calendarTableProps: {
-      role: 'presentation'
     },
     captionProps: {
       id: captionId,
