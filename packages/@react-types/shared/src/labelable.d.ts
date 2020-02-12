@@ -5,9 +5,9 @@ export type Alignment = 'start' | 'end';
 export type NecessityIndicator = 'icon' | 'label';
 
 export interface LabelableProps {
-  /** The content to display as the label */
+  /** The content to display as the label. */
   label?: ReactNode,
-  /** Whether the label is labeling a required field or group */
+  /** Whether the label is labeling a required field or group. */
   isRequired?: boolean
 }
 
@@ -24,7 +24,7 @@ export interface SpectrumLabelableProps extends LabelableProps {
   labelAlign?: Alignment,
   /** 
    * Controls if the label displays its field's or group's required status via 
-   * an asterisk icon or a “(required)” label.
+   * an icon or a text label.
    * @default "icon" 
    */
   necessityIndicator?: NecessityIndicator

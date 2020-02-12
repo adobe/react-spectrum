@@ -2,9 +2,12 @@ import {FocusableProps} from './events';
 
 export type ValidationState = 'valid' | 'invalid';
 export interface InputBase extends FocusableProps {
-  /** Whether the input is disabled */
+  /** Whether the input is disabled. */
   isDisabled?: boolean,
-  /** Whether user input is required on the input before form submission */
+  /** 
+   * Whether user input is required on the input before form submission. 
+   * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
+   */
   isRequired?: boolean,
   /** 
    * Whether the input should display its "invalid" visual styling. 
@@ -16,9 +19,9 @@ export interface InputBase extends FocusableProps {
 }
 
 export interface ValueBase<T> {
-  /** The value of a input, sets input behavior to "controlled" */
+  /** The value of a input, sets input behavior to "controlled". */
   value?: T,
-  /** The value of a input, sets input behavior to "uncontrolled" */
+  /** The value of a input, sets input behavior to "uncontrolled". */
   defaultValue?: T,
   /** 
    * A user defined callback function triggered upon any change to the input's value.
@@ -28,22 +31,22 @@ export interface ValueBase<T> {
 }
 
 export interface TextInputBase {
-  /** Temporary text that occupies the text input when it is empty */
+  /** Temporary text that occupies the text input when it is empty. */
   placeholder?: string
 }
 
 export interface RangeValue<T> {
-  /** The value of start position of the range */
+  /** The start value of the range. */
   start: T,
-  /** The value of end position of the range */
+  /** The end value of the range. */
   end: T
 }
 
 export interface RangeInputBase<T> {
-  /** The smallest value allowed for the input */
+  /** The smallest value allowed for the input. */
   minValue?: T,
-  /** The largest value allowed for the input */
+  /** The largest value allowed for the input. */
   maxValue?: T,
-  /** The amount that the input value changes with each increment or decrement "tick" */
+  /** The amount that the input value changes with each increment or decrement "tick". */
   step?: T // ??
 }
