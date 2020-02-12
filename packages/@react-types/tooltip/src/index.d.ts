@@ -4,7 +4,7 @@ import {ReactElement, ReactNode, RefObject} from 'react';
 
 export interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
-  type?: 'click',
+  type?: 'click' | 'hover',
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
   isDisabled?: boolean,

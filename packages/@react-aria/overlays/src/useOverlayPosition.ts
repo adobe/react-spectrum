@@ -1,6 +1,6 @@
 import {calculatePosition} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
-import {useLocale} from '@react-aria/i18n'; 
+import {useLocale} from '@react-aria/i18n';
 
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
@@ -46,7 +46,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     targetRef,
     overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 0,
+    containerPadding = 8,
     shouldFlip = true,
     boundaryElement = document.body,
     offset = 0,
@@ -82,7 +82,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     if (shouldUpdatePosition === false || !overlayRef.current || !targetRef.current || !containerRef.current) {
       return;
     }
-    
+
     setPosition(
       calculatePosition(
         translateRTL(placement, direction),

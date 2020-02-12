@@ -3,7 +3,12 @@ import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps} from '@react-types/toast';
+import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
+
+interface AriaToastProps extends ToastProps {
+  id?: string
+}
 
 interface ToastAria {
   toastProps: HTMLAttributes<HTMLElement>,
@@ -12,8 +17,9 @@ interface ToastAria {
   closeButtonProps: DOMProps & PressProps
 }
 
-export function useToast(props: ToastProps): ToastAria {
+export function useToast(props: AriaToastProps): ToastAria {
   let {
+    id,
     onAction,
     onClose,
     shouldCloseOnAction,
@@ -35,6 +41,7 @@ export function useToast(props: ToastProps): ToastAria {
 
   return {
     toastProps: {
+      id: useId(id),
       role: 'alert'
     },
     iconProps,
