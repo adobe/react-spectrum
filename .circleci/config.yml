@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
 jobs:
-  build:
+  build-image:
     docker:
       - image: circleci/node:12.10
 
@@ -28,20 +28,90 @@ jobs:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
 
+  build:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Write npmrc
+          command: |
+            cp .circleci/.npmrc .npmrc
+
+      - run:
+          name: yarn install
+          command: |
+            make clean_node_modules
+            make install_no_postinstall
       - run:
           name: build
           command: |
             make clean
             make -B
 
+  test:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Write npmrc
+          command: |
+            cp .circleci/.npmrc .npmrc
+
+      - run:
+          name: yarn install
+          command: |
+            make clean_node_modules
+            make install_no_postinstall
       - run:
           name: test
           command: make ci-test
 
+  storybook:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
       - run:
           name: build storybook
           command: make storybook
 
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook/**'
+  docs:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Write npmrc
+          command: |
+            cp .circleci/.npmrc .npmrc
+
+      - run:
+          name: yarn install
+          command: |
+            make clean_node_modules
+            make install_no_postinstall
       - run:
           name: build docs
           command: make website
@@ -49,7 +119,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '**'
+            - '*/docs/**'
 
   deploy:
     executor: azure-cli/azure-docker
@@ -77,10 +147,25 @@ workflows:
   version: 2
   test:
     jobs:
-      - build
+      - build-image
+      - build:
+          - requires:
+              - build-image
+      - test:
+          - requires:
+              - build-image
+      - storybook:
+          - requires:
+              - build-image
+      - docs:
+          - requires:
+              - build-image
       - deploy:
           requires:
             - build
+            - test
+            - storybook
+            - docs
       - comment:
           requires:
             - deploy
