@@ -51,14 +51,15 @@ A visual label should be provided for the TextField using the `label` prop. If t
 ```tsx example
 <TextField label="Street address" marginEnd="20px" />
 <TextField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<TextField label="Street address" isRequired necessityIndicator="label" />
+<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextField label="Street address" necessityIndicator="label" />
 ```
 
 ### Accessibility
 
-If a visible label isn't specified, an `aria-label` should be provided to the TextField for 
+If a visible label isn't specified, an `aria-label` must be provided to the TextField for 
 accessibility. If the TextField is labeled by a separate element instead, an `aria-labelledby`
-matching the labeling element's `id` should be provided instead.
+matching the labeling element's `id` must be provided instead.
 
 ```tsx example
 <label id="label-1">Name</label>
@@ -85,15 +86,11 @@ The example below uses `onChange` to update a separate `span` element with the s
 function Example() {
   let [text, setText] = React.useState();
 
-  let updateText = (value) => {
-    setText(value)
-  }
-
   return (
     <div>
       <TextField
         placeholder="Enter some text"
-        onChange={updateText}
+        onChange={setText}
         label="Text Mirror"
         marginEnd="20px"
       />
@@ -111,17 +108,20 @@ Implement your own validation logic in your app and pass either `"valid"` or `"i
 The example below illustrates how one would validate if the user has entered a number larger than 15 into the TextField.
 ```tsx example
 function Example() {
+  let defaultValue = '16';
   let [isValid, setValid] = React.useState(true);
-
-  let validate = (value) => {
-    setValid(Number(value) > 15)
-  }
+  let [value, setValue] = React.useState(defaultValue);
+  React.useEffect(() => {
+    let newValue = Number(value);
+    setValid(!isNaN(newValue) && newValue > 15)
+  }, [setValid, value]);
 
   return (
     <TextField
       validationState={isValid ? 'valid' : 'invalid'}
       placeholder="Enter a number"
-      onChange={validate}
+      defaultValue={defaultValue}
+      onChange={setValue}
       label="Number Field"
     />
   );
