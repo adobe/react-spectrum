@@ -31,7 +31,6 @@ jobs:
       - run:
           name: build
           command: |
-            make clean
             make -B
 
       - save_cache:
@@ -80,8 +79,8 @@ jobs:
           name: build storybook
           command: make storybook
 
-      - save_cache:
-          key: v3-storybook-{{ .Environment.CIRCLE_SHA1 }}
+      - persist_to_workspace:
+          root: dist
           paths:
             - ~/react-spectrum-v3/dist/*/storybook/
   docs:
@@ -94,23 +93,21 @@ jobs:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: build storybook
+          command: make storybook
+
+      - run:
           name: build docs
           command: make website
 
-      - save_cache:
-          key: v3-docs-{{ .Environment.CIRCLE_SHA1 }}
+      - persist_to_workspace:
+          root: dist
           paths:
-            - ~/react-spectrum-v3/dist/*/docs/
+            - '**'
 
   deploy:
     executor: azure-cli/azure-docker
     steps:
-      - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          key: v3-storybook-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          key: v3-docs-{{ .Environment.CIRCLE_SHA1 }}
       - attach_workspace:
           at: /tmp/dist
       - run:
@@ -138,16 +135,12 @@ workflows:
       - test:
           requires:
             - build-image
-      - storybook:
-          requires:
-            - build-image
       - docs:
           requires:
             - build-image
       - deploy:
           requires:
             - test
-            - storybook
             - docs
       - comment:
           requires:
