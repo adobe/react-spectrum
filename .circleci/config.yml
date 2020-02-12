@@ -28,26 +28,20 @@ jobs:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
 
+      - save_cache:
+          paths:
+            - ~/react-spectrum-v3
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
   build:
     docker:
       - image: circleci/node:12.10
 
     working_directory: ~/react-spectrum-v3
     steps:
-      - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - run:
-          name: Write npmrc
-          command: |
-            cp .circleci/.npmrc .npmrc
-
-      - run:
-          name: yarn install
-          command: |
-            make clean_node_modules
-            make install_no_postinstall
       - run:
           name: build
           command: |
@@ -60,20 +54,9 @@ jobs:
 
     working_directory: ~/react-spectrum-v3
     steps:
-      - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - run:
-          name: Write npmrc
-          command: |
-            cp .circleci/.npmrc .npmrc
-
-      - run:
-          name: yarn install
-          command: |
-            make clean_node_modules
-            make install_no_postinstall
       - run:
           name: test
           command: make ci-test
@@ -84,46 +67,44 @@ jobs:
 
     working_directory: ~/react-spectrum-v3
     steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
       - run:
           name: build storybook
           command: make storybook
 
-      - persist_to_workspace:
-          root: dist
+      - save_cache:
+          key: v3-storybook-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - '*/storybook/**'
+            - ~/react-spectrum-v3/dist/*/storybook/
   docs:
     docker:
       - image: circleci/node:12.10
 
     working_directory: ~/react-spectrum-v3
     steps:
-      - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - run:
-          name: Write npmrc
-          command: |
-            cp .circleci/.npmrc .npmrc
-
-      - run:
-          name: yarn install
-          command: |
-            make clean_node_modules
-            make install_no_postinstall
       - run:
           name: build docs
           command: make website
 
-      - persist_to_workspace:
-          root: dist
+      - save_cache:
+          key: v3-docs-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - '*/docs/**'
+            - ~/react-spectrum-v3/dist/*/docs/
 
   deploy:
     executor: azure-cli/azure-docker
     steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v3-storybook-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v3-docs-{{ .Environment.CIRCLE_SHA1 }}
       - attach_workspace:
           at: /tmp/dist
       - run:
