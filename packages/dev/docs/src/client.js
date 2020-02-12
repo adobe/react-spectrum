@@ -1,3 +1,4 @@
+import {attachToToC} from './attachToToC';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -46,7 +47,7 @@ function LinkPopover({id}) {
       <Header>
         <Breadcrumbs isHeading headingAriaLevel={3}>
           {breadcrumbs.map((b, i) => (
-            <BreadcrumbItem 
+            <BreadcrumbItem
               onPress={() => setBreadcrumbs(breadcrumbs.slice(0, i + 1))}>
               {b.dataset.title}
             </BreadcrumbItem>
@@ -60,3 +61,5 @@ function LinkPopover({id}) {
     </Dialog>
   );
 }
+
+attachToToC();

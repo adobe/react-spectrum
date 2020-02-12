@@ -53,6 +53,7 @@ module.exports = new Packager({
         })),
         pages,
         currentPage: bundle.name,
+        toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
       })
     );

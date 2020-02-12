@@ -2,29 +2,47 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
+import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const mdxComponents = {
-  h1: ({children}) => <h1 className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'])}>{children}</h1>,
-  h2: ({children}) => (
+  h1: ({children, ...props}) => (
+    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'])}>
+      {children}
+    </h1>
+  ),
+  h2: ({children, ...props}) => (
     <>
-      <h2 className={typographyStyles['spectrum-Heading3']}>{children}</h2>
+      <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+        {children}
+        <span className={classNames(docStyles['headingAnchor'])}>
+          <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`}>#</a>
+        </span>
+      </h2>
       <Divider />
     </>
   ),
-  h3: ({children}) => <h3 className={typographyStyles['spectrum-Heading4']}>{children}</h3>,
-  p: ({children}) => <p className={typographyStyles['spectrum-Body3']}>{children}</p>,
-  code: ({children}) => <code className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  inlineCode: ({children}) => <code className={typographyStyles['spectrum-Code4']}>{children}</code>
+  h3: ({children, ...props}) => (
+    <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      {children}
+      <span className={docStyles['headingAnchor']}>
+        <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`} aria-label="§">#</a>
+      </span>
+    </h3>
+  ),
+  p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
+  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>
 };
 
-export function Layout({scripts, styles, pages, currentPage, publicUrl, children}) {
+export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
     <html lang="en-US">
       <head>
@@ -56,6 +74,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
                 {children}
               </MDXProvider>
             </article>
+            <ToC toc={toc} />
           </main>
         </Provider>
         {scripts.map(s => <script type={s.type} src={s.url} />)}

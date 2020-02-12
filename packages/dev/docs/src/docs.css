@@ -135,3 +135,58 @@ summary::-webkit-details-marker {
 details[open] summary svg {
   transform: rotate(90deg);
 }
+
+.headingAnchor {
+  transition: all 125ms ease-in-out;
+  margin-left: 4px;
+
+  .anchor {
+    text-decoration: none;
+  }
+}
+
+.sectionHeader .headingAnchor {
+  margin-left: 6px;
+}
+
+.subHeader {
+  margin-bottom: 16px !important;
+}
+
+.headerContainer {
+  margin-bottom: 33px;
+}
+
+.sectionHeaderF {
+  padding-left: 0;
+}
+
+h2.sectionHeader {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.anchor {
+  opacity: 0;
+  transition: all 125ms ease-in-out;
+}
+
+.anchor:focus {
+  opacity: 1;
+  transition: all 125ms ease-in-out;
+}
+
+.editLink {
+  opacity: 0;
+}
+
+.docsHeader:hover .editLink, .docsHeader:hover .anchor {
+  opacity: 1;
+  transition: all 125ms ease-in-out;
+}
+
+.docsHeader .anchor:hover {
+  text-decoration: underline;
+}
+
+
