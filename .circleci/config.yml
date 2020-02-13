@@ -66,6 +66,19 @@ jobs:
           name: test
           command: make ci-test
 
+  lint:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: lint
+          command: make lint
+
   storybook:
     docker:
       - image: circleci/node:12.10
@@ -135,11 +148,15 @@ workflows:
       - test:
           requires:
             - build-image
+      - lint:
+          requires:
+            - build-image
       - docs:
           requires:
             - build-image
       - deploy:
           requires:
+            - lint
             - test
             - docs
       - comment:
