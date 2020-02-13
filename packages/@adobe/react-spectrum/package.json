@@ -5,7 +5,7 @@
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum"
   },
   "peerDependencies": {
     "react": "^16.8.0",
