@@ -17,7 +17,7 @@ import Select from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Divider', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add('Large (Default)',
     () => (
       <section>

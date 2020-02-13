@@ -15,7 +15,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('NumberField', module)
-  .addParameters({providerSwitcher: {status: "notice"}})
+  .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
     () => render({onChange: action('onChange')})

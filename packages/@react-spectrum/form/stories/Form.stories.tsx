@@ -16,7 +16,7 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => render({})

@@ -16,7 +16,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Alert', module)
-  .addParameters({providerSwitcher: {status: "negative"}})
+  .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'header',
     () => render({title: 'info', variant: 'info'})

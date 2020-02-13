@@ -27,7 +27,7 @@ const formatOptions = {
 };
 
 storiesOf('Meter', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .addDecorator(withKnobs)
   .add(
     'value: 50',

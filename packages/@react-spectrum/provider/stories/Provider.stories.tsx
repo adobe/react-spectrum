@@ -30,7 +30,7 @@ const THEME = {
 };
 
 storiesOf('Provider', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'colorScheme: dark',
     () => render({colorScheme: 'dark', style: {padding: 50, textAlign: 'center', width: 500}})

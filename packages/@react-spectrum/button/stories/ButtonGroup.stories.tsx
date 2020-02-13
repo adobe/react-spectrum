@@ -24,7 +24,7 @@ import {storiesOf} from '@storybook/react';
 import Undo from '@spectrum-icons/workflow/Undo';
 
 storiesOf('ButtonGroup', module)
-  .addParameters({providerSwitcher: {status: "negative"}})
+  .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
     () => render(null, items)

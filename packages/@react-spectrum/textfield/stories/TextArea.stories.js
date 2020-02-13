@@ -16,7 +16,7 @@ import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
 storiesOf('TextArea', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => render()

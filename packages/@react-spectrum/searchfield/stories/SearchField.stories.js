@@ -18,7 +18,7 @@ import {storiesOf} from '@storybook/react';
 const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 
 storiesOf('SearchField', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => renderSearchLandmark(render()),

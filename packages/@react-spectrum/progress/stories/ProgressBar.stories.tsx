@@ -36,7 +36,7 @@ const grayedBoxStyle: CSSProperties = {
 };
 
 storiesOf('Progress/ProgressBar', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .addDecorator(withKnobs)
   .add(
     'Default',

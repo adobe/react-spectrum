@@ -15,7 +15,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Checkbox', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => render()

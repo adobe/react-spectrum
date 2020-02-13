@@ -16,7 +16,7 @@ import React, {Fragment, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Modal', module)
-  .addParameters({providerSwitcher: {status: "notice"}})
+  .addParameters({providerSwitcher: {status: 'notice'}})
   .addParameters({chromatic: {disable: true}})
   .add(
     'default',

@@ -15,7 +15,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Button/LogicButton', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'logic variant: and',
     () => render({variant: 'and', label: 'and'})

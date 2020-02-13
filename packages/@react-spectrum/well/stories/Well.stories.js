@@ -14,7 +14,7 @@ import {storiesOf} from '@storybook/react';
 import {Well} from '../';
 
 storiesOf('Well', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => render()

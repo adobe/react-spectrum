@@ -14,7 +14,7 @@ import {StatusLight} from '../';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('StatusLight', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'variant: celery',
     () => render({variant: 'celery'})

@@ -27,7 +27,7 @@ import {TextField} from '@react-spectrum/textfield';
 storiesOf('Dialog', module)
 // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
   .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
-  .addParameters({providerSwitcher: {status: "notice"}})
+  .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
     () => render({})

@@ -21,7 +21,7 @@ const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></d
 
 storiesOf('Breadcrumbs', module)
   .addDecorator(CenterDecorator)
-  .addParameters({providerSwitcher: {status: "negative"}})
+  .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'Default',
     () => render({})

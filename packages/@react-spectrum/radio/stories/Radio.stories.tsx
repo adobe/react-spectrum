@@ -16,7 +16,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('RadioGroup', module)
-  .addParameters({providerSwitcher: {status: "positive"}})
+  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'default',
     () => render({})
