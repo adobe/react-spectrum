@@ -11,6 +11,7 @@ import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css'
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import MenuIcon from '@spectrum-icons/workflow/Menu';
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
@@ -55,6 +56,9 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
       </head>
       <body>
         <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
+          <div className={docStyles.tools}>
+            <MenuIcon />
+          </div>
           <nav className={docStyles.nav}>
             <header>
               <a href={publicUrl}>
@@ -77,7 +81,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
               </MDXProvider>
             </article>
           </main>
-          <ToC toc={toc} />
+          <ToC className={docStyles.toc} toc={toc} />
         </Provider>
         {scripts.map(s => <script type={s.type} src={s.url} />)}
       </body>

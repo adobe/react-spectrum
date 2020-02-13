@@ -11,7 +11,7 @@ export function ToC(props) {
   } = props;
 
   return (
-    <nav className={styles['toc']} id="toc">
+    <nav className={classNames(styles['toc'], props.className)} id="toc">
       <h3 className={classNames(typographyStyles['spectrum-Heading4'], styles['toc-Title'])}>Contents</h3>
       <SideNav node={toc} />
     </nav>

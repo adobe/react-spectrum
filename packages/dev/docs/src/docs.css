@@ -7,14 +7,27 @@ html, body {
   min-width: 100vw;
   min-height: 100vh;
   background: var(--spectrum-global-color-gray-50) !important;
-  display: flex;
+  display: grid;
+  grid-template-rows: auto minmax(1fr, auto);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "siteNav siteTools   siteTools"
+    "siteNav siteContent siteToC";
+}
+
+.tools {
+  grid-area: siteTools;
+  height: 40px;
+  border-bottom: 1px solid black;
+  align-items: center;
+  display: none;
 }
 
 .nav {
   position: sticky;
   top: 0;
   overflow: auto;
-  flex: 0 0 auto;
+  grid-area: siteNav;
   height: 100vh;
   width: 256px;
   padding: 0 24px;
@@ -41,9 +54,13 @@ html, body {
 }
 
 .main {
-  flex: 1 1 auto;
+  grid-area: siteContent;
   padding: 40px 52px;
   box-sizing: border-box;
+}
+
+.toc {
+  grid-area: siteToC;
 }
 
 article {
@@ -181,4 +198,19 @@ h2.sectionHeader {
 
 .docsHeader .anchor:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 1280px) {
+  .nav {
+    display: none;
+  }
+  .tools {
+    display: flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .toc {
+    display: none;
+  }
 }

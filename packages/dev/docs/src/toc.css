@@ -3,7 +3,6 @@
   top: 40px;
   height: calc(100vh - 40px);
   overflow: auto;
-  flex: 0 0 auto;
   padding: 0 24px;
 
   .toc-Title {
