@@ -29,12 +29,6 @@ jobs:
           key: yarn-cache-{{ checksum "yarn.lock" }}
 
       - run:
-          name: build
-          command: |
-            make clean
-            make -B
-
-      - run:
           name: test
           command: make ci-test
 
