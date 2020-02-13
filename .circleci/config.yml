@@ -95,7 +95,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - ~/react-spectrum-v3/dist/*/storybook/
+            - '**/dist/*/storybook/'
   docs:
     docker:
       - image: circleci/node:12.10
@@ -106,17 +106,13 @@ jobs:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: build storybook
-          command: make storybook
-
-      - run:
           name: build docs
           command: make website
 
       - persist_to_workspace:
           root: dist
           paths:
-            - '**'
+            - '**/dist/*/docs/'
 
   deploy:
     executor: azure-cli/azure-docker
@@ -151,6 +147,9 @@ workflows:
       - lint:
           requires:
             - build-image
+      - storybook:
+          requires:
+            - build-image
       - docs:
           requires:
             - build-image
@@ -158,6 +157,7 @@ workflows:
           requires:
             - lint
             - test
+            - storybook
             - docs
       - comment:
           requires:
