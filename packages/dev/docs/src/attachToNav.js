@@ -5,13 +5,14 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import path from 'path';
 import {Provider} from '@react-spectrum/provider';
 import RailIcon from '@spectrum-icons/workflow/Rail';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
 
 
 export function attachMobileNav() {
-  let container = document.querySelector('#collapsed-nav');
+  let container = document.querySelector('#mobile-nav');
   let siteNav = document.querySelector('#site-nav');
   let pages = JSON.parse(siteNav.dataset.pages);
   let currentPage = undefined;

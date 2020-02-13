@@ -56,7 +56,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
       <body>
         <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
           <div className={docStyles.tools}>
-            <span id="collapsed-nav" />
+            <span id="mobile-nav" />
           </div>
           <nav className={docStyles.nav}>
             <header>

@@ -17,7 +17,7 @@ html, body {
 
 .tools {
   grid-area: siteTools;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--spectrum-global-color-gray-700);
   align-items: center;
   padding-inline-start: 10px;
   padding-block-start: 10px;
