@@ -102,6 +102,11 @@ describe('useSearchField hook', () => {
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
+    it('clear button should not be focusable', () => {
+      let {clearButtonProps} = renderSearchHook({});
+      expect(clearButtonProps.tabIndex).toBe(-1);
+    });
+
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {

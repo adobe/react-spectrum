@@ -48,8 +48,7 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-dialog-min-width);
   max-width: 100%;
 
-  /* made up value */
-  max-height: 90vh;
+  max-height: inherit;
 
   outline: none;
 }
