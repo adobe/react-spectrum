@@ -3,6 +3,7 @@ import addons, { makeDecorator } from '@storybook/addons';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
 import {themes, defaultTheme} from '../../constants';
+import {StatusLight} from '@react-spectrum/statuslight';
 
 const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, v]) => {
   if (k.includes('providerSwitcher-')) {
@@ -38,8 +39,15 @@ function ProviderUpdater(props) {
     };
   }, []);
 
+  let statusMap = {
+    'positive': "Released as rc",
+    'notice': "In alpha",
+    'negative': "Under construction"
+  }
+
   return (
     <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue} typekitId="pbi5ojv">
+      <div style={{'padding-top': '20px', 'padding-left': '20px', 'padding-right': '20px'}}><div style={{'font-size': '18px', 'padding-left': '10px', 'padding-right': '10px'}}><strong>Status</strong></div><StatusLight variant={props.options.status || 'negative'}>{statusMap[props.options.status || 'negative']}</StatusLight></div>
       {storyReady && props.children}
     </Provider>
   );
@@ -49,8 +57,9 @@ export const withProviderSwitcher = makeDecorator({
   name: 'withProviderSwitcher',
   parameterName: 'providerSwitcher',
   wrapper: (getStory, context, {options, parameters}) => {
+    options = {...options, ...parameters};
     return (
-      <ProviderUpdater>
+      <ProviderUpdater options={options}>
         {getStory(context)}
       </ProviderUpdater>
     );

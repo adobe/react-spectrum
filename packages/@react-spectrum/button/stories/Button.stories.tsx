@@ -16,6 +16,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Button', module)
+  .addParameters({providerSwitcher: {status: "positive"}})
   .add(
     'variant: cta',
     () => render({variant: 'cta'})
