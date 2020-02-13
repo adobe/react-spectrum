@@ -62,11 +62,12 @@ for (let pkg of packages) {
   }
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
+  softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
 
   let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
   if (topIndexExists) {
     let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
-    softAssert.equal(contents, "export * from './src';\n", `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
+    softAssert(/export \* from '.\/src';/.test(contents), `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
   }
   softAssert(topIndexExists, `${pkg} is missing an index.ts`);
   softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);

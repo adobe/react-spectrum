@@ -2,6 +2,7 @@
   "name": "@react-spectrum/alert",
   "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "main": "dist/Alert.js",
   "module": "dist/Alert.module.js",
   "types": "dist/Alert.d.ts",

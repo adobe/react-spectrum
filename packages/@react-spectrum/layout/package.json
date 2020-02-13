@@ -3,18 +3,25 @@
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
