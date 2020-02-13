@@ -26,7 +26,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {
-    UNSAFE_className: groupClassName,
+    className: groupClassName,
     ...otherButtonProps
   } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);

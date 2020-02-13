@@ -53,7 +53,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
             <ButtonGroupItem
               key={item.key}
               {...buttonProps}
-              UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
+              className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
               item={item}
               state={state} />
           ))
@@ -64,7 +64,6 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
 }
 
 export interface ButtonGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
-  UNSAFE_className?: string,
   item: ButtonGroupButton,
   state: ButtonGroupState
 }
@@ -78,10 +77,9 @@ export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemPro
   });
 
   let buttonProps = mergeProps(itemProps, otherProps);
-  let allProps = mergeProps(item.props, buttonProps);
 
   return (
-    <PressResponder ref={ref} {...allProps} >
+    <PressResponder ref={ref} {...buttonProps} >
       {item}
     </PressResponder>
   );
