@@ -23,11 +23,11 @@ describe('Divider', function () {
   it.each`
     Name         | Component  | props
     ${'Divider'} | ${Divider} | ${{}}
-    ${'Rule'}    | ${Rule}    | ${{}}
+    ${'v2 Rule'}    | ${Rule}    | ${{}}
     ${'Divider'} | ${Divider} | ${{size: 'M'}}
-    ${'Rule'}    | ${Rule}    | ${{variant: 'medium'}}
+    ${'v2 Rule'}    | ${Rule}    | ${{variant: 'medium'}}
     ${'Divider'} | ${Divider} | ${{size: 'S'}}
-    ${'Rule'}    | ${Rule}    | ${{variant: 'small'}}
+    ${'v2 Rule'}    | ${Rule}    | ${{variant: 'small'}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} aria-label="divides" />);
 

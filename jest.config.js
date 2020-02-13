@@ -1,6 +1,14 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
+// Mock v2 if not installed
+let mocks = {};
+try {
+  require.resolve('@react/react-spectrum/Button');
+} catch (err) {
+  mocks['^@react\/.*'] = 'identity-obj-proxy';
+}
+
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -81,7 +89,8 @@ module.exports = {
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|styl)$': 'identity-obj-proxy',
-    '\\.\./Icon/.*$': '<rootDir>/__mocks__/iconMock.js'
+    '\\.\./Icon/.*$': '<rootDir>/__mocks__/iconMock.js',
+    ...mocks
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

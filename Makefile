@@ -2,10 +2,13 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
+
+adobe_setup:
+	echo "--install.ignore-optional false" > .yarnrc
+	git update-index --assume-unchanged .yarnrc
 
 node_modules: package.json
 	yarn install
@@ -87,7 +90,7 @@ ci:
 	$(MAKE) publish
 
 publish: build
-	lerna publish from-package --yes --registry $(NPM_REGISTRY)
+	lerna publish from-package --yes
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
