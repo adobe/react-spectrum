@@ -13,7 +13,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2"

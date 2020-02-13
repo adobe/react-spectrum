@@ -4,7 +4,7 @@
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "scripts": {
     "build-icons": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
