@@ -42,7 +42,8 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
-    "@react-spectrum/test-utils": "^3.0.0-alpha.2"
+    "@react-spectrum/test-utils": "^3.0.0-alpha.2",
+    "@react-spectrum/statuslight": "^3.0.0-rc-1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

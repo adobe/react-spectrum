@@ -15,6 +15,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Link', module)
+  .addParameters({providerSwitcher: {status: "notice"}})
   .add(
     'Default',
     () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
