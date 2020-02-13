@@ -226,7 +226,7 @@ function renderHero({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Image slot="hero" src="https://git.corp.adobe.com/pages/rsnow/assets/photos/25percent/IMG_0721.png" objectFit="cover" />
+          <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
           <Header><Text slot="title">The Title</Text></Header>
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
