@@ -95,7 +95,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '**/dist/*/storybook/'
+            - '*/storybook/'
   docs:
     docker:
       - image: circleci/node:12.10
@@ -112,7 +112,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '**/dist/*/docs/'
+            - '*/docs/'
 
   deploy:
     executor: azure-cli/azure-docker
