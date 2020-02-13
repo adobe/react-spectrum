@@ -36,21 +36,37 @@ clean_project_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 
-# --prefix needs to come before the command that npm is to run, otherwise documentation seems to indicate that it will write node_modules to that location
-docs:
-	cd documentation && yarn --no-lockfile
-	cd documentation && yarn build
+packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
+	yarn workspace @spectrum-icons/workflow make-icons
+	touch $@
 
-docs_local:
-	cd documentation && yarn --no-lockfile
-	cd documentation && yarn develop
+packages/@spectrum-icons/workflow/%.js: packages/@spectrum-icons/workflow/src/%.tsx
+	yarn workspace @spectrum-icons/workflow build-icons
+	touch $@
 
-clean_docs:
-	rm -rf documentation/public
+workflow-icons: $(addprefix packages/@spectrum-icons/workflow/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/workflow/src/*.tsx)))))
 
-# in order to pick up new changes to local components, this should be run before `docs_local` or `docs`
-clean_docs_node_modules:
-	rm -rf documentation/node_modules
+packages/@spectrum-icons/color/src: packages/@spectrum-icons/color/package.json
+	yarn workspace @spectrum-icons/color make-icons
+
+packages/@spectrum-icons/color/%.js: packages/@spectrum-icons/color/src/%.tsx
+	yarn workspace @spectrum-icons/color build-icons
+
+color-icons: $(addprefix packages/@spectrum-icons/color/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/color/src/*.tsx)))))
+
+packages/@spectrum-icons/ui/src: packages/@spectrum-icons/ui/package.json
+	yarn workspace @spectrum-icons/ui make-icons
+	touch $@
+
+packages/@spectrum-icons/ui/%.js: packages/@spectrum-icons/ui/src/%.tsx
+	yarn workspace @spectrum-icons/ui build-icons
+
+ui-icons: packages/@spectrum-icons/ui/src $(addprefix packages/@spectrum-icons/ui/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/ui/src/*.tsx)))))
+
+icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src
+	@$(MAKE) workflow-icons
+	@$(MAKE) color-icons
+	@$(MAKE) ui-icons
 
 lint:
 	yarn check-types
@@ -65,11 +81,6 @@ ci-test: lint
 
 storybook:
 	NODE_ENV=storybook yarn build-storybook
-
-deploy: storybook docs
-	ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null $(SERVER) mkdir -p "~/rsp"
-	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r documentation/public/* "$(SERVER):~/rsp/."
-	scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -r public/* "$(SERVER):~/rsp/."
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:

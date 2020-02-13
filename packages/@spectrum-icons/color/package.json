@@ -7,8 +7,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
-    "build": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
-    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && pwd && tsc --project './tsconfig.types.json'"
+    "build-icons": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && pwd && ( tsc --project './tsconfig.types.json' || true )"
   },
   "dependencies": {
     "@adobe/react-spectrum-workflow-color": "^1.0.0",

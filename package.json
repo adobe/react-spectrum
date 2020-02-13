@@ -16,7 +16,7 @@
     "jest": "NODE_ICU_DATA=node_modules/full-icu jest",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
-    "postinstall": "test -n \"$NOYARNPOSTINSTALL\" || ( (yarn wsrun --exclude-missing make-icons || true) && yarn wsrun --exclude-missing build ) && patch-package",
+    "postinstall": "make icons && patch-package",
     "plop": "plop",
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
