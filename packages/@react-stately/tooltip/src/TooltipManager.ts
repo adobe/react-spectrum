@@ -16,8 +16,6 @@ export class TooltipManager {
   hoverShowTimeout?: null | ReturnType<typeof setTimeout>;
 
   // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
-    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/master/data/elements/tooltip/TooltipBase.mjs
-    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/aab3963cebeb16df0081a805a1394fbc2d46a851/data/globals/GlobalAnimation.mjs
   constructor() {
     this.visibleTooltips = null;
     this.hoverHideTimeout = null;

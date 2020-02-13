@@ -7,7 +7,7 @@ Closes <!-- Github issue # here -->
 - [ ] Added/updated unit tests and storybook for this change (for new code or code which already has tests).
 - [ ] Filled out test instructions.
 - [ ] Updated documentation (if it already exist for this component).
-- [ ] Looked at the [Accessibility Standard](https://wiki.corp.adobe.com/display/Accessibility/Adobe+Accessibility+Standard) and/or talked to [@mijordan](https://git.corp.adobe.com/mijordan) about Accessibility for this feature.
+- [ ] Looked at the Accessibility Standard for this feature.
 
 ## 📝 Test Instructions:
 
@@ -15,4 +15,4 @@ Closes <!-- Github issue # here -->
 
 ## 🧢 Your Team:
 
-<!--- Which product is this pull request for? (i.e. Photoshop) -->
+<!--- Which product/company is this pull request for? -->
