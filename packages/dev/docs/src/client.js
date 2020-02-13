@@ -1,18 +1,14 @@
-import {ActionButton} from '@react-spectrum/button';
+import {attachMobileNav} from './attachToNav';
 import {attachToToC} from './attachToToC';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import classNames from 'classnames';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import highlightCss from './syntax-highlight.css';
-import path from 'path';
 import {Pressable} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import RailIcon from '@spectrum-icons/workflow/Rail';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
 
 let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
@@ -65,32 +61,6 @@ function LinkPopover({id}) {
       </Content>
     </Dialog>
   );
-}
-
-
-function attachMobileNav() {
-  let container = document.querySelector('#collapsed-nav');
-  let siteNav = document.querySelector('#site-nav');
-  let pages = JSON.parse(siteNav.dataset.pages);
-  let currentPage = undefined;
-  ReactDOM.render(
-    <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none', fontFamily: 'inherit'}}>
-      <DialogTrigger type="popover">
-        <ActionButton aria-label="Nav" isQuiet icon={<RailIcon />} />
-        <Dialog>
-          <Content>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pages.filter(p => p.name !== 'index.html').map(p => (
-                <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
-                  <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
-                </li>
-              ))}
-            </ul>
-          </Content>
-        </Dialog>
-      </DialogTrigger>
-    </Provider>
-  , container);
 }
 
 attachMobileNav();
