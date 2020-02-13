@@ -45,20 +45,27 @@ For languages that are read right to left (e.g. Hebrew and Arabic), the Checkbox
 
 ### isIndeterminate
 
+When a Checkbox is indeterminate, it overrides the selection state.
+The indeterminate visual state will be maintained irregardless of click events.
+
 ```tsx example
-<Checkbox isIndeterminate="true"> Checkbox Label </Checkbox>
+<Checkbox isIndeterminate> Checkbox Label </Checkbox>
 ```
 
 ### defaultSelected
 
+Renders a Checkbox in a checked state.
+
 ```tsx example
-<Checkbox defaultSelected="true"> Checkbox Label </Checkbox>
+<Checkbox defaultSelected> Checkbox Label </Checkbox>
 ```
 
 ### isSelected
 
+Puts the Checkbox in a controlled mode, preventing the user from toggling to an unchecked state via a click event.
+
 ```tsx example
-<Checkbox isSelected="true"> Checkbox Label </Checkbox>
+<Checkbox isSelected> Checkbox Label </Checkbox>
 ```
 
 ## Events
@@ -68,20 +75,20 @@ The example below uses `onChange` to alert the user to changes in the checkbox's
 
 ```jsx example
 function Example() {
+  let [selected, setSelection] = React.useState('false');
 
   let toggle = (value) => {
-    if (value) {
-     alert('The Checkbox is checked');
-    } else {
-     alert('The Checkbox is unchecked');
-    }
+    value ? setSelection('true') : setSelection('false');
   }
 
   return (
+    <div>
+    <div> The Checkbox is checked: {selected} </div>
     <Checkbox
       onChange={toggle}
       aria-label="This checkbox has no visible label"
     />
+    </div>
   );
  }
 ```
@@ -99,22 +106,22 @@ Implement your own validation logic in your app and pass either `"valid"` or `"i
 <Checkbox validationState="valid"> Checkbox Label </Checkbox>
 ```
 
-## Visual Options
-
-### isDisabled
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
-
-```tsx example
-<Checkbox isDisabled="true"> Checkbox Label </Checkbox>
-```
-
-### isEmphasized
-[Spectrum Usage Guidelines](https://spectrum.adobe.com/page/checkbox/#Emphasized-or-not?)
-
-```tsx example
-<Checkbox isEmphasized="true"> Checkbox Label </Checkbox>
-```
-
 ## Props
 
 <PropTable component={docs.exports.Checkbox} links={docs.links} />
+
+## Visual Options
+
+### isDisabled
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
+
+```tsx example
+<Checkbox isDisabled> Checkbox Label </Checkbox>
+```
+
+### isEmphasized
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Emphasized-or-not?)
+
+```tsx example
+<Checkbox isEmphasized> Checkbox Label </Checkbox>
+```
