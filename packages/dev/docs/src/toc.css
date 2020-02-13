@@ -1,9 +1,6 @@
 .toc {
-  position: sticky;
-  top: 40px;
-  height: calc(100vh - 40px);
   overflow: auto;
-  padding: 0 24px;
+  padding: 40px 24px 0 24px;
 
   .toc-Title {
     font-weight: var(--spectrum-global-font-weight-regular, 700);

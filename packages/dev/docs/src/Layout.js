@@ -11,7 +11,6 @@ import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css'
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import MenuIcon from '@spectrum-icons/workflow/Menu';
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
@@ -57,7 +56,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
       <body>
         <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
           <div className={docStyles.tools}>
-            <MenuIcon />
+            <span id="collapsed-nav"></span>
           </div>
           <nav className={docStyles.nav}>
             <header>
@@ -66,7 +65,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
                 <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
               </a>
             </header>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
+            <ul className={sideNavStyles['spectrum-SideNav']} id="site-nav" data-pages={JSON.stringify(pages)} data-currentPage={JSON.stringify(currentPage)}>
               {pages.filter(p => p.name !== 'index.html').map(p => (
                 <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
                   <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
