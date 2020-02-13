@@ -2,12 +2,12 @@ import {Item, Section, Tree} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-interface Item {
+interface ItemType {
   name: string,
-  children?: Item[]
+  children?: ItemType[]
 }
 
-let items: Item[] = [
+let items: ItemType[] = [
   {name: 'Animals', children: [
     {name: 'Aardvark'},
     {name: 'Kangaroo'},
@@ -22,7 +22,7 @@ let items: Item[] = [
   ]}
 ];
 
-let longList: Item[] = [];
+let longList: ItemType[] = [];
 for (let i = 0; i < 1000; i++) {
   longList.push({name: 'Item ' + i});
 }

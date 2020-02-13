@@ -42,8 +42,12 @@ jobs:
           name: build storybook
           command: make storybook
 
+      - run:
+          name: build docs
+          command: make website
+
       - persist_to_workspace:
-          root: storybook-static
+          root: dist
           paths:
             - '**'
 
@@ -51,10 +55,10 @@ jobs:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
-          at: /tmp/storybook-static
+          at: /tmp/dist
       - run:
-          name: deploy storybook
-          command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
+          name: deploy
+          command: az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
 
   comment:
     docker:
