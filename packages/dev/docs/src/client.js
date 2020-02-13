@@ -1,7 +1,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
-import classNames from 'classnames';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import classNames from 'classnames';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
