@@ -1,10 +1,9 @@
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import classNames from 'classnames';
 import React from 'react';
 import styles from './resourceCard.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-
-export function ResourceCard(props){
+export function ResourceCard(props) {
 
   let {
     type,
@@ -26,15 +25,15 @@ export function ResourceCard(props){
       type
     };
   } else if (type.toLowerCase() === 'npm') {
-     cardContent = {
-       svg: <svg className={styles['npmImage']} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x={0} y={0} viewBox="0 0 66 66" xmlSpace="preserve"><g id="layer1" transform="translate(8.305 24.74)"><path id="path4951" fill="#cb3837" d="M13.73 19.26V16.5H0V0h49.39v16.5h-24.7v2.76H13.73z" /><path id="path4949" fill="#fff" d="M22.02 16.5v-2.77h5.43V2.77H16.51V16.5h5.51z" /><path id="path4947" fill="#cb3837" d="M22.02 5.53h2.67v5.43h-2.67V5.53z" /><path id="path4945" fill="#fff" d="M8.2 13.73v-8.2h2.76v8.2h2.76V2.77H2.79v10.95H8.2z" /><path id="path2998" fill="#fff" d="M35.66 13.73v-8.2h2.76v8.2h2.76v-8.2h2.76v8.2h2.76V2.77H30.22v10.95h5.44z" /></g></svg>,
-       title: 'View Package',
-       type
-     };
+    cardContent = {
+      svg: <svg className={styles['npmImage']} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x={0} y={0} viewBox="0 0 66 66" xmlSpace="preserve"><g id="layer1" transform="translate(8.305 24.74)"><path id="path4951" fill="#cb3837" d="M13.73 19.26V16.5H0V0h49.39v16.5h-24.7v2.76H13.73z" /><path id="path4949" fill="#fff" d="M22.02 16.5v-2.77h5.43V2.77H16.51V16.5h5.51z" /><path id="path4947" fill="#cb3837" d="M22.02 5.53h2.67v5.43h-2.67V5.53z" /><path id="path4945" fill="#fff" d="M8.2 13.73v-8.2h2.76v8.2h2.76V2.77H2.79v10.95H8.2z" /><path id="path2998" fill="#fff" d="M35.66 13.73v-8.2h2.76v8.2h2.76v-8.2h2.76v8.2h2.76V2.77H30.22v10.95h5.44z" /></g></svg>,
+      title: 'View Package',
+      type
+    };
   }
 
   return (
-    <a href={props.url} target="_blank" title={cardContent.title} className={styles['resourceCard']}>
+    <a href={url} target="_blank" title={cardContent.title} className={styles['resourceCard']}>
       <div>
         {cardContent.svg}
       </div>
@@ -47,5 +46,5 @@ export function ResourceCard(props){
         </div>
       </div>
     </a>
-  )
+  );
 }

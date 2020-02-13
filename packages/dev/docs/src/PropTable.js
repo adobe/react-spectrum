@@ -1,7 +1,7 @@
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {InterfaceType, Type, TypeContext} from './types';
 import React from 'react';
-import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import styles from './docs.css';
-import {Type, TypeContext, InterfaceTable, InterfaceBody} from './types';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const GROUPS = {
   Events: [
@@ -81,14 +81,16 @@ export function PropTable({component, links}) {
   return (
     <>
       <TypeContext.Provider value={links}>
-        <InterfaceTable>
-          <InterfaceBody properties={ungrouped} />
-          {Object.keys(groups).map(group => (
-            <>
-              <InterfaceBody header={group} properties={groups[group]} />
-            </>
-          ))}
-        </InterfaceTable>
+        <InterfaceType properties={ungrouped} />
+        {Object.keys(groups).map(group => (
+          <details>
+            <summary className={typographyStyles['spectrum-Heading4']}>
+              <ChevronRight size="S" />
+              {group}
+            </summary>
+            <InterfaceType properties={groups[group]} />
+          </details>
+        ))}
         {Object.values(usedLinks).map(link => (
           <section id={link.id} data-title={link.name} hidden>
             <Type type={link} />

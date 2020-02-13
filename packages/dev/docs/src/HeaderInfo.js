@@ -1,5 +1,4 @@
 import js from 'highlight.js/lib/languages/javascript';
-import linkStyles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import Lowlight from 'react-lowlight';
 import React from 'react';
 import {ResourceCard} from './ResourceCard';

@@ -15,6 +15,7 @@ export function Link(props: SpectrumLinkProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
+
   let ref = useRef();
   let {linkProps} = useLink({...props, ref});
 

@@ -25,7 +25,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 
 ## Example
 
-```jsx example
+```tsx example
 <Button variant="cta">Test</Button>
 ```
 
@@ -34,7 +34,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
 A visible label can be provided by passing children.
 
-```jsx example
+```tsx example
 <Button variant="primary">Label only</Button>
 <Button variant="primary" icon={<Bell />}>Icon + Label</Button>
 <Button variant="primary" icon={<Bell />} aria-label="Icon only" />
@@ -57,7 +57,7 @@ prop.
 
 The following example uses an `onPress` handler to update a counter stored in React state.
 
-```jsx example
+```tsx example
 function Example() {
   let [count, setCount] = React.useState(0);
 
@@ -75,27 +75,27 @@ function Example() {
 
 ### Call To Action
 
-```jsx example
+```tsx example
 <Button variant="cta">Test</Button>
 ```
 
 ### Primary
 
-```jsx example
+```tsx example
 <Button variant="primary">Test</Button>
 <Button variant="primary" isQuiet>Test</Button>
 ```
 
 ### Secondary
 
-```jsx example
+```tsx example
 <Button variant="secondary">Test</Button>
 <Button variant="secondary" isQuiet>Test</Button>
 ```
 
 ### Over Background
 
-```jsx example
+```tsx example
 <div style={{backgroundColor: 'rgb(15, 121, 125)', padding: '15px 20px'}}>
   <Button variant="overBackground">Test</Button>
   <Button variant="overBackground" isQuiet>Test</Button>
@@ -104,7 +104,7 @@ function Example() {
 
 ### Negative
 
-```jsx example
+```tsx example
 <Button variant="negative">Test</Button>
 <Button variant="negative" isQuiet>Test</Button>
 ```
