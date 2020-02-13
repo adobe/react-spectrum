@@ -78,10 +78,16 @@ article h2 + hr {
   margin-bottom: 33px;
 }
 
-:global(.example) {
+.example {
   padding: 40px;
   border-radius: 0 0 4px 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
+}
+
+.inlineProvider {
+  display: inline !important;
+  background: none !important;
+  font-family: inherit !important;
 }
 
 article pre {
