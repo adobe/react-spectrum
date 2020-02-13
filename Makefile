@@ -21,7 +21,6 @@ run:
 clean:
 	yarn clean:icons
 	rm -rf dist storybook-static storybook-static-v3 public src/dist
-	$(MAKE) clean_docs
 
 clean_all:
 	$(MAKE) clean
