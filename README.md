@@ -1,7 +1,7 @@
 #  ⚠️ Under Construction  ⚠️
 
 We are currently working hard to be ready for a stable release.
-A few things:
+
   - Please don't share this repo until we make our announcement!
   - Please try out our rc components and tell us what you think!
 
@@ -9,8 +9,8 @@ A few things:
 
 ## Using react-spectrum in your project
 
-react-spectrum is usable with a module bundler like [Parcel](https://parceljs.org)
-Components are then `require`able as in the following example. The styles for each component you import will be bundled
+react-spectrum is usable with a module bundler like [Parcel](https://parceljs.org).
+Components are then usable as in the following example. The styles for each component you import will be bundled
 along-side the JavaScript (more on configuring this below). Each component should be imported independently -
 this way only the components you use will be included in the output JavaScript and CSS files.
 
