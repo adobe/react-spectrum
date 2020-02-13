@@ -1,5 +1,7 @@
 # Generating icon packages
 
+⚠️ Under Construction  ⚠️
+
 A4U creates React components of icon sets. These are useful to use standalone, however, they cannot automatically pick up things like the color or scale from a React Spectrum application.
 
 To use your custom icon sets from A4U the same way that you can use our core set of icons, we have this build tool which will take all the icons in a package you point to and wrap them in our `<Icon>` component.
