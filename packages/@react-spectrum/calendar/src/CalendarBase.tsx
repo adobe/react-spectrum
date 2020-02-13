@@ -70,7 +70,7 @@ export function CalendarBase(props: CalendarBaseProps) {
       </div>
       <table
         {...calendarBodyProps}
-        className={classNames(styles, ['spectrum-Calendar-body', 'spectrum-Calendar-table'])}>
+        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
         <VisuallyHidden elementType="caption" {...captionProps} />
         <CalendarTableHeader weekStart={state.weekStart} />
         <CalendarTableBody state={state} />
