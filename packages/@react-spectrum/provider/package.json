@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
-    "@react-spectrum/butoon": "^3.0.0-rc.1",
+    "@react-spectrum/button": "^3.0.0-rc.1",
     "@react-spectrum/checkbox": "^3.0.0-rc.1"
   },
   "peerDependencies": {
