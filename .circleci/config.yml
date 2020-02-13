@@ -21,7 +21,8 @@ jobs:
           name: yarn install
           command: |
             make clean_node_modules
-            make install_no_postinstall
+            make adobe_setup
+            yarn
 
       - save_cache:
           paths:

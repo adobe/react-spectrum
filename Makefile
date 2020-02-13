@@ -14,10 +14,6 @@ node_modules: package.json
 	yarn install
 	touch $@
 
-# using this won't generate icons and definitions, but will allow us to run things like cleaning beforehand
-install_no_postinstall:
-	NOYARNPOSTINSTALL=1 yarn install
-
 # --ci keeps it from opening the browser tab automatically
 run:
 	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
@@ -32,10 +28,6 @@ clean_all:
 	$(MAKE) clean_node_modules
 
 clean_node_modules:
-	$(MAKE) clean_project_node_modules
-	$(MAKE) clean_docs_node_modules
-
-clean_project_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 
