@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {EffectCallback, useEffect, useRef} from 'react';
 
 // Like useEffect, but only called for updates after the initial render.

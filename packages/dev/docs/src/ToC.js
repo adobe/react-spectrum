@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import classNames from 'classnames';
 import React from 'react';
 import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';

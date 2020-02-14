@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 export function clamp(value: number, min: number = -Infinity, max: number = Infinity): number {
   return Math.min(Math.max(value, min), max);
 }

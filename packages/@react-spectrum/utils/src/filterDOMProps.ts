@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {DOMProps} from '@react-types/shared';
 
 // IMPORTANT: this needs to be synced with the TypeScript definition of DOMProps

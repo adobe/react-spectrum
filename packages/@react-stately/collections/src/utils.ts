@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 export function keyDiff<T>(a: Map<T, any>, b: Map<T, any>): Set<T> {
   let res = new Set<T>();
 

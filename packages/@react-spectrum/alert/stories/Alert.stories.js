@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import _123 from '@spectrum-icons/workflow/123';
 import {Alert} from '../';
 import CalendarCheckColor from '@spectrum-icons/color/CalendarCheckColor';

@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {DOMProps, InputBase, RangeInputBase, StyleProps, TextInputBase, ValueBase} from '@react-types/shared';
 
 export interface NumberFieldProps extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number> {

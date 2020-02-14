@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {ColorScheme, Scale} from '@react-types/provider';
 import {Theme} from '@react-types/provider';
 import {useMediaQuery} from '@react-spectrum/utils';

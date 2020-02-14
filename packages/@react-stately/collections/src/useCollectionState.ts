@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {Collection} from './types';
 import {CollectionManager} from './CollectionManager';
 import {Key, useLayoutEffect, useMemo, useState} from 'react';

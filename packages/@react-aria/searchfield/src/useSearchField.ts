@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {ButtonHTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
 import intlMessages from '../intl/*.json';

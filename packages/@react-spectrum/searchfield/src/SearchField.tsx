@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';

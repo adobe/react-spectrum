@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {NumberField} from '../';
 import NumberInput from '@react/react-spectrum/NumberInput';

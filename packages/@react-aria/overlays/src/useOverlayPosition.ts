@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {calculatePosition} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';

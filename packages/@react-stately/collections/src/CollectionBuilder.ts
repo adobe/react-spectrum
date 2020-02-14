@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {CollectionBase, CollectionElement, ItemElement, ItemProps, ItemRenderer, SectionElement, SectionProps} from '@react-types/shared';
 import {ItemStates, Node} from './types';
 import React, {Key, ReactElement} from 'react';

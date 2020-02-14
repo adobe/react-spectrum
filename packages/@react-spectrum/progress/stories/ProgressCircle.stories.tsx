@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';

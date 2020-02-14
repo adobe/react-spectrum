@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {fireEvent} from '@testing-library/react';
 
 // Triggers a "press" event on an element.

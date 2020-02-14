@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';

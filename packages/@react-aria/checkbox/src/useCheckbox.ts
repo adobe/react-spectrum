@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {CheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';

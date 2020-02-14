@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
