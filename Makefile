@@ -2,7 +2,6 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
 
