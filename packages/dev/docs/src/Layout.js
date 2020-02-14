@@ -38,7 +38,8 @@ const mdxComponents = {
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>
+  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
+  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']}>{children}</a>
 };
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
