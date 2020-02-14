@@ -91,7 +91,11 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             window.addEventListener('storage', update);
           })();
         `.replace(/\n|\s{2,}/g, '')}} />
-        <script src="https://use.typekit.net/pbi5ojv.js" />
+        <link rel="stylesheet" href="https://use.typekit.net/uma8ayv.css" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
       </head>
