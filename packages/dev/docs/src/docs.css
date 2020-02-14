@@ -298,6 +298,8 @@ h2.sectionHeader {
   .propTable td[data-column] code {
     display: inline-block;
     vertical-align: text-top;
+    word-break: break-word;
+    width: calc(100% - 80px);
   }
 
   .propTable td[data-column]:before {
