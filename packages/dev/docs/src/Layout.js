@@ -104,7 +104,11 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         <nav className={docStyles.nav}>
           <header>
             <a href={publicUrl}>
-              <img src="https://spectrum.adobe.com/static/adobe_logo-2.svg" alt="Adobe Logo" />
+              <svg viewBox="0 0 30 26" fill="#E1251B">
+                <polygon points="19,0 30,0 30,26" />
+                <polygon points="11.1,0 0,0 0,26" />
+                <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+              </svg>
               <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
             </a>
           </header>
