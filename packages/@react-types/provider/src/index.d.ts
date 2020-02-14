@@ -27,7 +27,7 @@ interface ContextProps {
   toastPlacement?: ToastPlacement,
   /** Sets quiet property for children components that use this property via context. Sets the quiet style. */
   isQuiet?: boolean,
-  /** Sets emphasized property for children component that use this property via context. Sets the quiet style. */
+  /** Sets emphasized property for children component that use this property via context. Sets the emphasized style. */
   isEmphasized?: boolean,
   /** Sets disabled property for children component that use this property via context. Disables the component. */
   isDisabled?: boolean,
