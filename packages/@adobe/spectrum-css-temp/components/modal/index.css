@@ -65,6 +65,7 @@ governing permissions and limitations under the License.
 
   /* Don't be bigger than the screen */
   max-height: var(--spectrum-dialog-max-height);
+  max-width: 90vw;
 
   border-radius: var(--spectrum-dialog-border-radius);
   overflow: hidden;

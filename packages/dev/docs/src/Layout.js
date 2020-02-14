@@ -46,6 +46,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
     <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
             prevent a flash between themes when loading the page, an inline script is put
@@ -86,7 +87,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
       </head>
       <body>
-        <div id="themeSwitcher" />
+        <div className={docStyles.pageHeader} id="header" />
         <nav className={docStyles.nav}>
           <header>
             <a href={publicUrl}>

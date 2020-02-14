@@ -40,6 +40,7 @@ html, body {
 
 main {
   margin-left: 256px;
+  margin-right: 160px;
   padding: 40px 52px;
   box-sizing: border-box;
 }
@@ -51,6 +52,18 @@ article {
 
 .propTable {
   width: 100%;
+}
+
+.propTable td:last-child {
+  word-break: break-word;
+}
+
+.requiredIcon {
+  margin-left: 8px;
+}
+
+.noDefault {
+  text-align: center;
 }
 
 .colorLink {
@@ -82,6 +95,7 @@ article h2 + hr {
   padding: 40px;
   border-radius: 0 0 4px 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
+  overflow-x: auto;
 }
 
 .inlineProvider {
@@ -195,4 +209,110 @@ h2.sectionHeader {
   text-decoration: underline;
 }
 
+.pageHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  box-sizing: border-box;
+  height: 48px;
+}
 
+@media (max-width: 1200px) {
+  main {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 1020px) {
+  .nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 100%;
+    z-index: 100;
+    transition: transform 200ms;
+  }
+
+  .nav.visible {
+    transform: translateX(100%);
+  }
+
+  main:before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    content: '';
+    z-index: 99;
+    background: var(--spectrum-alias-background-color-modal-overlay);
+    opacity: 0;
+    transition: opacity 200ms;
+    pointer-events: none;
+  }
+
+  .nav.visible + main:before {
+    opacity: 1;
+  }
+
+  main {
+    margin-left: 0;
+    margin-top: 48px;
+    padding: 40px 24px;
+  }
+
+  .pageHeader {
+    border-bottom: 1px solid var(--spectrum-global-color-gray-200);
+    background: var(--spectrum-global-color-gray-50);
+    z-index: 50;
+  }
+}
+
+@media (max-width: 1020px) {
+  article h1 + p {
+    max-width: initial !important;
+  }
+
+  .propTable tr {
+    display: table;
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  .propTable td {
+    display: table-row;
+  }
+
+  .propTable thead {
+    display: none;
+  }
+
+  .propTable td[data-column] code {
+    display: inline-block;
+    vertical-align: text-top;
+  }
+
+  .propTable td[data-column]:before {
+    content: attr(data-column);
+    font-size: var(--spectrum-table-header-text-size);
+    font-weight: var(--spectrum-table-header-text-font-weight);
+    min-height: var(--spectrum-table-header-min-height);
+    letter-spacing: var(--spectrum-table-header-text-letter-spacing);
+    color: var(--spectrum-table-header-text-color);
+    text-transform: uppercase;
+    width: 80px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 8px 0;
+  }
+
+  .noDefault {
+    text-align: left;
+  }
+}
