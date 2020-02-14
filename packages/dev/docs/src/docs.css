@@ -57,6 +57,11 @@ article {
   word-break: break-word;
 }
 
+.propTable tr {
+  background: none !important;
+  cursor: initial;
+}
+
 .requiredIcon {
   margin-left: 8px;
 }
