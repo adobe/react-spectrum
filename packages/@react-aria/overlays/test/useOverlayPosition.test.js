@@ -41,14 +41,14 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       position: absolute;
       z-index: 100000;
-      left: 0px;
+      left: 8px;
       top: 350px;
-      max-height: 418px;
+      max-height: 410px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 60px;
+      left: 52px;
     `);
   });
 
@@ -57,9 +57,9 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 0px;
+      left: 8px;
       top: 100px;
-      max-height: 668px;
+      max-height: 660px;
     `);
 
     expect(overlay).toHaveTextContent('placement: top');
@@ -69,9 +69,9 @@ describe('useOverlayPosition', function () {
     fireEvent(window, new Event('resize'));
 
     expect(overlay).toHaveStyle(`
-      left: 0px;
+      left: 8px;
       top: 500px;
-      max-height: 500px;
+      max-height: 492px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -83,17 +83,17 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 0px;
+      left: 8px;
       top: 350px;
-      max-height: 418px;
+      max-height: 410px;
     `);
 
     res.rerender(<Example offset={20} />);
 
     expect(overlay).toHaveStyle(`
-      left: 0px;
+      left: 8px;
       top: 370px;
-      max-height: 398px;
+      max-height: 390px;
     `);
   });
 });
