@@ -19,9 +19,9 @@ export interface InputBase extends FocusableProps {
 }
 
 export interface ValueBase<T> {
-  /** The value of a input, sets input behavior to "controlled". */
+  /** The value of an input. Sets input behavior to "controlled". */
   value?: T,
-  /** The value of a input, sets input behavior to "uncontrolled". */
+  /** The value of an input. Sets input behavior to "uncontrolled". */
   defaultValue?: T,
   /** 
    * A user defined callback function triggered upon any change to the input's value.
