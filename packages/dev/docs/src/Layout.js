@@ -59,7 +59,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
             let update = () => {
-              if (dark.matches || localStorage.theme === "dark") {
+              if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
                 classList.add("${theme.dark['spectrum--dark']}");
               } else {
