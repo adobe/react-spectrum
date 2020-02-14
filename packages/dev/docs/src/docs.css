@@ -223,7 +223,7 @@ h2.sectionHeader {
   justify-content: space-between;
   padding: 0 8px;
   box-sizing: border-box;
-  height: 48px;
+  height: var(--spectrum-global-dimension-size-600);
 }
 
 @media (max-width: 1200px) {
@@ -276,9 +276,7 @@ h2.sectionHeader {
     background: var(--spectrum-global-color-gray-50);
     z-index: 50;
   }
-}
 
-@media (max-width: 1020px) {
   article h1 + p {
     max-width: initial !important;
   }
