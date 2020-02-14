@@ -1,6 +1,7 @@
 # Contributing
 
 Thanks for choosing to contribute!
+We are currently in pre-release mode and are actively working on getting to a stable version. Please talk to us/file an issue before contributing.
 
 The following are a set of guidelines to follow when contributing to this project.
 

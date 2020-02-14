@@ -1,6 +1,6 @@
 # Generating icon packages
 
-⚠️ Under Construction  ⚠️
+⚠️ Under Construction ⚠️
 
 A4U creates React components of icon sets. These are useful to use standalone, however, they cannot automatically pick up things like the color or scale from a React Spectrum application.
 
