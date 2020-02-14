@@ -43,7 +43,7 @@ const mdxComponents = {
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
-    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], docStyles.provider, highlightCss.spectrum)}>
+    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], typographyStyles.spectrum, docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
