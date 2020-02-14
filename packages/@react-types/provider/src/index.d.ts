@@ -22,7 +22,7 @@ export interface Theme {
 interface ContextProps {
   /**
    * Set the placement of the toast alerts for the provider.
-   * default "bottom"
+   * @default "bottom"
    */
   toastPlacement?: ToastPlacement,
   /** Sets quiet property for children components that use this property via context. Sets the quiet style. */
@@ -44,15 +44,18 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   children: ReactNode,
   /**
    * Spectrum theme scoped to this provider and it's children components.
-   * @default "light"
+   * Sets the CSS variables for scale and color scheme values.
    */
   theme?: Theme,
   /**
-   * Color scheme scoped to this provider and it's children components.
+   * Color scheme scoped to this provider and its children components.
    * Defaults to the color scheme set by the OS.
    */
   colorScheme?: ColorScheme,
-  /** If there is not an OS color scheme this is the default. */
+  /**
+   * If there is not an OS color scheme this is the default.
+   * @default "light"
+   */
   defaultColorScheme?: ColorScheme,
   /**
    * Spectrum scale scoped to this provider and it's children components.

@@ -8,6 +8,10 @@ import packageData from '../package.json';
 ```jsx import
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
+import {Form} from '@react-spectrum/form';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {TextField} from '@react-spectrum/textfield';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 ```
 
 # Provider
@@ -22,54 +26,129 @@ import {Checkbox} from '@react-spectrum/checkbox';
 ## Example
 
 ```tsx example
-<Provider>
-  <Button variant="cta">Button</Button>
+<Provider isDisabled scale="large">
+  <Button variant="primary">Button</Button>
 </Provider>
 ```
 
 ## Context
 
-Context properties such as isDisabled, isEmphasized, isQuiet, isReadOnly,
-isRequired, and validationState are passed into the provider as props and used
+Context properties such as `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
+`isRequired`, and `validationState` are passed into the provider as props and used
 by the children components via a context.
 
-### Disabled
+### Quiet
 
 ```tsx example
-<Provider isDisabled>
-  <Checkbox>
-    Checkbox Label
-  </Checkbox>
-  <Button variant="cta">Button</Button>
+<Provider isQuiet>
+  <Form>
+    <div>
+      <TextField label="Email" />
+    </div>
+    <Checkbox>
+      Checkbox Label
+    </Checkbox>
+    <div>
+      <Button variant="primary">Button</Button>
+    </div>
+  </Form>
 </Provider>
 ```
 
 ## Global Settings
 
-These properties such as theme, locale, and scale adjust all children components.
+Properties such as `theme`, `colorScheme`, `locale`, and `scale` adjust all
+children components. The `theme` allows the definition of custom CSS variables
+for the `colorScheme` and `scale` prop values.
 
-### Theme and Scale
+### Color Scheme and Scale
 
 ```tsx example
-<Provider theme="dark" scale="large">
-  <Checkbox>
-    Checkbox Label
-  </Checkbox>
-  <Button variant="cta">Button</Button>
+<Provider colorScheme="dark" scale="large" UNSAFE_style={{padding: '15px'}}>
+  <Form>
+    <div>
+      <TextField label="Email" />
+    </div>
+    <Checkbox>
+      Checkbox Label
+    </Checkbox>
+    <div>
+      <Button variant="primary">Button</Button>
+    </div>
+  </Form>
 </Provider>
+```
+
+### Theme
+
+In this example the `theme` is being changes so that the "light" `theme`'s css
+is being applied to the "dark" `colorScheme`.
+
+```tsx example
+function Example() {
+  /*
+   * These are imported elsewhere in the file and commented out in this example
+   * as a reminder of where the variables come from.
+   */
+  // import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+  // import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+
+  let theme = {
+    dark: themeLight,
+    medium: scaleMedium
+  };
+
+  return (
+    <Provider theme={theme} colorScheme="dark">
+      <Form>
+        <div>
+          <TextField label="Email" />
+        </div>
+        <Checkbox>
+          Checkbox Label
+        </Checkbox>
+        <div>
+          <Button variant="primary">Button</Button>
+        </div>
+      </Form>
+    </Provider>
+  );
+}
+
 ```
 
 ### Locale
 
-Adjust the app locale from the browser value, which changes how all children
+Adjust the app `locale` from the browser value, which changes how all children
 components are internationalized.
 
 ```tsx example
 <Provider locale="he-IL">
-  <Checkbox>
-    Checkbox Label
-  </Checkbox>
-  <Button variant="cta">Button</Button>
+  <Form>
+    <div>
+      <TextField label="Email" />
+    </div>
+    <Checkbox>
+      Checkbox Label
+    </Checkbox>
+    <div>
+      <Button variant="primary">Button</Button>
+    </div>
+  </Form>
+</Provider>
+```
+
+## Provider Nesting
+
+Providers may be nested. The parent provider passes its global settings props (`theme`) down to the
+children providers, but not its context props (`isDisabled`, `isEmphasized`, etc.).
+
+```tsx example
+<Provider isDisabled scale="large">
+  <Button variant="primary">Button</Button>
+  <Provider isQuiet>
+    <Button variant="primary">Button</Button>
+  </Provider>
 </Provider>
 ```
 
