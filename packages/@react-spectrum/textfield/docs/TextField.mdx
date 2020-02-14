@@ -1,0 +1,187 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/textfield';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {TextField} from '@react-spectrum/textfield';
+```
+
+# TextField
+
+<p>{docs.exports.TextField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TextField']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/text-field/'}
+  ]} />
+
+## Example
+
+```tsx example
+<TextField label="Name" />
+```
+
+## Value
+
+A TextFields's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, providing a `value` prop creates a TextField with a controlled value. 
+
+```tsx example
+<TextField defaultValue="Default text" label="Uncontrolled TextField" marginEnd="20px" />
+<TextField value="Default text" label="Controlled TextField" />
+```
+
+Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop. 
+Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the control with a visible label.
+
+```tsx example
+<TextField placeholder="abc@adobe.com" label="Email" />
+```
+
+## Labeling
+
+A visual label should be provided for the TextField using the `label` prop. If the Textfield is required, the `isRequired` and 
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<TextField label="Street address" marginEnd="20px" />
+<TextField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
+<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextField label="Street address" necessityIndicator="label" />
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the TextField for 
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+the `id` of the labeling element instead.
+
+```tsx example
+<label id="label-1">Name</label>
+<TextField aria-labelledby="label-1" marginStart="10px" />
+```
+
+### Internationalization
+
+In order to internationalize a TextField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+```tsx example
+<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextField label="Street address" necessityIndicator="label" />
+```
+
+## Events
+
+TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user. 
+For a full list of supported events, see the `Props` table below.
+
+The example below uses `onChange` to update a separate `span` element with the same text entered into the TextField.
+```tsx example
+function Example() {
+  let [text, setText] = React.useState();
+
+  return (
+    <div>
+      <TextField
+        placeholder="Enter some text"
+        onChange={setText}
+        label="Text Mirror"
+        marginEnd="20px"
+      />
+      <span>Mirrored text: {text}</span>
+    </div>
+  );
+}
+```
+
+## Validation
+
+TextFields can display a validation state to communicate to the user whether the current value is valid or invalid. 
+Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextField via the `validationState` prop.
+
+The example below illustrates how one would validate if the user has entered a number larger than 15 into the TextField.
+```tsx example
+function Example() {
+  let defaultValue = '16';
+  let [isValid, setValid] = React.useState(true);
+  let [value, setValue] = React.useState(defaultValue);
+  React.useEffect(() => {
+    let newValue = Number(value);
+    setValid(!isNaN(newValue) && newValue > 15)
+  }, [setValid, value]);
+
+  return (
+    <TextField
+      validationState={isValid ? 'valid' : 'invalid'}
+      placeholder="Enter a number"
+      defaultValue={defaultValue}
+      onChange={setValue}
+      label="Number Field"
+    />
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
+
+## Visual Options
+
+### Quiet 
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
+
+```tsx example
+<TextField label="Email" placeholder="Email Address" isQuiet />
+```
+
+### Disabled
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
+
+```tsx example
+<TextField label="Email" placeholder="Email Address" isDisabled />
+```
+
+### Read Only
+
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled` the TextField remains focusable 
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<TextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Label Alignment
+
+Labels can be aligned to the "start" or the "end" of the TextField. For left-to-right (LTR) languages, "start" refers to the left most edge
+of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TextField label="Email" labelAlign="start" marginEnd="20px" />
+<TextField label="Email" labelAlign="end" />
+```
+
+### Label Position
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+```tsx example
+<TextField label="Email" labelPosition="top" marginEnd="20px" />
+<TextField label="Email" labelPosition="side" />
+```
+
+### Custom Width
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<TextField label="Email" width={'400px'} />
+```

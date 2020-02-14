@@ -15,7 +15,7 @@ export function useDialog(props: DialogProps): DialogAria {
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
-      ref.current.focus();
+      ref.current.focus({preventScroll: true});
     }
   }, [ref]);
 
