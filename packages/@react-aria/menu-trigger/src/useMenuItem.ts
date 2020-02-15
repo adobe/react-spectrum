@@ -41,7 +41,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
     switch (e.key) {
       case ' ':
         if (!isDisabled) {
-          if (role !== 'menuitemcheckbox' && role !== 'menuitemradio' && role !== 'option') {
+          if (role === 'menuitem') {
             if (closeOnSelect) {
               onClose && onClose();
             }

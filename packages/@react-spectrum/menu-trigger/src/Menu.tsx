@@ -53,7 +53,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       setFocusStrategy('first');
     }
 
-    // TODO: add other default focus behaviors
+    // TODO: add other default focus behaviors https://jira.corp.adobe.com/browse/RSP-1399
     // Focus the first selected key (if any)
     if (selectedKeys.size) {
       focusedKey = selectedKeys.values().next().value;
