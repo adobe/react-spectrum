@@ -33,28 +33,18 @@ export interface HoverEvent {
 }
 
 export interface KeyboardEvents {
-  /** 
-   * Handler that is called when a key is pressed.
-   */
+  /** Handler that is called when a key is pressed. */
   onKeyDown?: (e: KeyboardEvent) => void,
-  /** 
-   * Handler that is called when a key is released.
-   */
+  /** Handler that is called when a key is released. */
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
 export interface FocusEvents {
-  /** 
-   * Handler that is called when the element receives focus.
-   */
+  /** Handler that is called when the element receives focus. */
   onFocus?: (e: FocusEvent) => void,
-  /** 
-   * Handler that is called when the element loses focus.
-   */
+  /** Handler that is called when the element loses focus. */
   onBlur?: (e: FocusEvent) => void,
-  /** 
-   * Handler that is called when the element's focus status changes.
-   */
+  /** Handler that is called when the element's focus status changes. */
   onFocusChange?: (isFocused: boolean) => void
 }
 
