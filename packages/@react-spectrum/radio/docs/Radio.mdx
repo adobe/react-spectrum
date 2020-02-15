@@ -66,7 +66,7 @@ When a visible label isn't being used an `aria-label` prop is needed to explicit
 Radio elements should always have a visible label.
 
 ```tsx example
-<RadioGroup aria-label='Favorite Avatar'>
+<RadioGroup aria-label="Favorite Avatar">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
@@ -108,19 +108,19 @@ RadioGroups can display a validation state to communicate to the user if the cur
 Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
 
 ```tsx example
-<RadioGroup label="Example Options" validationState='invalid'>
+<RadioGroup label="Example Options" validationState="invalid">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
 ```
 
-## Radio Props
-
-<PropTable component={docs.exports.Radio} links={docs.links} />
-
 ## RadioGroup Props
 
 <PropTable component={docs.exports.RadioGroup} links={docs.links} />
+
+## Radio Props
+
+<PropTable component={docs.exports.Radio} links={docs.links} />
 
 ## Visual Options
 
@@ -130,7 +130,7 @@ A RadioGroup is vertically aligned by default.
 An optional prop can be passed to the RadioGroup to position the Radio elements inline.
 
 ```tsx example
-<RadioGroup label="Example Options" orientation='horizontal'>
+<RadioGroup label="Example Options" orientation="horizontal">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
@@ -142,7 +142,7 @@ The default position of a label is on top of the RadioGroup.
 An optional prop can be passed to the RadioGroup that will position the label at the start of the topmost Radio.
 
 ```tsx example
-<RadioGroup label="Example Options" labelPosition='side'>
+<RadioGroup label="Example Options" labelPosition="side">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
@@ -155,7 +155,7 @@ For left-to-right (LTR) languages, "start" refers to the left most edge of the R
 and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<RadioGroup label="Example Options" labelAlign='end'>
+<RadioGroup label="Example Options" labelAlign="end">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>
