@@ -10,7 +10,7 @@ export interface InputBase extends FocusableProps {
    */
   isRequired?: boolean,
   /** 
-   * Whether the input should display its "invalid" visual styling. 
+   * Whether the input should display its "valid" or "invalid" visual styling. 
    * @default "valid"
    */
   validationState?: ValidationState,
