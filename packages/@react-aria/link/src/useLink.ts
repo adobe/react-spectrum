@@ -1,4 +1,4 @@
-import {AllHTMLAttributes, SyntheticEvent} from 'react';
+import {AllHTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {DOMProps, PressEvent} from '@react-types/shared';
 import {LinkProps} from '@react-types/link';
 import {useId} from '@react-aria/utils';
@@ -9,7 +9,8 @@ export interface AriaLinkProps extends LinkProps, DOMProps {
   href?: string,
   tabIndex?: number,
   onPress?: (e: PressEvent) => void,
-  onClick?: (e: SyntheticEvent) => void
+  onClick?: (e: SyntheticEvent) => void,
+  ref: RefObject<HTMLElement | null>
 }
 
 export interface LinkAria {
@@ -26,7 +27,8 @@ export function useLink(props: AriaLinkProps): LinkAria {
     onPressStart,
     onPressEnd,
     onClick: deprecatedOnClick,
-    isDisabled
+    isDisabled,
+    ref
   } = props;
 
   let linkProps: AllHTMLAttributes<HTMLDivElement>;
@@ -42,7 +44,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
     console.warn('href is deprecated, please use an anchor element as children');
   }
 
-  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled});
+  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
 
   return {
     linkProps: {

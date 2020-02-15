@@ -1,10 +1,10 @@
-import {DOMProps, FocusableProps, MultipleSelection, PressEvents, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, HoverEvents, MultipleSelection, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export interface ButtonProps extends DOMProps, StyleProps, PressEvents, FocusableProps {
+export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
   /** Whether the button is disabled */
   isDisabled?: boolean,
-  /** 
+  /**
    * The HTML element or React element used to render the button, e.g. "div", "a", or `RouterLink`
    * @default "button"
    */
