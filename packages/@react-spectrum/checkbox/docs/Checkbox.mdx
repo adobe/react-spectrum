@@ -6,7 +6,7 @@ import packageData from '../package.json';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 
 ```jsx import
- import {Checkbox} from '@react-spectrum/Checkbox';
+ import {Checkbox} from '@react-spectrum/checkbox';
  ```
 
 # Checkbox
@@ -43,29 +43,25 @@ For languages that are read right to left (e.g. Hebrew and Arabic), the Checkbox
 
 ## Value
 
+A Checkbox's state is unchecked by default. An uncontrolled checked state can be provided by using the `defaultSelected` prop.
+Alternatively, providing an `isSelected` prop creates a Checkbox with a controlled checked state.
+
+```tsx example
+<Checkbox defaultSelected> Uncontrolled </Checkbox>
+```
+
+```tsx example
+<Checkbox isSelected> Controlled </Checkbox>
+```
+
 ### isIndeterminate
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Mixed-value)
 
 When a Checkbox is indeterminate, it overrides the selection state.
-The indeterminate visual state will be maintained irregardless of click events.
+The indeterminate visual state will be maintained regardless of click events.
 
 ```tsx example
 <Checkbox isIndeterminate> Checkbox Label </Checkbox>
-```
-
-### defaultSelected
-
-Renders a Checkbox in a checked state.
-
-```tsx example
-<Checkbox defaultSelected> Checkbox Label </Checkbox>
-```
-
-### isSelected
-
-Puts the Checkbox in a controlled mode, preventing the user from toggling to an unchecked state via a click event.
-
-```tsx example
-<Checkbox isSelected> Checkbox Label </Checkbox>
 ```
 
 ## Events
