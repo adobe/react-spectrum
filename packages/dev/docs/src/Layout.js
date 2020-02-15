@@ -38,14 +38,24 @@ const mdxComponents = {
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>
+  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
+  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
 };
+
+function getTarget(href) {
+  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com/.test(href)) {
+    return null;
+  }
+
+  return '_blank';
+}
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
-    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], docStyles.provider, highlightCss.spectrum)}>
+    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], typographyStyles.spectrum, docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
             prevent a flash between themes when loading the page, an inline script is put
@@ -58,7 +68,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
             let update = () => {
-              if (dark.matches || localStorage.theme === "dark") {
+              if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
                 classList.add("${theme.dark['spectrum--dark']}");
               } else {
@@ -81,16 +91,24 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             window.addEventListener('storage', update);
           })();
         `.replace(/\n|\s{2,}/g, '')}} />
-        <script src="https://use.typekit.net/pbi5ojv.js" />
+        <link rel="stylesheet" href="https://use.typekit.net/uma8ayv.css" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
       </head>
       <body>
-        <div id="themeSwitcher" />
+        <div className={docStyles.pageHeader} id="header" />
         <nav className={docStyles.nav}>
           <header>
             <a href={publicUrl}>
-              <img src="https://spectrum.adobe.com/static/adobe_logo-2.svg" alt="Adobe Logo" />
+              <svg viewBox="0 0 30 26" fill="#E1251B">
+                <polygon points="19,0 30,0 30,26" />
+                <polygon points="11.1,0 0,0 0,26" />
+                <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+              </svg>
               <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
             </a>
           </header>
