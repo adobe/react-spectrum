@@ -46,6 +46,12 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
     <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        {/* Server rendering means we cannot use a real <Provider> component to do this.
+            Instead, we apply the default theme classes to the html element. In order to
+            prevent a flash between themes when loading the page, an inline script is put
+            as close to the top of the page as possible to switch the theme as soon as
+            possible during loading. It also handles when the media queries update, or
+            local storage is updated. */}
         <script 
           dangerouslySetInnerHTML={{__html: `(() => {
             let classList = document.documentElement.classList;
