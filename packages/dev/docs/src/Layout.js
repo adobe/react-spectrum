@@ -5,7 +5,6 @@ import highlightCss from './syntax-highlight.css';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
@@ -44,39 +43,73 @@ const mdxComponents = {
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
-    <html lang="en-US">
+    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        {/* Server rendering means we cannot use a real <Provider> component to do this.
+            Instead, we apply the default theme classes to the html element. In order to
+            prevent a flash between themes when loading the page, an inline script is put
+            as close to the top of the page as possible to switch the theme as soon as
+            possible during loading. It also handles when the media queries update, or
+            local storage is updated. */}
+        <script 
+          dangerouslySetInnerHTML={{__html: `(() => {
+            let classList = document.documentElement.classList;
+            let dark = window.matchMedia('(prefers-color-scheme: dark)');
+            let fine = window.matchMedia('(any-pointer: fine)');
+            let update = () => {
+              if (dark.matches || localStorage.theme === "dark") {
+                classList.remove("${theme.light['spectrum--light']}");
+                classList.add("${theme.dark['spectrum--dark']}");
+              } else {
+                classList.add("${theme.light['spectrum--light']}");
+                classList.remove("${theme.dark['spectrum--dark']}");
+              }
+
+              if (!fine.matches) {
+                classList.remove("${theme.medium['spectrum--medium']}");
+                classList.add("${theme.large['spectrum--large']}");
+              } else {
+                classList.add("${theme.medium['spectrum--medium']}");
+                classList.remove("${theme.large['spectrum--large']}");
+              }
+            };
+            
+            update();
+            dark.addListener(update);
+            fine.addListener(update);
+            window.addEventListener('storage', update);
+          })();
+        `.replace(/\n|\s{2,}/g, '')}} />
         <script src="https://use.typekit.net/pbi5ojv.js" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
       </head>
       <body>
-        <Provider theme={theme} colorScheme="light" scale="medium" UNSAFE_className={classNames(docStyles.provider, highlightCss.spectrum)}>
-          <nav className={docStyles.nav}>
-            <header>
-              <a href={publicUrl}>
-                <img src="https://spectrum.adobe.com/static/adobe_logo-2.svg" alt="Adobe Logo" />
-                <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
-              </a>
-            </header>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pages.filter(p => p.name !== 'index.html').map(p => (
-                <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
-                  <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <main>
-            <article className={typographyStyles['spectrum-Typography']}>
-              <MDXProvider components={mdxComponents}>
-                {children}
-              </MDXProvider>
-            </article>
-            <ToC toc={toc} />
-          </main>
-        </Provider>
+        <div id="themeSwitcher" />
+        <nav className={docStyles.nav}>
+          <header>
+            <a href={publicUrl}>
+              <img src="https://spectrum.adobe.com/static/adobe_logo-2.svg" alt="Adobe Logo" />
+              <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
+            </a>
+          </header>
+          <ul className={sideNavStyles['spectrum-SideNav']}>
+            {pages.filter(p => p.name !== 'index.html').map(p => (
+              <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
+                <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <main>
+          <article className={typographyStyles['spectrum-Typography']}>
+            <MDXProvider components={mdxComponents}>
+              {children}
+            </MDXProvider>
+          </article>
+          <ToC toc={toc} />
+        </main>
         {scripts.map(s => <script type={s.type} src={s.url} />)}
       </body>
     </html>

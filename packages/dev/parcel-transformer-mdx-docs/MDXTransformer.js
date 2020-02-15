@@ -26,10 +26,10 @@ module.exports = new Transformer({
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<Provider theme={theme} UNSAFE_className="example"><${name} /></Provider>, document.getElementById("${id}"));
+                ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
               })();`;
             } else {
-              code = `ReactDOM.render(<Provider theme={theme} UNSAFE_className="example">${code}</Provider>, document.getElementById("${id}"));`;
+              code = `ReactDOM.render(<ExampleProvider>${code}</ExampleProvider>, document.getElementById("${id}"));`;
             }
 
             exampleCode.push(code);
@@ -100,8 +100,8 @@ module.exports = new Transformer({
       ?  ''
       : `import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from '@react-spectrum/provider';
-import {theme} from '@react-spectrum/theme-default';
+import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+import '@react-spectrum/docs/src/client';
 ${exampleCode.join('\n')}
 export default {};
 `;
@@ -145,7 +145,7 @@ ${compiled}
         code: exampleBundle,
         uniqueKey: 'example',
         env: {
-          outputFormat: options.scopeHoist ? 'esmodule' : 'global'
+          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global'
         }
       });
 
