@@ -50,6 +50,11 @@ export interface HoverEvents {
 }
 
 export interface PressEvents {
+  /**
+   * Called when the mouse or touch is released
+   * @param e A press event
+   * @returns nothing
+   */
   onPress?: (e: PressEvent) => void,
   onPressStart?: (e: PressEvent) => void,
   onPressEnd?: (e: PressEvent) => void,

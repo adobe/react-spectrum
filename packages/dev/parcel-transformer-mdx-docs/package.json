@@ -1,0 +1,20 @@
+{
+  "name": "parcel-transformer-mdx-docs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "MDXTransformer.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@atom-languages/language-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2",
+    "@mdx-js/mdx": "^1.5.5",
+    "@mdx-js/react": "^1.5.5",
+    "@parcel/plugin": "nightly",
+    "mdast-util-toc": "^5.0.1",
+    "remark-slug": "5.1.2",
+    "remark-toc": "^7.0.0",
+    "remark-tree-sitter": "^1.0.3",
+    "unist-util-flatmap": "^1.0.0"
+  }
+}
