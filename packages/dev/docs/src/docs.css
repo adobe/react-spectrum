@@ -227,12 +227,14 @@ h2.sectionHeader {
 }
 
 @media (max-width: 1200px) {
+  /* Hide the table of contents */
   main {
     margin-right: 0;
   }
 }
 
 @media (max-width: 1020px) {
+  /* Turn the sidenav into a hamburger menu */
   .nav {
     position: fixed;
     top: 0;
@@ -271,16 +273,19 @@ h2.sectionHeader {
     padding: 40px 24px;
   }
 
+  /* Show the toolbar at the top with the hamburger and theme switcher buttons */
   .pageHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
     background: var(--spectrum-global-color-gray-50);
     z-index: 50;
   }
 
+  /* Expand the component description to full width */
   article h1 + p {
     max-width: initial !important;
   }
 
+  /* Collapse the prop table into a list with key/value pairs */
   .propTable tr {
     display: table;
     width: 100%;
