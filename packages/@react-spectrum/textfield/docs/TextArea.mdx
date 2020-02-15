@@ -16,9 +16,7 @@ import {TextArea} from '@react-spectrum/textfield';
 <HeaderInfo
   packageData={packageData}
   componentNames={['TextArea']}
-  sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/text-field/'}
-  ]} />
+  sourceData={[]} />
 
 ## Example
 
@@ -28,19 +26,25 @@ import {TextArea} from '@react-spectrum/textfield';
 
 ## Value
 
-See [TextField: Value](http://localhost:1234/react-spectrum/TextField.html#value) for more info on these props. 
-Examples for `value`, `defaultValue`, and `placeholder` are as follows:
+A TextArea's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, providing a `value` prop creates a TextArea with a controlled value. 
 
 ```tsx example
 <TextArea defaultValue="Default text" label="Uncontrolled TextArea" marginEnd="20px" />
-<TextArea value="Default text" label="Controlled TextArea" marginEnd="20px" />
+<TextArea value="Default text" label="Controlled TextArea" />
+```
+
+Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop. 
+Placeholder text will only appear when the TextArea is empty, and should not be used as a substitute for labeling the control with a visible label.
+
+```tsx example
 <TextArea placeholder="abc@adobe.com" label="Email" />
 ```
 
 ## Labeling
 
-See [TextField: Labeling](http://localhost:1234/react-spectrum/TextField.html#labeling) for more info on these props.
-Examples for `label`, `isRequired`, and `necessityIndicator` are as follows:
+A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and 
+`necessityIndicator` props can be used to show a required state.
 
 ```tsx example
 <TextArea label="Street address" marginEnd="20px" />
@@ -51,16 +55,14 @@ Examples for `label`, `isRequired`, and `necessityIndicator` are as follows:
 
 ### Accessibility
 
-See [TextField: Labeling Accessibility](http://localhost:1234/react-spectrum/TextField.html#accessibility) for labeling accessibility guidelines.
+If a visible label isn't specified, an `aria-label` must be provided to the TextArea for 
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+the `id` of the labeling element instead.
 
 ```tsx example
 <label id="label-1">Name</label>
 <TextArea aria-labelledby="label-1" marginStart="10px" />
 ```
-
-## ALTERNATE 
-ALTERNATE SCHEME BELOW (ESSENTIALLY COPY PASTE BUT REPLACED TEXTFIELD WITH TEXTAREA)
-
 
 ### Internationalization
 
@@ -75,7 +77,7 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 ## Events
 
 TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user. 
-For a full list of supported events, see the `Props` table below.
+For a full list of supported events, see the [Props](#props) table below.
 
 The example below uses `onChange` to update a separate `span` element with the same text entered into the TextArea.
 ```tsx example
