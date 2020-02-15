@@ -14,19 +14,16 @@ export interface InputBase extends FocusableProps {
    * @default "valid"
    */
   validationState?: ValidationState,
-  /** Whether the input can be selected but not changed by the user */
+  /** Whether the input can be selected but not changed by the user. */
   isReadOnly?: boolean
 }
 
 export interface ValueBase<T> {
-  /** The value of an input. Sets input behavior to "controlled". */
+  /** The current value (controlled). */
   value?: T,
-  /** The value of an input. Sets input behavior to "uncontrolled". */
+  /** The default value (uncontrolled). */
   defaultValue?: T,
-  /** 
-   * A user defined callback function triggered upon any change to the input's value.
-   * Passes the new value as an input to the callback.
-   */
+  /** Handler that is called when the value changes. */
   onChange?: (value: T) => void,
 }
 

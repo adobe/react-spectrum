@@ -23,8 +23,7 @@ export interface SpectrumLabelableProps extends LabelableProps {
    */
   labelAlign?: Alignment,
   /** 
-   * Controls if the label displays its field's or group's required status via 
-   * an icon or a text label.
+   * Whether the required state should be shown as an icon or text.
    * @default "icon" 
    */
   necessityIndicator?: NecessityIndicator
