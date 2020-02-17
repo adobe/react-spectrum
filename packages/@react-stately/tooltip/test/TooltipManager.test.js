@@ -2,21 +2,137 @@ import {TooltipManager} from '../';
 
 describe('TooltipManager', () => {
 
-  it('can show a tooltip', async function () {
+  it('can show a tooltip', () => {
+    jest.useFakeTimers();
     let tooltipManager = new TooltipManager();
     let setOpenSpy = jest.fn();
     let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
     let triggerId = 'triggerId-1';
+
     expect(tooltipManager.visibleTooltips).toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
+
     tooltipManager.showTooltipDelayed(tooltip, triggerId);
-    await new Promise((a) => setTimeout(a, 200));
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    jest.runAllTimers();
+
     expect(setOpenSpy).toHaveBeenCalledWith(true);
     expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
   });
 
-  // More are coming ...
+  it('can hide the currently visible tooltip', () => {
+    jest.useFakeTimers();
+    let tooltipManager = new TooltipManager();
+    let setOpenSpy = jest.fn();
+    let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
+    let triggerId = 'triggerId-1';
+
+    tooltipManager.showTooltipDelayed(tooltip, triggerId);
+
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    jest.runAllTimers();
+
+    expect(setOpenSpy).toHaveBeenCalledWith(true);
+    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+    expect(tooltipManager.hoverShowTimeout).toBeNull();
+
+    tooltipManager.hideTooltipDelayed(tooltip, triggerId);
+
+    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
+    expect(tooltipManager.hoverHideTimeout).toBeTruthy();
+    expect(tooltipManager.hoverShowTimeout).toBeNull();
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    jest.runAllTimers();
+    expect(setOpenSpy).toHaveBeenCalledWith(false);
+    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+    expect(tooltipManager.hoverShowTimeout).toBeNull();
+  });
+
+  it('will close the currently open tooltip when showing a new one', () => {
+    jest.useFakeTimers();
+    let tooltipManager = new TooltipManager();
+    let setOpenSpy = jest.fn();
+    let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
+    let triggerId = 'triggerId-1';
+
+    tooltipManager.showTooltipDelayed(tooltip, triggerId);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    jest.runAllTimers();
+
+    let setOpenSpy2 = jest.fn();
+    let tooltip2 = {open: false, setOpen: setOpenSpy2, tooltipManager};
+    let triggerId2 = 'triggerId-2';
+
+    tooltipManager.showTooltipDelayed(tooltip2, triggerId2);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    jest.runAllTimers();
+
+    expect(setOpenSpy).toHaveBeenLastCalledWith(false);
+    expect(setOpenSpy2).toHaveBeenCalledWith(true);
+    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId: triggerId2, state: tooltip2});
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+    expect(tooltipManager.hoverShowTimeout).toBeNull();
+  });
+
+  it('will not show the tooltip if hidden before the delayed show completes', () => {
+    jest.useFakeTimers();
+    let tooltipManager = new TooltipManager();
+    let setOpenSpy = jest.fn();
+    let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
+    let triggerId = 'triggerId-1';
+
+    tooltipManager.showTooltipDelayed(tooltip, triggerId);
+
+    expect(tooltipManager.hoverShowTimeout).not.toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+
+    jest.advanceTimersByTime(100);
+    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.hoverShowTimeout).not.toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+
+    tooltipManager.hideTooltip(tooltip);
+
+    expect(setOpenSpy).toHaveBeenCalledWith(false);
+    expect(tooltipManager.visibleTooltips).toBeNull();
+  });
+
+  it('will not show the first delayed tooltip if a second is delay shown before the first shows', () => {
+    jest.useFakeTimers();
+    let tooltipManager = new TooltipManager();
+    let setOpenSpy = jest.fn();
+    let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
+    let triggerId = 'triggerId-1';
+
+    tooltipManager.showTooltipDelayed(tooltip, triggerId);
+    expect(tooltipManager.hoverShowTimeout).not.toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+
+    jest.advanceTimersByTime(100);
+    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.hoverShowTimeout).not.toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+
+    let timer1 = tooltipManager.hoverShowTimeout;
+    let setOpenSpy2 = jest.fn();
+    let tooltip2 = {open: false, setOpen: setOpenSpy2, tooltipManager};
+    let triggerId2 = 'triggerId-2';
+
+    tooltipManager.showTooltipDelayed(tooltip2, triggerId2);
+
+    expect(tooltipManager.hoverShowTimeout).not.toBeNull();
+    expect(tooltipManager.hoverHideTimeout).toBeNull();
+
+    // run past first tooltips show timer
+    jest.advanceTimersByTime(150);
+    // finish all the timers
+    jest.runAllTimers();
+    expect(setOpenSpy2).toHaveBeenCalledWith(true);
+    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId: triggerId2, state: tooltip2});
+  });
 });

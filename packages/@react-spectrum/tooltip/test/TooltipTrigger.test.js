@@ -145,8 +145,7 @@ describe('TooltipTrigger', function () {
 
       expect(tooltip).not.toBeInTheDocument();
     });
-    // Pending: mouseOut should close the tooltip ... look at SplitView tests as an example
+    // Pending: mouseOut should close the tooltip ... look at v3 SplitView tests & v2 OverlayTrigger tests as an example
     // Pending: mousing into tooltip should stop it from closing
   });
-  // only one tooltip should appear on the screen at a time covered by tooltip manager tests
 });
