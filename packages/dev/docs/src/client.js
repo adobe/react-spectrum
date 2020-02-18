@@ -1,3 +1,4 @@
+import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {Content, Header} from '@react-spectrum/view';
@@ -8,7 +9,8 @@ import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {ThemeProvider} from './ThemeSwitcher';
+import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
+import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
 
 let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
 for (let link of links) {
@@ -61,5 +63,33 @@ function LinkPopover({id}) {
     </Dialog>
   );
 }
+
+function Hamburger() {
+  let onPress = () => {
+    document.querySelector('.' + docsStyle.nav).classList.toggle(docsStyle.visible);
+  };
+
+  useEffect(() => {
+    let nav = document.querySelector('.' + docsStyle.nav);
+    let main = document.querySelector('main');
+    let onClick = () => {
+      nav.classList.remove(docsStyle.visible);
+    };
+
+    main.addEventListener('click', onClick);
+    return () => {
+      main.removeEventListener('click', onClick);
+    };
+  }, []);
+
+  return (
+    <ActionButton icon={<ShowMenu />} onPress={onPress} />
+  );
+}
+
+ReactDOM.render(<>
+  <Hamburger />
+  <ThemeSwitcher />
+</>, document.getElementById('header'));
 
 attachToToC();
