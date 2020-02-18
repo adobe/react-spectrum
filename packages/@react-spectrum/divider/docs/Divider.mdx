@@ -23,49 +23,37 @@ import {Flex} from '@react-spectrum/layout';
 
 ## Example
 
-```jsx example
-function Horizontal () {
-  return (
-    <Flex width="50%" flexDirection="column">
-        Content above
-        <Divider marginTop="10px" marginBottom="10px" />
-        Content below
-    </Flex>
-  );
-}
+### Horizontal
+```tsx example
+Content above
+<Divider marginTop="10px" marginBottom="10px" />
+Content below
+```
+
+### Vertical
+Vertical dividers work in Flex or Grid containers
+```tsx example
+<Flex width="50%" height="100px">
+    Content left
+    <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
+    Content right
+</Flex>
 ```
 
 ## Props
 
 <PropTable component={docs.exports.Divider} links={docs.links} />
 
-## Visual Options
-
-```jsx example
-function Vertical () {
-  return (
-    <Flex width="50%" height="100px">
-        Content left
-        <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
-        Content right
-    </Flex>
-  );
-}
-```
-
-
 ## Frequently encountered issues
 
+### Flex Centering
+
 When using a Flexed container that does anything other than align items stretch. You must set the Divider to align itself as stretch so it takes up the full cross axis size. Otherwise it will look as though it hasn't rendered.
-```jsx example
-function VerticalCentered () {
-  return (
-    <Flex width="50%" height="100px" alignItems="center">
-        Content left
-        <Divider orientation="vertical" alignSelf="stretch" marginLeft="10px" marginRight="10px" />
-        Content right
-    </Flex>
-  );
-}
+```tsx example
+<Flex height="100px" alignItems="center">
+    Content left
+    <Divider orientation="vertical" alignSelf="stretch" marginLeft="10px" marginRight="10px" />
+    Content right
+</Flex>
 ```
 
