@@ -1,7 +1,6 @@
 import {AllHTMLAttributes, useState} from 'react';
 import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
 import {ButtonGroupProps} from '@react-types/button';
-import {FocusEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
@@ -58,8 +57,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
       ...mergeProps(focusWithinProps, listProps)
     },
     buttonProps: {
-      role: BUTTON_ROLES[selectionMode],
-      onFocus: (e: FocusEvent) => {e.continuePropagation();}
+      role: BUTTON_ROLES[selectionMode]
     }
   };
 }
