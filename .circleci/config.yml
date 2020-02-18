@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
 jobs:
-  build-image:
+  build:
     docker:
       - image: circleci/node:12.10
 
@@ -119,19 +119,19 @@ workflows:
   version: 2
   test:
     jobs:
-      - build-image
+      - build
       - test:
           requires:
-            - build-image
+            - build
       - lint:
           requires:
-            - build-image
+            - build
       - storybook:
           requires:
-            - build-image
+            - build
       - docs:
           requires:
-            - build-image
+            - build
       - deploy:
           requires:
             - lint
