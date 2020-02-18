@@ -1,5 +1,5 @@
 import {chain, useId} from '@react-aria/utils';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, FocusEvents} from '@react-types/shared';
 import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
 import {TooltipProps} from '@react-types/tooltip';
@@ -20,7 +20,7 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps,
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
@@ -91,7 +91,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
-      ...(triggerType === 'hover' && hoverProps)
+      ...(triggerType === 'hover' && hoverProps),
+      onFocus: triggerType === 'hover' || triggerType === 'focus' ? handleDelayedShow : undefined,
+      onBlur: triggerType === 'hover' || triggerType === 'focus' ? handleDelayedHide : undefined
     },
     tooltipProps: {
       ...overlayProps,

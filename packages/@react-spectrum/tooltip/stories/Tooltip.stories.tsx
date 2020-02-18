@@ -47,11 +47,11 @@ storiesOf('Tooltip', module)
     'triggered by click, placement: right',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
-    'triggered by hover, placement: top',
+    'triggered by hover and focus, placement: top',
     () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'hover'})
   ).add(
-    'triggered by hover, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'hover'})
+    'triggered by hover and focus, placement: bottom',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'focus'})
   ).add(
     'supports disable prop: click',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
