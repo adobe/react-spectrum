@@ -1,0 +1,133 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/statuslight';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import '@react-spectrum/docs/src/client';
+import {StatusLight} from '@react-spectrum/statuslight';
+import {Switch} from '@react-spectrum/switch';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+```
+
+# StatusLight
+
+<p>{docs.exports.StatusLight.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['StatusLight']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/status-light/'}
+  ]} />
+
+## Example
+
+```tsx example
+<StatusLight variant="positive">Default</StatusLight>
+```
+
+## Content
+
+A visible label can be provided by passing children. Spectrum dictates that it should always be used with a label, never alone.
+To indicate status use [semantic](#semantic-colors) or [label](#label-colors) variant color.
+
+```tsx example
+<StatusLight variant="positive">Semantic color</StatusLight>
+<StatusLight variant="yellow">Label color</StatusLight>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+The visual cue provided by the status light is insufficient to comply with [WCAG 2.1 Success Criterion 1.4.1 on the Use of Color](https://www.w3.org/TR/WCAG21/#use-of-color),
+which requires that "color is not used as the only visual means of conveying information, indicating an action,
+prompting a response, or distinguishing a visual element."
+If StatusLight communicates a state, like "Approved" or "Failed", that state must be included as part of the label.
+
+#### Using role="status"
+
+In cases where the status changes at runtime,
+it may be appropriate to add `role="status"` so that the status change will be announced politely by assistive technology.
+When using `role="status"`, be sure to provide appropriate context for the status change in the label for the StatusLight.
+A status change that announces "Approved" without meaningful context would not be helpful. 
+Also, use caution when adding `role="status"` in cases where multiple status lights can update at once.
+For example, with a large list of files that change status when deployed,
+a single announcement when all files have deployed would be preferable to the verbosity of each file status announcing individually.
+
+```tsx example
+function Example() {
+  let [isApproved, setIsApproved] = React.useState(false);
+
+  return (
+    <div>
+      <StatusLight role="stauts" variant={isApproved ? "positive" : "notice" }>
+        <VisuallyHidden>Pull Request</VisuallyHidden>
+        {isApproved ? "Approved" : "Needs Approval"}
+      </StatusLight>
+      <Switch onChange={() => setIsApproved(!isApproved)}>Toggle Status</Switch>
+    </div>
+  );
+}
+```
+
+### Internationalization
+
+To internationalize a StatusLight, a localized string should be set as the child content of the StatusLight.
+For languages that are read right to left (e.g. Hebrew and Arabic), the StatusLight is placed on the right side of the text.
+
+## Props
+
+<PropTable component={docs.exports.StatusLight} links={docs.links} />
+
+## Visual Options
+
+### Variant
+
+#### Semantic colors
+[View guidelines](https://spectrum.adobe.com/page/status-light/#Semantic-variants)
+
+When status lights have a semantic meaning, they should use semantic colors.
+Use the appropriate color to indicate status as follows.
+
+```tsx example
+<StatusLight variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</StatusLight>
+<StatusLight variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</StatusLight>
+<StatusLight variant="notice">Orange: Needs Approval, Pending, Scheduled, Syncing, Indexing, Processing</StatusLight>
+<StatusLight variant="negative">Red: Error, Alert, Rejected, Failed</StatusLight>
+<StatusLight variant="info">Blue: Active, In Use, Live, Published</StatusLight>
+```
+
+#### Label colors
+[View guidelines](https://spectrum.adobe.com/page/status-light/#Non-semantic-variants)
+
+When status lights are used to color code categories and labels commonly found in data visualization,
+they use label colors. The ideal usage for these is when there are 8 or fewer categories or labels being color coded.
+Use them in the following order to ensure the greatest possible color differences for multiple forms of color blindness:
+
+```tsx example
+<StatusLight variant="indigo">Indigo</StatusLight>
+<StatusLight variant="celery">Celery</StatusLight>
+<StatusLight variant="magenta">Magenta</StatusLight>
+<StatusLight variant="yellow">Yellow</StatusLight>
+<StatusLight variant="fuchsia">Fuchsia</StatusLight>
+<StatusLight variant="seafoam">Seafoam</StatusLight>
+<StatusLight variant="chartreuse">Chartreuse</StatusLight>
+<StatusLight variant="purple">Purple</StatusLight>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/status-light/#Disabled)
+
+Use `isDisabled` prop to match the state of a containing element.
+Note that the `isDisabled` prop alters the visual style of the StatusLight,
+but does not convey any state information to assistive technology.
+
+```tsx example
+<StatusLight variant="yellow" isDisabled >Yellow</StatusLight>
+```
