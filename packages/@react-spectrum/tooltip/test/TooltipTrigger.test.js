@@ -49,39 +49,7 @@ describe('TooltipTrigger', function () {
     });
   });
 
-  function renderClickTrigger() {
-    return render(
-      <Provider theme={theme}>
-        <TooltipTrigger type="click">
-          <ActionButton>Trigger</ActionButton>
-          <Tooltip>content</Tooltip>
-        </TooltipTrigger>
-      </Provider>
-    );
-  }
-
   describe('click related tests', function () {
-
-    function verifyClickTriggerToggle() {
-      jest.useFakeTimers();
-      let tree = renderClickTrigger();
-      let triggerButton = tree.getByRole('button');
-
-      triggerPress(triggerButton);
-
-      expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
-      jest.runAllTimers();
-
-      let tooltip = tree.getByRole('tooltip');
-      expect(tooltip).toBeTruthy();
-
-      triggerPress(triggerButton);
-
-      expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
-      jest.runAllTimers();
-
-      expect(tooltip).not.toBeInTheDocument();
-    }
 
     it('a click event can open the tooltip', async function () {
       let {getByRole} = render(
@@ -98,17 +66,34 @@ describe('TooltipTrigger', function () {
 
       let tooltip = getByRole('tooltip');
 
-      // wait for appearance
       await wait(() => {
         expect(tooltip).toBeVisible();
       });
     });
 
-    it.each`
-      Name             | Component
-      ${'TooltipTrigger'} | ${TooltipTrigger}
-    `('$Name toggles the tooltip on click events', function () {
-      verifyClickTriggerToggle();
+    it('a click event can close the tooltip', async function () {
+      let {getByText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByText('Trigger');
+      triggerPress(button);
+
+      let tooltip = getByText('content');
+
+      expect(tooltip).toBeInTheDocument();
+
+      triggerPress(button);
+
+      await new Promise((a) => setTimeout(a, 300));
+
+      expect(tooltip.id).not.toBeTruthy();
+      expect(button).not.toHaveAttribute('aria-describedby', tooltip.id);
     });
 
     it('pressing escape should close the tooltip after a click event', async function () {
@@ -153,7 +138,7 @@ describe('TooltipTrigger', function () {
       let button = getByText('Trigger');
       fireEvent.mouseOver(button);
 
-      await new Promise((a) => setTimeout(a, 300));
+      await new Promise((b) => setTimeout(b, 300));
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
@@ -166,41 +151,9 @@ describe('TooltipTrigger', function () {
     });
   });
 
-  function renderHoverTrigger() {
-    return render(
-      <Provider theme={theme}>
-        <TooltipTrigger type="hover">
-          <ActionButton>Trigger</ActionButton>
-          <Tooltip>content</Tooltip>
-        </TooltipTrigger>
-      </Provider>
-    );
-  }
-
   describe('hover related tests', function () {
 
-    function verifyHoverTriggerToggle() {
-      jest.useFakeTimers();
-      let tree = renderHoverTrigger();
-      let triggerButton = tree.getByRole('button');
-
-      fireEvent.mouseOver(triggerButton);
-
-      expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
-      jest.runAllTimers();
-
-      let tooltip = tree.getByRole('tooltip');
-      expect(tooltip).toBeTruthy();
-
-      fireEvent.mouseOut(triggerButton);
-
-      expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
-      jest.runAllTimers();
-
-      expect(tooltip).not.toBeInTheDocument();
-    }
-
-    it('triggered by mouseOver event', async function () {
+    it('a mouseOver event can open the tooltip', async function () {
       let {getByText} = render(
         <Provider theme={theme}>
           <TooltipTrigger type="hover">
@@ -213,17 +166,36 @@ describe('TooltipTrigger', function () {
       let button = getByText('Trigger');
       fireEvent.mouseOver(button);
 
-      await new Promise((b) => setTimeout(b, 400));
+      await new Promise((c) => setTimeout(c, 300));
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
     });
 
-    it.each`
-      Name             | Component
-      ${'TooltipTrigger'} | ${TooltipTrigger}
-    `('$Name toggles the tooltip on mouseOver and mouseOut events', function () {
-      verifyHoverTriggerToggle();
+    it('a mouseOut event can close the tooltip', async function () {
+      let {getByText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger type="hover">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByText('Trigger');
+      fireEvent.mouseOver(button);
+
+      await new Promise((c) => setTimeout(c, 300));
+
+      let tooltip = getByText('content');
+      expect(tooltip).toBeInTheDocument();
+
+      fireEvent.mouseOut(button);
+
+      await new Promise((d) => setTimeout(d, 300));
+
+      expect(tooltip.id).not.toBeTruthy();
+      expect(button).not.toHaveAttribute('aria-describedby', tooltip.id);
     });
   });
 });

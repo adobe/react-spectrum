@@ -118,7 +118,6 @@ describe('TooltipManager', () => {
     expect(tooltipManager.hoverShowTimeout).not.toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
 
-    let timer1 = tooltipManager.hoverShowTimeout;
     let setOpenSpy2 = jest.fn();
     let tooltip2 = {open: false, setOpen: setOpenSpy2, tooltipManager};
     let triggerId2 = 'triggerId-2';
