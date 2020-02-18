@@ -191,14 +191,19 @@ function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-/* Unused */
 function renderHTMLfromMarkdown(description) {
-  if (description) {
+  if (description && description !== 'The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button.') {
+                                            // ^throws a.replace is not a function as an error 
+    console.log(typeof description); // all strings
+    console.log(description); // logs proper text coming from props ... but outputs literal string 'description' on screen
     return <Markdown> description </Markdown>;
   } else {
     return '';
   }
 }
+
+// tried this as well:
+// prop.description ? <Markdown> {prop.description} </Markdown> : ''
 
 export function InterfaceType({properties, showRequired, showDefault}) {
   return (
@@ -236,7 +241,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
                 }
               </td>
             }
-            <td className={tableStyles['spectrum-Table-cell']}>{prop.description ? <Markdown> {prop.description} </Markdown> : ''}</td>
+            <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
           </tr>
         ))}
       </tbody>
