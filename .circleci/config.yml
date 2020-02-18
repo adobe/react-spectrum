@@ -18,20 +18,14 @@ jobs:
             cp .circleci/.npmrc .npmrc
 
       - run:
-          name: yarn install
-          command: |
-            make clean_node_modules
-            make install_no_postinstall
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: yarn-cache-{{ checksum "yarn.lock" }}
-
-      - run:
           name: build
           command: |
             make -B
+
+      - save_cache:
+         paths:
+           - node_modules
+         key: yarn-cache-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
