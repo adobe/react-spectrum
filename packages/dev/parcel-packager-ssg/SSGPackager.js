@@ -71,7 +71,7 @@ module.exports = new Packager({
     );
 
     return {
-      contents: code
+      contents: '<!doctype html>' + code
     };
   }
 });

@@ -20,6 +20,9 @@ governing permissions and limitations under the License.
   list-style-type: none;
   margin: 0;
   padding: 0;
+  outline: none;
+
+  height: 100%;
 }
 
 .spectrum-SideNav-item {
@@ -32,11 +35,11 @@ governing permissions and limitations under the License.
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: left;
+  justify-content: start;
   box-sizing: border-box;
 
-  width: 100%;
-  min-height: var(--spectrum-sidenav-item-height);
+  inline-size: 100%;
+  min-block-size: var(--spectrum-sidenav-item-height);
 
   padding: var(--spectrum-sidenav-item-padding-y) var(--spectrum-sidenav-item-padding-x);
 
@@ -72,13 +75,13 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-SideNav-itemIcon {
-    margin-right: var(--spectrum-sidenav-icon-gap);
+    margin-inline-end: var(--spectrum-sidenav-icon-gap);
   }
 }
 
 
 .spectrum-SideNav-heading {
-  height: var(--spectrum-sidenav-header-height);
+  block-size: var(--spectrum-sidenav-header-height);
   line-height: var(--spectrum-sidenav-header-height);
 
   margin: var(--spectrum-sidenav-header-gap-top) 0 var(--spectrum-sidenav-header-gap-bottom) 0;
@@ -86,6 +89,7 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-sidenav-header-border-radius);
 
+  text-align: start;
   font-size: var(--spectrum-sidenav-header-text-size);
   font-weight: var(--spectrum-sidenav-header-font-weight);
   font-style: normal;
@@ -106,12 +110,12 @@ governing permissions and limitations under the License.
     .spectrum-SideNav-itemLink {
       font-weight: var(--spectrum-sidenav-item-font-weight);
 
-      padding-left: calc(var(--spectrum-sidenav-multilevel-item-indentation-level1) + var(--spectrum-sidenav-item-padding-x));
+      padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level1) + var(--spectrum-sidenav-item-padding-x));
     }
 
     .spectrum-SideNav {
       .spectrum-SideNav-itemLink {
-        padding-left: calc(var(--spectrum-sidenav-multilevel-item-indentation-level2) + var(--spectrum-sidenav-item-padding-x));
+        padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level2) + var(--spectrum-sidenav-item-padding-x));
       }
     }
   }

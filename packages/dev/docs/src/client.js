@@ -10,31 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import docsStyle from './docs.css';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {theme} from '@react-spectrum/theme-default';
+import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
+import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
 
 let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
 for (let link of links) {
   let container = document.createElement('span');
 
   ReactDOM.render(
-    <Provider theme={theme} UNSAFE_style={{display: 'inline', background: 'none', fontFamily: 'inherit'}}>
+    <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
           <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
-    </Provider>
+    </ThemeProvider>
   , container);
 
   link.parentNode.replaceChild(container, link);
@@ -73,5 +75,33 @@ function LinkPopover({id}) {
     </Dialog>
   );
 }
+
+function Hamburger() {
+  let onPress = () => {
+    document.querySelector('.' + docsStyle.nav).classList.toggle(docsStyle.visible);
+  };
+
+  useEffect(() => {
+    let nav = document.querySelector('.' + docsStyle.nav);
+    let main = document.querySelector('main');
+    let onClick = () => {
+      nav.classList.remove(docsStyle.visible);
+    };
+
+    main.addEventListener('click', onClick);
+    return () => {
+      main.removeEventListener('click', onClick);
+    };
+  }, []);
+
+  return (
+    <ActionButton icon={<ShowMenu />} onPress={onPress} />
+  );
+}
+
+ReactDOM.render(<>
+  <Hamburger />
+  <ThemeSwitcher />
+</>, document.getElementById('header'));
 
 attachToToC();

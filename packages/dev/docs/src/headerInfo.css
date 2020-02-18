@@ -28,3 +28,9 @@
   display: flex;
   flex-wrap: wrap
 }
+
+@media (max-width: 400px) {
+  .resourceCardGroup {
+    justify-content: center;
+  }
+}

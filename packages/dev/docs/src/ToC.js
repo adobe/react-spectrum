@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import React from 'react';
 import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import styles from './toc.css';
-
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function ToC(props) {
   let {
@@ -23,7 +23,7 @@ export function ToC(props) {
 
   return (
     <nav className={styles['toc']} id="toc">
-      <div>Contents</div>
+      <h3 className={typographyStyles['spectrum-Heading4']}>Contents</h3>
       <SideNav node={toc} />
     </nav>
   );
