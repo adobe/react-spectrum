@@ -29,7 +29,15 @@ export const baseStyleProps: StyleHandlers = {
   maxHeight: ['maxHeight', dimensionValue],
   isHidden: ['display', hiddenValue],
   alignSelf: ['alignSelf', passthroughStyle],
-  justifySelf: ['justifySelf', passthroughStyle]
+  justifySelf: ['justifySelf', passthroughStyle],
+  position: ['position', anyValue],
+  zIndex: ['zIndex', anyValue],
+  top: ['top', dimensionValue],
+  bottom: ['bottom', dimensionValue],
+  start: [rtl('left', 'right'), dimensionValue],
+  end: [rtl('right', 'left'), dimensionValue],
+  left: ['left', dimensionValue],
+  right: ['right', dimensionValue]
 };
 
 export const viewStyleProps: StyleHandlers = {
@@ -126,6 +134,10 @@ function borderRadiusValue(value: BorderRadiusValue) {
 
 function hiddenValue(value: boolean) {
   return value ? 'none' : undefined;
+}
+
+function anyValue(value: any) {
+  return value;
 }
 
 export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
