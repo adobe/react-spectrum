@@ -32,21 +32,6 @@ jobs:
             - ~/react-spectrum-v3
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-  build:
-    docker:
-      - image: circleci/node:12.10
-
-    working_directory: ~/react-spectrum-v3
-    steps:
-      - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build
-          command: |
-            make clean
-            make -B
-
   test:
     docker:
       - image: circleci/node:12.10
