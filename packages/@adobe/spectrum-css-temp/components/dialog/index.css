@@ -121,7 +121,6 @@ governing permissions and limitations under the License.
   display: block;
   margin-left: var(--spectrum-dialog-icon-margin-left);
   flex-shrink: 0;
-  align-self: flex-start;
 }
 
 .spectrum-Dialog-content {
