@@ -42,7 +42,8 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
     keyboardDelegate: layout,
     autoFocus,
     focusStrategy,
-    setFocusStrategy
+    setFocusStrategy,
+    wrapAround: true
   });
 
   let menuItemRole = 'menuitem';

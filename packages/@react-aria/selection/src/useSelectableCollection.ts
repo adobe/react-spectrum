@@ -34,7 +34,8 @@ interface SelectableListOptions {
   keyboardDelegate: KeyboardDelegate,
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
-  setFocusStrategy?: (value: FocusStrategy) => void
+  setFocusStrategy?: (value: FocusStrategy) => void,
+  wrapAround?: boolean 
 }
 
 interface SelectableListAria {
@@ -47,7 +48,8 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     keyboardDelegate: delegate,
     autoFocus = true,
     focusStrategy,
-    setFocusStrategy
+    setFocusStrategy,
+    wrapAround = true
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -58,7 +60,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else {
+          } else if (wrapAround) {
             manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -73,7 +75,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else {
+          } else if (wrapAround) {
             manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
