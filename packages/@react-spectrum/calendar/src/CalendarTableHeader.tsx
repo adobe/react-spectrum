@@ -11,16 +11,12 @@ interface CalendarTableHeaderProps {
 
 export function CalendarTableHeader({weekStart}: CalendarTableHeaderProps) {
   const {
-    rowGroupProps,
-    rowProps,
     columnHeaderProps
   } = useCalendarTableHeader();
   let dayFormatter = useDateFormatter({weekday: 'short'});
   return (
-    <thead
-      {...rowGroupProps}>
-      <tr
-        {...rowProps}>
+    <thead>
+      <tr>
         {
           [...new Array(7).keys()].map(index => {
             let day = dayFormatter.format(setDay(Date.now(), (index + weekStart) % 7));

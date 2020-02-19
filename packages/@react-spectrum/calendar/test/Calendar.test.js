@@ -25,6 +25,7 @@ describe('Calendar', () => {
       ${'v3'}   | ${Calendar}
       ${'v2'}   | ${V2Calendar}
     `('$Name should render a calendar with a defaultValue', ({Calendar}) => {
+      let isV2 = Calendar === V2Calendar;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar defaultValue={new Date(2019, 5, 5)} />);
 
       let heading = getByRole('heading');
@@ -34,8 +35,8 @@ describe('Calendar', () => {
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
-      expect(selectedDate).toHaveAttribute('role', 'gridcell');
-      expect(selectedDate).toHaveAttribute('aria-selected', 'true');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(selectedDate).toHaveAttribute('aria-label', 'Wednesday, June 5, 2019 selected');
     });
 
@@ -44,6 +45,7 @@ describe('Calendar', () => {
       ${'v3'}   | ${Calendar}
       ${'v2'}   | ${V2Calendar}
     `('$Name should render a calendar with a value', ({Calendar}) => {
+      let isV2 = Calendar === V2Calendar;
       let {getByLabelText, getByRole, getAllByRole} = render(<Calendar value={new Date(2019, 5, 5)} />);
 
       let heading = getByRole('heading');
@@ -53,8 +55,8 @@ describe('Calendar', () => {
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
-      expect(selectedDate).toHaveAttribute('role', 'gridcell');
-      expect(selectedDate).toHaveAttribute('aria-selected', 'true');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? selectedDate : selectedDate.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(selectedDate).toHaveAttribute('aria-label', 'Wednesday, June 5, 2019 selected');
     });
 
@@ -66,14 +68,16 @@ describe('Calendar', () => {
       let {getByRole, getByLabelText} = render(<Calendar value={new Date(2019, 1, 3)} autoFocus />);
 
       let cell = getByLabelText('selected', {exact: false});
-      expect(cell).toHaveAttribute('role', 'gridcell');
-      expect(cell).toHaveAttribute('aria-selected', 'true');
 
       let grid = getByRole('grid');
       if (Calendar === V2Calendar) {
+        expect(cell).toHaveAttribute('role', 'gridcell');
+        expect(cell).toHaveAttribute('aria-selected', 'true');
         expect(grid).toHaveFocus();
         expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
       } else {
+        expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveFocus();
         expect(grid).not.toHaveAttribute('aria-activedescendant');
       }
@@ -330,7 +334,7 @@ describe('Calendar', () => {
       triggerPress(newDate);
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019');
+      expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019', 'polite', 3000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {

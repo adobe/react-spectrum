@@ -10,7 +10,7 @@ interface CalendarCellProps extends CalendarCellOptions {
 }
 
 export function CalendarCell({state, ...props}: CalendarCellProps) {
-  let {cellProps, textProps} = useCalendarCell(props, state);
+  let {cellProps, cellDateProps} = useCalendarCell(props, state);
   let dateFormatter = useDateFormatter({day: 'numeric'});
 
   return (
@@ -18,7 +18,7 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
       {...cellProps}
       className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
-        {...textProps}
+        {...cellDateProps}
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': props.isToday,
           'is-selected': props.isSelected,

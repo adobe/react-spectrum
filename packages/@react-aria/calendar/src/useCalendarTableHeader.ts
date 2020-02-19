@@ -1,15 +1,11 @@
-import {CalendarRowGroupAria, useCalendarRowGroup} from './useCalendarRowGroup';
-import {DOMProps} from '@react-types/shared';
-
-interface CalendarTableHeaderAria extends CalendarRowGroupAria {
-  columnHeaderProps: DOMProps
+interface CalendarTableHeaderAria {
+  columnHeaderProps: {scope?: 'col'}
 }
 
 export function useCalendarTableHeader(): CalendarTableHeaderAria {
   return {
-    ...useCalendarRowGroup(),
     columnHeaderProps: {
-      role: 'columnheader'
+      scope: 'col'
     }
   };
 }

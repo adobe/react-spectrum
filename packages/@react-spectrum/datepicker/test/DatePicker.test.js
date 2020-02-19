@@ -135,9 +135,9 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
-      triggerPress(selected.nextSibling);
+      triggerPress(selected.nextSibling.children[0]);
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -164,9 +164,9 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
-      triggerPress(selected.nextSibling);
+      triggerPress(selected.nextSibling.children[0]);
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);

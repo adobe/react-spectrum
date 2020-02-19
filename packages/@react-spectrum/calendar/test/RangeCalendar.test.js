@@ -27,6 +27,7 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', defaultValue: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name should render a calendar with a defaultValue', ({RangeCalendar, props}) => {
+      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -48,8 +49,8 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(cell).toHaveAttribute('role', 'gridcell');
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
@@ -59,6 +60,7 @@ describe('RangeCalendar', () => {
       ${'v3'}       | ${RangeCalendar} | ${{value: {start: new Date(2019, 5, 5), end: new Date(2019, 5, 10)}}}
       ${'v2'}       | ${V2Calendar}    | ${{selectionType: 'range', value: [new Date(2019, 5, 5), new Date(2019, 5, 10)]}}
     `('$Name should render a calendar with a value', ({RangeCalendar, props}) => {
+      let isV2 = RangeCalendar === V2Calendar;
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
@@ -80,8 +82,8 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selectedDates) {
-        expect(cell).toHaveAttribute('role', 'gridcell');
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', labels[i++]);
       }
     });
@@ -94,14 +96,16 @@ describe('RangeCalendar', () => {
       let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
       let cells = getAllByLabelText('selected', {exact: false});
-      expect(cells[0]).toHaveAttribute('role', 'gridcell');
-      expect(cells[0]).toHaveAttribute('aria-selected', 'true');
-
       let grid = getByRole('grid');
+
       if (RangeCalendar === V2Calendar) {
+        expect(cells[0]).toHaveAttribute('role', 'gridcell');
+        expect(cells[0]).toHaveAttribute('aria-selected', 'true');
         expect(grid).toHaveFocus();
         expect(grid).toHaveAttribute('aria-activedescendant', cells[0].id);
       } else {
+        expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cells[0]).toHaveFocus();
         expect(grid).not.toHaveAttribute('aria-activedescendant');
       }
@@ -135,7 +139,7 @@ describe('RangeCalendar', () => {
 
       let i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
@@ -159,7 +163,7 @@ describe('RangeCalendar', () => {
 
       i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', julyLabels[i++]);
       }
 
@@ -180,7 +184,7 @@ describe('RangeCalendar', () => {
       expect(selected.length).toBe(11);
       i = 0;
       for (let cell of selected) {
-        expect(cell).toHaveAttribute('aria-selected', 'true');
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
@@ -213,7 +217,7 @@ describe('RangeCalendar', () => {
       } else {
         expect(grid).not.toHaveAttribute('aria-activedescendant');
       }
-      expect(cell).toHaveAttribute('aria-selected');
+      expect(isV2 ? cell : cell.parentElement).toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected (Click to finish selecting date range)`);
     });
 
@@ -338,7 +342,7 @@ describe('RangeCalendar', () => {
       // try to enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(cell).not.toHaveAttribute('aria-selected');
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
       expect(document.activeElement).toBe(cell);
     });
@@ -445,10 +449,10 @@ describe('RangeCalendar', () => {
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      cell = getByText('17').parentNode;
+      cell = getByText('17');
       triggerPress(cell);
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(cell).not.toHaveAttribute('aria-selected');
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
       expect(document.activeElement).toBe(cell);
     });
 
@@ -572,7 +576,7 @@ describe('RangeCalendar', () => {
       triggerPress(getByText('10'));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019');
+      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 3000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {

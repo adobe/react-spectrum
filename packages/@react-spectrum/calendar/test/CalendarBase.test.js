@@ -54,7 +54,7 @@ describe('CalendarBase', () => {
       }
 
       let today = getByLabelText('today', {exact: false});
-      expect(today).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? today : today.parentElement).toHaveAttribute('role', 'gridcell');
       expect(today).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
       expect(today).toHaveAttribute('tabIndex', !isV2 ? '0' : '-1');
 
@@ -64,7 +64,7 @@ describe('CalendarBase', () => {
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(getDaysInMonth(new Date()));
       for (let cell of gridCells) {
-        expect(cell).toHaveAttribute('aria-label');
+        expect(isV2 ? cell : cell.children[0]).toHaveAttribute('aria-label');
       }
     });
 
@@ -119,7 +119,7 @@ describe('CalendarBase', () => {
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
 
       let cell = getByLabelText('today', {exact: false});
-      expect(cell).toHaveAttribute('role', 'gridcell');
+      expect(isV2 ? cell : cell.parentElement).toHaveAttribute('role', 'gridcell');
 
       let grid = getByRole('grid');
       expect(isV2 ? grid : cell).toHaveFocus();
@@ -276,10 +276,10 @@ describe('CalendarBase', () => {
         defaultValue = [defaultValue, defaultValue];
       }
 
-      let {getByRole, getByLabelText} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let {getAllByLabelText, getByRole, getByLabelText} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
       let grid = getByRole('grid');
 
-      let cell = getByLabelText('selected', {exact: false});
+      let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
       if (isV2) {
         expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
       } else {
@@ -427,11 +427,11 @@ describe('CalendarBase', () => {
       );
 
       let grid = getByRole('grid');
-      let selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
+      let selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
       expect(document.activeElement).toBe(selected);
 
       fireEvent.keyDown(grid, {key: 'ArrowLeft'});
-      expect(document.activeElement).toBe(selected.previousSibling);
+      expect(document.activeElement).toBe(selected.parentNode.previousSibling.children[0]);
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
       expect(document.activeElement).toBe(selected);
@@ -447,11 +447,11 @@ describe('CalendarBase', () => {
       fireEvent.blur(grid);
       fireEvent.focus(grid);
 
-      selected = getAllByRole('gridcell').find(cell => cell.getAttribute('tabIndex') === '0');
+      selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
       expect(document.activeElement).toBe(selected);
 
       fireEvent.keyDown(grid, {key: 'ArrowLeft'});
-      expect(document.activeElement).toBe(selected.nextSibling);
+      expect(document.activeElement).toBe(selected.parentNode.nextSibling.children[0]);
 
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});

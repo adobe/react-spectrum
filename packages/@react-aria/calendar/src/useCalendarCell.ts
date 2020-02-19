@@ -8,7 +8,7 @@ import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 interface CalendarCellAria {
   cellProps: PressProps & HTMLAttributes<HTMLElement>,
-  textProps: HTMLAttributes<HTMLElement>
+  cellDateProps: HTMLAttributes<HTMLElement>
 }
 
 export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
@@ -81,18 +81,19 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
 
   return {
     cellProps: {
+      onMouseEnter: props.isDisabled ? null : onMouseEnter,
+      role: 'gridcell',
+      'aria-disabled': props.isDisabled || null,
+      'aria-selected': props.isSelected
+    },
+    cellDateProps: {
       ...pressProps,
       ...focusProps,
       tabIndex,
-      onMouseEnter: props.isDisabled ? null : onMouseEnter,
       id: getCellId(props.cellDate, getCalendarId(state)),
-      role: 'gridcell',
+      role: 'button',
       'aria-disabled': props.isDisabled || null,
-      'aria-selected': props.isSelected,
       'aria-label': label
-    },
-    textProps: {
-      role: 'presentation'
     }
   };
 }

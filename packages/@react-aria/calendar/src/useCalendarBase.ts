@@ -51,7 +51,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     if (autoFocus) {
       focusFocusedDateCell();
     }
-  }, [autoFocus]);
+  }, [autoFocus, focusFocusedDateCell]);
 
   // Announce when the current month changes
   useUpdateEffect(() => {
@@ -65,7 +65,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   // Announce when the selected value changes
   useUpdateEffect(() => {
     if (selectedDateDescription) {
-      announce(selectedDateDescription);
+      announce(selectedDateDescription, 'polite', 3000);
     }
   }, [selectedDateDescription]);
 
@@ -161,8 +161,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     calendarBodyProps: {
       ref: calendarBody,
       role: 'grid',
-      'aria-readonly': isReadOnly,
-      'aria-disabled': isDisabled,
+      'aria-readonly': isReadOnly || null,
+      'aria-disabled': isDisabled || null,
       'aria-labelledby': labelProps['aria-labelledby'],
       'aria-describedby': selectedDateDescription ? captionId : null,
       onKeyDown,
