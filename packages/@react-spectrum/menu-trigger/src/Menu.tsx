@@ -16,7 +16,7 @@ import {Item, ListLayout, Node, Section} from '@react-stately/collections';
 import {MenuContext} from './context';
 import {MenuDivider, MenuHeading, MenuItem} from './';
 import {mergeProps} from '@react-aria/utils';
-import React, {Fragment, useContext, useEffect, useMemo} from 'react';
+import React, {Fragment, useContext, useMemo} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu-trigger';
@@ -38,11 +38,6 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
     selectionMode: props.selectionMode || 'single'
   };
 
-  let state = useTreeState(completeProps);
-  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout);
-  let {styleProps} = useStyleProps(completeProps);
-  let menuContext = mergeProps(menuProps, completeProps);
-
   let {
     focusStrategy,
     setFocusStrategy,
@@ -50,31 +45,10 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
     ...otherProps
   } = completeProps;
 
-  useEffect(() => {
-    // By default, attempt to focus first item upon opening menu
-    let focusedKey = layout.getFirstKey();
-    let selectionManager = state.selectionManager;
-    let selectedKeys = selectionManager.selectedKeys;
-    selectionManager.setFocused(true);
-    
-    // Focus last item if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
-    if (focusStrategy && focusStrategy === 'last') {
-      focusedKey = layout.getLastKey();
-
-      // Reset focus strategy so it doesn't get applied to future menu openings
-      setFocusStrategy('first');
-    }
-
-    // TODO: add other default focus behaviors https://jira.corp.adobe.com/browse/RSP-1399
-    // Focus the first selected key (if any)
-    if (selectedKeys.size) {
-      focusedKey = selectedKeys.values().next().value;
-    }
-    
-    if (autoFocus) {
-      selectionManager.setFocusedKey(focusedKey);
-    }
-  }, []);
+  let state = useTreeState(completeProps);
+  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout, autoFocus, focusStrategy, setFocusStrategy);
+  let {styleProps} = useStyleProps(completeProps);
+  let menuContext = mergeProps(menuProps, completeProps);
 
   return (
     <MenuContext.Provider value={menuContext}>

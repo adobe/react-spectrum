@@ -27,7 +27,7 @@ interface MenuState<T> extends TreeState<T> {}
 
 interface MenuLayout<T> extends ListLayout<T> {}
 
-export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
+export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>, autoFocus, focusStrategy, setFocusStrategy): MenuAria {
   let {
     'aria-orientation': ariaOrientation = 'vertical' as Orientation,
     role = 'menu',
@@ -39,7 +39,10 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    autoFocus,
+    focusStrategy,
+    setFocusStrategy
   });
 
   let menuItemRole = 'menuitem';

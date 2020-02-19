@@ -14,6 +14,8 @@ import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
+type FocusStrategy = 'first' | 'last';
+
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
     ? /^Mac/.test(window.navigator.platform)
@@ -29,7 +31,10 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 
 interface SelectableListOptions {
   selectionManager: MultipleSelectionManager,
-  keyboardDelegate: KeyboardDelegate
+  keyboardDelegate: KeyboardDelegate,
+  autoFocus?: boolean,
+  focusStrategy?: FocusStrategy,
+  setFocusStrategy?: (value: FocusStrategy) => void
 }
 
 interface SelectableListAria {
@@ -39,7 +44,10 @@ interface SelectableListAria {
 export function useSelectableCollection(options: SelectableListOptions): SelectableListAria {
   let {
     selectionManager: manager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    autoFocus = true,
+    focusStrategy,
+    setFocusStrategy
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -176,6 +184,30 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let onBlur = () => {
     manager.setFocused(false);
   };
+
+  useEffect(() => {
+    // By default, select first item for focus target
+    let focusedKey = delegate.getFirstKey();
+    let selectedKeys = manager.selectedKeys;
+    manager.setFocused(true);
+    
+    // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
+    if (focusStrategy && focusStrategy === 'last') {
+      focusedKey = delegate.getLastKey();
+
+      // Reset focus strategy so it doesn't get applied to future menu openings
+      setFocusStrategy('first');
+    }
+
+    // If there are any selected keys, make the first one the new focus target
+    if (selectedKeys.size) {
+      focusedKey = selectedKeys.values().next().value;
+    }
+    
+    if (autoFocus) {
+      manager.setFocusedKey(focusedKey);
+    }
+  }, []);
 
   return {
     listProps: {
