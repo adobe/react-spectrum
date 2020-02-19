@@ -27,7 +27,7 @@ import {TextArea} from '@react-spectrum/textfield';
 ## Value
 
 A TextArea's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-Alternatively, providing a `value` prop creates a TextArea with a controlled value. 
+Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example
 <TextArea defaultValue="Default text" label="Uncontrolled TextArea" marginEnd="20px" />
@@ -103,24 +103,23 @@ function Example() {
 TextAreas can display a validation state to communicate to the user whether the current value is valid or invalid. 
 Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextArea via the `validationState` prop.
 
-The example below illustrates how one would validate if the user has entered a number larger than 15 into the TextArea.
+The example below illustrates how one would validate if the user entered more than 30 characters into the TextArea.
 ```tsx example
 function Example() {
-  let defaultValue = '16';
-  let [isValid, setValid] = React.useState(true);
+  let defaultValue = '';
+  let [isValid, setValid] = React.useState(false);
   let [value, setValue] = React.useState(defaultValue);
   React.useEffect(() => {
-    let newValue = Number(value);
-    setValid(!isNaN(newValue) && newValue > 15)
+    setValid(value.length > 30)
   }, [setValid, value]);
 
   return (
     <TextArea
       validationState={isValid ? 'valid' : 'invalid'}
-      placeholder="Enter a number"
+      placeholder="Enter a description"
       defaultValue={defaultValue}
       onChange={setValue}
-      label="Number Field"
+      label="Description"
     />
   );
 }
@@ -135,6 +134,9 @@ function Example() {
 ### Quiet 
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
+
+In addition to changing the visual style of the TextArea, the `isQuiet` prop removes the ability to manually resize the TextArea.
+To compensate, the TextArea automatically adjusts its own height to accommodate for additional lines of text.
 
 ```tsx example
 <TextArea label="Email" placeholder="Email Address" isQuiet />
