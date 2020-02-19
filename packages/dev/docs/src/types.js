@@ -1,6 +1,7 @@
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
 import Lowlight from 'react-lowlight';
+import ReactMarkdown from 'react-markdown'
 import React, {useContext} from 'react';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -209,7 +210,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
                 <span className="token hljs-attr">{prop.name}</span>
               </code>
               {!prop.optional && showRequired
-                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" /> 
+                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
                 : null
               }
             </td>
@@ -226,7 +227,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
                 }
               </td>
             }
-            <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
+            <td className={tableStyles['spectrum-Table-cell']}>{<ReactMarkdown source={prop.description} />}</td>
           </tr>
         ))}
       </tbody>
