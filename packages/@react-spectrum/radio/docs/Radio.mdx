@@ -1,0 +1,201 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/radio';
+import packageData from '../package.json';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+
+```jsx import
+import {Radio} from '@react-spectrum/radio';
+import {RadioGroup} from '@react-spectrum/radio';
+```
+
+# RadioGroup
+
+<p>{docs.exports.Radio.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Radio', 'RadioGroup']}
+  sourceData={[
+  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/radio-button/'}
+  ]} />
+
+## Example
+
+```tsx example
+<RadioGroup label="Favorite pet">
+ <Radio value="dogs">Dogs</Radio>
+ <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+## Content
+
+RadioGroup accepts multiple Radio elements as children.
+Each Radio represents an option that can be selected, labeled by its children.
+
+Note: A Radio must be contained within a RadioGroup. If for whatever reason you need to
+have a single radio by itself, wrap it in a RadioGroup.
+
+## Value
+
+RadioGroup only allows single selection. An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+### Accessibility
+
+For accessibility, all Radio elements within a RadioGroup automatically receive an `aria-checked` attribute
+reflecting their individual selection status.
+
+```tsx example
+<RadioGroup label="Uncontrolled" defaultValue="dragon">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+
+<RadioGroup label="Controlled" value="dragon">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+## Labeling
+
+When a visible label isn't being used an `aria-label` prop is needed to explicitly set the label for the RadioGroup.
+Radio elements should always have a visible label.
+
+```tsx example
+<RadioGroup aria-label="Favorite Avatar">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Internationalization
+
+To internationalize a RadioGroup, a localized string should be set as the child content of the Radio.
+For languages that are read right to left (e.g. Hebrew and Arabic), the Radio is placed on the right side of the text.
+
+## Events
+
+RadioGroup accepts an `onChange` prop, which is triggered when a user changes the selected value.
+The example below uses `onChange` to log how the user is interacting with the component.
+
+```tsx example
+function Example() {
+  let [selected, setSelection] = React.useState('select me');
+
+  return (
+    <div>
+      <div>You have selected: {selected}</div>
+      <RadioGroup aria-label="Favorite Avatar" onChange={value => setSelection(value)}>
+       <Radio value="wizard">
+         Wizard
+       </Radio>
+       <Radio value="dragon">
+         Dragon
+       </Radio>
+      </RadioGroup>
+    </div>
+  );
+}
+```
+
+## Validation
+
+RadioGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+
+```tsx example
+<RadioGroup label="Example Options" validationState="invalid">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+## RadioGroup Props
+
+<PropTable component={docs.exports.RadioGroup} links={docs.links} />
+
+## Radio Props
+
+<PropTable component={docs.exports.Radio} links={docs.links} />
+
+## Visual Options
+
+### Orientation
+
+A RadioGroup is vertically aligned by default.
+An optional prop can be passed to the RadioGroup to position the Radio elements inline.
+
+```tsx example
+<RadioGroup label="Example Options" orientation="horizontal">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Label Position
+
+The default position of a label is on top of the RadioGroup.
+An optional prop can be passed to the RadioGroup that will position the label at the start of the topmost Radio.
+
+```tsx example
+<RadioGroup label="Example Options" labelPosition="side">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Label Align
+
+Labels can be aligned to the "start" or the "end" of the RadioGroup.
+For left-to-right (LTR) languages, "start" refers to the left most edge of the RadioGroup
+and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<RadioGroup label="Example Options" labelAlign="end">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Disabled
+[View Guidelines](https://spectrum.adobe.com/page/radio-button/#Disabled)
+
+```tsx example
+<RadioGroup label="Example Options" isDisabled>
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+```tsx example
+<RadioGroup label="Example Options">
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon" isDisabled>Dragon</Radio>
+</RadioGroup>
+```
+
+### Read Only
+
+The isReadOnly prop makes the selection immutable. Unlike isDisabled, the RadioGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<RadioGroup label="Example Options" defaultValue="wizard" isReadOnly>
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Emphasized
+[View Guidelines](https://spectrum.adobe.com/page/radio-button/#Emphasis)
+
+```tsx example
+<RadioGroup label="Example Options" isEmphasized>
+ <Radio value="wizard">Wizard</Radio>
+ <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```

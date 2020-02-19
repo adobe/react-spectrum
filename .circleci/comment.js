@@ -16,6 +16,9 @@ async function run() {
     owner: 'adobe-private',
     repo: 'react-spectrum-v3',
     issue_number: pr,
-    body: `Build successful! [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/index.html)`
+    body: `Build successful! 🎉
+
+* [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook/index.html)
+* [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
   });
 }
