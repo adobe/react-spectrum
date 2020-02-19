@@ -1,8 +1,8 @@
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
 import Lowlight from 'react-lowlight';
-import ReactMarkdown from 'react-markdown'
 import React, {useContext} from 'react';
+import ReactMarkdown from 'react-markdown';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';

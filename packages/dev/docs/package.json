@@ -20,6 +20,7 @@
     "globals-docs": "^2.4.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "react-lowlight": "^2.0.0"
+    "react-lowlight": "^2.0.0",
+    "react-markdown": "^4.3.1"
   }
 }
