@@ -12,9 +12,17 @@ export interface CheckboxBase extends InputBase {
 }
 
 export interface CheckboxProps extends CheckboxBase {
+  /**
+   * Indeterminism is presentational, when a checkbox is indeterminate, it overrides the selection state.
+   * The indeterminate visual representation remains even after subsequent clicks .
+   */
   isIndeterminate?: boolean
 }
 
 export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
+  /**
+   * By default, checkboxes are not emphasized (gray).
+   * This prop sets the emphasized style (blue) which provides visual prominence.
+   */
   isEmphasized?: boolean
 }
