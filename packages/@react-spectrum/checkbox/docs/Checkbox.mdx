@@ -33,8 +33,8 @@ Checkboxes can have a visual label, provided by passing a renderable child to th
 ### Accessibility
 
 In certain cases a visible label isn't needed. For example, a checkbox within a cell to select a row within a table should
-use the aria-label prop to explicitly set the accessibility name for the checkbox,
-or use aria-labelledby to provide a space-delimited list of id references for elements that label checkbox.
+use the `aria-label` prop to explicitly set the accessibility name for the checkbox,
+or use `aria-labelledby` to provide a space-delimited list of id references for elements that label checkbox.
 
 ### Internationalization
 
@@ -79,11 +79,11 @@ function Example() {
 
   return (
     <div>
-    <div> The Checkbox is checked: {selected} </div>
-    <Checkbox
-      onChange={toggle}
-      aria-label="This checkbox has no visible label"
-    />
+      <div> The Checkbox is checked: {selected} </div>
+      <Checkbox
+        onChange={toggle}
+        aria-label="This checkbox has no visible label"
+      />
     </div>
   );
  }
