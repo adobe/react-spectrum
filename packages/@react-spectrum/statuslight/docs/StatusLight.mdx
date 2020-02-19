@@ -31,7 +31,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 ## Content
 
-A visible label can be provided by passing children. Spectrum dictates that it should always be used with a label, never alone.
+A visible label is always required and can be provided by passing children.
 To indicate status use [semantic](#semantic-colors) or [label](#label-colors) variant color.
 
 ```tsx example
@@ -48,7 +48,7 @@ the `aria-label` prop.
 The visual cue provided by the status light is insufficient to comply with [WCAG 2.1 Success Criterion 1.4.1 on the Use of Color](https://www.w3.org/TR/WCAG21/#use-of-color),
 which requires that "color is not used as the only visual means of conveying information, indicating an action,
 prompting a response, or distinguishing a visual element."
-If StatusLight communicates a state, like "Approved" or "Failed", that state must be included as part of the label.
+If StatusLight communicates a state, such as "Approved" or "Failed", that state must be included as part of the label.
 
 #### Using role="status"
 
@@ -124,7 +124,7 @@ Use them in the following order to ensure the greatest possible color difference
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/status-light/#Disabled)
 
-Use `isDisabled` prop to match the state of a containing element.
+Use the `isDisabled` prop to match the state of a containing element.
 Note that the `isDisabled` prop alters the visual style of the StatusLight,
 but does not convey any state information to assistive technology.
 
