@@ -42,7 +42,7 @@ export function Example({children}) {
   return <ThemeProvider UNSAFE_className={styles.example}>{children}</ThemeProvider>;
 }
 
-function ThemeSwitcher() {
+export function ThemeSwitcher() {
   let colorScheme = useCurrentColorScheme();
   let onPress = () => {
     localStorage.theme = (colorScheme === 'dark' ? 'light' : 'dark');
@@ -53,11 +53,6 @@ function ThemeSwitcher() {
     <ActionButton 
       icon={colorScheme === 'dark' ? <Light /> : <Moon />}
       aria-label={colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      onPress={onPress}
-      position="fixed"
-      top="size-400"
-      end="size-400" />
+      onPress={onPress} />
   );
 }
-
-ReactDOM.render(<ThemeSwitcher />, document.getElementById('themeSwitcher'));

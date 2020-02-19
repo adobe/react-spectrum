@@ -1,4 +1,6 @@
+import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
+import Lowlight from 'react-lowlight';
 import React, {useContext} from 'react';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -188,25 +190,42 @@ function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-export function InterfaceType({properties}) {
+export function InterfaceType({properties, showRequired, showDefault}) {
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
         <tr>
           <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
           <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Default</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Required</td>
+          {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
           <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>
         {Object.values(properties).map((prop, index) => (
           <tr key={index} className={tableStyles['spectrum-Table-row']}>
-            <td className={tableStyles['spectrum-Table-cell']}><code className={`${typographyStyles['spectrum-Code4']}`}><span className="token hljs-attr">{prop.name}</span></code></td>
-            <td className={tableStyles['spectrum-Table-cell']}><code className={typographyStyles['spectrum-Code4']}><Type type={prop.value} /></code></td>
-            <td className={tableStyles['spectrum-Table-cell']} style={{textAlign: prop.default ? undefined : 'center'}}>{prop.default || '–'}</td>
-            <td className={tableStyles['spectrum-Table-cell']}>{!prop.optional ? 'true' : null}</td>
+            <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
+              <code className={`${typographyStyles['spectrum-Code4']}`}>
+                <span className="token hljs-attr">{prop.name}</span>
+              </code>
+              {!prop.optional && showRequired
+                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" /> 
+                : null
+              }
+            </td>
+            <td className={tableStyles['spectrum-Table-cell']} data-column="Type">
+              <code className={typographyStyles['spectrum-Code4']}>
+                <Type type={prop.value} />
+              </code>
+            </td>
+            {showDefault &&
+              <td className={`${tableStyles['spectrum-Table-cell']} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
+                {prop.default
+                  ? <Lowlight language="js" value={prop.default} inline className={typographyStyles['spectrum-Code4']} />
+                  : '—'
+                }
+              </td>
+            }
             <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
           </tr>
         ))}

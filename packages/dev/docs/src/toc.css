@@ -3,3 +3,9 @@
   top: 80px;
   right: 0;
 }
+
+@media (max-width: 1200px) {
+  .toc {
+    display: none;
+  }
+}
