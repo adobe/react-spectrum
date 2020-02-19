@@ -65,7 +65,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
   };
 
   let onMouseOver = () => state.selectionManager.setFocusedKey(key);
-  let {pressProps} = usePress(mergeProps({onPress}, mergeProps({onKeyDown}, {...itemProps, isDisabled: isDisabled})));
+  let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
 
   return {
     menuItemProps: {
