@@ -144,11 +144,3 @@ governing permissions and limitations under the License.
     margin-left: -12px;
   }
 }
-
-.spectrum-Popover {
-  &.spectrum-Popover--dialog {
-    .spectrum-Dialog-typeIcon {
-      margin-left: var(--spectrum-popover-dialog-icon-margin-left);
-    }
-  }
-}
