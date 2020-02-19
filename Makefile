@@ -69,7 +69,7 @@ lint:
 test:
 	yarn jest
 
-ci-test: lint
+ci-test:
 	yarn jest --maxWorkers=2
 
 storybook:

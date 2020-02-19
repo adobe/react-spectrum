@@ -37,8 +37,8 @@ import {TextField} from '@react-spectrum/textfield';
 
 ## Value
 
-A TextFields's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-Alternatively, providing a `value` prop creates a TextField with a controlled value. 
+A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example
 <TextField defaultValue="Default text" label="Uncontrolled TextField" marginEnd="20px" />
@@ -46,7 +46,7 @@ Alternatively, providing a `value` prop creates a TextField with a controlled va
 ```
 
 Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop. 
-Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the control with a visible label.
+Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the component with a visible label.
 
 ```tsx example
 <TextField placeholder="abc@adobe.com" label="Email" />
@@ -54,7 +54,7 @@ Placeholder text will only appear when the TextField is empty, and should not be
 
 ## Labeling
 
-A visual label should be provided for the TextField using the `label` prop. If the Textfield is required, the `isRequired` and 
+A visual label should be provided for the TextField using the `label` prop. If the TextField is required, the `isRequired` and 
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
@@ -88,7 +88,7 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 ## Events
 
 TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user. 
-For a full list of supported events, see the `Props` table below.
+For a full list of supported events, see the [Props](#props) table below.
 
 The example below uses `onChange` to update a separate `span` element with the same text entered into the TextField.
 ```tsx example
