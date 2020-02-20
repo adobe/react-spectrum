@@ -191,19 +191,13 @@ function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-// error: a.replace is not a function
 function renderHTMLfromMarkdown(description) {
   if (description) {
-    console.log(typeof description); // all strings
-    console.log(description);
-    return <Markdown> {description} </Markdown>;
-    // logs proper text coming from props ... but outputs literal string 'description' on screen if remove brackets around description from line 199
+    return <Markdown>{description}</Markdown>;
   } else {
     return '';
   }
 }
-// tried this within the InterfaceType function with the same result:
-// prop.description ? <Markdown> {prop.description} </Markdown> : ''
 
 export function InterfaceType({properties, showRequired, showDefault}) {
   return (
