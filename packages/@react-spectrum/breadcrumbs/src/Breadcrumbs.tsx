@@ -33,7 +33,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let listRef = useRef(null);
 
   const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
-  
+
   let {breadcrumbProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
@@ -80,7 +80,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
       </BreadcrumbItem>
     );
     rootItems.push(menuItem);
-  
+
     let restItems = childArray.slice(-visibleItems + rootItems.length);
 
     childArray = [
@@ -151,7 +151,7 @@ interface MenuProps extends DOMProps {
   children?: any
 }
 
-const Menu = React.forwardRef((props: MenuProps) => {
+const Menu = React.forwardRef((props: MenuProps, ref) => {
   let {
     children,
     label = '',
