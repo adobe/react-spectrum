@@ -31,11 +31,13 @@ import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css'
 </Provider>
 ```
 
-## Context
+## Children Props
 
-Context properties such as `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
-`isRequired`, and `validationState` are passed into the provider as props and used
-by the children components via a context.
+As a convenience, Provider supports passing common props to all components
+within it. For example, an entire group of components could be disabled by
+setting `isDisabled` in one place rather than on each individual element.
+These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
+`isRequired`, and `validationState`.
 
 ### Quiet
 
@@ -57,9 +59,9 @@ by the children components via a context.
 
 ## Global Settings
 
-Properties such as `theme`, `colorScheme`, `locale`, and `scale` adjust all
-children components. The `theme` allows the definition of custom CSS variables
-for the `colorScheme` and `scale` prop values.
+Props such as `theme`, `colorScheme`, `locale`, and `scale` adjust all
+components with Provider. The `theme` allows the definition of custom CSS
+variables for the `colorScheme` and `scale` prop values.
 
 ### Color Scheme and Scale
 
@@ -81,7 +83,7 @@ for the `colorScheme` and `scale` prop values.
 
 ### Theme
 
-In this example the `theme` is being changes so that the "light" `theme`'s css
+In this example the `theme` is being changed so that the "light" `theme`'s css
 is being applied to the "dark" `colorScheme`.
 
 ```tsx example
@@ -119,8 +121,8 @@ function Example() {
 
 ### Locale
 
-Adjust the app `locale` from the browser value, which changes how all children
-components are internationalized.
+The Provider can override the `locale` prop which defaults to the system/browser
+settings and changes how all children components are internationalized.
 
 ```tsx example
 <Provider locale="ar-AE">

@@ -25,52 +25,52 @@ interface ContextProps {
    * @default "bottom"
    */
   toastPlacement?: ToastPlacement,
-  /** Sets quiet property for children components that use this property via context. Sets the quiet style. */
+  /** Whether children components should be displayed with the quiet style. */
   isQuiet?: boolean,
-  /** Sets emphasized property for children component that use this property via context. Sets the emphasized style. */
+  /** Whether children components should be displayed with the emphasized style. */
   isEmphasized?: boolean,
-  /** Sets disabled property for children component that use this property via context. Disables the component. */
+  /** Whether children components should be disabled. */
   isDisabled?: boolean,
-  /** Sets required property for children component that use this property via context. Sets the required style. */
+  /** Whether children components should be displayed with the required style. */
   isRequired?: boolean,
-  /** Sets read only property for children component that use this property via context. Component is read only. */
+  /** Whether children components should be read only. */
   isReadOnly?: boolean,
-  /** Sets validation state property for children component that use this property via context. Sets the validation state style. */
+  /** Whether children components should be displayed with the validation state style. */
   validationState?: ValidationState
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
-  /** The components to receive provider properties and context. */
+  /** The children components to receive Provider props and context. */
   children: ReactNode,
   /**
-   * Spectrum theme scoped to this provider and it's children components.
+   * Spectrum theme scoped to this provider and its children components.
    * Sets the CSS variables for scale and color scheme values.
    */
   theme?: Theme,
   /**
    * Color scheme scoped to this provider and its children components.
-   * Defaults to the color scheme set by the OS.
+   * Defaults to the color scheme set by the OS/browser.
    */
   colorScheme?: ColorScheme,
   /**
-   * If there is not an OS color scheme this is the default.
+   * If there is not an OS/browser color scheme this is the default.
    * @default "light"
    */
   defaultColorScheme?: ColorScheme,
   /**
-   * Spectrum scale scoped to this provider and it's children components.
+   * Spectrum scale scoped to this provider and its children components.
    * By default this is selected based on touch or mouse pointer type of the OS.
    * @default "medium"
    */
   scale?: Scale,
   /**
-   * Type kit ID. This is required and products must get their own id's.
-   * https://typekit.com/account/kits There is a default provided, but
-   * it's only intended for prototyping work.
+   * Type kit ID is required and products must get their own id via
+   * https://typekit.com/account/kits. The default is only intended for
+   * prototyping work.
    */
   typekitId?: string,
   /**
-   * Locale (language specific format) of this provider and it's children.
+   * Locale (language specific format) of this provider and its children.
    * Using the format primary-region, ex. en-US, fr-CA, ar-AE.
    * @default "en-US"
    */
