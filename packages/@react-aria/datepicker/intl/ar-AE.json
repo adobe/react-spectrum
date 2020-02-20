@@ -1,5 +1,7 @@
 {
   "calendar": "التقويم",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} إلى {end, date, long}",
   "date": "التاريخ",
   "dateRange": "نطاق التاريخ",
   "day": "اليوم",

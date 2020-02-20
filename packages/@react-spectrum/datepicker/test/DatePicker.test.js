@@ -18,7 +18,7 @@ describe('DatePicker', function () {
     it('should render a datepicker with a specified date', function () {
       let {getByRole, getAllByRole} = render(<DatePicker value={new Date(2019, 1, 3)} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
@@ -29,7 +29,7 @@ describe('DatePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('Month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 - February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -59,7 +59,7 @@ describe('DatePicker', function () {
       };
       let {getByRole, getAllByRole} = render(<DatePicker value={new Date(2019, 1, 3)} formatOptions={format} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toBeVisible();
       expect(combobox).not.toHaveAttribute('aria-disabled');
       expect(combobox).not.toHaveAttribute('aria-invalid');
@@ -124,7 +124,7 @@ describe('DatePicker', function () {
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent('2/3/2019');
 
       let button = getByRole('button');
@@ -153,7 +153,7 @@ describe('DatePicker', function () {
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent('2/3/2019');
 
       let button = getByRole('button');
@@ -179,7 +179,7 @@ describe('DatePicker', function () {
     it('should support labeling with a default label', function () {
       let {getByRole, getAllByRole} = render(<DatePicker />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveAttribute('aria-label', 'Date');
       expect(combobox).toHaveAttribute('id');
       let comboboxId = combobox.getAttribute('id');
@@ -201,7 +201,7 @@ describe('DatePicker', function () {
     it('should support labeling with aria-label', function () {
       let {getByRole, getAllByRole} = render(<DatePicker aria-label="Birth date" />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveAttribute('aria-label', 'Birth date');
       expect(combobox).toHaveAttribute('id');
       let comboboxId = combobox.getAttribute('id');
@@ -223,7 +223,7 @@ describe('DatePicker', function () {
     it('should support labeling with aria-labelledby', function () {
       let {getByRole, getAllByRole} = render(<DatePicker aria-labelledby="foo" />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).not.toHaveAttribute('aria-label');
       expect(combobox).toHaveAttribute('aria-labelledby', 'foo');
 
@@ -765,7 +765,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole} = render(<DatePicker onChange={onChange} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
     });
 
@@ -773,7 +773,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole} = render(<DatePicker onChange={onChange} value={null} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
     });
 
@@ -781,7 +781,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole} = render(<DatePicker onChange={onChange} placeholderDate={new Date(1980, 0, 1)} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent('1/1/1980');
     });
 
@@ -789,7 +789,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(<DatePicker onChange={onChange} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
@@ -814,7 +814,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(<DatePicker onChange={onChange} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
@@ -842,7 +842,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, rerender} = render(<DatePicker onChange={onChange} value={null} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
@@ -873,7 +873,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(<DatePicker onChange={onChange} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
@@ -906,7 +906,7 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, rerender} = render(<DatePicker onChange={onChange} value={null} />);
 
-      let combobox = getByRole('combobox');
+      let combobox = getByRole('group');
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');

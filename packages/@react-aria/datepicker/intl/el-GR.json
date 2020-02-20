@@ -1,5 +1,7 @@
 {
   "calendar": "Ημερολόγιο",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} έως {end, date, long}",
   "date": "Ημερομηνία",
   "dateRange": "Εύρος ημερομηνιών",
   "day": "Ημέρα",

@@ -1,5 +1,7 @@
 {
   "calendar": "Koledar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumski obseg",
   "day": "Dan",

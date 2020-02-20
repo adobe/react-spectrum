@@ -8,6 +8,7 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useSpinButton} from '@react-aria/spinbutton';
+import { useMediaQuery } from '@react-spectrum/utils';
 
 interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
@@ -27,7 +28,8 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
   });
 
   if (segment.type === 'month') {
-    textValue = monthDateFormatter.format(state.value);
+    let monthTextValue = monthDateFormatter.format(state.value);
+    textValue = monthTextValue !== textValue ? `${textValue} - ${monthTextValue}` : monthTextValue;
   } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
     textValue = hourDateFormatter.format(state.value);
   }
@@ -141,14 +143,26 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     }
   };
 
-  let onFocus = () => {
+  let onFocus = (event: FocusEvent) => {
     setEnteredKeys('');
   };
+
+  let touchPropOverrides = useMediaQuery('(hover: none) and (pointer: coarse)') ? {
+    role: 'textbox',
+    'aria-valuemax': null,
+    'aria-valuemin': null,
+    'aria-valuetext': null,
+    'aria-valuenow': null,
+  } : {};
 
   let id = useId(props.id);
   return {
     segmentProps: mergeProps(spinButtonProps, {
       id,
+      ...touchPropOverrides,
+      'aria-controls': props['aria-controls'],
+      'aria-haspopup': props['aria-haspopup'],
+      'aria-invalid': props['aria-invalid'],
       'aria-label': messageFormatter(segment.type),
       'aria-labelledby': `${props['aria-labelledby']} ${id}`,
       tabIndex: props.isDisabled ? undefined : 0,

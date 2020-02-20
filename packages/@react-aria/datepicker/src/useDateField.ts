@@ -9,7 +9,10 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DateFieldAria {
   fieldProps: HTMLAttributes<HTMLElement>,
-  segmentProps: DOMProps
+  segmentProps: DOMProps & {
+    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+    'aria-invalid'?: string
+  }
 }
 
 export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
@@ -31,6 +34,9 @@ export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
       onMouseDown
     },
     segmentProps: {
+      'aria-controls': props['aria-controls'],
+      'aria-haspopup': props['aria-haspopup'],
+      'aria-invalid': props['aria-invalid'],
       // Segments should be labeled by the input id if provided, otherwise the field itself
       'aria-labelledby': fieldProps['aria-labelledby'] || fieldProps.id
     }

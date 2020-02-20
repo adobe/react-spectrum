@@ -1,6 +1,7 @@
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -29,7 +30,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let state = useDatePickerState(props);
-  let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
+  let {groupProps, fieldProps, buttonProps, dialogProps, descProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
   let targetRef = useRef<HTMLDivElement>();
   let {direction} = useLocale();
@@ -54,9 +55,10 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       <div
         {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...comboboxProps}
+        {...groupProps}
         className={className}
         ref={targetRef}>
+        {descProps && descProps.children && <span {...descProps} />}
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
             {...fieldProps}
@@ -88,10 +90,12 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             icon={<CalendarIcon />}
             isDisabled={isDisabled || isReadOnly} />
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Calendar
-              autoFocus
-              value={value}
-              onChange={selectDate} />
+            <Content>
+              <Calendar
+                autoFocus
+                value={value}
+                onChange={selectDate} />
+            </Content>
           </Dialog>
         </DialogTrigger>
       </div>
