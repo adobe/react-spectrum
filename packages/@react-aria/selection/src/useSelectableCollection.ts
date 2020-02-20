@@ -46,7 +46,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,
-    autoFocus = true,
+    autoFocus = false,
     focusStrategy,
     setFocusStrategy,
     wrapAround = true
