@@ -6,10 +6,10 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import '@react-spectrum/docs/src/client';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {Switch} from '@react-spectrum/switch';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import User from '@spectrum-icons/workflow/User';
 ```
 
 # StatusLight
@@ -41,9 +41,15 @@ To indicate status use [semantic](#semantic-colors) or [label](#label-colors) va
 
 ### Accessibility
 
-If no visible label is provided (e.g. an icon only button),
+If textual child is not provided (e.g. an icon only),
 an alternative text label must be provided to identify the control for accessibility. This should be added using
 the `aria-label` prop.
+
+```tsx example
+<StatusLight variant="positive" aria-label="Online" >
+  <User />
+</StatusLight>
+```
 
 The visual cue provided by the status light is insufficient to comply with [WCAG 2.1 Success Criterion 1.4.1 on the Use of Color](https://www.w3.org/TR/WCAG21/#use-of-color),
 which requires that "color is not used as the only visual means of conveying information, indicating an action,
