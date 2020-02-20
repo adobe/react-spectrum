@@ -151,12 +151,13 @@ interface MenuProps extends DOMProps {
   children?: any
 }
 
-const Menu = React.forwardRef((props: MenuProps, ref) => {
+const Menu = React.forwardRef((props: MenuProps, ref: DOMRef) => {
   let {
     children,
     label = '',
     isDisabled
   } = props;
+  useDOMRef(ref);
 
   return (
     <DialogTrigger type="popover">
