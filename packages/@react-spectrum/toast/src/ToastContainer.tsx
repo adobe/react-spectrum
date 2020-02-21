@@ -6,11 +6,16 @@ import {ToastStateBase} from '@react-types/toast';
 
 interface ToastProviderProps {
   toasts?: ToastStateBase[],
+  onRemove?: (id: string) => void
 }
 
 export function ToastContainer(props: ToastProviderProps): ReactElement {
-  let renderToasts = () => props.toasts.map((toast) =>
-    (<Toast {...toast.props}>{toast.content}</Toast>)
+  let {
+    onRemove,
+    toasts
+  } = props;
+  let renderToasts = () => toasts.map((toast) =>
+    (<Toast {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
   );
 
   return (

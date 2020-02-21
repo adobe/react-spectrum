@@ -1,14 +1,13 @@
+import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
-import {ToastProps} from '@react-types/toast';
+import {SpectrumToastProps} from '@react-types/toast';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface AriaToastProps extends ToastProps {
-  id?: string
-}
+interface AriaToastProps extends SpectrumToastProps {}
 
 interface ToastAria {
   toastProps: HTMLAttributes<HTMLElement>,
@@ -22,6 +21,7 @@ export function useToast(props: AriaToastProps): ToastAria {
     id,
     onAction,
     onClose,
+    onRemove,
     shouldCloseOnAction,
     variant
   } = props;
@@ -50,7 +50,7 @@ export function useToast(props: AriaToastProps): ToastAria {
     },
     closeButtonProps: {
       'aria-label': formatMessage('close'),
-      onPress: onClose
+      onPress: chain(onClose, () => onRemove(id))
     }
   };
 }

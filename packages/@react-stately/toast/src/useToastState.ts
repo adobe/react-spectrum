@@ -18,9 +18,19 @@ export function useToastState(props?: ToastStateProps) {
     setToasts(tempToasts);
   };
 
+  const onRemove = (ref) => {
+    console.log('ref', ref);
+    console.log('toasts', toasts);
+    // let tempToasts = [...toasts].filter(item => item.props.ref.current === ref.current);
+    let tempToasts = [...toasts].filter(item => item.props === {});
+    console.log('onRemove post filter', tempToasts);
+    setToasts(tempToasts);
+  };
+
   return {
     onAdd,
-    toasts,
-    setToasts
+    onRemove,
+    setToasts,
+    toasts
   };
 }

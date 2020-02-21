@@ -1,4 +1,4 @@
-import React, {ReactElement, ReactNode, useContext} from 'react';
+import React, {createRef, ReactElement, ReactNode, useContext} from 'react';
 import {ToastContainer} from './';
 import {ToastOptions, ToastStateBase} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -24,14 +24,14 @@ export function useToastProvider() {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, toasts} = useToastState();
+  let {onAdd, onRemove, toasts} = useToastState();
   let {
     children
   } = useProviderProps(props);
 
   let contextValue = {
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, options);
+      onAdd(content, {...options});
     },
     positive: (content: ReactNode, options: ToastOptions = {}) => {
       onAdd(content, {...options, variant: 'positive'});
@@ -46,7 +46,7 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
 
   return (
     <ToastContext.Provider value={contextValue}>
-      <ToastContainer toasts={toasts} />
+      <ToastContainer toasts={toasts} onRemove={onRemove} />
       {children}
     </ToastContext.Provider>
   );
