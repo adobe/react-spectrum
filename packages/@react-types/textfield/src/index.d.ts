@@ -4,9 +4,9 @@ import {ReactElement} from 'react';
 export interface TextFieldProps extends InputBase, TextInputBase, ValueBase<string>, LabelableProps {}
 
 export interface SpectrumTextFieldProps extends TextFieldProps, SpectrumLabelableProps, TextInputDOMProps, StyleProps {
-  /** An icon to display at the start of the textfield */
+  /** An icon to display at the start of the textfield. */
   icon?: ReactElement,
-  /** Whether the textfield should be displayed with a quiet style */
+  /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
