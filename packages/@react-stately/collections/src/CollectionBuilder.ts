@@ -49,7 +49,6 @@ export class CollectionBuilder<T> {
   }
 
   build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
-    console.log('props in build', props)
     this.getItemStates = getItemStates || (() => ({}));
     return iterable(() => this.iterateCollection(props));
   }
@@ -74,8 +73,7 @@ export class CollectionBuilder<T> {
 
   getNode(item: CollectionElement<T>, level: number, value: T, childNodes: Iterable<Node<T>>, parentKey?: Key): Node<T> {
     let key = this.getKey(item, value, parentKey);
-    let states = item.type === Section ? null : this.getItemStates(item.props.blah);
-    console.log('item in get node', item);
+    let states = item.type === Section ? null : this.getItemStates(item.props.blah || key);
     let node: Node<T> = {
       type: item.type === Section ? 'section' : 'item',
       blah: item.props.blah || key,

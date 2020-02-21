@@ -43,13 +43,11 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
-    console.log('keydown')
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
-          console.log('nextKey', nextKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
           } else {

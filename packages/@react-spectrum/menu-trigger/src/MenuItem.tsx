@@ -15,7 +15,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     state,
     ...otherProps
   } = props;
-
+  
   let menuProps = useMenuContext();
 
   let {
@@ -30,7 +30,6 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     key,
     blah
   } = item;
-console.log('item', item)
 
 // EXTRACT BLAH FROM ITEM AND PASS IT TO USEMENUITEM AND REPLACE KEY
 

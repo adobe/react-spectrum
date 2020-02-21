@@ -75,7 +75,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       selectionManager.setFocusedKey(focusedKey);
     }
   }, []);
-  console.log('MENU', layout, state.tree);
+
   return (
     <MenuContext.Provider value={menuContext}>
       <CollectionView
