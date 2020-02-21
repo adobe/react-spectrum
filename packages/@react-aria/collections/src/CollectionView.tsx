@@ -42,7 +42,7 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
       </div>
     )
   });
-
+  
   let ref = useRef<HTMLDivElement>();
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey

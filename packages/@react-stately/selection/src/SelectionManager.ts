@@ -41,6 +41,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   setFocusedKey(key: Key) {
+    console.log('setFocusedKey', key);
     this.state.setFocusedKey(key);
   }
 
@@ -49,6 +50,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   setSelectedKeys(keys: Selection) {
+    console.log('setSelectedKey', keys)
     this.state.setSelectedKeys(keys);
   }
 
@@ -88,6 +90,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   toggleSelection(key: Key) {
+    console.log('toggle selection', this.state, key)
     this.state.setSelectedKeys(selectedKeys => {
       let keys = new Selection(selectedKeys);
       if (keys.has(key)) {
