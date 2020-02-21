@@ -186,22 +186,23 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   };
 
   useEffect(() => {
-    // By default, select first item for focus target
-    let focusedKey = delegate.getFirstKey();
-    let selectedKeys = manager.selectedKeys;
     manager.setFocused(true);
-    
-    // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
-    if (focusStrategy && focusStrategy === 'last') {
-      focusedKey = delegate.getLastKey();
-    }
 
-    // If there are any selected keys, make the first one the new focus target
-    if (selectedKeys.size) {
-      focusedKey = selectedKeys.values().next().value;
-    }
-    
     if (autoFocus) {
+      // By default, select first item for focus target
+      let focusedKey = delegate.getFirstKey();
+      let selectedKeys = manager.selectedKeys;
+    
+      // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
+      if (focusStrategy && focusStrategy === 'last') {
+        focusedKey = delegate.getLastKey();
+      }
+
+      // If there are any selected keys, make the first one the new focus target
+      if (selectedKeys.size) {
+        focusedKey = selectedKeys.values().next().value;
+      }
+    
       manager.setFocusedKey(focusedKey);
     }
   }, []);
