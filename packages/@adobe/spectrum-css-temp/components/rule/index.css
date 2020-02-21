@@ -24,6 +24,7 @@ governing permissions and limitations under the License.
   margin: 0px;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
+  align-self: stretch;
 }
 
 .spectrum-Rule--large {
@@ -53,6 +54,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Rule--vertical {
+  display: inline-block;
+  height: 100%;
   /* expected usage, people need to set height 100% if they aren't using flex on the container
    * if they *ARE* using flex, then they need to either have align-items stretch OR align-self stretch
    */

@@ -33,10 +33,10 @@ Content below
 ### Vertical
 Vertical dividers work in Flex or Grid containers
 ```tsx example
-<Flex width="50%" height="100px">
-    Content left
-    <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
-    Content right
+<Flex height="100px">
+  Content left
+  <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
+  Content right
 </Flex>
 ```
 
@@ -46,14 +46,15 @@ Vertical dividers work in Flex or Grid containers
 
 ## Frequently encountered issues
 
-### Flex Centering
+### Not in a Flex container
 
-When using a Flexed container that does anything other than align items stretch. You must set the Divider to align itself as stretch so it takes up the full cross axis size. Otherwise it will look as though it hasn't rendered.
+When placing a vertical Divider into a non-flex container, you must specify height attributes on the parent or the Divider will have a height of zero. In addition, all the usual vertical alignment tricks must be used. If you want everything aligned to the top, this is what you'd need to do.
+`<span>`'s are necessary around the text so that they can have vertical alignment applied. In general, we recommend using Dividers inside Flex and Grid components.
 ```tsx example
-<Flex height="100px" alignItems="center">
-    Content left
-    <Divider orientation="vertical" alignSelf="stretch" marginLeft="10px" marginRight="10px" />
-    Content right
-</Flex>
+<div style={{height: '100px'}}>
+  <span style={{verticalAlign: 'top'}}>Content left</span>
+  <Divider orientation="vertical" marginLeft="10px" marginRight="10px" verticalAlign="top" />
+  <span style={{verticalAlign: 'top'}}>Content right</span>
+</div>
 ```
 
