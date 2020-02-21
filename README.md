@@ -7,7 +7,7 @@ We are currently working hard to be ready for a stable release.
   - Please *don't share* this repo until we make our announcement!
   - Please try out our rc components and tell us what you think!
 
-If you have feedback or would like to join our beta program, please create a [feedback issue]() and let us know.
+If you have feedback or would like to join our beta program, please create a [feedback issue](https://github.com/adobe-private/react-spectrum-v3/issues/new?template=Feedback.md) and let us know.
 
 ## Using react-spectrum in your project
 
