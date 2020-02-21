@@ -27,8 +27,12 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    key
+    key,
+    blah
   } = item;
+console.log('item', item)
+
+// EXTRACT BLAH FROM ITEM AND PASS IT TO USEMENUITEM AND REPLACE KEY
 
   let ref = useRef<HTMLDivElement>();
   let {menuItemProps} = useMenuItem(
@@ -36,6 +40,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
       isSelected,
       isDisabled,
       key,
+      blah,
       ...otherProps
     }, 
     ref, 

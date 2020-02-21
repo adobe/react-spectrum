@@ -16,12 +16,15 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
     isSelected,
     isDisabled,
     key,
-    role = 'menuitem'
+    role = 'menuitem',
+    blah
   } = props;
- 
+  console.log('props', props);
+  
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
+    itemKey: blah,
+    // itemKey: key,
     itemRef: ref
   });
 
@@ -64,7 +67,8 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
     }
   };
 
-  let onMouseOver = () => state.selectionManager.setFocusedKey(key);
+  // let onMouseOver = () => state.selectionManager.setFocusedKey(key);
+  let onMouseOver = () => state.selectionManager.setFocusedKey(blah);
   let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
 
   return {

@@ -63,7 +63,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       selectionManager.setFocusedKey(focusedKey);
     }
   }, []);
-
+  console.log('MENU', layout, state.tree);
   return (
     <MenuContext.Provider value={menuContext}>
       <CollectionView
@@ -83,7 +83,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
         {(type, item: Node<T>) => {
           if (type === 'section') {
             // Only render the Divider if it isn't the first Heading (extra equality check to guard against rerenders)
-            if (item.key === state.tree.getKeys().next().value) {
+            if (item.blah === state.tree.getKeys().next().value) {
               return (
                 <MenuHeading item={item} />
               );
