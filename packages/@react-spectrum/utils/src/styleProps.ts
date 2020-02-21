@@ -40,6 +40,8 @@ export const baseStyleProps: StyleHandlers = {
   maxWidth: ['maxWidth', dimensionValue],
   maxHeight: ['maxHeight', dimensionValue],
   isHidden: ['display', hiddenValue],
+  alignSelf: ['alignSelf', passthroughStyle],
+  justifySelf: ['justifySelf', passthroughStyle],
   position: ['position', anyValue],
   zIndex: ['zIndex', anyValue],
   top: ['top', dimensionValue],

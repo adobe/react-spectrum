@@ -81,6 +81,9 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     </label>
   );
 }
-
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
 let _Checkbox = forwardRef(Checkbox);
 export {_Checkbox as Checkbox};
