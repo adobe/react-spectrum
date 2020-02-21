@@ -1,11 +1,13 @@
-#  ⚠️ Under Construction  ⚠️
+#  react-spectrum
+[Spectrum](http://spectrum.adobe.com) UI components in React.
 
+## ⚠️ Under Construction  ⚠️
 We are currently working hard to be ready for a stable release.
 
-  - Please don't share this repo until we make our announcement!
+  - Please *don't share* this repo until we make our announcement!
   - Please try out our rc components and tell us what you think!
 
-[Spectrum](http://spectrum.adobe.com) UI components in React.
+If you have feedback or would like to join our beta program, please create a [feedback issue]() and let us know.
 
 ## Using react-spectrum in your project
 
