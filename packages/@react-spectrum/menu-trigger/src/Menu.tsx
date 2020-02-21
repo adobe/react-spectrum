@@ -38,22 +38,15 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
     selectionMode: props.selectionMode || 'single'
   };
 
-  let {
-    focusStrategy,
-    setFocusStrategy,
-    autoFocus = true,
-    ...otherProps
-  } = completeProps;
-
   let state = useTreeState(completeProps);
-  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout, autoFocus, focusStrategy, setFocusStrategy);
+  let {menuProps, menuItemProps} = useMenu(completeProps, state, layout);
   let {styleProps} = useStyleProps(completeProps);
   let menuContext = mergeProps(menuProps, completeProps);
 
   return (
     <MenuContext.Provider value={menuContext}>
       <CollectionView
-        {...filterDOMProps(otherProps)}
+        {...filterDOMProps(completeProps)}
         {...styleProps}
         {...menuProps}
         focusedKey={state.selectionManager.focusedKey}

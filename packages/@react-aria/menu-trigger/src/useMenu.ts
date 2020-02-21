@@ -27,12 +27,15 @@ interface MenuState<T> extends TreeState<T> {}
 
 interface MenuLayout<T> extends ListLayout<T> {}
 
-export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>, autoFocus, focusStrategy, setFocusStrategy): MenuAria {
+export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
   let {
     'aria-orientation': ariaOrientation = 'vertical' as Orientation,
     role = 'menu',
     id,
-    selectionMode
+    selectionMode,
+    autoFocus,
+    wrapAround,
+    focusStrategy
   } = props;
 
   let menuId = useId(id);
@@ -42,8 +45,7 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
     keyboardDelegate: layout,
     autoFocus,
     focusStrategy,
-    setFocusStrategy,
-    wrapAround: true
+    wrapAround
   });
 
   let menuItemRole = 'menuitem';

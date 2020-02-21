@@ -34,7 +34,6 @@ interface SelectableListOptions {
   keyboardDelegate: KeyboardDelegate,
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
-  setFocusStrategy?: (value: FocusStrategy) => void,
   wrapAround?: boolean 
 }
 
@@ -48,8 +47,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     keyboardDelegate: delegate,
     autoFocus = false,
     focusStrategy,
-    setFocusStrategy,
-    wrapAround = true
+    wrapAround = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -196,9 +194,6 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
     if (focusStrategy && focusStrategy === 'last') {
       focusedKey = delegate.getLastKey();
-
-      // Reset focus strategy so it doesn't get applied to future menu openings
-      setFocusStrategy('first');
     }
 
     // If there are any selected keys, make the first one the new focus target
