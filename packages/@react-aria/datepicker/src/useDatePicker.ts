@@ -6,8 +6,8 @@ import {HTMLAttributes, KeyboardEvent} from 'react';
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {SpectrumBaseDialogProps} from '@react-types/dialog';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
 interface DateFieldDescProps extends DOMProps {

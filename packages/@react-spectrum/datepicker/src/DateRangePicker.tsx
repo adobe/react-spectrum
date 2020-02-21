@@ -70,6 +70,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             formatOptions={formatOptions}
             placeholderDate={placeholderDate}
             value={value.start}
+            defaultValue={null}
             onChange={start => setDate('start', start)}
             UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
           <DateRangeDash />
@@ -83,6 +84,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             formatOptions={formatOptions}
             placeholderDate={placeholderDate}
             value={value.end}
+            defaultValue={null}
             onChange={end => setDate('end', end)}
             UNSAFE_className={classNames(
               styles,
@@ -112,7 +114,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             <Content>
               <RangeCalendar
                 autoFocus
-                value={value}
+                value={value || null}
                 onChange={selectDateRange} />
             </Content>
           </Dialog>

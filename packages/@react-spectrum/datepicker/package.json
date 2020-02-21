@@ -36,6 +36,7 @@
     "@react-spectrum/calendar": "^3.0.0-alpha.2",
     "@react-spectrum/dialog": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/view": "^3.0.0-alpha.2",
     "@react-stately/datepicker": "^3.0.0-alpha.2",
     "@react-types/datepicker": "^3.0.0-alpha.2",
     "@spectrum-icons/ui": "^3.0.0-alpha.2",

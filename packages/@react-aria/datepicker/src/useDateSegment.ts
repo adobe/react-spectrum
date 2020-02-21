@@ -7,8 +7,8 @@ import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
+import {useMediaQuery} from '@react-spectrum/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
-import { useMediaQuery } from '@react-spectrum/utils';
 
 interface DateSegmentAria {
   segmentProps: HTMLAttributes<HTMLDivElement>
@@ -143,7 +143,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     }
   };
 
-  let onFocus = (event: FocusEvent) => {
+  let onFocus = () => {
     setEnteredKeys('');
   };
 
@@ -152,7 +152,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
     'aria-valuemax': null,
     'aria-valuemin': null,
     'aria-valuetext': null,
-    'aria-valuenow': null,
+    'aria-valuenow': null
   } : {};
 
   let id = useId(props.id);
