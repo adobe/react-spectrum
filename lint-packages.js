@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 const glob = require('fast-glob');
 const fs = require('fs');
 const assert = require('assert');
@@ -62,11 +74,13 @@ for (let pkg of packages) {
   }
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
+  softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
+  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe-private/react-spectrum-v3'}, `${pkg} has incorrect or missing repository url`);
 
   let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
   if (topIndexExists) {
     let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
-    softAssert.equal(contents, "export * from './src';\n", `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
+    softAssert(/export \* from '.\/src';/.test(contents), `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
   }
   softAssert(topIndexExists, `${pkg} is missing an index.ts`);
   softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
