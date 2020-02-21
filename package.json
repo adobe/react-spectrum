@@ -141,8 +141,7 @@
     "wsrun": "^5.0.0"
   },
   "dependencies": {
-    "@spectrum-css/component-builder": "^1.0.0",
-    "markdown-to-jsx": "^6.11.0"
+    "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
     "@babel/core": "7.8.4",
