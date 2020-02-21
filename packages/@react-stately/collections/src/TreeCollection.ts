@@ -11,8 +11,6 @@ export class TreeCollection<T> implements Collection<Node<T>> {
     this.iterable = nodes;
 
     let visit = (node: Node<T>) => {
-      // console.log('in treecollection', node);
-      // this.keyMap.set(node.key, node);
       this.keyMap.set(node.blah, node);
 
       if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
@@ -43,7 +41,6 @@ export class TreeCollection<T> implements Collection<Node<T>> {
     }
 
     this.lastKey = last.blah;
-    console.log('keyMap', this.keyMap)
   }
 
   *[Symbol.iterator]() {
