@@ -54,8 +54,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Rule--vertical {
-  display: inline-block;
-  height: 100%;
+  height: auto;
   /* expected usage, people need to set height 100% if they aren't using flex on the container
    * if they *ARE* using flex, then they need to either have align-items stretch OR align-self stretch
    */

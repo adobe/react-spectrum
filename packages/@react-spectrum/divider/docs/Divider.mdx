@@ -24,6 +24,8 @@ import {Flex} from '@react-spectrum/layout';
 ## Example
 
 ### Horizontal
+
+Horizontal Dividers can be used as is because of how CSS Layout works. They may also be used in Flex and Grid containers.
 ```tsx example
 Content above
 <Divider marginTop="10px" marginBottom="10px" />
@@ -31,9 +33,10 @@ Content below
 ```
 
 ### Vertical
-Vertical dividers work in Flex or Grid containers
+
+It is recommended to only use vertical Dividers in Flex or Grid containers. CSS Layout otherwise makes displaying a vertical Divider very difficult.
 ```tsx example
-<Flex height="100px">
+<Flex>
   Content left
   <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
   Content right
@@ -43,18 +46,3 @@ Vertical dividers work in Flex or Grid containers
 ## Props
 
 <PropTable component={docs.exports.Divider} links={docs.links} />
-
-## Frequently encountered issues
-
-### Not in a Flex container
-
-When placing a vertical Divider into a non-flex container, you must specify height attributes on the parent or the Divider will have a height of zero. In addition, all the usual vertical alignment tricks must be used. If you want everything aligned to the top, this is what you'd need to do.
-`<span>`'s are necessary around the text so that they can have vertical alignment applied. In general, we recommend using Dividers inside Flex and Grid components.
-```tsx example
-<div style={{height: '100px'}}>
-  <span style={{verticalAlign: 'top'}}>Content left</span>
-  <Divider orientation="vertical" marginLeft="10px" marginRight="10px" verticalAlign="top" />
-  <span style={{verticalAlign: 'top'}}>Content right</span>
-</div>
-```
-
