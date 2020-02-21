@@ -186,9 +186,9 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   };
 
   useEffect(() => {
-    manager.setFocused(true);
-
     if (autoFocus) {
+      manager.setFocused(true);
+
       // By default, select first item for focus target
       let focusedKey = delegate.getFirstKey();
       let selectedKeys = manager.selectedKeys;
