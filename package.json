@@ -147,6 +147,7 @@
   },
   "resolutions": {
     "@babel/core": "7.8.4",
-    "@babel/runtime": "7.6.3"
+    "@babel/runtime": "7.6.3",
+    "postcss-calc": "7.0.1"
   }
 }
