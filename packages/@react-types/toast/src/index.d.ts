@@ -14,11 +14,18 @@ interface ToastProps extends ToastOptions {
   variant?: 'positive' | 'negative' | 'info'
 }
 
-export interface SpectrumToastProps extends ToastProps, StyleProps {
-  onRemove?: (id: string) => void
+export interface SpectrumToastProps extends ToastProps, ToastState, StyleProps {
+  idKey?: string,
 }
 
-export interface ToastStateBase {
+export interface ToastState {
+  onAdd?: (content: ReactNode, options: SpectrumToastProps) => void,
+  onRemove?: (idKey: string) => void,
+  setToasts?: (value: ToastStateValue[]) => void,
+  toasts?: ToastStateValue[]
+}
+
+export interface ToastStateValue{
   content: ReactNode,
-  props: ToastOptions
+  props: SpectrumToastProps
 }

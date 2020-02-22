@@ -1,15 +1,14 @@
-import {ToastStateBase} from '@react-types/toast';
-import {useState} from 'react';
+import {ReactNode, useState} from 'react';
+import {SpectrumToastProps, ToastState, ToastStateValue} from '@react-types/toast';
 
-
-interface ToastStateProps extends React.HTMLAttributes<HTMLElement> {
-  value?: ToastStateBase[]
+interface ToastStateProps {
+  value?: ToastStateValue[]
 }
 
-export function useToastState(props?: ToastStateProps) {
+export function useToastState(props?: ToastStateProps): ToastState {
   const [toasts, setToasts] = useState(props && props.value || []);
 
-  const onAdd = (content, options) => {
+  const onAdd = (content: ReactNode, options: SpectrumToastProps) => {
     let tempToasts = [...toasts];
     tempToasts.push({
       content,
@@ -18,12 +17,8 @@ export function useToastState(props?: ToastStateProps) {
     setToasts(tempToasts);
   };
 
-  const onRemove = (ref) => {
-    console.log('ref', ref);
-    console.log('toasts', toasts);
-    // let tempToasts = [...toasts].filter(item => item.props.ref.current === ref.current);
-    let tempToasts = [...toasts].filter(item => item.props === {});
-    console.log('onRemove post filter', tempToasts);
+  const onRemove = (idKey: string) => {
+    let tempToasts = [...toasts].filter(item => item.props.idKey !== idKey);
     setToasts(tempToasts);
   };
 

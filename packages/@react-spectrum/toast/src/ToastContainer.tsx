@@ -2,14 +2,9 @@ import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement} from 'react';
 import {Toast} from './';
 import toastContainerStyles from './toastContainer.css';
-import {ToastStateBase} from '@react-types/toast';
+import {ToastState} from '@react-types/toast';
 
-interface ToastProviderProps {
-  toasts?: ToastStateBase[],
-  onRemove?: (id: string) => void
-}
-
-export function ToastContainer(props: ToastProviderProps): ReactElement {
+export function ToastContainer(props: ToastState): ReactElement {
   let {
     onRemove,
     toasts

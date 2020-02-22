@@ -1,12 +1,10 @@
-import React, {createRef, ReactElement, ReactNode, useContext} from 'react';
+import React, {ReactElement, ReactNode, useContext} from 'react';
 import {ToastContainer} from './';
-import {ToastOptions, ToastStateBase} from '@react-types/toast';
+import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToastState} from '@react-stately/toast';
 
 interface ToastContextProps {
-  setToasts?: (any) => void,
-  toasts?: ToastStateBase[],
   positive?: (content: ReactNode, options: ToastOptions) => void,
   negative?: (content: ReactNode, options: ToastOptions) => void,
   neutral?: (content: ReactNode, options: ToastOptions) => void,
@@ -23,6 +21,11 @@ export function useToastProvider() {
   return useContext(ToastContext);
 }
 
+let keyCounter = 0;
+function generateKey(pre = 'toast') {
+  return `${ pre }_${ keyCounter++ }`;
+}
+
 export function ToastProvider(props: ToastProviderProps): ReactElement {
   let {onAdd, onRemove, toasts} = useToastState();
   let {
@@ -31,16 +34,16 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
 
   let contextValue = {
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options});
+      onAdd(content, {...options, idKey: generateKey()});
     },
     positive: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'positive'});
+      onAdd(content, {...options, idKey: generateKey(), variant: 'positive'});
     },
     negative: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'negative'});
+      onAdd(content, {...options, idKey: generateKey(), variant: 'negative'});
     },
     info: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'info'});
+      onAdd(content, {...options, idKey: generateKey(), variant: 'info'});
     }
   };
 

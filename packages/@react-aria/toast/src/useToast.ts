@@ -19,6 +19,7 @@ interface ToastAria {
 export function useToast(props: AriaToastProps): ToastAria {
   let {
     id,
+    idKey,
     onAction,
     onClose,
     onRemove,
@@ -50,7 +51,7 @@ export function useToast(props: AriaToastProps): ToastAria {
     },
     closeButtonProps: {
       'aria-label': formatMessage('close'),
-      onPress: chain(onClose, () => onRemove(id))
+      onPress: chain(onClose, () => onRemove(idKey))
     }
   };
 }
