@@ -73,10 +73,11 @@ export class CollectionBuilder<T> {
 
   getNode(item: CollectionElement<T>, level: number, value: T, childNodes: Iterable<Node<T>>, parentKey?: Key): Node<T> {
     let key = this.getKey(item, value, parentKey);
-    let states = item.type === Section ? null : this.getItemStates(item.props.blah || key);
+    let blah = item.props.blah || key;
+    let states = item.type === Section ? null : this.getItemStates(blah);
     let node: Node<T> = {
       type: item.type === Section ? 'section' : 'item',
-      blah: item.props.blah || key,
+      blah,
       key,
       value,
       level,
