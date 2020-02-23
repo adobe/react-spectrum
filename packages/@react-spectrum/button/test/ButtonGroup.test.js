@@ -1,4 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ActionButton, ButtonGroup} from '../';
+import Brush from '@spectrum-icons/workflow/Brush';
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -136,5 +149,23 @@ describe('ButtonGroup', function () {
     let button1 = getByTestId('button-1');
     triggerPress(button1);
     expect(button1).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('PressResponder should pass className, role and tabIndex', function () {
+    let {getByTestId} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ButtonGroup>
+          <ActionButton UNSAFE_className={'test-class'} icon={<Brush />} data-testid="button-1">Click me</ActionButton>
+        </ButtonGroup>
+      </Provider>
+    );
+
+    let button1 = getByTestId('button-1');
+    expect(button1).not.toHaveAttribute('icon');
+    expect(button1).not.toHaveAttribute('unsafe_classname');
+    expect(button1).toHaveAttribute('class', expect.stringContaining('test-class'));
+    expect(button1).toHaveAttribute('class', expect.stringContaining('-item'));
+    expect(button1).toHaveAttribute('role', 'radio');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
   });
 });

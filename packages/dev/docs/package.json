@@ -1,0 +1,26 @@
+{
+  "name": "@react-spectrum/docs",
+  "version": "1.0.0",
+  "private": true,
+  "source": "src/index.js",
+  "dependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@react-spectrum/button": "^3.0.0-rc.1",
+    "@react-spectrum/provider": "^3.0.0-rc.1",
+    "@react-spectrum/breadcrumbs": "^3.0.0-alpha.1",
+    "@react-spectrum/divider": "^3.0.0-rc.1",
+    "@react-spectrum/dialog": "^3.0.0-alpha.2",
+    "@react-spectrum/view": "^3.0.0-alpha.2",
+    "@react-aria/interactions": "^3.0.0-alpha.2",
+    "@react-spectrum/theme-default": "^3.0.0-rc.1",
+    "@spectrum-icons/workflow": "^3.0.0-alpha.2",
+    "highlight.js": "9.18.1",
+    "classnames": "^2.2.6",
+    "@mdx-js/react": "^1.5.5",
+    "globals-docs": "^2.4.1",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "react-lowlight": "^2.0.0",
+    "markdown-to-jsx": "^6.11.0"
+  }
+}

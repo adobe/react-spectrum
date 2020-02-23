@@ -18,43 +18,90 @@ jobs:
             cp .circleci/.npmrc .npmrc
 
       - run:
-          name: yarn install
+          name: build
           command: |
-            make clean_node_modules
-            make install_no_postinstall
+            make adobe_setup
+            yarn
+
+      - save_cache:
+         paths:
+           - node_modules
+         key: yarn-cache-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
-            - node_modules
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+            - ~/react-spectrum-v3
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - run:
-          name: build
-          command: |
-            make clean
-            make -B
+  test:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
           command: make ci-test
+
+  lint:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: lint
+          command: make lint
+
+  storybook:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
           command: make storybook
 
       - persist_to_workspace:
-          root: storybook-static
+          root: dist
           paths:
-            - '**'
+            - '*/storybook/'
+  docs:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build docs
+          command: make website
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
 
   deploy:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
-          at: /tmp/storybook-static
+          at: /tmp/dist
       - run:
-          name: deploy storybook
-          command: az storage blob upload-batch -d reactspectrum -s /tmp/storybook-static --account-name reactspectrum
+          name: deploy
+          command: az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
 
   comment:
     docker:
@@ -74,9 +121,24 @@ workflows:
   test:
     jobs:
       - build
-      - deploy:
+      - test:
           requires:
             - build
+      - lint:
+          requires:
+            - build
+      - storybook:
+          requires:
+            - build
+      - docs:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - lint
+            - test
+            - storybook
+            - docs
       - comment:
           requires:
             - deploy
