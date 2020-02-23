@@ -10,6 +10,24 @@ function Example(props) {
 describe('useHover', function () {
   afterEach(cleanup);
 
+  it('does not handle hover events if disabled', function () {
+    let events = [];
+    let addEvent = (e) => events.push(e);
+    let res = render(
+      <Example
+        isDisabled
+        onHoverEnd={addEvent}
+        onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        onHover={addEvent} />
+    );
+
+    let el = res.getByText('test');
+    fireEvent.mouseEnter(el);
+    fireEvent.mouseLeave(el);
+
+    expect(events).toEqual([]);
+  });
+
   describe('mouse events', function () {
     it('should fire hover events based on mouse events', function () {
       let events = [];
