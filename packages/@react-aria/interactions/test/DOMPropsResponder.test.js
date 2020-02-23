@@ -2,7 +2,7 @@ import {cleanup, fireEvent, render} from '@testing-library/react';
 import {DOMPropsResponder, Hoverable} from '../';
 import React from 'react';
 
-describe('HoverResponder', function () {
+describe('DOMPropsResponder', function () {
   afterEach(cleanup);
 
   it('should handle hover events on nested hoverable children', function () {
