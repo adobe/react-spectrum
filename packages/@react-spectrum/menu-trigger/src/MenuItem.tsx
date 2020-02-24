@@ -27,7 +27,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    blah
+    key
   } = item;
 
   let ref = useRef<HTMLDivElement>();
@@ -35,7 +35,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     {
       isSelected,
       isDisabled,
-      blah,
+      key,
       ...otherProps
     }, 
     ref, 
