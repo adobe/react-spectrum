@@ -47,7 +47,6 @@ export class CollectionBuilder<T> {
     }
     
     if (this.itemKey && value[this.itemKey]) {
-      console.log('value in get Key', value);
       return value[this.itemKey];
     }
   
