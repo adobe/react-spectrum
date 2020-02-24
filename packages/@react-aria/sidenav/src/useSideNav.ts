@@ -1,11 +1,11 @@
 import {AllHTMLAttributes} from 'react';
-import {CollectionBase, DOMProps, Expandable, SingleSelection} from '@react-types/shared';
+import {CollectionBase, DOMProps, Expandable, MultipleSelection} from '@react-types/shared';
 import {ListLayout} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface SideNavAriaProps<T> extends CollectionBase<T>, Expandable, SingleSelection, DOMProps {}
+interface SideNavAriaProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {}
 
 interface SideNavAria {
   navProps: AllHTMLAttributes<HTMLDivElement>,
