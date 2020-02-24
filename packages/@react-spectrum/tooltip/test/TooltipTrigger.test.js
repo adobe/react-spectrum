@@ -53,7 +53,7 @@ describe('TooltipTrigger', function () {
 
       // wait for appearance
       await wait(() => {
-        expect(tooltip).toBeVisible();
+        expect(tooltip).toBeInTheDocument();
       });
 
       expect(tooltip.id).toBeTruthy();
@@ -79,7 +79,7 @@ describe('TooltipTrigger', function () {
       let tooltip = getByRole('tooltip');
 
       await wait(() => {
-        expect(tooltip).toBeVisible();
+        expect(tooltip).toBeInTheDocument();
       });
     });
 
