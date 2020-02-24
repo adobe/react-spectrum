@@ -48,16 +48,16 @@ storiesOf('Tooltip', module)
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
     'triggered by hover and focus, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'hover'})
+    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: ['hover', 'focus']})
   ).add(
     'triggered by hover and focus, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'focus'})
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: ['hover', 'focus']})
   ).add(
     'supports disable prop: click',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   ).add(
-    'supports disable prop: hover',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
+    'supports disable prop: hover and focus',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], isDisabled: true})
   ).add(
      'single tooltip: hover',
      () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'hover'})
