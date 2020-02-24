@@ -148,14 +148,14 @@ storiesOf('Menu', module)
             <Item>
               One
             </Item>
-            <Item blah="2">
+            <Item staticKey="2">
               Two
             </Item>
             <Item>
               Three
             </Item>
           </Section>
-          <Section key="section2" title="Section 2">
+          <Section title="Section 2">
             <Item>
               Four
             </Item>
@@ -196,7 +196,7 @@ storiesOf('Menu', module)
             <Item>
               One
             </Item>
-            <Item blah="2">
+            <Item staticKey="2">
               Two
             </Item>
             <Item>
@@ -247,7 +247,7 @@ storiesOf('Menu', module)
             <Item>
               Two
             </Item>
-            <Item blah="3">
+            <Item staticKey="3">
               Three
             </Item>
           </Section>
@@ -255,7 +255,7 @@ storiesOf('Menu', module)
             <Item>
               Four
             </Item>
-            <Item blah="5">
+            <Item staticKey="5">
               Five
             </Item>
             <Item>
@@ -287,16 +287,28 @@ storiesOf('Menu', module)
     'Multiselect menu, static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item staticKey="1">
+              One
+            </Item>
+            <Item staticKey="2">
+              Two
+            </Item>
+            <Item staticKey="3">
+              Three
+            </Item>
           </Section>
           <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
+            <Item staticKey="4">
+              Four
+            </Item>
+            <Item staticKey="5">
+              Five
+            </Item>
+            <Item staticKey="6">
+              Six
+            </Item>
           </Section>
         </Menu>
       </Popover>
