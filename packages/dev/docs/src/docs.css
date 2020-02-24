@@ -104,7 +104,7 @@ article h2 {
 }
 
 article h2 + hr {
-  margin-bottom: 33px;
+  margin-bottom: 33px !important;
 }
 
 .example {
