@@ -42,10 +42,14 @@ export class CollectionBuilder<T> {
   }
 
   getKey(item: CollectionElement<T>, value: T, parentKey?: Key): Key {
+    if (item.props.uniqueKey) {
+      return item.props.uniqueKey;
+    }
+
     if (item.key) {
       return parentKey ? `${parentKey}${item.key}` : item.key;
     }
-    
+
     if (this.itemKey && value[this.itemKey]) {
       return value[this.itemKey];
     }
@@ -61,7 +65,6 @@ export class CollectionBuilder<T> {
 
   getNode(item: CollectionElement<T>, level: number, value: T, childNodes: Iterable<Node<T>>, parentKey?: Key): Node<T> {
     let key = this.getKey(item, value, parentKey);
-    key = item.props.staticKey || key;
     let states = item.type === Section ? null : this.getItemStates(key);
     let node: Node<T> = {
       type: item.type === Section ? 'section' : 'item',
