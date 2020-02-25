@@ -26,7 +26,7 @@ export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeSta
     itemRef: ref
   });
 
-  let {pressProps} = usePress(itemProps);
+  let {pressProps} = usePress({...itemProps, isDisabled: item.isDisabled});
 
   return {
     listItemProps: {
@@ -35,6 +35,7 @@ export function useSideNavItem<T>(props: SideNavItemAriaProps<T>, state: TreeSta
     listItemLinkProps: {
       role: 'link',
       target: '_self',
+      'aria-disabled': item.isDisabled,
       'aria-current': item.isSelected ? ariaCurrent || 'page' : undefined,
       ...mergeProps(itemProps, pressProps)
     }

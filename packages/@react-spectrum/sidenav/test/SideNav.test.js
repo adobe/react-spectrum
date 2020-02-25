@@ -1,4 +1,4 @@
-import {cleanup, render, waitForDomChange} from '@testing-library/react';
+import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
@@ -148,7 +148,7 @@ describe('SideNav', function () {
     ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
-  `('$Name can select an item', async function ({Name, Component, ComponentSection, ComponentItem}) {
+  `('$Name can single select an item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
     let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
 
@@ -166,6 +166,7 @@ describe('SideNav', function () {
   
     expect(foo).not.toHaveAttribute('aria-current');
     expect(foo).toHaveAttribute('tabindex', '-1');
+    expect(document.activeElement).toBe(bar);
     expect(bar).toHaveAttribute('aria-current', 'page');
     expect(bar).toHaveAttribute('tabindex', '0');
     expect(bob).not.toHaveAttribute('aria-current');
@@ -184,6 +185,7 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('tabindex', '-1');
     expect(bob).not.toHaveAttribute('aria-current');
     expect(bob).toHaveAttribute('tabindex', '-1');
+    expect(document.activeElement).toBe(alice);
     expect(alice).toHaveAttribute('aria-current', 'page');
     expect(alice).toHaveAttribute('tabindex', '0');
 
@@ -207,7 +209,135 @@ describe('SideNav', function () {
     expect(section1).toBeTruthy();
     expect(section2).toBeTruthy();
 
+    // contains 4 link items
     expect(getAllByRole('link').length).toBe(4);
+    // all 4 items and 2 sections have role presentation
     expect(getAllByRole('presentation').length).toBe(6);
   });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name can focus up/down item', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
+    
+    await waitForDomChange();
+
+    let items = getAllByRole('link');
+    let selectedItem = items[0];
+    selectedItem.focus();
+    expect(selectedItem).toBe(document.activeElement);
+    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    let nextSelectedItem = items[1];
+    expect(nextSelectedItem).toBe(document.activeElement);
+    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    expect(selectedItem).toBe(document.activeElement);
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
+    
+    await waitForDomChange();
+
+    let items = getAllByRole('link');
+    let selectedItem = items[0];
+    selectedItem.focus();
+    expect(selectedItem).toBe(document.activeElement);
+    fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    let nextSelectedItem = items[items.length - 1];
+    expect(nextSelectedItem).toBe(document.activeElement);
+    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    expect(selectedItem).toBe(document.activeElement);
+  });
+
+  // TODO: add test for static collection
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
+
+    await waitForDomChange();
+
+    let [foo, bar, bob, alice] = [
+      getByText('Foo'),
+      getByText('Bar'),
+      getByText('Bob'),
+      getByText('Alice')
+    ];
+
+    expect(foo).not.toHaveAttribute('aria-current');
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    expect(bob).not.toHaveAttribute('aria-current');
+    expect(alice).not.toHaveAttribute('aria-current');
+
+    triggerPress(alice);
+    expect(alice).toHaveAttribute('aria-current', 'page');
+  });
+
+  // TODO: add test for static collection
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name supports defaultSelectedKeys (controlled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectedKeys: ['Bar']});
+
+    await waitForDomChange();
+
+    let [foo, bar, bob, alice] = [
+      getByText('Foo'),
+      getByText('Bar'),
+      getByText('Bob'),
+      getByText('Alice')
+    ];
+
+    expect(foo).not.toHaveAttribute('aria-current');
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    expect(bob).not.toHaveAttribute('aria-current');
+    expect(alice).not.toHaveAttribute('aria-current');
+
+    triggerPress(alice);
+    expect(alice).not.toHaveAttribute('aria-current', 'page');
+    expect(bar).toHaveAttribute('aria-current', 'page');
+  });
+
+  // TODO: add test for static collection
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name supports disabledKeys', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, disabledKeys: ['Foo', 'Bob']});
+
+    await waitForDomChange();
+
+    let [foo, bar, bob, alice] = [
+      getByText('Foo'),
+      getByText('Bar'),
+      getByText('Bob'),
+      getByText('Alice')
+    ];
+
+    triggerPress(foo);
+    triggerPress(bob);
+    expect(spy).toBeCalledTimes(0);
+
+    expect(foo).toHaveAttribute('aria-disabled', 'true');
+    expect(bar).toHaveAttribute('aria-disabled', 'false');
+    expect(bob).toHaveAttribute('aria-disabled', 'true');
+    expect(alice).toHaveAttribute('aria-disabled', 'false');
+  });
+
 });

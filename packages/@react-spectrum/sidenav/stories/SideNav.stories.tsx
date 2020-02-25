@@ -42,14 +42,6 @@ storiesOf('SideNav', module)
     )
   )
   .add(
-    'with 2 default selected item',
-    () => (
-      <SideNav defaultSelectedKeys={['Snake', 'Kangaroo']} items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} >
-        {item => <Item>{item.name}</Item>}
-      </SideNav>
-    )
-  )
-  .add(
     'with selected item (controlled)',
     () => (
       <SideNav selectedKeys={['Kangaroo']} items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
