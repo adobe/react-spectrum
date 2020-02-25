@@ -10,7 +10,7 @@ export function ToastContainer(props: ToastState): ReactElement {
     toasts
   } = props;
   let renderToasts = () => toasts.map((toast) =>
-    (<Toast {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
+    (<Toast key={toast.props.idKey} {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
   );
 
   return (
