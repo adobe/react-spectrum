@@ -75,7 +75,7 @@ deploy: storybook docs
 ci:
 	$(MAKE) publish
 
-publish: build
+publish: 
 	lerna publish from-package --yes --registry $(NPM_REGISTRY)
 
 build:
