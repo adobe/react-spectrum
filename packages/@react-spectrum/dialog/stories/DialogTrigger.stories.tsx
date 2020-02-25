@@ -32,7 +32,7 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: popover',
-    () => render({type: 'popover'})
+    () => renderPopover({type: 'popover'})
   )
   .add(
     'type: modal',
@@ -41,17 +41,17 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: tray',
-    () => render({type: 'tray'}),
+    () => renderPopover({type: 'tray'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}}
   )
   .add(
     'popover with mobileType: modal',
-    () => render({type: 'popover', mobileType: 'modal'}),
+    () => renderPopover({type: 'popover', mobileType: 'modal'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
   )
   .add(
     'popover with mobileType: tray',
-    () => render({type: 'popover', mobileType: 'tray'}),
+    () => renderPopover({type: 'popover', mobileType: 'tray'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
   )
   .add(
@@ -132,71 +132,71 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'placement="left"',
-    () => render({type: 'popover', placement: 'left'})
+    () => renderPopover({type: 'popover', placement: 'left'})
   )
   .add(
     'placement="left top"',
-    () => render({type: 'popover', placement: 'left top'})
+    () => renderPopover({type: 'popover', placement: 'left top'})
   )
   .add(
     'placement="left bottom"',
-    () => render({type: 'popover', placement: 'left bottom'})
+    () => renderPopover({type: 'popover', placement: 'left bottom'})
   )
   .add(
     'placement="right"',
-    () => render({type: 'popover', placement: 'right'})
+    () => renderPopover({type: 'popover', placement: 'right'})
   )
   .add(
     'placement="right top"',
-    () => render({type: 'popover', placement: 'right top'})
+    () => renderPopover({type: 'popover', placement: 'right top'})
   )
   .add(
     'placement="right bottom"',
-    () => render({type: 'popover', placement: 'right bottom'})
+    () => renderPopover({type: 'popover', placement: 'right bottom'})
   )
   .add(
     'placement="bottom"',
-    () => render({type: 'popover', placement: 'bottom'})
+    () => renderPopover({type: 'popover', placement: 'bottom'})
   )
   .add(
     'placement="bottom left"',
-    () => render({type: 'popover', placement: 'bottom left'})
+    () => renderPopover({type: 'popover', placement: 'bottom left'})
   )
   .add(
     'placement="bottom right"',
-    () => render({type: 'popover', placement: 'bottom right'})
+    () => renderPopover({type: 'popover', placement: 'bottom right'})
   )
   .add(
     'placement="top"',
-    () => render({type: 'popover', placement: 'top'})
+    () => renderPopover({type: 'popover', placement: 'top'})
   )
   .add(
     'placement="top left"',
-    () => render({type: 'popover', placement: 'top left'})
+    () => renderPopover({type: 'popover', placement: 'top left'})
   )
   .add(
     'placement="top right"',
-    () => render({type: 'popover', placement: 'top right'})
+    () => renderPopover({type: 'popover', placement: 'top right'})
   )
   .add(
     'offset',
-    () => render({type: 'popover', offset: 50})
+    () => renderPopover({type: 'popover', offset: 50})
   )
   .add(
     'crossOffset',
-    () => render({type: 'popover', crossOffset: 50})
+    () => renderPopover({type: 'popover', crossOffset: 50})
   )
   .add(
     'shouldFlip: true',
-    () => render({type: 'popover', placement: 'left', shouldFlip: true, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: false',
-    () => render({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
     'containerPadding',
-    () => render({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
   .add(
     'alert dialog',
@@ -213,6 +213,21 @@ function render({width = 'auto', ...props}) {
           <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
           <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
+        </Dialog>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderPopover({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger {...props} defaultOpen={isChromatic()}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
       </DialogTrigger>
     </div>
