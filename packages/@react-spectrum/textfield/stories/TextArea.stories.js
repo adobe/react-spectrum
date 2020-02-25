@@ -107,10 +107,10 @@ storiesOf('TextArea', module)
     () => render({label: null, 'aria-label': 'Street address'})
   )
   .add('custom width',
-    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}})
+    () => render({icon: <Info />, validationState: 'invalid', width: '300'})
   )
   .add('custom width, quiet',
-    () => render({icon: <Info />, validationState: 'invalid', UNSAFE_style: {width: 300}, isQuiet: true})
+    () => render({icon: <Info />, validationState: 'invalid', width: '300', isQuiet: true})
   );
 
 function render(props = {}) {
