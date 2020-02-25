@@ -18,6 +18,8 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
+    // timeoutId is dynamic internal so removing it
+    delete result.current.toasts[0].timeoutId;
     expect(result.current.toasts).toStrictEqual(newValue);
   });
 
@@ -29,9 +31,15 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
+    // timeoutId is dynamic internal so removing it
+    delete result.current.toasts[0].timeoutId;
     expect(result.current.toasts).toStrictEqual(newValue);
+
     act(() => result.current.onAdd(secondToast.content, secondToast.props));
     expect(result.current.toasts.length).toBe(2);
+    // timeoutId is dynamic internal so removing it
+    delete result.current.toasts[0].timeoutId;
+    delete result.current.toasts[1].timeoutId;
     expect(result.current.toasts[0]).toStrictEqual(newValue[0]);
     expect(result.current.toasts[1]).toStrictEqual(secondToast);
   });

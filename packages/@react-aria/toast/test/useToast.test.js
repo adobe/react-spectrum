@@ -10,6 +10,7 @@ import {useToast} from '../';
 describe('useToast', () => {
   let onClose = jest.fn();
   let onAction = jest.fn();
+  let onRemove = jest.fn();
 
   afterEach(() => {
     onClose.mockClear();
@@ -23,13 +24,14 @@ describe('useToast', () => {
   };
 
   it('handles defaults', function () {
-    let {actionButtonProps, closeButtonProps, iconProps, toastProps} = renderToastHook({});
+    let {actionButtonProps, closeButtonProps, iconProps, toastProps} = renderToastHook({onRemove});
 
     expect(toastProps.role).toBe('alert');
     expect(iconProps.alt).toBe(undefined);
     expect(typeof actionButtonProps.onPress).toBe('function');
     expect(closeButtonProps['aria-label']).toBe('Close');
-    expect(closeButtonProps.onPress).toBe(undefined);
+    console.log('closeButtonProps.onPress', closeButtonProps.onPress());
+    expect(typeof closeButtonProps.onPress).toBe('function');
   });
 
   it('variant sets icon alt property', function () {
@@ -52,10 +54,11 @@ describe('useToast', () => {
   });
 
   it('handles onClose', function () {
-    let {closeButtonProps} = renderToastHook({onClose});
+    let {closeButtonProps} = renderToastHook({onClose, onRemove});
     closeButtonProps.onPress();
 
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
   it('handles shouldCloseOnAction', function () {

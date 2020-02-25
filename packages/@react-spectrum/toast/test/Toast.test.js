@@ -37,7 +37,7 @@ describe('Toast', function () {
   it.each`
     Name           | Component    | props                             | message
     ${'Toast'}     | ${Toast}     | ${{UNSAFE_className: 'myClass'}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{className: 'myClass'}}  | ${'Toast time!'}
+    ${'V2Toast'}   | ${V2Toast}   | ${{className: 'myClass'}}         | ${'Toast time!'}
   `('$Name supports UNSAFE_className', function ({Component, props, message}) {
     let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
@@ -46,7 +46,7 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props                      | message
+    Name           | Component    | props                 | message
     ${'Toast'}     | ${Toast}     | ${{variant: 'info'}}  | ${'Toast time!'}
   `('$Name supports variant info', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, props, message);
@@ -55,9 +55,9 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props                     | message
-    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo'}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true}}  | ${'Toast time!'}
+    Name           | Component    | props                                         | message
+    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', onRemove: () => {}}}  | ${'Toast time!'}
+    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true}}      | ${'Toast time!'}
   `('$Name handles action and close button clicks', function ({Component, props, message}) {
     let {getAllByRole, getByText} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
@@ -75,9 +75,9 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props                     | message
-    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}  | ${'Toast time!'}
+    Name           | Component    | props                                                                    | message
+    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true, onRemove: () => {}}}  | ${'Toast time!'}
+    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}            | ${'Toast time!'}
   `('$Name handles action and close button clicks when action closes', function ({Component, props, message}) {
     let {getAllByRole, getByText} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
@@ -95,9 +95,9 @@ describe('Toast', function () {
   });
 
   it.each`
-    Name           | Component    | props                     | message
-    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}  | ${'Toast time!'}
+    Name           | Component    | props                                                                    | message
+    ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true, onRemove: () => {}}}  | ${'Toast time!'}
+    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}            | ${'Toast time!'}
   `('$Name action button and close button are focusable', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');

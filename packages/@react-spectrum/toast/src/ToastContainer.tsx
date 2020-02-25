@@ -14,10 +14,18 @@ export function ToastContainer(props: ToastState): ReactElement {
     (<Toast key={toast.props.idKey} {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
   );
   let providerProps = useProvider();
-  let [containerPosition, containerPlacement] = providerProps.toastPlacement.split(' ');
+  let toastPlacement = providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' ');
+  let containerPosition = toastPlacement && toastPlacement[0];
+  let containerPlacement = toastPlacement && toastPlacement[1];
 
   return (
-    <div className={classNames(toastContainerStyles, 'react-spectrum-ToastContainer', `react-spectrum-ToastContainer--${containerPosition}`)}>
+    <div
+      className={classNames(
+        toastContainerStyles,
+        'react-spectrum-ToastContainer',
+        containerPosition && `react-spectrum-ToastContainer--${containerPosition}`,
+        containerPlacement && `react-spectrum-ToastContainer--${containerPlacement}`
+      )}>
       {renderToasts()}
     </div>
   );
