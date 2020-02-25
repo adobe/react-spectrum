@@ -92,8 +92,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
       ...(triggerType.includes('hover') && hoverProps),
-      onFocus: triggerType.includes('focus') ? handleDelayedShow : undefined,
-      onBlur: triggerType.includes('focus') ? handleDelayedHide : undefined
+      onFocus: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedShow : undefined,
+      onBlur: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedHide : undefined
     },
     tooltipProps: {
       ...overlayProps,
