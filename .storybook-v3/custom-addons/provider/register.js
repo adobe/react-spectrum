@@ -36,7 +36,7 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'top'});
+  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'bottom'});
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;

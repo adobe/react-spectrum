@@ -49,22 +49,22 @@ function RenderProvider() {
   return (
     <div>
       <Button
-        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
+        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose'), actionLabel: 'no timer'})}
         variant="secondary">
           Show Default Toast
       </Button>
       <Button
-        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
+        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose'), timeout: -1000})}
         variant="primary">
           Show Primary Toast
       </Button>
       <Button
-        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose'), timeout: 0})}
         variant="negative">
           Show Negative Toast
       </Button>
       <Button
-        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
+        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose'), timeout: 2000})}
         variant="cta">
           Show info Toast
       </Button>
