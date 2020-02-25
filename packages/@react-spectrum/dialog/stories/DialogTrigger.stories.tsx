@@ -63,15 +63,19 @@ storiesOf('DialogTrigger', module)
           <DialogTrigger>
             <ActionButton>Trigger</ActionButton>
             <Dialog>
-              <input />
-              <input />
-              <DialogTrigger>
-                <ActionButton>Trigger</ActionButton>
-                <Dialog>
-                  <input />
-                  <input />
-                </Dialog>
-              </DialogTrigger>
+              <Content>
+                <input />
+                <input />
+                <DialogTrigger>
+                  <ActionButton>Trigger</ActionButton>
+                  <Dialog>
+                    <Content>
+                      <input />
+                      <input />
+                    </Content>
+                  </Dialog>
+                </DialogTrigger>
+              </Content>
             </Dialog>
           </DialogTrigger>
         </Provider>
@@ -86,12 +90,14 @@ storiesOf('DialogTrigger', module)
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
           <Dialog>
-            <input />
-            <input />
-            <DialogTrigger type="popover">
-              <ActionButton>Trigger</ActionButton>
-              <Dialog>Hi!</Dialog>
-            </DialogTrigger>
+            <Content>
+              <input />
+              <input />
+              <DialogTrigger type="popover">
+                <ActionButton>Trigger</ActionButton>
+                <Dialog><Content>Hi!</Content></Dialog>
+              </DialogTrigger>
+            </Content>
           </Dialog>
         </DialogTrigger>
       </div>
@@ -107,8 +113,10 @@ storiesOf('DialogTrigger', module)
             <DialogTrigger type="popover">
               <ActionButton>Trigger</ActionButton>
               <Dialog>
-                <input />
-                <input />
+                <Content>
+                  <input />
+                  <input />
+                </Content>
               </Dialog>
             </DialogTrigger>
           </div>
@@ -217,7 +225,7 @@ function renderAlert({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={action('cancel')} onConfirm={action('confirm')}>
-          Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.
+          <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
         </AlertDialog>
       </DialogTrigger>
     </div>
