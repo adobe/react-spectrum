@@ -22,10 +22,6 @@ storiesOf('Link', module)
     () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
   )
   .add(
-    'variant: primary',
-    () => render({variant: 'primary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
     'variant: secondary',
     () => render({variant: 'secondary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
   )
