@@ -126,6 +126,7 @@ describe('TooltipManager', () => {
 
     expect(tooltipManager.hoverShowTimeout).not.toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
+    expect(tooltipManager.visibleTooltips).toBeNull();
 
     // run past first tooltips show timer
     jest.advanceTimersByTime(150);
