@@ -77,7 +77,7 @@ for (let [name, location] of releasedPackages) {
     }
   }
 
-  // fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+  fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
 }
 
 for (let name in info) {
