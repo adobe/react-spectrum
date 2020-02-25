@@ -22,7 +22,9 @@ let publicPackages = [
   '@react-spectrum/form',
   '@react-spectrum/searchfield',
   '@react-spectrum/meter',
-  '@react-spectrum/theme-default'
+  '@react-spectrum/theme-default',
+  '@spectrum-icons/color',
+  '@spectrum-icons/workflow'
 ];
 
 // Packages never to release
@@ -37,7 +39,7 @@ let blackList = new Set([
 
 // Get dependency tree from yarn workspaces, and build full list of packages to release
 // based on dependencies of the public packages.
-let info = JSON.parse(JSON.parse(exec('yarn workspaces info --json')).data);
+let info = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
 let releasedPackages = new Map();
 
 for (let pkg of publicPackages) {
@@ -75,5 +77,15 @@ for (let [name, location] of releasedPackages) {
     }
   }
 
-  fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+  // fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+}
+
+for (let name in info) {
+  if (!releasedPackages.has(name)) {
+    let filePath = info[name].location + '/package.json';
+    let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (!pkg.private) {
+      console.warn(`${name} should not be public`);
+    }
+  }
 }
