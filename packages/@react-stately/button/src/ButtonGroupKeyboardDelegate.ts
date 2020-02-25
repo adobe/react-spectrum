@@ -16,17 +16,19 @@ import {KeyboardDelegate} from '@react-types/shared';
 
 export class ButtonGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: any;
+  private flipHorizontal: boolean;
 
-  constructor(collection: Collection<T>) {
+  constructor(collection: Collection<T>, flipHorizontal: boolean) {
+    this.flipHorizontal = flipHorizontal;
     this.collection = collection;
   }
 
   getKeyLeftOf(key: Key) {
-    return this.collection.getKeyBefore(key);
+    return this.flipHorizontal ? this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
   }
 
   getKeyRightOf(key: Key) {
-    return this.collection.getKeyAfter(key);
+    return this.flipHorizontal ? this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
   }
 
   getKeyAbove(key: Key) {

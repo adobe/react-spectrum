@@ -16,6 +16,7 @@ import {ButtonGroupProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 const BUTTON_GROUP_ROLES = {
@@ -45,7 +46,9 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
     role
   } = props;
 
-  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection);
+  let {direction} = useLocale();
+  let flipHorizontal = direction === 'rtl' && orientation === 'horizontal';
+  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection, flipHorizontal);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
