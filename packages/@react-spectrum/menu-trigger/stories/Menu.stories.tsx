@@ -160,7 +160,7 @@ storiesOf('Menu', module)
             <Item>
               One
             </Item>
-            <Item staticKey="2">
+            <Item uniqueKey="2">
               Two
             </Item>
             <Item>
@@ -208,7 +208,7 @@ storiesOf('Menu', module)
             <Item>
               One
             </Item>
-            <Item staticKey="2">
+            <Item uniqueKey="2">
               Two
             </Item>
             <Item>
@@ -259,7 +259,7 @@ storiesOf('Menu', module)
             <Item>
               Two
             </Item>
-            <Item staticKey="3">
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
@@ -267,7 +267,7 @@ storiesOf('Menu', module)
             <Item>
               Four
             </Item>
-            <Item staticKey="5">
+            <Item uniqueKey="5">
               Five
             </Item>
             <Item>
@@ -301,24 +301,24 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
-            <Item staticKey="1">
+            <Item uniqueKey="1">
               One
             </Item>
-            <Item staticKey="2">
+            <Item uniqueKey="2">
               Two
             </Item>
-            <Item staticKey="3">
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item staticKey="4">
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item staticKey="5">
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item staticKey="6">
+            <Item uniqueKey="6">
               Six
             </Item>
           </Section>
