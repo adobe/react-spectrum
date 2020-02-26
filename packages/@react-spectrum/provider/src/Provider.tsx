@@ -29,12 +29,13 @@ const Context = React.createContext<ProviderContext | null>(null);
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
+  let prevColorScheme = prevContext && prevContext.colorScheme;
   let {
     theme = prevContext && prevContext.theme,
-    defaultColorScheme = prevContext ? prevContext.colorScheme : 'light'
+    defaultColorScheme
   } = props;
   // Hooks must always be called.
-  let autoColorScheme = useColorScheme(theme, defaultColorScheme);
+  let autoColorScheme = useColorScheme(theme, prevColorScheme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
 
