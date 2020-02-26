@@ -12,7 +12,7 @@
 
 import {ActionButton, ButtonGroup} from '../';
 import Brush from '@spectrum-icons/workflow/Brush';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -97,7 +97,288 @@ describe('ButtonGroup', function () {
     expect(group).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('SideNav handles single selection', function () {
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{}}
+  `('$Name shifts button focus on left/right keyboard arrow click (ltr + horizontal)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ComponentGroup {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowRight'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowLeft'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowLeft'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{}}
+  `('$Name shifts button focus on up/down keyboard arrow click (ltr + horizontal)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ComponentGroup {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowDown'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowUp'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowUp'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+  
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{}}
+  `('$Name shifts button focus on left/right keyboard arrow click (rtl + horizontal)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="ar-AE">
+        <ComponentGroup {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowRight'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button3, {key: 'ArrowLeft'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button3).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button3, {key: 'ArrowLeft'});
+    expect(button2).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{}}
+  `('$Name shifts button focus on up/down keyboard arrow click (rtl + horizontal)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="ar-AE">
+        <ComponentGroup {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowDown'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button3, {key: 'ArrowUp'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button3).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button3, {key: 'ArrowUp'});
+    expect(button2).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+  `('$Name shifts button focus on up/down keyboard arrow click (ltr + vertical)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ComponentGroup data-testid="test-group" {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+    let group = tree.getByTestId('test-group');
+    expect(group).toHaveAttribute('aria-orientation', 'vertical');
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowDown'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowUp'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowUp'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+  `('$Name shifts button focus on left/right keyboard arrow click (ltr + vertical)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ComponentGroup data-testid="test-group" {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+    let group = tree.getByTestId('test-group');
+    expect(group).toHaveAttribute('aria-orientation', 'vertical');
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowRight'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowLeft'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowLeft'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+  `('$Name shifts button focus on up/down keyboard arrow click (rtl + vertical)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="ar-AE">
+        <ComponentGroup data-testid="test-group" {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+    let group = tree.getByTestId('test-group');
+    expect(group).toHaveAttribute('aria-orientation', 'vertical');
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowDown'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowUp'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowUp'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name               | ComponentGroup   | Component       | props
+    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+  `('$Name shifts button focus on left/right keyboard arrow click (rtl + vertical)', function ({ComponentGroup, Component, props}) {
+    let tree = render(
+      <Provider theme={theme} locale="ar-AE">
+        <ComponentGroup data-testid="test-group" {...props} >
+          <Component data-testid="button-1">Click me 1</Component>
+          <Component data-testid="button-2">Click me 2</Component>
+          <Component data-testid="button-3">Click me 3</Component>
+        </ComponentGroup>
+      </Provider>
+    );
+    let group = tree.getByTestId('test-group');
+    expect(group).toHaveAttribute('aria-orientation', 'vertical');
+
+    let button1 = tree.getByTestId('button-1');
+    let button2 = tree.getByTestId('button-2');
+    let button3 = tree.getByTestId('button-3');
+
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button1, {key: 'ArrowRight'});
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+    expect(button2).toHaveAttribute('tabIndex', '0');
+
+    fireEvent.keyDown(button2, {key: 'ArrowLeft'});
+    expect(button1).toHaveAttribute('tabIndex', '0');
+    expect(button2).toHaveAttribute('tabIndex', '-1');
+
+    fireEvent.keyDown(button1, {key: 'ArrowLeft'});
+    expect(button3).toHaveAttribute('tabIndex', '0');
+    expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it('ButtonGroup handles single selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
         <ButtonGroup >
@@ -117,7 +398,7 @@ describe('ButtonGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('SideNav handles multiple selection', function () {
+  it('ButtonGroup handles multiple selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
         <ButtonGroup selectionMode="multiple">
@@ -137,7 +418,7 @@ describe('ButtonGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('SideNav handles none selection', function () {
+  it('ButtonGroup handles none selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
         <ButtonGroup selectionMode="none">
@@ -151,7 +432,7 @@ describe('ButtonGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('PressResponder should pass className, role and tabIndex', function () {
+  it('ButtonGroup should pass className, role and tabIndex', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
         <ButtonGroup>
