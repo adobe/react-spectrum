@@ -1,6 +1,19 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
 import Lowlight from 'react-lowlight';
+import Markdown from 'markdown-to-jsx';
 import React, {useContext} from 'react';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -190,6 +203,14 @@ function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
+function renderHTMLfromMarkdown(description) {
+  if (description) {
+    return <Markdown>{description}</Markdown>;
+  } else {
+    return '';
+  }
+}
+
 export function InterfaceType({properties, showRequired, showDefault}) {
   return (
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
@@ -209,7 +230,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
                 <span className="token hljs-attr">{prop.name}</span>
               </code>
               {!prop.optional && showRequired
-                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" /> 
+                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
                 : null
               }
             </td>
@@ -226,7 +247,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
                 }
               </td>
             }
-            <td className={tableStyles['spectrum-Table-cell']}>{prop.description}</td>
+            <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
           </tr>
         ))}
       </tbody>
