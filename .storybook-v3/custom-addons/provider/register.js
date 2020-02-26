@@ -94,7 +94,7 @@ function ProviderFieldSetter({api}) {
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale}>
-          {locales.map(locale => <option key={locale} value={locale.value}>{locale.label}</option>)}
+          {locales.map(locale => <option key={locale.label} value={locale.value}>{locale.label}</option>)}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
