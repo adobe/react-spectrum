@@ -98,7 +98,6 @@ describe('Popover', function () {
     it.each`
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name contains focus within the popover', function ({Name, Component, props}) {
       let {getByRole, getByTestId} = render(
         <Component {...props}>
@@ -110,27 +109,16 @@ describe('Popover', function () {
       let dialog = getByRole('dialog');
       let input1 = getByTestId('input1');
       let input2 = getByTestId('input2');
-      if (Name === 'v2') {
-        expect(document.activeElement).toBe(input1);
+      expect(document.activeElement).toBe(dialog);
 
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        expect(document.activeElement).toBe(input2);
-        console.log('will remove after this test is run', Name);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input1);
 
-        fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-        expect(document.activeElement).toBe(input1);
-      } else {
-        expect(document.activeElement).toBe(dialog);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input2);
 
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        expect(document.activeElement).toBe(input1);
-
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        expect(document.activeElement).toBe(input2);
-
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        expect(document.activeElement).toBe(input1);
-      }
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input1);
     });
   });
 
