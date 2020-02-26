@@ -80,10 +80,9 @@ describe('Provider', () => {
         </Provider>
       </Provider>
     );
-    let {getByTestId, rerender, debug} = render(<NestedProviders />);
+    let {getByTestId, rerender} = render(<NestedProviders />);
     let provider1 = getByTestId('testid1');
     let provider2 = getByTestId('testid2');
-    console.log(debug());
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--dark')).toBeTruthy();
 
@@ -123,7 +122,6 @@ describe('Provider', () => {
     expect(provider1.classList.contains('spectrum--light')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
 
-    console.log('should change');
     matchMedia.useMediaQuery(mediaQueryDark);
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--dark')).toBeTruthy();
