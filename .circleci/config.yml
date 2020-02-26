@@ -52,7 +52,7 @@ jobs:
           path: coverage
 
       - codecov/upload:
-          file: {{ coverage_report_filepath }}
+          file: coverage/*
           token: fd485295-0e96-47ad-a3fc-ef9d5ee0332b
 
   lint:
