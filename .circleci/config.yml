@@ -46,6 +46,9 @@ jobs:
           name: test
           command: make ci-test
 
+      - store_artifacts:
+          path: coverage
+
   lint:
     docker:
       - image: circleci/node:12.10

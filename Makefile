@@ -67,7 +67,7 @@ lint:
 	node lint-packages.js
 
 test:
-	yarn jest
+	yarn jest --collectCoverage=true
 
 ci-test:
 	yarn jest --maxWorkers=2
