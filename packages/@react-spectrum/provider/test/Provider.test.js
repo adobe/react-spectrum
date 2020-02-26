@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+// needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
+// eslint-disable-next-line rulesdir/sort-imports
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '../';
 import React from 'react';

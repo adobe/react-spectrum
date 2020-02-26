@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+// needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
+// eslint-disable-next-line rulesdir/sort-imports
 import {cleanup} from '@testing-library/react';
 import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
@@ -46,17 +48,17 @@ describe('mediaQueries', () => {
 
     it('uses OS as default - light', () => {
       matchMedia.useMediaQuery(mediaQueryLight);
-      let {result} = renderHook(() => useColorScheme(theme,undefined, 'light'));
+      let {result} = renderHook(() => useColorScheme(theme, undefined, 'light'));
       expect(result.current).toBe('light');
     });
 
     it('uses default light if OS is not useable', () => {
-      let {result} = renderHook(() => useColorScheme(theme,undefined, 'light'));
+      let {result} = renderHook(() => useColorScheme(theme, undefined, 'light'));
       expect(result.current).toBe('light');
     });
 
     it('uses default dark if OS is not useable', () => {
-      let {result} = renderHook(() => useColorScheme(theme,undefined, 'dark'));
+      let {result} = renderHook(() => useColorScheme(theme, undefined, 'dark'));
       expect(result.current).toBe('dark');
     });
   });
