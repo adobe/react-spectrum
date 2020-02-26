@@ -67,10 +67,10 @@ lint:
 	node lint-packages.js
 
 test:
-	yarn jest --collectCoverage=true
+	yarn jest
 
 ci-test:
-	yarn jest --maxWorkers=2
+	yarn jest --maxWorkers=2 --collectCoverage=true
 
 storybook:
 	NODE_ENV=storybook yarn build-storybook
