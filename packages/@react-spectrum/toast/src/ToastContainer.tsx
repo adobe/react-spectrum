@@ -10,13 +10,15 @@ export function ToastContainer(props: ToastState): ReactElement {
     onRemove,
     toasts
   } = props;
-  let renderToasts = () => toasts.map((toast) =>
-    (<Toast key={toast.props.idKey} {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
-  );
   let providerProps = useProvider();
   let toastPlacement = providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' ');
   let containerPosition = toastPlacement && toastPlacement[0];
   let containerPlacement = toastPlacement && toastPlacement[1];
+
+  let renderToasts = () => toasts.map((toast) =>
+    (<Toast key={toast.props.idKey} {...toast.props} onRemove={onRemove}>{toast.content}</Toast>)
+  );
+
 
   return (
     <div
