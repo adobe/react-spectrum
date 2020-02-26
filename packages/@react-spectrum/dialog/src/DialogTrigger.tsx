@@ -27,6 +27,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     mobileType = type === 'popover' ? 'modal' : type,
     hideArrow,
     targetRef,
+    size,
     ...positionProps
   } = props;
   let [trigger, content] = React.Children.toArray(children);
@@ -57,7 +58,8 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
         targetRef={targetRef}
         trigger={trigger}
         content={content}
-        hideArrow={hideArrow} />
+        hideArrow={hideArrow}
+        size={size} />
     );
   }
 
@@ -65,7 +67,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     switch (type) {
       case 'modal':
         return (
-          <Modal isOpen={isOpen} onClose={onClose}>
+          <Modal isOpen={isOpen} onClose={onClose} size={size}>
             {content}
           </Modal>
         );
@@ -85,11 +87,12 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       onPress={onPress}
       onClose={onClose}
       trigger={trigger}
-      overlay={renderOverlay()} />
+      overlay={renderOverlay()}
+      size={size} />
   );
 }
 
-function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
+function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, size, ...props}) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
@@ -134,14 +137,16 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
       triggerProps={triggerPropsWithRef}
       dialogProps={overlayAriaProps}
       trigger={trigger}
-      overlay={overlay} />
+      overlay={overlay}
+      size={size} />
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
+function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger, size}) {
   let context = {
     type,
     onClose,
+    size,
     ...dialogProps
   };
 

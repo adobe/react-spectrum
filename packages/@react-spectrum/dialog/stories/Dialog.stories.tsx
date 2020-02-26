@@ -50,32 +50,8 @@ storiesOf('Dialog', module)
     () => renderHero({isDismissable: true, onDismiss: action('dismissed')})
   )
   .add(
-    'small',
-    () => render({size: 'S'})
-  )
-  .add(
-    'medium',
-    () => render({size: 'M'})
-  )
-  .add(
-    'large',
-    () => render({size: 'L'})
-  )
-  .add(
-    'fullscreen',
-    () => render({size: 'fullscreen'})
-  )
-  .add(
-    'fullscreenTakeover',
-    () => render({size: 'fullscreenTakeover'})
-  )
-  .add(
     'form',
     () => renderWithForm({})
-  )
-  .add(
-    'fullscreenTakeover form',
-    () => renderWithForm({size: 'fullscreenTakeover'})
   )
   .add(
     'three buttons',

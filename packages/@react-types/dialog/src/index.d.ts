@@ -24,13 +24,14 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
   slots?: Slots,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  role?: 'dialog' | 'alertdialog'
+  role?: 'dialog' | 'alertdialog',
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {

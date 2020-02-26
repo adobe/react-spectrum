@@ -199,8 +199,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog--fullscreen {
-  width: calc(100vw - 32px);
-  height: calc(100vh - 32px);
+  width: calc(100vw - 64px);
+  height: calc(100vh - 64px);
 }
 .spectrum-Dialog--fullscreenTakeover {
   width: 100vw;
