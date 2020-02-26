@@ -27,7 +27,7 @@ export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelect
 
     return new ButtonGroupCollection(childrenArray, flipKeyOrder);
 
-  }, [props, selectionState.selectedKeys]);
+  }, [props, selectionState.selectedKeys, flipKeyOrder]);
 
   return {
     buttonCollection,
