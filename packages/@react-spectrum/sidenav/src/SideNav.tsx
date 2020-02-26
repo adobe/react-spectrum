@@ -11,7 +11,7 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, SingleSelectionBase, StyleProps} from '@react-types/shared';
+import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {ListLayout, Node} from '@react-stately/collections';
@@ -20,10 +20,10 @@ import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
 
-export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase, Expandable, StyleProps {}
+export interface SideNavProps<T> extends CollectionBase<T>, MultipleSelection, Expandable, StyleProps {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single'});
+  let state = useTreeState({...props, selectionMode: 'single', disableEmptySelection: true});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
 

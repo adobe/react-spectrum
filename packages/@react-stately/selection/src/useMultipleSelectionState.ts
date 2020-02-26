@@ -27,6 +27,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
 
   return {
     selectionMode: props.selectionMode || 'multiple',
+    disableEmptySelection: props.disableEmptySelection,
     get isFocused() {
       return isFocused.current;
     },
