@@ -51,7 +51,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     if (autoFocus) {
       focusFocusedDateCell();
     }
-  }, [autoFocus, focusFocusedDateCell]);
+  }, [autoFocus]);
 
   // Announce when the current month changes
   useUpdateEffect(() => {
