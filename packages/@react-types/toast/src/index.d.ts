@@ -25,7 +25,7 @@ export interface ToastState {
   toasts?: ToastStateValue[]
 }
 
-export interface ToastStateValue{
+export interface ToastStateValue {
   content: ReactNode,
   props: SpectrumToastProps,
   timeoutId: ReturnType<typeof setTimeout>

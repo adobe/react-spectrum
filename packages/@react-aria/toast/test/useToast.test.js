@@ -30,7 +30,6 @@ describe('useToast', () => {
     expect(iconProps.alt).toBe(undefined);
     expect(typeof actionButtonProps.onPress).toBe('function');
     expect(closeButtonProps['aria-label']).toBe('Close');
-    console.log('closeButtonProps.onPress', closeButtonProps.onPress());
     expect(typeof closeButtonProps.onPress).toBe('function');
   });
 

@@ -23,7 +23,7 @@ export function useToastProvider() {
 
 let keyCounter = 0;
 function generateKey(pre = 'toast') {
-  return `${ pre }_${ keyCounter++ }`;
+  return `${pre}_${keyCounter++}`;
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
