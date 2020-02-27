@@ -30,8 +30,8 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
   slots?: Slots,
-  role?: 'dialog' | 'alertdialog',
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  role?: 'dialog' | 'alertdialog'
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
