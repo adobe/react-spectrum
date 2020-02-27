@@ -81,11 +81,13 @@ for (let [name, location] of releasedPackages) {
 }
 
 for (let name in info) {
-  if (!releasedPackages.has(name)) {
+  if (!releasedPackages.has(name) && !blackList.has(name)) {
     let filePath = info[name].location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     if (!pkg.private) {
       console.warn(`${name} should not be public`);
+      pkg.private = true;
+      fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
     }
   }
 }
