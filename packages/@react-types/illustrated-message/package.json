@@ -2,16 +2,20 @@
   "name": "@react-types/illustrated-message",
   "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "private": true,
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
     "@react-types/shared": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

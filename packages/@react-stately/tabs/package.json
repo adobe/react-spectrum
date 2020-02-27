@@ -2,6 +2,7 @@
   "name": "@react-stately/tabs",
   "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -13,7 +14,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
