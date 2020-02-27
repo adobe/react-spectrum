@@ -15,7 +15,7 @@ const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
 let path = require('path');
-let packages = glob.sync(__dirname + '/packages/@react-*/*/package.json');
+let packages = glob.sync(__dirname + '/packages/@{react,spectrum}-*/*/package.json');
 let errors = false;
 
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
@@ -48,7 +48,7 @@ softAssert.equal = function (val, val2, message) {
 
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
-  if (!pkg.includes('@react-types')) {
+  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons')) {
     softAssert(json.main, `${pkg} did not have "main"`);
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
@@ -81,8 +81,10 @@ for (let pkg of packages) {
     softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
   }
 
-  softAssert(json.types, `${pkg} did not have "types"`);
-  softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
+  if (!pkg.includes('@spectrum-icons')) {
+    softAssert(json.types, `${pkg} did not have "types"`);
+    softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
+  }
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
   softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
