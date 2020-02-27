@@ -151,7 +151,6 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseOver(button);
 
       await new Promise((b) => setTimeout(b, 300));
-      // jest.setTimeout(300);
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
@@ -206,8 +205,6 @@ describe('TooltipTrigger', function () {
 
       fireEvent.mouseOver(button);
 
-      //await new Promise((c) => setTimeout(c, 300));
-      //expect(tooltip).not.toBeInTheDocument();
       await wait(() => {
         expect(tooltip).not.toBeInTheDocument();
       });
