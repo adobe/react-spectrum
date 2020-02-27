@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
 import classNames from 'classnames';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSlotProvider} from './Slots';
 
-type Direction = 'ltr' | 'rtl';
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -272,4 +271,3 @@ export const gridStyleProps: StyleHandlers = {
   columnGap: ['row-gap', dimensionValue],
   ...boxAlignmentStyleProps
 };
-

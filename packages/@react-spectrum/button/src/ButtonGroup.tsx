@@ -21,7 +21,6 @@ import {Provider} from '@react-spectrum/provider';
 import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
-import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
@@ -36,9 +35,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     ...otherProps
   } = props;
 
-  let {direction} = useLocale();
-  let flipKeyOrder = direction === 'rtl' && orientation === 'horizontal';
-  let state = useButtonGroupState({...props, selectionMode}, flipKeyOrder);
+  let state = useButtonGroupState({...props, selectionMode});
 
   let {buttonGroupProps, buttonProps} = useButtonGroup(props, state);
 

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Direction} from '@react-types/shared';
 import React, {ReactNode, useContext} from 'react';
 import {useDefaultLocale} from './useDefaultLocale';
 
@@ -20,7 +21,7 @@ interface ProviderProps {
 
 interface LocaleContext {
   locale: string,
-  direction: 'ltr' | 'rtl'
+  direction: Direction
 }
 
 const I18nContext = React.createContext<LocaleContext>({

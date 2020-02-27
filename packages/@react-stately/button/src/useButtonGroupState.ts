@@ -16,7 +16,7 @@ import {MultipleSelection} from '@react-types/shared';
 import React, {useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection, flipKeyOrder: boolean): ButtonGroupState {
+export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): ButtonGroupState {
   let selectionState = useMultipleSelectionState(props);
 
   let buttonCollection = useMemo(() => {
@@ -25,9 +25,9 @@ export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelect
       isSelected: selectionState.selectedKeys.has(child.key)
     }));
 
-    return new ButtonGroupCollection(childrenArray, flipKeyOrder);
+    return new ButtonGroupCollection(childrenArray);
 
-  }, [props, selectionState.selectedKeys, flipKeyOrder]);
+  }, [props, selectionState.selectedKeys]);
 
   return {
     buttonCollection,

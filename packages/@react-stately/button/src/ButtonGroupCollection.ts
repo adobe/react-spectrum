@@ -17,13 +17,9 @@ export class ButtonGroupCollection<T extends ReactElement> implements Collection
   public items: T[];
   private keys: Key[];
 
-  constructor(items: T[], flipKeyOrder: boolean) {
+  constructor(items: T[]) {
     this.items = items;
     this.keys = items.filter(item => !item.props.isDisabled).map(child => child.key);
-    
-    if (flipKeyOrder) {
-      this.keys.reverse();
-    }
   }
 
   getKeys() {
