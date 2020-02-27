@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useState} from 'react';
+import {AllHTMLAttributes, useMemo, useState} from 'react';
 import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
 import {ButtonGroupProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
@@ -47,7 +47,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation);
+  let keyboardDelegate = useMemo(() => new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation), [state.buttonCollection, direction, orientation]);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
