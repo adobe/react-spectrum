@@ -24,14 +24,6 @@ let theme = {
   medium: scaleMedium
 };
 
-
-function timerGame() {
-  console.log('Ready....go!');
-  setTimeout(() => {
-    console.log("Time's up -- stop!");
-  }, 1000);
-}
-
 describe('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
@@ -90,6 +82,32 @@ describe('TooltipTrigger', function () {
       });
     });
 
+    it('a click event can close the tooltip', async function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger type="click">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let tooltip = getByRole('tooltip');
+
+      await wait(() => {
+        expect(tooltip).toBeInTheDocument();
+      });
+
+      triggerPress(button);
+
+      await wait(() => {
+        expect(tooltip).not.toBeInTheDocument();
+      });
+    });
+
     it('pressing escape should close the tooltip after a click event', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -133,6 +151,7 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseOver(button);
 
       await new Promise((b) => setTimeout(b, 300));
+      // jest.setTimeout(300);
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
@@ -165,6 +184,33 @@ describe('TooltipTrigger', function () {
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
+    });
+
+    it('a mouseOver event can close the tooltip', async function () {
+      let {getByText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger type="hover">
+            <ActionButton>Trigger</ActionButton>
+            <Tooltip>content</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByText('Trigger');
+      fireEvent.mouseOver(button);
+
+      await new Promise((c) => setTimeout(c, 300));
+
+      let tooltip = getByText('content');
+      expect(tooltip).toBeInTheDocument();
+
+      fireEvent.mouseOver(button);
+
+      //await new Promise((c) => setTimeout(c, 300));
+      //expect(tooltip).not.toBeInTheDocument();
+      await wait(() => {
+        expect(tooltip).not.toBeInTheDocument();
+      });
     });
   });
 });

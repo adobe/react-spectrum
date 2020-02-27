@@ -50,6 +50,7 @@ describe('DOMPropsResponder', function () {
   });
 
   // this test failing tells you that it makes sense the other tests are failing
+  
   /*
   it('should not warn if there is a hoverable child', function () {
     let warn = jest.spyOn(global.console, 'warn').mockImplementation();
