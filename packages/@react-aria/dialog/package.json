@@ -2,7 +2,6 @@
   "name": "@react-aria/dialog",
   "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
