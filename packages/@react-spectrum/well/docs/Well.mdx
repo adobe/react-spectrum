@@ -15,6 +15,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
+import {Heading} from '@react-spectrum/typography';
 import {Well} from '@react-spectrum/well';
 ```
 
@@ -46,6 +47,19 @@ Wells can have children. They can be nested.
 ### Internationalization
 
 In order to internationalize a well, a localized string should be passed to the `children` prop.
+
+### Accessibility
+
+By default, the visual separation of a Well is not conveyed to assistive technologies. As such it should be used where this separation makes no difference in understanding the content.
+
+However, if the Well does convey semantic meaning then a role must be specified and, if appropriate, labeled using either aria-label or aria-labelledby.
+
+```tsx example
+<Well role="region" aria-labelledby="wellLabel">
+    <Heading id="wellLabel" variant="subtitle1">Shipping Address</Heading>
+    <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
+</Well>
+```
 
 ## Props
 
