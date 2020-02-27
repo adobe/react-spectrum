@@ -2,9 +2,10 @@
   "name": "@spectrum-icons/color",
   "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "scripts": {
     "build": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
@@ -17,5 +18,8 @@
   "devDependencies": {
     "@spectrum-icons/build-tools": "^3.0.0-alpha.2",
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
