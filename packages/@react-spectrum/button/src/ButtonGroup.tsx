@@ -60,9 +60,16 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
         )
       } >
       <Provider {...providerProps}>
-        <CollectionsContext.Provider value={{itemComponent: ButtonGroupItem}}>
-          {children}
-        </CollectionsContext.Provider>
+        {
+          state.buttonCollection.items.map((item) => (
+            <ButtonGroupItem
+              key={item.key}
+              {...buttonProps}
+              className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
+              item={item}
+              state={state} />
+          ))
+        }
       </Provider>
     </div>
   );
@@ -72,12 +79,6 @@ export interface ButtonGroupItemProps extends AllHTMLAttributes<HTMLButtonElemen
   item: ButtonGroupButton,
   state: ButtonGroupState
 }
-
-function Item({children}) {
-  let {itemComponent: ItemComponent} = useContext(CollectionsContext);
-  return <ItemComponent>{children}</ItemComponent>;
-}
-
 
 export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemProps) {
   let ref = useRef<HTMLDivElement>();
