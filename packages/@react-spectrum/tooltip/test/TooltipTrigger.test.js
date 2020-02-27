@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, wait, waitForDomChange} from '@testing-library/react';
+import {cleanup, fireEvent, render, wait} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -23,6 +23,14 @@ let theme = {
   light: themeLight,
   medium: scaleMedium
 };
+
+
+function timerGame() {
+  console.log('Ready....go!');
+  setTimeout(() => {
+    console.log("Time's up -- stop!");
+  }, 1000);
+}
 
 describe('TooltipTrigger', function () {
   let onOpen = jest.fn();
@@ -51,7 +59,6 @@ describe('TooltipTrigger', function () {
 
       let tooltip = getByRole('tooltip');
 
-      // wait for appearance
       await wait(() => {
         expect(tooltip).toBeInTheDocument();
       });
@@ -98,15 +105,15 @@ describe('TooltipTrigger', function () {
 
       let tooltip = getByRole('tooltip');
 
-      // wait for appearance
       await wait(() => {
         expect(tooltip).toBeInTheDocument();
       });
 
       fireEvent.keyDown(button, {key: 'Escape'});
-      await waitForDomChange();
 
-      expect(tooltip).not.toBeInTheDocument();
+      await wait(() => {
+        expect(tooltip).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -132,9 +139,10 @@ describe('TooltipTrigger', function () {
 
       fireEvent.focus(button);
       fireEvent.keyDown(button, {key: 'Escape'});
-      await waitForDomChange();
 
-      expect(tooltip).not.toBeInTheDocument();
+      await wait(() => {
+        expect(tooltip).not.toBeInTheDocument();
+      });
     });
   });
 
