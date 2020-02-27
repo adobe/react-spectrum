@@ -2,7 +2,6 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
-NPM_REGISTRY=http://localhost:4873
 SERVER=root@react-spectrum.corp.adobe.com
 
 all: node_modules
@@ -76,7 +75,7 @@ ci:
 	$(MAKE) publish
 
 publish: 
-	lerna publish from-package --yes --registry $(NPM_REGISTRY)
+	lerna publish from-package
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
