@@ -29,8 +29,8 @@ export function Dialog(props: SpectrumDialogProps) {
   } = useContext(DialogContext) || {} as DialogContextValue;
   let {
     children,
-    isDismissable,
-    onDismiss,
+    isDismissable = contextProps.isDismissable,
+    onDismiss = contextProps.onClose,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -38,7 +38,7 @@ export function Dialog(props: SpectrumDialogProps) {
     mergeProps(
       mergeProps(
         filterDOMProps(otherProps),
-        contextProps
+        filterDOMProps(contextProps)
       ),
       styleProps
     ),

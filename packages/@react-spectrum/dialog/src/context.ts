@@ -14,6 +14,7 @@ import React, {HTMLAttributes} from 'react';
 
 export interface DialogContextValue extends HTMLAttributes<HTMLElement> {
   type: 'modal' | 'popover' | 'tray',
+  isDismissable: boolean,
   onClose?: () => void
 }
 

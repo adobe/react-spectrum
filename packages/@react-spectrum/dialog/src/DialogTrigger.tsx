@@ -27,14 +27,14 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     mobileType = type === 'popover' ? 'modal' : type,
     hideArrow,
     targetRef,
+    isDismissable,
     ...positionProps
   } = props;
   if (!Array.isArray(children) || children.length > 2) {
     throw new Error('DialogTrigger must have exactly 2 children');
   }
   // if a function is passed as the second child, it won't appear in toArray
-  let [_, content] = React.Children.toArray(children);
-  let [trigger, contentWithClose] = children as [ReactElement, SpectrumDialogClose];
+  let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
@@ -71,13 +71,13 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'modal':
         return (
           <Modal isOpen={isOpen} onClose={onClose}>
-            {content || contentWithClose(onClose)}
+            {typeof content === 'function' ? content(onClose) : content}
           </Modal>
         );
       case 'tray':
         return (
           <Tray isOpen={isOpen} onClose={onClose}>
-            {content || contentWithClose(onClose)}
+            {typeof content === 'function' ? content(onClose) : content}
           </Tray>
         );
     }
@@ -89,6 +89,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       isOpen={isOpen}
       onPress={onPress}
       onClose={onClose}
+      isDismissable={isDismissable}
       trigger={trigger}
       overlay={renderOverlay()} />
   );
@@ -143,10 +144,11 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
+function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
   let context = {
     type,
     onClose,
+    isDismissable,
     ...dialogProps
   };
 
