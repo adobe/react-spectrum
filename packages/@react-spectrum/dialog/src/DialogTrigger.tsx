@@ -66,13 +66,13 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'modal':
         return (
           <Modal isOpen={isOpen} onClose={onClose}>
-            {content}
+            {content(onClose)}
           </Modal>
         );
       case 'tray':
         return (
           <Tray isOpen={isOpen} onClose={onClose}>
-            {content}
+            {content(onClose)}
           </Tray>
         );
     }
@@ -104,7 +104,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     shouldFlip: props.shouldFlip,
     isOpen
   });
-  
+
   let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',

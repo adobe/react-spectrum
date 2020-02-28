@@ -208,12 +208,14 @@ function render({width = 'auto', ...props}) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
-        <Dialog>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-          <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
-        </Dialog>
+        {close => (
+          <Dialog>
+            <Header><Text slot="title">The Title</Text></Header>
+            <Divider size="M" />
+            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+            <Footer><Button variant="secondary" onPress={close}>Cancel</Button><Button variant="cta" onPress={close}>Confirm</Button></Footer>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
