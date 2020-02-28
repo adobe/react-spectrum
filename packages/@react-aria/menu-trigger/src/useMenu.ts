@@ -32,14 +32,20 @@ export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: Men
     'aria-orientation': ariaOrientation = 'vertical' as Orientation,
     role = 'menu',
     id,
-    selectionMode
+    selectionMode,
+    autoFocus,
+    wrapAround,
+    focusStrategy
   } = props;
 
   let menuId = useId(id);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    autoFocus,
+    focusStrategy,
+    wrapAround
   });
 
   let menuItemRole = 'menuitem';

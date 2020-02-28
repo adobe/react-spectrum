@@ -18,7 +18,8 @@ export interface MenuContextValue extends DOMProps {
   onClose?: () => void,
   closeOnSelect?: boolean,
   focusStrategy?: FocusStrategy,
-  setFocusStrategy?: (value: FocusStrategy) => void,
+  wrapAround?: boolean,
+  autoFocus?: boolean
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
