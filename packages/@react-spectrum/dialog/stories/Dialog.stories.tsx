@@ -1,9 +1,22 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -16,6 +29,7 @@ import {TextField} from '@react-spectrum/textfield';
 storiesOf('Dialog', module)
 // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
   .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
+  .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
     () => render({})
@@ -67,6 +81,10 @@ storiesOf('Dialog', module)
   .add(
     'three buttons',
     () => renderWithThreeButtons({})
+  )
+  .add(
+    'cleared content',
+    () => renderWithDividerInContent({})
   );
 
 storiesOf('Dialog/Alert', module)
@@ -214,7 +232,7 @@ function renderHero({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Image slot="hero" src="https://git.corp.adobe.com/pages/rsnow/assets/photos/25percent/IMG_0721.png" objectFit="cover" />
+          <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
           <Header><Text slot="title">The Title</Text></Header>
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
@@ -314,9 +332,34 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
           <Footer>
-            <Button variant="secondary">Whoops I named this button a long name</Button>
-            <Button variant="primary">Cancel and forget about forever</Button>
-            <Button variant="cta" autoFocus>Confirm Starscream is the worst</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="primary">Primary</Button>
+            <Button variant="cta" autoFocus>CTA</Button>
+          </Footer>
+        </Dialog>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithDividerInContent({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isOpen>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog {...props}>
+          <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
+          <Content>
+            <Flex UNSAFE_style={{padding: '10px'}}>
+              <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>
+              <Divider flexShrink={0} marginStart={10} marginEnd={10} orientation="vertical" size="S" />
+              <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
+            </Flex>
+          </Content>
+          <Footer>
+            <Button variant="primary">Primary</Button>
+            <Button variant="cta" autoFocus>CTA</Button>
           </Footer>
         </Dialog>
       </DialogTrigger>

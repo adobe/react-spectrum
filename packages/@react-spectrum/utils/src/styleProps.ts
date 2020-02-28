@@ -1,10 +1,21 @@
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
 import classNames from 'classnames';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSlotProvider} from './Slots';
 
-type Direction = 'ltr' | 'rtl';
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -28,6 +39,8 @@ export const baseStyleProps: StyleHandlers = {
   maxWidth: ['maxWidth', dimensionValue],
   maxHeight: ['maxHeight', dimensionValue],
   isHidden: ['display', hiddenValue],
+  alignSelf: ['alignSelf', passthroughStyle],
+  justifySelf: ['justifySelf', passthroughStyle],
   position: ['position', anyValue],
   zIndex: ['zIndex', anyValue],
   top: ['top', dimensionValue],
@@ -35,7 +48,10 @@ export const baseStyleProps: StyleHandlers = {
   start: [rtl('left', 'right'), dimensionValue],
   end: [rtl('right', 'left'), dimensionValue],
   left: ['left', dimensionValue],
-  right: ['right', dimensionValue]
+  right: ['right', dimensionValue],
+  flexGrow: ['flexGrow', passthroughStyle],
+  flexShrink: ['flexShrink', passthroughStyle],
+  flexBasis: ['flexBasis', passthroughStyle]
 };
 
 export const viewStyleProps: StyleHandlers = {
@@ -258,4 +274,3 @@ export const gridStyleProps: StyleHandlers = {
   columnGap: ['row-gap', dimensionValue],
   ...boxAlignmentStyleProps
 };
-
