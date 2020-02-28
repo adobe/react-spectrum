@@ -28,13 +28,14 @@ describe('useMenu', function () {
   };
 
   it('should return default props for a menu', function () {
-    let {menuProps} = renderMenuHook({});
+    let {menuProps, menuItemProps} = renderMenuHook({});
     expect(menuProps['aria-orientation']).toBe('vertical');
     expect(menuProps.role).toBe('menu');
     expect(menuProps.id).toBeTruthy();
     expect(menuProps.onKeyDown).toBeTruthy();
     expect(menuProps.onFocus).toBeTruthy();
     expect(menuProps.onBlur).toBeTruthy();
+    expect(menuItemProps.role).toBe('menuitem');
   });
 
   it('should accommodate user defined aria attributes', function () {
@@ -51,5 +52,14 @@ describe('useMenu', function () {
     expect(menuProps.onKeyDown).toBeTruthy();
     expect(menuProps.onFocus).toBeTruthy();
     expect(menuProps.onBlur).toBeTruthy();
+  });
+
+  it('should return an appropriate menu item role based on the menu role or selection mode', function () {    
+    let props = renderMenuHook({role: 'listbox'});
+    expect(props.menuItemProps.role).toBe('option');
+    props = renderMenuHook({selectionMode: 'single'});
+    expect(props.menuItemProps.role).toBe('menuitemradio');
+    props = renderMenuHook({selectionMode: 'multiple'});
+    expect(props.menuItemProps.role).toBe('menuitemcheckbox');
   });
 });
