@@ -23,14 +23,14 @@ function PopoverWithDialog({children}) {
     </Popover>
   );
 }
- 
+
 describe('Popover', function () {
   afterEach(cleanup);
 
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
-  
+
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
   });
@@ -51,16 +51,21 @@ describe('Popover', function () {
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
-    `('$Name auto focuses the first tabbable element by default', function ({Component, props}) {
-      let {getByTestId} = render(
+    `('$Name auto focuses the first tabbable element by default', function ({Name, Component, props}) {
+      let {getByRole, getByTestId} = render(
         <Component {...props}>
           <input data-testid="input1" />
           <input data-testid="input2" />
         </Component>
       );
 
-      let input1 = getByTestId('input1');
-      expect(document.activeElement).toBe(input1);
+      if (Name === 'v2') {
+        let input1 = getByTestId('input1');
+        expect(document.activeElement).toBe(input1);
+      } else {
+        let dialog = getByRole('dialog');
+        expect(document.activeElement).toBe(dialog);
+      }
     });
 
     it.each`
@@ -69,7 +74,7 @@ describe('Popover', function () {
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name auto focuses the dialog itself if there is no focusable child', function ({Component, props}) {
       let {getByRole} = render(<Component {...props} />);
-  
+
       let dialog = getByRole('dialog');
       expect(document.activeElement).toBe(dialog);
     });
@@ -93,20 +98,23 @@ describe('Popover', function () {
     it.each`
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
-    `('$Name contains focus within the popover', function ({Component, props}) {
-      let {getByTestId} = render(
+    `('$Name contains focus within the popover', function ({Name, Component, props}) {
+      let {getByRole, getByTestId} = render(
         <Component {...props}>
           <input data-testid="input1" />
           <input data-testid="input2" />
         </Component>
       );
 
+      let dialog = getByRole('dialog');
       let input1 = getByTestId('input1');
       let input2 = getByTestId('input2');
+      expect(document.activeElement).toBe(dialog);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       expect(document.activeElement).toBe(input2);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
