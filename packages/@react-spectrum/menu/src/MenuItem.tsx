@@ -19,7 +19,7 @@ import {SpectrumMenuItemProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useMenuContext} from './context';
-import {useMenuItem} from '@react-aria/menu-trigger';
+import {useMenuItem} from '@react-aria/menu';
 
 export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
   let {

@@ -19,7 +19,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useContext, useMemo} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useMenu} from '@react-aria/menu-trigger';
+import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree'; 
 
 export {Item, Section};
