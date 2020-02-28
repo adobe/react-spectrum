@@ -8,7 +8,7 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "scripts": {
-    "check-types": "tsc",
+    "check-types": "tsc --skipLibCheck",
     "start": "make run",
     "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
     "test": "make test",
