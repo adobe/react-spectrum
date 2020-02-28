@@ -50,8 +50,24 @@ storiesOf('Dialog', module)
     () => renderHero({isDismissable: true, onDismiss: action('dismissed')})
   )
   .add(
+    'small',
+    () => render({size: 'S'})
+  )
+  .add(
+    'medium',
+    () => render({size: 'M'})
+  )
+  .add(
+    'large',
+    () => render({size: 'L'})
+  )
+  .add(
     'form',
     () => renderWithForm({})
+  )
+  .add(
+    'fullscreenTakeover form',
+    () => renderWithForm({size: 'fullscreenTakeover'})
   )
   .add(
     'three buttons',
@@ -232,7 +248,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
 function renderWithForm({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger isOpen size={props.size}>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Text slot="title">The Title</Text></Header>

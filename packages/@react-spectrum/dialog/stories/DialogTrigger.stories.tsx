@@ -47,14 +47,6 @@ storiesOf('DialogTrigger', module)
     () => render({type: 'popover', size: 'L'})
   )
   .add(
-    'type: popover, fullscreen',
-    () => render({type: 'popover', size: 'fullscreen'})
-  )
-  .add(
-    'type: popover, fullscreenTakeover',
-    () => render({type: 'popover', size: 'fullscreenTakeover'})
-  )
-  .add(
     'type: modal',
     () => render({type: 'modal'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}}

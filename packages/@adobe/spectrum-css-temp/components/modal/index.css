@@ -115,7 +115,6 @@ only screen and (max-device-height: 350px) {
   bottom: var(--spectrum-dialog-fullscreen-margin);
   max-width: none;
   max-height: none;
-  border-radius: 0;
 }
 
 .spectrum-Modal--fullscreenTakeover {

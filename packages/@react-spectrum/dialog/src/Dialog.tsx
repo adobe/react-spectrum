@@ -44,12 +44,18 @@ export function Dialog(props: SpectrumDialogProps) {
     ),
     {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
   );
-
+  // Prioritize size from context over Dialog size prop
+  let size = allProps.size || otherProps.size;
+  
   if (type === 'popover') {
-    return <BaseDialog {...allProps} size={allProps.size}>{children}</BaseDialog>;
+    if (size.indexOf('fullscreen') > -1) {
+      size = undefined;
+    }
+
+    return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;
   } else {
     return (
-      <ModalDialog {...allProps} size={allProps.size}>
+      <ModalDialog {...allProps} size={size}>
         {children}
         {isDismissable && <ActionButton slot="closeButton" autoFocus isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
       </ModalDialog>
