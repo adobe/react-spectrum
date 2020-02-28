@@ -18,6 +18,7 @@ import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.cs
 import {SideNav} from '../src';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {SideNav as V2SideNav, SideNavItem as V2SideNavItem} from '@react/react-spectrum/SideNav';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,
@@ -27,7 +28,7 @@ let theme = {
 function renderComponent(Component, props) {
   if (Component === V2SideNav) {
     return render(
-      <V2SideNav>
+      <V2SideNav {...props}>
         <V2SideNavItem>Foo</V2SideNavItem >
         <V2SideNavItem>Bar</V2SideNavItem>
         <V2SideNavItem>Bob</V2SideNavItem>
@@ -37,7 +38,7 @@ function renderComponent(Component, props) {
   } else {
     return render(
       <Provider theme={theme}>
-        <SideNav >
+        <SideNav {...props}>
           <Item>Foo</Item>
           <Item>Bar</Item>
           <Item>Bob</Item>
@@ -64,9 +65,9 @@ describe('SideNav', function () {
   });
 
   it.each`
-    Name           | Component    | props
-    ${'SideNav'}   | ${SideNav}   | ${{}}
-    ${'V2SideNav'} | ${V2SideNav} | ${{}}
+    Name           | Component
+    ${'SideNav'}   | ${SideNav}
+    ${'V2SideNav'} | ${V2SideNav}
   `('$Name has default behavior', async function ({Component}) {
     let {getByRole, getAllByRole, getByText} = renderComponent(Component);
 
@@ -101,5 +102,66 @@ describe('SideNav', function () {
     let sideNavListItemLinks = getAllByRole('link');
     expect(sideNavListItemLinks.length).toBe(4);
     expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
+  });
+
+  it.each`
+    Name           | Component
+    ${'SideNav'}   | ${SideNav}
+  `('$Name does not allow empty selection', async function ({Component}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Component, {onSelectionChange: spy});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Alice')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
+  });
+
+
+  it.each`
+    Name           | Component
+    ${'SideNav'}   | ${SideNav}
+  `('$Name with default key does not allow empty selection', async function ({Component}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Component, {onSelectionChange: spy, defaultSelectedKey: ['bar']});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Bob')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
   });
 });
