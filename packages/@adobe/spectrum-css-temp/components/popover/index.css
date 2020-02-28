@@ -20,6 +20,11 @@ governing permissions and limitations under the License.
 
   --spectrum-popover-min-width: var(--spectrum-global-dimension-size-400);
   --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
+
+  /* Popover tip positioning for left/right oriented popovers (-16px/-19px) */
+  --spectrum-popover-tip-left: calc(-6px - var(--spectrum-global-dimension-size-125));
+  /* Popover tip positioning for top/bottom oriented popovers (-11px/-13px) */
+  --spectrum-popover-tip-top: calc(-5px - var(--spectrum-global-dimension-size-75));
 }
 
 .spectrum-Popover {
@@ -80,7 +85,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--left--open;
   }
   .spectrum-Popover-tip {
-    right: calc(-6px - var(--spectrum-global-dimension-size-125));
+    right: var(--spectrum-popover-tip-left);
     transform: rotate(-90deg);
   }
 }
@@ -94,7 +99,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--right--open;
   }
   .spectrum-Popover-tip {
-    left: calc(-6px - var(--spectrum-global-dimension-size-125));
+    left: var(--spectrum-popover-tip-left);
     transform: rotate(90deg);
   }
 }
@@ -117,7 +122,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--bottom--open;
   }
   .spectrum-Popover-tip {
-    top: calc(-5px - var(--spectrum-global-dimension-size-75)); 
+    top: var(--spectrum-popover-tip-top); 
     transform: rotate(180deg);
   }
 }
@@ -131,7 +136,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--top--open;
   }
   .spectrum-Popover-tip {
-    bottom: calc(-5px - var(--spectrum-global-dimension-size-75)); 
+    bottom: var(--spectrum-popover-tip-top); 
   }
 }
 
