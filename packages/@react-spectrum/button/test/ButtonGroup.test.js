@@ -96,7 +96,7 @@ expect.extend({
 
     if (index !== -1) {
       return {
-        message: () => `expected button index configuration button${i}Focused (${received.map((button) => button.getAttribute('tabIndex'))}) but got ${tabIndices}`,
+        message: () => `expected button index configuration "button${i + 1}Focused": (${received.map((button) => button.getAttribute('tabIndex'))}) but got ${tabIndices}`,
         pass: false
       };  
     } else {
@@ -182,17 +182,17 @@ describe('ButtonGroup', function () {
   it.each`
     Name                                                   | ComponentGroup   | Component       | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) ButtonGroup'} | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ButtonGroup'} | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ButtonGroup'} | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
     ${'(up/down arrows, ltr + horizontal) ButtonGroup'}    | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ButtonGroup'}    | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ButtonGroup'}    | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.forward}]}
     ${'(left/right arrows, ltr + vertical) ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
     ${'(left/right arrows, rtl + vertical) ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
     ${'(up/down arrows, ltr + vertical) ButtonGroup'}      | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
     ${'(up/down arrows, rtl + vertical) ButtonGroup'}      | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
   `('$Name shifts button focus in the correct direction on key press', function ({ComponentGroup, Component, props, orders}) {
     let tree = render(
-      <Provider theme={theme} locale="de-DE">
-        <ComponentGroup {...props} >
+      <Provider theme={theme} locale={props.locale}>
+        <ComponentGroup orientation={props.orientation} >
           <Component data-testid="button-1">Click me 1</Component>
           <Component data-testid="button-2">Click me 2</Component>
           <Component data-testid="button-3">Click me 3</Component>
