@@ -54,10 +54,14 @@ export class CollectionBuilder<T> {
   }
 
   getKey(item: CollectionElement<T>, value: T, parentKey?: Key): Key {
+    if (item.props.uniqueKey) {
+      return item.props.uniqueKey;
+    }
+
     if (item.key) {
       return parentKey ? `${parentKey}${item.key}` : item.key;
     }
-    
+
     if (this.itemKey && value[this.itemKey]) {
       return value[this.itemKey];
     }
