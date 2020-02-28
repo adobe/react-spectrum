@@ -34,32 +34,6 @@ describe('TooltipTrigger', function () {
     cleanup();
   });
 
-  describe('handles defaults', function () {
-
-    it('should return proper ids', async function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>content</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let button = getByRole('button');
-      triggerPress(button);
-
-      let tooltip = getByRole('tooltip');
-
-      await wait(() => {
-        expect(tooltip).toBeInTheDocument();
-      });
-
-      expect(tooltip.id).toBeTruthy();
-      expect(button).toHaveAttribute('aria-describedby', tooltip.id);
-    });
-  });
-
   describe('click related tests', function () {
 
     it('a click event can open the tooltip', async function () {
