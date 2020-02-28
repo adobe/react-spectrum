@@ -20,7 +20,8 @@ jobs:
       - run:
           name: build
           command: |
-            make -B
+            make adobe_setup
+            yarn
 
       - save_cache:
          paths:
