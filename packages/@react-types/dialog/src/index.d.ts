@@ -29,6 +29,18 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
   isDismissable?: boolean
 }
 
+export interface SpectrumDialogTriggerBase {
+  type?: 'modal' | 'popover' | 'tray',
+  isOpen?: boolean,
+  onPress?: any,
+  onClose?: () => void,
+  isDismissable?: boolean
+  dialogProps?: SpectrumDialogProps | {},
+  triggerProps?: any,
+  overlay: ReactElement,
+  trigger: ReactElement
+}
+
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
   slots?: Slots,
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',

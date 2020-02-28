@@ -15,7 +15,7 @@ import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
-import {SpectrumDialogClose, SpectrumDialogTriggerProps} from '@react-types/dialog';
+import {SpectrumDialogClose, SpectrumDialogTriggerBase, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
@@ -144,7 +144,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
+function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
   let context = {
     type,
     onClose,
