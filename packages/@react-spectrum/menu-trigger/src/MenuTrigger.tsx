@@ -11,29 +11,18 @@
  */
 
 import {DOMRefValue} from '@react-types/shared';
-import {FocusStrategy, useMenuTrigger} from '@react-aria/menu-trigger';
+import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {Fragment, ReactElement, useRef, useState} from 'react';
+import React, {Fragment, useRef, useState} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
+import {useMenuTrigger} from '@react-aria/menu-trigger';
 
-export interface MenuTriggerProps {
-  children: ReactElement[],
-  trigger?: 'press' | 'longPress',
-  align?: 'start' | 'end',
-  direction?: 'bottom' | 'top', // left right?
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  shouldFlip?: boolean,
-  isDisabled?: boolean
-}
-
-export function MenuTrigger(props: MenuTriggerProps) {
+export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuPopoverRef = useRef<HTMLDivElement>();
   let menuTriggerRef = useRef<HTMLElement>();
@@ -43,7 +32,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     align = 'start',
     shouldFlip = false,
     direction = 'bottom',
-    isDisabled
+    isDisabled,
+    closeOnSelect = true
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -57,7 +47,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
-      type: 'menu'
+      type: 'menu',
+      isDisabled
     },
     {
       isOpen, 
@@ -80,7 +71,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ...menuProps,
     focusStrategy,
     setFocusStrategy,
-    setOpen
+    onClose,
+    closeOnSelect
   };
 
   let triggerProps = {

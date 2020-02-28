@@ -12,9 +12,17 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
@@ -104,6 +112,64 @@ storiesOf('MenuTrigger', module)
   .add(
     'no selection allowed menu',
     () => render({}, {selectionMode: 'none'})
+  )
+  .add(
+    'closeOnSelect=false',
+    () => render({closeOnSelect: false}, {})
+  )
+  .add(
+    'menu with semantic elements',
+    () => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
+          <ActionButton
+            onPress={action('press')}
+            onPressStart={action('pressstart')}
+            onPressEnd={action('pressend')}>
+              Menu Button
+          </ActionButton>
+          <Menu onSelectionChange={action('onSelectionChange')}>
+            <Section title="Section 1">
+              <Item>
+                <Copy size="S" />
+                <Text>Copy</Text>
+                <Keyboard>⌘C</Keyboard>
+              </Item>
+              <Item>
+                <Cut size="S" />
+                <Text>Cut</Text>
+                <Keyboard>⌘X</Keyboard>
+              </Item>
+              <Item>
+                <Paste size="S" />
+                <Text>Paste</Text>
+                <Keyboard>⌘V</Keyboard>
+              </Item>
+            </Section>
+            <Section title="Section 2">
+              <Item>
+                <AlignLeft size="S" />
+                <Text>Puppy</Text>
+                <Text slot="description">Puppy description super long as well geez</Text>
+              </Item>
+              <Item>
+                <AlignCenter size="S" />
+                <Text>Doggo with really really really long long long text</Text>
+                <Text slot="end">Value</Text>
+                <ChevronRightMedium slot="keyboard" />
+              </Item>
+              <Item>
+                <AlignRight size="S" />
+                <Text>Floof</Text>
+              </Item>
+              <Item>
+                Basic Item
+              </Item>
+            </Section>
+          </Menu>
+        </MenuTrigger>
+      </div>
+    )
   )
   .add(
     'menu closes on scroll',

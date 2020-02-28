@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, SelectionMode} from '@react-types/shared';
-import {FocusStrategy} from '@react-aria/menu-trigger';
-import React from 'react';
+import {DOMProps} from '@react-types/shared';
+import {FocusStrategy} from '@react-types/menu';
+import React, {useContext} from 'react';
 
 export interface MenuContextValue extends DOMProps {
   onClose?: () => void,
-  selectionMode?: SelectionMode,
-  setOpen?: (boolean) => void,
+  closeOnSelect?: boolean,
   focusStrategy?: FocusStrategy,
-  setFocusStrategy?: (value: FocusStrategy) => void
+  setFocusStrategy?: (value: FocusStrategy) => void,
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
+
+export function useMenuContext(): MenuContextValue {
+  return useContext(MenuContext);
+}
