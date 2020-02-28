@@ -17,8 +17,8 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {SideNav} from '../src';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {SideNav as V2SideNav, SideNavItem as V2SideNavItem} from '@react/react-spectrum/SideNav';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {SideNav as V2SideNav, SideNavItem as V2SideNavItem} from '@react/react-spectrum/SideNav';
 
 let theme = {
   light: themeLight,
