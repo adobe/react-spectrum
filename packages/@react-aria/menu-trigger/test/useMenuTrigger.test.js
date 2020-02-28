@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createRef} from 'react';
+import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useMenuTrigger} from '../';
 

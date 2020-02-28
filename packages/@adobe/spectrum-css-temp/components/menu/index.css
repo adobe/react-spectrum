@@ -207,8 +207,3 @@ governing permissions and limitations under the License.
   align-self: center;
   padding-inline-start: var(--spectrum-global-dimension-size-125);
 }
-.spectrum-Menu-keyboard {
-  grid-area: keyboard;
-  align-self: center;
-  padding-inline-start: var(--spectrum-global-dimension-size-125);
-}

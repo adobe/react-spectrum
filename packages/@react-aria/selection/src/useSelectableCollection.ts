@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
