@@ -156,28 +156,28 @@ storiesOf('Menu', module)
     () => (
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
-          <Section key="section1" title="Section 1">
-            <Item key="1">
+          <Section title="Section 1">
+            <Item uniqueKey="1">
               One
             </Item>
-            <Item key="2">
+            <Item uniqueKey="2">
               Two
             </Item>
-            <Item key="3">
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
-          <Section key="section2" title="Section 2">
-            <Item key="4">
+          <Section title="Section 2">
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item key="5">
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item key="6">
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item key="7">
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
@@ -204,28 +204,28 @@ storiesOf('Menu', module)
     () => (
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
-          <Section key="sec1" title="Section 1">
-            <Item key="1">
+          <Section title="Section 1">
+            <Item uniqueKey="1">
               One
             </Item>
-            <Item key="2">
+            <Item uniqueKey="2">
               Two
             </Item>
-            <Item key="3">
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
-          <Section key="sec2" title="Section 2">
-            <Item key="4">
+          <Section title="Section 2">
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item key="5">
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item key="6">
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item key="7">
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
@@ -252,28 +252,28 @@ storiesOf('Menu', module)
     () => (
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
-          <Section key="sec1" title="Section 1">
-            <Item key="1">
+          <Section title="Section 1">
+            <Item uniqueKey="1">
               One
             </Item>
-            <Item key="2">
+            <Item uniqueKey="2">
               Two
             </Item>
-            <Item key="3">
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
-          <Section key="sec2" title="Section 2">
-            <Item key="4">
+          <Section title="Section 2">
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item key="5">
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item key="6">
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item key="7">
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
@@ -299,16 +299,28 @@ storiesOf('Menu', module)
     'Multiselect menu, static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item uniqueKey="1">
+              One
+            </Item>
+            <Item uniqueKey="2">
+              Two
+            </Item>
+            <Item uniqueKey="3">
+              Three
+            </Item>
           </Section>
           <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
+            <Item uniqueKey="4">
+              Four
+            </Item>
+            <Item uniqueKey="5">
+              Five
+            </Item>
+            <Item uniqueKey="6">
+              Six
+            </Item>
           </Section>
         </Menu>
       </Popover>
