@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -288,6 +288,38 @@ describe('DialogTrigger', function () {
     await waitForDomChange(); // wait for animation
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
+
+  it('can be closed by buttons the user adds', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            {(close) => <Dialog>contents<Button variant="primary" data-testid="closebtn" onPress={close}>Close</Button></Dialog>}
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole, getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    let closeBtn = getByTestId('closebtn');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    triggerPress(closeBtn);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);

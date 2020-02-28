@@ -54,7 +54,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       <Content>{children}</Content>
       <Footer>
         {secondaryLabel && <Button variant="secondary" onPress={() => onConfirm('secondary')} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
-        {cancelLabel && <Button variant="secondary" onPress={onCancel} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
+        {cancelLabel && <Button variant="secondary" onPress={() => onCancel()} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
         <Button variant={confirmVariant} onPress={() => onConfirm('primary')} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
       </Footer>
     </Dialog>
