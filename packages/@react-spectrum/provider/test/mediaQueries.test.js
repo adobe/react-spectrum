@@ -42,23 +42,23 @@ describe('mediaQueries', () => {
   describe('useColorScheme', () => {
     it('uses OS as default - dark', () => {
       matchMedia.useMediaQuery(mediaQueryDark);
-      let {result} = renderHook(() => useColorScheme(theme, undefined, 'light'));
+      let {result} = renderHook(() => useColorScheme(theme, 'light'));
       expect(result.current).toBe('dark');
     });
 
     it('uses OS as default - light', () => {
       matchMedia.useMediaQuery(mediaQueryLight);
-      let {result} = renderHook(() => useColorScheme(theme, undefined, 'light'));
+      let {result} = renderHook(() => useColorScheme(theme, 'light'));
       expect(result.current).toBe('light');
     });
 
     it('uses default light if OS is not useable', () => {
-      let {result} = renderHook(() => useColorScheme(theme, undefined, 'light'));
+      let {result} = renderHook(() => useColorScheme(theme, 'light'));
       expect(result.current).toBe('light');
     });
 
     it('uses default dark if OS is not useable', () => {
-      let {result} = renderHook(() => useColorScheme(theme, undefined, 'dark'));
+      let {result} = renderHook(() => useColorScheme(theme, 'dark'));
       expect(result.current).toBe('dark');
     });
   });

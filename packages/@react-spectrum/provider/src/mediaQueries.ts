@@ -14,19 +14,11 @@ import {ColorScheme, Scale} from '@react-types/provider';
 import {Theme} from '@react-types/provider';
 import {useMediaQuery} from '@react-spectrum/utils';
 
-export function useColorScheme(theme: Theme, parentColorScheme, defaultColorScheme: ColorScheme): ColorScheme {
+export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {
   let matchesDark = useMediaQuery('(prefers-color-scheme: dark)');
   let matchesLight = useMediaQuery('(prefers-color-scheme: light)');
 
-  // importance parent > OS > default > omitted
-
-  if (theme.dark && parentColorScheme === 'dark') {
-    return 'dark';
-  }
-
-  if (theme.light && parentColorScheme === 'light') {
-    return 'light';
-  }
+  // importance OS > default > omitted
 
   if (theme.dark && matchesDark) {
     return 'dark';
@@ -51,6 +43,8 @@ export function useColorScheme(theme: Theme, parentColorScheme, defaultColorSche
   if (!theme.light) {
     return 'dark';
   }
+
+  return 'light';
 }
 
 export function useScale(theme: Theme): Scale {
