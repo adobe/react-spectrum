@@ -46,9 +46,9 @@ export function Dialog(props: SpectrumDialogProps) {
   );
   // Prioritize size from context over Dialog size prop
   let size = allProps.size || otherProps.size;
-  
+
   if (type === 'popover') {
-    if (size.indexOf('fullscreen') > -1) {
+    if (size && size.indexOf('fullscreen') > -1) {
       size = undefined;
     }
 
