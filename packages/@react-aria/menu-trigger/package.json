@@ -20,10 +20,11 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/interactions": "^3.0.0-alpha.2",
     "@react-aria/overlays": "^3.0.0-alpha.2",
-    "@react-aria/selection": "3.0.0-alpha.2",
+    "@react-aria/selection": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-alpha.2",
     "@react-stately/collections": "^3.0.0-alpha.2",
     "@react-stately/tree": "^3.0.0-alpha.2",
+    "@react-types/menu": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
