@@ -41,6 +41,11 @@ storiesOf('DialogTrigger', module)
     {chromaticProvider: {scales: ['medium'], height: 1000}}
   )
   .add(
+    'type: modal isDismissable',
+    () => renderDismissable({type: 'modal'}),
+    {chromaticProvider: {scales: ['medium'], height: 1000}}
+  )
+  .add(
     'type: tray',
     () => renderPopover({type: 'tray'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}}
@@ -207,10 +212,28 @@ storiesOf('DialogTrigger', module)
 function render({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog>
+            <Header><Text slot="title">The Title</Text></Header>
+            <Divider size="M" />
+            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+            <Footer><Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button><Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button></Footer>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderDismissable({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog isDismissable onDismiss={close}>
             <Header><Text slot="title">The Title</Text></Header>
             <Divider size="M" />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
