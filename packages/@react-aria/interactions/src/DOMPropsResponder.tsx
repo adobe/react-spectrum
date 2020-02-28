@@ -24,7 +24,6 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMProp
     ...props,
     ref,
     register() {
-      console.log('trying to register');
       isRegistered.current = true;
     }
   };
@@ -32,7 +31,6 @@ export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMProp
   // TODO: Think of a more generic message when this replaces the PressResponder as well
   useEffect(() => {
     if (!isRegistered.current) {
-      console.log("oposite of isRegistered.current", !isRegistered.current);
       console.warn(
         'A DOMPropsResponder was ultilized without a hoverable DOM node.'
       );
