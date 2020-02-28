@@ -31,11 +31,13 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
-  'aria-orientation'?: Orientation
+  'aria-orientation'?: Orientation,
+  autoFocus?: boolean,
+  focusStrategy?: FocusStrategy,
+  wrapAround?: boolean
 }
 
 export interface SpectrumMenuProps<T> extends MenuProps<T> {
-  autoFocus?: boolean, // whether or not to autoFocus the selected item on Menu render
 }
 
 export interface MenuItemProps<T> {

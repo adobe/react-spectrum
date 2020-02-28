@@ -94,9 +94,6 @@ describe('Menu', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
   });
 
-  beforeEach(() => {
-  });
-  
   afterEach(() => {
     onSelectionChange.mockClear();
     cleanup();
@@ -159,7 +156,7 @@ describe('Menu', function () {
 
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{}}
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
     ${'V2Menu'} | ${V2Menu} | ${{}}
   `('$Name allows user to change menu item focus via up/down arrow keys', async function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
@@ -178,8 +175,8 @@ describe('Menu', function () {
   // V3 only behavior
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{}}
-  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed', async function ({Component, props}) {
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
+  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', async function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     await waitForDomChange();
     let menu = tree.getByRole('menu');
@@ -213,7 +210,7 @@ describe('Menu', function () {
   describe('supports single selection', function () {
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, defaultSelectedKeys: ['Blah']}}
+      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true}}
     `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
@@ -248,7 +245,7 @@ describe('Menu', function () {
 
     it.each`
     Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectedKeys: ['Blah']}}
+      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectedKeys: ['Blah'], autoFocus: true}}
     `('$Name supports selectedKeys (controlled)', async function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
