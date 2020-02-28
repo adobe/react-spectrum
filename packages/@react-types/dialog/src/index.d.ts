@@ -15,8 +15,10 @@ import {HTMLAttributes, ReactElement, ReactNode, RefObject} from 'react';
 import {PositionProps} from '@react-types/overlays';
 import {Slots} from '@react-types/layout';
 
+export type SpectrumDialogClose = (close: () => void) => ReactElement;
+
 export interface SpectrumDialogTriggerProps extends PositionProps {
-  children: ReactElement[],
+  children: [ReactElement, SpectrumDialogClose | ReactElement],
   type?: 'modal' | 'popover' | 'tray',
   mobileType?: 'modal' | 'tray',
   hideArrow?: boolean,

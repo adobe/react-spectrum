@@ -208,7 +208,7 @@ function render({width = 'auto', ...props}) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
-        {close => (
+        {(close) => (
           <Dialog>
             <Header><Text slot="title">The Title</Text></Header>
             <Divider size="M" />

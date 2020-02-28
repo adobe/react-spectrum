@@ -14,8 +14,8 @@ import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef} from 'react';
-import {SpectrumDialogTriggerProps} from '@react-types/dialog';
+import React, {Fragment, ReactElement, useRef} from 'react';
+import {SpectrumDialogClose, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
@@ -29,7 +29,12 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     targetRef,
     ...positionProps
   } = props;
-  let [trigger, content] = React.Children.toArray(children);
+  if (!Array.isArray(children) || children.length > 2) {
+    throw new Error('DialogTrigger must have exactly 2 children');
+  }
+  // if a function is passed as the second child, it won't appear in toArray
+  let [_, content] = React.Children.toArray(children);
+  let [trigger, contentWithClose] = children as [ReactElement, SpectrumDialogClose];
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
@@ -66,13 +71,13 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'modal':
         return (
           <Modal isOpen={isOpen} onClose={onClose}>
-            {content(onClose)}
+            {content || contentWithClose(onClose)}
           </Modal>
         );
       case 'tray':
         return (
           <Tray isOpen={isOpen} onClose={onClose}>
-            {content(onClose)}
+            {content || contentWithClose(onClose)}
           </Tray>
         );
     }
