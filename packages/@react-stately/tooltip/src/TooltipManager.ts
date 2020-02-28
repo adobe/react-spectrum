@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 export class TooltipManager {
 
   visibleTooltips?: null | {triggerId: string, state: {open: boolean, setOpen(value: boolean), tooltipManager: string}}
@@ -5,8 +17,6 @@ export class TooltipManager {
   hoverShowTimeout?: null | ReturnType<typeof setTimeout>;
 
   // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
-    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/master/data/elements/tooltip/TooltipBase.mjs
-    // https://git.corp.adobe.com/Spectrum/spectrum-dna/blob/aab3963cebeb16df0081a805a1394fbc2d46a851/data/globals/GlobalAnimation.mjs
   constructor() {
     this.visibleTooltips = null;
     this.hoverHideTimeout = null;

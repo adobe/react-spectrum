@@ -1,9 +1,22 @@
-import {AllHTMLAttributes, useState} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AllHTMLAttributes, useMemo, useState} from 'react';
 import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
 import {ButtonGroupProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 const BUTTON_GROUP_ROLES = {
@@ -33,7 +46,8 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
     role
   } = props;
 
-  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection);
+  let {direction} = useLocale();
+  let keyboardDelegate = useMemo(() => new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation), [state.buttonCollection, direction, orientation]);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,

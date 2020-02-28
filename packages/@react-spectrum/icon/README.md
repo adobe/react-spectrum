@@ -3,22 +3,22 @@
 # Icons
 React Spectrum is a trusted distributor of A4U icons for easy use in your applications.
 We provide 959 Workflow Icons and 45 Colored Workflow Icons. These are an open source set of icons and are the core set that Adobe uses.
-To see a list of Icons, please go to our [FAQ's icon section](https://react-spectrum.corp.adobe.com/guides/faq). We may differ from [Spectrum's icon page](http://opensource.adobe.com/spectrum-css/2.13.0/icons/) in terms of icons we supply.
+To see a list of Icons, please go to the following [link](http://spectrum-css.corp.adobe.com/icons/). We may differ from [Spectrum's icon page](http://opensource.adobe.com/spectrum-css/2.13.0/icons/) in terms of icons we supply.
 All Icons are available from the top level of this package.
 
 All icons use default exports, so you are free to rename them as you see fit. Instead, we rely on the path to each icon module. There is a special React Inspector display name case, which is icons with names that start with a number. This is not allowed in React, so they have been prefixed with an underscore.
 
 Both of these are valid:
 
-`import Add from '@react-spectrum/icons-workflow/Add'`
-`import IconAdd from '@react-spectrum/icons-workflow/Add'`
+`import Add from '@spectrum-icons/workflow//Add'`
+`import IconAdd from '@spectrum-icons/workflow//Add'`
 
 These will both display `<Add />` in the React Inspector
 
 For a component starting with a numeral:
 
-`import _123 from '@react-spectrum/icons-workflow/123'`
-`import Icon123 from '@react-spectrum/icons-workflow/123'`
+`import _123 from '@spectrum-icons/workflow/123'`
+`import Icon123 from '@spectrum-icons/workflow/123'`
 
 These will both display `<_123 />` in the React Inspector
 
