@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, KeyboardEvent} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
+
+type FocusStrategy = 'first' | 'last';
 
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
@@ -29,7 +31,10 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 
 interface SelectableListOptions {
   selectionManager: MultipleSelectionManager,
-  keyboardDelegate: KeyboardDelegate
+  keyboardDelegate: KeyboardDelegate,
+  autoFocus?: boolean,
+  focusStrategy?: FocusStrategy,
+  wrapAround?: boolean 
 }
 
 interface SelectableListAria {
@@ -39,7 +44,10 @@ interface SelectableListAria {
 export function useSelectableCollection(options: SelectableListOptions): SelectableListAria {
   let {
     selectionManager: manager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    autoFocus = false,
+    focusStrategy,
+    wrapAround = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -50,7 +58,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else {
+          } else if (wrapAround) {
             manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -65,7 +73,7 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else {
+          } else if (wrapAround) {
             manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -176,6 +184,28 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
   let onBlur = () => {
     manager.setFocused(false);
   };
+
+  useEffect(() => {
+    if (autoFocus) {
+      manager.setFocused(true);
+
+      // By default, select first item for focus target
+      let focusedKey = delegate.getFirstKey();
+      let selectedKeys = manager.selectedKeys;
+    
+      // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
+      if (focusStrategy && focusStrategy === 'last') {
+        focusedKey = delegate.getLastKey();
+      }
+
+      // If there are any selected keys, make the first one the new focus target
+      if (selectedKeys.size) {
+        focusedKey = selectedKeys.values().next().value;
+      }
+    
+      manager.setFocusedKey(focusedKey);
+    }
+  }, []);
 
   return {
     listProps: {
