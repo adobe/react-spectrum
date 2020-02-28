@@ -10,7 +10,7 @@ coverage:
       default:
         # basic
         target: auto
-        threshold: 0%
+        threshold: 100%
 
 parsers:
   gcov:
