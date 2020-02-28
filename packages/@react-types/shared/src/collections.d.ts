@@ -48,6 +48,7 @@ export interface CollectionBase<T> extends AsyncLoadable<T> {
 }
 
 export interface SingleSelection {
+  disableEmptySelection?: boolean,
   selectedKey?: Key,
   defaultSelectedKey?: Key,
   onSelectionChange?: (key: Key) => any

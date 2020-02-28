@@ -21,6 +21,7 @@ export interface FocusState {
 }
 
 export interface SingleSelectionState extends FocusState {
+  disableEmptySelection?: boolean,
   selectedKey: Key,
   setSelectedKey(key: Key): void
 }
