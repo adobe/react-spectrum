@@ -157,27 +157,27 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
           <Section title="Section 1">
-            <Item>
+            <Item uniqueKey="1">
               One
             </Item>
             <Item uniqueKey="2">
               Two
             </Item>
-            <Item>
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item>
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item>
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item>
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item>
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
@@ -205,27 +205,27 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
           <Section title="Section 1">
-            <Item>
+            <Item uniqueKey="1">
               One
             </Item>
             <Item uniqueKey="2">
               Two
             </Item>
-            <Item>
+            <Item uniqueKey="3">
               Three
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item>
+            <Item uniqueKey="4">
               Four
             </Item>
-            <Item>
+            <Item uniqueKey="5">
               Five
             </Item>
-            <Item>
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item>
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
@@ -253,10 +253,10 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu autoFocus={false} onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
           <Section title="Section 1">
-            <Item>
+            <Item uniqueKey="1">
               One
             </Item>
-            <Item>
+            <Item uniqueKey="2">
               Two
             </Item>
             <Item uniqueKey="3">
@@ -264,16 +264,16 @@ storiesOf('Menu', module)
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item>
+            <Item uniqueKey="4">
               Four
             </Item>
             <Item uniqueKey="5">
               Five
             </Item>
-            <Item>
+            <Item uniqueKey="6">
               Six
             </Item>
-            <Item>
+            <Item uniqueKey="7">
               Seven
             </Item>
           </Section>
