@@ -18,7 +18,7 @@ export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLEleme
     key,
     role = 'menuitem'
   } = props;
- 
+
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     itemKey: key,
