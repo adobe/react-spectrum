@@ -98,7 +98,7 @@ function RenderProviderTimers() {
           Show Default Toast
       </Button>
       <Button
-        onPress={() => toastContext.neutral('Actionable Toast defaults to no timeout', {onClose: action('onClose'), actionLabel: 'no timeout'})}
+        onPress={() => toastContext.neutral('Actionable Toast defaults to no timeout', {onClose: action('onClose'), onAction: action('onAction'), shouldCloseOnAction: true, actionLabel: 'no timeout'})}
         variant="secondary">
           Show Actionable Toast
       </Button>

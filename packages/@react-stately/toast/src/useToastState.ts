@@ -11,7 +11,7 @@
  */
 
 import {ReactNode, useRef, useState} from 'react';
-import {SpectrumToastProps, ToastState, ToastStateValue} from '@react-types/toast';
+import {ToastProps, ToastState, ToastStateValue} from '@react-types/toast';
 
 interface ToastStateProps {
   value?: ToastStateValue[]
@@ -24,7 +24,7 @@ export function useToastState(props?: ToastStateProps): ToastState {
   const toastsRef = useRef(toasts);
   toastsRef.current = toasts;
 
-  const onAdd = (content: ReactNode, options: SpectrumToastProps) => {
+  const onAdd = (content: ReactNode, options: ToastProps) => {
     let tempToasts = [...toasts];
     let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -33,7 +33,7 @@ export function useToastState(props?: ToastStateProps): ToastState {
       if (options.timeout < 0) {
         options.timeout = TOAST_TIMEOUT;
       }
-      timeoutId = setTimeout(() => onRemove(options.idKey), options.timeout || 5000);
+      timeoutId = setTimeout(() => onRemove(options.toastKey), options.timeout || TOAST_TIMEOUT);
     }
 
     tempToasts.push({
@@ -46,12 +46,12 @@ export function useToastState(props?: ToastStateProps): ToastState {
 
   };
 
-  const onRemove = (idKey: string) => {
+  const onRemove = (toastKey: string) => {
     let tempToasts = [...toastsRef.current].filter(item => {
-      if (item.props.idKey === idKey && item.timeoutId) {
+      if (item.props.toastKey === toastKey && item.timeoutId) {
         clearTimeout(item.timeoutId);
       }
-      return item.props.idKey !== idKey;
+      return item.props.toastKey !== toastKey;
     });
     setToasts(tempToasts);
   };

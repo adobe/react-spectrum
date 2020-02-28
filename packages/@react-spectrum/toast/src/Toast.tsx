@@ -17,10 +17,10 @@ import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
-import {SpectrumToastProps} from '@react-types/toast';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
+import {ToastProps} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
 
 export const ICONS = {
@@ -29,7 +29,7 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+function Toast(props: ToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     actionButtonProps,
     closeButtonProps,

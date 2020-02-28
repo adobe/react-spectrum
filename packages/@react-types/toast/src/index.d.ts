@@ -13,7 +13,7 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface ToastOptions extends DOMProps {
+export interface ToastOptions extends DOMProps, StyleProps {
   actionLabel?: ReactNode,
   onAction?: (...args: any[]) => void,
   shouldCloseOnAction?: boolean,
@@ -21,17 +21,18 @@ export interface ToastOptions extends DOMProps {
   timeout?: number
 }
 
-interface ToastProps extends ToastOptions {
+interface ToastProps extends ToastOptions, ToastState {
   children?: ReactNode,
-  variant?: 'positive' | 'negative' | 'info'
+  variant?: 'positive' | 'negative' | 'info',
+  toastKey?: string,
 }
 
-export interface SpectrumToastProps extends ToastProps, ToastState, StyleProps {
-  idKey?: string,
-}
+/* export interface SpectrumToastProps extends ToastProps, ToastState, StyleProps {
+
+}*/
 
 export interface ToastState {
-  onAdd?: (content: ReactNode, options: SpectrumToastProps) => void,
+  onAdd?: (content: ReactNode, options: ToastProps) => void,
   onRemove?: (idKey: string) => void,
   setToasts?: (value: ToastStateValue[]) => void,
   toasts?: ToastStateValue[]
@@ -39,6 +40,6 @@ export interface ToastState {
 
 export interface ToastStateValue {
   content: ReactNode,
-  props: SpectrumToastProps,
+  props: ToastProps,
   timeoutId: ReturnType<typeof setTimeout>
 }

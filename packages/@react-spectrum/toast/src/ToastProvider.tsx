@@ -46,16 +46,16 @@ export function ToastProvider(props: ToastProviderProps): ReactElement {
 
   let contextValue = {
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, idKey: generateKey()});
+      onAdd(content, {...options, toastKey: generateKey()});
     },
     positive: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, idKey: generateKey(), variant: 'positive'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'positive'});
     },
     negative: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, idKey: generateKey(), variant: 'negative'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'negative'});
     },
     info: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, idKey: generateKey(), variant: 'info'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'info'});
     }
   };
 

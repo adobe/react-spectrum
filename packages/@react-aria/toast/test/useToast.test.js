@@ -73,10 +73,19 @@ describe('useToast', () => {
   });
 
   it('handles shouldCloseOnAction', function () {
-    let {actionButtonProps} = renderToastHook({onClose, onAction, shouldCloseOnAction: true});
+    let {actionButtonProps} = renderToastHook({onClose, onAction, onRemove, shouldCloseOnAction: true});
     actionButtonProps.onPress();
 
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it('onRemove is called with toastKey', function () {
+    let {closeButtonProps} = renderToastHook({onRemove, toastKey: 'key1'});
+    closeButtonProps.onPress();
+
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith('key1');
   });
 });
