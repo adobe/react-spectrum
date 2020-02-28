@@ -70,9 +70,10 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuContext = {
     ...menuProps,
     focusStrategy,
-    setFocusStrategy,
     onClose,
-    closeOnSelect
+    closeOnSelect,
+    autoFocus: true,
+    wrapAround: true
   };
 
   let triggerProps = {
