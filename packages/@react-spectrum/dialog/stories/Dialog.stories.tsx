@@ -37,7 +37,7 @@ storiesOf('Dialog', module)
   )
   .add(
   'isDismissable',
-  () => render({isDismissable: true, onDismiss: action('dismissed')})
+  () => render({isDismissable: true})
   )
   .add(
     'long content',
@@ -49,7 +49,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'with hero, isDimissable',
-    () => renderHero({isDismissable: true, onDismiss: action('dismissed')})
+    () => renderHero({isDismissable: true})
   )
   .add(
     'small',
@@ -207,10 +207,10 @@ storiesOf('Dialog/Alert', module)
     })
   );
 
-function render({width = 'auto', ...props}) {
+function render({width = 'auto', isDismissable, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger isDismissable={isDismissable} isOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
@@ -229,10 +229,10 @@ function render({width = 'auto', ...props}) {
 }
 
 
-function renderHero({width = 'auto', ...props}) {
+function renderHero({width = 'auto', isDismissable, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger isDismissable={isDismissable} isOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
