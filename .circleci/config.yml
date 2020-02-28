@@ -23,7 +23,7 @@ jobs:
           name: build
           command: |
             make adobe_setup
-            yarn
+            yarn --pure-lockfile
 
       - save_cache:
          paths:
