@@ -57,13 +57,13 @@ In order to internationalize a link, a localized string should be passed to the 
 
 For string-typed `children`, the link component will expose the acessible role to assistive technology as a "link".
 
-For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
-
 ```tsx example
 <Link onPress={e => console.log(`clicked "${e.target.textContent}" Link`)}>
   I forgot my password
 </Link>
 ```
+
+For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
 
 Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context within the link about where the link will take the user.
 
