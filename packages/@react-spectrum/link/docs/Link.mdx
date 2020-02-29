@@ -1,0 +1,95 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/link';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {Link} from '@react-spectrum/link';
+```
+
+# Link
+
+<p>{docs.exports.Link.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Link']}
+  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/link/'}]} />
+
+## Example
+
+```tsx example
+<Link onPress={() => console.log('pressed!')}>The missing link.</Link>
+```
+
+## Content
+
+A visible label is always required and can be provided by passing a child.
+
+```tsx example
+<Link>A label</Link>
+```
+
+To add an anchor (for example, to navigate to a location with an `href`), simply pass a anchor as a child.
+
+```tsx example
+<Link><a href="https://www.adobe.com">Adobe.com</a></Link>
+```
+
+The link component will clone its child and add the necessary styling and event handlers.
+
+### Internationalization
+
+In order to internationalize a link, a localized string should be passed to the `children` prop.
+
+### Accessibility
+
+For string-typed `children`, the link component will expose the acessible role to assistive technology as a "link".
+
+For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
+
+```tsx example
+<Link onPress={e => console.log(`clicked "${e.target.textContent}" Link`)}>
+  I forgot my password
+</Link>
+```
+
+Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context within the link about where the link will take the user.
+
+## Props
+
+<PropTable component={docs.exports.Link} links={docs.links} />
+
+## Visual Options
+[View Guidelines](https://spectrum.adobe.com/page/link/#Options)
+
+### Primary
+```tsx example
+<p>Would you live to <Link variant="primary">learn more</Link> about this fine component?</p>
+```
+
+### Secondary
+```tsx example
+<p>Would you live to <Link variant="secondary">learn more</Link> about this fine component?</p>
+```
+
+### overBackground
+```tsx example
+<p style={{background: 'rgb(15, 121, 125)'}}>Would you live to <Link variant="overBackground">learn more</Link> about this fine component?</p>
+```
+
+### quiet
+```tsx example
+<p>Would you live to <Link isQuiet>learn more</Link> about this fine component?</p>
+```
