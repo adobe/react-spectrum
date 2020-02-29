@@ -29,7 +29,13 @@ export function ToastContainer(props: ToastState): ReactElement {
   let containerPlacement = toastPlacement && toastPlacement[1];
 
   let renderToasts = () => toasts.map((toast) =>
-    (<Toast {...toast.props} key={toast.props.toastKey} onRemove={onRemove}>{toast.content}</Toast>)
+    (<Toast
+      {...toast.props}
+      key={toast.props.toastKey}
+      onRemove={onRemove}
+      timer={toast.timer}>
+      {toast.content}
+    </Toast>)
   );
 
 

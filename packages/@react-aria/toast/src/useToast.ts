@@ -16,6 +16,7 @@ import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps, ToastState} from '@react-types/toast';
+import {useFocus, useHover} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
@@ -36,6 +37,7 @@ export function useToast(props: ToastAriaProps): ToastAria {
     onClose,
     onRemove,
     shouldCloseOnAction,
+    timer,
     variant
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -53,17 +55,38 @@ export function useToast(props: ToastAriaProps): ToastAria {
 
   let iconProps = variant ? {alt: formatMessage(variant)} : {};
 
+  let pauseTimer = () => {
+    timer && timer.pause();
+  };
+
+  let resumeTimer = () => {
+    timer && timer.resume();
+  };
+
+  let {hoverProps} = useHover({
+    onHover: pauseTimer,
+    onHoverEnd: resumeTimer
+  });
+
+  let {focusProps} = useFocus({
+    onFocus: pauseTimer,
+    onBlur: resumeTimer
+  });
+
   return {
     toastProps: {
+      ...hoverProps,
       id: useId(id),
       role: 'alert'
     },
     iconProps,
     actionButtonProps: {
+      ...focusProps,
       onPress: handleAction
     },
     closeButtonProps: {
       'aria-label': formatMessage('close'),
+      ...focusProps,
       onPress: chain(onClose, () => onRemove(toastKey))
     }
   };

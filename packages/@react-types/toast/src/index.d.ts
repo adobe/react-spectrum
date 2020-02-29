@@ -25,6 +25,7 @@ interface ToastProps extends ToastOptions, ToastState {
   children?: ReactNode,
   variant?: 'positive' | 'negative' | 'info',
   toastKey?: string,
+  timer?: any
 }
 
 /* export interface SpectrumToastProps extends ToastProps, ToastState, StyleProps {
@@ -41,5 +42,5 @@ export interface ToastState {
 export interface ToastStateValue {
   content: ReactNode,
   props: ToastProps,
-  timeoutId: ReturnType<typeof setTimeout>
+  timer: any
 }

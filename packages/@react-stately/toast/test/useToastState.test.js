@@ -33,7 +33,7 @@ describe('useToastState', () => {
     expect(result.current.toasts).toStrictEqual([]);
 
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
-    expect(result.current.toasts).toStrictEqual([{...newValue[0], timeoutId: undefined}]);
+    expect(result.current.toasts).toStrictEqual([{...newValue[0], timer: undefined}]);
   });
 
   it('should be able to add multiple toasts', () => {
@@ -45,12 +45,12 @@ describe('useToastState', () => {
     expect(result.current.toasts).toStrictEqual([]);
 
     act(() => result.current.onAdd(newValue[0].content, newValue[0].props));
-    expect(result.current.toasts).toStrictEqual([{...newValue[0], timeoutId: undefined}]);
+    expect(result.current.toasts).toStrictEqual([{...newValue[0], timer: undefined}]);
 
     act(() => result.current.onAdd(secondToast.content, secondToast.props));
     expect(result.current.toasts.length).toBe(2);
-    expect(result.current.toasts[0]).toStrictEqual({...newValue[0], timeoutId: undefined});
-    expect(result.current.toasts[1]).toStrictEqual({...secondToast, timeoutId: undefined});
+    expect(result.current.toasts[0]).toStrictEqual({...newValue[0], timer: undefined});
+    expect(result.current.toasts[1]).toStrictEqual({...secondToast, timer: undefined});
   });
 
   it('should remove a toast via onRemove', () => {
@@ -95,7 +95,7 @@ describe('useToastState', () => {
     expect(result.current.toasts.length).toEqual(0);
     act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
     expect(result.current.toasts.length).toEqual(1);
-    expect(result.current.toasts[0].timeoutId).not.toBe(undefined);
+    expect(result.current.toasts[0].timer).not.toBe(undefined);
 
     await waitForNextUpdate();
 
@@ -114,6 +114,6 @@ describe('useToastState', () => {
     jest.runAllTimers();
 
     expect(result.current.toasts.length).toEqual(1);
-    expect(result.current.toasts[0].timeoutId).toBe(undefined);
+    expect(result.current.toasts[0].timer).toBe(undefined);
   });
 });
