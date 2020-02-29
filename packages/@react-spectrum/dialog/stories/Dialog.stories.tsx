@@ -207,7 +207,7 @@ storiesOf('Dialog/Alert', module)
     })
   );
 
-function render({width = 'auto', isDismissable, ...props}) {
+function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} isOpen>
@@ -229,7 +229,7 @@ function render({width = 'auto', isDismissable, ...props}) {
 }
 
 
-function renderHero({width = 'auto', isDismissable, ...props}) {
+function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} isOpen>
