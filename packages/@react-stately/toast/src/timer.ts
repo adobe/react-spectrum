@@ -1,5 +1,6 @@
 export function Timer(callback, delay) {
-  var timerId, start, remaining = delay;
+  let timerId, start;
+  let remaining = delay;
 
   this.pause = () => {
     clearTimeout(timerId);
@@ -8,7 +9,7 @@ export function Timer(callback, delay) {
 
   this.resume = () => {
     start = Date.now();
-    clearTimeout(timerId);
+    timerId && clearTimeout(timerId);
     timerId = setTimeout(callback, remaining);
   };
 
