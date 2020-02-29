@@ -60,7 +60,7 @@ governing permissions and limitations under the License.
 
   &::after {
     content: '';
-    width: var(--spectrum-popover-tip-width);
+    width: calc(var(--spectrum-popover-tip-width) + .5px);
     height: var(--spectrum-popover-tip-width);
     border-width: var(--spectrum-popover-border-size);
     border-style: solid;
