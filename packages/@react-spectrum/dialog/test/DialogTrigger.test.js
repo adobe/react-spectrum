@@ -330,4 +330,36 @@ describe('DialogTrigger', function () {
       getByRole('dialog');
     }).toThrow();
   });
+
+  it('can be closed by dismiss button in dialog', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole, getByLabelText} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    let closeButton = getByLabelText('dismiss');
+    triggerPress(closeButton);
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
 });
