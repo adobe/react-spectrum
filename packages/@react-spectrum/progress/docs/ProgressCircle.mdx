@@ -1,0 +1,103 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/progress';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {ProgressCircle} from '@react-spectrum/progress';
+```
+
+# ProgressCircle
+
+<p>{docs.exports.ProgressCircle.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ProgressCircle']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/circle-loader/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ProgressCircle aria-label="Loading…" />
+```
+
+## Value
+
+By default Progress Circles are controlled with the `value` prop representing current percentage (as an integer).
+In this case, the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" value={25} />
+<ProgressCircle aria-label="Loading…" value={75} />
+```
+
+Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" minValue={50} maxValue={150} value={100} />
+```
+
+### Accessibility
+
+ProgressCircle requires an `aria-label` or `aria-labelledby` attribute.
+
+```tsx example
+<div>
+  <label id="pc-label">Loading…</label>
+  <ProgressCircle aria-labelledby="pc-label" indeterminate />
+</div>
+```
+
+If using the over background variant, ensure the background offers enough contrast for the loader to be legible and meets color contrast guidelines.
+
+### Internationalization
+
+To internationalize a Progress Circle, a localized string should be passed to the `aria-label` prop (or value of associated `aria-labelledby` element).
+
+For RTL (right-to-left) languages, the fill of an both determinate and indeterminate Progress Circles continues to spin clockwise.
+
+## Props
+
+<PropTable component={docs.exports.ProgressCircle} links={docs.links} />
+
+## Visual Options
+
+### Over background
+[View guidelines](https://spectrum.adobe.com/page/circle-loader/#Over-background-variant)
+
+When a loader needs to be placed on top of a colored background, use the over background loader.
+
+```tsx example
+<div style={{background: 'rgb(15, 121, 125)'}}>
+  <ProgressCircle aria-label="Loading…" variant="overBackground" />
+</div>
+```
+
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/circle-loader/#Indeterminate)
+
+By default, loaders are determinate. Use a determinate loader when progress can be calculated against a specific goal.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" value={50} />
+```
+
+Use an indeterminate loader when progress is happening but the time or effort to completion can’t be determined.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" isIndeterminate />
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/circle-loader/#Size)
+
+```tsx example
+<ProgressCircle aria-label="Loading…" size="S" />
+<ProgressCircle aria-label="Loading…" />
+<ProgressCircle aria-label="Loading…" size="L" />
+```
