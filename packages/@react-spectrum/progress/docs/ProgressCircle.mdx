@@ -23,7 +23,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 ## Example
 
 ```tsx example
-<ProgressCircle aria-label="Loading…" />
+<ProgressCircle aria-label="Loading…" isIndeterminate />
 ```
 
 ## Value
@@ -33,7 +33,6 @@ In this case, the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
 <ProgressCircle aria-label="Loading…" value={25} />
-<ProgressCircle aria-label="Loading…" value={75} />
 ```
 
 Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
@@ -48,8 +47,8 @@ ProgressCircle requires an `aria-label` or `aria-labelledby` attribute.
 
 ```tsx example
 <div>
+  <ProgressCircle aria-labelledby="pc-label" isIndeterminate />
   <label id="pc-label">Loading…</label>
-  <ProgressCircle aria-labelledby="pc-label" indeterminate />
 </div>
 ```
 
@@ -73,7 +72,7 @@ For RTL (right-to-left) languages, the fill of an both determinate and indetermi
 When a loader needs to be placed on top of a colored background, use the over background loader.
 
 ```tsx example
-<div style={{background: 'rgb(15, 121, 125)'}}>
+<div style={{background: 'rgb(0, 0, 0)'}}>
   <ProgressCircle aria-label="Loading…" variant="overBackground" />
 </div>
 ```
