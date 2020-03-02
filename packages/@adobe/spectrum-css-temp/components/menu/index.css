@@ -46,8 +46,8 @@ governing permissions and limitations under the License.
 
   overflow: auto;
 
-  height: 255px;
   width: 200px;
+  max-height: inherit; /* inherit from parent popover */
 
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
@@ -111,13 +111,6 @@ governing permissions and limitations under the License.
 .spectrum-Menu-itemLabel {
   grid-area: text;
   align-self: center;
-  line-height: var(--spectrum-selectlist-option-label-line-height);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  /* Override user agentstyle sheet for <p> */
-  margin-block-start: 0px;
-  margin-block-end: 0px;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -165,8 +158,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-itemGrid {
-  /* hard coded height to match row height in Menu.tsx */
-  height: 32px;
   display: grid;
   grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto var(--spectrum-selectlist-option-padding);
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
