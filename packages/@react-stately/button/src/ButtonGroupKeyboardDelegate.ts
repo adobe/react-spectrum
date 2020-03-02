@@ -11,30 +11,32 @@
  */
 
 import {Collection} from '@react-stately/collections';
+import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 
 export class ButtonGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: any;
+  private flipDirection: boolean;
 
-  constructor(collection: Collection<T>) {
+  constructor(collection: Collection<T>, direction: Direction, orientation: Orientation) {
     this.collection = collection;
+    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
   }
 
   getKeyLeftOf(key: Key) {
-    return this.collection.getKeyBefore(key);
+    return this.flipDirection ? this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
   }
 
   getKeyRightOf(key: Key) {
-    return this.collection.getKeyAfter(key);
+    return this.flipDirection ? this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
   }
 
   getKeyAbove(key: Key) {
-    return this.collection.getKeyBefore(key);
+    return this.flipDirection ? this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
   }
 
   getKeyBelow(key: Key) {
-    return this.collection.getKeyAfter(key);
+    return this.flipDirection ? this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
   }
 
   getFirstKey() {

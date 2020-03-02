@@ -37,7 +37,7 @@ const mdxComponents = {
           <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`}>#</a>
         </span>
       </h2>
-      <Divider />
+      <Divider marginBottom="33px" />
     </>
   ),
   h3: ({children, ...props}) => (
