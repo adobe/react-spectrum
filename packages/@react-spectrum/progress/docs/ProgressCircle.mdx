@@ -48,7 +48,7 @@ ProgressCircle requires an `aria-label` or `aria-labelledby` attribute.
 ```tsx example
 <div>
   <ProgressCircle aria-labelledby="pc-label" isIndeterminate />
-  <label id="pc-label">Loading…</label>
+  <label id="pc-label" style={{display: 'block'}}>Loading…</label>
 </div>
 ```
 
@@ -72,7 +72,7 @@ For RTL (right-to-left) languages, the fill of an both determinate and indetermi
 When a loader needs to be placed on top of a colored background, use the over background loader.
 
 ```tsx example
-<div style={{background: 'rgb(0, 0, 0)'}}>
+<div style={{'rgba(0,0,0,0.4)', padding: '10px'}}>
   <ProgressCircle aria-label="Loading…" variant="overBackground" />
 </div>
 ```
