@@ -56,7 +56,7 @@ Depending on the visualization being used (ie depending on the `showValueLabel` 
 ```tsx example
 <div>
   <ProgressBar aria-labelledby="pc-label" showValueLabel={false} />
-  <label id="pc-label">Loading…</label>
+  <label id="pc-label" style={{display: 'block'}}>Loading…</label>
 </div>
 ```
 
@@ -107,16 +107,16 @@ Use an indeterminate loader when progress is happening but the time or effort to
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 
 ```tsx example
-<ProgressBar label="Loading…" />
-<ProgressBar label="Loading…" labelPosition="side" />
-<ProgressBar label="Loading…" showValueLabel={false} />
+<div><ProgressBar label="Loading…" /></div>
+<div><ProgressBar label="Loading…" labelPosition="side" /></div>
+<div><ProgressBar label="Loading…" showValueLabel={false} /></div>
 ```
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Size)
 
 ```tsx example
-<ProgressBar aria-label="Loading…" size="S" />
-<ProgressBar aria-label="Loading…" />
-<ProgressBar aria-label="Loading…" size="L" />
+<div><ProgressBar aria-label="Loading…" size="S" /></div>
+<div><ProgressBar aria-label="Loading…" /></div>
+<div><ProgressBar aria-label="Loading…" size="L" /></div>
 ```
