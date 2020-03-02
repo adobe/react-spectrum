@@ -1,0 +1,121 @@
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/progress';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {ProgressBar} from '@react-spectrum/progress';
+```
+
+# ProgressBar
+
+<p>{docs.exports.ProgressBar.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ProgressBar']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/bar-loader/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ProgressBar label="Loading…" value={50} />
+```
+
+## Value
+
+By default Progress Bars are controlled with the `value` prop representing current percentage (as an integer).
+In this case, the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<ProgressBar label="Loading…" value={25} />
+```
+
+Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
+
+```tsx example
+<ProgressBar label="Loading…" minValue={50} maxValue={150} value={100} />
+```
+
+Values are formatted by default as a percentage, but can modified via `formatOptions` for different formats.
+The `formatOptions` are displayed via the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) applied for the current locale.
+
+```tsx example
+<ProgressBar label="Loading…" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} />
+```
+
+### Accessibility
+
+Progress Bar requires a `label`, `aria-label`, or `aria-labelledby` attribute depending on the visualization being used (ie depending on the `showValueLabel` prop).
+
+```tsx example
+<div>
+  <ProgressBar aria-labelledby="pc-label" showValueLabel={false} />
+  <label id="pc-label">Loading…</label>
+</div>
+```
+
+If using the over background variant, ensure the background offers enough contrast for the loader to be legible and meets color contrast guidelines.
+
+### Internationalization
+
+To internationalize a Progress Bar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of associated `aria-labelledby` element.
+
+For RTL (right-to-left) languages, the layout of the bar loader is mirrored for both determinate and indeterminate options.
+The placement of the percent sign differs depending on the locale.
+
+## Props
+
+<PropTable component={docs.exports.ProgressBar} links={docs.links} />
+
+## Visual Options
+
+### Over background
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Over-background)
+
+When a loader needs to be placed on top of a colored background, use the over background loader.
+
+```tsx example
+<div style={{background: 'rgba(0,0,0,0.4)'}}>
+  <ProgressBar label="Loading…" variant="overBackground" />
+</div>
+```
+
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Determinate-or-indeterminate)
+
+By default, loaders are determinate. Use a determinate loader when progress can be calculated against a specific goal.
+
+```tsx example
+<ProgressBar label="Loading…" value={50} />
+```
+
+Use an indeterminate loader when progress is happening but the time or effort to completion can’t be determined.
+
+```tsx example
+<ProgressBar label="Loading…" isIndeterminate />
+```
+
+### Labels
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Label-or-no-label)
+
+Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
+
+```tsx example
+<ProgressBar label="Loading…" />
+<ProgressBar label="Loading…" labelPosition="side" />
+<ProgressBar label="Loading…" showValueLabel={false} />
+```
+
+### Size
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Size)
+
+```tsx example
+<ProgressBar aria-label="Loading…" size="S" />
+<ProgressBar aria-label="Loading…" />
+<ProgressBar aria-label="Loading…" size="L" />
+```
