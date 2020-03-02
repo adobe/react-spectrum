@@ -35,18 +35,6 @@ storiesOf('DialogTrigger', module)
     () => renderPopover({type: 'popover'})
   )
   .add(
-    'type: popover, small',
-    () => render({type: 'popover', size: 'S'})
-  )
-  .add(
-    'type: popover, medium',
-    () => render({type: 'popover', size: 'M'})
-  )
-  .add(
-    'type: popover, large',
-    () => render({type: 'popover', size: 'L'})
-  )
-  .add(
     'type: modal',
     () => render({type: 'modal'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}}

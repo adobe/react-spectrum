@@ -58,8 +58,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
         targetRef={targetRef}
         trigger={trigger}
         content={content}
-        hideArrow={hideArrow}
-        size={size} />
+        hideArrow={hideArrow} />
     );
   }
 
@@ -92,7 +91,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   );
 }
 
-function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, size, ...props}) {
+function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
@@ -137,12 +136,11 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
       triggerProps={triggerPropsWithRef}
       dialogProps={overlayAriaProps}
       trigger={trigger}
-      overlay={overlay}
-      size={size} />
+      overlay={overlay} />
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger, size}) {
+function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger, size = null}) {
   let context = {
     type,
     onClose,
