@@ -41,22 +41,15 @@ module.exports = {
   // collectCoverage: false,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ['./packages/**/*\.{ts,tsx,js,jsx}'],
+  // collectCoverageFrom: null,
 
   // The directory where Jest should output its coverage files
   // coverageDirectory: null,
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    '/index(\.ts|\.tsx|\.js)',
-    '\.d\.ts',
-    '/types\.ts',
-    '/stories/',
-    '/@react-types/',
-    '/@spectrum-icons/(ui|workflow|color)/',
-    '/dev/',
-    '/node_modules/'
-  ],
+  // coveragePathIgnorePatterns: [
+  //   "/node_modules/"
+  // ],
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -67,14 +60,7 @@ module.exports = {
   // ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: {
-  //       "global": {
-  //         "branches": 80,
-  //         "functions": 80,
-  //         "lines": 80,
-  //         "statements": -10
-  //       }
-  //     },
+  // coverageThreshold: null,
 
   // A path to a custom dependency extractor
   // dependencyExtractor: null,
