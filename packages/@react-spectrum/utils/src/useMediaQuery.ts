@@ -26,8 +26,8 @@ export function useMediaQuery(query: string) {
     }
 
     let mq = window.matchMedia(query);
-    let onChange = () => {
-      setMatches(mq.matches);
+    let onChange = (evt) => {
+      setMatches(evt.matches);
     };
 
     mq.addListener(onChange);
