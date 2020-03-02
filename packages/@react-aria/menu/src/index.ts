@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './MenuTrigger';
-export * from './Menu';
+export * from './useMenuTrigger';
+export * from './useMenu';
+export * from './useMenuItem';

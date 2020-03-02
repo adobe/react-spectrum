@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './dom';
-export * from './inputs';
-export * from './selection';
-export * from './splitview';
-export * from './dnd';
-export * from './collections';
-export * from './removable';
-export * from './events';
-export * from './dna';
-export * from './style';
-export * from './refs';
-export * from './labelable';
-export * from './orientation';
-export * from './locale';
+import {classNames} from '@react-spectrum/utils';
+import {Divider} from '@react-spectrum/divider';
+import React from 'react';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+
+export function MenuDivider() {
+  return (
+    <Divider 
+      size="M"
+      UNSAFE_className={classNames(
+        styles,
+        'spectrum-Menu-divider'
+      )} />
+  );
+}

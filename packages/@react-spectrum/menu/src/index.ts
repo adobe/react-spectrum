@@ -10,17 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './dom';
-export * from './inputs';
-export * from './selection';
-export * from './splitview';
-export * from './dnd';
-export * from './collections';
-export * from './removable';
-export * from './events';
-export * from './dna';
-export * from './style';
-export * from './refs';
-export * from './labelable';
-export * from './orientation';
-export * from './locale';
+export * from './MenuDivider';
+export * from './MenuHeading';
+export * from './MenuItem';
+export * from './MenuTrigger';
+export * from './Menu';

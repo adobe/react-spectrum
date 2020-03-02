@@ -10,24 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AllHTMLAttributes} from 'react';
+import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
 import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
-
-export type FocusStrategy = 'first' | 'last';
-
-interface MenuTriggerState {
-  isOpen: boolean,
-  setOpen: (value: boolean) => void,
-  focusStrategy: FocusStrategy,
-  setFocusStrategy: (value: FocusStrategy) => void
-}
-
-interface MenuTriggerProps {
-  ref: RefObject<HTMLElement | null>,
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-} 
 
 interface MenuTriggerAria {
   menuTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps,
@@ -37,7 +24,8 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type
+    type,
+    isDisabled
   } = props;
 
   let menuTriggerId = useId();
@@ -49,11 +37,14 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
   });
 
   let onPress = () => {
-    state.setOpen(!state.isOpen);
+    if (!isDisabled) {
+      state.setFocusStrategy('first');
+      state.setOpen(!state.isOpen);
+    }
   };
 
   let onKeyDown = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
+    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || isDisabled) {
       return;
     }
 
