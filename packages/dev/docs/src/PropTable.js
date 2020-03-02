@@ -74,6 +74,9 @@ const GROUPS = {
 };
 
 export function PropTable({component, links}) {
+  console.log("helloooo", component)
+  return <div>whatup</div>
+
   let [ungrouped, groups] = groupProps(component.props.properties);
 
   let usedLinks = {};

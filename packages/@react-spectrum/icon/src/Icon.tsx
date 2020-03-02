@@ -19,14 +19,23 @@ import {useProvider} from '@react-spectrum/provider';
 type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, StyleProps {
+  /* Alternate text for assistive technologies*/
   alt?: string,
+  /* blah */
   children: ReactElement,
+  /* blah */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  /* blah */
   scale?: Scale,
+  /* blah */
   color?: string,
+  /* blah */
   slot?: string
 }
 
+/**
+ * Icons are cool
+ */
 export function Icon(props: IconProps) {
   let {
     children,
