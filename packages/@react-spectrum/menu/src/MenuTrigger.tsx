@@ -20,7 +20,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, useRef, useState} from 'react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMenuTrigger} from '@react-aria/menu-trigger';
+import {useMenuTrigger} from '@react-aria/menu';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
