@@ -160,7 +160,6 @@ describe('Menu', function () {
     ${'V2Menu'} | ${V2Menu} | ${{}}
   `('$Name allows user to change menu item focus via up/down arrow keys', async function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
-    await waitForDomChange();
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitemradio');
     let selectedItem = menuItems[0];
@@ -178,7 +177,6 @@ describe('Menu', function () {
     ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
   `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', async function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
-    await waitForDomChange();
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitemradio');
     let firstItem = menuItems[0];
@@ -214,7 +212,6 @@ describe('Menu', function () {
     `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[3];
@@ -249,7 +246,6 @@ describe('Menu', function () {
     `('$Name supports selectedKeys (controlled)', async function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[3];

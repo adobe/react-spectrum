@@ -39,7 +39,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'none'
+    selectionMode: props.selectionMode || 'single'
   };
 
   let state = useTreeState(completeProps);

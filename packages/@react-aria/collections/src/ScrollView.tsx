@@ -83,7 +83,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
       let w = dom.offsetWidth;
       let h = dom.offsetHeight;
-      if (sizeToFit) {
+      if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
         let style = window.getComputedStyle(dom);
 
         if (sizeToFit === 'width') {
