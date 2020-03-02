@@ -89,6 +89,19 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   );
 }
 
+DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
+  let [trigger, content] = React.Children.toArray(props.children);
+  return {
+    element: trigger,
+    wrapper: (element) => (
+      <DialogTrigger {...props}>
+        {element}
+        {content}
+      </DialogTrigger>
+    )
+  };
+};
+
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();

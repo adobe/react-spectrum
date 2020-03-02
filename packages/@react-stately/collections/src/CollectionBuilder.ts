@@ -12,15 +12,103 @@
 
 import {CollectionBase, CollectionElement, ItemElement, ItemProps, ItemRenderer, SectionElement, SectionProps} from '@react-types/shared';
 import {ItemStates, Node} from './types';
-import React, {Key, ReactElement} from 'react';
+import React, {Key, ReactElement, ReactNode} from 'react';
 
 export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
+interface PartialNode<T> {
+  type?: 'section' | 'item',
+  key?: Key,
+  value?: T,
+  element?: ReactElement,
+  wrapper?: (element: ReactElement) => ReactElement,
+  rendered?: ReactNode,
+  renderer?: ItemRenderer<T>,
+  hasChildNodes?: boolean,
+  childNodes?: () => IterableIterator<PartialNode<T>>
+}
+
+Item.getCollectionNode = function<T>(props: ItemProps<T>): PartialNode<T> {
+  let {childItems, title, children} = props;
+
+  return {
+    type: 'item',
+    rendered: props.title || props.children,
+    hasChildNodes: hasChildItems(props),
+    *childNodes() {
+      if (childItems) {
+        for (let child of childItems) {
+          yield {
+            type: 'item',
+            value: child
+          };
+        }
+      } else if (title) {
+        let items = React.Children.toArray(children) as ItemElement<T>[];
+        for (let item of items) {
+          yield {
+            type: 'item',
+            element: item
+          };
+        }
+      }
+    }
+  }
+};
+
+function hasChildItems<T>(props: ItemProps<T>) {
+  if (props.hasChildItems != null) {
+    return props.hasChildItems;
+  }
+
+  if (props.childItems) {
+    return true;
+  }
+
+  if (props.title && React.Children.count(props.children) > 0) {
+    return true;
+  }
+
+  return false;
+}
+
 export function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
+
+Section.getCollectionNode = function<T>(props: SectionProps<T>) {
+  let {children, title, items} = props;
+  return {
+    type: 'section',
+    hasChildNodes: true,
+    rendered: title,
+    *childNodes() {
+      if (typeof children === 'function') {
+        if (!items) {
+          throw new Error('props.children was a function but props.items is missing');
+        }
+    
+        for (let item of items) {
+          yield {
+            type: 'item',
+            value: item,
+            renderer: children
+          };
+        }
+      } else {
+        let items = React.Children.toArray(children);
+        for (let item of items) {
+          yield {
+            type: 'item',
+            element: item
+          };
+        }
+      }
+    }
+  }
+};
 
 // Wraps an iterator function as an iterable object.
 function iterable<T>(iterator: () => IterableIterator<Node<T>>): Iterable<Node<T>> {
@@ -39,6 +127,21 @@ function shallowEqual<T>(a: T, b: T) {
   return true;
 }
 
+type Wrapper = (element: ReactElement) => ReactElement;
+function compose(outer: Wrapper | void, inner: Wrapper | void): Wrapper | void {
+  if (outer && inner) {
+    return (element) => outer(inner(element));
+  }
+
+  if (outer) {
+    return outer;
+  }
+
+  if (inner) {
+    return inner;
+  }
+}
+
 export class CollectionBuilder<T> {
   private itemKey: string;
   private cache: Map<T, Node<T>> = new Map();
@@ -50,7 +153,7 @@ export class CollectionBuilder<T> {
 
   build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
     this.getItemStates = getItemStates || (() => ({}));
-    return iterable(() => this.iterateCollection(props));
+    return iterable(() => this.iterateCollection2(props));
   }
 
   getKey(item: CollectionElement<T>, value: T, parentKey?: Key): Key {
@@ -111,6 +214,84 @@ export class CollectionBuilder<T> {
       return node;
     }
   }
+
+  getFullNode(partialNode: PartialNode<T>, renderer?: ItemRenderer<T>, parentKey?: Key): Node<T> {
+    let element = partialNode.element;
+    if (!element && partialNode.value && renderer) {
+      let cached = this.getCached(partialNode.value);
+      if (cached) {
+        return cached;
+      }
+
+      element = renderer(partialNode.value);
+    }
+
+    if (element) {
+      let childNode = element.type.getCollectionNode(element.props);
+      let node = this.getFullNode({
+        ...childNode,
+        key: childNode.element ? null : this.getKey(element, partialNode.value, parentKey),
+        wrapper: compose(partialNode.wrapper, childNode.wrapper)
+      }, childNode.renderer || renderer, parentKey);
+
+      if (partialNode.type && node.type !== partialNode.type) {
+        throw new Error(`Unknown type ${node.type}. Expected ${partialNode.type}.`)
+      }
+
+      console.log(element.props, partialNode, childNode, node)
+      return node;
+    }
+
+    let builder = this;
+    let node: Node<T> = {
+      type: partialNode.type,
+      key: partialNode.key,
+      value: partialNode.value,
+      rendered: partialNode.rendered,
+      wrapper: partialNode.wrapper,
+      hasChildNodes: partialNode.hasChildNodes,
+      childNodes: iterable(function *() {
+        for (let child of partialNode.childNodes()) {
+          yield builder.getFullNode(child, child.renderer || renderer, node.key);
+        }
+      })
+    };
+
+    if (node.type === 'item') {
+      Object.assign(node, this.getItemStates(node.key));
+    }
+
+    console.log(node)
+
+    if (node.value) {
+      this.cache.set(node.value, node);
+    }
+
+    return node;
+  }
+
+  *iterateCollection2(props: CollectionBase<T>) {
+    let {children, items} = props;
+
+    if (typeof children === 'function') {
+      if (!items) {
+        throw new Error('props.children was a function but props.items is missing');
+      }
+
+      for (let item of props.items) {
+        yield this.getFullNode({
+          value: item
+        }, children);
+      }
+    } else {
+      let items = React.Children.toArray(children);
+      for (let item of items) {
+        yield this.getFullNode({
+          element: item
+        });
+      }
+    }
+  }
   
   *iterateCollection(props: CollectionBase<T>) {
     if (typeof props.children === 'function') {
@@ -141,6 +322,14 @@ export class CollectionBuilder<T> {
     } else {
       let items = React.Children.toArray(props.children);
       for (let item of items) {
+        let wrapper;
+        if (item.type.getCollectionNode) {
+          let res = item.type.getCollectionNode(item.props);
+          item = res.item;
+          wrapper = res.wrapper;
+          console.log(item)
+        }
+
         let childItems: Iterable<Node<T>>;
         if (item.type === Section) {
           childItems = iterable(() => this.iterateSection(item as SectionElement<T>));
@@ -148,10 +337,12 @@ export class CollectionBuilder<T> {
           childItems = iterable(() => this.iterateItem(item as SectionElement<T>, 1, null));
         } else {
           let name = typeof item.type === 'function' ? item.type.name : item.type;
-          throw new Error(`Unsupported item type <${name}>`);
+          throw new Error(`Unsupported type <${name}> in collection. Only <Section> or <Item> are supported.`);
         }
   
-        yield this.getNode(item, 0, null, childItems);
+        let node = this.getNode(item, 0, null, childItems);
+        node.wrapper = wrapper;
+        yield node;
       }
     }
   }

@@ -20,11 +20,14 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/typography';
+import {Keyboard, Text, Heading} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import { DialogTrigger, Dialog } from '@react-spectrum/dialog';
+import { Content, Header } from '@react-spectrum/view';
+import { Divider } from '@react-spectrum/divider';
 
 let iconMap = {
   AlignCenter,
@@ -111,7 +114,18 @@ storiesOf('Menu', module)
     () => (
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')}>
-          <Item>One</Item>
+          <DialogTrigger>
+            <Item>One</Item>
+            <Dialog>
+              <Header>
+                <Heading slot="title">Heading</Heading>
+              </Header>
+              <Divider size="M" />
+              <Content>
+                Testing
+              </Content>
+            </Dialog>
+          </DialogTrigger>
           <Item>Two</Item>
           <Item>Three</Item>
         </Menu>

@@ -35,7 +35,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'single'
+    selectionMode: props.selectionMode || 'none'
   };
 
   let state = useTreeState(completeProps);
@@ -76,12 +76,18 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
             }
           }
 
-          return (   
+          let res = (   
             <MenuItem
               {...menuItemProps}
               item={item}
               state={state} />
           );
+
+          if (item.wrapper) {
+            res = item.wrapper(res);
+          }
+
+          return res;
         }}
       </CollectionView>
     </MenuContext.Provider>

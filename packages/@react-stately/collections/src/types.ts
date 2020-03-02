@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactNode} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
@@ -27,10 +27,11 @@ export interface Node<T> extends ItemStates {
   type: 'section' | 'item',
   key: Key,
   value: T,
-  level: number,
   hasChildNodes: boolean,
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
+  wrapper?: (element: ReactElement) => ReactElement,
+  level?: number,
   prevKey?: Key,
   nextKey?: Key
 }
