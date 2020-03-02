@@ -11,4 +11,4 @@
  */
 
 export * from './useToastState';
-export * from './Timer';
+export * from './timer';
