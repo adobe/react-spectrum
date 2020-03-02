@@ -26,18 +26,22 @@ export function CalendarTableHeader({weekStart}: CalendarTableHeaderProps) {
     columnHeaderProps
   } = useCalendarTableHeader();
   let dayFormatter = useDateFormatter({weekday: 'short'});
+  let dayFormatterLong = useDateFormatter({weekday: 'long'});
   return (
     <thead>
-      <tr>
+      <tr aria-rowindex={1}>
         {
           [...new Array(7).keys()].map(index => {
-            let day = dayFormatter.format(setDay(Date.now(), (index + weekStart) % 7));
+            let dateDay = setDay(Date.now(), (index + weekStart) % 7);
+            let day = dayFormatter.format(dateDay);
+            let dayLong = dayFormatterLong.format(dateDay);
             return (
               <th
                 key={index}
+                aria-colindex={index + 1}
                 {...columnHeaderProps}
                 className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-                <abbr className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
+                <abbr className={classNames(styles, 'spectrum-Calendar-dayOfWeek')} title={dayLong}>
                   {day}
                 </abbr>
               </th>

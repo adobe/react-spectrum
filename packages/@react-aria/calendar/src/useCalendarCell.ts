@@ -95,6 +95,7 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
     cellProps: {
       onMouseEnter: props.isDisabled ? null : onMouseEnter,
       role: 'gridcell',
+      'aria-colindex': props.colIndex,
       'aria-disabled': props.isDisabled || null,
       'aria-selected': props.isSelected
     },

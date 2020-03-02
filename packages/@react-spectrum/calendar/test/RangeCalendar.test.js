@@ -588,7 +588,7 @@ describe('RangeCalendar', () => {
       triggerPress(getByText('10'));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 3000);
+      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 4000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {

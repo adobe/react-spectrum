@@ -63,22 +63,27 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     if (autoFocus) {
       focusFocusedDateCell();
     }
+    // omitting focusFocusedDateCell method from dependencies
+    // so that autoFocus does not restore focus with a month change from Previous or Next button 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFocus]);
 
   // Announce when the current month changes
   useUpdateEffect(() => {
-    if (state.isFocused) {
-      focusFocusedDateCell();
-    } else {
+    // announce the new month with a change from the Previous or Next button 
+    if (!state.isFocused) {
       announce(monthFormatter.format(state.currentMonth));
     }
+    // handle an update to the current month from the Previous or Next button
+    // rather than move focus, we announce the new month value
   }, [state.currentMonth]);
 
   // Announce when the selected value changes
   useUpdateEffect(() => {
     if (selectedDateDescription) {
-      announce(selectedDateDescription, 'polite', 3000);
+      announce(selectedDateDescription, 'polite', 4000);
     }
+    // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
   // Ensure that the focused date moves focus to the focused date cell within the calendar.
@@ -86,6 +91,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     if (state.isFocused) {
       focusFocusedDateCell();
     }
+    // handling focused date change initiated from within the calendar table
   }, [state.focusedDate, state.isFocused, focusFocusedDateCell]);
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -177,6 +183,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       'aria-disabled': isDisabled || null,
       'aria-labelledby': labelProps['aria-labelledby'],
       'aria-describedby': selectedDateDescription ? captionId : null,
+      'aria-colcount': 7,
+      'aria-rowcount': state.weeksInMonth + 1,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
