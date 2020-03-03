@@ -77,7 +77,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         {overlay}
       </Fragment>
     );
-  } else if (type === 'hover') {
+  } else if (type.includes('hover') || type.includes('focus')) {
     return (
       <Fragment>
         <DOMPropsResponder
