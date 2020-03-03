@@ -7,6 +7,7 @@ import packageData from '../package.json';
 
 ```jsx import
 import {ProgressCircle} from '@react-spectrum/progress';
+import {View} from '@react-spectrum/view';
 ```
 
 # ProgressCircle
@@ -28,7 +29,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 
 ## Value
 
-By default Progress Circles are controlled with the `value` prop representing current percentage (as an integer).
+By default Progress Circles are controlled with the `value` prop representing current percentage as an integer.
 In this case, the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
@@ -56,7 +57,7 @@ If using the over background variant, ensure the background offers enough contra
 
 ### Internationalization
 
-To internationalize a Progress Circle, a localized string should be passed to the `aria-label` prop (or value of associated `aria-labelledby` element).
+To internationalize a Progress Circle, a localized string should be passed to the `aria-label` prop (or value of the associated `aria-labelledby` element).
 
 For languages that are read right to left (e.g. Hebrew and Arabic), the fill of an both determinate and indeterminate Progress Circles continues to spin clockwise.
 
@@ -72,9 +73,9 @@ For languages that are read right to left (e.g. Hebrew and Arabic), the fill of 
 When a Progress Circle needs to be placed on top of a colored background, use the `overBackground` variant.
 
 ```tsx example
-<div style={{background: 'rgba(0,0,0,0.4)', padding: '10px'}}>
-  <ProgressCircle aria-label="Loading…" variant="overBackground" />
-</div>
+<View backgroundColor="positive" padding="25px">
+  <ProgressCircle aria-label="Loading…" isIndeterminate variant="overBackground" />
+</View>
 ```
 
 ### Indeterminate
@@ -96,7 +97,7 @@ Use an indeterminate Progress Circle when progress is happening but the time or 
 [View guidelines](https://spectrum.adobe.com/page/circle-loader/#Size)
 
 ```tsx example
-<ProgressCircle aria-label="Loading…" size="S" />
-<ProgressCircle aria-label="Loading…" />
-<ProgressCircle aria-label="Loading…" size="L" />
+<ProgressCircle aria-label="Loading…" marginRight="25px" size="S" value={15} />
+<ProgressCircle aria-label="Loading…" marginRight="25px" value={30} />
+<ProgressCircle aria-label="Loading…" size="L"  value={60} />
 ```
