@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './CollectionView';
-export * from './useCollectionItem';
+export * from './MenuTrigger';
+export * from './Menu';
