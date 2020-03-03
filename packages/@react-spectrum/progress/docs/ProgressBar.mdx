@@ -8,6 +8,7 @@ import packageData from '../package.json';
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
 import {ProgressBar} from '@react-spectrum/progress';
+import {View} from '@react-spectrum/view';
 ```
 
 # ProgressBar
@@ -81,9 +82,9 @@ The placement of the percent sign differs depending on the locale.
 When a Progress Bar needs to be placed on top of a colored background, use the `overBackground` variant.
 
 ```tsx example
-<div style={{background: 'rgba(0,0,0,0.4)', padding: '10px'}}>
+<View backgroundColor="positive" padding="25px">
   <ProgressBar label="Loading…" variant="overBackground" value={5} />
-</div>
+</View>
 ```
 
 ### Indeterminate
@@ -107,10 +108,10 @@ Use an indeterminate Progress Bars when progress is happening but the time or ef
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 
 ```tsx example
-<Flex flexDirection="column">
-  <ProgressBar label="Loading…" marginBottom="5px" value={30} />
-  <ProgressBar label="Loading…" marginBottom="5px" labelPosition="side" value={30} />
-  <ProgressBar label="Loading…" marginBottom="5px" showValueLabel={false} value={30} />
+<Flex flexDirection="column" maxWidth="250px">
+  <ProgressBar label="Loading…" marginBottom="25px" value={30} />
+  <ProgressBar label="Loading…" marginBottom="25px" labelPosition="side" value={30} />
+  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
 </Flex>
 ```
 
@@ -119,7 +120,7 @@ Value labels are shown by default on top, but they can also be moved to the side
 
 ```tsx example
 <Flex flexDirection="column">
-  <ProgressBar aria-label="Loading…" marginBottom="5px" size="S" value={70} />
-  <ProgressBar aria-label="Loading…" marginBottom="5px" size="L" value={70} />
+  <ProgressBar label="Small" marginBottom="25px" size="S" value={70} />
+  <ProgressBar label="Large" size="L" value={70} />
 </Flex>
 ```
