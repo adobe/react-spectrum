@@ -14,17 +14,19 @@ import {chain} from '@react-aria/utils';
 import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
 import React, {CSSProperties, FocusEvent, HTMLAttributes, Key, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
+import {useCollectionItem} from './useCollectionItem';
 import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
   children: (type: string, content: T) => V,
   layout: Layout<T>,
   collection: Collection<T>,
-  focusedKey?: Key
+  focusedKey?: Key,
+  sizeToFit?: 'width' | 'height'
 }
 
 export function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>) {
-  let {children: renderView, layout, collection, focusedKey, ...otherProps} = props;
+  let {children: renderView, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
@@ -37,9 +39,9 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     collection,
     renderView,
     renderWrapper: (reusableView) => (
-      <div key={reusableView.key} role="presentation" style={layoutInfoToStyle(reusableView.layoutInfo)}>
+      <CollectionItem key={reusableView.key} layoutInfo={reusableView.layoutInfo} collectionManager={reusableView.collectionManager}>
         {reusableView.rendered}
-      </div>
+      </CollectionItem>
     )
   });
 
@@ -90,9 +92,25 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
       innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}
-      onVisibleRectChange={setVisibleRect}>
+      onVisibleRectChange={setVisibleRect}
+      sizeToFit={sizeToFit}>
       {visibleViews}
     </ScrollView>
+  );
+}
+
+function CollectionItem({layoutInfo, collectionManager, children}) {
+  let ref = useRef();
+  useCollectionItem({
+    layoutInfo,
+    collectionManager,
+    ref
+  });
+
+  return (
+    <div role="presentation" ref={ref} style={layoutInfoToStyle(layoutInfo)}>
+      {children}
+    </div>
   );
 }
 
