@@ -15,6 +15,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
+import {Flex} from '@react-spectrum/layout'
 import {Meter} from '@react-spectrum/meter';
 ```
 
@@ -35,43 +36,42 @@ import {Meter} from '@react-spectrum/meter';
 
 ## Value
 
-By default Meters are controlled with the `value` prop representing current percentage (as an integer).
+Meters are controlled with the `value` prop representing current percentage (as an integer).
 In this case, the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
-<Meter label="Storage space" value={25} />
+<Meter label="Storage space" value={25} variant="positive" />
 ```
 
 Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
 
 ```tsx example
-<Meter label="Widgets Used" minValue={50} maxValue={150} value={100} />
+<Meter label="Widgets Used" minValue={50} maxValue={150} value={100} variant="positive" />
 ```
 
-Values are formatted by default as a percentage, but can modified via `formatOptions` for different formats.
-The `formatOptions` are displayed via the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) applied for the current locale.
+Values are formatted as a percentage by default, but can be modified by using the `formatOptions` for different formats.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied to the current locale.
 
 ```tsx example
-<Meter label="Currency" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} />
+<Meter label="Currency" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} variant="positive" />
 ```
 
 ### Accessibility
 
-Meters are made accessible as per the ["meter" role in WAI-ARIA 1.2](https://www.w3.org/TR/wai-aria-1.2/#meter) and will fallback to the ["progressbar" role](https://www.w3.org/TR/wai-aria-1.2/#progressbar) if the meter role is not supported.
-Depending on the visualization being used (ie depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
 
 ```tsx example
 <div>
-  <Meter aria-labelledby="pc-label" showValueLabel={false} />
+  <Meter aria-labelledby="pc-label" showValueLabel={false} value={10} variant="positive" />
   <label id="pc-label" style={{display: 'block'}}>Meter</label>
 </div>
 ```
 
 ### Internationalization
 
-To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of associated `aria-labelledby` element.
+To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
 
-For RTL (right-to-left) languages, the layout of the bar loader is mirrored.
+For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the bar loader is mirrored.
 The placement of the percent sign differs depending on the locale.
 
 If the prop `formatOptions` is used, Meter will utilize current locale to format the value string.
@@ -85,26 +85,33 @@ If the prop `formatOptions` is used, Meter will utilize current locale to format
 ### Labels
 
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
+The label should be in sentence case.
 
 ```tsx example
-<p><Meter label="1 of 4" value={25} /></p>
-<p><Meter label="1 of 4" labelPosition="side" value={25} /></p>
-<p><Meter aria-label="1 of 4" showValueLabel={false} value={25} /></p>
+<Flex>
+  <Meter label="1 of 4" value={25} variant="warning" />
+  <Meter label="1 of 4" labelPosition="side" value={25} variant="warning" />
+  <Meter aria-label="1 of 4" showValueLabel={false} value={25} variant="warning" />
+</Flex>
 ```
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/meter/#Size)
 
 ```tsx example
-<p><Meter label="Meter" size="S" /></p>
-<p><Meter label="Meter" size="L" /></p>
+<Flex>
+  <Meter label="Meter" size="S" value={90} variant="critical" />
+  <Meter label="Meter" size="L" value={90} variant="critical" />
+</Flex>
 ```
 
 ### Variants
 [View guidelines](https://spectrum.adobe.com/page/meter/#Semantic-colors)
 
 ```tsx example
-<p><Meter label="1 of 4" variant="positive" value={25} /></p>
-<p><Meter label="1 of 4" variant="critical" value={25} /></p>
-<p><Meter label="1 of 4" variant="warning" value={25} /></p>
+<Flex>
+  <Meter label="1 of 4" value={25} variant="positive" />
+  <Meter label="1 of 4" value={25} variant="critical" />
+  <Meter label="1 of 4" value={25} variant="warning" />
+</Flex>
 ```
