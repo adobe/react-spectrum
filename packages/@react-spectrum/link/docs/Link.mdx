@@ -30,24 +30,34 @@ import {Link} from '@react-spectrum/link';
 ## Example
 
 ```tsx example
-<Link onPress={() => console.log('pressed!')}>The missing link.</Link>
+<Link onPress={() => alert('pressed!')}>The missing link.</Link>
 ```
 
 ## Content
 
-A visible label is always required and can be provided by passing a child.
+Links accept content as children.
+If the content is plain text, it will be styled and exposed to assistive technologies as a link.
+Events will need to be handled in JavaScript with the `onPress` prop.
 
 ```tsx example
 <Link>A label</Link>
 ```
 
-To add an anchor (for example, to navigate to a location with an `href`), simply pass a anchor as a child.
+If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
+Actual navigation will be handled by the wrapped element.
 
 ```tsx example
-<Link><a href="https://www.adobe.com">Adobe.com</a></Link>
+<Link><a href="https://www.adobe.com" target="_blank">Adobe.com</a></Link>
 ```
 
-The link component will clone its child and add the necessary styling and event handlers.
+To use in [React Router](https://reacttraining.com/react-router/)
+
+```tsx
+import {Link} from '@react-spectrum/link';
+import {Link as RouterLink} from 'react-router-dom';
+
+<Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
+```
 
 ### Internationalization
 
@@ -58,7 +68,7 @@ In order to internationalize a link, a localized string should be passed to the 
 For string-typed `children`, the link component will expose the acessible role to assistive technology as a "link".
 
 ```tsx example
-<Link onPress={e => console.log(`clicked "${e.target.textContent}" Link`)}>
+<Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
   I forgot my password
 </Link>
 ```
