@@ -23,7 +23,7 @@ export function CalendarTableBody({state}: CalendarTableBodyProps) {
     <tbody>
       {
         [...new Array(state.weeksInMonth).keys()].map(weekIndex => (
-          <tr key={weekIndex}>
+          <tr key={weekIndex} aria-rowindex={weekIndex + 2}>
             {
               [...new Array(7).keys()].map(dayIndex => (
                 <CalendarCell

@@ -145,8 +145,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
 
     it.each`
@@ -181,8 +181,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
 
     it.each`
@@ -218,8 +218,8 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', dialogId);
 
-      // Focuses the calendar body
-      expect(document.activeElement).toHaveAttribute('role', 'grid');
+      // Focuses the calendar date
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
   });
 
