@@ -51,7 +51,7 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={otherProps.size}>
         {children}
-        {isDismissable && <ActionButton slot="closeButton" autoFocus isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
+        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
       </ModalDialog>
     );
   }
@@ -88,7 +88,7 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
   }
 
   return (
-    <FocusScope contain restoreFocus autoFocus>
+    <FocusScope contain restoreFocus>
       <div
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(

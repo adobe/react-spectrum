@@ -15,7 +15,7 @@ import {LayoutInfo} from './LayoutInfo';
 import {ReusableView} from './ReusableView';
 
 type LayoutInfoMap = Map<Key, LayoutInfo>;
-export class Transaction<T, V> {
+export class Transaction<T extends object, V> {
   level = 0;
   actions: (() => void)[] = [];
   animated = true;

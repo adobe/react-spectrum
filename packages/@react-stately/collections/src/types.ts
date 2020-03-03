@@ -44,7 +44,7 @@ export interface Collection<T> {
   getLastKey(): Key | null
 }
 
-export interface InvalidationContext<T, V> {
+export interface InvalidationContext<T extends object, V> {
   contentChanged?: boolean,
   offsetChanged?: boolean,
   sizeChanged?: boolean,
@@ -55,7 +55,7 @@ export interface InvalidationContext<T, V> {
   transaction?: Transaction<T, V>
 }
 
-export interface CollectionManagerDelegate<T, V, W> {
+export interface CollectionManagerDelegate<T extends object, V, W> {
   setVisibleViews(views: Set<W>): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,

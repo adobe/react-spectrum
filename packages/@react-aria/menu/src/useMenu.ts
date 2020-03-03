@@ -11,37 +11,51 @@
  */
 
 import {AllHTMLAttributes} from 'react';
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, Orientation} from '@react-types/shared';
 import {ListLayout} from '@react-stately/collections';
+import {MenuProps} from '@react-types/menu';
+import {Orientation} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface MenuAriaProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {
-  'aria-orientation'?: Orientation
-}
-
 interface MenuAria {
-  menuProps: AllHTMLAttributes<HTMLElement>
+  menuProps: AllHTMLAttributes<HTMLElement>,
+  menuItemProps: AllHTMLAttributes<HTMLElement>
 }
 
 interface MenuState<T> extends TreeState<T> {}
 
 interface MenuLayout<T> extends ListLayout<T> {}
 
-export function useMenu<T>(props: MenuAriaProps<T>, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
+export function useMenu<T>(props: MenuProps<T>, state: MenuState<T>, layout: MenuLayout<T>): MenuAria {
   let {
     'aria-orientation': ariaOrientation = 'vertical' as Orientation,
     role = 'menu',
-    id
+    id,
+    selectionMode,
+    autoFocus,
+    wrapAround,
+    focusStrategy
   } = props;
 
   let menuId = useId(id);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    autoFocus,
+    focusStrategy,
+    wrapAround
   });
+
+  let menuItemRole = 'menuitem';
+  if (role === 'listbox') {
+    menuItemRole = 'option';
+  } else if (selectionMode === 'single') {
+    menuItemRole = 'menuitemradio';
+  } else if (selectionMode === 'multiple') {
+    menuItemRole = 'menuitemcheckbox';
+  }
 
   return {
     menuProps: {
@@ -49,6 +63,9 @@ export function useMenu<T>(props: MenuAriaProps<T>, state: MenuState<T>, layout:
       id: menuId,
       role,
       'aria-orientation': ariaOrientation
+    },
+    menuItemProps: {
+      role: menuItemRole
     }
   };
 }
