@@ -60,9 +60,9 @@ These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
 
 ## Global Settings
 
-Props such as `theme`, `colorScheme`, `locale`, and `scale` adjust all
-components with Provider. The `theme` allows the definition of custom CSS
-variables for the `colorScheme` and `scale` prop values.
+Props such as `theme`, `colorScheme`, `locale`, and `scale` are applied to all
+children components, included nested Providers. The `theme` allows the
+definition of custom CSS variables for the `colorScheme` and `scale` prop values.
 
 ### Color Scheme and Scale
 
@@ -143,8 +143,9 @@ settings and changes how all children components are internationalized.
 
 ## Provider Nesting
 
-Providers may be nested. The parent provider passes its global settings props (`theme`) down to the
-children providers, but not its context props (`isDisabled`, `isEmphasized`, etc.).
+Providers may be nested. The parent provider passes its global settings props
+(`scale`) down to the children providers, but not its context props
+(`isDisabled`, etc.).
 
 ```tsx example
 <Provider isDisabled scale="large">
