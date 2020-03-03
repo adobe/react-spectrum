@@ -21,8 +21,9 @@ export interface CalendarPropsBase {
   autoFocus?: boolean
 }
 
+export type DateRange = RangeValue<DateValue>;
 export interface CalendarProps extends CalendarPropsBase, ValueBase<DateValue> {}
-export interface RangeCalendarProps extends CalendarPropsBase, ValueBase<RangeValue<DateValue>> {}
+export interface RangeCalendarProps extends CalendarPropsBase, ValueBase<DateRange> {}
 
 export interface SpectrumCalendarProps extends CalendarProps, DOMProps, StyleProps {}
 export interface SpectrumRangeCalendarProps extends RangeCalendarProps, DOMProps, StyleProps {}

@@ -1,5 +1,7 @@
 {
   "calendar": "Calendrier",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} au {end, date, long}",
   "date": "Date",
   "dateRange": "Plage de dates",
   "day": "Jour",

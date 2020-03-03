@@ -22,6 +22,7 @@
     "@react-aria/interactions": "^3.0.0-alpha.2",
     "@react-aria/spinbutton": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-stately/datepicker": "^3.0.0-alpha.2",
     "@react-types/datepicker": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2",

@@ -15,6 +15,7 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
+import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {mergeProps} from '@react-aria/utils';
@@ -24,7 +25,12 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
 
-export function DatePickerField(props: SpectrumDatePickerProps) {
+interface DateFieldDescProps extends DOMProps {
+  children?: string,
+  hidden?: boolean
+}
+
+export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: DateFieldDescProps}) {
   let state = useDatePickerFieldState(props);
   let {
     isDisabled,
@@ -32,6 +38,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     isRequired,
     isQuiet,
     validationState,
+    descProps,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -90,7 +97,8 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
 
   return (
     <div {...domProps} {...styleProps} className={textfieldClass}>
-      <div className={inputClass}>
+      {descProps && descProps.children && <span {...descProps} />}
+      <div role="presentation" className={inputClass}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
             {...segmentProps}

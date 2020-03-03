@@ -1,5 +1,7 @@
 {
   "calendar": "달력",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} ~ {end, date, long}",
   "date": "날짜",
   "dateRange": "날짜 범위",
   "day": "요일",
