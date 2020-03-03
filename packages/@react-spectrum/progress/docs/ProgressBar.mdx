@@ -28,7 +28,7 @@ import {ProgressBar} from '@react-spectrum/progress';
 
 ## Value
 
-By default Progress Bars are controlled with the `value` prop representing current percentage (as an integer).
+Progress Bars are controlled with the `value` prop representing current percentage (as an integer).
 In this case, the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
@@ -50,23 +50,22 @@ The `formatOptions` are displayed via the [Intl.NumberFormat](https://developer.
 
 ### Accessibility
 
-Progress Bars are made accessible as per the ["progressbar" role in WAI-ARIA 1.1](https://www.w3.org/TR/wai-aria-1.1/#progressbar).
-Depending on the visualization being used (ie depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
 
 ```tsx example
 <div>
-  <ProgressBar aria-labelledby="pc-label" showValueLabel={false} />
+  <ProgressBar aria-labelledby="pc-label" showValueLabel={false} value={45} />
   <label id="pc-label" style={{display: 'block'}}>Loading…</label>
 </div>
 ```
 
-If using the over background variant, ensure the background offers enough contrast for the loader to be legible and meets color contrast guidelines.
+If using the over background variant, ensure the background offers enough contrast for the Progress Bar to be legible and meets color contrast guidelines.
 
 ### Internationalization
 
 To internationalize a Progress Bar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of associated `aria-labelledby` element.
 
-For RTL (right-to-left) languages, the layout of the bar loader is mirrored for both determinate and indeterminate options.
+For languages that are read right to left (e.g. Hebrew and Arabic), the layout is mirrored for both determinate and indeterminate options.
 The placement of the percent sign differs depending on the locale.
 
 ## Props
@@ -78,24 +77,24 @@ The placement of the percent sign differs depending on the locale.
 ### Over background
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Over-background)
 
-When a loader needs to be placed on top of a colored background, use the over background loader.
+When a Progress Bar needs to be placed on top of a colored background, use the `overBackground` variant.
 
 ```tsx example
 <div style={{background: 'rgba(0,0,0,0.4)', padding: '10px'}}>
-  <ProgressBar label="Loading…" variant="overBackground" />
+  <ProgressBar label="Loading…" variant="overBackground" value={5} />
 </div>
 ```
 
 ### Indeterminate
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Determinate-or-indeterminate)
 
-By default, loaders are determinate. Use a determinate loader when progress can be calculated against a specific goal.
+By default, Progress Bars are determinate. Use a determinate Progress Bar when progress can be calculated against a specific goal.
 
 ```tsx example
 <ProgressBar label="Loading…" value={50} />
 ```
 
-Use an indeterminate loader when progress is happening but the time or effort to completion can’t be determined.
+Use an indeterminate Progress Bars when progress is happening but the time or effort to completion can’t be determined.
 
 ```tsx example
 <ProgressBar label="Loading…" isIndeterminate />
@@ -107,15 +106,19 @@ Use an indeterminate loader when progress is happening but the time or effort to
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 
 ```tsx example
-<p><ProgressBar label="Loading…" /></p>
-<p><ProgressBar label="Loading…" labelPosition="side" /></p>
-<p><ProgressBar label="Loading…" showValueLabel={false} /></p>
+<Flex>
+  <ProgressBar label="Loading…" value={30} />
+  <ProgressBar label="Loading…" labelPosition="side" value={30} />
+  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
+</Flex>
 ```
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Size)
 
 ```tsx example
-<p><ProgressBar aria-label="Loading…" size="S" /></p>
-<p><ProgressBar aria-label="Loading…" size="L" /></p>
+<Flex>
+  <ProgressBar aria-label="Loading…" size="S" value={70} />
+  <ProgressBar aria-label="Loading…" size="L" value={70} />
+</Flex>
 ```
