@@ -1,5 +1,7 @@
 {
   "calendar": "Naptár",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} – {end, date, long}",
   "date": "Dátum",
   "dateRange": "Dátumtartomány",
   "day": "Nap",

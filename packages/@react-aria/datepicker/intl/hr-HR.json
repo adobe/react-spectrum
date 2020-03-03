@@ -1,5 +1,7 @@
 {
   "calendar": "Kalendar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "od {start, date, long} do {end, date, long}",
   "date": "Datum",
   "dateRange": "Raspon datuma",
   "day": "Dan",

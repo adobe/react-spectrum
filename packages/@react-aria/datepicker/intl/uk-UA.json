@@ -1,5 +1,7 @@
 {
   "calendar": "Календар",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "від {start, date, long} до {end, date, long}",
   "date": "Дата",
   "dateRange": "Діапазон дат",
   "day": "День",

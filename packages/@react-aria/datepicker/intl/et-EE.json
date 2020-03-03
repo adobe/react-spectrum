@@ -1,5 +1,7 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} kuni {end, date, long}",
   "date": "Kuupäev",
   "dateRange": "Kuupäevavahemik",
   "day": "Päev",
