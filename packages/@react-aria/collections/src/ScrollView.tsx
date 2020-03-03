@@ -19,7 +19,8 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   visibleRect: Rect,
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
-  innerStyle: CSSProperties
+  innerStyle: CSSProperties,
+  sizeToFit: 'width' | 'height'
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
@@ -29,6 +30,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     onVisibleRectChange, 
     children, 
     innerStyle,
+    sizeToFit,
     ...otherProps
   } = props;
 
@@ -81,6 +83,25 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
       let w = dom.offsetWidth;
       let h = dom.offsetHeight;
+      if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
+        let style = window.getComputedStyle(dom);
+
+        if (sizeToFit === 'width') {
+          w = contentSize.width;
+
+          let maxWidth = parseInt(style.maxWidth, 10);
+          if (!isNaN(maxWidth)) {
+            w = Math.min(maxWidth, w);
+          }
+        } else if (sizeToFit === 'height') {
+          h = contentSize.height;
+
+          let maxHeight = parseInt(style.maxHeight, 10);
+          if (!isNaN(maxHeight)) {
+            h = Math.min(maxHeight, h);
+          }
+        }
+      }
 
       if (state.width !== w || state.height !== h) {
         state.width = w;
@@ -94,7 +115,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, ref, state.height, state.scrollLeft, state.scrollTop, state.width]);
+  }, [onVisibleRectChange, ref, state.height, state.scrollLeft, state.scrollTop, state.width, sizeToFit, contentSize.width, contentSize.height]);
 
   useLayoutEffect(() => {
     let dom = ref.current;

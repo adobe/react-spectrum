@@ -104,7 +104,7 @@ export class CollectionManager<T extends object, V, W> {
   private _overscanManager: OverscanManager;
   private _relayoutRaf: number | null;
   private _scrollAnimation: CancelablePromise<void> | null;
-  private _sizeUpdateQueue: Set<Key>;
+  private _sizeUpdateQueue: Map<Key, Size>;
   private _animatedContentOffset: Point;
   private _transaction: Transaction<T, V> | null;
   private _nextTransaction: Transaction<T, V> | null;
@@ -123,7 +123,7 @@ export class CollectionManager<T extends object, V, W> {
     this._overscanManager = new OverscanManager();
 
     this._scrollAnimation = null;
-    this._sizeUpdateQueue = new Set();
+    this._sizeUpdateQueue = new Map();
     this._animatedContentOffset = new Point(0, 0);
 
     this._transaction = null;
@@ -313,7 +313,7 @@ export class CollectionManager<T extends object, V, W> {
     let reusable = this._reusableViews[reuseType];
     let view = reusable.length > 0
       ? reusable.pop()
-      : new ReusableView<T, V>();
+      : new ReusableView<T, V>(this);
 
     view.viewType = reuseType;
 
@@ -795,17 +795,9 @@ export class CollectionManager<T extends object, V, W> {
       }
     }
 
-    let needsSizeUpdate = false;
-
     for (let key of toAdd.keys()) {
       let layoutInfo = visibleLayoutInfos.get(key);
       let view: ReusableView<T, V> | void;
-
-      // We need to recompute view sizes if we only
-      // have an estimated size for this row.
-      if (layoutInfo.estimatedSize) {
-        needsSizeUpdate = true;
-      }
 
       // If we're in a transaction, and a layout change happens
       // during the animations such that a view that was going
@@ -850,18 +842,12 @@ export class CollectionManager<T extends object, V, W> {
     }
 
     this._flushVisibleViews();
-    if (this._transaction || needsSizeUpdate) {
+    if (this._transaction) {
       requestAnimationFrame(() => {
         // If we're in a transaction, apply animations to visible views
         // and "to be removed" views, which animate off screen.
         if (this._transaction) {
           requestAnimationFrame(() => this._applyLayoutInfos());
-        }
-
-        // If we need a height update, wait until the next frame
-        // so that the browser has time to do layout.
-        if (needsSizeUpdate) {
-          this.relayout();
         }
       });
     }
@@ -947,7 +933,7 @@ export class CollectionManager<T extends object, V, W> {
     }
   }
 
-  updateItemSize(key: Key) {
+  updateItemSize(key: Key, size: Size) {
     // TODO: we should be able to invalidate a single index path
     // @ts-ignore
     if (!this.layout.updateItemSize) {
@@ -957,14 +943,14 @@ export class CollectionManager<T extends object, V, W> {
     // If the scroll position is currently animating, add the update
     // to a queue to be processed after the animation is complete.
     if (this._scrollAnimation) {
-      this._sizeUpdateQueue.add(key);
+      this._sizeUpdateQueue.set(key, size);
       return;
     }
 
     // @ts-ignore
-    let changed = this.layout.updateItemSize(key);
+    let changed = this.layout.updateItemSize(key, size);
     if (changed) {
-      this.relayout();
+      this.relayoutNow();
     }
   }
 
@@ -1042,8 +1028,8 @@ export class CollectionManager<T extends object, V, W> {
 
       // Process view size updates that occurred during the animation.
       // Only views that are still visible will be actually updated.
-      for (let key of this._sizeUpdateQueue) {
-        this.updateItemSize(key);
+      for (let [key, size] of this._sizeUpdateQueue) {
+        this.updateItemSize(key, size);
       }
 
       this._sizeUpdateQueue.clear();
