@@ -6,6 +6,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
+import {Flex} from '@react-spectrum/layout';
 import {ProgressBar} from '@react-spectrum/progress';
 ```
 
@@ -106,10 +107,10 @@ Use an indeterminate Progress Bars when progress is happening but the time or ef
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 
 ```tsx example
-<Flex>
-  <ProgressBar label="Loading…" value={30} />
-  <ProgressBar label="Loading…" labelPosition="side" value={30} />
-  <ProgressBar label="Loading…" showValueLabel={false} value={30} />
+<Flex flexDirection="column">
+  <ProgressBar label="Loading…" marginBottom="5px" value={30} />
+  <ProgressBar label="Loading…" marginBottom="5px" labelPosition="side" value={30} />
+  <ProgressBar label="Loading…" marginBottom="5px" showValueLabel={false} value={30} />
 </Flex>
 ```
 
@@ -117,8 +118,8 @@ Value labels are shown by default on top, but they can also be moved to the side
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Size)
 
 ```tsx example
-<Flex>
-  <ProgressBar aria-label="Loading…" size="S" value={70} />
-  <ProgressBar aria-label="Loading…" size="L" value={70} />
+<Flex flexDirection="column">
+  <ProgressBar aria-label="Loading…" marginBottom="5px" size="S" value={70} />
+  <ProgressBar aria-label="Loading…" marginBottom="5px" size="L" value={70} />
 </Flex>
 ```
