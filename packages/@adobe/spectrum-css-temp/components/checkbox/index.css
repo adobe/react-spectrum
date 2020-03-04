@@ -60,7 +60,7 @@ governing permissions and limitations under the License.
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: calc(var(--spectrum-checkbox-cursor-hit-x) * -1);
-  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 3);
+  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 2);
   block-size: 100%;
 
   opacity: .0001;
