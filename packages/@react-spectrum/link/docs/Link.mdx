@@ -66,7 +66,7 @@ In order to internationalize a link, a localized string should be passed to the 
 
 ### Accessibility
 
-For string-typed `children`, the link component will expose the acessible role to assistive technology as a "link".
+For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
 
 ```tsx example
 <Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
@@ -87,22 +87,22 @@ Be mindful of what the experience is for users navigating with screen readers. M
 
 ### Primary
 ```tsx example
-<p>Would you live to <Link variant="primary">learn more</Link> about this fine component?</p>
+<p>Would you like to <Link variant="primary">learn more</Link> about this fine component?</p>
 ```
 
 ### Secondary
 ```tsx example
-<p>Would you live to <Link variant="secondary">learn more</Link> about this fine component?</p>
+<p>Would you like to <Link variant="secondary">learn more</Link> about this fine component?</p>
 ```
 
 ### overBackground
 ```tsx example
 <View backgroundColor="positive" padding="25px">
-  Would you live to <Link variant="overBackground">learn more</Link> about this fine component?
+  Would you like to <Link variant="overBackground">learn more</Link> about this fine component?
 </View>
 ```
 
 ### quiet
 ```tsx example
-<p>Would you live to <Link isQuiet>learn more</Link> about this fine component?</p>
+<p>Would you like to <Link isQuiet>learn more</Link> about this fine component?</p>
 ```
