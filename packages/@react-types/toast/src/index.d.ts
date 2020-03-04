@@ -21,16 +21,12 @@ export interface ToastOptions extends DOMProps, StyleProps {
   timeout?: number
 }
 
-interface ToastProps extends ToastOptions, ToastState {
+export interface ToastProps extends ToastOptions {
   children?: ReactNode,
   variant?: 'positive' | 'negative' | 'info',
   toastKey?: string,
   timer?: any
 }
-
-/* export interface SpectrumToastProps extends ToastProps, ToastState, StyleProps {
-
-}*/
 
 export interface ToastState {
   onAdd?: (content: ReactNode, options: ToastProps) => void,

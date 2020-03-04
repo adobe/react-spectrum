@@ -30,13 +30,13 @@ describe('useToast', () => {
     cleanup();
   });
 
-  let renderToastHook = (props, wrapper) => {
-    let {result} = renderHook(() => useToast(props), {wrapper});
+  let renderToastHook = (props, state, wrapper) => {
+    let {result} = renderHook(() => useToast(props, state), {wrapper});
     return result.current;
   };
 
   it('handles defaults', function () {
-    let {actionButtonProps, closeButtonProps, iconProps, toastProps} = renderToastHook({onRemove});
+    let {actionButtonProps, closeButtonProps, iconProps, toastProps} = renderToastHook({}, {onRemove});
 
     expect(toastProps.role).toBe('alert');
     expect(iconProps.alt).toBe(undefined);
@@ -46,7 +46,7 @@ describe('useToast', () => {
   });
 
   it('variant sets icon alt property', function () {
-    let {iconProps} = renderToastHook({variant: 'info'});
+    let {iconProps} = renderToastHook({variant: 'info'}, {onRemove});
 
     expect(iconProps.alt).toBe('Info');
   });
@@ -60,12 +60,12 @@ describe('useToast', () => {
 
     let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
     let expectedIntl = intlMessages[locale]['info'];
-    let {iconProps} = renderToastHook({variant: 'info'}, wrapper);
+    let {iconProps} = renderToastHook({variant: 'info'}, {onRemove}, wrapper);
     expect(iconProps.alt).toBe(expectedIntl);
   });
 
   it('handles onClose', function () {
-    let {closeButtonProps} = renderToastHook({onClose, onRemove});
+    let {closeButtonProps} = renderToastHook({onClose}, {onRemove});
     closeButtonProps.onPress();
 
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -73,7 +73,7 @@ describe('useToast', () => {
   });
 
   it('handles shouldCloseOnAction', function () {
-    let {actionButtonProps} = renderToastHook({onClose, onAction, onRemove, shouldCloseOnAction: true});
+    let {actionButtonProps} = renderToastHook({onClose, onAction, shouldCloseOnAction: true}, {onRemove});
     actionButtonProps.onPress();
 
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -82,7 +82,7 @@ describe('useToast', () => {
   });
 
   it('onRemove is called with toastKey', function () {
-    let {closeButtonProps} = renderToastHook({onRemove, toastKey: 'key1'});
+    let {closeButtonProps} = renderToastHook({toastKey: 'key1'}, {onRemove});
     closeButtonProps.onPress();
 
     expect(onRemove).toHaveBeenCalledTimes(1);

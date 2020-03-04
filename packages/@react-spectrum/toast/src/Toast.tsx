@@ -20,8 +20,10 @@ import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
-import {ToastProps} from '@react-types/toast';
+import {ToastProps, ToastState} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
+
+interface SpectrumToastProps extends ToastProps, ToastState {}
 
 export const ICONS = {
   info: InfoMedium,
@@ -29,19 +31,20 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-function Toast(props: ToastProps, ref: DOMRef<HTMLDivElement>) {
+function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    actionLabel,
+    children,
+    onRemove,
+    variant,
+    ...otherProps
+  } = props;
   let {
     actionButtonProps,
     closeButtonProps,
     iconProps,
     toastProps
-  } = useToast(props);
-  let {
-    actionLabel,
-    children,
-    variant,
-    ...otherProps
-  } = props;
+  } = useToast({...otherProps, variant}, {onRemove});
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let Icon = ICONS[variant];

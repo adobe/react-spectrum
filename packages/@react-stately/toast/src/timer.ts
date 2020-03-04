@@ -1,4 +1,4 @@
-export function Timer(callback, delay) {
+export function Timer(callback: () => void, delay: number) {
   let timerId, start;
   let remaining = delay;
 

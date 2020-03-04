@@ -20,7 +20,7 @@ import {useFocus, useHover} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface ToastAriaProps extends ToastProps, ToastState {}
+interface ToastAriaProps extends ToastProps {}
 
 interface ToastAria {
   toastProps: HTMLAttributes<HTMLElement>,
@@ -29,17 +29,19 @@ interface ToastAria {
   closeButtonProps: DOMProps & PressProps
 }
 
-export function useToast(props: ToastAriaProps): ToastAria {
+export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   let {
     id,
     toastKey,
     onAction,
     onClose,
-    onRemove,
     shouldCloseOnAction,
     timer,
     variant
   } = props;
+  let {
+    onRemove
+  } = state;
   let formatMessage = useMessageFormatter(intlMessages);
 
   const handleAction = (...args) => {
