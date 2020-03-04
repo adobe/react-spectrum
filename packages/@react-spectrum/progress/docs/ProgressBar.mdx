@@ -50,6 +50,21 @@ Values are formatted as a percentage by default, but can be modified by using th
 <ProgressBar label="Loading…" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} />
 ```
 
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Determinate-or-indeterminate)
+
+By default, Progress Bars are determinate. Use a determinate Progress Bar when progress can be calculated against a specific goal.
+
+```tsx example
+<ProgressBar label="Loading…" value={50} />
+```
+
+Use an indeterminate Progress Bars when progress is happening but the time or effort to completion can’t be determined.
+
+```tsx example
+<ProgressBar label="Loading…" isIndeterminate />
+```
+
 ### Accessibility
 
 Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
@@ -85,21 +100,6 @@ When a Progress Bar needs to be placed on top of a colored background, use the `
 <View backgroundColor="positive" padding="25px">
   <ProgressBar label="Loading…" variant="overBackground" value={5} />
 </View>
-```
-
-### Indeterminate
-[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Determinate-or-indeterminate)
-
-By default, Progress Bars are determinate. Use a determinate Progress Bar when progress can be calculated against a specific goal.
-
-```tsx example
-<ProgressBar label="Loading…" value={50} />
-```
-
-Use an indeterminate Progress Bars when progress is happening but the time or effort to completion can’t be determined.
-
-```tsx example
-<ProgressBar label="Loading…" isIndeterminate />
 ```
 
 ### Labels
