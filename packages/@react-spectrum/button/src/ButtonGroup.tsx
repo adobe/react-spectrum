@@ -10,20 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '../src';
 import {ButtonGroupButton, SpectrumButtonGroupProps} from '@react-types/button';
 import {ButtonGroupState, useButtonGroupState} from '@react-stately/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
+import {CollectionsContext} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
-import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useButtonGroup} from '@react-aria/button';
 import {useSelectableItem} from '@react-aria/selection';
 
-export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
+export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps<T>) {
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
@@ -60,40 +61,35 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
         )
       } >
       <Provider {...providerProps}>
-        {
-          state.buttonCollection.items.map((item) => (
-            <ButtonGroupItem
-              key={item.key}
-              {...buttonProps}
-              className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
-              item={item}
-              state={state} />
-          ))
-        }
+        <CollectionsContext.Provider
+          value={{itemComponent: (item) => <ButtonGroupItem state={state} item={item} {...buttonProps} />}}>
+          {state.buttonCollection.items}
+        </CollectionsContext.Provider>
       </Provider>
     </div>
   );
 }
 
-export interface ButtonGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
-  item: ButtonGroupButton,
+export interface ButtonGroupItemProps<T> extends AllHTMLAttributes<HTMLButtonElement> {
+  item: ButtonGroupButton<T>,
   state: ButtonGroupState
 }
 
-export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemProps) {
-  let ref = useRef<HTMLDivElement>();
+export function ButtonGroupItem<T>(props: ButtonGroupItemProps<T>) {
+  let {item, state, ...otherProps} = props;
+
+  let ref = useRef();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
     itemKey: item && item.key,
     itemRef: ref
   });
 
-  let buttonProps = mergeProps(itemProps, otherProps);
+  let ariaProps = mergeProps(itemProps, item);
+  let buttonProps = mergeProps(ariaProps, otherProps);
 
   return (
-    <PressResponder ref={ref} {...buttonProps} >
-      {item}
-    </PressResponder>
+    <ActionButton ref={ref} {...buttonProps} />
   );
 
 }

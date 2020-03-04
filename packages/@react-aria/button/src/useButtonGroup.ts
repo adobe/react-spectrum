@@ -37,7 +37,7 @@ export interface ButtonGroupAria {
   buttonGroupProps: AllHTMLAttributes<HTMLElement>,
   buttonProps: AllHTMLAttributes<HTMLElement>,
 }
-export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState): ButtonGroupAria {
+export function useButtonGroup<T>(props: ButtonGroupProps<T>, state: ButtonGroupState): ButtonGroupAria {
   let {
     id,
     selectionMode = 'single',

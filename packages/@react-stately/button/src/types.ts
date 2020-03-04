@@ -15,8 +15,8 @@ import {ButtonGroupCollection} from './';
 import {ReactElement} from 'react';
 import {SelectionManager} from '@react-stately/selection';
 
-export interface ButtonGroupStateBase {
-  children: ButtonGroupButton| ButtonGroupButton[]
+export interface ButtonGroupStateBase<T> {
+  children: ButtonGroupButton<T>| ButtonGroupButton<T>[]
 }
 
 export interface ButtonGroupState {

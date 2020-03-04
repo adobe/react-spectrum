@@ -10,12 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, CollectionElement, ItemElement, ItemProps, ItemRenderer, SectionElement, SectionProps} from '@react-types/shared';
+import {CollectionBase, CollectionElement, CollectionsContextValue, ItemElement, ItemProps, ItemRenderer, SectionElement, SectionProps} from '@react-types/shared';
 import {ItemStates, Node} from './types';
-import React, {Key, ReactElement} from 'react';
+import React, {Key, ReactElement, useContext} from 'react';
 
-export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
-  return null;
+// export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+//   return null;
+// }
+
+export const CollectionsContext = React.createContext<CollectionsContextValue | null>(null);
+
+export function Item<T>(props: ItemProps<T>): ReactElement {
+  let {itemComponent: ItemComponent} = useContext(CollectionsContext);
+  return <ItemComponent {...props} />;
 }
 
 export function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars

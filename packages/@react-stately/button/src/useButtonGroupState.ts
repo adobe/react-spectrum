@@ -16,12 +16,13 @@ import {MultipleSelection} from '@react-types/shared';
 import React, {useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): ButtonGroupState {
+export function useButtonGroupState<T>(props: ButtonGroupStateBase<T> & MultipleSelection): ButtonGroupState {
   let selectionState = useMultipleSelectionState(props);
 
   let buttonCollection = useMemo(() => {
     let childrenArray = React.Children.toArray(props.children);
     childrenArray = childrenArray.map(child => React.cloneElement(child, {
+      // @ts-ignore
       isSelected: selectionState.selectedKeys.has(child.key)
     }));
 

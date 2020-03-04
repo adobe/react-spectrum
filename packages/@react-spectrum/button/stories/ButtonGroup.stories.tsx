@@ -18,6 +18,7 @@ import Brush from '@spectrum-icons/workflow/Brush';
 import Camera from '@spectrum-icons/workflow/Camera';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Item} from '@react-stately/collections';
 import React from 'react';
 import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
 import Select  from '@spectrum-icons/workflow/Select';
@@ -27,8 +28,8 @@ import Undo from '@spectrum-icons/workflow/Undo';
 storiesOf('ButtonGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
-    'default',
-    () => render(null, items)
+    'default: RENDER ITEMS',
+    () => renderItems(null)
   )
   .add(
     'icons',
@@ -99,15 +100,15 @@ storiesOf('ButtonGroup', module)
     () => render({orientation: 'vertical', isQuiet: true}, toolIcons)
   );
 
-const items =
-  [
-    {children: 'React'},
-    {children: 'Add'},
-    {children: 'Delete'},
-    {children: 'Bell'},
-    {children: 'Camera'},
-    {children: 'Undo'}
-  ];
+function renderItems(props = {}) {
+  return (
+    <ButtonGroup onSelectionChange={action('onSelect')} {...props}>
+      <Item uniqueKey="React" >React</Item>
+      <Item uniqueKey="Add" >Add</Item>
+      <Item uniqueKey="Delete" >Delete</Item>
+    </ButtonGroup>
+  );
+}
 
 const itemsWithIcons =
   [

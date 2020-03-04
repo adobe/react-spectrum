@@ -10,7 +10,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Key, ReactElement, ReactNode} from 'react';
+import {JSXElementConstructor, Key, ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
@@ -141,3 +141,8 @@ interface AsyncListProps<T> {
 }
 
 declare function useAsyncList<T>(opts: AsyncListOptions<T>): AsyncListProps<T>;
+
+export interface CollectionsContextValue {
+  sectionComponent?: string | JSXElementConstructor<any>,
+  itemComponent?: string | JSXElementConstructor<any>
+}
