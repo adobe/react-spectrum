@@ -24,7 +24,7 @@ import {View} from '@react-spectrum/view';
 ## Example
 
 ```tsx example
-<ProgressCircle aria-label="Loading…" isIndeterminate />
+<ProgressCircle aria-label="Loading…" />
 ```
 
 ## Value
@@ -40,6 +40,21 @@ Alternatively, a different scale can be used by setting the `minValue` and `maxV
 
 ```tsx example
 <ProgressCircle aria-label="Loading…" minValue={50} maxValue={150} value={100} />
+```
+
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/circle-loader/#Indeterminate)
+
+By default, Progress Circles are determinate. Use a determinate Progress Circle when progress can be calculated against a specific goal.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" value={50} />
+```
+
+Use an indeterminate Progress Circle when progress is happening but the time or effort to completion can’t be determined.
+
+```tsx example
+<ProgressCircle aria-label="Loading…" isIndeterminate />
 ```
 
 ### Accessibility
@@ -76,21 +91,6 @@ When a Progress Circle needs to be placed on top of a colored background, use th
 <View backgroundColor="positive" padding="25px">
   <ProgressCircle aria-label="Loading…" isIndeterminate variant="overBackground" />
 </View>
-```
-
-### Indeterminate
-[View guidelines](https://spectrum.adobe.com/page/circle-loader/#Indeterminate)
-
-By default, Progress Circles are determinate. Use a determinate Progress Circle when progress can be calculated against a specific goal.
-
-```tsx example
-<ProgressCircle aria-label="Loading…" value={50} />
-```
-
-Use an indeterminate Progress Circle when progress is happening but the time or effort to completion can’t be determined.
-
-```tsx example
-<ProgressCircle aria-label="Loading…" isIndeterminate />
 ```
 
 ### Size
