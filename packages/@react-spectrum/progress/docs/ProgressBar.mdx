@@ -59,7 +59,7 @@ By default, ProgressBars are determinate. Use a determinate ProgressBar when pro
 <ProgressBar label="Loading…" value={50} />
 ```
 
-Use an indeterminate ProgressBar when thhe wait time or effort to completion can not be determined.
+Use an indeterminate ProgressBar when the wait time or effort to completion can not be determined.
 
 ```tsx example
 <ProgressBar label="Loading…" isIndeterminate />
@@ -67,7 +67,7 @@ Use an indeterminate ProgressBar when thhe wait time or effort to completion can
 
 ### Accessibility
 
-Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute is required.
 
 ```tsx example
 <div>
@@ -84,24 +84,7 @@ To internationalize a ProgressBar, a localized string should be passed to the `l
 
 For languages that are read right to left (e.g. Hebrew and Arabic), the layout is mirrored for both determinate and indeterminate options.
 
-## Props
-
-<PropTable component={docs.exports.ProgressBar} links={docs.links} />
-
-## Visual Options
-
-### Over background
-[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Over-background)
-
-When a ProgressBar needs to be placed on top of a colored background, use the `overBackground` variant.
-
-```tsx example
-<View backgroundColor="positive" padding="25px">
-  <ProgressBar label="Loading…" variant="overBackground" value={5} />
-</View>
-```
-
-### Labels
+## Labels
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Label-or-no-label)
 
 Labels and value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
@@ -128,6 +111,23 @@ Value labels by default show the percentage of progress in a determinate Progres
   <ProgressBar label="Loading…" marginBottom="25px" valueLabel="30 of 60 dogs" value={30} />
   <ProgressBar label="Loading…" formatOptions={{style: 'percent', minimumFractionDigits: 2}} value={30.123} />
 </Flex>
+```
+
+## Props
+
+<PropTable component={docs.exports.ProgressBar} links={docs.links} />
+
+## Visual Options
+
+### Over background
+[View guidelines](https://spectrum.adobe.com/page/bar-loader/#Over-background)
+
+When a ProgressBar needs to be placed on top of a colored background, use the `overBackground` variant.
+
+```tsx example
+<View backgroundColor="positive" padding="25px">
+  <ProgressBar label="Loading…" variant="overBackground" value={5} />
+</View>
 ```
 
 ### Size
