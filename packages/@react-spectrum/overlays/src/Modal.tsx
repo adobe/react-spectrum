@@ -22,7 +22,8 @@ interface ModalProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover'
+  type?: 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean
 }
 
 interface ModalWrapperProps extends ModalProps {
@@ -30,14 +31,15 @@ interface ModalWrapperProps extends ModalProps {
 }
 
 export function Modal(props: ModalProps) {
-  let {children, onClose, type, ...otherProps} = props;
+  let {children, onClose, type, isDismissable, ...otherProps} = props;
 
   return (
     <Overlay {...otherProps}>
       <Underlay />
       <ModalWrapper 
         onClose={onClose} 
-        type={type}>
+        type={type}
+        isDismissable={isDismissable}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -50,10 +52,11 @@ let typeMap = {
 };
 
 function ModalWrapper(props: ModalWrapperProps) {
-  let {children, onClose, isOpen, type} = props;
+  let {children, onClose, isOpen, type, isDismissable = false} = props;
   let typeVariant = typeMap[type];
   let ref = useRef(null);
-  let {overlayProps} = useOverlay({ref, onClose, isOpen});
+
+  let {overlayProps} = useOverlay({ref, onClose, isOpen, closeOnInteractOutside: isDismissable});
   useModal();
 
   let wrapperClassName = classNames(
