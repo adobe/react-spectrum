@@ -16,11 +16,11 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
+import {Heading} from '@react-spectrum/typography';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {Text} from '@react-spectrum/typography';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   let {
@@ -30,7 +30,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     cancelLabel,
     primaryLabel,
     autoFocusButton,
-    title,
+    heading,
     isConfirmDisabled,
     onCancel,
     onConfirm,
@@ -49,7 +49,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Text slot="title">{title}</Text>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Header><Heading>{heading}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
       <Content>{children}</Content>
       <Footer>

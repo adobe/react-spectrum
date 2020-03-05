@@ -19,12 +19,12 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/typography';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
@@ -64,20 +64,12 @@ storiesOf('Dialog', module)
     () => render({size: 'L'})
   )
   .add(
-    'fullscreen',
-    () => render({size: 'fullscreen'})
-  )
-  .add(
-    'fullscreenTakeover',
-    () => render({size: 'fullscreenTakeover'})
-  )
-  .add(
     'form',
     () => renderWithForm({})
   )
   .add(
     'fullscreenTakeover form',
-    () => renderWithForm({size: 'fullscreenTakeover'})
+    () => renderWithForm({type: 'fullscreenTakeover'})
   )
   .add(
     'three buttons',
@@ -95,7 +87,7 @@ storiesOf('Dialog/Alert', module)
     'destructive',
     () => renderAlert({
       variant: 'destructive',
-      title: 'Warning Destructive',
+      heading: 'Warning Destructive',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -107,7 +99,7 @@ storiesOf('Dialog/Alert', module)
     'confirmation',
     () => renderAlert({
       variant: 'confirmation',
-      title: 'Confirmation Required',
+      heading: 'Confirmation Required',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -119,7 +111,7 @@ storiesOf('Dialog/Alert', module)
     'information',
     () => renderAlert({
       variant: 'information',
-      title: 'Informative Alert',
+      heading: 'Informative Alert',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -131,7 +123,7 @@ storiesOf('Dialog/Alert', module)
     'error',
     () => renderAlert({
       variant: 'error',
-      title: 'Error: Danger Will Robinson',
+      heading: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -143,7 +135,7 @@ storiesOf('Dialog/Alert', module)
     'warning',
     () => renderAlert({
       variant: 'warning',
-      title: 'This is a warning',
+      heading: 'This is a warning',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -155,7 +147,7 @@ storiesOf('Dialog/Alert', module)
     'primary disabled',
     () => renderAlert({
       variant: 'error',
-      title: 'Error: Danger Will Robinson',
+      heading: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -168,7 +160,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus primary',
     () => renderAlert({
       variant: 'error',
-      title: 'Error: Danger Will Robinson',
+      heading: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -182,7 +174,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus secondary',
     () => renderAlert({
       variant: 'error',
-      title: 'Error: Danger Will Robinson',
+      heading: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -196,7 +188,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus cancel',
     () => renderAlert({
       variant: 'error',
-      title: 'Error: Danger Will Robinson',
+      heading: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -214,7 +206,7 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>{singleParagraph()}</Content>
             <Footer>
@@ -237,7 +229,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>{singleParagraph()}</Content>
             <Footer>
@@ -268,11 +260,11 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
 function renderWithForm({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
+      <DialogTrigger defaultOpen type={props.type}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>
               <Form>
@@ -319,7 +311,7 @@ function renderLongContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>{fiveParagraphs()}</Content>
             <Footer>
@@ -340,7 +332,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>{singleParagraph()}</Content>
             <Footer>
@@ -362,7 +354,7 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Text slot="title">The Title</Text></Header>
+            <Header><Heading>The Heading</Heading></Header>
             <Divider size="M" />
             <Content>
               <Flex UNSAFE_style={{padding: '10px'}}>

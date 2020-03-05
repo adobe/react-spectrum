@@ -19,14 +19,39 @@ import {useProvider} from '@react-spectrum/provider';
 type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, StyleProps {
+  /**
+   * Alternate text for assistive technologies
+   */
   alt?: string,
+  /**
+   * The content to display. Should be an SVG
+   */
   children: ReactElement,
+  /**
+   * Size of Icon (changes based on scale)
+   */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  /**
+   * TODO
+   */
   scale?: Scale,
+  /**
+   * TODO
+   */
   color?: string,
-  slot?: string
+  /**
+   * TODO
+   */
+  slot?: string,
+  /**
+   * @default 'img'
+   */
+  role?: string
 }
 
+/**
+ * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
+ */
 export function Icon(props: IconProps) {
   let {
     children,
