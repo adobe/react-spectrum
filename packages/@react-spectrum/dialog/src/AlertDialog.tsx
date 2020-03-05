@@ -22,7 +22,6 @@ import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 
-
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   let {
     variant,
