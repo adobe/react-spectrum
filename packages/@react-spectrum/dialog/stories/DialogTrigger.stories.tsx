@@ -209,7 +209,7 @@ function render({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Heading>The Title</Heading></Header>
+          <Header><Heading>The Heading</Heading></Header>
           <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
           <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
@@ -225,7 +225,7 @@ function renderPopover({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Heading>The Title</Heading></Header>
+          <Header><Heading>The Heading</Heading></Header>
           <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
@@ -239,7 +239,7 @@ function renderAlert({width = 'auto', ...props}) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={action('cancel')} onConfirm={action('confirm')}>
+        <AlertDialog heading="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={action('cancel')} onConfirm={action('confirm')}>
           <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
         </AlertDialog>
       </DialogTrigger>

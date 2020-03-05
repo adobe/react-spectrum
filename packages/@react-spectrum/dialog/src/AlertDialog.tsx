@@ -30,7 +30,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     cancelLabel,
     primaryLabel,
     autoFocusButton,
-    title,
+    heading,
     isConfirmDisabled,
     onCancel,
     onConfirm,
@@ -49,7 +49,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Header><Heading>{heading}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
       <Content>{children}</Content>
       <Footer>

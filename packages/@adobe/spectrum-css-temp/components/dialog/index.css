@@ -164,7 +164,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dialog-title {
+.spectrum-Dialog-heading {
   flex: 1 1 auto;
 
   margin: 0;
@@ -226,7 +226,7 @@ governing permissions and limitations under the License.
       ".    .       .       .";
   }
 
-  .spectrum-Dialog-title {
+  .spectrum-Dialog-heading {
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
     font-weight: var(--spectrum-dialog-fullscreen-header-text-font-weight);
   }
