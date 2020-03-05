@@ -22,7 +22,7 @@ interface ModalProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  type?: 'fullscreen' | 'fullscreenTakeover'
 }
 
 interface ModalWrapperProps extends ModalProps {
@@ -30,28 +30,28 @@ interface ModalWrapperProps extends ModalProps {
 }
 
 export function Modal(props: ModalProps) {
-  let {children, onClose, size, ...otherProps} = props;
+  let {children, onClose, type, ...otherProps} = props;
 
   return (
     <Overlay {...otherProps}>
       <Underlay />
       <ModalWrapper 
         onClose={onClose} 
-        size={size}>
+        type={type}>
         {children}
       </ModalWrapper>
     </Overlay>
   );
 }
 
-let sizeMap = {
+let typeMap = {
   fullscreen: 'fullscreen',
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
 function ModalWrapper(props: ModalWrapperProps) {
-  let {children, onClose, isOpen, size} = props;
-  let sizeVariant = sizeMap[size];
+  let {children, onClose, isOpen, type} = props;
+  let typeVariant = typeMap[type];
   let ref = useRef(null);
   let {overlayProps} = useOverlay({ref, onClose, isOpen});
   useModal();
@@ -77,7 +77,7 @@ function ModalWrapper(props: ModalWrapperProps) {
       'spectrum-Modal',
       'react-spectrum-Modal'
     ),
-    {[`spectrum-Modal--${sizeVariant}`]: sizeVariant}
+    {[`spectrum-Modal--${typeVariant}`]: typeVariant}
   );
 
   return (

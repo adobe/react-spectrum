@@ -44,12 +44,15 @@ export function Dialog(props: SpectrumDialogProps) {
     ),
     {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
   );
-  // Prioritize size from context over Dialog size prop, default as large otherwise
-  let size = type === 'popover' ? undefined : (contextProps.size || otherProps.size || 'L');
+  let size = type === 'popover' ? undefined : (otherProps.size || 'L');
 
   if (type === 'popover') {
     return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;
   } else {
+    if (type === 'fullscreen' || type === 'fullscreenTakeover') {
+      size = type;
+    }
+
     return (
       <ModalDialog {...allProps} size={size}>
         {children}

@@ -27,7 +27,6 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     mobileType = type === 'popover' ? 'modal' : type,
     hideArrow,
     targetRef,
-    size,
     ...positionProps
   } = props;
   let [trigger, content] = React.Children.toArray(children);
@@ -64,9 +63,16 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   let renderOverlay = () => {
     switch (type) {
+      case 'fullscreen':
+      case 'fullscreenTakeover':
+        return (
+          <Modal isOpen={isOpen} onClose={onClose} type={type}>
+            {content}
+          </Modal>
+        );
       case 'modal':
         return (
-          <Modal isOpen={isOpen} onClose={onClose} size={size}>
+          <Modal isOpen={isOpen} onClose={onClose}>
             {content}
           </Modal>
         );
@@ -86,8 +92,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       onPress={onPress}
       onClose={onClose}
       trigger={trigger}
-      overlay={renderOverlay()}
-      size={size} />
+      overlay={renderOverlay()} />
   );
 }
 
@@ -140,11 +145,10 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger, size = null}) {
+function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
   let context = {
     type,
     onClose,
-    size,
     ...dialogProps
   };
 
@@ -153,7 +157,7 @@ function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, tr
       <PressResponder
         {...triggerProps}
         onPress={onPress}
-        isPressed={isOpen && type !== 'modal'}>
+        isPressed={isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
         {trigger}
       </PressResponder>
       <DialogContext.Provider value={context}>
