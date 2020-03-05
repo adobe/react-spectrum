@@ -18,12 +18,12 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/typography';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
@@ -212,7 +212,7 @@ function render({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
           <Footer>
@@ -233,7 +233,7 @@ function renderHero({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
           <Footer>
@@ -264,7 +264,7 @@ function renderWithForm({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>
             <Form>
@@ -309,7 +309,7 @@ function renderLongContent({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>{fiveParagraphs()}</Content>
           <Footer>
@@ -328,7 +328,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
           <Footer>
@@ -348,7 +348,7 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content>
             <Flex UNSAFE_style={{padding: '10px'}}>

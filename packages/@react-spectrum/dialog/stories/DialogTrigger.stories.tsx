@@ -15,11 +15,11 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
+import {Heading, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
 
 storiesOf('DialogTrigger', module)
   // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
@@ -209,7 +209,7 @@ function render({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
           <Footer><Button variant="secondary">Cancel</Button><Button variant="cta">Confirm</Button></Footer>
@@ -225,7 +225,7 @@ function renderPopover({width = 'auto', ...props}) {
       <DialogTrigger {...props} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Text slot="title">The Title</Text></Header>
+          <Header><Heading>The Title</Heading></Header>
           <Divider size="M" />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>

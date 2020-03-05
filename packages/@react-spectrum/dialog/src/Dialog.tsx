@@ -78,7 +78,7 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
       container: styles['spectrum-Dialog-grid'],
       hero: styles['spectrum-Dialog-hero'],
       header: styles['spectrum-Dialog-header'],
-      title: styles['spectrum-Dialog-title'],
+      heading: styles['spectrum-Dialog-title'],
       typeIcon: styles['spectrum-Dialog-typeIcon'],
       divider: styles['spectrum-Dialog-divider'],
       content: styles['spectrum-Dialog-content'],
